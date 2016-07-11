@@ -1,11 +1,11 @@
-/* global JitsiMeetJS, APP */
+/* global APP, config, JitsiMeetJS, Promise */
 
 import LoginDialog from './LoginDialog';
-import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 import {openConnection} from '../../../connection';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
+const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 let externalAuthWindow;
 let authRequiredDialog;
@@ -157,10 +157,45 @@ function closeAuth() {
     }
 }
 
+function showXmppPasswordPrompt(roomName, connect) {
+    return new Promise(function (resolve, reject) {
+        let authDialog = LoginDialog.showAuthDialog(
+            function (id, password) {
+                connect(id, password, roomName).then(function (connection) {
+                    authDialog.close();
+                    resolve(connection);
+                }, function (err) {
+                    if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+                        authDialog.displayError(err);
+                    } else {
+                        authDialog.close();
+                        reject(err);
+                    }
+                });
+            }
+        );
+    });
+}
+
+/**
+ * Show Authentication Dialog and try to connect with new credentials.
+ * If failed to connect because of PASSWORD_REQUIRED error
+ * then ask for password again.
+ * @param {string} [roomName] name of the conference room
+ * @param {function(id, password, roomName)} [connect] function that returns
+ * a Promise which resolves with JitsiConnection or fails with one of
+ * ConnectionErrors.
+ * @returns {Promise<JitsiConnection>}
+ */
+function requestAuth(roomName, connect) {
+    return showXmppPasswordPrompt(roomName, connect);
+}
+
 
 export default {
     authenticate,
     requireAuth,
+    requestAuth,
     closeAuth,
     logout
 };
