@@ -1,17 +1,10 @@
 /* global $, JitsiMeetJs, MediaRecorder*/
 
 /**
- * options passed along when the MediaRecorder gets created
+ * Possible audio formats MIME types
  */
-const AUDIO_WEBM = "audio/webm";
-const AUDIO_OGG  = "audio/ogg";
-const MEDIA_RECORDING_OPTIONS_CHROME = {mimeType: AUDIO_WEBM}; //for chrome
-const MEDIA_RECORDING_OPTIONS_FIREFOX = {mimeType: AUDIO_OGG}; //for ff
-
-/**
- * File type to convert data into when it's downloaded
- */
-const FILE_TYPE = {type: 'audio/webm'};
+const AUDIO_WEBM = "audio/webm";    // Supported in chrome
+const AUDIO_OGG  = "audio/ogg";     // Supported in firefox
 
 /**
  * Object holding all the information needed for recording a single track
@@ -22,8 +15,39 @@ var TrackRecorder = function(track){
     // The MediaRecorder recording the stream
     this.recorder = null;
     // The array of data chunks recorded from the stream
+    // acts as a buffer until the data is stored on disk
     this.data = null;
 };
+
+/**
+ * Creates a TrackRecorder object. Also creates the MediaRecorder and
+ * data array for the trackRecorder.
+ * @param track the JitsiTrack holding the audio MediaStream(s)
+ */
+function instantiateTrackRecorder(track)
+{
+    var trackRecorder = new TrackRecorder(track);
+    // Create a new stream which only holds the audio track
+    var originalStream = trackRecorder.track.getOriginalStream();
+    var stream = createEmptyStream();
+    originalStream.getAudioTracks().forEach(function(track){
+        stream.addTrack(track);
+    });
+    // Create the MediaRecorder
+    trackRecorder.recorder = new MediaRecorder(stream,
+        {mimeType: audioRecorder.fileType});
+    //array for holding the recorder data. Resets it when
+    //audio already has been recorder once
+    trackRecorder.data = [];
+    // function handling a dataEvent, e.g the stream gets new data
+    trackRecorder.recorder.ondataavailable = function (dataEvent) {
+        if(dataEvent.data.size > 0) {
+            trackRecorder.data.push(dataEvent.data);
+        }
+    };
+
+    return trackRecorder;
+}
 
 /**
  * Determines which kind of audio recording the browser supports
@@ -39,8 +63,17 @@ function determineCorrectFileType()
     }
     else {
         throw new Error("unable to create a MediaRecorder with the" +
-            "right mimetype!")
+            "right mimetype!");
     }
+}
+
+/**
+ * Writes the TrackRecorder.data buffer to disk to free up RAM
+ * @param trackRecorder
+ */
+function writeBufferToDisk(trackRecorder)
+{
+
 }
 
 /**
@@ -53,7 +86,10 @@ var audioRecorder= {
     recorders: [],
 
     //get which file type is supported by the current browser
-    fileType: determineCorrectFileType()
+    fileType: determineCorrectFileType(),
+
+    //boolean flag for active recording
+    isRecording: false
 };
 
 /**
@@ -63,45 +99,41 @@ var audioRecorder= {
  */
 audioRecorder.giveTrack = function (track) {
     if(track.isAudioTrack()) {
-        console.log("added a track to the audioRecorder module");
-        audioRecorder.recorders.push(new TrackRecorder(track));
+        //create the track recorder
+        var trackRecorder = instantiateTrackRecorder(track);
+        //push it to the local array of all recorders
+        audioRecorder.recorders.push(trackRecorder);
+        //is we're already recording, immediately start recording this new track
+        if(audioRecorder.isRecording)        {
+            trackRecorder.recorder.start();
+        }
     }
+};
+
+/**
+ * Notifies the module that a specific track has stopped, e.g partipant left
+ * the conference.
+ * This method will tell the MediaRecorder of the specific track to stop
+ * recording, if //todo determine constraints
+ */
+audioRecorder.notifyTrackStopped = function(track){
+
 };
 
 /**
  * Starts the audio recording of every local and remote track
  */
 audioRecorder.startAudioRecording = function () {
-    //loop through all stored tracks and create a mediaRecorder for each stream
-    audioRecorder.recorders.forEach(function(trackRecorder){
-        //creates the recorder if not already created
-        if(trackRecorder.recorder == null) {
-            // Create a new stream which only holds the audio track
-            var originalStream = trackRecorder.track.getOriginalStream();
-            var stream = createEmptyStream();
-            originalStream.getAudioTracks().forEach(function(track){
-                stream.addTrack(track);
-            });
-            // Create the recorder
-            trackRecorder.recorder = new MediaRecorder(stream,
-                {mimeType: audioRecorder.fileType});
-            // function handling a dataEvent, e.g the stream gets new data
-            trackRecorder.recorder.ondataavailable = function (dataEvent) {
-                if(dataEvent.data.size > 0) {
-                    trackRecorder.data.push(dataEvent.data);
-                }
-            };
-        }
-        //array for holding the recorder data. Resets it when
-        //audio already has been recorder once
-        trackRecorder.data = [];
-    });
-
+    if(audioRecorder.isRecording) {
+        throw new Error("audiorecorder is already recording");
+    }
+    // set boolean isRecording flag to true so if new participants join the
+    // conference, that track can instantly start recording as well
+    audioRecorder.isRecording = true;
     //start all the mediaRecorders
     audioRecorder.recorders.forEach(function(trackRecorder){
         trackRecorder.recorder.start();
     });
-
     //log that recording has started
     console.log("Started the recording of the audio. There are currently " +
         audioRecorder.recorders.length + " recorders active.");
@@ -111,7 +143,10 @@ audioRecorder.startAudioRecording = function () {
  * Stops the audio recording of every local and remote track
  */
 audioRecorder.stopAudioRecording = function() {
-   audioRecorder.recorders.forEach(function(trackRecorder){
+    //set the boolean flag to false
+    audioRecorder.isRecording = false;
+    //stop all recorders
+    audioRecorder.recorders.forEach(function(trackRecorder){
        trackRecorder.recorder.stop();
    });
 };
