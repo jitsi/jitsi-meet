@@ -345,7 +345,7 @@ JitsiMeetExternalAPI.prototype.removeEventListeners = function(events) {
  * Removes the listeners and removes the Jitsi Meet frame.
  */
 JitsiMeetExternalAPI.prototype.dispose = function() {
-    this.postis.dispose();
+    this.postis.destroy();
     var frame = document.getElementById(this.frameName);
     if(frame)
         frame.src = 'about:blank';
