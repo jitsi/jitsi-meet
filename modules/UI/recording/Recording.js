@@ -201,10 +201,11 @@ function _showStopRecordingPrompt (recordingType) {
  */
 function moveToCorner(selector, move) {
     let moveToCornerClass = "moveToCorner";
+    let containsClass = selector.hasClass(moveToCornerClass);
 
-    if (move && !selector.hasClass(moveToCornerClass))
+    if (move && !containsClass)
         selector.addClass(moveToCornerClass);
-    else
+    else if (!move && containsClass)
         selector.removeClass(moveToCornerClass);
 }
 
@@ -220,10 +221,20 @@ var Status = {
     AVAILABLE: "available",
     UNAVAILABLE: "unavailable",
     PENDING: "pending",
+    RETRYING: "retrying",
     ERROR: "error",
     FAILED: "failed",
     BUSY: "busy"
 };
+
+/**
+ * Checks whether if the given status is either PENDING or RETRYING
+ * @param status {Status} Jibri status to be checked
+ * @returns {boolean} true if the condition is met or false otherwise.
+ */
+function isStartingStatus(status) {
+    return status === Status.PENDING || status === Status.RETRYING;
+}
 
 /**
  * Manages the recording user interface and user experience.
@@ -298,6 +309,7 @@ var Recording = {
 
             switch (self.currentState) {
                 case Status.ON:
+                case Status.RETRYING:
                 case Status.PENDING: {
                     _showStopRecordingPrompt(recordingType).then(() =>
                         self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED),
@@ -399,7 +411,8 @@ var Recording = {
         this.currentState = recordingState;
 
         // TODO: handle recording state=available
-        if (recordingState === Status.ON) {
+        if (recordingState === Status.ON ||
+            recordingState === Status.RETRYING) {
 
             buttonSelector.removeClass(this.baseClass);
             buttonSelector.addClass(this.baseClass + " active");
@@ -414,14 +427,14 @@ var Recording = {
             // We don't want to do any changes if this is
             // an availability change.
             if (oldState !== Status.ON
-                && oldState !== Status.PENDING)
+                && !isStartingStatus(oldState))
                 return;
 
             buttonSelector.removeClass(this.baseClass + " active");
             buttonSelector.addClass(this.baseClass);
 
             let messageKey;
-            if (oldState === Status.PENDING)
+            if (isStartingStatus(oldState))
                 messageKey = this.failedToStartKey;
             else
                 messageKey = this.recordingOffKey;
@@ -453,6 +466,12 @@ var Recording = {
         if (recordingState !== Status.AVAILABLE
             && !labelSelector.is(":visible"))
             labelSelector.css({display: "inline-block"});
+
+        // Recording spinner
+        if (recordingState === Status.RETRYING)
+            $("#recordingSpinner").show();
+        else
+            $("#recordingSpinner").hide();
     },
     // checks whether recording is enabled and whether we have params
     // to start automatically recording
@@ -471,11 +490,12 @@ var Recording = {
      */
     _updateStatusLabel(textKey, isCentered) {
         let labelSelector = $('#recordingLabel');
+        let labelTextSelector = $('#recordingLabelText');
 
         moveToCorner(labelSelector, !isCentered);
 
-        labelSelector.attr("data-i18n", textKey);
-        labelSelector.text(APP.translation.translateString(textKey));
+        labelTextSelector.attr("data-i18n", textKey);
+        labelTextSelector.text(APP.translation.translateString(textKey));
     }
 };
 
