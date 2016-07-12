@@ -52,12 +52,19 @@ function _requestLiveStreamId() {
     const streamIdRequired
         = APP.translation.generateTranslationHTML(
             "liveStreaming.streamIdRequired");
+    const customStreamLabel
+        = APP.translation.generateTranslationHTML(
+            "liveStreaming.customStreamLabel");
 
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
                 html:
                     `<h2>${msg}</h2>
+                    <h3 id="liveStreamingError"></h3>
+                    <select name="streamSelector">
+                        <option value="custom">${customStreamLabel}</option>
+                    </select>
                     <input name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     placeholder="${token}" autofocus>`,
@@ -72,8 +79,11 @@ function _requestLiveStreamId() {
                     e.preventDefault();
 
                     if (v) {
-                        if (f.streamId && f.streamId.length > 0) {
-                            resolve(UIUtil.escapeHtml(f.streamId));
+                        let streamId
+                            = f.streamSelector !== "custom"
+                                    ? f.streamSelector : f.streamId;
+                        if (streamId && streamId.length > 0) {
+                            resolve(UIUtil.escapeHtml(streamId));
                             dialog.close();
                             return;
                         }
@@ -112,6 +122,42 @@ function _requestLiveStreamId() {
             close: function () {
                 dialog = null;
             }
+        });
+        // Youtube stream selection handling
+        let streamSelector = $("select[name='streamSelector']");
+        // Shows/hides custom stream name/key input
+        streamSelector.on("change", function(eventObject) {
+            let inputSelect = $("input[name='streamId']");
+            if ($("option:selected", this).val() === "custom") {
+                inputSelect.show();
+            } else {
+                inputSelect.hide();
+            }
+        });
+        
+        APP.conference.getRecordingStreams().then(function (streamsInfo) {
+            console.info("Obtained live streams:", streamsInfo);
+            streamsInfo.forEach(function (streamInfo) {
+                var bacstTitle = streamInfo.bcastTitle;
+                var title = streamInfo.title;
+                var streamNameKey = streamInfo.streamNameKey;
+                $("select[name='streamSelector']").append(
+                    $("<option/>").val(streamNameKey).text(
+                        bacstTitle + " (" + title + ")"));
+            });
+            if (streamsInfo.length) {
+                streamSelector.show();
+            }
+            // Hide any error message
+            $("#liveStreamingError").hide();
+        }).catch(function (error) {
+            if (!error) {
+                return; // YouTube API not available or nothing to display
+            }            
+            let errorMessage = APP.translation.translateString(
+                "liveStreaming.streamFetchError",
+                { errorDetails: error });
+            $("#liveStreamingError").text(errorMessage).show();
         });
     });
 }

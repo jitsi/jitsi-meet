@@ -82,6 +82,11 @@ class TokenData{
         // field should be set to "anonymous"
         if(!config.token && this.payload && this.payload.iss !== "anonymous")
             config.token = jwt;
+        // Configure googleAccessToken config property if the google access
+        // token was provided in 'googleaccesstoken' JWT claim
+        if (this.googleAccessToken) {
+            config.googleAccessToken = this.googleAccessToken;
+        }
     }
 
     /**
@@ -92,6 +97,8 @@ class TokenData{
         if(!this.decodedJWT || !this.decodedJWT.payload)
             return;
         this.payload = this.decodedJWT.payload;
+        // Store Google access token for API access
+        this.googleAccessToken = this.payload.googleaccesstoken;
         if(!this.payload.context)
             return;
         let callerData = this.payload.context.user;

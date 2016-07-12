@@ -329,6 +329,8 @@
         "buttonTooltip": "Start / stop live stream",
         "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
         "error": "Live streaming failed. Please try again.",
-        "busy": "All recorders are currently busy. Please try again later."
+        "busy": "All recorders are currently busy. Please try again later.",
+        "customStreamLabel": "Custom name/key",
+        "streamFetchError": "Failed to fetch Youtube streams: __errorDetails__"
     }
 }

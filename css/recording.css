@@ -2,3 +2,7 @@
     display: none;
     vertical-align: text-bottom;
 }
+
+#liveStreamingError {
+    color: red;
+}

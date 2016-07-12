@@ -166,7 +166,7 @@ a.bottomToolbarButton:hover {
     background: #373737;
 }
 
-input[type='text'], input[type='password'], textarea {
+input[type='text'], input[type='password'], textarea, select {
     -webkit-user-select: text;
     user-select: text;
     display: inline-block;
@@ -184,7 +184,7 @@ input[type='text'], input[type='password'], textarea {
     resize: none; /* prevents the user-resizing, adjust to taste */
 }
 
-input[type='text'], input[type='password'], textarea:focus {
+input[type='text'], input[type='password'], textarea:focus, select {
     box-shadow: inset 0 0 3px 2px #ACD8F0; /* provides a more style-able
                                          replacement to the outline */
 }

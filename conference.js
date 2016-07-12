@@ -651,6 +651,20 @@ export default {
         return (this._room) ? this._room.getRecordingState() : undefined;
     },
     /**
+     * Obtains the list of recording streams. See
+     * JitsiConference.getRecordingStreams() for description.
+     * @returns {Promise|null}
+     */
+    getRecordingStreams () {
+        let getStreamsPromise = room.getRecordingStreams();
+        if (getStreamsPromise) {
+            return getStreamsPromise;
+        } else {
+            console.warn("Unable to load recording streams - disabled");
+            return Promise.reject(null);
+        }
+    },
+    /**
      * Will be filled with values only when config.debug is enabled.
      * Its used by torture to check audio levels.
      */
