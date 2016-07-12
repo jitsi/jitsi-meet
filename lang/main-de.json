@@ -8,9 +8,20 @@
     "participant": "Teilnehmer",
     "me": "ich",
     "speaker": "Sprecher",
+    "raisedHand": "Möchte sprechen",
     "defaultNickname": "Bsp: Heidi Blau",
     "defaultLink": "Bsp.: __url__",
     "calling": "Rufe __name__ an...",
+    "userMedia": {
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Ausgewähltes Gerät freigeben</i></b>",
+        "operaGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "Bitte Berechtigung zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>OK</i></b> erteilen",
+        "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen"
+    },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Tastaturkürzel:",
         "raiseHand": "Heben Sie Ihre Hand.",
@@ -150,7 +161,8 @@
         "grantedTo": "Moderatorenrechte an __to__ vergeben.",
         "grantedToUnknown": "Moderatorenrechte an $t(somebody) vergeben.",
         "muted": "Der Konferenz wurde stumm beigetreten.",
-        "mutedTitle": "Stummschaltung aktiv!"
+        "mutedTitle": "Stummschaltung aktiv!",
+        "raisedHand": "Möchte sprechen."
     },
     "dialog": {
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
@@ -240,11 +252,11 @@
         "cameraErrorPresent": "Fehler beim Verbinden zur Kamera.",
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
-        "cameraPermissionDeniedError": "Sie haben die Berechtigung für die Benutzung der Kamera nicht erteilt.",
-        "cameraNotFoundError": "Die angeforderte Kamera konnte nicht gefunden werden.",
+        "cameraPermissionDeniedError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
+        "cameraNotFoundError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
         "cameraConstraintFailedError": "Ihre Kamera erfüllt die notwendigen Anforderungen nicht.",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
-        "micPermissionDeniedError": "Sie haben die Berechtigung für die Benutzung des Mikrofons nicht erteilt.",
+        "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
         "micNotFoundError": "Das angeforderte Mikrofon konnte nicht gefunden werden.",
         "micConstraintFailedError": "Ihr Mikrofon erfüllt die notwendigen Anforderungen nicht."
     },
