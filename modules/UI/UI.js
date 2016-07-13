@@ -272,14 +272,14 @@ UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
  * Sets the local "raised hand" status.
  */
 UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(APP.conference.localId, raisedHandStatus);
+    VideoLayout.setRaisedHandStatus(APP.conference.getMyUserId(), raisedHandStatus);
 };
 
 /**
  * Initialize conference UI.
  */
 UI.initConference = function () {
-    let id = APP.conference.localId;
+    let id = APP.conference.getMyUserId();
     Toolbar.updateRoomUrl(window.location.href);
 
     // Add myself to the contact list.

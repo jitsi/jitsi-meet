@@ -317,7 +317,7 @@ function changeLocalDisplayName(nickname = '') {
 
     APP.settings.setDisplayName(nickname);
     room.setDisplayName(nickname);
-    APP.UI.changeDisplayName(APP.conference.localId, nickname);
+    APP.UI.changeDisplayName(APP.conference.getMyUserId(), nickname);
 }
 
 class ConferenceConnector {
@@ -410,6 +410,9 @@ class ConferenceConnector {
             connection.disconnect();
             APP.UI.notifyMaxUsersLimitReached();
             break;
+        case ConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
+            window.location.reload();
+            break;
         default:
             this._handleConferenceFailed(err, ...params);
         }
@@ -447,7 +450,6 @@ class ConferenceConnector {
 }
 
 export default {
-    localId: undefined,
     isModerator: false,
     audioMuted: false,
     videoMuted: false,
@@ -530,7 +532,7 @@ export default {
      * @returns {boolean}
      */
     isLocalId (id) {
-        return this.localId === id;
+        return this.getMyUserId() === id;
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
@@ -728,7 +730,6 @@ export default {
     _createRoom (localTracks) {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
-        this.localId = room.myUserId();
         this._setLocalAudioVideoStreams(localTracks);
         roomLocker = createRoomLocker(room);
         this._room = room; // FIXME do not use this
@@ -812,7 +813,7 @@ export default {
                 this.isSharingScreen = false;
             }
 
-            APP.UI.setVideoMuted(this.localId, this.videoMuted);
+            APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
 
             APP.UI.updateDesktopSharingButtons();
         });
@@ -847,7 +848,7 @@ export default {
             }
 
             APP.UI.enableMicrophoneButton();
-            APP.UI.setAudioMuted(this.localId, this.audioMuted);
+            APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
         });
     },
 
@@ -1009,7 +1010,7 @@ export default {
             let id;
             const mute = track.isMuted();
             if(track.isLocal()){
-                id = this.localId;
+                id = APP.conference.getMyUserId();
                 if(track.getType() === "audio") {
                     this.audioMuted = mute;
                 } else {

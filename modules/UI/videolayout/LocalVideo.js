@@ -18,7 +18,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.emitter = emitter;
     Object.defineProperty(this, 'id', {
         get: function () {
-            return APP.conference.localId;
+            return APP.conference.getMyUserId();
         }
     });
     SmallVideo.call(this, VideoLayout);

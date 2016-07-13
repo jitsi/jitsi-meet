@@ -162,7 +162,7 @@ var VideoLayout = {
         localVideoThumbnail.setDisplayName();
         localVideoThumbnail.createConnectionIndicator();
 
-        let localId = APP.conference.localId;
+        let localId = APP.conference.getMyUserId();
         this.onVideoTypeChanged(localId, stream.videoType);
 
         let {thumbWidth, thumbHeight} = this.resizeThumbnails(false, true);
@@ -186,7 +186,7 @@ var VideoLayout = {
      */
     mucJoined () {
         if (largeVideo && !largeVideo.id) {
-            this.updateLargeVideo(APP.conference.localId, true);
+            this.updateLargeVideo(APP.conference.getMyUserId(), true);
         }
     },
 
@@ -290,7 +290,7 @@ var VideoLayout = {
         // Go with local video
         console.info("Fallback to local video...");
 
-        let id = APP.conference.localId;
+        let id = APP.conference.getMyUserId();
         console.info("electLastVisibleVideo: " + id);
 
         return id;
@@ -457,6 +457,8 @@ var VideoLayout = {
         let isModerator = APP.conference.isModerator;
         if (isModerator) {
             localVideoThumbnail.createModeratorIndicatorElement();
+        } else {
+            localVideoThumbnail.removeModeratorIndicatorElement();
         }
 
         APP.conference.listMembers().forEach(function (member) {
@@ -775,7 +777,7 @@ var VideoLayout = {
     updateLocalConnectionStats (percent, object) {
         let resolutions = object.resolution;
 
-        object.resolution = resolutions[APP.conference.localId];
+        object.resolution = resolutions[APP.conference.getMyUserId()];
         localVideoThumbnail.updateStatsIndicator(percent, object);
 
         Object.keys(resolutions).forEach(function (id) {

@@ -639,7 +639,6 @@ SharedVideoThumb.prototype.createContainer = function (spanId) {
 
     // add the avatar
     var avatar = document.createElement('img');
-    avatar.id = 'avatar_' + this.id;
     avatar.className = 'sharedVideoAvatar';
     avatar.src = "https://img.youtube.com/vi/" + this.url + "/0.jpg";
     container.appendChild(avatar);
@@ -822,4 +821,3 @@ function requestVideoLink() {
 
     });
 }
-

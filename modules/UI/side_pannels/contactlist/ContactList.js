@@ -156,7 +156,7 @@ var ContactList = {
         if(!displayName)
             return;
         if (id === 'localVideoContainer') {
-            id = APP.conference.localId;
+            id = APP.conference.getMyUserId();
         }
         let contactName = $(`#contacts #${id}>p`);
 
