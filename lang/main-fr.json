@@ -8,8 +8,33 @@
     "participant": "Participant",
     "me": "moi",
     "speaker": "Haut-parleur",
+    "raisedHand": "Aimerais prendre la parole",
     "defaultNickname": "ex. Jean Dupont",
     "defaultLink": "ex. __url__",
+    "calling": "Appel __nom__ ...",
+    "userMedia": {
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "Merci d'accorder l'autorisation d'utiliser votre caméra et un microphone en appuyant sur le bouton<b> <i> Partager le périphérique sélectionné </ i> </ b> ",
+        "operaGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone en appuyant sur le bouton <b><i>Autoriser</i></b>",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "Merci d'autoriser l'utilisation de votre caméra et du microphone en appuyant sur <b><i>OK</i></b>",
+        "nwjsGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone"
+    },
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Raccourcis clavier :",
+        "raiseHand": "Demander la parole.",
+        "pushToTalk": "Appuyer pour parler.",
+        "toggleScreensharing": "Basculer entre la caméra et le partage d'écran.",
+        "toggleFilmstrip": "Afficher ou masquer les vidéos miniatures.",
+        "toggleShortcuts": "Afficher ou masquer ce menu d'aide.",
+        "focusLocal": "Focus sur la vidéo locale.",
+        "focusRemote": "Focus sur l'une des vidéos distantes.",
+        "toggleChat": "Ouvrir ou fermer le panneau de conversation.",
+        "mute": "Activer ou désactiver le microphone.",
+        "videoMute": "Arrêter ou démarrer la vidéo locale."
+    },
     "welcomepage": {
         "go": "Créer",
         "roomname": "Saisissez un nom de salle",
@@ -66,7 +91,9 @@
         "dialpad": "Afficher le clavier de numérotation",
         "sharedVideoMutedPopup": "Votre vidéo a été mise en muet<br/>pour que vous puissiez parler aux autres participants.",
         "micMutedPopup": "Votre microphone a été désactivé afin que vous<br/>puissiez profiter pleinement de votre vidéo partagée.",
-        "unableToUnmutePopup": "Vous ne pouvez pas réactiver votre microphone pendant que la vidéo partagée est activée."
+        "unableToUnmutePopup": "Vous ne pouvez pas réactiver votre microphone pendant que la vidéo partagée est activée.",
+        "cameraDisabled": "La camera n'est pas disponible",
+        "micDisabled": "Le microphone n'est pas disponible"
     },
     "bottomtoolbar": {
         "chat": "Ouvrir / fermer le chat",
@@ -88,7 +115,11 @@
         "startVideoMuted": "Démarrer sans vidéo",
         "selectCamera": "Sélectionnez une caméra",
         "selectMic": "Sélectionnez un microphone",
-        "followMe": "Activer \"me suivre\""
+        "selectAudioOutput": "Sélectionner la sortie audio",
+        "followMe": "Activer \"me suivre\"",
+        "noDevice": "Aucun",
+        "noPermission": "L'autorisation d'utiliser l'appareil n'a pas été accordé",
+        "avatarUrl": "URL de l'avatar"
     },
     "videothumbnail": {
         "editnickname": "Cliquez pour modifier<br/>votre nom",
@@ -97,7 +128,8 @@
         "mute": "Un participant a coupé son micro",
         "kick": "Exclure",
         "muted": "Muet",
-        "domute": "Couper le son"
+        "domute": "Couper le son",
+        "flip": "Retourner"
     },
     "connectionindicator": {
         "bitrate": "Débit :",
@@ -129,7 +161,8 @@
         "grantedTo": "Droits modérateur accordés à __to__ !",
         "grantedToUnknown": "Droits modérateur accordés à $t(somebody) !",
         "muted": "Vous avez commencé la conversation en muet.",
-        "mutedTitle": "Vous êtes en muet !"
+        "mutedTitle": "Vous êtes en muet !",
+        "raisedHand": "Aimerais prendre la parole."
     },
     "dialog": {
         "kickMessage": "Oups! Vous avez été renvoyé de la réunion !",
@@ -177,7 +210,7 @@
         "joinAgain": "Rejoignez à nouveau la conférence",
         "Share": "Partager",
         "Save": "Sauvegarder",
-        "recording": "",
+        "recording": "Enregistrement",
         "recordingToken": "Saisissez un jeton d'enregistrement",
         "Dial": "Composer",
         "sipMsg": "Saisissez un numéro SIP",
@@ -205,13 +238,27 @@
         "feedbackQuestion": "Comment était votre conférence ?",
         "thankYou": "Merci d'avoir utilisé __appName__ !",
         "sorryFeedback": "Nous sommes désolés d'apprendre cela. Voulez-vous nous en dire plus ?",
-        "liveStreaming": "",
+        "liveStreaming": "Direct",
         "streamKey": "Stream name/key",
         "startLiveStreaming": "Commencer le direct",
         "stopStreamingWarning": "Désirez-vous vraiment arrêter le direct?",
         "stopRecordingWarning": "Désirez-vous vraiment arrêter l'enregistrement?",
         "stopLiveStreaming": "Arrêter le direct",
-        "stopRecording": "Arrêter l'enregistrement"
+        "stopRecording": "Arrêter l'enregistrement",
+        "doNotShowWarningAgain": "Ne plus afficher cet avertissement",
+        "permissionDenied": "Permission refusée",
+        "screenSharingPermissionDeniedError": "Vous n'avez pas autorisé le partage de votre écran.",
+        "micErrorPresent": "Une erreur est survenue lors de la connexion à votre microphone.",
+        "cameraErrorPresent": "Votre caméra ne satisfait pas certaines des contraintes nécessaires.",
+        "cameraUnsupportedResolutionError": "Votre appareil ne prend pas en charge la résolution vidéo requise.",
+        "cameraUnknownError": "Vous ne pouvez pas utiliser la caméra pour une raison inconnue.",
+        "cameraPermissionDeniedError": "Vous n'avez pas autorisé l'utilisation de votre caméra. Vous pouvez toujours participer à la conférence, mais les autres ne vont pas vous voir. Utilisez le bouton de la caméra dans la barre d'adresse pour résoudre ce problème.",
+        "cameraNotFoundError": "La caméra demandée n'a pas été trouvée.",
+        "cameraConstraintFailedError": "Votre caméra ne satisfait pas certaines des contraintes nécessaires.",
+        "micUnknownError": "Vous ne pouvez pas utiliser le microphone pour une raison inconnue.",
+        "micPermissionDeniedError": "Vous n'avez pas autorisé l'utilisation de votre microphone. Vous pouvez toujours participer à la conférence, mais les autres ne vont pas vous entendre. Utilisez le bouton du microphone dans la barre d'adresse pour résoudre ce problème.",
+        "micNotFoundError": "Le microphone demandé n'a pas été trouvé.",
+        "micConstraintFailedError": "Votre microphone ne satisfait pas certaines des contraintes nécessaires."
     },
     "email": {
         "sharedKey": [
@@ -258,7 +305,9 @@
         "on": "Enregistrement",
         "off": "Enregistrement arrêter",
         "failedToStart": "L'enregistrement n'as pas réussi à démarrer",
-        "buttonTooltip": "Démarrer / arrêter l'enregistrement"
+        "buttonTooltip": "Démarrer / arrêter l'enregistrement",
+        "error": "Échec de l'enregistrement. Veuillez réessayer.",
+        "unavailable": "Le service d'enregistrement est actuellement indisponible. Veuillez réessayer plus tard."
     },
     "liveStreaming": {
         "pending": "Commencer le direct...",
@@ -267,6 +316,8 @@
         "unavailable": "Le direct est temporairement indisponible. Veuillez réessayer plus tard.",
         "failedToStart": "Le direct n'as pas réussi à démarrer",
         "buttonTooltip": "Démarrer / arrêter le direct",
-        "streamIdRequired": "Merci de renseigner le stream id pour lancer le direct."
+        "streamIdRequired": "Merci de renseigner le stream id pour lancer le direct.",
+        "error": "La retransmission en direct a échoué. Veuillez réessayer.",
+        "busy": "Tous les enregistreurs sont actuellement occupés. Veuillez réessayer plus tard."
     }
 }
