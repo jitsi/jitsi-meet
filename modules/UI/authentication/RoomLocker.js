@@ -116,6 +116,7 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
  */
 export default function createRoomLocker (room) {
     let password;
+    let dialog = null;
 
     function lock (newPass) {
         return room.lock(newPass).then(function () {
@@ -196,12 +197,21 @@ export default function createRoomLocker (room) {
          * Show notification that to set/remove password user must be moderator.
          */
         notifyModeratorRequired () {
+            if (dialog)
+                return;
+
+            let closeCallback = function () {
+                dialog = null;
+            };
+
             if (password) {
-                APP.UI.messageHandler
-                    .openMessageDialog(null, "dialog.passwordError");
+                dialog = APP.UI.messageHandler
+                    .openMessageDialog(null, "dialog.passwordError",
+                        null, null, closeCallback);
             } else {
-                APP.UI.messageHandler
-                    .openMessageDialog(null, "dialog.passwordError2");
+                dialog = APP.UI.messageHandler
+                    .openMessageDialog(null, "dialog.passwordError2",
+                        null, null, closeCallback);
             }
         }
     };
