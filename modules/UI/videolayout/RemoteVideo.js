@@ -144,13 +144,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     var isVideo = stream.isVideoTrack();
 
     var elementID = SmallVideo.getStreamElementID(stream);
-    var select = null;
-    if (isVideo) {
-        select = $('#' + elementID);
-    }
-    else
-        select = $('#' + this.videoSpanId + '>audio');
-
+    var select = $('#' + elementID);
     select.remove();
 
     console.info((isVideo ? "Video" : "Audio") +
