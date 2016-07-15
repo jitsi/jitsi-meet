@@ -279,7 +279,7 @@ function showXmppPasswordPrompt(roomName, connect) {
 function requestAuth(roomName, connect) {
     if (isTokenAuthEnabled) {
         // This Promise never resolves as user gets redirected to another URL
-        return new Promse(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             redirectToTokenAuthService(roomName);
         });
     } else {
