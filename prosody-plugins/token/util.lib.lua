@@ -21,6 +21,11 @@ local function _verify_token(token, appId, appSecret, roomName, disableRoomNameC
 		return nil, err;
 	end
 
+	local alg = claims["alg"];
+	if alg ~= nil and (alg == "none" or alg == "") then
+		return nil, "'alg' claim must not be empty";
+	end
+
 	local issClaim = claims["iss"];
 	if issClaim == nil then
 		return nil, "'iss' claim is missing";
