@@ -13,12 +13,12 @@
     "defaultLink": "ex. __url__",
     "calling": "Appel __nom__ ...",
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
+        "react-nativeGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone en appuyant sur le bouton <b><i>Autoriser</i></b>",
+        "chromeGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone en appuyant sur le bouton <b><i>Autoriser</i></b>",
+        "androidGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone en appuyant sur le bouton <b><i>Autoriser</i></b>",
         "firefoxGrantPermissions": "Merci d'accorder l'autorisation d'utiliser votre caméra et un microphone en appuyant sur le bouton<b> <i> Partager le périphérique sélectionné </ i> </ b> ",
         "operaGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone en appuyant sur le bouton <b><i>Autoriser</i></b>",
-        "iexplorerGrantPermissions": "",
+        "iexplorerGrantPermissions": "Merci d'autoriser l'utilisation de votre caméra et du microphone en appuyant sur <b><i>OK</i></b>",
         "safariGrantPermissions": "Merci d'autoriser l'utilisation de votre caméra et du microphone en appuyant sur <b><i>OK</i></b>",
         "nwjsGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone"
     },
