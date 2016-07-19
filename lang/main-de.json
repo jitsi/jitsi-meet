@@ -13,12 +13,12 @@
     "defaultLink": "Bsp.: __url__",
     "calling": "Rufe __name__ an...",
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
+        "react-nativeGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
+        "chromeGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
+        "androidGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
         "firefoxGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Ausgewähltes Gerät freigeben</i></b>",
         "operaGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
-        "iexplorerGrantPermissions": "",
+        "iexplorerGrantPermissions": "Bitte Berechtigung zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>OK</i></b> erteilen",
         "safariGrantPermissions": "Bitte Berechtigung zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>OK</i></b> erteilen",
         "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen"
     },
