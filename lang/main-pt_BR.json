@@ -13,12 +13,12 @@
     "defaultLink": "i.e. __url__",
     "calling": "Chamando __name__ ...",
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
+        "react-nativeGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
+        "chromeGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
+        "androidGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
         "firefoxGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Compartilhar Dispositivos Selecionados</i> </b>",
         "operaGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
-        "iexplorerGrantPermissions": "",
+        "iexplorerGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>OK</i> </b>",
         "safariGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>OK</i> </b>",
         "nwjsGrantPermissions": "Dê as permissões para usar sua câmera e microfone"
     },
