@@ -2,25 +2,50 @@
     "contactlist": "LISTA DE CONTACTOS",
     "connectionsettings": "Ajustes de la conexión",
     "poweredby": "impulsado por",
-    "downloadlogs": "Descargar bitácora",
+    "downloadlogs": "Descargar logs",
     "feedback": "Danos tu opinión",
     "roomUrlDefaultMsg": "Tu conferencia está siendo creada...",
     "participant": "Participante",
     "me": "yo",
     "speaker": "Orador",
-    "defaultNickname": "ej. __name__",
-    "defaultPreziLink": "ej. __url__",
+    "raisedHand": "",
+    "defaultNickname": "ej. Juana Rosas",
+    "defaultLink": "ej. __url__",
+    "calling": "Llamando __nombre__ ...",
+    "userMedia": {
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "",
+        "operaGrantPermissions": "",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "",
+        "nwjsGrantPermissions": ""
+    },
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Atajos de teclado:",
+        "raiseHand": "Levantar la mano.",
+        "pushToTalk": "Presione para hablar.",
+        "toggleScreensharing": "Cambiar entre cámara y compartir pantalla.",
+        "toggleFilmstrip": "Mostrar u ocultar película.",
+        "toggleShortcuts": "Muestra u oculta este menú de ayuda.",
+        "focusLocal": "Enfocar el video local.",
+        "focusRemote": "Enfocarse en uno de los videos remotos.",
+        "toggleChat": "Abrir o cerrar panel de charlas.",
+        "mute": "Activar o desactivar micrófono.",
+        "videoMute": "Detener o iniciar el video local."
+    },
     "welcomepage": {
         "go": "IR",
         "roomname": "Introduzca un nombre de sala:",
-        "disable": "No mostrar esta página en el próximo acceso ",
+        "disable": "No mostrar esta página otra vez",
         "feature1": {
             "title": "Sencillo de usar",
             "content": "No se requiere descargar nada. __app__  funciona directamente con tu navegador. Solo comparte el URL de tu conferencia con otros para comenzar."
         },
         "feature2": {
             "title": "Bajo Ancho de Banda",
-            "content": "Videoconferencias con múltiples participantes con tan poco como 128 Kbps. Conferencias compartiendo pantalla y audio  con mucho menos."
+            "content": "Las Videoconferencias con múltiples participantes funcionan con tan solo 128 Kbps. Conferencias para compartir pantalla y audio son posibles con mucho menos."
         },
         "feature3": {
             "title": "Código abierto",
@@ -32,39 +57,43 @@
         },
         "feature5": {
             "title": "Compartir pantalla",
-            "content": "Es fácil de compartir su pantalla con otros. __app__ es ideal para presentaciones en línea, conferencias y sesiones de soporte técnico.  "
+            "content": "Es fácil compartir su pantalla con otros. __app__ es ideal para presentaciones en línea, conferencias y sesiones de soporte técnico."
         },
         "feature6": {
             "title": "Salas seguras",
-            "content": "¿Necesita un poco de privacidad? Las salas de conferencias   __app__  se pueden asegurar con una contraseña con el fin de excluir a los invitados no deseados y evitar interrupciones."
+            "content": "¿Necesita un poco de privacidad? Las salas de conferencias  __app__  se pueden asegurar con una contraseña con el fin de excluir a los invitados no deseados y evitar interrupciones."
         },
         "feature7": {
             "title": "Notas compartidas",
-            "content": "__app__  incluye Etherpad, un editor de texto colaborativo, en tiempo real, que es genial para minutas de junta, redactar artículos, y más."
+            "content": "__app__ incluye Etherpad, un editor de texto colaborativo, en tiempo real, que es genial para minutas de reuniones, redactar artículos, y más."
         },
         "feature8": {
             "title": "Estadísticas de uso",
-            "content": "Conozca acerca de sus usuarios a través de una fácil integración con Piwik, Google Analytics, y otros sistemas de seguimiento y análisis de uso."
+            "content": "Aprenda de sus usuarios a través de una fácil integración con Piwik, Google Analytics, y otros sistemas de seguimiento y análisis de uso."
         }
     },
     "toolbar": {
-        "mute": "Silenciar / Activar",
+        "mute": "Activar / Desactivar Silencio",
         "videomute": "Iniciar / detener cámara",
         "authenticate": "Autenticar",
-        "record": "Grabar",
         "lock": "Bloquear / desbloquear sala",
         "invite": "Invitar a otros",
-        "chat": "",
-        "prezi": "Compartir Prezi",
-        "etherpad": "Compartir Documento",
+        "chat": "Abrir / cerrar chat",
+        "etherpad": "Compartir documento",
+        "sharedvideo": "Compartir un vídeo de YouTube",
         "sharescreen": "Compartir pantalla",
         "fullscreen": "Entrar / Salir de Pantalla completa",
         "sip": "Llamar a un número SIP",
         "Settings": "Ajustes",
         "hangup": "Colgar",
         "login": "Inicio de sesión",
-        "logout": "",
-        "dialpad": "Mostrar teclado de llamada"
+        "logout": "Cerrar sesión",
+        "dialpad": "Mostrar teclado de llamada",
+        "sharedVideoMutedPopup": "Su vídeo compartido ha sido silenciado<br/>para que pueda hablar con otros participantes.",
+        "micMutedPopup": "Su micrófono ha sido silenciado para que<br/>pueda disfrutar completamente de compartir su vídeo.",
+        "unableToUnmutePopup": "No puede silenciar su micrófono mientras el vídeo compartido está activo.",
+        "cameraDisabled": "Cámara no disponible",
+        "micDisabled": "Micrófono no disponible"
     },
     "bottomtoolbar": {
         "chat": "Abrir / cerrar chat",
@@ -82,20 +111,28 @@
         "title": "CONFIGURAR",
         "update": "Actualizar",
         "name": "Nombre",
-        "startAudioMuted": "iniciar sin audio",
-        "startVideoMuted": "iniciar sin video"
+        "startAudioMuted": "Iniciar sin audio",
+        "startVideoMuted": "Iniciar sin vídeo",
+        "selectCamera": "Seleccionar cámara",
+        "selectMic": "Seleccionar micrófono",
+        "selectAudioOutput": "Selecciona salida de audio",
+        "followMe": "Habilitar sígueme",
+        "noDevice": "Ninguno",
+        "noPermission": "Permiso para usar el dispositivo no permitido",
+        "avatarUrl": "URL del Avatar"
     },
     "videothumbnail": {
-        "editnickname": "Pica para editar tu <br/>nombre",
-        "moderator": "El dueño de<br/>esta conferencia",
+        "editnickname": "Click para editar tu <br/>nombre",
+        "moderator": "El propietario de<br/>esta conferencia",
         "videomute": "Participante ha<br/>detenido la cámara.",
         "mute": "Participante está silenciado",
         "kick": "Expulsar",
         "muted": "Silenciado",
-        "domute": "Silenciar"
+        "domute": "Silenciar",
+        "flip": "Voltear"
     },
     "connectionindicator": {
-        "bitrate": "Frecuencia de bits:",
+        "bitrate": "Tasa de bits:",
         "packetloss": "Pérdida de paquetes:",
         "resolution": "Resolución:",
         "less": "Mostrar menos",
@@ -111,7 +148,7 @@
         "remoteaddress_plural": "Direcciones remotas:",
         "transport": "Transporte:",
         "bandwidth": "Ancho de banda estimado:",
-        "na": "Volver aquí por información de la conexión, una vez que se inicia la conferencia"
+        "na": "Volver aquí para ver información de la conexión, una vez que se inicia la conferencia"
     },
     "notify": {
         "disconnected": "desconectado",
@@ -120,26 +157,29 @@
         "somebody": "Alguien",
         "me": "Yo",
         "focus": "Foco de conferencia",
-        "focusFail": "__component__ not available - retry en __ms__ sec",
+        "focusFail": "__component__ no disponible - reintentar en __ms__ seg",
         "grantedTo": "¡Derechos de moderador otorgados a __to__!",
         "grantedToUnknown": "¡Derechos de moderador otorgados a $t(somebody)!",
-        "muted": "Haz iniciado la conversación silenciado.",
-        "mutedTitle": "¡Estás silenciado!"
+        "muted": "Has iniciado la conversación silenciado.",
+        "mutedTitle": "¡Estás silenciado!",
+        "raisedHand": ""
     },
     "dialog": {
         "kickMessage": "¡Auch! ¡Haz sido expulsado de la reunión!",
-        "popupError": "Tu navegador está bloqueando las ventanas emergentes de este sitio. Por favor, activa las ventanas emergentes en la configuración de seguridad de su navegador y vuelva a intentarlo.",
-        "passwordError": "Esta conversación está protegido con una contraseña. Sólo el propietario de la conferencia puede establecer una contraseña.",
-        "passwordError2": "Esta conversación está protegido con una contraseña. Sólo el propietario de la conferencia puede establecer una contraseña.",
+        "popupError": "Su navegador está bloqueando las ventanas emergentes de este sitio. Por favor, activa las ventanas emergentes en la configuración de seguridad del navegador y vuelva a intentarlo.",
+        "passwordError": "Esta conversación está protegida con una contraseña. Sólo el propietario de la conferencia puede establecer una contraseña.",
+        "passwordError2": "Esta conversación no está protegida con una contraseña. Sólo el propietario de la conferencia puede establecer una contraseña.",
         "connectError": "¡Uups! Algo salió mal y no pudimos conectarnos a la conferencia.",
         "connectErrorWithMsg": "¡Uups! Algo salió mal y no pudimos conectarnos a la conferencia: __msg__",
-        "connecting": "",
-        "error": "",
+        "connecting": "Conectando",
+        "error": "Error",
         "detectext": "Error al tratar de detectar la extensión de compartir escritorio.",
         "failtoinstall": "Fallo al instalar la extensión de compartir escritorio",
         "failedpermissions": "Fallo al obtener permisos para utilizar el micrófono y/o cámara de tu equipo.",
-        "bridgeUnavailable": "Videobridge Jitsi no está actualmente disponible. ¡Por favor intente después!",
-        "lockTitle": "Fallo al bloquear",
+        "bridgeUnavailable": "Videobridge Jitsi no está actualmente disponible. ¡Por favor inténtelo más tarde!",
+        "jicofoUnavailable": "Jicofo no está disponible actualmente. ¡Por favor inténtelo más tarde!",
+        "maxUsersLimitReached": "El número máximo de participantes en la conferencia ha sido alcanzado. La conferencia está llena. ¡Por favor intente nuevamente más tarde!",
+        "lockTitle": "El número máximo de participantes en la conferencia ha sido alcanzado. La conferencia está llena. ¡Por favor intente nuevamente más tarde!",
         "lockMessage": "No se pudo bloquear la conferencia.",
         "warning": "Advertencia",
         "passwordNotSupported": "No se soportan contraseñas para la sala. ",
@@ -152,11 +192,12 @@
         "defaultError": "Hubo algún tipo de error",
         "passwordRequired": "Se necesita contraseña",
         "Ok": "Aceptar",
-        "removePreziTitle": "Eliminar Prezi",
-        "removePreziMsg": "¿Estas seguro que deseas eliminar tu Prezi?",
-        "sharePreziTitle": "Compartir un Prezi",
-        "sharePreziMsg": "Otro participante ya está compartiendo un Prezi. Esta conferencia permite  sólo un Prezi a la vez.",
         "Remove": "Eliminar",
+        "shareVideoTitle": "Compartir un vídeo",
+        "shareVideoLinkError": "Por favor introduzca un enlace correcto de Youtube.",
+        "removeSharedVideoTitle": "Eliminar video compartido",
+        "removeSharedVideoMsg": "¿Estas seguro que deseas eliminar tu vídeo compartido?",
+        "alreadySharedVideoMsg": "Otro participante esta ahora mismo compartiendo el vídeo. Esta conferencia permite sólo compartir un único vídeo a la vez.",
         "WaitingForHost": "Esperando al anfitrión...",
         "WaitForHostMsg": "La conferencia <b>__room__ </b> aún no inicia. Si usted es el anfitrión, por favor autentíquese. De lo contrario, por favor espere a que el anfitrión llegue.",
         "IamHost": "Yo soy el anfitrión",
@@ -168,8 +209,8 @@
         "hungUp": "Colgaste",
         "joinAgain": "Unirse de nuevo",
         "Share": "Compartir",
-        "preziLinkError": "Por favor indique una liga Prezi correcta. ",
         "Save": "Guardar",
+        "recording": "Grabando",
         "recordingToken": "Introduzca el token de grabación",
         "Dial": "Marcar",
         "sipMsg": "Introduzca número SIP",
@@ -196,7 +237,28 @@
         "firefoxExtensionPrompt": "Es necesario instalar una extensión para Firefox con el fin de utilizar la pantalla compartida. Por favor, inténtelo de nuevo después de que  lo obtenga de aquí <a href='__url__'> </a>!",
         "feedbackQuestion": "¿Como fue su llamada?",
         "thankYou": "Gracias por usar __appName__!",
-        "sorryFeedback": " Sentimos escuchar eso. ¿Quieres decirnos algo más?"
+        "sorryFeedback": " Sentimos escuchar eso. ¿Quieres decirnos algo más?",
+        "liveStreaming": "Emisión en Directo",
+        "streamKey": "Nombre/clave de emisión",
+        "startLiveStreaming": "Comenzar streaming en tiempo real",
+        "stopStreamingWarning": "¿Estas seguro que quieres parar la retransmisión en directo?",
+        "stopRecordingWarning": "¿Estás seguro que quieres parar la grabación?",
+        "stopLiveStreaming": "Parar retransmisión en directo",
+        "stopRecording": "Parar grabación",
+        "doNotShowWarningAgain": "No volver a mostrar esta advertencia",
+        "permissionDenied": "Permiso Denegado",
+        "screenSharingPermissionDeniedError": "No ha otorgado permiso para compartir su pantalla.",
+        "micErrorPresent": "Hubo un error conectando su micrófono.",
+        "cameraErrorPresent": "Hubo un error conectando su cámara.",
+        "cameraUnsupportedResolutionError": "Su cámara no soporta la resolución de video.",
+        "cameraUnknownError": "No se puede usar su cámara por motivos desconocidos.",
+        "cameraPermissionDeniedError": "",
+        "cameraNotFoundError": "No se encontró la cámara.",
+        "cameraConstraintFailedError": "Su cámara no cumple los requerimientos.",
+        "micUnknownError": "No se puede usar su micrófono por motivos desconocidos.",
+        "micPermissionDeniedError": "",
+        "micNotFoundError": "No se encontró el micrófono.",
+        "micConstraintFailedError": "Su micrófono no cumple los requerimientos."
     },
     "email": {
         "sharedKey": [
@@ -239,8 +301,23 @@
         "ATTACHED": "Adjunto"
     },
     "recording": {
-        "toaster": "¡Actualmente Grabando! ",
-        "pending": "Tu grabación se iniciará tan pronto como otro participante se una",
-        "on": "La grabación ha iniciado"
+        "pending": "La grabación esta esperando la entrada de un participante...",
+        "on": "Grabando",
+        "off": "Grabación parada",
+        "failedToStart": "No se pudo iniciar la grabación",
+        "buttonTooltip": "Iniciar / parar grabación",
+        "error": "Falla de grabación. Vuelva a intentarlo.",
+        "unavailable": "El servicio de grabación no está disponible. Inténtelo más tarde."
+    },
+    "liveStreaming": {
+        "pending": "Iniciando Emisión en Directo",
+        "on": "Emisión en Directo",
+        "off": "Emisión en Directo Detenida",
+        "unavailable": "El servicio de emisión en directo no está disponible actualmente. Por favor inténtelo de nuevo más tarde.",
+        "failedToStart": "La emisión en Directo falló al iniciar",
+        "buttonTooltip": "Iniciar / parar emisión en directo",
+        "streamIdRequired": "Por favor introduzca el id de emisión para poder lanzar la emisión en directo",
+        "error": "Falló el video en vivo. Por favor, vuelva a intentarlo.",
+        "busy": "Todos los grabadores están ocupados. Por favor intente más tarde."
     }
 }
