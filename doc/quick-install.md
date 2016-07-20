@@ -38,6 +38,29 @@ Confirm that you trust the self-signed certificate of the newly installed Jitsi 
 
 Enjoy!
 
+##Adding Desktop Sharing support in Chrome:
+```sh
+git clone https://github.com/jitsi/jidesha.git
+```
+Update xternally_connectable to point to your hostname (replace  "*://meet.jit.si/*" with "*://10.0.0.28/*" for example)
+```sh
+vim jidesha/chrome/manifest.json
+```
+ - Open chrome and goto goto chrome://extensions/
+ - check the developer checkbox
+ - click pack extension
+ - save off the resulting chrome.crx extension
+ - install the extension (see below)
+ - in list of extensions, copy the ID field under "Jitsi Desktop Streamer" should be something like "ID: fkmtttaipaicodbapbamakdedbllcpcg" 
+ - On the Jitsi meet server, update vim /etc/jitsi/meet/10.0.0.28-config.js (update the desktopSharingChromeExtId field from for your server)
+ - That's it, no need to restart, all new meetings should have working desktop sharing(once the clients wishing to share have installed the extension)
+ 
+###Install Chrome Desktop Sharing extension on all clients for desktop sharing:
+ - Goto chrome://extensions/
+ - Drag and drop to the window the chrome.crx extension
+ - Confirm you wish to install
+ - That's it, you should now be able to share your desktop in meetings
+
 ## Adding sip-gateway to Jitsi Meet
 
 ### Install Jigasi
