@@ -12,5 +12,11 @@ module.exports = {
     BG: "bg",
     DE: "de",
     TR: "tr",
-    FR: "fr"
+    FR: "fr",
+    ES: "es",
+    IT: "it",
+    PTBR: "ptBR",
+    SK: "sk",
+    SL: "sl",
+    SV: "sv"
 };
