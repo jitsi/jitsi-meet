@@ -210,6 +210,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     let isVideo = stream.isVideoTrack();
     isVideo ? this.videoStream = stream : this.audioStream = stream;
 
+    if (isVideo)
+        this.setVideoType(stream.videoType);
+
     // Add click handler.
     let onClickHandler = (event) => {
         let source = event.target || event.srcElement;
