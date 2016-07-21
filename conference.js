@@ -1133,27 +1133,26 @@ export default {
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
             ConnectionQuality.updateLocalStats(stats);
         });
-        ConnectionQuality.addListener(
-            CQEvents.LOCALSTATS_UPDATED,
+
+        ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
+                room.broadcastEndpointMessage({
+                    type: this.commands.defaults.CONNECTION_QUALITY,
+                    values: stats });
+            });
 
-                // send local stats to other users
-                room.sendCommandOnce(this.commands.defaults.CONNECTION_QUALITY,
-                {
-                    children: ConnectionQuality.convertToMUCStats(stats),
-                    attributes: {
-                        xmlns: 'http://jitsi.org/jitmeet/stats'
-                    }
-                });
-            }
-        );
-
-        // listen to remote stats
-        room.addCommandListener(this.commands.defaults.CONNECTION_QUALITY,
-            (values, from) => {
-                ConnectionQuality.updateRemoteStats(from, values);
-        });
+        room.on(ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+            (participant, payload) => {
+                switch(payload.type) {
+                    case this.commands.defaults.CONNECTION_QUALITY:
+                        ConnectionQuality.updateRemoteStats(participant.getId(),
+                            payload.values);
+                        break;
+                    default:
+                        console.warn("Unknown datachannel message", payload);
+                }
+            });
 
         ConnectionQuality.addListener(CQEvents.REMOTESTATS_UPDATED,
             (id, percent, stats) => {
