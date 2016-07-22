@@ -25,6 +25,11 @@ const TrackErrors = JitsiMeetJS.errors.track;
 
 let room, connection, localAudio, localVideo, roomLocker;
 
+/**
+ * Indicates whether the connection is interrupted or not.
+ */
+let connectionIsInterrupted = false;
+
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
@@ -1076,6 +1081,15 @@ export default {
             });
         }
 
+        room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
+            connectionIsInterrupted = true;
+            ConnectionQuality.updateLocalConnectionQuality(0);
+        });
+
+        room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
+            connectionIsInterrupted = false;
+        });
+
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
             APP.API.notifyDisplayNameChanged(id, displayName);
             APP.UI.changeDisplayName(id, displayName);
@@ -1131,7 +1145,7 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
-            ConnectionQuality.updateLocalStats(stats);
+            ConnectionQuality.updateLocalStats(stats, connectionIsInterrupted);
         });
 
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
