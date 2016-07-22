@@ -41,12 +41,26 @@ export default {
     /**
      * Updates the local statistics
      * @param data new statistics
+     * @param dontUpdateLocalConnectionQuality {boolean} if true -
+     * localConnectionQuality wont be recalculated.
      */
-    updateLocalStats: function (data) {
+    updateLocalStats: function (data, dontUpdateLocalConnectionQuality) {
         stats = data;
-        var newVal = 100 - stats.packetLoss.total;
-        localConnectionQuality =
-            calculateQuality(newVal, localConnectionQuality);
+        if(!dontUpdateLocalConnectionQuality) {
+            var newVal = 100 - stats.packetLoss.total;
+            localConnectionQuality =
+                calculateQuality(newVal, localConnectionQuality);
+        }
+        eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, localConnectionQuality,
+            stats);
+    },
+
+    /**
+     * Updates only the localConnectionQuality value
+     * @param values {int} the new value. should be from 0 - 100.
+     */
+    updateLocalConnectionQuality: function (value) {
+        localConnectionQuality = value;
         eventEmitter.emit(CQEvents.LOCALSTATS_UPDATED, localConnectionQuality,
             stats);
     },
