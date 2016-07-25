@@ -948,6 +948,8 @@ export default {
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
             APP.API.notifyConferenceJoined(APP.conference.roomName);
+            connectionIsInterrupted = false;
+            APP.UI.markVideoInterrupted(false);
         });
 
         room.on(
