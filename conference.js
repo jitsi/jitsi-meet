@@ -1294,19 +1294,18 @@ export default {
 
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
             var smallVideoId = smallVideo.getId();
-            try {
-                if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
-                    && !APP.conference.isLocalId(smallVideoId))
-                    if (isPinned)
-                            room.pinParticipant(smallVideoId);
-                    // When the library starts supporting multiple pins we would
-                    // pass the isPinned parameter together with the identifier,
-                    // but currently we send null to indicate that we unpin the
-                    // last pinned.
-                    else
-                        room.pinParticipant(null);
-            } catch (e) {
-                reportError(e);
+            if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
+                && !APP.conference.isLocalId(smallVideoId)) {
+
+                // When the library starts supporting multiple pins we would
+                // pass the isPinned parameter together with the identifier,
+                // but currently we send null to indicate that we unpin the
+                // last pinned.
+                try {
+                    room.pinParticipant(isPinned ? smallVideoId : null);
+                } catch (e) {
+                    reportError(e);
+                }
             }
         });
 
