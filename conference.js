@@ -14,6 +14,8 @@ import UIEvents from './service/UI/UIEvents';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
+import {reportError} from './modules/util/helpers';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -1153,9 +1155,13 @@ export default {
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
-                room.broadcastEndpointMessage({
-                    type: this.commands.defaults.CONNECTION_QUALITY,
-                    values: stats });
+                try {
+                    room.broadcastEndpointMessage({
+                        type: this.commands.defaults.CONNECTION_QUALITY,
+                        values: stats });
+                } catch (e) {
+                    reportError(e);
+                }
             });
 
         room.on(ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
@@ -1279,22 +1285,28 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
-            room.selectParticipant(id);
+            try {
+                room.selectParticipant(id);
+            } catch (e) {
+                reportError(e);
+            }
         });
 
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
             var smallVideoId = smallVideo.getId();
-
             if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
-                && !APP.conference.isLocalId(smallVideoId))
-                if (isPinned)
-                    room.pinParticipant(smallVideoId);
+                && !APP.conference.isLocalId(smallVideoId)) {
+
                 // When the library starts supporting multiple pins we would
                 // pass the isPinned parameter together with the identifier,
                 // but currently we send null to indicate that we unpin the
                 // last pinned.
-                else
-                    room.pinParticipant(null);
+                try {
+                    room.pinParticipant(isPinned ? smallVideoId : null);
+                } catch (e) {
+                    reportError(e);
+                }
+            }
         });
 
         APP.UI.addListener(
