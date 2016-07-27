@@ -195,7 +195,10 @@
                 </div>
                 <span id="videoConnectionMessage"></span>
                 <span id="videoResolutionLabel">HD</span>
-                <span id="recordingLabel" class="centeredVideoLabel"></span>
+                <span id="recordingLabel" class="centeredVideoLabel">
+                    <span id="recordingLabelText"></span>
+                    <img id="recordingSpinner" class="recordingSpinner" src="images/spin.svg"></img>
+                </span>
             </div>
 
             <div id="remoteVideos">
@@ -252,17 +255,21 @@
         </div>
         <div id="contactlist" class="right-panel" style="display:none;">
             <div class="title">
-                <i class="icon-contactList"><span data-i18n="contactlist"></span></i>
+                <i class="icon-contactList"></i>
+                <span data-i18n="contactlist"></span>
             </div>
             <ul id="contacts"></ul>
         </div>
         <div id="settingsmenu" class="right-panel" style="display:none;">
-            <div class="icon-settings" data-i18n="settings.title"></div>
+            <div class="title">
+                <i class="icon-settings"></i>
+                <span data-i18n="settings.title"></span>
+            </div>
             <img id="avatar" src="images/avatar2.png"/>
             <div class="arrow-up"></div>
             <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
             <input type="text" id="setEmail" placeholder="E-Mail">
-            <input type="text" id="setAvatarUrl" placeholder="Avatar URL" data-i18n="[placeholder]settings.avatar">
+            <input type="text" id="setAvatarUrl" placeholder="Avatar URL" data-i18n="[placeholder]settings.avatarUrl">
             <select id="languages_selectbox"></select>
             <div id = "startMutedOptions">
                 <label class = "startMutedLabel">
@@ -298,6 +305,73 @@
         </div>
         <div id="feedbackButtonDiv">
             <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
+        </div>
+    </div>
+    <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
+        <div class="header"><h3 data-i18n="keyboardShortcuts.keyboardShortcuts"></h3></div>
+        <div class="content">
+            <ul class="item">
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">M</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.mute"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">V</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.videoMute"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">C</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.toggleChat"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">R</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.raiseHand"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">T</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.pushToTalk"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">D</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.toggleScreensharing"></span>
+                </li>
+                <li class="item-details">
+                    <span class="item-action">
+                        <kbd class="regular-key">F</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.toggleFilmstrip"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">?</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.toggleShortcuts"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">0</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.focusLocal"></span>
+                </li>
+                <li>
+                    <span class="item-action">
+                        <kbd class="regular-key">1-9</kbd>
+                    </span>
+                    <span class="item-description" data-i18n="keyboardShortcuts.focusRemote"></span>
+                </li>
+            </ul>
         </div>
     </div>
   </body>

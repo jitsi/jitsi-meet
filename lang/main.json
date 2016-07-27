@@ -8,9 +8,33 @@
     "participant": "Participant",
     "me": "me",
     "speaker": "Speaker",
+    "raisedHand": "Would like to speak",
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "calling": "Calling __name__ ...",
+    "userMedia": {
+      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Share Selected Device</i></b> button",
+      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
+      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
+      "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
+    },
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Keyboard shortcuts:",
+        "raiseHand": "Raise your hand.",
+        "pushToTalk": "Push to talk.",
+        "toggleScreensharing": "Switch between camera and screensharing.",
+        "toggleFilmstrip": "Show or hide the filmstrip.",
+        "toggleShortcuts": "Show or hide this help menu.",
+        "focusLocal": "Focus on the local video.",
+        "focusRemote": "Focus on one of the remote videos.",
+        "toggleChat": "Open or close the chat panel.",
+        "mute": "Mute or unmute the microphone.",
+        "videoMute": "Stop or start the local video."
+    },
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
@@ -141,7 +165,8 @@
         "grantedTo": "Moderator rights granted to __to__!",
         "grantedToUnknown": "Moderator rights granted to $t(somebody)!",
         "muted": "You have started the conversation muted.",
-        "mutedTitle": "You're muted!"
+        "mutedTitle": "You're muted!",
+        "raisedHand": "Would like to speak."
     },
     "dialog": {
         "kickMessage": "Ouch! You have been kicked out of the meet!",
@@ -232,11 +257,11 @@
         "cameraErrorPresent": "There was an error connecting to your camera.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "cameraUnknownError": "Cannot use camera for a unknown reason.",
-        "cameraPermissionDeniedError": "You have not granted permission to use your camera.",
+        "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
         "cameraNotFoundError": "Requested camera was not found.",
         "cameraConstraintFailedError": "Yor camera does not satisfy some of required constraints.",
         "micUnknownError": "Cannot use microphone for a unknown reason.",
-        "micPermissionDeniedError": "You have not granted permission to use your microphone.",
+        "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micNotFoundError": "Requested microphone was not found.",
         "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints."
     },

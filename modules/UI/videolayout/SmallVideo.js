@@ -2,6 +2,7 @@
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -299,9 +300,6 @@ SmallVideo.prototype.updateIconPositions = function () {
 
 /**
  * Creates the element indicating the moderator(owner) of the conference.
- *
- * @param parentElement the parent element where the owner indicator will
- * be added
  */
 SmallVideo.prototype.createModeratorIndicatorElement = function () {
     // Show moderator indicator
@@ -329,6 +327,23 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
     APP.translation.translateElement($('#' + this.videoSpanId + ' .focusindicator'));
 };
 
+/**
+ * Removes the element indicating the moderator(owner) of the conference.
+ */
+SmallVideo.prototype.removeModeratorIndicatorElement = function () {
+    $('#' + this.videoSpanId + ' .focusindicator').remove();
+};
+
+/**
+ * This is an especially interesting function. A naive reader might think that
+ * it returns this SmallVideo's "video" element. But it is much more exciting.
+ * It first finds this video's parent element using jquery, then uses a utility
+ * from lib-jitsi-meet to extract the video element from it (with two more
+ * jquery calls), and finally uses jquery again to encapsulate the video element
+ * in an array. This last step allows (some might prefer "forces") users of
+ * this function to access the video element via the 0th element of the returned
+ * array (after checking its length of course!).
+ */
 SmallVideo.prototype.selectVideoElement = function () {
     return $(RTCUIHelper.findVideoElement($('#' + this.videoSpanId)[0]));
 };
@@ -376,7 +391,7 @@ SmallVideo.prototype.updateView = function () {
 
     let video = this.selectVideoElement();
 
-    let avatar = $(`#avatar_${this.id}`);
+    let avatar = $('#' + this.videoSpanId + ' .userAvatar');
 
     var isCurrentlyOnLarge = this.VideoLayout.isCurrentlyOnLarge(this.id);
 
@@ -404,7 +419,7 @@ SmallVideo.prototype.updateView = function () {
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     var thumbnail = $('#' + this.videoSpanId);
-    var avatar = $('#avatar_' + this.id);
+    var avatar = $('#' + this.videoSpanId + ' .userAvatar');
     this.hasAvatar = true;
 
     // set the avatar in the thumbnail
@@ -413,7 +428,6 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     } else {
         if (thumbnail && thumbnail.length > 0) {
             avatar = document.createElement('img');
-            avatar.id = 'avatar_' + this.id;
             avatar.className = 'userAvatar';
             avatar.src = avatarUrl;
             thumbnail.append(avatar);
@@ -422,37 +436,102 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
 };
 
 /**
- * Updates the Indicator for dominant speaker.
- *
- * @param isSpeaker indicates the current indicator state
+ * Shows or hides the dominant speaker indicator.
+ * @param show whether to show or hide.
  */
-SmallVideo.prototype.updateDominantSpeakerIndicator = function (isSpeaker) {
-
+SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     if (!this.container) {
         console.warn( "Unable to set dominant speaker indicator - "
             + this.videoSpanId + " does not exist");
         return;
     }
 
-    var indicatorSpan
-        = $('#' + this.videoSpanId + '>span.dominantspeakerindicator');
+    var indicatorSpanId = "dominantspeakerindicator";
+    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
 
-    // If we do not have an indicator for this video.
-    if (indicatorSpan.length <= 0) {
-        indicatorSpan = document.createElement('span');
+    indicatorSpan.innerHTML
+        = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
+    // adds a tooltip
+    UIUtil.setTooltip(indicatorSpan, "speaker", "left");
+    APP.translation.translateElement($(indicatorSpan));
 
-        indicatorSpan.innerHTML
-            = "<i id='speakerindicatoricon' class='fa fa-bullhorn'></i>";
-        indicatorSpan.className = 'dominantspeakerindicator';
+    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+};
 
-        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
-
-        // adds a tooltip
-        UIUtil.setTooltip(indicatorSpan, "speaker", "left");
-        APP.translation.translateElement($(indicatorSpan));
+/**
+ * Shows or hides the raised hand indicator.
+ * @param show whether to show or hide.
+ */
+SmallVideo.prototype.showRaisedHandIndicator = function (show) {
+    if (!this.container) {
+        console.warn( "Unable to raised hand indication - "
+            + this.videoSpanId + " does not exist");
+        return;
     }
 
-    $(indicatorSpan).css("visibility", isSpeaker ? "visible" : "hidden");
+    var indicatorSpanId = "raisehandindicator";
+    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+
+    indicatorSpan.style.background = "#D6D61E";
+    indicatorSpan.innerHTML
+        = "<i id='indicatoricon' class='fa fa-hand-paper-o'></i>";
+
+    // adds a tooltip
+    UIUtil.setTooltip(indicatorSpan, "raisedHand", "left");
+    APP.translation.translateElement($(indicatorSpan));
+
+    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+};
+
+/**
+ * Gets (creating if necessary) the "indicator" span for this SmallVideo
+  identified by an ID.
+ */
+SmallVideo.prototype.getIndicatorSpan = function(id) {
+    var indicatorSpan;
+    var spans = $(`#${this.videoSpanId}>[id=${id}`);
+    if (spans.length <= 0) {
+        indicatorSpan = document.createElement('span');
+        indicatorSpan.id = id;
+        indicatorSpan.className = "indicator";
+        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
+    } else {
+        indicatorSpan = spans[0];
+    }
+    return indicatorSpan;
+};
+
+/**
+ * Adds a listener for onresize events for this video, which will monitor for
+ * resolution changes, will calculate the delay since the moment the listened
+ * is added, and will fire a RESOLUTION_CHANGED event.
+ */
+SmallVideo.prototype.waitForResolutionChange = function() {
+    let self = this;
+    let beforeChange = window.performance.now();
+    let videos = this.selectVideoElement();
+    if (!videos || !videos.length || videos.length <= 0)
+        return;
+    let video = videos[0];
+    let oldWidth = video.videoWidth;
+    let oldHeight = video.videoHeight;
+    video.onresize = (event) => {
+        if (video.videoWidth != oldWidth || video.videoHeight != oldHeight) {
+            // Only run once.
+            video.onresize = null;
+
+            let delay = window.performance.now() - beforeChange;
+            let emitter = self.VideoLayout.getEventEmitter();
+            if (emitter) {
+                emitter.emit(
+                        UIEvents.RESOLUTION_CHANGED,
+                        self.getId(),
+                        oldWidth + "x" + oldHeight,
+                        video.videoWidth + "x" + video.videoHeight,
+                        delay);
+            }
+        }
+    };
 };
 
 export default SmallVideo;

@@ -7,8 +7,7 @@ html, body{
     margin:0px;
     height:100%;
     color: #424242;
-    font-family:'Helvetica Neue', Helvetica, sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     background: #000000;
     overflow-x: hidden;
@@ -16,6 +15,13 @@ html, body{
 
 a {
     text-decoration: none !important;
+}
+
+html, body, input, textarea, keygen, select, button {
+    font-family:    'open_sanslight',
+                    'Helvetica Neue',
+                    Helvetica,
+                    sans-serif !important;
 }
 
 .right-panel {
@@ -63,7 +69,7 @@ a {
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
     z-index: 1;
-    font-size: 1.22em !important;
+    font-size: 1.44em !important;
     vertical-align: middle;
 }
 
@@ -87,18 +93,18 @@ a {
 }
 /*#ffde00*/
 #toolbar_button_chat.active, #contactListButton.glowing, #chatBottomButton.glowing {
-    -webkit-text-shadow:    -1px 0 10px #00ccff,
-                            0 1px 10px #00ccff,
-                            1px 0 10px #00ccff,
-                            0 -1px 10px #00ccff;
-    -moz-text-shadow:   1px 0 10px #00ccff,
-                        0 1px 10px #00ccff,
-                        1px 0 10px #00ccff,
-                        0 -1px 10px #00ccff;
-    text-shadow:    -1px 0 10px #00ccff,
-                    0 1px 10px #00ccff,
-                    1px 0 10px #00ccff,
-                    0 -1px 10px #00ccff;
+    -webkit-text-shadow:    -1px 0 10px #21B9FC,
+                            0 1px 10px #21B9FC,
+                            1px 0 10px #21B9FC,
+                            0 -1px 10px #21B9FC;
+    -moz-text-shadow:   1px 0 10px #21B9FC,
+                        0 1px 10px #21B9FC,
+                        1px 0 10px #21B9FC,
+                        0 -1px 10px #21B9FC;
+    text-shadow:    -1px 0 10px #21B9FC,
+                    0 1px 10px #21B9FC,
+                    1px 0 10px #21B9FC,
+                    0 -1px 10px #21B9FC;
 }
 
 #toolbar_button_hangup {
@@ -121,7 +127,7 @@ a {
 }
 
 #contactListButton.active #numberOfParticipants {
-    color: #00ccff;
+    color: #21B9FC;
 }
 
 #toolbar_button_record {
@@ -359,16 +365,11 @@ div.feedbackButton:hover {
 }
 
 .connected {
-    color: forestgreen;
+    color: #21B9FC;
     font-size: 12px;
 }
 
-.disconnected {
-    color: darkred;
-    font-size: 12px;
-}
-
-.lastN {
+.lastN, .disconnected {
     color: #a3a3a3;
     font-size: 12px;
 }

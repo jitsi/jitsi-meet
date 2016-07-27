@@ -8,12 +8,37 @@
     "participant": "Участник",
     "me": "аз",
     "speaker": "Говорител",
-    "defaultNickname": "например __name__",
-    "defaultPreziLink": "например __url__",
+    "raisedHand": "",
+    "defaultNickname": "Яна Розова",
+    "defaultLink": "например __url__",
+    "calling": "Обаждане към __name__ ...",
+    "userMedia": {
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "",
+        "operaGrantPermissions": "",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "",
+        "nwjsGrantPermissions": ""
+    },
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Клавишни комбинации:",
+        "raiseHand": "Вдигни ръка.",
+        "pushToTalk": "Push to talk.",
+        "toggleScreensharing": "Смяна между камера и споделен екран.",
+        "toggleFilmstrip": "Показване/скриване на лентата с видеата.",
+        "toggleShortcuts": "Показване/скриване на това меню.",
+        "focusLocal": "Фокусиране върху нашето видео.",
+        "focusRemote": "Фокусиране върху видео на участник.",
+        "toggleChat": "Отваряне/скриване на чат панела.",
+        "mute": "Спиране/пускане на микрофона.",
+        "videoMute": "Спиране/пускане на нашето видео."
+    },
     "welcomepage": {
         "go": "Влез",
         "roomname": "Въведете име на стаята",
-        "disable": "Не показвай страницата следващия път",
+        "disable": "Не показвай повече тази страница",
         "feature1": {
             "title": "Лесен за употреба",
             "content": "Не е необходимо да сваляте нищо. _app_ работи директно във вашия браузър. Просто споделете адреса на вашата конференция с другите за да започнете."
@@ -51,12 +76,11 @@
         "mute": "Включи / Изключи микрофона",
         "videomute": "Включи / Изключи камерата",
         "authenticate": "Идентификация",
-        "record": "Запис",
         "lock": "Заключи / отключи стаята",
         "invite": "Покани други",
         "chat": "Отвори / затвори чат",
-        "prezi": "Сподели Prezi",
         "etherpad": "Покажи споделения документ",
+        "sharedvideo": "Сподели YouTube видео",
         "sharescreen": "Сподели екрана",
         "fullscreen": "Влез / Излез от Пълен екран",
         "sip": "Обади се на SIP номер",
@@ -64,7 +88,12 @@
         "hangup": "Затвори",
         "login": "Влез",
         "logout": "Изход",
-        "dialpad": "Цифров панел"
+        "dialpad": "Цифров панел",
+        "sharedVideoMutedPopup": "Споделеното видео е заглуено,<br/>, за да можете да говорите.",
+        "micMutedPopup": "Микрофонът е заглушен, за да<br/>не пречи на YouTube видеото.",
+        "unableToUnmutePopup": "Не се говори по време на филм!",
+        "cameraDisabled": "Не е налична камера",
+        "micDisabled": "Не е наличен микрофон"
     },
     "bottomtoolbar": {
         "chat": "Отвори / затвори чат",
@@ -82,8 +111,15 @@
         "title": "НАСТРОЙКИ",
         "update": "Актуализиране",
         "name": "Име",
-        "startAudioMuted": "започни без аудио",
-        "startVideoMuted": "започни без видео"
+        "startAudioMuted": "Започни без аудио",
+        "startVideoMuted": "Започни без видео",
+        "selectCamera": "Избери камера",
+        "selectMic": "Избери микрофон",
+        "selectAudioOutput": "Избери аудио изход",
+        "followMe": "Включи \"следвай ме\"",
+        "noDevice": "Няма",
+        "noPermission": "Не е разрешен достъп до устройството",
+        "avatarUrl": "Адрес на аватар"
     },
     "videothumbnail": {
         "editnickname": "Натиснете за да<br/>промените името",
@@ -92,7 +128,8 @@
         "mute": "Учасника е с изключен микрофон",
         "kick": "Изгони",
         "muted": "Изключен микрофон",
-        "domute": "Изключи микрофона"
+        "domute": "Изключи микрофона",
+        "flip": "Огледално"
     },
     "connectionindicator": {
         "bitrate": "Дебит:",
@@ -124,7 +161,8 @@
         "grantedTo": "Даване на роля модератор на __to__!",
         "grantedToUnknown": "Даване на роля модератор на $t(somebody)!",
         "muted": "Започвате разговора без звук.",
-        "mutedTitle": "Звукът ви е спрян!"
+        "mutedTitle": "Звукът ви е спрян!",
+        "raisedHand": ""
     },
     "dialog": {
         "kickMessage": "Бяхте изгонен от срещата!",
@@ -139,6 +177,8 @@
         "failtoinstall": "Неуспешна инсталация на разширението за споделяне на екрана.",
         "failedpermissions": "Неуспешен опит за получаване на права за използване на микрофон и/или камера.",
         "bridgeUnavailable": "Jitsi Videobridge не е наличен. Моля опитайте пак!",
+        "jicofoUnavailable": "Jitsi Videobridge не е наличен. Моля опитайте пак!",
+        "maxUsersLimitReached": "Конференцията е пълна. Моля, опитайте по-късно!",
         "lockTitle": "Неуспешно заключване",
         "lockMessage": "Неуспешно заключване на конференцията.",
         "warning": "Внимание",
@@ -152,11 +192,12 @@
         "defaultError": "Възникна грешка",
         "passwordRequired": "Изисква се парола",
         "Ok": "ОК",
-        "removePreziTitle": "Премахни Prezi",
-        "removePreziMsg": "Сигурни ли сте, че искате да премахнете Prezi?",
-        "sharePreziTitle": "Сподели Prezi",
-        "sharePreziMsg": "Prezi string delete",
         "Remove": "DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE ",
+        "shareVideoTitle": "Сподели видео",
+        "shareVideoLinkError": "Моля въведете правилен Prezi линк.",
+        "removeSharedVideoTitle": "Край на споделянето на видео",
+        "removeSharedVideoMsg": "Сигурни ли сте, че искате да премахнете Prezi?",
+        "alreadySharedVideoMsg": "Друг участник вече споделя видео. Споделянето е възможно само по веднъж на стая.",
         "WaitingForHost": "Чакаме домакина ...",
         "WaitForHostMsg": "<b>__room__ </b> още не е започнал. Ако вие сте домакина моля идентифицирайте се. В противен случай ще изчакаме домакина.",
         "IamHost": "Аз съм домакина",
@@ -168,8 +209,8 @@
         "hungUp": "Затворихте",
         "joinAgain": "Присъединете се отново",
         "Share": "Споделяне",
-        "preziLinkError": "Моля въведете правилен Prezi линк.",
         "Save": "Запазване",
+        "recording": "Запис",
         "recordingToken": "Въведете код за достъп за запис на конференцията",
         "Dial": "Набиране",
         "sipMsg": "Въведете SIP номер",
@@ -196,7 +237,28 @@
         "firefoxExtensionPrompt": "За да споделите екрана си, трябва да инсталирате Firefox разширение. <a href='__url__'>свалете го тук</a> и пробвайте пак!",
         "feedbackQuestion": "Как мина разговора?",
         "thankYou": "Благодарим, че използвахте __appName__!",
-        "sorryFeedback": "Много съжаляваме! Бихте ли ни казали повече?"
+        "sorryFeedback": "Много съжаляваме! Бихте ли ни казали повече?",
+        "liveStreaming": "Пряко предаване",
+        "streamKey": "Имке/ключ на потока",
+        "startLiveStreaming": "Пряко предаване",
+        "stopStreamingWarning": "Наистина ли искате да спрем прякото предаване?",
+        "stopRecordingWarning": "Наистина ли искате да спрем записа?",
+        "stopLiveStreaming": "Край на прякото предаване",
+        "stopRecording": "Край на записа",
+        "doNotShowWarningAgain": "Занапред не ме предупреждавай пак",
+        "permissionDenied": "Достъпът е отказан",
+        "screenSharingPermissionDeniedError": "Не сте дали права за споделяне на екран",
+        "micErrorPresent": "Грешка при достъп до микрофона",
+        "cameraErrorPresent": "Грешка при достъп до камерата.",
+        "cameraUnsupportedResolutionError": "Камерата ви не поддържа тази резолюция",
+        "cameraUnknownError": "Невъзможен достъп до камерата по неясна причина.",
+        "cameraPermissionDeniedError": "",
+        "cameraNotFoundError": "Указаната камера не е намерена.",
+        "cameraConstraintFailedError": "Камерата ви не задоволява зададените условия.",
+        "micUnknownError": "Не възможен достъп до микрофона по неясна причина.",
+        "micPermissionDeniedError": "",
+        "micNotFoundError": "Микрофонът не задоволява зададените условия.",
+        "micConstraintFailedError": "Микрофонът не задоволява зададените условия."
     },
     "email": {
         "sharedKey": [
@@ -236,8 +298,23 @@
         "ATTACHED": "Прикрепен"
     },
     "recording": {
-        "toaster": "В момента записваме!",
-        "pending": "Записът ви ще започне щом влезе втори участник",
-        "on": "Записът започна"
+        "pending": "Записът изчаква участник.",
+        "on": "Запис",
+        "off": "Записът спрян",
+        "failedToStart": "Неуспешен опит за записване",
+        "buttonTooltip": "Пускане / спиране на запис",
+        "error": "Грешка при опит за запис. Моля опитайте отново.",
+        "unavailable": "Записите са временно невъзможни. Моля опитайте по-късно."
+    },
+    "liveStreaming": {
+        "pending": "Започва пряко предаване...",
+        "on": "Пряко предаване",
+        "off": "Край на прякото предаване",
+        "unavailable": "Услугата за пряко предаване е временно недостъпна. Опитайте по-късно.",
+        "failedToStart": "Неуспешен опит за пряко предаване",
+        "buttonTooltip": "Начало / край на пряко предаване",
+        "streamIdRequired": "Моля попълнете името на потока, за да можем да започнем прякото предаване.",
+        "error": "Неуспешно  пряко предаване. Опитайте пак.",
+        "busy": "Всички записвачки са временно заети. Опитайте отново по-късно."
     }
 }

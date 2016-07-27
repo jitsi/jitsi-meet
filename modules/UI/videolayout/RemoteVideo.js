@@ -144,13 +144,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     var isVideo = stream.isVideoTrack();
 
     var elementID = SmallVideo.getStreamElementID(stream);
-    var select = null;
-    if (isVideo) {
-        select = $('#' + elementID);
-    }
-    else
-        select = $('#' + this.videoSpanId + '>audio');
-
+    var select = $('#' + elementID);
     select.remove();
 
     console.info((isVideo ? "Video" : "Audio") +
@@ -215,6 +209,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     let isVideo = stream.isVideoTrack();
     isVideo ? this.videoStream = stream : this.audioStream = stream;
+
+    if (isVideo)
+        this.setVideoType(stream.videoType);
 
     // Add click handler.
     let onClickHandler = (event) => {

@@ -1,11 +1,16 @@
 {
     "en": "English",
+
     "bg": "Bulgarian",
     "de": "German",
-    "tr": "Turkish",
-    "it": "Italian",
+    "es": "Spanish",
     "fr": "French",
-    "sl": "Slovenian",
+    "hy": "Armenian",
+    "it": "Italian",
+    "oc": "Occitan",
+    "ptBR": "Portuguese (Brazil)",
     "sk": "Slovak",
-    "sv": "Swedish"
+    "sl": "Slovenian",
+    "sv": "Swedish",
+    "tr": "Turkish"
 }

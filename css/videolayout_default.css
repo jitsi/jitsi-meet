@@ -308,7 +308,7 @@
     z-index: 3;
 }
 
-.videocontainer>span.dominantspeakerindicator {
+.videocontainer>span.indicator {
     bottom: 0px;
     left: 0px;
     width: 25px;
@@ -316,7 +316,7 @@
     z-index: 3;
     text-align: center;
     border-radius: 50%;
-    background: #0cf;
+    background: #21B9FC;
     margin: 5px;
     display: inline-block;
     position: absolute;
@@ -325,7 +325,7 @@
     border: 0px;
 }
 
-#speakerindicatoricon {
+#indicatoricon {
     padding-top: 5px;
 }
 

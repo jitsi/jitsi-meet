@@ -21,7 +21,6 @@
     -moz-user-select: none;
     background-repeat: no-repeat;
     font-weight: 500;
-    font-family: Helvetica;
     font-size: 16px;
     color: #acacac;
     z-index: 2;
@@ -35,7 +34,6 @@
     -moz-user-select: none;
     background-repeat: no-repeat;
     font-weight: 500;
-    font-family: Helvetica;
     font-size: 16px;
     color: #acacac;
     z-index: 2;
@@ -54,10 +52,12 @@
 #domain_name
 {
     float: left;
+    padding-top: 0.74em;
+    height: 55px;
+    line-height: 55px;
     font-size: 18px;
     font-weight: 500;
-    font-family: Helvetica;
-    padding-top: 0.74em;
+    padding-left: 20px;
 }
 
 #enter_room_field {
@@ -65,8 +65,9 @@
     border: none;
     -webkit-appearance: none;
     width: 228px;
+    height: 55px;
+    line-height: 55px;
     font-weight: 500;
-    font-family: Helvetica;
     box-shadow: none;
     float: left;
     background-color: #FFFFFF;
@@ -77,7 +78,7 @@
 #enter_room_button {
     width: 73px;
     height: 45px;
-    background-color: #16a8fe;
+    background-color: #21B9FC;
     moz-border-radius: 1px;
     -webkit-border-radius: 1px;
     color: #ffffff;
@@ -85,7 +86,6 @@
     border: none;
     margin-top: 5px;
     font-size: 19px;
-    font-family: Helvetica;
     padding-top: 6px;
     outline: none;
     float:left;
@@ -136,7 +136,6 @@
     width: 885px;
     height: 100px;
     color: #ffffff;
-    font-family: Helvetica;
     font-size: 24px;
     text-align: center;
     margin: 0px auto 0px auto;
@@ -167,7 +166,6 @@
     background-position: center;
     width: 169px;
     height: 169px;
-    font-family: Helvetica;
     color: #ffffff;
     font-size: 22px;
     /*font-weight: bold;*/
@@ -180,7 +178,6 @@
 .feature_description
 {
     width: 190px;
-    font-family: Helvetica;
     color: #ffffff;
     font-size: 16px;
     padding-top: 30px;

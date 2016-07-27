@@ -1,0 +1,19 @@
+#keyboard-shortcuts {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    overflow: hidden;
+    padding: 20px;
+    z-index: 1;
+    border-radius: 15px;
+    background-attachment: scroll;
+    background-size: auto auto;
+    color: rgba(255, 255, 255, .8);
+    background-color: rgba(0, 0, 0, .8);
+}
+
+#keyboard-shortcuts .item-action {
+    color: #209EFF;
+    font-size: 14pt;
+}

@@ -1,6 +1,5 @@
 /* global APP, JitsiMeetJS, config */
-//FIXME:
-import LoginDialog from './modules/UI/authentication/LoginDialog';
+import AuthHandler from './modules/UI/authentication/AuthHandler';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -93,33 +92,6 @@ function connect(id, password, roomName) {
 }
 
 /**
- * Show Authentication Dialog and try to connect with new credentials.
- * If failed to connect because of PASSWORD_REQUIRED error
- * then ask for password again.
- * @param {string} [roomName]
- * @returns {Promise<JitsiConnection>}
- */
-function requestAuth(roomName) {
-    return new Promise(function (resolve, reject) {
-        let authDialog = LoginDialog.showAuthDialog(
-            function (id, password) {
-                connect(id, password, roomName).then(function (connection) {
-                    authDialog.close();
-                    resolve(connection);
-                }, function (err) {
-                    if (err === ConnectionErrors.PASSWORD_REQUIRED) {
-                        authDialog.displayError(err);
-                    } else {
-                        authDialog.close();
-                        reject(err);
-                    }
-                });
-            }
-        );
-    });
-}
-
-/**
  * Open JitsiConnection using provided credentials.
  * If retry option is true it will show auth dialog on PASSWORD_REQUIRED error.
  *
@@ -157,7 +129,7 @@ export function openConnection({id, password, retry, roomName}) {
             if (config.token) {
                 throw err;
             } else {
-                return requestAuth(roomName);
+                return AuthHandler.requestAuth(roomName, connect);
             }
         } else {
             throw err;

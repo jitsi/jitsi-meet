@@ -8,9 +8,13 @@
     text-align: left;
     padding: 7px 10px;
     margin: 2px;
-    color: #00ccff;
+    color: #21B9FC;
     font-size: 11pt;
     border-bottom: 1px solid #676767;
+}
+
+#contactlist>div.title>span {
+    margin-left: 5px;
 }
 
 #contactlist>ul#contacts {

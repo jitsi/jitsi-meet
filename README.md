@@ -66,6 +66,7 @@ npm link lib-jitsi-meet
 ```
 
 So now after changes in local `lib-jitsi-meet` repository you can rebuild it with `npm run install` and your `jitsi-meet` repository will use that modified library.
+Note: when using node version 4.x, the make file of jitsi-meet do npm update which will delete the link, no longer the case with version 6.x.
 
 If you do not want to use local repository anymore you should run
 ```bash

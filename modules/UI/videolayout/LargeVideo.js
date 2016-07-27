@@ -21,7 +21,7 @@ function getStreamOwnerId(stream) {
         return;
     }
     if (stream.isLocal()) { // local stream doesn't have method "getParticipantId"
-        return APP.conference.localId;
+        return APP.conference.getMyUserId();
     } else {
         return stream.getParticipantId();
     }
