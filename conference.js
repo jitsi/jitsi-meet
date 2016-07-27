@@ -1155,10 +1155,14 @@ export default {
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
+                // Send only the data that remote participants care about.
+                let data = {
+                    bitrate: stats.bitrate,
+                    packetLoss: stats.packetLoss};
                 try {
                     room.broadcastEndpointMessage({
                         type: this.commands.defaults.CONNECTION_QUALITY,
-                        values: stats });
+                        values: data });
                 } catch (e) {
                     reportError(e);
                 }
