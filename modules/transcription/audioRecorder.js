@@ -141,6 +141,10 @@ audioRecorder.start = function () {
         audioRecorder.recorders.length + " recorders active.");
 };
 
+audioRecorder.printHello = function () {
+    Console.log("Hello");
+};
+
 /**
  * Stops the audio recording of every local and remote track
  */
