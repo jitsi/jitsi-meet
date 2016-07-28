@@ -69,5 +69,7 @@ var config = {
     'During that time service will not be available. ' +
     'Apologise for inconvenience.',*/
     disableThirdPartyRequests: false,
-    minHDHeight: 540
+    minHDHeight: 540,
+    //disable lipsync so video does not get recorder
+    //enableLipSync:false
 };

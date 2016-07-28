@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJs, MediaRecorder*/
+/* JitsiMeetJs, MediaRecorder, MediaStream, webkitMediaStream*/
 
 /**
  * Possible audio formats MIME types
@@ -7,7 +7,9 @@ const AUDIO_WEBM = "audio/webm";    // Supported in chrome
 const AUDIO_OGG  = "audio/ogg";     // Supported in firefox
 
 /**
- * Object holding all the information needed for recording a single track
+ * A TrackRecorder object holds all the information needed for recording a
+ * single JitsiTrack (either remote of local)
+ * @param track The JitsiTrack the object is holding
  */
 var TrackRecorder = function(track){
     // The JitsiTrack holding the stream
@@ -71,10 +73,10 @@ function determineCorrectFileType()
  * Writes the TrackRecorder.data buffer to disk to free up RAM
  * @param trackRecorder
  */
-function writeBufferToDisk(trackRecorder)
-{
-
-}
+// function writeBufferToDisk(trackRecorder)
+// {
+//
+// }
 
 /**
  * main exported object of the file, holding all
@@ -97,7 +99,7 @@ var audioRecorder= {
  *
  * @param track the track potentially holding an audio stream
  */
-audioRecorder.giveTrack = function (track) {
+audioRecorder.addTrack = function (track) {
     if(track.isAudioTrack()) {
         //create the track recorder
         var trackRecorder = instantiateTrackRecorder(track);
@@ -116,14 +118,14 @@ audioRecorder.giveTrack = function (track) {
  * This method will tell the MediaRecorder of the specific track to stop
  * recording, if //todo determine constraints
  */
-audioRecorder.notifyTrackStopped = function(track){
+audioRecorder.removeTrack = function(track){
 
 };
 
 /**
  * Starts the audio recording of every local and remote track
  */
-audioRecorder.startAudioRecording = function () {
+audioRecorder.start = function () {
     if(audioRecorder.isRecording) {
         throw new Error("audiorecorder is already recording");
     }
@@ -142,7 +144,7 @@ audioRecorder.startAudioRecording = function () {
 /**
  * Stops the audio recording of every local and remote track
  */
-audioRecorder.stopAudioRecording = function() {
+audioRecorder.stop = function() {
     //set the boolean flag to false
     audioRecorder.isRecording = false;
     //stop all recorders
@@ -169,18 +171,28 @@ audioRecorder.download = function () {
 };
 
 /**
+ *
+ * @returns {Array}
+ */
+audioRecorder.getByteArrays = function () {
+    var array = [];
+    audioRecorder.recorders.forEach(function (recorder) {
+       array.push(recorder.data);
+    });
+    return array;
+};
+
+/**
  * Creates a empty MediaStream object which can be used
  * to add MediaStreamTracks to
  * @returns MediaStream
  */
 function createEmptyStream() {
-    // Firefox supports creation of a clean empty MediaStream
-    // so test if it's firefox by just returning
-    // a new instance
+    // Firefox supports the MediaStream object
     try {
         return new MediaStream();
     }
-    // if it's chrome we need to make it the dirty way...
+    // if it's chrome we have to use their webKit version
     catch(e){
         if(e instanceof ReferenceError)
         {
