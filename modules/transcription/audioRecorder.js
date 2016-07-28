@@ -1,4 +1,4 @@
-/* JitsiMeetJs, MediaRecorder, MediaStream, webkitMediaStream*/
+/* global JitsiMeetJs, MediaRecorder, MediaStream, webkitMediaStream*/
 
 /**
  * Possible audio formats MIME types
