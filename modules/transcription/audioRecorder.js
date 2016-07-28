@@ -1,4 +1,4 @@
-/* global JitsiMeetJs, MediaRecorder, MediaStream, webkitMediaStream*/
+/* JitsiMeetJs, MediaRecorder, MediaStream, webkitMediaStream*/
 
 /**
  * Possible audio formats MIME types
@@ -70,10 +70,19 @@ function determineCorrectFileType()
 }
 
 /**
+ * Writes the TrackRecorder.data buffer to disk to free up RAM
+ * @param trackRecorder
+ */
+// function writeBufferToDisk(trackRecorder)
+// {
+//
+// }
+
+/**
  * main exported object of the file, holding all
  * relevant functions and variables for the outside world
  */
-var audioRecorder = {
+var audioRecorder= {
     // array of TrackRecorders, where each trackRecorder
     // holds the JitsiTrack, MediaRecorder and recorder data
     recorders: [],
@@ -96,7 +105,7 @@ audioRecorder.addTrack = function (track) {
         var trackRecorder = instantiateTrackRecorder(track);
         //push it to the local array of all recorders
         audioRecorder.recorders.push(trackRecorder);
-        //if we're already recording, immediately start recording this new track
+        //is we're already recording, immediately start recording this new track
         if(audioRecorder.isRecording)        {
             trackRecorder.recorder.start();
         }
@@ -104,28 +113,13 @@ audioRecorder.addTrack = function (track) {
 };
 
 /**
- * Notifies the module that a specific track has stopped, e.g participant left
+ * Notifies the module that a specific track has stopped, e.g partipant left
  * the conference.
- * if the recording has not started yet, the TrackRecorder will be removed from
- * the array. If the recording has started, the recorder will stop recording
- * but not removed from the array so that the recording can still be
- * accessed
+ * This method will tell the MediaRecorder of the specific track to stop
+ * recording, if //todo determine constraints
  */
-audioRecorder.removeTrack = function(jitsiTrack){
-    var array = audioRecorder.recorders;
-    for(var i = 0; i < array.length; i++)
-    {
-        if(array[i].track.getParticipantById() === jitsiTrack.
-            getParticipantById()){
-            var recorderToRemove = array[i];
-            if(audioRecorder.isRecording){
-                recorderToRemove.stop();
-            }
-            else {
-                array.slice(i, 1);
-            }
-        }
-    }
+audioRecorder.removeTrack = function(track){
+
 };
 
 /**
@@ -157,7 +151,6 @@ audioRecorder.stop = function() {
     audioRecorder.recorders.forEach(function(trackRecorder){
        trackRecorder.recorder.stop();
    });
-    console.log("stopped recording");
 };
 
 /**
@@ -178,23 +171,15 @@ audioRecorder.download = function () {
 };
 
 /**
- * returns the audio files of all recorders as an array of blobs
- * @returns {Array} an array of blobs where each blob is a recorder audio file
+ *
+ * @returns {Array}
  */
-audioRecorder.getBlobs = function () {
+audioRecorder.getByteArrays = function () {
     var array = [];
     audioRecorder.recorders.forEach(function (recorder) {
-        array.push(new Blob(recorder.data, {type: audioRecorder.fileType}));
+       array.push(recorder.data);
     });
     return array;
-};
-
-/**
- * Gets the mime type of the recorder audio
- * @returns {String} the mime type of the recorder audio
- */
-audioRecorder.getFileType = function () {
-    return this.fileType;
 };
 
 /**
@@ -203,15 +188,19 @@ audioRecorder.getFileType = function () {
  * @returns MediaStream
  */
 function createEmptyStream() {
-    // Firefox supports the MediaStream object, Chrome webkitMediaStream
-    if(MediaStream) {
+    // Firefox supports the MediaStream object
+    try {
         return new MediaStream();
     }
-    else if(webkitMediaStream) {
-        return new webkitMediaStream();
-    }
-    else {
-        throw new Error("cannot create a clean mediaStream");
+    // if it's chrome we have to use their webKit version
+    catch(e){
+        if(e instanceof ReferenceError)
+        {
+            return new webkitMediaStream();
+        }
+        else {
+            throw new Error("cannot create a clean MediaStream");
+        }
     }
 }
 
