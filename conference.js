@@ -533,9 +533,9 @@ export default {
                 if (config.iAmRecorder)
                     this.recorder = new Recorder();
 
-                //add the local audio track to the audio recording //fixme
+                //add the local audio track to the audio recording
                 tracks.forEach(function(track) {
-                    APP.audioRecording.giveTrack(track);
+                    APP.audioRecorder.addTrack(track);
                 });
 
                 // XXX The API will take care of disconnecting from the XMPP
@@ -1043,7 +1043,7 @@ export default {
             });
             APP.UI.addRemoteStream(track);
             //give the track to the audio recording module
-            APP.audioRecording.giveTrack(track);
+            APP.audioRecorder.addTrack(track);
         });
 
         room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
@@ -1051,6 +1051,9 @@ export default {
                 return;
 
             APP.UI.removeRemoteStream(track);
+
+            //tell the audio recording module that track got removed
+            APP.audioRecorder.removeTrack(track);
         });
 
         room.on(ConferenceEvents.TRACK_MUTE_CHANGED, (track) => {
