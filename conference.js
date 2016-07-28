@@ -1255,9 +1255,14 @@ export default {
 
         APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-            room.sendApplicationLog("Resolution change id=" + id
-                + " old=" + oldResolution + " new=" + newResolution
-                + " delay=" + delay);
+            var logObject = {
+                id: "resolution_change",
+                participant: id,
+                oldValue: oldResolution,
+                newValue: newResolution,
+                delay: delay
+                };
+            room.sendApplicationLog(JSON.stringify(logObject));
         });
 
         // Starts or stops the recording for the conference.
