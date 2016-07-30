@@ -1,0 +1,42 @@
+import audioRecorder from './audioRecorder';
+import transcriptionService from
+    './transcriptionServices/AbstractTranscriptionService';
+
+
+
+var transcriber =  {
+
+    audioRecorder: audioRecorder,
+
+    transcriptionService: transcriptionService
+};
+
+
+transcriber.start = function start() {
+  audioRecorder.start();
+};
+
+
+transcriber.stop = function stop() {
+    audioRecorder.stop();
+    audioRecorder.getByteArrays().forEach(function(byteArray){
+        transcriptionService.send(byteArray, byteArrayCallBack);
+    });
+};
+
+/**
+ * Call back function which gets
+ */
+var byteArrayCallBack = function(answer){
+
+};
+
+/**
+ * Returns the AudioRecorder module to add and remove tracks to
+ */
+transcriber.getAudioRecorder = function getAudioRecorder() {
+    return this.audioRecorder;
+};
+
+
+module.exports = transcriber;
