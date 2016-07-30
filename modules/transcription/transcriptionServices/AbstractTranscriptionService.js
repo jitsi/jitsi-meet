@@ -14,8 +14,10 @@ var TranscriptionService = function() {
  * @param byteArray the recorded audio stream as an array of bytes
  * @param callback function which will retrieve the answer
  */
-TranscriptionService.prototype.send = function send(byteArray, callback){
-    this.sendRequest(byteArray, this.formatResponse);
+TranscriptionService.send = function send(byteArray, callback){
+    this.sendRequest(byteArray, function callBackServer(answerFromServer) {
+        callback(this.formatResponse(answerFromServer))
+    });
 };
 
 /**
