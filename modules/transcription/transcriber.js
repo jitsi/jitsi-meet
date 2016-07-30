@@ -20,7 +20,7 @@ transcriber.start = function start() {
 transcriber.stop = function stop() {
     audioRecorder.stop();
     audioRecorder.getByteArrays().forEach(function(byteArray){
-        this.transcriptionService.send(byteArray, byteArrayCallBack);
+        transcriber.transcriptionService.send(byteArray, byteArrayCallBack);
     });
 };
 
