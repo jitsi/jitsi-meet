@@ -18,6 +18,7 @@ transcriber.start = function start() {
 
 
 transcriber.stop = function stop() {
+    console.log("stopping transcription and sending audio files");
     audioRecorder.stop();
     audioRecorder.getByteArrays().forEach(function(byteArray){
         transcriber.transcriptionService.send(byteArray, byteArrayCallBack);
