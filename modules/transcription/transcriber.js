@@ -8,7 +8,7 @@ var transcriber =  {
 
     audioRecorder: audioRecorder,
 
-    transcriptionService: new SphinxService()
+    transcriptionService: SphinxService
 };
 
 
