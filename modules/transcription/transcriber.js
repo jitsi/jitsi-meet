@@ -1,6 +1,6 @@
 import audioRecorder from './audioRecorder';
-import transcriptionService from
-    './transcriptionServices/AbstractTranscriptionService';
+import SphinxService from
+    './transcriptionServices/SphinxTranscriptionService';
 
 
 
@@ -8,7 +8,7 @@ var transcriber =  {
 
     audioRecorder: audioRecorder,
 
-    transcriptionService: transcriptionService
+    transcriptionService: new SphinxService()
 };
 
 
@@ -20,7 +20,7 @@ transcriber.start = function start() {
 transcriber.stop = function stop() {
     audioRecorder.stop();
     audioRecorder.getByteArrays().forEach(function(byteArray){
-        transcriptionService.send(byteArray, byteArrayCallBack);
+        this.transcriptionService.send(byteArray, byteArrayCallBack);
     });
 };
 
