@@ -1,15 +1,29 @@
-/* global config,  XMLHttpRequest */
-import TranscriptionService from "../transcriptionService";
+/* global config,  XMLHttpRequest, console, APP */
 
-var SphinxService = function () {
-    var url = getURL();
-    return new TranscriptionService(send, parse);
-};
+import TranscriptionService from "./AbstractTranscriptionService";
+import Transcriber from "../transcriber";
+import Word from "../word";
 
-SphinxService.prototype = new TranscriptionService();
+/**
+ * Implements a TranscriptionService for a Sphinx4 http server
+ */
+var SphinxService = Object.create(TranscriptionService);
 
+/**
+ * The HTTP url to the service
+ *
+ * @type {String} the url as a string
+ */
+SphinxService.url = "http://localhost:8081/recognize";//getURL();
 
-SphinxService.prototype.sendRequest = function(byteArray, callback) {
+/**
+ * Overrides the sendRequest method from TranscriptionService
+ * it will send the audio stream the a Sphinx4 server to get the transcription
+ *
+ * @param byteArray the recorder audio stream an an array of bytes
+ * @param callback the callback function retrieving the server response
+ */
+SphinxService.sendRequest = function(byteArray, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if(request.readyState === XMLHttpRequest.DONE && request.status === 200)
@@ -17,18 +31,32 @@ SphinxService.prototype.sendRequest = function(byteArray, callback) {
             callback(request.responseText);
         }
     };
-
     request.open("POST", this.url);
+    request.setRequestHeader("Content-Type",
+        APP.transcriber.getAudioRecorder().getFileType());
     request.send(byteArray);
 };
 
-function parse(answer) {
+/**
+ * Overrides the parseRequest method from TranscriptionService
+ * It will parse the answer from the server in the expected format
+ *
+ * @param answer the answer retrieved from the Sphinx4 server
+ */
+SphinxService.parseRequest = function(answer) {
+    console.log("should parse:\n" + answer);
+};
 
-}
-
+/**
+ * Gets the URL to the Sphinx4 server from the config file. If it's not there,
+ * it will throw an error
+ *
+ * @returns {string} the URL to the sphinx4 server
+ */
 function getURL() {
     if(config.sphinxURL === undefined){
-        throw error("config does not contain an url to a Sphinx4 http server")
+        throw new Error("config does not contain an url to a " +
+            "Sphinx4 http server");
     }
     else {
         return config.sphinxURL;

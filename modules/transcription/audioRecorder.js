@@ -82,7 +82,7 @@ function determineCorrectFileType()
  * main exported object of the file, holding all
  * relevant functions and variables for the outside world
  */
-var audioRecorder= {
+var audioRecorder = {
     // array of TrackRecorders, where each trackRecorder
     // holds the JitsiTrack, MediaRecorder and recorder data
     recorders: [],
@@ -180,6 +180,14 @@ audioRecorder.getByteArrays = function () {
        array.push(recorder.data);
     });
     return array;
+};
+
+/**
+ * Gets the mime type of the recorder audio
+ * @returns {String} the mime type of the recorder audio
+ */
+audioRecorder.getFileType = function () {
+    return this.fileType;
 };
 
 /**
