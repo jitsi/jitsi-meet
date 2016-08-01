@@ -14,7 +14,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
-    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'],
+    // the toolbar buttons line is intentionally left in one line, to be able
+    // to easily override values or remove them using regex
+    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
