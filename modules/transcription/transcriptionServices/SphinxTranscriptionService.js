@@ -7,14 +7,20 @@ import Word from "../word";
 /**
  * Implements a TranscriptionService for a Sphinx4 http server
  */
-var SphinxService = Object.create(TranscriptionService);
+var SphinxService = function(url) {
+    //set the correct url
+    this.url = getURL();
+};
 
 /**
- * The HTTP url to the service
- *
- * @type {String} the url as a string
+ * Subclass of AbstractTranscriptionService
  */
-SphinxService.url = "http://localhost:8081/recognize";//getURL();
+SphinxService.prototype = Object.create(TranscriptionService.prototype);
+
+/**
+ * Set the right constructor
+ */
+SphinxService.constructor = SphinxService;
 
 /**
  * Overrides the sendRequest method from TranscriptionService
