@@ -7,7 +7,7 @@ import Word from "../word";
 /**
  * Implements a TranscriptionService for a Sphinx4 http server
  */
-var SphinxService = function(url) {
+var SphinxService = function() {
     //set the correct url
     this.url = getURL();
 };
