@@ -280,7 +280,10 @@ UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
  */
 UI.initConference = function () {
     let id = APP.conference.getMyUserId();
-    Toolbar.updateRoomUrl(window.location.href);
+    Toolbar.updateRoomUrl(
+        // Do not include query parameters
+        // "https://example.com" + "/SomeConference1245"
+        window.location.origin + window.location.pathname);
 
     // Add myself to the contact list.
     ContactList.addContact(id);
