@@ -13,6 +13,7 @@ import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
+import AnalyticsAdapter from './modules/statistics/AnalyticsAdapter';
 
 import {reportError} from './modules/util/helpers';
 
@@ -889,6 +890,7 @@ export default {
                 return this.useVideoStream(stream);
             }).then(() => {
                 this.videoSwitchInProgress = false;
+                AnalyticsAdapter.sendEvent('conference.sharingDesktop.start');
                 console.log('sharing local desktop');
             }).catch((err) => {
                 this.videoSwitchInProgress = false;
@@ -934,6 +936,7 @@ export default {
                 ([stream]) => this.useVideoStream(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
+                AnalyticsAdapter.sendEvent('conference.sharingDesktop.stop');
                 console.log('sharing local video');
             }).catch((err) => {
                 this.useVideoStream(null);
@@ -1292,6 +1295,7 @@ export default {
             try {
                 room.selectParticipant(id);
             } catch (e) {
+                AnalyticsAdapter.sendEvent('selectParticipant.failed');
                 reportError(e);
             }
         });
@@ -1316,6 +1320,7 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
+                AnalyticsAdapter.sendEvent('settings.changeDevice.video');
                 createLocalTracks({
                     devices: ['video'],
                     cameraDeviceId: cameraDeviceId,
@@ -1336,6 +1341,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
+                AnalyticsAdapter.sendEvent('settings.changeDevice.audioIn');
                 createLocalTracks({
                     devices: ['audio'],
                     cameraDeviceId: null,
@@ -1356,6 +1362,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             (audioOutputDeviceId) => {
+                AnalyticsAdapter.sendEvent('settings.changeDevice.audioOut');
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => console.log('changed audio output device'))
                     .catch((err) => {
