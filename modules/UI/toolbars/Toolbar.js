@@ -26,7 +26,11 @@ function openLinkDialog () {
         false, "dialog.Invite",
         function (e, v) {
             if (v && roomUrl) {
+                AnalyticsAdapter.sendEvent('toolbar.invite.button');
                 emitter.emit(UIEvents.USER_INVITED, roomUrl);
+            }
+            else {
+                AnalyticsAdapter.sendEvent('toolbar.invite.cancel');
             }
         },
         function (event) {
@@ -37,6 +41,10 @@ function openLinkDialog () {
                     $(event.target).find('button[value=true]').prop('disabled', true);
                 }
             }
+        },
+        function (e, v, m, f) {
+            if(!v && !m && !f)
+                AnalyticsAdapter.sendEvent('toolbar.invite.close');
         }
     );
 }

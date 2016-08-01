@@ -1,5 +1,6 @@
 /* global $, APP, config, interfaceConfig */
 import UIEvents from "../../service/UI/UIEvents";
+import AnalyticsAdapter from '../statistics/AnalyticsAdapter';
 
 /**
  * Constructs the html for the overall feedback window.
@@ -199,9 +200,12 @@ var Feedback = {
                         var feedbackDetails
                             = document.getElementById("feedbackTextArea").value;
 
-                        if (feedbackDetails && feedbackDetails.length > 0)
+                        if (feedbackDetails && feedbackDetails.length > 0) {
+                            AnalyticsAdapter.sendEvent(
+                                'feedback.rating', Feedback.feedbackScore);
                             APP.conference.sendFeedback( Feedback.feedbackScore,
                                                     feedbackDetails);
+                        }
 
                         if (feedbackWindowCallback)
                             feedbackWindowCallback();
@@ -227,6 +231,7 @@ var Feedback = {
                     closeText: '',
                     loaded: onLoadFunction,
                     position: {width: 500}}, null);
+        AnalyticsAdapter.sendEvent('feedback.open');
     },
     /**
      * Toggles the appropriate css class for the given number of stars, to
