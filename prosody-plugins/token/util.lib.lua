@@ -1,7 +1,7 @@
 -- Token authentication
 -- Copyright (C) 2015 Atlassian
 
-local jwt = require "jwt";
+local jwt = require "luajwtjitsi";
 
 local _M = {};
 
