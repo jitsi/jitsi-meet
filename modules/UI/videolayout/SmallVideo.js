@@ -3,6 +3,7 @@
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -165,6 +166,7 @@ SmallVideo.createStreamElement = function (stream) {
             = window.performance.now();
         console.log("(TIME) Render " + type + ":\t",
                     now);
+        AnalyticsAdapter.sendEvent('render.' + type, now);
     };
     return element;
 };
