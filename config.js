@@ -72,5 +72,5 @@ var config = {
     minHDHeight: 540,
     //disable lipsync so video does not get recorder
     //enableLipSync:false
-    sphinxURL: "localhost"
+    sphinxURL: "http://localhost:8081/recognise"
 };
