@@ -29,7 +29,8 @@ SphinxService.constructor = SphinxService;
  * @param byteArray the recorder audio stream an an array of bytes
  * @param callback the callback function retrieving the server response
  */
-SphinxService.sendRequest = function(byteArray, callback) {
+SphinxService.prototype.sendRequest = function(byteArray, callback) {
+    console.log("sending the following object to "+this.url+":\n"+byteArray);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if(request.readyState === XMLHttpRequest.DONE && request.status === 200)
@@ -49,7 +50,7 @@ SphinxService.sendRequest = function(byteArray, callback) {
  *
  * @param answer the answer retrieved from the Sphinx4 server
  */
-SphinxService.parseRequest = function(answer) {
+SphinxService.prototype.parseRequest = function(answer) {
     console.log("should parse:\n" + answer);
 };
 
