@@ -122,7 +122,7 @@ function LoginDialog(successCallback, cancelCallback) {
     };
 
     var connDialog = APP.UI.messageHandler.openDialogWithStates(
-        states, { persistent: true, closeText: '' }, null
+        states, { persistent: true, closeText: '', zIndex: 1014 }, null
     );
 
     /**
