@@ -168,6 +168,11 @@ SmallVideo.createStreamElement = function (stream) {
                     now);
         AnalyticsAdapter.sendEvent('render.' + type, now);
 
+        // Time to first media, a number that can be used for comparision of
+        // time fot rendering media. It can be used for the first and
+        // the rest participants. It subtracts the period of waiting for the
+        // second participant to join (time between join and first
+        // session initiate).
         var ttfm = now - APP.connectionTimes["document.ready"]
             - (APP.conference.getConnectionTimes()["session.initiate"]
                 - APP.conference.getConnectionTimes()["muc.joined"]);
