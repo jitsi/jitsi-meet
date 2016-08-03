@@ -298,7 +298,9 @@ UI.initConference = function () {
     UI.updateLocalRole(false);
 
     // Once we've joined the muc show the toolbar
-    ToolbarToggler.showToolbar();
+    if (!RingOverlay.isDisplayed()) {
+        ToolbarToggler.showToolbar();
+    }
 
     let displayName = config.displayJids ? id : Settings.getDisplayName();
 
@@ -1413,14 +1415,12 @@ let bottomToolbarEnabled = null;
 
 UI.showRingOverLay = function () {
     RingOverlay.show(APP.tokenData.callee);
-    ToolbarToggler.setAlwaysVisibleToolbar(true);
     FilmStrip.toggleFilmStrip(false);
 };
 
 UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
-    ToolbarToggler.resetAlwaysVisibleToolbar();
     FilmStrip.toggleFilmStrip(true);
 };
 

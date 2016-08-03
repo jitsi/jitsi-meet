@@ -78,5 +78,14 @@ export default {
         overlay.destroy();
         overlay = null;
         return true;
+    },
+    /**
+     * Checks whether or not the ring overlay is currently displayed.
+     *
+     * @returns {boolean} true if the ring overlay is currently displayed or
+     * false otherwise.
+     */
+    isDisplayed () {
+        return overlay !== null;
     }
 };
