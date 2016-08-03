@@ -282,8 +282,9 @@ UI.initConference = function () {
     let id = APP.conference.getMyUserId();
 
     // Do not include query parameters in the invite URL
-    // "https://example.com" + "/SomeConference1245"
-    var inviteURL = window.location.origin + window.location.pathname;
+    // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
+    var inviteURL = window.location.protocol + "//" +
+        window.location.host + window.location.pathname;
     Toolbar.updateRoomUrl(inviteURL);
     // Clean up the URL displayed by the browser
     if (window.history && typeof window.history.replaceState === 'function') {
