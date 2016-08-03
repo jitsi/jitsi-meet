@@ -628,6 +628,12 @@ export default {
     sendFeedback (overallFeedback, detailedFeedback) {
         return room.sendFeedback (overallFeedback, detailedFeedback);
     },
+    /**
+     * Returns the connection times stored in the library.
+     */
+    getConnectionTimes () {
+        return this._room.getConnectionTimes();
+    },
     // used by torture currently
     isJoined () {
         return this._room
