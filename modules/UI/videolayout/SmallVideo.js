@@ -167,6 +167,12 @@ SmallVideo.createStreamElement = function (stream) {
         console.log("(TIME) Render " + type + ":\t",
                     now);
         AnalyticsAdapter.sendEvent('render.' + type, now);
+
+        var ttfm = now - APP.connectionTimes["document.ready"]
+            - (APP.conference.getConnectionTimes()["session.initiate"]
+                - APP.conference.getConnectionTimes()["muc.joined"]);
+        console.log("(TIME) TTFM " + type + ":\t", ttfm);
+        AnalyticsAdapter.sendEvent('ttfm.' + type, ttfm);
     };
     return element;
 };
