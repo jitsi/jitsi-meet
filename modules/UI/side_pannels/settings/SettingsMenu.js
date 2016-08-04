@@ -137,30 +137,37 @@ export default {
 
 
         // DEVICES LIST
-        if (JitsiMeetJS.mediaDevices.isDeviceListAvailable() &&
-            JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
-            this.changeDevicesList([]);
+        JitsiMeetJS.mediaDevices.isDeviceListAvailable()
+            .then((isDeviceListAvailable) => {
+                if (isDeviceListAvailable &&
+                    JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
+                    this._initializeDeviceSelectionSettings(emitter);
+                }
+            });
+    },
 
-            $('#selectCamera').change(function () {
-                let cameraDeviceId = $(this).val();
-                if (cameraDeviceId !== Settings.getCameraDeviceId()) {
-                    emitter.emit(UIEvents.VIDEO_DEVICE_CHANGED, cameraDeviceId);
-                }
-            });
-            $('#selectMic').change(function () {
-                let micDeviceId = $(this).val();
-                if (micDeviceId !== Settings.getMicDeviceId()) {
-                    emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
-                }
-            });
-            $('#selectAudioOutput').change(function () {
-                let audioOutputDeviceId = $(this).val();
-                if (audioOutputDeviceId !== Settings.getAudioOutputDeviceId()) {
-                    emitter.emit(UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
-                        audioOutputDeviceId);
-                }
-            });
-        }
+    _initializeDeviceSelectionSettings(emitter) {
+        this.changeDevicesList([]);
+
+        $('#selectCamera').change(function () {
+            let cameraDeviceId = $(this).val();
+            if (cameraDeviceId !== Settings.getCameraDeviceId()) {
+                emitter.emit(UIEvents.VIDEO_DEVICE_CHANGED, cameraDeviceId);
+            }
+        });
+        $('#selectMic').change(function () {
+            let micDeviceId = $(this).val();
+            if (micDeviceId !== Settings.getMicDeviceId()) {
+                emitter.emit(UIEvents.AUDIO_DEVICE_CHANGED, micDeviceId);
+            }
+        });
+        $('#selectAudioOutput').change(function () {
+            let audioOutputDeviceId = $(this).val();
+            if (audioOutputDeviceId !== Settings.getAudioOutputDeviceId()) {
+                emitter.emit(
+                    UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED, audioOutputDeviceId);
+            }
+        });
     },
 
     /**
