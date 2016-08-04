@@ -144,8 +144,7 @@
 }
 
 #remoteVideos .videocontainer>span.focusindicator,
-#remoteVideos .videocontainer>span.remotevideomenu {
-    display: inline-block;
+#remoteVideos .videocontainer>div.remotevideomenu {
     position: absolute;
     color: #FFFFFF;
     top: 0;
@@ -157,6 +156,14 @@
     border: 0px;
     z-index: 2;
     text-align: center;
+}
+
+#remoteVideos .videocontainer>span.focusindicator {
+    display: inline-block;
+}
+
+#remoteVideos .videocontainer>div.remotevideomenu {
+    display: block;
 }
 
 .videocontainer>span.displayname,
