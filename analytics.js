@@ -11,7 +11,10 @@
   }
 
   Analytics.prototype.sendEvent = function (action, data) {
-    ga('send', 'event', 'jit.si', action);
+    // empty label and add the value, the value should be integer or null
+    var value = parseInt(data);
+
+    ga('send', 'event', 'jit.si', action, "", value ? value : null);
   };
 
   ctx.Analytics = Analytics;

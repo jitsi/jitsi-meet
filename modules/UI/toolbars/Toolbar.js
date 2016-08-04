@@ -82,6 +82,7 @@ const buttonHandlers = {
         }
     },
     "toolbar_button_security": function () {
+        AnalyticsAdapter.sendEvent('toolbar.lock.clicked');
         emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
     },
     "toolbar_button_link": function () {

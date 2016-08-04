@@ -173,7 +173,7 @@ SmallVideo.createStreamElement = function (stream) {
         // the rest participants. It subtracts the period of waiting for the
         // second participant to join (time between join and first
         // session initiate).
-        var ttfm = now - APP.connectionTimes["document.ready"]
+        var ttfm = now
             - (APP.conference.getConnectionTimes()["session.initiate"]
                 - APP.conference.getConnectionTimes()["muc.joined"]);
         console.log("(TIME) TTFM " + type + ":\t", ttfm);
