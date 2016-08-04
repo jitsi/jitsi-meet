@@ -26,10 +26,10 @@ transcriber.stop = function stop() {
 };
 
 /**
- * Call back function which gets
+ * This method gets the answer from the transcription service
  */
 var byteArrayCallBack = function(answer){
-
+    console.log(answer);
 };
 
 /**
