@@ -8,6 +8,7 @@ import LargeContainer from '../videolayout/LargeContainer';
 import SmallVideo from '../videolayout/SmallVideo';
 import FilmStrip from '../videolayout/FilmStrip';
 import ToolbarToggler from "../toolbars/ToolbarToggler";
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 export const SHARED_VIDEO_CONTAINER_TYPE = "sharedvideo";
 
@@ -68,17 +69,25 @@ export default class SharedVideoManager {
 
         if(!this.isSharedVideoShown) {
             requestVideoLink().then(
-                    url => this.emitter.emit(
-                                UIEvents.UPDATE_SHARED_VIDEO, url, 'start'),
-                    err => console.log('SHARED VIDEO CANCELED', err)
+                    url => {
+                        this.emitter.emit(
+                            UIEvents.UPDATE_SHARED_VIDEO, url, 'start');
+                        AnalyticsAdapter.sendEvent('sharedvideo.started');
+                    },
+                    err => {
+                        console.log('SHARED VIDEO CANCELED', err);
+                        AnalyticsAdapter.sendEvent('sharedvideo.canceled');
+                    }
             );
             return;
         }
 
         if(APP.conference.isLocalId(this.from)) {
-            showStopVideoPropmpt().then(() =>
-                this.emitter.emit(
-                    UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop'),
+            showStopVideoPropmpt().then(() => {
+                    this.emitter.emit(
+                        UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
+                    AnalyticsAdapter.sendEvent('sharedvideo.stoped');
+                },
                 () => {});
         } else {
             dialog = APP.UI.messageHandler.openMessageDialog(
@@ -89,6 +98,7 @@ export default class SharedVideoManager {
                     dialog = null;
                 }
             );
+            AnalyticsAdapter.sendEvent('sharedvideo.alreadyshared');
         }
     }
 
@@ -192,6 +202,7 @@ export default class SharedVideoManager {
                 self.smartAudioMute();
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.smartAudioUnmute();
+                AnalyticsAdapter.sendEvent('sharedvideo.paused');
             }
             self.fireSharedVideoEvent(event.data == YT.PlayerState.PAUSED);
         };
@@ -221,6 +232,7 @@ export default class SharedVideoManager {
             else if (event.data.volume <=0 || event.data.muted) {
                 self.smartAudioUnmute();
             }
+            AnalyticsAdapter.sendEvent('sharedvideo.volumechanged');
         };
 
         window.onPlayerReady = function(event) {

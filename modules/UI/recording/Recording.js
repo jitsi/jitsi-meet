@@ -20,6 +20,7 @@ import VideoLayout from '../videolayout/VideoLayout';
 import Feedback from '../Feedback.js';
 import Toolbar from '../toolbars/Toolbar';
 import BottomToolbar from '../toolbars/BottomToolbar';
+import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 /**
  * The dialog for user input.
@@ -306,13 +307,16 @@ var Recording = {
         selector.click(function () {
             if (dialog)
                 return;
-
+            AnalyticsAdapter.sendEvent('recording.clicked');
             switch (self.currentState) {
                 case Status.ON:
                 case Status.RETRYING:
                 case Status.PENDING: {
-                    _showStopRecordingPrompt(recordingType).then(() =>
-                        self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED),
+                    _showStopRecordingPrompt(recordingType).then(
+                        () => {
+                            self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED);
+                            AnalyticsAdapter.sendEvent('recording.stopped');
+                        },
                         () => {});
                     break;
                 }
@@ -322,26 +326,35 @@ var Recording = {
                         _requestLiveStreamId().then((streamId) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {streamId: streamId});
+                            AnalyticsAdapter.sendEvent('recording.started');
                         }).catch(
                             reason => {
                                 if (reason !== APP.UI.messageHandler.CANCEL)
                                     console.error(reason);
+                                else
+                                    AnalyticsAdapter.sendEvent(
+                                        'recording.canceled');
                             }
                         );
                     else {
                         if (self.predefinedToken) {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {token: self.predefinedToken});
+                            AnalyticsAdapter.sendEvent('recording.started');
                             return;
                         }
 
                         _requestRecordingToken().then((token) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {token: token});
+                            AnalyticsAdapter.sendEvent('recording.started');
                         }).catch(
                             reason => {
                                 if (reason !== APP.UI.messageHandler.CANCEL)
                                     console.error(reason);
+                                else
+                                    AnalyticsAdapter.sendEvent(
+                                        'recording.canceled');
                             }
                         );
                     }
