@@ -119,7 +119,7 @@ audioRecorder.removeTrack = function(jitsiTrack){
             getParticipantById()){
             var recorderToRemove = array[i];
             if(audioRecorder.isRecording){
-                recorderToRemove.stop()
+                recorderToRemove.stop();
             }
             else {
                 array.slice(i, 1);
@@ -157,7 +157,7 @@ audioRecorder.stop = function() {
     audioRecorder.recorders.forEach(function(trackRecorder){
        trackRecorder.recorder.stop();
    });
-    console.log("stopped recording")
+    console.log("stopped recording");
 };
 
 /**
