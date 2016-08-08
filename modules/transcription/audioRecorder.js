@@ -187,20 +187,17 @@ audioRecorder.getFileType = function () {
  * @returns MediaStream
  */
 function createEmptyStream() {
-    // Firefox supports the MediaStream object
-    try {
+    // Firefox supports the MediaStream object, Chrome webkitMediaStream
+    if(MediaStream) {
         return new MediaStream();
     }
-    // if it's chrome we have to use their webKit version
-    catch(e){
-        if(e instanceof ReferenceError)
-        {
-            return new webkitMediaStream();
-        }
-        else {
-            throw new Error("cannot create a clean MediaStream");
-        }
+    else if(webkitMediaStream) {
+        return new webkitMediaStream();
     }
+    else {
+        throw new Error("cannot create a clean mediaStream");
+    }
+
 }
 
 /**
