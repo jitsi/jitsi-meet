@@ -35,6 +35,10 @@ TranscriptionService.prototype.sendRequest = function(array, callback) {
  *
  * The transcriber class expect an array of word objects, where each word
  * object is one transcribed word by the service.
+ * 
+ * The expected output of this method is an array of word objects, in
+ * the correct order. That is, the first object in the array is the first word
+ * being said, and the last word in the array is the last word being said
  *
  * @param answer the answer from the server to be formatted
  */

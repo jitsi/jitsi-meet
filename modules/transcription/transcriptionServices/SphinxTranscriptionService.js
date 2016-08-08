@@ -43,25 +43,21 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     request.setRequestHeader("Content-Type",
         APP.transcriber.getAudioRecorder().getFileType());
     request.send(audioFileBlob);
-
-};
-
-SphinxService.prototype.formatResponse = function(answer){
-    console.log(answer);
 };
 
 /**
- * Overrides the parseRequest method from AbstractTranscriptionService
+ * Overrides the formatResponse method from AbstractTranscriptionService
  * It will parse the answer from the server in the expected format
  *
  * @param answer the answer retrieved from the Sphinx4 server
  */
-SphinxService.prototype.parseRequest = function(answer) {
+SphinxService.prototype.formatResponse = function(answer) {
     var result = answer.result;
     var array = [];
     result.forEach(function(word){
-        array.push(new Word(word.word, word.start, word.end,
-            word.filler));
+        if(!word.filler) {
+            array.push(new Word(word.word, word.start, word.end));
+        }
     });
     return array;
 };
