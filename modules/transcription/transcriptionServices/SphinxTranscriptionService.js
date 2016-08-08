@@ -43,6 +43,7 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     request.setRequestHeader("Content-Type",
         APP.transcriber.getAudioRecorder().getFileType());
     request.send(audioFileBlob);
+    console.log("send " + audioFileBlob)
 };
 
 /**
