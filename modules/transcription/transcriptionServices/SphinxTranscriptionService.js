@@ -46,6 +46,11 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     console.log("send " + audioFileBlob)
 };
 
+SphinxService.prototype.formatResponse = function(answer)
+{
+    console.log(answer);
+};
+
 /**
  * Overrides the formatResponse method from AbstractTranscriptionService
  * It will parse the answer from the server in the expected format
