@@ -31,7 +31,7 @@ SphinxService.constructor = SphinxService;
  */
 SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     console.log("sending an audio file  to " + this.url);
-    console.log("the audio file beign sent: " + audioFileBlob);
+    console.log("the audio file being sent: " + audioFileBlob);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if(request.readyState === XMLHttpRequest.DONE && request.status === 200)
@@ -44,6 +44,11 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
         APP.transcriber.getAudioRecorder().getFileType());
     request.send(audioFileBlob);
 
+};
+
+SphinxService.prototype.formatResponse = function(answer)
+{
+    console.log(answer);
 };
 
 /**
