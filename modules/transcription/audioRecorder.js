@@ -165,10 +165,10 @@ audioRecorder.download = function () {
  *
  * @returns {Array}
  */
-audioRecorder.getByteArrays = function () {
+audioRecorder.getBlobs = function () {
     var array = [];
     audioRecorder.recorders.forEach(function (recorder) {
-       array.push(recorder.data);
+        array.push(new Blob(recorder.data, {type: audioRecorder.fileType}));
     });
     return array;
 };

@@ -20,15 +20,15 @@ transcriber.start = function start() {
 transcriber.stop = function stop() {
     console.log("stopping transcription and sending audio files");
     audioRecorder.stop();
-    audioRecorder.getByteArrays().forEach(function(byteArray){
-        transcriber.transcriptionService.send(byteArray, byteArrayCallBack);
+    audioRecorder.getBlobs().forEach(function(audioFileBlob){
+        transcriber.transcriptionService.send(audioFileBlob, blobCallBack);
     });
 };
 
 /**
  * This method gets the answer from the transcription service
  */
-var byteArrayCallBack = function(answer){
+var blobCallBack = function(answer){
     console.log(answer);
 };
 

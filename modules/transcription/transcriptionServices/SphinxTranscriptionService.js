@@ -29,7 +29,7 @@ SphinxService.constructor = SphinxService;
  * @param byteArray the recorder audio stream an an array of bytes
  * @param callback the callback function retrieving the server response
  */
-SphinxService.prototype.sendRequest = function(byteArray, callback) {
+SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     console.log("sending an audio file  to " + this.url);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -41,7 +41,7 @@ SphinxService.prototype.sendRequest = function(byteArray, callback) {
     request.open("POST", this.url);
     request.setRequestHeader("Content-Type",
         APP.transcriber.getAudioRecorder().getFileType());
-    request.send(byteArray);
+    request.send(audioFileBlob);
 };
 
 /**
