@@ -70,15 +70,6 @@ function determineCorrectFileType()
 }
 
 /**
- * Writes the TrackRecorder.data buffer to disk to free up RAM
- * @param trackRecorder
- */
-// function writeBufferToDisk(trackRecorder)
-// {
-//
-// }
-
-/**
  * main exported object of the file, holding all
  * relevant functions and variables for the outside world
  */
@@ -105,7 +96,7 @@ audioRecorder.addTrack = function (track) {
         var trackRecorder = instantiateTrackRecorder(track);
         //push it to the local array of all recorders
         audioRecorder.recorders.push(trackRecorder);
-        //is we're already recording, immediately start recording this new track
+        //if we're already recording, immediately start recording this new track
         if(audioRecorder.isRecording)        {
             trackRecorder.recorder.start();
         }
@@ -116,10 +107,10 @@ audioRecorder.addTrack = function (track) {
  * Notifies the module that a specific track has stopped, e.g partipant left
  * the conference.
  * This method will tell the MediaRecorder of the specific track to stop
- * recording, if //todo determine constraints
+ * recording,
  */
 audioRecorder.removeTrack = function(track){
-
+    //todo implement
 };
 
 /**
