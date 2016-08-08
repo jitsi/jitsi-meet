@@ -21,6 +21,8 @@ function LocalVideo(VideoLayout, emitter) {
             return APP.conference.getMyUserId();
         }
     });
+    this.initBrowserSpecificProperties();
+
     SmallVideo.call(this, VideoLayout);
 }
 

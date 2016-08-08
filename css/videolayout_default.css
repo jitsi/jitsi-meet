@@ -41,13 +41,6 @@
     background-size: contain;
     border-radius:1px;
     border: 1px solid #212425;
-    /**
-      * Some browsers don't have full support of the object-fit property for the
-      * video element and when we set video object-fit to "cover" the video
-      * actually overflows the boundaries of its container, so it's important
-      * to indicate that the "overflow" should be hidden.
-      */
-    overflow: hidden;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {

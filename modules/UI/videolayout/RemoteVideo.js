@@ -27,6 +27,9 @@ RemoteVideo.prototype.constructor = RemoteVideo;
 
 RemoteVideo.prototype.addRemoteVideoContainer = function() {
     this.container = RemoteVideo.createContainer(this.videoSpanId);
+
+    this.initBrowserSpecificProperties();
+
     if (APP.conference.isModerator) {
         this.addRemoteVideoMenu();
     }
