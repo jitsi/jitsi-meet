@@ -277,7 +277,27 @@ class VideoContainer extends LargeContainer {
         this.stream = stream;
         this.videoType = videoType;
 
-        stream.attach(this.$video);
+        if (RTCBrowserType.isTemasysPluginUsed()) {
+            // when Temasys plugin is in use stream.attach fails
+            // if element is not visible
+            // so we need to make it visible, but opaque
+
+            this.$wrapper.show().css({
+                opacity: 0
+            });
+
+            try {
+                stream.attach(this.$video);
+            } catch (e) {
+                console.error('failed to attach stream', e);
+            }
+
+            this.$wrapper.hide().css({
+                opacity: ''
+            });
+        } else {
+            stream.attach(this.$video);
+        }
 
         let flipX = stream.isLocal() && !this.isScreenSharing();
         this.$video.css({
