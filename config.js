@@ -1,6 +1,5 @@
 /* jshint -W101 */
 var config = {
-    var config = {
         hosts: {
             domain: 'nik.jitsi.net',
 
@@ -49,5 +48,4 @@ var config = {
         startAudioMuted: 9,
         startVideoMuted: 9,
         sphinxURL: "http://nik.jitsi.net/recognize-"
-    }
 };
