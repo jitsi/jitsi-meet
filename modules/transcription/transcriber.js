@@ -2,8 +2,10 @@ import audioRecorder from './audioRecorder';
 import SphinxService from
     './transcriptionServices/SphinxTranscriptionService';
 
-
-
+/**
+ *
+ * @type {{audioRecorder, transcriptionService}}
+ */
 var transcriber =  {
 
     audioRecorder: audioRecorder,

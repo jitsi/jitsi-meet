@@ -107,7 +107,7 @@ audioRecorder.addTrack = function (track) {
  * Notifies the module that a specific track has stopped, e.g partipant left
  * the conference.
  * This method will tell the MediaRecorder of the specific track to stop
- * recording,
+ * recording
  */
 audioRecorder.removeTrack = function(track){
     //todo implement
@@ -162,8 +162,8 @@ audioRecorder.download = function () {
 };
 
 /**
- *
- * @returns {Array}
+ * returns the audio files of all recorders as an array of blobs
+ * @returns {Array} an array of blobs where each blob is a recorder audio file
  */
 audioRecorder.getBlobs = function () {
     var array = [];
