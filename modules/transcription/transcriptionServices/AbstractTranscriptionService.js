@@ -15,9 +15,7 @@ var TranscriptionService = function() {
  * @param callback function which will retrieve the answer
  */
 TranscriptionService.prototype.send = function send(byteArray, callback){
-    this.sendRequest(byteArray, function callBackServer(answerFromServer) {
-        callback(this.formatResponse(answerFromServer));
-    });
+    this.sendRequest(byteArray, this.formatResponse);
 };
 
 /**

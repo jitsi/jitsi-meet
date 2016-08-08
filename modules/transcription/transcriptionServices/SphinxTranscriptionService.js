@@ -46,8 +46,7 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     console.log("send " + audioFileBlob)
 };
 
-SphinxService.prototype.formatResponse = function(answer)
-{
+SphinxService.prototype.formatResponse = function(answer){
     console.log(answer);
 };
 
