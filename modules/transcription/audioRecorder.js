@@ -104,13 +104,28 @@ audioRecorder.addTrack = function (track) {
 };
 
 /**
- * Notifies the module that a specific track has stopped, e.g partipant left
+ * Notifies the module that a specific track has stopped, e.g participant left
  * the conference.
- * This method will tell the MediaRecorder of the specific track to stop
- * recording
+ * if the recording has not started yet, the TrackRecorder will be removed from
+ * the array. If the recording has started, the recorder will stop recording
+ * but not removed from the array so that the recording can still be
+ * accessed
  */
-audioRecorder.removeTrack = function(track){
-    //todo implement
+audioRecorder.removeTrack = function(jitsiTrack){
+    var array = audioRecorder.recorders;
+    for(var i = 0; i < array.length; i++)
+    {
+        if(array[i].track.getParticipantById() === jitsiTrack.
+            getParticipantById()){
+            var recorderToRemove = array[i];
+            if(audioRecorder.isRecording){
+                recorderToRemove.stop()
+            }
+            else {
+                array.slice(i, 1);
+            }
+        }
+    }
 };
 
 /**
@@ -142,6 +157,7 @@ audioRecorder.stop = function() {
     audioRecorder.recorders.forEach(function(trackRecorder){
        trackRecorder.recorder.stop();
    });
+    console.log("stopped recording")
 };
 
 /**
@@ -197,7 +213,6 @@ function createEmptyStream() {
     else {
         throw new Error("cannot create a clean mediaStream");
     }
-
 }
 
 /**
