@@ -3,7 +3,6 @@
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
-import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
