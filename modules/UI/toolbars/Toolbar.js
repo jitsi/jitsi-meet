@@ -428,15 +428,21 @@ const Toolbar = {
 
     /**
      * Indicates if the toolbar is currently hovered.
-     * @return {true} if the toolbar is currently hovered, {false} otherwise
+     * @return {boolean} true if the toolbar is currently hovered,
+     * false otherwise
      */
     isHovered() {
+        var hovered = false;
         this.toolbarSelector.find('*').each(function () {
             let id = $(this).attr('id');
             if ($(`#${id}:hover`).length > 0) {
-                return true;
+                hovered = true;
+                // break each
+                return false;
             }
         });
+        if (hovered)
+            return true;
         if ($("#bottomToolbar:hover").length > 0) {
             return true;
         }
