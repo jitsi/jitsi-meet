@@ -1,7 +1,5 @@
 /* global APP, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
-//FIXME:
-import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 /**
  * Show dialog which asks user for new password for the conference.
@@ -152,7 +150,7 @@ export default function createRoomLocker (room) {
             return askToUnlock().then(
                 () => { return lock(); }
             ).then(function () {
-                AnalyticsAdapter.sendEvent('toolbar.lock.disabled');
+                JitsiMeetJS.analytics.sendEvent('toolbar.lock.disabled');
             }).catch(
                 reason => {
                     if (reason !== APP.UI.messageHandler.CANCEL)
@@ -170,7 +168,7 @@ export default function createRoomLocker (room) {
             return askForNewPassword().then(
                 newPass => { return lock(newPass);}
             ).then(function () {
-                AnalyticsAdapter.sendEvent('toolbar.lock.enabled');
+                JitsiMeetJS.analytics.sendEvent('toolbar.lock.enabled');
             }).catch(
                 reason => {
                     if (reason !== APP.UI.messageHandler.CANCEL)

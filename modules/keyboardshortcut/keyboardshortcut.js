@@ -1,5 +1,4 @@
-/* global APP, $ */
-import AnalyticsAdapter from '../statistics/AnalyticsAdapter';
+/* global APP, $, JitsiMeetJS */
 //maps keycode to character, id of popover for given function and function
 var shortcuts = {};
 function initShortcutHandlers() {
@@ -14,7 +13,7 @@ function initShortcutHandlers() {
             character: "C",
             id: "toggleChatPopover",
             function: function() {
-                AnalyticsAdapter.sendEvent('shortcut.chat.toggled');
+                JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
                 APP.UI.toggleChat();
             }
         },
@@ -22,7 +21,7 @@ function initShortcutHandlers() {
             character: "D",
             id: "toggleDesktopSharingPopover",
             function: function () {
-                AnalyticsAdapter.sendEvent('shortcut.screen.toggled');
+                JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
                 APP.conference.toggleScreenSharing();
             }
         },
@@ -30,7 +29,7 @@ function initShortcutHandlers() {
             character: "F",
             id: "filmstripPopover",
             function: function() {
-                AnalyticsAdapter.sendEvent('shortcut.film.toggled');
+                JitsiMeetJS.analytics.sendEvent('shortcut.film.toggled');
                 APP.UI.toggleFilmStrip();
             }
         },
@@ -38,14 +37,14 @@ function initShortcutHandlers() {
             character: "M",
             id: "mutePopover",
             function: function() {
-                AnalyticsAdapter.sendEvent('shortcut.audiomute.toggled');
+                JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
                 APP.conference.toggleAudioMuted();
             }
         },
         "R": {
             character: "R",
             function: function() {
-                AnalyticsAdapter.sendEvent('shortcut.raisedhand.toggled');
+                JitsiMeetJS.analytics.sendEvent('shortcut.raisedhand.toggled');
                 APP.conference.maybeToggleRaisedHand();
             }
 
@@ -53,7 +52,7 @@ function initShortcutHandlers() {
         "T": {
             character: "T",
             function: function() {
-                AnalyticsAdapter.sendEvent('shortcut.talk.clicked');
+                JitsiMeetJS.analytics.sendEvent('shortcut.talk.clicked');
                 APP.conference.muteAudio(true);
             }
         },
@@ -61,14 +60,14 @@ function initShortcutHandlers() {
             character: "V",
             id: "toggleVideoPopover",
             function: function() {
-                AnalyticsAdapter.sendEvent('shortcut.videomute.toggled');
+                JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
                 APP.conference.toggleVideoMuted();
             }
         },
         "?": {
             character: "?",
             function: function(e) {
-                AnalyticsAdapter.sendEvent('shortcut.shortcut.help');
+                JitsiMeetJS.analytics.sendEvent('shortcut.shortcut.help');
                 APP.UI.toggleKeyboardShortcutsPanel();
             }
         }
