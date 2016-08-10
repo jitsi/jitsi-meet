@@ -34,6 +34,7 @@ deploy-appbundle:
 	$(OUTPUT_DIR)/app.bundle.js $(OUTPUT_DIR)/app.bundle.js.map \
 	$(OUTPUT_DIR)/external_api.js.map $(OUTPUT_DIR)/external_api.js \
 	$(OUTPUT_DIR)/external_api.min.map $(OUTPUT_DIR)/external_api.min.js \
+	$(OUTPUT_DIR)/analytics.js \
 	$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
