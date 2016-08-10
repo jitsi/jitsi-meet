@@ -1214,6 +1214,33 @@ UI.showExtensionRequiredDialog = function (url) {
 };
 
 /**
+ * Shows "Please go to chrome webstore to install the desktop sharing extension"
+ * 2 button dialog with buttons - cancel and go to web store.
+ * @param url {string} the url of the extension.
+ */
+UI.showExtensionExternalInstallationDialog = function (url) {
+    messageHandler.openTwoButtonDialog(
+        "dialog.externalInstallationTitle",
+        null,
+        "dialog.externalInstallationMsg",
+        null,
+        true,
+        "dialog.goToStore",
+         function(e,v,m,f){
+            if (v) {
+                e.preventDefault();
+                eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
+            }
+        },
+        function () {},
+        function () {
+            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+        }
+    );
+};
+
+
+/**
  * Shows dialog with combined information about camera and microphone errors.
  * @param {JitsiTrackError} micError
  * @param {JitsiTrackError} cameraError
