@@ -263,7 +263,10 @@
         "micUnknownError": "Cannot use microphone for a unknown reason.",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micNotFoundError": "Requested microphone was not found.",
-        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints."
+        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
+        "goToStore": "Go to the webstore",
+        "externalInstallationTitle": "Extension required",
+        "externalInstallationMsg": "You need to install our desktop sharing extension."
     },
     "email":
     {

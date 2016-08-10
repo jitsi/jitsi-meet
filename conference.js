@@ -33,6 +33,11 @@ let room, connection, localAudio, localVideo, roomLocker;
  */
 let connectionIsInterrupted = false;
 
+/**
+ * Indicates whether extension external installation is in progress or not.
+ */
+let DSExternalInstallationInProgress = false;
+
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
@@ -270,7 +275,9 @@ function createLocalTracks (options, checkForPermissionPrompt) {
                 ? APP.settings.getMicDeviceId()
                 : options.micDeviceId,
             // adds any ff fake device settings if any
-            firefox_fake_device: config.firefox_fake_device
+            firefox_fake_device: config.firefox_fake_device,
+            desktopSharingExtensionExternalInstallation:
+                options.desktopSharingExtensionExternalInstallation
         }, checkForPermissionPrompt)
         .catch(function (err) {
             console.error(
@@ -878,9 +885,27 @@ export default {
         }
 
         this.videoSwitchInProgress = true;
+        let externalInstallation = false;
 
         if (shareScreen) {
-            createLocalTracks({ devices: ['desktop'] }).then(([stream]) => {
+            createLocalTracks({
+                devices: ['desktop'],
+                desktopSharingExtensionExternalInstallation: {
+                    interval: 500,
+                    checkAgain: () => {
+                        return DSExternalInstallationInProgress;
+                    },
+                    listener: (url) => {
+                        DSExternalInstallationInProgress = true;
+                        externalInstallation = true;
+                        APP.UI.showExtensionExternalInstallationDialog(url);
+                    }
+                }
+            }).then(([stream]) => {
+                DSExternalInstallationInProgress = false;
+                // close external installation dialog on success.
+                if(externalInstallation)
+                    $.prompt.close();
                 stream.on(
                     TrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
@@ -1132,6 +1157,17 @@ export default {
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
             APP.UI.updateDTMFSupport(isDTMFSupported);
+        });
+
+        APP.UI.addListener(UIEvents.EXTERNAL_INSTALLATION_CANCELED, () => {
+            // Wait a little bit more just to be sure that we won't miss the
+            // extension installation
+            setTimeout(() => DSExternalInstallationInProgress = false, 500);
+        });
+        APP.UI.addListener(UIEvents.OPEN_EXTENSION_STORE, (url) => {
+            window.open(
+                url, "extension_store_window",
+                "resizable,scrollbars=yes,status=1");
         });
 
         APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
