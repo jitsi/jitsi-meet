@@ -98,39 +98,39 @@ a {
 {
     width: 78px;
     height: 78px;
-    background-image: url('/images/chrome.png');
+    background-image: url('../images/chrome.png');
 }
 #chromium_logo
 {
     width: 77px;
     height: 78px;
-    background-image: url('/images/chromium.png');
+    background-image: url('../images/chromium.png');
 }
 #firefox_logo
 {
     width: 86px;
     height: 80px;
-    background-image: url('/images/firefox.png');
+    background-image: url('../images/firefox.png');
 }
 
 #opera_logo
 {
     width: 73px;
     height: 78px;
-    background-image: url('/images/opera.png');
+    background-image: url('../images/opera.png');
 }
 
 #safari_logo
 {
     width: 78px;
     height: 79px;
-    background-image: url('/images/safari.png');
+    background-image: url('../images/safari.png');
 }
 
 #ie_logo
 {
     width: 80px;
     height: 78px;
-    background-image: url('/images/ie.png');
+    background-image: url('../images/ie.png');
 }
 
