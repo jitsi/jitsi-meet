@@ -1305,13 +1305,21 @@ export default {
 
         APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-                // We only care about the delay between simulcast streams.
-                // Longer delays will be caused by something else and will just
-                // poison the data.
-                if (delay < 2000) {
-                    JitsiMeetJS.analytics
-                            .sendEvent('stream.switch.delay', delay);
-                }
+            var logObject = {
+                id: "resolution_change",
+                participant: id,
+                oldValue: oldResolution,
+                newValue: newResolution,
+                delay: delay
+                };
+            room.sendApplicationLog(JSON.stringify(logObject));
+
+            // We only care about the delay between simulcast streams.
+            // Longer delays will be caused by something else and will just
+            // poison the data.
+            if (delay < 2000) {
+                JitsiMeetJS.analytics.sendEvent('stream.switch.delay', delay);
+            }
         });
 
         // Starts or stops the recording for the conference.
