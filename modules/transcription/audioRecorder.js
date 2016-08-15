@@ -204,10 +204,10 @@ audioRecorder.getFileType = function () {
  */
 function createEmptyStream() {
     // Firefox supports the MediaStream object, Chrome webkitMediaStream
-    if(MediaStream) {
+    if(typeof(MediaStream) !== 'undefined') {
         return new MediaStream();
     }
-    else if(webkitMediaStream) {
+    else if(typeof(webkitMediaStream) !== 'undefined') {
         return new webkitMediaStream();
     }
     else {
