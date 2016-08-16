@@ -82,7 +82,7 @@ function getURL() {
     else {
         var toReturn = config.sphinxURL;
         if(toReturn.includes !== undefined && toReturn.includes("https://")){
-            return config.sphinxURL;
+            return toReturn;
         }
         else{
             throw new Error(message);
