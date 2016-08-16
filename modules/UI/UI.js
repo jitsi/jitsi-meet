@@ -298,10 +298,7 @@ UI.initConference = function () {
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
 
-    // Once we've joined the muc show the toolbar
-    if (!RingOverlay.isDisplayed()) {
-        ToolbarToggler.showToolbar();
-    }
+    ToolbarToggler.showToolbar();
 
     let displayName = config.displayJids ? id : Settings.getDisplayName();
 
