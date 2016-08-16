@@ -157,15 +157,6 @@ a.bottomToolbarButton:hover {
     color: #636363;
 }
 
-.bottom_button_separator {
-    display: inline-block;
-    position: relative;
-    left: 5px;
-    width: 20px;
-    height: 1px;
-    background: #373737;
-}
-
 input[type='text'], input[type='password'], textarea {
     -webkit-user-select: text;
     user-select: text;
