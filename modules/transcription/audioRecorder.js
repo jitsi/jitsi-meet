@@ -63,8 +63,8 @@ function stopRecorder(trackRecorder){
  */
 function updateJitsiTrackName(trackRecorder){
     if(trackRecorder.constructor !== TrackRecorder) {
-        throw new Error("Passed an object to updateJitsiTrackName which is not" +
-            " a TrackRecorder object");
+        throw new Error("Passed an object to updateJitsiTrackName which is " +
+            "not a TrackRecorder object");
     }
     var newName = "user"; //todo actually get the name
     if(newName !== 'undefined') {
@@ -237,7 +237,7 @@ audioRecorder.download = function () {
 audioRecorder.getBlobs = function () {
     if(audioRecorder.isRecording) {
         throw new Error("cannot get blobs because the AudioRecorder is still" +
-            "recording!")
+            "recording!");
     }
     var array = [];
     audioRecorder.recorders.forEach(function (recorder) {
