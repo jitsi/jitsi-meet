@@ -19,7 +19,7 @@ transcriber.start = function start() {
 };
 
 
-transcriber.stop = function stop() {
+transcriber.stop = function stop(callback) {
     console.log("stopping transcription and sending audio files");
     audioRecorder.stop();
     audioRecorder.getBlobs().forEach(function(audioFileBlob){
@@ -40,6 +40,5 @@ var blobCallBack = function(answer){
 transcriber.getAudioRecorder = function getAudioRecorder() {
     return this.audioRecorder;
 };
-
 
 module.exports = transcriber;

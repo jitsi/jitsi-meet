@@ -8,8 +8,8 @@ const AUDIO_OGG  = "audio/ogg";     // Supported in firefox
 
 /**
  * A TrackRecorder object holds all the information needed for recording a
- * single JitsiTrack (either remote of local)
- * @param track The JitsiTrack the object is holding
+ * single JitsiTrack (either remote or local)
+ * @param track The JitsiTrack the object is going to hold
  */
 var TrackRecorder = function(track){
     // The JitsiTrack holding the stream
@@ -19,15 +19,65 @@ var TrackRecorder = function(track){
     // The array of data chunks recorded from the stream
     // acts as a buffer until the data is stored on disk
     this.data = null;
+    //the name of the person of the JitsiTrack. This can be undefined and/or
+    //not unique
+    this.name = updateJitsiTrackName(track);
+    //the time of the start of the recording
+    this.startTime = null;
 };
+
+/**
+ * Starts the recording of a JitsiTrack in a TrackRecorder object.
+ * This will also define the timestamp and try to update the name
+ * @param trackRecorder the TrackRecorder to start
+ */
+function startRecorder(trackRecorder) {
+    if(trackRecorder.constructor !== TrackRecorder) {
+        throw new Error("Passed an object to startRecorder which is not a " +
+            "TrackRecorder object");
+    }
+    trackRecorder.recorder.start();
+    trackRecorder.startTime = new Date();
+    updateJitsiTrackName(trackRecorder);
+}
+
+/**
+ * Stops the recording of a JitsiTrack in a TrackRecorder object.
+ * This will also try to update the name
+ * @param trackRecorder the TrackRecorder to stop
+ */
+function stopRecorder(trackRecorder){
+    if(trackRecorder.constructor !== TrackRecorder) {
+        throw new Error("Passed an object to stopRecorder which is not a " +
+            "TrackRecorder object");
+    }
+    trackRecorder.recorder.stop();
+    updateJitsiTrackName(trackRecorder);
+}
+
+/**
+ * Tries to update the name value of a TrackRecorder. If it hasn't changed,
+ * it will keep the exiting name. If it changes to a undefined value, the old
+ * value will also be kept
+ * @param trackRecorder the TrackRecorder object to update the name on
+ */
+function updateJitsiTrackName(trackRecorder){
+    if(trackRecorder.constructor !== TrackRecorder) {
+        throw new Error("Passed an object to updateJitsiTrackName which is not" +
+            " a TrackRecorder object");
+    }
+    var newName = "user"; //todo actually get the name
+    if(newName !== 'undefined') {
+        trackRecorder.name = newName;
+    }
+}
 
 /**
  * Creates a TrackRecorder object. Also creates the MediaRecorder and
  * data array for the trackRecorder.
  * @param track the JitsiTrack holding the audio MediaStream(s)
  */
-function instantiateTrackRecorder(track)
-{
+function instantiateTrackRecorder(track) {
     var trackRecorder = new TrackRecorder(track);
     // Create a new stream which only holds the audio track
     var originalStream = trackRecorder.track.getOriginalStream();
@@ -55,8 +105,7 @@ function instantiateTrackRecorder(track)
  * Determines which kind of audio recording the browser supports
  * chrome supports "audio/webm" and firefox supports "audio/ogg"
  */
-function determineCorrectFileType()
-{
+function determineCorrectFileType() {
     if(MediaRecorder.isTypeSupported(AUDIO_WEBM)) {
         return AUDIO_WEBM;
     }
@@ -97,8 +146,8 @@ audioRecorder.addTrack = function (track) {
         //push it to the local array of all recorders
         audioRecorder.recorders.push(trackRecorder);
         //if we're already recording, immediately start recording this new track
-        if(audioRecorder.isRecording)        {
-            trackRecorder.recorder.start();
+        if(audioRecorder.isRecording){
+            startRecorder(trackRecorder);
         }
     }
 };
@@ -108,18 +157,20 @@ audioRecorder.addTrack = function (track) {
  * the conference.
  * if the recording has not started yet, the TrackRecorder will be removed from
  * the array. If the recording has started, the recorder will stop recording
- * but not removed from the array so that the recording can still be
+ * but not removed from the array so that the recorded stream can still be
  * accessed
+ *
+ * @param jitsiTrack the JitsiTrack to remove from the recording session
  */
 audioRecorder.removeTrack = function(jitsiTrack){
     var array = audioRecorder.recorders;
-    for(var i = 0; i < array.length; i++)
-    {
+    var i;
+    for(i = 0; i < array.length; i++) {
         if(array[i].track.getParticipantById() === jitsiTrack.
             getParticipantById()){
             var recorderToRemove = array[i];
             if(audioRecorder.isRecording){
-                recorderToRemove.stop();
+                stopRecorder(recorderToRemove);
             }
             else {
                 array.slice(i, 1);
@@ -140,7 +191,7 @@ audioRecorder.start = function () {
     audioRecorder.isRecording = true;
     //start all the mediaRecorders
     audioRecorder.recorders.forEach(function(trackRecorder){
-        trackRecorder.recorder.start();
+        startRecorder(trackRecorder);
     });
     //log that recording has started
     console.log("Started the recording of the audio. There are currently " +
@@ -155,8 +206,8 @@ audioRecorder.stop = function() {
     audioRecorder.isRecording = false;
     //stop all recorders
     audioRecorder.recorders.forEach(function(trackRecorder){
-       trackRecorder.recorder.stop();
-   });
+       stopRecorder(trackRecorder);
+    });
     console.log("stopped recording");
 };
 
@@ -178,13 +229,23 @@ audioRecorder.download = function () {
 };
 
 /**
- * returns the audio files of all recorders as an array of blobs
- * @returns {Array} an array of blobs where each blob is a recorder audio file
+ * returns the audio files of all recorders as an array of objects,
+ * which include the name of the owner of the track and the starting time stamp
+ * @returns {Array} an array of objects holding a blob (audioFile), string(name)
+ * and date (startTime) object
  */
 audioRecorder.getBlobs = function () {
+    if(audioRecorder.isRecording) {
+        throw new Error("cannot get blobs because the AudioRecorder is still" +
+            "recording!")
+    }
     var array = [];
     audioRecorder.recorders.forEach(function (recorder) {
-        array.push(new Blob(recorder.data, {type: audioRecorder.fileType}));
+        array.push({
+            blob: new Blob(recorder.data, {type: audioRecorder.fileType}),
+            name: recorder.name,
+            startTime: recorder.startTime
+        });
     });
     return array;
 };
