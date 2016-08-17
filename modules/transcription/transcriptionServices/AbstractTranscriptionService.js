@@ -11,21 +11,29 @@ var TranscriptionService = function() {
  * This method can be used to send the recorder audio stream and
  * retrieve the answer from the transcription service from the callback
  *
- * @param byteArray the recorded audio stream as an array of bytes
- * @param callback function which will retrieve the answer
+ * @param {RecordingResult} recordingResult a recordingResult object which
+ * included the recorded audio stream as a blob
+ * @param {Function} callback  which will retrieve the a RecordingResult with
+ *        the answer as a WordArray
  */
-TranscriptionService.prototype.send = function send(byteArray, callback){
-    this.sendRequest(byteArray, this.formatResponse);
+TranscriptionService.prototype.send = function send(recordingResult, callback){
+    var formatResponse = this.formatResponse;
+    this.sendRequest(recordingResult.blob, function(response){
+        recordingResult.wordArray = formatResponse(response);
+        callback(recordingResult);
+    });
 };
 
 /**
  * Abstract method which will rend the recorder audio stream to the implemented
- * transcription service
+ * transcription service and will retrieve an answer, which will be
+ * called on the given callback method
  *
- * @param array the recorder audio stream as an array of bytes
- * @param callback function which will retrieve the answer from the service
+ * @param {Blob} audioBlob the recorded audio stream as a single Blob
+ * @param {function} callback function which will retrieve the answer
+ *                            from the service
  */
-TranscriptionService.prototype.sendRequest = function(array, callback) {
+TranscriptionService.prototype.sendRequest = function(audioBlob, callback) {
     throw new Error("TranscriptionService.sendRequest is abstract");
 };
 
@@ -35,12 +43,14 @@ TranscriptionService.prototype.sendRequest = function(array, callback) {
  *
  * The transcriber class expect an array of word objects, where each word
  * object is one transcribed word by the service.
- * 
+ *
  * The expected output of this method is an array of word objects, in
  * the correct order. That is, the first object in the array is the first word
  * being said, and the last word in the array is the last word being said
  *
- * @param answer the answer from the server to be formatted
+ * @param answer the answer from the speech-to-text server which needs to be
+ *               formatted
+ * @return {Array} an array of Word objects
  */
 TranscriptionService.prototype.formatResponse = function(answer){
     throw new Error("TranscriptionService.format is abstract");

@@ -4,7 +4,7 @@
  * @param begin the time the word was started being uttered
  * @param end the tome the word stopped being uttered
  */
-var word = function (word, begin, end) {
+var Word = function (word, begin, end, name) {
     this.word = word;
     this.begin = begin;
     this.end = end;
@@ -14,7 +14,7 @@ var word = function (word, begin, end) {
  * Get the string representation of the word
  * @returns {*} the word as a string
  */
-word.prototype.getWord = function() {
+Word.prototype.getWord = function() {
     return this.word;  
 };
 
@@ -22,7 +22,7 @@ word.prototype.getWord = function() {
  * Get the time the word started being uttered
  * @returns {*} the start time as an integer
  */
-word.prototype.getBeginTime = function () {
+Word.prototype.getBeginTime = function () {
     return this.begin;
 };
 
@@ -30,6 +30,6 @@ word.prototype.getBeginTime = function () {
  * Get the time the word stopped being uttered
  * @returns {*} the end time as an integer
  */
-word.prototype.getEndTime = function () {
+Word.prototype.getEndTime = function () {
     return this.end;
 };

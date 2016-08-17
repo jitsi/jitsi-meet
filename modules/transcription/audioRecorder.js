@@ -1,4 +1,5 @@
-/* global JitsiMeetJs, MediaRecorder, MediaStream, webkitMediaStream*/
+/* global APP, MediaRecorder, MediaStream, webkitMediaStream*/
+import RecordingResult from "./recordingResult";
 
 /**
  * Possible audio formats MIME types
@@ -66,7 +67,9 @@ function updateJitsiTrackName(trackRecorder){
         throw new Error("Passed an object to updateJitsiTrackName which is " +
             "not a TrackRecorder object");
     }
-    var newName = "user"; //todo actually get the name
+    var id = trackRecorder.track.getParticipantId();
+    //non-good method via APP
+    var newName = APP.conference._room.getParticipantById(id).getDisplayName();
     if(newName !== 'undefined') {
         trackRecorder.name = newName;
     }
@@ -166,14 +169,14 @@ audioRecorder.removeTrack = function(jitsiTrack){
     var array = audioRecorder.recorders;
     var i;
     for(i = 0; i < array.length; i++) {
-        if(array[i].track.getParticipantById() === jitsiTrack.
-            getParticipantById()){
+        if(array[i].track.getParticipantId() === jitsiTrack.getParticipantId()){
             var recorderToRemove = array[i];
             if(audioRecorder.isRecording){
                 stopRecorder(recorderToRemove);
             }
             else {
-                array.slice(i, 1);
+                //remove the TrackRecorder from the array
+                array.splice(i, 1);
             }
         }
     }
@@ -231,21 +234,21 @@ audioRecorder.download = function () {
 /**
  * returns the audio files of all recorders as an array of objects,
  * which include the name of the owner of the track and the starting time stamp
- * @returns {Array} an array of objects holding a blob (audioFile), string(name)
- * and date (startTime) object
+ * @returns {Array} an array of RecordingResult objects
  */
-audioRecorder.getBlobs = function () {
+audioRecorder.getRecordingResults = function () {
     if(audioRecorder.isRecording) {
         throw new Error("cannot get blobs because the AudioRecorder is still" +
             "recording!");
     }
     var array = [];
     audioRecorder.recorders.forEach(function (recorder) {
-        array.push({
-            blob: new Blob(recorder.data, {type: audioRecorder.fileType}),
-            name: recorder.name,
-            startTime: recorder.startTime
-        });
+        array.push(
+            new RecordingResult(
+            new Blob(recorder.data, {type: audioRecorder.fileType}),
+            recorder.name,
+            recorder.startTime)
+        );
     });
     return array;
 };
