@@ -91,22 +91,24 @@ var blobCallBack = function(answer){
     console.log("retrieved an answer from the transcription service. ");
     //first add the offset between the start of the transcription and
     //the start of the recording to all start and end times
-    var offset = answer.startTime.getUTCMilliseconds() - transcriber.startTime.
-        getUTCMilliseconds(); //transcriber time will always be earlier
-    if(offset < 0) {
-        offset = 0; //presume 0 if it somehow not earlier
+    if(answer.wordArray.length > 0) {
+        var offset = answer.startTime.getUTCMilliseconds() -
+            transcriber.startTime.getUTCMilliseconds();
+        //transcriber time will always be earlier
+        if (offset < 0) {
+            offset = 0; //presume 0 if it somehow not earlier
+        }
+
+        answer.wordArray.forEach(function (wordObject) {
+            wordObject.begin += offset;
+            wordObject.end += offset;
+        });
+
+        //give a name value to the Array object so that the merging can access
+        //the name value without having to use the whole recordingResult object
+        //in the algorithm
+        answer.wordArray.name = answer.name;
     }
-
-    answer.wordArray.forEach(function(wordObject){
-        wordObject.begin += offset;
-        wordObject.end += offset;
-    });
-
-    //give a name value to the Array object so that the merging can access
-    //the name value without having to use the whole recordingResult object
-    //in the algorithm
-    answer.wordArray.name = answer.name;
-
     //then store the array and decrease the counter
     transcriber.results.push(answer.wordArray);
     transcriber.counter--;
