@@ -70,11 +70,14 @@ function updateJitsiTrackName(trackRecorder){
     else if(trackRecorder.track.isLocal()) {
         trackRecorder.name = "local";
     }
-    var id = trackRecorder.track.getParticipantId();
-    //non-good method via APP
-    var newName = APP.conference._room.getParticipantById(id).getDisplayName();
-    if(newName !== 'undefined') {
-        trackRecorder.name = newName;
+    else{
+        var id = trackRecorder.track.getParticipantId();
+        //non-good method via APP
+        var newName = APP.conference._room.getParticipantById(id).
+        getDisplayName();
+        if(newName !== 'undefined') {
+            trackRecorder.name = newName;
+        }
     }
 }
 
