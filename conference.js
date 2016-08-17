@@ -1053,7 +1053,7 @@ export default {
             APP.UI.removeRemoteStream(track);
 
             //tell the audio recording object that track got removed
-            APP.transcriber.getAudioRecorder.removeTrack(track);
+            APP.transcriber.getAudioRecorder().removeTrack(track);
         });
 
         room.on(ConferenceEvents.TRACK_MUTE_CHANGED, (track) => {
