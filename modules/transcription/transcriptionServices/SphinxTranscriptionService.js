@@ -93,7 +93,7 @@ SphinxService.prototype.verify = function(response){
     }
     //get the "objects" value and check for a session ID
     var array = json.objects;
-    if(array[0] && array[0]["session-id"]){
+    if(!(array[0] && array[0]["session-id"])){
         return false;
     }
     //everything seems to be in order
