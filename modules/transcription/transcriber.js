@@ -99,11 +99,14 @@ var blobCallBack = function(answer){
             offset = 0; //presume 0 if it somehow not earlier
         }
 
+        var array = "[";
         answer.wordArray.forEach(function (wordObject) {
             wordObject.begin += offset;
             wordObject.end += offset;
+            array += wordObject.word+",";
         });
-
+        array += "]";
+        console.log(array);
         //give a name value to the Array object so that the merging can access
         //the name value without having to use the whole recordingResult object
         //in the algorithm
@@ -133,7 +136,8 @@ var maybeMerge = function(){
  * readable transcription string
  */
 var merge = function() {
-    console.log("starting merge process!");
+    console.log("starting merge process!\n The length of the array: " +
+    transcriber.results);
     var transcription = "";
     //the merging algorithm will look over all Word objects who are at pos 0 in
     //every array. It will then select the one closest in time to the
