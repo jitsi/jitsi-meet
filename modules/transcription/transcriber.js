@@ -200,7 +200,9 @@ var merge = function() {
     //set the state to finished and do the necessary left-over tasks
     state = FINISHED_STATE;
     transcriber.transcription = transcription;
-    transcriber.callback(transcription);
+    if(transcriber.callback){
+        transcriber.callback(transcription);
+    }
 };
 
 /**

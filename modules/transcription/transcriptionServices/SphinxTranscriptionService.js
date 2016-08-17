@@ -58,9 +58,12 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
  */
 SphinxService.prototype.formatResponse = function(response) {
     var result = JSON.parse(response).objects;
+    //make sure to delete the session id object, which is always
+    //the first value in the JSON array
+    result.shift();
     var array = [];
     result.forEach(function(word){
-        if(!word.filler) {
+        if(!word.filler ) {
             array.push(new Word(word.word, word.start, word.end));
         }
     });
