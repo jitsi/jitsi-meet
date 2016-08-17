@@ -37,10 +37,11 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
         {
             callback(request.responseText);
         }
-        else{
+        else if (request.readyState === XMLHttpRequest.DONE) {
             throw new Error("unable to accept response from sphinx server." +
                 "status: " + request.status);
         }
+        //if not ready no point to throw an error
     };
     request.open("POST", this.url);
     request.setRequestHeader("Content-Type",
@@ -73,6 +74,7 @@ SphinxService.prototype.formatResponse = function(response) {
  */
 SphinxService.prototype.verify = function(response){
     console.log("retrieved this response: \n" + response);
+    console.log("\ntype: " + typeof(response));
     return false;
 };
 
