@@ -63,7 +63,7 @@ function stopRecorder(trackRecorder){
  * @param trackRecorder the TrackRecorder object to update the name on
  */
 function updateJitsiTrackName(trackRecorder){
-    if(trackRecorder.constructor !== TrackRecorder) {
+    if(trackRecorder.constructor != TrackRecorder) {
         throw new Error("Passed an object to updateJitsiTrackName which is " +
             "not a TrackRecorder object");
     }
