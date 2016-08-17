@@ -22,10 +22,13 @@ TranscriptionService.prototype.send = function send(recordingResult, callback){
         if(!t.verify(response)){
                console.log("the retrieved response from the server" +
                    " is not valid!");
-            return;
+            recordingResult.wordArray = [];
+            callback(recordingResult);
         }
-        recordingResult.wordArray = t.formatResponse(response);
-        callback(recordingResult);
+        else{
+            recordingResult.wordArray = t.formatResponse(response);
+            callback(recordingResult);
+        }
     });
 };
 
