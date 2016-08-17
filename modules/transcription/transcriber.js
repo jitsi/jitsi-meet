@@ -144,7 +144,7 @@ var maybeMerge = function(){
 var merge = function() {
     console.log("starting merge process!\n The length of the array: " +
         transcriber.results.length);
-    console.log("The array: \n" + transcriber.results);
+    console.log("The array: " + transcriber.results.toString());
     var transcription = "";
     //the merging algorithm will look over all Word objects who are at pos 0 in
     //every array. It will then select the one closest in time to the
@@ -224,12 +224,15 @@ var updateTranscription = function(transcription, word, name){
  * @returns {boolean} true if any non-zero arrays inside, otherwise false
  */
 var checkForPopulatedArrays = function(twoDimensionalArray){
+    console.log("Check 2d array. Length before:" + twoDimensionalArray.length);
     var i;
     for(i = 0; i < twoDimensionalArray.length; i++){
         if(twoDimensionalArray[i].length === 0){
             twoDimensionalArray.splice(i, 1);
+            console.log("deleted a inner array at location " + i);
         }
     }
+    console.log("after checking the length is: " + twoDimensionalArray.length);
     return twoDimensionalArray.length === 0;
 };
 
