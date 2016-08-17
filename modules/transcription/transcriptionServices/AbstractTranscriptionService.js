@@ -12,14 +12,18 @@ var TranscriptionService = function() {
  * retrieve the answer from the transcription service from the callback
  *
  * @param {RecordingResult} recordingResult a recordingResult object which
- * included the recorded audio stream as a blob
+ * includes the recorded audio stream as a blob
  * @param {Function} callback  which will retrieve the a RecordingResult with
  *        the answer as a WordArray
  */
 TranscriptionService.prototype.send = function send(recordingResult, callback){
-    var formatResponse = this.formatResponse;
+    var t = this;
     this.sendRequest(recordingResult.blob, function(response){
-        recordingResult.wordArray = formatResponse(response);
+        if(!t.verify(response)){
+               throw new Error("the retrieved response from the server" +
+                   "is not valid");
+        }
+        recordingResult.wordArray = t.formatResponse(response);
         callback(recordingResult);
     });
 };
@@ -48,12 +52,22 @@ TranscriptionService.prototype.sendRequest = function(audioBlob, callback) {
  * the correct order. That is, the first object in the array is the first word
  * being said, and the last word in the array is the last word being said
  *
- * @param answer the answer from the speech-to-text server which needs to be
- *               formatted
- * @return {Array} an array of Word objects
+ * @param response the answer from the speech-to-text server which needs to be
+ *                 formatted
+ * @return {Array<Word>} an array of Word objects
  */
-TranscriptionService.prototype.formatResponse = function(answer){
+TranscriptionService.prototype.formatResponse = function(response){
     throw new Error("TranscriptionService.format is abstract");
+};
+
+/**
+ * Abstract method which will verify that the response from the server is valid
+ * 
+ * @param response the response from the server
+ * @return {boolean} true if response is valid, false otherwise
+ */
+TranscriptionService.prototype.verify = function(response){
+      throw new Error("TranscriptionService.verify is abstract");
 };
 
 module.exports = TranscriptionService;

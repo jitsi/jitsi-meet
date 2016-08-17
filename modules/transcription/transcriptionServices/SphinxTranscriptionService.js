@@ -1,7 +1,6 @@
 /* global config,  XMLHttpRequest, console, APP */
 
 import TranscriptionService from "./AbstractTranscriptionService";
-import Transcriber from "../transcriber";
 import Word from "../word";
 
 /**
@@ -38,6 +37,10 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
         {
             callback(request.responseText);
         }
+        else{
+            throw new Error("unable to accept response from sphinx server." +
+                "status: " + request.status);
+        }
     };
     request.open("POST", this.url);
     request.setRequestHeader("Content-Type",
@@ -46,18 +49,14 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
     console.log("send " + audioFileBlob);
 };
 
-SphinxService.prototype.formatResponse = function(answer){
-    console.log(answer);
-};
-
 /**
  * Overrides the formatResponse method from AbstractTranscriptionService
  * It will parse the answer from the server in the expected format
  *
- * @param answer the answer retrieved from the Sphinx4 server
+ * @param response the JSON body retrieved from the Sphinx4 server
  */
-SphinxService.prototype.formatResponse = function(answer) {
-    var result = answer.result;
+SphinxService.prototype.formatResponse = function(response) {
+    var result = response;
     var array = [];
     result.forEach(function(word){
         if(!word.filler) {
@@ -65,6 +64,16 @@ SphinxService.prototype.formatResponse = function(answer) {
         }
     });
     return array;
+};
+
+/**
+ * checks wether the reply is empty, or doesn't contain a correct JSON object
+ * @param response the server response
+ * @return {boolean} whether the response is valid
+ */
+SphinxService.prototype.verify = function(response){
+    console.log("retrieved this response: \n" + response);
+    return false;
 };
 
 /**

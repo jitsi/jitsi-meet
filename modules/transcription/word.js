@@ -33,3 +33,5 @@ Word.prototype.getBeginTime = function () {
 Word.prototype.getEndTime = function () {
     return this.end;
 };
+
+module.exports = Word;
