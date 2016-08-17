@@ -33,7 +33,7 @@ var TrackRecorder = function(track){
  * @param trackRecorder the TrackRecorder to start
  */
 function startRecorder(trackRecorder) {
-    if(trackRecorder.constructor !== TrackRecorder) {
+    if(trackRecorder.recorder === undefined) {
         throw new Error("Passed an object to startRecorder which is not a " +
             "TrackRecorder object");
     }
@@ -48,7 +48,7 @@ function startRecorder(trackRecorder) {
  * @param trackRecorder the TrackRecorder to stop
  */
 function stopRecorder(trackRecorder){
-    if(trackRecorder.constructor !== TrackRecorder) {
+    if(trackRecorder.recorder === undefined) {
         throw new Error("Passed an object to stopRecorder which is not a " +
             "TrackRecorder object");
     }
@@ -63,7 +63,7 @@ function stopRecorder(trackRecorder){
  * @param trackRecorder the TrackRecorder object to update the name on
  */
 function updateJitsiTrackName(trackRecorder){
-    if(trackRecorder.constructor != TrackRecorder) {
+    if(trackRecorder.track === undefined) {
         throw new Error("Passed an object to updateJitsiTrackName which is " +
             "not a TrackRecorder object");
     }
