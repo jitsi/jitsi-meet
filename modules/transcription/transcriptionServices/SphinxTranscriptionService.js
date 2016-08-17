@@ -1,4 +1,4 @@
-/* global config,  XMLHttpRequest, console, APP */
+/* global config,  XMLHttpRequest, console, APP, JSON */
 
 import TranscriptionService from "./AbstractTranscriptionService";
 import Word from "../word";
@@ -73,9 +73,30 @@ SphinxService.prototype.formatResponse = function(response) {
  * @return {boolean} whether the response is valid
  */
 SphinxService.prototype.verify = function(response){
-    console.log("retrieved this response: \n" + response);
-    console.log("\ntype: " + typeof(response));
-    return false;
+    //test if server responded with a string object
+    if(typeof(response) !== "string"){
+        return false;
+    }
+    //test if the string can be parsed into valid JSON
+    var json;
+    try{
+        json = JSON.parse(response);
+    }
+    catch (error){
+        console.log(error);
+        return false;
+    }
+    //check if the JSON has a "objects" value
+    if(json.objects === undefined){
+        return false;
+    }
+    //get the "objects" value and check for a session ID
+    var array = json.objects;
+    if(array[0] && array[0]["session-id"]){
+        return false;
+    }
+    //everything seems to be in order
+    return true;
 };
 
 /**

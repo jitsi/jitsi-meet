@@ -21,7 +21,7 @@ TranscriptionService.prototype.send = function send(recordingResult, callback){
     this.sendRequest(recordingResult.blob, function(response){
         if(!t.verify(response)){
                throw new Error("the retrieved response from the server" +
-                   "is not valid");
+                   " is not valid");
         }
         recordingResult.wordArray = t.formatResponse(response);
         callback(recordingResult);
