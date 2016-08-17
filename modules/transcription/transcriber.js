@@ -233,6 +233,7 @@ var checkForPopulatedArrays = function(twoDimensionalArray){
         }
     }
     console.log("after checking the length is: " + twoDimensionalArray.length);
+    console.log("returing: " + twoDimensionalArray.length === 0);
     return twoDimensionalArray.length === 0;
 };
 
