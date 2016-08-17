@@ -165,7 +165,7 @@ var merge = function() {
     //keep adding words to transcription until all arrays are exhausted
     var lowestWordArray;
     var wordToAdd;
-    var breakInnerLoop;
+    var foundSmaller;
     while(hasPopulatedArrays(arrays)){
         console.log("starting another loop with length: " + arrays.length);
         //first select the lowest array;
@@ -181,25 +181,20 @@ var merge = function() {
             lowestWordArray.name);
 
         //keep going until a word in another array has a smaller time
-        breakInnerLoop = false;
-        do{
+        //or the array is empty
+        while(!foundSmaller && lowestWordArray.length > 0){
             arrays.forEach(function(wordArray){
-                if(lowestWordArray == wordArray){
-                    return;
-                }
                 if(wordArray[0].begin < lowestWordArray[0].begin){
-                    breakInnerLoop = true;
+                    foundSmaller = true;
                 }
             });
-            if(breakInnerLoop){
-                break;
-            }
-            else{
+            //add next word if no smaller time has been found
+            if(!foundSmaller){
                 wordToAdd = lowestWordArray.shift();
                 transcription = updateTranscription(transcription, wordToAdd);
             }
         }
-        while(!breakInnerLoop);
+
     }
 
     //set the state to finished and do the necessary left-over tasks
