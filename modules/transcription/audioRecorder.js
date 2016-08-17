@@ -22,7 +22,7 @@ var TrackRecorder = function(track){
     this.data = null;
     //the name of the person of the JitsiTrack. This can be undefined and/or
     //not unique
-    this.name = null;//updateJitsiTrackName(this);
+    this.name = updateJitsiTrackName(this);
     //the time of the start of the recording
     this.startTime = null;
 };
@@ -66,6 +66,9 @@ function updateJitsiTrackName(trackRecorder){
     if(trackRecorder.track === undefined) {
         throw new Error("Passed an object to updateJitsiTrackName which is " +
             "not a TrackRecorder object");
+    }
+    else if(trackRecorder.track.isLocal()) {
+        trackRecorder.name = "local";
     }
     var id = trackRecorder.track.getParticipantId();
     //non-good method via APP
