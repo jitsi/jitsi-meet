@@ -57,7 +57,7 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
  * @param response the JSON body retrieved from the Sphinx4 server
  */
 SphinxService.prototype.formatResponse = function(response) {
-    var result = response;
+    var result = JSON.parse(response).objects;
     var array = [];
     result.forEach(function(word){
         if(!word.filler) {
