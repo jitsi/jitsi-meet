@@ -167,6 +167,7 @@ var merge = function() {
     var wordToAdd;
     var breakInnerLoop;
     while(hasPopulatedArrays(arrays)){
+        console.log("starting another loop with length: " + arrays.length);
         //first select the lowest array;
         lowestWordArray = arrays[0];
         arrays.forEach(function(wordArray){
