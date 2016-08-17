@@ -204,7 +204,7 @@ var merge = function() {
 };
 
 var updateTranscription = function(transcription, word, name){
-    if(name !== null){
+    if(name !== undefined){
         transcription += "\n" + name + ":";
     }
     transcription += " " + word;
