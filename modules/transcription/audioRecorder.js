@@ -22,7 +22,7 @@ var TrackRecorder = function(track){
     this.data = null;
     //the name of the person of the JitsiTrack. This can be undefined and/or
     //not unique
-    this.name = updateJitsiTrackName(this);
+    this.name = null;//updateJitsiTrackName(this);
     //the time of the start of the recording
     this.startTime = null;
 };
