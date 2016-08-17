@@ -139,6 +139,7 @@ var maybeMerge = function(){
 var merge = function() {
     console.log("starting merge process!\n The length of the array: " +
     transcriber.results);
+    console.log("The array: \n" + transcriber.results);
     var transcription = "";
     //the merging algorithm will look over all Word objects who are at pos 0 in
     //every array. It will then select the one closest in time to the
