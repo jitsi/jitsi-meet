@@ -114,13 +114,13 @@ var blobCallBack = function(answer){
         answer.wordArray.name = answer.name;
     }
     //then store the array and decrease the counter
-    console.log("type of transcriber.results: " + typeof (transcriber.results));
     var test = transcriber.results.length ? true: false;
     console.log("transcriber.result has method length: " +  test);
     console.log("length before push: " + transcriber.results.length);
     transcriber.results.push(answer.wordArray);
     console.log("length after push: " + transcriber.results.length);
     transcriber.counter--;
+    console.log("current counter: " + transcriber.counter);
     //and check if all results have been received.
     maybeMerge();
 };
@@ -144,7 +144,6 @@ var maybeMerge = function(){
 var merge = function() {
     console.log("starting merge process!\n The length of the array: " +
         transcriber.results.length);
-    console.log("The array: " + transcriber.results.toString());
     var transcription = "";
     //the merging algorithm will look over all Word objects who are at pos 0 in
     //every array. It will then select the one closest in time to the
@@ -167,7 +166,6 @@ var merge = function() {
     var wordToAdd;
     var foundSmaller;
     while(hasPopulatedArrays(arrays)){
-        console.log("starting another loop with length: " + arrays.length);
         //first select the lowest array;
         lowestWordArray = arrays[0];
         arrays.forEach(function(wordArray){
@@ -230,7 +228,6 @@ var updateTranscription = function(transcription, word, name){
  * @returns {boolean} true if any non-zero arrays inside, otherwise false
  */
 var hasPopulatedArrays = function(twoDimensionalArray){
-    console.log("Check 2d array. Length before:" + twoDimensionalArray.length);
     var i;
     for(i = 0; i < twoDimensionalArray.length; i++){
         if(twoDimensionalArray[i].length === 0){
@@ -238,8 +235,6 @@ var hasPopulatedArrays = function(twoDimensionalArray){
             console.log("deleted a inner array at location " + i);
         }
     }
-    console.log("after checking the length is: " + twoDimensionalArray.length);
-    console.log("returing: " + twoDimensionalArray.length === 0);
     return twoDimensionalArray.length > 0;
 };
 
