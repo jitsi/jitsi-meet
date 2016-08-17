@@ -217,6 +217,7 @@ form {
 }
 
 #downloadlog {
+    display: none;
     position: absolute;
     bottom: 5;
     left: 5;
