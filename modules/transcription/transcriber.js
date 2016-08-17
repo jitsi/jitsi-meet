@@ -232,7 +232,6 @@ var hasPopulatedArrays = function(twoDimensionalArray){
     for(i = 0; i < twoDimensionalArray.length; i++){
         if(twoDimensionalArray[i].length === 0){
             twoDimensionalArray.splice(i, 1);
-            console.log("deleted a inner array at location " + i);
         }
     }
     return twoDimensionalArray.length > 0;
