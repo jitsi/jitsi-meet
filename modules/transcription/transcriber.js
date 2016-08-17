@@ -203,11 +203,19 @@ var merge = function() {
     transcriber.callback(transcription);
 };
 
+/**
+ * Appends a word object to a string value. It will make a new line with a
+ * name if a name is specified
+ * @param {string} transcription  the string to append to
+ * @param {Word} word the Word object holding the word to append
+ * @param {String|null} name the name of a new speaker. Null if not applicable
+ * @returns {string} the transcription string with the appended new information
+ */
 var updateTranscription = function(transcription, word, name){
-    if(name !== undefined){
+    if(name !== undefined && name !== null){
         transcription += "\n" + name + ":";
     }
-    transcription += " " + word;
+    transcription += " " + word.word;
     return transcription;
 };
 
