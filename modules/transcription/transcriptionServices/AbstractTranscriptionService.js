@@ -20,8 +20,9 @@ TranscriptionService.prototype.send = function send(recordingResult, callback){
     var t = this;
     this.sendRequest(recordingResult.blob, function(response){
         if(!t.verify(response)){
-               throw new Error("the retrieved response from the server" +
-                   " is not valid");
+               console.log("the retrieved response from the server" +
+                   " is not valid!");
+            return;
         }
         recordingResult.wordArray = t.formatResponse(response);
         callback(recordingResult);
@@ -62,7 +63,7 @@ TranscriptionService.prototype.formatResponse = function(response){
 
 /**
  * Abstract method which will verify that the response from the server is valid
- * 
+ *
  * @param response the response from the server
  * @return {boolean} true if response is valid, false otherwise
  */
