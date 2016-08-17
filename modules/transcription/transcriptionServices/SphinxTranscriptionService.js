@@ -57,7 +57,6 @@ SphinxService.prototype.sendRequest = function(audioFileBlob, callback) {
  * @param response the JSON body retrieved from the Sphinx4 server
  */
 SphinxService.prototype.formatResponse = function(response) {
-    console.log("formatting response:" + response.toString());
     var result = response;
     var array = [];
     result.forEach(function(word){
@@ -74,6 +73,7 @@ SphinxService.prototype.formatResponse = function(response) {
  * @return {boolean} whether the response is valid
  */
 SphinxService.prototype.verify = function(response){
+    console.log("response from server:" + response.toString());
     //test if server responded with a string object
     if(typeof(response) !== "string"){
         return false;
