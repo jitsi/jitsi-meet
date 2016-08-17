@@ -63,7 +63,7 @@ SphinxService.prototype.formatResponse = function(response) {
     result.shift();
     var array = [];
     result.forEach(function(word){
-        if(!word.filler ) {
+        if(!word.filler) {
             array.push(new Word(word.word, word.start, word.end));
         }
     });
