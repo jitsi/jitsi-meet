@@ -88,7 +88,8 @@ transcriber.stop = function stop(callback) {
  * WordArray
  */
 var blobCallBack = function(answer){
-    console.log("retrieved an answer from the transcription service. ");
+    console.log("retrieved an answer from the transcription service. The" +
+        " answer has an array of length: " + answer.wordArray.length);
     //first add the offset between the start of the transcription and
     //the start of the recording to all start and end times
     if(answer.wordArray.length > 0) {
@@ -288,10 +289,11 @@ transcriber.getState = function(){
  */
 transcriber.reset = function() {
     state = BEFORE_STATE;
-    transcriber.counter = null;
-    transcriber.transcription = null;
-    transcriber.startTime = null;
-    transcriber.callback = null;
+    this.counter = null;
+    this.transcription = null;
+    this.startTime = null;
+    this.callback = null;
+    this.results = [];
 };
 
 module.exports = transcriber;
