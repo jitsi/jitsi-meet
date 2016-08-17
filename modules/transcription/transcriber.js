@@ -29,7 +29,7 @@ var transcriber =  {
     //with the transcription as parameter
     callback: null,
     //stores all the retrieved speech-to-text results to merge together
-    //this array will store RecordingResult objects
+    //this value will store an Array<Word> object
     results: []
 };
 
@@ -124,8 +124,6 @@ var maybeMerge = function(){
     if(state === TRANSCRIBING_STATE && transcriber.counter === 0){
         //make sure to include the events in the result arrays before
         //merging starts
-
-
         merge();
     }
 };
@@ -142,7 +140,7 @@ var merge = function() {
     //previously placed word, while removing the selected word from its array
     //note: words can be skipped the skipped word's begin and end time somehow
     //end up between the closest word start and end time
-    var arrays = transcriber.results.wordArray;
+    var arrays = transcriber.results;
     //arrays of Word objects
     var potentialWords = []; //array of the first Word objects
     //check if any arrays are already empty and remove them
