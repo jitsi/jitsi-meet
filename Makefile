@@ -7,7 +7,7 @@ CSS_FILES = font.css toastr.css main.css overlay.css videolayout_default.css fon
 DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
-LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
+LIBJITSIMEET_DIR = /home/ubuntu/gsoc/lib-jitsi-meet/
 IFRAME_API_DIR = ./modules/API/external
 
 all: update-deps compile compile-iframe-api uglify uglify-iframe-api deploy clean
