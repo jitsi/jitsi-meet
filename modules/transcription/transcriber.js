@@ -155,7 +155,7 @@ var merge = function() {
     //arrays of Word objects
     var potentialWords = []; //array of the first Word objects
     //check if any arrays are already empty and remove them
-    checkForPopulatedArrays(arrays);
+    hasPopulatedArrays(arrays);
 
     //populate all the potential Words for a first time
     arrays.forEach(function (array){
@@ -166,7 +166,7 @@ var merge = function() {
     var lowestWordArray;
     var wordToAdd;
     var breakInnerLoop;
-    while(checkForPopulatedArrays(arrays)){
+    while(hasPopulatedArrays(arrays)){
         //first select the lowest array;
         lowestWordArray = arrays[0];
         arrays.forEach(function(wordArray){
@@ -223,7 +223,7 @@ var updateTranscription = function(transcription, word, name){
  * @param {Array<Array>} twoDimensionalArray the array to check
  * @returns {boolean} true if any non-zero arrays inside, otherwise false
  */
-var checkForPopulatedArrays = function(twoDimensionalArray){
+var hasPopulatedArrays = function(twoDimensionalArray){
     console.log("Check 2d array. Length before:" + twoDimensionalArray.length);
     var i;
     for(i = 0; i < twoDimensionalArray.length; i++){
@@ -234,7 +234,7 @@ var checkForPopulatedArrays = function(twoDimensionalArray){
     }
     console.log("after checking the length is: " + twoDimensionalArray.length);
     console.log("returing: " + twoDimensionalArray.length === 0);
-    return twoDimensionalArray.length === 0;
+    return twoDimensionalArray.length > 0;
 };
 
 /**
