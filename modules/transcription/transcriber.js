@@ -216,7 +216,7 @@ var updateTranscription = function(transcription, word, name){
  */
 var checkForPopulatedArrays = function(twoDimensionalArray){
     var i;
-    for(i = 0; i < twoDimensionalArray[i].length; i++){
+    for(i = 0; i < twoDimensionalArray.length; i++){
         if(twoDimensionalArray[i].length === 0){
             twoDimensionalArray.splice(i, 1);
         }
