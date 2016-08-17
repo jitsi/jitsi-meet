@@ -114,6 +114,7 @@ var blobCallBack = function(answer){
         answer.wordArray.name = answer.name;
     }
     //then store the array and decrease the counter
+    console.log("type of transcriber.results: " + typeof (transcriber.results));
     transcriber.results.push(answer.wordArray);
     transcriber.counter--;
     //and check if all results have been received.
