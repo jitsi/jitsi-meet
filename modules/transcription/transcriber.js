@@ -7,6 +7,9 @@ const RECORDING_STATE = "recording";
 const TRANSCRIBING_STATE = "transcribing";
 const FINISHED_STATE = "finished";
 
+//the amount of characters each line in the transcription will have
+const MAXIMUM_SENTENCE_LENGTH = 80;
+
 /**
  * This is the main object for handing the Transcription. It interacts with
  * the audioRecorder to record every person in a conference and sends the
@@ -214,10 +217,23 @@ var merge = function() {
 var updateTranscription = function(transcription, word, name){
     if(name !== undefined && name !== null){
         transcription += "\n" + name + ":";
+        lineLength = name.length + 1; //+1 for the semi-colon
+    }
+    if(lineLength + word.word.length > MAXIMUM_SENTENCE_LENGTH){
+        transcription += "\n    ";
+        lineLength = 4; //because of the 4 spaces after the new line
     }
     transcription += " " + word.word;
+    lineLength += word.word.length + 1; //+1 for the space
     return transcription;
 };
+
+/**
+ * Used in the updateTranscription method to add a new line when the
+ * sentence becomes to long
+ * @type {number}
+ */
+var lineLength = 0;
 
 /**
  * Check if the given 2 dimensional array has any non-zero Word-arrays in them.
