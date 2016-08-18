@@ -533,6 +533,11 @@ export default {
                 if (config.iAmRecorder)
                     this.recorder = new Recorder();
 
+                //add the local audio track to the audio recording
+                tracks.forEach(function(track) {
+                    APP.transcriber.getAudioRecorder().addTrack(track);
+                });
+
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
@@ -1037,6 +1042,8 @@ export default {
                 APP.UI.onPeerVideoTypeChanged(track.getParticipantId(), type);
             });
             APP.UI.addRemoteStream(track);
+            //give the track to the transcriber's audio recording object
+            APP.transcriber.getAudioRecorder().addTrack(track);
         });
 
         room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
@@ -1044,6 +1051,9 @@ export default {
                 return;
 
             APP.UI.removeRemoteStream(track);
+
+            //tell the audio recording object that track got removed
+            APP.transcriber.getAudioRecorder().removeTrack(track);
         });
 
         room.on(ConferenceEvents.TRACK_MUTE_CHANGED, (track) => {
