@@ -60,6 +60,9 @@ Launch again a browser with the Jitsi Meet URL and you'll see a telephone icon o
 
 Enjoy!
 
+## Generating browser extensions for screen-sharing
+The Jitsi Meet screen-sharing functionality requires a browser extension for clients performing the sharing. You will need to generate an extension for Firefox and/or Chrome, and instruct users to install it before they can screen-sharing feature. The extension is only required to share a screen, not to view a shared screen. See the [Jidesha repository](https://github.com/jitsi/jidesha) for full documentation.
+
 ## Uninstall
 
 ```sh
