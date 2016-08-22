@@ -543,7 +543,8 @@ SmallVideo.prototype.initBrowserSpecificProperties = function() {
 
     var userAgent = window.navigator.userAgent;
     if (userAgent.indexOf("QtWebEngine") > -1
-        && userAgent.indexOf("Windows") > -1) {
+        && (userAgent.indexOf("Windows") > -1
+            || userAgent.indexOf("Linux") > -1)) {
         $('#' + this.videoSpanId).css("overflow", "hidden");
     }
 };
