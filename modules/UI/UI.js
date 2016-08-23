@@ -1063,29 +1063,32 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
  * @returns {Promise} when dialog is closed.
  */
 UI.requestFeedback = function () {
-    return new Promise(function (resolve, reject) {
-        if (Feedback.isEnabled()) {
-            // If the user has already entered feedback, we'll show the window and
-            // immidiately start the conference dispose timeout.
-            if (Feedback.feedbackScore > 0) {
-                Feedback.openFeedbackWindow();
-                resolve();
+    if (Feedback.isVisible())
+        return Promise.resolve();
+    else
+        return new Promise(function (resolve, reject) {
+            if (Feedback.isEnabled()) {
+                // If the user has already entered feedback, we'll show the
+                // window and immidiately start the conference dispose timeout.
+                if (Feedback.feedbackScore > 0) {
+                    Feedback.openFeedbackWindow();
+                    resolve();
 
-            } else { // Otherwise we'll wait for user's feedback.
-                Feedback.openFeedbackWindow(resolve);
+                } else { // Otherwise we'll wait for user's feedback.
+                    Feedback.openFeedbackWindow(resolve);
+                }
+            } else {
+                // If the feedback functionality isn't enabled we show a thank
+                // you dialog.
+                messageHandler.openMessageDialog(
+                    null, null, null,
+                    APP.translation.translateString(
+                        "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+                    )
+                );
+                resolve();
             }
-        } else {
-            // If the feedback functionality isn't enabled we show a thank you
-            // dialog.
-            messageHandler.openMessageDialog(
-                null, null, null,
-                APP.translation.translateString(
-                    "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
-                )
-            );
-            resolve();
-        }
-    });
+        });
 };
 
 UI.updateRecordingState = function (state) {
