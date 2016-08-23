@@ -1,10 +1,17 @@
 -- Token authentication
 -- Copyright (C) 2015 Atlassian
 
-local generate_uuid = require "util.uuid".generate;
-local new_sasl = require "util.sasl".new;
-local sasl = require "util.sasl";
+local basexx = require 'basexx'
+local have_async, async = pcall(require, "util.async");
 local formdecode = require "util.http".formdecode;
+local generate_uuid = require "util.uuid".generate;
+local http = require "net.http";
+local json = require 'cjson'
+json.encode_empty_table('array')
+local new_sasl = require "util.sasl".new;
+local path = require "util.paths";
+local sasl = require "util.sasl";
+local timer = require "util.timer";
 local token_util = module:require "token/util";
 
 -- define auth provider
@@ -14,6 +21,7 @@ local host = module.host;
 
 local appId = module:get_option_string("app_id");
 local appSecret = module:get_option_string("app_secret");
+local asapKeyServer = module:get_option_string("asap_key_server");
 local allowEmptyToken = module:get_option_boolean("allow_empty_token");
 local disableRoomNameConstraints = module:get_option_boolean("disable_room_name_constraints");
 
@@ -26,8 +34,13 @@ if appId == nil then
 	return;
 end
 
-if appSecret == nil then
-	module:log("error", "'app_secret' must not be empty");
+if appSecret == nil and asapKeyServer == nil then
+	module:log("error", "'app_secret' or 'asap_key_server' must be specified");
+	return;
+end
+
+if asapKeyServer and not have_async then
+	module:log("error", "requires a version of Prosody with util.async");
 	return;
 end
 
@@ -64,6 +77,34 @@ function provider.delete_user(username)
 	return nil;
 end
 
+local http_timeout = 30;
+local http_headers = {
+	["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")"
+};
+
+-- TODO: This *needs* to be memoized before going to prod.
+function get_public_key(keyId)
+	local wait, done = async.waiter();
+	local content, code; --, request, response;
+	local function cb(content_, code_, response_, request_)
+		content, code = content_, code_;
+		done();
+	end
+	local request = http.request(path.join(asapKeyServer, keyId), {
+		headers = http_headers or {},
+		method = "GET"
+	}, cb);
+	-- TODO: Is the done() call racey?
+	timer.add_task(http_timeout, function() http.destroy_request(request); done(); end);
+	wait();
+
+	if code == 200 or code == 204 then
+		return content;
+	end
+
+	return nil
+end
+
 function provider.get_sasl_handler(session)
 	-- JWT token extracted from BOSH URL
 	local token = session.auth_token;
@@ -71,25 +112,35 @@ function provider.get_sasl_handler(session)
 	local function get_username_from_token(self, message)
 
 		if token == nil then
-			if allowEmptyToken == true then
-				return true;
+			if allowEmptyToken then
+				return true
 			else
 				return false, "not-allowed", "token required";
 			end
 		end
 
-		-- here we check if 'room' claim exists
-		local room, roomErr = token_util.get_room_name(token, appSecret);
-		if room == nil and disableRoomNameConstraints ~= true then
-            if roomErr == nil then
-                roomErr = "'room' claim is missing";
-            end
-			return false, "not-allowed", roomErr;
+		local pubKey;
+		if asapKeyServer and session.auth_token ~= nil then
+			local dotFirst = session.auth_token:find("%.")
+			if not dotFirst then return nil, "Invalid token" end
+			local header = json.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)))
+			local kid = header["kid"]
+			if kid == nil then
+				return false, "not-allowed", "'kid' claim is missing";
+			end
+			pubKey = get_public_key(kid);
+			if pubKey == nil then
+				return false, "not-allowed", "could not obtain public key";
+			end
 		end
 
 		-- now verify the whole token
-		local result, msg
-		= token_util.verify_token(token, appId, appSecret, room, disableRoomNameConstraints);
+		local result, msg;
+		if asapKeyServer then
+			result, msg = token_util.verify_token(token, appId, pubKey, disableRoomNameConstraints);
+		else
+			result, msg = token_util.verify_token(token, appId, appSecret, disableRoomNameConstraints);
+		end
 		if result == true then
 			-- Binds room name to the session which is later checked on MUC join
 			session.jitsi_meet_room = room;
