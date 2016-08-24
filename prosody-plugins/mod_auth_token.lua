@@ -1,7 +1,7 @@
 -- Token authentication
 -- Copyright (C) 2015 Atlassian
 
-local basexx = require 'basexx'
+local basexx = require 'basexx';
 local have_async, async = pcall(require, "util.async");
 local formdecode = require "util.http".formdecode;
 local generate_uuid = require "util.uuid".generate;
@@ -24,6 +24,10 @@ local appSecret = module:get_option_string("app_secret");
 local asapKeyServer = module:get_option_string("asap_key_server");
 local allowEmptyToken = module:get_option_boolean("allow_empty_token");
 local disableRoomNameConstraints = module:get_option_boolean("disable_room_name_constraints");
+
+-- TODO: Figure out a less arbitrary default cache size.
+local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
+local cache = require"util.cache".new(cacheSize);
 
 if allowEmptyToken == true then
 	module:log("warn", "WARNING - empty tokens allowed");
@@ -82,23 +86,31 @@ local http_headers = {
 	["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")"
 };
 
--- TODO: This *needs* to be memoized before going to prod.
 function get_public_key(keyId)
-	local wait, done = async.waiter();
-	local content, code; --, request, response;
-	local function cb(content_, code_, response_, request_)
-		content, code = content_, code_;
-		done();
-	end
-	local request = http.request(path.join(asapKeyServer, keyId), {
-		headers = http_headers or {},
-		method = "GET"
-	}, cb);
-	-- TODO: Is the done() call racey?
-	timer.add_task(http_timeout, function() http.destroy_request(request); done(); end);
-	wait();
+	local content = cache:get(keyId);
+	if content == nil then
+		-- If the key is not found in the cache.
+		module:log("debug", "Cache miss for key: "..keyId);
+		local code;
+		local wait, done = async.waiter();
+		local function cb(content_, code_, response_, request_)
+			content, code = content_, code_;
+			done();
+		end
+		local request = http.request(path.join(asapKeyServer, keyId), {
+			headers = http_headers or {},
+			method = "GET"
+		}, cb);
+		-- TODO: Is the done() call racey?
+		timer.add_task(http_timeout, function() http.destroy_request(request); done(); end);
+		wait();
 
-	if code == 200 or code == 204 then
+		if code == 200 or code == 204 then
+			module:log("debug", "Cache hit for key: "..keyId);
+			return content;
+		end
+	else
+		-- If the key is in the cache, use it.
 		return content;
 	end
 
