@@ -13,6 +13,7 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.emitter = emitter;
     this.videoSpanId = `participant_${id}`;
     SmallVideo.call(this, VideoLayout);
+    this.hasRemoteVideoMenu = false;
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, id);
     this.setDisplayName();
@@ -93,7 +94,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
         APP.translation.translateString("videothumbnail.muted") +
         "</div>";
 
-    muteLinkItem.id = "muteLinkItem";
+    muteLinkItem.id = "mutelink_" + this.id;
 
     if (this.isMuted) {
         muteLinkItem.innerHTML = mutedHTML;
@@ -105,7 +106,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
     }
 
     // Delegate event to the document.
-    $(document).on("click", ".mutelink", function(){
+    $(document).on("click", "#mutelink_" + this.id, function(){
 
         if (this.isMuted)
             return;
@@ -130,8 +131,9 @@ RemoteVideo.prototype._generatePopupContent = function () {
 
     ejectLinkItem.className = 'ejectlink';
     ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
+    ejectLinkItem.id = "ejectlink_" + this.id;
 
-    $(document).on("click", ".ejectlink", function(){
+    $(document).on("click", "#ejectlink_" + this.id, function(){
         this.emitter.emit(UIEvents.USER_KICKED, this.id);
         this.popover.forceHide();
     }.bind(this));
@@ -178,6 +180,7 @@ if (!interfaceConfig.filmStripOnly) {
         spanElement.appendChild(menuElement);
 
         this._initPopupMenu(this._generatePopupContent());
+        this.hasRemoteVideoMenu = true;
     };
 
 } else {
@@ -419,6 +422,7 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
     if (menuSpan.length) {
         this.popover.forceHide();
         menuSpan.remove();
+        this.hasRemoteVideoMenu = false;
     }
 };
 
