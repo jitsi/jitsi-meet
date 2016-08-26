@@ -23,6 +23,7 @@ import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Settings from "./../settings/Settings";
 import { reload } from '../util/helpers';
 import RingOverlay from "./ring_overlay/RingOverlay";
+import UIErrors from './UIErrors';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -1063,29 +1064,32 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
  * @returns {Promise} when dialog is closed.
  */
 UI.requestFeedback = function () {
-    return new Promise(function (resolve, reject) {
-        if (Feedback.isEnabled()) {
-            // If the user has already entered feedback, we'll show the window and
-            // immidiately start the conference dispose timeout.
-            if (Feedback.feedbackScore > 0) {
-                Feedback.openFeedbackWindow();
-                resolve();
+    if (Feedback.isVisible())
+        return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
+    else
+        return new Promise(function (resolve, reject) {
+            if (Feedback.isEnabled()) {
+                // If the user has already entered feedback, we'll show the
+                // window and immidiately start the conference dispose timeout.
+                if (Feedback.feedbackScore > 0) {
+                    Feedback.openFeedbackWindow();
+                    resolve();
 
-            } else { // Otherwise we'll wait for user's feedback.
-                Feedback.openFeedbackWindow(resolve);
+                } else { // Otherwise we'll wait for user's feedback.
+                    Feedback.openFeedbackWindow(resolve);
+                }
+            } else {
+                // If the feedback functionality isn't enabled we show a thank
+                // you dialog.
+                messageHandler.openMessageDialog(
+                    null, null, null,
+                    APP.translation.translateString(
+                        "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+                    )
+                );
+                resolve();
             }
-        } else {
-            // If the feedback functionality isn't enabled we show a thank you
-            // dialog.
-            messageHandler.openMessageDialog(
-                null, null, null,
-                APP.translation.translateString(
-                    "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
-                )
-            );
-            resolve();
-        }
-    });
+        });
 };
 
 UI.updateRecordingState = function (state) {

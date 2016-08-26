@@ -90,6 +90,7 @@ var Feedback = {
      * The feedback score. -1 indicates no score has been given for now.
      */
     feedbackScore: -1,
+
     /**
      * Initialise the Feedback functionality.
      * @param emitter the EventEmitter to associate with the Feedback.
@@ -134,6 +135,17 @@ var Feedback = {
     isEnabled: function() {
         return this.enabled && APP.conference.isCallstatsEnabled();
     },
+
+    /**
+     * Returns true if the feedback window is currently visible and false
+     * otherwise.
+     * @return {boolean} true if the feedback window is visible, false
+     * otherwise
+     */
+    isVisible: function() {
+        return $(".feedback").is(":visible");
+    },
+
     /**
      * Opens the feedback window.
      */

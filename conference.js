@@ -16,6 +16,8 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
+import UIErrors from './modules/UI/UIErrors';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -233,15 +235,28 @@ function disconnectAndShowFeedback(requestFeedback) {
  */
 function hangup (requestFeedback = false) {
     const errCallback = (f, err) => {
-        console.error('Error occurred during hanging up: ', err);
-        return f();
+
+        // If we want to break out the chain in our error handler, it needs
+        // to return a rejected promise. In the case of feedback request
+        // in progress it's important to not redirect to the welcome page
+        // (see below maybeRedirectToWelcomePage call).
+        if (err === UIErrors.FEEDBACK_REQUEST_IN_PROGRESS) {
+            return Promise.reject('Feedback request in progress.');
+        }
+        else {
+            console.error('Error occurred during hanging up: ', err);
+            return Promise.resolve();
+        }
     };
     const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
     APP.conference._room.leave()
     .then(disconnect)
     .catch(errCallback.bind(null, disconnect))
     .then(maybeRedirectToWelcomePage)
-    .catch(errCallback.bind(null, maybeRedirectToWelcomePage));
+    .catch(function(err){
+            console.log(err);
+        });
+
 }
 
 /**
