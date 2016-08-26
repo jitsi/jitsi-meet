@@ -103,7 +103,15 @@ function get_public_key(keyId)
 		}, cb);
 		-- TODO: Is the done() call racey? Can we cancel this if the request
 		--       succeedes?
-		timer.add_task(http_timeout, function() http.destroy_request(request); done(); end);
+		local function cancel()
+			-- TODO: This check is racey. Not likely to be a problem, but we should
+			--       still stick a mutex on content / code at some point.
+			if code == nil then
+				http.destroy_request(request);
+				done();
+			end
+		end
+		timer.add_task(http_timeout, cancel);
 		wait();
 
 		if code == 200 or code == 204 then
