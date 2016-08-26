@@ -134,6 +134,17 @@ var Feedback = {
     isEnabled: function() {
         return this.enabled && APP.conference.isCallstatsEnabled();
     },
+
+    /**
+     * Returns true if the feedback window is currently visible and false
+     * otherwise.
+     * @return {boolean} true if the feedback window is visible, false
+     * otherwise
+     */
+    isVisible: function() {
+        return $(".feedback").is(":visible");
+    },
+
     /**
      * Opens the feedback window.
      */

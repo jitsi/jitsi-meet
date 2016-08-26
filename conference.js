@@ -37,6 +37,12 @@ let connectionIsInterrupted = false;
  */
 let DSExternalInstallationInProgress = false;
 
+/**
+ * Indicates whether we have started a hangup process.
+ * @type {boolean}
+ */
+let _hangupInProgress = false;
+
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
@@ -232,6 +238,13 @@ function disconnectAndShowFeedback(requestFeedback) {
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
+    if (_hangupInProgress) {
+        console.log("Hangup already in progress.");
+        return;
+    }
+
+    _hangupInProgress = true;
+
     const errCallback = (f, err) => {
         console.error('Error occurred during hanging up: ', err);
         return f();
@@ -242,6 +255,8 @@ function hangup (requestFeedback = false) {
     .catch(errCallback.bind(null, disconnect))
     .then(maybeRedirectToWelcomePage)
     .catch(errCallback.bind(null, maybeRedirectToWelcomePage));
+
+    _hangupInProgress = false;
 }
 
 /**
