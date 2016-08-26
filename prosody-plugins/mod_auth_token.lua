@@ -148,15 +148,15 @@ function provider.get_sasl_handler(session)
 		end
 
 		-- now verify the whole token
-		local result, msg;
+		local claims, msg;
 		if asapKeyServer then
-			result, msg = token_util.verify_token(token, appId, pubKey, disableRoomNameConstraints);
+			claims, msg = token_util.verify_token(token, appId, pubKey, disableRoomNameConstraints);
 		else
-			result, msg = token_util.verify_token(token, appId, appSecret, disableRoomNameConstraints);
+			claims, msg = token_util.verify_token(token, appId, appSecret, disableRoomNameConstraints);
 		end
-		if result == true then
+		if claims ~= true then
 			-- Binds room name to the session which is later checked on MUC join
-			session.jitsi_meet_room = room;
+			session.jitsi_meet_room = claims["room"];
 			return true;
 		else
 			return false, "not-allowed", msg

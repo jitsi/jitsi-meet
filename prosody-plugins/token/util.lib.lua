@@ -30,7 +30,7 @@ local function _verify_token(token, appId, appSecret, disableRoomNameConstraints
 		return nil, "'room' claim is missing";
 	end
 
-	return true;
+	return claims;
 end
 
 function _M.verify_token(token, appId, appSecret, disableRoomNameConstraints)
