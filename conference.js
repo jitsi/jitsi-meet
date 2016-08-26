@@ -894,10 +894,21 @@ export default {
                     checkAgain: () => {
                         return DSExternalInstallationInProgress;
                     },
-                    listener: (url) => {
-                        DSExternalInstallationInProgress = true;
-                        externalInstallation = true;
-                        APP.UI.showExtensionExternalInstallationDialog(url);
+                    listener: (status, url) => {
+                        switch(status) {
+                            case "waitingForExtension":
+                                DSExternalInstallationInProgress = true;
+                                externalInstallation = true;
+                                APP.UI.showExtensionExternalInstallationDialog(
+                                    url);
+                                break;
+                            case "extensionFound":
+                                if(externalInstallation) //close the dialog
+                                    $.prompt.close();
+                                break;
+                            default:
+                                //Unknown status
+                        }
                     }
                 }
             }).then(([stream]) => {
@@ -924,6 +935,9 @@ export default {
                     'conference.sharingDesktop.start');
                 console.log('sharing local desktop');
             }).catch((err) => {
+                // close external installation dialog to show the error.
+                if(externalInstallation)
+                    $.prompt.close();
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
 
