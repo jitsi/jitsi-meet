@@ -115,7 +115,7 @@ function get_public_key(keyId)
 		return content;
 	end
 
-	return nil
+	return nil;
 end
 
 function provider.get_sasl_handler(session)
@@ -126,7 +126,7 @@ function provider.get_sasl_handler(session)
 
 		if token == nil then
 			if allowEmptyToken then
-				return true
+				return true;
 			else
 				return false, "not-allowed", "token required";
 			end
@@ -157,7 +157,7 @@ function provider.get_sasl_handler(session)
 		if result == true then
 			-- Binds room name to the session which is later checked on MUC join
 			session.jitsi_meet_room = room;
-			return true
+			return true;
 		else
 			return false, "not-allowed", msg
 		end
