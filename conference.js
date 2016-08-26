@@ -16,7 +16,7 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
-import Feedback from './modules/UI/Feedback';
+import UIErrors from './modules/UI/UIErrors';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -240,7 +240,7 @@ function hangup (requestFeedback = false) {
         // to return a rejected promise. In the case of feedback request
         // in progress it's important to not redirect to the welcome page
         // (see below maybeRedirectToWelcomePage call).
-        if (err === Feedback.FEEDBACK_REQUEST_IN_PROGRESS) {
+        if (err === UIErrors.FEEDBACK_REQUEST_IN_PROGRESS) {
             return Promise.reject('Feedback request in progress.');
         }
         else {
