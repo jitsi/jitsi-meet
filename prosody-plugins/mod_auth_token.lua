@@ -9,7 +9,6 @@ local http = require "net.http";
 local json = require 'cjson'
 json.encode_empty_table('array')
 local new_sasl = require "util.sasl".new;
-local path = require "util.paths";
 local sasl = require "util.sasl";
 local timer = require "util.timer";
 local token_util = module:require "token/util";
@@ -97,11 +96,13 @@ function get_public_key(keyId)
 			content, code = content_, code_;
 			done();
 		end
-		local request = http.request(path.join(asapKeyServer, keyId), {
+		module:log("debug", "Fetching public key from: "..asapKeyServer..keyId);
+		local request = http.request(asapKeyServer..keyId, {
 			headers = http_headers or {},
 			method = "GET"
 		}, cb);
-		-- TODO: Is the done() call racey?
+		-- TODO: Is the done() call racey? Can we cancel this if the request
+		--       succeedes?
 		timer.add_task(http_timeout, function() http.destroy_request(request); done(); end);
 		wait();
 
