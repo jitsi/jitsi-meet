@@ -5,16 +5,7 @@ local jwt = require "luajwtjitsi";
 
 local _M = {};
 
-local function _get_room_name(token, appSecret)
-	local claims, err = jwt.decode(token, appSecret);
-	if claims ~= nil then
-		return claims["room"];
-	else
-		return nil, err;
-	end
-end
-
-local function _verify_token(token, appId, appSecret, roomName, disableRoomNameConstraints)
+local function _verify_token(token, appId, appSecret, disableRoomNameConstraints)
 
 	local claims, err = jwt.decode(token, appSecret, true);
 	if claims == nil then
@@ -38,19 +29,12 @@ local function _verify_token(token, appId, appSecret, roomName, disableRoomNameC
 	if roomClaim == nil and disableRoomNameConstraints ~= true then
 		return nil, "'room' claim is missing";
 	end
-	if roomName ~= nil and roomName ~= roomClaim and disableRoomNameConstraints ~= true then
-		return nil, "Invalid room name('room' claim)";
-	end
 
-	return true;
+	return claims;
 end
 
-function _M.verify_token(token, appId, appSecret, roomName, disableRoomNameConstraints)
-	return _verify_token(token, appId, appSecret, roomName, disableRoomNameConstraints);
-end
-
-function _M.get_room_name(token, appSecret)
-	return _get_room_name(token, appSecret);
+function _M.verify_token(token, appId, appSecret, disableRoomNameConstraints)
+	return _verify_token(token, appId, appSecret, disableRoomNameConstraints);
 end
 
 return _M;
