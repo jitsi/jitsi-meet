@@ -107,11 +107,11 @@ function get_public_key(keyId)
 		wait();
 
 		if code == 200 or code == 204 then
-			module:log("debug", "Cache hit for key: "..keyId);
 			return content;
 		end
 	else
 		-- If the key is in the cache, use it.
+		module:log("debug", "Cache hit for key: "..keyId);
 		return content;
 	end
 
