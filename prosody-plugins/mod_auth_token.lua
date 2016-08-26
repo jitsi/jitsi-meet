@@ -154,7 +154,7 @@ function provider.get_sasl_handler(session)
 		else
 			claims, msg = token_util.verify_token(token, appId, appSecret, disableRoomNameConstraints);
 		end
-		if claims ~= true then
+		if claims ~= nil then
 			-- Binds room name to the session which is later checked on MUC join
 			session.jitsi_meet_room = claims["room"];
 			return true;
