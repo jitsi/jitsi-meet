@@ -87,9 +87,15 @@ function _showFeedbackButton (show) {
  */
 var Feedback = {
     /**
+     * Indicates a state of the Feedback dialog.
+     */
+    FEEDBACK_REQUEST_IN_PROGRESS: "FeedbackRequestInProgress",
+
+    /**
      * The feedback score. -1 indicates no score has been given for now.
      */
     feedbackScore: -1,
+
     /**
      * Initialise the Feedback functionality.
      * @param emitter the EventEmitter to associate with the Feedback.

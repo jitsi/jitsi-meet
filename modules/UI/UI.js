@@ -1064,7 +1064,7 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
  */
 UI.requestFeedback = function () {
     if (Feedback.isVisible())
-        return Promise.resolve();
+        return Promise.reject(Feedback.FEEDBACK_REQUEST_IN_PROGRESS);
     else
         return new Promise(function (resolve, reject) {
             if (Feedback.isEnabled()) {

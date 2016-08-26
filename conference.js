@@ -16,6 +16,8 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
+import Feedback from './modules/UI/Feedback';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -36,12 +38,6 @@ let connectionIsInterrupted = false;
  * Indicates whether extension external installation is in progress or not.
  */
 let DSExternalInstallationInProgress = false;
-
-/**
- * Indicates whether we have started a hangup process.
- * @type {boolean}
- */
-let _hangupInProgress = false;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
@@ -238,25 +234,29 @@ function disconnectAndShowFeedback(requestFeedback) {
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
-    if (_hangupInProgress) {
-        console.log("Hangup already in progress.");
-        return;
-    }
-
-    _hangupInProgress = true;
-
     const errCallback = (f, err) => {
-        console.error('Error occurred during hanging up: ', err);
-        return f();
+
+        // If we want to break out the chain in our error handler, it needs
+        // to return a rejected promise. In the case of feedback request
+        // in progress it's important to not redirect to the welcome page
+        // (see below maybeRedirectToWelcomePage call).
+        if (err === Feedback.FEEDBACK_REQUEST_IN_PROGRESS) {
+            return Promise.reject('Feedback request in progress.');
+        }
+        else {
+            console.error('Error occurred during hanging up: ', err);
+            return Promise.resolve();
+        }
     };
     const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
     APP.conference._room.leave()
     .then(disconnect)
     .catch(errCallback.bind(null, disconnect))
     .then(maybeRedirectToWelcomePage)
-    .catch(errCallback.bind(null, maybeRedirectToWelcomePage));
+    .catch(function(err){
+            console.log(err);
+        });
 
-    _hangupInProgress = false;
 }
 
 /**
