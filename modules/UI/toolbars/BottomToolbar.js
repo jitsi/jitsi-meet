@@ -10,7 +10,14 @@ const defaultBottomToolbarButtons = {
         id: '#bottom_toolbar_contact_list'
     },
     'filmstrip': {
-        id: '#bottom_toolbar_film_strip'
+        id: '#bottom_toolbar_film_strip',
+        shortcut: "F",
+        shortcutAttr: "filmstripPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
+            APP.UI.toggleFilmStrip();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
     }
 };
 
@@ -38,6 +45,7 @@ const BottomToolbar = {
     isEnabled() {
         return this.enabled;
     },
+
     setupListeners (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
@@ -57,6 +65,22 @@ const BottomToolbar = {
                 emitter.emit(UIEvents.TOGGLE_CHAT);
             }
         };
+
+        Object.keys(defaultBottomToolbarButtons).forEach(
+                id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    var button = defaultBottomToolbarButtons[id];
+
+                    if (button.shortcut)
+                        APP.keyboardshortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
+                }
+            }
+        );
 
         Object.keys(buttonHandlers).forEach(
             buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])

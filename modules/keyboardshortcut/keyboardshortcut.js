@@ -27,12 +27,10 @@ function initGlobalShortcuts() {
         APP.conference.muteAudio(true);
     }, "keyboardShortcuts.pushToTalk");
 
-    KeyboardShortcut.registerShortcut("F", 'filmstripPopover', function() {
-        JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
-        APP.UI.toggleFilmStrip();
-    }, "keyboardShortcuts.toggleFilmstrip");
-
-    // Focus keys are directly implemented below.
+    /**
+     * FIXME: Currently focus keys are directly implemented below in onkeyup.
+     * They should be moved to the SmallVideo instead.
+     */
     KeyboardShortcut._addShortcutToHelp("0", "keyboardShortcuts.focusLocal");
     KeyboardShortcut._addShortcutToHelp("1-9", "keyboardShortcuts.focusRemote");
 }
@@ -123,6 +121,8 @@ var KeyboardShortcut = {
      */
     unregisterShortcut: function(shortcutChar) {
         _shortcuts.remove(shortcutChar);
+
+        this._removeShortcutFromHelp(shortcutChar);
     },
 
     /**
@@ -177,6 +177,7 @@ var KeyboardShortcut = {
     _addShortcutToHelp: function (shortcutChar, shortcutDescriptionKey) {
 
         var listElement = document.createElement("li");
+        listElement.id = shortcutChar;
 
         var spanElement = document.createElement("span");
         spanElement.className = "item-action";
@@ -200,6 +201,21 @@ var KeyboardShortcut = {
 
         if (parentListElement)
             parentListElement.appendChild(listElement);
+    },
+
+    /**
+     * Removes the list element corresponding to the given shortcut from the
+     * help dialog
+     * @private
+     */
+    _removeShortcutFromHelp: function (shortcutChar) {
+        var parentListElement
+            = document.getElementById("keyboard-shortcuts-list");
+
+        var shortcutElement = document.getElementById(shortcutChar);
+
+        if (shortcutElement)
+            parentListElement.removeChild(shortcutElement);
     }
 };
 
