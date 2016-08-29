@@ -1,13 +1,12 @@
 -- Token authentication
 -- Copyright (C) 2015 Atlassian
 
-local basexx = require 'basexx';
+local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local formdecode = require "util.http".formdecode;
 local generate_uuid = require "util.uuid".generate;
 local http = require "net.http";
-local json = require 'cjson'
-json.encode_empty_table('array')
+local json = require "cjson";
 local new_sasl = require "util.sasl".new;
 local sasl = require "util.sasl";
 local timer = require "util.timer";
@@ -54,7 +53,7 @@ module:hook("bosh-session", function(event)
 	if query ~= nil then
 		session.auth_token = query and formdecode(query).token or nil;
 	end
-end)
+end);
 
 function provider.test_password(username, password)
 	return nil, "Password based auth not supported";
@@ -142,10 +141,10 @@ function provider.get_sasl_handler(session)
 
 		local pubKey;
 		if asapKeyServer and session.auth_token ~= nil then
-			local dotFirst = session.auth_token:find("%.")
+			local dotFirst = session.auth_token:find("%.");
 			if not dotFirst then return nil, "Invalid token" end
-			local header = json.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)))
-			local kid = header["kid"]
+			local header = json.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+			local kid = header["kid"];
 			if kid == nil then
 				return false, "not-allowed", "'kid' claim is missing";
 			end
@@ -167,7 +166,7 @@ function provider.get_sasl_handler(session)
 			session.jitsi_meet_room = claims["room"];
 			return true;
 		else
-			return false, "not-allowed", msg
+			return false, "not-allowed", msg;
 		end
 	end
 
@@ -186,10 +185,10 @@ local function anonymous(self, message)
 	self.username = username;
 
 	if result == true then
-		return "success"
+		return "success";
 	else
 
-		return "failure", err, msg
+		return "failure", err, msg;
 	end
 end
 
