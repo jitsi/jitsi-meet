@@ -2,7 +2,7 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-import KeyboardShortcut from '../../keyboardshortcut/KeyboardShortcut';
+import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
 let roomUrl = null;
 let emitter = null;
