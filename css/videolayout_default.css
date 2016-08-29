@@ -8,7 +8,15 @@
 }
 
 #remoteVideos {
-    display:block;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+
     position:absolute;
     text-align:right;
     height:196px;
@@ -30,8 +38,6 @@
 
 .videocontainer {
     position: relative;
-    margin-left: auto;
-    margin-right: auto;
     text-align: center;
 }
 
