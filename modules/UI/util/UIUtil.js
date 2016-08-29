@@ -130,7 +130,7 @@
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
                 return UIUtil.isButtonEnabled(buttonName)
-                    ? null : mappings[buttonName]; })
+                    ? null : mappings[buttonName].id; })
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();

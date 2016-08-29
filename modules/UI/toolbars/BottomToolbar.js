@@ -3,9 +3,15 @@ import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 
 const defaultBottomToolbarButtons = {
-    'chat':      '#bottom_toolbar_chat',
-    'contacts':  '#bottom_toolbar_contact_list',
-    'filmstrip': '#bottom_toolbar_film_strip'
+    'chat': {
+        id: '#bottom_toolbar_chat'
+    },
+    'contacts': {
+        id: '#bottom_toolbar_contact_list'
+    },
+    'filmstrip': {
+        id: '#bottom_toolbar_film_strip'
+    }
 };
 
 const BottomToolbar = {

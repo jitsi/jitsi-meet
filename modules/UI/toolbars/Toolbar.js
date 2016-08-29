@@ -2,6 +2,7 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
+import KeyboardShortcut from '../../keyboardshortcut/KeyboardShortcut';
 
 let roomUrl = null;
 let emitter = null;
@@ -110,7 +111,8 @@ const buttonHandlers = {
     },
     "toolbar_button_fullScreen": function() {
         JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
-        UIUtil.buttonClick("#toolbar_button_fullScreen", "icon-full-screen icon-exit-full-screen");
+        UIUtil.buttonClick("#toolbar_button_fullScreen",
+            "icon-full-screen icon-exit-full-screen");
         emitter.emit(UIEvents.FULLSCREEN_TOGGLE);
     },
     "toolbar_button_sip": function () {
@@ -152,16 +154,64 @@ const buttonHandlers = {
     }
 };
 const defaultToolbarButtons = {
-    'microphone': '#toolbar_button_mute',
-    'camera':     '#toolbar_button_camera',
-    'desktop':    '#toolbar_button_desktopsharing',
-    'security':   '#toolbar_button_security',
-    'invite':     '#toolbar_button_link',
-    'chat':       '#toolbar_button_chat',
-    'etherpad':   '#toolbar_button_etherpad',
-    'fullscreen': '#toolbar_button_fullScreen',
-    'settings':   '#toolbar_button_settings',
-    'hangup':     '#toolbar_button_hangup'
+    'microphone': {
+        id: '#toolbar_button_mute',
+        shortcut: 'M',
+        shortcutAttr: 'mutePopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
+            APP.conference.toggleAudioMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.mute"
+    },
+    'camera': {
+        id: '#toolbar_button_camera',
+        shortcut: 'V',
+        shortcutAttr: 'toggleVideoPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
+            APP.conference.toggleVideoMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.videoMute"
+    },
+    'desktop': {
+        id: '#toolbar_button_desktopsharing',
+        shortcut: 'D',
+        shortcutAttr: 'toggleDesktopSharingPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
+            APP.conference.toggleScreenSharing();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleScreensharing"
+    },
+    'security': {
+        id: '#toolbar_button_security'
+    },
+    'invite': {
+        id: '#toolbar_button_link'
+    },
+    'chat': {
+        id: '#toolbar_button_chat',
+        shortcut: 'C',
+        shortcutAttr: 'toggleChatPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
+            APP.UI.toggleChat();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleChat"
+    },
+    'etherpad': {
+        id: '#toolbar_button_etherpad'
+    },
+    'fullscreen': {
+        id: '#toolbar_button_fullScreen'
+    },
+    'settings': {
+        id: '#toolbar_button_settings'
+    },
+    'hangup': {
+        id: '#toolbar_button_hangup'
+    }
 };
 
 function dialpadButtonClicked() {
@@ -196,6 +246,22 @@ const Toolbar = {
         this.toolbarSelector = $("#header");
 
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
+
+        Object.keys(defaultToolbarButtons).forEach(
+            id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    var button = defaultToolbarButtons[id];
+
+                    if (button.shortcut)
+                        KeyboardShortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
+                }
+            }
+        );
 
         Object.keys(buttonHandlers).forEach(
             buttonId => $(`#${buttonId}`).click(function(event) {
