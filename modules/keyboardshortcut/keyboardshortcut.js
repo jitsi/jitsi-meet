@@ -82,12 +82,8 @@ var KeyboardShortcut = {
         $('body').popover({ selector: '[data-toggle=popover]',
             trigger: 'click hover',
             content: function() {
-                var shortcutAttr = this.getAttribute("shortcut");
-
-                var shortcutString = (shortcutAttr)
-                                        ? self._getShortcutTooltip(shortcutAttr)
-                                        : "";
-                return this.getAttribute("content") + shortcutString;
+                return this.getAttribute("content")
+                    + self._getShortcutTooltip(this.getAttribute("shortcut"));
             }
         });
     },
@@ -130,22 +126,24 @@ var KeyboardShortcut = {
     },
 
     /**
+     * Returns the tooltip string for the given shortcut attribute.
      *
-     * @param id indicates the popover associated with the shortcut
-     * @returns {string} the keyboard shortcut used for the id given
+     * @param shortcutAttr indicates the popover associated with the shortcut
+     * @returns {string} the tooltip string to add to the given shortcut popover
+     * or an empty string if the shortcutAttr is null, an empty string or not
+     * found in the shortcut mapping
      */
-    _getShortcutTooltip: function (id) {
-        if (!id || id.length <= 0)
-            return "";
-
-        for (var key in _shortcuts) {
-            if (_shortcuts.hasOwnProperty(key)) {
-                if (_shortcuts[key].shortcutAttr
-                    && _shortcuts[key].shortcutAttr === id) {
+    _getShortcutTooltip: function (shortcutAttr) {
+        if (typeof shortcutAttr === "string" && shortcutAttr.length > 0) {
+            for (var key in _shortcuts) {
+                if (_shortcuts.hasOwnProperty(key)
+                    && _shortcuts[key].shortcutAttr
+                    && _shortcuts[key].shortcutAttr === shortcutAttr) {
                     return " (" + _shortcuts[key].character + ")";
                 }
             }
         }
+
         return "";
     },
     /**
