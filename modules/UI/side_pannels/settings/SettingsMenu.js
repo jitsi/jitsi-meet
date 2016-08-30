@@ -82,11 +82,6 @@ export default {
             emitter.emit(UIEvents.EMAIL_CHANGED, $('#setEmail').val());
         }
 
-        // AVATAR URL CHANGED
-        function updateAvatarUrl () {
-            emitter.emit(UIEvents.AVATAR_URL_CHANGED, $('#setAvatarUrl').val());
-        }
-
         $('#setEmail')
             .val(Settings.getEmail())
             .keyup(function (event) {
@@ -94,15 +89,6 @@ export default {
                 updateEmail();
             }
         }).focusout(updateEmail);
-
-        $('#setAvatarUrl')
-            .val(Settings.getAvatarUrl())
-            .keyup(function (event) {
-            if (event.keyCode === 13) { // enter
-                updateAvatarUrl();
-            }
-        }).focusout(updateAvatarUrl);
-
 
         // START MUTED
         $("#startMutedOptions").change(function () {

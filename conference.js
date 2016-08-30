@@ -316,23 +316,6 @@ function changeLocalEmail(email = '') {
     sendData(commands.EMAIL, email);
 }
 
-
-/**
- * Changes the local avatar url for the local user
- * @param avatarUrl {string} the new avatar url
- */
-function changeLocalAvatarUrl(avatarUrl = '') {
-    avatarUrl = avatarUrl.trim();
-
-    if (avatarUrl === APP.settings.getAvatarUrl()) {
-        return;
-    }
-
-    APP.settings.setAvatarUrl(avatarUrl);
-    APP.UI.setUserAvatarUrl(room.myUserId(), avatarUrl);
-    sendData(commands.AVATAR_URL, avatarUrl);
-}
-
 /**
  * Changes the display name for the local user
  * @param nickname {string} the new display name
@@ -1268,8 +1251,6 @@ export default {
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.UI.setUserEmail(from, data.value);
         });
-
-        APP.UI.addListener(UIEvents.AVATAR_URL_CHANGED, changeLocalAvatarUrl);
 
         room.addCommandListener(this.commands.defaults.AVATAR_URL,
         (data, from) => {

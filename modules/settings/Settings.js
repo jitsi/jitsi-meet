@@ -35,7 +35,6 @@ if (supportsLocalStorage()) {
     }
 
     email = UIUtil.unescapeHtml(window.localStorage.email || '');
-    avatarUrl = UIUtil.unescapeHtml(window.localStorage.avatarUrl || '');
     localFlipX = JSON.parse(window.localStorage.localFlipX || true);
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
@@ -106,7 +105,6 @@ export default {
      */
     setAvatarUrl: function (newAvatarUrl) {
         avatarUrl = newAvatarUrl;
-        window.localStorage.avatarUrl = UIUtil.escapeHtml(newAvatarUrl);
     },
 
     /**
@@ -116,7 +114,6 @@ export default {
     getAvatarUrl: function () {
         return avatarUrl;
     },
-
 
     getLanguage () {
         return language;
