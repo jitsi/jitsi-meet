@@ -82,8 +82,12 @@ var KeyboardShortcut = {
         $('body').popover({ selector: '[data-toggle=popover]',
             trigger: 'click hover',
             content: function() {
-                return this.getAttribute("content") +
-                    self._getShortcut(this.getAttribute("shortcut"));
+                var shortcutAttr = this.getAttribute("shortcut");
+
+                var shortcutString = (shortcutAttr)
+                                        ? self._getShortcutTooltip(shortcutAttr)
+                                        : "";
+                return this.getAttribute("content") + shortcutString;
             }
         });
     },
@@ -130,10 +134,14 @@ var KeyboardShortcut = {
      * @param id indicates the popover associated with the shortcut
      * @returns {string} the keyboard shortcut used for the id given
      */
-    _getShortcut: function (id) {
+    _getShortcutTooltip: function (id) {
+        if (!id || id.length <= 0)
+            return "";
+
         for (var key in _shortcuts) {
             if (_shortcuts.hasOwnProperty(key)) {
-                if (_shortcuts[key].shortcutAttr === id) {
+                if (_shortcuts[key].shortcutAttr
+                    && _shortcuts[key].shortcutAttr === id) {
                     return " (" + _shortcuts[key].character + ")";
                 }
             }
