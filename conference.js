@@ -48,6 +48,7 @@ const commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     AVATAR_URL: "avatar-url",
+    AVATAR_ID: "avatar-id",
     ETHERPAD: "etherpad",
     SHARED_VIDEO: "shared-video",
     CUSTOM_ROLE: "custom-role"
@@ -758,6 +759,8 @@ export default {
         let avatarUrl = APP.settings.getAvatarUrl();
         avatarUrl && sendData(this.commands.defaults.AVATAR_URL,
             avatarUrl);
+        !email && sendData(
+             this.commands.defaults.AVATAR_ID, APP.settings.getAvatarId());
 
         let nick = APP.settings.getDisplayName();
         if (config.useNicks && !nick) {
@@ -1256,6 +1259,11 @@ export default {
         (data, from) => {
             APP.UI.setUserAvatarUrl(from, data.value);
         });
+
+        room.addCommandListener(this.commands.defaults.AVATAR_ID,
+            (data, from) => {
+                APP.UI.setUserAvatarID(from, data.value);
+            });
 
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED, changeLocalDisplayName);
 
