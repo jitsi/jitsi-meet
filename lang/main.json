@@ -119,8 +119,7 @@
         "selectAudioOutput": "Select audio output",
         "followMe": "Enable follow me",
         "noDevice": "None",
-        "noPermission": "Permission to use device is not granted",
-        "avatarUrl": "Avatar URL"
+        "noPermission": "Permission to use device is not granted"
     },
     "videothumbnail":
     {

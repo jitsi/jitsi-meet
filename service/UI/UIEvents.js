@@ -15,10 +15,6 @@ export default {
      */
     EMAIL_CHANGED: "UI.email_changed",
     /**
-     * Notifies that local user changed avatar url.
-     */
-    AVATAR_URL_CHANGED: "UI.avatar_url_changed",
-    /**
      * Notifies that "start muted" settings changed.
      */
     START_MUTED_CHANGED: "UI.start_muted_changed",
