@@ -1161,6 +1161,11 @@ export default {
             APP.UI.updateRecordingState(status);
         });
 
+        room.on(ConferenceEvents.LOCK_STATE_CHANGED, (state, error) => {
+            console.log("Received channel password lock change: ", state, error);
+            APP.UI.markRoomLocked(state);
+        });
+
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
             APP.UI.updateUserStatus(id, status);
         });
