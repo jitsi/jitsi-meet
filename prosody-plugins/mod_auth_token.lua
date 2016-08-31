@@ -9,6 +9,7 @@ local http = require "net.http";
 local json = require "cjson";
 local new_sasl = require "util.sasl".new;
 local sasl = require "util.sasl";
+local sha256 = require "util.hashes".sha256;
 local timer = require "util.timer";
 local token_util = module:require "token/util";
 
@@ -96,10 +97,15 @@ function get_public_key(keyId)
 			done();
 		end
 		module:log("debug", "Fetching public key from: "..asapKeyServer..keyId);
-		local request = http.request(asapKeyServer..keyId, {
+
+		-- We hash the key ID to work around some legacy behavior in the original
+		-- deployment and make deployment easier. It also helps prevent directory
+		-- traversal attacks (although path cleaning could have done this too).
+		local request = http.request(asapKeyServer..sha256(keyId)..'.pem', {
 			headers = http_headers or {},
 			method = "GET"
 		}, cb);
+
 		-- TODO: Is the done() call racey? Can we cancel this if the request
 		--       succeedes?
 		local function cancel()
