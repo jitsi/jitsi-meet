@@ -94,12 +94,15 @@ function get_public_key(keyId)
 		local wait, done = async.waiter();
 		local function cb(content_, code_, response_, request_)
 			content, code = content_, code_;
+			if code == 200 or code == 204 then
+				cache:set(keyId, content);
+			end
 			done();
 		end
 		module:log("debug", "Fetching public key from: "..asapKeyServer..keyId);
 
-		-- We hash the key ID to work around some legacy behavior in the original
-		-- deployment and make deployment easier. It also helps prevent directory
+		-- We hash the key ID to work around some legacy behavior and make
+		-- deployment easier. It also helps prevent directory
 		-- traversal attacks (although path cleaning could have done this too).
 		local request = http.request(asapKeyServer..sha256(keyId)..'.pem', {
 			headers = http_headers or {},
