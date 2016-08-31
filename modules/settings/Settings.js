@@ -3,6 +3,7 @@
 import UIUtil from '../UI/util/UIUtil';
 
 let email = '';
+let avatarId = '';
 let displayName = '';
 let language = null;
 let cameraDeviceId = '';
@@ -35,6 +36,13 @@ if (supportsLocalStorage()) {
     }
 
     email = UIUtil.unescapeHtml(window.localStorage.email || '');
+    avatarId = UIUtil.unescapeHtml(window.localStorage.avatarId || '');
+    if (!avatarId) {
+        // if there is no avatar id, we generate a unique one and use it forever
+        avatarId = generateUniqueId();
+        window.localStorage.avatarId = avatarId;
+    }
+
     localFlipX = JSON.parse(window.localStorage.localFlipX || true);
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
@@ -103,6 +111,14 @@ export default {
      */
     getEmail: function () {
         return email;
+    },
+
+    /**
+     * Returns avatar id of the local user.
+     * @returns {string} avatar id
+     */
+    getAvatarId: function () {
+        return avatarId;
     },
 
     /**

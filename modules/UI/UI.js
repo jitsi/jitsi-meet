@@ -308,7 +308,12 @@ UI.initConference = function () {
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserEmail(id, Settings.getEmail());
+    let email = Settings.getEmail();
+    if (email) {
+        UI.setUserEmail(id, email);
+    } else {
+        UI.setUserAvatarID(id, Settings.getAvatarId());
+    }
 
     Toolbar.checkAutoEnableDesktopSharing();
 
@@ -839,7 +844,7 @@ UI.dockToolbar = function (isDock) {
 /**
  * Updates the avatar for participant.
  * @param {string} id user id
- * @param {stirng} avatarUrl the URL for the avatar
+ * @param {string} avatarUrl the URL for the avatar
  */
 function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
@@ -852,7 +857,7 @@ function changeAvatar(id, avatarUrl) {
 /**
  * Update user email.
  * @param {string} id user id
- * @param {stirng} email user email
+ * @param {string} email user email
  */
 UI.setUserEmail = function (id, email) {
     // update avatar
@@ -861,11 +866,22 @@ UI.setUserEmail = function (id, email) {
     changeAvatar(id, Avatar.getAvatarUrl(id));
 };
 
+/**
+ * Update user avtar id.
+ * @param {string} id user id
+ * @param {string} avatarId user's avatar id
+ */
+UI.setUserAvatarID = function (id, avatarId) {
+    // update avatar
+    Avatar.setUserAvatarID(id, avatarId);
+
+    changeAvatar(id, Avatar.getAvatarUrl(id));
+};
 
 /**
  * Update user avatar URL.
  * @param {string} id user id
- * @param {stirng} url user avatar url
+ * @param {string} url user avatar url
  */
 UI.setUserAvatarUrl = function (id, url) {
     // update avatar
@@ -1439,8 +1455,6 @@ UI.disableMicrophoneButton = function () {
 UI.enableMicrophoneButton = function () {
     Toolbar.markAudioIconAsDisabled(false);
 };
-
-let bottomToolbarEnabled = null;
 
 UI.showRingOverLay = function () {
     RingOverlay.show(APP.tokenData.callee);
