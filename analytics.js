@@ -10,13 +10,13 @@
     ga('send', 'pageview');
   }
 
-  Analytics.prototype.sendEvent = function (action, data, label) {
+  Analytics.prototype.sendEvent = function (action, data, label, browserName) {
     // empty label if missing value for it and add the value,
     // the value should be integer or null
     var value = Math.round(parseFloat(data));
 
     ga('send', 'event', 'jit.si',
-        action, label ? label : "", value ? value : null);
+        action + '.' + browserName, label ? label : "", value ? value : null);
   };
 
   ctx.Analytics = Analytics;
