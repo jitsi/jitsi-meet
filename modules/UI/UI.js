@@ -332,6 +332,14 @@ UI.mucJoined = function () {
     VideoLayout.mucJoined();
 };
 
+/***
+ * Handler for toggling filmstrip
+ */
+UI.handleToggleFilmStrip = () => {
+    UI.toggleFilmStrip();
+    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+};
+
 /**
  * Setup some UI event listeners.
  */
@@ -359,10 +367,7 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
 
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
-        UI.toggleFilmStrip();
-        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
-    });
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
 
     UI.addListener(UIEvents.FOLLOW_ME_ENABLED, function (isEnabled) {
         if (followMeHandler)
@@ -515,7 +520,6 @@ UI.start = function () {
     // conference ready.
     return true;
 };
-
 
 /**
  * Show local stream on UI.
