@@ -857,6 +857,8 @@ export default {
 
         return promise.then(function () {
             if (stream) {
+                stream.on(TrackEvents.TRACK_AUDIO_NOT_WORKING,
+                    APP.UI.showAudioNotWorkingDialog);
                 return room.addTrack(stream);
             }
         }).then(() => {
@@ -1162,7 +1164,8 @@ export default {
         });
 
         room.on(ConferenceEvents.LOCK_STATE_CHANGED, (state, error) => {
-            console.log("Received channel password lock change: ", state, error);
+            console.log("Received channel password lock change: ", state,
+                error);
             APP.UI.markRoomLocked(state);
         });
 

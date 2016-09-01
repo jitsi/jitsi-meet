@@ -263,6 +263,7 @@
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micNotFoundError": "Microphone was not found.",
         "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
+        "micNotSendingData": "Your microphone is not sending data. Please select another device from the settings menu or try to restart your browser / device.",
         "goToStore": "Go to the webstore",
         "externalInstallationTitle": "Extension required",
         "externalInstallationMsg": "You need to install our desktop sharing extension."
