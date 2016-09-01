@@ -3,11 +3,13 @@
 
 local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
+local hex = require "util.hex";
 local formdecode = require "util.http".formdecode;
 local generate_uuid = require "util.uuid".generate;
 local http = require "net.http";
 local json = require "cjson";
 local new_sasl = require "util.sasl".new;
+local path = require "util.paths";
 local sasl = require "util.sasl";
 local sha256 = require "util.hashes".sha256;
 local timer = require "util.timer";
@@ -99,12 +101,13 @@ function get_public_key(keyId)
 			end
 			done();
 		end
-		module:log("debug", "Fetching public key from: "..asapKeyServer..keyId);
+		local keyurl = path.join(asapKeyServer, hex.to(sha256(keyId))..'.pem');
+		module:log("debug", "Fetching public key from: "..keyurl);
 
 		-- We hash the key ID to work around some legacy behavior and make
 		-- deployment easier. It also helps prevent directory
 		-- traversal attacks (although path cleaning could have done this too).
-		local request = http.request(asapKeyServer..sha256(keyId)..'.pem', {
+		local request = http.request(keyurl, {
 			headers = http_headers or {},
 			method = "GET"
 		}, cb);
