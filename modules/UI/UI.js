@@ -1392,6 +1392,18 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     }
 };
 
+/**
+ * Shows error dialog that informs the user that no data is received from the
+ * microphone.
+ */
+UI.showAudioNotWorkingDialog = function () {
+    messageHandler.openMessageDialog(
+        "dialog.error",
+        "dialog.micNotSendingData",
+        null,
+        null);
+};
+
 UI.updateDevicesAvailability = function (id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
 };
