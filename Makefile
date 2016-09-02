@@ -7,6 +7,7 @@ CLEANCSS = ./node_modules/.bin/cleancss
 STYLES_MAIN = css/main.scss
 STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
+STYLES_SOURCEMAPS = css/all.css.map
 DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
@@ -48,7 +49,7 @@ deploy-lib-jitsi-meet:
 	$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 	$(DEPLOY_DIR)
 deploy-css:
-	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
+	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) --source-map $(STYLES_SOURCEMAPS) && \
 	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
 	rm $(STYLES_BUNDLE)
 
