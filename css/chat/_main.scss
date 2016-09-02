@@ -1,12 +1,49 @@
+@import 'chat';
+
 #chatspace {
+    * {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+
     display: none;
     background-color: black;
     border-left: 1px solid #424242;
-}
 
-#chatspace * {
-    -webkit-user-select: text;
-    user-select: text;
+    &.is-conversation-mode {
+        #chatconversation {
+            visibility: visible;
+        }
+
+        #usermsg {
+            visibility: visible;
+        }
+
+        #nickname {
+            visibility: hidden;
+        }
+
+        #smileysarea {
+            visibility: visible;
+        }
+    }
+
+    .username {
+        float: left;
+        padding-left: 5px;
+        font-weight: bold;
+    }
+
+    .timestamp {
+        float: right;
+        padding-right: 5px;
+        font-size: 11px;
+    }
+
+    .usermessage {
+        padding-top: 20px;
+        padding-left: 5px;
+    }
 }
 
 #chatconversation {
@@ -22,9 +59,6 @@
     overflow-y: scroll;
     overflow-x: hidden;
     word-wrap: break-word;
-}
-#chatspace.is-conversation-mode #chatconversation {
-    visibility: visible;
 }
 
 .localuser {
@@ -58,39 +92,19 @@
     line-height: 30px;
     overflow: hidden;
     resize: none;
-}
 
-#usermsg:hover {
-    border: 0px none;
-    box-shadow: none;
-}
+    &:hover {
+        border: 0px none;
+        box-shadow: none;
+    }
 
-#chatspace.is-conversation-mode #usermsg {
-    visibility: visible;
-}
+    &::-webkit-scrollbar-track-piece {
+        background: #3a3a3a;
+    }
 
-#nickname {
-    position: absolute;
-    text-align: center;
-    color: #9d9d9d;
-    font-size: 18px;
-    top: 100px;
-    left: 5px;
-    right: 5px;
-    width: 95%;
-}
-
-#chatspace.is-conversation-mode #nickname {
-    visibility: hidden;
-}
-
-#nickinput {
-    margin-top: 20px;
-    font-size: 14px;
-    background: #3a3a3a;
-    box-shadow: inset 0 0 3px 2px #a7a7a7;
-    border: 1px solid #a7a7a7;
-    color: #a7a7a7;
+    &::-webkit-input-placeholder {
+        line-height: 30px;
+    }
 }
 
 #unreadMessages {
@@ -103,23 +117,6 @@
     left: 10px;
     position: absolute;
     font-size: 8px;
-}
-
-#chatspace .username {
-    float: left;
-    padding-left: 5px;
-    font-weight: bold;
-}
-
-#chatspace .timestamp {
-    float: right;
-    padding-right: 5px;
-    font-size: 11px;
-}
-
-#chatspace .usermessage {
-    padding-top: 20px;
-    padding-left: 5px;
 }
 
 .chatArrow {
@@ -155,11 +152,11 @@
     height: 26px;
     margin: auto;
     cursor: pointer;
-}
 
-#smileys img {
-    width: 22px;
-    padding: 2px;
+    img {
+        width: 22px;
+        padding: 2px;
+    }
 }
 
 #smileysarea {
@@ -170,16 +167,12 @@
     min-width: 31px;
     height: 40px;
     padding: 0px;
-    max-height:150px;
-    min-height:35px;
+    max-height: 150px;
+    min-height: 35px;
     border: 0px none;
     background: #3a3a3a;
     overflow: hidden;
     visibility: hidden;
-}
-
-#chatspace.is-conversation-mode #smileysarea {
-    visibility: visible;
 }
 
 #smileysContainer {
@@ -190,24 +183,20 @@
     border-top: 1px solid;
     width: 100%;
     bottom: 10%;
-}
 
-#smileysContainer .smiley {
-    padding: 7px;
+    .smiley {
+        padding: 7px;
+    }
 }
 
 .smileyContainer {
     width: 40px;
     height: 40px;
     display: inline-block;
-}
 
-.smileyContainer:hover {
-    background: #3e3e3e;
-}
-
-#usermsg::-webkit-input-placeholder {
-    line-height: 30px;
+    &:hover {
+        background: #3e3e3e;
+    }
 }
 
 ::-webkit-scrollbar {
@@ -230,24 +219,4 @@
 ::-webkit-scrollbar-thumb {
     background: #06a5df;
     border-radius: 4px;
-}
-
-#usermsg::-webkit-scrollbar-track-piece {
-    background: #3a3a3a;
-}
-
-a:link {
-    color: rgb(184, 184, 184);
-}
-
-a:visited {
-    color: white;
-}
-
-a:hover {
-    color: rgb(213, 213, 213);
-}
-
-a:active {
-    color: black;
 }
