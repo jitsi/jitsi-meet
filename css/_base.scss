@@ -14,10 +14,7 @@ html, body{
 }
 
 html, body, input, textarea, keygen, select, button {
-    font-family:    'open_sanslight',
-                    'Helvetica Neue',
-                    Helvetica,
-                    sans-serif !important;
+    font-family: $baseFontFamily !important;
 }
 
 .right-panel {

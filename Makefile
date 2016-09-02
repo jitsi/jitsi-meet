@@ -1,9 +1,12 @@
 NPM = npm
 BROWSERIFY = ./node_modules/.bin/browserify
+NODE_SASS = ./node_modules/.bin/node-sass
 UGLIFYJS = ./node_modules/.bin/uglifyjs
 EXORCIST = ./node_modules/.bin/exorcist
 CLEANCSS = ./node_modules/.bin/cleancss
-CSS_FILES = font.css toastr.css main.css overlay.css videolayout_default.css font-awesome.css jquery-impromptu.css modaldialog.css notice.css popup_menu.css recording.css login_menu.css popover.css jitsi_popover.css contact_list.css chat.css welcome_page.css settingsmenu.css feedback.css jquery.contextMenu.css keyboard-shortcuts.css
+STYLES_MAIN = css/main.scss
+STYLES_BUNDLE = css/all.bundle.css
+STYLES_DESTINATION = css/all.css
 DEPLOY_DIR = libs
 BROWSERIFY_FLAGS = -d
 OUTPUT_DIR = .
@@ -45,7 +48,9 @@ deploy-lib-jitsi-meet:
 	$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 	$(DEPLOY_DIR)
 deploy-css:
-	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css
+	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
+	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
+	rm $(STYLES_BUNDLE)
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
