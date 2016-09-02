@@ -45,6 +45,7 @@
     "clean-css": "*",
     "exorcist": "*",
     "jshint": "2.8.0",
+    "node-sass": "^3.8.0",
     "precommit-hook": "3.0.0",
     "uglify-js": "2.4.24"
   },
