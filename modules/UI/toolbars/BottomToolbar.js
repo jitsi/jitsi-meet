@@ -15,7 +15,7 @@ const defaultBottomToolbarButtons = {
         shortcutAttr: "filmstripPopover",
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
-            APP.UI.toggleFilmStrip();
+            APP.UI.handleToggleFilmStrip();
         },
         shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
     }
