@@ -16,35 +16,37 @@
   "readmeFilename": "README.md",
   "//": "Callstats.io does not work with recent versions of jsSHA (2.0.1 in particular)",
   "dependencies": {
+    "@atlassian/aui": "^6.0.0",
     "async": "0.9.0",
     "autosize": "^1.18.13",
     "bootstrap": "3.1.1",
     "events": "*",
     "i18next-client": "1.7.7",
-    "jquery": "~2.1.1",
     "jQuery-Impromptu": "git+https://github.com/trentrichardson/jQuery-Impromptu.git#v6.0.0",
-    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git",
+    "jquery": "~2.1.1",
     "jquery-contextmenu": "*",
     "jquery-ui": "1.10.5",
     "jssha": "1.5.0",
+    "jws": "*",
+    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git",
+    "postis": "^2.2.0",
     "retry": "0.6.1",
     "strophe": "^1.2.2",
     "strophejs-plugins": "^0.0.6",
-    "toastr": "^2.0.3",
-    "postis": "^2.2.0",
-    "jws": "*"
+    "toastr": "^2.0.3"
   },
   "devDependencies": {
+    "babel-polyfill": "*",
+    "babel-preset-es2015": "*",
+    "babelify": "*",
     "browserify": "11.1.x",
+    "browserify-css": "^0.9.2",
     "browserify-shim": "^3.8.10",
+    "clean-css": "*",
     "exorcist": "*",
     "jshint": "2.8.0",
     "precommit-hook": "3.0.0",
-    "uglify-js": "2.4.24",
-    "clean-css": "*",
-    "babelify": "*",
-    "babel-preset-es2015": "*",
-    "babel-polyfill": "*"
+    "uglify-js": "2.4.24"
   },
   "license": "Apache-2.0",
   "scripts": {
@@ -57,13 +59,19 @@
   "browserify": {
     "transform": [
       "browserify-shim",
-      ["babelify", {
-        "ignore": "node_modules"
-      }]
+      "browserify-css",
+      [
+        "babelify",
+        {
+          "ignore": "node_modules"
+        }
+      ]
     ]
   },
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   },
   "browser": {
     "jquery": "./node_modules/jquery/dist/jquery.js",
@@ -75,6 +83,10 @@
     "tooltip": "./node_modules/bootstrap/js/tooltip.js",
     "popover": "./node_modules/bootstrap/js/popover.js",
     "jQuery-Impromptu": "./node_modules/jQuery-Impromptu/dist/jquery-impromptu.js",
+    "aui": "./node_modules/@atlassian/aui/dist/aui/js/aui.js",
+    "aui-experimental": "./node_modules/@atlassian/aui/dist/aui/js/aui-experimental.js",
+    "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
+    "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
     "autosize": "./node_modules/autosize/build/jquery.autosize.js"
   },
   "browserify-shim": {
@@ -101,11 +113,17 @@
     "jQuery-Impromptu": {
       "depends": "jquery:jQuery"
     },
+    "aui-experimental": {
+      "depends": "aui:AJS"
+    },
     "jquery-contextmenu": {
-        "depends": "jquery:jQuery"
+      "depends": "jquery:jQuery"
     },
     "autosize": {
       "depends": "jquery:jQuery"
     }
+  },
+  "browserify-css": {
+    "autoInject": true
   }
 }
