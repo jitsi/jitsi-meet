@@ -1374,6 +1374,12 @@ export default {
 
         APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
             try {
+                // do not try to select participant if there is none (we are
+                // alone in the room), otherwise an error will be thrown cause
+                // reporting mechanism is not available (datachannels currently)
+                if (room.getParticipants().length === 0)
+                    return;
+
                 room.selectParticipant(id);
             } catch (e) {
                 JitsiMeetJS.analytics.sendEvent('selectParticipant.failed');
