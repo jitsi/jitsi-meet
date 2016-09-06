@@ -212,8 +212,6 @@ var Feedback = {
                             = document.getElementById("feedbackTextArea").value;
 
                         if (feedbackDetails && feedbackDetails.length > 0) {
-                            JitsiMeetJS.analytics.sendEvent(
-                                'feedback.rating', Feedback.feedbackScore);
                             APP.conference.sendFeedback( Feedback.feedbackScore,
                                                     feedbackDetails);
                         }
