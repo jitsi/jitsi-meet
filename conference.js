@@ -1416,7 +1416,7 @@ export default {
                 .then(([stream]) => {
                     this.useVideoStream(stream);
                     console.log('switched local video device');
-                    APP.settings.setCameraDeviceId(cameraDeviceId);
+                    APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(null, err);
@@ -1438,7 +1438,7 @@ export default {
                 .then(([stream]) => {
                     this.useAudioStream(stream);
                     console.log('switched local audio device');
-                    APP.settings.setMicDeviceId(micDeviceId);
+                    APP.settings.setMicDeviceId(micDeviceId, true);
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(err, null);
@@ -1533,13 +1533,13 @@ export default {
                 // storage and settings menu. This is a workaround until
                 // getConstraints() method will be implemented in browsers.
                 if (localAudio) {
-                    localAudio._setRealDeviceIdFromDeviceList(devices);
-                    APP.settings.setMicDeviceId(localAudio.getDeviceId());
+                    APP.settings.setMicDeviceId(
+                        localAudio.getDeviceId(), false);
                 }
 
                 if (localVideo) {
-                    localVideo._setRealDeviceIdFromDeviceList(devices);
-                    APP.settings.setCameraDeviceId(localVideo.getDeviceId());
+                    APP.settings.setCameraDeviceId(
+                        localVideo.getDeviceId(), false);
                 }
 
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
