@@ -14,10 +14,7 @@ html, body{
 }
 
 html, body, input, textarea, keygen, select, button {
-    font-family:    'open_sanslight',
-                    'Helvetica Neue',
-                    Helvetica,
-                    sans-serif !important;
+    font-family: $baseFontFamily !important;
 }
 
 .right-panel {
@@ -147,6 +144,7 @@ html, body, input, textarea, keygen, select, button {
 
 a.button:hover,
 a.bottomToolbarButton:hover {
+    text-decoration: none;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 1px;
@@ -157,7 +155,7 @@ a.bottomToolbarButton:hover {
     color: #636363;
 }
 
-input[type='text'], input[type='password'], textarea {
+[type='text'], [type='password'], textarea {
     -webkit-user-select: text;
     user-select: text;
     display: inline-block;
@@ -175,7 +173,7 @@ input[type='text'], input[type='password'], textarea {
     resize: none; /* prevents the user-resizing, adjust to taste */
 }
 
-input[type='text'], input[type='password'], textarea:focus {
+[type='text'], [type='password'], textarea:focus {
     box-shadow: inset 0 0 3px 2px #ACD8F0; /* provides a more style-able
                                          replacement to the outline */
 }
@@ -242,7 +240,7 @@ form {
     height: 100px;
     bottom: -50px;
     left: -50px;
-    z-index: 100;
+    z-index: 5;
     overflow: hidden;
     transition: all 2s ease-in-out;
 }
@@ -383,4 +381,22 @@ div.feedbackButton:hover {
 
 .toast-message .nickname {
     font-weight: bold;
+}
+
+a {
+    &:link {
+        color: rgb(184, 184, 184);
+    }
+
+    &:visited {
+        color: white;
+    }
+
+    &:hover {
+        color: rgb(213, 213, 213);
+    }
+
+    &:active {
+        color: black;
+    }
 }
