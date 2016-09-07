@@ -189,6 +189,9 @@ const defaultToolbarButtons = {
     'invite': {
         id: '#toolbar_button_link'
     },
+    'recording': {
+        id: '#toolbar_button_record'
+    },
     'chat': {
         id: '#toolbar_button_chat',
         shortcut: 'C',
@@ -201,6 +204,9 @@ const defaultToolbarButtons = {
     },
     'etherpad': {
         id: '#toolbar_button_etherpad'
+    },
+    'sharedvideo': {
+        id: '#toolbar_button_sharedvideo'
     },
     'fullscreen': {
         id: '#toolbar_button_fullScreen'
@@ -246,10 +252,13 @@ const Toolbar = {
 
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
+
+
         Object.keys(defaultToolbarButtons).forEach(
             id => {
                 if (UIUtil.isButtonEnabled(id)) {
                     var button = defaultToolbarButtons[id];
+                    UIUtil.setTooltip(button.id, '', 'bottom');
 
                     if (button.shortcut)
                         APP.keyboardshortcut.registerShortcut(
