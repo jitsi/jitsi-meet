@@ -144,6 +144,7 @@ html, body, input, textarea, keygen, select, button {
 
 a.button:hover,
 a.bottomToolbarButton:hover {
+    text-decoration: none;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 1px;
@@ -239,7 +240,7 @@ form {
     height: 100px;
     bottom: -50px;
     left: -50px;
-    z-index: 100;
+    z-index: 5;
     overflow: hidden;
     transition: all 2s ease-in-out;
 }

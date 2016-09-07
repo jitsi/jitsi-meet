@@ -1,5 +1,7 @@
 /* global $, config, interfaceConfig, AJS */
 
+import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
+
 /**
  * Created by hristo on 12/22/14.
  */
@@ -102,27 +104,33 @@
 
     setTooltip: function (element, key, position) {
         let positions = {
-            top: 's',
-            left: 'e',
-            bottom: 'n',
-            right: 'w'
+            'top': 's',
+            'left': 'e',
+            'bottom': 'n',
+            'right': 'w',
+            'top-left': 'se',
+            'top-right': 'sw',
+            'bottom-left': 'ne',
+            'bottom-right': 'nw'
         };
-        console.log('element', element);
-        console.log('key', key);
-        console.log('position', positions[position]);
+
+        element.setAttribute("data-i18n", "[content]" + key);
 
         AJS.$(element).tooltip({
             gravity: positions[position],
-            title: () => {
-                let $element = AJS.$(element);
-                let title = $element.attr('content');
-                let shortcutKey = $element.attr('shortcut');
-                if(shortcutKey) {
-                    title += ' ';
-                }
-                return title;
-            }
+            html: true,
+            title: this._getTooltipTitle.bind(this, element)
         });
+    },
+
+    _getTooltipTitle: function (element) {
+        let title = element.getAttribute('content');
+        let shortcut = element.getAttribute('shortcut');
+        if(shortcut) {
+            let shortcutString = KeyboardShortcut.getShortcutTooltip(shortcut);
+            title += ` ${shortcutString}`;
+        }
+        return title;
     },
 
     /**

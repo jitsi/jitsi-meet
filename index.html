@@ -15,7 +15,6 @@
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.2/css/aui-experimental.css" media="all">
     <link rel="stylesheet" href="css/all.css"/>
     <!--#include virtual="plugin.head.html" -->
   </head>
@@ -116,7 +115,7 @@
                             </li>
                         </ul>
                     </span>
-                    <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute">
+                    <a class="button icon-microphone" id="toolbar_button_mute" shortcut="mutePopover">
                         <ul id="micMutedPopup" class="loginmenu">
                             <li data-i18n="[html]toolbar.micMutedPopup"></li>
                         </ul>
@@ -124,25 +123,25 @@
                             <li data-i18n="[html]toolbar.unableToUnmutePopup"></li>
                         </ul>
                     </a>
-                    <a class="button icon-camera" id="toolbar_button_camera" data-container="body" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera"></a>
+                    <a class="button icon-camera" id="toolbar_button_camera" shortcut="toggleVideoPopover"></a>
                     <a class="button" id="toolbar_button_record" data-container="body" data-placement="bottom" style="display: none"></a>
-                    <a class="button icon-security" id="toolbar_button_security" data-container="body" data-placement="bottom" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
-                    <a class="button icon-link" id="toolbar_button_link" data-container="body" data-placement="bottom" data-i18n="[content]toolbar.invite" content="Invite others"></a>
-                    <a class="button icon-chat" id="toolbar_button_chat" data-container="body" shortcut="toggleChatPopover" data-placement="bottom" data-i18n="[content]toolbar.chat" content="Open / close chat">
+                    <a class="button icon-security" id="toolbar_button_security"></a>
+                    <a class="button icon-link" id="toolbar_button_link"></a>
+                    <a class="button icon-chat" id="toolbar_button_chat" shortcut="toggleChatPopover">
                         <span id="unreadMessages"></span>
                     </a>
-                    <a class="button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-placement="bottom" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
-                    <a class="button fa fa-share-alt-square" id="toolbar_button_sharedvideo" data-container="body" data-placement="bottom" content="Share a YouTube video" data-i18n="[content]toolbar.sharedvideo" style="display: none">
+                    <a class="button icon-share-doc" id="toolbar_button_etherpad"></a>
+                    <a class="button fa fa-share-alt-square" id="toolbar_button_sharedvideo" style="display: none">
                         <ul id="sharedVideoMutedPopup" class="loginmenu">
                             <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
                         </ul>
                     </a>
-                    <a class="button icon-share-desktop" id="toolbar_button_desktopsharing" data-container="body"data-placement="bottom" shortcut="toggleDesktopSharingPopover" content="Share screen" data-i18n="[content]toolbar.sharescreen" style="display: none"></a>
-                    <a class="button icon-full-screen" id="toolbar_button_fullScreen" data-container="body"data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen"></a>
-                    <a class="button icon-telephone" id="toolbar_button_sip" data-container="body" data-placement="bottom" content="Call SIP number" data-i18n="[content]toolbar.sip" style="display: none"></a>
-                    <a class="button icon-dialpad" id="toolbar_button_dialpad" data-container="body" data-placement="bottom" content="Open dialpad" data-i18n="[content]toolbar.dialpad" style="display: none"></a>
-                    <a class="button icon-settings" id="toolbar_button_settings" data-container="body" data-placement="bottom" content="Settings" data-i18n="[content]toolbar.Settings"></a>
-                    <a class="button icon-hangup" id="toolbar_button_hangup" data-container="body" data-placement="bottom" content="Hang Up" data-i18n="[content]toolbar.hangup"></a>
+                    <a class="button icon-share-desktop" id="toolbar_button_desktopsharing" shortcut="toggleDesktopSharingPopover" style="display: none"></a>
+                    <a class="button icon-full-screen" id="toolbar_button_fullScreen"></a>
+                    <a class="button icon-telephone" id="toolbar_button_sip" style="display: none"></a>
+                    <a class="button icon-dialpad" id="toolbar_button_dialpad" style="display: none"></a>
+                    <a class="button icon-settings" id="toolbar_button_settings"></a>
+                    <a class="button icon-hangup" id="toolbar_button_hangup"></a>
                 </span>
             </div>
             <div id="subject"></div>
@@ -186,21 +185,21 @@
             </div>
             <span id="bottomToolbar">
                 <span class="bottomToolbar_span">
-                    <a class="bottomToolbarButton" id="bottom_toolbar_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="top" data-i18n="[content]bottomtoolbar.chat" content="Open / close chat">
+                    <a class="bottomToolbarButton" id="bottom_toolbar_chat" shortcut="toggleChatPopover">
                         <i id="chatBottomButton" class="icon-chat-simple">
                             <span id="bottomUnreadMessages"></span>
                         </i>
                     </a>
                 </span>
                 <span class="bottomToolbar_span">
-                    <a class="bottomToolbarButton" id="bottom_toolbar_contact_list" data-container="body" data-toggle="popover" data-placement="top" id="contactlistpopover"  data-i18n="[content]bottomtoolbar.contactlist" content="Open / close contact list">
+                    <a class="bottomToolbarButton" id="bottom_toolbar_contact_list" id="contactlistpopover">
                         <i id="contactListButton" class="icon-contactList">
                             <span id="numberOfParticipants"></span>
                         </i>
                     </a>
                 </span>
                 <span class="bottomToolbar_span">
-                    <a class="bottomToolbarButton" id="bottom_toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="top" data-i18n="[content]bottomtoolbar.filmstrip" content="Show / hide film strip">
+                    <a class="bottomToolbarButton" id="bottom_toolbar_film_strip" shortcut="filmstripPopover">
                         <i id="filmStripButton" class="icon-filmstrip"></i>
                     </a>
                 </span>
@@ -270,10 +269,10 @@
                     <span  data-i18n="settings.followMe"></span>
                 </label>
             </div>
-            <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
+            <a id="downloadlog"><i class="fa fa-cloud-download"></i></a>
         </div>
         <div id="feedbackButtonDiv">
-            <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>
+            <a id="feedbackButton"><i class="fa fa-heart"></i></a>
         </div>
     </div>
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
