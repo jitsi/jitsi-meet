@@ -129,11 +129,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
         APP.translation.translateString("videothumbnail.kick") +
         "</div>";
 
-    /**
-     * TO FIX: Disabled kicks until they're fixed.
-     * @type {string}
-     */
-    ejectLinkItem.className = 'ejectlink disabled';
+    ejectLinkItem.className = 'ejectlink';
     ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
     ejectLinkItem.id = "ejectlink_" + this.id;
 
