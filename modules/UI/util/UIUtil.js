@@ -1,4 +1,4 @@
-/* global $, config, interfaceConfig */
+/* global $, config, interfaceConfig, AJS */
 
 /**
  * Created by hristo on 12/22/14.
@@ -101,11 +101,28 @@
     },
 
     setTooltip: function (element, key, position) {
-        element.setAttribute("data-i18n", "[data-content]" + key);
-        element.setAttribute("data-toggle", "popover");
-        element.setAttribute("data-placement", position);
-        element.setAttribute("data-html", true);
-        element.setAttribute("data-container", "body");
+        let positions = {
+            top: 's',
+            left: 'e',
+            bottom: 'n',
+            right: 'w'
+        };
+        console.log('element', element);
+        console.log('key', key);
+        console.log('position', positions[position]);
+
+        AJS.$(element).tooltip({
+            gravity: positions[position],
+            title: () => {
+                let $element = AJS.$(element);
+                let title = $element.attr('content');
+                let shortcutKey = $element.attr('shortcut');
+                if(shortcutKey) {
+                    title += ' ';
+                }
+                return title;
+            }
+        });
     },
 
     /**
