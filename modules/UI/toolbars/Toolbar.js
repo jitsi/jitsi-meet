@@ -2,10 +2,10 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
+import DefaultToolbarButtons from './DefaultToolbarButtons';
 
 let roomUrl = null;
 let emitter = null;
-
 
 /**
  * Opens the invite link dialog.
@@ -152,72 +152,6 @@ const buttonHandlers = {
         );
     }
 };
-const defaultToolbarButtons = {
-    'microphone': {
-        id: '#toolbar_button_mute',
-        shortcut: 'M',
-        shortcutAttr: 'mutePopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
-            APP.conference.toggleAudioMuted();
-        },
-        shortcutDescription: "keyboardShortcuts.mute"
-    },
-    'camera': {
-        id: '#toolbar_button_camera',
-        shortcut: 'V',
-        shortcutAttr: 'toggleVideoPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
-            APP.conference.toggleVideoMuted();
-        },
-        shortcutDescription: "keyboardShortcuts.videoMute"
-    },
-    'desktop': {
-        id: '#toolbar_button_desktopsharing',
-        shortcut: 'D',
-        shortcutAttr: 'toggleDesktopSharingPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
-            APP.conference.toggleScreenSharing();
-        },
-        shortcutDescription: "keyboardShortcuts.toggleScreensharing"
-    },
-    'security': {
-        id: '#toolbar_button_security'
-    },
-    'invite': {
-        id: '#toolbar_button_link'
-    },
-    'recording': {
-        id: '#toolbar_button_record'
-    },
-    'chat': {
-        id: '#toolbar_button_chat',
-        shortcut: 'C',
-        shortcutAttr: 'toggleChatPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
-            APP.UI.toggleChat();
-        },
-        shortcutDescription: "keyboardShortcuts.toggleChat"
-    },
-    'etherpad': {
-        id: '#toolbar_button_etherpad'
-    },
-    'sharedvideo': {
-        id: '#toolbar_button_sharedvideo'
-    },
-    'fullscreen': {
-        id: '#toolbar_button_fullScreen'
-    },
-    'settings': {
-        id: '#toolbar_button_settings'
-    },
-    'hangup': {
-        id: '#toolbar_button_hangup'
-    }
-};
 
 function dialpadButtonClicked() {
     //TODO show the dialpad box
@@ -250,15 +184,17 @@ const Toolbar = {
         this.enabled = true;
         this.toolbarSelector = $("#header");
 
-        UIUtil.hideDisabledButtons(defaultToolbarButtons);
+        UIUtil.hideDisabledButtons(DefaultToolbarButtons);
 
 
 
-        Object.keys(defaultToolbarButtons).forEach(
+        Object.keys(DefaultToolbarButtons).forEach(
             id => {
                 if (UIUtil.isButtonEnabled(id)) {
-                    var button = defaultToolbarButtons[id];
-                    UIUtil.setTooltip(button.id, '', 'bottom');
+                    let button = DefaultToolbarButtons[id];
+                    let buttonElement = document.getElementById(button.id.slice(1));
+
+                    UIUtil.setTooltip(buttonElement, button.key, 'bottom');
 
                     if (button.shortcut)
                         APP.keyboardshortcut.registerShortcut(

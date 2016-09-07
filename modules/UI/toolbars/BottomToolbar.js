@@ -1,25 +1,7 @@
 /* global $, APP, interfaceConfig, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-
-const defaultBottomToolbarButtons = {
-    'chat': {
-        id: '#bottom_toolbar_chat'
-    },
-    'contacts': {
-        id: '#bottom_toolbar_contact_list'
-    },
-    'filmstrip': {
-        id: '#bottom_toolbar_film_strip',
-        shortcut: "F",
-        shortcutAttr: "filmstripPopover",
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
-            APP.UI.handleToggleFilmStrip();
-        },
-        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
-    }
-};
+import DefaultBottomToolbarButtons from './DefaultBottomToolbarButtons';
 
 const BottomToolbar = {
     init () {
@@ -47,7 +29,7 @@ const BottomToolbar = {
     },
 
     setupListeners (emitter) {
-        UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
+        UIUtil.hideDisabledButtons(DefaultBottomToolbarButtons);
 
         const buttonHandlers = {
             "bottom_toolbar_contact_list": function () {
@@ -66,10 +48,14 @@ const BottomToolbar = {
             }
         };
 
-        Object.keys(defaultBottomToolbarButtons).forEach(
+        Object.keys(DefaultBottomToolbarButtons).forEach(
                 id => {
                 if (UIUtil.isButtonEnabled(id)) {
-                    var button = defaultBottomToolbarButtons[id];
+                    let button = DefaultBottomToolbarButtons[id];
+                    let idName = button.id.slice(1);
+                    let buttonElement = document.getElementById(idName);
+
+                    UIUtil.setTooltip(buttonElement, button.key, 'top-left');
 
                     if (button.shortcut)
                         APP.keyboardshortcut.registerShortcut(
