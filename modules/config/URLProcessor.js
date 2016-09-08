@@ -36,6 +36,12 @@ var URLProcessor = {
             if (key.indexOf("config.") === 0) {
                 confObj = configJSON.config;
                 confKey = key.substr("config.".length);
+
+                // prevent passing some parameters which can inject scripts
+                if (confKey === 'analyticsScriptUrl'
+                    || confKey === 'callStatsCustomScriptUrl')
+                    continue;
+
             } else if (key.indexOf("interfaceConfig.") === 0) {
                 confObj = configJSON.interfaceConfig;
                 confKey = key.substr("interfaceConfig.".length);
