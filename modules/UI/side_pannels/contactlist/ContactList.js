@@ -23,11 +23,7 @@ function updateNumberOfParticipants(delta) {
     let buttonIndicatorText = (numberOfContacts === 1) ? '' : numberOfContacts;
     $("#numberOfParticipants").text(buttonIndicatorText);
 
-    let showVisualNotification
-        = (numberOfContacts === 1) ? false : !ContactList.isVisible();
-    ContactList.setVisualNotification(showVisualNotification);
-
-    $("#contactlist>div.title").text(
+    $("#contacts_container>div.title").text(
         APP.translation.translateString(
             "contactlist", {participants: numberOfContacts}
         ));
@@ -135,23 +131,6 @@ var ContactList = {
         if (contact.length > 0) {
             contact.remove();
             updateNumberOfParticipants(-1);
-        }
-    },
-
-    setVisualNotification (show, stopGlowingIn) {
-        let glower = $('#contactListButton');
-
-        if (show && !notificationInterval) {
-            notificationInterval = window.setInterval(function () {
-                glower.toggleClass('active glowing');
-            }, 800);
-        } else if (!show && notificationInterval) {
-            stopGlowing(glower);
-        }
-        if (stopGlowingIn) {
-            setTimeout(function () {
-                stopGlowing(glower);
-            }, stopGlowingIn);
         }
     },
 

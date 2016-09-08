@@ -1,4 +1,4 @@
-#settingsmenu input, select {
+#settings_container input, select {
     margin-top: 10px;
     margin-left: 10%;
     width: 80%;
@@ -9,7 +9,7 @@
     color: #a7a7a7;
 }
 
-#settingsmenu .arrow-up {
+#settings_container .arrow-up {
     width: 0;
     height: 0;
     border-left: 5px solid transparent;
@@ -21,7 +21,7 @@
     margin-right: auto;
 }
 
-#settingsmenu #avatar {
+#settings_container #avatar {
     width: 24%;
     left: 38%;
     border-radius: 25px;

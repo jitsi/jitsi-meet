@@ -123,7 +123,7 @@ function addSmileys() {
         smileysContainer.appendChild(smileyContainer);
     }
 
-    $("#chatspace").append(smileysContainer);
+    $("#chat_container").append(smileysContainer);
 }
 
 /**
@@ -131,7 +131,7 @@ function addSmileys() {
  */
 function resizeChatConversation() {
     var msgareaHeight = $('#usermsg').outerHeight();
-    var chatspace = $('#chatspace');
+    var chatspace = $('#chat_container');
     var width = chatspace.width();
     var chat = $('#chatconversation');
     var smileys = $('#smileysarea');
@@ -187,7 +187,7 @@ var Chat = {
         };
         usermsg.autosize({callback: onTextAreaResize});
 
-        $("#chatspace").bind("shown",
+        $("#chat_container").bind("shown",
             function () {
                 unreadMessages = 0;
                 setVisualNotification(false);
@@ -275,7 +275,8 @@ var Chat = {
      * conversation mode or not.
      */
     setChatConversationMode (isConversationMode) {
-        $('#chatspace').toggleClass('is-conversation-mode', isConversationMode);
+        $('#chat_container')
+            .toggleClass('is-conversation-mode', isConversationMode);
         if (isConversationMode) {
             $('#usermsg').focus();
         }
@@ -285,7 +286,7 @@ var Chat = {
      * Resizes the chat area.
      */
     resizeChat (width, height) {
-        $('#chatspace').width(width).height(height);
+        $('#chat_container').width(width).height(height);
 
         resizeChatConversation();
     },
@@ -294,7 +295,8 @@ var Chat = {
      * Indicates if the chat is currently visible.
      */
     isVisible () {
-        return UIUtil.isVisible(document.getElementById("chatspace"));
+        return UIUtil.isVisible(
+            document.getElementById("chat_container"));
     },
     /**
      * Shows and hides the window with the smileys

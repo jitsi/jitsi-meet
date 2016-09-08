@@ -191,7 +191,7 @@ export default {
      * @returns {boolean}
      */
     isVisible () {
-        return UIUtil.isVisible(document.getElementById("settingsmenu"));
+        return UIUtil.isVisible(document.getElementById("settings_container"));
     },
 
     /**
@@ -290,6 +290,6 @@ export default {
 
         $('#devicesOptions').show();
 
-        APP.translation.translateElement($('#settingsmenu option'));
+        APP.translation.translateElement($('#settings_container option'));
     }
 };

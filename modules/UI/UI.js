@@ -7,7 +7,7 @@ import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
 import ContactList from "./side_pannels/contactlist/ContactList";
 import Avatar from "./avatar/Avatar";
-import ExtendedToolbarToggler from "./side_pannels/ExtendedToolbarToggler";
+import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
@@ -360,7 +360,7 @@ function registerListeners() {
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
     UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
-        ExtendedToolbarToggler.toggle("settingsmenu");
+        SideContainerToggler.toggle("settings_container");
     });
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
@@ -378,7 +378,7 @@ function registerListeners() {
  */
 function bindEvents() {
     function onResize() {
-        ExtendedToolbarToggler.resize();
+        SideContainerToggler.resize();
     }
 
     // Resize and reposition videos in full screen mode.
@@ -427,7 +427,7 @@ UI.start = function () {
     registerListeners();
 
     ToolbarToggler.init();
-    ExtendedToolbarToggler.init();
+    SideContainerToggler.init(eventEmitter);
     FilmStrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
@@ -716,14 +716,14 @@ UI.isFilmStripVisible = function () {
  * Toggles chat panel.
  */
 UI.toggleChat = function () {
-    ExtendedToolbarToggler.toggle("chatspace");
+    SideContainerToggler.toggle("chat_container");
 };
 
 /**
  * Toggles contact list panel.
  */
 UI.toggleContactList = function () {
-    ExtendedToolbarToggler.toggle("contactlist");
+    SideContainerToggler.toggle("contacts_container");
 };
 
 /**

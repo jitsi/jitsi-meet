@@ -43,16 +43,16 @@
     margin-right: auto;
     width: auto;
     border-radius: 4px;
-}
 
-#mainToolbar .first {
-    border-bottom-left-radius: 4px;
-    border-top-left-radius: 4px;
-}
+    .first {
+        border-bottom-left-radius: 4px;
+        border-top-left-radius: 4px;
+    }
 
-#mainToolbar .last {
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+    .last {
+        border-bottom-right-radius: 4px;
+        border-top-right-radius: 4px;
+    }
 }
 
 #extendedToolbar {
@@ -74,7 +74,7 @@
     -webkit-transform: translateX(-100%);
 }
 
-#extendedToolbarPanel {
+#sideToolbarContainer {
     display: inline-block;
     position:absolute;
     top: 0px;
@@ -86,7 +86,7 @@
     z-index: 800;
     overflow: hidden;
 
-    .extendedToolbarPanel__inner {
+    .sideToolbarContainer__inner {
         display: none;
         width: 200px;
         color: #FFF;
@@ -109,34 +109,6 @@
     display: none;
 }
 
-#toolbar_button_chat,
-#chatBottomButton,
-#contactListButton,
-#numberOfParticipants,
-#toolbar_button_record {
-    -webkit-transition: all .5s ease-in-out;
-    -moz-transition: all .5s ease-in-out;
-    transition: all .5s ease-in-out;
-}
-
-/*#ffde00*/
-#toolbar_button_chat.active,
-#contactListButton.glowing,
-#chatBottomButton.glowing {
-    -webkit-text-shadow:    -1px 0 10px #21B9FC,
-    0 1px 10px #21B9FC,
-    1px 0 10px #21B9FC,
-    0 -1px 10px #21B9FC;
-    -moz-text-shadow:   1px 0 10px #21B9FC,
-    0 1px 10px #21B9FC,
-    1px 0 10px #21B9FC,
-    0 -1px 10px #21B9FC;
-    text-shadow:    -1px 0 10px #21B9FC,
-    0 1px 10px #21B9FC,
-    1px 0 10px #21B9FC,
-    0 -1px 10px #21B9FC;
-}
-
 #numberOfParticipants {
   position: absolute;
   top: 5px;
@@ -145,59 +117,8 @@
   font-size: 11px;
 }
 
-#contactListButton.active #numberOfParticipants {
-  color: #21B9FC;
-}
-
 #mainToolbar a.button:last-child::after {
     content: none;
-}
-
-#bottomToolbar {
-    display:block;
-    position: absolute;
-    right: 0;
-    margin-right: 5px;
-    bottom: 40px;
-    width: 29px;
-    border-radius: 1px;
-    color: #FFF;
-    background: rgba(0,0,0,0.5);
-    z-index: 6; /*+1 from #remoteVideos*/
-}
-
-.bottomToolbarButton {
-    display: inline-block;
-    position: relative;
-    color: #FFFFFF;
-    top: 0;
-    padding-top: 6px;
-    margin: 2px;
-    width: 25px;
-    height: 20px;
-    cursor: pointer;
-    font-size: 10pt;
-    text-align: center;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    z-index: 1;
-}
-
-.toolbar_span>span {
-    display: inline-block;
-    position: absolute;
-    font-size: 7pt;
-    color: #ffffff;
-    text-align:center;
-    cursor: pointer;
-}
-
-.bottomToolbar_span>span {
-    display: inline-block;
-    position: absolute;
-    font-size: 7pt;
-    color: #ffffff;
-    text-align: center;
-    cursor: pointer;
 }
 
 .button {
@@ -220,9 +141,11 @@
 }
 
 a.button:hover,
-a.bottomToolbarButton:hover {
+a.button:active,
+a.button.selected {
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.8);
+    // sum opacity with background layer should give us 0.8
+    background: rgba(0, 0, 0, 0.6);
 }
 
 a.button>#avatar {
@@ -236,6 +159,9 @@ a.button>#avatar {
     margin-top: auto;
 }
 
+/**
+ * START of slide in animation for extended toolbar.
+ */
 @include keyframes(slideInX) {
     100% { transform: translateX(0%); }
 }
@@ -252,7 +178,13 @@ a.button>#avatar {
 .slideOutX {
   @include animation('slideOutX .5s forwards');
 }
+/**
+ * END of slide out animation for extended toolbar.
+ */
 
+/**
+ * START of slide in / out animation for main toolbar.
+ */
 @include keyframes(slideInY) {
     100% { transform: translateY(0%); }
 }
@@ -269,7 +201,13 @@ a.button>#avatar {
 .slideOutY {
     @include animation('slideOutY .5s forwards');
 }
+/**
+ * END of slide in / out animation for main toolbar.
+ */
 
+/**
+ * START of slide in animation for extended toolbar panel.
+ */
 @include keyframes(slideInExt) {
     from { width: 0%; }
     to   { width: 20%; }
@@ -287,3 +225,6 @@ a.button>#avatar {
 .slideOutExt {
   @include animation("slideOutExt .5s forwards");
 }
+/**
+ * END of slide in animation for extended toolbar panel.
+ */

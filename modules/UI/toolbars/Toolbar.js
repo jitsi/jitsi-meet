@@ -2,7 +2,7 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-import ExtendedToolbarToggler from "../side_pannels/ExtendedToolbarToggler.js";
+import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
 let roomUrl = null;
 let emitter = null;
@@ -208,10 +208,12 @@ const defaultToolbarButtons = {
             JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
             APP.UI.toggleChat();
         },
-        shortcutDescription: "keyboardShortcuts.toggleChat"
+        shortcutDescription: "keyboardShortcuts.toggleChat",
+        sideContainerId: "chat_container"
     },
     'contacts': {
-        id: '#toolbar_contact_list'
+        id: '#toolbar_contact_list',
+        sideContainerId: "contacts_container"
     },
     'etherpad': {
         id: '#toolbar_button_etherpad'
@@ -220,7 +222,8 @@ const defaultToolbarButtons = {
         id: '#toolbar_button_fullScreen'
     },
     'settings': {
-        id: '#toolbar_button_settings'
+        id: '#toolbar_button_settings',
+        sideContainerId: "settings_container"
     },
     'hangup': {
         id: '#toolbar_button_hangup'
@@ -292,6 +295,13 @@ const Toolbar = {
                 !$(this).prop('disabled') && buttonHandlers[buttonId](event);
             })
         );
+
+        APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            function(containerId, isVisible) {
+                console.log("TOGGLED", containerId, isVisible);
+                Toolbar.handleSideToolbarContainerToggled(  containerId,
+                                                            isVisible);
+            });
     },
     /**
      * Enables / disables the toolbar.
@@ -534,7 +544,7 @@ const Toolbar = {
             return true;
         if ($("#bottomToolbar:hover").length > 0
             || $("#extendedToolbar:hover").length > 0
-            || ExtendedToolbarToggler.isVisible()) {
+            || SideContainerToggler.isVisible()) {
             return true;
         }
         return false;
@@ -571,6 +581,25 @@ const Toolbar = {
 
         this.toolbarSelector.toggleClass("slideInY");
         this.extendedToolbarSelector.toggleClass("slideInX");
+    },
+
+    /**
+     *
+     */
+    handleSideToolbarContainerToggled(containerId, isVisible) {
+        Object.keys(defaultToolbarButtons).forEach(
+            id => {
+                if (!UIUtil.isButtonEnabled(id))
+                    return;
+
+                var button = defaultToolbarButtons[id];
+
+                if (button.sideContainerId
+                    && button.sideContainerId === containerId) {
+                    UIUtil.buttonClick(button.id, "selected");
+                }
+            }
+        );
     }
 };
 

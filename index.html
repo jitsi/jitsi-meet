@@ -191,66 +191,66 @@
                 <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
             </div>
         </div>
-        <div id="extendedToolbarPanel">
-            <div id="chatspace" class="extendedToolbarPanel__inner">
-            <div id="nickname">
-                <span data-i18n="chat.nickname.title"></span>
-                <form>
-                    <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
-                </form>
-            </div>
+        <div id="sideToolbarContainer">
+            <div id="chat_container" class="sideToolbarContainer__inner">
+                <div id="nickname">
+                    <span data-i18n="chat.nickname.title"></span>
+                    <form>
+                        <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
+                    </form>
+                </div>
 
-            <div id="chatconversation"></div>
-            <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
+                <div id="chatconversation"></div>
+                <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
                 <textarea id="usermsg" data-i18n="[placeholder]chat.messagebox" autofocus></textarea>
-            <div id="smileysarea">
-                <div id="smileys" id="toggle_smileys">
-                    <img src="images/smile.svg"/>
+                <div id="smileysarea">
+                    <div id="smileys" id="toggle_smileys">
+                        <img src="images/smile.svg"/>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="contactlist" class="extendedToolbarPanel__inner">
-            <div class="title" data-i18n="contactlist"></div>
-            <ul id="contacts"></ul>
-        </div>
-        <div id="settingsmenu" class="extendedToolbarPanel__inner">
-            <div class="title" data-i18n="settings.title"></div>
-            <div class="arrow-up"></div>
-            <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
-            <input type="text" id="setEmail" placeholder="E-Mail">
-            <select id="languages_selectbox"></select>
-            <div id = "startMutedOptions">
-                <label class = "startMutedLabel">
-                    <input type="checkbox" id="startAudioMuted">
-                    <span  data-i18n="settings.startAudioMuted"></span>
-                </label>
-                <label class = "startMutedLabel">
-                    <input type="checkbox" id="startVideoMuted">
-                    <span data-i18n="settings.startVideoMuted"></span>
-                </label>
+            <div id="contacts_container" class="sideToolbarContainer__inner">
+                <div class="title" data-i18n="contactlist"></div>
+                <ul id="contacts"></ul>
             </div>
-            <div id="devicesOptions">
-                <label className="devicesOptionsLabel">
-                    <span data-i18n="settings.selectCamera"></span>
-                    <select id="selectCamera"></select>
-                </label>
-                <label className="devicesOptionsLabel">
-                    <span data-i18n="settings.selectMic"></span>
-                    <select id="selectMic"></select>
-                </label>
-                <label className="devicesOptionsLabel">
-                    <span data-i18n="settings.selectAudioOutput"></span>
-                    <select id="selectAudioOutput"></select>
-                </label>
+            <div id="settings_container" class="sideToolbarContainer__inner">
+                <div class="title" data-i18n="settings.title"></div>
+                <div class="arrow-up"></div>
+                <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
+                <input type="text" id="setEmail" placeholder="E-Mail">
+                <select id="languages_selectbox"></select>
+                <div id = "startMutedOptions">
+                    <label class = "startMutedLabel">
+                        <input type="checkbox" id="startAudioMuted">
+                        <span  data-i18n="settings.startAudioMuted"></span>
+                    </label>
+                    <label class = "startMutedLabel">
+                        <input type="checkbox" id="startVideoMuted">
+                        <span data-i18n="settings.startVideoMuted"></span>
+                    </label>
+                </div>
+                <div id="devicesOptions">
+                    <label className="devicesOptionsLabel">
+                        <span data-i18n="settings.selectCamera"></span>
+                        <select id="selectCamera"></select>
+                    </label>
+                    <label className="devicesOptionsLabel">
+                        <span data-i18n="settings.selectMic"></span>
+                        <select id="selectMic"></select>
+                    </label>
+                    <label className="devicesOptionsLabel">
+                        <span data-i18n="settings.selectAudioOutput"></span>
+                        <select id="selectAudioOutput"></select>
+                    </label>
+                </div>
+                <div id="followMeOptions">
+                    <label class = "followMeLabel">
+                        <input type="checkbox" id="followMeCheckBox">
+                        <span  data-i18n="settings.followMe"></span>
+                    </label>
+                </div>
+                <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
             </div>
-            <div id="followMeOptions">
-                <label class = "followMeLabel">
-                    <input type="checkbox" id="followMeCheckBox">
-                    <span  data-i18n="settings.followMe"></span>
-                </label>
-            </div>
-            <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
-        </div>
         </div>
     </div>
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">

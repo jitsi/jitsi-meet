@@ -68,26 +68,38 @@ export default {
     VIDEO_DEVICE_CHANGED: "UI.video_device_changed",
     AUDIO_DEVICE_CHANGED: "UI.audio_device_changed",
     AUDIO_OUTPUT_DEVICE_CHANGED: "UI.audio_output_device_changed",
+
     /**
      * Notifies interested listeners that the follow-me feature is enabled or
      * disabled.
      */
     FOLLOW_ME_ENABLED: "UI.follow_me_enabled",
+
     /**
      * Notifies that flipX property of the local video is changed.
      */
     LOCAL_FLIPX_CHANGED: "UI.local_flipx_changed",
+
     // An event which indicates that the resolution of a remote video has
     // changed.
     RESOLUTION_CHANGED: "UI.resolution_changed",
+
     /**
      * Notifies that the button "Go to webstore" is pressed on the dialog for
      * external extension installation.
      */
     OPEN_EXTENSION_STORE: "UI.open_extension_store",
+
     /**
      * Notifies that the button "Cancel" is pressed on the dialog for
      * external extension installation.
      */
-    EXTERNAL_INSTALLATION_CANCELED: "UI.external_installation_canceled"
+    EXTERNAL_INSTALLATION_CANCELED: "UI.external_installation_canceled",
+
+    /**
+     * Notifies that the side toolbar container has been toggled. The actual
+     * event must contain the identifier of the container that has been toggled
+     * and information about toggle on or off.
+     */
+    SIDE_TOOLBAR_CONTAINER_TOGGLED: "UI.side_container_toggled"
 };
