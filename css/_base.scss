@@ -17,137 +17,8 @@ html, body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
 }
 
-.right-panel {
-    display:none;
-    position:absolute;
-    float: right;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    width: 0px;
-    max-width: 200px;
-    overflow: hidden;
-    /* background-color:#dfebf1;*/
-    background-color:#FFFFFF;
-    border-left:1px solid #424242;
-    z-index: 5;
-}
-
 #nowebrtc {
     display:none;
-}
-
-#header_container {
-    z-index: 1014;
-}
-
-.toolbar_span {
-    display: inline-block;
-    position: relative;
-}
-
-#toolbar a.button:last-child::after {
-    content: none;
-}
-
-.button {
-    display: inline-block;
-    position: relative;
-    color: #FFFFFF;
-    top:0px;
-    padding-top: 10px;
-    width: 38px;
-    height: 28px;
-    cursor: pointer;
-    text-align: center;
-    text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
-    z-index: 1;
-    font-size: 1.44em !important;
-    vertical-align: middle;
-}
-
-.button[disabled] {
-    opacity: 0.5;
-}
-
-.toolbar_span>span {
-    display: inline-block;
-    position: absolute;
-    font-size: 7pt;
-    color: #ffffff;
-    text-align:center;
-    cursor: pointer;
-}
-
-#toolbar_button_chat, #chatBottomButton, #contactListButton, #numberOfParticipants {
-    -webkit-transition: all .5s ease-in-out;
-       -moz-transition: all .5s ease-in-out;
-            transition: all .5s ease-in-out;
-}
-/*#ffde00*/
-#toolbar_button_chat.active, #contactListButton.glowing, #chatBottomButton.glowing {
-    -webkit-text-shadow:    -1px 0 10px #21B9FC,
-                            0 1px 10px #21B9FC,
-                            1px 0 10px #21B9FC,
-                            0 -1px 10px #21B9FC;
-    -moz-text-shadow:   1px 0 10px #21B9FC,
-                        0 1px 10px #21B9FC,
-                        1px 0 10px #21B9FC,
-                        0 -1px 10px #21B9FC;
-    text-shadow:    -1px 0 10px #21B9FC,
-                    0 1px 10px #21B9FC,
-                    1px 0 10px #21B9FC,
-                    0 -1px 10px #21B9FC;
-}
-
-#toolbar_button_hangup {
-    color: #ff0000;
-    font-size: 1.4em;
-}
-
-#numberOfParticipants {
-    position: absolute;
-    top: 0px;
-    right: -1px;
-    color: white;
-    width: 13px;
-    height: 13px;
-    line-height: 13px;
-    font-weight: bold;
-    border-radius: 1px;
-    font-size: 11px;
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
-
-#contactListButton.active #numberOfParticipants {
-    color: #21B9FC;
-}
-
-#toolbar {
-    display:inline-block;
-    position:relative;
-    top:5px;
-    margin-left:auto;
-    margin-right:auto;
-    height:38px;
-    width:auto;
-    background-color: rgba(0,0,0,0.5);
-    border-radius: 1px;
-    pointer-events: auto;
-}
-
-#toolbar_button_record {
-    -webkit-transition: all .5s ease-in-out;
-    -moz-transition: all .5s ease-in-out;
-    transition: all .5s ease-in-out;
-}
-
-a.button:hover,
-a.bottomToolbarButton:hover {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 1px;
-    -webkit-border-radius: 1px;
 }
 
 .no-fa-video-camera, .fa-microphone-slash {
@@ -222,76 +93,8 @@ form {
     color: rgba(255,255,255,.50);
 }
 
-#feedbackButton {
-    position: absolute;
-    bottom: 60;
-    left: 60;
-    overflow: visible;
-    color: rgba(255,255,255,.50);
-}
-
-#feedbackButtonDiv {
-    display: none;
-    position: absolute;
-    background-color: rgba(0,0,0,.50);
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    bottom: -50px;
-    left: -50px;
-    z-index: 100;
-    overflow: hidden;
-    transition: all 2s ease-in-out;
-}
-
-#feedbackButtonDiv.hidden {
-    bottom: -246px;
-}
-
-div.feedbackButton:hover {
-    transform: scale(1.3);
-}
-
-#bottomToolbar {
-    display:block;
-    position: absolute;
-    right: 0;
-    margin-right: 5px;
-    bottom: 40px;
-    width: 29px;
-    border-radius: 1px;
-    color: #FFF;
-    background: rgba(0,0,0,0.5);
-    z-index: 6; /*+1 from #remoteVideos*/
-}
-
-.bottomToolbarButton {
-    display: inline-block;
-    position: relative;
-    color: #FFFFFF;
-    top: 0;
-    padding-top: 6px;
-    margin: 2px;
-    width: 25px;
-    height: 20px;
-    cursor: pointer;
-    font-size: 10pt;
-    text-align: center;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    z-index: 1;
-}
-
 .active {
     background-color: #00ccff;
-}
-
-.bottomToolbar_span>span {
-    display: inline-block;
-    position: absolute;
-    font-size: 7pt;
-    color: #ffffff;
-    text-align: center;
-    cursor: pointer;
 }
 
 .glow
@@ -380,4 +183,36 @@ div.feedbackButton:hover {
 
 .toast-message .nickname {
     font-weight: bold;
+}
+
+/**
+ * Hides an element.
+ */
+.hide {
+    display: none !important;
+}
+
+/**
+ * Shows an element.
+ */
+.show {
+    display: block !important;
+}
+
+/**
+ * Shows an inline element.
+ */
+.show-inline {
+    display: inline-block !important;
+}
+
+/**
+ * Shows a flex element.
+ */
+.show-flex {
+    display: -webkit-box !important;
+    display: -moz-box !important;
+    display: -ms-flexbox !important;
+    display: -webkit-flex !important;
+    display: flex !important;
 }

@@ -1,5 +1,5 @@
 {
-    "contactlist": "CONTACT LIST",
+    "contactlist": "On Call (__participants__)",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "downloadlogs": "Download logs",
@@ -27,7 +27,7 @@
         "raiseHand": "Raise your hand.",
         "pushToTalk": "Push to talk.",
         "toggleScreensharing": "Switch between camera and screensharing.",
-        "toggleFilmstrip": "Show or hide the filmstrip.",
+        "toggleFilmstrip": "Show or hide the videos.",
         "toggleShortcuts": "Show or hide this help menu.",
         "focusLocal": "Focus on the local video.",
         "focusRemote": "Focus on one of the remote videos.",
@@ -97,7 +97,7 @@
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
-        "filmstrip": "Show / hide film strip",
+        "filmstrip": "Show / hide videos",
         "contactlist": "Open / close contact list"
     },
     "chat":{
@@ -109,7 +109,7 @@
     },
     "settings":
     {
-        "title": "SETTINGS",
+        "title": "Settings",
         "update": "Update",
         "name": "Name",
         "startAudioMuted": "Start without audio",

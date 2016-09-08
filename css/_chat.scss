@@ -1,9 +1,3 @@
-#chatspace {
-    display: none;
-    background-color: black;
-    border-left: 1px solid #424242;
-}
-
 #chatspace * {
     -webkit-user-select: text;
     user-select: text;
@@ -96,13 +90,6 @@
 #unreadMessages {
     font-size: 8px;
     position: absolute;
-}
-
-#bottomUnreadMessages {
-    top: 5px;
-    left: 10px;
-    position: absolute;
-    font-size: 8px;
 }
 
 #chatspace .username {

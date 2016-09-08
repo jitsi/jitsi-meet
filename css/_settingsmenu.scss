@@ -1,10 +1,3 @@
-#settingsmenu {
-    display: none;
-    background: black;
-    color: #21B9FC;
-    overflow-y: auto;
-}
-
 #settingsmenu input, select {
     margin-top: 10px;
     margin-left: 10%;
@@ -14,18 +7,6 @@
     border: none;
     box-shadow: none;
     color: #a7a7a7;
-}
-
-#settingsmenu>div.title {
-    text-align: left;
-    padding: 7px 10px;
-    margin: 2px;
-    font-size: 11pt;
-    border-bottom: 1px solid #676767;
-}
-
-#settingsmenu>div.title>span {
-    margin-left: 5px;
 }
 
 #settingsmenu .arrow-up {
