@@ -60,7 +60,7 @@
   "browserify": {
     "transform": [
       "browserify-shim",
-      "browserify-css"
+      "browserify-css",
       [
         "babelify",
         {
