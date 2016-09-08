@@ -7,16 +7,17 @@ var interfaceConfig = {
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
     DEFAULT_LOCAL_DISPLAY_NAME: "me",
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: "https://jitsi.org",
+    JITSI_WATERMARK_LINK: "https://jellrtc.com",
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
     SHOW_POWERED_BY: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
-    // the toolbar buttons line is intentionally left in one line, to be able
-    // to easily override values or remove them using regex
-    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
+    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop',
+        'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo',
+        'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',
+        'contacts'],
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the

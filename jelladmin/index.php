@@ -6,28 +6,30 @@ $config = "/etc/jitsi/meet/jellrtc.com-config.js";
 $configBak = "/usr/share/jitsi-meet/jelladmin/config.js.bak";
 
 if($_POST['modify']){
-	if($_POST['file']==="interface_config.js"){
+	if($_POST['filename']=="interface_config.js"){
 		$orig = $interfaceConfig;
 		$backup = $interfaceConfigBak;
 	} else {
 		$orig = $config;
 		$backup = $configBak;
 	}
-    copy ( $orig,$backup );
+    echo "Making a backup from {$orig} to {$backup}<br />";
+
+    //copy ( $orig,$backup );
     if (!copy($orig, $backup)) {
         echo "failed to copy $file...{$php_errormsg}<br /><br />";
     }
     $newContents = $_POST['contents'];
 
     if(file_put_contents($orig, $newContents)){
-        echo "Successfully modified config";
+        echo "Successfully modified config: {$orig}<br />";
     } else {
           echo "Failed to modify config file<br /><br />";
     }
 }
 
 if($_POST['rollback']){
-	if($_POST['file']==="interface_config.js"){
+	if($_POST['filename']==="interface_config.js"){
 		$orig = $interfaceConfig;
 		$backup = $interfaceConfigBak;
 	} else {

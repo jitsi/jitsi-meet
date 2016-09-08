@@ -7,7 +7,7 @@ var interfaceConfig = {
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
     DEFAULT_LOCAL_DISPLAY_NAME: "me",
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: "https://jitsi.org",
+    JITSI_WATERMARK_LINK: "https://jellrtc.com",
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
     SHOW_POWERED_BY: false,
