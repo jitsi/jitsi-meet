@@ -58,6 +58,7 @@
   "browserify": {
     "transform": [
       "browserify-shim",
+      "browserify-css",
       [
         "babelify",
         {

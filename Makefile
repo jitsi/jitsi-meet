@@ -5,6 +5,7 @@ UGLIFYJS = ./node_modules/.bin/uglifyjs
 EXORCIST = ./node_modules/.bin/exorcist
 CLEANCSS = ./node_modules/.bin/cleancss
 STYLES_MAIN = css/main.scss
+STYLES_UNSUPPORTED_BROWSER = css/unsupported_browser.scss
 STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
 DEPLOY_DIR = libs
@@ -47,7 +48,9 @@ deploy-lib-jitsi-meet:
 	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.js.map \
 	$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 	$(DEPLOY_DIR)
+
 deploy-css:
+	$(NODE_SASS) css/unsupported_browser.scss css/unsupported_browser.css ; \
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
 	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
 	rm $(STYLES_BUNDLE)
