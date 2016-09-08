@@ -39,6 +39,7 @@
     "babel-preset-es2015": "*",
     "babelify": "*",
     "browserify": "11.1.x",
+    "browserify-css": "^0.9.2",
     "browserify-shim": "^3.8.10",
     "clean-css": "*",
     "exorcist": "*",
@@ -113,6 +114,9 @@
     },
     "autosize": {
       "depends": "jquery:jQuery"
+    },
+    "browserify-css": {
+        "autoInject": true
     }
   }
 }
