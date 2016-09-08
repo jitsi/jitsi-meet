@@ -4,6 +4,12 @@
 
 /* Variables END */
 
+/* Mixins BEGIN */
+
+@import "mixins";
+
+/* Mixins END */
+
 /* Fonts BEGIN */
 
 @import 'font';
@@ -30,6 +36,7 @@
 @import 'welcome_page';
 @import 'settingsmenu';
 @import 'feedback';
+@import 'toolbars';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 
