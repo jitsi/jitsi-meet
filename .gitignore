@@ -6,4 +6,6 @@ node_modules
 deploy-local.sh
 libs/
 all.css
+*css.map
+unsupported_browser.css
 .remote-sync.json
