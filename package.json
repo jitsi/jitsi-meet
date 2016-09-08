@@ -35,16 +35,17 @@
     "jws": "*"
   },
   "devDependencies": {
+    "babel-polyfill": "*",
+    "babel-preset-es2015": "*",
+    "babelify": "*",
     "browserify": "11.1.x",
     "browserify-shim": "^3.8.10",
+    "clean-css": "*",
     "exorcist": "*",
     "jshint": "2.8.0",
+    "node-sass": "^3.8.0",
     "precommit-hook": "3.0.0",
-    "uglify-js": "2.4.24",
-    "clean-css": "*",
-    "babelify": "*",
-    "babel-preset-es2015": "*",
-    "babel-polyfill": "*"
+    "uglify-js": "2.4.24"
   },
   "license": "Apache-2.0",
   "scripts": {
@@ -57,13 +58,18 @@
   "browserify": {
     "transform": [
       "browserify-shim",
-      ["babelify", {
-        "ignore": "node_modules"
-      }]
+      [
+        "babelify",
+        {
+          "ignore": "node_modules"
+        }
+      ]
     ]
   },
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   },
   "browser": {
     "jquery": "./node_modules/jquery/dist/jquery.js",
@@ -102,7 +108,7 @@
       "depends": "jquery:jQuery"
     },
     "jquery-contextmenu": {
-        "depends": "jquery:jQuery"
+      "depends": "jquery:jQuery"
     },
     "autosize": {
       "depends": "jquery:jQuery"
