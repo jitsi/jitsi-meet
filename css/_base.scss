@@ -9,7 +9,7 @@ html, body{
     color: #424242;
     font-size: 14px;
     font-weight: 400;
-    background: #000000;
+    background: $bodyBg;
     overflow: hidden;
 }
 
@@ -144,6 +144,7 @@ html, body, input, textarea, keygen, select, button {
 
 a.button:hover,
 a.bottomToolbarButton:hover {
+    text-decoration: none;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 1px;

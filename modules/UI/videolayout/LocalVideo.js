@@ -11,7 +11,6 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
-    this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
     this.isLocal = true;
@@ -80,11 +79,9 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         }
         this.updateView();
     } else {
-        var editButton = createEditDisplayNameButton();
-
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
-        $('#' + this.videoSpanId)[0].appendChild(nameSpan);
+        document.getElementById(this.videoSpanId).appendChild(nameSpan);
 
 
         if (displayName && displayName.length > 0) {
@@ -97,7 +94,6 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         nameSpan.id = 'localDisplayName';
-        this.container.appendChild(editButton);
         //translates popover of edit button
         APP.translation.translateElement($("a.displayname"));
 

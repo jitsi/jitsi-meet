@@ -1,0 +1,20 @@
+@mixin circle($diameter) {
+    width: $diameter;
+    height: $diameter;
+    border-radius: 50%;
+}
+
+@mixin absoluteAligning($sizeX, $sizeY) {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    @include transform(translate(-#{$sizeX / 2}, -#{$sizeY / 2}))
+}
+
+@mixin transform($func) {
+    -moz-transform: $func;
+    -ms-transform: $func;
+    -webkit-transform: $func;
+    -o-transform: $func;
+    transform: $func;
+}

@@ -496,8 +496,6 @@ var VideoLayout = {
         let {thumbWidth, thumbHeight}
             = FilmStrip.calculateThumbnailSize(isSideBarVisible);
 
-        $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
-
         FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
             animate, forceUpdate)
             .then(function () {

@@ -147,7 +147,6 @@
             <div id="subject"></div>
         </div>
         <div id="videospace">
-
             <div id="largeVideoContainer" class="videocontainer">
                 <div id="presentation"></div>
                 <div id="sharedVideo"><div id="sharedVideoIFrame"></div></div>
@@ -173,12 +172,13 @@
             </div>
 
             <div id="remoteVideos">
-                <span id="localVideoContainer" class="videocontainer">
+                <span id="localVideoContainer" class="videocontainer videocontainer_small">
                     <span id="localVideoWrapper">
                         <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
                     </span>
                     <audio id="localAudio" autoplay muted></audio>
                     <span class="focusindicator"></span>
+                    <div class="videocontainer__toolbar"></div>
                 </span>
                 <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
                 <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>

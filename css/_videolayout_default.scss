@@ -20,7 +20,7 @@
     position:absolute;
     text-align:right;
     height:196px;
-    padding: 18px;
+    padding: 18px 18px 30px 18px;
     bottom: 0;
     left: 0;
     right: 20px;
@@ -43,10 +43,23 @@
 
 #remoteVideos .videocontainer {
     display: none;
+    position: relative;
     background-color: black;
     background-size: contain;
     border-radius:1px;
+    margin: 0 5px;
     border: 1px solid #212425;
+}
+
+.videocontainer__toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 25px;
+    max-height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {
@@ -149,8 +162,8 @@
 #remoteVideos .videocontainer>div.remotevideomenu {
     position: absolute;
     color: #FFFFFF;
-    top: 0;
-    left: 0;
+    bottom: 0;
+    right: 0;
     padding: 5px 0px;
     width: 25px;
     font-size: 11pt;
@@ -170,22 +183,28 @@
 
 .videocontainer>span.displayname,
 .videocontainer>input.displayname {
-    display: none;
+    display: inline-block;
     position: absolute;
-    color: #FFFFFF;
-    background: rgba(0,0,0,.7);
+    bottom: 4px;
+    left: 25%;
+    color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
-    width: 70%;
-    height: 20%;
-    left: 15%;
-    top: 40%;
-    padding: 5px;
-    font-size: 11pt;
+    width: 50%;
+    font-size: 12px;
+    font-weight: 100;
+    letter-spacing: 1px;
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    border-radius:3px;
+}
+
+.videocontainer>input.displayname {
+    outline: none;
+    border: none;
+    background: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 .videocontainer>span.status {
@@ -209,14 +228,17 @@
 
 .connectionindicator
 {
+    @include circle(23px);
+    box-sizing: border-box;
     display: inline-block;
     position: absolute;
-    top: 7px;
+    background: $connectionIndicatorBg;
+    border: 2px solid $thumbnailPictogramColor;
+    color: $thumbnailPictogramColor;
+    margin: 7px;
     right: 0;
     padding: 0px 5px;
     z-index: 3;
-    width: 18px;
-    height: 13px;
 }
 
 .connection.connection_empty
@@ -235,8 +257,8 @@
 {
     position: absolute;
     left: 0px;
-    top: 0px;
-    font-size: 8pt;
+    top: 3px;
+    font-size: 7.5px;
     border: 0px;
     width: 18px;
     height: 13px;
@@ -295,7 +317,8 @@
     display: inline-block;
     position: absolute;
     color: #FFFFFF;
-    top: 0;
+    bottom: 0;
+    left: 0;
     padding: 8px 5px;
     width: 25px;
     font-size: 8pt;
@@ -309,8 +332,7 @@
     display: inline-block;
     position: absolute;
     color: #FFFFFF;
-    top: 0;
-    right: 0;
+    bottom: 0;
     padding: 8px 5px;
     width: 25px;
     font-size: 8pt;
@@ -320,24 +342,26 @@
 }
 
 .videocontainer>span.indicator {
-    bottom: 0px;
+
+    position: absolute;
+    top: 0px;
     left: 0px;
-    width: 25px;
-    height: 25px;
+    @include circle(23px);
+    box-sizing: border-box;
     z-index: 3;
     text-align: center;
-    border-radius: 50%;
-    background: #21B9FC;
-    margin: 5px;
+    background: $dominantSpeakerBg;
+    margin: 7px;
     display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
+
+    color: $thumbnailPictogramColor;
     font-size: 11pt;
-    border: 0px;
+    border: 2px solid $thumbnailPictogramColor;
 }
 
 #indicatoricon {
-    padding-top: 5px;
+    font-size: 12px;
+    padding-top: 3px;
 }
 
 #reloadPresentation {
@@ -426,10 +450,8 @@
 }
 
 .userAvatar {
-    height: 100%;
-    position: absolute;
-    left: 0;
-    border-radius: 2px;
+    @include circle(60px);
+    @include absoluteAligning(60px, 60px);
 }
 
 .sharedVideoAvatar {
