@@ -3,8 +3,6 @@
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
-const thumbAspectRatio = 1 / 1;
-
 const FilmStrip = {
     /**
      *
@@ -72,8 +70,15 @@ const FilmStrip = {
      * that we want to take into account when calculating the film strip width.
      */
      calculateThumbnailSize (isSideBarVisible) {
-        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
+        let availableSizes = this.calculateAvailableSize(isSideBarVisible);
+        let width = availableSizes.availableWidth;
+        let height = availableSizes.availableHeight;
 
+        return this.calculateThumbnailSizeFromAvailable(width, height);
+    },
+
+    calculateAvailableSize(isSideBarVisible) {
+        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let numvids = this.getThumbs(true).length;
 
         let localVideoContainer = $("#localVideoContainer");
@@ -85,11 +90,11 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth(isSideBarVisible)
-                - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
             - 5;
 
         let availableWidth = videoAreaAvailableWidth;
@@ -116,21 +121,32 @@ const FilmStrip = {
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
-            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
-                        availableHeight);
+            = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
+            availableHeight);
 
         availableHeight
-            = Math.min( maxHeight, window.innerHeight - 18);
+            = Math.min(maxHeight, window.innerHeight - 18);
 
-        if (availableHeight < availableWidth) {
-            availableWidth = availableHeight;
+        return { availableWidth, availableHeight };
+    },
+
+    calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
+        let {
+            THUMBNAIL_RATIO_WIDTH,
+            THUMBNAIL_RATIO_HEIGHT
+        } = interfaceConfig;
+        let heightUnit = availableHeight / THUMBNAIL_RATIO_HEIGHT;
+        let widthUnit = availableWidth / THUMBNAIL_RATIO_WIDTH;
+
+        if (heightUnit < widthUnit) {
+            widthUnit = heightUnit;
         }
         else
-            availableHeight = availableWidth;
+            heightUnit = widthUnit;
 
         return {
-            thumbWidth: availableWidth,
-            thumbHeight: availableHeight
+            thumbWidth: widthUnit * THUMBNAIL_RATIO_WIDTH,
+            thumbHeight: heightUnit * THUMBNAIL_RATIO_HEIGHT
         };
     },
 

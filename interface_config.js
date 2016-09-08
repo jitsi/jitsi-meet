@@ -28,5 +28,7 @@ var interfaceConfig = {
     filmStripOnly: false,
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
-    FILM_STRIP_MAX_HEIGHT: 120
+    FILM_STRIP_MAX_HEIGHT: 120,
+    THUMBNAIL_RATIO_WIDTH: 16,
+    THUMBNAIL_RATIO_HEIGHT: 9
 };

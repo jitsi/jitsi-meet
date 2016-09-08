@@ -13,9 +13,9 @@
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: nowrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
 
     position:absolute;
     text-align:right;
