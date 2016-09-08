@@ -1,7 +1,6 @@
 /* global APP, config, $, interfaceConfig */
 
 import UIUtil from '../util/UIUtil';
-import BottomToolbar from './BottomToolbar';
 import Toolbar from './Toolbar';
 import FilmStrip from '../videolayout/FilmStrip.js';
 
@@ -37,9 +36,6 @@ function hideToolbar() {
     } else {
         Toolbar.hide();
         $('#subject').animate({top: "-=40"}, 300);
-        if (!FilmStrip.isFilmStripVisible()) {
-            BottomToolbar.hide(true);
-        }
     }
 }
 
@@ -75,11 +71,6 @@ const ToolbarToggler = {
         if (Toolbar.isEnabled() && !Toolbar.isVisible()) {
             Toolbar.show();
             $('#subject').animate({top: "+=40"}, 300);
-            updateTimeout = true;
-        }
-
-        if (BottomToolbar.isEnabled() && !BottomToolbar.isVisible()) {
-            BottomToolbar.show(true);
             updateTimeout = true;
         }
 

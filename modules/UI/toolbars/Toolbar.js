@@ -2,6 +2,7 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
+import ExtendedToolbarToggler from "../side_pannels/ExtendedToolbarToggler.js";
 
 let roomUrl = null;
 let emitter = null;
@@ -92,6 +93,11 @@ const buttonHandlers = {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
         emitter.emit(UIEvents.TOGGLE_CHAT);
     },
+    "toolbar_contact_list": function () {
+        JitsiMeetJS.analytics.sendEvent(
+            'toolbar.contacts.toggled');
+        emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
+    },
     "toolbar_button_etherpad": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
@@ -150,6 +156,11 @@ const buttonHandlers = {
                 }
             }
         );
+    },
+    "toolbar_film_strip": function () {
+        JitsiMeetJS.analytics.sendEvent(
+            'bottomtoolbar.filmstrip.toggled');
+        emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
     }
 };
 const defaultToolbarButtons = {
@@ -199,6 +210,9 @@ const defaultToolbarButtons = {
         },
         shortcutDescription: "keyboardShortcuts.toggleChat"
     },
+    'contacts': {
+        id: '#toolbar_contact_list'
+    },
     'etherpad': {
         id: '#toolbar_button_etherpad'
     },
@@ -210,6 +224,16 @@ const defaultToolbarButtons = {
     },
     'hangup': {
         id: '#toolbar_button_hangup'
+    },
+    'filmstrip': {
+        id: '#toolbar_film_strip',
+        shortcut: "F",
+        shortcutAttr: "filmstripPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
+            APP.UI.toggleFilmStrip();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
     }
 };
 
@@ -242,7 +266,8 @@ const Toolbar = {
         emitter = eventEmitter;
         // The toolbar is enabled by default.
         this.enabled = true;
-        this.toolbarSelector = $("#header");
+        this.toolbarSelector = $("#mainToolbarContainer");
+        this.extendedToolbarSelector = $("#extendedToolbar");
 
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
@@ -507,7 +532,9 @@ const Toolbar = {
         });
         if (hovered)
             return true;
-        if ($("#bottomToolbar:hover").length > 0) {
+        if ($("#bottomToolbar:hover").length > 0
+            || $("#extendedToolbar:hover").length > 0
+            || ExtendedToolbarToggler.isVisible()) {
             return true;
         }
         return false;
@@ -518,7 +545,7 @@ const Toolbar = {
      * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
      */
     isVisible() {
-        return this.toolbarSelector.is(":visible");
+        return this.toolbarSelector.hasClass("slideInY");
     },
 
     /**
@@ -526,8 +553,9 @@ const Toolbar = {
      * parameter.
      */
     hide() {
-        this.toolbarSelector.hide(
-            "slide", { direction: "up", duration: 300});
+        this.toolbarSelector.toggleClass("slideInY").toggleClass("slideOutY");
+        this.extendedToolbarSelector.toggleClass("slideInX")
+            .toggleClass("slideOutX");
     },
 
     /**
@@ -535,8 +563,14 @@ const Toolbar = {
      * parameter.
      */
     show() {
-        this.toolbarSelector.show(
-            "slide", { direction: "up", duration: 300});
+        if (this.toolbarSelector.hasClass("slideOutY"))
+            this.toolbarSelector.toggleClass("slideOutY");
+
+        if (this.extendedToolbarSelector.hasClass("slideOutX"))
+            this.extendedToolbarSelector.toggleClass("slideOutX");
+
+        this.toolbarSelector.toggleClass("slideInY");
+        this.extendedToolbarSelector.toggleClass("slideInX");
     }
 };
 

@@ -5,10 +5,9 @@ var UI = {};
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
-import BottomToolbar from "./toolbars/BottomToolbar";
 import ContactList from "./side_pannels/contactlist/ContactList";
 import Avatar from "./avatar/Avatar";
-import PanelToggler from "./side_pannels/SidePanelToggler";
+import ExtendedToolbarToggler from "./side_pannels/ExtendedToolbarToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
@@ -134,7 +133,6 @@ function setupChat() {
  */
 function setupToolbars() {
     Toolbar.init(eventEmitter);
-    BottomToolbar.setupListeners(eventEmitter);
 }
 
 /**
@@ -299,7 +297,7 @@ UI.initConference = function () {
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
 
-    ToolbarToggler.showToolbar();
+    UI.showToolbar();
 
     let displayName = config.displayJids ? id : Settings.getDisplayName();
 
@@ -337,7 +335,7 @@ UI.mucJoined = function () {
  */
 UI.handleToggleFilmStrip = () => {
     UI.toggleFilmStrip();
-    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+    VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
@@ -362,7 +360,7 @@ function registerListeners() {
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
     UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
-        PanelToggler.toggleSettingsMenu();
+        ExtendedToolbarToggler.toggle("settingsmenu");
     });
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
@@ -380,8 +378,7 @@ function registerListeners() {
  */
 function bindEvents() {
     function onResize() {
-        PanelToggler.resizeChat();
-        VideoLayout.resizeVideoArea(PanelToggler.isVisible());
+        ExtendedToolbarToggler.resize();
     }
 
     // Resize and reposition videos in full screen mode.
@@ -430,22 +427,22 @@ UI.start = function () {
     registerListeners();
 
     ToolbarToggler.init();
-    BottomToolbar.init();
+    ExtendedToolbarToggler.init();
     FilmStrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        VideoLayout.initLargeVideo(PanelToggler.isVisible());
+        VideoLayout.initLargeVideo();
     }
-    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, true);
+    VideoLayout.resizeVideoArea(true, true);
 
     ContactList.init(eventEmitter);
 
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        $("#videospace").mousemove(function () {
-            return ToolbarToggler.showToolbar();
+        $("#videoconference_page").mousemove(function () {
+            return UI.showToolbar();
         });
         setupToolbars();
         setupChat();
@@ -468,9 +465,8 @@ UI.start = function () {
             elem.href = 'data:application/json;charset=utf-8,\n' + data;
         });
     } else {
-        $("#header").css("display", "none");
+        $("#mainToolbarContainer").css("display", "none");
         $("#downloadlog").css("display", "none");
-        BottomToolbar.hide();
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         $('body').popover("disable");
@@ -499,13 +495,6 @@ UI.start = function () {
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut",
-            "reposition": function () {
-                if (PanelToggler.isVisible()) {
-                    $("#toast-container").addClass("notification-bottom-right-center");
-                } else {
-                    $("#toast-container").removeClass("notification-bottom-right-center");
-                }
-            },
             "newestOnTop": false
         };
 
@@ -727,14 +716,14 @@ UI.isFilmStripVisible = function () {
  * Toggles chat panel.
  */
 UI.toggleChat = function () {
-    PanelToggler.toggleChat();
+    ExtendedToolbarToggler.toggle("chatspace");
 };
 
 /**
  * Toggles contact list panel.
  */
 UI.toggleContactList = function () {
-    PanelToggler.toggleContactList();
+    ExtendedToolbarToggler.toggle("contactlist");
 };
 
 /**

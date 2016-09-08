@@ -14,16 +14,23 @@ let notificationInterval;
  */
 function updateNumberOfParticipants(delta) {
     numberOfContacts += delta;
-    if (numberOfContacts === 1) {
-        // when the user is alone we don't show the number of participants
-        $("#numberOfParticipants").text('');
-        ContactList.setVisualNotification(false);
-    } else if (numberOfContacts > 1) {
-        ContactList.setVisualNotification(!ContactList.isVisible());
-        $("#numberOfParticipants").text(numberOfContacts);
-    } else {
+
+    if (numberOfContacts <= 0) {
         console.error("Invalid number of participants: " + numberOfContacts);
+        return;
     }
+
+    let buttonIndicatorText = (numberOfContacts === 1) ? '' : numberOfContacts;
+    $("#numberOfParticipants").text(buttonIndicatorText);
+
+    let showVisualNotification
+        = (numberOfContacts === 1) ? false : !ContactList.isVisible();
+    ContactList.setVisualNotification(showVisualNotification);
+
+    $("#contactlist>div.title").text(
+        APP.translation.translateString(
+            "contactlist", {participants: numberOfContacts}
+        ));
 }
 
 /**

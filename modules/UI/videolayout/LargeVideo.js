@@ -536,11 +536,10 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Update container size optionally taking side bar size into account.
-     * @param {boolean} isSideBarVisible if side bar is visible.
+     * Update container size.
      */
-    updateContainerSize (isSideBarVisible) {
-        this.width = UIUtil.getAvailableVideoWidth(isSideBarVisible);
+    updateContainerSize () {
+        this.width = UIUtil.getAvailableVideoWidth();
         this.height = window.innerHeight;
     }
 

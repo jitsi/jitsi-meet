@@ -18,15 +18,11 @@ var unreadMessages = 0;
  */
 function setVisualNotification(show) {
     var unreadMsgElement = document.getElementById('unreadMessages');
-    var unreadMsgBottomElement
-        = document.getElementById('bottomUnreadMessages');
 
     var glower = $('#toolbar_button_chat');
-    var bottomGlower = $('#chatBottomButton');
 
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
-        unreadMsgBottomElement.innerHTML = unreadMessages.toString();
 
         ToolbarToggler.dockToolbar(true);
 
@@ -42,19 +38,6 @@ function setVisualNotification(show) {
                 'top:' + topIndent +
                 '; left:' + leftIndent + ';');
 
-        var chatBottomButtonElement
-            = document.getElementById('chatBottomButton').parentNode;
-        var bottomLeftIndent = (UIUtil.getTextWidth(chatBottomButtonElement) -
-            UIUtil.getTextWidth(unreadMsgBottomElement)) / 2;
-        var bottomTopIndent = (UIUtil.getTextHeight(chatBottomButtonElement) -
-            UIUtil.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
-
-        unreadMsgBottomElement.setAttribute(
-            'style',
-                'top:' + bottomTopIndent +
-                '; left:' + bottomLeftIndent + ';');
-
-
         if (!glower.hasClass('icon-chat-simple')) {
             glower.removeClass('icon-chat');
             glower.addClass('icon-chat-simple');
@@ -62,7 +45,6 @@ function setVisualNotification(show) {
     }
     else {
         unreadMsgElement.innerHTML = '';
-        unreadMsgBottomElement.innerHTML = '';
         glower.removeClass('icon-chat-simple');
         glower.addClass('icon-chat');
     }
@@ -70,15 +52,12 @@ function setVisualNotification(show) {
     if (show && !notificationInterval) {
         notificationInterval = window.setInterval(function () {
             glower.toggleClass('active');
-            bottomGlower.toggleClass('active glowing');
         }, 800);
     }
     else if (!show && notificationInterval) {
         window.clearInterval(notificationInterval);
         notificationInterval = false;
         glower.removeClass('active');
-        bottomGlower.removeClass('glowing');
-        bottomGlower.addClass('active');
     }
 }
 

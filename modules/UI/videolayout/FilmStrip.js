@@ -68,10 +68,8 @@ const FilmStrip = {
 
     /**
      * Calculates the thumbnail size.
-     * @param videoAreaAvailableWidth the currently available video area width
-     * that we want to take into account when calculating the film strip width.
      */
-     calculateThumbnailSize (isSideBarVisible) {
+     calculateThumbnailSize () {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
 
         let numvids = this.getThumbs(true).length;
@@ -84,7 +82,7 @@ const FilmStrip = {
          * film strip size hasn't been updated yet, but it will be.
          */
         let videoAreaAvailableWidth
-            = UIUtil.getAvailableVideoWidth(isSideBarVisible)
+            = UIUtil.getAvailableVideoWidth()
                 - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
                 - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
                 - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)

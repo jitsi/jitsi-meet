@@ -6,29 +6,10 @@
  var UIUtil = {
 
     /**
-     * Returns the size of the side panel.
-     */
-     getSidePanelSize () {
-        var availableHeight = window.innerHeight;
-        var availableWidth = window.innerWidth;
-
-        var panelWidth = 200;
-        if (availableWidth * 0.2 < 200) {
-            panelWidth = availableWidth * 0.2;
-        }
-
-        return [panelWidth, availableHeight];
-     },
-
-    /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function (isSidePanelVisible) {
+    getAvailableVideoWidth: function () {
         let rightPanelWidth = 0;
-
-        if (isSidePanelVisible) {
-            rightPanelWidth = UIUtil.getSidePanelSize()[0];
-        }
 
         return window.innerWidth - rightPanelWidth;
     },
