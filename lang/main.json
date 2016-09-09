@@ -91,7 +91,7 @@
         "dialpad": "Show dialpad",
         "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
-        "talkWhileMutedPopup": "Your microphone is muted <br/>while you are trying to talk.",
+        "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
