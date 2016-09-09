@@ -23,6 +23,7 @@ import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Settings from "./../settings/Settings";
 import { reload } from '../util/helpers';
 import RingOverlay from "./ring_overlay/RingOverlay";
+import UIErrors from './UIErrors';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -280,7 +281,16 @@ UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
  */
 UI.initConference = function () {
     let id = APP.conference.getMyUserId();
-    Toolbar.updateRoomUrl(window.location.href);
+
+    // Do not include query parameters in the invite URL
+    // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
+    var inviteURL = window.location.protocol + "//" +
+        window.location.host + window.location.pathname;
+    Toolbar.updateRoomUrl(inviteURL);
+    // Clean up the URL displayed by the browser
+    if (window.history && typeof window.history.replaceState === 'function') {
+        window.history.replaceState({}, document.title, inviteURL);
+    }
 
     // Add myself to the contact list.
     ContactList.addContact(id);
@@ -289,7 +299,6 @@ UI.initConference = function () {
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
 
-    // Once we've joined the muc show the toolbar
     ToolbarToggler.showToolbar();
 
     let displayName = config.displayJids ? id : Settings.getDisplayName();
@@ -299,7 +308,12 @@ UI.initConference = function () {
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    UI.setUserEmail(id, Settings.getEmail());
+    let email = Settings.getEmail();
+    if (email) {
+        UI.setUserEmail(id, email);
+    } else {
+        UI.setUserAvatarID(id, Settings.getAvatarId());
+    }
 
     Toolbar.checkAutoEnableDesktopSharing();
 
@@ -316,6 +330,14 @@ UI.initConference = function () {
 
 UI.mucJoined = function () {
     VideoLayout.mucJoined();
+};
+
+/***
+ * Handler for toggling filmstrip
+ */
+UI.handleToggleFilmStrip = () => {
+    UI.toggleFilmStrip();
+    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
 };
 
 /**
@@ -345,10 +367,7 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
 
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
-        UI.toggleFilmStrip();
-        VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
-    });
+    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
 
     UI.addListener(UIEvents.FOLLOW_ME_ENABLED, function (isEnabled) {
         if (followMeHandler)
@@ -501,7 +520,6 @@ UI.start = function () {
     // conference ready.
     return true;
 };
-
 
 /**
  * Show local stream on UI.
@@ -830,7 +848,7 @@ UI.dockToolbar = function (isDock) {
 /**
  * Updates the avatar for participant.
  * @param {string} id user id
- * @param {stirng} avatarUrl the URL for the avatar
+ * @param {string} avatarUrl the URL for the avatar
  */
 function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
@@ -843,7 +861,7 @@ function changeAvatar(id, avatarUrl) {
 /**
  * Update user email.
  * @param {string} id user id
- * @param {stirng} email user email
+ * @param {string} email user email
  */
 UI.setUserEmail = function (id, email) {
     // update avatar
@@ -852,11 +870,22 @@ UI.setUserEmail = function (id, email) {
     changeAvatar(id, Avatar.getAvatarUrl(id));
 };
 
+/**
+ * Update user avtar id.
+ * @param {string} id user id
+ * @param {string} avatarId user's avatar id
+ */
+UI.setUserAvatarID = function (id, avatarId) {
+    // update avatar
+    Avatar.setUserAvatarID(id, avatarId);
+
+    changeAvatar(id, Avatar.getAvatarUrl(id));
+};
 
 /**
  * Update user avatar URL.
  * @param {string} id user id
- * @param {stirng} url user avatar url
+ * @param {string} url user avatar url
  */
 UI.setUserAvatarUrl = function (id, url) {
     // update avatar
@@ -1055,29 +1084,32 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
  * @returns {Promise} when dialog is closed.
  */
 UI.requestFeedback = function () {
-    return new Promise(function (resolve, reject) {
-        if (Feedback.isEnabled()) {
-            // If the user has already entered feedback, we'll show the window and
-            // immidiately start the conference dispose timeout.
-            if (Feedback.feedbackScore > 0) {
-                Feedback.openFeedbackWindow();
-                resolve();
+    if (Feedback.isVisible())
+        return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
+    else
+        return new Promise(function (resolve, reject) {
+            if (Feedback.isEnabled()) {
+                // If the user has already entered feedback, we'll show the
+                // window and immidiately start the conference dispose timeout.
+                if (Feedback.feedbackScore > 0) {
+                    Feedback.openFeedbackWindow();
+                    resolve();
 
-            } else { // Otherwise we'll wait for user's feedback.
-                Feedback.openFeedbackWindow(resolve);
+                } else { // Otherwise we'll wait for user's feedback.
+                    Feedback.openFeedbackWindow(resolve);
+                }
+            } else {
+                // If the feedback functionality isn't enabled we show a thank
+                // you dialog.
+                messageHandler.openMessageDialog(
+                    null, null, null,
+                    APP.translation.translateString(
+                        "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+                    )
+                );
+                resolve();
             }
-        } else {
-            // If the feedback functionality isn't enabled we show a thank you
-            // dialog.
-            messageHandler.openMessageDialog(
-                null, null, null,
-                APP.translation.translateString(
-                    "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
-                )
-            );
-            resolve();
-        }
-    });
+        });
 };
 
 UI.updateRecordingState = function (state) {
@@ -1201,6 +1233,33 @@ UI.showExtensionRequiredDialog = function (url) {
         APP.translation.generateTranslationHTML(
             "dialog.firefoxExtensionPrompt", {url: url}));
 };
+
+/**
+ * Shows "Please go to chrome webstore to install the desktop sharing extension"
+ * 2 button dialog with buttons - cancel and go to web store.
+ * @param url {string} the url of the extension.
+ */
+UI.showExtensionExternalInstallationDialog = function (url) {
+    messageHandler.openTwoButtonDialog(
+        "dialog.externalInstallationTitle",
+        null,
+        "dialog.externalInstallationMsg",
+        null,
+        true,
+        "dialog.goToStore",
+         function(e,v,m,f){
+            if (v) {
+                e.preventDefault();
+                eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
+            }
+        },
+        function () {},
+        function () {
+            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+        }
+    );
+};
+
 
 /**
  * Shows dialog with combined information about camera and microphone errors.
@@ -1337,6 +1396,18 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     }
 };
 
+/**
+ * Shows error dialog that informs the user that no data is received from the
+ * microphone.
+ */
+UI.showAudioNotWorkingDialog = function () {
+    messageHandler.openMessageDialog(
+        "dialog.error",
+        "dialog.micNotSendingData",
+        null,
+        null);
+};
+
 UI.updateDevicesAvailability = function (id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
 };
@@ -1401,18 +1472,14 @@ UI.enableMicrophoneButton = function () {
     Toolbar.markAudioIconAsDisabled(false);
 };
 
-let bottomToolbarEnabled = null;
-
 UI.showRingOverLay = function () {
     RingOverlay.show(APP.tokenData.callee);
-    ToolbarToggler.setAlwaysVisibleToolbar(true);
     FilmStrip.toggleFilmStrip(false);
 };
 
 UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
-    ToolbarToggler.resetAlwaysVisibleToolbar();
     FilmStrip.toggleFilmStrip(true);
 };
 

@@ -119,8 +119,7 @@
         "selectAudioOutput": "Select audio output",
         "followMe": "Enable follow me",
         "noDevice": "None",
-        "noPermission": "Permission to use device is not granted",
-        "avatarUrl": "Avatar URL"
+        "noPermission": "Permission to use device is not granted"
     },
     "videothumbnail":
     {
@@ -258,12 +257,16 @@
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "cameraUnknownError": "Cannot use camera for a unknown reason.",
         "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
-        "cameraNotFoundError": "Requested camera was not found.",
+        "cameraNotFoundError": "Camera was not found.",
         "cameraConstraintFailedError": "Yor camera does not satisfy some of required constraints.",
         "micUnknownError": "Cannot use microphone for a unknown reason.",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
-        "micNotFoundError": "Requested microphone was not found.",
-        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints."
+        "micNotFoundError": "Microphone was not found.",
+        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
+        "micNotSendingData": "We are unable to access your microphone. Please select another device from the settings menu or try to restart the application.",
+        "goToStore": "Go to the webstore",
+        "externalInstallationTitle": "Extension required",
+        "externalInstallationMsg": "You need to install our desktop sharing extension."
     },
     "email":
     {

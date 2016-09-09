@@ -38,6 +38,15 @@ export default {
     },
 
     /**
+     * Sets the user's avatar id.
+     * @param id id of the user
+     * @param avatarId an id to be used for the avatar
+     */
+    setUserAvatarID: function (id, avatarId) {
+        this._setUserProp(id, "avatarId", avatarId);
+    },
+
+    /**
      * Returns the URL of the image for the avatar of a particular user,
      * identified by its id.
      * @param {string} userId user id
@@ -55,11 +64,16 @@ export default {
         let avatarId = null;
         const user = users[userId];
 
+        // The priority is url, email and lowest is avatarId
         if(user) {
             if(user.url)
-                return users[userId].url;
+                return user.url;
 
-            avatarId = users[userId].email;
+            if (user.email)
+                avatarId = user.email;
+            else {
+                avatarId = user.avatarId;
+            }
         }
 
         // If the ID looks like an email, we'll use gravatar.

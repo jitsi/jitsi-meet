@@ -1,27 +1,10 @@
 /*Initialize*/
 ul.popupmenu {
-    display:none;
-    position: absolute;
-    padding:10px;
+    padding: 0px 10px 0px 10px;
     margin: 0;
     bottom: 0;
-    margin-bottom: 35px;
-    padding-bottom:  10px;
-    padding-top: 10px;
-    right: 10px;
-    left: -5px;
     width: 100px;
-    background-color: rgba(0,0,0,0.9);
-    border: 1px solid rgba(256, 256, 256, 0.2);
-    border-radius:3px;
-}
-
-ul.popupmenu:after {
-    content: url('../images/popupPointer.png');
-    display: block;
-    position: absolute;
-    bottom: -8px;
-    left: 11px;
+    height: auto;
 }
 
 ul.popupmenu li {
@@ -36,11 +19,13 @@ ul.popupmenu li:hover {
 
 /*Link Appearance*/
 ul.popupmenu li a {
+    display: block;
     text-decoration: none;
     color: #fff;
     padding: 5px;
-    display: inline-block;
     font-size: 9pt;
+    width: 100%;
+    cursor: hand;
 }
 
 ul.popupmenu li a i.icon-kick {
@@ -54,6 +39,15 @@ ul.popupmenu li a span {
     text-align: center;
 }
 
+ul.popupmenu li a div {
+    display: inline-block;
+    line-height: 25px;
+}
+
+ul.popupmenu li a i {
+    line-height: 25px;
+}
+
 span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
     display:block !important;
 }
@@ -61,12 +55,4 @@ span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
 a.disabled {
     color: gray !important;
     pointer-events: none;
-}
-
-.popupmenuPadding {
-    height: 35px;
-    width: 100px;
-    position: absolute;
-    bottom: -35;
-    left: 0px;
 }

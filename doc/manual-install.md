@@ -2,7 +2,7 @@
 
 This describes configuring a server `jitsi.example.com` running Debian or a Debian Derivative. You will need to
 change references to that to match your host, and generate some passwords for
-`YOURSECRET1`, `YOURSECRET2`, `YOURSECRET3` and `YOURSECRET4`.
+`YOURSECRET1`, `YOURSECRET2` and `YOURSECRET3`.
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 

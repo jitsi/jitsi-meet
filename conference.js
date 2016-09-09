@@ -16,6 +16,8 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
+import UIErrors from './modules/UI/UIErrors';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -32,6 +34,11 @@ let room, connection, localAudio, localVideo, roomLocker;
  */
 let connectionIsInterrupted = false;
 
+/**
+ * Indicates whether extension external installation is in progress or not.
+ */
+let DSExternalInstallationInProgress = false;
+
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
 
 /**
@@ -41,6 +48,7 @@ const commands = {
     CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     AVATAR_URL: "avatar-url",
+    AVATAR_ID: "avatar-id",
     ETHERPAD: "etherpad",
     SHARED_VIDEO: "shared-video",
     CUSTOM_ROLE: "custom-role"
@@ -228,15 +236,28 @@ function disconnectAndShowFeedback(requestFeedback) {
  */
 function hangup (requestFeedback = false) {
     const errCallback = (f, err) => {
-        console.error('Error occurred during hanging up: ', err);
-        return f();
+
+        // If we want to break out the chain in our error handler, it needs
+        // to return a rejected promise. In the case of feedback request
+        // in progress it's important to not redirect to the welcome page
+        // (see below maybeRedirectToWelcomePage call).
+        if (err === UIErrors.FEEDBACK_REQUEST_IN_PROGRESS) {
+            return Promise.reject('Feedback request in progress.');
+        }
+        else {
+            console.error('Error occurred during hanging up: ', err);
+            return Promise.resolve();
+        }
     };
     const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
     APP.conference._room.leave()
     .then(disconnect)
     .catch(errCallback.bind(null, disconnect))
     .then(maybeRedirectToWelcomePage)
-    .catch(errCallback.bind(null, maybeRedirectToWelcomePage));
+    .catch(function(err){
+            console.log(err);
+        });
+
 }
 
 /**
@@ -269,7 +290,9 @@ function createLocalTracks (options, checkForPermissionPrompt) {
                 ? APP.settings.getMicDeviceId()
                 : options.micDeviceId,
             // adds any ff fake device settings if any
-            firefox_fake_device: config.firefox_fake_device
+            firefox_fake_device: config.firefox_fake_device,
+            desktopSharingExtensionExternalInstallation:
+                options.desktopSharingExtensionExternalInstallation
         }, checkForPermissionPrompt)
         .catch(function (err) {
             console.error(
@@ -292,23 +315,6 @@ function changeLocalEmail(email = '') {
     APP.settings.setEmail(email);
     APP.UI.setUserEmail(room.myUserId(), email);
     sendData(commands.EMAIL, email);
-}
-
-
-/**
- * Changes the local avatar url for the local user
- * @param avatarUrl {string} the new avatar url
- */
-function changeLocalAvatarUrl(avatarUrl = '') {
-    avatarUrl = avatarUrl.trim();
-
-    if (avatarUrl === APP.settings.getAvatarUrl()) {
-        return;
-    }
-
-    APP.settings.setAvatarUrl(avatarUrl);
-    APP.UI.setUserAvatarUrl(room.myUserId(), avatarUrl);
-    sendData(commands.AVATAR_URL, avatarUrl);
 }
 
 /**
@@ -627,6 +633,12 @@ export default {
     sendFeedback (overallFeedback, detailedFeedback) {
         return room.sendFeedback (overallFeedback, detailedFeedback);
     },
+    /**
+     * Returns the connection times stored in the library.
+     */
+    getConnectionTimes () {
+        return this._room.getConnectionTimes();
+    },
     // used by torture currently
     isJoined () {
         return this._room
@@ -747,6 +759,8 @@ export default {
         let avatarUrl = APP.settings.getAvatarUrl();
         avatarUrl && sendData(this.commands.defaults.AVATAR_URL,
             avatarUrl);
+        !email && sendData(
+             this.commands.defaults.AVATAR_ID, APP.settings.getAvatarId());
 
         let nick = APP.settings.getDisplayName();
         if (config.useNicks && !nick) {
@@ -843,6 +857,8 @@ export default {
 
         return promise.then(function () {
             if (stream) {
+                stream.on(TrackEvents.TRACK_AUDIO_NOT_WORKING,
+                    APP.UI.showAudioNotWorkingDialog);
                 return room.addTrack(stream);
             }
         }).then(() => {
@@ -871,9 +887,38 @@ export default {
         }
 
         this.videoSwitchInProgress = true;
+        let externalInstallation = false;
 
         if (shareScreen) {
-            createLocalTracks({ devices: ['desktop'] }).then(([stream]) => {
+            createLocalTracks({
+                devices: ['desktop'],
+                desktopSharingExtensionExternalInstallation: {
+                    interval: 500,
+                    checkAgain: () => {
+                        return DSExternalInstallationInProgress;
+                    },
+                    listener: (status, url) => {
+                        switch(status) {
+                            case "waitingForExtension":
+                                DSExternalInstallationInProgress = true;
+                                externalInstallation = true;
+                                APP.UI.showExtensionExternalInstallationDialog(
+                                    url);
+                                break;
+                            case "extensionFound":
+                                if(externalInstallation) //close the dialog
+                                    $.prompt.close();
+                                break;
+                            default:
+                                //Unknown status
+                        }
+                    }
+                }
+            }).then(([stream]) => {
+                DSExternalInstallationInProgress = false;
+                // close external installation dialog on success.
+                if(externalInstallation)
+                    $.prompt.close();
                 stream.on(
                     TrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
@@ -889,8 +934,13 @@ export default {
                 return this.useVideoStream(stream);
             }).then(() => {
                 this.videoSwitchInProgress = false;
+                JitsiMeetJS.analytics.sendEvent(
+                    'conference.sharingDesktop.start');
                 console.log('sharing local desktop');
             }).catch((err) => {
+                // close external installation dialog to show the error.
+                if(externalInstallation)
+                    $.prompt.close();
                 this.videoSwitchInProgress = false;
                 this.toggleScreenSharing(false);
 
@@ -934,6 +984,8 @@ export default {
                 ([stream]) => this.useVideoStream(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
+                JitsiMeetJS.analytics.sendEvent(
+                    'conference.sharingDesktop.stop');
                 console.log('sharing local video');
             }).catch((err) => {
                 this.useVideoStream(null);
@@ -1111,6 +1163,12 @@ export default {
             APP.UI.updateRecordingState(status);
         });
 
+        room.on(ConferenceEvents.LOCK_STATE_CHANGED, (state, error) => {
+            console.log("Received channel password lock change: ", state,
+                error);
+            APP.UI.markRoomLocked(state);
+        });
+
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
             APP.UI.updateUserStatus(id, status);
         });
@@ -1123,6 +1181,17 @@ export default {
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
             APP.UI.updateDTMFSupport(isDTMFSupported);
+        });
+
+        APP.UI.addListener(UIEvents.EXTERNAL_INSTALLATION_CANCELED, () => {
+            // Wait a little bit more just to be sure that we won't miss the
+            // extension installation
+            setTimeout(() => DSExternalInstallationInProgress = false, 500);
+        });
+        APP.UI.addListener(UIEvents.OPEN_EXTENSION_STORE, (url) => {
+            window.open(
+                url, "extension_store_window",
+                "resizable,scrollbars=yes,status=1");
         });
 
         APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
@@ -1155,10 +1224,14 @@ export default {
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
+                // Send only the data that remote participants care about.
+                let data = {
+                    bitrate: stats.bitrate,
+                    packetLoss: stats.packetLoss};
                 try {
                     room.broadcastEndpointMessage({
                         type: this.commands.defaults.CONNECTION_QUALITY,
-                        values: stats });
+                        values: data });
                 } catch (e) {
                     reportError(e);
                 }
@@ -1190,12 +1263,15 @@ export default {
             APP.UI.setUserEmail(from, data.value);
         });
 
-        APP.UI.addListener(UIEvents.AVATAR_URL_CHANGED, changeLocalAvatarUrl);
-
         room.addCommandListener(this.commands.defaults.AVATAR_URL,
         (data, from) => {
             APP.UI.setUserAvatarUrl(from, data.value);
         });
+
+        room.addCommandListener(this.commands.defaults.AVATAR_ID,
+            (data, from) => {
+                APP.UI.setUserAvatarID(from, data.value);
+            });
 
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED, changeLocalDisplayName);
 
@@ -1255,9 +1331,21 @@ export default {
 
         APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-            room.sendApplicationLog("Resolution change id=" + id
-                + " old=" + oldResolution + " new=" + newResolution
-                + " delay=" + delay);
+            var logObject = {
+                id: "resolution_change",
+                participant: id,
+                oldValue: oldResolution,
+                newValue: newResolution,
+                delay: delay
+                };
+            room.sendApplicationLog(JSON.stringify(logObject));
+
+            // We only care about the delay between simulcast streams.
+            // Longer delays will be caused by something else and will just
+            // poison the data.
+            if (delay < 2000) {
+                JitsiMeetJS.analytics.sendEvent('stream.switch.delay', delay);
+            }
         });
 
         // Starts or stops the recording for the conference.
@@ -1286,8 +1374,15 @@ export default {
 
         APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
             try {
+                // do not try to select participant if there is none (we are
+                // alone in the room), otherwise an error will be thrown cause
+                // reporting mechanism is not available (datachannels currently)
+                if (room.getParticipants().length === 0)
+                    return;
+
                 room.selectParticipant(id);
             } catch (e) {
+                JitsiMeetJS.analytics.sendEvent('selectParticipant.failed');
                 reportError(e);
             }
         });
@@ -1312,6 +1407,7 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
+                JitsiMeetJS.analytics.sendEvent('settings.changeDevice.video');
                 createLocalTracks({
                     devices: ['video'],
                     cameraDeviceId: cameraDeviceId,
@@ -1332,6 +1428,8 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
+                JitsiMeetJS.analytics.sendEvent(
+                    'settings.changeDevice.audioIn');
                 createLocalTracks({
                     devices: ['audio'],
                     cameraDeviceId: null,
@@ -1352,6 +1450,8 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             (audioOutputDeviceId) => {
+                JitsiMeetJS.analytics.sendEvent(
+                    'settings.changeDevice.audioOut');
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => console.log('changed audio output device'))
                     .catch((err) => {

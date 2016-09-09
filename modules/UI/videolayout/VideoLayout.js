@@ -107,7 +107,9 @@ var VideoLayout = {
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
-        this.resizeThumbnails(false, true, false);
+        let {thumbWidth, thumbHeight}
+            = this.resizeThumbnails(false, true, false);
+        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
@@ -158,15 +160,8 @@ var VideoLayout = {
     },
 
     changeLocalVideo (stream) {
-        // Set default display name.
-        localVideoThumbnail.setDisplayName();
-        localVideoThumbnail.createConnectionIndicator();
-
         let localId = APP.conference.getMyUserId();
         this.onVideoTypeChanged(localId, stream.videoType);
-
-        let {thumbWidth, thumbHeight} = this.resizeThumbnails(false, true);
-        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
         if (!stream.isMuted()) {
             localVideoThumbnail.changeVideo(stream);
@@ -472,7 +467,7 @@ var VideoLayout = {
                 remoteVideo.createModeratorIndicatorElement();
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
-                if ($(`#remote_popupmenu_${id}`).length <= 0) {
+                if(!remoteVideo.hasRemoteVideoMenu) {
                     remoteVideo.addRemoteVideoMenu();
                 }
             }

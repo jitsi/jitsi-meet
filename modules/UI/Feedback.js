@@ -1,4 +1,4 @@
-/* global $, APP, config, interfaceConfig */
+/* global $, APP, config, interfaceConfig, JitsiMeetJS */
 import UIEvents from "../../service/UI/UIEvents";
 
 /**
@@ -90,6 +90,7 @@ var Feedback = {
      * The feedback score. -1 indicates no score has been given for now.
      */
     feedbackScore: -1,
+
     /**
      * Initialise the Feedback functionality.
      * @param emitter the EventEmitter to associate with the Feedback.
@@ -134,6 +135,17 @@ var Feedback = {
     isEnabled: function() {
         return this.enabled && APP.conference.isCallstatsEnabled();
     },
+
+    /**
+     * Returns true if the feedback window is currently visible and false
+     * otherwise.
+     * @return {boolean} true if the feedback window is visible, false
+     * otherwise
+     */
+    isVisible: function() {
+        return $(".feedback").is(":visible");
+    },
+
     /**
      * Opens the feedback window.
      */
@@ -199,9 +211,10 @@ var Feedback = {
                         var feedbackDetails
                             = document.getElementById("feedbackTextArea").value;
 
-                        if (feedbackDetails && feedbackDetails.length > 0)
+                        if (feedbackDetails && feedbackDetails.length > 0) {
                             APP.conference.sendFeedback( Feedback.feedbackScore,
                                                     feedbackDetails);
+                        }
 
                         if (feedbackWindowCallback)
                             feedbackWindowCallback();
@@ -227,6 +240,7 @@ var Feedback = {
                     closeText: '',
                     loaded: onLoadFunction,
                     position: {width: 500}}, null);
+        JitsiMeetJS.analytics.sendEvent('feedback.open');
     },
     /**
      * Toggles the appropriate css class for the given number of stars, to

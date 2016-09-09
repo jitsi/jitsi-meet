@@ -1,7 +1,6 @@
-/* global APP, $, config, interfaceConfig */
+/* global APP, $, config, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
-import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 import UIEvents from '../../../service/UI/UIEvents';
 
 let roomUrl = null;
@@ -26,7 +25,11 @@ function openLinkDialog () {
         false, "dialog.Invite",
         function (e, v) {
             if (v && roomUrl) {
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
                 emitter.emit(UIEvents.USER_INVITED, roomUrl);
+            }
+            else {
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
             }
         },
         function (event) {
@@ -37,6 +40,10 @@ function openLinkDialog () {
                     $(event.target).find('button[value=true]').prop('disabled', true);
                 }
             }
+        },
+        function (e, v, m, f) {
+            if(!v && !m && !f)
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
         }
     );
 }
@@ -56,77 +63,79 @@ const buttonHandlers = {
                     $("#unableToUnmutePopup"), true, 5000);
             }
             else {
-                AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
+                JitsiMeetJS.analytics.sendEvent('toolbar.audio.unmuted');
                 emitter.emit(UIEvents.AUDIO_MUTED, false, true);
             }
         } else {
-            AnalyticsAdapter.sendEvent('toolbar.audio.muted');
+            JitsiMeetJS.analytics.sendEvent('toolbar.audio.muted');
             emitter.emit(UIEvents.AUDIO_MUTED, true, true);
         }
     },
     "toolbar_button_camera": function () {
         if (APP.conference.videoMuted) {
-            AnalyticsAdapter.sendEvent('toolbar.video.enabled');
+            JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
             emitter.emit(UIEvents.VIDEO_MUTED, false);
         } else {
-            AnalyticsAdapter.sendEvent('toolbar.video.disabled');
+            JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
             emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
     },
     "toolbar_button_security": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.lock.clicked');
         emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
     },
     "toolbar_button_link": function () {
-        AnalyticsAdapter.sendEvent('toolbar.invite.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
         openLinkDialog();
     },
     "toolbar_button_chat": function () {
-        AnalyticsAdapter.sendEvent('toolbar.chat.toggled');
+        JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
         emitter.emit(UIEvents.TOGGLE_CHAT);
     },
     "toolbar_button_etherpad": function () {
-        AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
         emitter.emit(UIEvents.ETHERPAD_CLICKED);
     },
     "toolbar_button_sharedvideo": function () {
-        AnalyticsAdapter.sendEvent('toolbar.sharedvideo.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.sharedvideo.clicked');
         emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
     },
     "toolbar_button_desktopsharing": function () {
         if (APP.conference.isSharingScreen) {
-            AnalyticsAdapter.sendEvent('toolbar.screen.disabled');
+            JitsiMeetJS.analytics.sendEvent('toolbar.screen.disabled');
         } else {
-            AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
+            JitsiMeetJS.analytics.sendEvent('toolbar.screen.enabled');
         }
         emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
     },
     "toolbar_button_fullScreen": function() {
-        AnalyticsAdapter.sendEvent('toolbar.fullscreen.enabled');
-        UIUtil.buttonClick("#toolbar_button_fullScreen", "icon-full-screen icon-exit-full-screen");
+        JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
+        UIUtil.buttonClick("#toolbar_button_fullScreen",
+            "icon-full-screen icon-exit-full-screen");
         emitter.emit(UIEvents.FULLSCREEN_TOGGLE);
     },
     "toolbar_button_sip": function () {
-        AnalyticsAdapter.sendEvent('toolbar.sip.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
         showSipNumberInput();
     },
     "toolbar_button_dialpad": function () {
-        AnalyticsAdapter.sendEvent('toolbar.sip.dialpad.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.sip.dialpad.clicked');
         dialpadButtonClicked();
     },
     "toolbar_button_settings": function () {
-        AnalyticsAdapter.sendEvent('toolbar.settings.toggled');
+        JitsiMeetJS.analytics.sendEvent('toolbar.settings.toggled');
         emitter.emit(UIEvents.TOGGLE_SETTINGS);
     },
     "toolbar_button_hangup": function () {
-        AnalyticsAdapter.sendEvent('toolbar.hangup');
+        JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
         emitter.emit(UIEvents.HANGUP);
     },
     "toolbar_button_login": function () {
-        AnalyticsAdapter.sendEvent('toolbar.authenticate.login.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.login.clicked');
         emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
-        AnalyticsAdapter.sendEvent('toolbar.authenticate.logout.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
         APP.UI.messageHandler.openTwoButtonDialog(
             "dialog.logoutTitle",
@@ -144,16 +153,64 @@ const buttonHandlers = {
     }
 };
 const defaultToolbarButtons = {
-    'microphone': '#toolbar_button_mute',
-    'camera':     '#toolbar_button_camera',
-    'desktop':    '#toolbar_button_desktopsharing',
-    'security':   '#toolbar_button_security',
-    'invite':     '#toolbar_button_link',
-    'chat':       '#toolbar_button_chat',
-    'etherpad':   '#toolbar_button_etherpad',
-    'fullscreen': '#toolbar_button_fullScreen',
-    'settings':   '#toolbar_button_settings',
-    'hangup':     '#toolbar_button_hangup'
+    'microphone': {
+        id: '#toolbar_button_mute',
+        shortcut: 'M',
+        shortcutAttr: 'mutePopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
+            APP.conference.toggleAudioMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.mute"
+    },
+    'camera': {
+        id: '#toolbar_button_camera',
+        shortcut: 'V',
+        shortcutAttr: 'toggleVideoPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
+            APP.conference.toggleVideoMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.videoMute"
+    },
+    'desktop': {
+        id: '#toolbar_button_desktopsharing',
+        shortcut: 'D',
+        shortcutAttr: 'toggleDesktopSharingPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
+            APP.conference.toggleScreenSharing();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleScreensharing"
+    },
+    'security': {
+        id: '#toolbar_button_security'
+    },
+    'invite': {
+        id: '#toolbar_button_link'
+    },
+    'chat': {
+        id: '#toolbar_button_chat',
+        shortcut: 'C',
+        shortcutAttr: 'toggleChatPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
+            APP.UI.toggleChat();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleChat"
+    },
+    'etherpad': {
+        id: '#toolbar_button_etherpad'
+    },
+    'fullscreen': {
+        id: '#toolbar_button_fullScreen'
+    },
+    'settings': {
+        id: '#toolbar_button_settings'
+    },
+    'hangup': {
+        id: '#toolbar_button_hangup'
+    }
 };
 
 function dialpadButtonClicked() {
@@ -188,6 +245,22 @@ const Toolbar = {
         this.toolbarSelector = $("#header");
 
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
+
+        Object.keys(defaultToolbarButtons).forEach(
+            id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    var button = defaultToolbarButtons[id];
+
+                    if (button.shortcut)
+                        APP.keyboardshortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
+                }
+            }
+        );
 
         Object.keys(buttonHandlers).forEach(
             buttonId => $(`#${buttonId}`).click(function(event) {
@@ -419,15 +492,21 @@ const Toolbar = {
 
     /**
      * Indicates if the toolbar is currently hovered.
-     * @return {true} if the toolbar is currently hovered, {false} otherwise
+     * @return {boolean} true if the toolbar is currently hovered,
+     * false otherwise
      */
     isHovered() {
+        var hovered = false;
         this.toolbarSelector.find('*').each(function () {
             let id = $(this).attr('id');
             if ($(`#${id}:hover`).length > 0) {
-                return true;
+                hovered = true;
+                // break each
+                return false;
             }
         });
+        if (hovered)
+            return true;
         if ($("#bottomToolbar:hover").length > 0) {
             return true;
         }

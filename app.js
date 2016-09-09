@@ -95,9 +95,9 @@ const APP = {
 function setTokenData() {
     let localUser = APP.tokenData.caller;
     if(localUser) {
-        APP.settings.setEmail((localUser.getEmail() || "").trim());
+        APP.settings.setEmail((localUser.getEmail() || "").trim(), true);
         APP.settings.setAvatarUrl((localUser.getAvatarUrl() || "").trim());
-        APP.settings.setDisplayName((localUser.getName() || "").trim());
+        APP.settings.setDisplayName((localUser.getName() || "").trim(), true);
     }
 }
 

@@ -159,13 +159,6 @@ SmallVideo.createStreamElement = function (stream) {
 
     element.id = SmallVideo.getStreamElementID(stream);
 
-    element.onplay = function () {
-        var type = (isVideo ? 'video' : 'audio');
-        var now = APP.connectionTimes[type + ".render"]
-            = window.performance.now();
-        console.log("(TIME) Render " + type + ":\t",
-                    now);
-    };
     return element;
 };
 
@@ -532,6 +525,28 @@ SmallVideo.prototype.waitForResolutionChange = function() {
             }
         }
     };
+};
+
+/**
+ * Initalizes any browser specific properties. Currently sets the overflow
+ * property for Qt browsers on Windows to hidden, thus fixing the following
+ * problem:
+ * Some browsers don't have full support of the object-fit property for the
+ * video element and when we set video object-fit to "cover" the video
+ * actually overflows the boundaries of its container, so it's important
+ * to indicate that the "overflow" should be hidden.
+ *
+ * Setting this property for all browsers will result in broken audio levels,
+ * which makes this a temporary solution, before reworking audio levels.
+ */
+SmallVideo.prototype.initBrowserSpecificProperties = function() {
+
+    var userAgent = window.navigator.userAgent;
+    if (userAgent.indexOf("QtWebEngine") > -1
+        && (userAgent.indexOf("Windows") > -1
+            || userAgent.indexOf("Linux") > -1)) {
+        $('#' + this.videoSpanId).css("overflow", "hidden");
+    }
 };
 
 export default SmallVideo;

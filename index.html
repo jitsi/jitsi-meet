@@ -5,26 +5,18 @@
     <meta charset="utf-8" />
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!--#include virtual="base.html" -->
-    <!--#include virtual="title.html" -->
     <script>
         window.indexLoadedTime = window.performance.now();
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
     </script>
-    <script><!--#include virtual="config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="utils.js?v=1"></script>
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
     <script src="connection_optimization/do_external_connect.js?v=1"></script>
-    <script src="interface_config.js?v=6"></script>
+    <script><!--#include virtual="/interface_config.js" --></script>
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
-    <link rel="icon" type="image/png" href="/images/favicon.ico?v=1"/>
-    <meta property="og:title" content="Jitsi Meet"/>
-    <meta property="og:image" content="/images/jitsilogo.png?v=1"/>
-    <meta property="og:description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
-    <meta description="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
-    <meta itemprop="name" content="Jitsi Meet"/>
-    <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
-    <meta itemprop="image" content="/images/jitsilogo.png?v=1"/>
+    <!--#include virtual="title.html" -->
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/all.css"/>
     <!--#include virtual="plugin.head.html" -->
@@ -220,7 +212,6 @@
                         </i>
                     </a>
                 </span>
-                <div class="bottom_button_separator"></div>
                 <span class="bottomToolbar_span">
                     <a class="bottomToolbarButton" id="bottom_toolbar_contact_list" data-container="body" data-toggle="popover" data-placement="top" id="contactlistpopover"  data-i18n="[content]bottomtoolbar.contactlist" content="Open / close contact list">
                         <i id="contactListButton" class="icon-contactList">
@@ -228,7 +219,6 @@
                         </i>
                     </a>
                 </span>
-                <div class="bottom_button_separator"></div>
                 <span class="bottomToolbar_span">
                     <a class="bottomToolbarButton" id="bottom_toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="top" data-i18n="[content]bottomtoolbar.filmstrip" content="Show / hide film strip">
                         <i id="filmStripButton" class="icon-filmstrip"></i>
@@ -269,7 +259,6 @@
             <div class="arrow-up"></div>
             <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
             <input type="text" id="setEmail" placeholder="E-Mail">
-            <input type="text" id="setAvatarUrl" placeholder="Avatar URL" data-i18n="[placeholder]settings.avatarUrl">
             <select id="languages_selectbox"></select>
             <div id = "startMutedOptions">
                 <label class = "startMutedLabel">
@@ -310,67 +299,7 @@
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
         <div class="header"><h3 data-i18n="keyboardShortcuts.keyboardShortcuts"></h3></div>
         <div class="content">
-            <ul class="item">
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">M</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.mute"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">V</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.videoMute"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">C</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.toggleChat"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">R</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.raiseHand"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">T</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.pushToTalk"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">D</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.toggleScreensharing"></span>
-                </li>
-                <li class="item-details">
-                    <span class="item-action">
-                        <kbd class="regular-key">F</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.toggleFilmstrip"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">?</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.toggleShortcuts"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">0</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.focusLocal"></span>
-                </li>
-                <li>
-                    <span class="item-action">
-                        <kbd class="regular-key">1-9</kbd>
-                    </span>
-                    <span class="item-description" data-i18n="keyboardShortcuts.focusRemote"></span>
-                </li>
+            <ul id="keyboard-shortcuts-list" class="item">
             </ul>
         </div>
     </div>

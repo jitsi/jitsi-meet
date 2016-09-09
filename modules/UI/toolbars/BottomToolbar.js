@@ -1,12 +1,24 @@
-/* global $, APP, interfaceConfig*/
+/* global $, APP, interfaceConfig, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-import AnalyticsAdapter from '../../statistics/AnalyticsAdapter';
 
 const defaultBottomToolbarButtons = {
-    'chat':      '#bottom_toolbar_chat',
-    'contacts':  '#bottom_toolbar_contact_list',
-    'filmstrip': '#bottom_toolbar_film_strip'
+    'chat': {
+        id: '#bottom_toolbar_chat'
+    },
+    'contacts': {
+        id: '#bottom_toolbar_contact_list'
+    },
+    'filmstrip': {
+        id: '#bottom_toolbar_film_strip',
+        shortcut: "F",
+        shortcutAttr: "filmstripPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
+            APP.UI.handleToggleFilmStrip();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
+    }
 };
 
 const BottomToolbar = {
@@ -33,23 +45,42 @@ const BottomToolbar = {
     isEnabled() {
         return this.enabled;
     },
+
     setupListeners (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
         const buttonHandlers = {
             "bottom_toolbar_contact_list": function () {
-                AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
+                JitsiMeetJS.analytics.sendEvent(
+                    'bottomtoolbar.contacts.toggled');
                 emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
             },
             "bottom_toolbar_film_strip": function () {
-                AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
+                JitsiMeetJS.analytics.sendEvent(
+                    'bottomtoolbar.filmstrip.toggled');
                 emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
             },
             "bottom_toolbar_chat": function () {
-                AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
+                JitsiMeetJS.analytics.sendEvent('bottomtoolbar.chat.toggled');
                 emitter.emit(UIEvents.TOGGLE_CHAT);
             }
         };
+
+        Object.keys(defaultBottomToolbarButtons).forEach(
+                id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    var button = defaultBottomToolbarButtons[id];
+
+                    if (button.shortcut)
+                        APP.keyboardshortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
+                }
+            }
+        );
 
         Object.keys(buttonHandlers).forEach(
             buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])

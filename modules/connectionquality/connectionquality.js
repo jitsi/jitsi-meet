@@ -75,6 +75,9 @@ export default {
             eventEmitter.emit(CQEvents.REMOTESTATS_UPDATED, id, null, null);
             return;
         }
+        // Use only the fields we need
+        data = {bitrate: data.bitrate, packetLoss: data.packetLoss};
+
         remoteStats[id] = data;
 
         var newVal = 100 - data.packetLoss.total;

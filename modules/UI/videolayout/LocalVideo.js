@@ -21,7 +21,14 @@ function LocalVideo(VideoLayout, emitter) {
             return APP.conference.getMyUserId();
         }
     });
+    this.initBrowserSpecificProperties();
+
     SmallVideo.call(this, VideoLayout);
+
+    // Set default display name.
+    this.setDisplayName();
+
+    this.createConnectionIndicator();
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);

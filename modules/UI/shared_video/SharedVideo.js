@@ -1,4 +1,5 @@
-/* global $, APP, YT, onPlayerReady, onPlayerStateChange, onPlayerError */
+/* global $, APP, YT, onPlayerReady, onPlayerStateChange, onPlayerError,
+JitsiMeetJS */
 
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -68,17 +69,25 @@ export default class SharedVideoManager {
 
         if(!this.isSharedVideoShown) {
             requestVideoLink().then(
-                    url => this.emitter.emit(
-                                UIEvents.UPDATE_SHARED_VIDEO, url, 'start'),
-                    err => console.log('SHARED VIDEO CANCELED', err)
+                    url => {
+                        this.emitter.emit(
+                            UIEvents.UPDATE_SHARED_VIDEO, url, 'start');
+                        JitsiMeetJS.analytics.sendEvent('sharedvideo.started');
+                    },
+                    err => {
+                        console.log('SHARED VIDEO CANCELED', err);
+                        JitsiMeetJS.analytics.sendEvent('sharedvideo.canceled');
+                    }
             );
             return;
         }
 
         if(APP.conference.isLocalId(this.from)) {
-            showStopVideoPropmpt().then(() =>
-                this.emitter.emit(
-                    UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop'),
+            showStopVideoPropmpt().then(() => {
+                    this.emitter.emit(
+                        UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
+                    JitsiMeetJS.analytics.sendEvent('sharedvideo.stoped');
+                },
                 () => {});
         } else {
             dialog = APP.UI.messageHandler.openMessageDialog(
@@ -89,6 +98,7 @@ export default class SharedVideoManager {
                     dialog = null;
                 }
             );
+            JitsiMeetJS.analytics.sendEvent('sharedvideo.alreadyshared');
         }
     }
 
@@ -192,6 +202,7 @@ export default class SharedVideoManager {
                 self.smartAudioMute();
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.smartAudioUnmute();
+                JitsiMeetJS.analytics.sendEvent('sharedvideo.paused');
             }
             self.fireSharedVideoEvent(event.data == YT.PlayerState.PAUSED);
         };
@@ -221,6 +232,7 @@ export default class SharedVideoManager {
             else if (event.data.volume <=0 || event.data.muted) {
                 self.smartAudioUnmute();
             }
+            JitsiMeetJS.analytics.sendEvent('sharedvideo.volumechanged');
         };
 
         window.onPlayerReady = function(event) {

@@ -3,6 +3,7 @@
 import UIUtil from '../UI/util/UIUtil';
 
 let email = '';
+let avatarId = '';
 let displayName = '';
 let language = null;
 let cameraDeviceId = '';
@@ -35,7 +36,13 @@ if (supportsLocalStorage()) {
     }
 
     email = UIUtil.unescapeHtml(window.localStorage.email || '');
-    avatarUrl = UIUtil.unescapeHtml(window.localStorage.avatarUrl || '');
+    avatarId = UIUtil.unescapeHtml(window.localStorage.avatarId || '');
+    if (!avatarId) {
+        // if there is no avatar id, we generate a unique one and use it forever
+        avatarId = generateUniqueId();
+        window.localStorage.avatarId = avatarId;
+    }
+
     localFlipX = JSON.parse(window.localStorage.localFlipX || true);
     displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
     language = window.localStorage.language;
@@ -69,10 +76,13 @@ export default {
      * Sets the local user display name and saves it to local storage
      *
      * @param {string} newDisplayName unescaped display name for the local user
+     * @param {boolean} disableLocalStore disables local store the display name
      */
-    setDisplayName (newDisplayName) {
+    setDisplayName (newDisplayName, disableLocalStore) {
         displayName = newDisplayName;
-        window.localStorage.displayname = UIUtil.escapeHtml(displayName);
+
+        if (!disableLocalStore)
+            window.localStorage.displayname = UIUtil.escapeHtml(displayName);
     },
 
     /**
@@ -86,10 +96,13 @@ export default {
     /**
      * Sets new email for local user and saves it to the local storage.
      * @param {string} newEmail new email for the local user
+     * @param {boolean} disableLocalStore disables local store the email
      */
-    setEmail: function (newEmail) {
+    setEmail: function (newEmail, disableLocalStore) {
         email = newEmail;
-        window.localStorage.email = UIUtil.escapeHtml(newEmail);
+
+        if (!disableLocalStore)
+            window.localStorage.email = UIUtil.escapeHtml(newEmail);
     },
 
     /**
@@ -101,12 +114,19 @@ export default {
     },
 
     /**
+     * Returns avatar id of the local user.
+     * @returns {string} avatar id
+     */
+    getAvatarId: function () {
+        return avatarId;
+    },
+
+    /**
      * Sets new avatarUrl for local user and saves it to the local storage.
      * @param {string} newAvatarUrl new avatarUrl for the local user
      */
     setAvatarUrl: function (newAvatarUrl) {
         avatarUrl = newAvatarUrl;
-        window.localStorage.avatarUrl = UIUtil.escapeHtml(newAvatarUrl);
     },
 
     /**
@@ -116,7 +136,6 @@ export default {
     getAvatarUrl: function () {
         return avatarUrl;
     },
-
 
     getLanguage () {
         return language;
