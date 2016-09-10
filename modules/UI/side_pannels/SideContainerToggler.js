@@ -57,7 +57,7 @@ const SideContainerToggler = {
     },
 
     /**
-     * Returns {true} if the extended toolbar panel is currently visible,
+     * Returns {true} if the side toolbar panel is currently visible,
      * otherwise returns {false}.
      */
     isVisible() {
@@ -65,7 +65,15 @@ const SideContainerToggler = {
     },
 
     /**
-     * Hides the extended toolbar panel with a slide out animation.
+     * Returns {true} if the side toolbar panel is currently hovered and
+     * {false} otherwise.
+     */
+    isHovered() {
+        return $("#sideToolbarContainer:hover").length > 0;
+    },
+
+    /**
+     * Hides the side toolbar panel with a slide out animation.
      */
     hide() {
         $("#sideToolbarContainer")
@@ -73,7 +81,7 @@ const SideContainerToggler = {
     },
 
     /**
-     * Shows the extended toolbar panel with a slide in animation.
+     * Shows the side toolbar panel with a slide in animation.
      */
     show() {
         if (!this.isVisible())
@@ -81,6 +89,12 @@ const SideContainerToggler = {
                 .removeClass("slideOutExt").addClass("slideInExt");
     },
 
+    /**
+     * Hides the inner container given by the selector.
+     *
+     * @param {Object} containerSelector the jquery selector for the
+     * element to hide
+     */
     hideInnerContainer(containerSelector) {
         containerSelector.removeClass("show").addClass("hide");
 
@@ -88,6 +102,12 @@ const SideContainerToggler = {
             containerSelector.attr('id'), false);
     },
 
+    /**
+     * Shows the inner container given by the selector.
+     *
+     * @param {Object} containerSelector the jquery selector for the
+     * element to show
+     */
     showInnerContainer(containerSelector) {
         containerSelector.removeClass("hide").addClass("show");
 

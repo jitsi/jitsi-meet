@@ -79,7 +79,7 @@
     position:absolute;
     top: 0px;
     left: $defaultToolbarSize;
-    width:0%;
+    width: 0%;
     height: 100%;
     max-width: 200px;
     background-color: rgba(0,0,0,0.8);
@@ -145,7 +145,7 @@ a.button:active,
 a.button.selected {
     cursor: pointer;
     // sum opacity with background layer should give us 0.8
-    background: rgba(0, 0, 0, 0.6);
+    background: $toolbarSelectBackground;
 }
 
 a.button>#avatar {
@@ -163,7 +163,8 @@ a.button>#avatar {
  * START of slide in animation for extended toolbar.
  */
 @include keyframes(slideInX) {
-    100% { transform: translateX(0%); }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0%); }
 }
 
 .slideInX {
@@ -171,13 +172,32 @@ a.button>#avatar {
 }
 
 @include keyframes(slideOutX) {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
 }
 
 .slideOutX {
   @include animation('slideOutX .5s forwards');
 }
+
+@include keyframes(slideInExtX) {
+    0% { transform: translateX(-500%); }
+    100% { transform: translateX(0%); }
+}
+
+.slideInExtX {
+  @include animation('slideInExtX .5s forwards');
+}
+
+@include keyframes(slideOutExtX) {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-500%); }
+}
+
+.slideOutExtX {
+  @include animation('slideOutExtX .5s forwards');
+}
+
 /**
  * END of slide out animation for extended toolbar.
  */
@@ -209,8 +229,8 @@ a.button>#avatar {
  * START of slide in animation for extended toolbar panel.
  */
 @include keyframes(slideInExt) {
-    from { width: 0%; }
-    to   { width: 20%; }
+    from { width: 0px; }
+    to   { width: 200px; } // TO FIX: Make this value a percentage.
 }
 
 .slideInExt {
@@ -218,8 +238,8 @@ a.button>#avatar {
 }
 
 @include keyframes(slideOutExt) {
-  from { width: 20%; }
-  to   { width: 0%; }
+  from { width: 200px; } // TO FIX: Make this value a percentage.
+  to   { width: 0px; }
 }
 
 .slideOutExt {

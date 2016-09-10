@@ -28,6 +28,11 @@
         padding: 7px 10px;
         margin: 2px;
 
+        &:hover,
+        &:active {
+            background: $toolbarSelectBackground;
+        }
+
         > p {
             display: inline-block;
             vertical-align: middle;

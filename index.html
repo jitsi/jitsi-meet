@@ -116,7 +116,7 @@
                 </span>
         </div>
         <div id="subject" class="hide"></div>
-        <span id="extendedToolbar" class="toolbar">
+        <div id="extendedToolbar" class="toolbar">
             <a class="button" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile" content="Edit your profile">
                 <img id="avatar" src="images/avatar2.png"/>
             </a>
@@ -133,6 +133,7 @@
                     </li>
                 </ul>
             </span>
+            <a class="button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]toolbar.invite" content="Invite others"></a>
             <a class="button icon-contactList" id="toolbar_contact_list" data-container="body" data-toggle="popover" data-placement="right" shortcut="contactlistpopover"  data-i18n="[content]bottomtoolbar.contactlist" content="Open / close contact list">
                 <span id="numberOfParticipants"></span>
             </a>
@@ -141,7 +142,6 @@
             </a>
             <a class="button" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="right" style="display: none"></a>
             <a class="button icon-security" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
-            <a class="button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]toolbar.invite" content="Invite others"></a>
             <a class="button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="right" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
             <a class="button fa fa-share-alt-square" id="toolbar_button_sharedvideo" data-container="body" data-toggle="popover" data-placement="right" content="Share a YouTube video" data-i18n="[content]toolbar.sharedvideo" style="display: none">
                 <ul id="sharedVideoMutedPopup" class="loginmenu">
@@ -153,7 +153,68 @@
             <a class="button icon-settings" id="toolbar_button_settings" data-container="body" data-toggle="popover" data-placement="right" content="Settings" data-i18n="[content]toolbar.Settings"></a>
             <a class="button icon-filmstrip" id="toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="right" data-i18n="[content]toolbar.filmstrip" content="Show / hide videos"></a>
             <a class="button fa fa-heart" id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]feedback"></a>
-        </span>
+            <div id="sideToolbarContainer">
+                <div id="chat_container" class="sideToolbarContainer__inner">
+                    <div id="nickname">
+                        <span data-i18n="chat.nickname.title"></span>
+                        <form>
+                            <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
+                        </form>
+                    </div>
+
+                    <div id="chatconversation"></div>
+                    <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
+                    <textarea id="usermsg" data-i18n="[placeholder]chat.messagebox" autofocus></textarea>
+                    <div id="smileysarea">
+                        <div id="smileys" id="toggle_smileys">
+                            <img src="images/smile.svg"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="contacts_container" class="sideToolbarContainer__inner">
+                    <div class="title" data-i18n="contactlist"></div>
+                    <ul id="contacts"></ul>
+                </div>
+                <div id="settings_container" class="sideToolbarContainer__inner">
+                    <div class="title" data-i18n="settings.title"></div>
+                    <div class="arrow-up"></div>
+                    <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
+                    <input type="text" id="setEmail" placeholder="E-Mail">
+                    <select id="languages_selectbox"></select>
+                    <div id = "startMutedOptions">
+                        <label class = "startMutedLabel">
+                            <input type="checkbox" id="startAudioMuted">
+                            <span  data-i18n="settings.startAudioMuted"></span>
+                        </label>
+                        <label class = "startMutedLabel">
+                            <input type="checkbox" id="startVideoMuted">
+                            <span data-i18n="settings.startVideoMuted"></span>
+                        </label>
+                    </div>
+                    <div id="devicesOptions">
+                        <label className="devicesOptionsLabel">
+                            <span data-i18n="settings.selectCamera"></span>
+                            <select id="selectCamera"></select>
+                        </label>
+                        <label className="devicesOptionsLabel">
+                            <span data-i18n="settings.selectMic"></span>
+                            <select id="selectMic"></select>
+                        </label>
+                        <label className="devicesOptionsLabel">
+                            <span data-i18n="settings.selectAudioOutput"></span>
+                            <select id="selectAudioOutput"></select>
+                        </label>
+                    </div>
+                    <div id="followMeOptions">
+                        <label class = "followMeLabel">
+                            <input type="checkbox" id="followMeCheckBox">
+                            <span  data-i18n="settings.followMe"></span>
+                        </label>
+                    </div>
+                    <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
+                </div>
+            </div>
+        </div>
         <div id="videospace">
             <div id="largeVideoContainer" class="videocontainer">
                 <div id="presentation"></div>
@@ -169,7 +230,7 @@
                     <canvas id="dominantSpeakerAudioLevel"></canvas>
                 </div>
                 <div id="largeVideoWrapper">
-                    <video id="largeVideo" muted="true" autoplay></video>
+                    <video id="largeVideo" muted="true" preload="auto" autoplay></video>
                 </div>
                 <span id="videoConnectionMessage"></span>
                 <span id="videoResolutionLabel">HD</span>
@@ -189,67 +250,6 @@
                 </span>
                 <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
                 <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
-            </div>
-        </div>
-        <div id="sideToolbarContainer">
-            <div id="chat_container" class="sideToolbarContainer__inner">
-                <div id="nickname">
-                    <span data-i18n="chat.nickname.title"></span>
-                    <form>
-                        <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
-                    </form>
-                </div>
-
-                <div id="chatconversation"></div>
-                <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
-                <textarea id="usermsg" data-i18n="[placeholder]chat.messagebox" autofocus></textarea>
-                <div id="smileysarea">
-                    <div id="smileys" id="toggle_smileys">
-                        <img src="images/smile.svg"/>
-                    </div>
-                </div>
-            </div>
-            <div id="contacts_container" class="sideToolbarContainer__inner">
-                <div class="title" data-i18n="contactlist"></div>
-                <ul id="contacts"></ul>
-            </div>
-            <div id="settings_container" class="sideToolbarContainer__inner">
-                <div class="title" data-i18n="settings.title"></div>
-                <div class="arrow-up"></div>
-                <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
-                <input type="text" id="setEmail" placeholder="E-Mail">
-                <select id="languages_selectbox"></select>
-                <div id = "startMutedOptions">
-                    <label class = "startMutedLabel">
-                        <input type="checkbox" id="startAudioMuted">
-                        <span  data-i18n="settings.startAudioMuted"></span>
-                    </label>
-                    <label class = "startMutedLabel">
-                        <input type="checkbox" id="startVideoMuted">
-                        <span data-i18n="settings.startVideoMuted"></span>
-                    </label>
-                </div>
-                <div id="devicesOptions">
-                    <label className="devicesOptionsLabel">
-                        <span data-i18n="settings.selectCamera"></span>
-                        <select id="selectCamera"></select>
-                    </label>
-                    <label className="devicesOptionsLabel">
-                        <span data-i18n="settings.selectMic"></span>
-                        <select id="selectMic"></select>
-                    </label>
-                    <label className="devicesOptionsLabel">
-                        <span data-i18n="settings.selectAudioOutput"></span>
-                        <select id="selectAudioOutput"></select>
-                    </label>
-                </div>
-                <div id="followMeOptions">
-                    <label class = "followMeLabel">
-                        <input type="checkbox" id="followMeCheckBox">
-                        <span  data-i18n="settings.followMe"></span>
-                    </label>
-                </div>
-                <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
             </div>
         </div>
     </div>

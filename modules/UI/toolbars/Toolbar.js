@@ -298,8 +298,7 @@ const Toolbar = {
 
         APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             function(containerId, isVisible) {
-                console.log("TOGGLED", containerId, isVisible);
-                Toolbar.handleSideToolbarContainerToggled(  containerId,
+                Toolbar._handleSideToolbarContainerToggled(  containerId,
                                                             isVisible);
             });
     },
@@ -544,7 +543,7 @@ const Toolbar = {
             return true;
         if ($("#bottomToolbar:hover").length > 0
             || $("#extendedToolbar:hover").length > 0
-            || SideContainerToggler.isVisible()) {
+            || SideContainerToggler.isHovered()) {
             return true;
         }
         return false;
@@ -564,8 +563,16 @@ const Toolbar = {
      */
     hide() {
         this.toolbarSelector.toggleClass("slideInY").toggleClass("slideOutY");
-        this.extendedToolbarSelector.toggleClass("slideInX")
-            .toggleClass("slideOutX");
+
+        let slideInAnimation = (SideContainerToggler.isVisible)
+                                    ? "slideInExtX"
+                                    : "slideInX";
+        let slideOutAnimation = (SideContainerToggler.isVisible)
+                                    ? "slideOutExtX"
+                                    : "slideOutX";
+
+        this.extendedToolbarSelector.toggleClass(slideInAnimation)
+            .toggleClass(slideOutAnimation);
     },
 
     /**
@@ -576,17 +583,30 @@ const Toolbar = {
         if (this.toolbarSelector.hasClass("slideOutY"))
             this.toolbarSelector.toggleClass("slideOutY");
 
-        if (this.extendedToolbarSelector.hasClass("slideOutX"))
-            this.extendedToolbarSelector.toggleClass("slideOutX");
+        let slideInAnimation = (SideContainerToggler.isVisible)
+                                ? "slideInExtX"
+                                : "slideInX";
+        let slideOutAnimation = (SideContainerToggler.isVisible)
+                                ? "slideOutExtX"
+                                : "slideOutX";
+
+        if (this.extendedToolbarSelector.hasClass(slideOutAnimation))
+            this.extendedToolbarSelector.toggleClass(slideOutAnimation);
 
         this.toolbarSelector.toggleClass("slideInY");
-        this.extendedToolbarSelector.toggleClass("slideInX");
+        this.extendedToolbarSelector.toggleClass(slideInAnimation);
+    },
+
+    registerClickListeners(listener) {
+        $('#mainToolbarContainer').click(listener);
+
+        $("#extendedToolbar").click(listener);
     },
 
     /**
-     *
+     * Handles the side toolbar toggle.
      */
-    handleSideToolbarContainerToggled(containerId, isVisible) {
+    _handleSideToolbarContainerToggled(containerId, isVisible) {
         Object.keys(defaultToolbarButtons).forEach(
             id => {
                 if (!UIUtil.isButtonEnabled(id))
