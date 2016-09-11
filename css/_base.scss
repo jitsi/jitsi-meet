@@ -112,7 +112,8 @@ form {
 
 .leftwatermark {
     display: none;
-    left: 15;
+    left: $defaultToolbarSize;
+    margin-left: 10px;
     background-image:url(../images/watermark.png);
     background-position: center left;
 }

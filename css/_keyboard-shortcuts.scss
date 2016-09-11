@@ -2,11 +2,12 @@
     display: none;
     position: absolute;
     bottom: 20px;
-    left: 20px;
+    left: $defaultToolbarSize;
     overflow: hidden;
     padding: 20px;
+    margin-left: 10px;
     z-index: 10;
-    border-radius: 15px;
+    border-radius: $borderRadius;
     background-attachment: scroll;
     background-size: auto auto;
     color: rgba(255, 255, 255, .8);
