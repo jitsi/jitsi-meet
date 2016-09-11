@@ -38,6 +38,10 @@ export default {
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
     /**
+     * Notifies that the profile toolbar button has been clicked.
+     */
+    TOGGLE_PROFILE: "UI.toggle_profile",
+    /**
      * Notifies that a command to toggle the film strip has been issued. The
      * event may optionally specify a {Boolean} (primitive) value to assign to
      * the visibility of the film strip (i.e. the event may act as a setter).

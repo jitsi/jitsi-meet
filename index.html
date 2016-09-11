@@ -100,24 +100,11 @@
                 <div id="notice" class="notice" style="display: none">
                     <span id="noticeText" class="noticeText"></span>
                 </div>
-                <span id="mainToolbar" class="toolbar">
-                    <a class="button icon-share-desktop first" id="toolbar_button_desktopsharing" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleDesktopSharingPopover" content="Share screen" data-i18n="[content]toolbar.sharescreen" style="display: none"></a>
-                    <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute">
-                        <ul id="micMutedPopup" class="loginmenu">
-                            <li data-i18n="[html]toolbar.micMutedPopup"></li>
-                        </ul>
-                        <ul id="unableToUnmutePopup" class="loginmenu">
-                            <li data-i18n="[html]toolbar.unableToUnmutePopup"></li>
-                        </ul>
-                    </a>
-                    <a class="button icon-hangup" id="toolbar_button_hangup" data-container="body" data-toggle="popover" data-placement="bottom" content="Hang Up" data-i18n="[content]toolbar.hangup"></a>
-                    <a class="button icon-camera" id="toolbar_button_camera" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="toggleVideoPopover" data-i18n="[content]toolbar.videomute" content="Start / stop camera"></a>
-                    <a class="button icon-full-screen last" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="bottom" content="Enter / Exit Full Screen" data-i18n="[content]toolbar.fullscreen"></a>
-                </span>
+                <span id="mainToolbar" class="toolbar"></span>
         </div>
         <div id="subject" class="hide"></div>
         <div id="extendedToolbar" class="toolbar">
-            <a class="button" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile" content="Edit your profile">
+            <a class="button" id="toolbar_button_profile" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile" content="Edit your profile">
                 <img id="avatar" src="images/avatar2.png"/>
             </a>
             <span id="authentication" class="authentication" style="display: none">
@@ -154,6 +141,17 @@
             <a class="button icon-filmstrip" id="toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="right" data-i18n="[content]toolbar.filmstrip" content="Show / hide videos"></a>
             <a class="button fa fa-heart" id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]feedback"></a>
             <div id="sideToolbarContainer">
+                <div id="profile_container" class="sideToolbarContainer__inner">
+                    <div class="title" data-i18n="profile.title"></div>
+                    <div class="sideToolbarBlock first">
+                        <label class="first" data-i18n="profile.setDisplayNameLabel"></label>
+                        <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
+                    </div>
+                    <div class="sideToolbarBlock">
+                        <label data-i18n="profile.setEmailLabel"></label>
+                        <input type="text" id="setEmail" placeholder="Enter e-mail">
+                    </div>
+                </div>
                 <div id="chat_container" class="sideToolbarContainer__inner">
                     <div id="nickname">
                         <span data-i18n="chat.nickname.title"></span>
@@ -177,39 +175,36 @@
                 </div>
                 <div id="settings_container" class="sideToolbarContainer__inner">
                     <div class="title" data-i18n="settings.title"></div>
-                    <div class="arrow-up"></div>
-                    <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
-                    <input type="text" id="setEmail" placeholder="E-Mail">
-                    <select id="languages_selectbox"></select>
-                    <div id = "startMutedOptions">
-                        <label class = "startMutedLabel">
-                            <input type="checkbox" id="startAudioMuted">
-                            <span  data-i18n="settings.startAudioMuted"></span>
-                        </label>
-                        <label class = "startMutedLabel">
-                            <input type="checkbox" id="startVideoMuted">
-                            <span data-i18n="settings.startVideoMuted"></span>
-                        </label>
-                    </div>
+                    <select class="first" id="languages_selectbox"></select>
+                    <div class="subTitle" data-i18n="settings.audioVideo"></div>
                     <div id="devicesOptions">
-                        <label className="devicesOptionsLabel">
-                            <span data-i18n="settings.selectCamera"></span>
+                        <div class="sideToolbarBlock first">
+                            <label class="first" data-i18n="settings.selectCamera"></label>
                             <select id="selectCamera"></select>
-                        </label>
-                        <label className="devicesOptionsLabel">
-                            <span data-i18n="settings.selectMic"></span>
-                            <select id="selectMic"></select>
-                        </label>
-                        <label className="devicesOptionsLabel">
-                            <span data-i18n="settings.selectAudioOutput"></span>
-                            <select id="selectAudioOutput"></select>
-                        </label>
+                        </div>
+                        <div class="sideToolbarBlock">
+                            <label data-i18n="settings.selectMic"></label>
+                            <select  id="selectMic"></select>
+                        </div>
+                        <div class="sideToolbarBlock">
+                            <label data-i18n="settings.selectAudioOutput"></label>
+                            <select  id="selectAudioOutput"></select>
+                        </div>
                     </div>
-                    <div id="followMeOptions">
-                        <label class = "followMeLabel">
-                            <input type="checkbox" id="followMeCheckBox">
-                            <span  data-i18n="settings.followMe"></span>
-                        </label>
+                    <div class="subTitle" data-i18n="settings.moderator"></div>
+                    <div id = "startMutedOptions">
+                        <div class="sideToolbarBlock first">
+                            <input type="checkbox" id="startAudioMuted">
+                            <label class="startMutedLabel" for="startAudioMuted" data-i18n="settings.startAudioMuted"></label>
+                        </div>
+                        <div class="sideToolbarBlock">
+                            <input type="checkbox" id="startVideoMuted">
+                            <label class="startMutedLabel" for="startVideoMuted" data-i18n="settings.startVideoMuted"></label>
+                        </div>
+                    </div>
+                    <div id="followMeOptions" class="sideToolbarBlock">
+                        <input type="checkbox" id="followMeCheckBox">
+                        <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
                     </div>
                     <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
                 </div>

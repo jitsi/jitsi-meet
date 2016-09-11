@@ -6,8 +6,8 @@
 html, body{
     margin:0px;
     height:100%;
-    color: #424242;
-    font-size: 14px;
+    color: $defaultColor;
+    font-size: 12px;
     font-weight: 400;
     background: #000000;
     overflow: hidden;
@@ -29,23 +29,15 @@ input[type='text'], input[type='password'], textarea {
     -webkit-user-select: text;
     user-select: text;
     display: inline-block;
-    font-size: 14px;
     padding: 5px;
-    background: #f3f3f3;
-    border-radius: 3px;
-    font-weight: 100;
-    line-height: 20px;
-    height: 40px;
-    color: #333;
+    color: $defaultDarkColor;
+    border-radius: $borderRadius;
+    line-height: 32px;
+    height: 32px;
     text-align: left;
-    border:1px solid #ACD8F0;
+    border:1px solid $inputBorderColor;
     outline: none; /* removes the default outline */
     resize: none; /* prevents the user-resizing, adjust to taste */
-}
-
-input[type='text'], input[type='password'], textarea:focus {
-    box-shadow: inset 0 0 3px 2px #ACD8F0; /* provides a more style-able
-                                         replacement to the outline */
 }
 
 textarea {
@@ -58,28 +50,33 @@ button.no-icon {
     padding: 0 1em;
 }
 
-button {
-    border: none;
-    height: 35px;
-    padding: 0 1em 0 2em;
-    position: relative;
-    border-radius: 1px;
-    font-weight: bold;
-    color: #fff;
-    line-height: 35px;
-    background: #2c8ad2;
-}
-
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
+    color: $defaultDarkColor;
+    background: $inputLightBackground;
+    font-size: 12px;
+    border: none;
+    box-shadow: none;
+    outline: none;
 }
 
-button, input[type="button"], input[type="reset"], input[type="submit"] {
+button, select, input[type="button"],
+input[type="reset"], input[type="submit"] {
+    height: 32px;
+    line-height: 32px;
+    padding-left: 4px;
+    padding-right: 4px;
     cursor: pointer;
-    -webkit-appearance: button;
 }
 
+button {
+    color: #FFF;
+    background-color: $buttonBackground !important;
+    border-radius: $borderRadius;
+}
+
+button,
 form {
     display: block;
 }
@@ -137,32 +134,6 @@ form {
     z-index: 100;
 }
 
-#toast-container.notification-bottom-right {
-    bottom: 140px;
-    right: 5px;
-}
-
-#toast-container.notification-bottom-right-center {
-    right: 205px;
-}
-
-#toast-container .toast-info {
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
-
-.toast-close-button {
-    right: -7px;
-    top: -19px;
-}
-
-#toast-container .toast-info {
-    background-color: black;
-    border: 1px solid #3a3a3a;
-    width: 220px;
-    padding: 10px 10px 10px 50px;
-}
-
 .connected {
     color: #21B9FC;
     font-size: 12px;
@@ -171,18 +142,6 @@ form {
 .lastN, .disconnected {
     color: #a3a3a3;
     font-size: 12px;
-}
-
-.toast-close-button:hover,
-.toast-close-button:focus {
-    color: #ffffff;
-    opacity: 1;
-    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-    filter: alpha(opacity=100);
-}
-
-.toast-message .nickname {
-    font-weight: bold;
 }
 
 /**

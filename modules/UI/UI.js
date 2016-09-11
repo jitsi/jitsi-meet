@@ -19,6 +19,7 @@ import GumPermissionsOverlay from './gum_overlay/UserMediaPermissionsGuidanceOve
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
+import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import { reload } from '../util/helpers';
 import RingOverlay from "./ring_overlay/RingOverlay";
@@ -140,7 +141,7 @@ function setupToolbars() {
  * (a.k.a. presentation mode in Chrome).
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
  */
-function toggleFullScreen () {
+UI.toggleFullScreen = function() {
                             // alternative standard method
     let isNotFullScreen = !document.fullscreenElement &&
             !document.mozFullScreenElement && // current working methods
@@ -169,7 +170,7 @@ function toggleFullScreen () {
             document.webkitExitFullscreen();
         }
     }
-}
+};
 
 /**
  * Notify user that server has shut down.
@@ -251,7 +252,7 @@ UI.changeDisplayName = function (id, displayName) {
     VideoLayout.onDisplayNameChanged(id, displayName);
 
     if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
-        SettingsMenu.changeDisplayName(displayName);
+        Profile.changeDisplayName(displayName);
         Chat.setChatConversationMode(!!displayName);
     }
 };
@@ -355,15 +356,19 @@ function registerListeners() {
         }
     });
 
-    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
+    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, UI.toggleFullScreen);
 
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
     UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
-        SideContainerToggler.toggle("settings_container");
+        UI.toggleSidePanel("settings_container");
     });
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
+
+    UI.addListener( UIEvents.TOGGLE_PROFILE, function() {
+        UI.toggleSidePanel("profile_container");
+    });
 
     UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
 
@@ -379,6 +384,7 @@ function registerListeners() {
 function bindEvents() {
     function onResize() {
         SideContainerToggler.resize();
+        VideoLayout.resizeVideoArea();
     }
 
     // Resize and reposition videos in full screen mode.
@@ -499,6 +505,7 @@ UI.start = function () {
         };
 
         SettingsMenu.init(eventEmitter);
+        Profile.init(eventEmitter);
     }
 
     if(APP.tokenData.callee) {
@@ -716,15 +723,25 @@ UI.isFilmStripVisible = function () {
  * Toggles chat panel.
  */
 UI.toggleChat = function () {
-    SideContainerToggler.toggle("chat_container");
+    UI.toggleSidePanel("chat_container");
 };
 
 /**
  * Toggles contact list panel.
  */
 UI.toggleContactList = function () {
-    SideContainerToggler.toggle("contacts_container");
+    UI.toggleSidePanel("contacts_container");
 };
+
+/**
+ * Toggles the given side panel.
+ *
+ * @param {String} sidePanelId the identifier of the side panel to toggle
+ */
+UI.toggleSidePanel = function (sidePanelId) {
+    SideContainerToggler.toggle(sidePanelId);
+};
+
 
 /**
  * Handle new user display name.
@@ -817,6 +834,16 @@ UI.removeListener = function (type, listener) {
     eventEmitter.removeListener(type, listener);
 };
 
+/**
+ * Emits the event of given type by specifying the parameters in options.
+ *
+ * @param type the type of the event we're emitting
+ * @param options the parameters for the event
+ */
+UI.emitEvent = function (type, options) {
+    eventEmitter.emit(type, options);
+};
+
 UI.clickOnVideo = function (videoNumber) {
     var remoteVideos = $(".videocontainer:not(#mixedstream)");
     if (remoteVideos.length > videoNumber) {
@@ -843,7 +870,7 @@ function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
     ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
-        SettingsMenu.changeAvatar(avatarUrl);
+        Profile.changeAvatar(avatarUrl);
     }
 }
 

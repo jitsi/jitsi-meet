@@ -62,34 +62,6 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
 
 export default {
     init (emitter) {
-
-        // DISPLAY NAME
-        function updateDisplayName () {
-            emitter.emit(UIEvents.NICKNAME_CHANGED, $('#setDisplayName').val());
-        }
-        $('#setDisplayName')
-            .val(Settings.getDisplayName())
-            .keyup(function (event) {
-                if (event.keyCode === 13) { // enter
-                    updateDisplayName();
-                }
-            })
-            .focusout(updateDisplayName);
-
-
-        // EMAIL
-        function updateEmail () {
-            emitter.emit(UIEvents.EMAIL_CHANGED, $('#setEmail').val());
-        }
-
-        $('#setEmail')
-            .val(Settings.getEmail())
-            .keyup(function (event) {
-            if (event.keyCode === 13) { // enter
-                updateEmail();
-            }
-        }).focusout(updateEmail);
-
         // START MUTED
         $("#startMutedOptions").change(function () {
             let startAudioMuted = $("#startAudioMuted").is(":checked");
@@ -192,22 +164,6 @@ export default {
      */
     isVisible () {
         return UIUtil.isVisible(document.getElementById("settings_container"));
-    },
-
-    /**
-     * Change user display name in the settings menu.
-     * @param {string} newDisplayName
-     */
-    changeDisplayName (newDisplayName) {
-        $('#setDisplayName').val(newDisplayName);
-    },
-
-    /**
-     * Change user avatar in the settings menu.
-     * @param {string} avatarUrl url of the new avatar
-     */
-    changeAvatar (avatarUrl) {
-        $('#avatar').attr('src', avatarUrl);
     },
 
     /**

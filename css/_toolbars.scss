@@ -74,34 +74,8 @@
     -webkit-transform: translateX(-100%);
 }
 
-#sideToolbarContainer {
-    display: inline-block;
-    position:absolute;
-    top: 0px;
-    left: $defaultToolbarSize;
-    width: 0%;
-    height: 100%;
-    max-width: 200px;
-    background-color: rgba(0,0,0,0.8);
-    z-index: 800;
-    overflow: hidden;
-
-    .sideToolbarContainer__inner {
-        display: none;
-        width: 200px;
-        color: #FFF;
-
-        > div.title {
-            text-align: left;
-            padding: 10px;
-            margin: 2px;
-            font-size: 12pt;
-        }
-    }
-}
-
 #toolbar_button_hangup {
-    color: #ff0000;
+    color: #BF2117;
     font-size: 2.2em !important;
 }
 

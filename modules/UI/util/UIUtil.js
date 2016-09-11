@@ -18,7 +18,8 @@
      * Changes the style class of the element given by id.
      */
     buttonClick: function(id, classname) {
-        $(id).toggleClass(classname); // add the class to the clicked element
+        // add the class to the clicked element
+        $("#" + id).toggleClass(classname);
     },
     /**
      * Returns the text width for the given element.

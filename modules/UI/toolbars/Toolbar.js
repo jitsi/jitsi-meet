@@ -20,9 +20,13 @@ function openLinkDialog () {
     } else {
         inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
     }
+
+    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
     APP.UI.messageHandler.openTwoButtonDialog(
-        "dialog.shareLink", null, null,
-        `<input id="inviteLinkRef" type="text" ${inviteAttributes} onclick="this.select();" readonly>`,
+        null, null, null,
+        '<h2>' + title + '</h2>'
+        + '<input id="inviteLinkRef" type="text" '
+        + inviteAttributes + ' onclick="this.select();" readonly>',
         false, "dialog.Invite",
         function (e, v) {
             if (v && roomUrl) {
@@ -38,7 +42,8 @@ function openLinkDialog () {
                 document.getElementById('inviteLinkRef').select();
             } else {
                 if (event && event.target) {
-                    $(event.target).find('button[value=true]').prop('disabled', true);
+                    $(event.target).find('button[value=true]')
+                        .prop('disabled', true);
                 }
             }
         },
@@ -50,6 +55,10 @@ function openLinkDialog () {
 }
 
 const buttonHandlers = {
+    "toolbar_button_profile": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
+        emitter.emit(UIEvents.TOGGLE_PROFILE);
+    },
     "toolbar_button_mute": function () {
         let sharedVideoManager = APP.UI.getSharedVideoManager();
 
@@ -116,7 +125,7 @@ const buttonHandlers = {
     },
     "toolbar_button_fullScreen": function() {
         JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
-        UIUtil.buttonClick("#toolbar_button_fullScreen",
+        UIUtil.buttonClick("toolbar_button_fullScreen",
             "icon-full-screen icon-exit-full-screen");
         emitter.emit(UIEvents.FULLSCREEN_TOGGLE);
     },
@@ -163,45 +172,55 @@ const buttonHandlers = {
         emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
     }
 };
+
 const defaultToolbarButtons = {
     'microphone': {
-        id: '#toolbar_button_mute',
+        id: 'toolbar_button_mute',
+        className: "button icon-microphone",
         shortcut: 'M',
         shortcutAttr: 'mutePopover',
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
             APP.conference.toggleAudioMuted();
         },
-        shortcutDescription: "keyboardShortcuts.mute"
+        shortcutDescription: "keyboardShortcuts.mute",
+        content: "Mute / Unmute",
+        i18n: "[content]toolbar.mute"
     },
     'camera': {
-        id: '#toolbar_button_camera',
+        id: 'toolbar_button_camera',
+        className: "button icon-camera",
         shortcut: 'V',
         shortcutAttr: 'toggleVideoPopover',
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
             APP.conference.toggleVideoMuted();
         },
-        shortcutDescription: "keyboardShortcuts.videoMute"
+        shortcutDescription: "keyboardShortcuts.videoMute",
+        content: "Start / stop camera",
+        i18n: "[content]toolbar.videomute"
     },
     'desktop': {
-        id: '#toolbar_button_desktopsharing',
+        id: 'toolbar_button_desktopsharing',
+        className: "button icon-share-desktop",
         shortcut: 'D',
         shortcutAttr: 'toggleDesktopSharingPopover',
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
             APP.conference.toggleScreenSharing();
         },
-        shortcutDescription: "keyboardShortcuts.toggleScreensharing"
+        shortcutDescription: "keyboardShortcuts.toggleScreensharing",
+        content: "Share screen",
+        i18n: "[content]toolbar.sharescreen"
     },
     'security': {
-        id: '#toolbar_button_security'
+        id: 'toolbar_button_security'
     },
     'invite': {
-        id: '#toolbar_button_link'
+        id: 'toolbar_button_link'
     },
     'chat': {
-        id: '#toolbar_button_chat',
+        id: 'toolbar_button_chat',
         shortcut: 'C',
         shortcutAttr: 'toggleChatPopover',
         shortcutFunc: function() {
@@ -212,24 +231,41 @@ const defaultToolbarButtons = {
         sideContainerId: "chat_container"
     },
     'contacts': {
-        id: '#toolbar_contact_list',
+        id: 'toolbar_contact_list',
         sideContainerId: "contacts_container"
     },
+    'profile': {
+        id: 'toolbar_button_profile',
+        sideContainerId: "profile_container"
+    },
     'etherpad': {
-        id: '#toolbar_button_etherpad'
+        id: 'toolbar_button_etherpad'
     },
     'fullscreen': {
-        id: '#toolbar_button_fullScreen'
+        id: 'toolbar_button_fullScreen',
+        className: "button icon-full-screen",
+        shortcut: 'F',
+        shortcutAttr: 'toggleFullscreenPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.fullscreen.toggled');
+            APP.UI.toggleFullScreen();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleChat",
+        content: "Enter / Exit Full Screen",
+        i18n: "[content]toolbar.fullscreen"
     },
     'settings': {
-        id: '#toolbar_button_settings',
+        id: 'toolbar_button_settings',
         sideContainerId: "settings_container"
     },
     'hangup': {
-        id: '#toolbar_button_hangup'
+        id: 'toolbar_button_hangup',
+        className: "button icon-hangup",
+        content: "Hang Up",
+        i18n: "[content]toolbar.hangup"
     },
     'filmstrip': {
-        id: '#toolbar_film_strip',
+        id: 'toolbar_film_strip',
         shortcut: "F",
         shortcutAttr: "filmstripPopover",
         shortcutFunc: function() {
@@ -272,6 +308,8 @@ const Toolbar = {
         this.toolbarSelector = $("#mainToolbarContainer");
         this.extendedToolbarSelector = $("#extendedToolbar");
 
+        this._initMainToolbarButtons();
+
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
         Object.keys(defaultToolbarButtons).forEach(
@@ -298,7 +336,7 @@ const Toolbar = {
 
         APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             function(containerId, isVisible) {
-                Toolbar._handleSideToolbarContainerToggled(  containerId,
+                Toolbar._handleSideToolbarContainerToggled( containerId,
                                                             isVisible);
             });
     },
@@ -617,9 +655,58 @@ const Toolbar = {
                 if (button.sideContainerId
                     && button.sideContainerId === containerId) {
                     UIUtil.buttonClick(button.id, "selected");
+                    return;
                 }
             }
         );
+    },
+    /**
+     * TODO: Fix mic popups
+     * <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute">
+     *   <ul id="micMutedPopup" class="loginmenu">
+     *       <li data-i18n="[html]toolbar.micMutedPopup"></li>
+     *   </ul>
+     *   <ul id="unableToUnmutePopup" class="loginmenu">
+     *       <li data-i18n="[html]toolbar.unableToUnmutePopup"></li>
+     *   </ul>
+     * </a>
+     */
+    _initMainToolbarButtons() {
+        interfaceConfig.MAIN_TOOLBAR_BUTTONS.forEach((value, index) => {
+            if (value && value in defaultToolbarButtons) {
+                let button = defaultToolbarButtons[value];
+                this._addMainToolbarButton(
+                    button,
+                    (index === 0),
+                    (index === interfaceConfig.MAIN_TOOLBAR_BUTTONS.length -1));
+            }
+        });
+    },
+
+    _addMainToolbarButton(button, isFirst, isLast) {
+        let buttonElement = document.createElement("a");
+        if (button.className)
+            buttonElement.className = button.className
+                                    + ((isFirst) ? " first" : "")
+                                    + ((isLast) ? " last" : "");
+
+        buttonElement.id = button.id;
+
+        if (button.shortcutAttr)
+            buttonElement.setAttribute("shortcut", button.shortcutAttr);
+
+        if (button.content)
+            buttonElement.setAttribute("content", button.content);
+
+        if (button.i18n)
+            buttonElement.setAttribute("data-i18n", button.i18n);
+
+        buttonElement.setAttribute("data-container", "body");
+        buttonElement.setAttribute("data-toggle", "popover");
+        buttonElement.setAttribute("data-placement", "bottom");
+
+        document.getElementById("mainToolbar")
+            .appendChild(buttonElement);
     }
 };
 

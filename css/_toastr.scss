@@ -19,32 +19,42 @@
 .toast-message label {
   color: #ffffff;
 }
+
+.toast-message .nickname {
+  font-weight: bold;
+}
+
 .toast-message a:hover {
   color: #cccccc;
   text-decoration: none;
 }
+
 .toast-close-button {
   position: relative;
   right: -0.3em;
   top: -0.3em;
   float: right;
-  font-size: 20px;
+  font-size: 15px;
+  height: 15px;
+  width: 15px;
   font-weight: bold;
   color: #ffffff;
+  background: transparent !important;
   -webkit-text-shadow: 0 1px 0 #ffffff;
   text-shadow: 0 1px 0 #ffffff;
   opacity: 0.8;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   filter: alpha(opacity=80);
 }
+
 .toast-close-button:hover,
 .toast-close-button:focus {
-  color: #000000;
+  color: #ffffff;
   text-decoration: none;
   cursor: pointer;
-  opacity: 0.4;
-  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
-  filter: alpha(opacity=40);
+  opacity: 1;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: alpha(opacity=100);
 }
 /*Additional properties for button version
  iOS requires the button element instead of an anchor tag.
@@ -173,4 +183,30 @@ button.toast-close-button {
     padding: 15px 15px 15px 15px;
     width: 25em;
   }
+}
+
+#toast-container.notification-bottom-right {
+  bottom: 140px;
+  right: 5px;
+}
+
+#toast-container.notification-bottom-right-center {
+  right: 205px;
+}
+
+#toast-container .toast-info {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.toast-close-button {
+  right: -7px;
+  top: -19px;
+}
+
+#toast-container .toast-info {
+  background-color: black;
+  border: 1px solid #3a3a3a;
+  width: 220px;
+  padding: 10px 10px 10px 50px;
 }
