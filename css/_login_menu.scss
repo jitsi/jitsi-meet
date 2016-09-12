@@ -45,6 +45,10 @@ span.authentication:hover ul.loginmenu, ul.loginmenu:hover {
     display:block !important;
 }
 
+span.authentication {
+    position: relative;
+}
+
 a.disabled {
     color: gray !important;
     pointer-events: none;
