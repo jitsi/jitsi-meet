@@ -76,7 +76,6 @@
 
 #toolbar_button_hangup {
     color: #BF2117;
-    font-size: 2.2em !important;
 }
 
 #toolbar_button_etherpad {
@@ -105,7 +104,7 @@
     cursor: pointer;
     text-align: center;
     z-index: 1;
-    font-size: 1.44em !important;
+    font-size: $toolbarFontSize !important;
     line-height: 50px !important;
     vertical-align: middle;
 }

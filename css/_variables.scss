@@ -2,6 +2,7 @@
  * Style variables
  */
 $baseFontFamily: 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$toolbarFontSize: 1.9em;
 
 /**
  * Size variables.
@@ -11,16 +12,16 @@ $defaultToolbarSize: 50px;
 /**
  * Color variables.
  */
-$defaultColor: #ECEEF1;
-$defaultSemiDarkColor: #8E96A8;
-$defaultDarkColor: #172B4D;
-$defaultBackground: #091E42;
+$defaultColor: #F1F1F1;
+$defaultSemiDarkColor: #ACACAC;
+$defaultDarkColor: #4F4F4F;
+$defaultBackground: #474747;
 $toolbarSelectBackground: rgba(0, 0, 0, 0.6);
-$inputBackground: rgba(94, 108, 132, .5);
-$inputSemiBackground: rgba(94, 108, 132, .8);
-$inputLightBackground: #E5E8EC;
-$inputBorderColor: #E5E8EC;
-$buttonBackground: #0074E0;
+$inputBackground: rgba(132, 132, 132, .5);
+$inputSemiBackground: rgba(132, 132, 132, .8);
+$inputLightBackground: #EBEBEB;
+$inputBorderColor: #EBEBEB;
+$buttonBackground: #44A5FF;
 
 /**
  * Misc.

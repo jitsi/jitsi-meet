@@ -93,7 +93,8 @@
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
-        "micDisabled": "Microphone is not available"
+        "micDisabled": "Microphone is not available",
+        "filmstrip": "Show / hide videos"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
