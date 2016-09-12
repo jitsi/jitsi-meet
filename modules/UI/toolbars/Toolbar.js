@@ -379,7 +379,7 @@ const Toolbar = {
      */
     unlockLockButton () {
         if ($("#toolbar_button_security").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("#toolbar_button_security",
+            UIUtil.buttonClick("toolbar_button_security",
                                 "icon-security icon-security-locked");
     },
 
@@ -388,7 +388,7 @@ const Toolbar = {
      */
     lockLockButton () {
         if ($("#toolbar_button_security").hasClass("icon-security"))
-            UIUtil.buttonClick("#toolbar_button_security",
+            UIUtil.buttonClick("toolbar_button_security",
                                 "icon-security icon-security-locked");
     },
 
