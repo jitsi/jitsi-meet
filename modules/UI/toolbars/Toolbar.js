@@ -184,6 +184,18 @@ const defaultToolbarButtons = {
             APP.conference.toggleAudioMuted();
         },
         shortcutDescription: "keyboardShortcuts.mute",
+        popups: [
+            {
+                id: "micMutedPopup",
+                className: "loginmenu",
+                dataAttr: "[html]toolbar.micMutedPopup"
+            },
+            {
+                id: "unableToUnmutePopup",
+                className: "loginmenu",
+                dataAttr: "[html]toolbar.unableToUnmutePopup"
+            }
+        ],
         content: "Mute / Unmute",
         i18n: "[content]toolbar.mute"
     },
@@ -704,9 +716,22 @@ const Toolbar = {
         buttonElement.setAttribute("data-container", "body");
         buttonElement.setAttribute("data-toggle", "popover");
         buttonElement.setAttribute("data-placement", "bottom");
+        this._addPopups(buttonElement, button.popups);
 
         document.getElementById("mainToolbar")
             .appendChild(buttonElement);
+    },
+
+    _addPopups(buttonElement, popups = []) {
+        popups.forEach((popup) => {
+            let popupElement = document.createElement("ul");
+            popupElement.id = popup.id;
+            popupElement.className = popup.className;
+            let liElement = document.createElement("li");
+            liElement.setAttribute("data-i18n", popup.dataAttr);
+            popupElement.appendChild(liElement);
+            buttonElement.appendChild(popupElement);
+        });
     }
 };
 

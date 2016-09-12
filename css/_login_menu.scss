@@ -1,6 +1,7 @@
 /*Initialize*/
 ul.loginmenu {
-    font-family: inherit;
+    font-family: $baseFontFamily;
+    line-height: normal;
     display:none;
     position: absolute;
     margin: 0;
@@ -55,4 +56,17 @@ a.disabled {
     position: absolute;
     top: -30px;
     left: 0px;
+}
+
+.loginmenu.extendedToolbarPopup {
+    left: 55px;
+    top: 0px;
+}
+
+ul.loginmenu.extendedToolbarPopup:after {
+    content: url('../images/leftDropdownPointer.png');
+    display: block;
+    position: absolute;
+    top: 18px;
+    left: -7px;
 }
