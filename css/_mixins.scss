@@ -18,3 +18,10 @@
     -o-transform: $func;
     transform: $func;
 }
+
+@mixin transition($transition...) {
+    -moz-transition:    $transition;
+    -o-transition:      $transition;
+    -webkit-transition: $transition;
+    transition:         $transition;
+}
