@@ -3,8 +3,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    right: 0px;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 #remoteVideos {
@@ -23,17 +22,19 @@
     padding: 18px;
     bottom: 0;
     left: 0;
+    overflow: hidden;
     right: 20px;
-    width:auto;
-    border:1px solid transparent;
+    text-align: right;
+    transition: padding 2s ease 0s, height 2s ease 0s;
+    width: auto;
+    /*height: auto !important;*/
     z-index: 5;
-    transition: bottom 2s;
-    overflow: visible !important;
     font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
 }
 
-#remotevideos.hidden {
-    bottom: -196px;
+#remoteVideos.hidden {
+    height: 0 !important;
+    padding: 0 18px;
 }
 
 .videocontainer {
@@ -177,7 +178,6 @@
     text-align: center;
     text-overflow: ellipsis;
     width: 70%;
-    height: 20%;
     left: 15%;
     top: 40%;
     padding: 5px;
@@ -213,7 +213,7 @@
     position: absolute;
     top: 7px;
     right: 0;
-    padding: 0px 5px;
+    margin: 0px 5px;
     z-index: 3;
     width: 18px;
     height: 13px;
@@ -367,6 +367,18 @@
     z-index:10;
     pointer-events: none;
     min-height: 100px;
+}
+
+#toolbar {
+    display:inline-block;
+    position:relative;
+    margin-top:5px;
+    margin-left:auto;
+    margin-right:auto;
+    width:auto;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 1px;
+    pointer-events: auto;
 }
 
 #subject {

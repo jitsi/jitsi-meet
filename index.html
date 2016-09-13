@@ -1,5 +1,7 @@
 <html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <meta charset="utf-8" />
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!--#include virtual="base.html" -->
@@ -21,72 +23,88 @@
   <body>
     <div id="welcome_page">
         <div id="welcome_page_header">
-            <a target="_new">
-                <div class="watermark leftwatermark"></div>
-            </a>
-            <a target="_new">
-                <div class="watermark rightwatermark"></div>
-            </a>
-            <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
-
-            <div id="enter_room_container">
-                    <div id="enter_room_form" >
+            <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6 pull-left">
+                <a target="_new">
+                    <div class="watermark leftwatermark"></div>
+                </a>
+                </div>
+                <div class="col-sm-6 pull-right">
+                <a target="_new">
+                    <div class="watermark rightwatermark"></div>
+                </a>
+                </div>
+            </div>
+            <div class="row">
+                <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-md-push-3" id="enter_room_container">
+                    <div id="enter_room_form" class="clearfix well-sm">
                         <div id="domain_name"></div>
                         <div id="enter_room">
-                            <input id="enter_room_field" type="text" autofocus/>
-                            <div class="icon-reload" id="reload_roomname"></div>
-                            <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
-
+                                <input class="form-control" id="enter_room_field" type="text" autofocus/>
+                                <span class="icon-reload" id="reload_roomname"></span>
                         </div>
+                        <input class="btn btn-primary" id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
                     </div>
+                </div>
             </div>
-            <div id="brand_header"></div>
-            <input type='checkbox' name='checkbox' id="disable_welcome"/>
-            <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
-            <div id="header_text">
-                <!--#include virtual="plugin.header.text.html" -->
+            <div class="row">
+                <div class="col-sm-12">
+                <input type='checkbox' name='checkbox' id="disable_welcome"/>
+                <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
+                </div>
+            </div>
+                <div id="brand_header"></div>
+            <div class="row">
+                <div id="header_text">
+                    <!--#include virtual="plugin.header.text.html" -->
+                </div>
+            </div>
             </div>
         </div>
         <div id="welcome_page_main">
             <div id="features">
-                <div class="feature_row">
-                    <div class="feature_holder">
+                <div class="feature_row row">
+                    <div class="col-sm-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature1.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature1.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                         </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-sm-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature2.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature2.content">
                         </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-sm-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature3.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature3.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                         </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-sm-3 feature holder">
                         <div class="feature_icon" data-i18n="welcomepage.feature4.title" ></div>
                         <div class="feature_description" data-i18n="welcomepage.feature4.content">
                         </div>
                     </div>
                 </div>
-                <div class="feature_row">
-                    <div class="feature_holder">
+                <div class="feature_row row">
+                    <div class="col-sm-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature5.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature5.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                             </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-sm-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature6.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature6.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
                             </div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-sm-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature7.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature7.content" data-i18n-options='{ "postProcess": "resolveAppName" }'></div>
                     </div>
-                    <div class="feature_holder">
+                    <div class="col-sm-3 feature holder">
                             <div class="feature_icon" data-i18n="welcomepage.feature8.title" ></div>
                             <div class="feature_description" data-i18n="welcomepage.feature8.content"></div>
                     </div>
@@ -269,7 +287,7 @@
                     <span  data-i18n="settings.followMe"></span>
                 </label>
             </div>
-            <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
+            <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="top" data-i18n="[data-content]downloadlogs" ><i class="fa fa-cloud-download"></i></a>
         </div>
         <div id="feedbackButtonDiv">
             <a id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]feedback"><i class="fa fa-heart"></i></a>

@@ -10,7 +10,11 @@ html, body{
     font-size: 14px;
     font-weight: 400;
     background: #000000;
-    overflow: hidden;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none !important;
 }
 
 html, body, input, textarea, keygen, select, button {
@@ -26,7 +30,7 @@ html, body, input, textarea, keygen, select, button {
     right: 0px;
     width: 0px;
     max-width: 200px;
-    overflow: hidden;
+    overflow-x: hidden;
     /* background-color:#dfebf1;*/
     background-color:#FFFFFF;
     border-left:1px solid #424242;
@@ -57,7 +61,7 @@ html, body, input, textarea, keygen, select, button {
     top:0px;
     padding-top: 10px;
     width: 38px;
-    height: 28px;
+    height: 38px;
     cursor: pointer;
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
@@ -121,19 +125,6 @@ html, body, input, textarea, keygen, select, button {
 
 #contactListButton.active #numberOfParticipants {
     color: #21B9FC;
-}
-
-#toolbar {
-    display:inline-block;
-    position:relative;
-    top:5px;
-    margin-left:auto;
-    margin-right:auto;
-    height:38px;
-    width:auto;
-    background-color: rgba(0,0,0,0.5);
-    border-radius: 1px;
-    pointer-events: auto;
 }
 
 #toolbar_button_record {
@@ -223,11 +214,9 @@ form {
 }
 
 #feedbackButton {
+    bottom: 1em;
+    left: 1em;
     position: absolute;
-    bottom: 60;
-    left: 60;
-    overflow: visible;
-    color: rgba(255,255,255,.50);
 }
 
 #feedbackButtonDiv {
@@ -235,12 +224,14 @@ form {
     position: absolute;
     background-color: rgba(0,0,0,.50);
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    bottom: -50px;
-    left: -50px;
-    z-index: 100;
+    bottom: 0;
+    font-size: 1em;
+    height: 3em;
+    left: 0;
     overflow: hidden;
+    text-align: center;
+    width: 3em;
+    z-index: 100;
     transition: all 2s ease-in-out;
 }
 
@@ -249,7 +240,9 @@ form {
 }
 
 div.feedbackButton:hover {
-    transform: scale(1.3);
+    font-size: 1.25em;
+    height: 3em;
+    width: 3em;
 }
 
 #bottomToolbar {

@@ -5,7 +5,7 @@
 
 .disable_welcome_position
 {
-    margin: -139px auto 0px auto;
+    margin: auto;
     padding-left: 39px;
     padding-top: 7px;
     width: 269px;
@@ -46,38 +46,39 @@
     -moz-border-radius: 1px;
     -webkit-border-radius: 1px;
     -webkit-appearance: none;
-    height: 55px;
     box-shadow: none;
-    float: left;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 5px;
+    overflow: hidden;
+}
+#enter_room_form > * {
+    flex: 1 0 auto;
 }
 
 #domain_name
 {
-    float: left;
     height: 55px;
     line-height: 55px;
     font-size: 18px;
     font-weight: 500;
-    padding-left: 20px;
+    text-align: center;
 }
 
 #enter_room_field {
     font-size: 15px;
     border: none;
     -webkit-appearance: none;
-    width: 228px;
     height: 55px;
     line-height: 55px;
     font-weight: 500;
     box-shadow: none;
-    float: left;
     background-color: #FFFFFF;
     position: relative;
     z-index: 2;
 }
 
 #enter_room_button {
-    width: 73px;
     height: 45px;
     background-color: #21B9FC;
     moz-border-radius: 1px;
@@ -85,7 +86,7 @@
     color: #ffffff;
     font-weight: 600;
     border: none;
-    margin-top: 5px;
+    margin: 5px 0;
     font-size: 19px;
     padding-top: 6px;
     outline: none;
@@ -95,13 +96,19 @@
 }
 
 #enter_room_container {
-    margin: 70px auto 0px auto;
-    display: table;
+    margin: 96px auto 15px auto;
 }
 
 #enter_room{
-    float:left;
-    padding-right: 5px;
+    display: flex;
+}
+
+#reload_roomname {
+    display: flex !important;
+    align-content: center;
+    align-items: center;
+    flex: 1 0 auto;
+    justify-content: center;
 }
 
 #welcome_page_header
@@ -110,6 +117,11 @@
     height: 290px;
     width: 100%;
     position: absolute;
+}
+
+#welcome_page_main *
+{
+    max-width: 100%;
 }
 
 #welcome_page_main
@@ -148,30 +160,27 @@
 {
     position: relative;
     width: 976px;
-    margin: 0px auto 30px auto;
-    padding-right: 75px;
-
+    margin: auto;
 }
 
-.feature_holder
+.feature.holder
 {
-    float:left;
-    width: 169px;
-    padding-left: 75px;
-    padding-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 .feature_icon
 {
     background-image:url(../images/welcome_page/bubble.png);
     background-repeat: no-repeat;
+    background-position: center;
     width: 169px;
     height: 169px;
     color: #ffffff;
     font-size: 22px;
     /*font-weight: bold;*/
     text-align: center;
-    display: table-cell;
+    display: block;
+    margin: auto;
     padding: 50px 26px 0px 20px;
 }
 
@@ -183,16 +192,14 @@
     padding-top: 30px;
     line-height: 22px;
     font-weight: 200;
+    margin: auto;
 }
 
 #reload_roomname
 {
     width: 30px;
-    height: 19px;
     color: #acacac;
-    margin-top: 22px;
     z-index: 3;
-    float:  left;
     cursor: pointer;
     text-align: center;
     display: none;
