@@ -114,7 +114,7 @@ form {
     display: none;
     left: $defaultToolbarSize;
     margin-left: 10px;
-    background-image:url(../images/watermark.png);
+    background-image: url($defaultWatermarkLink);
     background-position: center left;
 }
 
