@@ -219,6 +219,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
         if (audioMutedSpan.length > 0) {
             audioMutedSpan.popover('hide');
             audioMutedSpan.remove();
+            this.updateIconPositions();
         }
     }
     else {
@@ -255,6 +256,7 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
     if (isMuted === false) {
         if (videoMutedSpan.length > 0) {
             videoMutedSpan.remove();
+            this.updateIconPositions();
         }
     }
     else {

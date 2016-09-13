@@ -71,7 +71,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
             if (displayName && displayName.length > 0) {
                 meHTML = APP.translation.generateTranslationHTML("me");
                 $('#localDisplayName').html(
-                    UIUtil.escapeHtml(displayName) + ' (' + meHTML + ')'
+                    `${UIUtil.escapeHtml(displayName)} (${meHTML})`
                 );
             } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
@@ -120,21 +120,23 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         var self = this;
         $('#localVideoContainer .displayname')
             .bind("click", function (e) {
+                let $editDisplayName = $('#editDisplayName');
+                let $localDisplayName = $('#localDisplayName');
 
-                var editDisplayName = $('#editDisplayName');
                 e.preventDefault();
                 e.stopPropagation();
-                $('#localDisplayName').hide();
-                editDisplayName.show();
-                editDisplayName.focus();
-                editDisplayName.select();
+                $localDisplayName.hide();
+                $editDisplayName.show();
+                $editDisplayName.focus();
+                $editDisplayName.select();
 
-                editDisplayName.one("focusout", function (e) {
+                $editDisplayName.one("focusout", function (e) {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
-                    $('#editDisplayName').hide();
+                    $editDisplayName.hide();
+                    $localDisplayName.show();
                 });
 
-                editDisplayName.on('keydown', function (e) {
+                $editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
                         $('#editDisplayName').hide();
