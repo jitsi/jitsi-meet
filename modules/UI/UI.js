@@ -1443,12 +1443,13 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
 
 /**
  * Shows error dialog that informs the user that no data is received from the
- * microphone.
+ * device.
  */
-UI.showAudioNotWorkingDialog = function () {
+UI.showTrackNotWorkingDialog = function (stream) {
     messageHandler.openMessageDialog(
         "dialog.error",
-        "dialog.micNotSendingData",
+        stream.isAudioTrack()? "dialog.micNotSendingData" :
+            "dialog.cameraNotSendingData",
         null,
         null);
 };

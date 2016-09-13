@@ -293,8 +293,13 @@ function createLocalTracks (options, checkForPermissionPrompt) {
             firefox_fake_device: config.firefox_fake_device,
             desktopSharingExtensionExternalInstallation:
                 options.desktopSharingExtensionExternalInstallation
-        }, checkForPermissionPrompt)
-        .catch(function (err) {
+        }, checkForPermissionPrompt).then( (tracks) => {
+            tracks.forEach((track) => {
+                track.on(TrackEvents.NO_DATA_FROM_SOURCE,
+                    APP.UI.showTrackNotWorkingDialog.bind(null, track));
+            });
+            return tracks;
+        }).catch(function (err) {
             console.error(
                 'failed to create local tracks', options.devices, err);
             return Promise.reject(err);
@@ -865,8 +870,6 @@ export default {
 
         return promise.then(function () {
             if (stream) {
-                stream.on(TrackEvents.TRACK_AUDIO_NOT_WORKING,
-                    APP.UI.showAudioNotWorkingDialog);
                 return room.addTrack(stream);
             }
         }).then(() => {
