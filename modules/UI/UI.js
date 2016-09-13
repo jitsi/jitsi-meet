@@ -1051,7 +1051,7 @@ UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
     }
 
     let and = APP.translation.translateString("email.and");
-    let supportedBrowsers = `Chromium, Google Chrome ${and} Opera`;
+    let supportedBrowsers = `Chromium, Google Chrome, Firefox ${and} Opera`;
 
     let subject = APP.translation.translateString(
         "email.subject", {appName:interfaceConfig.APP_NAME, conferenceName}
