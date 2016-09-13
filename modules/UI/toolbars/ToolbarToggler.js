@@ -50,7 +50,8 @@ const ToolbarToggler = {
     init() {
         alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
 
-        this._registerWindowClickListeners();
+        // disabled
+        //this._registerWindowClickListeners();
     },
 
     /**
