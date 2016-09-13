@@ -47,17 +47,18 @@
     -webkit-border-radius: 1px;
     -webkit-appearance: none;
     box-shadow: none;
+    display: flex;
+}
+#enter_room_form > * {
+    flex: 1 0 auto;
 }
 
 #domain_name
 {
-    float: left;
-    padding-top: 0.74em;
     height: 55px;
     line-height: 55px;
     font-size: 18px;
     font-weight: 500;
-    padding-left: 20px;
 }
 
 #enter_room_field {
@@ -69,7 +70,6 @@
     line-height: 55px;
     font-weight: 500;
     box-shadow: none;
-    float: left;
     background-color: #FFFFFF;
     position: relative;
     z-index: 2;
@@ -99,7 +99,16 @@
 }
 
 #enter_room{
+    display: flex;
     padding: 5px;
+}
+
+#reload_roomname {
+    display: flex !important;
+    align-content: center;
+    align-items: center;
+    flex: 1 0 auto;
+    justify-content: center;
 }
 
 #welcome_page_header
