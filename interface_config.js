@@ -2,6 +2,9 @@ var interfaceConfig = {
     CANVAS_EXTRA: 104,
     CANVAS_RADIUS: 0,
     SHADOW_COLOR: '#ffffff',
+    // TO FIX: this needs to be handled from SASS variables. There are some
+    // methods allowing to use variables both in css and js.
+    DEFAULT_BACKGROUND: '#474747',
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
@@ -16,8 +19,8 @@ var interfaceConfig = {
     INVITATION_POWERED_BY: true,
     // the toolbar buttons line is intentionally left in one line, to be able
     // to easily override values or remove them using regex
-    MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'fullscreen', 'hangup'], // jshint ignore:line
-    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
+    MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'hangup'], // jshint ignore:line
+    TOOLBAR_BUTTONS: ['profile', 'authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the

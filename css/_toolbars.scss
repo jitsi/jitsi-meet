@@ -1,7 +1,7 @@
 .toolbar {
     background-color: rgba(0,0,0,0.5);
     position: relative;
-    z-index: 900;
+    z-index: $toolbarZ;
     height: 100%;
     pointer-events: auto;
 }
@@ -13,7 +13,7 @@
     top:0;
     left:0;
     right:0;
-    z-index:10;
+    z-index: $toolbarZ;
     pointer-events: none;
     min-height: 100px;
     transform: translateY(-100%);
@@ -76,6 +76,7 @@
 
 #toolbar_button_hangup {
     color: #BF2117;
+    font-size: $hangupFontSize !important;
 }
 
 #toolbar_button_etherpad {

@@ -1,11 +1,10 @@
-
 .overlay {
     position: fixed;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 1013;
+    z-index: $overlayZ;
     background: #21B9FC; /* Old browsers */
     opacity: 0.75;
     display: block;
@@ -19,7 +18,7 @@
     width: 100%;
     height: 100%;
     position: fixed;
-    z-index: 1013;
+    z-index: $overlayZ;
 }
 
 .overlay_content {
@@ -36,23 +35,6 @@
     margin-left: -200px;
 }
 
-.overlay_avatar {
-    width: 200px;
-    height: 200px;
-    position: relative;
-    border-radius: 100px;
-    z-index: 1013;
-    float: left;
-    margin-left: 100px;
-}
-
-.overlay_text {
-    position: relative;
-    width: 400px;
-    z-index: 1013;
-    margin-top: 50px;
-    float: left;
-}
 
 .overlay_text_small {
     font-size: 18px;

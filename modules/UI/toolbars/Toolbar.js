@@ -214,22 +214,25 @@ const defaultToolbarButtons = {
     },
     'desktop': {
         id: 'toolbar_button_desktopsharing',
-        className: "button icon-share-desktop",
+        className: 'button icon-share-desktop',
         shortcut: 'D',
         shortcutAttr: 'toggleDesktopSharingPopover',
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
             APP.conference.toggleScreenSharing();
         },
-        shortcutDescription: "keyboardShortcuts.toggleScreensharing",
-        content: "Share screen",
-        i18n: "[content]toolbar.sharescreen"
+        shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
+        content: 'Share screen',
+        i18n: '[content]toolbar.sharescreen'
     },
     'security': {
         id: 'toolbar_button_security'
     },
     'invite': {
-        id: 'toolbar_button_link'
+        id: 'toolbar_button_link',
+        className: 'button icon-link',
+        content: 'Invite others',
+        i18n: '[content]toolbar.invite'
     },
     'chat': {
         id: 'toolbar_button_chat',
@@ -239,16 +242,16 @@ const defaultToolbarButtons = {
             JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
             APP.UI.toggleChat();
         },
-        shortcutDescription: "keyboardShortcuts.toggleChat",
-        sideContainerId: "chat_container"
+        shortcutDescription: 'keyboardShortcuts.toggleChat',
+        sideContainerId: 'chat_container'
     },
     'contacts': {
         id: 'toolbar_contact_list',
-        sideContainerId: "contacts_container"
+        sideContainerId: 'contacts_container'
     },
     'profile': {
         id: 'toolbar_button_profile',
-        sideContainerId: "profile_container"
+        sideContainerId: 'profile_container'
     },
     'etherpad': {
         id: 'toolbar_button_etherpad'
@@ -695,6 +698,15 @@ const Toolbar = {
         });
     },
 
+    /**
+     * Adds the given button to the main (top) toolbar.
+     *
+     * @param {Object} the button to add.
+     * @param {boolean} isFirst indicates if this is the first button in the
+     * toolbar
+     * @param {boolean} isLast indicates if this is the last button in the
+     * toolbar
+     */
     _addMainToolbarButton(button, isFirst, isLast) {
         let buttonElement = document.createElement("a");
         if (button.className)

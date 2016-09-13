@@ -112,7 +112,7 @@
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
                 return UIUtil.isButtonEnabled(buttonName)
-                    ? null : mappings[buttonName].id; })
+                    ? null : "#" + mappings[buttonName].id; })
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();
@@ -120,7 +120,7 @@
 
     redirect (url) {
          window.location.href = url;
-     },
+    },
 
      isFullScreen () {
          return document.fullScreen

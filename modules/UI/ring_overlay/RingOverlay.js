@@ -1,4 +1,5 @@
 /* global $ */
+/* jshint -W101 */
 
 /**
  * Shows ring overlay
@@ -8,35 +9,39 @@ class RingOverlay {
      * @param callee instance of User class from TokenData.js
      */
     constructor(callee) {
+        this._containerId = 'ringOverlay';
+        this._audioContainerId = 'ringOverlayRinging';
+
         this.callee = callee;
-        this._buildHtml();
-        this.audio = $("#ring_overlay_ringing");
-        this.audio[0].play();
+        this.render();
+        this.audio = document.getElementById(this._audioContainerId);
+        this.audio.play();
         this._setAudioTimeout();
     }
 
     /**
      * Builds and appends the ring overlay to the html document
      */
-    _buildHtml() {
-        $("body").append("<div class='overlay_container' >" +
-        "<div class='overlay' /><div class='overlay_content'>" +
-        "<img class='overlay_avatar' src='" +
-        this.callee.getAvatarUrl() + "' />" +
-        "<span data-i18n='calling' data-i18n-options='" +
-        JSON.stringify({name: this.callee.getName()}) +
-        "' class='overlay_text'>Calling " +
-        this.callee.getName() + "...</span></div>" +
-        "<audio id='ring_overlay_ringing' src='/sounds/ring.ogg' /></div>");
+    _getHtmlStr(callee) {
+        return `
+            <div id="${this._containerId}" class='ringing' >
+                <div class='ringing__content'>
+                    <p>Calling...</p>
+                    <img class='ringing__avatar' src="${callee.getAvatarUrl()}" />
+                    <div class="ringing__caller-info">
+                        <p>${callee.getName()}</p>
+                    </div>
+                </div>
+                <audio id="${this._audioContainerId}" src="/sounds/ring.ogg" />
+            </div>`;
     }
 
     /**
-     * Sets the interval that is going to play the ringing sound.
+     *
      */
-    _setAudioTimeout() {
-        this.interval = setInterval( () => {
-            this.audio[0].play();
-        }, 5000);
+    render() {
+        this.htmlStr = this._getHtmlStr(this.callee);
+        this._attach();
     }
 
     /**
@@ -44,9 +49,28 @@ class RingOverlay {
      * related to the ring overlay.
      */
     destroy() {
-        if(this.interval)
+        if (this.interval) {
             clearInterval(this.interval);
-        $(".overlay_container").remove();
+        }
+
+        this._detach();
+    }
+
+    _attach() {
+        $("body").append(this.htmlStr);
+    }
+
+    _detach() {
+        $(`#${this._containerId}`).remove();
+    }
+
+    /**
+     * Sets the interval that is going to play the ringing sound.
+     */
+    _setAudioTimeout() {
+        this.interval = setInterval( () => {
+            this.audio.play();
+        }, 5000);
     }
 }
 
@@ -66,26 +90,30 @@ export default {
         if(overlay) {
             this.hide();
         }
+
         overlay = new RingOverlay(callee);
     },
+
     /**
      * Hides the ring overlay. Destroys all the elements related to the ring
      * overlay.
      */
     hide() {
-        if(!overlay)
+        if(!overlay) {
             return false;
+        }
         overlay.destroy();
         overlay = null;
         return true;
     },
+
     /**
      * Checks whether or not the ring overlay is currently displayed.
      *
      * @returns {boolean} true if the ring overlay is currently displayed or
      * false otherwise.
      */
-    isDisplayed () {
+    isVisible () {
         return overlay !== null;
     }
 };

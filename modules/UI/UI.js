@@ -1500,6 +1500,15 @@ UI.hideRingOverLay = function () {
 };
 
 /**
+ * Indicates if the ring overlay is currently visible.
+ *
+ * @returns {*|boolean} {true} if the ring overlay is visible, {false} otherwise
+ */
+UI.isRingOverlayVisible = function () {
+    return RingOverlay.isVisible();
+};
+
+/**
  * Shows browser-specific overlay with guidance how to proceed with gUM prompt.
  * @param {string} browser - name of browser for which to show the guidance
  *      overlay.

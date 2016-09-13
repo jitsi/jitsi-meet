@@ -35,7 +35,7 @@ function hideToolbar(force) {
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (Toolbar.isHovered()) {
+    if (Toolbar.isHovered() || APP.UI.isRingOverlayVisible()) {
         toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
     } else if (!SideContainerToggler.isVisible() || force) {
         Toolbar.hide();
