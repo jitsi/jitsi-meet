@@ -104,8 +104,35 @@
         }
     },
 
+    /**
+     * Indicates if a toolbar button is enabled.
+     * @param name the name of the setting section as defined in
+     * interface_config.js and Toolbar.js
+     * @returns {boolean} {true} to indicate that the given toolbar button
+     * is enabled, {false} - otherwise
+     */
     isButtonEnabled: function (name) {
         return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
+    },
+    /**
+     * Indicates if the setting section is enabled.
+     *
+     * @param name the name of the setting section as defined in
+     * interface_config.js and SettingsMenu.js
+     * @returns {boolean} {true} to indicate that the given setting section
+     * is enabled, {false} - otherwise
+     */
+    isSettingEnabled: function (name) {
+        return interfaceConfig.SETTINGS_SECTIONS.indexOf(name) !== -1;
+    },
+
+    /**
+     * Shows the element given by id.
+     *
+     * @param {String} the identifier of the element
+     */
+    showHiddenElement(id) {
+        $("#"+id).toggleClass("hide").toggleClass("show");
     },
 
     hideDisabledButtons: function (mappings) {
