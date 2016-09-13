@@ -6,8 +6,7 @@
     height: 100%;
     position: fixed;
     z-index: $overlayZ;
-    //background: linear-gradient(transparent, #000);
-    background: $defaultBackground; /* Old browsers */
+    background: linear-gradient(transparent, #000);
     opacity: 0.8;
 
     &__content {
