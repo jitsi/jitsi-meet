@@ -14,7 +14,7 @@ OUTPUT_DIR = .
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 IFRAME_API_DIR = ./modules/API/external
 
-all: compile compile-iframe-api uglify uglify-iframe-api deploy clean
+all: update-deps compile compile-iframe-api uglify uglify-iframe-api deploy clean
 
 update-deps:
 	$(NPM) update
