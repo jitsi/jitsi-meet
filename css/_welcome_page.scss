@@ -48,6 +48,7 @@
     -webkit-appearance: none;
     box-shadow: none;
     display: flex;
+    flex-wrap: wrap;
     padding: 0 5px;
 }
 #enter_room_form > * {
@@ -85,7 +86,7 @@
     color: #ffffff;
     font-weight: 600;
     border: none;
-    margin-top: 5px;
+    margin: 5px 0;
     font-size: 19px;
     padding-top: 6px;
     outline: none;
