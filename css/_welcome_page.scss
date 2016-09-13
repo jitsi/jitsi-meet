@@ -50,6 +50,7 @@
     display: flex;
     flex-wrap: wrap;
     padding: 0 5px;
+    overflow: hidden;
 }
 #enter_room_form > * {
     flex: 1 0 auto;
@@ -61,13 +62,13 @@
     line-height: 55px;
     font-size: 18px;
     font-weight: 500;
+    text-align: center;
 }
 
 #enter_room_field {
     font-size: 15px;
     border: none;
     -webkit-appearance: none;
-    width: 228px;
     height: 55px;
     line-height: 55px;
     font-weight: 500;
@@ -97,7 +98,6 @@
 
 #enter_room_container {
     margin: 96px auto 15px auto;
-    display: table;
 }
 
 #enter_room{
