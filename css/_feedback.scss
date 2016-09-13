@@ -1,48 +1,107 @@
-/**
- * The feedback window inner div css.
- */
-.feedback {
-    width: 450px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+@-webkit-keyframes shake-rotate {
+    0% {
+        -webkit-transform:scale(1) rotate(0deg);
+        transform:scale(1) rotate(0deg)
+    }
+
+    50% {
+        -webkit-transform:scale(.8) rotate(-5deg);
+        transform:scale(.8) rotate(-5deg)
+    }
+
+    to {
+        -webkit-transform:scale(1) rotate(3deg);
+        transform:scale(1) rotate(3deg)
+    }
+}
+
+@keyframes shake-rotate {
+    0% {
+        -webkit-transform:scale(1) rotate(0deg);
+        transform:scale(1) rotate(0deg)
+    }
+
+    50% {
+        -webkit-transform:scale(.8) rotate(-5deg);
+        transform:scale(.8) rotate(-5deg)
+    }
+
+    to {
+        -webkit-transform:scale(1) rotate(3deg);
+        transform:scale(1) rotate(3deg)
+    }
+}
+
+.shake-rotate {
+    -webkit-animation-duration: .4s;
+    animation-duration: .4s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: shake-rotate;
+    animation-name: shake-rotate;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out
+}
+
+.text-center {
     text-align: center;
-    font-size: 22px;
 }
 
-/**
- * Style of the thank you text inside the feedback window.
- */
-.feedbackTitle {
-    font-size: 22px;
-    color: #087dba;
-}
-
-/**
- * Stars div css.
- */
-#stars {
-    font-size: 30px;
-}
-
-/**
- * Star css.
- */
-#stars>a {
-    padding-right: 4px;
-}
-
-/**
- * Mouse over a star.
- */
-.starHover {
-    color: #087dba;
-}
-
-/**
- * Detailed feedback section text area style.
- */
 .feedbackDetails textarea {
     resize: vertical;
     min-height: 100px;
+}
+
+.feedback-rating {
+    line-height: 1.2;
+    padding: 20px 0;
+
+    h2 {
+        font-weight: 400;
+        font-size: 24px;
+        line-height: 1.2;
+        padding: auto;
+        margin: auto;
+        border: none;
+    }
+
+    p {
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-bottom: 0px;
+        margin-right: 0px;
+    }
+
+    .star-label {
+        font-size: 16px;
+        color: $rateStarLabelColor;
+    }
+
+    .star-btn {
+        color: $rateStarDefault;
+        font-size: 36px;
+        position: relative;
+        cursor: pointer;
+        outline: none;
+        text-decoration: none;
+        @include transition(all .2s ease);
+
+        &.starHover,
+        &.active,
+        &:hover {
+            color: $rateStarActivity;
+
+            .fa {
+                top: -6px;
+            }
+        };
+
+        &.rated:hover .fa {
+            top: 0;
+        }
+
+        .fa {
+            position: relative;
+        }
+    }
 }

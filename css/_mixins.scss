@@ -35,3 +35,18 @@
     @content;
   }
 }
+
+@mixin transform($func) {
+    -moz-transform: $func;
+    -ms-transform: $func;
+    -webkit-transform: $func;
+    -o-transform: $func;
+    transform: $func;
+}
+
+@mixin transition($transition...) {
+    -moz-transition:    $transition;
+    -o-transition:      $transition;
+    -webkit-transition: $transition;
+    transition:         $transition;
+}
