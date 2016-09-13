@@ -65,8 +65,11 @@ class TokenData{
      * @param {string} the JWT token
      */
     constructor(jwt) {
+        this.isGuest = true;
         if(!jwt)
             return;
+
+        this.isGuest = config.enableUserRolesBasedOnToken !== true;
 
         this.jwt = jwt;
 

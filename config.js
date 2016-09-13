@@ -69,5 +69,9 @@ var config = {
     'During that time service will not be available. ' +
     'Apologise for inconvenience.',*/
     disableThirdPartyRequests: false,
-    minHDHeight: 540
+    minHDHeight: 540,
+    // If true - all users without token will be considered guests and all users
+    // with token will be considered non-guests. Only guests will be allowed to
+    // edit their profile.
+    enableUserRolesBasedOnToken: false
 };

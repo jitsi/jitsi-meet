@@ -367,7 +367,8 @@ function registerListeners() {
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
 
     UI.addListener( UIEvents.TOGGLE_PROFILE, function() {
-        UI.toggleSidePanel("profile_container");
+        if(APP.tokenData.isGuest)
+            UI.toggleSidePanel("profile_container");
     });
 
     UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
