@@ -258,7 +258,8 @@ var messageHandler = {
     notify: function(displayName, displayNameKey, cls, messageKey,
                      messageArguments, options) {
 
-        if(!notificationsEnabled)
+        // If we're in ringing state we skip all toaster notifications.
+        if(!notificationsEnabled || APP.UI.isRingOverlayVisible())
             return;
 
         var displayNameSpan = '<span class="nickname" ';

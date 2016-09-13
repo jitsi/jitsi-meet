@@ -3,7 +3,6 @@
 
 import AudioLevels from "../audio_levels/AudioLevels";
 import Avatar from "../avatar/Avatar";
-import BottomToolbar from "../toolbars/BottomToolbar";
 import FilmStrip from "./FilmStrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -12,7 +11,6 @@ import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager, {VIDEO_CONTAINER_TYPE} from "./LargeVideo";
 import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
 import LocalVideo from "./LocalVideo";
-import PanelToggler from "../side_pannels/SidePanelToggler";
 
 const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
@@ -115,12 +113,12 @@ var VideoLayout = {
         this.lastNCount = config.channelLastN;
     },
 
-    initLargeVideo (isSideBarVisible) {
+    initLargeVideo () {
         largeVideo = new LargeVideoManager();
         if(localFlipX) {
             largeVideo.onLocalFlipXChange(localFlipX);
         }
-        largeVideo.updateContainerSize(isSideBarVisible);
+        largeVideo.updateContainerSize();
         AudioLevels.init();
     },
 
@@ -487,21 +485,16 @@ var VideoLayout = {
      */
     resizeThumbnails (  animate = false,
                         forceUpdate = false,
-                        isSideBarVisible = null,
                         onComplete = null) {
-        isSideBarVisible
-            = (isSideBarVisible !== null)
-                ? isSideBarVisible : PanelToggler.isVisible();
 
         let {thumbWidth, thumbHeight}
-            = FilmStrip.calculateThumbnailSize(isSideBarVisible);
+            = FilmStrip.calculateThumbnailSize();
 
         $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
         FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
             animate, forceUpdate)
             .then(function () {
-                BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
                 AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
@@ -891,31 +884,29 @@ var VideoLayout = {
     /**
      * Resizes the video area.
      *
-     * @param isSideBarVisible indicates if the side bar is currently visible
      * @param forceUpdate indicates that hidden thumbnails will be shown
      * @param completeFunction a function to be called when the video area is
      * resized.
      */
-    resizeVideoArea (isSideBarVisible,
-                    forceUpdate = false,
+    resizeVideoArea (forceUpdate = false,
                     animate = false,
                     completeFunction = null) {
 
         if (largeVideo) {
-            largeVideo.updateContainerSize(isSideBarVisible);
+            largeVideo.updateContainerSize();
             largeVideo.resize(animate);
         }
 
         // Calculate available width and height.
         let availableHeight = window.innerHeight;
-        let availableWidth = UIUtil.getAvailableVideoWidth(isSideBarVisible);
+        let availableWidth = UIUtil.getAvailableVideoWidth();
 
         if (availableWidth < 0 || availableHeight < 0) {
             return;
         }
 
         // Resize the thumbnails first.
-        this.resizeThumbnails(false, forceUpdate, isSideBarVisible);
+        this.resizeThumbnails(false, forceUpdate);
 
         // Resize the video area element.
         $('#videospace').animate({

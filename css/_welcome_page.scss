@@ -1,4 +1,3 @@
-
 #disable_welcome {
     display:none;
 }
@@ -59,6 +58,7 @@
     font-size: 18px;
     font-weight: 500;
     padding-left: 20px;
+    color: $defaultDarkColor;
 }
 
 #enter_room_field {
@@ -188,9 +188,9 @@
 #reload_roomname
 {
     width: 30px;
-    height: 19px;
     color: #acacac;
-    margin-top: 22px;
+    font-size: 1.9em;
+    line-height: 55px;
     z-index: 3;
     float:  left;
     cursor: pointer;

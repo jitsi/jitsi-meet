@@ -119,7 +119,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
     muteMenuItem.appendChild(muteLinkItem);
     popupmenuElement.appendChild(muteMenuItem);
 
-    var ejectIndicator = "<i style='float:left;' class='fa fa-eject'></i>";
+    var ejectIndicator = "<i style='float:left;' class='icon-kick'></i>";
 
     var ejectMenuItem = document.createElement('li');
     var ejectLinkItem = document.createElement('a');

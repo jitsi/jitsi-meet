@@ -1,5 +1,5 @@
 {
-    "contactlist": "CONTACT LIST",
+    "contactlist": "ON CALL (__participants__)",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "downloadlogs": "Download logs",
@@ -11,7 +11,7 @@
     "raisedHand": "Would like to speak",
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
-    "calling": "Calling __name__ ...",
+    "callingName": "__name__",
     "userMedia": {
       "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
       "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
@@ -27,7 +27,7 @@
         "raiseHand": "Raise your hand.",
         "pushToTalk": "Push to talk.",
         "toggleScreensharing": "Switch between camera and screensharing.",
-        "toggleFilmstrip": "Show or hide the filmstrip.",
+        "toggleFilmstrip": "Show or hide the videos.",
         "toggleShortcuts": "Show or hide this help menu.",
         "focusLocal": "Focus on the local video.",
         "focusRemote": "Focus on one of the remote videos.",
@@ -93,11 +93,12 @@
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
-        "micDisabled": "Microphone is not available"
+        "micDisabled": "Microphone is not available",
+        "filmstrip": "Show / hide videos"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
-        "filmstrip": "Show / hide film strip",
+        "filmstrip": "Show / hide videos",
         "contactlist": "Open / close contact list"
     },
     "chat":{
@@ -112,14 +113,24 @@
         "title": "SETTINGS",
         "update": "Update",
         "name": "Name",
-        "startAudioMuted": "Start without audio",
-        "startVideoMuted": "Start without video",
+        "startAudioMuted": "Everyone starts muted",
+        "startVideoMuted": "Everyone starts hidden",
         "selectCamera": "Select camera",
         "selectMic": "Select microphone",
         "selectAudioOutput": "Select audio output",
-        "followMe": "Enable follow me",
+        "followMe": "Everyone follows me",
         "noDevice": "None",
-        "noPermission": "Permission to use device is not granted"
+        "noPermission": "Permission to use device is not granted",
+        "cameraAndMic": "Camera and microphone",
+        "moderator": "MODERATOR",
+        "password": "SET PASSWORD",
+        "audioVideo": "AUDIO / VIDEO",
+        "setPasswordLabel": "Lock your room with a password."
+    },
+    "profile": {
+        "title": "PROFILE",
+        "setDisplayNameLabel": "Set your display name",
+        "setEmailLabel": "Set your gravatar email"
     },
     "videothumbnail":
     {
@@ -221,18 +232,18 @@
         "Remove": "Remove",
         "passwordMsg": "Set a password to lock your room",
         "Invite": "Invite",
-        "shareLink": "Share this link with everyone you want to invite",
+        "shareLink": "Copy and share this link",
         "settings1": "Configure your conference",
         "settings2": "Participants join muted",
         "settings3": "Require nicknames<br/><br/>Set a password to lock your room:",
-        "yourPassword": "your password",
+        "yourPassword": "Enter new password",
         "Back": "Back",
         "serviceUnavailable": "Service unavailable",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "Yes": "Yes",
         "reservationError": "Reservation system error",
         "reservationErrorMsg": "Error code: __code__, message: __msg__",
-        "password": "password",
+        "password": "Enter password",
         "userPassword": "user password",
         "token": "token",
         "tokenAuthFailed": "Failed to authenticate with XMPP server: invalid token",

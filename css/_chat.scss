@@ -1,10 +1,4 @@
-#chatspace {
-    display: none;
-    background-color: black;
-    border-left: 1px solid #424242;
-}
-
-#chatspace * {
+#chat_container * {
     -webkit-user-select: text;
     user-select: text;
 }
@@ -22,8 +16,25 @@
     overflow-y: scroll;
     overflow-x: hidden;
     word-wrap: break-word;
+
+    a:link {
+        color: rgb(184, 184, 184);
+    }
+
+    a:visited {
+        color: white;
+    }
+
+    a:hover {
+        color: rgb(213, 213, 213);
+    }
+
+    a:active {
+        color: black;
+    }
 }
-#chatspace.is-conversation-mode #chatconversation {
+
+#chat_container.is-conversation-mode #chatconversation {
     visibility: visible;
 }
 
@@ -65,7 +76,7 @@
     box-shadow: none;
 }
 
-#chatspace.is-conversation-mode #usermsg {
+#chat_container.is-conversation-mode #usermsg {
     visibility: visible;
 }
 
@@ -80,7 +91,7 @@
     width: 95%;
 }
 
-#chatspace.is-conversation-mode #nickname {
+#chat_container.is-conversation-mode #nickname {
     visibility: hidden;
 }
 
@@ -98,26 +109,19 @@
     position: absolute;
 }
 
-#bottomUnreadMessages {
-    top: 5px;
-    left: 10px;
-    position: absolute;
-    font-size: 8px;
-}
-
-#chatspace .username {
+#chat_container .username {
     float: left;
     padding-left: 5px;
     font-weight: bold;
 }
 
-#chatspace .timestamp {
+#chat_container .timestamp {
     float: right;
     padding-right: 5px;
     font-size: 11px;
 }
 
-#chatspace .usermessage {
+#chat_container .usermessage {
     padding-top: 20px;
     padding-left: 5px;
 }
@@ -178,7 +182,7 @@
     visibility: hidden;
 }
 
-#chatspace.is-conversation-mode #smileysarea {
+#chat_container.is-conversation-mode #smileysarea {
     visibility: visible;
 }
 
@@ -234,20 +238,4 @@
 
 #usermsg::-webkit-scrollbar-track-piece {
     background: #3a3a3a;
-}
-
-a:link {
-    color: rgb(184, 184, 184);
-}
-
-a:visited {
-    color: white;
-}
-
-a:hover {
-    color: rgb(213, 213, 213);
-}
-
-a:active {
-    color: black;
 }

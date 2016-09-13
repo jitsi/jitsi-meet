@@ -309,7 +309,7 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
     if (indicatorSpan.children().length !== 0)
         return;
     var moderatorIndicator = document.createElement('i');
-    moderatorIndicator.className = 'fa fa-star';
+    moderatorIndicator.className = 'icon-star';
     indicatorSpan[0].appendChild(moderatorIndicator);
 
     UIUtil.setTooltip(indicatorSpan[0],

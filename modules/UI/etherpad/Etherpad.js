@@ -4,7 +4,6 @@ import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
-import SidePanelToggler from "../side_pannels/SidePanelToggler";
 import FilmStrip from '../videolayout/FilmStrip';
 
 /**

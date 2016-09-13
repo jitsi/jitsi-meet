@@ -1,8 +1,8 @@
 /* global APP, config, $, interfaceConfig */
 
 import UIUtil from '../util/UIUtil';
-import BottomToolbar from './BottomToolbar';
 import Toolbar from './Toolbar';
+import SideContainerToggler from "../side_pannels/SideContainerToggler";
 import FilmStrip from '../videolayout/FilmStrip.js';
 
 let toolbarTimeoutObject;
@@ -23,8 +23,11 @@ function showDesktopSharingButton() {
 
 /**
  * Hides the toolbar.
+ *
+ * @param force {true} to force the hiding of the toolbar without caring about
+ * the extended toolbar side panels.
  */
-function hideToolbar() {
+function hideToolbar(force) {
     if (alwaysVisibleToolbar) {
         return;
     }
@@ -32,14 +35,11 @@ function hideToolbar() {
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (Toolbar.isHovered()) {
+    if (Toolbar.isHovered() || APP.UI.isRingOverlayVisible()) {
         toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-    } else {
+    } else if (!SideContainerToggler.isVisible() || force) {
         Toolbar.hide();
         $('#subject').animate({top: "-=40"}, 300);
-        if (!FilmStrip.isFilmStripVisible()) {
-            BottomToolbar.hide(true);
-        }
     }
 }
 
@@ -49,7 +49,26 @@ const ToolbarToggler = {
      */
     init() {
         alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
+
+        this._registerWindowClickListeners();
     },
+
+    /**
+     * Registers click listeners handling the show and hode of toolbars when
+     * user clicks outside of toolbar area.
+     */
+    _registerWindowClickListeners() {
+        $(window).click(function() {
+            (Toolbar.isEnabled() && Toolbar.isVisible())
+                ? hideToolbar(true)
+                : this.showToolbar();
+        }.bind(this));
+
+        Toolbar.registerClickListeners(function(event){
+            event.stopPropagation();
+        });
+    },
+
     /**
      * Sets the value of alwaysVisibleToolbar variable.
      * @param value {boolean} the new value of alwaysVisibleToolbar variable
@@ -57,12 +76,14 @@ const ToolbarToggler = {
     setAlwaysVisibleToolbar(value) {
         alwaysVisibleToolbar = value;
     },
+
     /**
      * Resets the value of alwaysVisibleToolbar variable to the default one.
      */
     resetAlwaysVisibleToolbar() {
         alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
     },
+
     /**
      * Shows the main toolbar.
      */
@@ -75,11 +96,6 @@ const ToolbarToggler = {
         if (Toolbar.isEnabled() && !Toolbar.isVisible()) {
             Toolbar.show();
             $('#subject').animate({top: "+=40"}, 300);
-            updateTimeout = true;
-        }
-
-        if (BottomToolbar.isEnabled() && !BottomToolbar.isVisible()) {
-            BottomToolbar.show(true);
             updateTimeout = true;
         }
 

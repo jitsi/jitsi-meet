@@ -4,6 +4,12 @@
 
 /* Variables END */
 
+/* Mixins BEGIN */
+
+@import "mixins";
+
+/* Mixins END */
+
 /* Fonts BEGIN */
 
 @import 'font';
@@ -15,7 +21,7 @@
 
 @import 'toastr';
 @import 'base';
-@import 'overlay';
+@import 'overlay/overlay';
 @import 'videolayout_default';
 @import 'jquery-impromptu';
 @import 'modaldialog';
@@ -27,8 +33,11 @@
 @import 'jitsi_popover';
 @import 'contact_list';
 @import 'chat';
+@import 'ringing/ringing';
 @import 'welcome_page';
-@import 'settingsmenu';
+@import 'toolbars';
+@import 'side_toolbar_container';
+@import 'device_settings_dialog';
 @import 'feedback';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';

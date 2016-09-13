@@ -1,20 +1,5 @@
-#contactlist {
-    display: none;
-    background-color: black;
+#contacts_container {
     cursor: default;
-
-    > div.title {
-        text-align: left;
-        padding: 7px 10px;
-        margin: 2px;
-        color: #21B9FC;
-        font-size: 11pt;
-        border-bottom: 1px solid #676767;
-
-        > span {
-            margin-left: 5px;
-        }
-    }
 
     > ul#contacts {
         position: absolute;
@@ -37,10 +22,16 @@
     >li {
         list-style-type: none;
         text-align: left;
+        white-space: nowrap;
         color: #FFF;
         font-size: 10pt;
         padding: 7px 10px;
         margin: 2px;
+
+        &:hover,
+        &:active {
+            background: $toolbarSelectBackground;
+        }
 
         > p {
             display: inline-block;

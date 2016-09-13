@@ -14,16 +14,19 @@ let notificationInterval;
  */
 function updateNumberOfParticipants(delta) {
     numberOfContacts += delta;
-    if (numberOfContacts === 1) {
-        // when the user is alone we don't show the number of participants
-        $("#numberOfParticipants").text('');
-        ContactList.setVisualNotification(false);
-    } else if (numberOfContacts > 1) {
-        ContactList.setVisualNotification(!ContactList.isVisible());
-        $("#numberOfParticipants").text(numberOfContacts);
-    } else {
+
+    if (numberOfContacts <= 0) {
         console.error("Invalid number of participants: " + numberOfContacts);
+        return;
     }
+
+    let buttonIndicatorText = (numberOfContacts === 1) ? '' : numberOfContacts;
+    $("#numberOfParticipants").text(buttonIndicatorText);
+
+    $("#contacts_container>div.title").text(
+        APP.translation.translateString(
+            "contactlist", {participants: numberOfContacts}
+        ));
 }
 
 /**
@@ -128,23 +131,6 @@ var ContactList = {
         if (contact.length > 0) {
             contact.remove();
             updateNumberOfParticipants(-1);
-        }
-    },
-
-    setVisualNotification (show, stopGlowingIn) {
-        let glower = $('#contactListButton');
-
-        if (show && !notificationInterval) {
-            notificationInterval = window.setInterval(function () {
-                glower.toggleClass('active glowing');
-            }, 800);
-        } else if (!show && notificationInterval) {
-            stopGlowing(glower);
-        }
-        if (stopGlowingIn) {
-            setTimeout(function () {
-                stopGlowing(glower);
-            }, stopGlowingIn);
         }
     },
 

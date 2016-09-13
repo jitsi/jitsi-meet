@@ -1,16 +1,4 @@
 @font-face {
-    font-family: 'open_sanslight';
-    src: url('../fonts/OpenSans-Light-webfont.eot');
-    src: url('../fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
-    url('../fonts/OpenSans-Light-webfont.woff') format('woff'),
-    url('../fonts/OpenSans-Light-webfont.ttf') format('truetype'),
-    url('../fonts/OpenSans-Light-webfont.svg#open_sanslight') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-@font-face {
     font-family: 'jitsi';
     src:url('../fonts/jitsi.eot?94d075');
     src:url('../fonts/jitsi.eot?#iefix94d075') format('embedded-opentype'),
@@ -36,100 +24,105 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-contactList:before {
-    content: "\e615";
+.icon-feedback:before {
+  content: "\e91d";
+}
+.icon-toggle-filmstrip:before {
+  content: "\e91c";
 }
 .icon-avatar:before {
-    content: "\e616";
+  content: "\e901";
 }
-.icon-callRetro:before {
-    content: "\e611";
+.icon-autorenew:before {
+  content: "\e903";
 }
-.icon-callModern:before {
-    content: "\e612";
-}
-.icon-recDisable:before {
-    content: "\e613";
-}
-.icon-recEnable:before {
-    content: "\e614";
-}
-.icon-authenticate:before {
-    content: "\e1ae";
-}
-.icon-kick1:before {
-    content: "\e60f";
-}
-.icon-kick:before {
-    content: "\e610";
-}
-.icon-share-desktop:before {
-	content: "\e602";
-}
-.icon-chat-simple:before {
-	content: "\e606";
-}
-.icon-full-screen:before {
-	content: "\e60d";
-}
-.icon-exit-full-screen:before {
-	content: "\e60e";
-}
-.icon-link:before {
-	content: "\e600";
+.icon-hangup:before {
+  content: "\e905";
 }
 .icon-chat:before {
-	content: "\e601";
+  content: "\e906";
 }
-.icon-presentation:before {
-	content: "\e603";
+.icon-download:before {
+  content: "\e902";
 }
-.icon-security:before {
-	content: "\e604";
+.icon-edit:before {
+  content: "\e907";
 }
 .icon-share-doc:before {
-	content: "\e605";
+  content: "\e908";
 }
 .icon-telephone:before {
-    content: "\e611";
+  content: "\e909";
+}
+.icon-kick:before {
+  content: "\e904";
+}
+.icon-full-screen:before {
+  content: "\e90b";
+}
+.icon-exit-full-screen:before {
+  content: "\e90c";
+}
+.icon-star-full:before {
+  content: "\e90a";
+}
+.icon-security:before {
+  content: "\e90d";
 }
 .icon-security-locked:before {
-	content: "\e607";
+  content: "\e90e";
 }
-.icon-camera:before {
-	content: "\e608";
-}
-.icon-camera-disabled:before {
-	content: "\e609";
-}
-.icon-mic-disabled:before {
-	content: "\e60a";
+.icon-reload:before {
+  content: "\e90f";
 }
 .icon-microphone:before {
-	content: "\e60b";
+  content: "\e910";
 }
-
-.icon-hangup:before {
-    content: "\e617";
+.icon-mic-empty:before {
+  content: "\e911";
 }
-
-.icon-reload:before {
-    content: "\e618";
+.icon-mic-disabled:before {
+  content: "\e912";
 }
-
-.icon-filmstrip:before {
-    content: "\e619";
+.icon-contactList:before {
+  content: "\e91b";
 }
-
-.icon-connection:before {
-    line-height: normal;
-    content: "\e61a";
+.icon-link:before {
+  content: "\e913";
 }
-
+.icon-shared-video:before {
+  content: "\e914";
+}
 .icon-settings:before {
-    content: "\e61b";
+  content: "\e915";
 }
-
-.icon-dialPad:before {
-    content: "\e61c";
+.icon-star:before {
+  content: "\e916";
+}
+.icon-share-desktop:before {
+  content: "\e917";
+}
+.icon-camera:before {
+  content: "\e918";
+}
+.icon-camera-disabled:before {
+  content: "\e919";
+}
+.icon-volume:before {
+  content: "\e91a";
+}
+.icon-connection-lost:before {
+  content: "\e900";
+}
+.icon-connection:before {
+  content: "\e61a";
+}
+.icon-recDisable:before {
+  content: "\e613";
+}
+.icon-recEnable:before {
+  content: "\e614";
+}
+.icon-presentation:before {
+  content: "\e603";
 }

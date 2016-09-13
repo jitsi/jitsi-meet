@@ -141,10 +141,6 @@
     z-index: 0;
 }
 
-#toolbar_button_etherpad {
-    display: none;
-}
-
 #remoteVideos .videocontainer>span.focusindicator,
 #remoteVideos .videocontainer>div.remotevideomenu {
     position: absolute;
@@ -355,33 +351,6 @@
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
     z-index: 20; /*The reload button should appear on top of the header!*/
-}
-
-#header{
-    display:none;
-    position:absolute;
-    text-align:center;
-    top:0;
-    left:0;
-    right:0;
-    z-index:10;
-    pointer-events: none;
-    min-height: 100px;
-}
-
-#subject {
-    position: relative;
-    z-index: 3;
-    width: auto;
-    padding: 5px;
-    margin-left: 40%;
-    margin-right: 40%;
-    text-align: center;
-    background: linear-gradient(to bottom, rgba(255,255,255,.85) , rgba(255,255,255,.35));
-    box-shadow: 0 0 2px #000000, 0 0 10px #000000;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    display: none;
 }
 
 .audiolevel {

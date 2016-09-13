@@ -20,11 +20,11 @@ var constructOverallFeedbackHtml = function() {
         feedbackQuestion +
         '</div><br/><br/>' +
         '<div id="stars">' +
-        '<a><i class="fa fa-star-o fa fa-star"></i></a>' +
-        '<a><i class="fa fa-star-o fa fa-star"></i></a>' +
-        '<a><i class="fa fa-star-o fa fa-star"></i></a>' +
-        '<a><i class="fa fa-star-o fa fa-star"></i></a>' +
-        '<a><i class="fa fa-star-o fa fa-star"></i></a>' +
+        '<a><i class="icon-star icon-star-full"></i></a>' +
+        '<a><i class="icon-star icon-star-full"></i></a>' +
+        '<a><i class="icon-star icon-star-full"></i></a>' +
+        '<a><i class="icon-star icon-star-full"></i></a>' +
+        '<a><i class="icon-star icon-star-full"></i></a>' +
         '</div></div>';
 
     return message;
@@ -252,10 +252,10 @@ var Feedback = {
     {
         $('#stars >a >i').each(function(index) {
             if (index <= starCount) {
-                $(this).removeClass("fa-star-o");
+                $(this).removeClass("icon-star");
             }
             else
-                $(this).addClass("fa-star-o");
+                $(this).addClass("icon-star");
         });
     },
     /**
@@ -280,7 +280,7 @@ var Feedback = {
     unhoverStars: function (starCount)
     {
         $('#stars >a >i').each(function(index) {
-            if (index <= starCount && $(this).hasClass("fa-star-o"))
+            if (index <= starCount && $(this).hasClass("icon-star"))
                 $(this).removeClass("starHover");
         });
     }

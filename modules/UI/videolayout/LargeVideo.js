@@ -317,6 +317,15 @@ class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar (show) {
+        // TO FIX: Video background need to be black, so that we don't have a
+        // flickering effect when scrolling between videos and have the screen
+        // move to grey before going back to video. Avatars though can have the
+        // default background set.
+        // In order to fix this code we need to introduce video background or
+        // find a workaround for the video flickering.
+        $("#largeVideoContainer").css("background",
+            (show) ? interfaceConfig.DEFAULT_BACKGROUND : "#000");
+
         this.$avatar.css("visibility", show ? "visible" : "hidden");
     }
 
@@ -536,11 +545,10 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Update container size optionally taking side bar size into account.
-     * @param {boolean} isSideBarVisible if side bar is visible.
+     * Update container size.
      */
-    updateContainerSize (isSideBarVisible) {
-        this.width = UIUtil.getAvailableVideoWidth(isSideBarVisible);
+    updateContainerSize () {
+        this.width = UIUtil.getAvailableVideoWidth();
         this.height = window.innerHeight;
     }
 

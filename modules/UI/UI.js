@@ -5,10 +5,9 @@ var UI = {};
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
-import BottomToolbar from "./toolbars/BottomToolbar";
 import ContactList from "./side_pannels/contactlist/ContactList";
 import Avatar from "./avatar/Avatar";
-import PanelToggler from "./side_pannels/SidePanelToggler";
+import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import CQEvents from '../../service/connectionquality/CQEvents';
@@ -20,6 +19,7 @@ import GumPermissionsOverlay from './gum_overlay/UserMediaPermissionsGuidanceOve
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
+import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import { reload } from '../util/helpers';
 import RingOverlay from "./ring_overlay/RingOverlay";
@@ -134,7 +134,6 @@ function setupChat() {
  */
 function setupToolbars() {
     Toolbar.init(eventEmitter);
-    BottomToolbar.setupListeners(eventEmitter);
 }
 
 /**
@@ -142,7 +141,7 @@ function setupToolbars() {
  * (a.k.a. presentation mode in Chrome).
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
  */
-function toggleFullScreen () {
+UI.toggleFullScreen = function() {
                             // alternative standard method
     let isNotFullScreen = !document.fullscreenElement &&
             !document.mozFullScreenElement && // current working methods
@@ -171,7 +170,7 @@ function toggleFullScreen () {
             document.webkitExitFullscreen();
         }
     }
-}
+};
 
 /**
  * Notify user that server has shut down.
@@ -253,7 +252,7 @@ UI.changeDisplayName = function (id, displayName) {
     VideoLayout.onDisplayNameChanged(id, displayName);
 
     if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
-        SettingsMenu.changeDisplayName(displayName);
+        Profile.changeDisplayName(displayName);
         Chat.setChatConversationMode(!!displayName);
     }
 };
@@ -299,7 +298,7 @@ UI.initConference = function () {
     //if local role changes buttons state will be again updated
     UI.updateLocalRole(false);
 
-    ToolbarToggler.showToolbar();
+    UI.showToolbar();
 
     let displayName = config.displayJids ? id : Settings.getDisplayName();
 
@@ -337,7 +336,7 @@ UI.mucJoined = function () {
  */
 UI.handleToggleFilmStrip = () => {
     UI.toggleFilmStrip();
-    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, false);
+    VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
@@ -357,15 +356,19 @@ function registerListeners() {
         }
     });
 
-    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, toggleFullScreen);
+    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, UI.toggleFullScreen);
 
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
     UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
-        PanelToggler.toggleSettingsMenu();
+        UI.toggleSidePanel("settings_container");
     });
 
     UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
+
+    UI.addListener( UIEvents.TOGGLE_PROFILE, function() {
+        UI.toggleSidePanel("profile_container");
+    });
 
     UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
 
@@ -380,8 +383,8 @@ function registerListeners() {
  */
 function bindEvents() {
     function onResize() {
-        PanelToggler.resizeChat();
-        VideoLayout.resizeVideoArea(PanelToggler.isVisible());
+        SideContainerToggler.resize();
+        VideoLayout.resizeVideoArea();
     }
 
     // Resize and reposition videos in full screen mode.
@@ -430,22 +433,22 @@ UI.start = function () {
     registerListeners();
 
     ToolbarToggler.init();
-    BottomToolbar.init();
+    SideContainerToggler.init(eventEmitter);
     FilmStrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        VideoLayout.initLargeVideo(PanelToggler.isVisible());
+        VideoLayout.initLargeVideo();
     }
-    VideoLayout.resizeVideoArea(PanelToggler.isVisible(), true, true);
+    VideoLayout.resizeVideoArea(true, true);
 
     ContactList.init(eventEmitter);
 
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        $("#videospace").mousemove(function () {
-            return ToolbarToggler.showToolbar();
+        $("#videoconference_page").mousemove(function () {
+            return UI.showToolbar();
         });
         setupToolbars();
         setupChat();
@@ -468,9 +471,8 @@ UI.start = function () {
             elem.href = 'data:application/json;charset=utf-8,\n' + data;
         });
     } else {
-        $("#header").css("display", "none");
+        $("#mainToolbarContainer").css("display", "none");
         $("#downloadlog").css("display", "none");
-        BottomToolbar.hide();
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         $('body').popover("disable");
@@ -499,17 +501,11 @@ UI.start = function () {
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut",
-            "reposition": function () {
-                if (PanelToggler.isVisible()) {
-                    $("#toast-container").addClass("notification-bottom-right-center");
-                } else {
-                    $("#toast-container").removeClass("notification-bottom-right-center");
-                }
-            },
             "newestOnTop": false
         };
 
         SettingsMenu.init(eventEmitter);
+        Profile.init(eventEmitter);
     }
 
     if(APP.tokenData.callee) {
@@ -727,15 +723,25 @@ UI.isFilmStripVisible = function () {
  * Toggles chat panel.
  */
 UI.toggleChat = function () {
-    PanelToggler.toggleChat();
+    UI.toggleSidePanel("chat_container");
 };
 
 /**
  * Toggles contact list panel.
  */
 UI.toggleContactList = function () {
-    PanelToggler.toggleContactList();
+    UI.toggleSidePanel("contacts_container");
 };
+
+/**
+ * Toggles the given side panel.
+ *
+ * @param {String} sidePanelId the identifier of the side panel to toggle
+ */
+UI.toggleSidePanel = function (sidePanelId) {
+    SideContainerToggler.toggle(sidePanelId);
+};
+
 
 /**
  * Handle new user display name.
@@ -828,6 +834,16 @@ UI.removeListener = function (type, listener) {
     eventEmitter.removeListener(type, listener);
 };
 
+/**
+ * Emits the event of given type by specifying the parameters in options.
+ *
+ * @param type the type of the event we're emitting
+ * @param options the parameters for the event
+ */
+UI.emitEvent = function (type, options) {
+    eventEmitter.emit(type, options);
+};
+
 UI.clickOnVideo = function (videoNumber) {
     var remoteVideos = $(".videocontainer:not(#mixedstream)");
     if (remoteVideos.length > videoNumber) {
@@ -854,7 +870,7 @@ function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
     ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
-        SettingsMenu.changeAvatar(avatarUrl);
+        Profile.changeAvatar(avatarUrl);
     }
 }
 
@@ -1481,6 +1497,15 @@ UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
     FilmStrip.toggleFilmStrip(true);
+};
+
+/**
+ * Indicates if the ring overlay is currently visible.
+ *
+ * @returns {*|boolean} {true} if the ring overlay is visible, {false} otherwise
+ */
+UI.isRingOverlayVisible = function () {
+    return RingOverlay.isVisible();
 };
 
 /**

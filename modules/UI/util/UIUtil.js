@@ -6,29 +6,10 @@
  var UIUtil = {
 
     /**
-     * Returns the size of the side panel.
-     */
-     getSidePanelSize () {
-        var availableHeight = window.innerHeight;
-        var availableWidth = window.innerWidth;
-
-        var panelWidth = 200;
-        if (availableWidth * 0.2 < 200) {
-            panelWidth = availableWidth * 0.2;
-        }
-
-        return [panelWidth, availableHeight];
-     },
-
-    /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function (isSidePanelVisible) {
+    getAvailableVideoWidth: function () {
         let rightPanelWidth = 0;
-
-        if (isSidePanelVisible) {
-            rightPanelWidth = UIUtil.getSidePanelSize()[0];
-        }
 
         return window.innerWidth - rightPanelWidth;
     },
@@ -37,7 +18,8 @@
      * Changes the style class of the element given by id.
      */
     buttonClick: function(id, classname) {
-        $(id).toggleClass(classname); // add the class to the clicked element
+        // add the class to the clicked element
+        $("#" + id).toggleClass(classname);
     },
     /**
      * Returns the text width for the given element.
@@ -130,7 +112,7 @@
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
                 return UIUtil.isButtonEnabled(buttonName)
-                    ? null : mappings[buttonName].id; })
+                    ? null : "#" + mappings[buttonName].id; })
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();
@@ -138,7 +120,7 @@
 
     redirect (url) {
          window.location.href = url;
-     },
+    },
 
      isFullScreen () {
          return document.fullScreen

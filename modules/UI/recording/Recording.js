@@ -19,7 +19,6 @@ import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
 import Feedback from '../Feedback.js';
 import Toolbar from '../toolbars/Toolbar';
-import BottomToolbar from '../toolbars/BottomToolbar';
 
 /**
  * The dialog for user input.
@@ -260,7 +259,6 @@ var Recording = {
             VideoLayout.setLocalVideoVisible(false);
             Feedback.enableFeedback(false);
             Toolbar.enable(false);
-            BottomToolbar.enable(false);
             APP.UI.messageHandler.enableNotifications(false);
             APP.UI.messageHandler.enablePopups(false);
         }
