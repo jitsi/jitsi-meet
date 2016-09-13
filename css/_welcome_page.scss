@@ -51,6 +51,7 @@
 }
 #enter_room_form > * {
     flex: 1 0 auto;
+    padding: 0 5px;
 }
 
 #domain_name
@@ -100,7 +101,6 @@
 
 #enter_room{
     display: flex;
-    padding: 5px;
 }
 
 #reload_roomname {
