@@ -49,6 +49,37 @@ var constructDetailedFeedbackHtml = function() {
     return message;
 };
 
+var createRateFeedbackHTML = function () {
+    var rate = APP.translation.translateString('dialog.rateExperience'),
+        help = APP.translation.translateString('dialog.feedbackHelp');
+
+    return `
+        <div class="feedback-rating text-center">
+            <h2>${ rate }</h2>
+            <p class="star-label">&nbsp;</p>
+            <div id="stars" class="feedback-stars">
+                <a class="star-btn">
+                    <i class="fa fa-star shake-rotate"></i>
+                </a>
+                <a class="star-btn">
+                    <i class="fa fa-star shake-rotate"></i>
+                </a>
+                <a class="star-btn">
+                    <i class="fa fa-star shake-rotate"></i>
+                </a>
+                <a class="star-btn">
+                    <i class="fa fa-star shake-rotate"></i>
+                </a>
+                <a class="star-btn">
+                    <i class="fa fa-star shake-rotate"></i>
+                </a>
+            </div>
+            <p>&nbsp;</p>
+            <p>${ help }</p>
+        </div>
+    `;
+};
+
 /**
  * The callback function corresponding to the openFeedbackWindow parameter.
  *
@@ -192,7 +223,7 @@ var Feedback = {
         // Defines the different states of the feedback window.
         var states = {
             overall_feedback: {
-                html: constructOverallFeedbackHtml(),
+                html: createRateFeedbackHTML(),
                 persistent: false,
                 buttons: {},
                 closeText: '',
