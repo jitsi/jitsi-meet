@@ -16,8 +16,11 @@ IFRAME_API_DIR = ./modules/API/external
 
 all: update-deps compile compile-iframe-api uglify uglify-iframe-api deploy clean
 
+# FIXME: there is a problem with node-sass not correctly installed (compiled)
+# a quick fix to make sure it is installed on every update
+# the problem appears on linux and not on macosx
 update-deps:
-	$(NPM) update
+	$(NPM) update && $(NPM) install node-sass
 
 compile:
 	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
