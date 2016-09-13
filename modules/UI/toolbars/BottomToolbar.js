@@ -88,7 +88,7 @@ const BottomToolbar = {
     },
 
     resizeToolbar (thumbWidth, thumbHeight) {
-        let bottom = (thumbHeight - this.toolbar.outerHeight())/2 + 18;
+        let bottom = (thumbHeight - this.toolbar.outerHeight())/2 + 30;
         this.toolbar.css({bottom});
     },
 

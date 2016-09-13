@@ -489,22 +489,24 @@ var VideoLayout = {
                         forceUpdate = false,
                         isSideBarVisible = null,
                         onComplete = null) {
+
         isSideBarVisible
             = (isSideBarVisible !== null)
                 ? isSideBarVisible : PanelToggler.isVisible();
 
+        let { remoteVideo, localVideo } = FilmStrip.calculateThumbnailSize(isSideBarVisible);
         let {thumbWidth, thumbHeight}
-            = FilmStrip.calculateThumbnailSize(isSideBarVisible);
+            = remoteVideo;
 
-        FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
+        FilmStrip.resizeThumbnails(remoteVideo, localVideo,
             animate, forceUpdate)
             .then(function () {
                 BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
-                AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+                AudioLevels.updateCanvasSize(remoteVideo, localVideo);
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
         });
-        return {thumbWidth, thumbHeight};
+        return {remoteVideo, localVideo};
     },
 
     /**

@@ -236,6 +236,8 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
             audioMutedSpan.appendChild(mutedIndicator);
 
         }
+
+        this.updateIconPositions();
     }
     this.isMuted = isMuted;
 };
@@ -455,7 +457,6 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     var indicatorSpanId = "raisehandindicator";
     var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
 
-    indicatorSpan.style.background = "#D6D61E";
     indicatorSpan.innerHTML
         = "<i id='indicatoricon' class='fa fa-hand-paper-o'></i>";
 

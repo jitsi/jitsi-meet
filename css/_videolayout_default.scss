@@ -359,6 +359,10 @@
     border: 2px solid $thumbnailPictogramColor;
 }
 
+.videocontainer>#raisehandindicator {
+    background: $raiseHandBg;
+}
+
 #indicatoricon {
     font-size: 12px;
     padding-top: 3px;
