@@ -199,6 +199,11 @@ const defaultToolbarButtons = {
                 id: "unableToUnmutePopup",
                 className: "loginmenu",
                 dataAttr: "[html]toolbar.unableToUnmutePopup"
+            },
+            {
+                id: "talkWhileMutedPopup",
+                className: "loginmenu",
+                dataAttr: "[html]toolbar.talkWhileMutedPopup"
             }
         ],
         content: "Mute / Unmute",
