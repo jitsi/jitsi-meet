@@ -179,6 +179,13 @@ var Chat = {
 
                 unreadMessages = 0;
                 updateVisualNotification();
+
+                // if we are in conversation mode focus on the text input
+                // if we are not, focus on the display name input
+                if (APP.settings.getDisplayName())
+                    $('#usermsg').focus();
+                else
+                    $('#nickinput').focus();
             });
 
         addSmileys();
@@ -259,12 +266,18 @@ var Chat = {
 
     /**
      * Sets the chat conversation mode.
+     * Conversation mode is the normal chat mode, non conversation mode is
+     * where we ask user to input its display name.
      * @param {boolean} isConversationMode if chat should be in
      * conversation mode or not.
      */
     setChatConversationMode (isConversationMode) {
         $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
+
+        // this is needed when we transition from no conversation mode to
+        // conversation mode. When user enters his nickname and hits enter,
+        // to focus on the write area.
         if (isConversationMode) {
             $('#usermsg').focus();
         }
