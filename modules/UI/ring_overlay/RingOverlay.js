@@ -11,25 +11,31 @@ class RingOverlay {
     constructor(callee) {
         this._containerId = 'ringOverlay';
         this._audioContainerId = 'ringOverlayRinging';
-
+        this.isRinging = true;
         this.callee = callee;
         this.render();
         this.audio = document.getElementById(this._audioContainerId);
         this.audio.play();
         this._setAudioTimeout();
+        this._timeout = setTimeout(() => {
+            this.destroy();
+            this.render();
+        }, 30000);
     }
 
     /**
      * Builds and appends the ring overlay to the html document
      */
     _getHtmlStr(callee) {
+        let callingLabel = this.isRinging? "<p>Calling...</p>" : "";
+        let callerStateLabel =  this.isRinging? "" : " isn't available";
         return `
             <div id="${this._containerId}" class='ringing' >
                 <div class='ringing__content'>
-                    <p>Calling...</p>
+                    ${callingLabel}
                     <img class='ringing__avatar' src="${callee.getAvatarUrl()}" />
                     <div class="ringing__caller-info">
-                        <p>${callee.getName()}</p>
+                        <p>${callee.getName()}${callerStateLabel}</p>
                     </div>
                 </div>
                 <audio id="${this._audioContainerId}" src="/sounds/ring.ogg" />
@@ -49,10 +55,7 @@ class RingOverlay {
      * related to the ring overlay.
      */
     destroy() {
-        if (this.interval) {
-            clearInterval(this.interval);
-        }
-
+        this._stopAudio();
         this._detach();
     }
 
@@ -62,6 +65,16 @@ class RingOverlay {
 
     _detach() {
         $(`#${this._containerId}`).remove();
+    }
+
+    _stopAudio() {
+        this.isRinging = false;
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        if(this._timeout) {
+            clearTimeout(this._timeout);
+        }
     }
 
     /**
