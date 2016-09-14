@@ -27,6 +27,7 @@ var interfaceConfig = {
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio.
     VIDEO_LAYOUT_FIT: 'both',
+    SHOW_CONTACTLIST_AVATARS: false,
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */

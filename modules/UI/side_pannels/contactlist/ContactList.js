@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, interfaceConfig */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
@@ -110,7 +110,8 @@ var ContactList = {
             }
         };
 
-        newContact.appendChild(createAvatar(id));
+        if (interfaceConfig.SHOW_CONTACTLIST_AVATARS)
+            newContact.appendChild(createAvatar(id));
         newContact.appendChild(createDisplayNameParagraph("participant"));
 
         if (APP.conference.isLocalId(id)) {
