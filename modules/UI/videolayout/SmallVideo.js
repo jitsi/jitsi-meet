@@ -219,6 +219,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
         if (audioMutedSpan.length > 0) {
             audioMutedSpan.popover('hide');
             audioMutedSpan.remove();
+            this.updateIconPositions();
         }
     }
     else {
@@ -236,6 +237,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
             audioMutedSpan.appendChild(mutedIndicator);
 
         }
+
         this.updateIconPositions();
     }
     this.isMuted = isMuted;
@@ -254,6 +256,7 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
     if (isMuted === false) {
         if (videoMutedSpan.length > 0) {
             videoMutedSpan.remove();
+            this.updateIconPositions();
         }
     }
     else {
@@ -278,17 +281,10 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
 };
 
 SmallVideo.prototype.updateIconPositions = function () {
-    var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
-    var connectionIndicator = $('#' + this.videoSpanId + '>div.connectionindicator');
-    var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
-    if(connectionIndicator.length > 0 &&
-        connectionIndicator[0].style.display != "none") {
-        audioMutedSpan.css({right: "23px"});
-        videoMutedSpan.css({right: ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
-    } else {
-        audioMutedSpan.css({right: "0px"});
-        videoMutedSpan.css({right: (audioMutedSpan.length > 0? 30 : 0) + "px"});
-    }
+    let audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
+    let videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
+    audioMutedSpan.css({left: "0px"});
+    videoMutedSpan.css({left: (audioMutedSpan.length > 0? 25 : 0) + "px"});
 };
 
 /**
@@ -406,8 +402,6 @@ SmallVideo.prototype.updateView = function () {
         setVisibility(video, showVideo);
     }
     setVisibility(avatar, showAvatar);
-
-    this.showDisplayName(!showVideo && !showAvatar);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
@@ -465,7 +459,6 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     var indicatorSpanId = "raisehandindicator";
     var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
 
-    indicatorSpan.style.background = "#D6D61E";
     indicatorSpan.innerHTML
         = "<i id='indicatoricon' class='fa fa-hand-paper-o'></i>";
 

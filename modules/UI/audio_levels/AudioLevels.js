@@ -242,19 +242,25 @@ const AudioLevels = {
         ASDrawContext.fill();
     },
 
-    updateCanvasSize (thumbWidth, thumbHeight) {
-        let canvasWidth = thumbWidth + interfaceConfig.CANVAS_EXTRA;
-        let canvasHeight = thumbHeight + interfaceConfig.CANVAS_EXTRA;
+    updateCanvasSize (remoteVideo, localVideo) {
+        let localCanvasWidth = localVideo.thumbWidth + interfaceConfig.CANVAS_EXTRA;
+        let localCanvasHeight = localVideo.thumbHeight + interfaceConfig.CANVAS_EXTRA;
+        let remoteCanvasWidth = remoteVideo.thumbWidth + interfaceConfig.CANVAS_EXTRA;
+        let remoteCanvasHeight = remoteVideo.thumbHeight + interfaceConfig.CANVAS_EXTRA;
 
-        FilmStrip.getThumbs().children('canvas').each(function () {
-            $(this).attr('width', canvasWidth);
-            $(this).attr('height', canvasHeight);
+        let { remoteThumbs, localThumb } = FilmStrip.getThumbs();
+
+        remoteThumbs.children('canvas').each(function () {
+            $(this).attr('width', remoteCanvasWidth);
+            $(this).attr('height', remoteCanvasHeight);
         });
 
-        Object.keys(audioLevelCanvasCache).forEach(function (id) {
-            audioLevelCanvasCache[id].width = canvasWidth;
-            audioLevelCanvasCache[id].height = canvasHeight;
-        });
+        if(localThumb) {
+            localThumb.children('canvas').each(function () {
+                $(this).attr('width', localCanvasWidth);
+                $(this).attr('height', localCanvasHeight);
+            });
+        }
     }
 };
 

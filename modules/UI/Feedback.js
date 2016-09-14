@@ -1,5 +1,6 @@
 /* global $, APP, config, interfaceConfig, JitsiMeetJS */
 import UIEvents from "../../service/UI/UIEvents";
+import UIUtil from "./util/UIUtil";
 
 /**
  * Constructs the html for the overall feedback window.
