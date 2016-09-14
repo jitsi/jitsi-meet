@@ -7,6 +7,7 @@
 }
 
 #remoteVideos {
+    box-sizing: content-box;
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -18,7 +19,7 @@
 
     position:absolute;
     text-align:right;
-    height:156px !important;
+    height:156px;
     padding: 18px;
     bottom: 0;
     left: 0;
