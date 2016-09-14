@@ -24,7 +24,7 @@ const FilmStrip = {
      */
     toggleFilmStrip (visible) {
         if (typeof visible === 'boolean'
-                && this.isFilmStripVisible() == visible) {
+            && this.isFilmStripVisible() == visible) {
             return;
         }
 
@@ -34,8 +34,8 @@ const FilmStrip = {
         var eventEmitter = this.eventEmitter;
         if (eventEmitter) {
             eventEmitter.emit(
-                    UIEvents.TOGGLED_FILM_STRIP,
-                    this.isFilmStripVisible());
+                UIEvents.TOGGLED_FILM_STRIP,
+                this.isFilmStripVisible());
         }
     },
 
@@ -75,7 +75,7 @@ const FilmStrip = {
     /**
      * Normalizes local and remote thumbnail ratios
      */
-     normalizeThumbnailRatio () {
+    normalizeThumbnailRatio () {
         let remoteHeightRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_HEIGHT;
         let remoteWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_WIDTH;
 
@@ -120,11 +120,11 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
-                - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
             - 5;
 
         let availableWidth = videoAreaAvailableWidth;
