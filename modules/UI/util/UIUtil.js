@@ -112,7 +112,8 @@
      * is enabled, {false} - otherwise
      */
     isButtonEnabled: function (name) {
-        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
+        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
+                || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
     },
     /**
      * Indicates if the setting section is enabled.
