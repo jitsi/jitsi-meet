@@ -9,7 +9,6 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 var smileys = require("./smileys.json").smileys;
 
-var notificationInterval = false;
 var unreadMessages = 0;
 
 /**
@@ -18,9 +17,9 @@ var unreadMessages = 0;
 var CHAT_CONTAINER_ID = "chat_container";
 
 /**
- * Shows/hides a visual notification, indicating that a message has arrived.
+ *  Updates visual notification, indicating that a message has arrived.
  */
-function setVisualNotification(show) {
+function updateVisualNotification() {
     var unreadMsgElement = document.getElementById('unreadMessages');
 
     var glower = $('#toolbar_button_chat');
@@ -41,27 +40,9 @@ function setVisualNotification(show) {
             'style',
                 'top:' + topIndent +
                 '; left:' + leftIndent + ';');
-
-        if (!glower.hasClass('icon-chat-simple')) {
-            glower.removeClass('icon-chat');
-            glower.addClass('icon-chat-simple');
-        }
     }
     else {
         unreadMsgElement.innerHTML = '';
-        glower.removeClass('icon-chat-simple');
-        glower.addClass('icon-chat');
-    }
-
-    if (show && !notificationInterval) {
-        notificationInterval = window.setInterval(function () {
-            glower.toggleClass('active');
-        }, 800);
-    }
-    else if (!show && notificationInterval) {
-        window.clearInterval(notificationInterval);
-        notificationInterval = false;
-        glower.removeClass('active');
     }
 }
 
@@ -194,7 +175,7 @@ var Chat = {
         $("#" + CHAT_CONTAINER_ID).bind("shown",
             function () {
                 unreadMessages = 0;
-                setVisualNotification(false);
+                updateVisualNotification();
             });
 
         addSmileys();
@@ -214,7 +195,7 @@ var Chat = {
             if (!Chat.isVisible()) {
                 unreadMessages++;
                 UIUtil.playSoundNotification('chatNotification');
-                setVisualNotification(true);
+                updateVisualNotification();
             }
         }
 
