@@ -105,8 +105,7 @@ var VideoLayout = {
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
-        let {thumbWidth, thumbHeight}
-            = this.resizeThumbnails(false, true, false);
+        let {thumbWidth, thumbHeight} = this.resizeThumbnails(false, true);
         AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
@@ -414,7 +413,7 @@ var VideoLayout = {
         console.info(resourceJid + " video is now active", videoelem);
 
         VideoLayout.resizeThumbnails(
-            false, false, false, function() {$(videoelem).show();});
+            false, false, function() {$(videoelem).show();});
 
         // Update the large video to the last added video only if there's no
         // current dominant, focused speaker or update it to
