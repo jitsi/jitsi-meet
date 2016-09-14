@@ -46,6 +46,7 @@
 }
 
 #remoteVideos .videocontainer {
+    box-sizing: content-box;
     display: none;
     background-color: black;
     background-size: contain;
