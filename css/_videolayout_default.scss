@@ -18,7 +18,7 @@
 
     position:absolute;
     text-align:right;
-    height:196px;
+    height:156px !important;
     padding: 18px;
     bottom: 0;
     left: 0;
@@ -33,8 +33,10 @@
 }
 
 #remoteVideos.hidden {
+    display: flex !important;
     height: 0 !important;
     padding: 0 18px;
+    visibility: visible !important;
 }
 
 .videocontainer {
