@@ -12,6 +12,10 @@ var smileys = require("./smileys.json").smileys;
 var notificationInterval = false;
 var unreadMessages = 0;
 
+/**
+ * The container id, which is and the element id.
+ */
+var CHAT_CONTAINER_ID = "chat_container";
 
 /**
  * Shows/hides a visual notification, indicating that a message has arrived.
@@ -131,7 +135,7 @@ function addSmileys() {
  */
 function resizeChatConversation() {
     var msgareaHeight = $('#usermsg').outerHeight();
-    var chatspace = $('#chat_container');
+    var chatspace = $('#' + CHAT_CONTAINER_ID);
     var width = chatspace.width();
     var chat = $('#chatconversation');
     var smileys = $('#smileysarea');
@@ -187,7 +191,7 @@ var Chat = {
         };
         usermsg.autosize({callback: onTextAreaResize});
 
-        $("#chat_container").bind("shown",
+        $("#" + CHAT_CONTAINER_ID).bind("shown",
             function () {
                 unreadMessages = 0;
                 setVisualNotification(false);
@@ -275,7 +279,7 @@ var Chat = {
      * conversation mode or not.
      */
     setChatConversationMode (isConversationMode) {
-        $('#chat_container')
+        $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
         if (isConversationMode) {
             $('#usermsg').focus();
@@ -286,7 +290,7 @@ var Chat = {
      * Resizes the chat area.
      */
     resizeChat (width, height) {
-        $('#chat_container').width(width).height(height);
+        $('#' + CHAT_CONTAINER_ID).width(width).height(height);
 
         resizeChatConversation();
     },
@@ -296,7 +300,7 @@ var Chat = {
      */
     isVisible () {
         return UIUtil.isVisible(
-            document.getElementById("chat_container"));
+            document.getElementById(CHAT_CONTAINER_ID));
     },
     /**
      * Shows and hides the window with the smileys
