@@ -341,9 +341,13 @@ const Toolbar = {
         this.toolbarSelector = $("#mainToolbarContainer");
         this.extendedToolbarSelector = $("#extendedToolbar");
 
-        this._initMainToolbarButtons();
-
+        // First hide all disabled buttons in the extended toolbar.
+        // TODO: Make the extended toolbar dynamically created.
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
+
+        // Initialise the main toolbar. The main toolbar will only take into
+        // account it's own configuration from interface_config.
+        this._initMainToolbarButtons();
 
         Object.keys(defaultToolbarButtons).forEach(
             id => {

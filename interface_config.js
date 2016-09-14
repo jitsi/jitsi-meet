@@ -20,7 +20,7 @@ var interfaceConfig = {
     // the toolbar buttons line is intentionally left in one line, to be able
     // to easily override values or remove them using regex
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'hangup'], // jshint ignore:line
-    TOOLBAR_BUTTONS: ['profile', 'authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
+    TOOLBAR_BUTTONS: ['profile', 'authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'raisehand', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
     SETTINGS_SECTIONS: ['language', 'devices', 'moderator'],
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
