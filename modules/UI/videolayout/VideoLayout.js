@@ -297,6 +297,7 @@ var VideoLayout = {
             return;
 
         remoteVideo.addRemoteStreamElement(stream);
+        remoteVideo.updateView();
 
         // if track is muted make sure we reflect that
         if(stream.isMuted())
@@ -340,8 +341,10 @@ var VideoLayout = {
      * @param id the identifier of the video thumbnail
      */
     handleVideoThumbClicked (id) {
+        let oldSmallVideo;
+
         if(pinnedId) {
-            var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
+            oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
@@ -375,6 +378,9 @@ var VideoLayout = {
             eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, true);
         }
 
+        if(oldSmallVideo) {
+            oldSmallVideo.updateView();
+        }
         this.updateLargeVideo(id);
     },
 
