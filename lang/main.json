@@ -94,7 +94,8 @@
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
-        "filmstrip": "Show / hide videos"
+        "filmstrip": "Show / hide videos",
+        "raiseHand": "Raise hand to speak"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",

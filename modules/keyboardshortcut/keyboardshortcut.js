@@ -17,11 +17,6 @@ function initGlobalShortcuts() {
         APP.UI.toggleKeyboardShortcutsPanel();
     }, "keyboardShortcuts.toggleShortcuts");
 
-    KeyboardShortcut.registerShortcut("R", null, function() {
-        JitsiMeetJS.analytics.sendEvent("shortcut.raisedhand.toggled");
-        APP.conference.maybeToggleRaisedHand();
-    }, "keyboardShortcuts.raiseHand");
-
     KeyboardShortcut.registerShortcut("T", null, function() {
         JitsiMeetJS.analytics.sendEvent("shortcut.talk.clicked");
         APP.conference.muteAudio(true);

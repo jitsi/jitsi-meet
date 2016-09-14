@@ -168,8 +168,13 @@ const buttonHandlers = {
     },
     "toolbar_film_strip": function () {
         JitsiMeetJS.analytics.sendEvent(
-            'bottomtoolbar.filmstrip.toggled');
+            'toolbar.filmstrip.toggled');
         emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
+    },
+    "toolbar_button_raisehand": function () {
+        JitsiMeetJS.analytics.sendEvent(
+            'toolbar.raiseHand.clicked');
+        APP.conference.maybeToggleRaisedHand();
     }
 };
 
@@ -288,6 +293,19 @@ const defaultToolbarButtons = {
             APP.UI.toggleFilmStrip();
         },
         shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
+    },
+    'raisehand': {
+        id: "toolbar_button_raisehand",
+        className: "button icon-raised-hand",
+        shortcut: "R",
+        shortcutAttr: "raiseHandPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.raisehand.clicked");
+            APP.conference.maybeToggleRaisedHand();
+        },
+        shortcutDescription: "keyboardShortcuts.raiseHand",
+        content: "Raise Hand",
+        i18n: "[content]toolbar.raiseHand"
     }
 };
 
@@ -679,16 +697,9 @@ const Toolbar = {
             }
         );
     },
+
     /**
-     * TODO: Fix mic popups
-     * <a class="button icon-microphone" id="toolbar_button_mute" data-container="body" data-toggle="popover" data-placement="bottom" shortcut="mutePopover" data-i18n="[content]toolbar.mute" content="Mute / Unmute">
-     *   <ul id="micMutedPopup" class="loginmenu">
-     *       <li data-i18n="[html]toolbar.micMutedPopup"></li>
-     *   </ul>
-     *   <ul id="unableToUnmutePopup" class="loginmenu">
-     *       <li data-i18n="[html]toolbar.unableToUnmutePopup"></li>
-     *   </ul>
-     * </a>
+     * Initialise main toolbar buttons.
      */
     _initMainToolbarButtons() {
         interfaceConfig.MAIN_TOOLBAR_BUTTONS.forEach((value, index) => {
