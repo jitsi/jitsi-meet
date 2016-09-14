@@ -35,9 +35,11 @@ function hideToolbar(force) {
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (Toolbar.isHovered() || APP.UI.isRingOverlayVisible()) {
+    if (Toolbar.isHovered()
+            || APP.UI.isRingOverlayVisible()
+            || SideContainerToggler.isVisible()) {
         toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-    } else if (!SideContainerToggler.isVisible() || force) {
+    } else {
         Toolbar.hide();
         $('#subject').animate({top: "-=40"}, 300);
     }
