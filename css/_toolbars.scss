@@ -56,11 +56,11 @@
 }
 
 #extendedToolbar {
-    display: flex;
-    display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
+    display: -webkit-box;
     display: -webkit-flex;
+    display: flex;
     width: $defaultToolbarSize;
     height: 100%;
     top: 0px;
