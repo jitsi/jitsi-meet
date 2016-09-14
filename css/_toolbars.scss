@@ -114,6 +114,17 @@
     opacity: 0.5;
 }
 
+.button.unclickable {
+    cursor: default;
+}
+
+a.button.unclickable:hover,
+a.button.unclickable:active,
+a.button.unclickable.selected{
+    cursor: default;
+    background: none;
+}
+
 a.button:hover,
 a.button:active,
 a.button.selected {
@@ -219,6 +230,7 @@ a.button>#avatar {
 .slideOutExt {
   @include animation("slideOutExt .5s forwards");
 }
+
 /**
  * END of slide in animation for extended toolbar panel.
  */

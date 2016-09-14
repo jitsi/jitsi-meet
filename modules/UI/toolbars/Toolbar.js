@@ -354,6 +354,10 @@ const Toolbar = {
                 Toolbar._handleSideToolbarContainerToggled( containerId,
                                                             isVisible);
             });
+
+        if(!APP.tokenData.isGuest) {
+            $("#toolbar_button_profile").addClass("unclickable");
+        }
     },
     /**
      * Enables / disables the toolbar.
