@@ -1,0 +1,15 @@
+.nickname {
+    text-align: center;
+    color: #9d9d9d;
+    font-size: 18px;
+    width: 95%;
+
+    &__input {
+       margin-top: 20px;
+       font-size: 14px;
+       background: #3a3a3a;
+       box-shadow: inset 0 0 3px 2px #a7a7a7;
+       border: 1px solid #a7a7a7;
+       color: #a7a7a7;
+    }
+}
