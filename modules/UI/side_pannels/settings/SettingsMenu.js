@@ -74,11 +74,11 @@ export default {
                     }
                 });
 
-            // Only show the subtitle if this is the only setting section.
+            // Only show the subtitle if this isn't the only setting section.
             if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.showHiddenElement("deviceOptionsTitle");
+                UIUtil.showElement("deviceOptionsTitle");
 
-            UIUtil.showHiddenElement("devicesOptions");
+            UIUtil.showElement("devicesOptions");
         }
 
         if (UIUtil.isSettingEnabled('language')) {
@@ -93,7 +93,7 @@ export default {
                 emitter.emit(UIEvents.LANG_CHANGED, languagesBox.val());
             });
 
-            UIUtil.showHiddenElement("languages_selectbox");
+            UIUtil.showElement("languages_selectbox");
         }
 
         if (UIUtil.isSettingEnabled('moderator')) {
@@ -116,13 +116,6 @@ export default {
                     isFollowMeEnabled
                 );
             });
-
-            // Only show the subtitle if this is the only setting section.
-            if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.showHiddenElement("moderatorOptionsTitle");
-
-            UIUtil.showHiddenElement("startMutedOptions");
-            UIUtil.showHiddenElement("followMeOptions");
         }
     },
 
@@ -155,10 +148,21 @@ export default {
      * @param {boolean} show
      */
     showStartMutedOptions (show) {
-        if (show) {
-            $("#startMutedOptions").css("display", "block");
+        console.log("------", show, UIUtil.isSettingEnabled('moderator'));
+        if (show && UIUtil.isSettingEnabled('moderator')) {
+            console.log("idva li tuuk");
+            // Only show the subtitle if this isn't the only setting section.
+            if (!$("#moderatorOptionsTitle").is(":visible")
+                && interfaceConfig.SETTINGS_SECTIONS.length > 1)
+                UIUtil.showElement("moderatorOptionsTitle");
+
+            UIUtil.showElement("startMutedOptions");
         } else {
-            $("#startMutedOptions").css("display", "none");
+            // Only show the subtitle if this isn't the only setting section.
+            if ($("#moderatorOptionsTitle").is(":visible"))
+                UIUtil.hideElement("moderatorOptionsTitle");
+
+            UIUtil.hideElement("startMutedOptions");
         }
     },
 
@@ -173,10 +177,10 @@ export default {
      * @param {boolean} show {true} to show those options, {false} to hide them
      */
     showFollowMeOptions (show) {
-        if (show) {
-            $("#followMeOptions").css("display", "block");
+        if (show && UIUtil.isSettingEnabled('moderator')) {
+            UIUtil.showElement("followMeOptions");
         } else {
-            $("#followMeOptions").css("display", "none");
+            UIUtil.hideElement("followMeOptions");
         }
     },
 

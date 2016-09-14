@@ -129,10 +129,25 @@
     /**
      * Shows the element given by id.
      *
-     * @param {String} the identifier of the element
+     * @param {String} the identifier of the element to show
      */
-    showHiddenElement(id) {
-        $("#"+id).toggleClass("hide").toggleClass("show");
+    showElement(id) {
+        if ($("#"+id).hasClass("hide"))
+            $("#"+id).removeClass("hide");
+
+        $("#"+id).addClass("show");
+    },
+
+    /**
+     * Hides the element given by id.
+     *
+     * @param {String} the identifier of the element to hide
+     */
+    hideElement(id) {
+        if ($("#"+id).hasClass("show"))
+            $("#"+id).removeClass("show");
+
+        $("#"+id).addClass("hide");
     },
 
     hideDisabledButtons: function (mappings) {
