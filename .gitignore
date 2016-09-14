@@ -9,3 +9,4 @@ all.css
 *css.map
 unsupported_browser.css
 .remote-sync.json
+.sync-config.cson
