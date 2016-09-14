@@ -400,6 +400,7 @@ SmallVideo.prototype.updateView = function () {
 
     if (video && video.length > 0) {
         setVisibility(video, showVideo);
+        $(video).show();
     }
     setVisibility(avatar, showAvatar);
 };
