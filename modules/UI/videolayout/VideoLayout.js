@@ -255,7 +255,8 @@ var VideoLayout = {
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let thumbs = FilmStrip.getThumbs(true).filter('[id!="mixedstream"]');
+        let remoteThumbs = FilmStrip.getThumbs(true).remoteThumbs;
+        let thumbs = remoteThumbs.filter('[id!="mixedstream"]');
 
         let lastVisible = thumbs.filter(':visible:last');
         if (lastVisible.length) {
@@ -269,7 +270,7 @@ var VideoLayout = {
         }
 
         console.info("Last visible video no longer exists");
-        thumbs = FilmStrip.getThumbs();
+        thumbs = FilmStrip.getThumbs().remoteThumbs;
         if (thumbs.length) {
             let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
