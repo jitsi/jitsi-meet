@@ -172,8 +172,11 @@ var Chat = {
         };
         usermsg.autosize({callback: onTextAreaResize});
 
-        $("#" + CHAT_CONTAINER_ID).bind("shown",
-            function () {
+        eventEmitter.on(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            function(containerId, isVisible) {
+                if (containerId !== CHAT_CONTAINER_ID || !isVisible)
+                    return;
+
                 unreadMessages = 0;
                 updateVisualNotification();
             });
