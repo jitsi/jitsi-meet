@@ -2,13 +2,13 @@
 
 @import 'variables';
 
-/* Variables END */
-
 /* Mixins BEGIN */
 
 @import "mixins";
 
 /* Mixins END */
+
+/* Variables END */
 
 /* Fonts BEGIN */
 
@@ -32,7 +32,8 @@
 @import 'popover';
 @import 'jitsi_popover';
 @import 'contact_list';
-@import 'chat';
+@import 'chat/main';
+@import 'nickname/nickname';
 @import 'ringing/ringing';
 @import 'welcome_page';
 @import 'toolbars';

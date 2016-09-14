@@ -487,19 +487,21 @@ var VideoLayout = {
                         forceUpdate = false,
                         onComplete = null) {
 
+        let { remoteVideo, localVideo } = FilmStrip.calculateThumbnailSize(isSideBarVisible);
         let {thumbWidth, thumbHeight}
             = FilmStrip.calculateThumbnailSize();
 
         $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
+        FilmStrip.resizeThumbnails(remoteVideo, localVideo,
             animate, forceUpdate)
             .then(function () {
                 AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
         });
-        return {thumbWidth, thumbHeight};
+        return {remoteVideo, localVideo};
     },
 
     /**

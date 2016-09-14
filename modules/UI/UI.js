@@ -471,6 +471,10 @@ UI.start = function () {
             elem.download = 'meetlog.json';
             elem.href = 'data:application/json;charset=utf-8,\n' + data;
         });
+
+        let downloadLogElement = document.getElementById('downloadlog');
+        UIUtil.setTooltip(downloadLogElement, 'downloadlogs', 'right');
+        APP.translation.translateElement($(downloadLogElement));
     } else {
         $("#mainToolbarContainer").css("display", "none");
         $("#downloadlog").css("display", "none");

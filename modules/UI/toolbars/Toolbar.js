@@ -7,7 +7,6 @@ import SideContainerToggler from "../side_pannels/SideContainerToggler";
 let roomUrl = null;
 let emitter = null;
 
-
 /**
  * Opens the invite link dialog.
  */
@@ -352,7 +351,10 @@ const Toolbar = {
         Object.keys(defaultToolbarButtons).forEach(
             id => {
                 if (UIUtil.isButtonEnabled(id)) {
-                    var button = defaultToolbarButtons[id];
+                    let button = defaultToolbarButtons[id];
+                    let buttonElement = document.getElementById(button.id.slice(1));
+
+                    UIUtil.setTooltip(buttonElement, button.key, 'bottom');
 
                     if (button.shortcut)
                         APP.keyboardshortcut.registerShortcut(

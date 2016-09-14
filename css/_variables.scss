@@ -1,5 +1,4 @@
 /**
-<<<<<<< HEAD
  * Style variables
  */
 $baseFontFamily: 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -25,6 +24,18 @@ $inputLightBackground: #EBEBEB;
 $inputBorderColor: #EBEBEB;
 $buttonBackground: #44A5FF;
 
+$connectionIndicatorBg: #bf2117;
+$thumbnailPictogramColor: #fff;
+$dominantSpeakerBg: #165ecc;
+$raiseHandBg: #6c64a6;
+$participantNameColor: #fff;
+$bodyBg: #091e42;
+$bodyBgLight: #06a5df;
+
+$rateStarDefault: #ccc;
+$rateStarActivity: #f6c342;
+$rateStarLabelColor: #333;
+
 /**
  * Misc.
  */
@@ -36,7 +47,3 @@ $defaultWatermarkLink: '../images/watermark.png';
  */
 $toolbarZ: 900;
 $overlayZ: 800;
-
-$rateStarDefault: #ccc;
-$rateStarActivity: #f6c342;
-$rateStarLabelColor: #333;

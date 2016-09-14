@@ -1,5 +1,6 @@
 /* global $, APP, config, interfaceConfig, JitsiMeetJS */
 import UIEvents from "../../service/UI/UIEvents";
+import UIUtil from "./util/UIUtil";
 
 /**
  * Constructs the html for the overall feedback window.
@@ -142,6 +143,10 @@ var Feedback = {
         $("#feedbackButton").click(function (event) {
             Feedback.openFeedbackWindow();
         });
+
+        let element = document.getElementById('feedbackButton');
+        UIUtil.setTooltip(element, 'feedback', 'top-right');
+        APP.translation.translateElement($(element));
 
         // Show / hide the feedback button whenever the film strip is
         // shown / hidden.
