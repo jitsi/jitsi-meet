@@ -148,9 +148,7 @@ export default {
      * @param {boolean} show
      */
     showStartMutedOptions (show) {
-        console.log("------", show, UIUtil.isSettingEnabled('moderator'));
         if (show && UIUtil.isSettingEnabled('moderator')) {
-            console.log("idva li tuuk");
             // Only show the subtitle if this isn't the only setting section.
             if (!$("#moderatorOptionsTitle").is(":visible")
                 && interfaceConfig.SETTINGS_SECTIONS.length > 1)
