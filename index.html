@@ -175,9 +175,9 @@
                 </div>
                 <div id="settings_container" class="sideToolbarContainer__inner">
                     <div class="title" data-i18n="settings.title"></div>
-                    <select class="first" id="languages_selectbox"></select>
-                    <div class="subTitle" data-i18n="settings.audioVideo"></div>
-                    <div id="devicesOptions">
+                    <select id="languages_selectbox" class="first hide"></select>
+                    <div id="deviceOptionsTitle" class="subTitle hide" data-i18n="settings.audioVideo"></div>
+                    <div id="devicesOptions" class="hide">
                         <div class="sideToolbarBlock first">
                             <label class="first" data-i18n="settings.selectCamera"></label>
                             <select id="selectCamera"></select>
@@ -191,8 +191,8 @@
                             <select  id="selectAudioOutput"></select>
                         </div>
                     </div>
-                    <div class="subTitle" data-i18n="settings.moderator"></div>
-                    <div id = "startMutedOptions">
+                    <div id="moderatorOptionsTitle" class="subTitle hide" data-i18n="settings.moderator"></div>
+                    <div id = "startMutedOptions" class="hide">
                         <div class="sideToolbarBlock first">
                             <input type="checkbox" id="startAudioMuted">
                             <label class="startMutedLabel" for="startAudioMuted" data-i18n="settings.startAudioMuted"></label>
@@ -202,7 +202,7 @@
                             <label class="startMutedLabel" for="startVideoMuted" data-i18n="settings.startVideoMuted"></label>
                         </div>
                     </div>
-                    <div id="followMeOptions" class="sideToolbarBlock">
+                    <div id="followMeOptions" class="sideToolbarBlock hide">
                         <input type="checkbox" id="followMeCheckBox">
                         <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
                     </div>

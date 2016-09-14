@@ -1,4 +1,4 @@
-/* global APP, $, JitsiMeetJS */
+/* global APP, $, JitsiMeetJS, interfaceConfig */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
@@ -6,6 +6,7 @@ import Settings from '../../../settings/Settings';
 
 /**
  * Generate html select options for available languages.
+ *
  * @param {string[]} items available languages
  * @param {string} [currentLang] current language
  * @returns {string}
@@ -28,6 +29,7 @@ function generateLanguagesOptions(items, currentLang) {
 
 /**
  * Generate html select options for available physical devices.
+ *
  * @param {{ deviceId, label }[]} items available devices
  * @param {string} [selectedId] id of selected device
  * @param {boolean} permissionGranted if permission to use selected device type
@@ -62,46 +64,59 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
 
 export default {
     init (emitter) {
-        // START MUTED
-        $("#startMutedOptions").change(function () {
-            let startAudioMuted = $("#startAudioMuted").is(":checked");
-            let startVideoMuted = $("#startVideoMuted").is(":checked");
-            emitter.emit(
-                UIEvents.START_MUTED_CHANGED,
-                startAudioMuted,
-                startVideoMuted
-            );
-        });
+        if (UIUtil.isSettingEnabled('devices')) {
+            // DEVICES LIST
+            JitsiMeetJS.mediaDevices.isDeviceListAvailable()
+                .then((isDeviceListAvailable) => {
+                    if (isDeviceListAvailable &&
+                        JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
+                        this._initializeDeviceSelectionSettings(emitter);
+                    }
+                });
 
-        // FOLLOW ME
-        $("#followMeOptions").change(function () {
-            let isFollowMeEnabled = $("#followMeCheckBox").is(":checked");
-            emitter.emit(
-                UIEvents.FOLLOW_ME_ENABLED,
-                isFollowMeEnabled
-            );
-        });
+            // Only show the subtitle if this isn't the only setting section.
+            if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
+                UIUtil.showElement("deviceOptionsTitle");
 
-        // LANGUAGES BOX
-        let languagesBox = $("#languages_selectbox");
-        languagesBox.html(generateLanguagesOptions(
-            languages.getLanguages(),
-            APP.translation.getCurrentLanguage()
-        ));
-        APP.translation.translateElement(languagesBox);
-        languagesBox.change(function () {
-            emitter.emit(UIEvents.LANG_CHANGED, languagesBox.val());
-        });
+            UIUtil.showElement("devicesOptions");
+        }
 
-
-        // DEVICES LIST
-        JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-            .then((isDeviceListAvailable) => {
-                if (isDeviceListAvailable &&
-                    JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
-                    this._initializeDeviceSelectionSettings(emitter);
-                }
+        if (UIUtil.isSettingEnabled('language')) {
+            //LANGUAGES BOX
+            let languagesBox = $("#languages_selectbox");
+            languagesBox.html(generateLanguagesOptions(
+                languages.getLanguages(),
+                APP.translation.getCurrentLanguage()
+            ));
+            APP.translation.translateElement(languagesBox);
+            languagesBox.change(function () {
+                emitter.emit(UIEvents.LANG_CHANGED, languagesBox.val());
             });
+
+            UIUtil.showElement("languages_selectbox");
+        }
+
+        if (UIUtil.isSettingEnabled('moderator')) {
+            // START MUTED
+            $("#startMutedOptions").change(function () {
+                let startAudioMuted = $("#startAudioMuted").is(":checked");
+                let startVideoMuted = $("#startVideoMuted").is(":checked");
+                emitter.emit(
+                    UIEvents.START_MUTED_CHANGED,
+                    startAudioMuted,
+                    startVideoMuted
+                );
+            });
+
+            // FOLLOW ME
+            $("#followMeOptions").change(function () {
+                let isFollowMeEnabled = $("#followMeCheckBox").is(":checked");
+                emitter.emit(
+                    UIEvents.FOLLOW_ME_ENABLED,
+                    isFollowMeEnabled
+                );
+            });
+        }
     },
 
     _initializeDeviceSelectionSettings(emitter) {
@@ -133,10 +148,19 @@ export default {
      * @param {boolean} show
      */
     showStartMutedOptions (show) {
-        if (show) {
-            $("#startMutedOptions").css("display", "block");
+        if (show && UIUtil.isSettingEnabled('moderator')) {
+            // Only show the subtitle if this isn't the only setting section.
+            if (!$("#moderatorOptionsTitle").is(":visible")
+                && interfaceConfig.SETTINGS_SECTIONS.length > 1)
+                UIUtil.showElement("moderatorOptionsTitle");
+
+            UIUtil.showElement("startMutedOptions");
         } else {
-            $("#startMutedOptions").css("display", "none");
+            // Only show the subtitle if this isn't the only setting section.
+            if ($("#moderatorOptionsTitle").is(":visible"))
+                UIUtil.hideElement("moderatorOptionsTitle");
+
+            UIUtil.hideElement("startMutedOptions");
         }
     },
 
@@ -151,10 +175,10 @@ export default {
      * @param {boolean} show {true} to show those options, {false} to hide them
      */
     showFollowMeOptions (show) {
-        if (show) {
-            $("#followMeOptions").css("display", "block");
+        if (show && UIUtil.isSettingEnabled('moderator')) {
+            UIUtil.showElement("followMeOptions");
         } else {
-            $("#followMeOptions").css("display", "none");
+            UIUtil.hideElement("followMeOptions");
         }
     },
 
