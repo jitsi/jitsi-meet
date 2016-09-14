@@ -16,7 +16,6 @@
   "readmeFilename": "README.md",
   "//": "Callstats.io does not work with recent versions of jsSHA (2.0.1 in particular)",
   "dependencies": {
-    "@atlassian/aui": "^6.0.0",
     "async": "0.9.0",
     "autosize": "^1.18.13",
     "bootstrap": "3.1.1",
@@ -84,10 +83,6 @@
     "tooltip": "./node_modules/bootstrap/js/tooltip.js",
     "popover": "./node_modules/bootstrap/js/popover.js",
     "jQuery-Impromptu": "./node_modules/jQuery-Impromptu/dist/jquery-impromptu.js",
-    "aui": "./node_modules/@atlassian/aui/dist/aui/js/aui.js",
-    "aui-experimental": "./node_modules/@atlassian/aui/dist/aui/js/aui-experimental.js",
-    "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
-    "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
     "autosize": "./node_modules/autosize/build/jquery.autosize.js"
   },
   "browserify-shim": {
@@ -114,9 +109,6 @@
     "jQuery-Impromptu": {
       "depends": "jquery:jQuery"
     },
-    "aui-experimental": {
-      "depends": "aui:AJS"
-    },
     "jquery-contextmenu": {
       "depends": "jquery:jQuery"
     },
@@ -126,8 +118,5 @@
     "browserify-css": {
         "autoInject": true
     }
-  },
-  "browserify-css": {
-    "autoInject": true
   }
 }

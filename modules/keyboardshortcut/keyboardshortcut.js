@@ -78,7 +78,7 @@ var KeyboardShortcut = {
             trigger: 'click hover',
             content: function() {
                 return this.getAttribute("content")
-                    + self.getShortcutTooltip(this.getAttribute("shortcut"));
+                    + self._getShortcutTooltip(this.getAttribute("shortcut"));
             }
         });
     },
@@ -128,7 +128,7 @@ var KeyboardShortcut = {
      * or an empty string if the shortcutAttr is null, an empty string or not
      * found in the shortcut mapping
      */
-    getShortcutTooltip: function (shortcutAttr) {
+    _getShortcutTooltip: function (shortcutAttr) {
         if (typeof shortcutAttr === "string" && shortcutAttr.length > 0) {
             for (var key in _shortcuts) {
                 if (_shortcuts.hasOwnProperty(key)

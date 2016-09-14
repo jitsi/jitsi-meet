@@ -44,7 +44,7 @@ function createEditDisplayNameButton() {
     UIUtil.setTooltip(editButton,
         "videothumbnail.editnickname",
         "left");
-    editButton.innerHTML = '<i class="fa fa-pencil"></i>';
+    editButton.innerHTML = '<i class="icon-edit"></i>';
 
     return editButton;
 }

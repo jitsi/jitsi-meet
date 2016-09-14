@@ -64,8 +64,8 @@ const FilmStrip = {
             - parseInt(this.filmStrip.css('paddingRight'), 10);
     },
 
-    calculateThumbnailSize(isSideBarVisible) {
-        let availableSizes = this.calculateAvailableSize(isSideBarVisible);
+    calculateThumbnailSize() {
+        let availableSizes = this.calculateAvailableSize();
         let width = availableSizes.availableWidth;
         let height = availableSizes.availableHeight;
 
@@ -106,7 +106,7 @@ const FilmStrip = {
         return { localRatio, remoteRatio };
     },
 
-    calculateAvailableSize(isSideBarVisible) {
+    calculateAvailableSize() {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let thumbs = this.getThumbs(true);
         let numvids = thumbs.remoteThumbs.length;

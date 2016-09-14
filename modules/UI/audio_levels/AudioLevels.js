@@ -4,7 +4,6 @@
 import CanvasUtil from './CanvasUtils';
 import FilmStrip from '../videolayout/FilmStrip';
 
-
 const LOCAL_LEVEL = 'local';
 
 let ASDrawContext = null;

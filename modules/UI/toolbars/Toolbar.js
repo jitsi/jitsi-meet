@@ -351,10 +351,7 @@ const Toolbar = {
         Object.keys(defaultToolbarButtons).forEach(
             id => {
                 if (UIUtil.isButtonEnabled(id)) {
-                    let button = defaultToolbarButtons[id];
-                    let buttonElement = document.getElementById(button.id.slice(1));
-
-                    UIUtil.setTooltip(buttonElement, button.key, 'bottom');
+                    var button = defaultToolbarButtons[id];
 
                     if (button.shortcut)
                         APP.keyboardshortcut.registerShortcut(

@@ -144,10 +144,6 @@ var Feedback = {
             Feedback.openFeedbackWindow();
         });
 
-        let element = document.getElementById('feedbackButton');
-        UIUtil.setTooltip(element, 'feedback', 'top-right');
-        APP.translation.translateElement($(element));
-
         // Show / hide the feedback button whenever the film strip is
         // shown / hidden.
         emitter.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {

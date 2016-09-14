@@ -20,10 +20,10 @@
     position:absolute;
     text-align:right;
     height:196px;
-    padding: 18px 18px 30px 18px;
+    padding: 10px 10px 10px 10px;
     bottom: 0;
     left: 0;
-    right: 20px;
+    right: 0px;
     width:auto;
     border:1px solid transparent;
     z-index: 5;
@@ -76,12 +76,12 @@
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {
-    box-shadow: inset 0 0 28px #006d91;
+    //box-shadow: inset 0 0 28px #006d91;
     border: 1px solid #006d91;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused:hover {
-    box-shadow: inset 0 0 5px #c1c1c1, 0 0 10px #c1c1c1, inset 0 0 60px #006d91;
+    //box-shadow: inset 0 0 5px #c1c1c1, 0 0 10px #c1c1c1, inset 0 0 60px #006d91;
     border: 1px solid #c1c1c1;
 }
 
@@ -162,7 +162,7 @@
     right: 0;
     padding: 5px 0px;
     width: 25px;
-    font-size: 11pt;
+    font-size: 9pt;
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
     border: 0px;
     z-index: 2;
@@ -224,17 +224,14 @@
 
 .connectionindicator
 {
-    @include circle(23px);
-    box-sizing: border-box;
     display: inline-block;
     position: absolute;
-    background: $connectionIndicatorBg;
-    border: 2px solid $thumbnailPictogramColor;
-    color: $thumbnailPictogramColor;
-    margin: 7px;
+    top: 7px;
     right: 0;
     padding: 0px 5px;
     z-index: 3;
+    width: 18px;
+    height: 13px;
 }
 
 .connection.connection_empty
