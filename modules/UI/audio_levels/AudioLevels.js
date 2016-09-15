@@ -10,7 +10,7 @@ let ASDrawContext = null;
 let audioLevelCanvasCache = {};
 let dominantSpeakerAudioElement = null;
 
-function initDominantSpeakerAudioLevels(dominantSpeakerAvatarSize) {
+function _initDominantSpeakerAudioLevels(dominantSpeakerAvatarSize) {
     let ASRadius = dominantSpeakerAvatarSize / 2;
     let ASCenter = (dominantSpeakerAvatarSize + ASRadius) / 2;
 
@@ -28,7 +28,9 @@ function initDominantSpeakerAudioLevels(dominantSpeakerAvatarSize) {
 /**
  * Resizes the given audio level canvas to match the given thumbnail size.
  */
-function resizeAudioLevelCanvas(audioLevelCanvas, thumbnailWidth, thumbnailHeight) {
+function _resizeAudioLevelCanvas(   audioLevelCanvas,
+                                    thumbnailWidth,
+                                    thumbnailHeight) {
     audioLevelCanvas.width = thumbnailWidth + interfaceConfig.CANVAS_EXTRA;
     audioLevelCanvas.height = thumbnailHeight + interfaceConfig.CANVAS_EXTRA;
 }
@@ -138,18 +140,18 @@ const AudioLevels = {
         dominantSpeakerAudioElement.height = dominantSpeakerHeight;
 
         let dominantSpeakerAvatar = $("#dominantSpeakerAvatar");
-        initDominantSpeakerAudioLevels(dominantSpeakerAvatar.width());
+        _initDominantSpeakerAudioLevels(dominantSpeakerAvatar.width());
     },
 
     /**
      * Updates the audio level canvas for the given id. If the canvas
      * didn't exist we create it.
      */
-    updateAudioLevelCanvas (id, thumbWidth, thumbHeight) {
-        let videoSpanId = 'localVideoContainer';
-        if (id) {
-            videoSpanId = `participant_${id}`;
-        }
+    createAudioLevelCanvas (id, thumbWidth, thumbHeight) {
+
+        let videoSpanId = (id === "local")
+                        ? "localVideoContainer"
+                        : `participant_${id}`;
 
         let videoSpan = document.getElementById(videoSpanId);
 
@@ -172,13 +174,13 @@ const AudioLevels = {
                 = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
             audioLevelCanvas.style.left
                 = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
-            resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
+            _resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
 
             videoSpan.appendChild(audioLevelCanvas);
         } else {
             audioLevelCanvas = audioLevelCanvas.get(0);
 
-            resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
+            _resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
         }
     },
 
@@ -242,19 +244,29 @@ const AudioLevels = {
         ASDrawContext.fill();
     },
 
-    updateCanvasSize (thumbWidth, thumbHeight) {
-        let canvasWidth = thumbWidth + interfaceConfig.CANVAS_EXTRA;
-        let canvasHeight = thumbHeight + interfaceConfig.CANVAS_EXTRA;
+    updateCanvasSize (localVideo, remoteVideo) {
+        let localCanvasWidth
+            = localVideo.thumbWidth + interfaceConfig.CANVAS_EXTRA;
+        let localCanvasHeight
+            = localVideo.thumbHeight + interfaceConfig.CANVAS_EXTRA;
+        let remoteCanvasWidth
+            = remoteVideo.thumbWidth + interfaceConfig.CANVAS_EXTRA;
+        let remoteCanvasHeight
+            = remoteVideo.thumbHeight + interfaceConfig.CANVAS_EXTRA;
 
-        FilmStrip.getThumbs().children('canvas').each(function () {
-            $(this).attr('width', canvasWidth);
-            $(this).attr('height', canvasHeight);
+        let { remoteThumbs, localThumb } = FilmStrip.getThumbs();
+
+        remoteThumbs.children('canvas').each(function () {
+            $(this).attr('width', remoteCanvasWidth);
+            $(this).attr('height', remoteCanvasHeight);
         });
 
-        Object.keys(audioLevelCanvasCache).forEach(function (id) {
-            audioLevelCanvasCache[id].width = canvasWidth;
-            audioLevelCanvasCache[id].height = canvasHeight;
-        });
+        if(localThumb) {
+            localThumb.children('canvas').each(function () {
+                $(this).attr('width', localCanvasWidth);
+                $(this).attr('height', localCanvasHeight);
+            });
+        }
     }
 };
 

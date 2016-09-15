@@ -172,26 +172,6 @@ SmallVideo.getStreamElementID = function (stream) {
 };
 
 /**
- * Configures hoverIn/hoverOut handlers.
- */
-SmallVideo.prototype.bindHoverHandler = function () {
-    // Add hover handler
-    var self = this;
-    $(this.container).hover(
-        function () {
-            self.showDisplayName(true);
-        },
-        function () {
-            // If the video has been "pinned" by the user we want to
-            // keep the display name on place.
-            if (!self.VideoLayout.isLargeVideoVisible() ||
-                !self.VideoLayout.isCurrentlyOnLarge(self.id))
-                self.showDisplayName(false);
-        }
-    );
-};
-
-/**
  * Updates the data for the indicator
  * @param id the id of the indicator
  * @param percent the percent for connection quality
@@ -219,6 +199,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
         if (audioMutedSpan.length > 0) {
             audioMutedSpan.popover('hide');
             audioMutedSpan.remove();
+            this.updateIconPositions();
         }
     }
     else {
@@ -230,12 +211,14 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
                 "top");
 
             this.container.appendChild(audioMutedSpan);
-            APP.translation.translateElement($('#' + this.videoSpanId + " > span"));
+            APP.translation
+                .translateElement($('#' + this.videoSpanId + " > span"));
             var mutedIndicator = document.createElement('i');
             mutedIndicator.className = 'icon-mic-disabled';
             audioMutedSpan.appendChild(mutedIndicator);
 
         }
+
         this.updateIconPositions();
     }
     this.isMuted = isMuted;
@@ -254,6 +237,7 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
     if (isMuted === false) {
         if (videoMutedSpan.length > 0) {
             videoMutedSpan.remove();
+            this.updateIconPositions();
         }
     }
     else {
@@ -270,7 +254,8 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
                 "top");
             videoMutedSpan.appendChild(mutedIndicator);
             //translate texts for muted indicator
-            APP.translation.translateElement($('#' + this.videoSpanId  + " > span > i"));
+            APP.translation
+                .translateElement($('#' + this.videoSpanId  + " > span > i"));
         }
 
         this.updateIconPositions();
@@ -278,13 +263,18 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
 };
 
 SmallVideo.prototype.updateIconPositions = function () {
-    var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
-    var connectionIndicator = $('#' + this.videoSpanId + '>div.connectionindicator');
-    var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
+    let audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
+    let videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
+    audioMutedSpan.css({left: "0px"});
+    videoMutedSpan.css({left: (audioMutedSpan.length > 0? 25 : 0) + "px"});
+
+    var connectionIndicator
+        = $('#' + this.videoSpanId + '>div.connectionindicator');
     if(connectionIndicator.length > 0 &&
         connectionIndicator[0].style.display != "none") {
         audioMutedSpan.css({right: "23px"});
-        videoMutedSpan.css({right: ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
+        videoMutedSpan.css({right:
+            ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
     } else {
         audioMutedSpan.css({right: "0px"});
         videoMutedSpan.css({right: (audioMutedSpan.length > 0? 30 : 0) + "px"});
@@ -317,7 +307,8 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
         "top");
 
     //translates text in focus indicators
-    APP.translation.translateElement($('#' + this.videoSpanId + ' .focusindicator'));
+    APP.translation
+        .translateElement($('#' + this.videoSpanId + ' .focusindicator'));
 };
 
 /**
@@ -406,8 +397,6 @@ SmallVideo.prototype.updateView = function () {
         setVisibility(video, showVideo);
     }
     setVisibility(avatar, showAvatar);
-
-    this.showDisplayName(!showVideo && !showAvatar);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
@@ -465,9 +454,8 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     var indicatorSpanId = "raisehandindicator";
     var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
 
-    indicatorSpan.style.background = "#D6D61E";
     indicatorSpan.innerHTML
-        = "<i id='indicatoricon' class='fa fa-hand-paper-o'></i>";
+        = "<i id='indicatoricon' class='icon-raised-hand'></i>";
 
     // adds a tooltip
     UIUtil.setTooltip(indicatorSpan, "raisedHand", "left");

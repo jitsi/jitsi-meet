@@ -17,7 +17,6 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, id);
     this.setDisplayName();
-    this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
     this.isMuted = false;
@@ -34,8 +33,10 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
     if (APP.conference.isModerator) {
         this.addRemoteVideoMenu();
     }
-    let {thumbWidth, thumbHeight} = this.VideoLayout.resizeThumbnails();
-    AudioLevels.updateAudioLevelCanvas(this.id, thumbWidth, thumbHeight);
+
+    let { remoteVideo } = this.VideoLayout.resizeThumbnails();
+    let { thumbHeight, thumbWidth } = remoteVideo;
+    AudioLevels.createAudioLevelCanvas(this.id, thumbWidth, thumbHeight);
 
     return this.container;
 };
@@ -427,12 +428,16 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
 };
 
 RemoteVideo.createContainer = function (spanId) {
-    var container = document.createElement('span');
+    let container = document.createElement('span');
     container.id = spanId;
     container.className = 'videocontainer';
+
+    let toolbar = document.createElement('div');
+    toolbar.className = "videocontainer__toolbar";
+    container.appendChild(toolbar);
+
     var remotes = document.getElementById('remoteVideos');
     return remotes.appendChild(container);
 };
-
 
 export default RemoteVideo;

@@ -13,17 +13,17 @@
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: nowrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
 
     position:absolute;
     text-align:right;
     height:196px;
-    padding: 18px;
+    padding: 10px 10px 10px 5px;
     bottom: 0;
     left: 0;
-    right: 20px;
+    right: 0;
     width:auto;
     border:1px solid transparent;
     z-index: 5;
@@ -43,10 +43,23 @@
 
 #remoteVideos .videocontainer {
     display: none;
+    position: relative;
     background-color: black;
     background-size: contain;
     border-radius:1px;
-    border: 1px solid #212425;
+    margin: 0 $thumbnailVideoMargin;
+    border: 1px solid $defaultDarkColor;
+}
+
+.videocontainer__toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 25px;
+    max-height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {
@@ -58,18 +71,13 @@
     -webkit-animation-iteration-count: 1;
 }
 
-#remoteVideos .videocontainer:hover {
-    border: 1px solid #c1c1c1;
-}
-
 #remoteVideos .videocontainer.videoContainerFocused {
-    box-shadow: inset 0 0 28px #006d91;
-    border: 1px solid #006d91;
+    border: 1px solid $videoThumbnailSelected;
 }
 
+#remoteVideos .videocontainer:hover,
 #remoteVideos .videocontainer.videoContainerFocused:hover {
-    box-shadow: inset 0 0 5px #c1c1c1, 0 0 10px #c1c1c1, inset 0 0 60px #006d91;
-    border: 1px solid #c1c1c1;
+    border: 1px solid $videoThumbnailHovered;
 }
 
 #localVideoWrapper {
@@ -145,11 +153,11 @@
 #remoteVideos .videocontainer>div.remotevideomenu {
     position: absolute;
     color: #FFFFFF;
-    top: 0;
-    left: 0;
+    bottom: 0;
+    right: 0;
     padding: 5px 0px;
     width: 25px;
-    font-size: 11pt;
+    font-size: 9pt;
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
     border: 0px;
     z-index: 2;
@@ -166,22 +174,28 @@
 
 .videocontainer>span.displayname,
 .videocontainer>input.displayname {
-    display: none;
+    display: inline-block;
     position: absolute;
-    color: #FFFFFF;
-    background: rgba(0,0,0,.7);
+    bottom: 4px;
+    left: 25%;
+    color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
-    width: 70%;
-    height: 20%;
-    left: 15%;
-    top: 40%;
-    padding: 5px;
-    font-size: 11pt;
+    width: 50%;
+    font-size: 12px;
+    font-weight: 100;
+    letter-spacing: 1px;
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    border-radius:3px;
+}
+
+.videocontainer>input.displayname {
+    outline: none;
+    border: none;
+    background: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 .videocontainer>span.status {
@@ -291,7 +305,8 @@
     display: inline-block;
     position: absolute;
     color: #FFFFFF;
-    top: 0;
+    bottom: 0;
+    left: 0;
     padding: 8px 5px;
     width: 25px;
     font-size: 8pt;
@@ -305,8 +320,7 @@
     display: inline-block;
     position: absolute;
     color: #FFFFFF;
-    top: 0;
-    right: 0;
+    bottom: 0;
     padding: 8px 5px;
     width: 25px;
     font-size: 8pt;
@@ -316,24 +330,30 @@
 }
 
 .videocontainer>span.indicator {
-    bottom: 0px;
+    position: absolute;
+    top: 0px;
     left: 0px;
-    width: 25px;
-    height: 25px;
+    @include circle($thumbnailIndicatorSize);
+    box-sizing: border-box;
+    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
     z-index: 3;
     text-align: center;
-    border-radius: 50%;
-    background: #21B9FC;
-    margin: 5px;
+    background: $dominantSpeakerBg;
+    margin: 7px;
     display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    font-size: 11pt;
-    border: 0px;
+    color: $thumbnailPictogramColor;
+    font-size: 8pt;
+    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+}
+
+.videocontainer>#raisehandindicator {
+    background: $raiseHandBg;
 }
 
 #indicatoricon {
-    padding-top: 5px;
+    width: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
+    height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
+    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
 }
 
 #reloadPresentation {
@@ -395,10 +415,8 @@
 }
 
 .userAvatar {
-    height: 100%;
-    position: absolute;
-    left: 0;
-    border-radius: 2px;
+    @include circle(60px);
+    @include absoluteAligning(60px, 60px);
 }
 
 .sharedVideoAvatar {

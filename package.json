@@ -21,18 +21,18 @@
     "bootstrap": "3.1.1",
     "events": "*",
     "i18next-client": "1.7.7",
-    "jquery": "~2.1.1",
     "jQuery-Impromptu": "git+https://github.com/trentrichardson/jQuery-Impromptu.git#v6.0.0",
-    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git",
+    "jquery": "~2.1.1",
     "jquery-contextmenu": "*",
     "jquery-ui": "1.10.5",
     "jssha": "1.5.0",
+    "jws": "*",
+    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git",
+    "postis": "^2.2.0",
     "retry": "0.6.1",
     "strophe": "^1.2.2",
     "strophejs-plugins": "^0.0.6",
-    "toastr": "^2.0.3",
-    "postis": "^2.2.0",
-    "jws": "*"
+    "toastr": "^2.0.3"
   },
   "devDependencies": {
     "babel-polyfill": "*",
