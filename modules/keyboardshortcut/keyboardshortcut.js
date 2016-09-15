@@ -74,13 +74,6 @@ var KeyboardShortcut = {
                 }
             }
         };
-        $('body').popover({ selector: '[data-toggle=popover]',
-            trigger: 'click hover',
-            content: function() {
-                return this.getAttribute("content")
-                    + self.getShortcutTooltip(this.getAttribute("shortcut"));
-            }
-        });
     },
 
     /**

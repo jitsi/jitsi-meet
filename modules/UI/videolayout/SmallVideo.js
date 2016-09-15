@@ -197,7 +197,6 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
 
     if (!isMuted) {
         if (audioMutedSpan.length > 0) {
-            audioMutedSpan.popover('hide');
             audioMutedSpan.remove();
             this.updateIconPositions();
         }
