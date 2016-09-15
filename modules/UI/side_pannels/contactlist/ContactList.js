@@ -96,9 +96,9 @@ var ContactList = {
 
     /**
      * Adds a contact for the given id.
-     *
+     * @param isLocal is an id for the local user.
      */
-    addContact (id) {
+    addContact (id, isLocal) {
         let contactlist = $('#contacts');
 
         let newContact = document.createElement('li');
@@ -112,7 +112,11 @@ var ContactList = {
 
         if (interfaceConfig.SHOW_CONTACTLIST_AVATARS)
             newContact.appendChild(createAvatar(id));
-        newContact.appendChild(createDisplayNameParagraph("participant"));
+
+        newContact.appendChild(
+            createDisplayNameParagraph(
+                isLocal ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME : null,
+                isLocal ? null : interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME));
 
         if (APP.conference.isLocalId(id)) {
             contactlist.prepend(newContact);

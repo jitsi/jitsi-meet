@@ -292,7 +292,7 @@ UI.initConference = function () {
     }
 
     // Add myself to the contact list.
-    ContactList.addContact(id);
+    ContactList.addContact(id, true);
 
     //update default button states before showing the toolbar
     //if local role changes buttons state will be again updated
