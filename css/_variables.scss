@@ -10,6 +10,11 @@ $hangupFontSize: 2em;
  */
 $defaultToolbarSize: 50px;
 
+// Video layout.
+$thumbnailIndicatorSize: 23px;
+$thumbnailIndicatorBorder: 0px;
+$thumbnailVideoMargin: 2px;
+
 /**
  * Color variables.
  */
@@ -17,12 +22,28 @@ $defaultColor: #F1F1F1;
 $defaultSemiDarkColor: #ACACAC;
 $defaultDarkColor: #4F4F4F;
 $defaultBackground: #474747;
+
+// Toolbar
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
+
+// Main controls
 $inputBackground: rgba(132, 132, 132, .5);
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 $inputBorderColor: #EBEBEB;
 $buttonBackground: #44A5FF;
+
+// Video layout.
+$videoThumbnailHovered: #44A5FF;
+$videoThumbnailSelected: #165ecc;
+$participantNameColor: #fff;
+$thumbnailPictogramColor: #fff;
+$dominantSpeakerBg: #165ecc;
+$raiseHandBg: #D6D61E;
+
+$rateStarDefault: #ccc;
+$rateStarActivity: #165ecc;
+$rateStarLabelColor: #333;
 
 /**
  * Misc.
@@ -35,7 +56,3 @@ $defaultWatermarkLink: '../images/watermark.png';
  */
 $toolbarZ: 900;
 $overlayZ: 800;
-
-$rateStarDefault: #ccc;
-$rateStarActivity: #f6c342;
-$rateStarLabelColor: #333;

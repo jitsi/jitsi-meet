@@ -105,8 +105,9 @@ var VideoLayout = {
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
-        let {thumbWidth, thumbHeight} = this.resizeThumbnails(false, true);
-        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
+        let { localVideo } = this.resizeThumbnails(false, true);
+        AudioLevels.createAudioLevelCanvas(
+            "local", localVideo.thumbWidth, localVideo.thumbHeight);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
@@ -254,7 +255,8 @@ var VideoLayout = {
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let thumbs = FilmStrip.getThumbs(true).filter('[id!="mixedstream"]');
+        let remoteThumbs = FilmStrip.getThumbs(true).remoteThumbs;
+        let thumbs = remoteThumbs.filter('[id!="mixedstream"]');
 
         let lastVisible = thumbs.filter(':visible:last');
         if (lastVisible.length) {
@@ -268,7 +270,7 @@ var VideoLayout = {
         }
 
         console.info("Last visible video no longer exists");
-        thumbs = FilmStrip.getThumbs();
+        thumbs = FilmStrip.getThumbs().remoteThumbs;
         if (thumbs.length) {
             let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
@@ -401,7 +403,7 @@ var VideoLayout = {
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
-            FilmStrip.getThumbs().length >= localLastNCount + 2) {
+            FilmStrip.getThumbs().remoteThumbs.length >= localLastNCount + 2) {
             remoteVideo.showPeerContainer('hide');
         } else {
             VideoLayout.resizeThumbnails(false, true);
@@ -486,19 +488,19 @@ var VideoLayout = {
                         forceUpdate = false,
                         onComplete = null) {
 
-        let {thumbWidth, thumbHeight}
+        let { localVideo, remoteVideo }
             = FilmStrip.calculateThumbnailSize();
 
-        $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
+        let {thumbWidth, thumbHeight} = remoteVideo;
 
-        FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
+        FilmStrip.resizeThumbnails(localVideo, remoteVideo,
             animate, forceUpdate)
             .then(function () {
-                AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+                AudioLevels.updateCanvasSize(localVideo, remoteVideo);
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
-        });
-        return {thumbWidth, thumbHeight};
+            });
+        return { localVideo, remoteVideo };
     },
 
     /**
@@ -656,7 +658,7 @@ var VideoLayout = {
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
-        FilmStrip.getThumbs().each(( index, element ) => {
+        FilmStrip.getThumbs().remoteThumbs.each(( index, element ) => {
             var resourceJid = getPeerContainerResourceId(element);
             var smallVideo = remoteVideos[resourceJid];
 

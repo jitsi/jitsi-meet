@@ -11,7 +11,6 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
-    this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
     this.isLocal = true;
@@ -44,7 +43,7 @@ function createEditDisplayNameButton() {
     editButton.className = 'displayname';
     UIUtil.setTooltip(editButton,
         "videothumbnail.editnickname",
-        "top");
+        "left");
     editButton.innerHTML = '<i class="icon-edit"></i>';
 
     return editButton;
@@ -72,7 +71,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
             if (displayName && displayName.length > 0) {
                 meHTML = APP.translation.generateTranslationHTML("me");
                 $('#localDisplayName').html(
-                    UIUtil.escapeHtml(displayName) + ' (' + meHTML + ')'
+                    `${UIUtil.escapeHtml(displayName)} (${meHTML})`
                 );
             } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
@@ -80,11 +79,9 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         }
         this.updateView();
     } else {
-        var editButton = createEditDisplayNameButton();
-
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
-        $('#' + this.videoSpanId)[0].appendChild(nameSpan);
+        document.getElementById(this.videoSpanId).appendChild(nameSpan);
 
 
         if (displayName && displayName.length > 0) {
@@ -97,7 +94,6 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
 
         nameSpan.id = 'localDisplayName';
-        this.container.appendChild(editButton);
         //translates popover of edit button
         APP.translation.translateElement($("a.displayname"));
 
@@ -124,21 +120,23 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         var self = this;
         $('#localVideoContainer .displayname')
             .bind("click", function (e) {
+                let $editDisplayName = $('#editDisplayName');
+                let $localDisplayName = $('#localDisplayName');
 
-                var editDisplayName = $('#editDisplayName');
                 e.preventDefault();
                 e.stopPropagation();
-                $('#localDisplayName').hide();
-                editDisplayName.show();
-                editDisplayName.focus();
-                editDisplayName.select();
+                $localDisplayName.hide();
+                $editDisplayName.show();
+                $editDisplayName.focus();
+                $editDisplayName.select();
 
-                editDisplayName.one("focusout", function (e) {
+                $editDisplayName.one("focusout", function (e) {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
-                    $('#editDisplayName').hide();
+                    $editDisplayName.hide();
+                    $localDisplayName.show();
                 });
 
-                editDisplayName.on('keydown', function (e) {
+                $editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
                         $('#editDisplayName').hide();

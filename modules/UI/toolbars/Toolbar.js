@@ -7,7 +7,6 @@ import SideContainerToggler from "../side_pannels/SideContainerToggler";
 let roomUrl = null;
 let emitter = null;
 
-
 /**
  * Opens the invite link dialog.
  */
