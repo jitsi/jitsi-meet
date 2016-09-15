@@ -146,7 +146,7 @@ var Feedback = {
             Feedback.openFeedbackWindow();
         });
 
-        UIUtil.setTooltip($feedbackButton.get(0), '', 'right');
+        UIUtil.setTooltip($feedbackButton.get(0), 'feedback', 'right');
 
         // Show / hide the feedback button whenever the film strip is
         // shown / hidden.

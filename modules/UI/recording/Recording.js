@@ -271,7 +271,7 @@ var Recording = {
         let selector = $('#toolbar_button_record');
 
         let button = selector.get(0);
-        UIUtil.setTooltip(button, '', 'right');
+        UIUtil.setTooltip(button, 'liveStreaming.buttonTooltip', 'right');
 
         if (recordingType === 'jibri') {
             this.baseClass = "fa fa-play-circle";

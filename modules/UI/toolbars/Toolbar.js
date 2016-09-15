@@ -487,7 +487,7 @@ const Toolbar = {
         if (UIUtil.isButtonEnabled('sharedvideo')
                 && config.disableThirdPartyRequests !== true) {
             $element.css({display: "inline-block"});
-            UIUtil.setTooltip($element.get(0), '', 'right');
+            UIUtil.setTooltip($element.get(0), 'toolbar.sharedvideo', 'right');
         } else {
             $('#toolbar_button_sharedvideo').css({display: "none"});
         }

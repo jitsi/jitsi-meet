@@ -1,4 +1,4 @@
-/* global $, config, AJS, interfaceConfig */
+/* global $, APP, config, AJS, interfaceConfig */
 
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
@@ -97,6 +97,7 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
         };
 
         element.setAttribute("data-i18n", "[content]" + key);
+        APP.translation.translateElement($(element));
 
         AJS.$(element).tooltip({
             gravity: positions[position],
