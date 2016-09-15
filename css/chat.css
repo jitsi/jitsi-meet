@@ -1,4 +1,5 @@
 #chatspace {
+    display: none;
     background-color: black;
     border-left: 1px solid #424242;
 }
@@ -21,6 +22,9 @@
     overflow-y: scroll;
     overflow-x: hidden;
     word-wrap: break-word;
+}
+#chatspace.is-conversation-mode #chatconversation {
+    visibility: visible;
 }
 
 .localuser {
@@ -61,6 +65,10 @@
     box-shadow: none;
 }
 
+#chatspace.is-conversation-mode #usermsg {
+    visibility: visible;
+}
+
 #nickname {
     position: absolute;
     text-align: center;
@@ -70,6 +78,10 @@
     left: 5px;
     right: 5px;
     width: 95%;
+}
+
+#chatspace.is-conversation-mode #nickname {
+    visibility: hidden;
 }
 
 #nickinput {
@@ -84,8 +96,6 @@
 #unreadMessages {
     font-size: 8px;
     position: absolute;
-    left: 46%;
-    top: 27%
 }
 
 #bottomUnreadMessages {
@@ -166,6 +176,10 @@
     background: #3a3a3a;
     overflow: hidden;
     visibility: hidden;
+}
+
+#chatspace.is-conversation-mode #smileysarea {
+    visibility: visible;
 }
 
 #smileysContainer {

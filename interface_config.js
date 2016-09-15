@@ -1,6 +1,6 @@
 var interfaceConfig = {
     CANVAS_EXTRA: 104,
-    CANVAS_RADIUS: 7,
+    CANVAS_RADIUS: 0,
     SHADOW_COLOR: '#ffffff',
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
@@ -14,11 +14,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
-    ACTIVE_SPEAKER_AVATAR_SIZE: 100,
-    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop',
-        'recording', 'security', 'invite', 'chat', 'prezi', 'etherpad',
-        'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip',
-        'contacts'],
+    // the toolbar buttons line is intentionally left in one line, to be able
+    // to easily override values or remove them using regex
+    TOOLBAR_BUTTONS: ['authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'invite', 'chat', 'etherpad', 'sharedvideo', 'fullscreen', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
@@ -29,5 +27,6 @@ var interfaceConfig = {
      */
     filmStripOnly: false,
     RANDOM_AVATAR_URL_PREFIX: false,
-    RANDOM_AVATAR_URL_SUFFIX: false
+    RANDOM_AVATAR_URL_SUFFIX: false,
+    FILM_STRIP_MAX_HEIGHT: 120
 };

@@ -3,16 +3,42 @@
     "connectionsettings": "Nastavitve povezave",
     "poweredby": "poganja",
     "downloadlogs": "Shrani zapis",
+    "feedback": "",
     "roomUrlDefaultMsg": "Ustvarjanje vaše konference ...",
     "participant": "Udeleženec",
     "me": "jaz",
     "speaker": "Govornik",
-    "defaultNickname": "npr. __name__",
-    "defaultPreziLink": "npr. __url__",
+    "raisedHand": "",
+    "defaultNickname": "",
+    "defaultLink": "npr. __url__",
+    "calling": "",
+    "userMedia": {
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "",
+        "operaGrantPermissions": "",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "",
+        "nwjsGrantPermissions": ""
+    },
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "",
+        "raiseHand": "",
+        "pushToTalk": "",
+        "toggleScreensharing": "",
+        "toggleFilmstrip": "",
+        "toggleShortcuts": "",
+        "focusLocal": "",
+        "focusRemote": "",
+        "toggleChat": "",
+        "mute": "",
+        "videoMute": ""
+    },
     "welcomepage": {
         "go": "POJDI",
         "roomname": "Vpišite ime sobe",
-        "disable": "Prihodnjič ne prikaži te strani",
+        "disable": "",
         "feature1": {
             "title": "Enostavna uporaba",
             "content": "Nič ni treba namestiti. __app__ deluje direktno v vašem brskalniku. Enostavno sporočite ostalim udeležencem URL svoje konference in začnite."
@@ -23,7 +49,7 @@
         },
         "feature3": {
             "title": "Odprta koda",
-            "content": "__app__ je objavljen po licenci MIT. Pod pogoji te licence lahko prosto snamete, uporabljate, spreminjate in delite."
+            "content": ""
         },
         "feature4": {
             "title": "Neomejeno število uporabnikov",
@@ -50,12 +76,11 @@
         "mute": "Utišaj / Povrni glasnost",
         "videomute": "Zaženi / Ustavi kamero",
         "authenticate": "Overi",
-        "record": "Snemaj",
         "lock": "Zakleni / Odkleni sobo",
         "invite": "Povabite ostale",
         "chat": "Odpri / zapri klepetalnico",
-        "prezi": "Skupna raba Prezi",
         "etherpad": "Dokument v skupni rabi",
+        "sharedvideo": "",
         "sharescreen": "Zaslon v souporabi",
         "fullscreen": "Vklopi / Izklopi celozaslonski način",
         "sip": "Pokliči številko SIP",
@@ -63,7 +88,12 @@
         "hangup": "Odloži",
         "login": "Prijava",
         "logout": "Odjava",
-        "dialpad": "Pokaži številčnico"
+        "dialpad": "Pokaži številčnico",
+        "sharedVideoMutedPopup": "",
+        "micMutedPopup": "",
+        "unableToUnmutePopup": "",
+        "cameraDisabled": "",
+        "micDisabled": ""
     },
     "bottomtoolbar": {
         "chat": "Odpri / zapri klepetalnico",
@@ -81,8 +111,15 @@
         "title": "NASTAVITVE",
         "update": "Posodobi",
         "name": "Ime",
-        "startAudioMuted": "začni brez zvoka",
-        "startVideoMuted": "začni brez slike"
+        "startAudioMuted": "",
+        "startVideoMuted": "",
+        "selectCamera": "",
+        "selectMic": "",
+        "selectAudioOutput": "",
+        "followMe": "",
+        "noDevice": "",
+        "noPermission": "",
+        "avatarUrl": ""
     },
     "videothumbnail": {
         "editnickname": "Kliknite, da spremenite<br/>svoje ime",
@@ -91,7 +128,8 @@
         "mute": "Udeleženec je utišan",
         "kick": "Izženi",
         "muted": "Utišan",
-        "domute": "Utišaj"
+        "domute": "Utišaj",
+        "flip": ""
     },
     "connectionindicator": {
         "bitrate": "Bitna hitrost:",
@@ -131,14 +169,14 @@
         "grantedTo": "Moderatorske pravice dodeljene uporabniku __to__!",
         "grantedToUnknown": "Moderatorske pravice dodeljene uporabniku $t(somebody)!",
         "muted": "Pogovor ste začeli utišano.",
-        "mutedTitle": "Utišani ste!"
+        "mutedTitle": "Utišani ste!",
+        "raisedHand": ""
     },
     "dialog": {
         "kickMessage": "Ojej! Izgnali so vas iz srečanja!",
-        "popupError": "Vaš brskalnik ne dovoli pojavnih oken iz te spletne strani. Omogočite prosim pojavna okna v varnostnih nastavitvah svojega brskalnika in ponovno poskusite.",
-        "passwordError": "Ta pogovor je zaščiten z geslom. Samo lastnik konference lahko nastavi geslo.",
-        "passwordError2": "Ta pogovor ni zaščiten z geslom. Samo lastnik konference lahko nastavi geslo.",
-        "joinError": "Ups! Ni se bilo mogoče pridružiti konferenci. Mogoče je kakšna težava z varnostnimi nastavitvami. Pišite prosim administratorju storitve.",
+        "popupError": "",
+        "passwordError": "",
+        "passwordError2": "",
         "connectError": "Ups! Nekaj je narobe in se ni bilo mogoče povezati s konferenco.",
         "connectErrorWithMsg": "Ups! Nekaj je narobe in se ni bilo mogoče povezati s konferenco: __msg__",
         "connecting": "Povezovanje",
@@ -147,8 +185,10 @@
         "failtoinstall": "Razširitve za skupno uporabo namizja ni bilo mogoče namestiti",
         "failedpermissions": "Ni bilo mogoče pridobiti dovoljenja za uporabo lokalnega mikrofona ali kamere.",
         "bridgeUnavailable": "Jitsi Videobridge trenutno ni na razpolago. Prosim poskusite kasneje!",
+        "jicofoUnavailable": "",
+        "maxUsersLimitReached": "",
         "lockTitle": "Zaklepanje ni uspelo",
-        "lockMessage": "Konference ni bilo mogoče zakleniti.",
+        "lockMessage": "",
         "warning": "Opozorilo",
         "passwordNotSupported": "Trenutno ni mogoče zakleniti sobe z geslom.",
         "sorry": "Oprostite",
@@ -160,11 +200,12 @@
         "defaultError": "Prišlo je do neke napake",
         "passwordRequired": "Potrebno je geslo",
         "Ok": "V redu",
-        "removePreziTitle": "Odstrani Prezi",
-        "removePreziMsg": "Ali res želite odstraniti Prezi?",
-        "sharePreziTitle": "Dajte Prezi v skupno rabo",
-        "sharePreziMsg": "Drug uporabnik je že dal Prezi v skupno rabo. Ta konferenca podpira samo en Prezi naenkrat.",
         "Remove": "Odstrani",
+        "shareVideoTitle": "",
+        "shareVideoLinkError": "",
+        "removeSharedVideoTitle": "",
+        "removeSharedVideoMsg": "",
+        "alreadySharedVideoMsg": "",
         "WaitingForHost": "Čakanje na gostitelja ...",
         "WaitForHostMsg": "Ta konferenca <b>__room__ </b> se še ni začela. V primeru, da ste vi gostitelj se prosim overite. Drugače počakajte prosim na prihod gostitelja.",
         "IamHost": "Jaz sem gostitelj",
@@ -173,11 +214,11 @@
         "logoutTitle": "Odjava",
         "logoutQuestion": "Ali se res želite odjaviti in prekiniti konferenco?",
         "sessTerminated": "Seja je končana",
-        "hungUp": "Prekinili ste klic",
+        "hungUp": "",
         "joinAgain": "Ponovno se pridruži",
         "Share": "Souporaba",
-        "preziLinkError": "Prosim, pravilno vpišite povezavo Prezi.",
         "Save": "Shrani",
+        "recording": "",
         "recordingToken": "Vnesite žeton za registracijo",
         "Dial": "Pokliči",
         "sipMsg": "Vnesite številko SIP",
@@ -198,17 +239,37 @@
         "password": "geslo",
         "userPassword": "uporabniško geslo",
         "token": "žeton",
-        "displayNameRequired": "Vpišite svoje ime:"
+        "tokenAuthFailed": "",
+        "displayNameRequired": "",
+        "extensionRequired": "",
+        "firefoxExtensionPrompt": "",
+        "feedbackQuestion": "",
+        "thankYou": "",
+        "sorryFeedback": "",
+        "liveStreaming": "",
+        "streamKey": "",
+        "startLiveStreaming": "",
+        "stopStreamingWarning": "",
+        "stopRecordingWarning": "",
+        "stopLiveStreaming": "",
+        "stopRecording": "",
+        "doNotShowWarningAgain": "",
+        "permissionDenied": "",
+        "screenSharingPermissionDeniedError": "",
+        "micErrorPresent": "",
+        "cameraErrorPresent": "",
+        "cameraUnsupportedResolutionError": "",
+        "cameraUnknownError": "",
+        "cameraPermissionDeniedError": "",
+        "cameraNotFoundError": "",
+        "cameraConstraintFailedError": "",
+        "micUnknownError": "",
+        "micPermissionDeniedError": "",
+        "micNotFoundError": "",
+        "micConstraintFailedError": ""
     },
     "email": {
-        "sharedKey": [
-            "Ta konferenca je zaklenjena z geslom. Uporabite sledeči PIN ko se pridružite:",
-            "",
-            "",
-            "__sharedKey__",
-            "",
-            ""
-        ],
+        "sharedKey": "",
         "subject": "Povabilo na __appName__ (__conferenceName__)",
         "body": [
             "Pozdravljeni,",
@@ -242,8 +303,23 @@
         "ATTACHED": "Priključeno"
     },
     "recording": {
-        "toaster": "Trenutno poteka snemanje!",
-        "pending": "Snemanje se bo začelo takoj, ko se bo pridružil drugi udeleženec",
-        "on": "Snemanje se je začelo"
+        "pending": "",
+        "on": "",
+        "off": "",
+        "failedToStart": "",
+        "buttonTooltip": "",
+        "error": "",
+        "unavailable": ""
+    },
+    "liveStreaming": {
+        "pending": "",
+        "on": "",
+        "off": "",
+        "unavailable": "",
+        "failedToStart": "",
+        "buttonTooltip": "",
+        "streamIdRequired": "",
+        "error": "",
+        "busy": ""
     }
 }

@@ -1,10 +1,10 @@
 /* jshint -W101 */
 var Smileys = require("./smileys.json");
+
 /**
  * Processes links and smileys in "body"
  */
-function processReplacements(body)
-{
+export function processReplacements(body) {
     //make links clickable
     body = linkify(body);
 
@@ -18,8 +18,7 @@ function processReplacements(body)
  * Finds and replaces all links in the links in "body"
  * with their <a href=""></a>
  */
-function linkify(inputText)
-{
+export function linkify(inputText) {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;
 
     //URLs starting with http://, https://, or ftp://
@@ -40,8 +39,7 @@ function linkify(inputText)
 /**
  * Replaces common smiley strings with images
  */
-function smilify(body)
-{
+function smilify(body) {
     if(!body) {
         return body;
     }
@@ -56,8 +54,3 @@ function smilify(body)
 
     return body;
 }
-
-module.exports = {
-    processReplacements: processReplacements,
-    linkify: linkify
-};

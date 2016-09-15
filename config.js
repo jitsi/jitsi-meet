@@ -6,7 +6,6 @@ var config = {
         //anonymousdomain: 'guest.example.com',
         //authdomain: 'jitsi-meet.example.com',  // defaults to <domain>
         muc: 'conference.jitsi-meet.example.com', // FIXME: use XEP-0030
-        bridge: 'jitsi-videobridge.jitsi-meet.example.com', // FIXME: use XEP-0030
         //jirecon: 'jirecon.jitsi-meet.example.com',
         //call_control: 'callcontrol.jitsi-meet.example.com',
         //focus: 'focus.jitsi-meet.example.com', // defaults to 'focus.jitsi-meet.example.com'
@@ -54,10 +53,10 @@ var config = {
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.
     adaptiveLastN: false,
-    adaptiveSimulcast: false,
+    //disableAdaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
-    enableSimulcast: false, // blocks FF support
+    disableSimulcast: false,
     logStats: false, // Enable logging of PeerConnection stats via the focus
 //    requireDisplayName: true, // Forces the participants that doesn't have display name to enter it when they enter the room.
 //    startAudioMuted: 10, // every participant after the Nth will start audio muted
@@ -70,4 +69,5 @@ var config = {
     'During that time service will not be available. ' +
     'Apologise for inconvenience.',*/
     disableThirdPartyRequests: false,
+    minHDHeight: 540
 };

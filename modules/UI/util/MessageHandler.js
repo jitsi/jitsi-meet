@@ -1,13 +1,29 @@
 /* global $, APP, jQuery, toastr, Impromptu */
 /* jshint -W101 */
 
+import UIUtil from './UIUtil';
+
 /**
  * Flag for enable/disable of the notifications.
  * @type {boolean}
  */
-var notificationsEnabled = true;
+let notificationsEnabled = true;
 
-var messageHandler = (function(my) {
+/**
+ * Flag for enabling/disabling popups.
+ * @type {boolean}
+ */
+let popupEnabled = true;
+
+/**
+ * Currently displayed two button dialog.
+ * @type {null}
+ */
+let twoButtonDialog = null;
+
+var messageHandler = {
+    OK: "dialog.OK",
+    CANCEL: "dialog.Cancel",
 
     /**
      * Shows a message to the user.
@@ -20,8 +36,15 @@ var messageHandler = (function(my) {
      * titleKey will be used to get a title via the translation API.
      * @param message the message to show. If a falsy value is provided,
      * messageKey will be used to get a message via the translation API.
+     * @param closeFunction function to be called after
+     * the prompt is closed (optional)
+     * @return the prompt that was created, or null
      */
-    my.openMessageDialog = function(titleKey, messageKey, title, message) {
+    openMessageDialog: function(titleKey, messageKey, title, message,
+                                closeFunction) {
+        if (!popupEnabled)
+            return null;
+
         if (!title) {
             title = APP.translation.generateTranslationHTML(titleKey);
         }
@@ -29,11 +52,15 @@ var messageHandler = (function(my) {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
-        $.prompt(message,
-            {title: title, persistent: false}
-        );
-    };
-
+        return $.prompt(message, {
+            title: title,
+            persistent: false,
+            close: function (e, v, m, f) {
+                if(closeFunction)
+                    closeFunction(e, v, m, f);
+            }
+        });
+    },
     /**
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
@@ -51,10 +78,15 @@ var messageHandler = (function(my) {
      *        the dialog is opened
      * @param defaultButton index of default button which will be activated when
      *        the user press 'enter'. Indexed from 0.
+     * @return the prompt that was created, or null
      */
-    my.openTwoButtonDialog = function(titleKey, titleString, msgKey, msgString,
+    openTwoButtonDialog: function(titleKey, titleString, msgKey, msgString,
         persistent, leftButtonKey, submitFunction, loadedFunction,
         closeFunction, focus, defaultButton) {
+
+        if (!popupEnabled || twoButtonDialog)
+            return null;
+
         var buttons = [];
 
         var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
@@ -71,17 +103,26 @@ var messageHandler = (function(my) {
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
-        $.prompt(message, {
+        twoButtonDialog = $.prompt(message, {
             title: title,
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
-            submit: submitFunction,
-            close: closeFunction
+            submit: function (e, v, m, f) {
+                twoButtonDialog = null;
+                if (submitFunction)
+                    submitFunction(e, v, m, f);
+            },
+            close: function (e, v, m, f) {
+                twoButtonDialog = null;
+                if (closeFunction)
+                    closeFunction(e, v, m, f);
+            }
         });
-    };
+        return twoButtonDialog;
+    },
 
     /**
      * Shows a message to the user with two buttons: first is given as a
@@ -97,38 +138,48 @@ var messageHandler = (function(my) {
      * @param submitFunction function to be called on submit
      * @param loadedFunction function to be called after the prompt is fully
      *        loaded
+     * @param closeFunction function to be called on dialog close
      */
-    my.openDialog = function (titleString, msgString, persistent, buttons,
-                              submitFunction, loadedFunction) {
+    openDialog: function (titleString, msgString, persistent, buttons,
+                              submitFunction, loadedFunction, closeFunction) {
+        if (!popupEnabled)
+            return;
+
         var args = {
             title: titleString,
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
             loaded: loadedFunction,
-            submit: submitFunction
+            submit: submitFunction,
+            close: closeFunction
         };
+
         if (persistent) {
             args.closeText = '';
         }
+
         return new Impromptu(msgString, args);
-    };
+    },
 
     /**
      * Closes currently opened dialog.
      */
-    my.closeDialog = function () {
+    closeDialog: function () {
         $.prompt.close();
-    };
+    },
 
     /**
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
      */
-    my.openDialogWithStates = function (statesObject, options) {
+    openDialogWithStates: function (statesObject, options) {
+        if (!popupEnabled)
+            return;
+
         return new Impromptu(statesObject, options);
-    };
+    },
 
     /**
      * Opens new popup window for given <tt>url</tt> centered over current
@@ -143,7 +194,10 @@ var messageHandler = (function(my) {
      * @returns {object} popup window object if opened successfully or undefined
      *          in case we failed to open it(popup blocked)
      */
-    my.openCenteredPopup = function (url, w, h, onPopupClosed) {
+    openCenteredPopup: function (url, w, h, onPopupClosed) {
+        if (!popupEnabled)
+            return;
+
         var l = window.screenX + (window.innerWidth / 2) - (w / 2);
         var t = window.screenY + (window.innerHeight / 2) - (h / 2);
         var popup = window.open(
@@ -158,7 +212,7 @@ var messageHandler = (function(my) {
             }, 200);
         }
         return popup;
-    };
+    },
 
     /**
      * Shows a dialog prompting the user to send an error report.
@@ -167,18 +221,18 @@ var messageHandler = (function(my) {
      * @param msgKey the text of the message
      * @param error the error that is being reported
      */
-    my.openReportDialog = function(titleKey, msgKey, error) {
-        my.openMessageDialog(titleKey, msgKey);
+    openReportDialog: function(titleKey, msgKey, error) {
+        this.openMessageDialog(titleKey, msgKey);
         console.log(error);
         //FIXME send the error to the server
-    };
+    },
 
     /**
      *  Shows an error dialog to the user.
      * @param titleKey the title of the message.
      * @param msgKey the text of the message.
      */
-    my.showError = function(titleKey, msgKey) {
+    showError: function(titleKey, msgKey) {
 
         if (!titleKey) {
             titleKey = "dialog.oops";
@@ -187,24 +241,29 @@ var messageHandler = (function(my) {
             msgKey = "dialog.defaultError";
         }
         messageHandler.openMessageDialog(titleKey, msgKey);
-    };
+    },
 
     /**
-     * Displayes notification.
-     * @param displayName display name of the participant that is associated with the notification.
-     * @param displayNameKey the key from the language file for the display name.
+     * Displays a notification.
+     * @param displayName the display name of the participant that is
+     * associated with the notification.
+     * @param displayNameKey the key from the language file for the display
+     * name. Only used if displayName i not provided.
      * @param cls css class for the notification
-     * @param messageKey the key from the language file for the text of the message.
+     * @param messageKey the key from the language file for the text of the
+     * message.
      * @param messageArguments object with the arguments for the message.
      * @param options object with language options.
      */
-    my.notify = function(displayName, displayNameKey,
-                         cls, messageKey, messageArguments, options) {
+    notify: function(displayName, displayNameKey, cls, messageKey,
+                     messageArguments, options) {
+
         if(!notificationsEnabled)
             return;
+
         var displayNameSpan = '<span class="nickname" ';
         if (displayName) {
-            displayNameSpan += ">" + displayName;
+            displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
         } else {
             displayNameSpan += "data-i18n='" + displayNameKey +
                 "'>" + APP.translation.translateString(displayNameKey);
@@ -219,33 +278,26 @@ var messageHandler = (function(my) {
             APP.translation.translateString(messageKey,
                 messageArguments) +
             '</span>', null, options);
-    };
+    },
 
     /**
      * Removes the toaster.
      * @param toasterElement
      */
-    my.remove = function(toasterElement) {
+    remove: function(toasterElement) {
         toasterElement.remove();
-    };
+    },
 
     /**
-     * Disables notifications.
+     * Enables / disables notifications.
      */
-    my.disableNotifications = function () {
-        notificationsEnabled = false;
-    };
+    enableNotifications: function (enable) {
+        notificationsEnabled = enable;
+    },
 
-    /**
-     * Enables notifications.
-     */
-    my.enableNotifications = function () {
-        notificationsEnabled = true;
-    };
-
-    return my;
-}(messageHandler || {}));
+    enablePopups: function (enable) {
+        popupEnabled = enable;
+    }
+};
 
 module.exports = messageHandler;
-
-

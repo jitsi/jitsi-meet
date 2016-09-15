@@ -1,20 +1,38 @@
 /* global $, config, interfaceConfig */
+
 /**
  * Created by hristo on 12/22/14.
  */
-var UIUtil = module.exports = {
+ var UIUtil = {
+
+    /**
+     * Returns the size of the side panel.
+     */
+     getSidePanelSize () {
+        var availableHeight = window.innerHeight;
+        var availableWidth = window.innerWidth;
+
+        var panelWidth = 200;
+        if (availableWidth * 0.2 < 200) {
+            panelWidth = availableWidth * 0.2;
+        }
+
+        return [panelWidth, availableHeight];
+     },
+
     /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function (isVisible) {
-        var PanelToggler = require("../side_pannels/SidePanelToggler");
-        if(typeof isVisible === "undefined" || isVisible === null)
-            isVisible = PanelToggler.isVisible();
-        var rightPanelWidth
-            = isVisible ? PanelToggler.getPanelSize()[0] : 0;
+    getAvailableVideoWidth: function (isSidePanelVisible) {
+        let rightPanelWidth = 0;
+
+        if (isSidePanelVisible) {
+            rightPanelWidth = UIUtil.getSidePanelSize()[0];
+        }
 
         return window.innerWidth - rightPanelWidth;
     },
+
     /**
      * Changes the style class of the element given by id.
      */
@@ -53,6 +71,16 @@ var UIUtil = module.exports = {
      */
     escapeHtml: function (unsafeText) {
         return $('<div/>').text(unsafeText).html();
+    },
+
+    /**
+     * Unescapes the given text.
+     *
+     * @param {string} safe string which contains escaped html
+     * @returns {string} unescaped html string.
+     */
+    unescapeHtml: function (safe) {
+        return $('<div />').html(safe).text();
     },
 
     imageToGrayScale: function (canvas) {
@@ -95,22 +123,92 @@ var UIUtil = module.exports = {
     },
 
     isButtonEnabled: function (name) {
-        var isEnabled = interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
-        if (name === 'prezi') {
-            return isEnabled && !config.disablePrezi;
-        } else if (name === 'recording') {
-            return isEnabled && config.enableRecording;
-        }
-        return isEnabled;
+        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
     },
 
     hideDisabledButtons: function (mappings) {
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
                 return UIUtil.isButtonEnabled(buttonName)
-                    ? null : mappings[buttonName]; })
+                    ? null : mappings[buttonName].id; })
           .filter(function (item) { return item; })
           .join(',');
         $(selector).hide();
+    },
+
+    redirect (url) {
+         window.location.href = url;
+     },
+
+     isFullScreen () {
+         return document.fullScreen
+             || document.mozFullScreen
+             || document.webkitIsFullScreen;
+     },
+
+     /**
+      * Create html attributes string out of object properties.
+      * @param {Object} attrs object with properties
+      * @returns {String} string of html element attributes
+      */
+     attrsToString: function (attrs) {
+         return Object.keys(attrs).map(
+             key => ` ${key}="${attrs[key]}"`
+         ).join(' ');
+     },
+
+    /**
+     * Checks if the given DOM element is currently visible. The offsetParent
+     * will be null if the "display" property of the element or any of its
+     * parent containers is set to "none". This method will NOT check the
+     * visibility property though.
+     * @param {el} The DOM element we'd like to check for visibility
+     */
+    isVisible(el) {
+        return (el.offsetParent !== null);
+    },
+
+    /**
+     * Shows / hides the element given by {selector} and sets a timeout if the
+     * {hideDelay} is set to a value > 0.
+     * @param selector the jquery selector of the element to show/hide.
+     * @param show a {boolean} that indicates if the element should be shown or
+     * hidden
+     * @param hideDelay the value in milliseconds to wait before hiding the
+     * element
+     */
+    animateShowElement(selector, show, hideDelay) {
+        if(show) {
+            if (!selector.is(":visible"))
+                selector.css("display", "inline-block");
+
+            selector.fadeIn(300,
+                () => {selector.css({opacity: 1});}
+            );
+
+            if (hideDelay && hideDelay > 0)
+                setTimeout(
+                    function () {
+                        selector.fadeOut(300,
+                        () => {selector.css({opacity: 0});}
+                    );
+                }, hideDelay);
+        }
+        else {
+            selector.fadeOut(300,
+                () => {selector.css({opacity: 0});}
+            );
+        }
+    },
+
+    /**
+     * Parses the given cssValue as an Integer. If the value is not a number
+     * we return 0 instead of NaN.
+     * @param cssValue the string value we obtain when querying css properties
+     */
+    parseCssInt(cssValue) {
+        return parseInt(cssValue) || 0;
     }
 };
+
+export default UIUtil;

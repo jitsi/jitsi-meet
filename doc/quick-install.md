@@ -10,8 +10,8 @@ N.B.: All commands are supposed to be run by root. If you are logged in as a reg
 
 ### Add the repository
 ```sh
-echo 'deb http://download.jitsi.org/nightly/deb unstable/' >> /etc/apt/sources.list
-wget -qO - https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add -
+echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
+wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 ```
 
 ### Update the package lists
@@ -48,8 +48,8 @@ apt-get -y install jigasi
 or
 
 ```sh
-wget https://download.jitsi.org/jigasi_1.0-1_amd64.deb
-dpkg -i jigasi_1.0-1_amd64.deb
+wget https://download.jitsi.org/unstable/jigasi_1.0-107_amd64.deb
+dpkg -i jigasi_1.0-107_amd64.deb
 ```
 
 During the installation, you will be asked to enter your SIP account and password. This account will be used to invite the other SIP participants.

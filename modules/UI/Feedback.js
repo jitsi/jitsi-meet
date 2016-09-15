@@ -1,11 +1,5 @@
-/* global $, config, interfaceConfig */
-
-/*
- * Created by Yana Stamcheva on 2/10/15.
- */
-var messageHandler = require("./util/MessageHandler");
-var callStats = require("../statistics/CallStats");
-var APP = require("../../app");
+/* global $, APP, config, interfaceConfig, JitsiMeetJS */
+import UIEvents from "../../service/UI/UIEvents";
 
 /**
  * Constructs the html for the overall feedback window.
@@ -63,6 +57,29 @@ var constructDetailedFeedbackHtml = function() {
 var feedbackWindowCallback = null;
 
 /**
+ * Shows / hides the feedback button.
+ * @private
+ */
+function _toggleFeedbackIcon() {
+    $('#feedbackButtonDiv').toggleClass("hidden");
+}
+
+/**
+ * Shows / hides the feedback button.
+ * @param {show} set to {true} to show the feedback button or to  {false}
+ * to hide it
+ * @private
+ */
+function _showFeedbackButton (show) {
+    var feedbackButton = $("#feedbackButtonDiv");
+
+    if (show)
+        feedbackButton.css("display", "block");
+    else
+        feedbackButton.css("display", "none");
+}
+
+/**
  * Defines all methods in connection to the Feedback window.
  *
  * @type {{feedbackScore: number, openFeedbackWindow: Function,
@@ -73,31 +90,62 @@ var Feedback = {
      * The feedback score. -1 indicates no score has been given for now.
      */
     feedbackScore: -1,
+
     /**
      * Initialise the Feedback functionality.
+     * @param emitter the EventEmitter to associate with the Feedback.
      */
-    init: function () {
+    init: function (emitter) {
         // CallStats is the way we send feedback, so we don't have to initialise
         // if callstats isn't enabled.
-        if (!this.isEnabled())
+        if (!APP.conference.isCallstatsEnabled())
             return;
 
-        $("div.feedbackButton").css("display", "block");
+        // If enabled property is still undefined, i.e. it hasn't been set from
+        // some other module already, we set it to true by default.
+        if (typeof this.enabled == "undefined")
+            this.enabled = true;
+
+        _showFeedbackButton(this.enabled);
+
         $("#feedbackButton").click(function (event) {
             Feedback.openFeedbackWindow();
         });
+
+        // Show / hide the feedback button whenever the film strip is
+        // shown / hidden.
+        emitter.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
+            _toggleFeedbackIcon();
+        });
     },
+    /**
+     * Enables/ disabled the feedback feature.
+     */
+    enableFeedback: function (enable) {
+        if (this.enabled !== enable)
+            _showFeedbackButton(enable);
+        this.enabled = enable;
+    },
+
     /**
      * Indicates if the feedback functionality is enabled.
      *
      * @return true if the feedback functionality is enabled, false otherwise.
      */
     isEnabled: function() {
-        // XXX callStats.isEnabled() indicates whether we are allowed to attempt
-        // to integrate callstats.io. Whether our attempt was/is/will be
-        // successful is a different question.
-        return callStats.isEnabled();
+        return this.enabled && APP.conference.isCallstatsEnabled();
     },
+
+    /**
+     * Returns true if the feedback window is currently visible and false
+     * otherwise.
+     * @return {boolean} true if the feedback window is visible, false
+     * otherwise
+     */
+    isVisible: function() {
+        return $(".feedback").is(":visible");
+    },
+
     /**
      * Opens the feedback window.
      */
@@ -122,7 +170,7 @@ var Feedback = {
                     // If the feedback is less than 3 stars we're going to
                     // ask the user for more information.
                     if (Feedback.feedbackScore > 3) {
-                        callStats.sendFeedback(Feedback.feedbackScore, "");
+                        APP.conference.sendFeedback(Feedback.feedbackScore, "");
                         if (feedbackWindowCallback)
                             feedbackWindowCallback();
                         else
@@ -163,9 +211,12 @@ var Feedback = {
                         var feedbackDetails
                             = document.getElementById("feedbackTextArea").value;
 
-                        if (feedbackDetails && feedbackDetails.length > 0)
-                            callStats.sendFeedback( Feedback.feedbackScore,
+                        if (feedbackDetails && feedbackDetails.length > 0) {
+                            JitsiMeetJS.analytics.sendEvent(
+                                'feedback.rating', Feedback.feedbackScore);
+                            APP.conference.sendFeedback( Feedback.feedbackScore,
                                                     feedbackDetails);
+                        }
 
                         if (feedbackWindowCallback)
                             feedbackWindowCallback();
@@ -191,6 +242,7 @@ var Feedback = {
                     closeText: '',
                     loaded: onLoadFunction,
                     position: {width: 500}}, null);
+        JitsiMeetJS.analytics.sendEvent('feedback.open');
     },
     /**
      * Toggles the appropriate css class for the given number of stars, to

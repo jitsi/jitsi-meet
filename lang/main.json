@@ -8,12 +8,37 @@
     "participant": "Participant",
     "me": "me",
     "speaker": "Speaker",
-    "defaultNickname": "ex. __name__",
-    "defaultPreziLink": "e.g. __url__",
+    "raisedHand": "Would like to speak",
+    "defaultNickname": "ex. Jane Pink",
+    "defaultLink": "e.g. __url__",
+    "calling": "Calling __name__ ...",
+    "userMedia": {
+      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Share Selected Device</i></b> button",
+      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
+      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
+      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
+      "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
+    },
+    "keyboardShortcuts": {
+        "keyboardShortcuts": "Keyboard shortcuts:",
+        "raiseHand": "Raise your hand.",
+        "pushToTalk": "Push to talk.",
+        "toggleScreensharing": "Switch between camera and screensharing.",
+        "toggleFilmstrip": "Show or hide the filmstrip.",
+        "toggleShortcuts": "Show or hide this help menu.",
+        "focusLocal": "Focus on the local video.",
+        "focusRemote": "Focus on one of the remote videos.",
+        "toggleChat": "Open or close the chat panel.",
+        "mute": "Mute or unmute the microphone.",
+        "videoMute": "Stop or start the local video."
+    },
     "welcomepage":{
         "go": "GO",
         "roomname": "Enter room name",
-        "disable": "Don't show this page the next time I enter",
+        "disable": "Don't show this page again",
         "feature1": {
             "title": "Simple to use",
             "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started."
@@ -51,12 +76,11 @@
         "mute": "Mute / Unmute",
         "videomute": "Start / stop camera",
         "authenticate": "Authenticate",
-        "record": "Record",
         "lock": "Lock / unlock room",
         "invite": "Invite others",
         "chat": "Open / close chat",
-        "prezi": "Share Prezi",
         "etherpad": "Shared document",
+        "sharedvideo": "Share a YouTube video",
         "sharescreen": "Share screen",
         "fullscreen": "Enter / Exit Full Screen",
         "sip": "Call SIP number",
@@ -64,7 +88,12 @@
         "hangup": "Hang Up",
         "login": "Login",
         "logout": "Logout",
-        "dialpad": "Show dialpad"
+        "dialpad": "Show dialpad",
+        "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
+        "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
+        "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
+        "cameraDisabled": "Camera is not available",
+        "micDisabled": "Microphone is not available"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
@@ -83,8 +112,14 @@
         "title": "SETTINGS",
         "update": "Update",
         "name": "Name",
-        "startAudioMuted": "start without audio",
-        "startVideoMuted": "start without video"
+        "startAudioMuted": "Start without audio",
+        "startVideoMuted": "Start without video",
+        "selectCamera": "Select camera",
+        "selectMic": "Select microphone",
+        "selectAudioOutput": "Select audio output",
+        "followMe": "Enable follow me",
+        "noDevice": "None",
+        "noPermission": "Permission to use device is not granted"
     },
     "videothumbnail":
     {
@@ -94,7 +129,8 @@
         "mute": "Participant is muted",
         "kick": "Kick out",
         "muted": "Muted",
-        "domute": "Mute"
+        "domute": "Mute",
+        "flip": "Flip"
 
     },
     "connectionindicator":
@@ -128,7 +164,8 @@
         "grantedTo": "Moderator rights granted to __to__!",
         "grantedToUnknown": "Moderator rights granted to $t(somebody)!",
         "muted": "You have started the conversation muted.",
-        "mutedTitle": "You're muted!"
+        "mutedTitle": "You're muted!",
+        "raisedHand": "Would like to speak."
     },
     "dialog": {
         "kickMessage": "Ouch! You have been kicked out of the meet!",
@@ -143,6 +180,8 @@
         "failtoinstall": "Failed to install desktop sharing extension",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
         "bridgeUnavailable": "Jitsi Videobridge is currently unavailable. Please try again later!",
+        "jicofoUnavailable": "Jicofo is currently unavailable. Please try again later!",
+        "maxUsersLimitReached": "The limit for maximum number of participants in the conference has been reached. The conference is full. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",
@@ -156,11 +195,12 @@
         "defaultError": "There was some kind of error",
         "passwordRequired": "Password required",
         "Ok": "Ok",
-        "removePreziTitle": "Remove Prezi",
-        "removePreziMsg": "Are you sure you would like to remove your Prezi?",
-        "sharePreziTitle": "Share a Prezi",
-        "sharePreziMsg": "Another participant is already sharing a Prezi. This conference allows only one Prezi at a time.",
         "Remove": "Remove",
+        "shareVideoTitle": "Share a video",
+        "shareVideoLinkError": "Please provide a correct youtube link.",
+        "removeSharedVideoTitle": "Remove shared video",
+        "removeSharedVideoMsg": "Are you sure you would like to remove your shared video?",
+        "alreadySharedVideoMsg": "Another participant is already sharing video. This conference allows only one shared video at a time.",
         "WaitingForHost": "Waiting for the host ...",
         "WaitForHostMsg": "The conference <b>__room__ </b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "IamHost": "I am the host",
@@ -172,8 +212,8 @@
         "hungUp": "You hung up",
         "joinAgain": "Join again",
         "Share": "Share",
-        "preziLinkError": "Please provide a correct prezi link.",
         "Save": "Save",
+        "recording": "Recording",
         "recordingToken": "Enter recording token",
         "Dial": "Dial",
         "sipMsg": "Enter SIP number",
@@ -196,12 +236,37 @@
         "userPassword": "user password",
         "token": "token",
         "tokenAuthFailed": "Failed to authenticate with XMPP server: invalid token",
-        "displayNameRequired": "Please enter your display name:",
+        "displayNameRequired": "Please enter your display name",
         "extensionRequired": "Extension required:",
         "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
         "feedbackQuestion": "How was your call?",
         "thankYou": "Thank you for using __appName__!",
-        "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?"
+        "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?",
+        "liveStreaming": "Live Streaming",
+        "streamKey": "Stream name/key",
+        "startLiveStreaming": "Start live streaming",
+        "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
+        "stopRecordingWarning": "Are you sure you would like to stop the recording?",
+        "stopLiveStreaming": "Stop live streaming",
+        "stopRecording": "Stop recording",
+        "doNotShowWarningAgain": "Don't show this warning again",
+        "permissionDenied": "Permission Denied",
+        "screenSharingPermissionDeniedError": "You have not granted permission to share your screen.",
+        "micErrorPresent": "There was an error connecting to your microphone.",
+        "cameraErrorPresent": "There was an error connecting to your camera.",
+        "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
+        "cameraUnknownError": "Cannot use camera for a unknown reason.",
+        "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
+        "cameraNotFoundError": "Camera was not found.",
+        "cameraConstraintFailedError": "Yor camera does not satisfy some of required constraints.",
+        "micUnknownError": "Cannot use microphone for a unknown reason.",
+        "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
+        "micNotFoundError": "Microphone was not found.",
+        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
+        "micNotSendingData": "Your microphone is not sending data. Please select another device from the settings menu or try to restart your browser / device.",
+        "goToStore": "Go to the webstore",
+        "externalInstallationTitle": "Extension required",
+        "externalInstallationMsg": "You need to install our desktop sharing extension."
     },
     "email":
     {
@@ -249,8 +314,24 @@
     },
     "recording":
     {
-        "toaster": "Currently recording!",
-        "pending": "Your recording will start as soon as another participant joins",
-        "on": "Recording has been started"
+        "pending": "Recording waiting for a participant to join...",
+        "on": "Recording",
+        "off": "Recording stopped",
+        "failedToStart": "Recording failed to start",
+        "buttonTooltip": "Start / stop recording",
+        "error": "Recording failed. Please try again.",
+        "unavailable": "The recording service is currently unavailable. Please try again later."
+    },
+    "liveStreaming":
+    {
+        "pending": "Starting Live Stream...",
+        "on": "Live Streaming",
+        "off": "Live Streaming Stopped",
+        "unavailable": "The live streaming service is currently unavailable. Please try again later.",
+        "failedToStart": "Live streaming failed to start",
+        "buttonTooltip": "Start / stop live stream",
+        "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
+        "error": "Live streaming failed. Please try again.",
+        "busy": "All recorders are currently busy. Please try again later."
     }
 }

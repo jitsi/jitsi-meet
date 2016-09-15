@@ -7,10 +7,17 @@ html, body{
     margin:0px;
     height:100%;
     color: #424242;
-    font-family:'Helvetica Neue', Helvetica, sans-serif;
+    font-size: 14px;
     font-weight: 400;
     background: #000000;
     overflow: hidden;
+}
+
+html, body, input, textarea, keygen, select, button {
+    font-family:    'open_sanslight',
+                    'Helvetica Neue',
+                    Helvetica,
+                    sans-serif !important;
 }
 
 .right-panel {
@@ -20,7 +27,7 @@ html, body{
     top: 0px;
     bottom: 0px;
     right: 0px;
-    width: 20%;
+    width: 0px;
     max-width: 200px;
     overflow: hidden;
     /* background-color:#dfebf1;*/
@@ -33,19 +40,13 @@ html, body{
     display:none;
 }
 
+#header_container {
+    z-index: 1014;
+}
+
 .toolbar_span {
     display: inline-block;
     position: relative;
-}
-
-#toolbar a.button::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    left: 40px;
-    width: 1px;
-    height: 20px;
-    background: #373737;
 }
 
 #toolbar a.button:last-child::after {
@@ -56,13 +57,20 @@ html, body{
     display: inline-block;
     position: relative;
     color: #FFFFFF;
-    top: 0;
-    padding: 10px 0;
+    top:0px;
+    padding-top: 10px;
     width: 38px;
+    height: 28px;
     cursor: pointer;
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.6);
     z-index: 1;
+    font-size: 1.44em !important;
+    vertical-align: middle;
+}
+
+.button[disabled] {
+    opacity: 0.5;
 }
 
 .toolbar_span>span {
@@ -81,18 +89,18 @@ html, body{
 }
 /*#ffde00*/
 #toolbar_button_chat.active, #contactListButton.glowing, #chatBottomButton.glowing {
-    -webkit-text-shadow:    -1px 0 10px #00ccff,
-                            0 1px 10px #00ccff,
-                            1px 0 10px #00ccff,
-                            0 -1px 10px #00ccff;
-    -moz-text-shadow:   1px 0 10px #00ccff,
-                        0 1px 10px #00ccff,
-                        1px 0 10px #00ccff,
-                        0 -1px 10px #00ccff;
-    text-shadow:    -1px 0 10px #00ccff,
-                    0 1px 10px #00ccff,
-                    1px 0 10px #00ccff,
-                    0 -1px 10px #00ccff;
+    -webkit-text-shadow:    -1px 0 10px #21B9FC,
+                            0 1px 10px #21B9FC,
+                            1px 0 10px #21B9FC,
+                            0 -1px 10px #21B9FC;
+    -moz-text-shadow:   1px 0 10px #21B9FC,
+                        0 1px 10px #21B9FC,
+                        1px 0 10px #21B9FC,
+                        0 -1px 10px #21B9FC;
+    text-shadow:    -1px 0 10px #21B9FC,
+                    0 1px 10px #21B9FC,
+                    1px 0 10px #21B9FC,
+                    0 -1px 10px #21B9FC;
 }
 
 #toolbar_button_hangup {
@@ -103,19 +111,32 @@ html, body{
 #numberOfParticipants {
     position: absolute;
     top: 0px;
-    right: -1;
+    right: -1px;
     color: white;
     width: 13px;
     height: 13px;
     line-height: 13px;
     font-weight: bold;
-    border-radius: 2px;
+    border-radius: 1px;
     font-size: 11px;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #contactListButton.active #numberOfParticipants {
-    color: #00ccff;
+    color: #21B9FC;
+}
+
+#toolbar {
+    display:inline-block;
+    position:relative;
+    top:5px;
+    margin-left:auto;
+    margin-right:auto;
+    height:38px;
+    width:auto;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 1px;
+    pointer-events: auto;
 }
 
 #toolbar_button_record {
@@ -123,53 +144,17 @@ html, body{
     -moz-transition: all .5s ease-in-out;
     transition: all .5s ease-in-out;
 }
-/*#ffde00*/
-#toolbar_button_record.active {
-    -webkit-text-shadow:    -1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-    -moz-text-shadow:   1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-    text-shadow:    -1px 0 10px #00ccff,
-    0 1px 10px #00ccff,
-    1px 0 10px #00ccff,
-    0 -1px 10px #00ccff;
-}
 
 a.button:hover,
 a.bottomToolbarButton:hover {
-    top: 0px;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    background-clip: padding-box;
-    -webkit-border-radius: 6px;
-    -webkit-background-clip: padding-box;
+    border-radius: 1px;
+    -webkit-border-radius: 1px;
 }
 
 .no-fa-video-camera, .fa-microphone-slash {
     color: #636363;
-}
-
-.header_button_separator {
-    display: inline-block;
-    position:relative;
-    top: 5;
-    width: 1px;
-    height: 20px;
-    background: #373737;
-}
-
-.bottom_button_separator {
-    display: inline-block;
-    position: relative;
-    left: 5;
-    width: 20px;
-    height: 1px;
-    background: #373737;
 }
 
 input[type='text'], input[type='password'], textarea {
@@ -210,7 +195,7 @@ button {
     height: 35px;
     padding: 0 1em 0 2em;
     position: relative;
-    border-radius: 3px;
+    border-radius: 1px;
     font-weight: bold;
     color: #fff;
     line-height: 35px;
@@ -232,6 +217,7 @@ form {
 }
 
 #downloadlog {
+    display: none;
     position: absolute;
     bottom: 5;
     left: 5;
@@ -247,7 +233,7 @@ form {
     color: rgba(255,255,255,.50);
 }
 
-div.feedbackButton {
+#feedbackButtonDiv {
     display: none;
     position: absolute;
     background-color: rgba(0,0,0,.50);
@@ -258,7 +244,11 @@ div.feedbackButton {
     left: -50px;
     z-index: 100;
     overflow: hidden;
-    transition: all .2s ease-in-out;
+    transition: all 2s ease-in-out;
+}
+
+#feedbackButtonDiv.hidden {
+    bottom: -246px;
 }
 
 div.feedbackButton:hover {
@@ -272,10 +262,9 @@ div.feedbackButton:hover {
     margin-right: 5px;
     bottom: 40px;
     width: 29px;
-    border-radius: 6px;
+    border-radius: 1px;
     color: #FFF;
-    border: 1px solid rgba(256, 256, 256, 0.2);
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.5);
     z-index: 6; /*+1 from #remoteVideos*/
 }
 
@@ -296,7 +285,7 @@ div.feedbackButton:hover {
 }
 
 .active {
-    color: #00ccff;
+    background-color: #00ccff;
 }
 
 .bottomToolbar_span>span {
@@ -349,7 +338,7 @@ div.feedbackButton:hover {
 }
 
 #toast-container.notification-bottom-right {
-    bottom: 120px;
+    bottom: 140px;
     right: 5px;
 }
 
@@ -375,16 +364,11 @@ div.feedbackButton:hover {
 }
 
 .connected {
-    color: forestgreen;
+    color: #21B9FC;
     font-size: 12px;
 }
 
-.disconnected {
-    color: darkred;
-    font-size: 12px;
-}
-
-.lastN {
+.lastN, .disconnected {
     color: #a3a3a3;
     font-size: 12px;
 }

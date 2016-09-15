@@ -1,97 +1,30 @@
-/* global $, APP, Strophe, interfaceConfig */
+/* global $, APP, interfaceConfig */
 /* jshint -W101 */
-var Avatar = require("../avatar/Avatar");
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
-var UIUtil = require("../util/UIUtil");
-var UIEvents = require("../../../service/UI/UIEvents");
-var xmpp = require("../../xmpp/xmpp");
-var ToolbarToggler = require("../toolbars/ToolbarToggler");
 
-// FIXME: With Temasys we have to re-select everytime
-//var video = $('#largeVideo');
+import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
+import LargeContainer from './LargeContainer';
+import FilmStrip from './FilmStrip';
+import Avatar from "../avatar/Avatar";
+import {createDeferred} from '../../util/helpers';
 
-var currentVideoWidth = null;
-var currentVideoHeight = null;
-// By default we use camera
-var getVideoSize = getCameraVideoSize;
-var getVideoPosition = getCameraVideoPosition;
-/**
- * The small video instance that is displayed in the large video
- * @type {SmallVideo}
- */
-var currentSmallVideo = null;
-/**
- * Indicates whether the large video is enabled.
- * @type {boolean}
- */
-var isEnabled = true;
-/**
- * Current large video state.
- * Possible values - video, prezi or etherpad.
- * @type {string}
- */
-var state = "video";
+const FADE_DURATION_MS = 300;
+
+export const VIDEO_CONTAINER_TYPE = "camera";
 
 /**
- * Returns the html element associated with the passed state of large video
- * @param state the state.
- * @returns {JQuery|*|jQuery|HTMLElement} the container.
+ * Get stream id.
+ * @param {JitsiTrack?} stream
  */
-function getContainerByState(state)
-{
-    var selector = null;
-    switch (state)
-    {
-        case "video":
-            selector = "#largeVideoWrapper";
-            break;
-        case "etherpad":
-            selector = "#etherpad>iframe";
-            break;
-        case "prezi":
-            selector = "#presentation>iframe";
-            break;
+function getStreamOwnerId(stream) {
+    if (!stream) {
+        return;
     }
-    return (selector !== null)? $(selector) : null;
-}
-
-/**
- * Sets the size and position of the given video element.
- *
- * @param video the video element to position
- * @param width the desired video width
- * @param height the desired video height
- * @param horizontalIndent the left and right indent
- * @param verticalIndent the top and bottom indent
- */
-function positionVideo(video,
-                       width,
-                       height,
-                       horizontalIndent,
-                       verticalIndent,
-                       animate) {
-    if (animate) {
-        video.animate({
-                width: width,
-                height: height,
-                top: verticalIndent,
-                bottom: verticalIndent,
-                left: horizontalIndent,
-                right: horizontalIndent
-            },
-            {
-                queue: false,
-                duration: 500
-            });
+    if (stream.isLocal()) { // local stream doesn't have method "getParticipantId"
+        return APP.conference.getMyUserId();
     } else {
-        video.width(width);
-        video.height(height);
-        video.css({  top: verticalIndent + 'px',
-            bottom: verticalIndent + 'px',
-            left: horizontalIndent + 'px',
-            right: horizontalIndent + 'px'});
+        return stream.getParticipantId();
     }
-
 }
 
 /**
@@ -105,80 +38,25 @@ function getDesktopVideoSize(videoWidth,
                              videoHeight,
                              videoSpaceWidth,
                              videoSpaceHeight) {
-    if (!videoWidth)
-        videoWidth = currentVideoWidth;
-    if (!videoHeight)
-        videoHeight = currentVideoHeight;
 
-    var aspectRatio = videoWidth / videoHeight;
+    let aspectRatio = videoWidth / videoHeight;
 
-    var availableWidth = Math.max(videoWidth, videoSpaceWidth);
-    var availableHeight = Math.max(videoHeight, videoSpaceHeight);
+    let availableWidth = Math.max(videoWidth, videoSpaceWidth);
+    let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    var filmstrip = $("#remoteVideos");
+    videoSpaceHeight -= FilmStrip.getFilmStripHeight();
 
-    if (!filmstrip.hasClass("hidden"))
-        videoSpaceHeight -= filmstrip.outerHeight();
-
-    if (availableWidth / aspectRatio >= videoSpaceHeight)
-    {
+    if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;
         availableWidth = availableHeight * aspectRatio;
     }
 
-    if (availableHeight * aspectRatio >= videoSpaceWidth)
-    {
+    if (availableHeight * aspectRatio >= videoSpaceWidth) {
         availableWidth = videoSpaceWidth;
         availableHeight = availableWidth / aspectRatio;
     }
 
-    return [availableWidth, availableHeight];
-}
-
-
-/**
- * Returns an array of the video horizontal and vertical indents,
- * so that if fits its parent.
- *
- * @return an array with 2 elements, the horizontal indent and the vertical
- * indent
- */
-function getCameraVideoPosition(videoWidth,
-                                videoHeight,
-                                videoSpaceWidth,
-                                videoSpaceHeight) {
-    // Parent height isn't completely calculated when we position the video in
-    // full screen mode and this is why we use the screen height in this case.
-    // Need to think it further at some point and implement it properly.
-    var isFullScreen = document.fullScreen ||
-        document.mozFullScreen ||
-        document.webkitIsFullScreen;
-    if (isFullScreen)
-        videoSpaceHeight = window.innerHeight;
-
-    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
-    var verticalIndent = (videoSpaceHeight - videoHeight) / 2;
-
-    return [horizontalIndent, verticalIndent];
-}
-
-/**
- * Returns an array of the video horizontal and vertical indents.
- * Centers horizontally and top aligns vertically.
- *
- * @return an array with 2 elements, the horizontal indent and the vertical
- * indent
- */
-function getDesktopVideoPosition(videoWidth,
-                                 videoHeight,
-                                 videoSpaceWidth,
-                                 videoSpaceHeight) {
-
-    var horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
-
-    var verticalIndent = 0;// Top aligned
-
-    return [horizontalIndent, verticalIndent];
+    return [ availableWidth, availableHeight ];
 }
 
 
@@ -198,15 +76,10 @@ function getCameraVideoSize(videoWidth,
                             videoSpaceWidth,
                             videoSpaceHeight) {
 
-    if (!videoWidth)
-        videoWidth = currentVideoWidth;
-    if (!videoHeight)
-        videoHeight = currentVideoHeight;
+    let aspectRatio = videoWidth / videoHeight;
 
-    var aspectRatio = videoWidth / videoHeight;
-
-    var availableWidth = videoWidth;
-    var availableHeight = videoHeight;
+    let availableWidth = videoWidth;
+    let availableHeight = videoHeight;
 
     if (interfaceConfig.VIDEO_LAYOUT_FIT == 'height') {
         availableHeight = videoSpaceHeight;
@@ -232,493 +105,571 @@ function getCameraVideoSize(videoWidth,
     }
 
 
-    return [availableWidth, availableHeight];
+    return [ availableWidth, availableHeight ];
 }
 
 /**
- * Updates the src of the active speaker avatar
- * @param jid of the current active speaker
+ * Returns an array of the video horizontal and vertical indents,
+ * so that if fits its parent.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
  */
-function updateActiveSpeakerAvatarSrc() {
-    var avatar = $("#activeSpeakerAvatar")[0];
-    var jid = currentSmallVideo.peerJid;
-    var url = Avatar.getAvatarUrl(jid);
-    if (avatar.src === url)
-        return;
-    if (jid) {
-        avatar.src = url;
-        currentSmallVideo.showAvatar();
+function getCameraVideoPosition(videoWidth,
+                                videoHeight,
+                                videoSpaceWidth,
+                                videoSpaceHeight) {
+    // Parent height isn't completely calculated when we position the video in
+    // full screen mode and this is why we use the screen height in this case.
+    // Need to think it further at some point and implement it properly.
+    if (UIUtil.isFullScreen()) {
+        videoSpaceHeight = window.innerHeight;
     }
+
+    let horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
+    let verticalIndent = (videoSpaceHeight - videoHeight) / 2;
+
+    return { horizontalIndent, verticalIndent };
 }
 
 /**
- * Change the video source of the large video.
- * @param isVisible
+ * Returns an array of the video horizontal and vertical indents.
+ * Centers horizontally and top aligns vertically.
+ *
+ * @return an array with 2 elements, the horizontal indent and the vertical
+ * indent
  */
-function changeVideo(isVisible) {
+function getDesktopVideoPosition(videoWidth,
+                                 videoHeight,
+                                 videoSpaceWidth,
+                                 videoSpaceHeight) {
 
-    if (!currentSmallVideo) {
-        console.error("Unable to change large video - no 'currentSmallVideo'");
-        return;
-    }
+    let horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
 
-    updateActiveSpeakerAvatarSrc();
-    var largeVideoElement = $('#largeVideo')[0];
+    let verticalIndent = 0;// Top aligned
 
-    APP.RTC.setVideoSrc(largeVideoElement, currentSmallVideo.getSrc());
-
-    var flipX = currentSmallVideo.flipX;
-
-    largeVideoElement.style.transform = flipX ? "scaleX(-1)" : "none";
-
-    LargeVideo.updateVideoSizeAndPosition(currentSmallVideo.getVideoType());
-
-    // Only if the large video is currently visible.
-    if (isVisible) {
-        LargeVideo.VideoLayout.largeVideoUpdated(currentSmallVideo);
-
-        $('#largeVideoWrapper').fadeTo(300, 1);
-    }
+    return { horizontalIndent, verticalIndent };
 }
 
 /**
- * Creates the html elements for the large video.
+ * Container for user video.
  */
-function createLargeVideoHTML()
-{
-    var html = '<div id="largeVideoContainer" class="videocontainer">';
-    html += '<div id="presentation"></div>' +
-            '<div id="etherpad"></div>' +
-            '<a target="_new"><div class="watermark leftwatermark"></div></a>' +
-            '<a target="_new"><div class="watermark rightwatermark"></div></a>' +
-            '<a class="poweredby" href="http://jitsi.org" target="_new" >' +
-                '<span data-i18n="poweredby"></span> jitsi.org' +
-            '</a>'+
-            '<div id="activeSpeaker">' +
-                '<img id="activeSpeakerAvatar" src=""/>' +
-                '<canvas id="activeSpeakerAudioLevel"></canvas>' +
-            '</div>' +
-            '<div id="largeVideoWrapper">' +
-                '<video id="largeVideo" muted="true"' +
-                        'autoplay oncontextmenu="return false;"></video>' +
-            '</div id="largeVideoWrapper">' +
-            '<span id="videoConnectionMessage"></span>';
-    html += '</div>';
-    $(html).prependTo("#videospace");
-
-    if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-        var leftWatermarkDiv
-            = $("#largeVideoContainer div[class='watermark leftwatermark']");
-
-        leftWatermarkDiv.css({display: 'block'});
-        leftWatermarkDiv.parent().get(0).href
-            = interfaceConfig.JITSI_WATERMARK_LINK;
+class VideoContainer extends LargeContainer {
+    // FIXME: With Temasys we have to re-select everytime
+    get $video () {
+        return $('#largeVideo');
     }
 
-    if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-        var rightWatermarkDiv
-            = $("#largeVideoContainer div[class='watermark rightwatermark']");
-
-        rightWatermarkDiv.css({display: 'block'});
-        rightWatermarkDiv.parent().get(0).href
-            = interfaceConfig.BRAND_WATERMARK_LINK;
-        rightWatermarkDiv.get(0).style.backgroundImage
-            = "url(images/rightwatermark.png)";
+    get id () {
+        return getStreamOwnerId(this.stream);
     }
 
-    if (interfaceConfig.SHOW_POWERED_BY) {
-        $("#largeVideoContainer>a[class='poweredby']").css({display: 'block'});
+    constructor (onPlay) {
+        super();
+        this.stream = null;
+        this.videoType = null;
+        this.localFlipX = true;
+
+        this.isVisible = false;
+
+        this.$avatar = $('#dominantSpeaker');
+        this.$wrapper = $('#largeVideoWrapper');
+
+        this.avatarHeight = $("#dominantSpeakerAvatar").height();
+
+        // This does not work with Temasys plugin - has to be a property to be
+        // copied between new <object> elements
+        //this.$video.on('play', onPlay);
+        this.$video[0].onplay = onPlay;
     }
 
-    if (!RTCBrowserType.isIExplorer()) {
-        $('#largeVideo').volume = 0;
-    }
-}
-
-var LargeVideo = {
-
-    init: function (VideoLayout, emitter) {
-        if(!isEnabled)
-            return;
-        createLargeVideoHTML();
-
-        this.VideoLayout = VideoLayout;
-        this.eventEmitter = emitter;
-        this.eventEmitter.emit(UIEvents.LARGEVIDEO_INIT);
-        var self = this;
-        // Listen for large video size updates
-        var largeVideo = $('#largeVideo')[0];
-        var onplaying = function (arg1, arg2, arg3) {
-            // re-select
-            if (RTCBrowserType.isTemasysPluginUsed())
-                largeVideo = $('#largeVideo')[0];
-            currentVideoWidth = largeVideo.videoWidth;
-            currentVideoHeight = largeVideo.videoHeight;
-            self.position(currentVideoWidth, currentVideoHeight);
+    /**
+     * Get size of video element.
+     * @returns {{width, height}}
+     */
+    getStreamSize () {
+        let video = this.$video[0];
+        return {
+            width: video.videoWidth,
+            height: video.videoHeight
         };
-        largeVideo.onplaying = onplaying;
-    },
+    }
+
     /**
-     * Indicates if the large video is currently visible.
-     *
-     * @return <tt>true</tt> if visible, <tt>false</tt> - otherwise
+     * Calculate optimal video size for specified container size.
+     * @param {number} containerWidth container width
+     * @param {number} containerHeight container height
+     * @returns {{availableWidth, availableHeight}}
      */
-    isLargeVideoVisible: function() {
-        return $('#largeVideoWrapper').is(':visible');
-    },
-    /**
-     * Returns <tt>true</tt> if the user is currently displayed on large video.
-     */
-    isCurrentlyOnLarge: function (resourceJid) {
-        return currentSmallVideo && resourceJid &&
-            currentSmallVideo.getResourceJid() === resourceJid;
-    },
-    /**
-     * Updates the large video with the given new video source.
-     */
-    updateLargeVideo: function (resourceJid, forceUpdate) {
-        if(!isEnabled)
-            return;
-        var newSmallVideo = this.VideoLayout.getSmallVideo(resourceJid);
-        console.info('hover in ' + resourceJid + ', video: ', newSmallVideo);
-
-        if (!newSmallVideo) {
-            console.error("Small video not found for: " + resourceJid);
-            return;
-        }
-
-        if (!LargeVideo.isCurrentlyOnLarge(resourceJid) || forceUpdate) {
-            $('#activeSpeaker').css('visibility', 'hidden');
-
-            var oldSmallVideo = null;
-            if (currentSmallVideo) {
-                oldSmallVideo = currentSmallVideo;
-            }
-            currentSmallVideo = newSmallVideo;
-
-            var oldJid = null;
-            if (oldSmallVideo)
-                oldJid = oldSmallVideo.peerJid;
-            if (oldJid !== resourceJid) {
-                // we want the notification to trigger even if userJid is undefined,
-                // or null.
-                this.eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, resourceJid);
-            }
-            // We are doing fadeOut/fadeIn animations on parent div which wraps
-            // largeVideo, because when Temasys plugin is in use it replaces
-            // <video> elements with plugin <object> tag. In Safari jQuery is
-            // unable to store values on this plugin object which breaks all
-            // animation effects performed on it directly.
-            //
-            // If for any reason large video was hidden before calling fadeOut
-            // changeVideo will never be called, so we call show() in chain just
-            // to be sure
-            $('#largeVideoWrapper').show().fadeTo(300, 0,
-                changeVideo.bind($('#largeVideo'), this.isLargeVideoVisible()));
+    getVideoSize (containerWidth, containerHeight) {
+        let { width, height } = this.getStreamSize();
+        if (this.stream && this.isScreenSharing()) {
+            return getDesktopVideoSize( width,
+                                        height,
+                                        containerWidth,
+                                        containerHeight);
         } else {
-            if (currentSmallVideo) {
-                currentSmallVideo.showAvatar();
-            }
+            return getCameraVideoSize(  width,
+                                        height,
+                                        containerWidth,
+                                        containerHeight);
         }
-
-    },
+    }
 
     /**
-     * Shows/hides the large video.
+     * Calculate optimal video position (offset for top left corner)
+     * for specified video size and container size.
+     * @param {number} width video width
+     * @param {number} height video height
+     * @param {number} containerWidth container width
+     * @param {number} containerHeight container height
+     * @returns {{horizontalIndent, verticalIndent}}
      */
-    setLargeVideoVisible: function(isVisible) {
-        if(!isEnabled)
-            return;
-        if (isVisible) {
-            $('#largeVideoWrapper').css({visibility: 'visible'});
-            $('.watermark').css({visibility: 'visible'});
-            if(currentSmallVideo)
-                currentSmallVideo.enableDominantSpeaker(true);
-        }
-        else {
-            $('#largeVideoWrapper').css({visibility: 'hidden'});
-            $('#activeSpeaker').css('visibility', 'hidden');
-            $('.watermark').css({visibility: 'hidden'});
-            if(currentSmallVideo)
-                currentSmallVideo.enableDominantSpeaker(false);
-        }
-    },
-    onVideoTypeChanged: function (resourceJid, newVideoType) {
-        if (!isEnabled)
-            return;
-        if (LargeVideo.isCurrentlyOnLarge(resourceJid))
-        {
-            LargeVideo.updateVideoSizeAndPosition(newVideoType);
-
-            this.position(null, null, null, null, true);
-        }
-    },
-    /**
-     * Positions the large video.
-     *
-     * @param videoWidth the stream video width
-     * @param videoHeight the stream video height
-     */
-    position: function (videoWidth, videoHeight,
-                        videoSpaceWidth, videoSpaceHeight, animate) {
-        if(!isEnabled)
-            return;
-        if(!videoSpaceWidth)
-            videoSpaceWidth = $('#videospace').width();
-        if(!videoSpaceHeight)
-            videoSpaceHeight = window.innerHeight;
-
-        var videoSize = getVideoSize(videoWidth,
-            videoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight);
-
-        var largeVideoWidth = videoSize[0];
-        var largeVideoHeight = videoSize[1];
-
-        var videoPosition = getVideoPosition(largeVideoWidth,
-            largeVideoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight);
-
-        var horizontalIndent = videoPosition[0];
-        var verticalIndent = videoPosition[1];
-
-        positionVideo($('#largeVideoWrapper'),
-            largeVideoWidth,
-            largeVideoHeight,
-            horizontalIndent, verticalIndent, animate);
-    },
-    /**
-     * Resizes the large html elements.
-     *
-     * @param animate boolean property that indicates whether the resize should
-     * be animated or not.
-     * @param isSideBarVisible boolean property that indicates whether the chat
-     * area is displayed or not.
-     * If that parameter is null the method will check the chat panel
-     * visibility.
-     * @param completeFunction a function to be called when the video space is
-     * resized
-     * @returns {*[]} array with the current width and height values of the
-     * largeVideo html element.
-     */
-    resize: function (animate, isSideBarVisible, completeFunction) {
-        if(!isEnabled)
-            return;
-        var availableHeight = window.innerHeight;
-        var availableWidth = UIUtil.getAvailableVideoWidth(isSideBarVisible);
-
-        if (availableWidth < 0 || availableHeight < 0) return;
-
-        var avatarSize = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE;
-        var top = availableHeight / 2 - avatarSize / 4 * 3;
-        $('#activeSpeaker').css('top', top);
-
-        this.VideoLayout
-            .resizeVideoSpace(animate, isSideBarVisible, completeFunction);
-        if(animate) {
-            $('#largeVideoContainer').animate({
-                    width: availableWidth,
-                    height: availableHeight
-                },
-                {
-                    queue: false,
-                    duration: 500
-                });
+    getVideoPosition (width, height, containerWidth, containerHeight) {
+        if (this.stream && this.isScreenSharing()) {
+            return getDesktopVideoPosition( width,
+                                            height,
+                                            containerWidth,
+                                            containerHeight);
         } else {
-            $('#largeVideoContainer').width(availableWidth);
-            $('#largeVideoContainer').height(availableHeight);
+            return getCameraVideoPosition(  width,
+                                            height,
+                                            containerWidth,
+                                            containerHeight);
         }
-        return [availableWidth, availableHeight];
-    },
-    /**
-     * Resizes the large video.
-     *
-     * @param isSideBarVisible indicating if the side bar is visible
-     * @param completeFunction the callback function to be executed after the
-     * resize
-     */
-    resizeVideoAreaAnimated: function (isSideBarVisible, completeFunction) {
-        if(!isEnabled)
-            return;
-        var size = this.resize(true, isSideBarVisible, completeFunction);
-        this.position(null, null, size[0], size[1], true);
-    },
-    /**
-     * Updates the video size and position.
-     *
-     * @param videoType the video type indicating if the stream is of type
-     * desktop or web cam
-     */
-    updateVideoSizeAndPosition: function (videoType) {
-        if (!videoType)
-            videoType = currentSmallVideo.getVideoType();
+    }
 
-        var isDesktop = videoType === 'screen';
+    resize (containerWidth, containerHeight, animate = false) {
+        let [width, height]
+            = this.getVideoSize(containerWidth, containerHeight);
+        let { horizontalIndent, verticalIndent }
+            = this.getVideoPosition(width, height,
+                                    containerWidth, containerHeight);
 
-        // Change the way we'll be measuring and positioning large video
-        getVideoSize = isDesktop ? getDesktopVideoSize : getCameraVideoSize;
-        getVideoPosition = isDesktop ? getDesktopVideoPosition :
-            getCameraVideoPosition;
-    },
-    getResourceJid: function () {
-        return currentSmallVideo ? currentSmallVideo.getResourceJid() : null;
-    },
-    updateAvatar: function (resourceJid) {
-        if(!isEnabled)
-            return;
-        if (resourceJid === this.getResourceJid()) {
-            updateActiveSpeakerAvatarSrc();
+        // update avatar position
+        let top = containerHeight / 2 - this.avatarHeight / 4 * 3;
+
+        this.$avatar.css('top', top);
+
+        this.$wrapper.animate({
+            width: width,
+            height: height,
+
+            top: verticalIndent,
+            bottom: verticalIndent,
+
+            left: horizontalIndent,
+            right: horizontalIndent
+        }, {
+            queue: false,
+            duration: animate ? 500 : 0
+        });
+    }
+
+    /**
+     * Update video stream.
+     * @param {JitsiTrack?} stream new stream
+     * @param {string} videoType video type
+     */
+    setStream (stream, videoType) {
+        // detach old stream
+        if (this.stream) {
+            this.stream.detach(this.$video[0]);
         }
-    },
-    showAvatar: function (resourceJid, show) {
-        if (!isEnabled)
+
+        this.stream = stream;
+        this.videoType = videoType;
+
+        if (!stream) {
             return;
-        if (this.getResourceJid() === resourceJid && state === "video") {
-            $("#largeVideoWrapper")
-                .css("visibility", show ? "hidden" : "visible");
-            $('#activeSpeaker').css("visibility", show ? "visible" : "hidden");
-            return true;
         }
+
+        stream.attach(this.$video[0]);
+        let flipX = stream.isLocal() && this.localFlipX;
+        this.$video.css({
+            transform: flipX ? 'scaleX(-1)' : 'none'
+        });
+    }
+
+    /**
+     * Changes the flipX state of the local video.
+     * @param val {boolean} true if flipped.
+     */
+    setLocalFlipX(val) {
+        this.localFlipX = val;
+        if(!this.$video || !this.stream || !this.stream.isLocal())
+            return;
+        this.$video.css({
+            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
+        });
+    }
+
+    /**
+     * Check if current video stream is screen sharing.
+     * @returns {boolean}
+     */
+    isScreenSharing () {
+        return this.videoType === 'desktop';
+    }
+
+    /**
+     * Show or hide user avatar.
+     * @param {boolean} show
+     */
+    showAvatar (show) {
+        this.$avatar.css("visibility", show ? "visible" : "hidden");
+    }
+
+    // We are doing fadeOut/fadeIn animations on parent div which wraps
+    // largeVideo, because when Temasys plugin is in use it replaces
+    // <video> elements with plugin <object> tag. In Safari jQuery is
+    // unable to store values on this plugin object which breaks all
+    // animation effects performed on it directly.
+
+    show () {
+        // its already visible
+        if (this.isVisible) {
+            return Promise.resolve();
+        }
+
+        let $wrapper = this.$wrapper;
+        return new Promise((resolve) => {
+            this.$wrapper.css('visibility', 'visible').fadeTo(
+                FADE_DURATION_MS,
+                1,
+                () => {
+                    this.isVisible = true;
+                    resolve();
+                }
+            );
+        });
+    }
+
+    hide () {
+        // as the container is hidden/replaced by another container
+        // hide its avatar
+        this.showAvatar(false);
+
+        // its already hidden
+        if (!this.isVisible) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            this.$wrapper.fadeTo(FADE_DURATION_MS, 0, () => {
+                this.$wrapper.css('visibility', 'hidden');
+                this.isVisible = false;
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * @return {boolean} switch on dominant speaker event if on stage.
+     */
+    stayOnStage () {
         return false;
-    },
-    /**
-     * Disables the large video
-     */
-    disable: function () {
-        isEnabled = false;
-    },
-    /**
-     * Enables the large video
-     */
-    enable: function () {
-        isEnabled = true;
-    },
-    /**
-     * Returns true if the video is enabled.
-     */
-    isEnabled: function () {
-        return isEnabled;
-    },
-    /**
-     * Creates the iframe used by the etherpad
-     * @param src the value for src attribute
-     * @param onloadHandler handler executed when the iframe loads it content
-     * @returns {HTMLElement} the iframe
-     */
-    createEtherpadIframe: function (src, onloadHandler) {
-        if(!isEnabled)
-            return;
+    }
+}
 
-        var etherpadIFrame = document.createElement('iframe');
-        etherpadIFrame.src = src;
-        etherpadIFrame.frameBorder = 0;
-        etherpadIFrame.scrolling = "no";
-        etherpadIFrame.width = $('#largeVideoContainer').width() || 640;
-        etherpadIFrame.height = $('#largeVideoContainer').height() || 480;
-        etherpadIFrame.setAttribute('style', 'visibility: hidden;');
+/**
+ * Manager for all Large containers.
+ */
+export default class LargeVideoManager {
+    constructor () {
+        this.containers = {};
 
-        document.getElementById('etherpad').appendChild(etherpadIFrame);
+        this.state = VIDEO_CONTAINER_TYPE;
+        this.videoContainer = new VideoContainer(
+            () => this.resizeContainer(VIDEO_CONTAINER_TYPE));
+        this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
-        etherpadIFrame.onload = onloadHandler;
+        // use the same video container to handle and desktop tracks
+        this.addContainer("desktop", this.videoContainer);
 
-        return etherpadIFrame;
-    },
-    /**
-     * Changes the state of the large video.
-     * Possible values - video, prezi, etherpad.
-     * @param newState - the new state
-     */
-    setState: function (newState) {
-        if(state === newState)
-            return;
-        var currentContainer = getContainerByState(state);
-        if(!currentContainer)
-            return;
+        this.width = 0;
+        this.height = 0;
 
-        var self = this;
-        var oldState = state;
+        this.$container = $('#largeVideoContainer');
 
-        switch (newState)
-        {
-            case "etherpad":
-                $('#activeSpeaker').css('visibility', 'hidden');
-                currentContainer.fadeOut(300, function () {
-                    if (oldState === "prezi") {
-                        currentContainer.css({opacity: '0'});
-                        $('#reloadPresentation').css({display: 'none'});
-                    }
-                    else {
-                        self.setLargeVideoVisible(false);
-                    }
-                });
+        this.$container.css({
+            display: 'inline-block'
+        });
 
-                $('#etherpad>iframe').fadeIn(300, function () {
-                    document.body.style.background = '#eeeeee';
-                    $('#etherpad>iframe').css({visibility: 'visible'});
-                    $('#etherpad').css({zIndex: 2});
-                });
-                break;
-            case "prezi":
-                var prezi = $('#presentation>iframe');
-                currentContainer.fadeOut(300, function() {
-                    document.body.style.background = 'black';
-                });
-                prezi.fadeIn(300, function() {
-                    prezi.css({opacity:'1'});
-                    ToolbarToggler.dockToolbar(true);//fix that
-                    self.setLargeVideoVisible(false);
-                    $('#etherpad>iframe').css({visibility: 'hidden'});
-                    $('#etherpad').css({zIndex: 0});
-                });
-                $('#activeSpeaker').css('visibility', 'hidden');
-                break;
+        if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+            let leftWatermarkDiv
+                = this.$container.find("div.watermark.leftwatermark");
 
-            case "video":
-                currentContainer.fadeOut(300, function () {
-                    $('#presentation>iframe').css({opacity:'0'});
-                    $('#reloadPresentation').css({display:'none'});
-                    $('#etherpad>iframe').css({visibility: 'hidden'});
-                    $('#etherpad').css({zIndex: 0});
-                    document.body.style.background = 'black';
-                    ToolbarToggler.dockToolbar(false);//fix that
-                });
-                $('#largeVideoWrapper').fadeIn(300, function () {
-                    self.setLargeVideoVisible(true);
-                });
-                break;
+            leftWatermarkDiv.css({display: 'block'});
+
+            leftWatermarkDiv.parent().attr(
+                'href', interfaceConfig.JITSI_WATERMARK_LINK);
         }
 
-        state = newState;
+        if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+            let rightWatermarkDiv
+                = this.$container.find("div.watermark.rightwatermark");
 
-    },
+            rightWatermarkDiv.css({
+                display: 'block',
+                backgroundImage: 'url(images/rightwatermark.png)'
+            });
+
+            rightWatermarkDiv.parent().attr(
+                'href', interfaceConfig.BRAND_WATERMARK_LINK);
+        }
+
+        if (interfaceConfig.SHOW_POWERED_BY) {
+            this.$container.children("a.poweredby").css({display: 'block'});
+        }
+
+        this.$container.hover(
+            e => this.onHoverIn(e),
+            e => this.onHoverOut(e)
+        );
+    }
+
+    onHoverIn (e) {
+        if (!this.state) {
+            return;
+        }
+        let container = this.getContainer(this.state);
+        container.onHoverIn(e);
+    }
+
+    onHoverOut (e) {
+        if (!this.state) {
+            return;
+        }
+        let container = this.getContainer(this.state);
+        container.onHoverOut(e);
+    }
+
+    get id () {
+        let container = this.getContainer(this.state);
+        return container.id;
+    }
+
+    scheduleLargeVideoUpdate () {
+        if (this.updateInProcess || !this.newStreamData) {
+            return;
+        }
+
+        this.updateInProcess = true;
+
+        let container = this.getContainer(this.state);
+
+        // Include hide()/fadeOut only if we're switching between users
+        let preUpdate;
+        if (this.newStreamData.id != this.id) {
+            preUpdate = container.hide();
+        } else {
+            preUpdate = Promise.resolve();
+        }
+
+        preUpdate.then(() => {
+            let {id, stream, videoType, resolve} = this.newStreamData;
+            this.newStreamData = null;
+
+            console.info("hover in %s", id);
+            this.state = videoType;
+            let container = this.getContainer(this.state);
+            container.setStream(stream, videoType);
+
+            // change the avatar url on large
+            this.updateAvatar(Avatar.getAvatarUrl(id));
+
+            // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
+            // its stream whether exist and is muted to set isVideoMuted
+            // in rest of the cases it is false
+            let isVideoMuted = false;
+            if (videoType == VIDEO_CONTAINER_TYPE)
+                isVideoMuted = stream ? stream.isMuted() : true;
+
+            // show the avatar on large if needed
+            container.showAvatar(isVideoMuted);
+
+            let promise;
+
+            // do not show stream if video is muted
+            // but we still should show watermark
+            if (isVideoMuted) {
+                this.showWatermark(true);
+                promise = Promise.resolve();
+            } else {
+                promise = container.show();
+            }
+
+            // resolve updateLargeVideo promise after everything is done
+            promise.then(resolve);
+
+            return promise;
+        }).then(() => {
+            // after everything is done check again if there are any pending
+            // new streams.
+            this.updateInProcess = false;
+            this.scheduleLargeVideoUpdate();
+        });
+    }
+
     /**
-     * Returns the current state of the large video.
-     * @returns {string} the current state - video, prezi or etherpad.
+     * Update large video.
+     * Switches to large video even if previously other container was visible.
+     * @param userID the userID of the participant associated with the stream
+     * @param {JitsiTrack?} stream new stream
+     * @param {string?} videoType new video type
+     * @returns {Promise}
      */
-    getState: function () {
-        return state;
-    },
+    updateLargeVideo (userID, stream, videoType) {
+        if (this.newStreamData) {
+            this.newStreamData.reject();
+        }
+
+        this.newStreamData = createDeferred();
+        this.newStreamData.id = userID;
+        this.newStreamData.stream = stream;
+        this.newStreamData.videoType = videoType;
+
+        this.scheduleLargeVideoUpdate();
+
+        return this.newStreamData.promise;
+    }
+
     /**
-     * Sets hover handlers for the large video container div.
-     *
-     * @param inHandler
-     * @param outHandler
+     * Update container size optionally taking side bar size into account.
+     * @param {boolean} isSideBarVisible if side bar is visible.
      */
-    setHover: function(inHandler, outHandler)
-    {
-        $('#largeVideoContainer').hover(inHandler, outHandler);
-    },
+    updateContainerSize (isSideBarVisible) {
+        this.width = UIUtil.getAvailableVideoWidth(isSideBarVisible);
+        this.height = window.innerHeight;
+    }
+
+    /**
+     * Resize Large container of specified type.
+     * @param {string} type type of container which should be resized.
+     * @param {boolean} [animate=false] if resize process should be animated.
+     */
+    resizeContainer (type, animate = false) {
+        let container = this.getContainer(type);
+        container.resize(this.width, this.height, animate);
+    }
+
+    /**
+     * Resize all Large containers.
+     * @param {boolean} animate if resize process should be animated.
+     */
+    resize (animate) {
+        // resize all containers
+        Object.keys(this.containers)
+            .forEach(type => this.resizeContainer(type, animate));
+
+        this.$container.animate({
+            width: this.width,
+            height: this.height
+        }, {
+            queue: false,
+            duration: animate ? 500 : 0
+        });
+    }
 
     /**
      * Enables/disables the filter indicating a video problem to the user.
      *
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
-    enableVideoProblemFilter: function (enable) {
-        $("#largeVideo").toggleClass("videoProblemFilter", enable);
+    enableVideoProblemFilter (enable) {
+        let container = this.getContainer(this.state);
+        container.$video.toggleClass("videoProblemFilter", enable);
     }
-};
 
-module.exports = LargeVideo;
+    /**
+     * Updates the src of the dominant speaker avatar
+     */
+    updateAvatar (avatarUrl) {
+        $("#dominantSpeakerAvatar").attr('src', avatarUrl);
+    }
+
+    /**
+     * Show or hide watermark.
+     * @param {boolean} show
+     */
+    showWatermark (show) {
+        $('.watermark').css('visibility', show ? 'visible' : 'hidden');
+    }
+
+    /**
+     * Add container of specified type.
+     * @param {string} type container type
+     * @param {LargeContainer} container container to add.
+     */
+    addContainer (type, container) {
+        if (this.containers[type]) {
+            throw new Error(`container of type ${type} already exist`);
+        }
+
+        this.containers[type] = container;
+        this.resizeContainer(type);
+    }
+
+    /**
+     * Get Large container of specified type.
+     * @param {string} type container type.
+     * @returns {LargeContainer}
+     */
+    getContainer (type) {
+        let container = this.containers[type];
+
+        if (!container) {
+            throw new Error(`container of type ${type} doesn't exist`);
+        }
+
+        return container;
+    }
+
+    /**
+     * Remove Large container of specified type.
+     * @param {string} type container type.
+     */
+    removeContainer (type) {
+        if (!this.containers[type]) {
+            throw new Error(`container of type ${type} doesn't exist`);
+        }
+
+        delete this.containers[type];
+    }
+
+    /**
+     * Show Large container of specified type.
+     * Does nothing if such container is already visible.
+     * @param {string} type container type.
+     * @returns {Promise}
+     */
+    showContainer (type) {
+        if (this.state === type) {
+            return Promise.resolve();
+        }
+
+        let oldContainer = this.containers[this.state];
+        if (this.state === VIDEO_CONTAINER_TYPE) {
+            this.showWatermark(false);
+        }
+        oldContainer.hide();
+
+        this.state = type;
+        let container = this.getContainer(type);
+
+        return container.show().then(() => {
+            if (type === VIDEO_CONTAINER_TYPE) {
+                this.showWatermark(true);
+            }
+        });
+    }
+
+    /**
+     * Changes the flipX state of the local video.
+     * @param val {boolean} true if flipped.
+     */
+    onLocalFlipXChange(val) {
+        this.videoContainer.setLocalFlipX(val);
+    }
+}

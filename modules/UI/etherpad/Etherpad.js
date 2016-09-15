@@ -1,61 +1,21 @@
-/* global $, config,
-   setLargeVideoVisible, Util */
+/* global $ */
 
-var VideoLayout = require("../videolayout/VideoLayout");
-var Prezi = require("../prezi/Prezi");
-var UIUtil = require("../util/UIUtil");
-
-var etherpadName = null;
-var etherpadIFrame = null;
-var domain = null;
-var options = "?showControls=true&showChat=false&showLineNumbers=true" +
-    "&useMonospaceFont=false";
-
+import VideoLayout from "../videolayout/VideoLayout";
+import LargeContainer from '../videolayout/LargeContainer';
+import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
+import SidePanelToggler from "../side_pannels/SidePanelToggler";
+import FilmStrip from '../videolayout/FilmStrip';
 
 /**
- * Resizes the etherpad.
+ * Etherpad options.
  */
-function resize() {
-    if ($('#etherpad>iframe').length) {
-        var remoteVideos = $('#remoteVideos');
-        var availableHeight
-            = window.innerHeight - remoteVideos.outerHeight();
-        var availableWidth = UIUtil.getAvailableVideoWidth();
-
-        $('#etherpad>iframe').width(availableWidth);
-        $('#etherpad>iframe').height(availableHeight);
-    }
-}
-
-/**
- * Creates the Etherpad button and adds it to the toolbar.
- */
-function enableEtherpadButton() {
-    if (!$('#toolbar_button_etherpad').is(":visible"))
-        $('#toolbar_button_etherpad').css({display: 'inline-block'});
-}
-
-/**
- * Creates the IFrame for the etherpad.
- */
-function createIFrame() {
-    etherpadIFrame = VideoLayout.createEtherpadIframe(
-            domain + etherpadName + options, function() {
-
-                document.domain = document.domain;
-                bubbleIframeMouseMove(etherpadIFrame);
-                setTimeout(function() {
-                    // the iframes inside of the etherpad are
-                    // not yet loaded when the etherpad iframe is loaded
-                    var outer = etherpadIFrame.
-                        contentDocument.getElementsByName("ace_outer")[0];
-                    bubbleIframeMouseMove(outer);
-                    var inner = outer.
-                        contentDocument.getElementsByName("ace_inner")[0];
-                    bubbleIframeMouseMove(inner);
-                }, 2000);
-            });
-}
+const options = $.param({
+    showControns: true,
+    showChat: false,
+    showLineNumbers: true,
+    useMonospaceFont: false
+});
 
 function bubbleIframeMouseMove(iframe){
     var existingOnMouseMove = iframe.contentWindow.onmousemove;
@@ -71,8 +31,8 @@ function bubbleIframeMouseMove(iframe){
             e.detail,
             e.screenX,
             e.screenY,
-                e.clientX + boundingClientRect.left,
-                e.clientY + boundingClientRect.top,
+            e.clientX + boundingClientRect.left,
+            e.clientY + boundingClientRect.top,
             e.ctrlKey,
             e.altKey,
             e.shiftKey,
@@ -84,48 +44,158 @@ function bubbleIframeMouseMove(iframe){
     };
 }
 
+/**
+ * Default Etherpad frame width.
+ */
+const DEFAULT_WIDTH = 640;
+/**
+ * Default Etherpad frame height.
+ */
+const DEFAULT_HEIGHT = 480;
 
-var Etherpad = {
-    /**
-     * Initializes the etherpad.
-     */
-    init: function (name) {
+const ETHERPAD_CONTAINER_TYPE = "etherpad";
 
-        if (config.etherpad_base && !etherpadName && name) {
+/**
+ * Container for Etherpad iframe.
+ */
+class Etherpad extends LargeContainer {
 
-            domain = config.etherpad_base;
+    constructor (domain, name) {
+        super();
 
-            etherpadName = name;
+        const iframe = document.createElement('iframe');
 
-            enableEtherpadButton();
+        iframe.src = domain + name + '?' + options;
+        iframe.frameBorder = 0;
+        iframe.scrolling = "no";
+        iframe.width = DEFAULT_WIDTH;
+        iframe.height = DEFAULT_HEIGHT;
+        iframe.setAttribute('style', 'visibility: hidden;');
 
-            /**
-             * Resizes the etherpad, when the window is resized.
-             */
-            $(window).resize(function () {
-                resize();
-            });
-        }
-    },
+        this.container.appendChild(iframe);
 
-    /**
-     * Opens/hides the Etherpad.
-     */
-    toggleEtherpad: function (isPresentation) {
-        if (!etherpadIFrame)
-            createIFrame();
+        iframe.onload = function() {
+            document.domain = document.domain;
+            bubbleIframeMouseMove(iframe);
 
+            setTimeout(function() {
+                const doc = iframe.contentDocument;
 
-        if(VideoLayout.getLargeVideoState() === "etherpad")
-        {
-            VideoLayout.setLargeVideoState("video");
-        }
-        else
-        {
-            VideoLayout.setLargeVideoState("etherpad");
-        }
-        resize();
+                // the iframes inside of the etherpad are
+                // not yet loaded when the etherpad iframe is loaded
+                const outer = doc.getElementsByName("ace_outer")[0];
+                bubbleIframeMouseMove(outer);
+
+                const inner = doc.getElementsByName("ace_inner")[0];
+                bubbleIframeMouseMove(inner);
+            }, 2000);
+        };
+
+        this.iframe = iframe;
     }
-};
 
-module.exports = Etherpad;
+    get isOpen () {
+        return !!this.iframe;
+    }
+
+    get container () {
+        return document.getElementById('etherpad');
+    }
+
+    resize (containerWidth, containerHeight, animate) {
+        let height = containerHeight - FilmStrip.getFilmStripHeight();
+        let width = containerWidth;
+
+        $(this.iframe).width(width).height(height);
+    }
+
+    show () {
+        const $iframe = $(this.iframe);
+        const $container = $(this.container);
+        let self = this;
+
+        return new Promise(resolve => {
+            $iframe.fadeIn(300, function () {
+                self.bodyBackground = document.body.style.background;
+                document.body.style.background = '#eeeeee';
+                $iframe.css({visibility: 'visible'});
+                $container.css({zIndex: 2});
+                resolve();
+            });
+        });
+    }
+
+    hide () {
+        const $iframe = $(this.iframe);
+        const $container = $(this.container);
+        document.body.style.background = this.bodyBackground;
+
+        return new Promise(resolve => {
+            $iframe.fadeOut(300, function () {
+                $iframe.css({visibility: 'hidden'});
+                $container.css({zIndex: 0});
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * @return {boolean} do not switch on dominant speaker event if on stage.
+     */
+    stayOnStage () {
+        return true;
+    }
+}
+
+/**
+ * Manager of the Etherpad frame.
+ */
+export default class EtherpadManager {
+    constructor (domain, name, eventEmitter) {
+        if (!domain || !name) {
+            throw new Error("missing domain or name");
+        }
+
+        this.domain = domain;
+        this.name = name;
+        this.eventEmitter = eventEmitter;
+        this.etherpad = null;
+    }
+
+    get isOpen () {
+        return !!this.etherpad;
+    }
+
+    isVisible() {
+        return VideoLayout.isLargeContainerTypeVisible(ETHERPAD_CONTAINER_TYPE);
+    }
+
+    /**
+     * Create new Etherpad frame.
+     */
+    openEtherpad () {
+        this.etherpad = new Etherpad(this.domain, this.name);
+        VideoLayout.addLargeVideoContainer(
+            ETHERPAD_CONTAINER_TYPE,
+            this.etherpad
+        );
+    }
+
+    /**
+     * Toggle Etherpad frame visibility.
+     * Open new Etherpad frame if there is no Etherpad frame yet.
+     */
+    toggleEtherpad () {
+        if (!this.isOpen) {
+            this.openEtherpad();
+        }
+
+        let isVisible = this.isVisible();
+
+        VideoLayout.showLargeVideoContainer(
+            ETHERPAD_CONTAINER_TYPE, !isVisible);
+
+        this.eventEmitter
+            .emit(UIEvents.TOGGLED_SHARED_DOCUMENT, !isVisible);
+    }
+}

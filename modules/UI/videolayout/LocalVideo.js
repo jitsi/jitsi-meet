@@ -1,19 +1,34 @@
-/* global $, interfaceConfig, APP */
-var SmallVideo = require("./SmallVideo");
-var ConnectionIndicator = require("./ConnectionIndicator");
-var NicknameHandler = require("../util/NicknameHandler");
-var UIUtil = require("../util/UIUtil");
-var LargeVideo = require("./LargeVideo");
-var RTCBrowserType = require("../../RTC/RTCBrowserType");
+/* global $, config, interfaceConfig, APP, JitsiMeetJS */
+import ConnectionIndicator from "./ConnectionIndicator";
+import UIUtil from "../util/UIUtil";
+import UIEvents from "../../../service/UI/UIEvents";
+import SmallVideo from "./SmallVideo";
 
-function LocalVideo(VideoLayout) {
+const RTCUIUtils = JitsiMeetJS.util.RTCUIHelper;
+const TrackEvents = JitsiMeetJS.events.track;
+
+function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
+    this.localVideoId = null;
     this.bindHoverHandler();
-    this.VideoLayout = VideoLayout;
-    this.flipX = true;
+    if(config.enableLocalVideoFlip)
+        this._buildContextMenu();
     this.isLocal = true;
-    this.peerJid = null;
+    this.emitter = emitter;
+    Object.defineProperty(this, 'id', {
+        get: function () {
+            return APP.conference.getMyUserId();
+        }
+    });
+    this.initBrowserSpecificProperties();
+
+    SmallVideo.call(this, VideoLayout);
+
+    // Set default display name.
+    this.setDisplayName();
+
+    this.createConnectionIndicator();
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -56,11 +71,14 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         if (nameSpan.text() !== displayName) {
             if (displayName && displayName.length > 0) {
                 meHTML = APP.translation.generateTranslationHTML("me");
-                $('#localDisplayName').html(displayName + ' (' + meHTML + ')');
+                $('#localDisplayName').html(
+                    UIUtil.escapeHtml(displayName) + ' (' + meHTML + ')'
+                );
             } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
             }
         }
+        this.updateView();
     } else {
         var editButton = createEditDisplayNameButton();
 
@@ -71,7 +89,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
 
         if (displayName && displayName.length > 0) {
             meHTML = APP.translation.generateTranslationHTML("me");
-            nameSpan.innerHTML = displayName + meHTML;
+            nameSpan.innerHTML = UIUtil.escapeHtml(displayName) + meHTML;
         }
         else {
             nameSpan.innerHTML = defaultLocalDisplayName;
@@ -116,39 +134,19 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 editDisplayName.select();
 
                 editDisplayName.one("focusout", function (e) {
-                    self.VideoLayout.inputDisplayNameHandler(this.value);
+                    self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
+                    $('#editDisplayName').hide();
                 });
 
                 editDisplayName.on('keydown', function (e) {
                     if (e.keyCode === 13) {
                         e.preventDefault();
-                        self.VideoLayout.inputDisplayNameHandler(this.value);
+                        $('#editDisplayName').hide();
+                        // focusout handler will save display name
                     }
                 });
             });
     }
-};
-
-LocalVideo.prototype.inputDisplayNameHandler = function (name) {
-    name = UIUtil.escapeHtml(name);
-
-    NicknameHandler.setNickname(name);
-
-    var localDisplayName = $('#localDisplayName');
-    if (!localDisplayName.is(":visible")) {
-        if (NicknameHandler.getNickname()) {
-            var meHTML = APP.translation.generateTranslationHTML("me");
-            localDisplayName.html(NicknameHandler.getNickname() + " (" +
-            meHTML + ")");
-        } else {
-            var defaultHTML = APP.translation.generateTranslationHTML(
-                interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            localDisplayName .html(defaultHTML);
-        }
-        localDisplayName.show();
-    }
-
-    $('#editDisplayName').hide();
 };
 
 LocalVideo.prototype.createConnectionIndicator = function() {
@@ -158,43 +156,31 @@ LocalVideo.prototype.createConnectionIndicator = function() {
     this.connectionIndicator = new ConnectionIndicator(this, null);
 };
 
-LocalVideo.prototype.changeVideo = function (stream, isMuted) {
-    var self = this;
+LocalVideo.prototype.changeVideo = function (stream) {
+    this.videoStream = stream;
 
-    function localVideoClick(event) {
+    let localVideoClick = (event) => {
         // FIXME: with Temasys plugin event arg is not an event, but
         // the clicked object itself, so we have to skip this call
         if (event.stopPropagation) {
             event.stopPropagation();
         }
-        self.VideoLayout.handleVideoThumbClicked(
-            true,
-            APP.xmpp.myResource());
-    }
+        this.VideoLayout.handleVideoThumbClicked(this.id);
+    };
 
-    var localVideoContainerSelector = $('#localVideoContainer');
+    let localVideoContainerSelector = $('#localVideoContainer');
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    if(isMuted) {
-        APP.UI.setVideoMute(true);
-        return;
-    }
-    this.flipX = stream.videoType != "screen";
-    var localVideo = document.createElement('video');
-    localVideo.id = 'localVideo_' +
-        APP.RTC.getStreamID(stream.getOriginalStream());
-    if (!RTCBrowserType.isIExplorer()) {
-        localVideo.autoplay = true;
-        localVideo.volume = 0; // is it required if audio is separated ?
-    }
-    localVideo.oncontextmenu = function () { return false; };
+    let localVideo = document.createElement('video');
+    localVideo.id = this.localVideoId = 'localVideo_' + stream.getId();
+
+    RTCUIUtils.setAutoPlay(localVideo, true);
+    RTCUIUtils.setVolume(localVideo, 0);
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
     // Put the new video always in front
     UIUtil.prependChild(localVideoContainer, localVideo);
-
-    var localVideoSelector = $('#' + localVideo.id);
 
     // Add click handler to both video and video wrapper elements in case
     // there's no video.
@@ -202,34 +188,94 @@ LocalVideo.prototype.changeVideo = function (stream, isMuted) {
     // onclick has to be used with Temasys plugin
     localVideo.onclick = localVideoClick;
 
-    if (this.flipX) {
-        localVideoSelector.addClass("flipVideoX");
-    }
+    let isVideo = stream.videoType != "desktop";
+    this._enableDisableContextMenu(isVideo);
+    this.setFlipX(isVideo? APP.settings.getLocalFlipX() : false);
 
     // Attach WebRTC stream
-    APP.RTC.attachMediaStream(localVideoSelector, stream.getOriginalStream());
+    localVideo = stream.attach(localVideo);
 
-    // Add stream ended handler
-    APP.RTC.addMediaStreamInactiveHandler(
-        stream.getOriginalStream(), function () {
-        // We have to re-select after attach when Temasys plugin is used,
-        // because <video> element is replaced with <object>
-        localVideo = $('#' + localVideo.id)[0];
+    let endedHandler = () => {
         localVideoContainer.removeChild(localVideo);
-        self.VideoLayout.updateRemovedVideo(APP.xmpp.myResource());
+        // when removing only the video element and we are on stage
+        // update the stage
+        if(this.VideoLayout.isCurrentlyOnLarge(this.id))
+            this.VideoLayout.updateLargeVideo(this.id);
+        stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+    };
+    stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+};
+
+/**
+ * Shows or hides the local video container.
+ * @param {boolean} true to make the local video container visible, false
+ * otherwise
+ */
+LocalVideo.prototype.setVisible = function(visible) {
+
+    // We toggle the hidden class as an indication to other interested parties
+    // that this container has been hidden on purpose.
+    $("#localVideoContainer").toggleClass("hidden");
+
+    // We still show/hide it as we need to overwrite the style property if we
+    // want our action to take effect. Toggling the display property through
+    // the above css class didn't succeed in overwriting the style.
+    if (visible) {
+        $("#localVideoContainer").show();
+    }
+    else {
+        $("#localVideoContainer").hide();
+    }
+};
+
+/**
+ * Sets the flipX state of the video.
+ * @param val {boolean} true for flipped otherwise false;
+ */
+LocalVideo.prototype.setFlipX = function (val) {
+    this.emitter.emit(UIEvents.LOCAL_FLIPX_CHANGED, val);
+    if(!this.localVideoId)
+        return;
+    if(val) {
+        this.selectVideoElement().addClass("flipVideoX");
+    } else {
+        this.selectVideoElement().removeClass("flipVideoX");
+    }
+};
+
+/**
+ * Builds the context menu for the local video.
+ */
+LocalVideo.prototype._buildContextMenu = function () {
+    $.contextMenu({
+        selector: '#' + this.videoSpanId,
+        zIndex: 10000,
+        items: {
+            flip: {
+                name: "Flip",
+                callback: () => {
+                    let val = !APP.settings.getLocalFlipX();
+                    this.setFlipX(val);
+                    APP.settings.setLocalFlipX(val);
+                }
+            }
+        },
+        events: {
+            show : function(options){
+                options.items.flip.name =
+                    APP.translation.translateString("videothumbnail.flip");
+            }
+        }
     });
 };
 
-LocalVideo.prototype.joined = function (jid) {
-    this.peerJid = jid;
+/**
+ * Enables or disables the context menu for the local video.
+ * @param enable {boolean} true for enable, false for disable
+ */
+LocalVideo.prototype._enableDisableContextMenu = function (enable) {
+    if($('#' + this.videoSpanId).contextMenu)
+        $('#' + this.videoSpanId).contextMenu(enable);
 };
 
-LocalVideo.prototype.getResourceJid = function () {
-    var myResource = APP.xmpp.myResource();
-    if (!myResource) {
-        console.error("Requested local resource before we're in the MUC");
-    }
-    return myResource;
-};
-
-module.exports = LocalVideo;
+export default LocalVideo;

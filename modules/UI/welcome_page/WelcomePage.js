@@ -1,4 +1,4 @@
-/* global $, interfaceConfig */
+/* global $, interfaceConfig, APP */
 var animateTimeout, updateTimeout;
 
 var RoomnameGenerator = require("../../util/RoomnameGenerator");
@@ -87,8 +87,9 @@ function setupWelcomePage() {
     }
 
     $("#disable_welcome").click(function () {
-        window.localStorage.welcomePageDisabled =
-            $("#disable_welcome").is(":checked");
+        APP.settings.setWelcomePageEnabled(
+            !$("#disable_welcome").is(":checked")
+        );
     });
 
 }

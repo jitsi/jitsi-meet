@@ -4,6 +4,6 @@ node_modules
 *.iml
 .*.tmp
 deploy-local.sh
-libs/app.bundle.*
+libs/
 all.css
 .remote-sync.json

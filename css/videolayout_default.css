@@ -8,7 +8,15 @@
 }
 
 #remoteVideos {
-    display:block;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+
     position:absolute;
     text-align:right;
     height:196px;
@@ -21,6 +29,7 @@
     z-index: 5;
     transition: bottom 2s;
     overflow: visible !important;
+    font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
 }
 
 #remotevideos.hidden {
@@ -29,52 +38,42 @@
 
 .videocontainer {
     position: relative;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: center;
 }
 
 #remoteVideos .videocontainer {
-    display: inline-block;
+    display: none;
     background-color: black;
     background-size: contain;
-    border-radius:8px;
-    border: 2px solid #212425;
-    margin-right: 3px;
+    border-radius:1px;
+    border: 1px solid #212425;
 }
 
-#remoteVideos .videocontainer:hover,
 #remoteVideos .videocontainer.videoContainerFocused {
     cursor: hand;
-    /* transform:scale(1.08, 1.08);
-    -webkit-transform:scale(1.08, 1.08); */
     transition-duration: 0.5s;
     -webkit-transition-duration: 0.5s;
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
-    overflow: visible !important;
 }
 
 #remoteVideos .videocontainer:hover {
-    box-shadow:  inset 0 0 10px #FFFFFF, 0 0 10px #FFFFFF;
-    border: 2px solid #FFFFFF;
+    border: 1px solid #c1c1c1;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused {
     box-shadow: inset 0 0 28px #006d91;
-    border: 2px solid #006d91;
+    border: 1px solid #006d91;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused:hover {
-    box-shadow: inset 0 0 5px #FFFFFF, 0 0 10px #FFFFFF, inset 0 0 60px #006d91;
-    border: 2px solid #FFFFFF;
+    box-shadow: inset 0 0 5px #c1c1c1, 0 0 10px #c1c1c1, inset 0 0 60px #006d91;
+    border: 1px solid #c1c1c1;
 }
 
 #localVideoWrapper {
     display:inline-block;
-    -webkit-mask-box-image: url(../images/videomask.svg);
-    border-radius:4px !important;
-    border: 0px !important;
 }
 
 /* With TemasysWebRTC plugin <object/> element is used
@@ -82,7 +81,9 @@
 #remoteVideos .videocontainer>video,
 #remoteVideos .videocontainer>object {
     cursor: hand;
-    border-radius:4px;
+    border-radius:1px;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .flipVideoX {
@@ -95,7 +96,8 @@
 #localVideoWrapper>video,
 #localVideoWrapper>object {
     cursor: hand;
-    border-radius:4px !important;
+    border-radius:1px !important;
+    object-fit: cover;
 }
 
 #largeVideo,
@@ -112,6 +114,7 @@
 }
 
 #presentation,
+#sharedVideo,
 #etherpad,
 #localVideoWrapper>video,
 #localVideoWrapper>object,
@@ -143,8 +146,7 @@
 }
 
 #remoteVideos .videocontainer>span.focusindicator,
-#remoteVideos .videocontainer>span.remotevideomenu {
-    display: inline-block;
+#remoteVideos .videocontainer>div.remotevideomenu {
     position: absolute;
     color: #FFFFFF;
     top: 0;
@@ -158,14 +160,12 @@
     text-align: center;
 }
 
-#remoteVideos .nick {
-    display: none; /* enable when you want nicks to be shown */
-    position: absolute;
-    left: 0px;
-    bottom: -20px;
-    z-index: 0;
-    width: 100%;
-    font-size: 10pt;
+#remoteVideos .videocontainer>span.focusindicator {
+    display: inline-block;
+}
+
+#remoteVideos .videocontainer>div.remotevideomenu {
+    display: block;
 }
 
 .videocontainer>span.displayname,
@@ -185,7 +185,7 @@
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    border-radius:20px;
+    border-radius:3px;
 }
 
 .videocontainer>span.status {
@@ -204,7 +204,7 @@
     overflow: hidden;
     white-space: nowrap;
     z-index: 2;
-    border-radius:20px;
+    border-radius:3px;
 }
 
 .connectionindicator
@@ -319,7 +319,7 @@
     z-index: 3;
 }
 
-.videocontainer>span.dominantspeakerindicator {
+.videocontainer>span.indicator {
     bottom: 0px;
     left: 0px;
     width: 25px;
@@ -327,7 +327,7 @@
     z-index: 3;
     text-align: center;
     border-radius: 50%;
-    background: #0cf;
+    background: #21B9FC;
     margin: 5px;
     display: inline-block;
     position: absolute;
@@ -336,7 +336,7 @@
     border: 0px;
 }
 
-#speakerindicatoricon {
+#indicatoricon {
     padding-top: 5px;
 }
 
@@ -366,22 +366,7 @@
     right:0;
     z-index:10;
     pointer-events: none;
-}
-
-#toolbar {
-    display:inline-block;
-    position:relative;
-    margin-top:5px;
-    margin-left:auto;
-    margin-right:auto;
-    padding-left:2px;
-    padding-right:2px;
-    height:38px;
-    width:auto;
-    background-color: rgba(0,0,0,0.8); 
-    border: 1px solid rgba(256, 256, 256, 0.2);
-    border-radius: 6px;
-    pointer-events: auto;
+    min-height: 100px;
 }
 
 #subject {
@@ -403,24 +388,24 @@
     display: inline-block;
     position: absolute;
     z-index: 0;
-    border-radius:10px;
+    border-radius:1px;
     pointer-events: none;
 }
 
-#activeSpeaker {
+#dominantSpeaker {
     visibility: hidden;
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
     margin: auto;
     overflow: hidden;
     position: relative;
 }
 
-#activeSpeakerAudioLevel {
+#dominantSpeakerAudioLevel {
     position: absolute;
     top: 0px;
     left: 0px;
-    z-index: 1;
+    z-index: 2;
     visibility: inherit;
 }
 
@@ -428,22 +413,29 @@
     display:none !important;
 }
 
-#activeSpeakerAvatar {
-    width: 100px;
-    height: 100px;
-    top: 25px;
+#dominantSpeakerAvatar {
+    width: 200px;
+    height: 200px;
+    top: 50px;
     margin: auto;
     position: relative;
-    border-radius: 50px;
-    z-index: 2;
+    border-radius: 100px;
+    z-index: 3;
     visibility: inherit;
+    background-color: #000000;
 }
 
 .userAvatar {
     height: 100%;
     position: absolute;
-    left: 35px;
-    border-radius: 200px;
+    left: 0;
+    border-radius: 2px;
+}
+
+.sharedVideoAvatar {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 
 .noMic {
@@ -485,7 +477,7 @@
     position: absolute;
     width: 100%;
     top:50%;
-    z-index: 10000;
+    z-index: 1011;
     font-weight: 600;
     font-size: 14px;
     text-align: center;
@@ -495,4 +487,48 @@
                     0px 1px 1px rgba(0,0,0,0.3),
                     1px 0px 1px rgba(0,0,0,0.3),
                     0px 0px 1px rgba(0,0,0,0.3);
+}
+
+#videoResolutionLabel {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,.5);
+    padding: 10px;
+    color: rgba(255,255,255,.5);
+    z-index: 1011;
+}
+
+.centeredVideoLabel {
+    display: none;
+    position: absolute;
+    bottom: 45%;
+    top: auto;
+    right: auto;
+    left: auto;
+    line-height: 28px;
+    height: 28px;
+    width: auto;
+    padding: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    background: rgba(0,0,0,.5);
+    color: #FFF;
+    z-index: 1011;
+    border-radius: 2px;
+    -webkit-transition: all 2s 2s linear;
+    transition: all 2s 2s linear;
+}
+
+.moveToCorner {
+    top: 5px;
+    right: 50px; /*leave free space for the HD label*/
+    margin-right: 0px;
+    margin-left: auto;
+    background: rgba(0,0,0,.3);
+    color: rgba(255,255,255,.5);
+}
+
+.hidden {
 }
