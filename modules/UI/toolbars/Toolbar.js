@@ -180,6 +180,8 @@ const buttonHandlers = {
 const defaultToolbarButtons = {
     'microphone': {
         id: 'toolbar_button_mute',
+        key: '',
+        tooltipPosition: 'bottom',
         className: "button icon-microphone",
         shortcut: 'M',
         shortcutAttr: 'mutePopover',
@@ -205,6 +207,8 @@ const defaultToolbarButtons = {
     },
     'camera': {
         id: 'toolbar_button_camera',
+        key: '',
+        tooltipPosition: 'bottom',
         className: "button icon-camera",
         shortcut: 'V',
         shortcutAttr: 'toggleVideoPopover',
@@ -218,6 +222,8 @@ const defaultToolbarButtons = {
     },
     'desktop': {
         id: 'toolbar_button_desktopsharing',
+        key: '',
+        tooltipPosition: 'bottom',
         className: 'button icon-share-desktop',
         shortcut: 'D',
         shortcutAttr: 'toggleDesktopSharingPopover',
@@ -230,16 +236,22 @@ const defaultToolbarButtons = {
         i18n: '[content]toolbar.sharescreen'
     },
     'security': {
-        id: 'toolbar_button_security'
+        id: 'toolbar_button_security',
+        key: '',
+        tooltipPosition: 'right'
     },
     'invite': {
         id: 'toolbar_button_link',
+        key: '',
+        tooltipPosition: 'bottom',
         className: 'button icon-link',
         content: 'Invite others',
         i18n: '[content]toolbar.invite'
     },
     'chat': {
         id: 'toolbar_button_chat',
+        key: '',
+        tooltipPosition: 'right',
         shortcut: 'C',
         shortcutAttr: 'toggleChatPopover',
         shortcutFunc: function() {
@@ -251,17 +263,25 @@ const defaultToolbarButtons = {
     },
     'contacts': {
         id: 'toolbar_contact_list',
+        key: '',
+        tooltipPosition: 'right',
         sideContainerId: 'contacts_container'
     },
     'profile': {
         id: 'toolbar_button_profile',
+        key: '',
+        tooltipPosition: 'right',
         sideContainerId: 'profile_container'
     },
     'etherpad': {
-        id: 'toolbar_button_etherpad'
+        id: 'toolbar_button_etherpad',
+        key: '',
+        tooltipPosition: 'right'
     },
     'fullscreen': {
         id: 'toolbar_button_fullScreen',
+        key: '',
+        tooltipPosition: 'right',
         className: "button icon-full-screen",
         shortcut: 'F',
         shortcutAttr: 'toggleFullscreenPopover',
@@ -275,16 +295,22 @@ const defaultToolbarButtons = {
     },
     'settings': {
         id: 'toolbar_button_settings',
+        key: '',
+        tooltipPosition: 'right',
         sideContainerId: "settings_container"
     },
     'hangup': {
         id: 'toolbar_button_hangup',
+        key: '',
+        tooltipPosition: 'bottom',
         className: "button icon-hangup",
         content: "Hang Up",
         i18n: "[content]toolbar.hangup"
     },
     'filmstrip': {
         id: 'toolbar_film_strip',
+        key: '',
+        tooltipPosition: 'right',
         shortcut: "F",
         shortcutAttr: "filmstripPopover",
         shortcutFunc: function() {
@@ -295,6 +321,8 @@ const defaultToolbarButtons = {
     },
     'raisehand': {
         id: "toolbar_button_raisehand",
+        key: '',
+        tooltipPosition: 'right',
         className: "button icon-raised-hand",
         shortcut: "R",
         shortcutAttr: "raiseHandPopover",
@@ -351,7 +379,10 @@ const Toolbar = {
         Object.keys(defaultToolbarButtons).forEach(
             id => {
                 if (UIUtil.isButtonEnabled(id)) {
-                    var button = defaultToolbarButtons[id];
+                    let button = defaultToolbarButtons[id];
+                    let buttonElement = document.getElementById(button.id);
+
+                    UIUtil.setTooltip(buttonElement, button.key, button.tooltipPosition);
 
                     if (button.shortcut)
                         APP.keyboardshortcut.registerShortcut(
@@ -452,9 +483,11 @@ const Toolbar = {
 
     // Shows or hides the 'shared video' button.
     showSharedVideoButton () {
+        let $element = $('#toolbar_button_sharedvideo');
         if (UIUtil.isButtonEnabled('sharedvideo')
                 && config.disableThirdPartyRequests !== true) {
-            $('#toolbar_button_sharedvideo').css({display: "inline-block"});
+            $element.css({display: "inline-block"});
+            UIUtil.setTooltip($element.get(0), '', 'right');
         } else {
             $('#toolbar_button_sharedvideo').css({display: "none"});
         }
