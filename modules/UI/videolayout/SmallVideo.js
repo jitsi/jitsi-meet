@@ -1,8 +1,10 @@
-/* global $, APP, JitsiMeetJS */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
+
+import InteractiveMicrophone from "./InteractiveMicrophone";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -13,6 +15,13 @@ function SmallVideo(VideoLayout) {
     this.videoStream = null;
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
+
+    if (interfaceConfig.INTERACTIVE_MICROPHONE) {
+        this.imic = new InteractiveMicrophone({
+            container: '#' + this.videoSpanId,
+            level: 0
+        });
+    }
 }
 
 function setVisibility(selector, show) {
@@ -193,6 +202,11 @@ SmallVideo.prototype.hideIndicator = function () {
  * @param {string} isMuted
  */
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
+    if (interfaceConfig.INTERACTIVE_MICROPHONE) {
+        this.imic.mute(isMuted).redraw();
+        return;
+    }
+
     var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
 
     if (!isMuted) {
@@ -263,7 +277,7 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
 };
 
 SmallVideo.prototype.updateIconPositions = function () {
-    let audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
+    let audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted, .interactive-mic');
     let videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
     audioMutedSpan.css({left: "0px"});
     videoMutedSpan.css({left: (audioMutedSpan.length > 0? 25 : 0) + "px"});

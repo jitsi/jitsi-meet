@@ -17,6 +17,8 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
+    // show interactive icon at the bottom left of thumbnail
+    INTERACTIVE_MICROPHONE: true,
     // the toolbar buttons line is intentionally left in one line, to be able
     // to easily override values or remove them using regex
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'hangup'], // jshint ignore:line
