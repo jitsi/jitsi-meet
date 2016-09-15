@@ -9,6 +9,11 @@
     background: linear-gradient(transparent, #000);
     opacity: 0.8;
 
+    &.solidBG {
+        background: $defaultBackground;
+        opacity: 1;
+    }
+
     &__content {
         position: absolute;
         width: 400px;

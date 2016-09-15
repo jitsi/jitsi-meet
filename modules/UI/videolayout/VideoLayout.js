@@ -113,7 +113,7 @@ var VideoLayout = {
     },
 
     initLargeVideo () {
-        largeVideo = new LargeVideoManager();
+        largeVideo = new LargeVideoManager(eventEmitter);
         if(localFlipX) {
             largeVideo.onLocalFlipXChange(localFlipX);
         }
