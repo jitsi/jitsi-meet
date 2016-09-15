@@ -3,6 +3,7 @@
 import {processReplacements, linkify} from './Replacement';
 import CommandsProcessor from './Commands';
 import ToolbarToggler from '../../toolbars/ToolbarToggler';
+import VideoLayout from "../../videolayout/VideoLayout";
 
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -179,6 +180,12 @@ var Chat = {
 
                 unreadMessages = 0;
                 updateVisualNotification();
+
+                // Undock the toolbar when the chat is shown and if we're in a
+                // video mode.
+                if (VideoLayout.isLargeVideoVisible()) {
+                    ToolbarToggler.dockToolbar(false);
+                }
 
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
