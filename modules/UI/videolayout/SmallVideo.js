@@ -304,7 +304,7 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 
     UIUtil.setTooltip(indicatorSpan[0],
         "videothumbnail.moderator",
-        "top");
+        "top-left");
 
     //translates text in focus indicators
     APP.translation

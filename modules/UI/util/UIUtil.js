@@ -85,12 +85,6 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
     },
 
     setTooltip: function (element, key, position) {
-        // element.setAttribute("data-i18n", "[data-content]" + key);
-        // element.setAttribute("data-toggle", "popover");
-        // element.setAttribute("data-placement", position);
-        // element.setAttribute("data-html", true);
-        // element.setAttribute("data-container", "body");
-
         let positions = {
             'top': 's',
             'top-left': 'se',
@@ -102,7 +96,7 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
             'top-right': 'sw'
         };
 
-        //element.setAttribute("data-i18n", "[content]" + key);
+        element.setAttribute("data-i18n", "[content]" + key);
 
         AJS.$(element).tooltip({
             gravity: positions[position],

@@ -180,7 +180,7 @@ const buttonHandlers = {
 const defaultToolbarButtons = {
     'microphone': {
         id: 'toolbar_button_mute',
-        key: '',
+        key: 'toolbar.mute',
         tooltipPosition: 'bottom',
         className: "button icon-microphone",
         shortcut: 'M',
@@ -207,7 +207,7 @@ const defaultToolbarButtons = {
     },
     'camera': {
         id: 'toolbar_button_camera',
-        key: '',
+        key: 'toolbar.videomute',
         tooltipPosition: 'bottom',
         className: "button icon-camera",
         shortcut: 'V',
@@ -222,7 +222,7 @@ const defaultToolbarButtons = {
     },
     'desktop': {
         id: 'toolbar_button_desktopsharing',
-        key: '',
+        key: 'toolbar.sharescreen',
         tooltipPosition: 'bottom',
         className: 'button icon-share-desktop',
         shortcut: 'D',
@@ -237,12 +237,12 @@ const defaultToolbarButtons = {
     },
     'security': {
         id: 'toolbar_button_security',
-        key: '',
+        key: 'toolbar.lock',
         tooltipPosition: 'right'
     },
     'invite': {
         id: 'toolbar_button_link',
-        key: '',
+        key: 'toolbar.invite',
         tooltipPosition: 'bottom',
         className: 'button icon-link',
         content: 'Invite others',
@@ -250,7 +250,7 @@ const defaultToolbarButtons = {
     },
     'chat': {
         id: 'toolbar_button_chat',
-        key: '',
+        key: 'toolbar.chat',
         tooltipPosition: 'right',
         shortcut: 'C',
         shortcutAttr: 'toggleChatPopover',
@@ -263,24 +263,24 @@ const defaultToolbarButtons = {
     },
     'contacts': {
         id: 'toolbar_contact_list',
-        key: '',
+        key: 'bottomtoolbar.contactlist',
         tooltipPosition: 'right',
         sideContainerId: 'contacts_container'
     },
     'profile': {
         id: 'toolbar_button_profile',
-        key: '',
+        key: 'profile.setDisplayNameLabel',
         tooltipPosition: 'right',
         sideContainerId: 'profile_container'
     },
     'etherpad': {
         id: 'toolbar_button_etherpad',
-        key: '',
+        key: 'toolbar.etherpad',
         tooltipPosition: 'right'
     },
     'fullscreen': {
         id: 'toolbar_button_fullScreen',
-        key: '',
+        key: 'toolbar.fullscreen',
         tooltipPosition: 'right',
         className: "button icon-full-screen",
         shortcut: 'F',
@@ -295,13 +295,13 @@ const defaultToolbarButtons = {
     },
     'settings': {
         id: 'toolbar_button_settings',
-        key: '',
+        key: 'toolbar.Settings',
         tooltipPosition: 'right',
         sideContainerId: "settings_container"
     },
     'hangup': {
         id: 'toolbar_button_hangup',
-        key: '',
+        key: 'toolbar.hangup',
         tooltipPosition: 'bottom',
         className: "button icon-hangup",
         content: "Hang Up",
@@ -309,7 +309,7 @@ const defaultToolbarButtons = {
     },
     'filmstrip': {
         id: 'toolbar_film_strip',
-        key: '',
+        key: 'toolbar.filmstrip',
         tooltipPosition: 'right',
         shortcut: "F",
         shortcutAttr: "filmstripPopover",
@@ -321,7 +321,7 @@ const defaultToolbarButtons = {
     },
     'raisehand': {
         id: "toolbar_button_raisehand",
-        key: '',
+        key: 'toolbar.raiseHand',
         tooltipPosition: 'right',
         className: "button icon-raised-hand",
         shortcut: "R",
