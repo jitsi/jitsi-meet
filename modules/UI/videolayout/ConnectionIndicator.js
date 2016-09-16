@@ -245,13 +245,13 @@ ConnectionIndicator.prototype.showMore = function () {
 };
 
 
-function createIcon(classes) {
+function createIcon(classes, iconClass) {
     var icon = document.createElement("span");
     for(var i in classes) {
         icon.classList.add(classes[i]);
     }
     icon.appendChild(
-        document.createElement("i")).classList.add("icon-connection");
+        document.createElement("i")).classList.add(iconClass);
     return icon;
 }
 
@@ -282,9 +282,9 @@ ConnectionIndicator.prototype.create = function () {
     }.bind(this);
 
     this.emptyIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_empty"]));
+        createIcon(["connection", "connection_empty"], "icon-connection"));
     this.fullIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_full"]));
+        createIcon(["connection", "connection_full"], "icon-connection"));
 };
 
 /**
