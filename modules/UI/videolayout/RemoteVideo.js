@@ -228,6 +228,49 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
 };
 
 /**
+ * Checks whether the remote user associated with this <tt>RemoteVideo</tt>
+ * has connectivity issues.
+ *
+ * @return {boolean} <tt>true</tt> if the user's connection is fine or
+ * <tt>false</tt> otherwise.
+ */
+RemoteVideo.prototype.isConnectionActive = function() {
+    return this.user.isConnectionActive();
+};
+
+/**
+ * @inheritDoc
+ */
+RemoteVideo.prototype.updateView = function () {
+    SmallVideo.prototype.updateView.call(this);
+    this.updateConnectionStatusIndicator(
+        null /* will obtain the status from 'conference' */);
+};
+
+/**
+ * Updates the UI to reflect user's connectivity status.
+ * @param isActive {boolean|null} 'true' if user's connection is active or
+ * 'false' when the use is having some connectivity issues and a warning
+ * should be displayed. When 'null' is passed then the current value will be
+ * obtained from the conference instance.
+ */
+RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
+    // Check for initial value if 'isActive' is not defined
+    if (typeof isActive !== "boolean") {
+        isActive = this.isConnectionActive();
+        if (isActive === null) {
+            // Cancel processing at this point - no update
+            return;
+        }
+    }
+
+    console.debug(this.id + " thumbnail is connection active ? " + isActive);
+
+    if(this.connectionIndicator)
+        this.connectionIndicator.updateConnectionStatusIndicator(isActive);
+};
+
+/**
  * Removes RemoteVideo from the page.
  */
 RemoteVideo.prototype.remove = function () {

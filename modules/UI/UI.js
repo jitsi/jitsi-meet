@@ -996,6 +996,17 @@ UI.handleLastNEndpoints = function (ids, enteringIds) {
 };
 
 /**
+ * Will handle notification about participant's connectivity status change.
+ *
+ * @param {string} id the id of remote participant(MUC jid)
+ * @param {boolean} isActive true if the connection is ok or false if the user
+ * is having connectivity issues.
+ */
+UI.participantConnectionStatusChanged = function (id, isActive) {
+    VideoLayout.onParticipantConnectionStatusChanged(id, isActive);
+};
+
+/**
  * Update audio level visualization for specified user.
  * @param {string} id user id
  * @param {number} lvl audio level

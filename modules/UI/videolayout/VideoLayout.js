@@ -423,6 +423,8 @@ var VideoLayout = {
         } else {
             VideoLayout.resizeThumbnails(false, true);
         }
+        // Initialize the view
+        remoteVideo.updateView();
     },
 
     videoactive (videoelem, resourceJid) {
@@ -637,6 +639,21 @@ var VideoLayout = {
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
+        }
+    },
+
+    /**
+     * Shows/hides warning about remote user's connectivity issues.
+     *
+     * @param {string} id the ID of the remote participant(MUC nickname)
+     * @param {boolean} isActive true if the connection is ok or false when
+     * the user is having connectivity issues.
+     */
+    onParticipantConnectionStatusChanged (id, isActive) {
+        // Show/hide warning on the thumbnail
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo) {
+            remoteVideo.updateConnectionStatusIndicator(isActive);
         }
     },
 
