@@ -221,6 +221,12 @@
     overflow: hidden;
 }
 
+.connection.connection_lost
+{
+    color: #8B8B8B;
+    overflow: visible;
+}
+
 .connection.connection_full
 {
     color: #FFFFFF;/*#15A1ED*/

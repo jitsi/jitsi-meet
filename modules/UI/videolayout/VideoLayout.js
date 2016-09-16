@@ -498,6 +498,18 @@ var VideoLayout = {
     },
 
     /**
+     * Shows/hides the indication about local connection being interrupted.
+     *
+     * @param {boolean} isInterrupted <tt>true</tt> if local connection is
+     * currently in the interrupted state or <tt>false</tt> if the connection
+     * is fine.
+     */
+    showLocalConnectionInterrupted (isInterrupted) {
+        localVideoThumbnail.connectionIndicator
+            .updateConnectionStatusIndicator(!isInterrupted);
+    },
+
+    /**
      * Resizes thumbnails.
      */
     resizeThumbnails (  animate = false,

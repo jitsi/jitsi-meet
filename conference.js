@@ -1205,10 +1205,12 @@ export default {
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
             connectionIsInterrupted = true;
             ConnectionQuality.updateLocalConnectionQuality(0);
+            APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
             connectionIsInterrupted = false;
+            APP.UI.showLocalConnectionInterrupted(false);
         });
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
