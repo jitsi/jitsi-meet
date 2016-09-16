@@ -357,6 +357,14 @@ class ConferenceConnector {
         case ConferenceErrors.PASSWORD_REQUIRED:
             APP.UI.markRoomLocked(true);
             roomLocker.requirePassword().then(function () {
+                let pass = roomLocker.password;
+                // we received that password is required, but user is trying
+                // anyway to login without a password, mark room as not locked
+                // in case he succeeds (maybe someone removed the password
+                // meanwhile), if it is still locked another password required
+                // will be received and the room again will be marked as locked
+                if (!pass)
+                    APP.UI.markRoomLocked(false);
                 room.join(roomLocker.password);
             });
             break;
