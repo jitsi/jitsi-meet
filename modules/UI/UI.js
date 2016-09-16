@@ -1211,8 +1211,14 @@ UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
     SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
 
-UI.onRaiseHandChanged = function (isRaiseHand) {
-    eventEmitter.emit(UIEvents.RAISE_HAND_CHANGED, isRaiseHand);
+/**
+ * Notifies interested listeners that the raise hand property has changed.
+ *
+ * @param {boolean} isRaisedHand indicates the current state of the
+ * "raised hand"
+ */
+UI.onRaiseHandChanged = function (isRaisedHand) {
+    eventEmitter.emit(UIEvents.RAISE_HAND_CHANGED, isRaisedHand);
 };
 
 /**
