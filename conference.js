@@ -1648,6 +1648,8 @@ export default {
     setRaisedHand(raisedHand) {
         if (raisedHand !== this.isHandRaised)
         {
+            APP.UI.onRaiseHandChanged(raisedHand);
+
             this.isHandRaised = raisedHand;
             // Advertise the updated status
             room.setLocalParticipantProperty("raisedHand", raisedHand);

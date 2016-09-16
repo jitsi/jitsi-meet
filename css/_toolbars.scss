@@ -118,6 +118,10 @@
     cursor: default;
 }
 
+.button.toggled {
+    color: $toolbarButtonToggled;
+}
+
 a.button.unclickable:hover,
 a.button.unclickable:active,
 a.button.unclickable.selected{

@@ -1211,6 +1211,10 @@ UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
     SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
 
+UI.onRaiseHandChanged = function (isRaiseHand) {
+    eventEmitter.emit(UIEvents.RAISE_HAND_CHANGED, isRaiseHand);
+};
+
 /**
  * Update list of available physical devices.
  * @param {object[]} devices new list of available devices
