@@ -433,7 +433,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     indicatorSpan.innerHTML
         = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
     // adds a tooltip
-    UIUtil.setTooltip(indicatorSpan, "speaker", "left");
+    UIUtil.setTooltip(indicatorSpan, "speaker", "top");
     APP.translation.translateElement($(indicatorSpan));
 
     $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
@@ -457,7 +457,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         = "<i id='indicatoricon' class='icon-raised-hand'></i>";
 
     // adds a tooltip
-    UIUtil.setTooltip(indicatorSpan, "raisedHand", "left");
+    UIUtil.setTooltip(indicatorSpan, "raisedHand", "top");
     APP.translation.translateElement($(indicatorSpan));
 
     $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
