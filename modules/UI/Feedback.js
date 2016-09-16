@@ -140,9 +140,13 @@ var Feedback = {
 
         _showFeedbackButton(this.enabled);
 
-        $("#feedbackButton").click(function (event) {
+        let $feedbackButton = $("#feedbackButton");
+
+        $feedbackButton.click(function (event) {
             Feedback.openFeedbackWindow();
         });
+
+        UIUtil.setTooltip($feedbackButton.get(0), 'feedback', 'right');
 
         // Show / hide the feedback button whenever the film strip is
         // shown / hidden.

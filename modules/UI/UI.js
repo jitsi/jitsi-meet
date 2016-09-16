@@ -476,7 +476,6 @@ UI.start = function () {
         $("#downloadlog").css("display", "none");
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
-        $('body').popover("disable");
         JitsiPopover.enabled = false;
     }
 
