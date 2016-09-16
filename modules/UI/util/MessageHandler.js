@@ -2,6 +2,7 @@
 /* jshint -W101 */
 
 import UIUtil from './UIUtil';
+import Dialog from '../dialog/Dialog';
 
 /**
  * Flag for enable/disable of the notifications.
@@ -160,6 +161,7 @@ var messageHandler = {
         }
 
         return new Impromptu(msgString, args);
+        //return new Dialog(msgString, args);
     },
 
     /**
