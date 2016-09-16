@@ -314,12 +314,14 @@ ConnectionIndicator.prototype.updateConnectionQuality =
             this.connectionIndicatorContainer.style.display = "block";
         }
     }
-    this.bandwidth = object.bandwidth;
-    this.bitrate = object.bitrate;
-    this.packetLoss = object.packetLoss;
-    this.transport = object.transport;
-    if (object.resolution) {
-        this.resolution = object.resolution;
+    if (object) {
+        this.bandwidth = object.bandwidth;
+        this.bitrate = object.bitrate;
+        this.packetLoss = object.packetLoss;
+        this.transport = object.transport;
+        if (object.resolution) {
+            this.resolution = object.resolution;
+        }
     }
     for (var quality in ConnectionIndicator.connectionQualityValues) {
         if (percent >= quality) {
@@ -327,7 +329,7 @@ ConnectionIndicator.prototype.updateConnectionQuality =
                 ConnectionIndicator.connectionQualityValues[quality];
         }
     }
-    if (object.isResolutionHD) {
+    if (object && typeof object.isResolutionHD === 'boolean') {
         this.isResolutionHD = object.isResolutionHD;
     }
     this.updateResolutionIndicator();
