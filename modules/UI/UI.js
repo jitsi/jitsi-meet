@@ -340,6 +340,22 @@ UI.handleToggleFilmStrip = () => {
 };
 
 /**
+ * Sets tooltip defaults.
+ *
+ * @private
+ */
+function _setTooltipDefaults() {
+    $.fn.tooltip.defaults = {
+        opacity: 1, //defaults to 1
+        offset: 1,
+        delayIn: 0, //defaults to 500
+        hoverable: true,
+        hideOnClick: true,
+        aria: true
+    };
+}
+
+/**
  * Setup some UI event listeners.
  */
 function registerListeners() {
@@ -431,6 +447,9 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
+    // Set the defaults for tooltips.
+    _setTooltipDefaults();
+
     registerListeners();
 
     ToolbarToggler.init();
@@ -476,7 +495,6 @@ UI.start = function () {
         $("#downloadlog").css("display", "none");
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
-        $('body').popover("disable");
         JitsiPopover.enabled = false;
     }
 

@@ -197,7 +197,6 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
 
     if (!isMuted) {
         if (audioMutedSpan.length > 0) {
-            audioMutedSpan.popover('hide');
             audioMutedSpan.remove();
             this.updateIconPositions();
         }
@@ -304,7 +303,7 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 
     UIUtil.setTooltip(indicatorSpan[0],
         "videothumbnail.moderator",
-        "top");
+        "top-left");
 
     //translates text in focus indicators
     APP.translation
