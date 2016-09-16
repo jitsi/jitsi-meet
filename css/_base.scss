@@ -176,3 +176,13 @@ form {
     display: -webkit-flex !important;
     display: flex !important;
 }
+
+.tipsy {
+    &-inner {
+        background-color: $tooltipBg;
+    }
+
+    &-arrow {
+        border-color: $tooltipBg;
+    }
+}
