@@ -1,4 +1,6 @@
-/* global $, config, interfaceConfig */
+/* global $, APP, config, AJS, interfaceConfig */
+
+import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
 /**
  * Created by hristo on 12/22/14.
@@ -82,12 +84,50 @@
         context.putImageData(imgData, 0, 0);
     },
 
+    /**
+     * Sets the tooltip to the given element.
+     *
+     * @param element the element to set the tooltip to
+     * @param key the tooltip data-i18n key
+     * @param position the position of the tooltip in relation to the element
+     */
     setTooltip: function (element, key, position) {
-        element.setAttribute("data-i18n", "[data-content]" + key);
-        element.setAttribute("data-toggle", "popover");
-        element.setAttribute("data-placement", position);
-        element.setAttribute("data-html", true);
-        element.setAttribute("data-container", "body");
+        let positions = {
+            'top': 's',
+            'top-left': 'se',
+            'left': 'e',
+            'bottom-left': 'ne',
+            'bottom': 'n',
+            'bottom-right': 'nw',
+            'right': 'w',
+            'top-right': 'sw'
+        };
+
+        element.setAttribute("data-i18n", "[content]" + key);
+        APP.translation.translateElement($(element));
+
+        AJS.$(element).tooltip({
+            gravity: positions[position],
+            title: this._getTooltipText.bind(this, element),
+            html: true
+        });
+    },
+
+    /**
+     * Internal util function for generating tooltip title.
+     *
+     * @param element
+     * @returns {string|*}
+     * @private
+     */
+    _getTooltipText: function (element) {
+        let title = element.getAttribute('content');
+        let shortcut = element.getAttribute('shortcut');
+        if(shortcut) {
+            let shortcutString = KeyboardShortcut.getShortcutTooltip(shortcut);
+            title += ` ${shortcutString}`;
+        }
+        return title;
     },
 
     /**

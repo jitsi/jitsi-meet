@@ -8,10 +8,14 @@ import "jquery-ui";
 import "strophe";
 import "strophe-disco";
 import "strophe-caps";
-import "tooltip";
-import "popover";
 import "jQuery-Impromptu";
 import "autosize";
+
+import 'aui';
+import 'aui-experimental';
+import 'aui-css';
+import 'aui-experimental-css';
+
 window.toastr = require("toastr");
 
 import URLProcessor from "./modules/config/URLProcessor";

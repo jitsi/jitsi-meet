@@ -185,6 +185,10 @@ export default function createRoomLocker (room) {
                 newPass => { password = newPass; }
             ).catch(
                 reason => {
+                    // user canceled, no pass was entered.
+                    // clear, as if we use the same instance several times
+                    // pass stays between attempts
+                    password = null;
                     if (reason !== APP.UI.messageHandler.CANCEL)
                         console.error(reason);
                 }

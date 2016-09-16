@@ -164,11 +164,12 @@ class VideoContainer extends LargeContainer {
         return getStreamOwnerId(this.stream);
     }
 
-    constructor (onPlay) {
+    constructor (onPlay, emitter) {
         super();
         this.stream = null;
         this.videoType = null;
         this.localFlipX = true;
+        this.emitter = emitter;
 
         this.isVisible = false;
 
@@ -327,6 +328,8 @@ class VideoContainer extends LargeContainer {
             (show) ? interfaceConfig.DEFAULT_BACKGROUND : "#000");
 
         this.$avatar.css("visibility", show ? "visible" : "hidden");
+
+        this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_DISPLAYED, show);
     }
 
     // We are doing fadeOut/fadeIn animations on parent div which wraps
@@ -385,12 +388,12 @@ class VideoContainer extends LargeContainer {
  * Manager for all Large containers.
  */
 export default class LargeVideoManager {
-    constructor () {
+    constructor (emitter) {
         this.containers = {};
 
         this.state = VIDEO_CONTAINER_TYPE;
         this.videoContainer = new VideoContainer(
-            () => this.resizeContainer(VIDEO_CONTAINER_TYPE));
+            () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
         // use the same video container to handle and desktop tracks

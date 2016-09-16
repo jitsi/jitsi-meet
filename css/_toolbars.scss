@@ -129,6 +129,7 @@ a.button:hover,
 a.button:active,
 a.button.selected {
     cursor: pointer;
+    text-decoration: none;
     // sum opacity with background layer should give us 0.8
     background: $toolbarSelectBackground;
 }

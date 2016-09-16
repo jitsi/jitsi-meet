@@ -105,5 +105,10 @@ export default {
      * event must contain the identifier of the container that has been toggled
      * and information about toggle on or off.
      */
-    SIDE_TOOLBAR_CONTAINER_TOGGLED: "UI.side_container_toggled"
+    SIDE_TOOLBAR_CONTAINER_TOGGLED: "UI.side_container_toggled",
+
+    /**
+     * Notifies that the avatar is displayed or not on the largeVideo.
+     */
+    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed"
 };
