@@ -26,7 +26,7 @@
     "i18next-client": "1.7.7",
     "jquery": "~2.1.1",
     "jQuery-Impromptu": "git+https://github.com/trentrichardson/jQuery-Impromptu.git#v6.0.0",
-    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git",
+    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git#193",
     "jquery-contextmenu": "*",
     "jquery-ui": "1.10.5",
     "jssha": "1.5.0",
