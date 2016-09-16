@@ -108,6 +108,11 @@ export default {
     SIDE_TOOLBAR_CONTAINER_TOGGLED: "UI.side_container_toggled",
 
     /**
+     * Notifies that the raise hand has been changed.
+     */
+    LOCAL_RAISE_HAND_CHANGED: "UI.local_raise_hand_changed",
+
+    /**
      * Notifies that the avatar is displayed or not on the largeVideo.
      */
     LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed"

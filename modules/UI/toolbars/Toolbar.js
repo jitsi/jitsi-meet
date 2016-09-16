@@ -400,6 +400,11 @@ const Toolbar = {
                                                             isVisible);
             });
 
+        APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
+            function(isRaisedHand) {
+                Toolbar._toggleRaiseHand(isRaisedHand);
+            });
+
         if(!APP.tokenData.isGuest) {
             $("#toolbar_button_profile").addClass("unclickable");
         }
@@ -563,6 +568,13 @@ const Toolbar = {
         } else {
             button.removeClass("glow");
         }
+    },
+
+    /**
+     * Toggles / untoggles the view for raised hand.
+     */
+    _toggleRaiseHand(isRaisedHand) {
+        $('#toolbar_button_raisehand').toggleClass("toggled", isRaisedHand);
     },
 
     /**
