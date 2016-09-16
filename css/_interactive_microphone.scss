@@ -1,16 +1,10 @@
 .interactive-mic {
-    font-size: 20px;
-    line-height: 0;
-    display: block;
-    width: 24px;
-    height: 24px;
-
     .mic-layer {
-        width: 4px;
-        height: 9px;
-        margin-left: -2px;
+        width: 2px;
+        height: 5px;
+        margin-left: -1px;
         position: absolute;
-        top: 5px;
+        top: 3px;
         left: 50%;
     }
 
@@ -33,8 +27,5 @@
 }
 
 .videocontainer .interactive-mic {
-    position: absolute;
-    left: 4px !important;
-    bottom: 5px;
-    z-index: 1;
+    position: relative;
 }

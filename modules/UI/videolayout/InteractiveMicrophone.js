@@ -1,4 +1,6 @@
 /* global $, APP, JitsiMeetJS, interfaceConfig */
+import UIUtil from "../util/UIUtil";
+
 export default class InteractiveMicrophone {
     constructor (options) {
         Object.assign(this, {
@@ -8,13 +10,15 @@ export default class InteractiveMicrophone {
         }, options);
 
         this.max = 100;
+        this.min = 50; // otherwise the progress bar will be almost invisible
     }
 
     render () {
         var level = (this.max - this.level).toFixed(0);
+
         /* jshint ignore:start */
         return `
-            <div class="interactive-mic">
+            <div class="interactive-mic toolbar-icon">
                 <i class="icon-${ this.silence ? 'mic-disabled' : 'microphone' }"></i>
                 <div class="mic-layer" style="display:${ this.silence ? 'none' : 'block' }">
                     <div class="mic-back"></div>
@@ -28,14 +32,25 @@ export default class InteractiveMicrophone {
     redraw () {
         var container = $(this.container),
             elements = container.find('.interactive-mic'),
-            content = this.render();
+            pseudo = document.createElement('div');
+
+        pseudo.innerHTML = this.render();
 
         elements.each(function () {
-            this.outerHTML = content;
+            var icon = document.createElement('i'),
+                elem = pseudo.children[0];
+
+            $(this).replaceWith(elem);
+
+            icon = elem.querySelector('.icon-mic-disabled') || icon;
+
+            UIUtil.setTooltip(icon, "videothumbnail.mute", "top");
         });
 
         if (!elements.length) {
-            container.append(content);
+            container
+                .find('.videocontainer__toolbar')
+                .append(pseudo.children[0]);
         }
 
         return this;
@@ -54,6 +69,7 @@ export default class InteractiveMicrophone {
         }
 
         if (level > 0) {
+            level = level < this.min ? this.min : level;
             level = level > this.max ? this.max : level;
         }
 

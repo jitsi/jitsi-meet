@@ -172,16 +172,16 @@
     display: block;
 }
 
-.videocontainer>span.displayname,
-.videocontainer>input.displayname {
+.videocontainer .displayname,
+.videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    bottom: 4px;
-    left: 25%;
+    bottom: 6px;
+    left: 30%;
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
-    width: 50%;
+    width: 40%;
     font-size: 12px;
     font-weight: 100;
     letter-spacing: 1px;
@@ -190,7 +190,8 @@
     z-index: 2;
 }
 
-.videocontainer>input.displayname {
+.videocontainer .editdisplayname {
+    line-height: 1.2;
     outline: none;
     border: none;
     background: none;
@@ -271,16 +272,16 @@
 }
 
 #localVideoContainer>span.status:hover,
-#localVideoContainer>span.displayname:hover {
+#localVideoContainer .displayname:hover {
     cursor: text;
 }
 
 .videocontainer>span.status,
-.videocontainer>span.displayname {
+.videocontainer .displayname {
     pointer-events: none;
 }
 
-.videocontainer>input.displayname {
+.videocontainer .editdisplayname {
     height: auto;
 }
 
@@ -301,32 +302,17 @@
     z-index: 2;
 }
 
-.videocontainer>span.audioMuted {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    bottom: 0;
-    left: 0;
-    padding: 8px 5px;
-    width: 25px;
+.videocontainer .toolbar-icon {
     font-size: 8pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 3;
     text-align: center;
-}
-
-.videocontainer>span.videoMuted {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    bottom: 0;
-    padding: 8px 5px;
-    width: 25px;
-    font-size: 8pt;
     text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    color: #FFFFFF;
+    width: 12px;
+    height: 18px;
+    padding: 0;
+    margin: 5px 0px 5px 3px;
     border: 0px;
-    z-index: 3;
+    float: left;
 }
 
 .videocontainer>span.indicator {
