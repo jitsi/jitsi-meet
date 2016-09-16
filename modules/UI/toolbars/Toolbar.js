@@ -400,7 +400,7 @@ const Toolbar = {
                                                             isVisible);
             });
 
-        APP.UI.addListener(UIEvents.RAISE_HAND_CHANGED,
+        APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
             function(isRaisedHand) {
                 Toolbar._toggleRaiseHand(isRaisedHand);
             });

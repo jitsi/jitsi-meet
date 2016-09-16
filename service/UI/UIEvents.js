@@ -110,7 +110,7 @@ export default {
     /**
      * Notifies that the raise hand has been changed.
      */
-    RAISE_HAND_CHANGED: "UI.raise_hand_changed",
+    LOCAL_RAISE_HAND_CHANGED: "UI.local_raise_hand_changed",
 
     /**
      * Notifies that the avatar is displayed or not on the largeVideo.

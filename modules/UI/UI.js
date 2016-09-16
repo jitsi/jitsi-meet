@@ -1217,8 +1217,8 @@ UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
  * @param {boolean} isRaisedHand indicates the current state of the
  * "raised hand"
  */
-UI.onRaiseHandChanged = function (isRaisedHand) {
-    eventEmitter.emit(UIEvents.RAISE_HAND_CHANGED, isRaisedHand);
+UI.onLocalRaiseHandChanged = function (isRaisedHand) {
+    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, isRaisedHand);
 };
 
 /**

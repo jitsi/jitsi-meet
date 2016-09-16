@@ -1648,7 +1648,7 @@ export default {
     setRaisedHand(raisedHand) {
         if (raisedHand !== this.isHandRaised)
         {
-            APP.UI.onRaiseHandChanged(raisedHand);
+            APP.UI.onLocalRaiseHandChanged(raisedHand);
 
             this.isHandRaised = raisedHand;
             // Advertise the updated status
