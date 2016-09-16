@@ -602,10 +602,11 @@ UI.getSharedDocumentManager = function () {
 
 /**
  * Show user on UI.
- * @param {string} id user id
- * @param {string} displayName user nickname
+ * @param {JitsiParticipant} user
  */
-UI.addUser = function (id, displayName) {
+UI.addUser = function (user) {
+    var id = user.getId();
+    var displayName = user.getDisplayName();
     UI.hideRingOverLay();
     ContactList.addContact(id);
 
@@ -618,7 +619,7 @@ UI.addUser = function (id, displayName) {
         UIUtil.playSoundNotification('userJoined');
 
     // Add Peer's container
-    VideoLayout.addParticipantContainer(id);
+    VideoLayout.addParticipantContainer(user);
 
     // Configure avatar
     UI.setUserEmail(id);

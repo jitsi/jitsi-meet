@@ -8,14 +8,24 @@ import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 import JitsiPopover from "../util/JitsiPopover";
 
-function RemoteVideo(id, VideoLayout, emitter) {
-    this.id = id;
+/**
+ * Creates new instance of the <tt>RemoteVideo</tt>.
+ * @param user {JitsiParticipant} the user for whom remote video instance will
+ * be created.
+ * @param {VideoLayout} VideoLayout the video layout instance.
+ * @param {EventEmitter} emitter the event emitter which will be used by
+ * the new instance to emit events.
+ * @constructor
+ */
+function RemoteVideo(user, VideoLayout, emitter) {
+    this.user = user;
+    this.id = user.getId();
     this.emitter = emitter;
-    this.videoSpanId = `participant_${id}`;
+    this.videoSpanId = `participant_${this.id}`;
     SmallVideo.call(this, VideoLayout);
     this.hasRemoteVideoMenu = false;
     this.addRemoteVideoContainer();
-    this.connectionIndicator = new ConnectionIndicator(this, id);
+    this.connectionIndicator = new ConnectionIndicator(this, this.id);
     this.setDisplayName();
     this.flipX = false;
     this.isLocal = false;

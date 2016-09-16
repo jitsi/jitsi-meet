@@ -1085,7 +1085,7 @@ export default {
 
             console.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
-            APP.UI.addUser(id, user.getDisplayName());
+            APP.UI.addUser(user);
 
             // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
