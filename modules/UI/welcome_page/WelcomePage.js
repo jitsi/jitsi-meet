@@ -2,6 +2,7 @@
 var animateTimeout, updateTimeout;
 
 var RoomnameGenerator = require("../../util/RoomnameGenerator");
+import UIUtil from "../util/UIUtil";
 
 function enter_room() {
     var val = $("#enter_room_field").val();
@@ -39,10 +40,10 @@ function setupWelcomePage() {
             $("#welcome_page_header div[class='watermark leftwatermark']");
         if(leftWatermarkDiv && leftWatermarkDiv.length > 0) {
             leftWatermarkDiv.css({display: 'block'});
-            leftWatermarkDiv.parent().get(0).href =
-                interfaceConfig.JITSI_WATERMARK_LINK;
+            UIUtil.setLinkHref(
+                leftWatermarkDiv.parent(),
+                interfaceConfig.JITSI_WATERMARK_LINK);
         }
-
     }
 
     if (interfaceConfig.SHOW_BRAND_WATERMARK) {
@@ -50,8 +51,9 @@ function setupWelcomePage() {
             $("#welcome_page_header div[class='watermark rightwatermark']");
         if(rightWatermarkDiv && rightWatermarkDiv.length > 0) {
             rightWatermarkDiv.css({display: 'block'});
-            rightWatermarkDiv.parent().get(0).href =
-                interfaceConfig.BRAND_WATERMARK_LINK;
+            UIUtil.setLinkHref(
+                rightWatermarkDiv.parent(),
+                interfaceConfig.BRAND_WATERMARK_LINK);
             rightWatermarkDiv.get(0).style.backgroundImage =
                 "url(images/rightwatermark.png)";
         }

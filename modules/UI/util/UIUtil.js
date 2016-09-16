@@ -273,6 +273,23 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
      */
     parseCssInt(cssValue) {
         return parseInt(cssValue) || 0;
+    },
+
+    /**
+     * Adds href value to 'a' link jquery object. If link value is null,
+     * undefined or empty string, disables the link.
+     * @param {object} aLinkElement the jquery object
+     * @param {string} link the link value
+     */
+    setLinkHref(aLinkElement, link) {
+        if (link) {
+            aLinkElement.attr('href', link);
+        } else {
+            aLinkElement.css({
+                "pointer-events": "none",
+                "cursor": "default"
+            });
+        }
     }
 };
 
