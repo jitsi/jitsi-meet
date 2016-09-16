@@ -2,7 +2,6 @@
 /* jshint -W101 */
 
 import UIUtil from './UIUtil';
-import Dialog from '../dialog/Dialog';
 
 /**
  * Flag for enable/disable of the notifications.
@@ -146,14 +145,32 @@ var messageHandler = {
         if (!popupEnabled)
             return;
 
-        var args = {
+        let classes = {
+            box: '',
+            prompt: 'dialog aui-layer aui-dialog2 aui-dialog2-small',
+            close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
+            fade: 'aui-blanket',
+            button: 'aui-button',
+            message: 'aui-dialog2-content',
+            buttons: 'aui-dialog2-footer',
+            defaultButton: 'aui-button-primary',
+            title: 'aui-dialog2-header'
+        };
+
+        let $titleString = $('<h2>');
+        $titleString.addClass('aui-dialog2-header-main');
+        $titleString.append(titleString);
+        titleString = $('<div>').append($titleString).html();
+
+        let args = {
             title: titleString,
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
             loaded: loadedFunction,
             submit: submitFunction,
-            close: closeFunction
+            close: closeFunction,
+            classes
         };
 
         if (persistent) {
@@ -161,7 +178,6 @@ var messageHandler = {
         }
 
         return new Impromptu(msgString, args);
-        //return new Dialog(msgString, args);
     },
 
     /**
