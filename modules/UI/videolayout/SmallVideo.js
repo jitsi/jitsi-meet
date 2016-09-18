@@ -40,7 +40,7 @@ SmallVideo.prototype.isVisible = function () {
 };
 
 SmallVideo.prototype.showDisplayName = function(isShow) {
-    var nameSpan = $('#' + this.videoSpanId + '>span.displayname').get(0);
+    var nameSpan = $('#' + this.videoSpanId + ' .displayname').get(0);
     if (isShow) {
         if (nameSpan && nameSpan.innerHTML && nameSpan.innerHTML.length)
             nameSpan.setAttribute("style", "display:inline-block;");
@@ -189,38 +189,54 @@ SmallVideo.prototype.hideIndicator = function () {
 
 
 /**
- * Shows audio muted indicator over small videos.
- * @param {string} isMuted
+ * Shows / hides the audio muted indicator over small videos.
+ *
+ * @param {string} isMuted indicates if the muted element should be shown
+ * or hidden
  */
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
-    var audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
+
+    var audioMutedIndicator = this.getAudioMutedIndicator();
 
     if (!isMuted) {
-        if (audioMutedSpan.length > 0) {
-            audioMutedSpan.remove();
-            this.updateIconPositions();
-        }
+        audioMutedIndicator.hide();
     }
     else {
-        if (!audioMutedSpan.length) {
-            audioMutedSpan = document.createElement('span');
-            audioMutedSpan.className = 'audioMuted';
-            UIUtil.setTooltip(audioMutedSpan,
-                "videothumbnail.mute",
-                "top");
-
-            this.container.appendChild(audioMutedSpan);
-            APP.translation
-                .translateElement($('#' + this.videoSpanId + " > span"));
-            var mutedIndicator = document.createElement('i');
-            mutedIndicator.className = 'icon-mic-disabled';
-            audioMutedSpan.appendChild(mutedIndicator);
-
-        }
-
-        this.updateIconPositions();
+        audioMutedIndicator.show();
     }
     this.isMuted = isMuted;
+};
+
+/**
+ * Returns the audio muted indicator jquery object. If it doesn't exists -
+ * creates it.
+ *
+ * @returns {jQuery|HTMLElement}
+ */
+SmallVideo.prototype.getAudioMutedIndicator = function () {
+    var audioMutedSpan = $('#' + this.videoSpanId + ' .audioMuted');
+
+    if (audioMutedSpan.length) {
+        return audioMutedSpan;
+    }
+
+    audioMutedSpan = document.createElement('span');
+    audioMutedSpan.className = 'audioMuted toolbar-icon';
+    
+    UIUtil.setTooltip(audioMutedSpan,
+        "videothumbnail.mute",
+        "top");
+
+    this.container
+        .querySelector('.videocontainer__toolbar')
+        .appendChild(audioMutedSpan);
+
+
+    var mutedIndicator = document.createElement('i');
+    mutedIndicator.className = 'icon-mic-disabled';
+    audioMutedSpan.appendChild(mutedIndicator);
+
+    return $('#' + this.videoSpanId + ' .audioMuted');
 };
 
 /**
@@ -231,53 +247,41 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 
-    var videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
+    var videoMutedSpan = this.getVideoMutedIndicator();
 
-    if (isMuted === false) {
-        if (videoMutedSpan.length > 0) {
-            videoMutedSpan.remove();
-            this.updateIconPositions();
-        }
-    }
-    else {
-        if (!videoMutedSpan.length) {
-            videoMutedSpan = document.createElement('span');
-            videoMutedSpan.className = 'videoMuted';
-
-            this.container.appendChild(videoMutedSpan);
-
-            var mutedIndicator = document.createElement('i');
-            mutedIndicator.className = 'icon-camera-disabled';
-            UIUtil.setTooltip(mutedIndicator,
-                "videothumbnail.videomute",
-                "top");
-            videoMutedSpan.appendChild(mutedIndicator);
-            //translate texts for muted indicator
-            APP.translation
-                .translateElement($('#' + this.videoSpanId  + " > span > i"));
-        }
-
-        this.updateIconPositions();
-    }
+    videoMutedSpan[isMuted ? 'show' : 'hide']();
 };
 
-SmallVideo.prototype.updateIconPositions = function () {
-    let audioMutedSpan = $('#' + this.videoSpanId + '>span.audioMuted');
-    let videoMutedSpan = $('#' + this.videoSpanId + '>span.videoMuted');
-    audioMutedSpan.css({left: "0px"});
-    videoMutedSpan.css({left: (audioMutedSpan.length > 0? 25 : 0) + "px"});
+/**
+ * Returns the video muted indicator jquery object. If it doesn't exists -
+ * creates it.
+ *
+ * @returns {jQuery|HTMLElement}
+ */
+SmallVideo.prototype.getVideoMutedIndicator = function () {
+    var videoMutedSpan = $('#' + this.videoSpanId + ' .videoMuted');
 
-    var connectionIndicator
-        = $('#' + this.videoSpanId + '>div.connectionindicator');
-    if(connectionIndicator.length > 0 &&
-        connectionIndicator[0].style.display != "none") {
-        audioMutedSpan.css({right: "23px"});
-        videoMutedSpan.css({right:
-            ((audioMutedSpan.length > 0? 23 : 0) + 30) + "px"});
-    } else {
-        audioMutedSpan.css({right: "0px"});
-        videoMutedSpan.css({right: (audioMutedSpan.length > 0? 30 : 0) + "px"});
+    if (videoMutedSpan.length) {
+        return videoMutedSpan;
     }
+
+    videoMutedSpan = document.createElement('span');
+    videoMutedSpan.className = 'videoMuted toolbar-icon';
+
+    this.container
+        .querySelector('.videocontainer__toolbar')
+        .appendChild(videoMutedSpan);
+
+    var mutedIndicator = document.createElement('i');
+    mutedIndicator.className = 'icon-camera-disabled';
+    
+    UIUtil.setTooltip(mutedIndicator,
+        "videothumbnail.videomute",
+        "top");
+    
+    videoMutedSpan.appendChild(mutedIndicator);
+
+    return $('#' + this.videoSpanId + ' .videoMuted');
 };
 
 /**
@@ -287,27 +291,25 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
     // Show moderator indicator
     var indicatorSpan = $('#' + this.videoSpanId + ' .focusindicator');
 
-    if (!indicatorSpan || indicatorSpan.length === 0) {
-        indicatorSpan = document.createElement('span');
-        indicatorSpan.className = 'focusindicator';
-
-        this.container.appendChild(indicatorSpan);
-        indicatorSpan = $('#' + this.videoSpanId + ' .focusindicator');
+    if (indicatorSpan.length) {
+        return;
     }
 
-    if (indicatorSpan.children().length !== 0)
-        return;
+    indicatorSpan = document.createElement('span');
+    indicatorSpan.className = 'focusindicator toolbar-icon right';
+
+    this.container
+        .querySelector('.videocontainer__toolbar')
+        .appendChild(indicatorSpan);
+
     var moderatorIndicator = document.createElement('i');
     moderatorIndicator.className = 'icon-star';
-    indicatorSpan[0].appendChild(moderatorIndicator);
 
-    UIUtil.setTooltip(indicatorSpan[0],
+    UIUtil.setTooltip(moderatorIndicator,
         "videothumbnail.moderator",
         "top-left");
 
-    //translates text in focus indicators
-    APP.translation
-        .translateElement($('#' + this.videoSpanId + ' .focusindicator'));
+    indicatorSpan.appendChild(moderatorIndicator);
 };
 
 /**

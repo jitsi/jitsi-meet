@@ -51,17 +51,25 @@
     border: 1px solid $defaultDarkColor;
 }
 
+/**
+ * The toolbar of the video thumbnail.
+ */
 .videocontainer__toolbar {
     position: absolute;
     bottom: 0;
     left: 0;
     z-index: 1;
     width: 100%;
-    height: 25px;
+    box-sizing: border-box; // Includes the padding in the 100% width.
+    height: $thumbnailToolbarHeight;
     max-height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    padding: 0 5px 0 5px;
 }
 
+/**
+ * Focused video thumbnail.
+ */
 #remoteVideos .videocontainer.videoContainerFocused {
     cursor: hand;
     transition-duration: 0.5s;
@@ -69,9 +77,6 @@
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
-}
-
-#remoteVideos .videocontainer.videoContainerFocused {
     border: 1px solid $videoThumbnailSelected;
 }
 
@@ -149,48 +154,31 @@
     z-index: 0;
 }
 
-#remoteVideos .videocontainer>span.focusindicator,
-#remoteVideos .videocontainer>div.remotevideomenu {
-    position: absolute;
-    color: #FFFFFF;
-    bottom: 0;
-    right: 0;
-    padding: 5px 0px;
-    width: 25px;
-    font-size: 9pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 2;
-    text-align: center;
-}
-
-#remoteVideos .videocontainer>span.focusindicator {
-    display: inline-block;
-}
-
-#remoteVideos .videocontainer>div.remotevideomenu {
-    display: block;
-}
-
-.videocontainer>span.displayname,
-.videocontainer>input.displayname {
+/**
+ * Positions video thumbnail display name and editor.
+ */
+.videocontainer .displayname,
+.videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    bottom: 4px;
-    left: 25%;
+    left: 30%;
+    width: 40%;
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
-    width: 50%;
     font-size: 12px;
     font-weight: 100;
     letter-spacing: 1px;
     overflow: hidden;
     white-space: nowrap;
+    line-height: $thumbnailToolbarHeight;
     z-index: 2;
 }
 
-.videocontainer>input.displayname {
+/**
+ * Positions video thumbnail display name editor.
+ */
+.videocontainer .editdisplayname {
     outline: none;
     border: none;
     background: none;
@@ -271,16 +259,16 @@
 }
 
 #localVideoContainer>span.status:hover,
-#localVideoContainer>span.displayname:hover {
+#localVideoContainer .displayname:hover {
     cursor: text;
 }
 
 .videocontainer>span.status,
-.videocontainer>span.displayname {
+.videocontainer .displayname {
     pointer-events: none;
 }
 
-.videocontainer>input.displayname {
+.videocontainer .editdisplayname {
     height: auto;
 }
 
@@ -301,32 +289,36 @@
     z-index: 2;
 }
 
-.videocontainer>span.audioMuted {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    bottom: 0;
-    left: 0;
-    padding: 8px 5px;
-    width: 25px;
+/**
+ * Video thumbnail toolbar icon.
+ */
+.videocontainer .toolbar-icon {
     font-size: 8pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 3;
     text-align: center;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    color: #FFFFFF;
+    width: 12px;
+    line-height: $thumbnailToolbarHeight;
+    height: $thumbnailToolbarHeight;
+    padding: 0;
+    border: 0;
+    margin: 0px 5px 0px 0px;
+    float: left;
 }
 
-.videocontainer>span.videoMuted {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    bottom: 0;
-    padding: 8px 5px;
-    width: 25px;
-    font-size: 8pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 3;
+/**
+ * Toolbar icon internal i elements (font icons).
+ */
+.toolbar-icon>i {
+    line-height: $thumbnailToolbarHeight;
+}
+
+/**
+ * Toolbar icons positioned on the right.
+ */
+.toolbar-icon.right {
+  float: right;
+  margin: 0px 0px 0px 5px;
 }
 
 .videocontainer>span.indicator {

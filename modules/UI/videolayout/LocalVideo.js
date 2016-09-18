@@ -60,7 +60,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         return;
     }
 
-    var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
+    var nameSpan = $('#' + this.videoSpanId + ' .displayname');
     var defaultLocalDisplayName = APP.translation.generateTranslationHTML(
         interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
 
@@ -81,7 +81,9 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
     } else {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
-        document.getElementById(this.videoSpanId).appendChild(nameSpan);
+        document.getElementById(this.videoSpanId)
+            .querySelector('.videocontainer__toolbar')
+            .appendChild(nameSpan);
 
 
         if (displayName && displayName.length > 0) {
@@ -98,7 +100,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
         APP.translation.translateElement($("a.displayname"));
 
         var editableText = document.createElement('input');
-        editableText.className = 'displayname';
+        editableText.className = 'editdisplayname';
         editableText.type = 'text';
         editableText.id = 'editDisplayName';
 
@@ -115,7 +117,9 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
             JSON.stringify({name: "Jane Pink"}));
         editableText.setAttribute("placeholder", defaultNickname);
 
-        this.container.appendChild(editableText);
+        this.container
+            .querySelector('.videocontainer__toolbar')
+            .appendChild(editableText);
 
         var self = this;
         $('#localVideoContainer .displayname')
