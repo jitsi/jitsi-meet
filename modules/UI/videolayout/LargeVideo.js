@@ -414,8 +414,9 @@ export default class LargeVideoManager {
 
             leftWatermarkDiv.css({display: 'block'});
 
-            leftWatermarkDiv.parent().attr(
-                'href', interfaceConfig.JITSI_WATERMARK_LINK);
+            UIUtil.setLinkHref(
+                leftWatermarkDiv.parent(),
+                interfaceConfig.JITSI_WATERMARK_LINK);
         }
 
         if (interfaceConfig.SHOW_BRAND_WATERMARK) {
@@ -427,8 +428,9 @@ export default class LargeVideoManager {
                 backgroundImage: 'url(images/rightwatermark.png)'
             });
 
-            rightWatermarkDiv.parent().attr(
-                'href', interfaceConfig.BRAND_WATERMARK_LINK);
+            UIUtil.setLinkHref(
+                rightWatermarkDiv.parent(),
+                interfaceConfig.BRAND_WATERMARK_LINK);
         }
 
         if (interfaceConfig.SHOW_POWERED_BY) {
