@@ -52,6 +52,8 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
+        console.log('open message dialog', arguments);
+
         return $.prompt(message, {
             title: this._getFormattedTitleString(title),
             persistent: false,
@@ -81,9 +83,19 @@ var messageHandler = {
      *        the user press 'enter'. Indexed from 0.
      * @return the prompt that was created, or null
      */
-    openTwoButtonDialog: function(titleKey, titleString, msgKey, msgString,
-        persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction, focus, defaultButton) {
+    openTwoButtonDialog: function(options) {
+        let {
+            titleKey,
+            titleString,
+            msgKey,
+            msgString,
+            leftButtonKey,
+            submitFunction,
+            loadedFunction,
+            closeFunction,
+            focus,
+            defaultButton
+        } = options;
 
         if (!popupEnabled || twoButtonDialog)
             return null;
@@ -147,6 +159,8 @@ var messageHandler = {
         if (!popupEnabled)
             return;
 
+        console.log('opening dialog', arguments);
+
         let args = {
             title: this._getFormattedTitleString(titleString),
             persistent: persistent,
@@ -207,6 +221,10 @@ var messageHandler = {
         let { classes } = options;
         options.classes = Object.assign({}, this._getDialogClasses(), classes);
 
+        console.log(options);
+
+        console.log('opening dialog with states', arguments);
+
         return new Impromptu(statesObject, options);
     },
 
@@ -240,6 +258,9 @@ var messageHandler = {
                 }
             }, 200);
         }
+
+        console.log('opening centered popup', arguments);
+
         return popup;
     },
 

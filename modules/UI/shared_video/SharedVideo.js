@@ -726,26 +726,25 @@ function getYoutubeLink(url) {
  */
 function showStopVideoPropmpt() {
     return new Promise(function (resolve, reject) {
-        dialog = APP.UI.messageHandler.openTwoButtonDialog(
-            "dialog.removeSharedVideoTitle",
-            null,
-            "dialog.removeSharedVideoMsg",
-            null,
-            false,
-            "dialog.Remove",
-            function(e,v,m,f) {
-                if (v) {
-                    resolve();
-                } else {
-                    reject();
-                }
-            },
-            null,
-            function () {
-                dialog = null;
+        let submitFunction = function(e,v,m,f) {
+            if (v) {
+                resolve();
+            } else {
+                reject();
             }
-        );
+        };
 
+        let closeFunction = function () {
+            dialog = null;
+        };
+
+        dialog = APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey: "dialog.removeSharedVideoTitle",
+            msgKey: "dialog.removeSharedVideoMsg",
+            leftButtonKey: "dialog.Remove",
+            submitFunction,
+            closeFunction
+        });
     });
 }
 
