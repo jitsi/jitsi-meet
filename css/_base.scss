@@ -163,6 +163,41 @@ form {
     display: flex !important;
 }
 
+.auto-rows,
+.auto-cols {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.auto-rows {
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+}
+
+.auto-cols {
+    -webkit-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+}
+
+.auto-grow {
+    flex: 1 0 auto;
+}
+
+.auto-shrink {
+    flex: 0 1 auto;
+}
+
+.auto-stretch {
+    flex: 1 1 auto;
+}
+
+.no-stretch {
+    flex: 0 0 auto;
+}
+
 .tipsy {
     z-index: $tooltipsZ;
     &-inner {

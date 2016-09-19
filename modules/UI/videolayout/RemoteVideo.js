@@ -26,6 +26,9 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.hasRemoteVideoMenu = false;
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
+    this.getAudioMutedIndicator();
+    this.getVideoMutedIndicator();
+    this.createDisplayNameWrapper();
     this.setDisplayName();
     this.flipX = false;
     this.isLocal = false;
@@ -227,7 +230,7 @@ if (!interfaceConfig.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
 
         var spanElement = document.createElement('span');
-        spanElement.className = 'remotevideomenu toolbar-icon right';
+        spanElement.className = 'remotevideomenu toolbar-icon right no-stretch';
 
         this.container
             .querySelector('.videocontainer__toolbar')
@@ -536,7 +539,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         $('#' + this.videoSpanId)[0]
-            .querySelector('.videocontainer__toolbar')
+            .querySelector('.name-wrapper')
             .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
@@ -555,7 +558,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
  * @param videoElementId the id of local or remote video element.
  */
 RemoteVideo.prototype.removeRemoteVideoMenu = function() {
-    var menuSpan = $('#' + this.videoSpanId + '> .remotevideomenu');
+    var menuSpan = $('#' + this.videoSpanId + ' .remotevideomenu');
     if (menuSpan.length) {
         this.popover.forceHide();
         menuSpan.remove();
@@ -569,7 +572,7 @@ RemoteVideo.createContainer = function (spanId) {
     container.className = 'videocontainer';
 
     let toolbar = document.createElement('div');
-    toolbar.className = "videocontainer__toolbar";
+    toolbar.className = "videocontainer__toolbar auto-cols";
     container.appendChild(toolbar);
 
     var remotes = document.getElementById('remoteVideos');
