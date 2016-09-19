@@ -239,6 +239,18 @@ RemoteVideo.prototype.isConnectionActive = function() {
 };
 
 /**
+ * The remote video is considered "playable" once the stream has started
+ * according to the {@link #hasVideoStarted} result.
+ *
+ * @inheritdoc
+ * @override
+ */
+RemoteVideo.prototype.isVideoPlayable = function () {
+    return SmallVideo.prototype.isVideoPlayable.call(this)
+        && this.hasVideoStarted();
+};
+
+/**
  * @inheritDoc
  */
 RemoteVideo.prototype.updateView = function () {

@@ -5,6 +5,27 @@ import UIEvents from "../../../service/UI/UIEvents";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
+/**
+ * Display mode constant used when video is being displayed on the small video.
+ * @type {number}
+ * @constant
+ */
+const DISPLAY_VIDEO = 0;
+/**
+ * Display mode constant used when the user's avatar is being displayed on
+ * the small video.
+ * @type {number}
+ * @constant
+ */
+const DISPLAY_AVATAR = 1;
+/**
+ * Display mode constant used when neither video nor avatar is being displayed
+ * on the small video.
+ * @type {number}
+ * @constant
+ */
+const DISPLAY_BLACKNESS = 2;
+
 function SmallVideo(VideoLayout) {
     this.isAudioMuted = false;
     this.hasAvatar = false;
@@ -381,6 +402,36 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function () {
 };
 
 /**
+ * Checks whether there is a playable video stream available for the user
+ * associated with this <tt>SmallVideo</tt>.
+ *
+ * @return {boolean} <tt>true</tt> if there is a playable video stream available
+ * or <tt>false</tt> otherwise.
+ */
+SmallVideo.prototype.isVideoPlayable = function() {
+    return this.videoStream // Is there anything to display ?
+        && !this.isVideoMuted && !this.videoStream.isMuted() // Muted ?
+        && (this.isLocal || this.VideoLayout.isInLastN(this.id));
+};
+
+/**
+ * Determines what should be display on the thumbnail.
+ *
+ * @return {number} one of <tt>DISPLAY_VIDEO</tt>,<tt>DISPLAY_AVATAR</tt>
+ * or <tt>DISPLAY_BLACKNESS</tt>.
+ */
+SmallVideo.prototype.selectDisplayMode = function() {
+    // Display name is always and only displayed when user is on the stage
+    if (this.isCurrentlyOnLargeVideo()) {
+        return DISPLAY_BLACKNESS;
+    } else if (this.isVideoPlayable() && this.selectVideoElement().length) {
+        return DISPLAY_VIDEO;
+    } else {
+        return DISPLAY_AVATAR;
+    }
+};
+
+/**
  * Hides or shows the user's avatar.
  * This update assumes that large video had been updated and we will
  * reflect it on this small video.
@@ -399,30 +450,12 @@ SmallVideo.prototype.updateView = function () {
         }
     }
 
-    let video = this.selectVideoElement();
-
-    let avatar = this.$avatar;
-
-    var isCurrentlyOnLarge = this.isCurrentlyOnLargeVideo();
-
-    var showVideo = !this.isVideoMuted && !isCurrentlyOnLarge;
-    var showAvatar;
-    if ((!this.isLocal
-            && !this.VideoLayout.isInLastN(this.id))
-        || this.isVideoMuted) {
-        showAvatar = true;
-    } else {
-        // We want to show the avatar when the video is muted or not exists
-        // that is when 'true' or 'null' is returned
-        showAvatar = !this.videoStream || this.videoStream.isMuted();
-    }
-
-    showAvatar = showAvatar && !isCurrentlyOnLarge;
-
-    if (video && video.length > 0) {
-        setVisibility(video, showVideo);
-    }
-    setVisibility(avatar, showAvatar);
+    // Determine whether video, avatar or blackness should be displayed
+    let displayMode = this.selectDisplayMode();
+    // Show/hide video
+    setVisibility(this.selectVideoElement(), displayMode === DISPLAY_VIDEO);
+    // Show/hide the avatar
+    setVisibility(this.$avatar(), displayMode === DISPLAY_AVATAR);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
