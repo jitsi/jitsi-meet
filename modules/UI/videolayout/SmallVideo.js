@@ -338,6 +338,16 @@ SmallVideo.prototype.selectVideoElement = function () {
 };
 
 /**
+ * Selects the HTML image element which displays user's avatar.
+ *
+ * @return {jQuery|HTMLElement} a jQuery selector pointing to the HTML image
+ * element which displays the user's avatar.
+ */
+SmallVideo.prototype.$avatar = function () {
+    return $('#' + this.videoSpanId + ' .userAvatar');
+};
+
+/**
  * Enables / disables the css responsible for focusing/pinning a video
  * thumbnail.
  *
@@ -380,7 +390,7 @@ SmallVideo.prototype.updateView = function () {
 
     let video = this.selectVideoElement();
 
-    let avatar = $('#' + this.videoSpanId + ' .userAvatar');
+    let avatar = this.$avatar;
 
     var isCurrentlyOnLarge = this.VideoLayout.isCurrentlyOnLarge(this.id);
 
@@ -406,18 +416,18 @@ SmallVideo.prototype.updateView = function () {
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     var thumbnail = $('#' + this.videoSpanId);
-    var avatar = $('#' + this.videoSpanId + ' .userAvatar');
+    var avatarSel = this.$avatar();
     this.hasAvatar = true;
 
     // set the avatar in the thumbnail
-    if (avatar && avatar.length > 0) {
-        avatar[0].src = avatarUrl;
+    if (avatarSel && avatarSel.length > 0) {
+        avatarSel[0].src = avatarUrl;
     } else {
         if (thumbnail && thumbnail.length > 0) {
-            avatar = document.createElement('img');
-            avatar.className = 'userAvatar';
-            avatar.src = avatarUrl;
-            thumbnail.append(avatar);
+            var avatarElement = document.createElement('img');
+            avatarElement.className = 'userAvatar';
+            avatarElement.src = avatarUrl;
+            thumbnail.append(avatarElement);
         }
     }
 };
