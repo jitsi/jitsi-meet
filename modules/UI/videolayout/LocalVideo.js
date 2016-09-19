@@ -23,12 +23,14 @@ function LocalVideo(VideoLayout, emitter) {
     this.initBrowserSpecificProperties();
 
     SmallVideo.call(this, VideoLayout);
-
-    // Set default display name.
-    this.setDisplayName();
-
+    
     this.createConnectionIndicator();
     this.addAudioLevelIndicator();
+    this.getAudioMutedIndicator();
+    this.getVideoMutedIndicator();
+    this.createDisplayNameWrapper();
+    // Set default display name.
+    this.setDisplayName();
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -70,7 +72,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         document.getElementById(this.videoSpanId)
-            .querySelector('.videocontainer__toolbar')
+            .querySelector('.name-wrapper')
             .appendChild(nameSpan);
 
 
@@ -106,7 +108,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         editableText.setAttribute("placeholder", defaultNickname);
 
         this.container
-            .querySelector('.videocontainer__toolbar')
+            .querySelector('.name-wrapper')
             .appendChild(editableText);
 
         var self = this;
