@@ -41,10 +41,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,
-    LOCAL_THUMBNAIL_RATIO_WIDTH: 16,
-    LOCAL_THUMBNAIL_RATIO_HEIGHT: 9,
-    REMOTE_THUMBNAIL_RATIO_WIDTH: 1,
-    REMOTE_THUMBNAIL_RATIO_HEIGHT: 1,
     // Enables feedback star animation.
     ENABLE_FEEDBACK_ANIMATION: false,
     DISABLE_FOCUS_INDICATOR: false,
@@ -52,5 +48,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     // disables the ringing sound when the RingOverlay is shown.
     DISABLE_RINGING: false,
     AUDIO_LEVEL_PRIMARY_COLOR: "rgba(255,255,255,0.7)",
-    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.4)"
+    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.4)",
+    LOCAL_THUMBNAIL_RATIO: 16/9, //16:9
+    REMOTE_THUMBNAIL_RATIO: 1, //1:1
 };
