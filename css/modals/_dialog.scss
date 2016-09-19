@@ -6,42 +6,60 @@
         color: $defaultDarkFontColor;
     }
 
-    .aui-dialog2 {
-        &-content {
-            font-size: em(14, 12);
-            min-height: 0;
+    .aui {
+        &-icon {
+            color: $auiIconColor;
 
-            &:last-child {
-                border-bottom-right-radius: 5px;
-                border-bottom-left-radius: 5px;
-            }
-
-            &:first-child {
-                border-top-right-radius: 5px;
-                border-top-left-radius: 5px;
+            &-small {
+                width: 14px;
+                height: 14px;
             }
         }
-    }
 
-    .aui-button {
-        outline: none;
-        border: none;
-        background-color: transparent;
-        border-left: solid 1px #e4e4e4;
-        font-weight: 700;
-
-        &-primary {
-            background-color: $auiPrimaryButtonBg;
-            color: $auiPrimaryButtonColor;
+        &-iconfont-close-dialog {
+            cursor: pointer;
+            right: 20px;
+            position: absolute;
+            top: -44px;
         }
 
-        &_close {
-            color: $defaultFontColor;
+        &-dialog2 {
+            &-content {
+                font-size: em(14, 12);
+                min-height: 0;
+
+                &:last-child {
+                    border-bottom-right-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                }
+
+                &:first-child {
+                    border-top-right-radius: 5px;
+                    border-top-left-radius: 5px;
+                }
+            }
         }
-        &_submit {
-            color: $linkFontColor;
-            &:hover {
-                color: $linkHoverFontColor;
+
+        &-button {
+            outline: none;
+            border: none;
+            background-color: transparent;
+            font-weight: 700;
+            float: right;
+
+            &-primary {
+                background-color: $auiPrimaryButtonBg;
+                color: $auiPrimaryButtonColor;
+            }
+
+            &_close {
+                color: $defaultFontColor;
+            }
+            &_submit {
+                color: $linkFontColor;
+                &:hover {
+                    color: $linkHoverFontColor;
+                }
             }
         }
     }
