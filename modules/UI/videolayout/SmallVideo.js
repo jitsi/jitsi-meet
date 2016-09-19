@@ -370,6 +370,17 @@ SmallVideo.prototype.hasVideo = function () {
 };
 
 /**
+ * Checks whether the user associated with this <tt>SmallVideo</tt> is currently
+ * being displayed on the "large video".
+ *
+ * @return {boolean} <tt>true</tt> if the user is displayed on the large video
+ * or <tt>false</tt> otherwise.
+ */
+SmallVideo.prototype.isCurrentlyOnLargeVideo = function () {
+    return this.VideoLayout.isCurrentlyOnLarge(this.id);
+};
+
+/**
  * Hides or shows the user's avatar.
  * This update assumes that large video had been updated and we will
  * reflect it on this small video.
@@ -392,7 +403,7 @@ SmallVideo.prototype.updateView = function () {
 
     let avatar = this.$avatar;
 
-    var isCurrentlyOnLarge = this.VideoLayout.isCurrentlyOnLarge(this.id);
+    var isCurrentlyOnLarge = this.isCurrentlyOnLargeVideo();
 
     var showVideo = !this.isVideoMuted && !isCurrentlyOnLarge;
     var showAvatar;

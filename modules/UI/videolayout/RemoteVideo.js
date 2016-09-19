@@ -223,7 +223,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
 
     // when removing only the video element and we are on stage
     // update the stage
-    if (isVideo && this.VideoLayout.isCurrentlyOnLarge(this.id))
+    if (isVideo && this.isCurrentlyOnLargeVideo())
         this.VideoLayout.updateLargeVideo(this.id);
 };
 
