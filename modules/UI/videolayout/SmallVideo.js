@@ -191,7 +191,7 @@ SmallVideo.prototype.hideIndicator = function () {
 /**
  * Shows / hides the audio muted indicator over small videos.
  *
- * @param {string} isMuted indicates if the muted element should be shown
+ * @param {boolean} isMuted indicates if the muted element should be shown
  * or hidden
  */
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
@@ -211,7 +211,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
  * Returns the audio muted indicator jquery object. If it doesn't exists -
  * creates it.
  *
- * @returns {jQuery|HTMLElement}
+ * @returns {jQuery|HTMLElement} the audio muted indicator
  */
 SmallVideo.prototype.getAudioMutedIndicator = function () {
     var audioMutedSpan = $('#' + this.videoSpanId + ' .audioMuted');
@@ -242,6 +242,9 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
 /**
  * Shows video muted indicator over small videos and disables/enables avatar
  * if video muted.
+ *
+ * @param {boolean} isMuted indicates if we should set the view to muted view
+ * or not
  */
 SmallVideo.prototype.setMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
@@ -256,7 +259,7 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
  * Returns the video muted indicator jquery object. If it doesn't exists -
  * creates it.
  *
- * @returns {jQuery|HTMLElement}
+ * @returns {jQuery|HTMLElement} the video muted indicator
  */
 SmallVideo.prototype.getVideoMutedIndicator = function () {
     var videoMutedSpan = $('#' + this.videoSpanId + ' .videoMuted');
