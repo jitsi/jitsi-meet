@@ -2,10 +2,6 @@
     visibility: visible;
     height: auto;
 
-    p,span {
-        color: $defaultDarkFontColor;
-    }
-
     .aui {
         &-icon {
             color: $auiIconColor;
@@ -24,9 +20,19 @@
         }
 
         &-dialog2 {
+            &-header {
+                h2 {
+                    font-size: em(21, 12);
+                }
+            }
+
             &-content {
                 font-size: em(14, 12);
                 min-height: 0;
+
+                p,span {
+                    color: $defaultDarkFontColor;
+                }
 
                 &:last-child {
                     border-bottom-right-radius: 5px;
@@ -42,12 +48,13 @@
 
         &-button {
             outline: none;
-            border: none;
             background-color: transparent;
-            font-weight: 700;
+            font-weight: 400;
             float: right;
+            margin-left: 10px;
 
             &-primary {
+                font-weight: 700;
                 background-color: $auiPrimaryButtonBg;
                 color: $auiPrimaryButtonColor;
             }
