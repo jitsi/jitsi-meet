@@ -55,9 +55,9 @@ function _requestLiveStreamId() {
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
+                title: msg,
                 html:
-                    `<h2>${msg}</h2>
-                    <input name="streamId" type="text"
+                    `<input name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     placeholder="${token}" autofocus>`,
                 persistent: false,
@@ -89,7 +89,8 @@ function _requestLiveStreamId() {
             },
 
             state1: {
-                html: `<h2>${msg}</h2> ${streamIdRequired}`,
+                title: msg,
+                html: streamIdRequired,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},

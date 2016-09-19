@@ -766,8 +766,8 @@ function requestVideoLink() {
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
+                title: title,
                 html:  `
-                    <h2>${title}</h2>
                     <input name="sharedVideoUrl" type="text"
                            data-i18n="[placeholder]defaultLink"
                            data-i18n-options="${JSON.stringify(i18nOptions)}"
@@ -806,7 +806,8 @@ function requestVideoLink() {
             },
 
             state1: {
-                html: `<h2>${title}</h2> ${linkError}`,
+                title: title,
+                html: linkError,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},

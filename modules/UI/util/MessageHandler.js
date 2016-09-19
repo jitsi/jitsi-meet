@@ -221,9 +221,15 @@ var messageHandler = {
         let { classes } = options;
         options.classes = Object.assign({}, this._getDialogClasses(), classes);
 
-        console.log(options);
+        for (let state in statesObject) {
+            let currentState = statesObject[state];
+            if(currentState.title) {
+                let title = currentState.title;
+                currentState.title = this._getFormattedTitleString(title);
+            }
+        }
 
-        console.log('opening dialog with states', arguments);
+        console.log(statesObject);
 
         return new Impromptu(statesObject, options);
     },
