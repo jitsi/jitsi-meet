@@ -455,6 +455,11 @@
     filter: blur(10px) grayscale(.5) opacity(0.8);
 }
 
+.videoThumbnailProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
 #videoConnectionMessage {
     display: none;
     position: absolute;

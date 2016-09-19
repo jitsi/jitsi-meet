@@ -268,6 +268,12 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
 
     if(this.connectionIndicator)
         this.connectionIndicator.updateConnectionStatusIndicator(isActive);
+
+    // Toggle thumbnail video problem filter
+    this.selectVideoElement().toggleClass(
+        "videoThumbnailProblemFilter", !isActive);
+    this.$avatar().toggleClass(
+        "videoThumbnailProblemFilter", !isActive);
 };
 
 /**
@@ -300,6 +306,8 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
     var onPlayingHandler = function () {
         self.VideoLayout.videoactive(streamElement, self.id);
         streamElement.onplaying = null;
+        // Refresh to show the video
+        self.updateView();
     };
     streamElement.onplaying = onPlayingHandler;
 };
