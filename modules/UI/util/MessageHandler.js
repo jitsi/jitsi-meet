@@ -53,8 +53,9 @@ var messageHandler = {
         }
 
         return $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(title),
             persistent: false,
+            classes: this._getDialogClasses(),
             close: function (e, v, m, f) {
                 if(closeFunction)
                     closeFunction(e, v, m, f);
@@ -104,12 +105,13 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
         twoButtonDialog = $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(title),
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
+            classes: this._getDialogClasses(),
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
                 if (submitFunction)
@@ -145,8 +147,37 @@ var messageHandler = {
         if (!popupEnabled)
             return;
 
-        let classes = {
+        let args = {
+            title: this._getFormattedTitleString(titleString),
+            persistent: persistent,
+            buttons: buttons,
+            defaultButton: 1,
+            loaded: loadedFunction,
+            submit: submitFunction,
+            close: closeFunction,
+            classes: this._getDialogClasses()
+        };
+
+        if (persistent) {
+            args.closeText = '';
+        }
+
+        return new Impromptu(msgString, args);
+    },
+
+    _getFormattedTitleString(titleString) {
+        let $titleString = $('<h2>');
+        $titleString.addClass('aui-dialog2-header-main');
+        $titleString.append(titleString);
+        titleString = $('<div>').append($titleString).html();
+
+        return titleString;
+    },
+
+    _getDialogClasses() {
+        return {
             box: '',
+            form: '',
             prompt: 'dialog aui-layer aui-dialog2 aui-dialog2-small',
             close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
             fade: 'aui-blanket',
@@ -156,28 +187,6 @@ var messageHandler = {
             defaultButton: 'aui-button-primary',
             title: 'aui-dialog2-header'
         };
-
-        let $titleString = $('<h2>');
-        $titleString.addClass('aui-dialog2-header-main');
-        $titleString.append(titleString);
-        titleString = $('<div>').append($titleString).html();
-
-        let args = {
-            title: titleString,
-            persistent: persistent,
-            buttons: buttons,
-            defaultButton: 1,
-            loaded: loadedFunction,
-            submit: submitFunction,
-            close: closeFunction,
-            classes
-        };
-
-        if (persistent) {
-            args.closeText = '';
-        }
-
-        return new Impromptu(msgString, args);
     },
 
     /**
@@ -195,6 +204,8 @@ var messageHandler = {
     openDialogWithStates: function (statesObject, options) {
         if (!popupEnabled)
             return;
+        let { classes } = options;
+        options.classes = Object.assign({}, this._getDialogClasses(), classes);
 
         return new Impromptu(statesObject, options);
     },
