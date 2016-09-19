@@ -8,7 +8,7 @@ import VideoLayout from "../../videolayout/VideoLayout";
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
 
-var smileys = require("./smileys.json").smileys;
+import { smileys } from './smileys';
 
 var unreadMessages = 0;
 
