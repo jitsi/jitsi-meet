@@ -126,6 +126,12 @@ var VideoLayout = {
         if (!largeVideo) {
             return;
         }
+
+        if (interfaceConfig.INTERACTIVE_MICROPHONE && (remoteVideos[id] || localVideoThumbnail.id === id) ) {
+            (remoteVideos[id] || localVideoThumbnail).imic.volume(lvl * 100).redraw();
+            return;
+        }
+
         AudioLevels.updateAudioLevel(
             id, lvl, largeVideo.id
         );

@@ -382,7 +382,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         return;
     }
 
-    var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
+    var nameSpan = $('#' + this.videoSpanId + ' .displayname');
 
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
@@ -401,7 +401,9 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
     } else {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
-        $('#' + this.videoSpanId)[0].appendChild(nameSpan);
+        $('#' + this.videoSpanId)[0]
+            .querySelector('.videocontainer__toolbar')
+            .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
             $(nameSpan).text(displayName);
