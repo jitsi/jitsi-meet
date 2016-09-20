@@ -2,9 +2,10 @@
  * Toolbar side panel main container element.
  */
 #sideToolbarContainer {
-    display: inline-block;
-    position:absolute;
-    top: 0px;
+    position: absolute;
+    top: 0;
+    //magic 10px for toolbar height. TODO: fix it
+    bottom: 10px;
     left: $defaultToolbarSize;
     width: 0;
     background-color: rgba(0,0,0,0.8);
@@ -50,12 +51,6 @@
             margin-left: 0;
             width: 100%;
         }
-
-        .startMutedLabel,
-        .followMeLabel {
-            display: inline;
-            margin-top: 0;
-        }
     }
 
     /**
@@ -72,16 +67,16 @@
         /**
          * Titles and subtitles of inner containers.
          */
-        > div.title,
-          div.subTitle {
+         div.title,
+         div.subTitle {
             text-align: left;
-            margin: 10px 0px 10px 0px;
+            margin: 10px 0;
         }
 
         /**
          * Main title size.
          */
-        > div.title {
+        div.title {
             color: $defaultColor !important;
             text-align: center;
             font-size: 16px;
@@ -90,7 +85,7 @@
         /**
          * Subtitle specific properties.
          */
-        > div.subTitle {
+        div.subTitle {
             font-size: 11px;
             font-weight: 500;
             color: $defaultSideBarFontColor !important;
@@ -101,7 +96,7 @@
          * First element after a title.
          */
         .first {
-            margin-top: 0px !important;
+            margin-top: 0 !important;
         }
 
         /**
@@ -117,10 +112,4 @@
 #device_settings {
     width : auto !important;
     text-align: center;
-}
-
-#startAudioMuted,
-#startVideoMuted,
-#followMeCheckBox {
-    width: 13px !important;
 }

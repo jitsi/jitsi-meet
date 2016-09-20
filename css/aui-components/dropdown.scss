@@ -1,0 +1,32 @@
+form.aui {
+    .aui-select2-container {
+        background-color: transparent;
+
+        > a{
+            margin: 0 auto !important;
+            width: 100% !important;
+        }
+    }
+
+}
+.aui-select2-drop{
+    z-index: 901;
+}
+.select2-drop-mask{
+    z-index: 900;
+}
+
+//Dark theme
+form.aui{
+    //Placeholder
+    .aui-select2-container.input-container-dark {
+        a.select2-choice {
+            text-shadow: none;
+        }
+    }
+}
+//
+.aui-dropdown2.aui-style-default.dropdown-dark{
+    background-color: $defaultBackground;
+    border-color: transparent;
+}
