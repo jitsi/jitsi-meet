@@ -1152,11 +1152,13 @@ UI.updateRecordingState = function (state) {
 };
 
 UI.notifyTokenAuthFailed = function () {
-    messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+    messageHandler.showError(   "dialog.tokenAuthFailedTitle",
+                                "dialog.tokenAuthFailed");
 };
 
 UI.notifyInternalError = function () {
-    messageHandler.showError("dialog.sorry", "dialog.internalError");
+    messageHandler.showError(   "dialog.internalErrorTitle",
+                                "dialog.internalError");
 };
 
 UI.notifyFocusDisconnected = function (focus, retrySec) {
