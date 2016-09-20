@@ -48,7 +48,7 @@ $dominantSpeakerBg: #165ecc;
 $raiseHandBg: #D6D61E;
 
 $rateStarDefault: #ccc;
-$rateStarActivity: #165ecc;
+$rateStarActivity: #f6c342;
 $rateStarLabelColor: #333;
 
 /**
@@ -62,3 +62,15 @@ $defaultWatermarkLink: '../images/watermark.png';
  */
 $toolbarZ: 900;
 $overlayZ: 800;
+
+/**
+ * Font Colors TODO: change according the design
+ */
+$defaultFontColor: #777;
+$defaultLightFontColor: #F1F1F1;
+$defaultDarkFontColor: #000;
+$buttonFontColor: #777;
+$buttonHoverFontColor: #287ade;
+$linkFontColor: #489afe;
+$linkHoverFontColor: #287ade;
+

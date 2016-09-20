@@ -29,7 +29,7 @@ var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
-var Feedback = require("./Feedback");
+var Feedback = require("./feedback/Feedback");
 
 import FollowMe from "../FollowMe";
 
@@ -1126,7 +1126,7 @@ UI.requestFeedback = function () {
             if (Feedback.isEnabled()) {
                 // If the user has already entered feedback, we'll show the
                 // window and immidiately start the conference dispose timeout.
-                if (Feedback.feedbackScore > 0) {
+                if (Feedback.getFeedbackScore() > 0) {
                     Feedback.openFeedbackWindow();
                     resolve();
 

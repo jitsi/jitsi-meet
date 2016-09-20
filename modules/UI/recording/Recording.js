@@ -17,7 +17,7 @@
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
-import Feedback from '../Feedback.js';
+import Feedback from '../feedback/Feedback.js';
 import Toolbar from '../toolbars/Toolbar';
 
 /**
