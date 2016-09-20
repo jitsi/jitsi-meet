@@ -45,6 +45,8 @@ function updateVisualNotification() {
     else {
         unreadMsgElement.innerHTML = '';
     }
+
+    $(unreadMsgElement).parent()[unreadMessages > 0 ? 'show' : 'hide']();
 }
 
 
@@ -196,6 +198,7 @@ var Chat = {
             });
 
         addSmileys();
+        updateVisualNotification();
     },
 
     /**

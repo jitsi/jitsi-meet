@@ -83,14 +83,6 @@
     display: none;
 }
 
-#numberOfParticipants {
-  position: absolute;
-  top: 5px;
-  line-height: 13px;
-  font-weight: bold;
-  font-size: 11px;
-}
-
 #mainToolbar a.button:last-child::after {
     content: none;
 }
@@ -147,6 +139,42 @@ a.button>#avatar {
 
 #feedbackButton {
     margin-top: auto;
+}
+
+/**
+ * Round badge.
+ */
+.badge-round {
+    background-color: $toolbarBadgeBackground;
+    color: $toolbarBadgeColor;
+    font-size: 9px;
+    line-height: 13px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 50%;
+    min-width: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+/**
+ * Badge-round element text span.
+ */
+.badge-round>span {
+    display: inline-block;
+    line-height: 11px;
+    padding: 0 0 2px 0;
+}
+
+/**
+ * Toolbar specific round badge.
+ */
+.toolbar .badge-round {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
 }
 
 /**
