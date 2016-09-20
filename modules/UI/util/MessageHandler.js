@@ -52,8 +52,6 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
-        console.log('open message dialog', arguments);
-
         return $.prompt(message, {
             title: this._getFormattedTitleString(title),
             persistent: false,
@@ -159,8 +157,6 @@ var messageHandler = {
         if (!popupEnabled)
             return;
 
-        console.log('opening dialog', arguments);
-
         let args = {
             title: this._getFormattedTitleString(titleString),
             persistent: persistent,
@@ -229,8 +225,6 @@ var messageHandler = {
             }
         }
 
-        console.log(statesObject);
-
         return new Impromptu(statesObject, options);
     },
 
@@ -264,8 +258,6 @@ var messageHandler = {
                 }
             }, 200);
         }
-
-        console.log('opening centered popup', arguments);
 
         return popup;
     },
