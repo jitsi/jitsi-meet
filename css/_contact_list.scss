@@ -2,12 +2,11 @@
     cursor: default;
 
     > ul#contacts {
-        position: absolute;
-        top: 31px;
+        font-size: 12px;
         bottom: 0px;
-        width: 100%;
         margin: 0px;
         padding: 0px;
+        width: 100%;
         overflow-y: scroll;
         overflow-x: hidden;
     }
@@ -20,13 +19,13 @@
 #contacts {
 
     >li {
+        color: $defaultSideBarFontColor;
         list-style-type: none;
         text-align: left;
         white-space: nowrap;
         color: #FFF;
         font-size: 10pt;
-        padding: 7px 10px;
-        margin: 2px;
+        padding: 6px 10%;
 
         &:hover,
         &:active {

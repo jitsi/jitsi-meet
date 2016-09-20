@@ -12,12 +12,13 @@
     background-color: rgba(0,0,0,0.8);
     z-index: 800;
     overflow: hidden;
+    letter-spacing: 1px;
 
     /**
      * Labels inside the side panel.
      */
     label {
-        color: $defaultSemiDarkColor;
+        color: $defaultColor;
     }
 
     /**
@@ -70,16 +71,16 @@
          */
         > div.title,
           div.subTitle {
-            color: $defaultColor !important;
             text-align: left;
             margin: 10px 0px 10px 0px;
-            padding: 5px 10px 5px 10px;
         }
 
         /**
          * Main title size.
          */
         > div.title {
+            color: $defaultColor !important;
+            text-align: center;
             font-size: 16px;
         }
 
@@ -87,10 +88,10 @@
          * Subtitle specific properties.
          */
         > div.subTitle {
-            font-size: 12px;
-            background: $inputSemiBackground !important;
-            margin-top: 20px !important;
-            margin-bottom: 8px !important;
+            font-size: 11px;
+            font-weight: 500;
+            color: $defaultSideBarFontColor !important;
+            margin-left: 10%;
         }
 
         /**

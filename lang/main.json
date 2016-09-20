@@ -1,5 +1,5 @@
 {
-    "contactlist": "ON CALL (__participants__)",
+    "contactlist": "On Call (__participants__)",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "downloadlogs": "Download logs",
@@ -110,21 +110,21 @@
     },
     "settings":
     {
-        "title": "SETTINGS",
+        "title": "Settings",
         "update": "Update",
         "name": "Name",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
-        "selectCamera": "Select camera",
-        "selectMic": "Select microphone",
-        "selectAudioOutput": "Select audio output",
+        "selectCamera": "Camera",
+        "selectMic": "Microphone",
+        "selectAudioOutput": "Audio output",
         "followMe": "Everyone follows me",
         "noDevice": "None",
         "noPermission": "Permission to use device is not granted",
         "cameraAndMic": "Camera and microphone",
         "moderator": "MODERATOR",
         "password": "SET PASSWORD",
-        "audioVideo": "AUDIO / VIDEO",
+        "audioVideo": "AUDIO AND VIDEO",
         "setPasswordLabel": "Lock your room with a password."
     },
     "profile": {

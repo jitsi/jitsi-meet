@@ -74,10 +74,7 @@ export default {
                     }
                 });
 
-            // Only show the subtitle if this isn't the only setting section.
-            if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.showElement("deviceOptionsTitle");
-
+            UIUtil.showElement("deviceOptionsTitle");
             UIUtil.showElement("devicesOptions");
         }
 
@@ -150,8 +147,7 @@ export default {
     showStartMutedOptions (show) {
         if (show && UIUtil.isSettingEnabled('moderator')) {
             // Only show the subtitle if this isn't the only setting section.
-            if (!$("#moderatorOptionsTitle").is(":visible")
-                && interfaceConfig.SETTINGS_SECTIONS.length > 1)
+            if (!$("#moderatorOptionsTitle").is(":visible"))
                 UIUtil.showElement("moderatorOptionsTitle");
 
             UIUtil.showElement("startMutedOptions");
