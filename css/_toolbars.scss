@@ -157,15 +157,9 @@ a.button>#avatar {
     text-overflow: ellipsis;
     box-sizing: border-box;
     vertical-align: middle;
-}
-
-/**
- * Badge-round element text span.
- */
-.badge-round>span {
-    display: inline-block;
-    line-height: 11px;
-    padding: 0 0 2px 0;
+    // Do not inherit the font-family from the toolbar button, because it's an
+    // icon style.
+    font-family: $baseFontFamily;
 }
 
 /**
@@ -173,8 +167,8 @@ a.button>#avatar {
  */
 .toolbar .badge-round {
     position: absolute;
-    right: 8px;
-    bottom: 8px;
+    right: 9px;
+    bottom: 9px;
 }
 
 /**
