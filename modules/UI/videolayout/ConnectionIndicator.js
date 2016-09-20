@@ -312,7 +312,6 @@ ConnectionIndicator.prototype.updateConnectionQuality =
     } else {
         if(this.connectionIndicatorContainer.style.display == "none") {
             this.connectionIndicatorContainer.style.display = "block";
-            this.videoContainer.updateIconPositions();
         }
     }
     this.bandwidth = object.bandwidth;
