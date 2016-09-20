@@ -136,7 +136,7 @@
     {
         "editnickname": "Click to edit your<br/>display name",
         "moderator": "The owner of<br/>this conference",
-        "videomute": "Participant has<br/>stopped the camera.",
+        "videomute": "Participant has<br/>stopped the camera",
         "mute": "Participant is muted",
         "kick": "Kick out",
         "muted": "Muted",

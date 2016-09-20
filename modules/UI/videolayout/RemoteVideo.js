@@ -51,7 +51,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  */
 RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
     this.popover = new JitsiPopover(
-        $("#" + this.videoSpanId + " > .remotevideomenu"),
+        $("#" + this.videoSpanId + " .remotevideomenu"),
         {   content: popupMenuElement.outerHTML,
             skin: "black"});
 
@@ -171,12 +171,16 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
  */
 if (!interfaceConfig.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
-        var spanElement = document.createElement('div');
-        spanElement.className = 'remotevideomenu';
-        this.container.appendChild(spanElement);
+
+        var spanElement = document.createElement('span');
+        spanElement.className = 'remotevideomenu toolbar-icon right';
+
+        this.container
+            .querySelector('.videocontainer__toolbar')
+            .appendChild(spanElement);
 
         var menuElement = document.createElement('i');
-        menuElement.className = 'fa fa-angle-down';
+        menuElement.className = 'icon-menu-up';
         menuElement.title = 'Remote user controls';
         spanElement.appendChild(menuElement);
 
@@ -382,7 +386,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         return;
     }
 
-    var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
+    var nameSpan = $('#' + this.videoSpanId + ' .displayname');
 
     // If we already have a display name for this video.
     if (nameSpan.length > 0) {
@@ -401,7 +405,9 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
     } else {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
-        $('#' + this.videoSpanId)[0].appendChild(nameSpan);
+        $('#' + this.videoSpanId)[0]
+            .querySelector('.videocontainer__toolbar')
+            .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
             $(nameSpan).text(displayName);
@@ -419,7 +425,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
  * @param videoElementId the id of local or remote video element.
  */
 RemoteVideo.prototype.removeRemoteVideoMenu = function() {
-    var menuSpan = $('#' + this.videoSpanId + '>span.remotevideomenu');
+    var menuSpan = $('#' + this.videoSpanId + '> .remotevideomenu');
     if (menuSpan.length) {
         this.popover.forceHide();
         menuSpan.remove();
