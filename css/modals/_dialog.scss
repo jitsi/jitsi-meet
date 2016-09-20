@@ -1,0 +1,73 @@
+.dialog {
+    visibility: visible;
+    height: auto;
+
+    .aui {
+        &-icon {
+            color: $auiIconColor;
+
+            &-small {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        &-iconfont-close-dialog {
+            cursor: pointer;
+            right: 20px;
+            position: absolute;
+            top: -44px;
+        }
+
+        &-dialog2 {
+            &-header {
+                h2 {
+                    font-size: em(21, 12);
+                }
+            }
+
+            &-content {
+                font-size: em(14, 12);
+                min-height: 0;
+
+                p,span {
+                    color: $defaultDarkFontColor;
+                }
+
+                &:last-child {
+                    border-bottom-right-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                }
+
+                &:first-child {
+                    border-top-right-radius: 5px;
+                    border-top-left-radius: 5px;
+                }
+            }
+        }
+
+        &-button {
+            outline: none;
+            background-color: transparent;
+            font-weight: 400;
+            float: right;
+            margin-left: 10px;
+
+            &-primary {
+                font-weight: 700;
+                background-color: $auiPrimaryButtonBg;
+                color: $auiPrimaryButtonColor;
+            }
+
+            &_close {
+                color: $defaultFontColor;
+            }
+            &_submit {
+                color: $linkFontColor;
+                &:hover {
+                    color: $linkHoverFontColor;
+                }
+            }
+        }
+    }
+}

@@ -1,3 +1,9 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
 /* Variables BEGIN */
 
 @import 'variables';
@@ -22,9 +28,11 @@
 @import 'toastr';
 @import 'base';
 @import 'overlay/overlay';
+@import 'modals/dialog';
+@import 'modals/feedback/feedback';
 @import 'videolayout_default';
-@import 'jquery-impromptu';
-@import 'modaldialog';
+//@import 'jquery-impromptu';
+//ß@import 'modaldialog';
 @import 'notice';
 @import 'popup_menu';
 @import 'recording';
@@ -38,7 +46,6 @@
 @import 'toolbars';
 @import 'side_toolbar_container';
 @import 'device_settings_dialog';
-@import 'feedback';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 

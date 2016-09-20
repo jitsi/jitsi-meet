@@ -11,46 +11,60 @@ let emitter = null;
  * Opens the invite link dialog.
  */
 function openLinkDialog () {
+    let InviteAttributesKey = 'roomUrlDefaultMsg';
+    let title = APP.translation.translateString(InviteAttributesKey);
     let inviteAttributes;
+    let titleKey = "dialog.shareLink";
+    let titleString = APP.translation.generateTranslationHTML(titleKey);
+
+    let submitFunction = function (e, v) {
+        if (v && roomUrl) {
+            JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
+            emitter.emit(UIEvents.USER_INVITED, roomUrl);
+        }
+        else {
+            JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
+        }
+    };
+
+    let loadedFunction = function (event) {
+        if (roomUrl) {
+            document.getElementById('inviteLinkRef').select();
+        } else {
+            if (event && event.target) {
+                $(event.target).find('button[value=true]')
+                    .prop('disabled', true);
+            }
+        }
+    };
+
+    let closeFunction = function (e, v, m, f) {
+        if(!v && !m && !f)
+            JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
+    };
 
     if (roomUrl === null) {
         inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
+            title + '"';
     } else {
         inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
     }
 
-    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        '<h2>' + title + '</h2>'
-        + '<input id="inviteLinkRef" type="text" '
-        + inviteAttributes + ' onclick="this.select();" readonly>',
-        false, "dialog.Invite",
-        function (e, v) {
-            if (v && roomUrl) {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-                emitter.emit(UIEvents.USER_INVITED, roomUrl);
-            }
-            else {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
-            }
-        },
-        function (event) {
-            if (roomUrl) {
-                document.getElementById('inviteLinkRef').select();
-            } else {
-                if (event && event.target) {
-                    $(event.target).find('button[value=true]')
-                        .prop('disabled', true);
-                }
-            }
-        },
-        function (e, v, m, f) {
-            if(!v && !m && !f)
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
-        }
-    );
+    let msgString = (`
+        <input id="inviteLinkRef" type="text"
+               ${inviteAttributes} onclick="this.select();"
+               readonly>
+    `);
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString,
+        msgString,
+        submitFunction,
+        loadedFunction,
+        closeFunction,
+        leftButtonKey: "dialog.Invite"
+    });
 }
 
 const buttonHandlers = {
@@ -149,21 +163,20 @@ const buttonHandlers = {
         emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
+        let titleKey = "dialog.logoutTitle";
+        let msgKey = "dialog.logoutQuestion";
         JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
-        APP.UI.messageHandler.openTwoButtonDialog(
-            "dialog.logoutTitle",
-            null,
-            "dialog.logoutQuestion",
-            null,
-            false,
-            "dialog.Yes",
-            function (evt, yes) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            msgKey,
+            leftButtonKey: "dialog.Yes",
+            submitFunction: function (evt, yes) {
                 if (yes) {
                     emitter.emit(UIEvents.LOGOUT);
                 }
             }
-        );
+        });
     },
     "toolbar_film_strip": function () {
         JitsiMeetJS.analytics.sendEvent(
@@ -330,20 +343,25 @@ function showSipNumberInput () {
     let defaultNumber = config.defaultSipNumber
         ? config.defaultSipNumber
         : '';
-
+    let titleKey = "dialog.sipMsg";
     let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        `<h2>${sipMsg}</h2>
-            <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
-        false, "dialog.Dial",
-        function (e, v, m, f) {
+    let msgString = (`
+            <input name="sipNumber" type="text"
+                   value="${defaultNumber}" autofocus>
+    `);
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString: sipMsg,
+        msgString,
+        leftButtonKey: "dialog.Dial",
+        submitFunction: function (e, v, m, f) {
             if (v && f.sipNumber) {
                 emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
             }
         },
-        null, null, ':input:first'
-    );
+        focus: ':input:first'
+    });
 }
 
 const Toolbar = {

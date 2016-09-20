@@ -52,9 +52,12 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
+        console.log('open message dialog', arguments);
+
         return $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(title),
             persistent: false,
+            classes: this._getDialogClasses(),
             close: function (e, v, m, f) {
                 if(closeFunction)
                     closeFunction(e, v, m, f);
@@ -80,9 +83,19 @@ var messageHandler = {
      *        the user press 'enter'. Indexed from 0.
      * @return the prompt that was created, or null
      */
-    openTwoButtonDialog: function(titleKey, titleString, msgKey, msgString,
-        persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction, focus, defaultButton) {
+    openTwoButtonDialog: function(options) {
+        let {
+            titleKey,
+            titleString,
+            msgKey,
+            msgString,
+            leftButtonKey,
+            submitFunction,
+            loadedFunction,
+            closeFunction,
+            focus,
+            defaultButton
+        } = options;
 
         if (!popupEnabled || twoButtonDialog)
             return null;
@@ -104,12 +117,13 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
         twoButtonDialog = $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(title),
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
+            classes: this._getDialogClasses(),
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
                 if (submitFunction)
@@ -145,14 +159,17 @@ var messageHandler = {
         if (!popupEnabled)
             return;
 
-        var args = {
-            title: titleString,
+        console.log('opening dialog', arguments);
+
+        let args = {
+            title: this._getFormattedTitleString(titleString),
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
             loaded: loadedFunction,
             submit: submitFunction,
-            close: closeFunction
+            close: closeFunction,
+            classes: this._getDialogClasses()
         };
 
         if (persistent) {
@@ -160,6 +177,30 @@ var messageHandler = {
         }
 
         return new Impromptu(msgString, args);
+    },
+
+    _getFormattedTitleString(titleString) {
+        let $titleString = $('<h2>');
+        $titleString.addClass('aui-dialog2-header-main');
+        $titleString.append(titleString);
+        titleString = $('<div>').append($titleString).html();
+
+        return titleString;
+    },
+
+    _getDialogClasses() {
+        return {
+            box: '',
+            form: '',
+            prompt: 'dialog aui-layer aui-dialog2 aui-dialog2-small',
+            close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
+            fade: 'aui-blanket',
+            button: 'aui-button',
+            message: 'aui-dialog2-content',
+            buttons: 'aui-dialog2-footer',
+            defaultButton: 'aui-button-primary',
+            title: 'aui-dialog2-header'
+        };
     },
 
     /**
@@ -177,6 +218,18 @@ var messageHandler = {
     openDialogWithStates: function (statesObject, options) {
         if (!popupEnabled)
             return;
+        let { classes } = options;
+        options.classes = Object.assign({}, this._getDialogClasses(), classes);
+
+        for (let state in statesObject) {
+            let currentState = statesObject[state];
+            if(currentState.title) {
+                let title = currentState.title;
+                currentState.title = this._getFormattedTitleString(title);
+            }
+        }
+
+        console.log(statesObject);
 
         return new Impromptu(statesObject, options);
     },
@@ -211,6 +264,9 @@ var messageHandler = {
                 }
             }, 200);
         }
+
+        console.log('opening centered popup', arguments);
+
         return popup;
     },
 
