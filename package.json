@@ -47,7 +47,13 @@
     "jshint": "2.8.0",
     "node-sass": "^3.8.0",
     "precommit-hook": "3.0.0",
-    "uglify-js": "2.4.24"
+    "uglify-js": "2.4.24",
+
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-register": "*",
+    "string-replace-loader": "*",
+    "webpack": "*"
   },
   "license": "Apache-2.0",
   "scripts": {
