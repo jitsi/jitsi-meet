@@ -48,11 +48,16 @@ let constructDetailedFeedbackHtml = function() {
  * @returns {string} the contructed html string
  */
 let createRateFeedbackHTML = function (Feedback) {
-    var rateExperience = APP.translation.translateString('dialog.rateExperience'),
+    let rateExperience
+            = APP.translation.translateString('dialog.rateExperience'),
         feedbackHelp = APP.translation.translateString('dialog.feedbackHelp'),
         feedbackQuestion = (Feedback.feedbackScore < 0)
         ? `<p><br/>${APP.translation.translateString('dialog.feedbackQuestion')}</p>`
         : '';
+
+    let starClassName = (interfaceConfig.ENABLE_FEEDBACK_ANIMATION)
+                            ? "icon-star shake-rotate"
+                            : "icon-star";
 
     return `
         <div class="aui-dialog2-content feedback__content">
@@ -63,19 +68,19 @@ let createRateFeedbackHTML = function (Feedback) {
                     <p class="star-label">&nbsp;</p>
                     <div id="stars" class="feedback-stars">
                         <a class="star-btn">
-                            <i class="icon-star shake-rotate"></i>
+                            <i class=${ starClassName }></i>
                         </a>
                         <a class="star-btn">
-                            <i class="icon-star shake-rotate"></i>
+                            <i class=${ starClassName }></i>
                         </a>
                         <a class="star-btn">
-                            <i class="icon-star shake-rotate"></i>
+                            <i class=${ starClassName }></i>
                         </a>
                         <a class="star-btn">
-                            <i class="icon-star shake-rotate"></i>
+                            <i class=${ starClassName }></i>
                         </a>
                         <a class="star-btn">
-                            <i class="icon-star shake-rotate"></i>
+                            <i class=${ starClassName }></i>
                         </a>
                     </div>
                     <p>&nbsp;</p>
@@ -140,6 +145,8 @@ let onLoadDetailedFunction = function(Feedback) {
             Feedback.hide();
         });
     }
+
+    $('#feedbackTextArea').focus();
 };
 
 /**
