@@ -19,7 +19,6 @@ function RemoteVideo(id, VideoLayout, emitter) {
     this.setDisplayName();
     this.flipX = false;
     this.isLocal = false;
-    this.isMuted = false;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -61,7 +60,7 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
     this.popover.show = function () {
         // update content by forcing it, to finish even if popover
         // is not visible
-        this.updateRemoteVideoMenu(this.isMuted, true);
+        this.updateRemoteVideoMenu(this.isAudioMuted, true);
         // call the original show, passing its actual this
         origShowFunc.call(this.popover);
     }.bind(this);
@@ -97,7 +96,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
 
     muteLinkItem.id = "mutelink_" + this.id;
 
-    if (this.isMuted) {
+    if (this.isAudioMuted) {
         muteLinkItem.innerHTML = mutedHTML;
         muteLinkItem.className = 'mutelink disabled';
     }
@@ -109,7 +108,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
     // Delegate event to the document.
     $(document).on("click", "#mutelink_" + this.id, function(){
 
-        if (this.isMuted)
+        if (this.isAudioMuted)
             return;
 
         this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
@@ -153,7 +152,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
  */
 RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
 
-    this.isMuted = isMuted;
+    this.isAudioMuted = isMuted;
 
     // generate content, translate it and add it to document only if
     // popover is visible or we force to do so.
