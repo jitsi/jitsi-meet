@@ -486,17 +486,8 @@ UI.start = function () {
             $('#noticeText').text(config.noticeMessage);
             $('#notice').css({display: 'block'});
         }
-        $("#downloadlog").click(function (event) {
-            let logs = APP.conference.getLogs();
-            let data = encodeURIComponent(JSON.stringify(logs, null, '  '));
-
-            let elem = event.target.parentNode;
-            elem.download = 'meetlog.json';
-            elem.href = 'data:application/json;charset=utf-8,\n' + data;
-        });
     } else {
         $("#mainToolbarContainer").css("display", "none");
-        $("#downloadlog").css("display", "none");
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
