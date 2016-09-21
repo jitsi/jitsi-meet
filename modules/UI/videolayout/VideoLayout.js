@@ -8,7 +8,7 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 import RemoteVideo from "./RemoteVideo";
-import LargeVideoManager  from "./LargeVideo";
+import LargeVideoManager  from "./LargeVideoManager";
 import {VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
 import LocalVideo from "./LocalVideo";
