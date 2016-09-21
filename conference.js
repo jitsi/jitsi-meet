@@ -712,6 +712,30 @@ export default {
     },
 
     /**
+     * Download logs, a function that can be called from console while
+     * debugging.
+     * @param filename (optional) specify target filename
+     */
+    saveLogs (filename = 'meetlog.json') {
+        // this can be called from console and will not have reference to this
+        // that's why we reference the global var
+        let logs = APP.conference.getLogs();
+        let data = encodeURIComponent(JSON.stringify(logs, null, '  '));
+
+        let elem = document.createElement('a');
+
+        elem.download = filename;
+        elem.href = 'data:application/json;charset=utf-8,\n' + data;
+        elem.dataset.downloadurl
+            = ['text/json', elem.download, elem.href].join(':');
+        elem.dispatchEvent(new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: false
+        }));
+    },
+
+    /**
      * Exposes a Command(s) API on this instance. It is necessitated by (1) the
      * desire to keep room private to this instance and (2) the need of other
      * modules to send and receive commands to and from participants.
