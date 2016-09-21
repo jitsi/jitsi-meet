@@ -123,12 +123,30 @@ var VideoLayout = {
     },
 
     setAudioLevel(id, lvl) {
+        var interactive = interfaceConfig.INTERACTIVE_MICROPHONE;
+
         if (!largeVideo) {
             return;
         }
+
+        if (interactive && this.getVideoThumbnailById(id)) {
+            this.getVideoThumbnailById(id).imic.volume(lvl * 100).redraw();
+            return;
+        }
+
         AudioLevels.updateAudioLevel(
             id, lvl, largeVideo.id
         );
+    },
+
+    getVideoThumbnailById(id) {
+        var result = remoteVideos[id];
+
+        if (localVideoThumbnail.id === id) {
+            result = localVideoThumbnail;
+        }
+
+        return result;
     },
 
     isInLastN (resource) {

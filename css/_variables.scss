@@ -25,6 +25,9 @@ $defaultDarkColor: #4F4F4F;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
+$interactiveMicrophoneBaseColor: inherit;
+$interactiveMicrophoneLevelColor: $defaultDarkColor;
+
 // Toolbar
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 $toolbarButtonToggled: #44A5FF;
