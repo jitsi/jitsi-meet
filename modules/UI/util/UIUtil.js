@@ -114,6 +114,15 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
     },
 
     /**
+     * Removes the tooltip to the given element.
+     *
+     * @param element the element to remove the tooltip from
+     */
+    removeTooltip: function (element) {
+        AJS.$(element).tooltip('destroy');
+    },
+
+    /**
      * Internal util function for generating tooltip title.
      *
      * @param element
