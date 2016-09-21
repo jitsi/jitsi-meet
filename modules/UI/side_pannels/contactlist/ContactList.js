@@ -26,9 +26,8 @@ function updateNumberOfParticipants(delta) {
         .parent()[numberOfContacts > 1 ? 'show' : 'hide']();
 
     $("#contacts_container>div.title").text(
-        APP.translation.translateString(
-            "contactlist", {participants: numberOfContacts}
-        ));
+        APP.translation.translateString("contactlist")
+            + ' (' + numberOfContacts + ')');
 }
 
 /**
