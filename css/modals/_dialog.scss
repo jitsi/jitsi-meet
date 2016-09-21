@@ -25,6 +25,10 @@
                 h2 {
                     font-size: em(21, 12);
                 }
+
+                &-main {
+                    padding-right: 0;
+                }
             }
 
             &-content {

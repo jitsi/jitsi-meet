@@ -55,6 +55,7 @@ var messageHandler = {
         return $.prompt(message, {
             title: this._getFormattedTitleString(title),
             persistent: false,
+            promptspeed: 0,
             classes: this._getDialogClasses(),
             close: function (e, v, m, f) {
                 if(closeFunction)
@@ -121,6 +122,7 @@ var messageHandler = {
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
+            promptspeed: 0,
             classes: this._getDialogClasses(),
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
@@ -162,6 +164,7 @@ var messageHandler = {
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
+            promptspeed: 0,
             loaded: loadedFunction,
             submit: submitFunction,
             close: closeFunction,
@@ -216,6 +219,8 @@ var messageHandler = {
             return;
         let { classes } = options;
         options.classes = Object.assign({}, this._getDialogClasses(), classes);
+        options.promptspeed = options.promptspeed || 0;
+
 
         for (let state in statesObject) {
             let currentState = statesObject[state];
