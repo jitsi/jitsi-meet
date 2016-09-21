@@ -407,6 +407,8 @@ const Toolbar = {
 
         if(!APP.tokenData.isGuest) {
             $("#toolbar_button_profile").addClass("unclickable");
+            UIUtil.removeTooltip(
+                document.getElementById('toolbar_button_profile'));
         }
     },
     /**
