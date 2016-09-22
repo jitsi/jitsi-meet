@@ -1,5 +1,4 @@
-/* global $, APP, JitsiMeetJS */
-/* jshint -W101 */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -222,7 +221,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
 
     audioMutedSpan = document.createElement('span');
     audioMutedSpan.className = 'audioMuted toolbar-icon';
-    
+
     UIUtil.setTooltip(audioMutedSpan,
         "videothumbnail.mute",
         "top");
@@ -277,11 +276,11 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
 
     var mutedIndicator = document.createElement('i');
     mutedIndicator.className = 'icon-camera-disabled';
-    
+
     UIUtil.setTooltip(mutedIndicator,
         "videothumbnail.videomute",
         "top");
-    
+
     videoMutedSpan.appendChild(mutedIndicator);
 
     return $('#' + this.videoSpanId + ' .videoMuted');
@@ -291,6 +290,8 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
  * Creates the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.createModeratorIndicatorElement = function () {
+    // don't create moderator indicator if DISABLE_FOCUS_INDICATOR is true
+    if (interfaceConfig.DISABLE_FOCUS_INDICATOR) return false;
     // Show moderator indicator
     var indicatorSpan = $('#' + this.videoSpanId + ' .focusindicator');
 

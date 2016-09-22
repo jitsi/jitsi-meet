@@ -40,5 +40,6 @@ var interfaceConfig = {
     REMOTE_THUMBNAIL_RATIO_WIDTH: 1,
     REMOTE_THUMBNAIL_RATIO_HEIGHT: 1,
     // Enables feedback star animation.
-    ENABLE_FEEDBACK_ANIMATION: false
+    ENABLE_FEEDBACK_ANIMATION: false,
+    DISABLE_FOCUS_INDICATOR: false
 };
