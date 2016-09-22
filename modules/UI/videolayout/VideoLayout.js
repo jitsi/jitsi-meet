@@ -950,28 +950,18 @@ var VideoLayout = {
      * Indicates that the video has been interrupted.
      */
     onVideoInterrupted () {
-        this.enableVideoProblemFilter(true);
-        let reconnectingKey = "connection.RECONNECTING";
-        $('#videoConnectionMessage')
-            .attr("data-i18n", reconnectingKey)
-            .text(APP.translation.translateString(reconnectingKey))
-            .css({display: "block"});
+        if (largeVideo) {
+            largeVideo.onVideoInterrupted();
+        }
     },
 
     /**
      * Indicates that the video has been restored.
      */
     onVideoRestored () {
-        this.enableVideoProblemFilter(false);
-        $('#videoConnectionMessage').css({display: "none"});
-    },
-
-    enableVideoProblemFilter (enable) {
-        if (!largeVideo) {
-            return;
+        if (largeVideo) {
+            largeVideo.onVideoRestored();
         }
-
-        largeVideo.enableVideoProblemFilter(enable);
     },
 
     isLargeVideoVisible () {
