@@ -169,6 +169,7 @@ form {
 }
 
 .tipsy {
+    z-index: $tooltipsZ;
     &-inner {
         background-color: $tooltipBg;
     }
