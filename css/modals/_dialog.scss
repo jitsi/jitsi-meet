@@ -5,7 +5,7 @@
     .aui {
 
         &-icon {
-            color: $auiIconColor;
+            color: $auiDialogColor;
 
             &-small {
                 width: 14px;
@@ -17,13 +17,17 @@
             cursor: pointer;
             right: 20px;
             position: absolute;
-            top: -44px;
+            top: -49px;
         }
 
         &-dialog2 {
             &-header {
+                height: em(58, 12);
                 h2 {
-                    font-size: em(21, 12);
+                    font-size: em(20, 12);
+                    font-weight: 300;
+                    letter-spacing: 1px;
+                    color: $auiDialogColor;
                 }
 
                 &-main {
@@ -31,12 +35,20 @@
                 }
             }
 
+            &-header, &-footer {
+                background-color: $auiDialogBg;
+                border: none;
+            }
+
             &-content {
                 font-size: em(14, 12);
                 min-height: 0;
+                background-color: $auiDialogContentBg;
+                color: $auiDialogColor;
 
-                p,span {
-                    color: $defaultDarkFontColor;
+                p,span, h3 {
+                    font-weight: 300;
+                    letter-spacing: 0.5px;
                 }
 
                 &:last-child {
@@ -52,16 +64,22 @@
         }
 
         &-button {
+            border: none;
             outline: none;
             background-color: transparent;
             font-weight: 400;
             float: right;
             margin-left: 10px;
+            color: $auiDialogColor;
+            letter-spacing: 0.5px;
+            font-weight: 300;
 
             &-primary {
-                font-weight: 700;
                 background-color: $auiPrimaryButtonBg;
-                color: $auiPrimaryButtonColor;
+
+                &:hover {
+                    background-color: $auiPrimaryButtonHoverBg;
+                }
             }
 
             &_close {
@@ -74,5 +92,9 @@
                 }
             }
         }
+    }
+
+    .input-control:not(:last-child) {
+        border-bottom: 1px solid $hrColor;
     }
 }

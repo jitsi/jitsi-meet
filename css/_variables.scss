@@ -22,7 +22,9 @@ $thumbnailToolbarHeight: 25px;
 $defaultColor: #F1F1F1;
 $defaultSideBarFontColor: #44A5FF;
 $defaultSemiDarkColor: #ACACAC;
-$defaultDarkColor: #4F4F4F;
+$inputColor: #758196;
+$defaultDarkColor: #2b3d5c;
+$defaultDarkSelectionColor: #253858;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
@@ -34,10 +36,10 @@ $toolbarBadgeBackground: #165ECC;
 $toolbarBadgeColor: #FFFFFF;
 
 // Main controls
-$inputBackground: rgba(132, 132, 132, .5);
+$inputBackground: #344563;
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
-$inputBorderColor: #EBEBEB;
+$inputBorderColor: #7a869a;
 $buttonBackground: #44A5FF;
 
 // Video layout.
@@ -57,6 +59,7 @@ $rateStarLabelColor: #333;
  */
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
+$hrColor: #505f79;
 
 /**
  * Z-indexes. TODO: Replace this by a function.
@@ -74,6 +77,15 @@ $buttonFontColor: #777;
 $buttonHoverFontColor: #287ade;
 $linkFontColor: #489afe;
 $linkHoverFontColor: #287ade;
-$auiPrimaryButtonBg: #3572b0;
+$auiPrimaryButtonBg: #505f79;
+$auiPrimaryButtonHoverBg: #57647b;
 $auiPrimaryButtonColor: #fff;
 $auiIconColor: #707070;
+$inputControlEmColor: #f29424;
+
+/**
+* Dialog colors
+**/
+$auiDialogColor: #eceef1;
+$auiDialogBg: #253858;
+$auiDialogContentBg: #344563;
