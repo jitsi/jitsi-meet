@@ -23,57 +23,51 @@ function openLinkDialog () {
     let msgString = (`
         <div class="input-control">
             <label class="input-control__label for="inviteLinkRef">${titleString}</label>
-            <input class="input-control__input" id="inviteLinkRef" type="text"
-               ${inviteAttributes} readonly>
-            <button id="copyInviteLink" class="button-control button-control_light">Copy</button>
+            <div class="input-control__container">
+                <input class="input-control__input" id="inviteLinkRef" type="text"
+                       ${inviteAttributes} readonly>
+                <button id="copyInviteLink" class="button-control button-control_light">Copy</button>
+            </div>
             <p class="input-control__hint">This call is locked. New callers must have
                 the link and enter the password to join.</p>
         </div>
         <div class="input-control">
             <label class="input-control__label">Password</label>
-            <p class="input-control__text">The current password is <span class="input-control__em">HIPCHATZ</span></p>
+            <div class="input-control__container">
+                <p class="input-control__text">The current password is <span class="input-control__em">HIPCHATZ</span></p>
+                <a class="link input-control__right" href="#">Remove password</a>
+            </div>
         </div>
     `);
-
-    $('body').on('click', '#inviteLinkRef', () => {
-        let inviteLink = document.getElementById('inviteLinkRef');
-        inviteLink.select();
-    });
 
     APP.UI.messageHandler.openTwoButtonDialog({
         titleKey,
         titleString,
         msgString,
-        submitFunction: function (e, v) {
-            if (v && roomUrl) {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-
-                focusInviteLink();
-
-                document.execCommand('copy');
-            }
-            else {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
-            }
-        },
-        loadedFunction: function (event) {
-            if (!roomUrl) {
-                if (event && event.target) {
-                    $(event.target).find('button[value=true]')
-                        .prop('disabled', true);
-                }
-            }
-            else {
-                focusInviteLink();
-            }
-        },
-        closeFunction: function (e, v, m, f) {
-            if(!v && !m && !f)
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
-        },
-        leftButtonKey: "dialog.copy",
-        focus: 'Copy'
+        submitFunction,
+        loadedFunction,
+        closeFunction,
+        leftButtonKey: "dialog.Invite",
+        size: 'medium'
     });
+
+    $('#copyInviteLink').on('click', copyToClipboard);
+}
+
+function copyToClipboard() {
+    let inviteLink = document.getElementById('inviteLinkRef');
+
+    if (inviteLink && inviteLink.select) {
+        inviteLink.select();
+
+        try {
+            document.execCommand('copy');
+            inviteLink.blur();
+        }
+        catch (err) {
+            console.error('error when copy the text');
+        }
+    }
 }
 
 const buttonHandlers = {
