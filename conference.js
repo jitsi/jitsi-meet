@@ -1329,15 +1329,6 @@ export default {
                 && APP.UI.notifyInitiallyMuted();
         });
 
-        APP.UI.addListener(UIEvents.USER_INVITED, (roomUrl) => {
-            APP.UI.inviteParticipants(
-                roomUrl,
-                APP.conference.roomName,
-                roomLocker.password,
-                APP.settings.getDisplayName()
-            );
-        });
-
         room.on(
             ConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
                 APP.UI.updateDevicesAvailability(id, devices);

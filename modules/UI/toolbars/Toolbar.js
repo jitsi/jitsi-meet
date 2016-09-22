@@ -22,15 +22,14 @@ function openLinkDialog () {
 
     let title = APP.translation.generateTranslationHTML("dialog.shareLink");
     APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        '<h2>' + title + '</h2>'
-        + '<input id="inviteLinkRef" type="text" '
-        + inviteAttributes + ' onclick="this.select();" readonly>',
-        false, "dialog.Invite",
+        null, title, null,
+        '<input id="inviteLinkRef" type="text" '
+            + inviteAttributes + ' readonly/>',
+        false, "dialog.copy",
         function (e, v) {
             if (v && roomUrl) {
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-                emitter.emit(UIEvents.USER_INVITED, roomUrl);
+                document.execCommand('copy');
             }
             else {
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
@@ -38,7 +37,8 @@ function openLinkDialog () {
         },
         function (event) {
             if (roomUrl) {
-                document.getElementById('inviteLinkRef').select();
+                $('#inviteLinkRef').focus();
+                $('#inviteLinkRef').select();
             } else {
                 if (event && event.target) {
                     $(event.target).find('button[value=true]')
