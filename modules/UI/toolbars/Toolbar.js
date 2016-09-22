@@ -24,8 +24,8 @@ function openLinkDialog () {
         <div class="input-control">
             <label class="input-control__label for="inviteLinkRef">${titleString}</label>
             <input class="input-control__input" id="inviteLinkRef" type="text"
-               ${inviteAttributes} onclick="this.select();"
-               readonly>
+               ${inviteAttributes} readonly>
+            <button id="copyInviteLink" class="button-control button-control_light">Copy</button>
             <p class="input-control__hint">This call is locked. New callers must have
                 the link and enter the password to join.</p>
         </div>
@@ -35,12 +35,12 @@ function openLinkDialog () {
         </div>
     `);
 
-    let titleKey = "dialog.shareLink";
-    let titleString = APP.translation.generateTranslationHTML(titleKey);
-    let msgString = (`<input id="inviteLinkRef" type="text"
-        ${inviteAttributes} readonly/>`);
+    $('body').on('click', '#inviteLinkRef', () => {
+        let inviteLink = document.getElementById('inviteLinkRef');
+        inviteLink.select();
+    });
 
-    APP.UI.messageHandler.openTwoButtonDialog( {
+    APP.UI.messageHandler.openTwoButtonDialog({
         titleKey,
         titleString,
         msgString,
