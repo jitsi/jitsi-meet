@@ -1130,14 +1130,9 @@ UI.requestFeedback = function () {
                 }
             } else {
                 // If the feedback functionality isn't enabled we show a thank
-                // you dialog.
-                messageHandler.openMessageDialog(
-                    null, null, null,
-                    APP.translation.translateString(
-                        "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
-                    )
-                );
-                resolve();
+                // you dialog. Signaling it (true), so the caller
+                // of requestFeedback can act on it
+                resolve(true);
             }
         });
 };

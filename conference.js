@@ -202,8 +202,20 @@ function muteLocalVideo (muted) {
 
 /**
  * Check if the welcome page is enabled and redirects to it.
+ * If requested show a thank you dialog before that.
+ * @param {boolean} showThankYou whether we should show a thank you dialog
  */
-function maybeRedirectToWelcomePage() {
+function maybeRedirectToWelcomePage(showThankYou) {
+
+    if (showThankYou) {
+        APP.UI.messageHandler.openMessageDialog(
+            null, null, null,
+            APP.translation.translateString(
+                "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+            )
+        );
+    }
+
     if (!config.enableWelcomePage) {
         return;
     }
