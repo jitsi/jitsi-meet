@@ -1,3 +1,9 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
 /* Variables BEGIN */
 
 @import 'variables';
@@ -25,8 +31,7 @@
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
 @import 'videolayout_default';
-@import 'jquery-impromptu';
-@import 'modaldialog';
+//@import 'jquery-impromptu';
 @import 'notice';
 @import 'popup_menu';
 @import 'recording';
@@ -42,5 +47,7 @@
 @import 'device_settings_dialog';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
+@import 'input-control/input-control';
+@import 'shortcuts/main';
 
 /* Modules END */

@@ -19,6 +19,32 @@
     <!--#include virtual="plugin.head.html" -->
   </head>
   <body>
+  <!-- Render the dialog -->
+  <section role="dialog" id="demo-dialog" class="aui-layer aui-dialog2 aui-dialog2-small" aria-hidden="true">
+      <!-- Dialog header -->
+      <header class="aui-dialog2-header">
+          <!-- The dialog's title -->
+          <h2 class="aui-dialog2-header-main"></h2>
+          <!-- Close icon -->
+          <a class="aui-dialog2-header-close">
+              <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+          </a>
+      </header>
+      <!-- Main dialog content -->
+      <div class="aui-dialog2-content">
+      </div>
+      <!-- Dialog footer -->
+      <footer class="aui-dialog2-footer">
+          <!-- Actions to render on the right of the footer -->
+          <div class="aui-dialog2-footer-actions">
+              <!--<button id="dialog-submit-button" class="aui-button aui-button-primary">OK</button>
+              <button id="dialog-next-button" class="aui-button">Next</button>
+              <button id="dialog-close-button" class="aui-button aui-button-link">Close</button>-->
+          </div>
+          <!-- Hint text is rendered on the left of the footer -->
+          <div class="aui-dialog2-footer-hint">this is a hint</div>
+      </footer>
+  </section>
     <div id="welcome_page">
         <div id="welcome_page_header">
             <a target="_new">
@@ -255,9 +281,8 @@
         </div>
     </div>
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
-        <div class="header"><h3 data-i18n="keyboardShortcuts.keyboardShortcuts"></h3></div>
         <div class="content">
-            <ul id="keyboard-shortcuts-list" class="item">
+            <ul id="keyboard-shortcuts-list" class="shortcuts-list">
             </ul>
         </div>
     </div>
