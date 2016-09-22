@@ -69,7 +69,7 @@ class RingOverlay {
                         <p>${callee.getName()}${callerStateLabel}</p>
                     </div>
                 </div>
-                <audio id="${this._audioContainerId}" src="/sounds/ring.ogg" />
+                <audio id="${this._audioContainerId}" src="./sounds/ring.ogg" />
             </div>`;
     }
 
