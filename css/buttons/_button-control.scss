@@ -38,6 +38,10 @@
     &_link {
         color: $buttonLinkColor;
         background-color: $buttonLinkBackground;
+
+        &:hover {
+            background-color: $buttonLinkBackground;
+        }
     }
 
     &_primary {

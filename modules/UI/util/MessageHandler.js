@@ -93,6 +93,7 @@ var messageHandler = {
             loadedFunction,
             closeFunction,
             focus,
+            size,
             defaultButton
         } = options;
 
@@ -123,7 +124,7 @@ var messageHandler = {
             focus: focus,
             loaded: loadedFunction,
             promptspeed: 0,
-            classes: this._getDialogClasses(),
+            classes: this._getDialogClasses(size),
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
                 if (submitFunction)
@@ -187,11 +188,11 @@ var messageHandler = {
         return titleString;
     },
 
-    _getDialogClasses() {
+    _getDialogClasses(size = 'small') {
         return {
             box: '',
             form: '',
-            prompt: 'dialog aui-layer aui-dialog2 aui-dialog2-small',
+            prompt: `dialog aui-layer aui-dialog2 aui-dialog2-${size}`,
             close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
             fade: 'aui-blanket',
             button: 'button-control',
