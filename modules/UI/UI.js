@@ -1568,7 +1568,12 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
  * Shows or hides the keyboard shortcuts panel, depending on the current state.'
  */
 UI.toggleKeyboardShortcutsPanel = function() {
-    $('#keyboard-shortcuts').toggle();
+    let titleKey = 'keyboardShortcuts.keyboardShortcuts';
+    let title = APP.translation.translateString(titleKey);
+    let msg = $('#keyboard-shortcuts').html();
+    let buttons = { Close: true };
+
+    messageHandler.openDialog(title, msg, true, buttons);
 };
 
 /**

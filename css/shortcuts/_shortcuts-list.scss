@@ -1,0 +1,12 @@
+.shortcuts-list {
+    padding: 0;
+
+    &__description {
+        margin-left: em(16, 14);
+        vertical-align: top;
+    }
+
+    &__item {
+        margin-bottom: em(7, 14);
+    }
+}
