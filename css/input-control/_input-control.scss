@@ -22,4 +22,19 @@
         margin: 0;
         font-size: em(12, 14);
     }
+
+    &__container {
+        position: relative;
+        width: 100%;
+        @include flex();
+
+        .button-control {
+            margin: 9px 0 9px 10px;
+        }
+    }
+
+    &__right {
+        position: absolute;
+        right: 0;
+    }
 }
