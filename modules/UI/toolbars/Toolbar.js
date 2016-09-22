@@ -20,10 +20,20 @@ function openLinkDialog () {
         inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
     }
 
-    let focusInviteLink = function() {
-        $('#inviteLinkRef').focus();
-        $('#inviteLinkRef').select();
-    };
+    let msgString = (`
+        <div class="input-control">
+            <label class="input-control__label for="inviteLinkRef">${titleString}</label>
+            <input class="input-control__input" id="inviteLinkRef" type="text"
+               ${inviteAttributes} onclick="this.select();"
+               readonly>
+            <p class="input-control__hint">This call is locked. New callers must have
+                the link and enter the password to join.</p>
+        </div>
+        <div class="input-control">
+            <label class="input-control__label">Password</label>
+            <p class="input-control__text">The current password is <span class="input-control__em">HIPCHATZ</span></p>
+        </div>
+    `);
 
     let titleKey = "dialog.shareLink";
     let titleString = APP.translation.generateTranslationHTML(titleKey);
