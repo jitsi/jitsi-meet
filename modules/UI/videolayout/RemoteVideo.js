@@ -37,6 +37,16 @@ function RemoteVideo(user, VideoLayout, emitter) {
      * @type {boolean}
      */
     this.wasVideoPlayed = false;
+    /**
+     * The flag is set to <tt>true</tt> if remote participant's video gets muted
+     * during his media connection disruption. This is to prevent black video
+     * being render on the thumbnail, because even though once the video has
+     * been played the image usually remains on the video element it seems that
+     * after longer period of the video element being hidden this image can be
+     * lost.
+     * @type {boolean}
+     */
+    this.mutedWhileDisconnected = false;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -180,6 +190,33 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
 };
 
 /**
+ * @inheritDoc
+ */
+RemoteVideo.prototype.setMutedView = function(isMuted) {
+    SmallVideo.prototype.setMutedView.call(this, isMuted);
+    // Update 'mutedWhileDisconnected' flag
+    this._figureOutMutedWhileDisconnected(this.isConnectionActive() === false);
+}
+
+/**
+ * Figures out the value of {@link #mutedWhileDisconnected} flag by taking into
+ * account remote participant's network connectivity and video muted status.
+ *
+ * @param {boolean} isDisconnected <tt>true</tt> if the remote participant is
+ * currently having connectivity issues or <tt>false</tt> otherwise.
+ *
+ * @private
+ */
+RemoteVideo.prototype._figureOutMutedWhileDisconnected
+= function(isDisconnected) {
+    if (isDisconnected && this.isVideoMuted) {
+        this.mutedWhileDisconnected = true;
+    } else if (!isDisconnected && !this.isVideoMuted) {
+        this.mutedWhileDisconnected = false;
+    }
+}
+
+/**
  * Adds the remote video menu element for the given <tt>id</tt> in the
  * given <tt>parentElement</tt>.
  *
@@ -237,6 +274,9 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     // update the stage
     if (isVideo && this.isCurrentlyOnLargeVideo())
         this.VideoLayout.updateLargeVideo(this.id);
+    else
+        // Missing video stream will affect display mode
+        this.updateView();
 };
 
 /**
@@ -259,16 +299,20 @@ RemoteVideo.prototype.isConnectionActive = function() {
  */
 RemoteVideo.prototype.isVideoPlayable = function () {
     return SmallVideo.prototype.isVideoPlayable.call(this)
-        && this.hasVideoStarted();
+        && this.hasVideoStarted() && !this.mutedWhileDisconnected;
 };
 
 /**
  * @inheritDoc
  */
 RemoteVideo.prototype.updateView = function () {
-    SmallVideo.prototype.updateView.call(this);
+
     this.updateConnectionStatusIndicator(
         null /* will obtain the status from 'conference' */);
+
+    // This must be called after 'updateConnectionStatusIndicator' because it
+    // affects the display mode by modifying 'mutedWhileDisconnected' flag
+    SmallVideo.prototype.updateView.call(this);
 };
 
 /**
@@ -289,6 +333,9 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
     }
 
     console.debug(this.id + " thumbnail is connection active ? " + isActive);
+
+    // Update 'mutedWhileDisconnected' flag
+    this._figureOutMutedWhileDisconnected(!isActive);
 
     if(this.connectionIndicator)
         this.connectionIndicator.updateConnectionStatusIndicator(isActive);
