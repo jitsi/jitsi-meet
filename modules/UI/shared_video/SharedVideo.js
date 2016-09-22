@@ -567,10 +567,6 @@ class SharedVideoContainer extends LargeContainer {
         this.player = player;
     }
 
-    get $video () {
-        return this.$iframe;
-    }
-
     show () {
         let self = this;
         return new Promise(resolve => {

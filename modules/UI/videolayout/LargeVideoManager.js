@@ -213,8 +213,7 @@ export default class LargeVideoManager {
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
     enableVideoProblemFilter (enable) {
-        let container = this.getContainer(this.state);
-        container.$video.toggleClass("videoProblemFilter", enable);
+        this.videoContainer.enableVideoProblemFilter(enable);
     }
 
     /**

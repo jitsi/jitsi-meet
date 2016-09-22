@@ -185,6 +185,17 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
+     * Enables a filter on the video which indicates that there are some
+     * problems with the media connection.
+     *
+     * @param {boolean} enable <tt>true</tt> if the filter is to be enabled or
+     * <tt>false</tt> otherwise.
+     */
+    enableVideoProblemFilter (enable) {
+        this.$video.toggleClass("videoProblemFilter", enable);
+    }
+
+    /**
      * Get size of video element.
      * @returns {{width, height}}
      */
