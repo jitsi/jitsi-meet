@@ -22,13 +22,13 @@
     "bootstrap": "3.1.1",
     "events": "*",
     "i18next-client": "1.7.7",
-    "jQuery-Impromptu": "git+https://github.com/trentrichardson/jQuery-Impromptu.git#v6.0.0",
+    "jQuery-Impromptu": "trentrichardson/jQuery-Impromptu#v6.0.0",
     "jquery": "~2.1.1",
     "jquery-contextmenu": "*",
     "jquery-ui": "1.10.5",
     "jssha": "1.5.0",
     "jws": "*",
-    "lib-jitsi-meet": "git+https://github.com/jitsi/lib-jitsi-meet.git",
+    "lib-jitsi-meet": "jitsi/lib-jitsi-meet",
     "postis": "^2.2.0",
     "retry": "0.6.1",
     "strophe": "^1.2.2",
@@ -36,101 +36,39 @@
     "toastr": "^2.0.3"
   },
   "devDependencies": {
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-plugin-transform-object-rest-spread": "*",
     "babel-polyfill": "*",
     "babel-preset-es2015": "*",
-    "babelify": "*",
-    "browserify": "11.1.x",
-    "browserify-css": "^0.9.2",
-    "browserify-shim": "^3.8.10",
+    "babel-register": "*",
     "clean-css": "*",
-    "exorcist": "*",
+    "css-loader": "*",
+    "expose-loader": "*",
+    "file-loader": "*",
+    "imports-loader": "*",
     "jshint": "2.8.0",
     "node-sass": "^3.8.0",
     "precommit-hook": "3.0.0",
-    "uglify-js": "2.4.24",
-
-    "babel-core": "*",
-    "babel-loader": "*",
-    "babel-register": "*",
     "string-replace-loader": "*",
+    "style-loader": "*",
     "webpack": "*"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "./node_modules/.bin/jshint .",
+    "lint": "jshint .",
     "validate": "npm ls"
   },
   "pre-commit": [
     "lint"
   ],
-  "browserify": {
-    "transform": [
-      "browserify-shim",
-      "browserify-css",
-      [
-        "babelify",
-        {
-          "ignore": "node_modules"
-        }
-      ]
-    ]
-  },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
   "browser": {
-    "jquery": "./node_modules/jquery/dist/jquery.js",
-    "jquery-ui": "./node_modules/jquery-ui/jquery-ui.js",
-    "strophe": "./node_modules/strophe/strophe.js",
+    "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
+    "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
+    "autosize": "./node_modules/autosize/build/jquery.autosize.js",
+    "popover": "./node_modules/bootstrap/js/popover.js",
     "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js",
     "strophe-caps": "./node_modules/strophejs-plugins/caps/strophe.caps.jsonly.js",
-    "toastr": "./node_modules/toastr/toastr.js",
-    "tooltip": "./node_modules/bootstrap/js/tooltip.js",
-    "popover": "./node_modules/bootstrap/js/popover.js",
-    "jQuery-Impromptu": "./node_modules/jQuery-Impromptu/dist/jquery-impromptu.js",
-    "autosize": "./node_modules/autosize/build/jquery.autosize.js",
-    "aui": "./node_modules/@atlassian/aui/dist/aui/js/aui.js",
-    "aui-experimental": "./node_modules/@atlassian/aui/dist/aui/js/aui-experimental.js",
-    "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
-    "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css"
-  },
-  "browserify-shim": {
-    "jquery": [
-      "$"
-    ],
-    "strophe": {
-      "exports": "Strophe",
-      "depends": [
-        "jquery:$"
-      ]
-    },
-    "strophe-disco": {
-      "depends": [
-        "strophe:Strophe"
-      ]
-    },
-    "tooltip": {
-      "depends": "jquery:jQuery"
-    },
-    "popover": {
-      "depends": "jquery:jQuery"
-    },
-    "jQuery-Impromptu": {
-      "depends": "jquery:jQuery"
-    },
-    "aui-experimental": {
-      "depends": "aui:AJS"
-    },
-    "jquery-contextmenu": {
-      "depends": "jquery:jQuery"
-    },
-    "autosize": {
-      "depends": "jquery:jQuery"
-    },
-    "browserify-css": {
-        "autoInject": true
-    }
+    "tooltip": "./node_modules/bootstrap/js/tooltip.js"
   }
 }
