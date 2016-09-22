@@ -108,7 +108,7 @@ var messageHandler = {
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
-            focus: (focus && focus >= 0) ? focus : -1,
+            focus: (focus) ? focus : '',
             loaded: loadedFunction,
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
