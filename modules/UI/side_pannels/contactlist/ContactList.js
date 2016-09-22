@@ -20,10 +20,7 @@ function updateNumberOfParticipants(delta) {
         return;
     }
 
-    let buttonIndicatorText = (numberOfContacts === 1) ? '' : numberOfContacts;
-    $("#numberOfParticipants")
-        .text(buttonIndicatorText)
-        .parent()[numberOfContacts > 1 ? 'show' : 'hide']();
+    $("#numberOfParticipants").text(numberOfContacts);
 
     $("#contacts_container>div.title").text(
         APP.translation.translateString("contactlist")
