@@ -1,7 +1,21 @@
 /* global $ */
 import UIUtil from "../util/UIUtil";
 
+/**
+ * Creates a new interactive microphone.
+ *
+ * @class
+ */
 export default class InteractiveMicrophone {
+    /**
+     * @constructs InteractiveMicrophone
+     * 
+     * @param {object} options - Information about microphone.
+     * @param {string|HMTLElement|jQuery} options.container - The element 
+     * to insert microphone in.
+     * @param {number} options.level - Audio level in % (between 0 and 100).
+     * @param {boolean} options.silence - Is microphone muted?
+     */
     constructor (options) {
         Object.assign(this, {
             container: document.createElement('div'),
@@ -14,7 +28,11 @@ export default class InteractiveMicrophone {
     }
 
     /**
-     * @param value {boolean} Is microphone muted?
+     * Turns microphone into muted mode.
+     * 
+     * @param {boolean} value - Is microphone muted?
+     * 
+     * @returns {this}
      */
     mute (value) {
         this.silence = value;
@@ -23,7 +41,11 @@ export default class InteractiveMicrophone {
     }
 
     /**
-     * @param level {number} Current audio level in % (between 0 and 100)
+     * Updates microphone with new audio level.
+     *
+     * @param {number} level - Current audio level in % (between 0 and 100).
+     * 
+     * @returns {this}
      */
     volume (level) {
         level = parseInt(level, 10);
@@ -40,6 +62,11 @@ export default class InteractiveMicrophone {
         return this;
     }
 
+    /**
+     * Updates state of the HTML element. Ensures that the element is in DOM.
+     * 
+     * @returns {this}
+     */
     redraw () {
         var container = $(this.container),
             elements = container.find('.interactive-mic'),
@@ -69,6 +96,11 @@ export default class InteractiveMicrophone {
         return this;
     }
 
+    /**
+     * Creates fresh instance of HTML element for the microphone.
+     * 
+     * @returns {HTMLElement|jQuery} Representation of the microphone.
+     */
     render () {
         var elem = $(`
             <div class="interactive-mic toolbar-icon audioMuted">

@@ -129,24 +129,14 @@ var VideoLayout = {
             return;
         }
 
-        if (interactive && this.getVideoThumbnailById(id)) {
-            this.getVideoThumbnailById(id).imic.volume(lvl * 100).redraw();
+        if (interactive && this.getSmallVideo(id)) {
+            this.getSmallVideo(id).imic.volume(lvl * 100).redraw();
             return;
         }
 
         AudioLevels.updateAudioLevel(
             id, lvl, largeVideo.id
         );
-    },
-
-    getVideoThumbnailById(id) {
-        var result = remoteVideos[id];
-
-        if (localVideoThumbnail.id === id) {
-            result = localVideoThumbnail;
-        }
-
-        return result;
     },
 
     isInLastN (resource) {
@@ -939,12 +929,14 @@ var VideoLayout = {
         });
     },
 
+    /**
+     * Looks for video thumbnail by ID.
+     *  
+     * @returns {object|indefined} - Video thumbnail.
+     */
     getSmallVideo (id) {
-        if (APP.conference.isLocalId(id)) {
-            return localVideoThumbnail;
-        } else {
-            return remoteVideos[id];
-        }
+        var isLocal = APP.conference.isLocalId(id);
+        return isLocal ? localVideoThumbnail : remoteVideos[id];
     },
 
     changeUserAvatar (id, avatarUrl) {
