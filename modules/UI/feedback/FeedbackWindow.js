@@ -176,6 +176,13 @@ export default class Dialog {
         });
         this.$el = this.window.$el;
 
+        AJS.dialog2(selector).on("hide", function() {
+            if (this.onCloseCallback) {
+                this.onCloseCallback();
+                this.onCloseCallback = null;
+            }
+        }.bind(this));
+
         this.setState();
     }
 
@@ -201,11 +208,6 @@ export default class Dialog {
 
     hide() {
         this.window.hide();
-
-        if (this.onCloseCallback) {
-            this.onCloseCallback();
-            this.onCloseCallback = null;
-        }
     }
 
     onFeedbackSubmitted() {
