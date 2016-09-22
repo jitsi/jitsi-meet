@@ -8,7 +8,8 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 import RemoteVideo from "./RemoteVideo";
-import LargeVideoManager, {VIDEO_CONTAINER_TYPE} from "./LargeVideo";
+import LargeVideoManager  from "./LargeVideoManager";
+import {VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
 import LocalVideo from "./LocalVideo";
 
@@ -102,6 +103,7 @@ var VideoLayout = {
             });
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
         // sets default video type of local video
+        // FIXME container type is totally different thing from the video type
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
@@ -397,6 +399,7 @@ var VideoLayout = {
         let videoType = VideoLayout.getRemoteVideoType(id);
         if (!videoType) {
             // make video type the default one (camera)
+            // FIXME container type is not a video type
             videoType = VIDEO_CONTAINER_TYPE;
         }
         remoteVideo.setVideoType(videoType);
@@ -996,6 +999,7 @@ var VideoLayout = {
 
         if (!isOnLarge || forceUpdate) {
             let videoType = this.getRemoteVideoType(id);
+            // FIXME video type is not the same thing as container type
             if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }

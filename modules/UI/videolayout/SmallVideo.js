@@ -7,7 +7,7 @@ import UIEvents from "../../../service/UI/UIEvents";
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
 function SmallVideo(VideoLayout) {
-    this.isMuted = false;
+    this.isAudioMuted = false;
     this.hasAvatar = false;
     this.isVideoMuted = false;
     this.videoStream = null;
@@ -204,7 +204,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
     else {
         audioMutedIndicator.show();
     }
-    this.isMuted = isMuted;
+    this.isAudioMuted = isMuted;
 };
 
 /**
@@ -222,7 +222,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
 
     audioMutedSpan = document.createElement('span');
     audioMutedSpan.className = 'audioMuted toolbar-icon';
-    
+
     UIUtil.setTooltip(audioMutedSpan,
         "videothumbnail.mute",
         "top");
@@ -277,11 +277,11 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
 
     var mutedIndicator = document.createElement('i');
     mutedIndicator.className = 'icon-camera-disabled';
-    
+
     UIUtil.setTooltip(mutedIndicator,
         "videothumbnail.videomute",
         "top");
-    
+
     videoMutedSpan.appendChild(mutedIndicator);
 
     return $('#' + this.videoSpanId + ' .videoMuted');

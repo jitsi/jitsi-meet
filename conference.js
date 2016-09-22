@@ -39,7 +39,7 @@ let connectionIsInterrupted = false;
  */
 let DSExternalInstallationInProgress = false;
 
-import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
+import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
 /**
  * Known custom conference commands.
@@ -1424,6 +1424,8 @@ export default {
 
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
             var smallVideoId = smallVideo.getId();
+            // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
+            // the participant is on the large video ?
             if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
                 && !APP.conference.isLocalId(smallVideoId)) {
 
