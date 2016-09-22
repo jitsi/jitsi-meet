@@ -126,7 +126,6 @@
     object-fit: cover;
 }
 
-#presentation,
 #sharedVideo,
 #etherpad,
 #localVideoWrapper>video,
@@ -145,8 +144,7 @@
     height: 100%;
 }
 
-#etherpad,
-#presentation {
+#etherpad {
     text-align: center;
 }
 
