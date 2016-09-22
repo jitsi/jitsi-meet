@@ -103,8 +103,8 @@ export default class InteractiveMicrophone {
      */
     render () {
         var elem = $(`
-            <div class="interactive-mic toolbar-icon audioMuted">
-                <div class="mic-muted">
+            <div class="interactive-mic toolbar-icon">
+                <div class="mic-muted audioMuted">
                     <i class="icon-mic-disabled"></i>
                 </div>
                 <div class="mic-layer">
