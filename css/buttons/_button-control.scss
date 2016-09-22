@@ -1,0 +1,60 @@
+.button-control {
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: baseline;
+    height: 30px;
+    padding: 4px 10px;
+    margin: 0;
+    line-height: 1.5em;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    float: right;
+    font-size: 14px;
+    margin-left: 10px;
+    color: $auiDialogColor;
+    letter-spacing: 0.5px;
+    font-weight: 300;
+    @include transition(background-color .1s ease-out);
+
+    &:hover {
+        background-color: $buttonHoverBackground;
+        @include transition(background-color .1s ease-in);
+    }
+
+    &:active {
+        @include box-shadow(inset, 0, 0, 1px, $buttonShadowColor);
+    }
+
+    &_light {
+        color: $defaultDarkColor;
+        background-color: $buttonLightBackground;
+
+        &:hover {
+            background-color: $buttonLightHoverBackground;
+        }
+    }
+
+    &_link {
+        color: $buttonLinkColor;
+        background-color: $buttonLinkBackground;
+    }
+
+    &_primary {
+        background-color: $primaryButtonBackground;
+
+        &:hover {
+            background-color: $primaryButtonHoverBackground;
+        }
+    }
+
+    &_close {
+        color: $defaultFontColor;
+    }
+    &_submit {
+        color: $linkFontColor;
+        &:hover {
+            color: $linkHoverFontColor;
+        }
+    }
+}

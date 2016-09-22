@@ -194,10 +194,10 @@ var messageHandler = {
             prompt: 'dialog aui-layer aui-dialog2 aui-dialog2-small',
             close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
             fade: 'aui-blanket',
-            button: 'aui-button',
+            button: 'button-control',
             message: 'aui-dialog2-content',
             buttons: 'aui-dialog2-footer',
-            defaultButton: 'aui-button-primary',
+            defaultButton: 'button-control_primary',
             title: 'aui-dialog2-header'
         };
     },

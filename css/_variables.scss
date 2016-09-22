@@ -53,7 +53,6 @@ $inputBackground: #344563;
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 $inputBorderColor: #7a869a;
-$buttonBackground: #44A5FF;
 
 // Video layout.
 $videoThumbnailHovered: #BFEBFF;
@@ -96,6 +95,25 @@ $auiPrimaryButtonHoverBg: #57647b;
 $auiPrimaryButtonColor: #fff;
 $auiIconColor: #707070;
 $inputControlEmColor: #f29424;
+
+
+/**
+* Buttons
+*/
+$buttonBackground: #44A5FF;
+$buttonHoverBackground: #2c4062;
+
+$buttonLightBackground: #eceef1;
+$buttonLightHoverBackground: #c4d0e2;
+
+$buttonLinkBackground: transparent;
+$buttonLinkColor: #0090e8;
+
+$primaryButtonBackground: #505f79;
+$primaryButtonHoverBackground: #57647b;
+$primaryButtonColor: #fff;
+
+$buttonShadowColor: #192d4f;
 
 /**
  * Dialog colors

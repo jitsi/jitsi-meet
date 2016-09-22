@@ -62,36 +62,6 @@
                 }
             }
         }
-
-        &-button {
-            border: none;
-            outline: none;
-            background-color: transparent;
-            font-weight: 400;
-            float: right;
-            margin-left: 10px;
-            color: $auiDialogColor;
-            letter-spacing: 0.5px;
-            font-weight: 300;
-
-            &-primary {
-                background-color: $auiPrimaryButtonBg;
-
-                &:hover {
-                    background-color: $auiPrimaryButtonHoverBg;
-                }
-            }
-
-            &_close {
-                color: $defaultFontColor;
-            }
-            &_submit {
-                color: $linkFontColor;
-                &:hover {
-                    color: $linkHoverFontColor;
-                }
-            }
-        }
     }
 
     .input-control:not(:last-child) {
