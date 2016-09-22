@@ -63,3 +63,9 @@
     -webkit-transition: $transition;
     transition:         $transition;
 }
+
+@mixin box-shadow($type, $h, $y, $blur, $color) {
+    -webkit-box-shadow: $type $h $y $blur $color;
+    -moz-box-shadow: $type $h $y $blur $color;
+    box-shadow: $type $h $y $blur $color;
+}
