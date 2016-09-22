@@ -29,6 +29,14 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.setDisplayName();
     this.flipX = false;
     this.isLocal = false;
+    /**
+     * The flag is set to <tt>true</tt> after the 'onplay' event has been
+     * triggered on the current video element. It goes back to <tt>false</tt>
+     * when the stream is removed. It is used to determine whether the video
+     * playback has ever started.
+     * @type {boolean}
+     */
+    this.wasVideoPlayed = false;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -218,6 +226,10 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     var select = $('#' + elementID);
     select.remove();
 
+    if (isVideo) {
+        this.wasVideoPlayed = false;
+    }
+
     console.info((isVideo ? "Video" : "Audio") +
                  " removed " + this.id, select);
 
@@ -316,6 +328,7 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
     // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
     // when video playback starts
     var onPlayingHandler = function () {
+        self.wasVideoPlayed = true;
         self.VideoLayout.videoactive(streamElement, self.id);
         streamElement.onplaying = null;
         // Refresh to show the video
@@ -325,15 +338,13 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
 };
 
 /**
- * Checks whether or not video stream exists and has started for this
- * RemoteVideo instance. This is checked by trying to select video element in
- * this container and checking if 'currentTime' field's value is greater than 0.
+ * Checks whether the video stream has started for this RemoteVideo instance.
  *
- * @returns {*|boolean} true if this RemoteVideo has active video stream running
+ * @returns {boolean} true if this RemoteVideo has a video stream for which
+ * the playback has been started.
  */
 RemoteVideo.prototype.hasVideoStarted = function () {
-    var videoSelector = this.selectVideoElement();
-    return videoSelector.length && videoSelector[0].currentTime > 0;
+    return this.wasVideoPlayed;
 };
 
 RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
