@@ -1,0 +1,21 @@
+.interactive-mic {
+    .mic-layer {
+        color: $interactiveMicrophoneLevelColor;
+        display: block;
+    }
+
+    .mic-level {
+        color: $interactiveMicrophoneBaseColor;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        @include transition(height 1s ease-out);
+    }
+}
+
+.videocontainer .interactive-mic {
+    position: relative;
+}

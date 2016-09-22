@@ -1,8 +1,10 @@
-/* global $, APP, JitsiMeetJS */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 /* jshint -W101 */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
+
+import InteractiveMicrophone from "./InteractiveMicrophone";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -13,6 +15,13 @@ function SmallVideo(VideoLayout) {
     this.videoStream = null;
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
+
+    if (interfaceConfig.INTERACTIVE_MICROPHONE) {
+        this.imic = new InteractiveMicrophone({
+            container: '#' + this.videoSpanId + ' .videocontainer__toolbar',
+            level: 0
+        });
+    }
 }
 
 function setVisibility(selector, show) {
@@ -195,6 +204,10 @@ SmallVideo.prototype.hideIndicator = function () {
  * or hidden
  */
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
+    if (interfaceConfig.INTERACTIVE_MICROPHONE) {
+        this.imic.mute(isMuted).redraw();
+        return;
+    }
 
     var audioMutedIndicator = this.getAudioMutedIndicator();
 
