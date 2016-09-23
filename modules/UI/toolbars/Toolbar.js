@@ -20,36 +20,46 @@ function openLinkDialog () {
         inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
     }
 
+    let inviteLinkId = "inviteLinkRef";
+    let focusInviteLink = function() {
+        $('#' + inviteLinkId).focus();
+        $('#' + inviteLinkId).select();
+    };
+
     let title = APP.translation.generateTranslationHTML("dialog.shareLink");
     APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        '<h2>' + title + '</h2>'
-        + '<input id="inviteLinkRef" type="text" '
-        + inviteAttributes + ' onclick="this.select();" readonly>',
-        false, "dialog.Invite",
+        null, title, null,
+        '<input id="' + inviteLinkId + '" type="text" '
+            + inviteAttributes + ' readonly/>',
+        false, "dialog.copy",
         function (e, v) {
             if (v && roomUrl) {
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-                emitter.emit(UIEvents.USER_INVITED, roomUrl);
+
+                focusInviteLink();
+
+                document.execCommand('copy');
             }
             else {
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
             }
         },
         function (event) {
-            if (roomUrl) {
-                document.getElementById('inviteLinkRef').select();
-            } else {
+            if (!roomUrl) {
                 if (event && event.target) {
                     $(event.target).find('button[value=true]')
                         .prop('disabled', true);
                 }
             }
+            else {
+                focusInviteLink();
+            }
         },
         function (e, v, m, f) {
             if(!v && !m && !f)
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
-        }
+        },
+        'Copy' // Focus Copy button.
     );
 }
 
