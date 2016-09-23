@@ -586,7 +586,7 @@ const Toolbar = {
      * Toggles / untoggles the view for raised hand.
      */
     _toggleRaiseHand(isRaisedHand) {
-        $('#toolbar_button_raisehand').toggleClass("toggled", isRaisedHand);
+        $('#toolbar_button_raisehand').toggleClass("glow", isRaisedHand);
     },
 
     /**
