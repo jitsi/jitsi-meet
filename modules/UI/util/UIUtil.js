@@ -103,13 +103,17 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
             'top-right': 'sw'
         };
 
-        element.setAttribute("data-i18n", "[content]" + key);
+        $(element).each(function () {
+            this.setAttribute("data-i18n", "[content]" + key);
+        });
         APP.translation.translateElement($(element));
 
         AJS.$(element).tooltip({
             gravity: positions[position],
             title: this._getTooltipText.bind(this, element),
-            html: true
+            html: true,
+            live: true,
+            hoverable: false
         });
     },
 
@@ -123,6 +127,15 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
     },
 
     /**
+     * Checks if visible tooltips are valid.
+     */
+    validateTooltips: function () {
+        if (typeof ($.fn.tipsy) === 'function') {
+            $.fn.tipsy.revalidate();
+        }
+    },
+
+    /**
      * Internal util function for generating tooltip title.
      *
      * @param element
@@ -130,6 +143,7 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
      * @private
      */
     _getTooltipText: function (element) {
+        element = $(element).get(0);
         let title = element.getAttribute('content');
         let shortcut = element.getAttribute('shortcut');
         if(shortcut) {

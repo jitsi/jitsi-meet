@@ -383,7 +383,7 @@ const Toolbar = {
                                 .indexOf(id) > -1)
                             ? "bottom" : "right";
 
-                    UIUtil.setTooltip(  buttonElement,
+                    UIUtil.setTooltip(  '#' + button.id,
                                         button.tooltipKey,
                                         tooltipPosition);
 
