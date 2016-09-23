@@ -465,9 +465,10 @@ var VideoLayout = {
                 return;
 
             if (member.isModerator()) {
-                remoteVideo.removeRemoteVideoMenu();
                 remoteVideo.createModeratorIndicatorElement();
-            } else if (isModerator) {
+            }
+
+            if (isModerator) {
                 // We are moderator, but user is not - add menu
                 if(!remoteVideo.hasRemoteVideoMenu) {
                     remoteVideo.addRemoteVideoMenu();
