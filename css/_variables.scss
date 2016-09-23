@@ -49,7 +49,7 @@ $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #165ECC;
 
 // Main controls
-$inputBackground: #EBEBEB;
+$inputBackground: #344563;
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 $inputBorderColor: #7a869a;
@@ -82,3 +82,26 @@ $hrColor: #505f79;
 $tooltipsZ: 901;
 $toolbarZ: 900;
 $overlayZ: 800;
+
+/**
+ * Font Colors TODO: Change colors when general dialogs are implemented.
+ */
+$defaultFontColor: #777;
+$defaultLightFontColor: #F1F1F1;
+$defaultDarkFontColor: #000;
+$buttonFontColor: #777;
+$buttonHoverFontColor: #287ade;
+$linkFontColor: #489afe;
+$linkHoverFontColor: #287ade;
+$auiPrimaryButtonBg: #3572b0;
+$auiPrimaryButtonHoverBg: #57647b;
+$auiPrimaryButtonColor: #fff;
+$auiIconColor: #707070;
+
+/**
+ * Dialog colors
+ **/
+$auiDialogColor: #eceef1;
+$auiDialogBg: #253858;
+$auiDialogContentBg: #344563;
+>>>>>>> BeatC dialogs redesign
