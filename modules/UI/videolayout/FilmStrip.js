@@ -216,24 +216,24 @@ const FilmStrip = {
 
         return new Promise(resolve => {
             let thumbs = this.getThumbs(!forceUpdate);
-
-            thumbs.localThumb.animate({
-                height: local.thumbHeight,
-                width: local.thumbWidth
-            }, {
-                queue: false,
-                duration: animate ? 500 : 0,
-                complete:  resolve
-            });
-
-            thumbs.remoteThumbs.animate({
-                height: remote.thumbHeight,
-                width: remote.thumbWidth
-            }, {
-                queue: false,
-                duration: animate ? 500 : 0,
-                complete:  resolve
-            });
+            if(thumbs.localThumb)
+                thumbs.localThumb.animate({
+                    height: local.thumbHeight,
+                    width: local.thumbWidth
+                }, {
+                    queue: false,
+                    duration: animate ? 500 : 0,
+                    complete:  resolve
+                });
+            if(thumbs.remoteThumbs)
+                thumbs.remoteThumbs.animate({
+                    height: remote.thumbHeight,
+                    width: remote.thumbWidth
+                }, {
+                    queue: false,
+                    duration: animate ? 500 : 0,
+                    complete:  resolve
+                });
 
             this.filmStrip.animate({
                 // adds 2 px because of small video 1px border
