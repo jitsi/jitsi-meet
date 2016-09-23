@@ -31,7 +31,7 @@ function createRateFeedbackHTML() {
 
     return `
         <div class="aui-dialog2-content feedback__content">
-            <form id="feedbackForm" 
+            <form id="feedbackForm"
                 action="javascript:false;" onsubmit="return false;">
                 <div class="feedback__rating">
                     <p class="star-label">&nbsp;</p>
