@@ -1,53 +1,100 @@
-.dialog{
+.dialog {
     visibility: visible;
     height: auto;
 
-    p {
-        color: $defaultDarkColor;
-    }
-    textarea {
-        background: none;
-        border: 1px solid $inputBorderColor;
-    }
-    .aui-dialog2-content:last-child {
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
-    }
-    .aui-dialog2-content:first-child {
-        border-top-right-radius: 5px;
-        border-top-left-radius: 5px;
-    }
-    .aui-dialog2-footer{
-        border-top: 0;
-        border-radius: 0;
-        padding-top: 0;
-        background: none;
-        border: none;
-        height: auto;
-        margin-top: 10px;
-    }
-    .aui-button {
-        height: 28px;
-        font-size: 12px;
-        padding: 3px 6px 3px 6px;
-        border: none;
-        box-shadow: none;
-        outline: none;
+    .aui {
 
-        &_close {
-            font-weight: 400 !important;
-            color: $buttonBackground;
-            background: none !important;
+        &-icon {
+            color: $auiDialogColor;
 
-            :hover {
-                text-decoration: underline;
+            &-small {
+                width: 14px;
+                height: 14px;
             }
         }
-        &_submit {
-            font-weight: 700 !important;
-            color: $defaultColor;
-            background: $buttonBackground;
-            border-radius: 3px;
+
+        &-iconfont-close-dialog {
+            cursor: pointer;
+            right: 20px;
+            position: absolute;
+            top: -49px;
         }
+
+        &-dialog2 {
+            &-header {
+                height: em(58, 12);
+                h2 {
+                    font-size: em(20, 12);
+                    font-weight: 300;
+                    letter-spacing: 1px;
+                    color: $auiDialogColor;
+                }
+
+                &-main {
+                    padding-right: 0;
+                }
+            }
+
+            &-header, &-footer {
+                background-color: $auiDialogBg;
+                border: none;
+            }
+
+            &-content {
+                font-size: em(14, 12);
+                min-height: 0;
+                background-color: $auiDialogContentBg;
+                color: $auiDialogColor;
+
+                p,span, h3 {
+                    font-weight: 300;
+                    letter-spacing: 0.5px;
+                }
+
+                &:last-child {
+                    border-bottom-right-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                }
+
+                &:first-child {
+                    border-top-right-radius: 5px;
+                    border-top-left-radius: 5px;
+                }
+            }
+        }
+
+        &-button {
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-weight: 400;
+            float: right;
+            margin-left: 10px;
+            color: $auiDialogColor;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+
+            &-primary {
+                background-color: $auiPrimaryButtonBg;
+
+                &:hover {
+                    background-color: $auiPrimaryButtonHoverBg;
+                }
+            }
+
+            &_close {
+                color: $defaultFontColor;
+            }
+            &_submit {
+                color: $linkFontColor;
+                &:hover {
+                    color: $linkHoverFontColor;
+                }
+            }
+        }
+    }
+
+    .input-control:not(:last-child) {
+        border-bottom: 1px solid $hrColor;
     }
 }
