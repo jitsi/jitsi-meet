@@ -20,19 +20,21 @@ function openLinkDialog () {
         inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
     }
 
-    let inviteLinkId = "inviteLinkRef";
     let focusInviteLink = function() {
-        $('#' + inviteLinkId).focus();
-        $('#' + inviteLinkId).select();
+        $('#inviteLinkRef').focus();
+        $('#inviteLinkRef').select();
     };
 
-    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, title, null,
-        '<input id="' + inviteLinkId + '" type="text" '
-            + inviteAttributes + ' readonly/>',
-        false, "dialog.copy",
-        function (e, v) {
+    let titleKey = "dialog.shareLink";
+    let titleString = APP.translation.generateTranslationHTML(titleKey);
+    let msgString = (`<input id="inviteLinkRef" type="text"
+        ${inviteAttributes} readonly/>`);
+
+    APP.UI.messageHandler.openTwoButtonDialog( {
+        titleKey,
+        titleString,
+        msgString,
+        submitFunction: function (e, v) {
             if (v && roomUrl) {
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
 
@@ -44,7 +46,7 @@ function openLinkDialog () {
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
             }
         },
-        function (event) {
+        loadedFunction: function (event) {
             if (!roomUrl) {
                 if (event && event.target) {
                     $(event.target).find('button[value=true]')
@@ -55,12 +57,13 @@ function openLinkDialog () {
                 focusInviteLink();
             }
         },
-        function (e, v, m, f) {
+        closeFunction: function (e, v, m, f) {
             if(!v && !m && !f)
                 JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
         },
-        'Copy' // Focus Copy button.
-    );
+        leftButtonKey: "dialog.copy",
+        focus: 'Copy'
+    });
 }
 
 const buttonHandlers = {
@@ -159,21 +162,20 @@ const buttonHandlers = {
         emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
+        let titleKey = "dialog.logoutTitle";
+        let msgKey = "dialog.logoutQuestion";
         JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
-        APP.UI.messageHandler.openTwoButtonDialog(
-            "dialog.logoutTitle",
-            null,
-            "dialog.logoutQuestion",
-            null,
-            false,
-            "dialog.Yes",
-            function (evt, yes) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            msgKey,
+            leftButtonKey: "dialog.Yes",
+            submitFunction: function (evt, yes) {
                 if (yes) {
                     emitter.emit(UIEvents.LOGOUT);
                 }
             }
-        );
+        });
     },
     "toolbar_film_strip": function () {
         JitsiMeetJS.analytics.sendEvent(
@@ -340,20 +342,25 @@ function showSipNumberInput () {
     let defaultNumber = config.defaultSipNumber
         ? config.defaultSipNumber
         : '';
-
+    let titleKey = "dialog.sipMsg";
     let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        `<h2>${sipMsg}</h2>
-            <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
-        false, "dialog.Dial",
-        function (e, v, m, f) {
+    let msgString = (`
+            <input name="sipNumber" type="text"
+                   value="${defaultNumber}" autofocus>
+    `);
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString: sipMsg,
+        msgString,
+        leftButtonKey: "dialog.Dial",
+        submitFunction: function (e, v, m, f) {
             if (v && f.sipNumber) {
                 emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
             }
         },
-        null, null, ':input:first'
-    );
+        focus: ':input:first'
+    });
 }
 
 const Toolbar = {
