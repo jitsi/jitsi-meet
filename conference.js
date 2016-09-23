@@ -1222,6 +1222,7 @@ export default {
             console.log("Received channel password lock change: ", state,
                 error);
             APP.UI.markRoomLocked(state);
+            roomLocker.lockedElsewhere = state;
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
