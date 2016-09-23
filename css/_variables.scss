@@ -21,7 +21,10 @@ $thumbnailToolbarHeight: 25px;
  */
 $defaultColor: #F1F1F1;
 $defaultSideBarFontColor: #44A5FF;
-$defaultDarkColor: #4F4F4F;
+$defaultSemiDarkColor: #ACACAC;
+$inputColor: #758196;
+$defaultDarkColor: #2b3d5c;
+$defaultDarkSelectionColor: #253858;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
@@ -33,10 +36,10 @@ $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #165ECC;
 
 // Main controls
-$inputBackground: rgba(132, 132, 132, .5);
+$inputBackground: #344563;
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
-$inputBorderColor: #EBEBEB;
+$inputBorderColor: #7a869a;
 $buttonBackground: #44A5FF;
 
 // Video layout.
@@ -50,7 +53,7 @@ $audioLevelBg: #44A5FF;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 
 $rateStarDefault: #ccc;
-$rateStarActivity: #165ecc;
+$rateStarActivity: #f6c342;
 $rateStarLabelColor: #333;
 
 /**
@@ -58,6 +61,7 @@ $rateStarLabelColor: #333;
  */
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
+$hrColor: #505f79;
 
 /**
  * Z-indexes. TODO: Replace this by a function.

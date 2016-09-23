@@ -1,3 +1,9 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
 /* Variables BEGIN */
 
 @import 'variables';
@@ -25,8 +31,6 @@
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
 @import 'videolayout_default';
-@import 'jquery-impromptu';
-@import 'modaldialog';
 @import 'notice';
 @import 'popup_menu';
 @import 'recording';
@@ -43,6 +47,7 @@
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';
-
+@import 'input-control/input-control';
+@import 'shortcuts/main';
 
 /* Modules END */

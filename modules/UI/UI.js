@@ -798,28 +798,33 @@ UI.connectionIndicatorShowMore = function(id) {
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     console.log('password is required');
-    var message = '<h2 data-i18n="dialog.passwordRequired">';
-    message += APP.translation.translateString(
-        "dialog.passwordRequired");
-    message += '</h2>' +
-        '<input name="username" type="text" ' +
-        'placeholder="user@domain.net" autofocus>' +
-        '<input name="password" ' +
-        'type="password" data-i18n="[placeholder]dialog.userPassword"' +
-        ' placeholder="user password">';
-    messageHandler.openTwoButtonDialog(null, null, null, message,
-        true,
-        "dialog.Ok",
-        function (e, v, m, f) {
-            if (v) {
-                if (f.username && f.password) {
-                    callback(f.username, f.password);
-                }
-            }
-        },
-        null, null, ':input:first'
+    let titleKey = "dialog.passwordRequired";
+    let titleString = APP.translation.translateString(titleKey);
 
+    let message = (
+        `<input name="username" type="text"
+                placeholder="user@domain.net" autofocus>
+         <input name="password" type="password"
+                data-i18n="[placeholder]dialog.userPassword"
+                placeholder="user password">`
     );
+
+    let submitFunction = (e, v, m, f) => {
+        if (v) {
+            if (f.username && f.password) {
+                callback(f.username, f.password);
+            }
+        }
+    };
+
+    messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString,
+        msgString: message,
+        leftButtonKey: 'dialog.Ok',
+        submitFunction,
+        focus: ':input:first'
+    });
 };
 
 UI.askForNickname = function () {
@@ -1265,24 +1270,27 @@ UI.showExtensionRequiredDialog = function (url) {
  * @param url {string} the url of the extension.
  */
 UI.showExtensionExternalInstallationDialog = function (url) {
-    messageHandler.openTwoButtonDialog(
-        "dialog.externalInstallationTitle",
-        null,
-        "dialog.externalInstallationMsg",
-        null,
-        true,
-        "dialog.goToStore",
-         function(e,v,m,f){
-            if (v) {
-                e.preventDefault();
-                eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
-            }
-        },
-        function () {},
-        function () {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+    let submitFunction = function(e,v,m,f){
+        if (v) {
+            e.preventDefault();
+            eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
         }
-    );
+    };
+
+    let closeFunction = function () {
+        eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+    };
+
+    messageHandler.openTwoButtonDialog({
+        titleKey: 'dialog.externalInstallationTitle',
+        titleString: '',
+        msgKey: 'dialog.externalInstallationMsg',
+        msgString: '',
+        leftButtonKey: 'dialog.goToStore',
+        submitFunction,
+        loadedFunction: $.noop,
+        closeFunction
+    });
 };
 
 
@@ -1538,7 +1546,12 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
  * Shows or hides the keyboard shortcuts panel, depending on the current state.'
  */
 UI.toggleKeyboardShortcutsPanel = function() {
-    $('#keyboard-shortcuts').toggle();
+    let titleKey = 'keyboardShortcuts.keyboardShortcuts';
+    let title = APP.translation.translateString(titleKey);
+    let msg = $('#keyboard-shortcuts').html();
+    let buttons = { Close: true };
+
+    messageHandler.openDialog(title, msg, true, buttons);
 };
 
 /**

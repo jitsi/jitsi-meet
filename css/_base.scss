@@ -29,13 +29,16 @@ input[type='text'], input[type='password'], textarea {
     -webkit-user-select: text;
     user-select: text;
     display: inline-block;
-    padding: 5px;
-    color: $defaultDarkColor;
+    width: 100%;
+    padding: 5px 7px;
+    color: $inputColor;
     border-radius: $borderRadius;
     line-height: 32px;
+    letter-spacing: 0.5px;
     height: 32px;
     text-align: left;
     border:1px solid $inputBorderColor;
+    background-color: $inputBackground;
     outline: none; /* removes the default outline */
     resize: none; /* prevents the user-resizing, adjust to taste */
 }
@@ -44,6 +47,7 @@ textarea {
     overflow: hidden;
     word-wrap: break-word;
     resize: horizontal;
+    padding-top: 0;
 }
 
 button.no-icon {
@@ -53,12 +57,9 @@ button.no-icon {
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
-    color: $defaultDarkColor;
-    background: $inputLightBackground;
-    font-size: 12px;
-    border: none;
-    box-shadow: none;
-    outline: none;
+    color: $inputColor;
+    font-size: 1em;
+    letter-spacing: 0.5px;
 }
 
 button, select, input[type="button"],
@@ -72,7 +73,7 @@ input[type="reset"], input[type="submit"] {
 
 button {
     color: #FFF;
-    background-color: $buttonBackground !important;
+    background-color: $buttonBackground;
     border-radius: $borderRadius;
 }
 
@@ -172,4 +173,8 @@ form {
     &-arrow {
         border-color: $tooltipBg;
     }
+}
+
+.aui-blanket {
+    visibility: visible;
 }

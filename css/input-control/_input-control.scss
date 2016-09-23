@@ -1,0 +1,25 @@
+.input-control {
+    padding: 16px 0;
+
+    &__text {
+        margin: 8px 0;
+        font-size: 1em
+    }
+
+    &__label {
+        font-size: 1em;
+    }
+
+    &__input {
+        margin: 8px 0;
+    }
+
+    &__em {
+        color: $inputControlEmColor;
+    }
+
+    &__hint {
+        margin: 0;
+        font-size: em(12, 14);
+    }
+}
