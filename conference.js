@@ -714,6 +714,28 @@ export default {
         let participant = this.getParticipantById(id);
         return participant ? participant.isConnectionActive() : null;
     },
+    /**
+     * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
+     * the given <tt>id</tt>.
+     *
+     * @param id {string} the participant's id(MUC nickname/JVB endpoint id)
+     *
+     * @return {string} the participant's display name or the default string if
+     * absent.
+     */
+    getParticipantDisplayName (id) {
+        let displayName = getDisplayName(id);
+        if (displayName) {
+            return displayName;
+        } else {
+            if (APP.conference.isLocalId(id)) {
+                return APP.translation.generateTranslationHTML(
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+            } else {
+                return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            }
+        }
+    },
     getMyUserId () {
         return this._room
             && this._room.myUserId();
