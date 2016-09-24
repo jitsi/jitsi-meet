@@ -92,9 +92,9 @@ export default class LargeVideoManager {
      */
     onVideoInterrupted () {
         this.enableLocalConnectionProblemFilter(true);
-        this._setVideoConnectionMessage("connection.RECONNECTING")
+        this._setLocalConnectionMessage("connection.RECONNECTING")
         // Show the message only if the video is currently being displayed
-        this.showVideoConnectionMessage(this.state === VIDEO_CONTAINER_TYPE);
+        this.showLocalConnectionMessage(this.state === VIDEO_CONTAINER_TYPE);
     }
 
     /**
@@ -102,7 +102,7 @@ export default class LargeVideoManager {
      */
     onVideoRestored () {
         this.enableLocalConnectionProblemFilter(false);
-        this.showVideoConnectionMessage(false);
+        this.showLocalConnectionMessage(false);
     }
 
     get id () {
@@ -316,23 +316,23 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Shows/hides the "video connection message".
+     * Shows/hides the message indicating problems with local media connection.
      * @param {boolean|null} show(optional) tells whether the message is to be
      * displayed or not. If missing the condition will be based on the value
      * obtained from {@link APP.conference.isConnectionInterrupted}.
      */
-    showVideoConnectionMessage (show) {
+    showLocalConnectionMessage (show) {
         if (typeof show !== 'boolean') {
             show = APP.conference.isConnectionInterrupted();
         }
 
         if (show) {
-            $('#videoConnectionMessage').css({display: "block"});
+            $('#localConnectionMessage').css({display: "block"});
             // Avatar message conflicts with 'videoConnectionMessage',
             // so it must be hidden
             this.showRemoteConnectionMessage(false);
         } else {
-            $('#videoConnectionMessage').css({display: "none"});
+            $('#localConnectionMessage').css({display: "none"});
         }
     }
 
@@ -355,7 +355,7 @@ export default class LargeVideoManager {
             $('#remoteConnectionMessage').css({display: "block"});
             // 'videoConnectionMessage' message conflicts with 'avatarMessage',
             // so it must be hidden
-            this.showVideoConnectionMessage(false);
+            this.showLocalConnectionMessage(false);
         } else {
             $('#remoteConnectionMessage').hide();
         }
@@ -382,7 +382,8 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Updated the text which is to be shown on the top of large video.
+     * Updated the text which is to be shown on the top of large video, when
+     * local media connection is interrupted.
      *
      * @param {string} msgKey the translation key which will be used to get
      * the message text to be displayed on the large video.
@@ -390,8 +391,8 @@ export default class LargeVideoManager {
      *
      * @private
      */
-    _setVideoConnectionMessage (msgKey, msgOptions) {
-        $('#videoConnectionMessage')
+    _setLocalConnectionMessage (msgKey, msgOptions) {
+        $('#localConnectionMessage')
             .attr("data-i18n", msgKey)
             .text(APP.translation.translateString(msgKey, msgOptions));
     }
@@ -454,7 +455,7 @@ export default class LargeVideoManager {
         // be taking care of it by itself, but that is a bigger refactoring
         if (this.state === VIDEO_CONTAINER_TYPE) {
             this.showWatermark(false);
-            this.showVideoConnectionMessage(false);
+            this.showLocalConnectionMessage(false);
             this.showRemoteConnectionMessage(false);
         }
         oldContainer.hide();
@@ -473,7 +474,7 @@ export default class LargeVideoManager {
                 // at the same time, but the latter is of higher priority and it
                 // will hide the avatar one if will be displayed.
                 this.showRemoteConnectionMessage(/* fet the current state */);
-                this.showVideoConnectionMessage(/* fetch the current state */);
+                this.showLocalConnectionMessage(/* fetch the current state */);
             }
         });
     }
