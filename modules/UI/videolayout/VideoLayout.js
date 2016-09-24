@@ -650,6 +650,12 @@ var VideoLayout = {
      * the user is having connectivity issues.
      */
     onParticipantConnectionStatusChanged (id, isActive) {
+        // Show/hide warning on the large video
+        if (this.isCurrentlyOnLarge(id)) {
+            if (largeVideo) {
+                largeVideo.updateParticipantConnStatusIndication(id, isActive);
+            }
+        }
         // Show/hide warning on the thumbnail
         let remoteVideo = remoteVideos[id];
         if (remoteVideo) {

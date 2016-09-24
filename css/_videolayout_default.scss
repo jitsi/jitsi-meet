@@ -450,6 +450,11 @@
     filter: grayscale(.5) opacity(0.8);
 }
 
+.remoteVideoProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
 .videoProblemFilter {
     -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
     filter: blur(10px) grayscale(.5) opacity(0.8);
@@ -458,6 +463,28 @@
 .videoThumbnailProblemFilter {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
+}
+
+#remoteConnectionMessage {
+    display: none;
+    position: absolute;
+    width: auto;
+    z-index: 1011;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+
+    background: rgba(0,0,0,.5);
+    border-radius: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #videoConnectionMessage {
