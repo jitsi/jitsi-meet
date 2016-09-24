@@ -653,7 +653,9 @@ var VideoLayout = {
         // Show/hide warning on the large video
         if (this.isCurrentlyOnLarge(id)) {
             if (largeVideo) {
-                largeVideo.updateParticipantConnStatusIndication(id, isActive);
+                // We have to trigger full large video update to transition from
+                // avatar to video on connectivity restored.
+                this.updateLargeVideo(id, true /* force update */);
             }
         }
         // Show/hide warning on the thumbnail
