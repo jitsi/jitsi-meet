@@ -92,10 +92,7 @@ export default class LargeVideoManager {
      */
     onVideoInterrupted () {
         this.enableLocalConnectionProblemFilter(true);
-        let reconnectingKey = "connection.RECONNECTING";
-        $('#videoConnectionMessage')
-            .attr("data-i18n", reconnectingKey)
-            .text(APP.translation.translateString(reconnectingKey));
+        this._setVideoConnectionMessage("connection.RECONNECTING")
         // Show the message only if the video is currently being displayed
         this.showVideoConnectionMessage(this.state === VIDEO_CONTAINER_TYPE);
     }
@@ -280,6 +277,21 @@ export default class LargeVideoManager {
         } else {
             $('#videoConnectionMessage').css({display: "none"});
         }
+    }
+
+    /**
+     * Updated the text which is to be shown on the top of large video.
+     *
+     * @param {string} msgKey the translation key which will be used to get
+     * the message text to be displayed on the large video.
+     * @param {object} msgOptions translation options object
+     *
+     * @private
+     */
+    _setVideoConnectionMessage (msgKey, msgOptions) {
+        $('#videoConnectionMessage')
+            .attr("data-i18n", msgKey)
+            .text(APP.translation.translateString(msgKey, msgOptions));
     }
 
     /**
