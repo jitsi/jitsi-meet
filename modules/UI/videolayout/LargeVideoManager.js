@@ -5,12 +5,18 @@ import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
+import LargeContainer from "./LargeContainer";
 
 /**
  * Manager for all Large containers.
  */
 export default class LargeVideoManager {
     constructor (emitter) {
+        /**
+         * The map of <tt>LargeContainer</tt>s where the key is the video
+         * container type.
+         * @type {Object.<string, LargeContainer>}
+         */
         this.containers = {};
 
         this.state = VIDEO_CONTAINER_TYPE;
@@ -136,6 +142,10 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
+            // FIXME that does not really make sense, because the videoType
+            // (camera or desktop) is a completely different thing than
+            // the video container type (Etherpad, SharedVideo, VideoContainer).
+            // ----------------------------------------------------------------
             // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
             // its stream whether exist and is muted to set isVideoMuted
             // in rest of the cases it is false
