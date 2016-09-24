@@ -91,7 +91,7 @@ export default class LargeVideoManager {
      * Called when the media connection has been interrupted.
      */
     onVideoInterrupted () {
-        this.enableVideoProblemFilter(true);
+        this.enableLocalConnectionProblemFilter(true);
         let reconnectingKey = "connection.RECONNECTING";
         $('#videoConnectionMessage')
             .attr("data-i18n", reconnectingKey)
@@ -104,7 +104,7 @@ export default class LargeVideoManager {
      * Called when the media connection has been restored.
      */
     onVideoRestored () {
-        this.enableVideoProblemFilter(false);
+        this.enableLocalConnectionProblemFilter(false);
         this.showVideoConnectionMessage(false);
     }
 
@@ -240,12 +240,13 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Enables/disables the filter indicating a video problem to the user.
+     * Enables/disables the filter indicating a video problem to the user caused
+     * by the problems with local media connection.
      *
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
-    enableVideoProblemFilter (enable) {
-        this.videoContainer.enableVideoProblemFilter(enable);
+    enableLocalConnectionProblemFilter (enable) {
+        this.videoContainer.enableLocalConnectionProblemFilter(enable);
     }
 
     /**
