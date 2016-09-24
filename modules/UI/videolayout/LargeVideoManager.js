@@ -162,7 +162,8 @@ export default class LargeVideoManager {
             // but we still should show watermark
             if (isVideoMuted) {
                 this.showWatermark(true);
-                promise = Promise.resolve();
+                // If the avatar is to be displayed the video should be hidden
+                promise = container.hide();
             } else {
                 promise = container.show();
             }
