@@ -174,14 +174,29 @@ export class VideoContainer extends LargeContainer {
         this.isVisible = false;
 
         this.$avatar = $('#dominantSpeaker');
+
+        /**
+         * Indicates whether or not the video stream attached to the video
+         * element has started(which means that there is any image rendered
+         * even if the video is stalled).
+         * @type {boolean}
+         */
+        this.wasVideoRendered = false;
+
         this.$wrapper = $('#largeVideoWrapper');
 
         this.avatarHeight = $("#dominantSpeakerAvatar").height();
 
+        var onPlayCallback = function (event) {
+            if (typeof onPlay === 'function') {
+                onPlay(event);
+            }
+            this.wasVideoRendered = true;
+        }.bind(this);
         // This does not work with Temasys plugin - has to be a property to be
         // copied between new <object> elements
         //this.$video.on('play', onPlay);
-        this.$video[0].onplay = onPlay;
+        this.$video[0].onplay = onPlayCallback;
     }
 
     /**
@@ -284,6 +299,14 @@ export class VideoContainer extends LargeContainer {
      * @param {string} videoType video type
      */
     setStream (stream, videoType) {
+
+        if (this.stream === stream) {
+            return;
+        } else {
+            // The stream has changed, so the image will be lost on detach
+            this.wasVideoRendered = false;
+        }
+
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
