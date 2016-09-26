@@ -681,6 +681,16 @@ export default {
         return this._room
             && this._room.getConnectionState();
     },
+    /**
+     * Checks whether or not our connection is currently in interrupted and
+     * reconnect attempts are in progress.
+     *
+     * @returns {boolean} true if the connection is in interrupted state or
+     * false otherwise.
+     */
+    isConnectionInterrupted () {
+        return connectionIsInterrupted;
+    },
     getMyUserId () {
         return this._room
             && this._room.myUserId();

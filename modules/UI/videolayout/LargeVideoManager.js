@@ -81,6 +81,27 @@ export default class LargeVideoManager {
         container.onHoverOut(e);
     }
 
+    /**
+     * Called when the media connection has been interrupted.
+     */
+    onVideoInterrupted () {
+        this.enableVideoProblemFilter(true);
+        let reconnectingKey = "connection.RECONNECTING";
+        $('#videoConnectionMessage')
+            .attr("data-i18n", reconnectingKey)
+            .text(APP.translation.translateString(reconnectingKey));
+        // Show the message only if the video is currently being displayed
+        this.showVideoConnectionMessage(this.state === VIDEO_CONTAINER_TYPE);
+    }
+
+    /**
+     * Called when the media connection has been restored.
+     */
+    onVideoRestored () {
+        this.enableVideoProblemFilter(false);
+        this.showVideoConnectionMessage(false);
+    }
+
     get id () {
         let container = this.getContainer(this.state);
         return container.id;
@@ -213,8 +234,7 @@ export default class LargeVideoManager {
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
     enableVideoProblemFilter (enable) {
-        let container = this.getContainer(this.state);
-        container.$video.toggleClass("videoProblemFilter", enable);
+        this.videoContainer.enableVideoProblemFilter(enable);
     }
 
     /**
@@ -230,6 +250,24 @@ export default class LargeVideoManager {
      */
     showWatermark (show) {
         $('.watermark').css('visibility', show ? 'visible' : 'hidden');
+    }
+
+    /**
+     * Shows/hides the "video connection message".
+     * @param {boolean|null} show(optional) tells whether the message is to be
+     * displayed or not. If missing the condition will be based on the value
+     * obtained from {@link APP.conference.isConnectionInterrupted}.
+     */
+    showVideoConnectionMessage (show) {
+        if (typeof show !== 'boolean') {
+            show = APP.conference.isConnectionInterrupted();
+        }
+
+        if (show) {
+            $('#videoConnectionMessage').css({display: "block"});
+        } else {
+            $('#videoConnectionMessage').css({display: "none"});
+        }
     }
 
     /**
@@ -285,8 +323,12 @@ export default class LargeVideoManager {
         }
 
         let oldContainer = this.containers[this.state];
+        // FIXME when video is being replaced with other content we need to hide
+        // companion icons/messages. It would be best if the container would
+        // be taking care of it by itself, but that is a bigger refactoring
         if (this.state === VIDEO_CONTAINER_TYPE) {
             this.showWatermark(false);
+            this.showVideoConnectionMessage(false);
         }
         oldContainer.hide();
 
@@ -295,7 +337,12 @@ export default class LargeVideoManager {
 
         return container.show().then(() => {
             if (type === VIDEO_CONTAINER_TYPE) {
+                // FIXME when video appears on top of other content we need to
+                // show companion icons/messages. It would be best if
+                // the container would be taking care of it by itself, but that
+                // is a bigger refactoring
                 this.showWatermark(true);
+                this.showVideoConnectionMessage(/* fetch the current state */);
             }
         });
     }
