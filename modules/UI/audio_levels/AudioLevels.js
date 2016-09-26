@@ -147,17 +147,13 @@ const AudioLevels = {
      * Updates the audio level canvas for the given id. If the canvas
      * didn't exist we create it.
      */
-    createAudioLevelCanvas (id, thumbWidth, thumbHeight) {
-
-        let videoSpanId = (id === "local")
-                        ? "localVideoContainer"
-                        : `participant_${id}`;
+    createAudioLevelCanvas (videoSpanId, thumbWidth, thumbHeight) {
 
         let videoSpan = document.getElementById(videoSpanId);
 
         if (!videoSpan) {
-            if (id) {
-                console.error("No video element for id", id);
+            if (videoSpanId) {
+                console.error("No video element for id", videoSpanId);
             } else {
                 console.error("No video element for local video.");
             }
@@ -245,27 +241,18 @@ const AudioLevels = {
     },
 
     updateCanvasSize (localVideo, remoteVideo) {
-        let localCanvasWidth
-            = localVideo.thumbWidth + interfaceConfig.CANVAS_EXTRA;
-        let localCanvasHeight
-            = localVideo.thumbHeight + interfaceConfig.CANVAS_EXTRA;
-        let remoteCanvasWidth
-            = remoteVideo.thumbWidth + interfaceConfig.CANVAS_EXTRA;
-        let remoteCanvasHeight
-            = remoteVideo.thumbHeight + interfaceConfig.CANVAS_EXTRA;
-
         let { remoteThumbs, localThumb } = FilmStrip.getThumbs();
 
-        remoteThumbs.children('canvas').each(function () {
-            $(this).attr('width', remoteCanvasWidth);
-            $(this).attr('height', remoteCanvasHeight);
+        remoteThumbs.each(( index, element ) => {
+            this.createAudioLevelCanvas(element.id,
+                                        remoteVideo.thumbWidth,
+                                        remoteVideo.thumbHeight);
         });
 
-        if(localThumb) {
-            localThumb.children('canvas').each(function () {
-                $(this).attr('width', localCanvasWidth);
-                $(this).attr('height', localCanvasHeight);
-            });
+        if (localThumb) {
+            this.createAudioLevelCanvas(localThumb.get(0).id,
+                                        localVideo.thumbWidth,
+                                        localVideo.thumbHeight);
         }
     }
 };

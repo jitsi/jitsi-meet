@@ -33,9 +33,10 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
         this.addRemoteVideoMenu();
     }
 
-    let { remoteVideo } = this.VideoLayout.resizeThumbnails();
+    let { remoteVideo } = this.VideoLayout.resizeThumbnails(false, true);
     let { thumbHeight, thumbWidth } = remoteVideo;
-    AudioLevels.createAudioLevelCanvas(this.id, thumbWidth, thumbHeight);
+    AudioLevels.createAudioLevelCanvas(
+        this.videoSpanId, thumbWidth, thumbHeight);
 
     return this.container;
 };

@@ -25,7 +25,7 @@
     left: 0;
     right: 0;
     width:auto;
-    border:1px solid transparent;
+    border: 2px solid transparent;
     z-index: 5;
     transition: bottom 2s;
     overflow: visible !important;
@@ -48,7 +48,6 @@
     background-size: contain;
     border-radius:1px;
     margin: 0 $thumbnailVideoMargin;
-    border: 1px solid $defaultDarkColor;
 }
 
 /**
@@ -67,22 +66,35 @@
     padding: 0 5px 0 5px;
 }
 
+#remoteVideos .videocontainer.videoContainerFocused,
+#remoteVideos .videocontainer:hover {
+    cursor: hand;
+    margin-right: $thumbnailVideoMargin - 2;
+    margin-left: $thumbnailVideoMargin - 2;
+    margin-top: -2px;
+}
 /**
  * Focused video thumbnail.
  */
 #remoteVideos .videocontainer.videoContainerFocused {
-    cursor: hand;
     transition-duration: 0.5s;
     -webkit-transition-duration: 0.5s;
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
-    border: 1px solid $videoThumbnailSelected;
+    border: 2px solid $videoThumbnailSelected !important;
+    box-shadow: inset 0 0 3px $videoThumbnailSelected,
+                0 0 3px $videoThumbnailSelected !important;
 }
 
-#remoteVideos .videocontainer:hover,
-#remoteVideos .videocontainer.videoContainerFocused:hover {
-    border: 1px solid $videoThumbnailHovered;
+/**
+ * Hovered video thumbnail.
+ */
+#remoteVideos .videocontainer:hover {
+    cursor: hand;
+    border: 2px solid $videoThumbnailHovered;
+    box-shadow: inset 0 0 3px $videoThumbnailHovered,
+              0 0 3px $videoThumbnailHovered;
 }
 
 #localVideoWrapper {
