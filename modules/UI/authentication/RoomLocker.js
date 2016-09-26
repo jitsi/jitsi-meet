@@ -124,6 +124,11 @@ export default function createRoomLocker (room) {
      */
     let lockedElsewhere = false;
 
+    /*
+     * Allows to set new password
+     * @param newPass
+     * @returns {Promise.<TResult>}
+     */
     function lock (newPass) {
         return room.lock(newPass).then(function () {
             password = newPass;
@@ -149,6 +154,8 @@ export default function createRoomLocker (room) {
         get password () {
             return password;
         },
+
+        lock,
 
         /**
          * Sets that the room is locked from another user, not us.

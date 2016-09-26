@@ -17,6 +17,11 @@
     font-weight: 300;
     @include transition(background-color .1s ease-out);
 
+    &[disabled] {
+        color: #666;
+        cursor: default;
+    }
+
     &:hover {
         background-color: $buttonHoverBackground;
         @include transition(background-color .1s ease-in);

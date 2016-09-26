@@ -218,8 +218,8 @@ var messageHandler = {
     openDialogWithStates: function (statesObject, options) {
         if (!popupEnabled)
             return;
-        let { classes } = options;
-        options.classes = Object.assign({}, this._getDialogClasses(), classes);
+        let { classes, size } = options;
+        options.classes = Object.assign({}, this._getDialogClasses(size), classes);
         options.promptspeed = options.promptspeed || 0;
 
 
@@ -230,7 +230,6 @@ var messageHandler = {
                 currentState.title = this._getFormattedTitleString(title);
             }
         }
-
         return new Impromptu(statesObject, options);
     },
 
