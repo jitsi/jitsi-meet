@@ -23,8 +23,6 @@ var CHAT_CONTAINER_ID = "chat_container";
 function updateVisualNotification() {
     var unreadMsgElement = document.getElementById('unreadMessages');
 
-    var glower = $('#toolbar_button_chat');
-
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
 
