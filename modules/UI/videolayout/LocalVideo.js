@@ -41,7 +41,7 @@ LocalVideo.prototype.constructor = LocalVideo;
 function createEditDisplayNameButton() {
     var editButton = document.createElement('a');
     editButton.className = 'displayname';
-    UIUtil.setTooltip(editButton,
+    UIUtil.setTooltip('#' + this.videoSpanId + ' .displayname',
         "videothumbnail.editnickname",
         "left");
     editButton.innerHTML = '<i class="icon-edit"></i>';

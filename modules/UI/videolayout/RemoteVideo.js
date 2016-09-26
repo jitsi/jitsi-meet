@@ -230,6 +230,7 @@ RemoteVideo.prototype.remove = function () {
     if (this.container.parentNode) {
         this.container.parentNode.removeChild(this.container);
     }
+    UIUtils.validateTooltips();
 };
 
 RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {

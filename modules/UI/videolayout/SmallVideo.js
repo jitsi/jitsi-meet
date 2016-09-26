@@ -222,13 +222,13 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
     audioMutedSpan = document.createElement('span');
     audioMutedSpan.className = 'audioMuted toolbar-icon';
 
-    UIUtil.setTooltip(audioMutedSpan,
-        "videothumbnail.mute",
-        "top");
-
     this.container
         .querySelector('.videocontainer__toolbar')
         .appendChild(audioMutedSpan);
+
+    UIUtil.setTooltip('#' + this.videoSpanId + ' .audioMuted',
+        "videothumbnail.mute",
+        "top");
 
 
     var mutedIndicator = document.createElement('i');
@@ -277,7 +277,7 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
     var mutedIndicator = document.createElement('i');
     mutedIndicator.className = 'icon-camera-disabled';
 
-    UIUtil.setTooltip(mutedIndicator,
+    UIUtil.setTooltip('#' + this.videoSpanId + ' .videoMuted',
         "videothumbnail.videomute",
         "top");
 
@@ -309,7 +309,7 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
     var moderatorIndicator = document.createElement('i');
     moderatorIndicator.className = 'icon-star';
 
-    UIUtil.setTooltip(moderatorIndicator,
+    UIUtil.setTooltip('#' + this.videoSpanId + ' .focusindicator',
         "videothumbnail.moderator",
         "top-left");
 
@@ -433,14 +433,10 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
     }
 
-    var indicatorSpanId = "dominantspeakerindicator";
-    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
-
-    indicatorSpan.innerHTML
-        = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
-    // adds a tooltip
-    UIUtil.setTooltip(indicatorSpan, "speaker", "top");
-    APP.translation.translateElement($(indicatorSpan));
+    var indicatorSpan = this.getIndicatorSpan(
+        "dominantspeakerindicator", 
+        "dominant-indicator"
+    );
 
     $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
 };
@@ -456,15 +452,21 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         return;
     }
 
-    var indicatorSpanId = "raisehandindicator";
-    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+    var indicatorSpan = this.getIndicatorSpan(
+        "raisehandindicator", 
+        "hand-indicator"
+    );
 
     indicatorSpan.innerHTML
         = "<i id='indicatoricon' class='icon-raised-hand'></i>";
 
     // adds a tooltip
-    UIUtil.setTooltip(indicatorSpan, "raisedHand", "top");
     APP.translation.translateElement($(indicatorSpan));
+    UIUtil.setTooltip(
+        '#' + this.videoSpanId + ' .hand-indicator', 
+        "raisedHand", 
+        "top"
+    );
 
     $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
 };
@@ -473,14 +475,24 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
  * Gets (creating if necessary) the "indicator" span for this SmallVideo
   identified by an ID.
  */
-SmallVideo.prototype.getIndicatorSpan = function(id) {
+SmallVideo.prototype.getIndicatorSpan = function(id, cls) {
     var indicatorSpan;
-    var spans = $(`#${this.videoSpanId}>[id=${id}`);
+    var spans = $(`#${this.videoSpanId} .${cls}`);
     if (spans.length <= 0) {
         indicatorSpan = document.createElement('span');
         indicatorSpan.id = id;
-        indicatorSpan.className = "indicator";
+        indicatorSpan.className = `indicator ${cls}`;
+
+        indicatorSpan.innerHTML
+            = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
+
         $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
+
+        UIUtil.setTooltip(
+            '#' + this.videoSpanId + ' .' + cls,
+            "speaker", 
+            "top"
+        );
     } else {
         indicatorSpan = spans[0];
     }
