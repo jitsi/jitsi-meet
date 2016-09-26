@@ -358,6 +358,30 @@ function changeLocalDisplayName(nickname = '') {
     APP.UI.changeDisplayName(APP.conference.getMyUserId(), nickname);
 }
 
+/**
+ * Invokes callback with current room status
+ */
+function returnRoomStatus(cb = $.noop) {
+    let {
+        password,
+        isLocked
+    } = roomLocker;
+
+    window.cb = cb;
+
+    cb({password, isLocked});
+}
+
+function lockRoom(newPass, cb = $.noop) {
+    roomLocker.lock(newPass);
+    cb();
+}
+
+function unlockRoom(cb = $.noop) {
+    roomLocker.lock();
+    cb();
+}
+
 class ConferenceConnector {
     constructor(resolve, reject) {
         this._resolve = resolve;
@@ -1334,6 +1358,12 @@ export default {
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muteLocalVideo);
+
+        APP.UI.addListener(UIEvents.REQUEST_ROOM_PASSWORD, returnRoomStatus);
+
+        APP.UI.addListener(UIEvents.UNLOCK_ROOM, unlockRoom);
+
+        APP.UI.addListener(UIEvents.LOCK_ROOM, lockRoom);
 
         if (!interfaceConfig.filmStripOnly) {
             APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {

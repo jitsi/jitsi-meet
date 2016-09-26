@@ -2,6 +2,7 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
+import InviteDialog from '../dialogs/InviteDialog';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
 let roomUrl = null;
@@ -11,63 +12,29 @@ let emitter = null;
  * Opens the invite link dialog.
  */
 function openLinkDialog () {
-    let inviteAttributes;
+    return new Promise((resolve) => {
+        let options = {
+            roomUrl,
+            emitter,
+            password: null
+        };
 
-    if (roomUrl === null) {
-        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-    } else {
-        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
-    }
+        let event = UIEvents.REQUEST_ROOM_PASSWORD;
 
-    let msgString = (`
-        <div class="input-control">
-            <label class="input-control__label for="inviteLinkRef">${titleString}</label>
-            <div class="input-control__container">
-                <input class="input-control__input" id="inviteLinkRef" type="text"
-                       ${inviteAttributes} readonly>
-                <button id="copyInviteLink" class="button-control button-control_light">Copy</button>
-            </div>
-            <p class="input-control__hint">This call is locked. New callers must have
-                the link and enter the password to join.</p>
-        </div>
-        <div class="input-control">
-            <label class="input-control__label">Password</label>
-            <div class="input-control__container">
-                <p class="input-control__text">The current password is <span class="input-control__em">HIPCHATZ</span></p>
-                <a class="link input-control__right" href="#">Remove password</a>
-            </div>
-        </div>
-    `);
+        emitter.emit(event, (room) => {
+            if (room.isLocked) {
+                options.password = room.password;
+            } else {
+                options.password = null;
+            }
 
-    APP.UI.messageHandler.openTwoButtonDialog({
-        titleKey,
-        titleString,
-        msgString,
-        submitFunction,
-        loadedFunction,
-        closeFunction,
-        leftButtonKey: "dialog.Invite",
-        size: 'medium'
+            let inviteDialog = new InviteDialog(options);
+
+            inviteDialog.open();
+            resolve(inviteDialog);
+        });
     });
 
-    $('#copyInviteLink').on('click', copyToClipboard);
-}
-
-function copyToClipboard() {
-    let inviteLink = document.getElementById('inviteLinkRef');
-
-    if (inviteLink && inviteLink.select) {
-        inviteLink.select();
-
-        try {
-            document.execCommand('copy');
-            inviteLink.blur();
-        }
-        catch (err) {
-            console.error('error when copy the text');
-        }
-    }
 }
 
 const buttonHandlers = {
