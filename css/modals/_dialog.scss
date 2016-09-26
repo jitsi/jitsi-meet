@@ -2,6 +2,10 @@
     visibility: visible;
     height: auto;
 
+    h3 {
+        color: $auiDialogColor;
+    }
+
     .aui {
 
         &-icon {
