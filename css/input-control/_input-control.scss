@@ -12,6 +12,10 @@
 
     &__input {
         margin: 8px 0;
+
+        &::selection {
+            background-color: $defaultDarkSelectionColor;
+        }
     }
 
     &__em {
