@@ -111,6 +111,20 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
             title: this._getTooltipText.bind(this, element),
             html: true
         });
+
+        $(element).addClass('active-tooltip');
+    },
+
+    destroyTooltip: function (element) {
+        AJS.$(element).tooltip('destroy');
+    },
+
+    showTooltip: function (element) {
+        AJS.$(element).tooltip('show');
+    },
+
+    hideTooltip: function (element) {
+        AJS.$(element).tooltip('hide');
     },
 
     /**

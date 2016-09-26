@@ -222,6 +222,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
  */
 RemoteVideo.prototype.remove = function () {
     console.log("Remove thumbnail", this.id);
+    UIUtils.destroyTooltip($(this.container).find('.active-tooltip'));
     this.removeConnectionIndicator();
     // Make sure that the large video is updated if are removing its
     // corresponding small video.

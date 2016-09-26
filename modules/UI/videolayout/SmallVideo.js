@@ -198,6 +198,7 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
     var audioMutedIndicator = this.getAudioMutedIndicator();
 
     if (!isMuted) {
+        UIUtil.hideTooltip(audioMutedIndicator);
         audioMutedIndicator.hide();
     }
     else {
@@ -251,7 +252,12 @@ SmallVideo.prototype.setMutedView = function(isMuted) {
 
     var videoMutedSpan = this.getVideoMutedIndicator();
 
-    videoMutedSpan[isMuted ? 'show' : 'hide']();
+    if (isMuted) {
+        videoMutedSpan.show();
+    } else {
+        UIUtil.hideTooltip(videoMutedSpan);
+        videoMutedSpan.hide();
+    }
 };
 
 /**
@@ -320,7 +326,9 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
  * Removes the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.removeModeratorIndicatorElement = function () {
-    $('#' + this.videoSpanId + ' .focusindicator').remove();
+    var element = $('#' + this.videoSpanId + ' .focusindicator');
+    UIUtil.destroyTooltip(element);
+    element.remove();
 };
 
 /**
@@ -442,7 +450,12 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     UIUtil.setTooltip(indicatorSpan, "speaker", "top");
     APP.translation.translateElement($(indicatorSpan));
 
-    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+    if (show) {
+        $(indicatorSpan).css("visibility", "visible");
+    } else {
+        UIUtil.hideTooltip(indicatorSpan);
+        $(indicatorSpan).css("visibility", "hidden");
+    }
 };
 
 /**
@@ -466,7 +479,12 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     UIUtil.setTooltip(indicatorSpan, "raisedHand", "top");
     APP.translation.translateElement($(indicatorSpan));
 
-    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+    if (show) {
+        $(indicatorSpan).css("visibility", "visible");
+    } else {
+        UIUtil.hideTooltip(indicatorSpan);
+        $(indicatorSpan).css("visibility", "hidden");
+    }
 };
 
 /**
