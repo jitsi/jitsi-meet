@@ -116,13 +116,11 @@ function onFeedbackSubmitted(Feedback) {
         Feedback.feedbackScore,
         message);
 
-    // TODO: make sendFeedback return true or false.
-    Feedback.submitted = true;
+    Feedback.onHide();
 
     //Remove history is submitted
     Feedback.feedbackScore = -1;
     Feedback.feedbackMessage = '';
-    Feedback.onHide();
 }
 
 /**
@@ -143,9 +141,7 @@ export default class Dialog {
     constructor() {
         this.feedbackScore = -1;
         this.feedbackMessage = '';
-        this.submitted = false;
         this.onCloseCallback = function() {};
-
         this.setDefaultOptions();
     }
 
@@ -164,9 +160,7 @@ export default class Dialog {
     }
 
     setFeedbackMessage() {
-        let message = $('#feedbackTextArea').val();
-
-        this.feedbackMessage = message;
+        this.feedbackMessage = $('#feedbackTextArea').val();
     }
 
     show(cb) {
@@ -179,6 +173,9 @@ export default class Dialog {
     }
 
     onHide() {
-        this.onCloseCallback(this.feedbackScore, this.feedbackMessage);
+        this.onCloseCallback({
+            score: this.feedbackScore,
+            message: this.feedbackMessage
+        });
     }
 }

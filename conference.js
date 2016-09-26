@@ -4,19 +4,14 @@ import Invite from './modules/UI/invite/Invite';
 import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
-
 import ConnectionQuality from './modules/connectionquality/connectionquality';
-
 import Recorder from './modules/recorder/Recorder';
-
 import CQEvents from './service/connectionquality/CQEvents';
 import UIEvents from './service/UI/UIEvents';
-
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
-
 import {reportError} from './modules/util/helpers';
-
 import UIUtil from './modules/UI/util/UIUtil';
+import ClosePage from './modules/UI/close_page/ClosePage';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -182,31 +177,35 @@ function muteLocalVideo (muted) {
 /**
  * Check if the welcome page is enabled and redirects to it.
  * If requested show a thank you dialog before that.
+ *
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
- * @param {boolean} showThankYou whether we should show a thank you dialog
+ *
+ * @param {object} data Feedback data
+ * @param {number} data.score - The Feedback's score.
+ * @param {string} data.message - The Feedback's message.
  */
-function maybeRedirectToWelcomePage(showThankYou) {
-
+function maybeRedirectToWelcomePage(data) {
     // if close page is enabled redirect to it, without further action
     if (config.enableClosePage) {
-        window.location.pathname = "close.html";
-        return;
+        let isScore = data.score && data.score > -1;
+        let closePage = new ClosePage({
+            feedback: isScore
+        });
+        return closePage.render();
     }
 
-    if (showThankYou) {
-        APP.UI.messageHandler.openMessageDialog(
-            null, "dialog.thankYou", {appName:interfaceConfig.APP_NAME});
-    }
+    // else: show thankYou dialog
+    APP.UI.messageHandler.openMessageDialog(
+        null, "dialog.thankYou", {appName:interfaceConfig.APP_NAME});
 
-    if (!config.enableWelcomePage) {
-        return;
+    // if Welcome page is enabled redirect to welcome page after 3 sec.
+    if (config.enableWelcomePage) {
+        setTimeout(() => {
+            APP.settings.setWelcomePageEnabled(true);
+            window.location.pathname = "/";
+        }, 3000);
     }
-    // redirect to welcome page
-    setTimeout(() => {
-        APP.settings.setWelcomePageEnabled(true);
-        window.location.pathname = "/";
-    }, 3000);
 }
 
 /**
