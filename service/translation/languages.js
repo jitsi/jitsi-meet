@@ -9,16 +9,19 @@ module.exports = {
         return languages;
     },
     EN: "en",
+
     BG: "bg",
     DE: "de",
-    TR: "tr",
-    FR: "fr",
     ES: "es",
+    FR: "fr",
     HY: "hy",
     IT: "it",
     OC: "oc",
+    PL: "pl",
     PTBR: "ptBR",
+    RU: "ru",
     SK: "sk",
     SL: "sl",
-    SV: "sv"
+    SV: "sv",
+    TR: "tr"
 };
