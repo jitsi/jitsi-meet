@@ -57,16 +57,6 @@ function createDisplayNameParagraph(key, displayName) {
     return p;
 }
 
-
-function stopGlowing(glower) {
-    window.clearInterval(notificationInterval);
-    notificationInterval = false;
-    glower.removeClass('glowing');
-    if (!ContactList.isVisible()) {
-        glower.removeClass('active');
-    }
-}
-
 function getContactEl (id) {
     return $(`#contacts>li[id="${id}"]`);
 }
