@@ -1,29 +1,29 @@
-/* global config, APP, $, Strophe, require, interfaceConfig */
+/* global config, APP, $, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
-var AudioLevels = require("../audio_levels/AudioLevels");
-var ContactList = require("../side_pannels/contactlist/ContactList");
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
-var UIEvents = require("../../../service/UI/UIEvents");
-var UIUtil = require("../util/UIUtil");
 
-var RTC = require("../../RTC/RTC");
-var RTCBrowserType = require('../../RTC/RTCBrowserType');
+import AudioLevels from "../audio_levels/AudioLevels";
+import Avatar from "../avatar/Avatar";
+import BottomToolbar from "../toolbars/BottomToolbar";
+import FilmStrip from "./FilmStrip";
+import UIEvents from "../../../service/UI/UIEvents";
+import UIUtil from "../util/UIUtil";
 
-var RemoteVideo = require("./RemoteVideo");
-var LargeVideo = require("./LargeVideo");
-var LocalVideo = require("./LocalVideo");
+import RemoteVideo from "./RemoteVideo";
+import LargeVideoManager, {VIDEO_CONTAINER_TYPE} from "./LargeVideo";
+import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
+import LocalVideo from "./LocalVideo";
+import PanelToggler from "../side_pannels/SidePanelToggler";
 
+const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
 var remoteVideos = {};
-var remoteVideoTypes = {};
 var localVideoThumbnail = null;
 
 var currentDominantSpeaker = null;
-var lastNCount = config.channelLastN;
 var localLastNCount = config.channelLastN;
 var localLastNSet = [];
 var lastNEndpointsCache = [];
-var lastNPickupJid = null;
+var lastNPickupId = null;
 
 var eventEmitter = null;
 
@@ -31,619 +31,592 @@ var eventEmitter = null;
  * Currently focused video jid
  * @type {String}
  */
-var focusedVideoResourceJid = null;
+var pinnedId = null;
 
-var VideoLayout = (function (my) {
-    my.init = function (emitter) {
-        eventEmitter = emitter;
-        localVideoThumbnail = new LocalVideo(VideoLayout);
-        if (interfaceConfig.filmStripOnly) {
-            LargeVideo.disable();
+/**
+ * flipX state of the localVideo
+ */
+let localFlipX = null;
+
+/**
+ * On contact list item clicked.
+ */
+function onContactClicked (id) {
+    if (APP.conference.isLocalId(id)) {
+        $("#localVideoContainer").click();
+        return;
+    }
+
+    let remoteVideo = remoteVideos[id];
+    if (remoteVideo && remoteVideo.hasVideo()) {
+        // It is not always the case that a videoThumb exists (if there is
+        // no actual video).
+        if (remoteVideo.hasVideoStarted()) {
+            // We have a video src, great! Let's update the large video
+            // now.
+            VideoLayout.handleVideoThumbClicked(id);
         } else {
-            LargeVideo.init(VideoLayout, emitter);
+
+            // If we don't have a video src for jid, there's absolutely
+            // no point in calling handleVideoThumbClicked; Quite
+            // simply, it won't work because it needs an src to attach
+            // to the large video.
+            //
+            // Instead, we trigger the pinned endpoint changed event to
+            // let the bridge adjust its lastN set for myjid and store
+            // the pinned user in the lastNPickupId variable to be
+            // picked up later by the lastN changed event handler.
+
+            lastNPickupId = id;
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, remoteVideo, true);
         }
+    }
+}
 
-        VideoLayout.resizeLargeVideoContainer();
+/**
+ * Returns the corresponding resource id to the given peer container
+ * DOM element.
+ *
+ * @return the corresponding resource id to the given peer container
+ * DOM element
+ */
+function getPeerContainerResourceId (containerElement) {
+    if (localVideoThumbnail.container === containerElement) {
+        return localVideoThumbnail.id;
+    }
 
-    };
+    let i = containerElement.id.indexOf('participant_');
 
-    my.isInLastN = function(resource) {
-        return lastNCount < 0 || // lastN is disabled
+    if (i >= 0) {
+        return containerElement.id.substring(i + 12);
+    }
+}
+
+let largeVideo;
+
+var VideoLayout = {
+    init (emitter) {
+        eventEmitter = emitter;
+        eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED, function (val) {
+                localFlipX = val;
+                if(largeVideo)
+                    largeVideo.onLocalFlipXChange(val);
+            });
+        localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
+        // sets default video type of local video
+        localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
+        // if we do not resize the thumbs here, if there is no video device
+        // the local video thumb maybe one pixel
+        let {thumbWidth, thumbHeight}
+            = this.resizeThumbnails(false, true, false);
+        AudioLevels.updateAudioLevelCanvas(null, thumbWidth, thumbHeight);
+
+        emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
+        this.lastNCount = config.channelLastN;
+    },
+
+    initLargeVideo (isSideBarVisible) {
+        largeVideo = new LargeVideoManager();
+        if(localFlipX) {
+            largeVideo.onLocalFlipXChange(localFlipX);
+        }
+        largeVideo.updateContainerSize(isSideBarVisible);
+        AudioLevels.init();
+    },
+
+    setAudioLevel(id, lvl) {
+        if (!largeVideo) {
+            return;
+        }
+        AudioLevels.updateAudioLevel(
+            id, lvl, largeVideo.id
+        );
+    },
+
+    isInLastN (resource) {
+        return this.lastNCount < 0 || // lastN is disabled
              // lastNEndpoints cache not built yet
-            (lastNCount > 0 && !lastNEndpointsCache.length) ||
+            (this.lastNCount > 0 && !lastNEndpointsCache.length) ||
             (lastNEndpointsCache &&
                 lastNEndpointsCache.indexOf(resource) !== -1);
-    };
+    },
 
-    my.changeLocalAudio = function(stream, isMuted) {
-        if (isMuted)
-            APP.UI.setAudioMuted(true, true);
-        APP.RTC.attachMediaStream($('#localAudio'), stream.getOriginalStream());
-        var localAudio = document.getElementById('localAudio');
-        // Writing volume not allowed in IE
-        if (!RTCBrowserType.isIExplorer()) {
-            localAudio.autoplay = true;
-            localAudio.volume = 0;
-        }
+    changeLocalAudio (stream) {
+        let localAudio = document.getElementById('localAudio');
+        localAudio = stream.attach(localAudio);
+
         // Now when Temasys plugin is converting also <audio> elements to
         // plugin's <object>s, in current layout it will capture click events
         // before it reaches the local video object. We hide it here in order
         // to prevent that.
-        if (RTCBrowserType.isIExplorer()) {
+        //if (RTCBrowserType.isIExplorer()) {
             // The issue is not present on Safari. Also if we hide it in Safari
             // then the local audio track will have 'enabled' flag set to false
             // which will result in audio mute issues
-            $('#localAudio').hide();
+            //  $(localAudio).hide();
+            localAudio.width = 1;
+            localAudio.height = 1;
+        //}
+    },
+
+    changeLocalVideo (stream) {
+        let localId = APP.conference.getMyUserId();
+        this.onVideoTypeChanged(localId, stream.videoType);
+
+        if (!stream.isMuted()) {
+            localVideoThumbnail.changeVideo(stream);
         }
-    };
-
-    my.changeLocalVideo = function(stream, isMuted) {
-        // Set default display name.
-        localVideoThumbnail.setDisplayName();
-        localVideoThumbnail.createConnectionIndicator();
-
-        this.onVideoTypeChanged(APP.xmpp.myResource(), stream.videoType);
-
-        AudioLevels.updateAudioLevelCanvas(null, VideoLayout);
-
-        localVideoThumbnail.changeVideo(stream, isMuted);
 
         /* force update if we're currently being displayed */
-        if (LargeVideo.isCurrentlyOnLarge(APP.xmpp.myResource())) {
-            LargeVideo.updateLargeVideo(APP.xmpp.myResource(), true);
+        if (this.isCurrentlyOnLarge(localId)) {
+            this.updateLargeVideo(localId, true);
         }
-    };
+    },
 
-    my.mucJoined = function () {
-        var myResourceJid = APP.xmpp.myResource();
-        localVideoThumbnail.joined(APP.xmpp.myJid());
-
-        if (!LargeVideo.getResourceJid())
-            LargeVideo.updateLargeVideo(myResourceJid, true);
-    };
+    /**
+     * Get's the localID of the conference and set it to the local video
+     * (small one). This needs to be called as early as possible, when muc is
+     * actually joined. Otherwise events can come with information like email
+     * and setting them assume the id is already set.
+     */
+    mucJoined () {
+        if (largeVideo && !largeVideo.id) {
+            this.updateLargeVideo(APP.conference.getMyUserId(), true);
+        }
+    },
 
     /**
      * Adds or removes icons for not available camera and microphone.
      * @param resourceJid the jid of user
      * @param devices available devices
      */
-    my.setDeviceAvailabilityIcons = function (resourceJid, devices) {
-        if(!devices)
-            return;
-
-        if(!resourceJid) {
+    setDeviceAvailabilityIcons (id, devices) {
+        if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDeviceAvailabilityIcons(devices);
-        } else {
-            if(remoteVideos[resourceJid])
-                remoteVideos[resourceJid].setDeviceAvailabilityIcons(devices);
+            return;
         }
-    };
+
+        let video = remoteVideos[id];
+        if (!video) {
+            return;
+        }
+
+        video.setDeviceAvailabilityIcons(devices);
+    },
+
+    /**
+     * Enables/disables device availability icons for the given participant id.
+     * The default value is {true}.
+     * @param id the identifier of the participant
+     * @param enable {true} to enable device availability icons
+     */
+    enableDeviceAvailabilityIcons (id, enable) {
+        let video;
+        if (APP.conference.isLocalId(id)) {
+            video = localVideoThumbnail;
+        }
+        else {
+            video = remoteVideos[id];
+        }
+
+        if (video)
+            video.enableDeviceAvailabilityIcons(enable);
+    },
+
+    /**
+     * Shows/hides local video.
+     * @param {boolean} true to make the local video visible, false - otherwise
+     */
+    setLocalVideoVisible(visible) {
+        localVideoThumbnail.setVisible(visible);
+    },
 
     /**
      * Checks if removed video is currently displayed and tries to display
      * another one instead.
+     * Uses focusedID if any or dominantSpeakerID if any,
+     * otherwise elects new video, in this order.
      */
-    my.updateRemovedVideo = function(resourceJid) {
-        var newResourceJid;
-
-        if (resourceJid === LargeVideo.getResourceJid()) {
-            // We'll show user's avatar if he is the dominant speaker or if
-            // his video thumbnail is pinned
-            if (remoteVideos[resourceJid] &&
-                resourceJid === focusedVideoResourceJid ||
-                resourceJid === currentDominantSpeaker) {
-                newResourceJid = resourceJid;
-            } else {
-                // Otherwise select last visible video
-                newResourceJid = this.electLastVisibleVideo();
-            }
-            LargeVideo.updateLargeVideo(newResourceJid);
+    updateAfterThumbRemoved (id) {
+        if (!this.isCurrentlyOnLarge(id)) {
+            return;
         }
-    };
 
-    my.electLastVisibleVideo = function () {
+        let newId;
+
+        if (pinnedId)
+            newId = pinnedId;
+        else if (currentDominantSpeaker)
+            newId = currentDominantSpeaker;
+        else // Otherwise select last visible video
+            newId = this.electLastVisibleVideo();
+
+        this.updateLargeVideo(newId);
+    },
+
+    electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        var jid;
-        var pick = $('#remoteVideos>span[id!="mixedstream"]:visible:last');
-        if (pick.length) {
-            jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
-            if (!remoteVideos[jid]) {
-                // The RemoteVideo was removed (but the DOM elements may still
-                // exist).
-                jid = null;
+        let thumbs = FilmStrip.getThumbs(true).filter('[id!="mixedstream"]');
+
+        let lastVisible = thumbs.filter(':visible:last');
+        if (lastVisible.length) {
+            let id = getPeerContainerResourceId(lastVisible[0]);
+            if (remoteVideos[id]) {
+                console.info("electLastVisibleVideo: " + id);
+                return id;
             }
+            // The RemoteVideo was removed (but the DOM elements may still
+            // exist).
         }
 
-        if (!jid) {
-            console.info("Last visible video no longer exists");
-            pick = $('#remoteVideos>span[id!="mixedstream"]');
-            if (pick.length) {
-                jid = VideoLayout.getPeerContainerResourceJid(pick[0]);
-                if (!remoteVideos[jid]) {
-                    // The RemoteVideo was removed (but the DOM elements may
-                    // still exist).
-                    jid = null;
-                }
+        console.info("Last visible video no longer exists");
+        thumbs = FilmStrip.getThumbs();
+        if (thumbs.length) {
+            let id = getPeerContainerResourceId(thumbs[0]);
+            if (remoteVideos[id]) {
+                console.info("electLastVisibleVideo: " + id);
+                return id;
             }
+            // The RemoteVideo was removed (but the DOM elements may
+            // still exist).
         }
 
-        if (!jid) {
-            // Go with local video
-            console.info("Fallback to local video...");
-            jid = APP.xmpp.myResource();
+        // Go with local video
+        console.info("Fallback to local video...");
+
+        let id = APP.conference.getMyUserId();
+        console.info("electLastVisibleVideo: " + id);
+
+        return id;
+    },
+
+    onRemoteStreamAdded (stream) {
+        let id = stream.getParticipantId();
+        let remoteVideo = remoteVideos[id];
+
+        if (!remoteVideo)
+            return;
+
+        remoteVideo.addRemoteStreamElement(stream);
+
+        // if track is muted make sure we reflect that
+        if(stream.isMuted())
+        {
+            if(stream.getType() === "audio")
+                this.onAudioMute(stream.getParticipantId(), true);
+            else
+                this.onVideoMute(stream.getParticipantId(), true);
         }
+    },
 
-        console.info("electLastVisibleVideo: " + jid);
-        return jid;
-    };
-    
-    my.onRemoteStreamAdded = function (stream) {
-        if (stream.peerjid) {
-            VideoLayout.ensurePeerContainerExists(stream.peerjid);
-
-            var resourceJid = Strophe.getResourceFromJid(stream.peerjid);
-            remoteVideos[resourceJid].addRemoteStreamElement(stream);
+    onRemoteStreamRemoved (stream) {
+        let id = stream.getParticipantId();
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo) { // remote stream may be removed after participant left the conference
+            remoteVideo.removeRemoteStreamElement(stream);
         }
-    };
-
-    my.getLargeVideoResource = function () {
-        return LargeVideo.getResourceJid();
-    };
+    },
 
     /**
      * Return the type of the remote video.
-     * @param jid the jid for the remote video
-     * @returns the video type video or screen.
+     * @param id the id for the remote video
+     * @returns {String} the video type video or screen.
      */
-    my.getRemoteVideoType = function (jid) {
-        return remoteVideoTypes[jid];
-    };
+    getRemoteVideoType (id) {
+        let smallVideo = VideoLayout.getSmallVideo(id);
+        return smallVideo ? smallVideo.getVideoType() : null;
+    },
+
+    isPinned (id) {
+        return (pinnedId) ? (id === pinnedId) : false;
+    },
+
+    getPinnedId () {
+        return pinnedId;
+    },
 
     /**
-     * Called when large video update is finished
-     * @param currentSmallVideo small video currently displayed on large video
+     * Handles the click on a video thumbnail.
+     *
+     * @param id the identifier of the video thumbnail
      */
-    my.largeVideoUpdated = function (currentSmallVideo) {
-        // Makes sure that dominant speaker UI
-        // is enabled only on current small video
-        localVideoThumbnail.enableDominantSpeaker(
-            localVideoThumbnail === currentSmallVideo);
-        Object.keys(remoteVideos).forEach(
-            function (resourceJid) {
-                var remoteVideo = remoteVideos[resourceJid];
-                if (remoteVideo) {
-                    remoteVideo.enableDominantSpeaker(
-                        remoteVideo === currentSmallVideo);
-                }
-            }
-        );
-    };
-
-    my.handleVideoThumbClicked = function(noPinnedEndpointChangedEvent,
-                                          resourceJid) {
-        if(focusedVideoResourceJid) {
-            var oldSmallVideo
-                    = VideoLayout.getSmallVideo(focusedVideoResourceJid);
+    handleVideoThumbClicked (id) {
+        if(pinnedId) {
+            var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly)
                 oldSmallVideo.focus(false);
         }
 
-        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
-        // Unlock current focused.
-        if (focusedVideoResourceJid === resourceJid)
+        var smallVideo = VideoLayout.getSmallVideo(id);
+
+        // Unpin if currently pinned.
+        if (pinnedId === id)
         {
-            focusedVideoResourceJid = null;
+            pinnedId = null;
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
                 if(smallVideo && smallVideo.hasVideo()) {
-                    LargeVideo.updateLargeVideo(currentDominantSpeaker);
+                    this.updateLargeVideo(currentDominantSpeaker);
                 }
             }
 
-            if (!noPinnedEndpointChangedEvent) {
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT);
-            }
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, false);
+
             return;
         }
 
         // Lock new video
-        focusedVideoResourceJid = resourceJid;
+        pinnedId = id;
 
         // Update focused/pinned interface.
-        if (resourceJid) {
+        if (id) {
             if (smallVideo && !interfaceConfig.filmStripOnly)
                 smallVideo.focus(true);
 
-            if (!noPinnedEndpointChangedEvent) {
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT, resourceJid);
-            }
+            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, true);
         }
 
-        LargeVideo.setState("video");
-
-        LargeVideo.updateLargeVideo(resourceJid);
-
-        // Writing volume not allowed in IE
-        if (!RTCBrowserType.isIExplorer()) {
-            $('audio').each(function (idx, el) {
-                el.volume = 0;
-                el.volume = 1;
-            });
-        }
-    };
-
+        this.updateLargeVideo(id);
+    },
 
     /**
-     * Checks if container for participant identified by given peerJid exists
-     * in the document and creates it eventually.
-     * 
-     * @param peerJid peer Jid to check.
-     * 
-     * @return Returns <tt>true</tt> if the peer container exists,
-     * <tt>false</tt> - otherwise
+     * Creates a participant container for the given id and smallVideo.
+     *
+     * @param id the id of the participant to add
+     * @param {SmallVideo} smallVideo optional small video instance to add as a
+     * remote video, if undefined RemoteVideo will be created
      */
-    my.ensurePeerContainerExists = function(peerJid) {
-        ContactList.ensureAddContact(peerJid);
+    addParticipantContainer (id, smallVideo) {
+        let remoteVideo;
+        if(smallVideo)
+            remoteVideo = smallVideo;
+        else
+            remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
+        remoteVideos[id] = remoteVideo;
 
-        var resourceJid = Strophe.getResourceFromJid(peerJid);
-
-        if (!remoteVideos[resourceJid]) {
-
-            var remoteVideo = new RemoteVideo(peerJid, VideoLayout);
-            remoteVideos[resourceJid] = remoteVideo;
-
-            var videoType = remoteVideoTypes[resourceJid];
-            if (videoType) {
-                remoteVideo.setVideoType(videoType);
-            }
-
-            // In case this is not currently in the last n we don't show it.
-            if (localLastNCount &&
-                localLastNCount > 0 &&
-                $('#remoteVideos>span').length >= localLastNCount + 2) {
-                remoteVideo.showPeerContainer('hide');
-            }
-            else
-                VideoLayout.resizeThumbnails();
+        let videoType = VideoLayout.getRemoteVideoType(id);
+        if (!videoType) {
+            // make video type the default one (camera)
+            videoType = VIDEO_CONTAINER_TYPE;
         }
-    };
+        remoteVideo.setVideoType(videoType);
 
+        // In case this is not currently in the last n we don't show it.
+        if (localLastNCount && localLastNCount > 0 &&
+            FilmStrip.getThumbs().length >= localLastNCount + 2) {
+            remoteVideo.showPeerContainer('hide');
+        } else {
+            VideoLayout.resizeThumbnails(false, true);
+        }
+    },
 
-    my.inputDisplayNameHandler = function (name) {
-        localVideoThumbnail.inputDisplayNameHandler(name);
-    };
+    videoactive (videoelem, resourceJid) {
 
-    my.videoactive = function (videoelem, resourceJid) {
+        console.info(resourceJid + " video is now active", videoelem);
 
-        console.info(resourceJid + " video is now active");
-
-        videoelem.show();
-        VideoLayout.resizeThumbnails();
+        VideoLayout.resizeThumbnails(
+            false, false, false, function() {$(videoelem).show();});
 
         // Update the large video to the last added video only if there's no
-        // current dominant, focused speaker or prezi playing or update it to
+        // current dominant, focused speaker or update it to
         // the current dominant speaker.
-        if ((!focusedVideoResourceJid &&
+        if ((!pinnedId &&
             !currentDominantSpeaker &&
-            !require("../prezi/Prezi").isPresentationVisible()) ||
-            focusedVideoResourceJid === resourceJid ||
-            (resourceJid &&
-                currentDominantSpeaker === resourceJid)) {
-            LargeVideo.updateLargeVideo(resourceJid, true);
+            this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
+            pinnedId === resourceJid ||
+            (!pinnedId && resourceJid &&
+                currentDominantSpeaker === resourceJid) ||
+            /* Playback started while we're on the stage - may need to update
+               video source with the new stream */
+            this.isCurrentlyOnLarge(resourceJid)) {
+
+            this.updateLargeVideo(resourceJid, true);
         }
-    };
+    },
 
     /**
      * Shows the presence status message for the given video.
      */
-    my.setPresenceStatus = function (resourceJid, statusMsg) {
-        remoteVideos[resourceJid].setPresenceStatus(statusMsg);
-    };
+    setPresenceStatus (id, statusMsg) {
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo)
+            remoteVideo.setPresenceStatus(statusMsg);
+    },
 
     /**
      * Shows a visual indicator for the moderator of the conference.
+     * On local or remote participants.
      */
-    my.showModeratorIndicator = function () {
-
-        var isModerator = APP.xmpp.isModerator();
+    showModeratorIndicator () {
+        let isModerator = APP.conference.isModerator;
         if (isModerator) {
             localVideoThumbnail.createModeratorIndicatorElement();
+        } else {
+            localVideoThumbnail.removeModeratorIndicatorElement();
         }
 
-        var members = APP.xmpp.getMembers();
-
-        Object.keys(members).forEach(function (jid) {
-
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            var member = members[jid];
-
-            if (member.isFocus) {
-                // Skip server side focus
+        APP.conference.listMembers().forEach(function (member) {
+            let id = member.getId();
+            let remoteVideo = remoteVideos[id];
+            if (!remoteVideo)
                 return;
-            }
 
-            if (member.role === 'moderator') {
-                remoteVideos[resourceJid].removeRemoteVideoMenu();
-                remoteVideos[resourceJid].createModeratorIndicatorElement();
+            if (member.isModerator()) {
+                remoteVideo.removeRemoteVideoMenu();
+                remoteVideo.createModeratorIndicatorElement();
             } else if (isModerator) {
                 // We are moderator, but user is not - add menu
-                if ($('#remote_popupmenu_' + resourceJid).length <= 0) {
-                    remoteVideos[resourceJid].addRemoteVideoMenu();
+                if(!remoteVideo.hasRemoteVideoMenu) {
+                    remoteVideo.addRemoteVideoMenu();
                 }
             }
         });
-    };
+    },
 
     /*
      * Shows or hides the audio muted indicator over the local thumbnail video.
      * @param {boolean} isMuted
      */
-    my.showLocalAudioIndicator = function(isMuted) {
+    showLocalAudioIndicator (isMuted) {
         localVideoThumbnail.showAudioIndicator(isMuted);
-    };
-
-    /**
-     * Resizes the large video container.
-     */
-    my.resizeLargeVideoContainer = function () {
-        if(LargeVideo.isEnabled()) {
-            LargeVideo.resize();
-        } else {
-            VideoLayout.resizeVideoSpace();
-        }
-        VideoLayout.resizeThumbnails();
-        LargeVideo.position();
-    };
+    },
 
     /**
      * Resizes thumbnails.
      */
-    my.resizeThumbnails = function(animate) {
-        var videoSpaceWidth = $('#remoteVideos').width();
+    resizeThumbnails (  animate = false,
+                        forceUpdate = false,
+                        isSideBarVisible = null,
+                        onComplete = null) {
+        isSideBarVisible
+            = (isSideBarVisible !== null)
+                ? isSideBarVisible : PanelToggler.isVisible();
 
-        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
-        var width = thumbnailSize[0];
-        var height = thumbnailSize[1];
+        let {thumbWidth, thumbHeight}
+            = FilmStrip.calculateThumbnailSize(isSideBarVisible);
 
-        $('.userAvatar').css('left', (width - height) / 2);
+        $('.userAvatar').css('left', (thumbWidth - thumbHeight) / 2);
 
-        if(animate) {
-            $('#remoteVideos').animate({
-                    // adds 2 px because of small video 1px border
-                    height: height + 2
-                },
-                {
-                    queue: false,
-                    duration: 500
-                });
-
-            $('#remoteVideos>span').animate({
-                    height: height,
-                    width: width
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: function () {
-                        $(document).trigger(
-                            "remotevideo.resized",
-                            [width,
-                                height]);
-                    }
-                });
-
-        } else {
-            // size videos so that while keeping AR and max height, we have a
-            // nice fit
-            // adds 2 px because of small video 1px border
-            $('#remoteVideos').height(height + 2);
-            $('#remoteVideos>span').width(width);
-            $('#remoteVideos>span').height(height);
-
-            $(document).trigger("remotevideo.resized", [width, height]);
-        }
-    };
-
-    /**
-     * Calculates the thumbnail size.
-     *
-     * @param videoSpaceWidth the width of the video space
-     */
-    my.calculateThumbnailSize = function (videoSpaceWidth) {
-        // Calculate the available height, which is the inner window height
-        // minus 39px for the header minus 2px for the delimiter lines on the
-        // top and bottom of the large video, minus the 36px space inside the
-        // remoteVideos container used for highlighting shadow.
-       var availableHeight = 100;
-
-        var numvids = $('#remoteVideos>span:visible').length;
-        if (localLastNCount && localLastNCount > 0) {
-            numvids = Math.min(localLastNCount + 1, numvids);
-        }
-
-       // Remove the 3px borders arround videos and border around the remote
-       // videos area and the 4 pixels between the local video and the others
-       //TODO: Find out where the 4 pixels come from and remove them
-       var availableWinWidth = videoSpaceWidth - 2 * 3 * numvids - 70 - 4;
-
-       var availableWidth = availableWinWidth / numvids;
-       var aspectRatio = 16.0 / 9.0;
-       var maxHeight = Math.min(160, availableHeight);
-       availableHeight
-           = Math.min(  maxHeight,
-                        availableWidth / aspectRatio,
-                        window.innerHeight - 18);
-
-       if (availableHeight < availableWidth / aspectRatio) {
-           availableWidth = Math.floor(availableHeight * aspectRatio);
-       }
-
-       return [availableWidth, availableHeight];
-   };
-
-    /**
-     * Returns the corresponding resource jid to the given peer container
-     * DOM element.
-     *
-     * @return the corresponding resource jid to the given peer container
-     * DOM element
-     */
-    my.getPeerContainerResourceJid = function (containerElement) {
-        if (localVideoThumbnail.container === containerElement) {
-            return localVideoThumbnail.getResourceJid();
-        }
-
-        var i = containerElement.id.indexOf('participant_');
-
-        if (i >= 0)
-            return containerElement.id.substring(i + 12);
-    };
-
-    /**
-     * On contact list item clicked.
-     */
-    $(ContactList).bind('contactclicked', function(event, jid) {
-        if (!jid) {
-            return;
-        }
-
-        if (jid === APP.xmpp.myJid()) {
-            $("#localVideoContainer").click();
-            return;
-        }
-
-        var resource = Strophe.getResourceFromJid(jid);
-        var remoteVideo = remoteVideos[resource];
-        if (remoteVideo && remoteVideo.selectVideoElement().length) {
-            var videoThumb = remoteVideo.selectVideoElement()[0];
-            // It is not always the case that a videoThumb exists (if there is
-            // no actual video).
-            if (RTC.getVideoSrc(videoThumb)) {
-
-                // We have a video src, great! Let's update the large video
-                // now.
-                VideoLayout.handleVideoThumbClicked(
-                    false,
-                    Strophe.getResourceFromJid(jid));
-            } else {
-
-                // If we don't have a video src for jid, there's absolutely
-                // no point in calling handleVideoThumbClicked; Quite
-                // simply, it won't work because it needs an src to attach
-                // to the large video.
-                //
-                // Instead, we trigger the pinned endpoint changed event to
-                // let the bridge adjust its lastN set for myjid and store
-                // the pinned user in the lastNPickupJid variable to be
-                // picked up later by the lastN changed event handler.
-
-                lastNPickupJid = jid;
-                eventEmitter.emit(UIEvents.PINNED_ENDPOINT,
-                    Strophe.getResourceFromJid(jid));
-            }
-        }
-    });
+        FilmStrip.resizeThumbnails(thumbWidth, thumbHeight,
+            animate, forceUpdate)
+            .then(function () {
+                BottomToolbar.resizeToolbar(thumbWidth, thumbHeight);
+                AudioLevels.updateCanvasSize(thumbWidth, thumbHeight);
+                if (onComplete && typeof onComplete === "function")
+                    onComplete();
+        });
+        return {thumbWidth, thumbHeight};
+    },
 
     /**
      * On audio muted event.
      */
-    my.onAudioMute = function (jid, isMuted) {
-        var resourceJid = Strophe.getResourceFromJid(jid);
-        if (resourceJid === APP.xmpp.myResource()) {
+    onAudioMute (id, isMuted) {
+        if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.showAudioIndicator(isMuted);
         } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[resourceJid].showAudioIndicator(isMuted);
-            if (APP.xmpp.isModerator()) {
-                remoteVideos[resourceJid].updateRemoteVideoMenu(isMuted);
+            let remoteVideo = remoteVideos[id];
+            if (!remoteVideo)
+                return;
+
+            remoteVideo.showAudioIndicator(isMuted);
+            if (APP.conference.isModerator) {
+                remoteVideo.updateRemoteVideoMenu(isMuted);
             }
         }
-    };
+    },
 
     /**
      * On video muted event.
      */
-    my.onVideoMute = function (jid, value) {
-        if (jid !== APP.xmpp.myJid() &&
-            !APP.RTC.muteRemoteVideoStream(jid, value))
-            return;
-
-        if (jid === APP.xmpp.myJid()) {
-            localVideoThumbnail.showVideoIndicator(value);
+    onVideoMute (id, value) {
+        if (APP.conference.isLocalId(id)) {
+            localVideoThumbnail.setMutedView(value);
         } else {
-            var resource = Strophe.getResourceFromJid(jid);
-
-            VideoLayout.ensurePeerContainerExists(jid);
-            var remoteVideo = remoteVideos[resource];
-            remoteVideo.showVideoIndicator(value);
-
-            var el = remoteVideo.selectVideoElement();
-            if (!value)
-                el.show();
-            else
-                el.hide();
+            let remoteVideo = remoteVideos[id];
+            if (remoteVideo)
+                remoteVideo.setMutedView(value);
         }
-    };
+
+        if (this.isCurrentlyOnLarge(id)) {
+            // large video will show avatar instead of muted stream
+            this.updateLargeVideo(id, true);
+        }
+    },
 
     /**
      * Display name changed.
      */
-    my.onDisplayNameChanged =
-                    function (jid, displayName, status) {
-        if (jid === 'localVideoContainer' ||
-            jid === APP.xmpp.myJid()) {
+    onDisplayNameChanged (id, displayName, status) {
+        if (id === 'localVideoContainer' ||
+            APP.conference.isLocalId(id)) {
             localVideoThumbnail.setDisplayName(displayName);
         } else {
-            VideoLayout.ensurePeerContainerExists(jid);
-            remoteVideos[Strophe.getResourceFromJid(jid)].setDisplayName(
-                displayName,
-                status);
+            let remoteVideo = remoteVideos[id];
+            if (remoteVideo)
+                remoteVideo.setDisplayName(displayName, status);
         }
-    };
+    },
+
+    /**
+     * Sets the "raised hand" status for a participant identified by 'id'.
+     */
+    setRaisedHandStatus(id, raisedHandStatus) {
+        var video
+            = APP.conference.isLocalId(id)
+                ? localVideoThumbnail : remoteVideos[id];
+        if (video) {
+            video.showRaisedHandIndicator(raisedHandStatus);
+        }
+    },
 
     /**
      * On dominant speaker changed event.
      */
-    my.onDominantSpeakerChanged = function (resourceJid) {
-        // We ignore local user events.
-        if (resourceJid === APP.xmpp.myResource())
-            return;
-
-        var remoteVideo = remoteVideos[resourceJid];
-        var members = APP.xmpp.getMembers();
-        // Update the current dominant speaker.
-        if (resourceJid !== currentDominantSpeaker) {
-            if (remoteVideo) {
-                remoteVideo.updateDominantSpeakerIndicator(true);
-                // let's remove the indications from the remote video if any
-                var oldSpeakerRemoteVideo
-                    = remoteVideos[currentDominantSpeaker];
-                if (oldSpeakerRemoteVideo) {
-                    oldSpeakerRemoteVideo.updateDominantSpeakerIndicator(false);
-                }
-            }
-            currentDominantSpeaker = resourceJid;
-        } else {
+    onDominantSpeakerChanged (id) {
+        if (id === currentDominantSpeaker) {
             return;
         }
 
-        if (!remoteVideo)
+        let oldSpeakerRemoteVideo = remoteVideos[currentDominantSpeaker];
+        // We ignore local user events, but just unmark remote user as dominant
+        // while we are talking
+        if (APP.conference.isLocalId(id)) {
+            if(oldSpeakerRemoteVideo)
+            {
+                oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
+                currentDominantSpeaker = null;
+            }
+            localVideoThumbnail.showDominantSpeakerIndicator(true);
             return;
+        }
 
-        // Obtain container for new dominant speaker.
-        var videoSel  = remoteVideo.selectVideoElement();
+        let remoteVideo = remoteVideos[id];
+        if (!remoteVideo) {
+            return;
+        }
+
+        // Update the current dominant speaker.
+        remoteVideo.showDominantSpeakerIndicator(true);
+        localVideoThumbnail.showDominantSpeakerIndicator(false);
+
+        // let's remove the indications from the remote video if any
+        if (oldSpeakerRemoteVideo) {
+            oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
+        }
+        currentDominantSpeaker = id;
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
-        if (!focusedVideoResourceJid && videoSel.length) {
-            // Update the large video if the video source is already available,
-            // otherwise wait for the "videoactive.jingle" event.
-            if (videoSel[0].currentTime > 0) {
-                LargeVideo.updateLargeVideo(resourceJid);
-            }
+        // Update the large video if the video source is already available,
+        // otherwise wait for the "videoactive.jingle" event.
+        if (!pinnedId
+            && remoteVideo.hasVideoStarted()
+            && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
+            this.updateLargeVideo(id);
         }
-    };
+    },
 
     /**
      * On last N change event.
@@ -652,11 +625,9 @@ var VideoLayout = (function (my) {
      * @param endpointsEnteringLastN the list currently entering last N
      * endpoints
      */
-    my.onLastNEndpointsChanged = function (lastNEndpoints,
-                                           endpointsEnteringLastN,
-                                           stream) {
-        if (lastNCount !== lastNEndpoints.length)
-            lastNCount = lastNEndpoints.length;
+    onLastNEndpointsChanged (lastNEndpoints, endpointsEnteringLastN) {
+        if (this.lastNCount !== lastNEndpoints.length)
+            this.lastNCount = lastNEndpoints.length;
 
         lastNEndpointsCache = lastNEndpoints;
 
@@ -671,13 +642,12 @@ var VideoLayout = (function (my) {
         // enters E's local LastN ejecting C.
 
         // Increase the local LastN set size, if necessary.
-        if (lastNCount > localLastNCount) {
-            localLastNCount = lastNCount;
+        if (this.lastNCount > localLastNCount) {
+            localLastNCount = this.lastNCount;
         }
 
         // Update the local LastN set preserving the order in which the
         // endpoints appeared in the LastN/local LastN set.
-
         var nextLocalLastNSet = lastNEndpoints.slice(0);
         for (var i = 0; i < localLastNSet.length; i++) {
             if (nextLocalLastNSet.length >= localLastNCount) {
@@ -694,8 +664,9 @@ var VideoLayout = (function (my) {
         var updateLargeVideo = false;
 
         // Handle LastN/local LastN changes.
-        $('#remoteVideos>span').each(function( index, element ) {
-            var resourceJid = VideoLayout.getPeerContainerResourceJid(element);
+        FilmStrip.getThumbs().each(( index, element ) => {
+            var resourceJid = getPeerContainerResourceId(element);
+            var smallVideo = remoteVideos[resourceJid];
 
             // We do not want to process any logic for our own(local) video
             // because the local participant is never in the lastN set.
@@ -704,7 +675,7 @@ var VideoLayout = (function (my) {
             // video
             // Detected from avatar tests, where lastN event override
             // local video pinning
-            if(resourceJid == APP.xmpp.myResource())
+            if(APP.conference.isLocalId(resourceJid))
                 return;
 
             var isReceived = true;
@@ -712,18 +683,22 @@ var VideoLayout = (function (my) {
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) < 0) {
                 console.log("Remove from last N", resourceJid);
-                if (remoteVideos[resourceJid])
-                    remoteVideos[resourceJid].showPeerContainer('hide');
-                else if (APP.xmpp.myResource() !== resourceJid)
+                if (smallVideo)
+                    smallVideo.showPeerContainer('hide');
+                else if (!APP.conference.isLocalId(resourceJid))
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             } else if (resourceJid &&
-                $('#participant_' + resourceJid).is(':visible') &&
+                //TOFIX: smallVideo may be undefined
+                smallVideo.isVisible() &&
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) >= 0) {
-                if (remoteVideos[resourceJid])
-                    remoteVideos[resourceJid].showPeerContainer('avatar');
-                else if (APP.xmpp.myResource() !== resourceJid)
+
+                // TOFIX: if we're here we already know that the smallVideo
+                // exists. Look at the previous FIX above.
+                if (smallVideo)
+                    smallVideo.showPeerContainer('avatar');
+                else if (!APP.conference.isLocalId(resourceJid))
                     console.error("No remote video for: " + resourceJid);
                 isReceived = false;
             }
@@ -734,7 +709,7 @@ var VideoLayout = (function (my) {
                 // displayed in the large video we have to switch to another
                 // user.
                 if (!updateLargeVideo &&
-                    resourceJid === LargeVideo.getResourceJid()) {
+                    this.isCurrentlyOnLarge(resourceJid)) {
                     updateLargeVideo = true;
                 }
             }
@@ -746,32 +721,26 @@ var VideoLayout = (function (my) {
         if (endpointsEnteringLastN && endpointsEnteringLastN.length > 0) {
             endpointsEnteringLastN.forEach(function (resourceJid) {
 
-                var isVisible = $('#participant_' + resourceJid).is(':visible');
                 var remoteVideo = remoteVideos[resourceJid];
-                remoteVideo.showPeerContainer('show');
-                if (!isVisible) {
+                if (remoteVideo)
+                    remoteVideo.showPeerContainer('show');
+
+                if (!remoteVideo.isVisible()) {
                     console.log("Add to last N", resourceJid);
 
-                    var jid = APP.xmpp.findJidFromResource(resourceJid);
-                    var mediaStream =
-                        APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE];
-                    var sel = remoteVideo.selectVideoElement();
+                    remoteVideo.addRemoteStreamElement(remoteVideo.videoStream);
 
-                    APP.RTC.attachMediaStream(sel, mediaStream.stream);
-                    if (lastNPickupJid == mediaStream.peerjid) {
-                        // Clean up the lastN pickup jid.
-                        lastNPickupJid = null;
+                    if (lastNPickupId == resourceJid) {
+                        // Clean up the lastN pickup id.
+                        lastNPickupId = null;
 
-                        // Don't fire the events again, they've already
-                        // been fired in the contact list click handler.
-                        VideoLayout.handleVideoThumbClicked(
-                            false,
-                            Strophe.getResourceFromJid(mediaStream.peerjid));
+                        VideoLayout.handleVideoThumbClicked(resourceJid);
 
                         updateLargeVideo = false;
                     }
-                    remoteVideos[resourceJid].
-                        waitForPlayback(sel, mediaStream);
+                    remoteVideo.waitForPlayback(
+                        remoteVideo.selectVideoElement()[0],
+                        remoteVideo.videoStream);
                 }
             });
         }
@@ -782,277 +751,378 @@ var VideoLayout = (function (my) {
 
         if (updateLargeVideo) {
             var resource;
-            var myResource
-                = APP.xmpp.myResource();
-
             // Find out which endpoint to show in the large video.
             for (i = 0; i < lastNEndpoints.length; i++) {
                 resource = lastNEndpoints[i];
-                if (!resource || resource === myResource)
+                if (!resource || APP.conference.isLocalId(resource))
                     continue;
 
                 // videoSrcToSsrc needs to be update for this call to succeed.
-                LargeVideo.updateLargeVideo(resource);
+                this.updateLargeVideo(resource);
                 break;
             }
         }
-    };
+    },
 
     /**
      * Updates local stats
      * @param percent
      * @param object
      */
-    my.updateLocalConnectionStats = function (percent, object) {
-        var resolution = null;
-        if (object.resolution !== null) {
-            resolution = object.resolution;
-            object.resolution = resolution[APP.xmpp.myJid()];
-            delete resolution[APP.xmpp.myJid()];
-        }
+    updateLocalConnectionStats (percent, object) {
+        let resolutions = object.resolution;
+
+        object.resolution = resolutions[APP.conference.getMyUserId()];
         localVideoThumbnail.updateStatsIndicator(percent, object);
-        for (var jid in resolution) {
-            if (resolution[jid] === null)
-                continue;
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            if (remoteVideos[resourceJid] &&
-                remoteVideos[resourceJid].connectionIndicator) {
-                remoteVideos[resourceJid].connectionIndicator.
-                    updateResolution(resolution[jid]);
+
+        Object.keys(resolutions).forEach(function (id) {
+            if (APP.conference.isLocalId(id)) {
+                return;
             }
-        }
-    };
+
+            let resolution = resolutions[id];
+            let remoteVideo = remoteVideos[id];
+
+            if (resolution && remoteVideo) {
+                remoteVideo.updateResolution(resolution);
+            }
+        });
+    },
 
     /**
      * Updates remote stats.
-     * @param jid the jid associated with the stats
+     * @param id the id associated with the stats
      * @param percent the connection quality percent
      * @param object the stats data
      */
-    my.updateConnectionStats = function (jid, percent, object) {
-        var resourceJid = Strophe.getResourceFromJid(jid);
-
-        if (remoteVideos[resourceJid])
-            remoteVideos[resourceJid].updateStatsIndicator(percent, object);
-    };
+    updateConnectionStats (id, percent, object) {
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo) {
+            remoteVideo.updateStatsIndicator(percent, object);
+        }
+    },
 
     /**
      * Hides the connection indicator
-     * @param jid
+     * @param id
      */
-    my.hideConnectionIndicator = function (jid) {
-        remoteVideos[Strophe.getResourceFromJid(jid)].hideConnectionIndicator();
-    };
+    hideConnectionIndicator (id) {
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo)
+            remoteVideo.hideConnectionIndicator();
+    },
 
     /**
      * Hides all the indicators
      */
-    my.onStatsStop = function () {
-        for(var video in remoteVideos) {
-            remoteVideos[video].hideIndicator();
+    hideStats () {
+        for (var video in remoteVideos) {
+            let remoteVideo = remoteVideos[video];
+            if (remoteVideo)
+                remoteVideo.hideIndicator();
         }
         localVideoThumbnail.hideIndicator();
-    };
+    },
 
-    my.participantLeft = function (jid) {
+    removeParticipantContainer (id) {
         // Unlock large video
-        var resourceJid = Strophe.getResourceFromJid(jid);
-        if (focusedVideoResourceJid === resourceJid) {
+        if (pinnedId === id) {
             console.info("Focused video owner has left the conference");
-            focusedVideoResourceJid = null;
+            pinnedId = null;
         }
 
-        if (currentDominantSpeaker === resourceJid) {
+        if (currentDominantSpeaker === id) {
             console.info("Dominant speaker has left the conference");
             currentDominantSpeaker = null;
         }
 
-        var remoteVideo = remoteVideos[resourceJid];
+        var remoteVideo = remoteVideos[id];
         if (remoteVideo) {
             // Remove remote video
-            console.info("Removing remote video: " + resourceJid);
-            delete remoteVideos[resourceJid];
+            console.info("Removing remote video: " + id);
+            delete remoteVideos[id];
             remoteVideo.remove();
         } else {
-            console.warn("No remote video for " + resourceJid);
+            console.warn("No remote video for " + id);
         }
 
         VideoLayout.resizeThumbnails();
-    };
-    
-    my.onVideoTypeChanged = function (resourceJid, newVideoType) {
-        if (remoteVideoTypes[resourceJid] === newVideoType) {
+    },
+
+    onVideoTypeChanged (id, newVideoType) {
+        if (VideoLayout.getRemoteVideoType(id) === newVideoType) {
             return;
         }
 
-        console.info("Peer video type changed: ", resourceJid, newVideoType);
-        remoteVideoTypes[resourceJid] = newVideoType;
+        console.info("Peer video type changed: ", id, newVideoType);
 
         var smallVideo;
-        if (resourceJid === APP.xmpp.myResource()) {
+        if (APP.conference.isLocalId(id)) {
             if (!localVideoThumbnail) {
                 console.warn("Local video not ready yet");
                 return;
             }
             smallVideo = localVideoThumbnail;
-        } else if (remoteVideos[resourceJid]) {
-            smallVideo = remoteVideos[resourceJid];
+        } else if (remoteVideos[id]) {
+            smallVideo = remoteVideos[id];
         } else {
             return;
         }
-
         smallVideo.setVideoType(newVideoType);
-        LargeVideo.onVideoTypeChanged(resourceJid, newVideoType);
 
-    };
+        if (this.isCurrentlyOnLarge(id)) {
+            this.updateLargeVideo(id, true);
+        }
+    },
 
-    /**
-     * Updates the video size and position when the film strip is toggled.
-     *
-     * @param isToggled indicates if the film strip is toggled or not. True
-     * would mean that the film strip is hidden, false would mean it's shown
-     */
-    my.onFilmStripToggled = function(isToggled) {
-        LargeVideo.updateVideoSizeAndPosition();
-        LargeVideo.position(null, null, null, null, true);
-    };
-
-    my.showMore = function (jid) {
-        if (jid === 'local') {
+    showMore (id) {
+        if (id === 'local') {
             localVideoThumbnail.connectionIndicator.showMore();
         } else {
-            var remoteVideo = remoteVideos[Strophe.getResourceFromJid(jid)];
+            let remoteVideo = remoteVideos[id];
             if (remoteVideo) {
                 remoteVideo.connectionIndicator.showMore();
             } else {
-                console.info("Error - no remote video for jid: " + jid);
+                console.info("Error - no remote video for id: " + id);
             }
         }
-    };
-
-    my.addPreziContainer = function (id) {
-        var container = RemoteVideo.createContainer(id);
-        VideoLayout.resizeThumbnails();
-        return container;
-    };
-
-    my.setLargeVideoVisible = function (isVisible) {
-        LargeVideo.setLargeVideoVisible(isVisible);
-        if(!isVisible && focusedVideoResourceJid) {
-            var smallVideo = VideoLayout.getSmallVideo(focusedVideoResourceJid);
-            if(smallVideo) {
-                smallVideo.focus(false);
-                smallVideo.showAvatar();
-            }
-            focusedVideoResourceJid = null;
-        }
-    };
+    },
 
     /**
      * Resizes the video area.
      *
      * @param isSideBarVisible indicates if the side bar is currently visible
-     * @param callback a function to be called when the video space is
+     * @param forceUpdate indicates that hidden thumbnails will be shown
+     * @param completeFunction a function to be called when the video area is
      * resized.
      */
-    my.resizeVideoArea = function(isSideBarVisible, callback) {
-        LargeVideo.resizeVideoAreaAnimated(isSideBarVisible, callback);
-        VideoLayout.resizeThumbnails(true);
-    };
+    resizeVideoArea (isSideBarVisible,
+                    forceUpdate = false,
+                    animate = false,
+                    completeFunction = null) {
 
-    /**
-     * Resizes the #videospace html element
-     * @param animate boolean property that indicates whether the resize should
-     * be animated or not.
-     * @param isChatVisible boolean property that indicates whether the chat
-     * area is displayed or not.
-     * If that parameter is null the method will check the chat panel
-     * visibility.
-     * @param completeFunction a function to be called when the video space
-     * is resized.
-     */
-    my.resizeVideoSpace = function (animate, isChatVisible, completeFunction) {
-        var availableHeight = window.innerHeight;
-        var availableWidth = UIUtil.getAvailableVideoWidth(isChatVisible);
-
-        if (availableWidth < 0 || availableHeight < 0) return;
-
-        if(animate) {
-            $('#videospace').animate({
-                    right: window.innerWidth - availableWidth,
-                    width: availableWidth,
-                    height: availableHeight
-                },
-                {
-                    queue: false,
-                    duration: 500,
-                    complete: completeFunction
-                });
-        } else {
-            $('#videospace').width(availableWidth);
-            $('#videospace').height(availableHeight);
+        if (largeVideo) {
+            largeVideo.updateContainerSize(isSideBarVisible);
+            largeVideo.resize(animate);
         }
 
-    };
+        // Calculate available width and height.
+        let availableHeight = window.innerHeight;
+        let availableWidth = UIUtil.getAvailableVideoWidth(isSideBarVisible);
 
-    my.getSmallVideo = function (resourceJid) {
-        if(resourceJid == APP.xmpp.myResource()) {
+        if (availableWidth < 0 || availableHeight < 0) {
+            return;
+        }
+
+        // Resize the thumbnails first.
+        this.resizeThumbnails(false, forceUpdate, isSideBarVisible);
+
+        // Resize the video area element.
+        $('#videospace').animate({
+            right: window.innerWidth - availableWidth,
+            width: availableWidth,
+            height: availableHeight
+        }, {
+            queue: false,
+            duration: animate ? 500 : 1,
+            complete: completeFunction
+        });
+    },
+
+    getSmallVideo (id) {
+        if (APP.conference.isLocalId(id)) {
             return localVideoThumbnail;
         } else {
-            if(!remoteVideos[resourceJid])
-                return null;
-            return remoteVideos[resourceJid];
+            return remoteVideos[id];
         }
-    };
+    },
 
-    my.userAvatarChanged = function(resourceJid, avatarUrl) {
-        var smallVideo = VideoLayout.getSmallVideo(resourceJid);
-        if(smallVideo)
+    changeUserAvatar (id, avatarUrl) {
+        var smallVideo = VideoLayout.getSmallVideo(id);
+        if (smallVideo) {
             smallVideo.avatarChanged(avatarUrl);
-        else
+        } else {
             console.warn(
-                "Missed avatar update - no small video yet for " + resourceJid);
-        LargeVideo.updateAvatar(resourceJid, avatarUrl);
-    };
-
-    my.createEtherpadIframe = function(src, onloadHandler)
-    {
-        return LargeVideo.createEtherpadIframe(src, onloadHandler);
-    };
-
-    my.setLargeVideoState = function (state) {
-        LargeVideo.setState(state);
-    };
-
-    my.getLargeVideoState = function () {
-        return LargeVideo.getState();
-    };
-
-    my.setLargeVideoHover = function (inHandler, outHandler) {
-        LargeVideo.setHover(inHandler, outHandler);
-    };
+                "Missed avatar update - no small video yet for " + id
+            );
+        }
+        if (this.isCurrentlyOnLarge(id)) {
+            largeVideo.updateAvatar(avatarUrl);
+        }
+    },
 
     /**
      * Indicates that the video has been interrupted.
      */
-    my.onVideoInterrupted = function () {
-        LargeVideo.enableVideoProblemFilter(true);
-        var reconnectingKey = "connection.RECONNECTING";
-        $('#videoConnectionMessage').attr("data-i18n", reconnectingKey);
+    onVideoInterrupted () {
+        this.enableVideoProblemFilter(true);
+        let reconnectingKey = "connection.RECONNECTING";
         $('#videoConnectionMessage')
-            .text(APP.translation.translateString(reconnectingKey));
-        $('#videoConnectionMessage').css({display: "block"});
-    };
+            .attr("data-i18n", reconnectingKey)
+            .text(APP.translation.translateString(reconnectingKey))
+            .css({display: "block"});
+    },
 
     /**
      * Indicates that the video has been restored.
      */
-    my.onVideoRestored = function () {
-        LargeVideo.enableVideoProblemFilter(false);
+    onVideoRestored () {
+        this.enableVideoProblemFilter(false);
         $('#videoConnectionMessage').css({display: "none"});
-    };
+    },
 
-    return my;
-}(VideoLayout || {}));
+    enableVideoProblemFilter (enable) {
+        if (!largeVideo) {
+            return;
+        }
 
-module.exports = VideoLayout;
+        largeVideo.enableVideoProblemFilter(enable);
+    },
+
+    isLargeVideoVisible () {
+        return this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE);
+    },
+
+    /**
+     * @return {LargeContainer} the currently displayed container on large
+     * video.
+     */
+    getCurrentlyOnLargeContainer () {
+        return largeVideo.getContainer(largeVideo.state);
+    },
+
+    isCurrentlyOnLarge (id) {
+        return largeVideo && largeVideo.id === id;
+    },
+
+    updateLargeVideo (id, forceUpdate) {
+        if (!largeVideo) {
+            return;
+        }
+        let isOnLarge = this.isCurrentlyOnLarge(id);
+        let currentId = largeVideo.id;
+
+        if (!isOnLarge || forceUpdate) {
+            let videoType = this.getRemoteVideoType(id);
+            if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
+                eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
+            }
+
+            let smallVideo = this.getSmallVideo(id);
+            let oldSmallVideo;
+            if (currentId) {
+                oldSmallVideo = this.getSmallVideo(currentId);
+            }
+
+            smallVideo.waitForResolutionChange();
+            if (oldSmallVideo)
+                oldSmallVideo.waitForResolutionChange();
+
+            largeVideo.updateLargeVideo(
+                id,
+                smallVideo.videoStream,
+                videoType
+            ).then(function() {
+                // update current small video and the old one
+                smallVideo.updateView();
+                oldSmallVideo && oldSmallVideo.updateView();
+            }, function () {
+                // use clicked other video during update, nothing to do.
+            });
+
+        } else if (currentId) {
+            let currentSmallVideo = this.getSmallVideo(currentId);
+            currentSmallVideo.updateView();
+        }
+    },
+
+    addLargeVideoContainer (type, container) {
+        largeVideo && largeVideo.addContainer(type, container);
+    },
+
+    removeLargeVideoContainer (type) {
+        largeVideo && largeVideo.removeContainer(type);
+    },
+
+    /**
+     * @returns Promise
+     */
+    showLargeVideoContainer (type, show) {
+        if (!largeVideo) {
+            return Promise.reject();
+        }
+
+        let isVisible = this.isLargeContainerTypeVisible(type);
+        if (isVisible === show) {
+            return Promise.resolve();
+        }
+
+        let currentId = largeVideo.id;
+        if(currentId) {
+            var oldSmallVideo = this.getSmallVideo(currentId);
+        }
+
+        let containerTypeToShow = type;
+        // if we are hiding a container and there is focusedVideo
+        // (pinned remote video) use its video type,
+        // if not then use default type - large video
+        if (!show) {
+            if(pinnedId)
+                containerTypeToShow = this.getRemoteVideoType(pinnedId);
+            else
+                containerTypeToShow = VIDEO_CONTAINER_TYPE;
+        }
+
+        return largeVideo.showContainer(containerTypeToShow)
+            .then(() => {
+                if(oldSmallVideo)
+                    oldSmallVideo && oldSmallVideo.updateView();
+            });
+    },
+
+    isLargeContainerTypeVisible (type) {
+        return largeVideo && largeVideo.state === type;
+    },
+
+    /**
+     * Returns the id of the current video shown on large.
+     * Currently used by tests (torture).
+     */
+    getLargeVideoID () {
+        return largeVideo.id;
+    },
+
+    /**
+     * Returns the the current video shown on large.
+     * Currently used by tests (torture).
+     */
+    getLargeVideo () {
+        return largeVideo;
+    },
+
+    /**
+     * Updates the resolution label, indicating to the user that the large
+     * video stream is currently HD.
+     */
+    updateResolutionLabel(isResolutionHD) {
+        let videoResolutionLabel = $("#videoResolutionLabel");
+
+        if (isResolutionHD && !videoResolutionLabel.is(":visible"))
+            videoResolutionLabel.css({display: "block"});
+        else if (!isResolutionHD && videoResolutionLabel.is(":visible"))
+            videoResolutionLabel.css({display: "none"});
+    },
+
+    /**
+     * Sets the flipX state of the local video.
+     * @param {boolean} true for flipped otherwise false;
+     */
+    setLocalFlipX: function (val) {
+        this.localFlipX = val;
+
+    },
+
+    getEventEmitter: () => {return eventEmitter;}
+};
+
+export default VideoLayout;

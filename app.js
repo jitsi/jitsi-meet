@@ -1,48 +1,125 @@
-/* jshint -W117 */
+/* global $, JitsiMeetJS, config, getRoomName */
 /* application specific logic */
 
-require("jquery");
-require("jquery-ui");
-require("strophe");
-require("strophe-disco");
-require("strophe-caps");
-require("tooltip");
-require("popover");
+import "babel-polyfill";
+import "jquery";
+import "jquery-contextmenu";
+import "jquery-ui";
+import "strophe";
+import "strophe-disco";
+import "strophe-caps";
+import "tooltip";
+import "popover";
+import "jQuery-Impromptu";
+import "autosize";
 window.toastr = require("toastr");
-require("jQuery-Impromptu");
-require("autosize");
 
-var APP =
-{
-    init: function () {
-        this.UI = require("./modules/UI/UI");
-        this.API = require("./modules/API/API");
-        this.connectionquality =
-            require("./modules/connectionquality/connectionquality");
-        this.statistics = require("./modules/statistics/statistics");
-        this.RTC = require("./modules/RTC/RTC");
-        this.desktopsharing =
-            require("./modules/desktopsharing/desktopsharing");
-        this.xmpp = require("./modules/xmpp/xmpp");
+import URLProcessor from "./modules/config/URLProcessor";
+import RoomnameGenerator from './modules/util/RoomnameGenerator';
+
+import UI from "./modules/UI/UI";
+import settings from "./modules/settings/Settings";
+import conference from './conference';
+import API from './modules/API/API';
+
+import UIEvents from './service/UI/UIEvents';
+import getTokenData from "./modules/TokenData/TokenData";
+
+/**
+ * Tries to push history state with the following parameters:
+ * 'VideoChat', `Room: ${roomName}`, URL. If fail, prints the error and returns
+ * it.
+ */
+function pushHistoryState(roomName, URL) {
+    try {
+        window.history.pushState(
+            'VideoChat', `Room: ${roomName}`, URL
+        );
+    } catch (e) {
+        console.warn("Push history state failed with parameters:",
+            'VideoChat', `Room: ${roomName}`, URL, e);
+        return e;
+    }
+    return null;
+}
+
+/**
+ * Builds and returns the room name.
+ */
+function buildRoomName () {
+    let roomName = getRoomName();
+
+    if(!roomName) {
+        let word = RoomnameGenerator.generateRoomWithoutSeparator();
+        roomName = word.toLowerCase();
+        let historyURL = window.location.href + word;
+        //Trying to push state with current URL + roomName
+        pushHistoryState(word, historyURL);
+    }
+
+    return roomName;
+}
+
+const APP = {
+    // Used by do_external_connect.js if we receive the attach data after
+    // connect was already executed. status property can be "initialized",
+    // "ready" or "connecting". We are interested in "ready" status only which
+    // means that connect was executed but we have to wait for the attach data.
+    // In status "ready" handler property will be set to a function that will
+    // finish the connect process when the attach data or error is received.
+    connect: {
+        status: "initialized",
+        handler: null
+    },
+    // Used for automated performance tests
+    connectionTimes: {
+        "index.loaded": window.indexLoadedTime
+    },
+    UI,
+    settings,
+    conference,
+    connection: null,
+    API,
+    init () {
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.translation = require("./modules/translation/translation");
-        this.settings = require("./modules/settings/Settings");
-        //this.DTMF = require("./modules/DTMF/DTMF");
-        this.members = require("./modules/members/MemberList");
         this.configFetch = require("./modules/config/HttpConfigFetch");
+        this.tokenData = getTokenData();
     }
 };
 
-function init() {
+/**
+ * If JWT token data it will be used for local user settings
+ */
+function setTokenData() {
+    let localUser = APP.tokenData.caller;
+    if(localUser) {
+        APP.settings.setEmail((localUser.getEmail() || "").trim(), true);
+        APP.settings.setAvatarUrl((localUser.getAvatarUrl() || "").trim());
+        APP.settings.setDisplayName((localUser.getName() || "").trim(), true);
+    }
+}
 
-    APP.desktopsharing.init();
-    APP.RTC.start();
-    APP.xmpp.start();
-    APP.statistics.start();
-    APP.connectionquality.init();
-    APP.keyboardshortcut.init();
-    APP.members.start();
+function init() {
+    setTokenData();
+    var isUIReady = APP.UI.start();
+    if (isUIReady) {
+        APP.conference.init({roomName: buildRoomName()}).then(function () {
+            APP.UI.initConference();
+
+            APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
+                APP.translation.setLanguage(language);
+                APP.settings.setLanguage(language);
+            });
+
+            APP.keyboardshortcut.init();
+        }).catch(function (err) {
+            APP.UI.hideRingOverLay();
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
+            console.error(err);
+        });
+    }
 }
 
 /**
@@ -54,7 +131,7 @@ function init() {
  * will be displayed to the user.
  */
 function obtainConfigAndInit() {
-    var roomName = APP.UI.getRoomNode();
+    let roomName = APP.conference.roomName;
 
     if (config.configLocation) {
         APP.configFetch.obtainConfig(
@@ -62,8 +139,9 @@ function obtainConfigAndInit() {
             // Get config result callback
             function(success, error) {
                 if (success) {
-                    console.log("(TIME) configuration fetched:\t",
-                                window.performance.now());
+                    var now = APP.connectionTimes["configuration.fetched"] =
+                        window.performance.now();
+                    console.log("(TIME) configuration fetched:\t", now);
                     init();
                 } else {
                     // Show obtain config error,
@@ -82,25 +160,21 @@ function obtainConfigAndInit() {
 
 
 $(document).ready(function () {
-    console.log("(TIME) document ready:\t", window.performance.now());
+    var now = APP.connectionTimes["document.ready"] = window.performance.now();
+    console.log("(TIME) document ready:\t", now);
 
-    var URLProcessor = require("./modules/config/URLProcessor");
     URLProcessor.setConfigParametersFromUrl();
     APP.init();
 
-    APP.translation.init();
+    APP.translation.init(settings.getLanguage());
 
-    if(APP.API.isEnabled())
-        APP.API.init();
+    APP.API.init(APP.tokenData.externalAPISettings);
 
-    APP.UI.start(obtainConfigAndInit);
-
+    obtainConfigAndInit();
 });
 
 $(window).bind('beforeunload', function () {
-    if(APP.API.isEnabled())
-        APP.API.dispose();
+    APP.API.dispose();
 });
 
 module.exports = APP;
-

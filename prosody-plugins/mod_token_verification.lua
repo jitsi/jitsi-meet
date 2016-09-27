@@ -24,6 +24,7 @@ end
 local appId = parentCtx:get_option_string("app_id");
 local appSecret = parentCtx:get_option_string("app_secret");
 local allowEmptyToken = parentCtx:get_option_boolean("allow_empty_token");
+local disableRoomNameConstraints = parentCtx:get_option_boolean("disable_room_name_constraints")
 
 log("debug",
 	"%s - starting MUC token verifier app_id: %s app_secret: %s allow empty: %s",
@@ -35,17 +36,17 @@ local function verify_user(session, stanza)
 		tostring(session.auth_token),
 		tostring(session.jitsi_meet_room));
 
-	if allowEmptyToken and session.auth_token == nil then
-		module:log(
-			"debug",
-			"Skipped room token verification - empty tokens are allowed");
-		return nil;
-	end
-
 	-- token not required for admin users
 	local user_jid = stanza.attr.from;
 	if is_admin(user_jid) then
 		log("debug", "Token not required from admin user: %s", user_jid);
+		return nil;
+	end
+
+	if allowEmptyToken and session.auth_token == nil then
+		module:log(
+			"debug",
+			"Skipped room token verification - empty tokens are allowed");
 		return nil;
 	end
 
@@ -59,7 +60,7 @@ local function verify_user(session, stanza)
 
 	local token = session.auth_token;
 	local auth_room = session.jitsi_meet_room;
-	if room ~= auth_room then
+	if room ~= auth_room and disableRoomNameConstraints ~= true then
 		log("error", "Token %s not allowed to join: %s",
 			tostring(token), tostring(auth_room));
 		session.send(
@@ -81,4 +82,3 @@ module:hook("muc-occupant-pre-join", function(event)
 	log("debug", "pre join: %s %s", tostring(room), tostring(stanza));
 	return verify_user(origin, stanza);
 end);
-

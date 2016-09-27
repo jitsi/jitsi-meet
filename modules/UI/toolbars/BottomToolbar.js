@@ -1,66 +1,130 @@
-/* global $ */
-var PanelToggler = require("../side_pannels/SidePanelToggler");
-var UIUtil = require("../util/UIUtil");
-var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
-var UIEvents = require("../../../service/UI/UIEvents");
+/* global $, APP, interfaceConfig, JitsiMeetJS */
+import UIUtil from '../util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
 
-var eventEmitter = null;
-
-var buttonHandlers = {
-    "bottom_toolbar_contact_list": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.contacts.toggled');
-        BottomToolbar.toggleContactList();
+const defaultBottomToolbarButtons = {
+    'chat': {
+        id: '#bottom_toolbar_chat'
     },
-    "bottom_toolbar_film_strip": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.filmstrip.toggled');
-        BottomToolbar.toggleFilmStrip();
+    'contacts': {
+        id: '#bottom_toolbar_contact_list'
     },
-    "bottom_toolbar_chat": function () {
-        AnalyticsAdapter.sendEvent('bottomtoolbar.chat.toggled');
-        BottomToolbar.toggleChat();
+    'filmstrip': {
+        id: '#bottom_toolbar_film_strip',
+        shortcut: "F",
+        shortcutAttr: "filmstripPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
+            APP.UI.toggleFilmStrip();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
     }
 };
 
+const BottomToolbar = {
+    init () {
+        this.toolbar = $('#bottomToolbar');
 
-var defaultBottomToolbarButtons = {
-    'chat': '#bottom_toolbar_chat',
-    'contacts': '#bottom_toolbar_contact_list',
-    'filmstrip': '#bottom_toolbar_film_strip'
-};
+        // The bottom toolbar is enabled by default.
+        this.enabled = true;
+    },
+    /**
+     * Enables / disables the bottom toolbar.
+     * @param {e} set to {true} to enable the bottom toolbar or {false}
+     * to disable it
+     */
+    enable (e) {
+        this.enabled = e;
+        if (!e && this.isVisible())
+            this.hide(false);
+    },
+    /**
+     * Indicates if the bottom toolbar is currently enabled.
+     * @return {this.enabled}
+     */
+    isEnabled() {
+        return this.enabled;
+    },
 
-
-var BottomToolbar = (function (my) {
-    my.init = function (emitter) {
-        eventEmitter = emitter;
+    setupListeners (emitter) {
         UIUtil.hideDisabledButtons(defaultBottomToolbarButtons);
 
-        for(var k in buttonHandlers)
-            $("#" + k).click(buttonHandlers[k]);
-    };
+        const buttonHandlers = {
+            "bottom_toolbar_contact_list": function () {
+                JitsiMeetJS.analytics.sendEvent(
+                    'bottomtoolbar.contacts.toggled');
+                emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
+            },
+            "bottom_toolbar_film_strip": function () {
+                JitsiMeetJS.analytics.sendEvent(
+                    'bottomtoolbar.filmstrip.toggled');
+                emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
+            },
+            "bottom_toolbar_chat": function () {
+                JitsiMeetJS.analytics.sendEvent('bottomtoolbar.chat.toggled');
+                emitter.emit(UIEvents.TOGGLE_CHAT);
+            }
+        };
 
-    my.toggleChat = function() {
-        PanelToggler.toggleChat();
-    };
+        Object.keys(defaultBottomToolbarButtons).forEach(
+                id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    var button = defaultBottomToolbarButtons[id];
 
-    my.toggleContactList = function() {
-        PanelToggler.toggleContactList();
-    };
+                    if (button.shortcut)
+                        APP.keyboardshortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
+                }
+            }
+        );
 
-    my.toggleFilmStrip = function() {
-        var filmstrip = $("#remoteVideos");
-        filmstrip.toggleClass("hidden");
+        Object.keys(buttonHandlers).forEach(
+            buttonId => $(`#${buttonId}`).click(buttonHandlers[buttonId])
+        );
+    },
 
-        eventEmitter.emit(  UIEvents.FILM_STRIP_TOGGLED,
-                            filmstrip.hasClass("hidden"));
-    };
+    resizeToolbar (thumbWidth, thumbHeight) {
+        let bottom = (thumbHeight - this.toolbar.outerHeight())/2 + 18;
+        this.toolbar.css({bottom});
+    },
 
-    $(document).bind("remotevideo.resized", function (event, width, height) {
-        var bottom = (height - $('#bottomToolbar').outerHeight())/2 + 18;
+    /**
+     * Returns true if this toolbar is currently visible, or false otherwise.
+     * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
+     */
+    isVisible() {
+        return this.toolbar.is(":visible");
+    },
 
-        $('#bottomToolbar').css({bottom: bottom + 'px'});
-    });
+    /**
+     * Hides the bottom toolbar with animation or not depending on the animate
+     * parameter.
+     * @param animate <tt>true</tt> to hide the bottom toolbar with animation,
+     * <tt>false</tt> or nothing to hide it without animation.
+     */
+    hide(animate) {
+        if (animate)
+            this.toolbar.hide("slide", {direction: "right", duration: 300});
+        else
+            this.toolbar.css("display", "none");
+    },
 
-    return my;
-}(BottomToolbar || {}));
+    /**
+     * Shows the bottom toolbar with animation or not depending on the animate
+     * parameter.
+     * @param animate <tt>true</tt> to show the bottom toolbar with animation,
+     * <tt>false</tt> or nothing to show it without animation.
+     */
+    show(animate) {
+        if (animate)
+            this.toolbar.show("slide", {direction: "right", duration: 300});
+        else
+            this.toolbar.css("display", "block");
+    }
+};
 
-module.exports = BottomToolbar;
+export default BottomToolbar;

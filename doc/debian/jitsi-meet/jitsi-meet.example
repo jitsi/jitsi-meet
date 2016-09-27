@@ -33,6 +33,11 @@ server {
         ssi on;
     }
 
+    # Backward compatibility
+    location ~ /external_api.* {
+        root /usr/share/jitsi-meet/libs;
+    }
+
     # BOSH
     location /http-bind {
         proxy_pass      http://localhost:5280/http-bind;

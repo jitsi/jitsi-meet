@@ -1,108 +1,143 @@
-/* global APP, $, buttonClick, config, lockRoom, interfaceConfig, setSharedKey,
- Util */
+/* global APP, $, config, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
-var messageHandler = require("../util/MessageHandler");
-var BottomToolbar = require("./BottomToolbar");
-var Prezi = require("../prezi/Prezi");
-var Etherpad = require("../etherpad/Etherpad");
-var PanelToggler = require("../side_pannels/SidePanelToggler");
-var Authentication = require("../authentication/Authentication");
-var UIUtil = require("../util/UIUtil");
-var AuthenticationEvents
-    = require("../../../service/authentication/AuthenticationEvents");
-var AnalyticsAdapter = require("../../statistics/AnalyticsAdapter");
-var Feedback = require("../Feedback");
+import UIUtil from '../util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
 
-var roomUrl = null;
-var sharedKey = '';
-var UI = null;
-var recordingToaster = null;
+let roomUrl = null;
+let emitter = null;
 
-var buttonHandlers = {
-    "toolbar_button_mute": function () {
-        if (APP.RTC.localAudio.isMuted()) {
-            AnalyticsAdapter.sendEvent('toolbar.audio.unmuted');
-        } else {
-            AnalyticsAdapter.sendEvent('toolbar.audio.muted');
+
+/**
+ * Opens the invite link dialog.
+ */
+function openLinkDialog () {
+    let inviteAttributes;
+
+    if (roomUrl === null) {
+        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            APP.translation.translateString("roomUrlDefaultMsg") + '"';
+    } else {
+        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
+    }
+    APP.UI.messageHandler.openTwoButtonDialog(
+        "dialog.shareLink", null, null,
+        `<input id="inviteLinkRef" type="text" ${inviteAttributes} onclick="this.select();" readonly>`,
+        false, "dialog.Invite",
+        function (e, v) {
+            if (v && roomUrl) {
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
+                emitter.emit(UIEvents.USER_INVITED, roomUrl);
+            }
+            else {
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
+            }
+        },
+        function (event) {
+            if (roomUrl) {
+                document.getElementById('inviteLinkRef').select();
+            } else {
+                if (event && event.target) {
+                    $(event.target).find('button[value=true]').prop('disabled', true);
+                }
+            }
+        },
+        function (e, v, m, f) {
+            if(!v && !m && !f)
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
         }
-        return APP.UI.toggleAudio();
+    );
+}
+
+const buttonHandlers = {
+    "toolbar_button_mute": function () {
+        let sharedVideoManager = APP.UI.getSharedVideoManager();
+
+        if (APP.conference.audioMuted) {
+            // If there's a shared video with the volume "on" and we aren't
+            // the video owner, we warn the user
+            // that currently it's not possible to unmute.
+            if (sharedVideoManager
+                && sharedVideoManager.isSharedVideoVolumeOn()
+                && !sharedVideoManager.isSharedVideoOwner()) {
+                UIUtil.animateShowElement(
+                    $("#unableToUnmutePopup"), true, 5000);
+            }
+            else {
+                JitsiMeetJS.analytics.sendEvent('toolbar.audio.unmuted');
+                emitter.emit(UIEvents.AUDIO_MUTED, false, true);
+            }
+        } else {
+            JitsiMeetJS.analytics.sendEvent('toolbar.audio.muted');
+            emitter.emit(UIEvents.AUDIO_MUTED, true, true);
+        }
     },
     "toolbar_button_camera": function () {
-        if (APP.RTC.localVideo.isMuted()) {
-            AnalyticsAdapter.sendEvent('toolbar.video.enabled');
+        if (APP.conference.videoMuted) {
+            JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
+            emitter.emit(UIEvents.VIDEO_MUTED, false);
         } else {
-            AnalyticsAdapter.sendEvent('toolbar.video.disabled');
+            JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
+            emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
-        return APP.UI.toggleVideo();
-    },
-    /*"toolbar_button_authentication": function () {
-        return Toolbar.authenticateClicked();
-    },*/
-    "toolbar_button_record": function () {
-        AnalyticsAdapter.sendEvent('toolbar.recording.toggled');
-        return toggleRecording();
     },
     "toolbar_button_security": function () {
-        if (sharedKey) {
-            AnalyticsAdapter.sendEvent('toolbar.lock.disabled');
-        } else {
-            AnalyticsAdapter.sendEvent('toolbar.lock.enabled');
-        }
-        return Toolbar.openLockDialog();
+        JitsiMeetJS.analytics.sendEvent('toolbar.lock.clicked');
+        emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
     },
     "toolbar_button_link": function () {
-        AnalyticsAdapter.sendEvent('toolbar.invite.clicked');
-        return Toolbar.openLinkDialog();
+        JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
+        openLinkDialog();
     },
     "toolbar_button_chat": function () {
-        AnalyticsAdapter.sendEvent('toolbar.chat.toggled');
-        return BottomToolbar.toggleChat();
-    },
-    "toolbar_button_prezi": function () {
-        AnalyticsAdapter.sendEvent('toolbar.prezi.clicked');
-        return Prezi.openPreziDialog();
+        JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
+        emitter.emit(UIEvents.TOGGLE_CHAT);
     },
     "toolbar_button_etherpad": function () {
-        AnalyticsAdapter.sendEvent('toolbar.etherpad.clicked');
-        return Etherpad.toggleEtherpad(0);
+        JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
+        emitter.emit(UIEvents.ETHERPAD_CLICKED);
+    },
+    "toolbar_button_sharedvideo": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.sharedvideo.clicked');
+        emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
     },
     "toolbar_button_desktopsharing": function () {
-        if (APP.desktopsharing.isUsingScreenStream) {
-            AnalyticsAdapter.sendEvent('toolbar.screen.disabled');
+        if (APP.conference.isSharingScreen) {
+            JitsiMeetJS.analytics.sendEvent('toolbar.screen.disabled');
         } else {
-            AnalyticsAdapter.sendEvent('toolbar.screen.enabled');
+            JitsiMeetJS.analytics.sendEvent('toolbar.screen.enabled');
         }
-        return APP.desktopsharing.toggleScreenSharing();
+        emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
     },
     "toolbar_button_fullScreen": function() {
-        AnalyticsAdapter.sendEvent('toolbar.fullscreen.enabled');
-        UIUtil.buttonClick("#toolbar_button_fullScreen", "icon-full-screen icon-exit-full-screen");
-        return Toolbar.toggleFullScreen();
+        JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
+        UIUtil.buttonClick("#toolbar_button_fullScreen",
+            "icon-full-screen icon-exit-full-screen");
+        emitter.emit(UIEvents.FULLSCREEN_TOGGLE);
     },
     "toolbar_button_sip": function () {
-        AnalyticsAdapter.sendEvent('toolbar.sip.clicked');
-        return callSipButtonClicked();
+        JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
+        showSipNumberInput();
     },
     "toolbar_button_dialpad": function () {
-        AnalyticsAdapter.sendEvent('toolbar.sip.dialpad.clicked');
-        return dialpadButtonClicked();
+        JitsiMeetJS.analytics.sendEvent('toolbar.sip.dialpad.clicked');
+        dialpadButtonClicked();
     },
     "toolbar_button_settings": function () {
-        AnalyticsAdapter.sendEvent('toolbar.settings.toggled');
-        PanelToggler.toggleSettingsMenu();
+        JitsiMeetJS.analytics.sendEvent('toolbar.settings.toggled');
+        emitter.emit(UIEvents.TOGGLE_SETTINGS);
     },
     "toolbar_button_hangup": function () {
-        AnalyticsAdapter.sendEvent('toolbar.hangup');
-        return hangup();
+        JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
+        emitter.emit(UIEvents.HANGUP);
     },
     "toolbar_button_login": function () {
-        AnalyticsAdapter.sendEvent('toolbar.authenticate.login.clicked');
-        Toolbar.authenticateClicked();
+        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.login.clicked');
+        emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
-        AnalyticsAdapter.sendEvent('toolbar.authenticate.logout.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
-        messageHandler.openTwoButtonDialog(
+        APP.UI.messageHandler.openTwoButtonDialog(
             "dialog.logoutTitle",
             null,
             "dialog.logoutQuestion",
@@ -111,631 +146,398 @@ var buttonHandlers = {
             "dialog.Yes",
             function (evt, yes) {
                 if (yes) {
-                    APP.xmpp.logout(function (url) {
-                        if (url) {
-                            window.location.href = url;
-                        } else {
-                            hangup();
-                        }
-                    });
+                    emitter.emit(UIEvents.LOGOUT);
                 }
-            });
-    }
-};
-var defaultToolbarButtons = {
-    'microphone': '#toolbar_button_mute',
-    'camera': '#toolbar_button_camera',
-    'desktop': '#toolbar_button_desktopsharing',
-    'security': '#toolbar_button_security',
-    'invite': '#toolbar_button_link',
-    'chat': '#toolbar_button_chat',
-    'prezi': '#toolbar_button_prezi',
-    'etherpad': '#toolbar_button_etherpad',
-    'fullscreen': '#toolbar_button_fullScreen',
-    'settings': '#toolbar_button_settings',
-    'hangup': '#toolbar_button_hangup'
-};
-
-/**
- * Hangs up this call.
- */
-function hangup() {
-    var conferenceDispose = function () {
-        APP.xmpp.disposeConference();
-
-        if (config.enableWelcomePage) {
-            setTimeout(function() {
-                window.localStorage.welcomePageDisabled = false;
-                window.location.pathname = "/";
-            }, 3000);
-        }
-    };
-
-    if (Feedback.isEnabled())
-    {
-        // If the user has already entered feedback, we'll show the window and
-        // immidiately start the conference dispose timeout.
-        if (Feedback.feedbackScore > 0) {
-            Feedback.openFeedbackWindow();
-            conferenceDispose();
-
-        }
-        // Otherwise we'll wait for user's feedback.
-        else
-            Feedback.openFeedbackWindow(conferenceDispose);
-    }
-    else {
-        conferenceDispose();
-
-        // If the feedback functionality isn't enabled we show a thank you
-        // dialog.
-        APP.UI.messageHandler.openMessageDialog(null, null, null,
-            APP.translation.translateString("dialog.thankYou",
-                {appName:interfaceConfig.APP_NAME}));
-    }
-}
-
-/**
- * Starts or stops the recording for the conference.
- */
-function toggleRecording(predefinedToken) {
-    APP.xmpp.toggleRecording(function (callback) {
-        if (predefinedToken) {
-            callback(UIUtil.escapeHtml(predefinedToken));
-            return;
-        }
-
-        var msg = APP.translation.generateTranslationHTML(
-            "dialog.recordingToken");
-        var token = APP.translation.translateString("dialog.token");
-        APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
-                '<h2>' + msg + '</h2>' +
-                '<input name="recordingToken" type="text" ' +
-                ' data-i18n="[placeholder]dialog.token" ' +
-                'placeholder="' + token + '" autofocus>',
-            false,
-            "dialog.Save",
-            function (e, v, m, f) {
-                if (v) {
-                    var token = f.recordingToken;
-
-                    if (token) {
-                        callback(UIUtil.escapeHtml(token));
-                    }
-                }
-            },
-            null,
-            function () { },
-            ':input:first'
+            }
         );
-    }, Toolbar.setRecordingButtonState);
-}
-
-/**
- * Locks / unlocks the room.
- */
-function lockRoom(lock) {
-    var currentSharedKey = '';
-    if (lock)
-        currentSharedKey = sharedKey;
-
-    APP.xmpp.lockRoom(currentSharedKey, function (res) {
-        // password is required
-        if (sharedKey) {
-            console.log('set room password');
-            Toolbar.lockLockButton();
-        }
-        else {
-            console.log('removed room password');
-            Toolbar.unlockLockButton();
-        }
-    }, function (err) {
-        console.warn('setting password failed', err);
-        messageHandler.showError("dialog.lockTitle",
-            "dialog.lockMessage");
-        Toolbar.setSharedKey('');
-    }, function () {
-        console.warn('room passwords not supported');
-        messageHandler.showError("dialog.warning",
-            "dialog.passwordNotSupported");
-        Toolbar.setSharedKey('');
-    });
-}
-
-/**
- * Invite participants to conference.
- */
-function inviteParticipants() {
-    if (roomUrl === null)
-        return;
-
-    var sharedKeyText = "";
-    if (sharedKey && sharedKey.length > 0) {
-        sharedKeyText =
-            APP.translation.translateString("email.sharedKey",
-                {sharedKey: sharedKey});
-        sharedKeyText = sharedKeyText.replace(/\n/g, "%0D%0A");
     }
-
-    var supportedBrowsers = "Chromium, Google Chrome " +
-        APP.translation.translateString("email.and") + " Opera";
-    var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
-    var subject = APP.translation.translateString("email.subject",
-        {appName:interfaceConfig.APP_NAME, conferenceName: conferenceName});
-    var body = APP.translation.translateString("email.body",
-        {appName:interfaceConfig.APP_NAME, sharedKeyText: sharedKeyText,
-            roomUrl: roomUrl, supportedBrowsers: supportedBrowsers});
-    body = body.replace(/\n/g, "%0D%0A");
-
-    if (window.localStorage.displayname) {
-        body += "%0D%0A%0D%0A" + window.localStorage.displayname;
+};
+const defaultToolbarButtons = {
+    'microphone': {
+        id: '#toolbar_button_mute',
+        shortcut: 'M',
+        shortcutAttr: 'mutePopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
+            APP.conference.toggleAudioMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.mute"
+    },
+    'camera': {
+        id: '#toolbar_button_camera',
+        shortcut: 'V',
+        shortcutAttr: 'toggleVideoPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
+            APP.conference.toggleVideoMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.videoMute"
+    },
+    'desktop': {
+        id: '#toolbar_button_desktopsharing',
+        shortcut: 'D',
+        shortcutAttr: 'toggleDesktopSharingPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
+            APP.conference.toggleScreenSharing();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleScreensharing"
+    },
+    'security': {
+        id: '#toolbar_button_security'
+    },
+    'invite': {
+        id: '#toolbar_button_link'
+    },
+    'chat': {
+        id: '#toolbar_button_chat',
+        shortcut: 'C',
+        shortcutAttr: 'toggleChatPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
+            APP.UI.toggleChat();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleChat"
+    },
+    'etherpad': {
+        id: '#toolbar_button_etherpad'
+    },
+    'fullscreen': {
+        id: '#toolbar_button_fullScreen'
+    },
+    'settings': {
+        id: '#toolbar_button_settings'
+    },
+    'hangup': {
+        id: '#toolbar_button_hangup'
     }
-
-    if (interfaceConfig.INVITATION_POWERED_BY) {
-        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
-    }
-
-    window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
-}
+};
 
 function dialpadButtonClicked() {
     //TODO show the dialpad box
 }
 
-function callSipButtonClicked() {
-    var defaultNumber
-        = config.defaultSipNumber ? config.defaultSipNumber : '';
+function showSipNumberInput () {
+    let defaultNumber = config.defaultSipNumber
+        ? config.defaultSipNumber
+        : '';
 
-    var sipMsg = APP.translation.generateTranslationHTML(
-        "dialog.sipMsg");
-    messageHandler.openTwoButtonDialog(null, null, null,
-        '<h2>' + sipMsg + '</h2>' +
-        '<input name="sipNumber" type="text"' +
-        ' value="' + defaultNumber + '" autofocus>',
-        false,
-        "dialog.Dial",
+    let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
+    APP.UI.messageHandler.openTwoButtonDialog(
+        null, null, null,
+        `<h2>${sipMsg}</h2>
+            <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
+        false, "dialog.Dial",
         function (e, v, m, f) {
-            if (v) {
-                var numberInput = f.sipNumber;
-                if (numberInput) {
-                    APP.xmpp.dial(
-                        numberInput, 'fromnumber', UI.getRoomName(), sharedKey);
-                }
+            if (v && f.sipNumber) {
+                emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
             }
         },
         null, null, ':input:first'
     );
 }
 
-var Toolbar = (function (my) {
+const Toolbar = {
+    init (eventEmitter) {
+        emitter = eventEmitter;
+        // The toolbar is enabled by default.
+        this.enabled = true;
+        this.toolbarSelector = $("#header");
 
-    my.init = function (ui) {
         UIUtil.hideDisabledButtons(defaultToolbarButtons);
 
-        for(var k in buttonHandlers)
-            $("#" + k).click(buttonHandlers[k]);
-        UI = ui;
-        // Update login info
-        APP.xmpp.addListener(
-            AuthenticationEvents.IDENTITY_UPDATED,
-            function (authenticationEnabled, userIdentity) {
+        Object.keys(defaultToolbarButtons).forEach(
+            id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    var button = defaultToolbarButtons[id];
 
-                var loggedIn = false;
-                if (userIdentity) {
-                    loggedIn = true;
-                }
-
-                Toolbar.showAuthenticateButton(authenticationEnabled);
-
-                if (authenticationEnabled) {
-                    Toolbar.setAuthenticatedIdentity(userIdentity);
-
-                    Toolbar.showLoginButton(!loggedIn);
-                    Toolbar.showLogoutButton(loggedIn);
+                    if (button.shortcut)
+                        APP.keyboardshortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
                 }
             }
         );
-    };
 
+        Object.keys(buttonHandlers).forEach(
+            buttonId => $(`#${buttonId}`).click(function(event) {
+                !$(this).prop('disabled') && buttonHandlers[buttonId](event);
+            })
+        );
+    },
     /**
-     * Sets shared key
-     * @param sKey the shared key
+     * Enables / disables the toolbar.
+     * @param {e} set to {true} to enable the toolbar or {false}
+     * to disable it
      */
-    my.setSharedKey = function (sKey) {
-        sharedKey = sKey;
-    };
-
-    my.authenticateClicked = function () {
-        Authentication.focusAuthenticationWindow();
-        if (!APP.xmpp.isExternalAuthEnabled()) {
-            Authentication.xmppAuthenticate();
-            return;
-        }
-        // Get authentication URL
-        if (!APP.xmpp.isMUCJoined()) {
-            APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
-                // If conference has not been started yet - redirect to login page
-                window.location.href = url;
-            });
-        } else {
-            APP.xmpp.getPopupLoginUrl(UI.getRoomName(), function (url) {
-                // Otherwise - open popup with authentication URL
-                var authenticationWindow = Authentication.createAuthenticationWindow(
-                    function () {
-                        // On popup closed - retry room allocation
-                        APP.xmpp.allocateConferenceFocus(
-                            APP.UI.getRoomName(),
-                            function () { console.info("AUTH DONE"); }
-                        );
-                    }, url);
-                if (!authenticationWindow) {
-                    messageHandler.openMessageDialog(
-                        null, "dialog.popupError");
-                }
-            });
-        }
-    };
-
+    enable (e) {
+        this.enabled = e;
+        if (!e && this.isVisible())
+            this.hide(false);
+    },
+    /**
+     * Indicates if the bottom toolbar is currently enabled.
+     * @return {this.enabled}
+     */
+    isEnabled() {
+        return this.enabled;
+    },
     /**
      * Updates the room invite url.
      */
-    my.updateRoomUrl = function (newRoomUrl) {
+    updateRoomUrl (newRoomUrl) {
         roomUrl = newRoomUrl;
 
-        // If the invite dialog has been already opened we update the information.
-        var inviteLink = document.getElementById('inviteLinkRef');
+        // If the invite dialog has been already opened we update the
+        // information.
+        let inviteLink = document.getElementById('inviteLinkRef');
         if (inviteLink) {
             inviteLink.value = roomUrl;
             inviteLink.select();
             $('#inviteLinkRef').parent()
                 .find('button[value=true]').prop('disabled', false);
         }
-    };
+    },
 
-    /**
-     * Disables and enables some of the buttons.
-     */
-    my.setupButtonsFromConfig = function () {
-        if (!UIUtil.isButtonEnabled('prezi')) {
-            $("#toolbar_button_prezi").css({display: "none"});
-        }
-    };
-
-    /**
-     * Opens the lock room dialog.
-     */
-    my.openLockDialog = function () {
-        // Only the focus is able to set a shared key.
-        if (!APP.xmpp.isModerator()) {
-            if (sharedKey) {
-                messageHandler.openMessageDialog(null,
-                    "dialog.passwordError");
-            } else {
-                messageHandler.openMessageDialog(null, "dialog.passwordError2");
-            }
-        } else {
-            if (sharedKey) {
-                messageHandler.openTwoButtonDialog(null, null,
-                    "dialog.passwordCheck",
-                    null,
-                    false,
-                    "dialog.Remove",
-                    function (e, v) {
-                        if (v) {
-                            Toolbar.setSharedKey('');
-                            lockRoom(false);
-                        }
-                    });
-            } else {
-                var msg = APP.translation.generateTranslationHTML(
-                    "dialog.passwordMsg");
-                var yourPassword = APP.translation.translateString(
-                    "dialog.yourPassword");
-                messageHandler.openTwoButtonDialog(null, null, null,
-                    '<h2>' + msg + '</h2>' +
-                        '<input name="lockKey" type="text"' +
-                        ' data-i18n="[placeholder]dialog.yourPassword" ' +
-                        'placeholder="' + yourPassword + '" autofocus>',
-                    false,
-                    "dialog.Save",
-                    function (e, v, m, f) {
-                        if (v) {
-                            var lockKey = f.lockKey;
-
-                            if (lockKey) {
-                                Toolbar.setSharedKey(
-                                    UIUtil.escapeHtml(lockKey));
-                                lockRoom(true);
-                            }
-                        }
-                    },
-                    null, null, 'input:first'
-                );
-            }
-        }
-    };
-
-    /**
-     * Opens the invite link dialog.
-     */
-    my.openLinkDialog = function () {
-        var inviteAttributes;
-
-        if (roomUrl === null) {
-            inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-        } else {
-            inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
-        }
-        messageHandler.openTwoButtonDialog("dialog.shareLink",
-            null, null,
-            '<input id="inviteLinkRef" type="text" ' +
-                inviteAttributes + ' onclick="this.select();" readonly>',
-            false,
-            "dialog.Invite",
-            function (e, v) {
-                if (v) {
-                    if (roomUrl) {
-                        inviteParticipants();
-                    }
-                }
-            },
-            function (event) {
-                if (roomUrl) {
-                    document.getElementById('inviteLinkRef').select();
-                } else {
-                    if (event && event.target)
-                        $(event.target)
-                            .find('button[value=true]').prop('disabled', true);
-                }
-            }
-        );
-    };
-
-    /**
-     * Opens the settings dialog.
-     * FIXME: not used ?
-     */
-    my.openSettingsDialog = function () {
-        var settings1 = APP.translation.generateTranslationHTML(
-            "dialog.settings1");
-        var settings2 = APP.translation.generateTranslationHTML(
-            "dialog.settings2");
-        var settings3 = APP.translation.generateTranslationHTML(
-            "dialog.settings3");
-
-        var yourPassword = APP.translation.translateString(
-            "dialog.yourPassword");
-
-        messageHandler.openTwoButtonDialog(null,
-            '<h2>' + settings1 + '</h2>' +
-                '<input type="checkbox" id="initMuted">' +
-                settings2 + '<br/>' +
-                '<input type="checkbox" id="requireNicknames">' +
-                 settings3 +
-                '<input id="lockKey" type="text" placeholder="' + yourPassword +
-                '" data-i18n="[placeholder]dialog.yourPassword" autofocus>',
-            null,
-            null,
-            false,
-            "dialog.Save",
-            function () {
-                document.getElementById('lockKey').focus();
-            },
-            function (e, v) {
-                if (v) {
-                    if ($('#initMuted').is(":checked")) {
-                        // it is checked
-                    }
-
-                    if ($('#requireNicknames').is(":checked")) {
-                        // it is checked
-                    }
-                    /*
-                    var lockKey = document.getElementById('lockKey');
-
-                    if (lockKey.value) {
-                        setSharedKey(lockKey.value);
-                        lockRoom(true);
-                    }
-                    */
-                }
-            }
-        );
-    };
-
-    /**
-     * Toggles the application in and out of full screen mode
-     * (a.k.a. presentation mode in Chrome).
-     */
-    my.toggleFullScreen = function () {
-        var fsElement = document.documentElement;
-
-        if (!document.mozFullScreen && !document.webkitIsFullScreen) {
-            //Enter Full Screen
-            if (fsElement.mozRequestFullScreen) {
-                fsElement.mozRequestFullScreen();
-            }
-            else {
-                fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-            }
-        } else {
-            //Exit Full Screen
-            if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else {
-                document.webkitCancelFullScreen();
-            }
-        }
-    };
     /**
      * Unlocks the lock button state.
      */
-    my.unlockLockButton = function () {
+    unlockLockButton () {
         if ($("#toolbar_button_security").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("#toolbar_button_security", "icon-security icon-security-locked");
-    };
+            UIUtil.buttonClick("#toolbar_button_security",
+                                "icon-security icon-security-locked");
+    },
+
     /**
      * Updates the lock button state to locked.
      */
-    my.lockLockButton = function () {
+    lockLockButton () {
         if ($("#toolbar_button_security").hasClass("icon-security"))
-            UIUtil.buttonClick("#toolbar_button_security", "icon-security icon-security-locked");
-    };
+            UIUtil.buttonClick("#toolbar_button_security",
+                                "icon-security icon-security-locked");
+    },
 
     /**
      * Shows or hides authentication button
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
-    my.showAuthenticateButton = function (show) {
+    showAuthenticateButton (show) {
         if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#authentication').css({display: "inline"});
-        }
-        else {
+        } else {
             $('#authentication').css({display: "none"});
         }
-    };
+    },
 
-    // Shows or hides the 'recording' button.
-    my.showRecordingButton = function (show) {
-        if (UIUtil.isButtonEnabled('recording') && show) {
-            $('#toolbar_button_record').css({display: "inline-block"});
+    showEtherpadButton () {
+        if (!$('#toolbar_button_etherpad').is(":visible")) {
+            $('#toolbar_button_etherpad').css({display: 'inline-block'});
         }
-        else {
-            $('#toolbar_button_record').css({display: "none"});
+    },
+
+    // Shows or hides the 'shared video' button.
+    showSharedVideoButton () {
+        if (UIUtil.isButtonEnabled('sharedvideo')
+                && config.disableThirdPartyRequests !== true) {
+            $('#toolbar_button_sharedvideo').css({display: "inline-block"});
+        } else {
+            $('#toolbar_button_sharedvideo').css({display: "none"});
         }
-    };
-
-    // Sets the state of the recording button
-    my.setRecordingButtonState = function (recordingState) {
-        var selector = $('#toolbar_button_record');
-
-        if (recordingState === 'on') {
-            selector.removeClass("icon-recEnable");
-            selector.addClass("icon-recEnable active");
-
-            $("#largeVideo").toggleClass("videoMessageFilter", true);
-            var recordOnKey = "recording.on";
-            $('#videoConnectionMessage').attr("data-i18n", recordOnKey);
-            $('#videoConnectionMessage').text(APP.translation.translateString(recordOnKey));
-
-            setTimeout(function(){
-                $("#largeVideo").toggleClass("videoMessageFilter", false);
-                $('#videoConnectionMessage').css({display: "none"});
-            }, 1500);
-
-            recordingToaster = messageHandler.notify(null, "recording.toaster", null,
-                null, null, {timeOut: 0, closeButton: null, tapToDismiss: false});
-        } else if (recordingState === 'off') {
-            selector.removeClass("icon-recEnable active");
-            selector.addClass("icon-recEnable");
-
-            $("#largeVideo").toggleClass("videoMessageFilter", false);
-            $('#videoConnectionMessage').css({display: "none"});
-
-            if (recordingToaster)
-                messageHandler.remove(recordingToaster);
-
-        } else if (recordingState === 'pending') {
-            selector.removeClass("icon-recEnable active");
-            selector.addClass("icon-recEnable");
-
-            $("#largeVideo").toggleClass("videoMessageFilter", true);
-            var recordPendingKey = "recording.pending";
-            $('#videoConnectionMessage').attr("data-i18n", recordPendingKey);
-            $('#videoConnectionMessage').text(APP.translation.translateString(recordPendingKey));
-            $('#videoConnectionMessage').css({display: "block"});
-        }
-    };
-
-    // checks whether recording is enabled and whether we have params
-    // to start automatically recording
-    my.checkAutoRecord = function () {
-        if (UIUtil.isButtonEnabled('recording') && config.autoRecord) {
-            toggleRecording(config.autoRecordToken);
-        }
-    };
+    },
 
     // checks whether desktop sharing is enabled and whether
     // we have params to start automatically sharing
-    my.checkAutoEnableDesktopSharing = function () {
+    checkAutoEnableDesktopSharing () {
         if (UIUtil.isButtonEnabled('desktop')
-                && config.autoEnableDesktopSharing) {
-            APP.desktopsharing.toggleScreenSharing();
+            && config.autoEnableDesktopSharing) {
+            emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
         }
-    };
+    },
 
     // Shows or hides SIP calls button
-    my.showSipCallButton = function (show) {
-        if (APP.xmpp.isSipGatewayEnabled() && UIUtil.isButtonEnabled('sip') && show) {
+    showSipCallButton (show) {
+        if (APP.conference.sipGatewayEnabled()
+            && UIUtil.isButtonEnabled('sip') && show) {
             $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
             $('#toolbar_button_sip').css({display: "none"});
         }
-    };
+    },
 
     // Shows or hides the dialpad button
-    my.showDialPadButton = function (show) {
+    showDialPadButton (show) {
         if (UIUtil.isButtonEnabled('dialpad') && show) {
             $('#toolbar_button_dialpad').css({display: "inline-block"});
         } else {
             $('#toolbar_button_dialpad').css({display: "none"});
         }
-    };
+    },
 
     /**
      * Displays user authenticated identity name(login).
      * @param authIdentity identity name to be displayed.
      */
-    my.setAuthenticatedIdentity = function (authIdentity) {
+    setAuthenticatedIdentity (authIdentity) {
         if (authIdentity) {
-            var selector = $('#toolbar_auth_identity');
+            let selector = $('#toolbar_auth_identity');
             selector.css({display: "list-item"});
             selector.text(authIdentity);
         } else {
             $('#toolbar_auth_identity').css({display: "none"});
         }
-    };
+    },
 
     /**
      * Shows/hides login button.
      * @param show <tt>true</tt> to show
      */
-    my.showLoginButton = function (show) {
+    showLoginButton (show) {
         if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#toolbar_button_login').css({display: "list-item"});
         } else {
             $('#toolbar_button_login').css({display: "none"});
         }
-    };
+    },
 
     /**
      * Shows/hides logout button.
      * @param show <tt>true</tt> to show
      */
-    my.showLogoutButton = function (show) {
+    showLogoutButton (show) {
         if (UIUtil.isButtonEnabled('authentication') && show) {
             $('#toolbar_button_logout').css({display: "list-item"});
         } else {
             $('#toolbar_button_logout').css({display: "none"});
         }
-    };
+    },
 
     /**
-     * Sets the state of the button. The button has blue glow if desktop
+     * Update the state of the button. The button has blue glow if desktop
      * streaming is active.
-     * @param active the state of the desktop streaming.
      */
-    my.changeDesktopSharingButtonState = function (active) {
-        var button = $("#toolbar_button_desktopsharing");
-        if (active) {
+    updateDesktopSharingButtonState () {
+        let button = $("#toolbar_button_desktopsharing");
+        if (APP.conference.isSharingScreen) {
             button.addClass("glow");
         } else {
             button.removeClass("glow");
         }
-    };
+    },
 
-    return my;
-}(Toolbar || {}));
+    /**
+     * Marks video icon as muted or not.
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    markVideoIconAsMuted (muted) {
+        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+    },
 
-module.exports = Toolbar;
+    /**
+     * Marks video icon as disabled or not.
+     * @param {boolean} disabled if icon should look like disabled or not
+     */
+    markVideoIconAsDisabled (disabled) {
+        var $btn = $('#toolbar_button_camera');
+
+        $btn
+            .prop("disabled", disabled)
+            .attr("data-i18n", disabled
+                ? "[content]toolbar.cameraDisabled"
+                : "[content]toolbar.videomute")
+            .attr("shortcut", disabled ? "" : "toggleVideoPopover");
+
+        disabled
+            ? $btn.attr("disabled", "disabled")
+            : $btn.removeAttr("disabled");
+
+        APP.translation.translateElement($btn);
+
+        disabled && this.markVideoIconAsMuted(disabled);
+    },
+
+    /**
+     * Marks audio icon as muted or not.
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    markAudioIconAsMuted (muted) {
+        $('#toolbar_button_mute').toggleClass("icon-microphone",
+            !muted).toggleClass("icon-mic-disabled", muted);
+    },
+
+    /**
+     * Marks audio icon as disabled or not.
+     * @param {boolean} disabled if icon should look like disabled or not
+     */
+    markAudioIconAsDisabled (disabled) {
+        var $btn = $('#toolbar_button_mute');
+
+        $btn
+            .prop("disabled", disabled)
+            .attr("data-i18n", disabled
+                ? "[content]toolbar.micDisabled"
+                : "[content]toolbar.mute")
+            .attr("shortcut", disabled ? "" : "mutePopover");
+
+        disabled
+            ? $btn.attr("disabled", "disabled")
+            : $btn.removeAttr("disabled");
+
+        APP.translation.translateElement($btn);
+
+        disabled && this.markAudioIconAsMuted(disabled);
+    },
+
+    /**
+     * Indicates if the toolbar is currently hovered.
+     * @return {boolean} true if the toolbar is currently hovered,
+     * false otherwise
+     */
+    isHovered() {
+        var hovered = false;
+        this.toolbarSelector.find('*').each(function () {
+            let id = $(this).attr('id');
+            if ($(`#${id}:hover`).length > 0) {
+                hovered = true;
+                // break each
+                return false;
+            }
+        });
+        if (hovered)
+            return true;
+        if ($("#bottomToolbar:hover").length > 0) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns true if this toolbar is currently visible, or false otherwise.
+     * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
+     */
+    isVisible() {
+        return this.toolbarSelector.is(":visible");
+    },
+
+    /**
+     * Hides the toolbar with animation or not depending on the animate
+     * parameter.
+     */
+    hide() {
+        this.toolbarSelector.hide(
+            "slide", { direction: "up", duration: 300});
+    },
+
+    /**
+     * Shows the toolbar with animation or not depending on the animate
+     * parameter.
+     */
+    show() {
+        this.toolbarSelector.show(
+            "slide", { direction: "up", duration: 300});
+    }
+};
+
+export default Toolbar;

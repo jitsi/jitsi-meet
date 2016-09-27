@@ -1,4 +1,4 @@
-var jssha = require('jssha');
+var JSSHA = require('jssha');
 
 module.exports = {
     /**
@@ -16,7 +16,7 @@ module.exports = {
         // This implements the actual choice of an entry in the list based on
         // roomName. Please consider the implications for existing deployments
         // before introducing changes.
-        var hash = (new jssha(roomName, 'TEXT')).getHash('SHA-1', 'HEX');
+        var hash = (new JSSHA(roomName, 'TEXT')).getHash('SHA-1', 'HEX');
         var n = parseInt("0x"+hash.substr(-6));
         var idx = n % config.boshList.length;
         var attemptFirstAddress;

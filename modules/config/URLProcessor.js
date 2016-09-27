@@ -1,18 +1,6 @@
-/* global $, $iq, config, interfaceConfig */
+/* global $, $iq, config, interfaceConfig, getConfigParamsFromUrl */
 var configUtils = require('./Util');
 var params = {};
-function getConfigParamsFromUrl() {
-    if (!location.hash)
-        return {};
-    var hash = location.hash.substr(1);
-    var result = {};
-    hash.split("&").forEach(function (part) {
-        var item = part.split("=");
-        result[item[0]] = JSON.parse(
-            decodeURIComponent(item[1]).replace(/\\&/, "&"));
-    });
-    return result;
-}
 
 params = getConfigParamsFromUrl();
 
