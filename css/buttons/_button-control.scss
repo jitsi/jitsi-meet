@@ -22,6 +22,10 @@
         cursor: default;
     }
 
+    &_full-width {
+        width: 100%;
+    }
+
     &:hover {
         background-color: $buttonHoverBackground;
         @include transition(background-color .1s ease-in);
