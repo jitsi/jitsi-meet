@@ -26,10 +26,7 @@ let toggleStars = function(starCount) {
 let createRateFeedbackHTML = function (Feedback) {
     let rateExperience
             = APP.translation.translateString('dialog.rateExperience'),
-        feedbackHelp = APP.translation.translateString('dialog.feedbackHelp'),
-        feedbackQuestion = (Feedback.feedbackScore < 0)
-        ? `<p><br/>${APP.translation.translateString('dialog.feedbackQuestion')}</p>`
-        : '';
+        feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
 
     let starClassName = (interfaceConfig.ENABLE_FEEDBACK_ANIMATION)
                             ? "icon-star shake-rotate"
@@ -37,7 +34,6 @@ let createRateFeedbackHTML = function (Feedback) {
 
     return `
         <div class="aui-dialog2-content feedback__content">
-            ${feedbackQuestion}
             <form action="javascript:false;" onsubmit="return false;">
                 <div class="feedback__rating">
                     <h2>${ rateExperience }</h2>
