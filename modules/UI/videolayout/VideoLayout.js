@@ -109,7 +109,9 @@ var VideoLayout = {
         // the local video thumb maybe one pixel
         let { localVideo } = this.resizeThumbnails(false, true);
         AudioLevels.createAudioLevelCanvas(
-            "local", localVideo.thumbWidth, localVideo.thumbHeight);
+            "localVideoContainer",
+            localVideo.thumbWidth,
+            localVideo.thumbHeight);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
