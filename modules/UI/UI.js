@@ -262,6 +262,17 @@ UI.changeDisplayName = function (id, displayName) {
 };
 
 /**
+ * Shows/hides the indication about local connection being interrupted.
+ *
+ * @param {boolean} isInterrupted <tt>true</tt> if local connection is
+ * currently in the interrupted state or <tt>false</tt> if the connection
+ * is fine.
+ */
+UI.showLocalConnectionInterrupted = function (isInterrupted) {
+    VideoLayout.showLocalConnectionInterrupted(isInterrupted);
+};
+
+/**
  * Sets the "raised hand" status for a participant.
  */
 UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
@@ -602,10 +613,11 @@ UI.getSharedDocumentManager = function () {
 
 /**
  * Show user on UI.
- * @param {string} id user id
- * @param {string} displayName user nickname
+ * @param {JitsiParticipant} user
  */
-UI.addUser = function (id, displayName) {
+UI.addUser = function (user) {
+    var id = user.getId();
+    var displayName = user.getDisplayName();
     UI.hideRingOverLay();
     ContactList.addContact(id);
 
@@ -618,7 +630,7 @@ UI.addUser = function (id, displayName) {
         UIUtil.playSoundNotification('userJoined');
 
     // Add Peer's container
-    VideoLayout.addParticipantContainer(id);
+    VideoLayout.addParticipantContainer(user);
 
     // Configure avatar
     UI.setUserEmail(id);
@@ -981,6 +993,17 @@ UI.markDominantSpeaker = function (id) {
 
 UI.handleLastNEndpoints = function (ids, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(ids, enteringIds);
+};
+
+/**
+ * Will handle notification about participant's connectivity status change.
+ *
+ * @param {string} id the id of remote participant(MUC jid)
+ * @param {boolean} isActive true if the connection is ok or false if the user
+ * is having connectivity issues.
+ */
+UI.participantConnectionStatusChanged = function (id, isActive) {
+    VideoLayout.onParticipantConnectionStatusChanged(id, isActive);
 };
 
 /**

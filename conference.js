@@ -691,6 +691,51 @@ export default {
     isConnectionInterrupted () {
         return connectionIsInterrupted;
     },
+    /**
+     * Finds JitsiParticipant for given id.
+     *
+     * @param {string} id participant's identifier(MUC nickname).
+     *
+     * @returns {JitsiParticipant|null} participant instance for given id or
+     * null if not found.
+     */
+    getParticipantById (id) {
+        return room ? room.getParticipantById(id) : null;
+    },
+    /**
+     * Checks whether the user identified by given id is currently connected.
+     *
+     * @param {string} id participant's identifier(MUC nickname)
+     *
+     * @returns {boolean|null} true if participant's connection is ok or false
+     * if the user is having connectivity issues.
+     */
+    isParticipantConnectionActive (id) {
+        let participant = this.getParticipantById(id);
+        return participant ? participant.isConnectionActive() : null;
+    },
+    /**
+     * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
+     * the given <tt>id</tt>.
+     *
+     * @param id {string} the participant's id(MUC nickname/JVB endpoint id)
+     *
+     * @return {string} the participant's display name or the default string if
+     * absent.
+     */
+    getParticipantDisplayName (id) {
+        let displayName = getDisplayName(id);
+        if (displayName) {
+            return displayName;
+        } else {
+            if (APP.conference.isLocalId(id)) {
+                return APP.translation.generateTranslationHTML(
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+            } else {
+                return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            }
+        }
+    },
     getMyUserId () {
         return this._room
             && this._room.myUserId();
@@ -1085,7 +1130,7 @@ export default {
 
             console.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
-            APP.UI.addUser(id, user.getDisplayName());
+            APP.UI.addUser(user);
 
             // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
@@ -1174,6 +1219,10 @@ export default {
             ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids, enteringIds) => {
             APP.UI.handleLastNEndpoints(ids, enteringIds);
         });
+        room.on(
+            ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED, (id, isActive) => {
+            APP.UI.participantConnectionStatusChanged(id, isActive);
+        });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
             if (this.isLocalId(id)) {
                 this.isDominantSpeaker = true;
@@ -1205,10 +1254,12 @@ export default {
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
             connectionIsInterrupted = true;
             ConnectionQuality.updateLocalConnectionQuality(0);
+            APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
             connectionIsInterrupted = false;
+            APP.UI.showLocalConnectionInterrupted(false);
         });
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {

@@ -384,18 +384,30 @@ var VideoLayout = {
     },
 
     /**
-     * Creates a participant container for the given id and smallVideo.
+     * Creates or adds a participant container for the given id and smallVideo.
      *
-     * @param id the id of the participant to add
+     * @param {JitsiParticipant} user the participant to add
      * @param {SmallVideo} smallVideo optional small video instance to add as a
-     * remote video, if undefined RemoteVideo will be created
+     * remote video, if undefined <tt>RemoteVideo</tt> will be created
      */
-    addParticipantContainer (id, smallVideo) {
+    addParticipantContainer (user, smallVideo) {
+        let id = user.getId();
         let remoteVideo;
         if(smallVideo)
             remoteVideo = smallVideo;
         else
-            remoteVideo = new RemoteVideo(id, VideoLayout, eventEmitter);
+            remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
+        this.addRemoteVideoContainer(id, remoteVideo);
+    },
+
+    /**
+     * Adds remote video container for the given id and <tt>SmallVideo</tt>.
+     *
+     * @param {string} the id of the video to add
+     * @param {SmallVideo} smallVideo the small video instance to add as a
+     * remote video
+     */
+    addRemoteVideoContainer (id, remoteVideo) {
         remoteVideos[id] = remoteVideo;
 
         let videoType = VideoLayout.getRemoteVideoType(id);
@@ -413,6 +425,8 @@ var VideoLayout = {
         } else {
             VideoLayout.resizeThumbnails(false, true);
         }
+        // Initialize the view
+        remoteVideo.updateView();
     },
 
     videoactive (videoelem, resourceJid) {
@@ -485,6 +499,18 @@ var VideoLayout = {
      */
     showLocalAudioIndicator (isMuted) {
         localVideoThumbnail.showAudioIndicator(isMuted);
+    },
+
+    /**
+     * Shows/hides the indication about local connection being interrupted.
+     *
+     * @param {boolean} isInterrupted <tt>true</tt> if local connection is
+     * currently in the interrupted state or <tt>false</tt> if the connection
+     * is fine.
+     */
+    showLocalConnectionInterrupted (isInterrupted) {
+        localVideoThumbnail.connectionIndicator
+            .updateConnectionStatusIndicator(!isInterrupted);
     },
 
     /**
@@ -615,6 +641,35 @@ var VideoLayout = {
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
+        }
+    },
+
+    /**
+     * Shows/hides warning about remote user's connectivity issues.
+     *
+     * @param {string} id the ID of the remote participant(MUC nickname)
+     * @param {boolean} isActive true if the connection is ok or false when
+     * the user is having connectivity issues.
+     */
+    onParticipantConnectionStatusChanged (id, isActive) {
+        // Show/hide warning on the large video
+        if (this.isCurrentlyOnLarge(id)) {
+            if (largeVideo) {
+                // We have to trigger full large video update to transition from
+                // avatar to video on connectivity restored.
+                this.updateLargeVideo(id, true /* force update */);
+            }
+        }
+        // Show/hide warning on the thumbnail
+        let remoteVideo = remoteVideos[id];
+        if (remoteVideo) {
+            // Updating only connection status indicator is not enough, because
+            // when we the connection is restored while the avatar was displayed
+            // (due to 'muted while disconnected' condition) we may want to show
+            // the video stream again and in order to do that the display mode
+            // must be updated.
+            //remoteVideo.updateConnectionStatusIndicator(isActive);
+            remoteVideo.updateView();
         }
     },
 
