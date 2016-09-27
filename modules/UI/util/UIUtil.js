@@ -90,30 +90,21 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
      * appropriate class (ex. "tooltip-n") and "content" attribute.
      */
     activateTooltips: function () {
-        var positions = [
-            {side: 'top', gravity: 's'},
-            {side: 'left', gravity: 'e'},
-            {side: 'right', gravity: 'w'},
-            {side: 'bottom', gravity: 'n'},
-            {side: 'top-left', gravity: 'se'},
-            {side: 'top-right', gravity: 'sw'},
-            {side: 'bottom-left', gravity: 'ne'},
-            {side: 'bottom-right', gravity: 'nw'}
-        ];
-
         function getTitle () {
             return this.getAttribute('content');
         }
 
-        positions.forEach(function (config) {
-            AJS.$('.tooltip-' + config.gravity).tooltip({
-                gravity: config.gravity,
-                title: getTitle,
-                html: true,      // handle multiline tooltips
-                // two options to prevent tooltips from being stuck:
-                live: true,      // attach listener to document element
-                hoverable: false // make custom tooltips to behave like native
-            });
+        function getGravity () {
+            return this.getAttribute('data-tooltip');
+        }
+
+        AJS.$('[data-tooltip]').tooltip({
+            gravity: getGravity,
+            title: getTitle,
+            html: true,      // handle multiline tooltips
+            // two options to prevent tooltips from being stuck:
+            live: true,      // attach listener to document element
+            hoverable: false // make custom tooltips to behave like native
         });
     },
 
@@ -139,8 +130,8 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
         $(element).each(function () {
             var el = $(this);
 
-            el.addClass('tooltip-' + positions[position])
-              .attr("data-i18n", "[content]" + key);
+            el.attr("data-i18n", "[content]" + key)
+              .attr('data-tooltip', positions[position]);
 
             APP.translation.translateElement(el);
         });
