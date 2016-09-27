@@ -71,6 +71,31 @@ function contactElExists (id) {
 var ContactList = {
     init (emitter) {
         this.emitter = emitter;
+        this.addInviteButton();
+    },
+    /**
+     * Adds layout for invite button
+     */
+    addInviteButton() {
+        let container = document.getElementById('contacts_container');
+        let title = container.firstElementChild;
+        let htmlLayout = this.getInviteButtonLayout();
+        title.insertAdjacentHTML('afterend', htmlLayout);
+    },
+    /**
+     *
+     */
+    getInviteButtonLayout() {
+        let classes = 'button-control button-control_primary';
+        classes += ' button-control_full-width';
+        return (
+            `<div class="input-control">
+                <div class="input-control__container">
+                    <button id="addParticipantsBtn" class="${classes}">
+                        Add Participants
+                    </button>
+                </div>
+            </div>`);
     },
     /**
      * Indicates if the chat is currently visible.
