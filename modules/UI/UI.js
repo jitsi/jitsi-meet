@@ -1072,6 +1072,9 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
 UI.requestFeedback = function () {
     if (Feedback.isVisible())
         return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
+    // Feedback has been submitted already.
+    else if (Feedback.isSubmitted())
+        return Promise.resolve();
     else
         return new Promise(function (resolve, reject) {
             if (Feedback.isEnabled()) {

@@ -3,7 +3,11 @@
     height: auto;
 
     p {
-        color: $defaultDarkFontColor;
+        color: $defaultDarkColor;
+    }
+    textarea {
+        background: none;
+        border: 1px solid $inputBorderColor;
     }
     .aui-dialog2-content:last-child {
         border-bottom-right-radius: 5px;
@@ -14,24 +18,36 @@
         border-top-left-radius: 5px;
     }
     .aui-dialog2-footer{
+        border-top: 0;
+        border-radius: 0;
         padding-top: 0;
+        background: none;
+        border: none;
+        height: auto;
+        margin-top: 10px;
     }
     .aui-button {
-        height: 36px;
-        padding-top: 12px;
+        height: 28px;
+        font-size: 12px;
+        padding: 3px 6px 3px 6px;
         border: none;
-        background-color: transparent!important;
-        border-left: solid 1px #e4e4e4;
-        font-weight: 700;
+        box-shadow: none;
+        outline: none;
 
         &_close {
-            color: $defaultFontColor;
+            font-weight: 400 !important;
+            color: $buttonBackground;
+            background: none !important;
+
+            :hover {
+                text-decoration: underline;
+            }
         }
         &_submit {
-            color: $linkFontColor;
-            &:hover {
-                color: $linkHoverFontColor;
-            }
+            font-weight: 700 !important;
+            color: $defaultColor;
+            background: $buttonBackground;
+            border-radius: 3px;
         }
     }
 }
