@@ -88,6 +88,16 @@ var Feedback = {
     },
 
     /**
+     * Indicates if the feedback is submitted.
+     *
+     * @return {boolean} {true} to indicate if the feedback is submitted,
+     * {false} - otherwise
+     */
+    isSubmitted: function() {
+        return Feedback.window.submitted;
+    },
+
+    /**
      * Opens the feedback window.
      */
     openFeedbackWindow: function (callback) {
@@ -96,10 +106,23 @@ var Feedback = {
         JitsiMeetJS.analytics.sendEvent('feedback.open');
     },
 
+    /**
+     * Returns the feedback score.
+     *
+     * @returns {*}
+     */
     getFeedbackScore: function() {
-      return Feedback.window.feedbackScore;
-    }
+        return Feedback.window.feedbackScore;
+    },
 
+    /**
+     * Returns the feedback free text.
+     *
+     * @returns {null|*|message}
+     */
+    getFeedbackText: function() {
+        return Feedback.window.feedbackText;
+    }
 };
 
 module.exports = Feedback;

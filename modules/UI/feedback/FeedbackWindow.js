@@ -19,30 +19,6 @@ let toggleStars = function(starCount) {
 };
 
 /**
- * Constructs the html for the detailed feedback window.
- *
- * @returns {string} the contructed html string
- */
-let constructDetailedFeedbackHtml = function() {
-
-    return `
-        <div class="aui-dialog2-content feedback__content">
-            <div class="feedback__details">
-                <p>${APP.translation.translateString("dialog.sorryFeedback")}</p>
-                <br/><br/>
-                <textarea id="feedbackTextArea" rows="10" cols="50" autofocus></textarea>
-            </div>
-        </div>
-        <footer class="aui-dialog2-footer feedback__footer">
-            <div class="aui-dialog2-footer-actions">
-                <button id="dialog-close-button" class="aui-button aui-button_close">Close</button>
-                <button id="dialog-submit-button" class="aui-button aui-button_submit">Submit</button>
-            </div>
-        </footer>
-        `;
-};
-
-/**
  * Constructs the html for the rated feedback window.
  *
  * @returns {string} the contructed html string
@@ -86,7 +62,14 @@ let createRateFeedbackHTML = function (Feedback) {
                     <p>&nbsp;</p>
                     <p>${ feedbackHelp }</p>
                 </div>
+                <textarea id="feedbackTextArea" rows="10" cols="40" autofocus></textarea>
             </form>
+            <footer class="aui-dialog2-footer feedback__footer">
+                <div class="aui-dialog2-footer-actions">
+                    <button id="dialog-close-button" class="aui-button aui-button_close">Close</button>
+                    <button id="dialog-submit-button" class="aui-button aui-button_submit">Submit</button>
+                </div>
+            </footer>
         </div>
 `;
 };
@@ -106,15 +89,6 @@ let onLoadRateFunction = function (Feedback) {
         };
         el.onclick = function(){
             Feedback.feedbackScore = index + 1;
-
-            // If the feedback is less than 3 stars we're going to
-            // ask the user for more information.
-            if (Feedback.feedbackScore > 3) {
-                APP.conference.sendFeedback(Feedback.feedbackScore, "");
-                Feedback.hide();
-            } else {
-                Feedback.setState('detailed_feedback');
-            }
         };
     });
 
@@ -122,14 +96,10 @@ let onLoadRateFunction = function (Feedback) {
     if (Feedback.feedbackScore > 0) {
         toggleStars(Feedback.feedbackScore - 1);
     }
-};
 
-/**
- * Callback for Detailed Feedback
- *
- * @param Feedback
- */
-let onLoadDetailedFunction = function(Feedback) {
+    if (Feedback.feedbackText && Feedback.feedbackText.length > 0)
+        $('#feedbackTextArea').text(Feedback.feedbackText);
+
     let submitBtn = Feedback.$el.find('#dialog-submit-button');
     let closeBtn = Feedback.$el.find('#dialog-close-button');
 
@@ -157,16 +127,14 @@ export default class Dialog {
 
     constructor(options) {
         this.feedbackScore = -1;
+        this.feedbackText = null;
+        this.submitted = false;
         this.onCloseCallback = null;
 
         this.states = {
             rate_feedback: {
                 getHtml: createRateFeedbackHTML,
                 onLoad: onLoadRateFunction
-            },
-            detailed_feedback: {
-                getHtml: constructDetailedFeedbackHtml,
-                onLoad: onLoadDetailedFunction
             }
         };
         this.state = options.state || 'rate_feedback';
@@ -215,11 +183,15 @@ export default class Dialog {
         let self = this;
 
         if (message && message.length > 0) {
-            APP.conference.sendFeedback(
-                self.feedbackScore,
-                message);
+            self.feedbackText = message;
         }
+
+        APP.conference.sendFeedback(self.feedbackScore,
+                                    self.feedbackText);
+
+        // TO DO: make sendFeedback return true or false.
+        self.submitted = true;
+
         this.hide();
     }
-
 }

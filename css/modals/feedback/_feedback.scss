@@ -58,6 +58,12 @@
 
     &__content {
         text-align: center;
+
+        textarea {
+            text-align: left;
+            min-height: 80px;
+            width: 100%;
+        }
     }
     &__footer {
 
@@ -97,13 +103,6 @@
                 }
             };
 
-        }
-    }
-    &__details {
-        text-align: left;
-        textarea {
-            min-height: 100px;
-            width: 100%;
         }
     }
 }
