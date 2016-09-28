@@ -92,7 +92,7 @@ export default class LargeVideoManager {
      */
     onVideoInterrupted () {
         this.enableLocalConnectionProblemFilter(true);
-        this._setLocalConnectionMessage("connection.RECONNECTING")
+        this._setLocalConnectionMessage("connection.RECONNECTING");
         // Show the message only if the video is currently being displayed
         this.showLocalConnectionMessage(this.state === VIDEO_CONTAINER_TYPE);
     }

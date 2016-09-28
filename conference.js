@@ -1220,8 +1220,9 @@ export default {
             APP.UI.handleLastNEndpoints(ids, enteringIds);
         });
         room.on(
-            ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED, (id, isActive) => {
-            APP.UI.participantConnectionStatusChanged(id, isActive);
+            ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
+            (id, isActive) => {
+                APP.UI.participantConnectionStatusChanged(id, isActive);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
             if (this.isLocalId(id)) {
