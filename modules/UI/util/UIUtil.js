@@ -2,6 +2,17 @@
 
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
+const TOOLTIP_POSITIONS = {
+    'top': 's',
+    'left': 'e',
+    'right': 'w',
+    'bottom': 'n',
+    'top-left': 'se',
+    'top-right': 'sw',
+    'bottom-left': 'ne',
+    'bottom-right': 'nw'
+};
+
 /**
  * Created by hristo on 12/22/14.
  */
@@ -90,17 +101,13 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
      * appropriate class (ex. "tooltip-n") and "content" attribute.
      */
     activateTooltips: function () {
-        function getTitle () {
-            return this.getAttribute('content');
-        }
-
-        function getGravity () {
-            return this.getAttribute('data-tooltip');
-        }
-
         AJS.$('[data-tooltip]').tooltip({
-            gravity: getGravity,
-            title: getTitle,
+            gravity() {
+                return this.getAttribute('data-tooltip');
+            },
+            title() {
+                return this.getAttribute('content')
+            },
             html: true,      // handle multiline tooltips
             // two options to prevent tooltips from being stuck:
             live: true,      // attach listener to document element
@@ -116,25 +123,10 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
      * @param position the position of the tooltip in relation to the element
      */
     setTooltip: function (element, key, position) {
-        let positions = {
-            'top': 's',
-            'top-left': 'se',
-            'left': 'e',
-            'bottom-left': 'ne',
-            'bottom': 'n',
-            'bottom-right': 'nw',
-            'right': 'w',
-            'top-right': 'sw'
-        };
+        element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
+        element.setAttribute('data-i18n', '[content]' + key);
 
-        $(element).each(function () {
-            var el = $(this);
-
-            el.attr("data-i18n", "[content]" + key)
-              .attr('data-tooltip', positions[position]);
-
-            APP.translation.translateElement(el);
-        });
+        APP.translation.translateElement($(element));
     },
 
     /**
