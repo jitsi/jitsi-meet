@@ -2,6 +2,10 @@
 
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
+/**
+ * The 'TOOLTIP_POSITIONS' constant indicates what 'gravity' option should be 
+ * passed into AUI tooltip plugin using desired position of the tooltip
+ */
 const TOOLTIP_POSITIONS = {
     'top': 's',
     'left': 'e',
