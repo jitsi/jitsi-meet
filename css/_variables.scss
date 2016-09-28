@@ -31,19 +31,6 @@ $defaultDarkColor: #2b3d5c;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
-//TODO check it after rebase
-$auiDialogColor: #F1F1F1;
-$auiDialogBg: #474747;
-$auiDialogContentBg: #474747;
-$linkFontColor: #287ade;
-$linkHoverFontColor: #287ade;
-$auiPrimaryButtonBg: #3572b0;
-$auiPrimaryButtonColor: #fff;
-$auiIconColor: #707070;
-$auiPrimaryButtonHoverBg: #474747;
-$inputControlEmColor: #F1F1F1;
-//TODO end
-
 // Toolbar
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 
@@ -93,33 +80,3 @@ $auiPrimaryButtonHoverBg: #57647b;
 $auiPrimaryButtonColor: #fff;
 $auiIconColor: #707070;
 $inputControlEmColor: #f29424;
-<<<<<<< HEAD
-
-
-/**
-* Buttons
-*/
-$buttonBackground: #44A5FF;
-$buttonHoverBackground: #2c4062;
-
-$buttonLightBackground: #eceef1;
-$buttonLightHoverBackground: #c4d0e2;
-
-$buttonLinkBackground: transparent;
-$buttonLinkColor: #0090e8;
-
-$primaryButtonBackground: #505f79;
-$primaryButtonHoverBackground: #57647b;
-$primaryButtonColor: #fff;
-
-$buttonShadowColor: #192d4f;
-
-/**
- * Dialog colors
- **/
-$auiDialogColor: #eceef1;
-$auiDialogBg: #253858;
-$auiDialogContentBg: #344563;
->>>>>>> BeatC dialogs redesign
-=======
->>>>>>> finish theming
