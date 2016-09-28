@@ -25,12 +25,19 @@
         }
 
         &-dialog2 {
+            &-header, &-footer {
+                background-color: $auiDialogBg;
+                border: none;
+            }
+
             &-header {
                 height: em(58, 12);
+                border-bottom: 1px solid $auiBorderColor;
+
                 h2 {
                     font-size: em(20, 12);
-                    font-weight: 300;
-                    letter-spacing: 1px;
+                    font-weight: $dialogTitleFontWeight;
+                    letter-spacing: $titleLetterSpacing;
                     color: $auiDialogColor;
                 }
 
@@ -39,9 +46,8 @@
                 }
             }
 
-            &-header, &-footer {
-                background-color: $auiDialogBg;
-                border: none;
+            &-footer {
+                border-top: 1px solid $auiBorderColor;
             }
 
             &-content {
@@ -51,8 +57,8 @@
                 color: $auiDialogColor;
 
                 p,span, h3 {
-                    font-weight: 300;
-                    letter-spacing: 0.5px;
+                    font-weight: $labelFontWeight;
+                    letter-spacing: $letterSpacing;
                 }
 
                 &:last-child {
@@ -69,6 +75,6 @@
     }
 
     .input-control:not(:last-child) {
-        border-bottom: 1px solid $hrColor;
+        border-bottom: 1px solid $auiBorderColor;
     }
 }

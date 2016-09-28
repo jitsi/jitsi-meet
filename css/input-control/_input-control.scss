@@ -8,6 +8,7 @@
 
     &__label {
         font-size: 1em;
+        font-weight: $labelFontWeight;
     }
 
     &__input {
@@ -24,7 +25,7 @@
 
     &__hint {
         margin-top: 0;
-        font-size: em(12, 14);
+        font-size: $hintFontSize;
     }
 
     &__container {
