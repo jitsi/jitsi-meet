@@ -3,6 +3,22 @@
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
 /**
+ * Associates tooltip element position (in the terms of
+ * {@link UIUtil#setTooltip} which do not look like CSS <tt>position</tt>) with
+ * AUI tooltip <tt>gravity</tt>.
+ */
+const TOOLTIP_POSITIONS = {
+    'bottom': 'n',
+    'bottom-left': 'ne',
+    'bottom-right': 'nw',
+    'left': 'e',
+    'right': 'w',
+    'top': 's',
+    'top-left': 'se',
+    'top-right': 'sw'
+};
+
+/**
  * Created by hristo on 12/22/14.
  */
  var UIUtil = {
@@ -85,6 +101,29 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
     },
 
     /**
+     * Sets a global handler for all tooltips. Once invoked, create a new
+     * tooltip by merely updating a DOM node with the appropriate class (e.g.
+     * <tt>tooltip-n</tt>) and the attribute <tt>content</tt>.
+     */
+    activateTooltips() {
+        AJS.$('[data-tooltip]').tooltip({
+            gravity() {
+                return this.getAttribute('data-tooltip');
+            },
+
+            title() {
+                return this.getAttribute('content');
+            },
+
+            html: true, // Handle multiline tooltips.
+
+            // The following two prevent tooltips from being stuck:
+            hoverable: false, // Make custom tooltips behave like native ones.
+            live: true // Attach listener to document element.
+        });
+    },
+
+    /**
      * Sets the tooltip to the given element.
      *
      * @param element the element to set the tooltip to
@@ -92,25 +131,10 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
      * @param position the position of the tooltip in relation to the element
      */
     setTooltip: function (element, key, position) {
-        let positions = {
-            'top': 's',
-            'top-left': 'se',
-            'left': 'e',
-            'bottom-left': 'ne',
-            'bottom': 'n',
-            'bottom-right': 'nw',
-            'right': 'w',
-            'top-right': 'sw'
-        };
+        element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
+        element.setAttribute('data-i18n', '[content]' + key);
 
-        element.setAttribute("data-i18n", "[content]" + key);
         APP.translation.translateElement($(element));
-
-        AJS.$(element).tooltip({
-            gravity: positions[position],
-            title: this._getTooltipText.bind(this, element),
-            html: true
-        });
     },
 
     /**

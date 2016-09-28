@@ -340,6 +340,8 @@ UI.initConference = function () {
     // to the UI (depending on the moderator role of the local participant) and
     // (2) APP.conference as means of communication between the participants.
     followMeHandler = new FollowMe(APP.conference, UI);
+
+    UIUtil.activateTooltips();
 };
 
 UI.mucJoined = function () {
