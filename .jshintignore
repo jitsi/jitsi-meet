@@ -1,5 +1,4 @@
-debian
-libs
 node_modules
+libs
+debian
 analytics.js
-webpack.config.babel.js
