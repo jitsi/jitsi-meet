@@ -17,7 +17,7 @@ function initGlobalShortcuts() {
         APP.UI.toggleKeyboardShortcutsPanel();
     }, "keyboardShortcuts.toggleShortcuts");
 
-    KeyboardShortcut.registerShortcut("T", null, function() {
+    KeyboardShortcut.registerShortcut("SPACE", null, function() {
         JitsiMeetJS.analytics.sendEvent("shortcut.talk.clicked");
         APP.conference.muteAudio(true);
     }, "keyboardShortcuts.pushToTalk");
@@ -68,7 +68,7 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 var key = self._getKeyboardKey(e).toUpperCase();
-                if(key === "T") {
+                if(key === "SPACE") {
                     if(APP.conference.isLocalAudioMuted())
                         APP.conference.muteAudio(false);
                 }
@@ -139,6 +139,9 @@ var KeyboardShortcut = {
      * @returns {string} e.key or something close if not supported
      */
     _getKeyboardKey: function (e) {
+        if (e.which === 32) {
+            return 'SPACE';
+        }
         if (typeof e.key === "string") {
             return e.key;
         }
