@@ -2,6 +2,7 @@
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
+import AudioLevels from "../audio_levels/AudioLevels";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -266,7 +267,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
  * @param {boolean} isMuted indicates if we should set the view to muted view
  * or not
  */
-SmallVideo.prototype.setMutedView = function(isMuted) {
+SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 
@@ -308,10 +309,11 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
 };
 
 /**
- * Creates the element indicating the moderator(owner) of the conference.
+ * Adds the element indicating the moderator(owner) of the conference.
  */
-SmallVideo.prototype.createModeratorIndicatorElement = function () {
-    // don't create moderator indicator if DISABLE_FOCUS_INDICATOR is true
+SmallVideo.prototype.addModeratorIndicator = function () {
+
+    // Don't create moderator indicator if DISABLE_FOCUS_INDICATOR is true
     if (interfaceConfig.DISABLE_FOCUS_INDICATOR)
         return false;
 
@@ -340,9 +342,32 @@ SmallVideo.prototype.createModeratorIndicatorElement = function () {
 };
 
 /**
+ * Adds the element indicating the audio level of the participant.
+ */
+SmallVideo.prototype.addAudioLevelIndicator = function () {
+    var audioSpan = $('#' + this.videoSpanId + ' .audioindicator');
+
+    if (audioSpan.length) {
+        return;
+    }
+
+    this.container.appendChild(
+        AudioLevels.createThumbnailAudioLevelIndicator());
+};
+
+/**
+ * Updates the audio level for this small video.
+ *
+ * @param lvl the new audio level to set
+ */
+SmallVideo.prototype.updateAudioLevelIndicator = function (lvl) {
+    AudioLevels.updateThumbnailAudioLevel(this.videoSpanId, lvl);
+};
+
+/**
  * Removes the element indicating the moderator(owner) of the conference.
  */
-SmallVideo.prototype.removeModeratorIndicatorElement = function () {
+SmallVideo.prototype.removeModeratorIndicator = function () {
     $('#' + this.videoSpanId + ' .focusindicator').remove();
 };
 

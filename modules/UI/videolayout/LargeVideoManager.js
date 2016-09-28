@@ -5,7 +5,10 @@ import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
+
 import LargeContainer from "./LargeContainer";
+
+import AudioLevels from "../audio_levels/AudioLevels";
 
 /**
  * Manager for all Large containers.
@@ -305,6 +308,15 @@ export default class LargeVideoManager {
      */
     updateAvatar (avatarUrl) {
         $("#dominantSpeakerAvatar").attr('src', avatarUrl);
+    }
+
+    /**
+     * Updates the audio level indicator of the large video.
+     *
+     * @param lvl the new audio level to set
+     */
+    updateLargeVideoAudioLevel (lvl) {
+        AudioLevels.updateLargeVideoAudioLevel("dominantSpeaker", lvl);
     }
 
     /**

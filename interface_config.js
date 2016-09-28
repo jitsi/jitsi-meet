@@ -41,5 +41,7 @@ var interfaceConfig = {
     REMOTE_THUMBNAIL_RATIO_HEIGHT: 1,
     // Enables feedback star animation.
     ENABLE_FEEDBACK_ANIMATION: false,
-    DISABLE_FOCUS_INDICATOR: false
+    DISABLE_FOCUS_INDICATOR: false,
+    AUDIO_LEVEL_PRIMARY_COLOR: "rgba(255,255,255,0.7)",
+    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.4)"
 };
