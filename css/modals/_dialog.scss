@@ -1,5 +1,4 @@
 .dialog {
-    visibility: visible;
     height: auto;
 
     .aui {
@@ -72,7 +71,6 @@
             margin-left: 10px;
             color: $auiDialogColor;
             letter-spacing: 0.5px;
-            font-weight: 300;
 
             &-primary {
                 background-color: $auiPrimaryButtonBg;
@@ -83,7 +81,7 @@
             }
 
             &_close {
-                color: $defaultFontColor;
+                color: $defaultColor;
             }
             &_submit {
                 color: $linkFontColor;
