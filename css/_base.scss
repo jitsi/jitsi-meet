@@ -36,7 +36,7 @@ input[type='text'], input[type='password'], textarea {
     color: $inputColor;
     border-radius: $borderRadius;
     line-height: 32px;
-    letter-spacing: 0.5px;
+    letter-spacing: $letterSpacing;
     height: 32px;
     text-align: left;
     border:1px solid $inputBorderColor;
@@ -61,7 +61,7 @@ button, input, select, textarea {
     vertical-align: baseline;
     color: $inputColor;
     font-size: 1em;
-    letter-spacing: 0.5px;
+    letter-spacing: $letterSpacing;
 }
 
 button, select, input[type="button"],
@@ -187,11 +187,8 @@ form {
 
     &:hover {
         color: $linkHoverFontColor;
+        text-decoration: underline;
         @include transition(color .1s ease-in);
-    }
-
-    &:active, &:focus, &:hover {
-        text-decoration: none;
     }
 }
 

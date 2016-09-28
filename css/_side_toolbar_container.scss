@@ -12,7 +12,7 @@
     background-color: rgba(0,0,0,0.8);
     z-index: 800;
     overflow: hidden;
-    letter-spacing: 1px;
+    letter-spacing: $titleLetterSpacing;
 
     /**
      * Labels inside the side panel.
@@ -36,7 +36,7 @@
      */
     select, input[type="button"], input[type="text"],
     input[type="reset"], input[type="submit"] {
-        color: $defaultColor;
+        color: $inputColor;
         background: $inputBackground;
         border: none;
     }
