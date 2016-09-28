@@ -1,9 +1,7 @@
-import path from 'path';
 import process from 'process';
 import webpack from 'webpack';
 
-const aui_css
-    = path.resolve(__dirname, './node_modules/@atlassian/aui/dist/aui/css/');
+const aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
 const minimize
     = process.argv.indexOf('-p') != -1
         || process.argv.indexOf('--optimize-minimize') != -1;
@@ -18,8 +16,8 @@ const config = {
             // Transpile ES2015 (aka ES6) to ES5.
 
             exclude: [
-                path.resolve(__dirname, './modules/RTC/adapter.screenshare.js'),
-                path.resolve(__dirname, './node_modules/')
+                __dirname + '/modules/RTC/adapter.screenshare.js',
+                __dirname + '/node_modules/'
             ],
             loader: 'babel',
             test: /\.js$/
@@ -72,7 +70,7 @@ const config = {
     output: {
         filename: '[name]' + (minimize ? '.min' : '') + '.js',
         libraryTarget: 'umd',
-        path: path.resolve(__dirname, './build'),
+        path: __dirname + '/build',
         sourceMapFilename: '[name].' + (minimize ? 'min' : 'js') + '.map'
     },
     resolve: {
