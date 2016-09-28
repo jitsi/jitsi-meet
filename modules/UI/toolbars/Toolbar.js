@@ -7,35 +7,7 @@ import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
 let roomUrl = null;
 let emitter = null;
-
-/**
- * Opens the invite link dialog.
- */
-function openLinkDialog () {
-    return new Promise((resolve) => {
-        let options = {
-            roomUrl,
-            emitter,
-            password: null
-        };
-
-        let event = UIEvents.REQUEST_ROOM_PASSWORD;
-
-        emitter.emit(event, (room) => {
-            if (room.isLocked) {
-                options.password = room.password;
-            } else {
-                options.password = null;
-            }
-
-            let inviteDialog = new InviteDialog(options);
-
-            inviteDialog.open();
-            resolve(inviteDialog);
-        });
-    });
-
-}
+let Toolbar;
 
 const buttonHandlers = {
     "toolbar_button_profile": function () {
@@ -79,7 +51,7 @@ const buttonHandlers = {
     },
     "toolbar_button_link": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-        openLinkDialog();
+        Toolbar.openLinkDialog();
     },
     "toolbar_button_chat": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
@@ -334,7 +306,7 @@ function showSipNumberInput () {
     });
 }
 
-const Toolbar = {
+Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
         // The toolbar is enabled by default.
@@ -707,6 +679,35 @@ const Toolbar = {
         $('#mainToolbarContainer').click(listener);
 
         $("#extendedToolbar").click(listener);
+    },
+
+    /**
+     * Opens the invite link dialog.
+     */
+    openLinkDialog () {
+        return new Promise((resolve) => {
+            let options = {
+                roomUrl,
+                emitter,
+                password: null
+            };
+
+            let event = UIEvents.REQUEST_ROOM_PASSWORD;
+
+            emitter.emit(event, (room) => {
+                if (room.isLocked) {
+                    options.password = room.password;
+                } else {
+                    options.password = null;
+                }
+
+                let inviteDialog = new InviteDialog(options);
+
+                inviteDialog.open();
+                resolve(inviteDialog);
+            });
+        });
+
     },
 
     /**

@@ -1,5 +1,8 @@
 {
     "contactlist": "On Call",
+    "roomLocked": "Callers must enter a password",
+    "addParticipants": "Add Participants",
+    "roomUnlocked": "Anyone with the link can join",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "feedback": "Give us your feedback",
@@ -178,6 +181,7 @@
         "raisedHand": "Would like to speak."
     },
     "dialog": {
+        "add": "Add",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
         "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser's security settings and try again.",
         "passwordError": "This conversation is currently protected by a password. Only the owner of the conference can set a password.",
@@ -187,6 +191,7 @@
         "connecting": "Connecting",
         "copy": "Copy",
         "error": "Error",
+        "addPassword": "Add Password",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
@@ -203,10 +208,13 @@
         "SLDFailure": "Oops! Something went wrong and we failed to mute! (SLD Failure)",
         "SRDFailure": "Oops! Something went wrong and we failed to stop video! (SRD Failure)",
         "oops": "Oops!",
+        "currentPassword": "The current password is",
+        "passwordLabel": "Password",
         "defaultError": "There was some kind of error",
         "passwordRequired": "Password required",
         "Ok": "Ok",
         "Remove": "Remove",
+        "removePassword": "Remove password",
         "shareVideoTitle": "Share a video",
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "removeSharedVideoTitle": "Remove shared video",
