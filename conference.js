@@ -39,6 +39,13 @@ let connectionIsInterrupted = false;
  */
 let DSExternalInstallationInProgress = false;
 
+/**
+ * Listens whether conference had been left from local user when we are trying
+ * to navigate away from current page.
+ * @type {ConferenceLeftListener}
+ */
+let conferenceLeftListener = null;
+
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
 /**
@@ -255,7 +262,7 @@ function disconnectAndShowFeedback(requestFeedback) {
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
-    const errCallback = (f, err) => {
+    const errCallback = (err) => {
 
         // If we want to break out the chain in our error handler, it needs
         // to return a rejected promise. In the case of feedback request
@@ -270,14 +277,69 @@ function hangup (requestFeedback = false) {
         }
     };
     const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
-    APP.conference._room.leave()
-    .then(disconnect)
-    .catch(errCallback.bind(null, disconnect))
-    .then(maybeRedirectToWelcomePage)
-    .catch(function(err){
-            console.log(err);
-        });
 
+    if (!conferenceLeftListener)
+        conferenceLeftListener = new ConferenceLeftListener();
+
+    // Make sure that leave is resolved successfully and the set the handlers
+    // to be invoked once conference had been left
+    APP.conference._room.leave()
+        .then(conferenceLeftListener.setHandler(disconnect, errCallback))
+        .catch(errCallback);
+}
+
+/**
+ * Listens for CONFERENCE_LEFT event so we can check whether it has finished.
+ * The handler will be called once the conference had been left or if it
+ * was already left when we are adding the handler.
+ */
+class ConferenceLeftListener {
+    /**
+     * Creates ConferenceLeftListener and start listening for conference
+     * failed event.
+     */
+    constructor() {
+        room.on(ConferenceEvents.CONFERENCE_LEFT,
+            this._handleConferenceLeft.bind(this));
+    }
+
+    /**
+     * Handles the conference left event, if we have a handler we invoke it.
+     * @private
+     */
+    _handleConferenceLeft() {
+        this.conferenceLeft = true;
+
+        if (this.handler)
+            this._handleLeave();
+    }
+
+    /**
+     * Sets the handlers. If we already left the conference invoke them.
+     * @param handler
+     * @param errCallback
+     */
+    setHandler (handler, errCallback) {
+        this.handler = handler;
+        this.errCallback = errCallback;
+
+        if (this.conferenceLeft)
+            this._handleLeave();
+    }
+
+    /**
+     * Invokes the handlers.
+     * @private
+     */
+    _handleLeave()
+    {
+        this.handler()
+            .catch(this.errCallback)
+            .then(maybeRedirectToWelcomePage)
+            .catch(function(err){
+                console.log(err);
+            });
+    }
 }
 
 /**
