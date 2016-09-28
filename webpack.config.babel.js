@@ -15,10 +15,7 @@ const config = {
         loaders: [{
             // Transpile ES2015 (aka ES6) to ES5.
 
-            exclude: [
-                __dirname + '/modules/RTC/adapter.screenshare.js',
-                __dirname + '/node_modules/'
-            ],
+            exclude: __dirname + '/node_modules/',
             loader: 'babel',
             test: /\.js$/
         },{
