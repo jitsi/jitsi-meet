@@ -28,6 +28,19 @@ $defaultDarkSelectionColor: #253858;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
+//TODO check it after rebase
+$auiDialogColor: #F1F1F1;
+$auiDialogBg: #474747;
+$auiDialogContentBg: #474747;
+$linkFontColor: #287ade;
+$linkHoverFontColor: #287ade;
+$auiPrimaryButtonBg: #3572b0;
+$auiPrimaryButtonColor: #fff;
+$auiIconColor: #707070;
+$auiPrimaryButtonHoverBg: #474747;
+$inputControlEmColor: #F1F1F1;
+//TODO end
+
 // Toolbar
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 
@@ -36,7 +49,7 @@ $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #165ECC;
 
 // Main controls
-$inputBackground: #344563;
+$inputBackground: #EBEBEB;
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 $inputBorderColor: #7a869a;
