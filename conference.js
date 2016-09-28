@@ -1768,5 +1768,20 @@ export default {
             // Update the view
             APP.UI.setLocalRaisedHandStatus(raisedHand);
         }
+    },
+    /**
+     * Log event to callstats and analytics.
+     * @param {string} name the event name
+     * @param {int} value the value (it's int because google analytics supports
+     * only int).
+     * NOTE: Should be used after conference.init
+     */
+    logEvent(name, value) {
+        if(JitsiMeetJS.analytics) {
+            JitsiMeetJS.analytics.sendEvent(name, value);
+        }
+        if(room) {
+            room.sendApplicationLog(JSON.stringify({name, value}));
+        }
     }
 };
