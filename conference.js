@@ -401,6 +401,13 @@ class ConferenceConnector {
             }
             break;
 
+        case ConferenceErrors.NOT_ALLOWED_ERROR:
+            {
+                // let's show some auth not allowed page
+                window.location.pathname = "authError.html";
+            }
+            break;
+
         case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
             APP.UI.notifyBridgeDown();
             break;
