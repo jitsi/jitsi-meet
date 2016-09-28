@@ -689,7 +689,9 @@ UI.updateLocalRole = function (isModerator) {
     SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
-        messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
+        if (!interfaceConfig.DISABLE_FOCUS_INDICATOR)
+            messageHandler
+                .notify(null, "notify.me", 'connected', "notify.moderator");
 
         Recording.checkAutoRecord();
     }
@@ -703,7 +705,9 @@ UI.updateLocalRole = function (isModerator) {
 UI.updateUserRole = function (user) {
     VideoLayout.showModeratorIndicator();
 
-    if (!user.isModerator()) {
+    // We don't need to show moderator notifications when the focus (moderator)
+    // indicator is disabled.
+    if (!user.isModerator() || interfaceConfig.DISABLE_FOCUS_INDICATOR) {
         return;
     }
 

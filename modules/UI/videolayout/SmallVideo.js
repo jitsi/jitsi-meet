@@ -312,7 +312,9 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
  */
 SmallVideo.prototype.createModeratorIndicatorElement = function () {
     // don't create moderator indicator if DISABLE_FOCUS_INDICATOR is true
-    if (interfaceConfig.DISABLE_FOCUS_INDICATOR) return false;
+    if (interfaceConfig.DISABLE_FOCUS_INDICATOR)
+        return false;
+
     // Show moderator indicator
     var indicatorSpan = $('#' + this.videoSpanId + ' .focusindicator');
 
