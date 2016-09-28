@@ -1,20 +1,20 @@
 .button-control {
     box-sizing: border-box;
     display: inline-block;
+    border: 1px solid $buttonBorder;
     vertical-align: baseline;
     height: 30px;
     padding: 4px 10px;
     margin: 0;
     line-height: 1.5em;
-    border: none;
     outline: none;
     background-color: transparent;
     float: right;
     font-size: 14px;
     margin-left: 10px;
-    color: $auiDialogColor;
-    letter-spacing: 0.5px;
-    font-weight: 300;
+    color: $buttonColor;
+    letter-spacing: $letterSpacing;
+    font-weight: $buttonFontWeight;
     @include transition(background-color .1s ease-out);
 
     &[disabled] {
@@ -28,6 +28,7 @@
     }
 
     &:hover {
+        border: 1px solid $buttonHoverBorder;
         background-color: $buttonHoverBackground;
         @include transition(background-color .1s ease-in);
     }
@@ -39,8 +40,10 @@
     &_light {
         color: $defaultDarkColor;
         background-color: $buttonLightBackground;
+        border: 1px solid $buttonLightBorder;
 
         &:hover {
+            border: 1px solid $buttonLightHoverBorder;
             background-color: $buttonLightHoverBackground;
         }
     }
@@ -56,8 +59,12 @@
 
     &_primary {
         background-color: $primaryButtonBackground;
+        border: 1px solid $primaryButtonBackground;
+        color: $primaryButtonColor;
+        font-weight: $primaryButtonFontWeight;
 
         &:hover {
+            border: 1px solid $primaryButtonHoverBackground;
             background-color: $primaryButtonHoverBackground;
         }
     }

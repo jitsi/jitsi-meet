@@ -1,0 +1,46 @@
+/**
+* Buttons
+*/
+$buttonBackground: #f5f5f5;
+$buttonHoverBackground: #e9e9e9;
+$buttonBorder: #ccc;
+$buttonHoverBorder: #999;
+$buttonColor: #333;
+
+$buttonLightBackground: #f5f5f5;
+$buttonLightHoverBackground: #e9e9e9;
+$buttonLightBorder: #ccc;
+$buttonLightHoverBorder: #999;
+
+$buttonLinkBackground: transparent;
+$buttonLinkColor: #0090e8;
+
+$primaryButtonBackground: #3572b0;
+$primaryButtonHoverBackground: #2a67a5;
+$primaryButtonColor: #fff;
+$primaryButtonFontWeight: 400;
+
+$buttonShadowColor: #192d4f;
+
+/**
+ * Dialog colors
+ **/
+$auiDialogColor: #333;
+$auiDialogBg: #f5f5f5;
+$auiDialogContentBg: #fff;
+$auiBorderColor: #ccc;
+$dialogTitleFontWeight: 400;
+
+// Main controls
+$inputBackground: #fff;
+$inputBorderColor: #ccc;
+$inputColor: #333;
+$defaultDarkSelectionColor: #ccc;
+$titleLetterSpacing: 0;
+$letterSpacing: 0;
+$buttonFontWeight: 400;
+$labelFontWeight: 400;
+$hintFontSize: em(13, 14);
+$linkFontColor: #3572b0;
+$linkHoverFontColor: darken(#3572b0, 10%);
+$dropdownColor: #333;
