@@ -1,5 +1,6 @@
 /* global APP, $, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
+import UIEvents from  '../../../service/UI/UIEvents';
 
 /**
  * Show dialog which asks user for new password for the conference.
@@ -124,7 +125,7 @@ export default function createRoomLocker (room) {
      */
     let lockedElsewhere = false;
 
-    /*
+    /**
      * Allows to set new password
      * @param newPass
      * @returns {Promise.<TResult>}
@@ -132,6 +133,10 @@ export default function createRoomLocker (room) {
     function lock (newPass) {
         return room.lock(newPass).then(function () {
             password = newPass;
+
+            let { ROOM_LOCKED, ROOM_UNLOCKED} = UIEvents;
+            let event = password ? ROOM_LOCKED : ROOM_UNLOCKED;
+            APP.UI.emitEvent(event);
         }).catch(function (err) {
             console.error(err);
             if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {

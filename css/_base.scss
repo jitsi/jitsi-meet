@@ -13,6 +13,10 @@ html, body{
     overflow: hidden;
 }
 
+p {
+    margin: 0;
+}
+
 html, body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
 }

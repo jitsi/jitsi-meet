@@ -750,7 +750,9 @@ UI.toggleChat = function () {
  * Toggles contact list panel.
  */
 UI.toggleContactList = function () {
-    UI.toggleSidePanel("contacts_container");
+    ContactList.updateView().then(() => {
+        UI.toggleSidePanel("contacts_container");
+    });
 };
 
 /**
@@ -1543,6 +1545,13 @@ UI.showKeyboardShortcutsPanel = function(show) {
     } else {
         $('#keyboard-shortcuts').hide();
     }
+};
+
+/**
+ * Opens the invite link dialog.
+ */
+UI.openLinkDialog = function () {
+    Toolbar.openLinkDialog();
 };
 
 module.exports = UI;

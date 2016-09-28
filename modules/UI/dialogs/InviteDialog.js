@@ -15,6 +15,8 @@ export default class InviteDialog {
         this.password = options.password;
         this.roomUrl = options.roomUrl || null;
         this.emitter = options.emitter || null;
+        this.unlockHint = "unlockHint";
+        this.lockHint = "lockHint";
 
         if (this.roomUrl === null) {
             this.inviteAttributes = (
@@ -90,7 +92,13 @@ export default class InviteDialog {
     }
 
     getShareLinkBlock() {
-        // TODO: Add translations
+        let copyKey = 'dialog.copy';
+        let copyText = APP.translation.translateString(copyKey);
+        let roomLockDescKey = 'roomLocked';
+        let roomLockDesc = APP.translation.translateString(roomLockDescKey);
+        let roomUnlockKey = 'roomUnlocked';
+        let roomUnlock = APP.translation.translateString(roomUnlockKey);
+
         return (
             `<div class="input-control">
                 <label class="input-control__label for="inviteLinkRef">
@@ -99,31 +107,41 @@ export default class InviteDialog {
                 <div class="input-control__container">
                     <input class="input-control__input" id="inviteLinkRef"
                            type="text" ${this.inviteAttributes} readonly>
-                    <button id="copyInviteLink"
+                    <button id="copyInviteLink" data-i18n="${copyKey}"
                             class="button-control button-control_light">
-                        Copy
+                        ${copyText}
                     </button>
                 </div>
-                <p class="input-control__hint">
-                    This call is locked. New callers must have
-                    the link and enter the password to join.
+                <p class="input-control__hint ${this.lockHint}"
+                   data-i18n="${roomLockDescKey}">
+                    ${roomLockDesc}
+                </p>
+                <p class="input-control__hint ${this.unlockHint}"
+                   data-i18n="${roomUnlockKey}">
+                    ${roomUnlock}
                 </p>
             </div>`
         );
     }
 
     getAddPasswordBlock() {
+        let addPassKey = 'dialog.addPassword';
+        let addPassText = APP.translation.translateString(addPassKey);
+        let addKey = 'dialog.add';
+        let addText = APP.translation.translateString(addKey);
+
         return (`
             <div class="input-control">
                 <label class="input-control__label
-                       for="newPasswordInput">Add password</label>
+                       for="newPasswordInput"
+                       data-i18n="${addPassKey}">${addPassText}</label>
                 <div class="input-control__container">
                     <input class="input-control__input" id="newPasswordInput"
                            type="text">
                     <button id="addPasswordBtn" id="inviteDialogAddPassword"
-                            disabled
+                            disabled data-i18n="${addKey}"
                             class="button-control button-control_light">
-                        Add
+                        ${addText}
                     </button>
                 </div>
             </div>
@@ -132,12 +150,21 @@ export default class InviteDialog {
 
     getPasswordBlock() {
         let { password } = this;
+        let removePassKey = 'dialog.removePassword';
+        let removePassText = APP.translation.translateString(removePassKey);
+        let currentPassKey = 'dialog.currentPassword';
+        let currentPassText = APP.translation.translateString(currentPassKey);
+        let passwordKey = "dialog.passwordLabel";
+        let passwordText = APP.translation.translateString(passwordKey);
+
         return (`
             <div class="input-control">
-                <label class="input-control__label">Password</label>
+                <label class="input-control__label"
+                       data-i18n="${passwordKey}">${passwordText}</label>
                 <div class="input-control__container">
-                    <p class="input-control__text">
-                        The current password is
+                    <p class="input-control__text"
+                       data-i18n="${currentPassKey}">
+                        ${currentPassText}
                         <span id="inviteDialogPassword"
                               class="input-control__em">
                             ${password}
@@ -145,8 +172,8 @@ export default class InviteDialog {
                     </p>
                     <a class="link input-control__right"
                        id="inviteDialogRemovePassword"
-                       href="#">
-                       Remove password
+                       href="#" data-i18n="${removePassKey}">
+                       ${removePassText}
                    </a>
                 </div>
             </div>
@@ -181,6 +208,7 @@ export default class InviteDialog {
             size: 'medium'
         });
         $.prompt.goToState(initialState);
+        this.updateView(!!this.password);
 
         this.setHandlers();
     }
@@ -194,8 +222,8 @@ export default class InviteDialog {
             let newPass = $passInput.val();
             let addPassCb = () => {
                 this.password = newPass;
-                this.updateView();
                 $.prompt.goToState(States.LOCKED);
+                this.updateView(!!this.password);
             };
 
             if(newPass) {
@@ -205,13 +233,17 @@ export default class InviteDialog {
         $('#inviteDialogRemovePassword').on('click', () => {
             let removePassCb = () => {
                 this.password = null;
-                this.updateView();
                 $.prompt.goToState(States.UNLOCKED);
+                this.updateView(!!this.password);
             };
 
             this.emitter.emit(UIEvents.UNLOCK_ROOM, removePassCb);
         });
         $passInput.keyup(this.disableAddPassIfInputEmpty.bind(this));
+        let updateViewUnlocked = this.updateView.bind(this, false);
+        let updateViewLocked = this.updateView.bind(this, true);
+        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, updateViewUnlocked);
+        APP.UI.addListener(UIEvents.ROOM_LOCKED, updateViewLocked);
     }
 
     disableAddPassIfInputEmpty() {
@@ -241,9 +273,18 @@ export default class InviteDialog {
         }
     }
 
-    updateView() {
+    updateView(roomLocked) {
         $('#inviteDialogPassword').text(this.password);
         $('#newPasswordInput').val('');
         this.disableAddPassIfInputEmpty();
+
+        let roomLockedDesc = `.${this.lockHint}`;
+        let roomUnlockedDesc = `.${this.unlockHint}`;
+
+        let showDesc = roomLocked ? roomLockedDesc : roomUnlockedDesc;
+        let hideDesc = !roomLocked ? roomLockedDesc : roomUnlockedDesc;
+
+        $(showDesc).show();
+        $(hideDesc).hide();
     }
 }

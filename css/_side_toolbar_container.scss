@@ -63,6 +63,9 @@
      */
     .sideToolbarContainer__inner {
         display: none;
+        box-sizing: border-box;
+        padding-left: 10px;
+        padding-right: 10px;
         width: 200px;
         color: #FFF;
 
@@ -99,6 +102,10 @@
          */
         .first {
             margin-top: 0px !important;
+        }
+
+        .button-control {
+            margin: 9px 0;
         }
     }
 }
