@@ -430,8 +430,6 @@ function returnRoomStatus(cb = $.noop) {
         isLocked
     } = roomLocker;
 
-    window.cb = cb;
-
     cb({password, isLocked});
 }
 

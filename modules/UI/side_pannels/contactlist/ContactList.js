@@ -71,7 +71,10 @@ function contactElExists (id) {
 var ContactList = {
     init (emitter) {
         this.emitter = emitter;
+        this.lockKey = 'roomLocked';
+        this.unlockKey = 'roomUnlocked';
         this.addInviteButton();
+        this.setupListeners();
     },
     /**
      * Adds layout for invite button
@@ -79,23 +82,77 @@ var ContactList = {
     addInviteButton() {
         let container = document.getElementById('contacts_container');
         let title = container.firstElementChild;
-        let htmlLayout = this.getInviteButtonLayout();
+
+        let htmlLayout =  this.getInviteButtonLayout();
         title.insertAdjacentHTML('afterend', htmlLayout);
+        $(document).on('click', '#addParticipantsBtn', () => {
+            APP.UI.openLinkDialog();
+        });
     },
     /**
-     *
+     *  Returns layout for invite button
      */
     getInviteButtonLayout() {
         let classes = 'button-control button-control_primary';
         classes += ' button-control_full-width';
-        return (
-            `<div class="input-control">
-                <div class="input-control__container">
-                    <button id="addParticipantsBtn" class="${classes}">
-                        Add Participants
-                    </button>
-                </div>
+        let key = 'addParticipants';
+        let text = APP.translation.translateString(key);
+
+        let lockedHtml = this.getLockDescriptionLayout(this.lockKey);
+        let unlockedHtml = this.getLockDescriptionLayout(this.unlockKey);
+
+        let html = (
+            `<button id="addParticipantsBtn" 
+                     data-i18n="${key}" 
+                     class="${classes}">
+                ${text}
+            </button>
+            <div class="input-control__container">
+                ${lockedHtml}
+                ${unlockedHtml}
             </div>`);
+
+        return html;
+    },
+    /**
+     * Adds layout for lock description
+     */
+    getLockDescriptionLayout(key) {
+        let classes = "input-control__hint input-control_full-width";
+        let description = APP.translation.translateString(key);
+        return `<p id="contactList${key}"
+                       data-i18n="${key}"
+                       class="${classes}">${description}</p>`;
+    },
+    /**
+     * Setup listeners
+     */
+    setupListeners() {
+        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, this.updateView.bind(this));
+        APP.UI.addListener(UIEvents.ROOM_LOCKED, this.updateView.bind(this));
+    },
+    /**
+     * Updating the view according the model
+     * @returns {Promise}
+     */
+    updateView() {
+        return new Promise((resolve) => {
+            let event = UIEvents.REQUEST_ROOM_PASSWORD;
+
+            let password;
+            this.emitter.emit(event, (room) => {
+                password = room.password;
+                let showKey = !!password ? this.lockKey : this.unlockKey;
+                let hideKey = !password ? this.lockKey : this.unlockKey;
+                let showId = `contactList${showKey}`;
+                let hideId = `contactList${hideKey}`;
+
+                $(`#${showId}`).show();
+                $(`#${hideId}`).hide();
+
+                resolve();
+            });
+        });
     },
     /**
      * Indicates if the chat is currently visible.

@@ -127,7 +127,17 @@ export default {
     UNLOCK_ROOM: "UI.unlock_room",
 
     /**
+     * Triggered when room unlocked
+     */
+    ROOM_UNLOCKED: "UI.room_unlocked",
+
+    /**
      * Locking the room
      */
-    LOCK_ROOM: "UI.lock_room"
+    LOCK_ROOM: "UI.lock_room",
+
+    /**
+     * Triggered when room locked
+     */
+    ROOM_LOCKED: "UI.room_locked"
 };
