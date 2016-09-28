@@ -197,7 +197,7 @@ RemoteVideo.prototype.setMutedView = function(isMuted) {
     SmallVideo.prototype.setMutedView.call(this, isMuted);
     // Update 'mutedWhileDisconnected' flag
     this._figureOutMutedWhileDisconnected(this.isConnectionActive() === false);
-}
+};
 
 /**
  * Figures out the value of {@link #mutedWhileDisconnected} flag by taking into
@@ -215,7 +215,7 @@ RemoteVideo.prototype._figureOutMutedWhileDisconnected
     } else if (!isDisconnected && !this.isVideoMuted) {
         this.mutedWhileDisconnected = false;
     }
-}
+};
 
 /**
  * Adds the remote video menu element for the given <tt>id</tt> in the
