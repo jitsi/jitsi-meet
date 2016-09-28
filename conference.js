@@ -1101,8 +1101,10 @@ export default {
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
                 console.info(`My role changed, new role: ${role}`);
-                this.isModerator = room.isModerator();
-                APP.UI.updateLocalRole(room.isModerator());
+                if (this.isModerator !== room.isModerator()) {
+                    this.isModerator = room.isModerator();
+                    APP.UI.updateLocalRole(room.isModerator());
+                }
             } else {
                 let user = room.getParticipantById(id);
                 if (user) {
