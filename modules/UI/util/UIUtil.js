@@ -85,6 +85,30 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
     },
 
     /**
+     * Sets global handler for all tooltips. Once this function is invoked
+     * all you need to create new tooltip is to update DOM node with
+     * appropriate class (ex. "tooltip-n") and "content" attribute.
+     */
+    activateTooltips: function () {
+        function getTitle () {
+            return this.getAttribute('content');
+        }
+
+        function getGravity () {
+            return this.getAttribute('data-tooltip');
+        }
+
+        AJS.$('[data-tooltip]').tooltip({
+            gravity: getGravity,
+            title: getTitle,
+            html: true,      // handle multiline tooltips
+            // two options to prevent tooltips from being stuck:
+            live: true,      // attach listener to document element
+            hoverable: false // make custom tooltips to behave like native
+        });
+    },
+
+    /**
      * Sets the tooltip to the given element.
      *
      * @param element the element to set the tooltip to
@@ -103,13 +127,13 @@ import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
             'top-right': 'sw'
         };
 
-        element.setAttribute("data-i18n", "[content]" + key);
-        APP.translation.translateElement($(element));
+        $(element).each(function () {
+            var el = $(this);
 
-        AJS.$(element).tooltip({
-            gravity: positions[position],
-            title: this._getTooltipText.bind(this, element),
-            html: true
+            el.attr("data-i18n", "[content]" + key)
+              .attr('data-tooltip', positions[position]);
+
+            APP.translation.translateElement(el);
         });
     },
 
