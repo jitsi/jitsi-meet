@@ -46,8 +46,8 @@
     "uglify-js": "2.4.24",
     "clean-css": "*",
     "babelify": "*",
-    "babel-preset-es2015": "*",
-    "babel-polyfill": "*"
+    "babel-preset-es2015": "6.14.0",
+    "babel-polyfill": "6.13.0"
   },
   "license": "Apache-2.0",
   "scripts": {
