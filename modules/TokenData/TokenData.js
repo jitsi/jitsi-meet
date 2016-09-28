@@ -97,6 +97,7 @@ class TokenData{
         this.payload = this.decodedJWT.payload;
         if(!this.payload.context)
             return;
+        this.server = this.payload.context.server;
         let callerData = this.payload.context.user;
         let calleeData = this.payload.context.callee;
         if(callerData)
