@@ -2,66 +2,12 @@
 /* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
+import InviteDialog from '../dialogs/InviteDialog';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
 let roomUrl = null;
 let emitter = null;
-
-/**
- * Opens the invite link dialog.
- */
-function openLinkDialog () {
-    let inviteAttributes;
-
-    if (roomUrl === null) {
-        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-    } else {
-        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
-    }
-
-    let inviteLinkId = "inviteLinkRef";
-    let focusInviteLink = function() {
-        $('#' + inviteLinkId).focus();
-        $('#' + inviteLinkId).select();
-    };
-
-    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, title, null,
-        '<input id="' + inviteLinkId + '" type="text" '
-            + inviteAttributes + ' readonly/>',
-        false, "dialog.copy",
-        function (e, v) {
-            if (v && roomUrl) {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-
-                focusInviteLink();
-
-                document.execCommand('copy');
-            }
-            else {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
-            }
-        },
-        function (event) {
-            if (!roomUrl) {
-                if (event && event.target) {
-                    $(event.target).find('button[value=true]')
-                        .prop('disabled', true);
-                }
-            }
-            else {
-                focusInviteLink();
-            }
-        },
-        function (e, v, m, f) {
-            if(!v && !m && !f)
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
-        },
-        'Copy' // Focus Copy button.
-    );
-}
+let Toolbar;
 
 const buttonHandlers = {
     "toolbar_button_profile": function () {
@@ -105,7 +51,7 @@ const buttonHandlers = {
     },
     "toolbar_button_link": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-        openLinkDialog();
+        Toolbar.openLinkDialog();
     },
     "toolbar_button_chat": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
@@ -159,21 +105,20 @@ const buttonHandlers = {
         emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
+        let titleKey = "dialog.logoutTitle";
+        let msgKey = "dialog.logoutQuestion";
         JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
-        APP.UI.messageHandler.openTwoButtonDialog(
-            "dialog.logoutTitle",
-            null,
-            "dialog.logoutQuestion",
-            null,
-            false,
-            "dialog.Yes",
-            function (evt, yes) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            msgKey,
+            leftButtonKey: "dialog.Yes",
+            submitFunction: function (evt, yes) {
                 if (yes) {
                     emitter.emit(UIEvents.LOGOUT);
                 }
             }
-        );
+        });
     },
     "toolbar_film_strip": function () {
         JitsiMeetJS.analytics.sendEvent(
@@ -340,23 +285,28 @@ function showSipNumberInput () {
     let defaultNumber = config.defaultSipNumber
         ? config.defaultSipNumber
         : '';
-
+    let titleKey = "dialog.sipMsg";
     let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        `<h2>${sipMsg}</h2>
-            <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
-        false, "dialog.Dial",
-        function (e, v, m, f) {
+    let msgString = (`
+            <input name="sipNumber" type="text"
+                   value="${defaultNumber}" autofocus>
+    `);
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString: sipMsg,
+        msgString,
+        leftButtonKey: "dialog.Dial",
+        submitFunction: function (e, v, m, f) {
             if (v && f.sipNumber) {
                 emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
             }
         },
-        null, null, ':input:first'
-    );
+        focus: ':input:first'
+    });
 }
 
-const Toolbar = {
+Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
         // The toolbar is enabled by default.
@@ -729,6 +679,35 @@ const Toolbar = {
         $('#mainToolbarContainer').click(listener);
 
         $("#extendedToolbar").click(listener);
+    },
+
+    /**
+     * Opens the invite link dialog.
+     */
+    openLinkDialog () {
+        return new Promise((resolve) => {
+            let options = {
+                roomUrl,
+                emitter,
+                password: null
+            };
+
+            let event = UIEvents.REQUEST_ROOM_PASSWORD;
+
+            emitter.emit(event, (room) => {
+                if (room.isLocked) {
+                    options.password = room.password;
+                } else {
+                    options.password = null;
+                }
+
+                let inviteDialog = new InviteDialog(options);
+
+                inviteDialog.open();
+                resolve(inviteDialog);
+            });
+        });
+
     },
 
     /**

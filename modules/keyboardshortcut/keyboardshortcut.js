@@ -170,19 +170,23 @@ var KeyboardShortcut = {
      */
     _addShortcutToHelp: function (shortcutChar, shortcutDescriptionKey) {
 
-        var listElement = document.createElement("li");
+        let listElement = document.createElement("li");
+        let itemClass = 'shortcuts-list__item';
+        listElement.className = itemClass;
         listElement.id = shortcutChar;
 
-        var spanElement = document.createElement("span");
+        let spanElement = document.createElement("span");
         spanElement.className = "item-action";
 
-        var kbdElement = document.createElement("kbd");
-        kbdElement.className = "regular-key";
+        let kbdElement = document.createElement("kbd");
+        let classes = 'aui-label regular-key';
+        kbdElement.className = classes;
         kbdElement.innerHTML = shortcutChar;
         spanElement.appendChild(kbdElement);
 
-        var descriptionElement = document.createElement("span");
-        descriptionElement.className = "item-description";
+        let descriptionElement = document.createElement("span");
+        let descriptionClass = "shortcuts-list__description";
+        descriptionElement.className = descriptionClass;
         descriptionElement.setAttribute("data-i18n", shortcutDescriptionKey);
         descriptionElement.innerHTML
             = APP.translation.translateString(shortcutDescriptionKey);
@@ -190,7 +194,7 @@ var KeyboardShortcut = {
         listElement.appendChild(spanElement);
         listElement.appendChild(descriptionElement);
 
-        var parentListElement
+        let parentListElement
             = document.getElementById("keyboard-shortcuts-list");
 
         if (parentListElement)
