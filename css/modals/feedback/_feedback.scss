@@ -48,7 +48,7 @@
 .feedback.aui-dialog2{
     .aui-dialog2{
         &-header {
-            background-color: #fff;
+            background-color: $auiDialogContentBg;
             border-bottom-color: transparent;
             h2 {
                 text-align: center;
@@ -57,7 +57,7 @@
 
         &-content {
             text-align: center;
-            padding: 40px;
+            padding: 10px 40px 20px 40px;
 
             .rating {
                 line-height: 1.2;
@@ -65,8 +65,7 @@
 
                 .star-label {
                     height: 16px;
-                    font-size: 16px;
-                    color: $rateStarLabelColor;
+                    font-size: 14px;
                 }
                 .star-btn {
                     color: $rateStarDefault;
@@ -81,9 +80,6 @@
                     &.active,
                     &:hover {
                         color: $rateStarActivity;
-                        > i:before {
-                            content: "\e90a";
-                        }
                     };
 
                 }
@@ -97,6 +93,10 @@
                     min-height: 100px;
                 }
             }
+        }
+        &-footer {
+            background-color: $auiDialogContentBg;
+            border-top-color: transparent;
         }
     }
 }
