@@ -31,6 +31,7 @@
         "focusRemote": "Focus on one of the remote videos.",
         "toggleChat": "Open or close the chat panel.",
         "mute": "Mute or unmute the microphone.",
+        "fullScreen": "Enter or exit full screen mode.",
         "videoMute": "Stop or start the local video."
     },
     "welcomepage":{
