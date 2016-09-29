@@ -283,13 +283,13 @@ const defaultToolbarButtons = {
         id: 'toolbar_button_fullScreen',
         tooltipKey: 'toolbar.fullscreen',
         className: "button icon-full-screen",
-        shortcut: 'F',
+        shortcut: 'S',
         shortcutAttr: 'toggleFullscreenPopover',
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent('shortcut.fullscreen.toggled');
             APP.UI.toggleFullScreen();
         },
-        shortcutDescription: "keyboardShortcuts.toggleChat",
+        shortcutDescription: "keyboardShortcuts.fullScreen",
         content: "Enter / Exit Full Screen",
         i18n: "[content]toolbar.fullscreen"
     },
