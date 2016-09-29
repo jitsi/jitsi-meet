@@ -1,7 +1,6 @@
 /* global config, APP, $, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
-import AudioLevels from "../audio_levels/AudioLevels";
 import Avatar from "../avatar/Avatar";
 import FilmStrip from "./FilmStrip";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -108,10 +107,6 @@ var VideoLayout = {
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
         let { localVideo } = this.resizeThumbnails(false, true);
-        AudioLevels.createAudioLevelCanvas(
-            "localVideoContainer",
-            localVideo.thumbWidth,
-            localVideo.thumbHeight);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
@@ -123,16 +118,21 @@ var VideoLayout = {
             largeVideo.onLocalFlipXChange(localFlipX);
         }
         largeVideo.updateContainerSize();
-        AudioLevels.init();
     },
 
+    /**
+     * Sets the audio level of the video elements associated to the given id.
+     *
+     * @param id the video identifier in the form it comes from the library
+     * @param lvl the new audio level to update to
+     */
     setAudioLevel(id, lvl) {
-        if (!largeVideo) {
-            return;
-        }
-        AudioLevels.updateAudioLevel(
-            id, lvl, largeVideo.id
-        );
+        let smallVideo = this.getSmallVideo(id);
+        if (smallVideo)
+            smallVideo.updateAudioLevelIndicator(lvl);
+
+        if (largeVideo && id === largeVideo.id)
+            largeVideo.updateLargeVideoAudioLevel(lvl);
     },
 
     isInLastN (resource) {
@@ -469,9 +469,9 @@ var VideoLayout = {
     showModeratorIndicator () {
         let isModerator = APP.conference.isModerator;
         if (isModerator) {
-            localVideoThumbnail.createModeratorIndicatorElement();
+            localVideoThumbnail.addModeratorIndicator();
         } else {
-            localVideoThumbnail.removeModeratorIndicatorElement();
+            localVideoThumbnail.removeModeratorIndicator();
         }
 
         APP.conference.listMembers().forEach(function (member) {
@@ -481,7 +481,7 @@ var VideoLayout = {
                 return;
 
             if (member.isModerator()) {
-                remoteVideo.createModeratorIndicatorElement();
+                remoteVideo.addModeratorIndicator();
             }
 
             if (isModerator) {
@@ -528,7 +528,6 @@ var VideoLayout = {
         FilmStrip.resizeThumbnails(localVideo, remoteVideo,
             animate, forceUpdate)
             .then(function () {
-                AudioLevels.updateCanvasSize(localVideo, remoteVideo);
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
             });
@@ -558,11 +557,11 @@ var VideoLayout = {
      */
     onVideoMute (id, value) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setMutedView(value);
+            localVideoThumbnail.setVideoMutedView(value);
         } else {
             let remoteVideo = remoteVideos[id];
             if (remoteVideo)
-                remoteVideo.setMutedView(value);
+                remoteVideo.setVideoMutedView(value);
         }
 
         if (this.isCurrentlyOnLarge(id)) {

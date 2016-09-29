@@ -28,6 +28,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.setDisplayName();
 
     this.createConnectionIndicator();
+    this.addAudioLevelIndicator();
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);

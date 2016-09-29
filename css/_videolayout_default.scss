@@ -363,6 +363,46 @@
     background: $raiseHandBg;
 }
 
+/**
+ * Audio indicator on video thumbnails.
+ */
+.videocontainer>span.audioindicator {
+    position: absolute;
+    display: inline-block;
+    left: 6px;
+    top: 50%;
+    margin-top: -17px;
+    width: 6px;
+    height: 35px;
+    z-index: 2;
+    border: none;
+
+    .audiodot-top,
+    .audiodot-bottom,
+    .audiodot-middle {
+        opacity: 0;
+        display: inline-block;
+        @include circle(5px);
+        background: $audioLevelShadow;
+        margin: 1px 0 1px 0;
+        transition: opacity .25s ease-in-out;
+        -moz-transition: opacity .25s ease-in-out;
+    }
+
+    span.audiodot-top::after,
+    span.audiodot-bottom::after,
+    span.audiodot-middle::after {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        -webkit-filter: blur(0.5px);
+        filter: blur(0.5px);
+        background: $audioLevelBg;
+    }
+}
+
 #indicatoricon {
     width: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
     height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
@@ -399,25 +439,20 @@
     width: 300px;
     height: 300px;
     margin: auto;
-    overflow: hidden;
     position: relative;
-}
-
-#dominantSpeakerAudioLevel {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 2;
-    visibility: inherit;
 }
 
 #mixedstream {
     display:none !important;
 }
 
-#dominantSpeakerAvatar {
+#dominantSpeakerAvatar,
+.dynamic-shadow {
     width: 200px;
     height: 200px;
+}
+
+#dominantSpeakerAvatar {
     top: 50px;
     margin: auto;
     position: relative;
@@ -425,6 +460,15 @@
     z-index: 3;
     visibility: inherit;
     background-color: #000000;
+}
+
+.dynamic-shadow {
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -100px;
+    transition: box-shadow 0.3s ease;
 }
 
 .userAvatar {

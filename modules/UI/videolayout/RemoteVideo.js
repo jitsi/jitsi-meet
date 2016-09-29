@@ -63,12 +63,11 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 
     let { remoteVideo } = this.VideoLayout.resizeThumbnails(false, true);
     let { thumbHeight, thumbWidth } = remoteVideo;
-    AudioLevels.createAudioLevelCanvas(
-        this.videoSpanId, thumbWidth, thumbHeight);
+
+    this.addAudioLevelIndicator();
 
     return this.container;
 };
-
 
 /**
  * Initializes the remote participant popup menu, by specifying previously
