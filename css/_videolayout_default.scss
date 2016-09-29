@@ -371,25 +371,35 @@
     display: inline-block;
     left: 6px;
     top: 50%;
-    margin-top: -21px;
+    margin-top: -17px;
     width: 6px;
-    height: 42px;
+    height: 35px;
     z-index: 2;
     border: none;
 
     .audiodot-top,
-    .audiodot-bottom {
+    .audiodot-bottom,
+    .audiodot-middle {
         opacity: 0;
         display: inline-block;
-        @include circle(4px);
-        background: $audioLevelBg;
+        @include circle(5px);
+        background: $audioLevelShadow;
         margin: 1px 0 1px 0;
-        -webkit-filter: blur(0.5px);
-        filter: blur(0.5px);
-        border: 1px solid rgba(0, 0, 0, .5);
         transition: opacity .25s ease-in-out;
         -moz-transition: opacity .25s ease-in-out;
-        z-index: 2;
+    }
+
+    span.audiodot-top::after,
+    span.audiodot-bottom::after,
+    span.audiodot-middle::after {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        -webkit-filter: blur(0.5px);
+        filter: blur(0.5px);
+        background: $audioLevelBg;
     }
 }
 

@@ -1,19 +1,24 @@
 /* global interfaceConfig */
 
 import UIUtil from "../util/UIUtil";
+
 /**
  * Responsible for drawing audio levels.
  */
 const AudioLevels = {
 
     /**
-     * The number of dots per class. We have 2 classes of dots "top" and
-     * "bottom". The total number of dots will be twice the below value.
+     * The number of dots.
+     *
+     * IMPORTANT: functions below assume that this is an odd number.
      */
-    _AUDIO_LEVEL_DOTS: 3,
+    _AUDIO_LEVEL_DOTS: 5,
 
     /**
      * Creates the audio level indicator span element.
+     *
+     * IMPORTANT: This function assumes that the number of dots is an
+     * odd number.
      *
      * @return {Element} the document element representing audio levels
      */
@@ -22,9 +27,17 @@ const AudioLevels = {
         let audioSpan = document.createElement('span');
         audioSpan.className = 'audioindicator';
 
-        for (let i = 0; i < this._AUDIO_LEVEL_DOTS*2; i++) {
-            var audioDot = document.createElement('span');
-            audioDot.className = (i < this._AUDIO_LEVEL_DOTS)
+        this.sideDotsCount = Math.floor(this._AUDIO_LEVEL_DOTS/2);
+
+        for (let i = 0; i < this._AUDIO_LEVEL_DOTS; i++) {
+            let audioDot = document.createElement('span');
+
+            // The median index will be equal to the number of dots on each
+            // side.
+            if (i === this.sideDotsCount)
+                audioDot.className = "audiodot-middle";
+            else
+                audioDot.className = (i < this.sideDotsCount)
                                     ? "audiodot-top"
                                     : "audiodot-bottom";
 
@@ -36,13 +49,42 @@ const AudioLevels = {
     /**
      * Updates the audio level UI for the given id.
      *
-     * @param id id of the user for whom we draw the audio level
-     * @param audioLevel the newAudio level to render
+     * @param {string} id id of the user for whom we draw the audio level
+     * @param {number} audioLevel the newAudio level to render
      */
     updateThumbnailAudioLevel (id, audioLevel) {
-        let audioSpan = document.getElementById(id)
-                            .getElementsByClassName("audioindicator");
 
+        // First make sure we are sensitive enough.
+        audioLevel *= 1.2;
+        audioLevel = Math.min(audioLevel, 1);
+
+        // Let's now stretch the audio level over the number of dots we have.
+        let stretchedAudioLevel = (this.sideDotsCount + 1) * audioLevel;
+        let dotLevel = 0.0;
+
+        for (let i = 0; i < (this.sideDotsCount + 1); i++) {
+
+            dotLevel = Math.min(1, Math.max(0, (stretchedAudioLevel - i)));
+            this._setDotLevel(id, i, dotLevel);
+        }
+    },
+
+    /**
+     * Fills the dot(s) with the specified "index", with as much opacity as
+     * indicated by "opacity".
+     *
+     * @param {string} elementID the parent audio indicator span element
+     * @param {number} index the index of the dots to fill, where 0 indicates
+     * the middle dot and the following increments point toward the
+     * corresponding pair of dots.
+     * @param {number} opacity the opacity to set for the specified dot.
+     */
+    _setDotLevel(elementID, index, opacity) {
+
+        let audioSpan = document.getElementById(elementID)
+            .getElementsByClassName("audioindicator");
+
+        // Make sure the audio span is still around.
         if (audioSpan && audioSpan.length > 0)
             audioSpan = audioSpan[0];
         else
@@ -50,29 +92,21 @@ const AudioLevels = {
 
         let audioTopDots
             = audioSpan.getElementsByClassName("audiodot-top");
+        let audioDotMiddle
+            = audioSpan.getElementsByClassName("audiodot-middle");
         let audioBottomDots
             = audioSpan.getElementsByClassName("audiodot-bottom");
 
-        let coloredDots = Math.round(this._AUDIO_LEVEL_DOTS*audioLevel);
-        let topColoredDots = this._AUDIO_LEVEL_DOTS - coloredDots;
-
-        for (let i = 0; i < audioTopDots.length; i++) {
-            if (i < topColoredDots)
-                audioTopDots[i].style.opacity = 0;
-            else if (i === topColoredDots && topColoredDots > 0)
-                audioTopDots[i].style.opacity = 0.5;
-            else
-                audioTopDots[i].style.opacity = 1;
+        // First take care of the middle dot case.
+        if (index === 0){
+            audioDotMiddle[0].style.opacity = opacity;
+            return;
         }
 
-        for (let i = 0; i < audioBottomDots.length; i++) {
-            if (i < coloredDots)
-                audioBottomDots[i].style.opacity = 1;
-            else if (i === coloredDots && coloredDots > 0)
-                audioBottomDots[i].style.opacity = 0.5;
-            else
-                audioBottomDots[i].style.opacity = 0;
-        }
+        // Index > 0 : we are setting non-middle dots.
+        index--;
+        audioBottomDots[index].style.opacity = opacity;
+        audioTopDots[this.sideDotsCount - index - 1].style.opacity = opacity;
     },
 
     /**
