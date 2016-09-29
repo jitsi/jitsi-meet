@@ -17,10 +17,12 @@ function initGlobalShortcuts() {
         APP.UI.toggleKeyboardShortcutsPanel();
     }, "keyboardShortcuts.toggleShortcuts");
 
-    KeyboardShortcut.registerShortcut("SPACE", null, function() {
+    // register SPACE shortcut in two steps to insure visibility of help message
+    KeyboardShortcut.registerShortcut(" ", null, function() {
         JitsiMeetJS.analytics.sendEvent("shortcut.talk.clicked");
         APP.conference.muteAudio(true);
-    }, "keyboardShortcuts.pushToTalk");
+    });
+    KeyboardShortcut._addShortcutToHelp("SPACE","keyboardShortcuts.pushToTalk");
 
     /**
      * FIXME: Currently focus keys are directly implemented below in onkeyup.
@@ -68,7 +70,7 @@ var KeyboardShortcut = {
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
                 var key = self._getKeyboardKey(e).toUpperCase();
-                if(key === "SPACE") {
+                if(key === " ") {
                     if(APP.conference.isLocalAudioMuted())
                         APP.conference.muteAudio(false);
                 }
@@ -139,9 +141,6 @@ var KeyboardShortcut = {
      * @returns {string} e.key or something close if not supported
      */
     _getKeyboardKey: function (e) {
-        if (e.which === 32) {
-            return 'SPACE';
-        }
         if (typeof e.key === "string") {
             return e.key;
         }
