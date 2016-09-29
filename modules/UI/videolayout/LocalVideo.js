@@ -74,6 +74,9 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 $('#localDisplayName').html(
                     `${UIUtil.escapeHtml(displayName)} (${meHTML})`
                 );
+                $('#editDisplayName').val(
+                    `${UIUtil.escapeHtml(displayName)}`
+                );
             } else {
                 $('#localDisplayName').html(defaultLocalDisplayName);
             }
