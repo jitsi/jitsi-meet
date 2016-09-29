@@ -3,7 +3,7 @@
 const labels = {
     1: 'Very Bad',
     2: 'Bad',
-    3: 'Not Bad',
+    3: 'Average',
     4: 'Good',
     5: 'Very Good'
 };
@@ -39,8 +39,8 @@ let createRateFeedbackHTML = function () {
         feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
 
     let starClassName = (interfaceConfig.ENABLE_FEEDBACK_ANIMATION)
-        ? "icon-star shake-rotate"
-        : "icon-star";
+        ? "icon-star-full shake-rotate"
+        : "icon-star-full";
 
     return `
         <form id="feedbackForm"
@@ -68,7 +68,7 @@ let createRateFeedbackHTML = function () {
                 </div>
             </div>
             <div class="details">
-                <textarea id="feedbackTextArea"
+                <textarea id="feedbackTextArea" class="input-control__input"
                     placeholder="${ feedbackHelp }"></textarea>
             </div>
         </form>`;
