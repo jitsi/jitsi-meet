@@ -55,7 +55,7 @@
     "validate": "npm ls"
   },
   "pre-commit": [
-    "lint"
+    "jshint"
   ],
   "browserify": {
     "transform": [
