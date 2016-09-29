@@ -1102,7 +1102,7 @@ UI.requestFeedback = function () {
     if (Feedback.isVisible())
         return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
     // Feedback has been submitted already.
-    else if (Feedback.isSubmitted())
+    else if (Feedback.isEnabled() && Feedback.isSubmitted())
         return Promise.resolve();
     else
         return new Promise(function (resolve, reject) {
