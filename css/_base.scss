@@ -48,8 +48,8 @@ input[type='text'], input[type='password'], textarea {
 textarea {
     overflow: hidden;
     word-wrap: break-word;
-    resize: horizontal;
-    padding-top: 0;
+    resize: none;
+    line-height: 1.5em;
 }
 
 button.no-icon {

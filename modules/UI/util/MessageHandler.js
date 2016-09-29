@@ -93,7 +93,9 @@ var messageHandler = {
             closeFunction,
             focus,
             size,
-            defaultButton
+            defaultButton,
+            wrapperClass,
+            classes
         } = options;
 
         if (!popupEnabled || twoButtonDialog)
@@ -101,7 +103,9 @@ var messageHandler = {
 
         var buttons = [];
 
-        var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
+        var leftButton = leftButtonKey ?
+            APP.translation.generateTranslationHTML(leftButtonKey) :
+            APP.translation.generateTranslationHTML('dialog.Submit');
         buttons.push({ title: leftButton, value: true});
 
         var cancelButton
@@ -115,6 +119,11 @@ var messageHandler = {
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
+        classes = classes || this._getDialogClasses(size);
+        if (wrapperClass) {
+            classes.prompt += ` ${wrapperClass}`;
+        }
+
         twoButtonDialog = $.prompt(message, {
             title: this._getFormattedTitleString(title),
             persistent: false,
@@ -123,7 +132,7 @@ var messageHandler = {
             focus: focus,
             loaded: loadedFunction,
             promptspeed: 0,
-            classes: this._getDialogClasses(size),
+            classes,
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
                 if (submitFunction)

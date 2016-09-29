@@ -45,71 +45,58 @@
     animation-timing-function: ease-in-out
 }
 
-.feedback {
-    h2 {
-        font-weight: 400;
-        font-size: 24px;
-        line-height: 1.2;
-    }
-    p {
-        font-weight: 400;
-        font-size: 14px;
-    }
-
-    &__content {
-        text-align: center;
-
-        textarea {
-            text-align: left;
-            min-height: 80px;
-            width: 100%;
-        }
-    }
-    &__footer {
-
-        &:hover {
-            color: #287ade;
-            outline: 0;
-        }
-    }
-    &__rating {
-        line-height: 1.2;
-        text-align: center;
-
-        p {
-            margin: 10px 0 0;
+.feedback.aui-dialog2{
+    .aui-dialog2{
+        &-header {
+            background-color: #fff;
+            border-bottom-color: transparent;
+            h2 {
+                text-align: center;
+            }
         }
 
-        .star-label {
-            font-size: 16px;
-            color: $rateStarLabelColor;
-        }
+        &-content {
+            text-align: center;
+            padding: 40px;
 
-        .star-btn {
-            color: $rateStarDefault;
-            font-size: 36px;
-            position: relative;
-            cursor: pointer;
-            outline: none;
-            text-decoration: none;
-            @include transition(all .2s ease);
+            .rating {
+                line-height: 1.2;
+                text-align: center;
 
-            &.starHover,
-            &.active,
-            &:hover {
-                color: $rateStarActivity;
-                > i:before {
-                    content: "\e90a";
+                .star-label {
+                    height: 16px;
+                    font-size: 16px;
+                    color: $rateStarLabelColor;
                 }
-            };
+                .star-btn {
+                    color: $rateStarDefault;
+                    font-size: 36px;
+                    position: relative;
+                    cursor: pointer;
+                    outline: none;
+                    text-decoration: none;
+                    @include transition(all .2s ease);
 
-        }
-    }
-    &__details {
-        text-align: left;
-        textarea {
-            resize: vertical;
-            min-height: 100px;
+                    &.starHover,
+                    &.active,
+                    &:hover {
+                        color: $rateStarActivity;
+                        > i:before {
+                            content: "\e90a";
+                        }
+                    };
+
+                }
+            }
+
+            .details {
+                padding-left: 60px;
+                padding-right: 60px;
+                margin-top: 20px;
+                textarea {
+                    min-height: 100px;
+                }
+            }
         }
     }
 }
