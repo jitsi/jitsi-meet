@@ -1,5 +1,5 @@
 /* jshint -W101 */
-var Smileys = require("./smileys.json");
+import { regexes } from './smileys';
 
 /**
  * Processes links and smileys in "body"
@@ -29,7 +29,7 @@ export function linkify(inputText) {
     replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
 
-    //Change email addresses to mailto:: links.
+    //Change email addresses to mailto: links.
     replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
     replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
 
@@ -44,10 +44,9 @@ function smilify(body) {
         return body;
     }
 
-    var regexs = Smileys.regexs;
-    for(var smiley in regexs) {
-        if(regexs.hasOwnProperty(smiley)) {
-            body = body.replace(regexs[smiley],
+    for(var smiley in regexes) {
+        if(regexes.hasOwnProperty(smiley)) {
+            body = body.replace(regexes[smiley],
                     '<img class="smiley" src="images/smileys/' + smiley + '.svg">');
         }
     }

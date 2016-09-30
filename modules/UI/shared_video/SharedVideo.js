@@ -243,7 +243,7 @@ export default class SharedVideoManager {
 
             let thumb = new SharedVideoThumb(self.url);
             thumb.setDisplayName(player.getVideoData().title);
-            VideoLayout.addParticipantContainer(self.url, thumb);
+            VideoLayout.addRemoteVideoContainer(self.url, thumb);
 
             let iframe = player.getIframe();
             self.sharedVideo = new SharedVideoContainer(
@@ -565,10 +565,6 @@ class SharedVideoContainer extends LargeContainer {
         this.$iframe = $(iframe);
         this.url = url;
         this.player = player;
-    }
-
-    get $video () {
-        return this.$iframe;
     }
 
     show () {

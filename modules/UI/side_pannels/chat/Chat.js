@@ -3,23 +3,25 @@
 import {processReplacements, linkify} from './Replacement';
 import CommandsProcessor from './Commands';
 import ToolbarToggler from '../../toolbars/ToolbarToggler';
+import VideoLayout from "../../videolayout/VideoLayout";
 
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
 
-var smileys = require("./smileys.json").smileys;
+import { smileys } from './smileys';
 
-var notificationInterval = false;
 var unreadMessages = 0;
 
+/**
+ * The container id, which is and the element id.
+ */
+var CHAT_CONTAINER_ID = "chat_container";
 
 /**
- * Shows/hides a visual notification, indicating that a message has arrived.
+ *  Updates visual notification, indicating that a message has arrived.
  */
-function setVisualNotification(show) {
+function updateVisualNotification() {
     var unreadMsgElement = document.getElementById('unreadMessages');
-
-    var glower = $('#toolbar_button_chat');
 
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
@@ -37,28 +39,12 @@ function setVisualNotification(show) {
             'style',
                 'top:' + topIndent +
                 '; left:' + leftIndent + ';');
-
-        if (!glower.hasClass('icon-chat-simple')) {
-            glower.removeClass('icon-chat');
-            glower.addClass('icon-chat-simple');
-        }
     }
     else {
         unreadMsgElement.innerHTML = '';
-        glower.removeClass('icon-chat-simple');
-        glower.addClass('icon-chat');
     }
 
-    if (show && !notificationInterval) {
-        notificationInterval = window.setInterval(function () {
-            glower.toggleClass('active');
-        }, 800);
-    }
-    else if (!show && notificationInterval) {
-        window.clearInterval(notificationInterval);
-        notificationInterval = false;
-        glower.removeClass('active');
-    }
+    $(unreadMsgElement).parent()[unreadMessages > 0 ? 'show' : 'hide']();
 }
 
 
@@ -131,7 +117,7 @@ function addSmileys() {
  */
 function resizeChatConversation() {
     var msgareaHeight = $('#usermsg').outerHeight();
-    var chatspace = $('#chat_container');
+    var chatspace = $('#' + CHAT_CONTAINER_ID);
     var width = chatspace.width();
     var chat = $('#chatconversation');
     var smileys = $('#smileysarea');
@@ -187,13 +173,30 @@ var Chat = {
         };
         usermsg.autosize({callback: onTextAreaResize});
 
-        $("#chat_container").bind("shown",
-            function () {
+        eventEmitter.on(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            function(containerId, isVisible) {
+                if (containerId !== CHAT_CONTAINER_ID || !isVisible)
+                    return;
+
                 unreadMessages = 0;
-                setVisualNotification(false);
+                updateVisualNotification();
+
+                // Undock the toolbar when the chat is shown and if we're in a
+                // video mode.
+                if (VideoLayout.isLargeVideoVisible()) {
+                    ToolbarToggler.dockToolbar(false);
+                }
+
+                // if we are in conversation mode focus on the text input
+                // if we are not, focus on the display name input
+                if (APP.settings.getDisplayName())
+                    $('#usermsg').focus();
+                else
+                    $('#nickinput').focus();
             });
 
         addSmileys();
+        updateVisualNotification();
     },
 
     /**
@@ -210,7 +213,7 @@ var Chat = {
             if (!Chat.isVisible()) {
                 unreadMessages++;
                 UIUtil.playSoundNotification('chatNotification');
-                setVisualNotification(true);
+                updateVisualNotification();
             }
         }
 
@@ -271,12 +274,18 @@ var Chat = {
 
     /**
      * Sets the chat conversation mode.
+     * Conversation mode is the normal chat mode, non conversation mode is
+     * where we ask user to input its display name.
      * @param {boolean} isConversationMode if chat should be in
      * conversation mode or not.
      */
     setChatConversationMode (isConversationMode) {
-        $('#chat_container')
+        $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
+
+        // this is needed when we transition from no conversation mode to
+        // conversation mode. When user enters his nickname and hits enter,
+        // to focus on the write area.
         if (isConversationMode) {
             $('#usermsg').focus();
         }
@@ -286,7 +295,7 @@ var Chat = {
      * Resizes the chat area.
      */
     resizeChat (width, height) {
-        $('#chat_container').width(width).height(height);
+        $('#' + CHAT_CONTAINER_ID).width(width).height(height);
 
         resizeChatConversation();
     },
@@ -296,7 +305,7 @@ var Chat = {
      */
     isVisible () {
         return UIUtil.isVisible(
-            document.getElementById("chat_container"));
+            document.getElementById(CHAT_CONTAINER_ID));
     },
     /**
      * Shows and hides the window with the smileys

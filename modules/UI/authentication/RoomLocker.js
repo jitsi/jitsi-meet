@@ -116,6 +116,13 @@ export default function createRoomLocker (room) {
     let password;
     let dialog = null;
 
+    /**
+     * If the room was locked from someone other than us, we indicate it with
+     * this property in order to have correct roomLocker state of isLocked.
+     * @type {boolean} whether room is locked, but not from us.
+     */
+    let lockedElsewhere = false;
+
     function lock (newPass) {
         return room.lock(newPass).then(function () {
             password = newPass;
@@ -135,11 +142,28 @@ export default function createRoomLocker (room) {
      */
     return {
         get isLocked () {
-            return !!password;
+            return !!password || lockedElsewhere;
         },
 
         get password () {
             return password;
+        },
+
+        /**
+         * Sets that the room is locked from another user, not us.
+         * @param {boolean} value locked/unlocked state
+         */
+        set lockedElsewhere (value) {
+            lockedElsewhere = value;
+        },
+
+        /**
+         * Whether room is locked from someone else.
+         * @returns {boolean} whether room is not locked locally,
+         * but it is still locked.
+         */
+        get lockedElsewhere () {
+            return lockedElsewhere;
         },
 
         /**
@@ -185,6 +209,10 @@ export default function createRoomLocker (room) {
                 newPass => { password = newPass; }
             ).catch(
                 reason => {
+                    // user canceled, no pass was entered.
+                    // clear, as if we use the same instance several times
+                    // pass stays between attempts
+                    password = null;
                     if (reason !== APP.UI.messageHandler.CANCEL)
                         console.error(reason);
                 }
@@ -202,7 +230,7 @@ export default function createRoomLocker (room) {
                 dialog = null;
             };
 
-            if (password) {
+            if (this.isLocked) {
                 dialog = APP.UI.messageHandler
                     .openMessageDialog(null, "dialog.passwordError",
                         null, null, closeCallback);

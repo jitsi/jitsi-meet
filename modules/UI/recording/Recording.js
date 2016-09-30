@@ -17,7 +17,7 @@
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
-import Feedback from '../Feedback.js';
+import Feedback from '../feedback/Feedback.js';
 import Toolbar from '../toolbars/Toolbar';
 
 /**
@@ -269,6 +269,9 @@ var Recording = {
      */
     initRecordingButton(recordingType) {
         let selector = $('#toolbar_button_record');
+
+        let button = selector.get(0);
+        UIUtil.setTooltip(button, 'liveStreaming.buttonTooltip', 'right');
 
         if (recordingType === 'jibri') {
             this.baseClass = "fa fa-play-circle";

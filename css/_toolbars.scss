@@ -83,14 +83,6 @@
     display: none;
 }
 
-#numberOfParticipants {
-  position: absolute;
-  top: 5px;
-  line-height: 13px;
-  font-weight: bold;
-  font-size: 11px;
-}
-
 #mainToolbar a.button:last-child::after {
     content: none;
 }
@@ -118,6 +110,11 @@
     cursor: default;
 }
 
+.button.glow
+{
+    text-shadow: 0px 0px 5px $toolbarToggleBackground;
+}
+
 a.button.unclickable:hover,
 a.button.unclickable:active,
 a.button.unclickable.selected{
@@ -129,6 +126,7 @@ a.button:hover,
 a.button:active,
 a.button.selected {
     cursor: pointer;
+    text-decoration: none;
     // sum opacity with background layer should give us 0.8
     background: $toolbarSelectBackground;
 }
@@ -142,6 +140,36 @@ a.button>#avatar {
 
 #feedbackButton {
     margin-top: auto;
+}
+
+/**
+ * Round badge.
+ */
+.badge-round {
+    background-color: $toolbarBadgeBackground;
+    color: $toolbarBadgeColor;
+    font-size: 9px;
+    line-height: 13px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 50%;
+    min-width: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    vertical-align: middle;
+    // Do not inherit the font-family from the toolbar button, because it's an
+    // icon style.
+    font-family: $baseFontFamily;
+}
+
+/**
+ * Toolbar specific round badge.
+ */
+.toolbar .badge-round {
+    position: absolute;
+    right: 9px;
+    bottom: 9px;
 }
 
 /**

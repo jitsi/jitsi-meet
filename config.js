@@ -56,6 +56,8 @@ var config = {
     //disableAdaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
+    //enableClosePage: false, // enabling the close page will ignore the welcome
+                              // page redirection when call is hangup
     disableSimulcast: false,
     logStats: false, // Enable logging of PeerConnection stats via the focus
 //    requireDisplayName: true, // Forces the participants that doesn't have display name to enter it when they enter the room.

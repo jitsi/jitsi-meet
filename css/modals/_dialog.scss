@@ -1,0 +1,53 @@
+.dialog{
+    visibility: visible;
+    height: auto;
+
+    p {
+        color: $defaultDarkColor;
+    }
+    textarea {
+        background: none;
+        border: 1px solid $inputBorderColor;
+    }
+    .aui-dialog2-content:last-child {
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+    .aui-dialog2-content:first-child {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+    }
+    .aui-dialog2-footer{
+        border-top: 0;
+        border-radius: 0;
+        padding-top: 0;
+        background: none;
+        border: none;
+        height: auto;
+        margin-top: 10px;
+    }
+    .aui-button {
+        height: 28px;
+        font-size: 12px;
+        padding: 3px 6px 3px 6px;
+        border: none;
+        box-shadow: none;
+        outline: none;
+
+        &_close {
+            font-weight: 400 !important;
+            color: $buttonBackground;
+            background: none !important;
+
+            :hover {
+                text-decoration: underline;
+            }
+        }
+        &_submit {
+            font-weight: 700 !important;
+            color: $defaultColor;
+            background: $buttonBackground;
+            border-radius: 3px;
+        }
+    }
+}

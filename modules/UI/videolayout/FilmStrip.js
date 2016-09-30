@@ -3,8 +3,6 @@
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
-const thumbAspectRatio = 1 / 1;
-
 const FilmStrip = {
     /**
      *
@@ -26,7 +24,7 @@ const FilmStrip = {
      */
     toggleFilmStrip (visible) {
         if (typeof visible === 'boolean'
-                && this.isFilmStripVisible() == visible) {
+            && this.isFilmStripVisible() == visible) {
             return;
         }
 
@@ -36,8 +34,8 @@ const FilmStrip = {
         var eventEmitter = this.eventEmitter;
         if (eventEmitter) {
             eventEmitter.emit(
-                    UIEvents.TOGGLED_FILM_STRIP,
-                    this.isFilmStripVisible());
+                UIEvents.TOGGLED_FILM_STRIP,
+                this.isFilmStripVisible());
         }
     },
 
@@ -66,13 +64,52 @@ const FilmStrip = {
             - parseInt(this.filmStrip.css('paddingRight'), 10);
     },
 
-    /**
-     * Calculates the thumbnail size.
-     */
-     calculateThumbnailSize () {
-        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
+    calculateThumbnailSize() {
+        let availableSizes = this.calculateAvailableSize();
+        let width = availableSizes.availableWidth;
+        let height = availableSizes.availableHeight;
 
-        let numvids = this.getThumbs(true).length;
+        return this.calculateThumbnailSizeFromAvailable(width, height);
+    },
+
+    /**
+     * Normalizes local and remote thumbnail ratios
+     */
+    normalizeThumbnailRatio () {
+        let remoteHeightRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_HEIGHT;
+        let remoteWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_WIDTH;
+
+        let localHeightRatio = interfaceConfig.LOCAL_THUMBNAIL_RATIO_HEIGHT;
+        let localWidthRatio = interfaceConfig.LOCAL_THUMBNAIL_RATIO_WIDTH;
+
+        let commonHeightRatio = remoteHeightRatio * localHeightRatio;
+
+        let localRatioCoefficient = localWidthRatio / localHeightRatio;
+        let remoteRatioCoefficient = remoteWidthRatio / remoteHeightRatio;
+
+        remoteWidthRatio = commonHeightRatio * remoteRatioCoefficient;
+        remoteHeightRatio = commonHeightRatio;
+
+        localWidthRatio = commonHeightRatio * localRatioCoefficient;
+        localHeightRatio = commonHeightRatio;
+
+        let localRatio = {
+            widthRatio: localWidthRatio,
+            heightRatio: localHeightRatio
+        };
+
+        let remoteRatio = {
+            widthRatio: remoteWidthRatio,
+            heightRatio: remoteHeightRatio
+        };
+
+        return { localRatio, remoteRatio };
+    },
+
+    calculateAvailableSize() {
+        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
+        let thumbs = this.getThumbs(true);
+        let numvids = thumbs.remoteThumbs.length;
 
         let localVideoContainer = $("#localVideoContainer");
 
@@ -83,20 +120,19 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
-                - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
-                - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('borderLeftWidth'), 10)
+            - UIUtil.parseCssInt(this.filmStrip.css('borderRightWidth'), 10)
             - 5;
 
         let availableWidth = videoAreaAvailableWidth;
 
-        // If the number of videos is 0 or undefined we don't need to calculate
-        // further.
-        if (numvids)
+        // If local thumb is not hidden
+        if(thumbs.localThumb) {
             availableWidth = Math.floor(
-                (videoAreaAvailableWidth - numvids * (
+                (videoAreaAvailableWidth - (
                 UIUtil.parseCssInt(
                     localVideoContainer.css('borderLeftWidth'), 10)
                 + UIUtil.parseCssInt(
@@ -109,45 +145,99 @@ const FilmStrip = {
                     localVideoContainer.css('marginLeft'), 10)
                 + UIUtil.parseCssInt(
                     localVideoContainer.css('marginRight'), 10)))
-                / numvids);
+            );
+        }
+
+        // If the number of videos is 0 or undefined we don't need to calculate
+        // further.
+        if (numvids) {
+            let remoteVideoContainer = thumbs.remoteThumbs.eq(0);
+            availableWidth = Math.floor(
+                (videoAreaAvailableWidth - numvids * (
+                UIUtil.parseCssInt(
+                    remoteVideoContainer.css('borderLeftWidth'), 10)
+                + UIUtil.parseCssInt(
+                    remoteVideoContainer.css('borderRightWidth'), 10)
+                + UIUtil.parseCssInt(
+                    remoteVideoContainer.css('paddingLeft'), 10)
+                + UIUtil.parseCssInt(
+                    remoteVideoContainer.css('paddingRight'), 10)
+                + UIUtil.parseCssInt(
+                    remoteVideoContainer.css('marginLeft'), 10)
+                + UIUtil.parseCssInt(
+                    remoteVideoContainer.css('marginRight'), 10)))
+            );
+        }
 
         let maxHeight
             // If the MAX_HEIGHT property hasn't been specified
             // we have the static value.
-            = Math.min( interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
-                        availableHeight);
+            = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
+            availableHeight);
 
         availableHeight
-            = Math.min( maxHeight, window.innerHeight - 18);
+            = Math.min(maxHeight, window.innerHeight - 18);
 
-        if (availableHeight < availableWidth) {
-            availableWidth = availableHeight;
+        return { availableWidth, availableHeight };
+    },
+
+    calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
+        let { localRatio, remoteRatio } = this.normalizeThumbnailRatio();
+        let { remoteThumbs } = this.getThumbs(true);
+        let remoteProportion = remoteRatio.widthRatio * remoteThumbs.length;
+        let widthProportion = remoteProportion + localRatio.widthRatio;
+
+        let heightUnit = availableHeight / localRatio.heightRatio;
+        let widthUnit = availableWidth / widthProportion;
+
+        if (heightUnit < widthUnit) {
+            widthUnit = heightUnit;
         }
         else
-            availableHeight = availableWidth;
+            heightUnit = widthUnit;
+
+        let localVideo = {
+            thumbWidth: widthUnit * localRatio.widthRatio,
+            thumbHeight: heightUnit * localRatio.heightRatio
+        };
+        let remoteVideo = {
+            thumbWidth: widthUnit * remoteRatio.widthRatio,
+            thumbHeight: widthUnit * remoteRatio.heightRatio
+        };
 
         return {
-            thumbWidth: availableWidth,
-            thumbHeight: availableHeight
+            localVideo,
+            remoteVideo
         };
     },
 
-    resizeThumbnails (thumbWidth, thumbHeight,
+    resizeThumbnails (local, remote,
                       animate = false, forceUpdate = false) {
 
         return new Promise(resolve => {
-            this.getThumbs(!forceUpdate).animate({
-                height: thumbHeight,
-                width: thumbWidth
-            }, {
-                queue: false,
-                duration: animate ? 500 : 0,
-                complete:  resolve
-            });
+            let thumbs = this.getThumbs(!forceUpdate);
+            if(thumbs.localThumb)
+                thumbs.localThumb.animate({
+                    height: local.thumbHeight,
+                    width: local.thumbWidth
+                }, {
+                    queue: false,
+                    duration: animate ? 500 : 0,
+                    complete:  resolve
+                });
+            if(thumbs.remoteThumbs)
+                thumbs.remoteThumbs.animate({
+                    height: remote.thumbHeight,
+                    width: remote.thumbWidth
+                }, {
+                    queue: false,
+                    duration: animate ? 500 : 0,
+                    complete:  resolve
+                });
 
             this.filmStrip.animate({
                 // adds 2 px because of small video 1px border
-                height: thumbHeight + 2
+                height: remote.thumbHeight + 2
             }, {
                 queue: false,
                 duration: animate ? 500 : 0
@@ -165,13 +255,19 @@ const FilmStrip = {
             selector += ':visible';
         }
 
+        let localThumb = $("#localVideoContainer");
+        let remoteThumbs = this.filmStrip.children(selector)
+            .not("#localVideoContainer");
+
         // Exclude the local video container if it has been hidden.
-        if ($("#localVideoContainer").hasClass("hidden"))
-            return this.filmStrip.children(selector)
-                    .not("#localVideoContainer");
-        else
-            return this.filmStrip.children(selector);
+        if (localThumb.hasClass("hidden")) {
+            return { remoteThumbs };
+        } else {
+            return { remoteThumbs, localThumb };
+        }
+
     }
+
 };
 
 export default FilmStrip;

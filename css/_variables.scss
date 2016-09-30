@@ -10,19 +10,48 @@ $hangupFontSize: 2em;
  */
 $defaultToolbarSize: 50px;
 
+// Video layout.
+$thumbnailIndicatorSize: 23px;
+$thumbnailIndicatorBorder: 0px;
+$thumbnailVideoMargin: 2px;
+$thumbnailToolbarHeight: 25px;
+
 /**
  * Color variables.
  */
 $defaultColor: #F1F1F1;
-$defaultSemiDarkColor: #ACACAC;
+$defaultSideBarFontColor: #44A5FF;
 $defaultDarkColor: #4F4F4F;
 $defaultBackground: #474747;
+$tooltipBg: rgba(0,0,0, 0.7);
+
+// Toolbar
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
+
+$toolbarBadgeBackground: #165ECC;
+$toolbarBadgeColor: #FFFFFF;
+$toolbarToggleBackground: #165ECC;
+
+// Main controls
 $inputBackground: rgba(132, 132, 132, .5);
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 $inputBorderColor: #EBEBEB;
 $buttonBackground: #44A5FF;
+
+// Video layout.
+$videoThumbnailHovered: #BFEBFF;
+$videoThumbnailSelected: #165ECC;
+$participantNameColor: #fff;
+$thumbnailPictogramColor: #fff;
+$dominantSpeakerBg: #165ecc;
+$raiseHandBg: #D6D61E;
+$audioLevelBg: #44A5FF;
+$audioLevelShadow: rgba(9, 36, 77, 0.9);
+
+$rateStarDefault: #ccc;
+$rateStarActivity: #165ecc;
+$rateStarLabelColor: #333;
 
 /**
  * Misc.
@@ -33,9 +62,6 @@ $defaultWatermarkLink: '../images/watermark.png';
 /**
  * Z-indexes. TODO: Replace this by a function.
  */
+$tooltipsZ: 901;
 $toolbarZ: 900;
 $overlayZ: 800;
-
-$rateStarDefault: #ccc;
-$rateStarActivity: #f6c342;
-$rateStarLabelColor: #333;

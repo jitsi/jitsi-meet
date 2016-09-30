@@ -174,10 +174,12 @@ export default {
      * Set device id of the camera which is currently in use.
      * Empty string stands for default device.
      * @param {string} newId new camera device id
+     * @param {boolean} whether we need to store the value
      */
-    setCameraDeviceId: function (newId = '') {
+    setCameraDeviceId: function (newId, store) {
         cameraDeviceId = newId;
-        window.localStorage.cameraDeviceId = newId;
+        if (store)
+            window.localStorage.cameraDeviceId = newId;
     },
 
     /**
@@ -192,10 +194,12 @@ export default {
      * Set device id of the microphone which is currently in use.
      * Empty string stands for default device.
      * @param {string} newId new microphone device id
+     * @param {boolean} whether we need to store the value
      */
-    setMicDeviceId: function (newId = '') {
+    setMicDeviceId: function (newId, store) {
         micDeviceId = newId;
-        window.localStorage.micDeviceId = newId;
+        if (store)
+            window.localStorage.micDeviceId = newId;
     },
 
     /**

@@ -1,5 +1,21 @@
-/* global $ */
+/* global $, APP */
 /* jshint -W101 */
+import UIEvents from "../../../service/UI/UIEvents";
+
+/**
+ * Store the current ring overlay instance.
+ * Note: We want to have only 1 instance at a time.
+ */
+let overlay = null;
+
+/**
+ * Handler for UIEvents.LARGE_VIDEO_AVATAR_DISPLAYED event.
+ * @param {boolean} shown indicates whether the avatar on the large video is
+ *  currently displayed or not.
+ */
+function onAvatarDisplayed(shown) {
+    overlay._changeBackground(shown);
+}
 
 /**
  * Shows ring overlay
@@ -11,28 +27,49 @@ class RingOverlay {
     constructor(callee) {
         this._containerId = 'ringOverlay';
         this._audioContainerId = 'ringOverlayRinging';
-
+        this.isRinging = true;
         this.callee = callee;
         this.render();
         this.audio = document.getElementById(this._audioContainerId);
         this.audio.play();
         this._setAudioTimeout();
+        this._timeout = setTimeout(() => {
+            this.destroy();
+            this.render();
+        }, 30000);
+    }
+
+    /**
+     * Chagnes the background of the ring overlay.
+     * @param {boolean} solid - if true the new background will be the solid
+     * one, otherwise the background will be default one.
+     * NOTE: The method just toggles solidBG css class.
+     */
+    _changeBackground(solid) {
+        const container = $("#" + this._containerId);
+        if(solid) {
+            container.addClass("solidBG");
+        } else {
+            container.removeClass("solidBG");
+        }
     }
 
     /**
      * Builds and appends the ring overlay to the html document
      */
     _getHtmlStr(callee) {
+        let callingLabel = this.isRinging? "<p>Calling...</p>" : "";
+        let callerStateLabel =  this.isRinging? "" : " isn't available";
         return `
             <div id="${this._containerId}" class='ringing' >
                 <div class='ringing__content'>
-                    <p>Calling...</p>
+                    ${callingLabel}
                     <img class='ringing__avatar' src="${callee.getAvatarUrl()}" />
                     <div class="ringing__caller-info">
-                        <p>${callee.getName()}</p>
+                        <p>${callee.getName()}${callerStateLabel}</p>
                     </div>
                 </div>
-                <audio id="${this._audioContainerId}" src="/sounds/ring.ogg" />
+                <audio id="${this._audioContainerId}" src="./sounds/ring.ogg" />
             </div>`;
     }
 
@@ -49,10 +86,7 @@ class RingOverlay {
      * related to the ring overlay.
      */
     destroy() {
-        if (this.interval) {
-            clearInterval(this.interval);
-        }
-
+        this._stopAudio();
         this._detach();
     }
 
@@ -64,6 +98,16 @@ class RingOverlay {
         $(`#${this._containerId}`).remove();
     }
 
+    _stopAudio() {
+        this.isRinging = false;
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        if(this._timeout) {
+            clearTimeout(this._timeout);
+        }
+    }
+
     /**
      * Sets the interval that is going to play the ringing sound.
      */
@@ -73,12 +117,6 @@ class RingOverlay {
         }, 5000);
     }
 }
-
-/**
- * Store the current ring overlay instance.
- * Note: We want to have only 1 instance at a time.
- */
-let overlay = null;
 
 export default {
     /**
@@ -92,6 +130,8 @@ export default {
         }
 
         overlay = new RingOverlay(callee);
+        APP.UI.addListener(UIEvents.LARGE_VIDEO_AVATAR_DISPLAYED,
+            onAvatarDisplayed);
     },
 
     /**
@@ -104,6 +144,8 @@ export default {
         }
         overlay.destroy();
         overlay = null;
+        APP.UI.removeListener(UIEvents.LARGE_VIDEO_AVATAR_DISPLAYED,
+            onAvatarDisplayed);
         return true;
     },
 

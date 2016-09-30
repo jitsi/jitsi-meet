@@ -16,8 +16,9 @@
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
-    line-height: 0.75em;
+    line-height: 1.22em;
     font-size: 1.22em;
+    cursor: default;
 
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
@@ -42,9 +43,6 @@
 .icon-chat:before {
   content: "\e906";
 }
-.icon-download:before {
-  content: "\e902";
-}
 .icon-edit:before {
   content: "\e907";
 }
@@ -57,11 +55,20 @@
 .icon-kick:before {
   content: "\e904";
 }
+.icon-menu-up:before {
+  content: "\e91f";
+}
+.icon-menu-down:before {
+  content: "\e920";
+}
 .icon-full-screen:before {
   content: "\e90b";
 }
 .icon-exit-full-screen:before {
   content: "\e90c";
+}
+.icon-star:before {
+    content: "\e916";
 }
 .icon-star-full:before {
   content: "\e90a";
@@ -99,9 +106,6 @@
 .icon-settings:before {
   content: "\e915";
 }
-.icon-star:before {
-  content: "\e916";
-}
 .icon-share-desktop:before {
   content: "\e917";
 }
@@ -126,6 +130,7 @@
 .icon-recEnable:before {
   content: "\e614";
 }
+// FIXME not used anymore - consider removing in the next font update
 .icon-presentation:before {
   content: "\e603";
 }

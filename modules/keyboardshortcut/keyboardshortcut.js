@@ -74,13 +74,6 @@ var KeyboardShortcut = {
                 }
             }
         };
-        $('body').popover({ selector: '[data-toggle=popover]',
-            trigger: 'click hover',
-            content: function() {
-                return this.getAttribute("content")
-                    + self._getShortcutTooltip(this.getAttribute("shortcut"));
-            }
-        });
     },
 
     /**
@@ -128,7 +121,7 @@ var KeyboardShortcut = {
      * or an empty string if the shortcutAttr is null, an empty string or not
      * found in the shortcut mapping
      */
-    _getShortcutTooltip: function (shortcutAttr) {
+    getShortcutTooltip: function (shortcutAttr) {
         if (typeof shortcutAttr === "string" && shortcutAttr.length > 0) {
             for (var key in _shortcuts) {
                 if (_shortcuts.hasOwnProperty(key)

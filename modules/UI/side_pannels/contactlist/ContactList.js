@@ -20,13 +20,11 @@ function updateNumberOfParticipants(delta) {
         return;
     }
 
-    let buttonIndicatorText = (numberOfContacts === 1) ? '' : numberOfContacts;
-    $("#numberOfParticipants").text(buttonIndicatorText);
+    $("#numberOfParticipants").text(numberOfContacts);
 
     $("#contacts_container>div.title").text(
-        APP.translation.translateString(
-            "contactlist", {participants: numberOfContacts}
-        ));
+        APP.translation.translateString("contactlist")
+            + ' (' + numberOfContacts + ')');
 }
 
 /**
@@ -59,16 +57,6 @@ function createDisplayNameParagraph(key, displayName) {
     return p;
 }
 
-
-function stopGlowing(glower) {
-    window.clearInterval(notificationInterval);
-    notificationInterval = false;
-    glower.removeClass('glowing');
-    if (!ContactList.isVisible()) {
-        glower.removeClass('active');
-    }
-}
-
 function getContactEl (id) {
     return $(`#contacts>li[id="${id}"]`);
 }
@@ -96,9 +84,9 @@ var ContactList = {
 
     /**
      * Adds a contact for the given id.
-     *
+     * @param isLocal is an id for the local user.
      */
-    addContact (id) {
+    addContact (id, isLocal) {
         let contactlist = $('#contacts');
 
         let newContact = document.createElement('li');
@@ -112,7 +100,11 @@ var ContactList = {
 
         if (interfaceConfig.SHOW_CONTACTLIST_AVATARS)
             newContact.appendChild(createAvatar(id));
-        newContact.appendChild(createDisplayNameParagraph("participant"));
+
+        newContact.appendChild(
+            createDisplayNameParagraph(
+                isLocal ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME : null,
+                isLocal ? null : interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME));
 
         if (APP.conference.isLocalId(id)) {
             contactlist.prepend(newContact);

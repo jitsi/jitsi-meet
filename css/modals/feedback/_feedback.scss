@@ -33,6 +33,8 @@
 }
 
 .shake-rotate {
+    display: inline-block;
+
     -webkit-animation-duration: .4s;
     animation-duration: .4s;
     -webkit-animation-iteration-count: infinite;
@@ -43,65 +45,64 @@
     animation-timing-function: ease-in-out
 }
 
-.text-center {
-    text-align: center;
-}
-
-.feedbackDetails textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.feedback-rating {
-    line-height: 1.2;
-    padding: 20px 0;
-
+.feedback {
     h2 {
         font-weight: 400;
         font-size: 24px;
         line-height: 1.2;
-        padding: auto;
-        margin: auto;
-        border: none;
     }
-
     p {
-        margin-top: 10px;
-        margin-left: 0px;
-        margin-bottom: 0px;
-        margin-right: 0px;
+        font-weight: 400;
+        font-size: 14px;
     }
 
-    .star-label {
-        font-size: 16px;
-        color: $rateStarLabelColor;
+    &__content {
+        text-align: center;
+
+        textarea {
+            text-align: left;
+            min-height: 80px;
+            width: 100%;
+        }
     }
+    &__footer {
 
-    .star-btn {
-        color: $rateStarDefault;
-        font-size: 36px;
-        position: relative;
-        cursor: pointer;
-        outline: none;
-        text-decoration: none;
-        @include transition(all .2s ease);
-
-        &.starHover,
-        &.active,
         &:hover {
-            color: $rateStarActivity;
+            color: #287ade;
+            outline: 0;
+        }
+    }
+    &__rating {
+        line-height: 1.2;
+        padding: 20px 0;
 
-            .fa {
-                top: -6px;
-            }
-        };
-
-        &.rated:hover .fa {
-            top: 0;
+        p {
+            margin: 10px 0 0;
         }
 
-        .fa {
+        .star-label {
+            font-size: 16px;
+            color: $rateStarLabelColor;
+        }
+
+        .star-btn {
+            color: $rateStarDefault;
+            font-size: 36px;
             position: relative;
+            cursor: pointer;
+            outline: none;
+            text-decoration: none;
+            @include transition(all .2s ease);
+
+            &.starHover,
+            &.active,
+            &:hover {
+                color: $rateStarActivity;
+                > i:before {
+                    content: "\e90a";
+                }
+            };
+
         }
     }
 }

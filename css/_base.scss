@@ -81,22 +81,8 @@ form {
     display: block;
 }
 
-#downloadlog {
-    display: none;
-    position: absolute;
-    bottom: 5;
-    left: 5;
-    overflow: visible;
-    color: rgba(255,255,255,.50);
-}
-
 .active {
     background-color: #00ccff;
-}
-
-.glow
-{
-    text-shadow: 0px 0px 30px #06a5df, 0px 0px 10px #06a5df, 0px 0px 5px #06a5df,0px 0px 3px #06a5df;
 }
 
 .watermark {
@@ -175,4 +161,15 @@ form {
     display: -ms-flexbox !important;
     display: -webkit-flex !important;
     display: flex !important;
+}
+
+.tipsy {
+    z-index: $tooltipsZ;
+    &-inner {
+        background-color: $tooltipBg;
+    }
+
+    &-arrow {
+        border-color: $tooltipBg;
+    }
 }

@@ -120,28 +120,32 @@
                     </li>
                 </ul>
             </span>
-            <a class="button icon-contactList" id="toolbar_contact_list" data-container="body" data-toggle="popover" data-placement="right" shortcut="contactlistpopover"  data-i18n="[content]bottomtoolbar.contactlist" content="Open / close contact list">
-                <span id="numberOfParticipants"></span>
+            <a class="button icon-contactList" id="toolbar_contact_list" shortcut="contactlistpopover">
+                <span class="badge-round">
+                    <span id="numberOfParticipants"></span>
+                </span>
             </a>
-            <!--a class="button icon-link" id="toolbar_button_link" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]toolbar.invite" content="Invite others"></a-->
-            <a class="button icon-chat" id="toolbar_button_chat" data-container="body" data-toggle="popover" shortcut="toggleChatPopover" data-placement="right" data-i18n="[content]toolbar.chat" content="Open / close chat">
-                <span id="unreadMessages"></span>
+            <!--a class="button icon-link" id="toolbar_button_link"></a-->
+            <a class="button icon-chat" id="toolbar_button_chat" shortcut="toggleChatPopover">
+                <span class="badge-round">
+                    <span id="unreadMessages"></span>
+                </span>
             </a>
-            <a class="button" id="toolbar_button_record" data-container="body" data-toggle="popover" data-placement="right" style="display: none"></a>
-            <a class="button icon-security" id="toolbar_button_security" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]toolbar.lock" content="Lock / unlock room"></a>
-            <a class="button icon-share-doc" id="toolbar_button_etherpad" data-container="body" data-toggle="popover" data-placement="right" content="Shared document" data-i18n="[content]toolbar.etherpad"></a>
-            <a class="button icon-shared-video" id="toolbar_button_sharedvideo" data-container="body" data-toggle="popover" data-placement="right" content="Share a YouTube video" data-i18n="[content]toolbar.sharedvideo" style="display: none">
+            <a class="button" id="toolbar_button_record" style="display: none"></a>
+            <a class="button icon-security" id="toolbar_button_security"></a>
+            <a class="button icon-share-doc" id="toolbar_button_etherpad"></a>
+            <a class="button icon-shared-video" id="toolbar_button_sharedvideo" style="display: none">
                 <ul id="sharedVideoMutedPopup" class="loginmenu extendedToolbarPopup">
                     <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
                 </ul>
             </a>
-            <a class="button icon-telephone" id="toolbar_button_sip" data-container="body" data-toggle="popover" data-placement="right" content="Call SIP number" data-i18n="[content]toolbar.sip" style="display: none"></a>
-            <a class="button icon-dialpad" id="toolbar_button_dialpad" data-container="body" data-toggle="popover" data-placement="right" content="Open dialpad" data-i18n="[content]toolbar.dialpad" style="display: none"></a>
-            <a class="button icon-settings" id="toolbar_button_settings" data-container="body" data-toggle="popover" data-placement="right" content="Settings" data-i18n="[content]toolbar.Settings"></a>
-            <a class="button icon-raised-hand" id="toolbar_button_raisehand" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]toolbar.raiseHand" content="Raise Hand" shortcut="raiseHandPopover"></a>
-            <a class="button icon-full-screen" id="toolbar_button_fullScreen" data-container="body" data-toggle="popover" data-placement="right" shortcut="toggleFullscreenPopover" data-i18n="[content]toolbar.fullscreen" content="Enter / Exit Full Screen"></a>
-            <a class="button icon-toggle-filmstrip" id="toolbar_film_strip" data-container="body" data-toggle="popover" shortcut="filmstripPopover" data-placement="right" data-i18n="[content]toolbar.filmstrip" content="Show / hide videos"></a>
-            <a class="button icon-feedback" id="feedbackButton" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[content]feedback"></a>
+            <a class="button icon-telephone" id="toolbar_button_sip" style="display: none"></a>
+            <a class="button icon-dialpad" id="toolbar_button_dialpad" style="display: none"></a>
+            <a class="button icon-settings" id="toolbar_button_settings"></a>
+            <a class="button icon-raised-hand" id="toolbar_button_raisehand" shortcut="raiseHandPopover"></a>
+            <a class="button icon-full-screen" id="toolbar_button_fullScreen" shortcut="toggleFullscreenPopover"></a>
+            <a class="button icon-toggle-filmstrip" id="toolbar_film_strip" data-container="body" shortcut="filmstripPopover"></a>
+            <a class="button icon-feedback" id="feedbackButton"></a>
             <div id="sideToolbarContainer">
                 <div id="profile_container" class="sideToolbarContainer__inner">
                     <div class="title" data-i18n="profile.title"></div>
@@ -208,13 +212,11 @@
                         <input type="checkbox" id="followMeCheckBox">
                         <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
                     </div>
-                    <a id="downloadlog" data-container="body" data-toggle="popover" data-placement="right" data-i18n="[data-content]downloadlogs" ><i class="icon-download"></i></a>
                 </div>
             </div>
         </div>
         <div id="videospace">
             <div id="largeVideoContainer" class="videocontainer">
-                <div id="presentation"></div>
                 <div id="sharedVideo"><div id="sharedVideoIFrame"></div></div>
                 <div id="etherpad"></div>
                 <a target="_new"><div class="watermark leftwatermark"></div></a>
@@ -223,13 +225,14 @@
                     <span data-i18n="poweredby"></span> jitsi.org
                 </a>
                 <div id="dominantSpeaker">
+                    <div class="dynamic-shadow"></div>
                     <img id="dominantSpeakerAvatar" src=""/>
-                    <canvas id="dominantSpeakerAudioLevel"></canvas>
                 </div>
+                <span id="remoteConnectionMessage"></span>
                 <div id="largeVideoWrapper">
                     <video id="largeVideo" muted="true" autoplay></video>
                 </div>
-                <span id="videoConnectionMessage"></span>
+                <span id="localConnectionMessage"></span>
                 <span id="videoResolutionLabel">HD</span>
                 <span id="recordingLabel" class="centeredVideoLabel">
                     <span id="recordingLabelText"></span>
@@ -238,12 +241,12 @@
             </div>
 
             <div id="remoteVideos">
-                <span id="localVideoContainer" class="videocontainer">
+                <span id="localVideoContainer" class="videocontainer videocontainer_small">
                     <span id="localVideoWrapper">
                         <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
                     </span>
                     <audio id="localAudio" autoplay muted></audio>
-                    <span class="focusindicator"></span>
+                    <div class="videocontainer__toolbar"></div>
                 </span>
                 <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
                 <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
@@ -257,5 +260,6 @@
             </ul>
         </div>
     </div>
+    <div id="aui-feedback-dialog" class="dialog feedback aui-layer aui-dialog2 aui-dialog2-medium" style="display: none;"></div>
   </body>
 </html>

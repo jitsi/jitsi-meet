@@ -1,11 +1,9 @@
 {
-    "contactlist": "ON CALL (__participants__)",
+    "contactlist": "On Call",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
-    "downloadlogs": "Download logs",
     "feedback": "Give us your feedback",
     "roomUrlDefaultMsg": "Your conference is currently being created...",
-    "participant": "Participant",
     "me": "me",
     "speaker": "Speaker",
     "raisedHand": "Would like to speak",
@@ -33,6 +31,7 @@
         "focusRemote": "Focus on one of the remote videos.",
         "toggleChat": "Open or close the chat panel.",
         "mute": "Mute or unmute the microphone.",
+        "fullScreen": "Enter or exit full screen mode.",
         "videoMute": "Stop or start the local video."
     },
     "welcomepage":{
@@ -112,21 +111,21 @@
     },
     "settings":
     {
-        "title": "SETTINGS",
+        "title": "Settings",
         "update": "Update",
         "name": "Name",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
-        "selectCamera": "Select camera",
-        "selectMic": "Select microphone",
-        "selectAudioOutput": "Select audio output",
+        "selectCamera": "Camera",
+        "selectMic": "Microphone",
+        "selectAudioOutput": "Audio output",
         "followMe": "Everyone follows me",
         "noDevice": "None",
         "noPermission": "Permission to use device is not granted",
         "cameraAndMic": "Camera and microphone",
         "moderator": "MODERATOR",
         "password": "SET PASSWORD",
-        "audioVideo": "AUDIO / VIDEO",
+        "audioVideo": "AUDIO AND VIDEO",
         "setPasswordLabel": "Lock your room with a password."
     },
     "profile": {
@@ -138,7 +137,7 @@
     {
         "editnickname": "Click to edit your<br/>display name",
         "moderator": "The owner of<br/>this conference",
-        "videomute": "Participant has<br/>stopped the camera.",
+        "videomute": "Participant has<br/>stopped the camera",
         "mute": "Participant is muted",
         "kick": "Kick out",
         "muted": "Muted",
@@ -188,6 +187,7 @@
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
         "connectErrorWithMsg": "Oops! Something went wrong and we couldn't connect to the conference: __msg__",
         "connecting": "Connecting",
+        "copy": "Copy",
         "error": "Error",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
@@ -199,8 +199,8 @@
         "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",
         "passwordNotSupported": "Room passwords are currently not supported.",
-        "sorry": "Sorry",
-        "internalError": "Internal application error [setRemoteDescription]",
+        "internalErrorTitle": "Internal error",
+        "internalError": "Oups! Something went wrong. The following error occurred: [setRemoteDescription]",
         "unableToSwitch": "Unable to switch video stream.",
         "SLDFailure": "Oops! Something went wrong and we failed to mute! (SLD Failure)",
         "SRDFailure": "Oops! Something went wrong and we failed to stop video! (SRD Failure)",
@@ -233,7 +233,6 @@
         "passwordCheck": "Are you sure you would like to remove your password?",
         "Remove": "Remove",
         "passwordMsg": "Set a password to lock your room",
-        "Invite": "Invite",
         "shareLink": "Copy and share this link",
         "settings1": "Configure your conference",
         "settings2": "Participants join muted",
@@ -248,13 +247,14 @@
         "password": "Enter password",
         "userPassword": "user password",
         "token": "token",
-        "tokenAuthFailed": "Failed to authenticate with XMPP server: invalid token",
+        "tokenAuthFailedTitle": "Authentication problem",
+        "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
         "displayNameRequired": "Please enter your display name",
         "extensionRequired": "Extension required:",
         "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
         "rateExperience": "Please rate your meeting experience.",
         "feedbackHelp": "Your feedback will help us to improve our video experience.",
-        "feedbackQuestion": "How was your call?",
+        "feedbackQuestion": "Tell us about your call!",
         "thankYou": "Thank you for using __appName__!",
         "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?",
         "liveStreaming": "Live Streaming",
@@ -279,6 +279,7 @@
         "micNotFoundError": "Microphone was not found.",
         "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
         "micNotSendingData": "We are unable to access your microphone. Please select another device from the settings menu or try to restart the application.",
+        "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to restart the application.",
         "goToStore": "Go to the webstore",
         "externalInstallationTitle": "Extension required",
         "externalInstallationMsg": "You need to install our desktop sharing extension."
@@ -325,7 +326,8 @@
         "ATTACHED": "Attached",
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
-        "GET_SESSION_ID_ERROR": "Get session-id error: "
+        "GET_SESSION_ID_ERROR": "Get session-id error: ",
+        "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues..."
     },
     "recording":
     {

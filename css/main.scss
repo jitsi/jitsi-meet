@@ -22,6 +22,8 @@
 @import 'toastr';
 @import 'base';
 @import 'overlay/overlay';
+@import 'modals/dialog';
+@import 'modals/feedback/feedback';
 @import 'videolayout_default';
 @import 'jquery-impromptu';
 @import 'modaldialog';
@@ -38,8 +40,9 @@
 @import 'toolbars';
 @import 'side_toolbar_container';
 @import 'device_settings_dialog';
-@import 'feedback';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
+@import 'redirect_page';
+
 
 /* Modules END */

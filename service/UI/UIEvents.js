@@ -29,7 +29,6 @@ export default {
      */
     UPDATE_SHARED_VIDEO: "UI.update_shared_video",
     ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
-    USER_INVITED: "UI.user_invited",
     USER_KICKED: "UI.user_kicked",
     REMOTE_AUDIO_MUTED: "UI.remote_audio_muted",
     FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",
@@ -105,5 +104,15 @@ export default {
      * event must contain the identifier of the container that has been toggled
      * and information about toggle on or off.
      */
-    SIDE_TOOLBAR_CONTAINER_TOGGLED: "UI.side_container_toggled"
+    SIDE_TOOLBAR_CONTAINER_TOGGLED: "UI.side_container_toggled",
+
+    /**
+     * Notifies that the raise hand has been changed.
+     */
+    LOCAL_RAISE_HAND_CHANGED: "UI.local_raise_hand_changed",
+
+    /**
+     * Notifies that the avatar is displayed or not on the largeVideo.
+     */
+    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed"
 };

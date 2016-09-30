@@ -40,7 +40,14 @@ let connectionIsInterrupted = false;
  */
 let DSExternalInstallationInProgress = false;
 
-import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/LargeVideo";
+/**
+ * Listens whether conference had been left from local user when we are trying
+ * to navigate away from current page.
+ * @type {ConferenceLeftListener}
+ */
+let conferenceLeftListener = null;
+
+import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
 /**
  * Known custom conference commands.
@@ -203,8 +210,28 @@ function muteLocalVideo (muted) {
 
 /**
  * Check if the welcome page is enabled and redirects to it.
+ * If requested show a thank you dialog before that.
+ * If we have a close page enabled, redirect to it without
+ * showing any other dialog.
+ * @param {boolean} showThankYou whether we should show a thank you dialog
  */
-function maybeRedirectToWelcomePage() {
+function maybeRedirectToWelcomePage(showThankYou) {
+
+    // if close page is enabled redirect to it, without further action
+    if (config.enableClosePage) {
+        window.location.pathname = "close.html";
+        return;
+    }
+
+    if (showThankYou) {
+        APP.UI.messageHandler.openMessageDialog(
+            null, null, null,
+            APP.translation.translateString(
+                "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
+            )
+        );
+    }
+
     if (!config.enableWelcomePage) {
         return;
     }
@@ -236,7 +263,7 @@ function disconnectAndShowFeedback(requestFeedback) {
  * @param {boolean} [requestFeedback=false] if user feedback should be requested
  */
 function hangup (requestFeedback = false) {
-    const errCallback = (f, err) => {
+    const errCallback = (err) => {
 
         // If we want to break out the chain in our error handler, it needs
         // to return a rejected promise. In the case of feedback request
@@ -251,14 +278,69 @@ function hangup (requestFeedback = false) {
         }
     };
     const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
-    APP.conference._room.leave()
-    .then(disconnect)
-    .catch(errCallback.bind(null, disconnect))
-    .then(maybeRedirectToWelcomePage)
-    .catch(function(err){
-            console.log(err);
-        });
 
+    if (!conferenceLeftListener)
+        conferenceLeftListener = new ConferenceLeftListener();
+
+    // Make sure that leave is resolved successfully and the set the handlers
+    // to be invoked once conference had been left
+    APP.conference._room.leave()
+        .then(conferenceLeftListener.setHandler(disconnect, errCallback))
+        .catch(errCallback);
+}
+
+/**
+ * Listens for CONFERENCE_LEFT event so we can check whether it has finished.
+ * The handler will be called once the conference had been left or if it
+ * was already left when we are adding the handler.
+ */
+class ConferenceLeftListener {
+    /**
+     * Creates ConferenceLeftListener and start listening for conference
+     * failed event.
+     */
+    constructor() {
+        room.on(ConferenceEvents.CONFERENCE_LEFT,
+            this._handleConferenceLeft.bind(this));
+    }
+
+    /**
+     * Handles the conference left event, if we have a handler we invoke it.
+     * @private
+     */
+    _handleConferenceLeft() {
+        this.conferenceLeft = true;
+
+        if (this.handler)
+            this._handleLeave();
+    }
+
+    /**
+     * Sets the handlers. If we already left the conference invoke them.
+     * @param handler
+     * @param errCallback
+     */
+    setHandler (handler, errCallback) {
+        this.handler = handler;
+        this.errCallback = errCallback;
+
+        if (this.conferenceLeft)
+            this._handleLeave();
+    }
+
+    /**
+     * Invokes the handlers.
+     * @private
+     */
+    _handleLeave()
+    {
+        this.handler()
+            .catch(this.errCallback)
+            .then(maybeRedirectToWelcomePage)
+            .catch(function(err){
+                console.log(err);
+            });
+    }
 }
 
 /**
@@ -294,8 +376,13 @@ function createLocalTracks (options, checkForPermissionPrompt) {
             firefox_fake_device: config.firefox_fake_device,
             desktopSharingExtensionExternalInstallation:
                 options.desktopSharingExtensionExternalInstallation
-        }, checkForPermissionPrompt)
-        .catch(function (err) {
+        }, checkForPermissionPrompt).then( (tracks) => {
+            tracks.forEach((track) => {
+                track.on(TrackEvents.NO_DATA_FROM_SOURCE,
+                    APP.UI.showTrackNotWorkingDialog.bind(null, track));
+            });
+            return tracks;
+        }).catch(function (err) {
             console.error(
                 'failed to create local tracks', options.devices, err);
             return Promise.reject(err);
@@ -358,6 +445,14 @@ class ConferenceConnector {
         case ConferenceErrors.PASSWORD_REQUIRED:
             APP.UI.markRoomLocked(true);
             roomLocker.requirePassword().then(function () {
+                let pass = roomLocker.password;
+                // we received that password is required, but user is trying
+                // anyway to login without a password, mark room as not locked
+                // in case he succeeds (maybe someone removed the password
+                // meanwhile), if it is still locked another password required
+                // will be received and the room again will be marked as locked
+                if (!pass)
+                    APP.UI.markRoomLocked(false);
                 room.join(roomLocker.password);
             });
             break;
@@ -366,6 +461,13 @@ class ConferenceConnector {
             {
                 let [msg] = params;
                 APP.UI.notifyConnectionFailed(msg);
+            }
+            break;
+
+        case ConferenceErrors.NOT_ALLOWED_ERROR:
+            {
+                // let's show some auth not allowed page
+                window.location.pathname = "authError.html";
             }
             break;
 
@@ -649,6 +751,61 @@ export default {
         return this._room
             && this._room.getConnectionState();
     },
+    /**
+     * Checks whether or not our connection is currently in interrupted and
+     * reconnect attempts are in progress.
+     *
+     * @returns {boolean} true if the connection is in interrupted state or
+     * false otherwise.
+     */
+    isConnectionInterrupted () {
+        return connectionIsInterrupted;
+    },
+    /**
+     * Finds JitsiParticipant for given id.
+     *
+     * @param {string} id participant's identifier(MUC nickname).
+     *
+     * @returns {JitsiParticipant|null} participant instance for given id or
+     * null if not found.
+     */
+    getParticipantById (id) {
+        return room ? room.getParticipantById(id) : null;
+    },
+    /**
+     * Checks whether the user identified by given id is currently connected.
+     *
+     * @param {string} id participant's identifier(MUC nickname)
+     *
+     * @returns {boolean|null} true if participant's connection is ok or false
+     * if the user is having connectivity issues.
+     */
+    isParticipantConnectionActive (id) {
+        let participant = this.getParticipantById(id);
+        return participant ? participant.isConnectionActive() : null;
+    },
+    /**
+     * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
+     * the given <tt>id</tt>.
+     *
+     * @param id {string} the participant's id(MUC nickname/JVB endpoint id)
+     *
+     * @return {string} the participant's display name or the default string if
+     * absent.
+     */
+    getParticipantDisplayName (id) {
+        let displayName = getDisplayName(id);
+        if (displayName) {
+            return displayName;
+        } else {
+            if (APP.conference.isLocalId(id)) {
+                return APP.translation.generateTranslationHTML(
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+            } else {
+                return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            }
+        }
+    },
     getMyUserId () {
         return this._room
             && this._room.myUserId();
@@ -697,6 +854,30 @@ export default {
 
     getLogs () {
         return room.getLogs();
+    },
+
+    /**
+     * Download logs, a function that can be called from console while
+     * debugging.
+     * @param filename (optional) specify target filename
+     */
+    saveLogs (filename = 'meetlog.json') {
+        // this can be called from console and will not have reference to this
+        // that's why we reference the global var
+        let logs = APP.conference.getLogs();
+        let data = encodeURIComponent(JSON.stringify(logs, null, '  '));
+
+        let elem = document.createElement('a');
+
+        elem.download = filename;
+        elem.href = 'data:application/json;charset=utf-8,\n' + data;
+        elem.dataset.downloadurl
+            = ['text/json', elem.download, elem.href].join(':');
+        elem.dispatchEvent(new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: false
+        }));
     },
 
     /**
@@ -858,8 +1039,6 @@ export default {
 
         return promise.then(function () {
             if (stream) {
-                stream.on(TrackEvents.TRACK_AUDIO_NOT_WORKING,
-                    APP.UI.showAudioNotWorkingDialog);
                 return room.addTrack(stream);
             }
         }).then(() => {
@@ -1021,7 +1200,7 @@ export default {
 
             console.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
-            APP.UI.addUser(id, user.getDisplayName());
+            APP.UI.addUser(user);
 
             // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
@@ -1037,8 +1216,10 @@ export default {
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
                 console.info(`My role changed, new role: ${role}`);
-                this.isModerator = room.isModerator();
-                APP.UI.updateLocalRole(room.isModerator());
+                if (this.isModerator !== room.isModerator()) {
+                    this.isModerator = room.isModerator();
+                    APP.UI.updateLocalRole(room.isModerator());
+                }
             } else {
                 let user = room.getParticipantById(id);
                 if (user) {
@@ -1115,6 +1296,11 @@ export default {
             ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids, enteringIds) => {
             APP.UI.handleLastNEndpoints(ids, enteringIds);
         });
+        room.on(
+            ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
+            (id, isActive) => {
+                APP.UI.participantConnectionStatusChanged(id, isActive);
+        });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
             if (this.isLocalId(id)) {
                 this.isDominantSpeaker = true;
@@ -1146,10 +1332,12 @@ export default {
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
             connectionIsInterrupted = true;
             ConnectionQuality.updateLocalConnectionQuality(0);
+            APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
             connectionIsInterrupted = false;
+            APP.UI.showLocalConnectionInterrupted(false);
         });
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
@@ -1173,6 +1361,7 @@ export default {
             console.log("Received channel password lock change: ", state,
                 error);
             APP.UI.markRoomLocked(state);
+            roomLocker.lockedElsewhere = state;
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
@@ -1300,15 +1489,6 @@ export default {
                 && APP.UI.notifyInitiallyMuted();
         });
 
-        APP.UI.addListener(UIEvents.USER_INVITED, (roomUrl) => {
-            APP.UI.inviteParticipants(
-                roomUrl,
-                APP.conference.roomName,
-                roomLocker.password,
-                APP.settings.getDisplayName()
-            );
-        });
-
         room.on(
             ConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
                 APP.UI.updateDevicesAvailability(id, devices);
@@ -1395,6 +1575,8 @@ export default {
 
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
             var smallVideoId = smallVideo.getId();
+            // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
+            // the participant is on the large video ?
             if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
                 && !APP.conference.isLocalId(smallVideoId)) {
 
@@ -1422,7 +1604,7 @@ export default {
                 .then(([stream]) => {
                     this.useVideoStream(stream);
                     console.log('switched local video device');
-                    APP.settings.setCameraDeviceId(cameraDeviceId);
+                    APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(null, err);
@@ -1444,7 +1626,7 @@ export default {
                 .then(([stream]) => {
                     this.useAudioStream(stream);
                     console.log('switched local audio device');
-                    APP.settings.setMicDeviceId(micDeviceId);
+                    APP.settings.setMicDeviceId(micDeviceId, true);
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(err, null);
@@ -1539,13 +1721,13 @@ export default {
                 // storage and settings menu. This is a workaround until
                 // getConstraints() method will be implemented in browsers.
                 if (localAudio) {
-                    localAudio._setRealDeviceIdFromDeviceList(devices);
-                    APP.settings.setMicDeviceId(localAudio.getDeviceId());
+                    APP.settings.setMicDeviceId(
+                        localAudio.getDeviceId(), false);
                 }
 
                 if (localVideo) {
-                    localVideo._setRealDeviceIdFromDeviceList(devices);
-                    APP.settings.setCameraDeviceId(localVideo.getDeviceId());
+                    APP.settings.setCameraDeviceId(
+                        localVideo.getDeviceId(), false);
                 }
 
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
@@ -1646,11 +1828,28 @@ export default {
     setRaisedHand(raisedHand) {
         if (raisedHand !== this.isHandRaised)
         {
+            APP.UI.onLocalRaiseHandChanged(raisedHand);
+
             this.isHandRaised = raisedHand;
             // Advertise the updated status
             room.setLocalParticipantProperty("raisedHand", raisedHand);
             // Update the view
             APP.UI.setLocalRaisedHandStatus(raisedHand);
+        }
+    },
+    /**
+     * Log event to callstats and analytics.
+     * @param {string} name the event name
+     * @param {int} value the value (it's int because google analytics supports
+     * only int).
+     * NOTE: Should be used after conference.init
+     */
+    logEvent(name, value) {
+        if(JitsiMeetJS.analytics) {
+            JitsiMeetJS.analytics.sendEvent(name, value);
+        }
+        if(room) {
+            room.sendApplicationLog(JSON.stringify({name, value}));
         }
     }
 };

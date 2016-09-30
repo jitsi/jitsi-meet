@@ -245,13 +245,13 @@ ConnectionIndicator.prototype.showMore = function () {
 };
 
 
-function createIcon(classes) {
+function createIcon(classes, iconClass) {
     var icon = document.createElement("span");
     for(var i in classes) {
         icon.classList.add(classes[i]);
     }
     icon.appendChild(
-        document.createElement("i")).classList.add("icon-connection");
+        document.createElement("i")).classList.add(iconClass);
     return icon;
 }
 
@@ -282,9 +282,12 @@ ConnectionIndicator.prototype.create = function () {
     }.bind(this);
 
     this.emptyIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_empty"]));
+        createIcon(["connection", "connection_empty"], "icon-connection"));
     this.fullIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_full"]));
+        createIcon(["connection", "connection_full"], "icon-connection"));
+    this.interruptedIndicator = this.connectionIndicatorContainer.appendChild(
+        createIcon(["connection", "connection_lost"],"icon-connection-lost"));
+    $(this.interruptedIndicator).hide();
 };
 
 /**
@@ -296,6 +299,27 @@ ConnectionIndicator.prototype.remove = function() {
             this.connectionIndicatorContainer);
     }
     this.popover.forceHide();
+};
+
+/**
+ * Updates the UI which displays warning about user's connectivity problems.
+ *
+ * @param {boolean} isActive true if the connection is working fine or false if
+ * the user is having connectivity issues.
+ */
+ConnectionIndicator.prototype.updateConnectionStatusIndicator
+= function (isActive) {
+    this.isConnectionActive = isActive;
+    if (this.isConnectionActive) {
+        $(this.interruptedIndicator).hide();
+        $(this.emptyIcon).show();
+        $(this.fullIcon).show();
+    } else {
+        $(this.interruptedIndicator).show();
+        $(this.emptyIcon).hide();
+        $(this.fullIcon).hide();
+        this.updateConnectionQuality(0 /* zero bars */);
+    }
 };
 
 /**
@@ -312,15 +336,16 @@ ConnectionIndicator.prototype.updateConnectionQuality =
     } else {
         if(this.connectionIndicatorContainer.style.display == "none") {
             this.connectionIndicatorContainer.style.display = "block";
-            this.videoContainer.updateIconPositions();
         }
     }
-    this.bandwidth = object.bandwidth;
-    this.bitrate = object.bitrate;
-    this.packetLoss = object.packetLoss;
-    this.transport = object.transport;
-    if (object.resolution) {
-        this.resolution = object.resolution;
+    if (object) {
+        this.bandwidth = object.bandwidth;
+        this.bitrate = object.bitrate;
+        this.packetLoss = object.packetLoss;
+        this.transport = object.transport;
+        if (object.resolution) {
+            this.resolution = object.resolution;
+        }
     }
     for (var quality in ConnectionIndicator.connectionQualityValues) {
         if (percent >= quality) {
@@ -328,7 +353,7 @@ ConnectionIndicator.prototype.updateConnectionQuality =
                 ConnectionIndicator.connectionQualityValues[quality];
         }
     }
-    if (object.isResolutionHD) {
+    if (object && typeof object.isResolutionHD === 'boolean') {
         this.isResolutionHD = object.isResolutionHD;
     }
     this.updateResolutionIndicator();

@@ -1,5 +1,10 @@
+#videoconference_page {
+    min-height: 100%;
+}
+
 #videospace {
     display: block;
+    min-height: 100%;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -13,19 +18,19 @@
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: nowrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
 
     position:absolute;
     text-align:right;
     height:196px;
-    padding: 18px;
+    padding: 10px 10px 10px 5px;
     bottom: 0;
     left: 0;
-    right: 20px;
+    right: 0;
     width:auto;
-    border:1px solid transparent;
+    border: 2px solid transparent;
     z-index: 5;
     transition: bottom 2s;
     overflow: visible !important;
@@ -43,33 +48,58 @@
 
 #remoteVideos .videocontainer {
     display: none;
+    position: relative;
     background-color: black;
     background-size: contain;
     border-radius:1px;
-    border: 1px solid #212425;
+    margin: 0 $thumbnailVideoMargin;
 }
 
-#remoteVideos .videocontainer.videoContainerFocused {
+/**
+ * The toolbar of the video thumbnail.
+ */
+.videocontainer__toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box; // Includes the padding in the 100% width.
+    height: $thumbnailToolbarHeight;
+    max-height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0 5px 0 5px;
+}
+
+#remoteVideos .videocontainer.videoContainerFocused,
+#remoteVideos .videocontainer:hover {
     cursor: hand;
+    margin-right: $thumbnailVideoMargin - 2;
+    margin-left: $thumbnailVideoMargin - 2;
+    margin-top: -2px;
+}
+/**
+ * Focused video thumbnail.
+ */
+#remoteVideos .videocontainer.videoContainerFocused {
     transition-duration: 0.5s;
     -webkit-transition-duration: 0.5s;
     -webkit-animation-name: greyPulse;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
+    border: 2px solid $videoThumbnailSelected !important;
+    box-shadow: inset 0 0 3px $videoThumbnailSelected,
+                0 0 3px $videoThumbnailSelected !important;
 }
 
+/**
+ * Hovered video thumbnail.
+ */
 #remoteVideos .videocontainer:hover {
-    border: 1px solid #c1c1c1;
-}
-
-#remoteVideos .videocontainer.videoContainerFocused {
-    box-shadow: inset 0 0 28px #006d91;
-    border: 1px solid #006d91;
-}
-
-#remoteVideos .videocontainer.videoContainerFocused:hover {
-    box-shadow: inset 0 0 5px #c1c1c1, 0 0 10px #c1c1c1, inset 0 0 60px #006d91;
-    border: 1px solid #c1c1c1;
+    cursor: hand;
+    border: 2px solid $videoThumbnailHovered;
+    box-shadow: inset 0 0 3px $videoThumbnailHovered,
+              0 0 3px $videoThumbnailHovered;
 }
 
 #localVideoWrapper {
@@ -113,7 +143,6 @@
     object-fit: cover;
 }
 
-#presentation,
 #sharedVideo,
 #etherpad,
 #localVideoWrapper>video,
@@ -132,8 +161,7 @@
     height: 100%;
 }
 
-#etherpad,
-#presentation {
+#etherpad {
     text-align: center;
 }
 
@@ -141,47 +169,36 @@
     z-index: 0;
 }
 
-#remoteVideos .videocontainer>span.focusindicator,
-#remoteVideos .videocontainer>div.remotevideomenu {
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    left: 0;
-    padding: 5px 0px;
-    width: 25px;
-    font-size: 11pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 2;
-    text-align: center;
-}
-
-#remoteVideos .videocontainer>span.focusindicator {
+/**
+ * Positions video thumbnail display name and editor.
+ */
+.videocontainer .displayname,
+.videocontainer .editdisplayname {
     display: inline-block;
-}
-
-#remoteVideos .videocontainer>div.remotevideomenu {
-    display: block;
-}
-
-.videocontainer>span.displayname,
-.videocontainer>input.displayname {
-    display: none;
     position: absolute;
-    color: #FFFFFF;
-    background: rgba(0,0,0,.7);
+    left: 30%;
+    width: 40%;
+    color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
-    width: 70%;
-    height: 20%;
-    left: 15%;
-    top: 40%;
-    padding: 5px;
-    font-size: 11pt;
+    font-size: 12px;
+    font-weight: 100;
+    letter-spacing: 1px;
     overflow: hidden;
     white-space: nowrap;
+    line-height: $thumbnailToolbarHeight;
     z-index: 2;
-    border-radius:3px;
+}
+
+/**
+ * Positions video thumbnail display name editor.
+ */
+.videocontainer .editdisplayname {
+    outline: none;
+    border: none;
+    background: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 .videocontainer>span.status {
@@ -221,6 +238,12 @@
     overflow: hidden;
 }
 
+.connection.connection_lost
+{
+    color: #8B8B8B;
+    overflow: visible;
+}
+
 .connection.connection_full
 {
     color: #FFFFFF;/*#15A1ED*/
@@ -257,16 +280,16 @@
 }
 
 #localVideoContainer>span.status:hover,
-#localVideoContainer>span.displayname:hover {
+#localVideoContainer .displayname:hover {
     cursor: text;
 }
 
 .videocontainer>span.status,
-.videocontainer>span.displayname {
+.videocontainer .displayname {
     pointer-events: none;
 }
 
-.videocontainer>input.displayname {
+.videocontainer .editdisplayname {
     height: auto;
 }
 
@@ -287,53 +310,103 @@
     z-index: 2;
 }
 
-.videocontainer>span.audioMuted {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    padding: 8px 5px;
-    width: 25px;
+/**
+ * Video thumbnail toolbar icon.
+ */
+.videocontainer .toolbar-icon {
     font-size: 8pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 3;
     text-align: center;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    color: #FFFFFF;
+    width: 12px;
+    line-height: $thumbnailToolbarHeight;
+    height: $thumbnailToolbarHeight;
+    padding: 0;
+    border: 0;
+    margin: 0px 5px 0px 0px;
+    float: left;
 }
 
-.videocontainer>span.videoMuted {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    right: 0;
-    padding: 8px 5px;
-    width: 25px;
-    font-size: 8pt;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    border: 0px;
-    z-index: 3;
+/**
+ * Toolbar icon internal i elements (font icons).
+ */
+.toolbar-icon>i {
+    line-height: $thumbnailToolbarHeight;
+}
+
+/**
+ * Toolbar icons positioned on the right.
+ */
+.toolbar-icon.right {
+  float: right;
+  margin: 0px 0px 0px 5px;
 }
 
 .videocontainer>span.indicator {
-    bottom: 0px;
+    position: absolute;
+    top: 0px;
     left: 0px;
-    width: 25px;
-    height: 25px;
+    @include circle($thumbnailIndicatorSize);
+    box-sizing: border-box;
+    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
     z-index: 3;
     text-align: center;
-    border-radius: 50%;
-    background: #21B9FC;
-    margin: 5px;
+    background: $dominantSpeakerBg;
+    margin: 7px;
     display: inline-block;
+    color: $thumbnailPictogramColor;
+    font-size: 8pt;
+    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+}
+
+.videocontainer>#raisehandindicator {
+    background: $raiseHandBg;
+}
+
+/**
+ * Audio indicator on video thumbnails.
+ */
+.videocontainer>span.audioindicator {
     position: absolute;
-    color: #FFFFFF;
-    font-size: 11pt;
-    border: 0px;
+    display: inline-block;
+    left: 6px;
+    top: 50%;
+    margin-top: -17px;
+    width: 6px;
+    height: 35px;
+    z-index: 2;
+    border: none;
+
+    .audiodot-top,
+    .audiodot-bottom,
+    .audiodot-middle {
+        opacity: 0;
+        display: inline-block;
+        @include circle(5px);
+        background: $audioLevelShadow;
+        margin: 1px 0 1px 0;
+        transition: opacity .25s ease-in-out;
+        -moz-transition: opacity .25s ease-in-out;
+    }
+
+    span.audiodot-top::after,
+    span.audiodot-bottom::after,
+    span.audiodot-middle::after {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        -webkit-filter: blur(0.5px);
+        filter: blur(0.5px);
+        background: $audioLevelBg;
+    }
 }
 
 #indicatoricon {
-    padding-top: 5px;
+    width: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
+    height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
+    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
 }
 
 #reloadPresentation {
@@ -366,25 +439,20 @@
     width: 300px;
     height: 300px;
     margin: auto;
-    overflow: hidden;
     position: relative;
-}
-
-#dominantSpeakerAudioLevel {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 2;
-    visibility: inherit;
 }
 
 #mixedstream {
     display:none !important;
 }
 
-#dominantSpeakerAvatar {
+#dominantSpeakerAvatar,
+.dynamic-shadow {
     width: 200px;
     height: 200px;
+}
+
+#dominantSpeakerAvatar {
     top: 50px;
     margin: auto;
     position: relative;
@@ -394,11 +462,18 @@
     background-color: #000000;
 }
 
-.userAvatar {
-    height: 100%;
+.dynamic-shadow {
+    border-radius: 50%;
     position: absolute;
-    left: 0;
-    border-radius: 2px;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -100px;
+    transition: box-shadow 0.3s ease;
+}
+
+.userAvatar {
+    @include circle(60px);
+    @include absoluteAligning(60px, 60px);
 }
 
 .sharedVideoAvatar {
@@ -436,12 +511,44 @@
     filter: grayscale(.5) opacity(0.8);
 }
 
+.remoteVideoProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
 .videoProblemFilter {
     -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
     filter: blur(10px) grayscale(.5) opacity(0.8);
 }
 
-#videoConnectionMessage {
+.videoThumbnailProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+#remoteConnectionMessage {
+    display: none;
+    position: absolute;
+    width: auto;
+    z-index: 1011;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+
+    background: rgba(0,0,0,.5);
+    border-radius: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#localConnectionMessage {
     display: none;
     position: absolute;
     width: 100%;

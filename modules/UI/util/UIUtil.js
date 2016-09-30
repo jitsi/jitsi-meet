@@ -1,4 +1,22 @@
-/* global $, config, interfaceConfig */
+/* global $, APP, config, AJS, interfaceConfig */
+
+import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
+
+/**
+ * Associates tooltip element position (in the terms of
+ * {@link UIUtil#setTooltip} which do not look like CSS <tt>position</tt>) with
+ * AUI tooltip <tt>gravity</tt>.
+ */
+const TOOLTIP_POSITIONS = {
+    'bottom': 'n',
+    'bottom-left': 'ne',
+    'bottom-right': 'nw',
+    'left': 'e',
+    'right': 'w',
+    'top': 's',
+    'top-left': 'se',
+    'top-right': 'sw'
+};
 
 /**
  * Created by hristo on 12/22/14.
@@ -82,12 +100,71 @@
         context.putImageData(imgData, 0, 0);
     },
 
+    /**
+     * Sets a global handler for all tooltips. Once invoked, create a new
+     * tooltip by merely updating a DOM node with the appropriate class (e.g.
+     * <tt>tooltip-n</tt>) and the attribute <tt>content</tt>.
+     */
+    activateTooltips() {
+        AJS.$('[data-tooltip]').tooltip({
+            gravity() {
+                return this.getAttribute('data-tooltip');
+            },
+
+            title() {
+                return this.getAttribute('content');
+            },
+
+            html: true, // Handle multiline tooltips.
+
+            // The following two prevent tooltips from being stuck:
+            hoverable: false, // Make custom tooltips behave like native ones.
+            live: true // Attach listener to document element.
+        });
+    },
+
+    /**
+     * Sets the tooltip to the given element.
+     *
+     * @param element the element to set the tooltip to
+     * @param key the tooltip data-i18n key
+     * @param position the position of the tooltip in relation to the element
+     */
     setTooltip: function (element, key, position) {
-        element.setAttribute("data-i18n", "[data-content]" + key);
-        element.setAttribute("data-toggle", "popover");
-        element.setAttribute("data-placement", position);
-        element.setAttribute("data-html", true);
-        element.setAttribute("data-container", "body");
+        element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
+        element.setAttribute('data-i18n', '[content]' + key);
+
+        APP.translation.translateElement($(element));
+    },
+
+    /**
+     * Removes the tooltip to the given element.
+     *
+     * @param element the element to remove the tooltip from
+     */
+    removeTooltip: function (element) {
+        AJS.$(element).tooltip('destroy');
+        element.setAttribute('data-tooltip', '');
+        element.setAttribute('data-i18n','');
+        element.setAttribute('content','');
+        element.setAttribute('shortcut','');
+    },
+
+    /**
+     * Internal util function for generating tooltip title.
+     *
+     * @param element
+     * @returns {string|*}
+     * @private
+     */
+    _getTooltipText: function (element) {
+        let title = element.getAttribute('content');
+        let shortcut = element.getAttribute('shortcut');
+        if(shortcut) {
+            let shortcutString = KeyboardShortcut.getShortcutTooltip(shortcut);
+            title += ` ${shortcutString}`;
+        }
+        return title;
     },
 
     /**
@@ -233,6 +310,23 @@
      */
     parseCssInt(cssValue) {
         return parseInt(cssValue) || 0;
+    },
+
+    /**
+     * Adds href value to 'a' link jquery object. If link value is null,
+     * undefined or empty string, disables the link.
+     * @param {object} aLinkElement the jquery object
+     * @param {string} link the link value
+     */
+    setLinkHref(aLinkElement, link) {
+        if (link) {
+            aLinkElement.attr('href', link);
+        } else {
+            aLinkElement.css({
+                "pointer-events": "none",
+                "cursor": "default"
+            });
+        }
     }
 };
 

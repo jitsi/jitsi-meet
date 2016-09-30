@@ -29,7 +29,7 @@ var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
-var Feedback = require("./Feedback");
+var Feedback = require("./feedback/Feedback");
 
 import FollowMe from "../FollowMe";
 
@@ -60,6 +60,8 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NOT_FOUND]
     = "dialog.cameraNotFoundError";
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.CONSTRAINT_FAILED]
     = "dialog.cameraConstraintFailedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NO_DATA_FROM_SOURCE]
+    = "dialog.cameraNotSendingData";
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
     = "dialog.micUnknownError";
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.PERMISSION_DENIED]
@@ -68,6 +70,8 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NOT_FOUND]
     = "dialog.micNotFoundError";
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.CONSTRAINT_FAILED]
     = "dialog.micConstraintFailedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
+    = "dialog.micNotSendingData";
 
 /**
  * Prompt user for nickname.
@@ -258,6 +262,17 @@ UI.changeDisplayName = function (id, displayName) {
 };
 
 /**
+ * Shows/hides the indication about local connection being interrupted.
+ *
+ * @param {boolean} isInterrupted <tt>true</tt> if local connection is
+ * currently in the interrupted state or <tt>false</tt> if the connection
+ * is fine.
+ */
+UI.showLocalConnectionInterrupted = function (isInterrupted) {
+    VideoLayout.showLocalConnectionInterrupted(isInterrupted);
+};
+
+/**
  * Sets the "raised hand" status for a participant.
  */
 UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
@@ -292,11 +307,11 @@ UI.initConference = function () {
     }
 
     // Add myself to the contact list.
-    ContactList.addContact(id);
+    ContactList.addContact(id, true);
 
-    //update default button states before showing the toolbar
-    //if local role changes buttons state will be again updated
-    UI.updateLocalRole(false);
+    // Update default button states before showing the toolbar
+    // if local role changes buttons state will be again updated.
+    UI.updateLocalRole(APP.conference.isModerator);
 
     UI.showToolbar();
 
@@ -325,6 +340,8 @@ UI.initConference = function () {
     // to the UI (depending on the moderator role of the local participant) and
     // (2) APP.conference as means of communication between the participants.
     followMeHandler = new FollowMe(APP.conference, UI);
+
+    UIUtil.activateTooltips();
 };
 
 UI.mucJoined = function () {
@@ -338,6 +355,22 @@ UI.handleToggleFilmStrip = () => {
     UI.toggleFilmStrip();
     VideoLayout.resizeVideoArea(true, false);
 };
+
+/**
+ * Sets tooltip defaults.
+ *
+ * @private
+ */
+function _setTooltipDefaults() {
+    $.fn.tooltip.defaults = {
+        opacity: 1, //defaults to 1
+        offset: 1,
+        delayIn: 0, //defaults to 500
+        hoverable: true,
+        hideOnClick: true,
+        aria: true
+    };
+}
 
 /**
  * Setup some UI event listeners.
@@ -431,6 +464,9 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
+    // Set the defaults for tooltips.
+    _setTooltipDefaults();
+
     registerListeners();
 
     ToolbarToggler.init();
@@ -463,20 +499,10 @@ UI.start = function () {
             $('#noticeText').text(config.noticeMessage);
             $('#notice').css({display: 'block'});
         }
-        $("#downloadlog").click(function (event) {
-            let logs = APP.conference.getLogs();
-            let data = encodeURIComponent(JSON.stringify(logs, null, '  '));
-
-            let elem = event.target.parentNode;
-            elem.download = 'meetlog.json';
-            elem.href = 'data:application/json;charset=utf-8,\n' + data;
-        });
     } else {
         $("#mainToolbarContainer").css("display", "none");
-        $("#downloadlog").css("display", "none");
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
-        $('body').popover("disable");
         JitsiPopover.enabled = false;
     }
 
@@ -589,10 +615,11 @@ UI.getSharedDocumentManager = function () {
 
 /**
  * Show user on UI.
- * @param {string} id user id
- * @param {string} displayName user nickname
+ * @param {JitsiParticipant} user
  */
-UI.addUser = function (id, displayName) {
+UI.addUser = function (user) {
+    var id = user.getId();
+    var displayName = user.getDisplayName();
     UI.hideRingOverLay();
     ContactList.addContact(id);
 
@@ -605,7 +632,7 @@ UI.addUser = function (id, displayName) {
         UIUtil.playSoundNotification('userJoined');
 
     // Add Peer's container
-    VideoLayout.addParticipantContainer(id);
+    VideoLayout.addParticipantContainer(user);
 
     // Configure avatar
     UI.setUserEmail(id);
@@ -662,7 +689,9 @@ UI.updateLocalRole = function (isModerator) {
     SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
-        messageHandler.notify(null, "notify.me", 'connected', "notify.moderator");
+        if (!interfaceConfig.DISABLE_FOCUS_INDICATOR)
+            messageHandler
+                .notify(null, "notify.me", 'connected', "notify.moderator");
 
         Recording.checkAutoRecord();
     }
@@ -676,7 +705,9 @@ UI.updateLocalRole = function (isModerator) {
 UI.updateUserRole = function (user) {
     VideoLayout.showModeratorIndicator();
 
-    if (!user.isModerator()) {
+    // We don't need to show moderator notifications when the focus (moderator)
+    // indicator is disabled.
+    if (!user.isModerator() || interfaceConfig.DISABLE_FOCUS_INDICATOR) {
         return;
     }
 
@@ -971,6 +1002,17 @@ UI.handleLastNEndpoints = function (ids, enteringIds) {
 };
 
 /**
+ * Will handle notification about participant's connectivity status change.
+ *
+ * @param {string} id the id of remote participant(MUC jid)
+ * @param {boolean} isActive true if the connection is ok or false if the user
+ * is having connectivity issues.
+ */
+UI.participantConnectionStatusChanged = function (id, isActive) {
+    VideoLayout.onParticipantConnectionStatusChanged(id, isActive);
+};
+
+/**
  * Update audio level visualization for specified user.
  * @param {string} id user id
  * @param {number} lvl audio level
@@ -1053,62 +1095,21 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
 };
 
 /**
- * Invite participants to conference.
- * @param {string} roomUrl
- * @param {string} conferenceName
- * @param {string} key
- * @param {string} nick
- */
-UI.inviteParticipants = function (roomUrl, conferenceName, key, nick) {
-    let keyText = "";
-    if (key) {
-        keyText = APP.translation.translateString(
-            "email.sharedKey", {sharedKey: key}
-        );
-    }
-
-    let and = APP.translation.translateString("email.and");
-    let supportedBrowsers = `Chromium, Google Chrome, Firefox ${and} Opera`;
-
-    let subject = APP.translation.translateString(
-        "email.subject", {appName:interfaceConfig.APP_NAME, conferenceName}
-    );
-
-    let body = APP.translation.translateString(
-        "email.body", {
-            appName:interfaceConfig.APP_NAME,
-            sharedKeyText: keyText,
-            roomUrl,
-            supportedBrowsers
-        }
-    );
-
-    body = body.replace(/\n/g, "%0D%0A");
-
-    if (nick) {
-        body += "%0D%0A%0D%0A" + UIUtil.escapeHtml(nick);
-    }
-
-    if (interfaceConfig.INVITATION_POWERED_BY) {
-        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
-    }
-
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-};
-
-/**
  * Show user feedback dialog if its required or just show "thank you" dialog.
  * @returns {Promise} when dialog is closed.
  */
 UI.requestFeedback = function () {
     if (Feedback.isVisible())
         return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
+    // Feedback has been submitted already.
+    else if (Feedback.isEnabled() && Feedback.isSubmitted())
+        return Promise.resolve();
     else
         return new Promise(function (resolve, reject) {
             if (Feedback.isEnabled()) {
                 // If the user has already entered feedback, we'll show the
                 // window and immidiately start the conference dispose timeout.
-                if (Feedback.feedbackScore > 0) {
+                if (Feedback.getFeedbackScore() > 0) {
                     Feedback.openFeedbackWindow();
                     resolve();
 
@@ -1117,14 +1118,9 @@ UI.requestFeedback = function () {
                 }
             } else {
                 // If the feedback functionality isn't enabled we show a thank
-                // you dialog.
-                messageHandler.openMessageDialog(
-                    null, null, null,
-                    APP.translation.translateString(
-                        "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
-                    )
-                );
-                resolve();
+                // you dialog. Signaling it (true), so the caller
+                // of requestFeedback can act on it
+                resolve(true);
             }
         });
 };
@@ -1134,11 +1130,13 @@ UI.updateRecordingState = function (state) {
 };
 
 UI.notifyTokenAuthFailed = function () {
-    messageHandler.showError("dialog.error", "dialog.tokenAuthFailed");
+    messageHandler.showError(   "dialog.tokenAuthFailedTitle",
+                                "dialog.tokenAuthFailed");
 };
 
 UI.notifyInternalError = function () {
-    messageHandler.showError("dialog.sorry", "dialog.internalError");
+    messageHandler.showError(   "dialog.internalErrorTitle",
+                                "dialog.internalError");
 };
 
 UI.notifyFocusDisconnected = function (focus, retrySec) {
@@ -1191,6 +1189,16 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
 
 UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
     SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
+};
+
+/**
+ * Notifies interested listeners that the raise hand property has changed.
+ *
+ * @param {boolean} isRaisedHand indicates the current state of the
+ * "raised hand"
+ */
+UI.onLocalRaiseHandChanged = function (isRaisedHand) {
+    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, isRaisedHand);
 };
 
 /**
@@ -1415,12 +1423,13 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
 
 /**
  * Shows error dialog that informs the user that no data is received from the
- * microphone.
+ * device.
  */
-UI.showAudioNotWorkingDialog = function () {
+UI.showTrackNotWorkingDialog = function (stream) {
     messageHandler.openMessageDialog(
         "dialog.error",
-        "dialog.micNotSendingData",
+        stream.isAudioTrack()? "dialog.micNotSendingData" :
+            "dialog.cameraNotSendingData",
         null,
         null);
 };

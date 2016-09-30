@@ -8,10 +8,14 @@ import "jquery-ui";
 import "strophe";
 import "strophe-disco";
 import "strophe-caps";
-import "tooltip";
-import "popover";
 import "jQuery-Impromptu";
 import "autosize";
+
+import 'aui';
+import 'aui-experimental';
+import 'aui-css';
+import 'aui-experimental-css';
+
 window.toastr = require("toastr");
 
 import URLProcessor from "./modules/config/URLProcessor";
@@ -106,6 +110,11 @@ function init() {
     var isUIReady = APP.UI.start();
     if (isUIReady) {
         APP.conference.init({roomName: buildRoomName()}).then(function () {
+            let server = APP.tokenData.server;
+            if(server) {
+                APP.conference.logEvent("server." + server, 1);
+            }
+
             APP.UI.initConference();
 
             APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {

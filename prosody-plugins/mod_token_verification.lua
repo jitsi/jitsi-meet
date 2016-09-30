@@ -60,7 +60,7 @@ local function verify_user(session, stanza)
 
 	local token = session.auth_token;
 	local auth_room = session.jitsi_meet_room;
-	if room ~= auth_room and disableRoomNameConstraints ~= true then
+	if disableRoomNameConstraints ~= true and room ~= string.lower(auth_room) then
 		log("error", "Token %s not allowed to join: %s",
 			tostring(token), tostring(auth_room));
 		session.send(
