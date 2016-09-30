@@ -884,8 +884,8 @@ UI.clickOnVideo = function (videoNumber) {
 };
 
 //Used by torture
-UI.showToolbar = function () {
-    return ToolbarToggler.showToolbar();
+UI.showToolbar = function (timeout) {
+    return ToolbarToggler.showToolbar(timeout);
 };
 
 //Used by torture
