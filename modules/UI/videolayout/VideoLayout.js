@@ -593,6 +593,9 @@ var VideoLayout = {
                 ? localVideoThumbnail : remoteVideos[id];
         if (video) {
             video.showRaisedHandIndicator(raisedHandStatus);
+            if (raisedHandStatus) {
+                video.showDominantSpeakerIndicator(false);
+            }
         }
     },
 

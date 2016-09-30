@@ -1812,14 +1812,10 @@ export default {
     },
 
     /**
-     * Toggles the local "raised hand" status, if the current state allows
-     * toggling.
+     * Toggles the local "raised hand" status.
      */
     maybeToggleRaisedHand() {
-        // If we are the dominant speaker, we don't enable "raise hand".
-        if (this.isHandRaised || !this.isDominantSpeaker) {
-            this.setRaisedHand(!this.isHandRaised);
-        }
+        this.setRaisedHand(!this.isHandRaised);
     },
 
     /**
