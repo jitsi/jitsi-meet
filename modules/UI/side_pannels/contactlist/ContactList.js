@@ -120,9 +120,15 @@ var ContactList = {
     getLockDescriptionLayout(key) {
         let classes = "input-control__hint input-control_full-width";
         let description = APP.translation.translateString(key);
-        return `<p id="contactList${key}"
-                       data-i18n="${key}"
-                       class="${classes}">${description}</p>`;
+        let padlockSuffix = '';
+        if (key === this.lockKey) {
+            padlockSuffix = '-locked';
+        }
+
+        return `<p id="contactList${key}" class="${classes}">
+                    <span class="icon-security${padlockSuffix}"></span>
+                    <span data-i18n="${key}">${description}</span>
+                </p>`;
     },
     /**
      * Setup listeners
