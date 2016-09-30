@@ -148,13 +148,13 @@ export default class InviteDialog {
                         ${copyText}
                     </button>
                 </div>
-                <p class="input-control__hint ${this.lockHint}"
-                   data-i18n="${roomLockDescKey}">
-                    ${roomLockDesc}
+                <p class="input-control__hint ${this.lockHint}">
+                   <span class="icon-security-locked"></span>
+                   <span data-i18n="${roomLockDescKey}">${roomLockDesc}</span>
                 </p>
-                <p class="input-control__hint ${this.unlockHint}"
-                   data-i18n="${roomUnlockKey}">
-                    ${roomUnlock}
+                <p class="input-control__hint ${this.unlockHint}">
+                   <span class="icon-security"></span>
+                   <span data-i18n="${roomUnlockKey}">${roomUnlock}</span>
                 </p>
             </div>`
         );

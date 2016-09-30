@@ -162,6 +162,9 @@ form {
     display: flex !important;
 }
 
+/**
+* Tooltips
+**/
 .tipsy {
     z-index: $tooltipsZ;
     &-inner {
@@ -173,6 +176,9 @@ form {
     }
 }
 
+/**
+* Dialogs fade
+*/
 .aui-blanket {
     visibility: visible;
 }
