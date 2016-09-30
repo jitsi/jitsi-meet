@@ -2,11 +2,20 @@
 
 import UIEvents from '../../../service/UI/UIEvents';
 
+/**
+ * Substate for password
+ * @type {{LOCKED: string, UNLOCKED: string}}
+ */
 const States = {
     LOCKED: 'locked',
     UNLOCKED: 'unlocked'
 };
 
+/**
+ * Class representing custom dialog
+ * for invitation of participants
+ * @class InviteDialog
+ */
 export default class InviteDialog {
     constructor(options) {
         let InviteAttributesKey = 'roomUrlDefaultMsg';
@@ -30,6 +39,9 @@ export default class InviteDialog {
         this.initDialog();
     }
 
+    /**
+     * Initialization of dialog property
+     */
     initDialog() {
         let dialog = {};
         dialog.closeFunction = this.closeFunction.bind(this);
@@ -46,6 +58,11 @@ export default class InviteDialog {
         this.dialog.states = this.getStates();
     }
 
+    /**
+     * Event handler for submitting dialog
+     * @param e
+     * @param v
+     */
     submitFunction(e, v) {
         if (v && this.roomUrl) {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
@@ -56,6 +73,10 @@ export default class InviteDialog {
         }
     }
 
+    /**
+     * Event handler for load dialog
+     * @param event
+     */
     loadedFunction(event) {
         if (this.roomUrl) {
             document.getElementById('inviteLinkRef').select();
@@ -67,11 +88,22 @@ export default class InviteDialog {
         }
     }
 
+    /**
+     * Event handler for closing dialog
+     * @param e
+     * @param v
+     * @param m
+     * @param f
+     */
     closeFunction(e, v, m, f) {
         if(!v && !m && !f)
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
     }
 
+    /**
+     * Returns all states of the dialog
+     * @returns {{}}
+     */
     getStates() {
         let {
             titleString
@@ -91,6 +123,10 @@ export default class InviteDialog {
         return states;
     }
 
+    /**
+     * Layout for invite link input
+     * @returns {string}
+     */
     getShareLinkBlock() {
         let copyKey = 'dialog.copy';
         let copyText = APP.translation.translateString(copyKey);
@@ -124,6 +160,10 @@ export default class InviteDialog {
         );
     }
 
+    /**
+     * Layout for adding password input
+     * @returns {string}
+     */
     getAddPasswordBlock() {
         let addPassKey = 'dialog.addPassword';
         let addPassText = APP.translation.translateString(addPassKey);
@@ -148,6 +188,10 @@ export default class InviteDialog {
         `);
     }
 
+    /**
+     * Layout for password (when room is locked)
+     * @returns {string}
+     */
     getPasswordBlock() {
         let { password } = this;
         let removePassKey = 'dialog.removePassword';
@@ -180,6 +224,9 @@ export default class InviteDialog {
         `);
     }
 
+    /**
+     * Opening the dialog
+     */
     open() {
         let leftButton;
         let {
@@ -213,6 +260,10 @@ export default class InviteDialog {
         this.setHandlers();
     }
 
+    /**
+     * Setting event handlers
+     * used in dialog
+     */
     setHandlers() {
         let $passInput = $('#newPasswordInput');
         let $addPassBtn = $('#addPasswordBtn');
@@ -246,6 +297,10 @@ export default class InviteDialog {
         APP.UI.addListener(UIEvents.ROOM_LOCKED, updateViewLocked);
     }
 
+    /**
+     * Checking input and if it's empty then
+     * disable add pass button
+     */
     disableAddPassIfInputEmpty() {
         let $passInput = $('#newPasswordInput');
         let $addPassBtn = $('#addPasswordBtn');
@@ -257,6 +312,9 @@ export default class InviteDialog {
         }
     }
 
+    /**
+     * Copying text to clipboard
+     */
     copyToClipboard() {
         let inviteLink = document.getElementById('inviteLinkRef');
 
@@ -273,6 +331,10 @@ export default class InviteDialog {
         }
     }
 
+    /**
+     * Method syncing the view and the model
+     * @param roomLocked
+     */
     updateView(roomLocked) {
         $('#inviteDialogPassword').text(this.password);
         $('#newPasswordInput').val('');
