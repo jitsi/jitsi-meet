@@ -90,6 +90,26 @@ function getPeerContainerResourceId (containerElement) {
     }
 }
 
+/**
+ * If call is one to one, we skip dominant speaker. Otherwise unmark old video
+ * and mark the new one as dominant speaker. There can be situations where
+ * the video is not existing.
+ * @param {SmallVideo} oldSpeakerVideo the old speaker video
+ * @param {SmallVideo} newSpeakerVideo the new video to be marked as dominant
+ */
+function updateDominantSpeakerIndicator (oldSpeakerVideo, newSpeakerVideo) {
+    let isOne2OneCall = APP.conference.membersCount === 2;
+
+    if (isOne2OneCall)
+        return;
+
+    if (oldSpeakerVideo)
+        oldSpeakerVideo.showDominantSpeakerIndicator(false);
+
+    if (newSpeakerVideo)
+        newSpeakerVideo.showDominantSpeakerIndicator(true);
+}
+
 let largeVideo;
 
 var VideoLayout = {
@@ -607,40 +627,27 @@ var VideoLayout = {
             return;
         }
 
-        let oldSpeakerRemoteVideo = remoteVideos[currentDominantSpeaker];
-        // We ignore local user events, but just unmark remote user as dominant
-        // while we are talking
+        let oldSpeakerVideo = currentDominantSpeaker ?
+            remoteVideos[currentDominantSpeaker] : localVideoThumbnail;
+
+        let newSpeakerVideo = APP.conference.isLocalId(id) ?
+            localVideoThumbnail : remoteVideos[id];
+
+        updateDominantSpeakerIndicator(oldSpeakerVideo, newSpeakerVideo);
+
         if (APP.conference.isLocalId(id)) {
-            if(oldSpeakerRemoteVideo)
-            {
-                oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
-                currentDominantSpeaker = null;
-            }
-            localVideoThumbnail.showDominantSpeakerIndicator(true);
+            currentDominantSpeaker = null;
             return;
+        } else {
+            currentDominantSpeaker = id;
         }
-
-        let remoteVideo = remoteVideos[id];
-        if (!remoteVideo) {
-            return;
-        }
-
-        // Update the current dominant speaker.
-        remoteVideo.showDominantSpeakerIndicator(true);
-        localVideoThumbnail.showDominantSpeakerIndicator(false);
-
-        // let's remove the indications from the remote video if any
-        if (oldSpeakerRemoteVideo) {
-            oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
-        }
-        currentDominantSpeaker = id;
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
         if (!pinnedId
-            && remoteVideo.hasVideoStarted()
+            && newSpeakerVideo && newSpeakerVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
         }
