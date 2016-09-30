@@ -17,6 +17,7 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import {reportError} from './modules/util/helpers';
 
 import UIErrors from './modules/UI/UIErrors';
+import UIUtil from './modules/UI/util/UIUtil';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -1276,6 +1277,11 @@ export default {
             }
 
             APP.UI.setAudioLevel(id, lvl);
+        });
+
+        room.on(ConferenceEvents.TALK_WHILE_MUTED, () => {
+            APP.UI.showToolbar(6000);
+            UIUtil.animateShowElement($("#talkWhileMutedPopup"), true, 5000);
         });
 
         room.on(ConferenceEvents.IN_LAST_N_CHANGED, (inLastN) => {

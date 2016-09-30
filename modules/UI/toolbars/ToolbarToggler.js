@@ -89,8 +89,9 @@ const ToolbarToggler = {
 
     /**
      * Shows the main toolbar.
+     * @param timeout (optional) to specify custom timeout value
      */
-    showToolbar () {
+    showToolbar (timeout) {
         if (interfaceConfig.filmStripOnly) {
             return;
         }
@@ -107,7 +108,8 @@ const ToolbarToggler = {
                 clearTimeout(toolbarTimeoutObject);
                 toolbarTimeoutObject = null;
             }
-            toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            toolbarTimeoutObject
+                = setTimeout(hideToolbar, timeout || toolbarTimeout);
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
         }
 
