@@ -143,11 +143,9 @@ const TOOLTIP_POSITIONS = {
      * @param element the element to remove the tooltip from
      */
     removeTooltip: function (element) {
-        AJS.$(element).tooltip('destroy');
-        element.setAttribute('data-tooltip', '');
-        element.setAttribute('data-i18n','');
-        element.setAttribute('content','');
-        element.setAttribute('shortcut','');
+        element.removeAttribute('data-tooltip', '');
+        element.removeAttribute('data-i18n','');
+        element.removeAttribute('content','');
     },
 
     /**
