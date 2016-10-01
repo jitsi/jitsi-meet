@@ -19,5 +19,9 @@
         action + '.' + browserName, label ? label : "", value ? value : null);
   };
 
+  Analytics.prototype.sendFeedback = function (data, label, browserName) {
+      this.sendEvent('feedback.rating', data.overall, label, browserName);
+  };
+
   ctx.Analytics = Analytics;
 }(window));
