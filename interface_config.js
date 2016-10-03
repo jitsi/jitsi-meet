@@ -1,4 +1,4 @@
-var interfaceConfig = {
+var interfaceConfig = { // eslint-disable-line no-unused-vars
     CANVAS_EXTRA: 104,
     CANVAS_RADIUS: 0,
     SHADOW_COLOR: '#ffffff',

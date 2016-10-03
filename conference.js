@@ -19,7 +19,6 @@ import {reportError} from './modules/util/helpers';
 import UIErrors from './modules/UI/UIErrors';
 import UIUtil from './modules/UI/util/UIUtil';
 
-const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
@@ -159,29 +158,24 @@ function getDisplayName (id) {
 
 /**
  * Mute or unmute local audio stream if it exists.
- * @param {boolean} muted if audio stream should be muted or unmuted.
- * @param {boolean} indicates if this local audio mute was a result of user
- * interaction
- *
+ * @param {boolean} muted - if audio stream should be muted or unmuted.
+ * @param {boolean} userInteraction - indicates if this local audio mute was a
+ * result of user interaction
  */
-function muteLocalAudio (muted, userInteraction) {
-    if (!localAudio) {
+function muteLocalAudio (muted) {
+    muteLocalMedia(localAudio, muted, 'Audio');
+}
+
+function muteLocalMedia(localMedia, muted, localMediaTypeString) {
+    if (!localMedia) {
         return;
     }
 
-    if (muted) {
-        localAudio.mute().then(function(value) {},
-            function(value) {
-                console.warn('Audio Mute was rejected:', value);
-            }
-        );
-    } else {
-        localAudio.unmute().then(function(value) {},
-            function(value) {
-                console.warn('Audio unmute was rejected:', value);
-            }
-        );
-    }
+    const method = muted ? 'mute' : 'unmute';
+
+    localMedia[method]().catch(reason => {
+        console.warn(`${localMediaTypeString} ${method} was rejected:`, reason);
+    });
 }
 
 /**
@@ -189,23 +183,7 @@ function muteLocalAudio (muted, userInteraction) {
  * @param {boolean} muted if video stream should be muted or unmuted.
  */
 function muteLocalVideo (muted) {
-    if (!localVideo) {
-        return;
-    }
-
-    if (muted) {
-        localVideo.mute().then(function(value) {},
-            function(value) {
-                console.warn('Video mute was rejected:', value);
-            }
-        );
-    } else {
-        localVideo.unmute().then(function(value) {},
-            function(value) {
-                console.warn('Video unmute was rejected:', value);
-            }
-        );
-    }
+    muteLocalMedia(localVideo, muted, 'Video');
 }
 
 /**
@@ -433,7 +411,7 @@ class ConferenceConnector {
         room.on(ConferenceEvents.CONFERENCE_ERROR,
             this._onConferenceError.bind(this));
     }
-    _handleConferenceFailed(err, msg) {
+    _handleConferenceFailed(err) {
         this._unsubscribe();
         this._reject(err);
     }
@@ -1284,6 +1262,7 @@ export default {
             UIUtil.animateShowElement($("#talkWhileMutedPopup"), true, 5000);
         });
 
+/*
         room.on(ConferenceEvents.IN_LAST_N_CHANGED, (inLastN) => {
             //FIXME
             if (config.muteLocalVideoIfNotInLastN) {
@@ -1292,6 +1271,7 @@ export default {
                 // APP.UI.markVideoMuted(true/false);
             }
         });
+*/
         room.on(
             ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids, enteringIds) => {
             APP.UI.handleLastNEndpoints(ids, enteringIds);

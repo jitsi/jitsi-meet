@@ -44,6 +44,7 @@
     "babel-register": "*",
     "clean-css": "*",
     "css-loader": "*",
+    "eslint": "*",
     "expose-loader": "*",
     "file-loader": "*",
     "imports-loader": "*",
@@ -56,7 +57,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "jshint .",
+    "lint": "jshint . && eslint .",
     "validate": "npm ls"
   },
   "pre-commit": [

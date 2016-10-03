@@ -1,4 +1,4 @@
-/* global $, APP, config*/
+/* global APP, config */
 
 /**
  * Build html for "password required" dialog.
@@ -109,7 +109,7 @@ function LoginDialog(successCallback, cancelCallback) {
             html:   '<div id="errorMessage"></div>',
             buttons: finishedButtons,
             defaultButton: 0,
-            submit: function (e, v, m, f) {
+            submit: function (e, v) {
                 e.preventDefault();
                 if (v === 'retry') {
                     connDialog.goToState('login');

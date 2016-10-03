@@ -75,8 +75,6 @@ function setupWelcomePage() {
     });
 
     if (interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE !== false) {
-        var updateTimeout;
-        var animateTimeout;
         var selector = $("#reload_roomname");
         selector.click(function () {
             clearTimeout(updateTimeout);

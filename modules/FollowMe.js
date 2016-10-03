@@ -261,25 +261,26 @@ class FollowMe {
      * @param newValue the new value
      * @private
      */
+    // eslint-disable-next-line no-unused-vars
     _localPropertyChange (property, oldValue, newValue) {
         // Only a moderator is allowed to send commands.
-        var conference = this._conference;
+        const conference = this._conference;
         if (!conference.isModerator)
             return;
 
-        var commands = conference.commands;
+        const commands = conference.commands;
         // XXX The "Follow Me" command represents a snapshot of all states
         // which are to be followed so don't forget to removeCommand before
         // sendCommand!
         commands.removeCommand(_COMMAND);
-        var self = this;
+        const local = this._local;
         commands.sendCommandOnce(
                 _COMMAND,
                 {
                     attributes: {
-                        filmStripVisible: self._local.filmStripVisible,
-                        nextOnStage: self._local.nextOnStage,
-                        sharedDocumentVisible: self._local.sharedDocumentVisible
+                        filmStripVisible: local.filmStripVisible,
+                        nextOnStage: local.nextOnStage,
+                        sharedDocumentVisible: local.sharedDocumentVisible
                     }
                 });
     }

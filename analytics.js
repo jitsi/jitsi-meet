@@ -1,5 +1,9 @@
+/* global ga */
+
 (function (ctx) {
   function Analytics() {
+    /* eslint-disable */
+
     /**
      * Google Analytics
      */
@@ -8,6 +12,8 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-319188-14', 'jit.si');
     ga('send', 'pageview');
+
+    /* eslint-enable */
   }
 
   Analytics.prototype.sendEvent = function (action, data, label, browserName) {

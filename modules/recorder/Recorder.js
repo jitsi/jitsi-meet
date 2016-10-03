@@ -1,4 +1,4 @@
-/* global APP, $, config */
+/* global APP, config */
 
 /**
  * The (name of the) command which transports the recorder info.
@@ -26,7 +26,6 @@ class Recorder {
         // which are to be followed so don't forget to removeCommand before
         // sendCommand!
         commands.removeCommand(_USER_INFO_COMMAND);
-        var self = this;
         commands.sendCommand(
             _USER_INFO_COMMAND,
             {

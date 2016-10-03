@@ -4,7 +4,6 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
 
 let numberOfContacts = 0;
-let notificationInterval;
 
 /**
  * Updates the number of participants in the contact list button and sets
@@ -59,10 +58,6 @@ function createDisplayNameParagraph(key, displayName) {
 
 function getContactEl (id) {
     return $(`#contacts>li[id="${id}"]`);
-}
-
-function contactElExists (id) {
-    return getContactEl(id).length > 0;
 }
 
 /**

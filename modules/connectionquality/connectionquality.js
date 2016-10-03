@@ -1,5 +1,3 @@
-/* global APP, require */
-/* jshint -W101 */
 import EventEmitter from "events";
 
 import CQEvents from "../../service/connectionquality/CQEvents";

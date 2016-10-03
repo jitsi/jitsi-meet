@@ -35,25 +35,9 @@ LocalVideo.prototype = Object.create(SmallVideo.prototype);
 LocalVideo.prototype.constructor = LocalVideo;
 
 /**
- * Creates the edit display name button.
- *
- * @returns {object} the edit button
- */
-function createEditDisplayNameButton() {
-    var editButton = document.createElement('a');
-    editButton.className = 'displayname';
-    UIUtil.setTooltip(editButton,
-        "videothumbnail.editnickname",
-        "left");
-    editButton.innerHTML = '<i class="icon-edit"></i>';
-
-    return editButton;
-}
-
-/**
  * Sets the display name for the given video span id.
  */
-LocalVideo.prototype.setDisplayName = function(displayName, key) {
+LocalVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
         console.warn(
                 "Unable to set displayName - " + this.videoSpanId +
@@ -138,7 +122,7 @@ LocalVideo.prototype.setDisplayName = function(displayName, key) {
                 $editDisplayName.focus();
                 $editDisplayName.select();
 
-                $editDisplayName.one("focusout", function (e) {
+                $editDisplayName.one("focusout", function () {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
                     $editDisplayName.hide();
                     $localDisplayName.show();

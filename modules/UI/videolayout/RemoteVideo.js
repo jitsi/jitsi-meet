@@ -3,7 +3,6 @@
 import ConnectionIndicator from './ConnectionIndicator';
 
 import SmallVideo from "./SmallVideo";
-import AudioLevels from "../audio_levels/AudioLevels";
 import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 import JitsiPopover from "../util/JitsiPopover";
@@ -61,8 +60,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
         this.addRemoteVideoMenu();
     }
 
-    let { remoteVideo } = this.VideoLayout.resizeThumbnails(false, true);
-    let { thumbHeight, thumbWidth } = remoteVideo;
+    this.VideoLayout.resizeThumbnails(false, true);
 
     this.addAudioLevelIndicator();
 
@@ -429,7 +427,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
         return;
 
     let streamElement = SmallVideo.createStreamElement(stream);
-    let newElementId = streamElement.id;
 
     // Put new stream element always in front
     UIUtils.prependChild(this.container, streamElement);

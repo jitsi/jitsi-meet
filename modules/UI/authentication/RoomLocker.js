@@ -51,7 +51,7 @@ function askForPassword () {
         APP.UI.messageHandler.openTwoButtonDialog(
             null, null, null, msg,
             true, "dialog.Ok",
-            function (e, v, m, f) {}, null,
+            function () {}, null,
             function (e, v, m, f) {
                 if (v && f.lockKey) {
                     resolve(UIUtil.escapeHtml(f.lockKey));

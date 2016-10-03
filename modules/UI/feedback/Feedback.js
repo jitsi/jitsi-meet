@@ -1,4 +1,4 @@
-/* global $, APP, config, interfaceConfig, JitsiMeetJS */
+/* global $, APP, JitsiMeetJS */
 import UIEvents from "../../../service/UI/UIEvents";
 import FeedabckWindow from "./FeedbackWindow";
 

@@ -9,7 +9,7 @@
 /**
  * Builds and returns the room name.
  */
-function getRoomName () {
+function getRoomName () { // eslint-disable-line no-unused-vars
     var path = window.location.pathname;
     var roomName;
 
@@ -42,6 +42,7 @@ function getRoomName () {
  * @param dontParse if false or undefined some transformations
  * (for parsing the value as JSON) are going to be executed
  */
+// eslint-disable-next-line no-unused-vars
 function getConfigParamsFromUrl(source, dontParse) {
     var paramStr = (source === "search")? location.search : location.hash;
     if (!paramStr)

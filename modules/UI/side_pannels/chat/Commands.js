@@ -1,4 +1,3 @@
-/* global APP */
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
 

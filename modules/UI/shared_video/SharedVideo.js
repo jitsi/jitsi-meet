@@ -729,7 +729,7 @@ function showStopVideoPropmpt() {
             null,
             false,
             "dialog.Remove",
-            function(e,v,m,f) {
+            function(e,v) {
                 if (v) {
                     resolve();
                 } else {
@@ -811,7 +811,7 @@ function requestVideoLink() {
                 ],
                 focus: ':input:first',
                 defaultButton: 1,
-                submit: function (e, v, m, f) {
+                submit: function (e, v) {
                     e.preventDefault();
                     if (v === 0) {
                         reject();

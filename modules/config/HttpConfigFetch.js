@@ -32,7 +32,7 @@ var HttpConfig = {
                     var error = "Get config response status: " + textStatus;
                     complete(false, error);
                 },
-                success: function(data, textStatus, jqXHR) {
+                success: function(data) {
                     try {
                         configUtil.overrideConfigJSON(
                             config, interfaceConfig, data);

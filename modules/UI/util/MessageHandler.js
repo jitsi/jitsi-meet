@@ -1,5 +1,4 @@
-/* global $, APP, jQuery, toastr, Impromptu */
-/* jshint -W101 */
+/* global $, APP, toastr, Impromptu */
 
 import UIUtil from './UIUtil';
 
@@ -274,7 +273,8 @@ var messageHandler = {
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
-                    " data-i18n-options='" + JSON.stringify(messageArguments) + "'"
+                    " data-i18n-options='" + JSON.stringify(messageArguments)
+                        + "'"
                     : "") + ">" +
             APP.translation.translateString(messageKey,
                 messageArguments) +

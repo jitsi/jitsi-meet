@@ -1,4 +1,3 @@
-/* global $ */
 var ConfigUtil = {
     /**
      * Method overrides JSON properties in <tt>config</tt> and
