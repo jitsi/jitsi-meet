@@ -242,8 +242,8 @@ a.button>#avatar {
  * START of slide in animation for extended toolbar panel.
  */
 @include keyframes(slideInExt) {
-    from { width: 0px; }
-    to   { width: 200px; } // TO FIX: Make this value a percentage.
+    from { left: -$contactListWidth; }
+    to   { left: 0 }
 }
 
 .slideInExt {
