@@ -6,10 +6,10 @@
     position:absolute;
     top: 0px;
     left: $defaultToolbarSize;
-    width: $contactListWidth;
-    height: 100%;
-    max-width: $contactListWidth;
+    width: 0;
     background-color: rgba(0,0,0,0.8);
+    height: 100%;
+    max-width: $sidebarWidth;
     z-index: 800;
     overflow: hidden;
     letter-spacing: $titleLetterSpacing;
@@ -63,6 +63,8 @@
      */
     .sideToolbarContainer__inner {
         display: none;
+        width: $sidebarWidth;
+        position: absolute;
         box-sizing: border-box;
         color: #FFF;
 

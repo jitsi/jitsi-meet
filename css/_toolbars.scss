@@ -172,93 +172,42 @@ a.button>#avatar {
     bottom: 9px;
 }
 
-/**
- * START of slide in animation for extended toolbar.
- */
-@include keyframes(slideInX) {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(0%); }
-}
-
 .slideInX {
-  @include animation('slideInX .5s forwards');
-}
-
-@include keyframes(slideOutX) {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
+  @include animation(slideInX .5s forwards);
 }
 
 .slideOutX {
-  @include animation('slideOutX .5s forwards');
-}
-
-@include keyframes(slideInExtX) {
-    0% { transform: translateX(-500%); }
-    100% { transform: translateX(0%); }
+  @include animation(slideOutX .5s forwards);
 }
 
 .slideInExtX {
-  @include animation('slideInExtX .5s forwards');
-}
-
-@include keyframes(slideOutExtX) {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-500%); }
+  @include animation(slideInExtX .5s forwards);
 }
 
 .slideOutExtX {
-  @include animation('slideOutExtX .5s forwards');
-}
-
-/**
- * END of slide out animation for extended toolbar.
- */
-
-/**
- * START of slide in / out animation for main toolbar.
- */
-@include keyframes(slideInY) {
-    100% { transform: translateY(0%); }
+  @include animation(slideOutExtX .5s forwards);
 }
 
 .slideInY {
-  @include animation('slideInY .5s forwards');
-}
-
-@include keyframes(slideOutY) {
-    0% { transform: translateY(0%); }
-    100% { transform: translateY(-100%); }
+  @include animation(slideInY .5s forwards);
 }
 
 .slideOutY {
-    @include animation('slideOutY .5s forwards');
-}
-/**
- * END of slide in / out animation for main toolbar.
- */
-
-/**
- * START of slide in animation for extended toolbar panel.
- */
-@include keyframes(slideInExt) {
-    from { left: -$contactListWidth; }
-    to   { left: 0 }
+    @include animation(slideOutY .5s forwards);
 }
 
 .slideInExt {
-    @include animation("slideInExt .5s forwards");
-}
-
-@include keyframes(slideOutExt) {
-  from { width: 200px; } // TO FIX: Make this value a percentage.
-  to   { width: 0px; }
+    @include animation(slideInExt .5s forwards);
 }
 
 .slideOutExt {
-  @include animation("slideOutExt .5s forwards");
+  @include animation(slideOutExt .5s forwards);
 }
 
-/**
- * END of slide in animation for extended toolbar panel.
- */
+.slideInExtContainer {
+  @include animation(slideInExtContainer .5s forwards);
+}
+
+.slideOutExtContainer {
+  @include animation(slideOutExtContainer .5s forwards);
+}
