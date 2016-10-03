@@ -13,8 +13,7 @@
     font-size: 10pt;
     width: 100%;
     height: 90%;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: auto;
     word-wrap: break-word;
 
     a:link {
