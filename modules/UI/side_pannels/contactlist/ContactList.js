@@ -145,7 +145,7 @@ var ContactList = {
             let password;
             this.emitter.emit(event, (room) => {
                 password = room.password;
-                let showKey = !!password ? this.lockKey : this.unlockKey;
+                let showKey = password ? this.lockKey : this.unlockKey;
                 let hideKey = !password ? this.lockKey : this.unlockKey;
                 let showId = `contactList${showKey}`;
                 let hideId = `contactList${hideKey}`;

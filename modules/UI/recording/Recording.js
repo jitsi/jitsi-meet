@@ -175,7 +175,7 @@ function _showStopRecordingPrompt (recordingType) {
             titleKey: title,
             messageKey: message,
             leftButtonKey: buttonKey,
-            submitFunction: function(e,v,m,f) {
+            submitFunction: function(e,v) {
                 if (v) {
                     resolve();
                 } else {

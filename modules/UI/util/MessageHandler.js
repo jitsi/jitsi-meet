@@ -230,9 +230,9 @@ var messageHandler = {
         if (!popupEnabled)
             return;
         let { classes, size } = options;
-        options.classes = Object.assign({}, this._getDialogClasses(size), classes);
+        let defaultClasses = this._getDialogClasses(size);
+        options.classes = Object.assign({}, defaultClasses, classes);
         options.promptspeed = options.promptspeed || 0;
-
 
         for (let state in statesObject) {
             let currentState = statesObject[state];

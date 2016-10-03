@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig, AJS */
+/* global $, APP, interfaceConfig */
 
 const labels = {
     1: 'Very Bad',
@@ -27,7 +27,7 @@ function toggleStars(starCount) {
             el.classList.remove("starHover");
     });
     labelEl.text(label);
-};
+}
 
 /**
  * Constructs the html for the rated feedback window.
@@ -35,9 +35,7 @@ function toggleStars(starCount) {
  * @returns {string} the contructed html string
  */
 function createRateFeedbackHTML() {
-    let rateExperience
-            = APP.translation.translateString('dialog.rateExperience'),
-        feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
+    let feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
 
     let starClassName = (interfaceConfig.ENABLE_FEEDBACK_ANIMATION)
         ? "icon-star-full shake-rotate"
@@ -73,7 +71,7 @@ function createRateFeedbackHTML() {
                     placeholder="${ feedbackHelp }"></textarea>
             </div>
         </form>`;
-};
+}
 
 /**
  * Feedback is loaded callback

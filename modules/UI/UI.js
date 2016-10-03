@@ -1261,7 +1261,7 @@ UI.showExtensionRequiredDialog = function (url) {
  * @param url {string} the url of the extension.
  */
 UI.showExtensionExternalInstallationDialog = function (url) {
-    let submitFunction = function(e,v,m,f){
+    let submitFunction = function(e,v){
         if (v) {
             e.preventDefault();
             eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);

@@ -722,7 +722,7 @@ function getYoutubeLink(url) {
  */
 function showStopVideoPropmpt() {
     return new Promise(function (resolve, reject) {
-        let submitFunction = function(e,v,m,f) {
+        let submitFunction = function(e,v) {
             if (v) {
                 resolve();
             } else {
