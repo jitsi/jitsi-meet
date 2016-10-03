@@ -1,4 +1,4 @@
-/* global APP, $, JitsiMeetJS, interfaceConfig */
+/* global APP, $, JitsiMeetJS */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";

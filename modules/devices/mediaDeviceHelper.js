@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS, config, interfaceConfig */
+/* global APP, JitsiMeetJS */
 
 let currentAudioInputDevices,
     currentVideoInputDevices,

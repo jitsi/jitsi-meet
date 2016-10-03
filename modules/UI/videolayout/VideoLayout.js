@@ -1,7 +1,5 @@
-/* global config, APP, $, interfaceConfig, JitsiMeetJS */
-/* jshint -W101 */
+/* global config, APP, $, interfaceConfig */
 
-import Avatar from "../avatar/Avatar";
 import FilmStrip from "./FilmStrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -9,10 +7,7 @@ import UIUtil from "../util/UIUtil";
 import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager  from "./LargeVideoManager";
 import {VIDEO_CONTAINER_TYPE} from "./VideoContainer";
-import {SHARED_VIDEO_CONTAINER_TYPE} from '../shared_video/SharedVideo';
 import LocalVideo from "./LocalVideo";
-
-const RTCUIUtil = JitsiMeetJS.util.RTCUIHelper;
 
 var remoteVideos = {};
 var localVideoThumbnail = null;
@@ -106,7 +101,7 @@ var VideoLayout = {
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
-        let { localVideo } = this.resizeThumbnails(false, true);
+        this.resizeThumbnails(false, true);
 
         emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
@@ -316,7 +311,8 @@ var VideoLayout = {
     onRemoteStreamRemoved (stream) {
         let id = stream.getParticipantId();
         let remoteVideo = remoteVideos[id];
-        if (remoteVideo) { // remote stream may be removed after participant left the conference
+        // Remote stream may be removed after participant left the conference.
+        if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
         }
     },
@@ -519,11 +515,8 @@ var VideoLayout = {
     resizeThumbnails (  animate = false,
                         forceUpdate = false,
                         onComplete = null) {
-
-        let { localVideo, remoteVideo }
+        const { localVideo, remoteVideo }
             = FilmStrip.calculateThumbnailSize();
-
-        let {thumbWidth, thumbHeight} = remoteVideo;
 
         FilmStrip.resizeThumbnails(localVideo, remoteVideo,
             animate, forceUpdate)
@@ -653,6 +646,7 @@ var VideoLayout = {
      * @param {boolean} isActive true if the connection is ok or false when
      * the user is having connectivity issues.
      */
+    // eslint-disable-next-line no-unused-vars
     onParticipantConnectionStatusChanged (id, isActive) {
         // Show/hide warning on the large video
         if (this.isCurrentlyOnLarge(id)) {

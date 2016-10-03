@@ -1,5 +1,6 @@
+/* global __dirname */
+
 import process from 'process';
-import webpack from 'webpack';
 
 const aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
 const minimize

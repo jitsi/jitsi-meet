@@ -3,11 +3,9 @@ var i18n = require("i18next-client");
 var languages = require("../../service/translation/languages");
 var DEFAULT_LANG = languages.EN;
 
-i18n.addPostProcessor("resolveAppName", function(value, key, options) {
-    return value.replace("__app__", interfaceConfig.APP_NAME);
-});
-
-
+i18n.addPostProcessor(
+    "resolveAppName",
+    value => value.replace("__app__", interfaceConfig.APP_NAME));
 
 var defaultOptions = {
     detectLngQS: "lang",
@@ -34,7 +32,7 @@ var defaultOptions = {
                                                  { lng: lng, ns: ns });
         i18n.functions.ajax({
             url: url,
-            success: function(data, status, xhr) {
+            success: function(data) {
                 i18n.functions.log('loaded: ' + url);
                 done(null, data);
             },
@@ -63,7 +61,7 @@ var defaultOptions = {
 //                localStorageExpirationTime: 86400000 // in ms, default 1 week
 };
 
-function initCompleted(t) {
+function initCompleted() {
     $("[data-i18n]").i18n();
 }
 

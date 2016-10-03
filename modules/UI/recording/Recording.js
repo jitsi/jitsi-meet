@@ -97,7 +97,7 @@ function _requestLiveStreamId() {
                 ],
                 focus: ':input:first',
                 defaultButton: 1,
-                submit: function (e, v, m, f) {
+                submit: function (e, v) {
                     e.preventDefault();
                     if (v === 0) {
                         reject(APP.UI.messageHandler.CANCEL);
@@ -177,7 +177,7 @@ function _showStopRecordingPrompt (recordingType) {
             null,
             false,
             buttonKey,
-            function(e,v,m,f) {
+            function(e,v) {
                 if (v) {
                     resolve();
                 } else {

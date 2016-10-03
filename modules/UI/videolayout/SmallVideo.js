@@ -574,7 +574,6 @@ SmallVideo.prototype.getIndicatorSpan = function(id) {
  * is added, and will fire a RESOLUTION_CHANGED event.
  */
 SmallVideo.prototype.waitForResolutionChange = function() {
-    let self = this;
     let beforeChange = window.performance.now();
     let videos = this.selectVideoElement();
     if (!videos || !videos.length || videos.length <= 0)
@@ -582,17 +581,17 @@ SmallVideo.prototype.waitForResolutionChange = function() {
     let video = videos[0];
     let oldWidth = video.videoWidth;
     let oldHeight = video.videoHeight;
-    video.onresize = (event) => {
+    video.onresize = () => {
         if (video.videoWidth != oldWidth || video.videoHeight != oldHeight) {
             // Only run once.
             video.onresize = null;
 
             let delay = window.performance.now() - beforeChange;
-            let emitter = self.VideoLayout.getEventEmitter();
+            let emitter = this.VideoLayout.getEventEmitter();
             if (emitter) {
                 emitter.emit(
                         UIEvents.RESOLUTION_CHANGED,
-                        self.getId(),
+                        this.getId(),
                         oldWidth + "x" + oldHeight,
                         video.videoWidth + "x" + video.videoHeight,
                         delay);

@@ -1,5 +1,4 @@
 /* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
-/* jshint -W101 */
 var UI = {};
 
 import Chat from "./side_pannels/chat/Chat";
@@ -10,11 +9,11 @@ import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
-import CQEvents from '../../service/connectionquality/CQEvents';
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
 import Recording from "./recording/Recording";
-import GumPermissionsOverlay from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
+import GumPermissionsOverlay
+    from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
@@ -194,21 +193,16 @@ UI.notifyReservationError = function (code, msg) {
         "dialog.reservationError");
     var message = APP.translation.generateTranslationHTML(
         "dialog.reservationErrorMsg", {code: code, msg: msg});
-    messageHandler.openDialog(
-        title,
-        message,
-        true, {},
-        function (event, value, message, formVals) {
-            return false;
-        }
-    );
+    messageHandler.openDialog(title, message, true, {}, () => false);
 };
 
 /**
  * Notify user that he has been kicked from the server.
  */
 UI.notifyKicked = function () {
-    messageHandler.openMessageDialog("dialog.sessTerminated", "dialog.kickMessage");
+    messageHandler.openMessageDialog(
+            "dialog.sessTerminated",
+            "dialog.kickMessage");
 };
 
 /**
@@ -218,13 +212,9 @@ UI.notifyKicked = function () {
 UI.notifyConferenceDestroyed = function (reason) {
     //FIXME: use Session Terminated from translation, but
     // 'reason' text comes from XMPP packet and is not translated
-    var title = APP.translation.generateTranslationHTML("dialog.sessTerminated");
-    messageHandler.openDialog(
-        title, reason, true, {},
-        function (event, value, message, formVals) {
-            return false;
-        }
-    );
+    const title
+        = APP.translation.generateTranslationHTML("dialog.sessTerminated");
+    messageHandler.openDialog(title, reason, true, {}, () => false);
 };
 
 /**
@@ -287,7 +277,9 @@ UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
  * Sets the local "raised hand" status.
  */
 UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(APP.conference.getMyUserId(), raisedHandStatus);
+    VideoLayout.setRaisedHandStatus(
+            APP.conference.getMyUserId(),
+            raisedHandStatus);
 };
 
 /**
@@ -578,10 +570,6 @@ UI.addRemoteStream = function (track) {
 UI.removeRemoteStream = function (track) {
     VideoLayout.onRemoteStreamRemoved(track);
 };
-
-function chatAddError(errorMessage, originalText) {
-    return Chat.chatAddError(errorMessage, originalText);
-}
 
 /**
  * Update chat subject.
@@ -959,9 +947,7 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
             "dialog.connectError");
     }
 
-    messageHandler.openDialog(
-        title, message, true, {}, function (e, v, m, f) { return false; }
-    );
+    messageHandler.openDialog(title, message, true, {}, () => false);
 };
 
 
@@ -975,9 +961,7 @@ UI.notifyMaxUsersLimitReached = function () {
     var message = APP.translation.generateTranslationHTML(
             "dialog.maxUsersLimitReached");
 
-    messageHandler.openDialog(
-        title, message, true, {}, function (e, v, m, f) { return false; }
-    );
+    messageHandler.openDialog(title, message, true, {}, () => false);
 };
 
 /**
@@ -985,8 +969,12 @@ UI.notifyMaxUsersLimitReached = function () {
  */
 UI.notifyInitiallyMuted = function () {
     messageHandler.notify(
-        null, "notify.mutedTitle", "connected", "notify.muted", null, {timeOut: 120000}
-    );
+        null,
+        "notify.mutedTitle",
+        "connected",
+        "notify.muted",
+        null,
+        { timeOut: 120000 });
 };
 
 /**
@@ -1089,6 +1077,7 @@ UI.addMessage = function (from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
 };
 
+// eslint-disable-next-line no-unused-vars
 UI.updateDTMFSupport = function (isDTMFSupported) {
     //TODO: enable when the UI is ready
     //Toolbar.showDialPadButton(dtmfSupport);
@@ -1105,7 +1094,7 @@ UI.requestFeedback = function () {
     else if (Feedback.isEnabled() && Feedback.isSubmitted())
         return Promise.resolve();
     else
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             if (Feedback.isEnabled()) {
                 // If the user has already entered feedback, we'll show the
                 // window and immidiately start the conference dispose timeout.
@@ -1272,7 +1261,7 @@ UI.showExtensionExternalInstallationDialog = function (url) {
         null,
         true,
         "dialog.goToStore",
-         function(e,v,m,f){
+        function(e,v) {
             if (v) {
                 e.preventDefault();
                 eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
@@ -1407,13 +1396,12 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
         let title = "dialog.error";
 
         if (micError && micError.name === TrackErrors.PERMISSION_DENIED) {
-            if (cameraError && cameraError.name === TrackErrors.PERMISSION_DENIED) {
-                title = "dialog.permissionDenied";
-            } else if (!cameraError) {
+            if (!cameraError
+                    || cameraError.name === TrackErrors.PERMISSION_DENIED) {
                 title = "dialog.permissionDenied";
             }
-        } else if (cameraError &&
-            cameraError.name === TrackErrors.PERMISSION_DENIED) {
+        } else if (cameraError
+                && cameraError.name === TrackErrors.PERMISSION_DENIED) {
             title = "dialog.permissionDenied";
         }
 

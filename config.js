@@ -1,5 +1,6 @@
-/* jshint -W101 */
-var config = {
+/* jshint maxlen:false */
+
+var config = { // eslint-disable-line no-unused-vars
 //    configLocation: './config.json', // see ./modules/HttpConfigFetch.js
     hosts: {
         domain: 'jitsi-meet.example.com',

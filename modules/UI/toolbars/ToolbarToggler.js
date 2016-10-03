@@ -3,7 +3,6 @@
 import UIUtil from '../util/UIUtil';
 import Toolbar from './Toolbar';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
-import FilmStrip from '../videolayout/FilmStrip.js';
 
 let toolbarTimeoutObject;
 let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
@@ -27,7 +26,7 @@ function showDesktopSharingButton() {
  * @param force {true} to force the hiding of the toolbar without caring about
  * the extended toolbar side panels.
  */
-function hideToolbar(force) {
+function hideToolbar(force) { // eslint-disable-line no-unused-vars
     if (alwaysVisibleToolbar) {
         return;
     }

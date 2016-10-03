@@ -1,4 +1,4 @@
-/* global $, APP, config, AJS, interfaceConfig */
+/* global $, APP, AJS, interfaceConfig */
 
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 

@@ -1,7 +1,6 @@
-/* global APP, $, JitsiMeetJS */
+/* global $ */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
-import languages from "../../../../service/translation/languages";
 import Settings from '../../../settings/Settings';
 
 export default {

@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig, config*/
+/* global $, interfaceConfig */
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";

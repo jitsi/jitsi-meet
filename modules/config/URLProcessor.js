@@ -1,4 +1,4 @@
-/* global $, $iq, config, interfaceConfig, getConfigParamsFromUrl */
+/* global config, interfaceConfig, getConfigParamsFromUrl */
 var configUtils = require('./Util');
 var params = {};
 

@@ -1,12 +1,9 @@
 /* global $, APP, interfaceConfig */
-/* jshint -W101 */
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
 import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
-
-import LargeContainer from "./LargeContainer";
 
 import AudioLevels from "../audio_levels/AudioLevels";
 

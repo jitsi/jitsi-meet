@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS */
+/* global $, APP */
 
 let $overlay;
 

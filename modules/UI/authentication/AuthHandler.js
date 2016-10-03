@@ -4,7 +4,6 @@ import LoginDialog from './LoginDialog';
 import UIUtil from '../util/UIUtil';
 import {openConnection} from '../../../connection';
 
-const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 let externalAuthWindow;
@@ -73,7 +72,6 @@ function redirectToTokenAuthService(roomName) {
  * @param room the name fo the conference room.
  */
 function initJWTTokenListener(room) {
-    var self = this;
     var listener = function (event) {
         if (externalAuthWindow !== event.source) {
             console.warn("Ignored message not coming " +
@@ -279,14 +277,11 @@ function showXmppPasswordPrompt(roomName, connect) {
 function requestAuth(roomName, connect) {
     if (isTokenAuthEnabled) {
         // This Promise never resolves as user gets redirected to another URL
-        return new Promise(function (resolve, reject) {
-            redirectToTokenAuthService(roomName);
-        });
+        return new Promise(() => redirectToTokenAuthService(roomName));
     } else {
         return showXmppPasswordPrompt(roomName, connect);
     }
 }
-
 
 export default {
     authenticate,

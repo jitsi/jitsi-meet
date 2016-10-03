@@ -1,5 +1,4 @@
 /* global $, APP, interfaceConfig, AJS */
-/* jshint -W101 */
 
 const selector = '#aui-feedback-dialog';
 
@@ -9,21 +8,21 @@ const selector = '#aui-feedback-dialog';
  *
  * @param starCount the number of stars, for which to toggle the css class
  */
-let toggleStars = function(starCount) {
+function toggleStars(starCount) {
     $('#stars > a').each(function(index, el) {
         if (index <= starCount) {
             el.classList.add("starHover");
         } else
             el.classList.remove("starHover");
     });
-};
+}
 
 /**
  * Constructs the html for the rated feedback window.
  *
  * @returns {string} the contructed html string
  */
-let createRateFeedbackHTML = function (Feedback) {
+function createRateFeedbackHTML() {
     let rateExperience
             = APP.translation.translateString('dialog.rateExperience'),
         feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
@@ -58,17 +57,22 @@ let createRateFeedbackHTML = function (Feedback) {
                     <p>&nbsp;</p>
                     <p>${ feedbackHelp }</p>
                 </div>
-                <textarea id="feedbackTextArea" rows="10" cols="40" autofocus></textarea>
+                <textarea id="feedbackTextArea" rows="10" cols="40" autofocus>
+                </textarea>
             </form>
             <footer class="aui-dialog2-footer feedback__footer">
                 <div class="aui-dialog2-footer-actions">
-                    <button id="dialog-close-button" class="aui-button aui-button_close">Close</button>
-                    <button id="dialog-submit-button" class="aui-button aui-button_submit">Submit</button>
+                    <button
+                        id="dialog-close-button"
+                        class="aui-button aui-button_close">Close</button>
+                    <button
+                        id="dialog-submit-button"
+                        class="aui-button aui-button_submit">Submit</button>
                 </div>
             </footer>
         </div>
 `;
-};
+}
 
 /**
  * Callback for Rate Feedback

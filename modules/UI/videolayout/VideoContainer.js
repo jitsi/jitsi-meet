@@ -139,11 +139,7 @@ function getCameraVideoPosition(videoWidth,
  * @return an array with 2 elements, the horizontal indent and the vertical
  * indent
  */
-function getDesktopVideoPosition(videoWidth,
-                                 videoHeight,
-                                 videoSpaceWidth,
-                                 videoSpaceHeight) {
-
+function getDesktopVideoPosition(videoWidth, videoHeight, videoSpaceWidth) {
     let horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
 
     let verticalIndent = 0;// Top aligned
@@ -428,7 +424,6 @@ export class VideoContainer extends LargeContainer {
             return Promise.resolve();
         }
 
-        let $wrapper = this.$wrapper;
         return new Promise((resolve) => {
             this.$wrapper.css('visibility', 'visible').fadeTo(
                 FADE_DURATION_MS,

@@ -1,5 +1,4 @@
 /* global APP, $, config, interfaceConfig, JitsiMeetJS */
-/* jshint -W101 */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
@@ -350,7 +349,11 @@ function showSipNumberInput () {
     APP.UI.messageHandler.openTwoButtonDialog(
         null, null, null,
         `<h2>${sipMsg}</h2>
-            <input name="sipNumber" type="text" value="${defaultNumber}" autofocus>`,
+            <input
+                name="sipNumber"
+                type="text"
+                value="${defaultNumber}"
+                autofocus>`,
         false, "dialog.Dial",
         function (e, v, m, f) {
             if (v && f.sipNumber) {
@@ -739,7 +742,7 @@ const Toolbar = {
     /**
      * Handles the side toolbar toggle.
      */
-    _handleSideToolbarContainerToggled(containerId, isVisible) {
+    _handleSideToolbarContainerToggled(containerId) {
         Object.keys(defaultToolbarButtons).forEach(
             id => {
                 if (!UIUtil.isButtonEnabled(id))
