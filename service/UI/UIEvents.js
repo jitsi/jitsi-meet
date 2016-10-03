@@ -114,5 +114,30 @@ export default {
     /**
      * Notifies that the avatar is displayed or not on the largeVideo.
      */
-    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed"
+    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed",
+
+    /**
+     * Requesting room password for invite dialog
+     */
+    REQUEST_ROOM_PASSWORD: "UI.request_room_password",
+
+    /**
+     * Unlocking the room
+     */
+    UNLOCK_ROOM: "UI.unlock_room",
+
+    /**
+     * Triggered when room unlocked
+     */
+    ROOM_UNLOCKED: "UI.room_unlocked",
+
+    /**
+     * Locking the room
+     */
+    LOCK_ROOM: "UI.lock_room",
+
+    /**
+     * Triggered when room locked
+     */
+    ROOM_LOCKED: "UI.room_locked"
 };

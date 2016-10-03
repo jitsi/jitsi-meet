@@ -53,8 +53,10 @@ var messageHandler = {
         }
 
         return $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(title),
             persistent: false,
+            promptspeed: 0,
+            classes: this._getDialogClasses(),
             close: function (e, v, m, f) {
                 if(closeFunction)
                     closeFunction(e, v, m, f);
@@ -80,16 +82,31 @@ var messageHandler = {
      *        the user press 'enter'. Indexed from 0.
      * @return the prompt that was created, or null
      */
-    openTwoButtonDialog: function(titleKey, titleString, msgKey, msgString,
-        persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction, focus, defaultButton) {
+    openTwoButtonDialog: function(options) {
+        let {
+            titleKey,
+            titleString,
+            msgKey,
+            msgString,
+            leftButtonKey,
+            submitFunction,
+            loadedFunction,
+            closeFunction,
+            focus,
+            size,
+            defaultButton,
+            wrapperClass,
+            classes
+        } = options;
 
         if (!popupEnabled || twoButtonDialog)
             return null;
 
         var buttons = [];
 
-        var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
+        var leftButton = leftButtonKey ?
+            APP.translation.generateTranslationHTML(leftButtonKey) :
+            APP.translation.generateTranslationHTML('dialog.Submit');
         buttons.push({ title: leftButton, value: true});
 
         var cancelButton
@@ -103,22 +120,32 @@ var messageHandler = {
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
+        classes = classes || this._getDialogClasses(size);
+        if (wrapperClass) {
+            classes.prompt += ` ${wrapperClass}`;
+        }
+
         twoButtonDialog = $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(title),
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
+            promptspeed: 0,
+            classes,
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
-                if (submitFunction)
-                    submitFunction(e, v, m, f);
+                if (v){
+                    if (submitFunction)
+                        submitFunction(e, v, m, f);
+                }
             },
             close: function (e, v, m, f) {
                 twoButtonDialog = null;
-                if (closeFunction)
+                if (closeFunction) {
                     closeFunction(e, v, m, f);
+                }
             }
         });
         return twoButtonDialog;
@@ -145,14 +172,16 @@ var messageHandler = {
         if (!popupEnabled)
             return;
 
-        var args = {
-            title: titleString,
+        let args = {
+            title: this._getFormattedTitleString(titleString),
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
+            promptspeed: 0,
             loaded: loadedFunction,
             submit: submitFunction,
-            close: closeFunction
+            close: closeFunction,
+            classes: this._getDialogClasses()
         };
 
         if (persistent) {
@@ -160,6 +189,30 @@ var messageHandler = {
         }
 
         return new Impromptu(msgString, args);
+    },
+
+    _getFormattedTitleString(titleString) {
+        let $titleString = $('<h2>');
+        $titleString.addClass('aui-dialog2-header-main');
+        $titleString.append(titleString);
+        titleString = $('<div>').append($titleString).html();
+
+        return titleString;
+    },
+
+    _getDialogClasses(size = 'small') {
+        return {
+            box: '',
+            form: '',
+            prompt: `dialog aui-layer aui-dialog2 aui-dialog2-${size}`,
+            close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
+            fade: 'aui-blanket',
+            button: 'button-control',
+            message: 'aui-dialog2-content',
+            buttons: 'aui-dialog2-footer',
+            defaultButton: 'button-control_primary',
+            title: 'aui-dialog2-header'
+        };
     },
 
     /**
@@ -177,7 +230,18 @@ var messageHandler = {
     openDialogWithStates: function (statesObject, options) {
         if (!popupEnabled)
             return;
+        let { classes, size } = options;
+        options.classes = Object.assign({}, this._getDialogClasses(size), classes);
+        options.promptspeed = options.promptspeed || 0;
 
+
+        for (let state in statesObject) {
+            let currentState = statesObject[state];
+            if(currentState.title) {
+                let title = currentState.title;
+                currentState.title = this._getFormattedTitleString(title);
+            }
+        }
         return new Impromptu(statesObject, options);
     },
 
@@ -211,6 +275,7 @@ var messageHandler = {
                 }
             }, 200);
         }
+
         return popup;
     },
 

@@ -1,25 +1,28 @@
-/* global APP, JitsiMeetJS */
+/* global APP, $, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
+import UIEvents from  '../../../service/UI/UIEvents';
 
 /**
  * Show dialog which asks user for new password for the conference.
  * @returns {Promise<string>} password or nothing if user canceled
  */
 function askForNewPassword () {
-    let passMsg = APP.translation.generateTranslationHTML("dialog.passwordMsg");
+    let titleKey = "dialog.passwordMsg";
+    let titleString = APP.translation.generateTranslationHTML(titleKey);
     let yourPassMsg = APP.translation.translateString("dialog.yourPassword");
-    let msg = `
-        <h2>${passMsg}</h2>
+    let msgString = (`
         <input name="lockKey" type="text"
                data-i18n="[placeholder]dialog.yourPassword"
                placeholder="${yourPassMsg}" autofocus>
-    `;
+    `);
 
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
-            null, null, null,
-            msg, false, "dialog.Save",
-            function (e, v, m, f) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            titleString,
+            msgString,
+            leftButtonKey: "dialog.Save",
+            submitFunction: function (e, v, m, f) {
                 if (v && f.lockKey) {
                     resolve(UIUtil.escapeHtml(f.lockKey));
                 }
@@ -27,8 +30,8 @@ function askForNewPassword () {
                     reject(APP.UI.messageHandler.CANCEL);
                 }
             },
-            null, null, 'input:first'
-        );
+            focus: 'input:first'
+        });
     });
 }
 
@@ -37,30 +40,28 @@ function askForNewPassword () {
  * @returns {Promise<string>} password or nothing if user canceled
  */
 function askForPassword () {
-    let passRequiredMsg = APP.translation.translateString(
-        "dialog.passwordRequired"
-    );
+    let titleKey = "dialog.passwordRequired";
     let passMsg = APP.translation.translateString("dialog.password");
-    let msg = `
-        <h2 data-i18n="dialog.passwordRequired">${passRequiredMsg}</h2>
+    let msgString = `
         <input name="lockKey" type="text"
                data-i18n="[placeholder]dialog.password"
                placeholder="${passMsg}" autofocus>
     `;
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
-            null, null, null, msg,
-            true, "dialog.Ok",
-            function (e, v, m, f) {}, null,
-            function (e, v, m, f) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            msgString,
+            leftButtonKey: "dialog.Ok",
+            submitFunction: $.noop,
+            closeFunction: function (e, v, m, f) {
                 if (v && f.lockKey) {
                     resolve(UIUtil.escapeHtml(f.lockKey));
                 } else {
                     reject(APP.UI.messageHandler.CANCEL);
                 }
             },
-            ':input:first'
-        );
+            focus: ':input:first'
+        });
     });
 }
 
@@ -70,17 +71,18 @@ function askForPassword () {
  */
 function askToUnlock () {
     return new Promise(function (resolve, reject) {
-        APP.UI.messageHandler.openTwoButtonDialog(
-            null, null, "dialog.passwordCheck",
-            null, false, "dialog.Remove",
-            function (e, v) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleString: 'Unlock room',
+            msgKey: "dialog.passwordCheck",
+            leftButtonKey: "dialog.Remove",
+            submitFunction: function (e, v) {
                 if (v) {
                     resolve();
                 } else {
                     reject(APP.UI.messageHandler.CANCEL);
                 }
             }
-        );
+        });
     });
 }
 
@@ -123,9 +125,18 @@ export default function createRoomLocker (room) {
      */
     let lockedElsewhere = false;
 
+    /**
+     * Allows to set new password
+     * @param newPass
+     * @returns {Promise.<TResult>}
+     */
     function lock (newPass) {
         return room.lock(newPass).then(function () {
             password = newPass;
+
+            let { ROOM_LOCKED, ROOM_UNLOCKED} = UIEvents;
+            let event = password ? ROOM_LOCKED : ROOM_UNLOCKED;
+            APP.UI.emitEvent(event);
         }).catch(function (err) {
             console.error(err);
             if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {
@@ -148,6 +159,8 @@ export default function createRoomLocker (room) {
         get password () {
             return password;
         },
+
+        lock,
 
         /**
          * Sets that the room is locked from another user, not us.
