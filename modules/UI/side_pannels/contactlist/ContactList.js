@@ -97,14 +97,16 @@ var ContactList = {
         let unlockedHtml = this.getLockDescriptionLayout(this.unlockKey);
 
         let html = (
-            `<button id="addParticipantsBtn" 
-                     data-i18n="${key}" 
-                     class="${classes}">
-                ${text}
-            </button>
-            <div class="input-control__container">
-                ${lockedHtml}
-                ${unlockedHtml}
+            `<div class="input-control">
+                <button id="addParticipantsBtn" 
+                         data-i18n="${key}" 
+                         class="${classes}">
+                    ${text}
+                </button>
+                <div class="input-control__container">
+                    ${lockedHtml}
+                    ${unlockedHtml}
+                </div>
             </div>`);
 
         return html;

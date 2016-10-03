@@ -4,7 +4,8 @@
     > ul#contacts {
         font-size: 12px;
         bottom: 0px;
-        margin: 0px;
+        margin: 0;
+        margin-top: 16px;
         padding: 0px;
         width: 100%;
         overflow: auto;
@@ -24,7 +25,7 @@
         white-space: nowrap;
         color: #FFF;
         font-size: 10pt;
-        padding: 6px 10%;
+        padding: 6px 30px;
 
         &:hover,
         &:active {

@@ -6,9 +6,9 @@
     position:absolute;
     top: 0px;
     left: $defaultToolbarSize;
-    width: 0%;
+    width: $contactListWidth;
     height: 100%;
-    max-width: 200px;
+    max-width: $contactListWidth;
     background-color: rgba(0,0,0,0.8);
     z-index: 800;
     overflow: hidden;
@@ -64,9 +64,6 @@
     .sideToolbarContainer__inner {
         display: none;
         box-sizing: border-box;
-        padding-left: 10px;
-        padding-right: 10px;
-        width: 200px;
         color: #FFF;
 
         /**
@@ -102,6 +99,14 @@
          */
         .first {
             margin-top: 0px !important;
+        }
+
+        .input-control {
+            padding: 0 30px;
+
+            .button-control:first-child {
+                margin-top: 0;
+            }
         }
 
         .button-control {
