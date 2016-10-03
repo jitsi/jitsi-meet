@@ -14,7 +14,10 @@ const SideContainerToggler = {
      * @param eventEmitter
      */
     init(eventEmitter) {
+        let innerSelect = '#sideToolbarContainer .sideToolbarContainer__inner';
         this.eventEmitter = eventEmitter;
+        this.$sidebarContainer = $("#sideToolbarContainer");
+        this.$sidebarInner = $(innerSelect);
 
         // Adds a listener for the animation end event that would take care
         // of hiding all internal containers when the extendedToolbarPanel is
@@ -44,7 +47,7 @@ const SideContainerToggler = {
         }
         else {
             if (this.isVisible())
-                $("#sideToolbarContainer").children().each(function() {
+                this.$sidebarContainer.children().each(function() {
                     if ($(this).id !== elementId && $(this).hasClass("show"))
                         SideContainerToggler.hideInnerContainer($(this));
                 });
@@ -61,7 +64,7 @@ const SideContainerToggler = {
      * otherwise returns {false}.
      */
     isVisible() {
-        return $("#sideToolbarContainer").hasClass("slideInExt");
+        return this.$sidebarInner.hasClass("slideInExt");
     },
 
     /**
@@ -76,8 +79,12 @@ const SideContainerToggler = {
      * Hides the side toolbar panel with a slide out animation.
      */
     hide() {
-        $("#sideToolbarContainer")
-            .removeClass("slideInExt").addClass("slideOutExt");
+        this.$sidebarContainer
+            .removeClass('slideInExtContainer')
+            .addClass('slideOutExtContainer');
+        this.$sidebarInner
+            .removeClass("slideInExt")
+            .addClass("slideOutExt");
     },
 
     /**
@@ -85,8 +92,12 @@ const SideContainerToggler = {
      */
     show() {
         if (!this.isVisible())
-            $("#sideToolbarContainer")
-                .removeClass("slideOutExt").addClass("slideInExt");
+            this.$sidebarContainer
+                .removeClass('slideOutExtContainer')
+                .addClass('slideInExtContainer');
+            this.$sidebarInner
+                .removeClass("slideOutExt")
+                .addClass("slideInExt");
     },
 
     /**
