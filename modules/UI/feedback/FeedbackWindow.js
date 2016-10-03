@@ -7,6 +7,7 @@ const labels = {
     4: 'Good',
     5: 'Very Good'
 };
+
 /**
  * Toggles the appropriate css class for the given number of stars, to
  * indicate that those stars have been clicked/selected.
@@ -75,11 +76,12 @@ function createRateFeedbackHTML() {
 };
 
 /**
- * Callback for Rate Feedback
+ * Feedback is loaded callback
+ * Calls when Modal window is in DOM
  *
  * @param Feedback
  */
-let onLoadRateFunction = function (Feedback) {
+let onLoadFunction = function (Feedback) {
     $('#stars > a').each((index, el) => {
         el.onmouseover = function(){
             toggleStars(index);
@@ -89,6 +91,7 @@ let onLoadRateFunction = function (Feedback) {
         };
         el.onclick = function(){
             Feedback.feedbackScore = index + 1;
+            Feedback.setFeedbackMessage();
         };
     });
 
@@ -103,6 +106,11 @@ let onLoadRateFunction = function (Feedback) {
     $('#feedbackTextArea').focus();
 };
 
+/**
+ * On Feedback Submitted callback
+ *
+ * @param Feedback
+ */
 function onFeedbackSubmitted(Feedback) {
     let form = $('#feedbackForm');
     let message = form.find('textarea').val();
@@ -111,13 +119,22 @@ function onFeedbackSubmitted(Feedback) {
         Feedback.feedbackScore,
         message);
 
-    // TODO: make sendFeedback return true or false. (done in Kostya's PR)
+    // TODO: make sendFeedback return true or false.
     Feedback.submitted = true;
 
     //Remove history is submitted
-    //Feedback.feedbackScore = -1;
-    //Feedback.feedbackMessage ='';
-    Feedback.hide();
+    Feedback.feedbackScore = -1;
+    Feedback.feedbackMessage = '';
+    Feedback.onHide();
+}
+
+/**
+ * On Feedback Closed callback
+ *
+ * @param Feedback
+ */
+function onFeedbackClosed(Feedback) {
+    Feedback.onHide();
 }
 
 /**
@@ -130,6 +147,7 @@ export default class Dialog {
         this.feedbackScore = -1;
         this.feedbackMessage = '';
         this.submitted = false;
+        this.onCloseCallback = function() {};
 
         this.setDefoulOptions();
     }
@@ -140,8 +158,9 @@ export default class Dialog {
         this.options = {
             titleKey: 'dialog.rateExperience',
             msgString: createRateFeedbackHTML(),
+            loadedFunction: function() {onLoadFunction(self);},
             submitFunction: function() {onFeedbackSubmitted(self);},
-            loadedFunction: function() {onLoadRateFunction(self);},
+            closeFunction: function() {onFeedbackClosed(self);},
             wrapperClass: 'feedback',
             size: 'medium'
         };
@@ -154,18 +173,15 @@ export default class Dialog {
     }
 
     show(cb) {
-        if (typeof cb !== 'function') {
-            cb = function() { };
+        const options = this.options;
+        if (typeof cb === 'function') {
+            this.onCloseCallback = cb;
         }
-        let options = this.options;
 
-        options.closeFunction = function() {
-            cb();
-        };
         this.window = APP.UI.messageHandler.openTwoButtonDialog(options);
     }
 
-    hide() {
-        this.setFeedbackMessage();
+    onHide() {
+        this.onCloseCallback(this.feedbackScore, this.feedbackMessage);
     }
 }

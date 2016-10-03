@@ -135,13 +135,16 @@ var messageHandler = {
             classes,
             submit: function (e, v, m, f) {
                 twoButtonDialog = null;
-                if (submitFunction)
-                    submitFunction(e, v, m, f);
+                if (v){
+                    if (submitFunction)
+                        submitFunction(e, v, m, f);
+                }
             },
             close: function (e, v, m, f) {
                 twoButtonDialog = null;
-                if (closeFunction)
+                if (closeFunction) {
                     closeFunction(e, v, m, f);
+                }
             }
         });
         return twoButtonDialog;
