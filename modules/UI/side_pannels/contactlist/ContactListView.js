@@ -1,7 +1,6 @@
 /* global $, APP, interfaceConfig */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
-import ContactListModel from './ContactListModel';
 import UIUtil from '../../util/UIUtil';
 
 let numberOfContacts = 0;
@@ -64,9 +63,9 @@ function getContactEl (id) {
 /**
  * Contact list.
  */
-var ContactList = {
-    init (emitter) {
-        this.model = ContactListModel;
+var ContactListView = {
+    init (emitter, model) {
+        this.model = model;
         this.emitter = emitter;
         this.lockKey = 'roomLocked';
         this.unlockKey = 'roomUnlocked';
@@ -134,16 +133,22 @@ var ContactList = {
      */
     setupListeners() {
         let model = this.model;
-        model.subscribe(UIEvents.ROOM_UNLOCKED, this.updateView.bind(this));
-        model.subscribe(UIEvents.ROOM_LOCKED, this.updateView.bind(this));
+        let removeContact = this.onRemoveContact.bind(this);
+        let changeAvatar = this.changeUserAvatar.bind(this);
+        let displayNameChange = this.onDisplayNameChange.bind(this);
+        model.subscribe(UIEvents.TOGGLE_ROOM_LOCK, this.toggleLock.bind(this));
+        model.subscribe(UIEvents.ADD_CONTACT, this.onAddContact.bind(this));
+        model.subscribe(UIEvents.REMOVE_CONTACT, removeContact);
+        model.subscribe(UIEvents.CHANGE_USER_AVATAR, changeAvatar);
+        model.subscribe(UIEvents.DISPLAY_NAME_CHANGED, displayNameChange);
     },
     /**
      * Updating the view according the model
      * @param type {String} type of change
      * @returns {Promise}
      */
-    updateView() {
-        let isLocked = this.model.isLocked;
+    toggleLock() {
+        let isLocked = this.model.roomLocked;
         let showKey = isLocked ? this.lockKey : this.unlockKey;
         let hideKey = !isLocked ? this.lockKey : this.unlockKey;
         let showId = `contactList${showKey}`;
@@ -166,7 +171,8 @@ var ContactList = {
      * Handler for Adding a contact for the given id.
      * @param isLocal is an id for the local user.
      */
-    onAddContact (id, isLocal) {
+    onAddContact (data) {
+        let { id, isLocal } = data;
         let contactlist = $('#contacts');
         let newContact = document.createElement('li');
         newContact.id = id;
@@ -197,7 +203,8 @@ var ContactList = {
      * Handler for removing
      * a contact for the given id.
      */
-    onRemoveContact (id) {
+    onRemoveContact (data) {
+        let { id } = data;
         let contact = getContactEl(id);
 
         if (contact.length > 0) {
@@ -210,29 +217,28 @@ var ContactList = {
         getContactEl(id).toggleClass('clickable', isClickable);
     },
 
-    onDisplayNameChange (id, displayName) {
-        if(!displayName)
+    onDisplayNameChange (data) {
+        let { id, name } = data;
+        if(!name)
             return;
         if (id === 'localVideoContainer') {
             id = APP.conference.getMyUserId();
         }
         let contactName = $(`#contacts #${id}>p`);
 
-        if (contactName.text() !== displayName) {
-            contactName.text(displayName);
+        if (contactName.text() !== name) {
+            contactName.text(name);
         }
     },
 
-    changeUserAvatar (id, avatarUrl) {
+    changeUserAvatar (data) {
+        let { id, avatar } = data;
         // set the avatar in the contact list
         let contact = $(`#${id}>img`);
         if (contact.length > 0) {
-            contact.attr('src', avatarUrl);
+            contact.attr('src', avatar);
         }
     }
 };
 
-export default ContactList;
-
-
-this.model.subscribe(this.render.bind(this))
+export default ContactListView;
