@@ -22,6 +22,8 @@ import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
+import LayoutManager from './LayoutManager';
+import routes from './Rotes';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -32,6 +34,7 @@ import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
+UI.layoutManager = new LayoutManager(routes);
 
 let etherpadManager;
 let sharedVideoManager;
@@ -396,18 +399,31 @@ UI.getSharedVideoManager = function () {
  */
 UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
+
+    return UI.layoutManager.route(window.location.pathname);
+};
+
+
+UI.goToHome = function() {
+    console.log("GOTO: home");
     var setupWelcomePage = null;
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
-       Settings.isWelcomePageEnabled()) {
+
+    if(config.enableWelcomePage && Settings.isWelcomePageEnabled()) {
         $("#videoconference_page").hide();
-        if (!setupWelcomePage)
+        if (!setupWelcomePage) {
             setupWelcomePage = require("./welcome_page/WelcomePage");
+        }
+
         setupWelcomePage();
 
         // Return false to indicate that the UI hasn't been fully started and
         // conference ready. We're still waiting for input from the user.
         return false;
     }
+};
+
+UI.goToVideoPage = function() {
+    console.log("GOTO: video");
 
     $("#welcome_page").hide();
 
