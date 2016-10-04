@@ -46,14 +46,16 @@ const SideContainerToggler = {
             this.hide();
         }
         else {
-            if (this.isVisible())
+            if (this.isVisible()) {
                 this.$sidebarContainer.children().each(function() {
-                    if ($(this).id !== elementId && $(this).hasClass("show"))
-                        SideContainerToggler.hideInnerContainer($(this));
+                    let $this = $(this);
+                    $this.removeClass('slideInExt slideOutExt');
+                    if ($this.id !== elementId && $this.hasClass("show"))
+                        SideContainerToggler.hideInnerContainer($this);
                 });
-
-            if (!this.isVisible())
+            } else {
                 this.show();
+            }
 
             this.showInnerContainer(elementSelector);
         }
@@ -64,7 +66,7 @@ const SideContainerToggler = {
      * otherwise returns {false}.
      */
     isVisible() {
-        return this.$sidebarInner.hasClass("slideInExt");
+        return this.$sidebarInner.hasClass("show");
     },
 
     /**
@@ -107,7 +109,8 @@ const SideContainerToggler = {
      * element to hide
      */
     hideInnerContainer(containerSelector) {
-        containerSelector.removeClass("show").addClass("hide");
+        containerSelector
+            .removeClass("show").addClass("hide");
 
         this.eventEmitter.emit(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             containerSelector.attr('id'), false);
