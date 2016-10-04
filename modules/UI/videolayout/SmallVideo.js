@@ -275,10 +275,10 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     var videoMutedSpan = this.getVideoMutedIndicator();
 
     if (isMuted) {
+        videoMutedSpan.show();
+    } else {
         // hide and close tooltip
         videoMutedSpan.hide().trigger('mouseleave');
-    } else {
-        videoMutedSpan.show();
     }
 };
 
