@@ -4,7 +4,8 @@ var UI = {};
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
-import ContactList from "./side_pannels/contactlist/ContactList";
+import ContactListClass from "./side_pannels/contactlist/ContactList";
+import ContactListView from "./side_pannels/contactlist/ContactListView";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
@@ -29,7 +30,7 @@ UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./feedback/Feedback");
-
+var ContactList;
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -470,7 +471,9 @@ UI.start = function () {
     }
     VideoLayout.resizeVideoArea(true, true);
 
-    ContactList.init(eventEmitter);
+    ContactList = new ContactListClass(eventEmitter);
+    ContactListView.init(eventEmitter, ContactList);
+    ContactList.setRoomUnlocked();
 
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
@@ -750,9 +753,7 @@ UI.toggleChat = function () {
  * Toggles contact list panel.
  */
 UI.toggleContactList = function () {
-    ContactList.updateView().then(() => {
-        UI.toggleSidePanel("contacts_container");
-    });
+    UI.toggleSidePanel("contacts_container");
 };
 
 /**
@@ -1068,9 +1069,12 @@ UI.markVideoInterrupted = function (interrupted) {
 UI.markRoomLocked = function (locked) {
     if (locked) {
         Toolbar.lockLockButton();
+        ContactList.setRoomLocked();
     } else {
         Toolbar.unlockLockButton();
+        ContactList.setRoomUnlocked();
     }
+
 };
 
 /**

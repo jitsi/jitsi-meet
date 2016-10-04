@@ -239,17 +239,18 @@ export default function createRoomLocker (room) {
             if (dialog)
                 return;
 
+            let titleKey = 'dialog.passwordErrorTitle';
             let closeCallback = function () {
                 dialog = null;
             };
 
             if (this.isLocked) {
                 dialog = APP.UI.messageHandler
-                    .openMessageDialog(null, "dialog.passwordError",
+                    .openMessageDialog(titleKey, 'dialog.passwordError',
                         null, null, closeCallback);
             } else {
                 dialog = APP.UI.messageHandler
-                    .openMessageDialog(null, "dialog.passwordError2",
+                    .openMessageDialog(titleKey, 'dialog.passwordError2',
                         null, null, closeCallback);
             }
         }

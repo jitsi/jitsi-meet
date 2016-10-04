@@ -139,5 +139,30 @@ export default {
     /**
      * Triggered when room locked
      */
-    ROOM_LOCKED: "UI.room_locked"
+    ROOM_LOCKED: "UI.room_locked",
+
+    /**
+     * Toggling room lock
+     */
+    TOGGLE_ROOM_LOCK: "UI.toggle_room_lock",
+
+    /**
+     * Adding contact to contact list
+     */
+    ADD_CONTACT: "UI.add_contact",
+
+    /**
+     * Removing the contact from contact list
+     */
+    REMOVE_CONTACT: "UI.remove_contact",
+
+    /**
+     * Changed user avatar
+     */
+    CHANGE_USER_AVATAR: "UI.change_user_avatar",
+
+    /**
+     * Display name changed
+     */
+    DISPLAY_NAME_CHANGED: "UI.display_name_changed"
 };
