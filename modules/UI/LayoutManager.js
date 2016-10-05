@@ -14,22 +14,25 @@ export default class LayoutManager {
     //TODO: clear route method
     route (path) {
         let routes = this.routes;
+
         //special character
         if (symbs.indexOf(path) > -1) {
             return this.routeTo(routes[path]);
-        } else {
-            //first character - '/'
-            let regStr = path.slice(1);
-            for (let key in routes) {
-                if( routes.hasOwnProperty(key) ) {
-                    let regExp = new RegExp(key);
+        }
 
-                    if (regExp.test(regStr)) {
-                        return this.routeTo(routes[key]);
-                    }
+        //first character - '/'
+        let regStr = path.slice(1);
+        for (let key in routes) {
+            if( routes.hasOwnProperty(key) ) {
+                let regExp = new RegExp(key);
+
+                if (regExp.test(regStr)) {
+                    return this.routeTo(routes[key]);
                 }
             }
         }
+
+        return this.routeTo('error');
     }
 
     routeTo (path) {

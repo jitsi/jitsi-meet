@@ -7,12 +7,8 @@ export default {
         '/*': 'error'
     },
     handlers: {
-        home: function () {
-            return APP.UI.goToHome();
-        },
-        video: function() {
-            return APP.UI.goToVideoPage();
-        },
+        home: () => APP.UI.goToHome(),
+        video: () => APP.UI.goToVideoPage(),
         error: function() {
             //TODO: GOTO error page
             console.log('ERROR!');

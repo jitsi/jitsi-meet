@@ -23,7 +23,7 @@ import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
 import LayoutManager from './LayoutManager';
-import routes from './Rotes';
+import routes from './Routes';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -403,9 +403,7 @@ UI.start = function () {
     return UI.layoutManager.route(window.location.pathname);
 };
 
-
 UI.goToHome = function() {
-    console.log("GOTO: home");
     var setupWelcomePage = null;
 
     if(config.enableWelcomePage && Settings.isWelcomePageEnabled()) {
@@ -423,8 +421,6 @@ UI.goToHome = function() {
 };
 
 UI.goToVideoPage = function() {
-    console.log("GOTO: video");
-
     $("#welcome_page").hide();
 
     // Set the defaults for prompt dialogs.
@@ -469,8 +465,6 @@ UI.goToVideoPage = function() {
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
     }
-
-    document.title = interfaceConfig.APP_NAME;
 
     if(config.requireDisplayName) {
         if (!APP.settings.getDisplayName()) {
