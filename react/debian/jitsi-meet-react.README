@@ -1,0 +1,10 @@
+Jitsi Meet
+
+====
+
+A WebRTC-powered multi-user videochat.
+
+Powered by the jitsi-videobridge[0]
+
+
+[0] https://github.com/jitsi/jitsi-videobridge

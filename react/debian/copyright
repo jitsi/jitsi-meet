@@ -1,0 +1,13 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: Jitsi Meet
+Upstream-Contact: Emil Ivov <emcho@jitsi.org>
+Source: https://github.com/jitsi/jitsi-meet-react
+
+Files: *
+Copyright: 2015 Atlassian Pty Ltd
+License: Apache-2.0
+
+License: Apache-2.0
+On Debian systems, the full text of the Apache
+ License version 2 can be found in the file
+ '/usr/share/common-licenses/Apache-2.0'.

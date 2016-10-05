@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@
+
+# we skip making Makefile exists for updating browserify modules when developing
+override_dh_auto_build:
+
+override_dh_install:
+	dh_installdirs
+	dh_install -X/config.js -X/package.json
