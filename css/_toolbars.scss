@@ -113,7 +113,8 @@
 
 .button.glow
 {
-    text-shadow: 0px 0px 5px $toolbarToggleBackground;
+    color: $toolbarGlowColor;
+    text-shadow: 0px 0px 5px $toolbarGlowShadow;
 }
 
 a.button.unclickable:hover,
