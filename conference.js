@@ -16,7 +16,6 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
-import UIErrors from './modules/UI/UIErrors';
 import UIUtil from './modules/UI/util/UIUtil';
 
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -42,7 +41,7 @@ let DSExternalInstallationInProgress = false;
 /**
  * Listens whether conference had been left from local user when we are trying
  * to navigate away from current page.
- * @type {ConferenceLeftListener}
+ * @type {HangupConferenceLeftListener}
  */
 let conferenceLeftListener = null;
 
@@ -220,104 +219,47 @@ function maybeRedirectToWelcomePage(showThankYou) {
     }, 3000);
 }
 
-/**
- * Executes connection.disconnect and shows the feedback dialog
- * @param {boolean} [requestFeedback=false] if user feedback should be requested
- * @returns Promise.
- */
-function disconnectAndShowFeedback(requestFeedback) {
-    APP.UI.hideRingOverLay();
-    connection.disconnect();
-    APP.API.notifyConferenceLeft(APP.conference.roomName);
-    if (requestFeedback) {
-        return APP.UI.requestFeedback();
-    } else {
-        return Promise.resolve();
-    }
-}
 
 /**
- * Disconnect from the conference and optionally request user feedback.
- * @param {boolean} [requestFeedback=false] if user feedback should be requested
+ * Listens for CONFERENCE_LEFT event after hangup function has been executed.
  */
-function hangup (requestFeedback = false) {
-    const errCallback = (err) => {
-
-        // If we want to break out the chain in our error handler, it needs
-        // to return a rejected promise. In the case of feedback request
-        // in progress it's important to not redirect to the welcome page
-        // (see below maybeRedirectToWelcomePage call).
-        if (err === UIErrors.FEEDBACK_REQUEST_IN_PROGRESS) {
-            return Promise.reject('Feedback request in progress.');
-        }
-        else {
-            console.error('Error occurred during hanging up: ', err);
-            return Promise.resolve();
-        }
-    };
-    const disconnect = disconnectAndShowFeedback.bind(null, requestFeedback);
-
-    if (!conferenceLeftListener)
-        conferenceLeftListener = new ConferenceLeftListener();
-
-    // Make sure that leave is resolved successfully and the set the handlers
-    // to be invoked once conference had been left
-    APP.conference._room.leave()
-        .then(conferenceLeftListener.setHandler(disconnect, errCallback))
-        .catch(errCallback);
-}
-
-/**
- * Listens for CONFERENCE_LEFT event so we can check whether it has finished.
- * The handler will be called once the conference had been left or if it
- * was already left when we are adding the handler.
- */
-class ConferenceLeftListener {
+class HangupConferenceLeftListener {
     /**
-     * Creates ConferenceLeftListener and start listening for conference
-     * failed event.
+     * Creates HangupConferenceLeftListener and start listening for conference
+     * left event. On CONFERENCE_LEFT event calls should disconnect the user
+     * and maybe show the feedback dialog.
+     * @param {boolean} [requestFeedback=false] if user feedback should be
+     * requested
      */
-    constructor() {
+    constructor(requestFeedback) {
+        this.requestFeedback = requestFeedback;
         room.on(ConferenceEvents.CONFERENCE_LEFT,
             this._handleConferenceLeft.bind(this));
     }
 
     /**
-     * Handles the conference left event, if we have a handler we invoke it.
+     * Handles the conference left event.
      * @private
      */
     _handleConferenceLeft() {
-        this.conferenceLeft = true;
-
-        if (this.handler)
-            this._handleLeave();
+        this._disconnectAndShowFeedback()
+            .then(() => {
+                APP.API.notifyReadyToClose();
+                maybeRedirectToWelcomePage();
+            }).catch(console.log);
     }
 
     /**
-     * Sets the handlers. If we already left the conference invoke them.
-     * @param handler
-     * @param errCallback
-     */
-    setHandler (handler, errCallback) {
-        this.handler = handler;
-        this.errCallback = errCallback;
-
-        if (this.conferenceLeft)
-            this._handleLeave();
-    }
-
-    /**
-     * Invokes the handlers.
+     * Executes connection.disconnect and shows the feedback dialog
+     * @returns Promise.
      * @private
      */
-    _handleLeave()
-    {
-        this.handler()
-            .catch(this.errCallback)
-            .then(maybeRedirectToWelcomePage)
-            .catch(function(err){
-                console.log(err);
-            });
+    _disconnectAndShowFeedback() {
+        APP.UI.hideRingOverLay();
+        connection.disconnect();
+        APP.API.notifyConferenceLeft(APP.conference.roomName);
+        return (this.requestFeedback) ?
+            APP.UI.requestFeedback() : Promise.resolve();
     }
 }
 
@@ -1477,16 +1419,16 @@ export default {
 
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {
-            hangup(true);
+            this.hangup(true);
         });
 
         // logout
         APP.UI.addListener(UIEvents.LOGOUT, () => {
-            AuthHandler.logout(room).then(function (url) {
+            AuthHandler.logout(room).then(url => {
                 if (url) {
                     window.location.href = url;
                 } else {
-                    hangup(true);
+                    this.hangup(true);
                 }
             });
         });
@@ -1827,5 +1769,20 @@ export default {
         if(room) {
             room.sendApplicationLog(JSON.stringify({name, value}));
         }
+    },
+    /**
+     * Disconnect from the conference and optionally request user feedback.
+     * @param {boolean} [requestFeedback=false] if user feedback should be
+     * requested
+     */
+    hangup (requestFeedback = false) {
+        if (!conferenceLeftListener) {
+            conferenceLeftListener
+                = new HangupConferenceLeftListener(requestFeedback);
+        }
+
+        //FIXME: Do something for the use case when we are not receiving
+        // CONFERENCE_LEFT for some reason
+        room.leave();
     }
 };

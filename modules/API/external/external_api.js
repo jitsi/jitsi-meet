@@ -33,7 +33,8 @@ var commands = {
     "toggleFilmStrip": "toggle-film-strip",
     "toggleChat": "toggle-chat",
     "toggleContactList": "toggle-contact-list",
-    "toggleShareScreen": "toggle-share-screen"
+    "toggleShareScreen": "toggle-share-screen",
+    "hangup": "video-hangup"
 };
 
 /**
@@ -47,7 +48,8 @@ var events = {
     "participantJoined": "participant-joined",
     "participantLeft": "participant-left",
     "videoConferenceJoined": "video-conference-joined",
-    "videoConferenceLeft": "video-conference-left"
+    "videoConferenceLeft": "video-conference-left",
+    "readyToClose": "video-ready-to-close"
 };
 
 /**
@@ -246,6 +248,8 @@ JitsiMeetExternalAPI.prototype.executeCommands = function(object) {
  * {{
  * roomName: room //the room name of the conference
  * }}
+ * readyToClose - all hangup operations are completed and Jitsi Meet is ready
+ * to be disposed.
  * @param object
  */
 JitsiMeetExternalAPI.prototype.addEventListeners = function(object) {

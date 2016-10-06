@@ -82,6 +82,11 @@ api.executeCommand('toggleContactList', [])
 api.executeCommand('toggleShareScreen', [])
 ```
 
+* **hangup** - Hangups the call. No arguments are required.
+```
+api.executeCommand('hangup', [])
+```
+
 You can also execute multiple commands using the method ```executeCommands```.
 ```
 api.executeCommands(commands)
@@ -155,6 +160,8 @@ The listener will receive object with the following structure:
 roomName: room //the room name of the conference
 }
 ```
+
+* **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
 
 You can also add multiple event listeners by using ```addEventListeners```.
 This method requires one argument of type Object. The object argument must

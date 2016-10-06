@@ -50,7 +50,8 @@ function initCommands() {
         "toggle-film-strip": APP.UI.toggleFilmStrip,
         "toggle-chat": APP.UI.toggleChat,
         "toggle-contact-list": APP.UI.toggleContactList,
-        "toggle-share-screen": APP.conference.toggleScreenSharing
+        "toggle-share-screen": APP.conference.toggleScreenSharing,
+        "video-hangup": () => APP.conference.hangup()
     };
     Object.keys(commands).forEach(function (key) {
         postis.listen(key, commands[key]);
@@ -78,7 +79,8 @@ const events = {
     "participant-joined": false,
     "participant-left": false,
     "video-conference-joined": false,
-    "video-conference-left": false
+    "video-conference-left": false,
+    "video-ready-to-close": false
 };
 
 /**
@@ -241,6 +243,14 @@ export default {
      */
     notifyConferenceLeft (room) {
         triggerEvent("video-conference-left", {roomName: room});
+    },
+
+    /**
+     * Notify external application (if API is enabled) that
+     * we are ready to be closed.
+     */
+    notifyReadyToClose () {
+        triggerEvent("video-ready-to-close", {});
     },
 
     /**
