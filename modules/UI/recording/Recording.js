@@ -422,7 +422,6 @@ var Recording = {
      * @param recordingState gives us the current recording state
      */
     updateRecordingUI (recordingState) {
-        let buttonSelector = $('#toolbar_button_record');
 
         let oldState = this.currentState;
         this.currentState = recordingState;
@@ -431,8 +430,7 @@ var Recording = {
         if (recordingState === Status.ON ||
             recordingState === Status.RETRYING) {
 
-            buttonSelector.removeClass(this.baseClass);
-            buttonSelector.addClass(this.baseClass + " active");
+            this._setToolbarButtonToggled(true);
 
             this._updateStatusLabel(this.recordingOnKey, false);
         }
@@ -447,8 +445,7 @@ var Recording = {
                 && !isStartingStatus(oldState))
                 return;
 
-            buttonSelector.removeClass(this.baseClass + " active");
-            buttonSelector.addClass(this.baseClass);
+            this._setToolbarButtonToggled(false);
 
             let messageKey;
             if (isStartingStatus(oldState))
@@ -464,15 +461,14 @@ var Recording = {
         }
         else if (recordingState === Status.PENDING) {
 
-            buttonSelector.removeClass(this.baseClass + " active");
-            buttonSelector.addClass(this.baseClass);
+            this._setToolbarButtonToggled(false);
 
             this._updateStatusLabel(this.recordingPendingKey, true);
         }
         else if (recordingState === Status.ERROR
                     || recordingState === Status.FAILED) {
-            buttonSelector.removeClass(this.baseClass + " active");
-            buttonSelector.addClass(this.baseClass);
+
+            this._setToolbarButtonToggled(false);
 
             this._updateStatusLabel(this.recordingErrorKey, true);
         }
@@ -513,6 +509,16 @@ var Recording = {
 
         labelTextSelector.attr("data-i18n", textKey);
         labelTextSelector.text(APP.translation.translateString(textKey));
+    },
+
+    /**
+     * Sets the toggled state of the recording toolbar button.
+     *
+     * @param {boolean} isToggled indicates if the button should be toggled
+     * or not
+     */
+    _setToolbarButtonToggled(isToggled) {
+        ("#toolbar_button_record").toggleClass("toggled", isToggled);
     }
 };
 
