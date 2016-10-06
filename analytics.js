@@ -16,17 +16,15 @@
     /* eslint-enable */
   }
 
-  Analytics.prototype.sendEvent = function (action, data, label, browserName) {
+  Analytics.prototype.sendEvent = function (action, data) {
     // empty label if missing value for it and add the value,
     // the value should be integer or null
-    var value = Math.round(parseFloat(data));
+    var value = data.value;
+    value = value? Math.round(parseFloat(value)) : null;
+    var label = data.label || "";
 
     ga('send', 'event', 'jit.si',
-        action + '.' + browserName, label ? label : "", value ? value : null);
-  };
-
-  Analytics.prototype.sendFeedback = function (data, label, browserName) {
-      this.sendEvent('feedback.rating', data.overall, label, browserName);
+        action + '.' + data.browserName, label, value);
   };
 
   ctx.Analytics = Analytics;

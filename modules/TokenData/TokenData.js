@@ -99,6 +99,7 @@ class TokenData{
         if(!this.payload.context)
             return;
         this.server = this.payload.context.server;
+        this.group = this.payload.context.group;
         let callerData = this.payload.context.user;
         let calleeData = this.payload.context.callee;
         if(callerData)
