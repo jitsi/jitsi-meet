@@ -1,6 +1,7 @@
-/* global APP, $, JitsiMeetJS */
+/* global $, APP, JitsiMeetJS */
 
 import UIEvents from '../../../service/UI/UIEvents';
+
 
 /**
  * Substate for password
@@ -12,28 +13,25 @@ const States = {
 };
 
 /**
- * Class representing custom dialog
- * for invitation of participants
- * @class InviteDialog
+ * Class representing view for Invite dialog
+ * @class InviteDialogView
  */
-export default class InviteDialog {
-    constructor(options) {
-        let InviteAttributesKey = 'roomUrlDefaultMsg';
+export default class InviteDialogView {
+    constructor(model) {
+        let InviteAttributesKey = 'inviteUrlDefaultMsg';
         let title = APP.translation.translateString(InviteAttributesKey);
 
-        this.password = options.password;
-        this.roomUrl = options.roomUrl || null;
-        this.emitter = options.emitter || null;
         this.unlockHint = "unlockHint";
         this.lockHint = "lockHint";
+        this.model = model;
 
-        if (this.roomUrl === null) {
+        if (this.model.inviteUrl === null) {
             this.inviteAttributes = (
-                `data-i18n="[value]roomUrlDefaultMsg" value="${title}"`
+                `data-i18n="[value]inviteUrlDefaultMsg" value="${title}"`
             );
         } else {
-            let encodedRoomUrl = encodeURI(this.roomUrl);
-            this.inviteAttributes = `value="${encodedRoomUrl}"`;
+            let encodedInviteUrl = this.model.getEncodedInviteUrl();
+            this.inviteAttributes = `value="${encodedInviteUrl}"`;
         }
 
         this.initDialog();
@@ -64,9 +62,8 @@ export default class InviteDialog {
      * @param v
      */
     submitFunction(e, v) {
-        if (v && this.roomUrl) {
+        if (v && this.model.inviteUrl) {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-            this.emitter.emit(UIEvents.USER_INVITED, this.roomUrl);
         }
         else {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
@@ -78,7 +75,7 @@ export default class InviteDialog {
      * @param event
      */
     loadedFunction(event) {
-        if (this.roomUrl) {
+        if (this.model.inviteUrl) {
             document.getElementById('inviteLinkRef').select();
         } else {
             if (event && event.target) {
@@ -193,7 +190,7 @@ export default class InviteDialog {
      * @returns {string}
      */
     getPasswordBlock() {
-        let { password } = this;
+        let { password, isModerator } = this.model;
         let removePassKey = 'dialog.removePassword';
         let removePassText = APP.translation.translateString(removePassKey);
         let currentPassKey = 'dialog.currentPassword';
@@ -201,28 +198,39 @@ export default class InviteDialog {
         let passwordKey = "dialog.passwordLabel";
         let passwordText = APP.translation.translateString(passwordKey);
 
-        return (`
-            <div class="input-control">
-                <label class="input-control__label"
-                       data-i18n="${passwordKey}">${passwordText}</label>
-                <div class="input-control__container">
-                    <p class="input-control__text"
-                       data-i18n="${currentPassKey}">
-                        ${currentPassText}
-                        <span id="inviteDialogPassword"
-                              class="input-control__em">
-                            ${password}
-                        </span>
-                    </p>
-                    <a class="link input-control__right"
-                       id="inviteDialogRemovePassword"
-                       href="#" data-i18n="${removePassKey}">
-                       ${removePassText}
-                   </a>
+        if (isModerator) {
+            return (`
+                <div class="input-control">
+                    <label class="input-control__label"
+                           data-i18n="${passwordKey}">${passwordText}</label>
+                    <div class="input-control__container">
+                        <p class="input-control__text"
+                           data-i18n="${currentPassKey}">
+                            ${currentPassText}
+                            <span id="inviteDialogPassword"
+                                  class="input-control__em">
+                                ${password}
+                            </span>
+                        </p>
+                        <a class="link input-control__right"
+                           id="inviteDialogRemovePassword"
+                           href="#" data-i18n="${removePassKey}">
+                           ${removePassText}
+                       </a>
+                    </div>
                 </div>
-            </div>
-        `);
+            `);
+        } else {
+            return (`
+                <div class="input-control">
+                    <p>A participant protected this call with a password.</p>
+                </div>
+            `);
+        }
+
     }
+
+
 
     /**
      * Opening the dialog
@@ -245,7 +253,7 @@ export default class InviteDialog {
         leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
         buttons.push({ title: leftButton, value: true});
 
-        let initialState = this.password ? States.LOCKED : States.UNLOCKED;
+        let initial = this.model.password ? States.LOCKED : States.UNLOCKED;
 
         APP.UI.messageHandler.openDialogWithStates(states, {
             submit: submitFunction,
@@ -254,17 +262,17 @@ export default class InviteDialog {
             buttons,
             size: 'medium'
         });
-        $.prompt.goToState(initialState);
-        this.updateView(!!this.password);
+        $.prompt.goToState(initial);
 
-        this.setHandlers();
+        this.setupListeners();
+        this.updateView();
     }
 
     /**
      * Setting event handlers
      * used in dialog
      */
-    setHandlers() {
+    setupListeners() {
         let $passInput = $('#newPasswordInput');
         let $addPassBtn = $('#addPasswordBtn');
 
@@ -272,29 +280,28 @@ export default class InviteDialog {
         $addPassBtn.on('click', () => {
             let newPass = $passInput.val();
             let addPassCb = () => {
-                this.password = newPass;
+                this.model.password = newPass;
                 $.prompt.goToState(States.LOCKED);
-                this.updateView(!!this.password);
+                this.updateView();
             };
 
             if(newPass) {
-                this.emitter.emit(UIEvents.LOCK_ROOM, newPass, addPassCb);
+                APP.UI.emitEvent(UIEvents.LOCK_ROOM, newPass, addPassCb);
             }
         });
         $('#inviteDialogRemovePassword').on('click', () => {
             let removePassCb = () => {
-                this.password = null;
+                this.model.removePassword();
                 $.prompt.goToState(States.UNLOCKED);
-                this.updateView(!!this.password);
+                this.updateView();
             };
 
-            this.emitter.emit(UIEvents.UNLOCK_ROOM, removePassCb);
+            APP.UI.emitEvent(UIEvents.UNLOCK_ROOM, removePassCb);
         });
         $passInput.keyup(this.disableAddPassIfInputEmpty.bind(this));
-        let updateViewUnlocked = this.updateView.bind(this, false);
-        let updateViewLocked = this.updateView.bind(this, true);
-        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, updateViewUnlocked);
-        APP.UI.addListener(UIEvents.ROOM_LOCKED, updateViewLocked);
+        let updateView = this.updateView.bind(this);
+        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, updateView);
+        APP.UI.addListener(UIEvents.ROOM_LOCKED, updateView);
     }
 
     /**
@@ -335,16 +342,16 @@ export default class InviteDialog {
      * Method syncing the view and the model
      * @param roomLocked
      */
-    updateView(roomLocked) {
-        $('#inviteDialogPassword').text(this.password);
+    updateView() {
+        $('#inviteDialogPassword').text(this.model.password);
         $('#newPasswordInput').val('');
         this.disableAddPassIfInputEmpty();
 
-        let roomLockedDesc = `.${this.lockHint}`;
-        let roomUnlockedDesc = `.${this.unlockHint}`;
+        let roomLocked = `.${this.lockHint}`;
+        let roomUnlocked = `.${this.unlockHint}`;
 
-        let showDesc = roomLocked ? roomLockedDesc : roomUnlockedDesc;
-        let hideDesc = !roomLocked ? roomLockedDesc : roomUnlockedDesc;
+        let showDesc = this.model.roomLocked ? roomLocked : roomUnlocked;
+        let hideDesc = !this.model.roomLocked ? roomLocked : roomUnlocked;
 
         $(showDesc).show();
         $(hideDesc).hide();

@@ -1383,6 +1383,8 @@ export default {
             }
         });
 
+
+
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muteLocalVideo);
 

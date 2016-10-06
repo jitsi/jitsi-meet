@@ -6,7 +6,7 @@
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "feedback": "Give us your feedback",
-    "roomUrlDefaultMsg": "Your conference is currently being created...",
+    "inviteUrlDefaultMsg": "Your conference is currently being created...",
     "me": "me",
     "speaker": "Speaker",
     "raisedHand": "Would like to speak",

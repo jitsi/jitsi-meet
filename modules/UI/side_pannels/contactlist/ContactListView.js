@@ -1,6 +1,7 @@
 /* global $, APP, interfaceConfig */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
+import Invite from '../../invite/Invite';
 import UIUtil from '../../util/UIUtil';
 
 let numberOfContacts = 0;
@@ -64,9 +65,8 @@ function getContactEl (id) {
  * Contact list.
  */
 var ContactListView = {
-    init (emitter, model) {
+    init (model) {
         this.model = model;
-        this.emitter = emitter;
         this.lockKey = 'roomLocked';
         this.unlockKey = 'roomUnlocked';
         this.addInviteButton();
@@ -82,7 +82,7 @@ var ContactListView = {
         let htmlLayout =  this.getInviteButtonLayout();
         title.insertAdjacentHTML('afterend', htmlLayout);
         $(document).on('click', '#addParticipantsBtn', () => {
-            APP.UI.openLinkDialog();
+            Invite.openLinkDialog();
         });
     },
     /**
@@ -179,7 +179,7 @@ var ContactListView = {
         newContact.className = "clickable";
         newContact.onclick = (event) => {
             if (event.currentTarget.className === "clickable") {
-                this.emitter.emit(UIEvents.CONTACT_CLICKED, id);
+                APP.UI.emitEvent(UIEvents.CONTACT_CLICKED, id);
             }
         };
 

@@ -5,11 +5,11 @@ import Contact from './Contact';
 
 /**
  * Model for Contact list
+ * @class ContactList
  */
 class ContactList {
-    constructor(emitter) {
+    constructor() {
         this.contacts = [];
-        this.emitter = emitter;
         this.setupListeners();
     }
 
@@ -19,8 +19,8 @@ class ContactList {
     setupListeners() {
         let setRoomUnlocked = this.setRoomUnlocked.bind(this);
         let setRoomLocked = this.setRoomLocked.bind(this);
-        this.emitter.addListener(UIEvents.ROOM_UNLOCKED, setRoomUnlocked);
-        this.emitter.addListener(UIEvents.ROOM_LOCKED, setRoomLocked);
+        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, setRoomUnlocked);
+        APP.UI.addListener(UIEvents.ROOM_LOCKED, setRoomLocked);
     }
 
     /**
@@ -29,7 +29,7 @@ class ContactList {
      * @param data
      */
     publish(type, data) {
-        this.emitter.emit(type, data);
+        APP.UI.emitEvent(type, data);
     }
 
     /**
@@ -38,7 +38,7 @@ class ContactList {
      * @param handler
      */
     subscribe(type, handler) {
-        this.emitter.addListener(type, handler);
+        APP.UI.addListener(type, handler);
     }
 
     /**

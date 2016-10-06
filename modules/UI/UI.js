@@ -4,6 +4,7 @@ var UI = {};
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
+import Invite from './invite/Invite';
 import ContactListClass from "./side_pannels/contactlist/ContactList";
 import ContactListView from "./side_pannels/contactlist/ContactListView";
 import Avatar from "./avatar/Avatar";
@@ -293,7 +294,7 @@ UI.initConference = function () {
     // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
     var inviteURL = window.location.protocol + "//" +
         window.location.host + window.location.pathname;
-    Toolbar.updateRoomUrl(inviteURL);
+    Invite.updateInviteUrl(inviteURL);
     // Clean up the URL displayed by the browser
     if (window.history && typeof window.history.replaceState === 'function') {
         window.history.replaceState({}, document.title, inviteURL);
@@ -471,8 +472,8 @@ UI.start = function () {
     }
     VideoLayout.resizeVideoArea(true, true);
 
-    ContactList = new ContactListClass(eventEmitter);
-    ContactListView.init(eventEmitter, ContactList);
+    ContactList = new ContactListClass();
+    ContactListView.init(ContactList);
     ContactList.setRoomUnlocked();
 
     bindEvents();
@@ -671,6 +672,12 @@ UI.onPeerVideoTypeChanged = (id, newVideoType) => {
  */
 UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
+
+    if (isModerator) {
+        Invite.setLocalAsModerator();
+    } else {
+        Invite.unsetLocalAsModerator();
+    }
 
     Toolbar.showSipCallButton(isModerator);
     Toolbar.showSharedVideoButton(isModerator);
@@ -1070,9 +1077,11 @@ UI.markRoomLocked = function (locked) {
     if (locked) {
         Toolbar.lockLockButton();
         ContactList.setRoomLocked();
+        Invite.setRoomLocked();
     } else {
         Toolbar.unlockLockButton();
         ContactList.setRoomUnlocked();
+        Invite.setRoomUnlocked();
     }
 
 };
@@ -1555,7 +1564,7 @@ UI.showKeyboardShortcutsPanel = function(show) {
  * Opens the invite link dialog.
  */
 UI.openLinkDialog = function () {
-    Toolbar.openLinkDialog();
+    Invite.openLinkDialog();
 };
 
 module.exports = UI;

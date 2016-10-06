@@ -1,5 +1,6 @@
 /**
  * Class representing Contact model
+ * @class Contact
  */
 export default class Contact {
     constructor(opts) {

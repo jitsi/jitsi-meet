@@ -1,10 +1,9 @@
 /* global APP, $, config, interfaceConfig, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-import InviteDialog from '../dialogs/InviteDialog';
+import Invite from '../invite/Invite';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
-let roomUrl = null;
 let emitter = null;
 let Toolbar;
 
@@ -50,7 +49,7 @@ const buttonHandlers = {
     },
     "toolbar_button_link": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-        Toolbar.openLinkDialog();
+        Invite.openLinkDialog();
     },
     "toolbar_button_chat": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
@@ -393,23 +392,6 @@ Toolbar = {
         return this.enabled;
     },
     /**
-     * Updates the room invite url.
-     */
-    updateRoomUrl (newRoomUrl) {
-        roomUrl = newRoomUrl;
-
-        // If the invite dialog has been already opened we update the
-        // information.
-        let inviteLink = document.getElementById('inviteLinkRef');
-        if (inviteLink) {
-            inviteLink.value = roomUrl;
-            inviteLink.select();
-            $('#inviteLinkRef').parent()
-                .find('button[value=true]').prop('disabled', false);
-        }
-    },
-
-    /**
      * Unlocks the lock button state.
      */
     unlockLockButton () {
@@ -698,35 +680,6 @@ Toolbar = {
         $('#mainToolbarContainer').click(listener);
 
         $("#extendedToolbar").click(listener);
-    },
-
-    /**
-     * Opens the invite link dialog.
-     */
-    openLinkDialog () {
-        return new Promise((resolve) => {
-            let options = {
-                roomUrl,
-                emitter,
-                password: null
-            };
-
-            let event = UIEvents.REQUEST_ROOM_PASSWORD;
-
-            emitter.emit(event, (room) => {
-                if (room.isLocked) {
-                    options.password = room.password;
-                } else {
-                    options.password = null;
-                }
-
-                let inviteDialog = new InviteDialog(options);
-
-                inviteDialog.open();
-                resolve(inviteDialog);
-            });
-        });
-
     },
 
     /**
