@@ -329,10 +329,6 @@ class ConferenceConnector {
             }
             break;
 
-        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
-            APP.UI.notifyBridgeDown();
-            break;
-
             // not enough rights to create conference
         case ConferenceErrors.AUTHENTICATION_REQUIRED:
             // schedule reconnect to check if someone else created the room
@@ -367,6 +363,10 @@ class ConferenceConnector {
             }
             break;
 
+            // FIXME FOCUS_DISCONNECTED is confusing event name.
+            // What really happens there is that the library is not ready yet,
+            // because Jicofo is not available, but it is going to give
+            // it another try.
         case ConferenceErrors.FOCUS_DISCONNECTED:
             {
                 let [focus, retrySec] = params;
@@ -375,8 +375,12 @@ class ConferenceConnector {
             break;
 
         case ConferenceErrors.FOCUS_LEFT:
+        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+            // FIXME the conference should be stopped by the library and not by
+            // the app. Both the errors above are unrecoverable from the library
+            // perspective.
             room.leave().then(() => connection.disconnect());
-            APP.UI.notifyFocusLeft();
+            APP.UI.notifyVideoConferencingNotAvailable();
             break;
 
         case ConferenceErrors.CONFERENCE_MAX_USERS:
