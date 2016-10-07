@@ -7,21 +7,47 @@
  */
 export default class InviteDialog {
     constructor(options) {
+        this.views = [];
+        this.roomLocked = false;
         this.password = options.password;
         this.inviteUrl = options.inviteUrl || null;
         this.isModerator = options.isModerator || false;
     }
 
-    setupListeners() {
+    addView(view) {
+        this.views.push(view);
+    }
 
+    removeView(view) {
+        this.views = this.views.filter(el => el !== view);
+    }
+
+    setRoomLocked(password) {
+        this.roomLocked = true;
+        this.password = password;
+        this.updateViews();
+    }
+
+    updateViews() {
+        this.views.forEach(view => {
+            view.updateView();
+        });
+    }
+
+    setRoomUnlocked() {
+        this.roomLocked = false;
+        this.password = null;
+        this.updateViews();
     }
 
     setLocalAsModerator() {
         this.isModerator = true;
+        this.updateViews();
     }
 
     unsetLocalAsModerator() {
         this.isModerator = false;
+        this.updateViews();
     }
 
     getEncodedInviteUrl() {
@@ -30,5 +56,10 @@ export default class InviteDialog {
 
     removePassword() {
         this.password = null;
+        this.updateViews();
+    }
+
+    updateInviteUrl(newInviteUrl) {
+        this.inviteUrl = newInviteUrl;
     }
 }

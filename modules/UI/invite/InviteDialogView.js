@@ -64,8 +64,7 @@ export default class InviteDialogView {
     submitFunction(e, v) {
         if (v && this.model.inviteUrl) {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-        }
-        else {
+        } else {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
         }
     }
@@ -166,8 +165,10 @@ export default class InviteDialogView {
         let addPassText = APP.translation.translateString(addPassKey);
         let addKey = 'dialog.add';
         let addText = APP.translation.translateString(addKey);
+        let html;
 
-        return (`
+        if (this.model.isModerator) {
+            html = (`
             <div class="input-control">
                 <label class="input-control__label
                        for="newPasswordInput"
@@ -183,6 +184,11 @@ export default class InviteDialogView {
                 </div>
             </div>
         `);
+        } else {
+            html = '';
+        }
+
+        return html;
     }
 
     /**
@@ -238,11 +244,12 @@ export default class InviteDialogView {
     open() {
         let leftButton;
         let {
-            states,
             submitFunction,
             loadedFunction,
             closeFunction
         } = this.dialog;
+
+        let states = this.getStates();
 
         let buttons = [];
         let leftButtonKey = "dialog.Invite";
@@ -253,7 +260,7 @@ export default class InviteDialogView {
         leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
         buttons.push({ title: leftButton, value: true});
 
-        let initial = this.model.password ? States.LOCKED : States.UNLOCKED;
+        let initial = this.model.roomLocked ? States.LOCKED : States.UNLOCKED;
 
         APP.UI.messageHandler.openDialogWithStates(states, {
             submit: submitFunction,
@@ -263,8 +270,9 @@ export default class InviteDialogView {
             size: 'medium'
         });
         $.prompt.goToState(initial);
+        console.log('initial state:', initial);
 
-        this.setupListeners();
+        this.registerListeners();
         this.updateView();
     }
 
@@ -272,7 +280,7 @@ export default class InviteDialogView {
      * Setting event handlers
      * used in dialog
      */
-    setupListeners() {
+    registerListeners() {
         let $passInput = $('#newPasswordInput');
         let $addPassBtn = $('#addPasswordBtn');
 
@@ -299,9 +307,6 @@ export default class InviteDialogView {
             APP.UI.emitEvent(UIEvents.UNLOCK_ROOM, removePassCb);
         });
         $passInput.keyup(this.disableAddPassIfInputEmpty.bind(this));
-        let updateView = this.updateView.bind(this);
-        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, updateView);
-        APP.UI.addListener(UIEvents.ROOM_LOCKED, updateView);
     }
 
     /**
@@ -340,12 +345,20 @@ export default class InviteDialogView {
 
     /**
      * Method syncing the view and the model
-     * @param roomLocked
      */
     updateView() {
         $('#inviteDialogPassword').text(this.model.password);
         $('#newPasswordInput').val('');
         this.disableAddPassIfInputEmpty();
+
+        this.updateInviteLink();
+
+        if(this.model.roomLocked) {
+            $.prompt.goToState(States.LOCKED);
+        } else {
+            $.prompt.goToState(States.UNLOCKED);
+        }
+
 
         let roomLocked = `.${this.lockHint}`;
         let roomUnlocked = `.${this.unlockHint}`;
@@ -355,5 +368,17 @@ export default class InviteDialogView {
 
         $(showDesc).show();
         $(hideDesc).hide();
+    }
+
+    updateInviteLink() {
+        // If the invite dialog has been already opened we update the
+        // information.
+        let inviteLink = document.getElementById('inviteLinkRef');
+        if (inviteLink) {
+            inviteLink.value = this.model.inviteUrl;
+            inviteLink.select();
+            $('#inviteLinkRef').parent()
+                .find('button[value=true]').prop('disabled', false);
+        }
     }
 }

@@ -10,17 +10,6 @@ import Contact from './Contact';
 class ContactList {
     constructor() {
         this.contacts = [];
-        this.setupListeners();
-    }
-
-    /**
-     * Setup listeners
-     */
-    setupListeners() {
-        let setRoomUnlocked = this.setRoomUnlocked.bind(this);
-        let setRoomLocked = this.setRoomLocked.bind(this);
-        APP.UI.addListener(UIEvents.ROOM_UNLOCKED, setRoomUnlocked);
-        APP.UI.addListener(UIEvents.ROOM_LOCKED, setRoomLocked);
     }
 
     /**

@@ -1,22 +1,32 @@
-/* global APP, $ */
+/* global APP */
 
 import InviteDialog from './InviteDialog';
 import InviteDialogView from './InviteDialogView';
 import UIEvents from '../../../service/UI/UIEvents';
 
 class Invite {
-    constructor() {
-        this.roomLocked = false;
+    constructor(conference) {
+        this.conference = conference;
+        this.registerListeners();
     }
+
+    registerListeners() {
+
+    }
+
     /**
      * Opens the invite link dialog.
      */
     openLinkDialog () {
+        let promise;
+
         if (!this.view) {
-            this.initDialog().then(() => this.view.open());
+            promise = this.initDialog();
         } else {
-            this.view.open();
+            promise = Promise.resolve();
         }
+
+        promise.then(() => this.view.open());
     }
 
     initDialog() {
@@ -30,6 +40,7 @@ class Invite {
 
                 this.model = new InviteDialog(options);
                 this.view = new InviteDialogView(this.model);
+                this.model.addView(this.view);
                 resolve();
             });
         });
@@ -37,57 +48,87 @@ class Invite {
 
     getPassword() {
         return new Promise((resolve) => {
-            if(!this.roomLocked) {
-                resolve(null);
-            } else {
-                let event = UIEvents.REQUEST_ROOM_PASSWORD;
+            let event = UIEvents.REQUEST_ROOM_PASSWORD;
 
-                APP.UI.emitEvent(event, (room) => {
-                    resolve(room.password);
-                });
-            }
+            APP.UI.emitEvent(event, (room) => {
+                resolve(room.password);
+            });
         });
     }
 
     setLocalAsModerator() {
+        let promise;
         this.isModerator = true;
 
-        if(this.model) {
-            this.model.setLocalAsModerator();
+        if(!this.model) {
+            promise = this.initDialog();
+        } else {
+            promise = Promise.resolve();
         }
+
+        promise.then(() => {
+            this.model.setLocalAsModerator();
+        });
     }
 
     unsetLocalAsModerator() {
-        this.isModerator = false;
+        let promise;
 
-        if(this.model) {
-            this.model.unsetLocalAsModerator();
+        if(!this.model) {
+            promise = this.initDialog();
+        } else {
+            promise = Promise.resolve();
         }
+
+        promise.then(() => {
+            this.model.unsetLocalAsModerator();
+        });
     }
 
     setRoomUnlocked() {
-        this.roomLocked = false;
+        let promise;
+
+        if(!this.model) {
+            promise = this.initDialog();
+        } else {
+            promise = Promise.resolve();
+        }
+
+        promise.then(() => {
+            this.model.setRoomUnlocked();
+        });
     }
 
     setRoomLocked() {
-        this.roomLocked = true;
+        let promise;
+
+        if(!this.model) {
+            promise = this.initDialog();
+        } else {
+            promise = Promise.resolve();
+        }
+
+        promise.then(() => {
+            return this.getPassword();
+        }).then((password) => {
+            this.model.setRoomLocked(password);
+        });
     }
 
     /**
      * Updates the room invite url.
      */
     updateInviteUrl (newInviteUrl) {
-        this.inviteUrl = newInviteUrl;
-
-        // If the invite dialog has been already opened we update the
-        // information.
-        let inviteLink = document.getElementById('inviteLinkRef');
-        if (inviteLink) {
-            inviteLink.value = this.inviteUrl;
-            inviteLink.select();
-            $('#inviteLinkRef').parent()
-                .find('button[value=true]').prop('disabled', false);
+        let promise;
+        if (!this.model) {
+            promise = this.initDialog();
+        } else {
+            promise = Promise.resolve();
         }
+
+        promise.then(() => {
+            this.model.updateInviteUrl(newInviteUrl);
+        });
     }
 }
 

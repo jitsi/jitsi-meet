@@ -70,7 +70,7 @@ var ContactListView = {
         this.lockKey = 'roomLocked';
         this.unlockKey = 'roomUnlocked';
         this.addInviteButton();
-        this.setupListeners();
+        this.registerListeners();
     },
     /**
      * Adds layout for invite button
@@ -131,7 +131,7 @@ var ContactListView = {
     /**
      * Setup listeners
      */
-    setupListeners() {
+    registerListeners() {
         let model = this.model;
         let removeContact = this.onRemoveContact.bind(this);
         let changeAvatar = this.changeUserAvatar.bind(this);
