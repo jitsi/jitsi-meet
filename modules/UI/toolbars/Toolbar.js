@@ -6,7 +6,68 @@ import SideContainerToggler from "../side_pannels/SideContainerToggler";
 let emitter = null;
 let Toolbar;
 
+/**
+ * Opens the invite link dialog.
+ */
+function openLinkDialog () {
+    let inviteAttributes;
+
+    if (roomUrl === null) {
+        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
+            APP.translation.translateString("roomUrlDefaultMsg") + '"';
+    } else {
+        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
+    }
+
+    let inviteLinkId = "inviteLinkRef";
+    let focusInviteLink = function() {
+        $('#' + inviteLinkId)
+            .focus()
+            .select();
+    };
+
+    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
+    APP.UI.messageHandler.openTwoButtonDialog(
+        null, title, null,
+        '<input id="' + inviteLinkId + '" type="text" '
+            + inviteAttributes + ' readonly/>',
+        false, "dialog.copy",
+        function (e, v) {
+            if (v && roomUrl) {
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
+
+                focusInviteLink();
+
+                document.execCommand('copy');
+            }
+            else {
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
+            }
+        },
+        function (event) {
+            if (!roomUrl) {
+                if (event && event.target) {
+                    $(event.target).find('button[value=true]')
+                        .prop('disabled', true);
+                }
+            }
+            else {
+                focusInviteLink();
+            }
+        },
+        function (e, v, m, f) {
+            if(!v && !m && !f)
+                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
+        },
+        'Copy' // Focus Copy button.
+    );
+}
+
 const buttonHandlers = {
+    "toolbar_button_authentication": function() {
+        JitsiMeetJS.analytics.sendEvent('toolbar.authentication.toggled');
+        emitter.emit(UIEvents.TOGGLE_AUTHENTICATION);
+    },
     "toolbar_button_profile": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
         emitter.emit(UIEvents.TOGGLE_PROFILE);
@@ -125,6 +186,11 @@ const buttonHandlers = {
 };
 
 const defaultToolbarButtons = {
+    'authentication': {
+        id: 'toolbar_button_authentication',
+        tooltipKey: 'toolbar.authenticate',
+        sideContainerId: 'authentication_container'
+    },
     'microphone': {
         id: 'toolbar_button_mute',
         tooltipKey: 'toolbar.mute',
@@ -392,9 +458,9 @@ Toolbar = {
      */
     showAuthenticateButton (show) {
         if (UIUtil.isButtonEnabled('authentication') && show) {
-            $('#authentication').css({display: "inline"});
+            $('#toolbar_button_authentication').css({display: "inline"});
         } else {
-            $('#authentication').css({display: "none"});
+            $('#toolbar_button_authentication').css({display: "none"});
         }
     },
 

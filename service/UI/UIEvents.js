@@ -45,6 +45,10 @@ export default {
      */
     TOGGLE_PROFILE: "UI.toggle_profile",
     /**
+     * Notifies that the authentication toolbar button has been clicked.
+     */
+    TOGGLE_AUTHENTICATION: "UI.toggle_authentication",
+    /**
      * Notifies that a command to toggle the film strip has been issued. The
      * event may optionally specify a {Boolean} (primitive) value to assign to
      * the visibility of the film strip (i.e. the event may act as a setter).

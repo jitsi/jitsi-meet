@@ -31,21 +31,8 @@ ul.loginmenu:after {
     left: 18px;
 }
 
-li a.authButton{
-    background-color: #06a5df;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-left: 29px;
-    padding-right: 29px;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
-span.authentication:hover ul.loginmenu, ul.loginmenu:hover {
-    display:block !important;
-}
-
-span.authentication {
+.authentication {
     position: relative;
 }
 
@@ -73,4 +60,25 @@ ul.loginmenu.extendedToolbarPopup:after {
     position: absolute;
     top: 18px;
     left: -7px;
+}
+
+//extended toolbar: Log In menu
+.auth_container {
+    ul {
+        margin-top: 40px;
+        padding: 0;
+
+        li a.authButton{
+            width: 160px;
+            margin: 10px 20px;
+            background-color: #06a5df;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 29px;
+            padding-right: 29px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+    }
 }
