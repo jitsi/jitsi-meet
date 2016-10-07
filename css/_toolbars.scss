@@ -42,7 +42,7 @@
     margin-left: auto;
     margin-right: auto;
     width: auto;
-    border-radius: 4px;
+    border-radius: 3px;
 
     .first {
         border-bottom-left-radius: 4px;
@@ -111,9 +111,8 @@
     cursor: default;
 }
 
-.button.glow
-{
-    text-shadow: 0px 0px 5px $toolbarToggleBackground;
+.button.toggled {
+    background: $toolbarToggleBackground !important;
 }
 
 a.button.unclickable:hover,

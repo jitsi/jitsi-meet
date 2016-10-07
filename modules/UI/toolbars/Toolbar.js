@@ -413,14 +413,14 @@ const Toolbar = {
         );
 
         APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
-            function(containerId, isVisible) {
+            (containerId, isVisible) => {
                 Toolbar._handleSideToolbarContainerToggled( containerId,
                                                             isVisible);
             });
 
         APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-            function(isRaisedHand) {
-                Toolbar._toggleRaiseHand(isRaisedHand);
+            (isRaisedHand) => {
+                this._setToggledState("toolbar_button_raisehand", isRaisedHand);
             });
 
         if(!APP.tokenData.isGuest) {
@@ -582,82 +582,97 @@ const Toolbar = {
      * streaming is active.
      */
     updateDesktopSharingButtonState () {
-        let button = $("#toolbar_button_desktopsharing");
-        if (APP.conference.isSharingScreen) {
-            button.addClass("glow");
-        } else {
-            button.removeClass("glow");
-        }
-    },
-
-    /**
-     * Toggles / untoggles the view for raised hand.
-     */
-    _toggleRaiseHand(isRaisedHand) {
-        $('#toolbar_button_raisehand').toggleClass("glow", isRaisedHand);
+        this._setToggledState(  "toolbar_button_desktopsharing",
+                                APP.conference.isSharingScreen);
     },
 
     /**
      * Marks video icon as muted or not.
+     *
      * @param {boolean} muted if icon should look like muted or not
      */
-    markVideoIconAsMuted (muted) {
+    toggleVideoIcon (muted) {
         $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
+
+        this._setToggledState("toolbar_button_camera", muted);
     },
 
     /**
-     * Marks video icon as disabled or not.
-     * @param {boolean} disabled if icon should look like disabled or not
+     * Enables / disables audio toolbar button.
+     *
+     * @param {boolean} enabled indicates if the button should be enabled
+     * or disabled
      */
-    markVideoIconAsDisabled (disabled) {
-        var $btn = $('#toolbar_button_camera');
+    setVideoIconEnabled (enabled) {
+        this._setMediaIconEnabled(
+                '#toolbar_button_camera',
+                enabled,
+                /* data-i18n attribute value */
+                `[content]toolbar.${enabled ? 'videomute' : 'cameraDisabled'}`,
+                /* shortcut attribute value */
+                'toggleVideoPopover');
+
+        enabled || this.toggleVideoIcon(!enabled);
+    },
+
+    /**
+     * Enables/disables the toolbar button associated with a specific media such
+     * as audio or video.
+     *
+     * @param {string} btn - The jQuery selector <tt>string</tt> which
+     * identifies the toolbar button to be enabled/disabled.
+     * @param {boolean} enabled - <tt>true</tt> to enable the specified
+     * <tt>btn</tt>  or <tt>false</tt> to disable it.
+     * @param {string} dataI18n - The value to assign to the <tt>data-i18n</tt>
+     * attribute of the specified <tt>btn</tt>.
+     * @param {string} shortcut - The value, if any, to assign to the
+     * <tt>shortcut</tt> attribute of the specified <tt>btn</tt> if the toolbar
+     * button is enabled.
+     */
+    _setMediaIconEnabled(btn, enabled, dataI18n, shortcut) {
+        const $btn = $(btn);
 
         $btn
-            .prop("disabled", disabled)
-            .attr("data-i18n", disabled
-                ? "[content]toolbar.cameraDisabled"
-                : "[content]toolbar.videomute")
-            .attr("shortcut", disabled ? "" : "toggleVideoPopover");
+            .prop('disabled', !enabled)
+            .attr('data-i18n', dataI18n)
+            .attr('shortcut', enabled && shortcut ? shortcut : '');
 
-        disabled
-            ? $btn.attr("disabled", "disabled")
-            : $btn.removeAttr("disabled");
+        enabled
+            ? $btn.removeAttr('disabled')
+            : $btn.attr('disabled', 'disabled');
 
         APP.translation.translateElement($btn);
-
-        disabled && this.markVideoIconAsMuted(disabled);
     },
 
     /**
      * Marks audio icon as muted or not.
+     *
      * @param {boolean} muted if icon should look like muted or not
      */
-    markAudioIconAsMuted (muted) {
-        $('#toolbar_button_mute').toggleClass("icon-microphone",
-            !muted).toggleClass("icon-mic-disabled", muted);
+    toggleAudioIcon(muted) {
+        $('#toolbar_button_mute')
+            .toggleClass("icon-microphone", !muted)
+            .toggleClass("icon-mic-disabled", muted);
+
+        this._setToggledState("toolbar_button_mute", muted);
     },
 
     /**
-     * Marks audio icon as disabled or not.
-     * @param {boolean} disabled if icon should look like disabled or not
+     * Enables / disables audio toolbar button.
+     *
+     * @param {boolean} enabled indicates if the button should be enabled
+     * or disabled
      */
-    markAudioIconAsDisabled (disabled) {
-        var $btn = $('#toolbar_button_mute');
+    setAudioIconEnabled (enabled) {
+        this._setMediaIconEnabled(
+                '#toolbar_button_mute',
+                enabled,
+                /* data-i18n attribute value */
+                `[content]toolbar.${enabled ? 'mute' : 'micDisabled'}`,
+                /* shortcut attribute value */
+                'mutePopover');
 
-        $btn
-            .prop("disabled", disabled)
-            .attr("data-i18n", disabled
-                ? "[content]toolbar.micDisabled"
-                : "[content]toolbar.mute")
-            .attr("shortcut", disabled ? "" : "mutePopover");
-
-        disabled
-            ? $btn.attr("disabled", "disabled")
-            : $btn.removeAttr("disabled");
-
-        APP.translation.translateElement($btn);
-
-        disabled && this.markAudioIconAsMuted(disabled);
+        enabled || this.toggleAudioIcon(!enabled);
     },
 
     /**
@@ -819,6 +834,17 @@ const Toolbar = {
             popupElement.appendChild(liElement);
             buttonElement.appendChild(popupElement);
         });
+    },
+
+    /**
+     * Sets the toggled state of the given element depending on the isToggled
+     * parameter.
+     *
+     * @param elementId the element identifier
+     * @param isToggled indicates if the element should be toggled or untoggled
+     */
+     _setToggledState(elementId, isToggled) {
+        $("#" + elementId).toggleClass("toggled", isToggled);
     }
 };
 

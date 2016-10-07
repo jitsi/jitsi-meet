@@ -820,7 +820,7 @@ UI.askForNickname = function () {
 UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        Toolbar.markAudioIconAsMuted(muted);
+        Toolbar.toggleAudioIcon(muted);
     }
 };
 
@@ -830,7 +830,7 @@ UI.setAudioMuted = function (id, muted) {
 UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        Toolbar.markVideoIconAsMuted(muted);
+        Toolbar.toggleVideoIcon(muted);
     }
 };
 
@@ -1459,31 +1459,23 @@ UI.onSharedVideoStop = function (id, attributes) {
 };
 
 /**
- * Disables camera toolbar button.
+ * Enables / disables camera toolbar button.
+ *
+ * @param {boolean} enabled indicates if the camera button should be enabled
+ * or disabled
  */
-UI.disableCameraButton = function () {
-    Toolbar.markVideoIconAsDisabled(true);
+UI.setCameraButtonEnabled = function (enabled) {
+    Toolbar.setVideoIconEnabled(enabled);
 };
 
 /**
- * Enables camera toolbar button.
+ * Enables / disables microphone toolbar button.
+ *
+ * @param {boolean} enabled indicates if the microphone button should be
+ * enabled or disabled
  */
-UI.enableCameraButton = function () {
-    Toolbar.markVideoIconAsDisabled(false);
-};
-
-/**
- * Disables microphone toolbar button.
- */
-UI.disableMicrophoneButton = function () {
-    Toolbar.markAudioIconAsDisabled(true);
-};
-
-/**
- * Enables microphone toolbar button.
- */
-UI.enableMicrophoneButton = function () {
-    Toolbar.markAudioIconAsDisabled(false);
+UI.setMicrophoneButtonEnabled = function (enabled) {
+    Toolbar.setAudioIconEnabled(enabled);
 };
 
 UI.showRingOverLay = function () {
