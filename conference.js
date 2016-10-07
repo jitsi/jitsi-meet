@@ -485,6 +485,39 @@ class ConferenceConnector {
     }
 }
 
+/**
+ * Sends statistics from APP.tokenData
+ */
+function sendTokenDataStats() {
+    let {server, group} = APP.tokenData;
+    if(server) {
+        APP.conference.logEvent("server." + server, 1);
+    }
+    if(group) {
+        APP.conference.logEvent("group", group);
+    }
+}
+
+/**
+ * Set permanent ptoperties to analytics.
+ * NOTE: Has to be used after JitsiMeetJS.init. otherwise analytics will be
+ * null.
+ */
+function setAnalyticsPermanentProperties() {
+    let permanentProperties = {
+        userAgent: navigator.userAgent,
+        roomName: APP.conference.roomName
+    };
+    let {server, group} = APP.tokenData;
+    if(server) {
+        permanentProperties.server = server;
+    }
+    if(group) {
+        permanentProperties.group = group;
+    }
+    JitsiMeetJS.analytics.addPermanentProperties(permanentProperties);
+}
+
 export default {
     isModerator: false,
     audioMuted: false,
@@ -532,8 +565,11 @@ export default {
         }
 
         return JitsiMeetJS.init(config)
-            .then(() => createInitialLocalTracksAndConnect(options.roomName))
-            .then(([tracks, con]) => {
+            .then(() => {
+                setAnalyticsPermanentProperties();
+                sendTokenDataStats();
+                return createInitialLocalTracksAndConnect(options.roomName);
+            }).then(([tracks, con]) => {
                 console.log('initialized with %s local tracks', tracks.length);
                 APP.connection = connection = con;
                 this._createRoom(tracks);
@@ -1453,7 +1489,8 @@ export default {
             // Longer delays will be caused by something else and will just
             // poison the data.
             if (delay < 2000) {
-                JitsiMeetJS.analytics.sendEvent('stream.switch.delay', delay);
+                JitsiMeetJS.analytics.sendEvent('stream.switch.delay',
+                    {value: delay});
             }
         });
 
@@ -1765,7 +1802,7 @@ export default {
      */
     logEvent(name, value) {
         if(JitsiMeetJS.analytics) {
-            JitsiMeetJS.analytics.sendEvent(name, value);
+            JitsiMeetJS.analytics.sendEvent(name, {value});
         }
         if(room) {
             room.sendApplicationLog(JSON.stringify({name, value}));
