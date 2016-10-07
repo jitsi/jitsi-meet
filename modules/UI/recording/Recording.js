@@ -518,7 +518,7 @@ var Recording = {
      * or not
      */
     _setToolbarButtonToggled(isToggled) {
-        ("#toolbar_button_record").toggleClass("toggled", isToggled);
+        $("#toolbar_button_record").toggleClass("toggled", isToggled);
     }
 };
 

@@ -543,11 +543,11 @@ export default {
                 // if user didn't give access to mic or camera or doesn't have
                 // them at all, we disable corresponding toolbar buttons
                 if (!tracks.find((t) => t.isAudioTrack())) {
-                    APP.UI.disableMicrophoneButton(true);
+                    APP.UI.setMicrophoneButtonEnabled(false);
                 }
 
                 if (!tracks.find((t) => t.isVideoTrack())) {
-                    APP.UI.disableCameraButton(true);
+                    APP.UI.setCameraButtonEnabled(false);
                 }
 
                 this._initDeviceList();
@@ -931,7 +931,7 @@ export default {
                 APP.UI.addLocalStream(stream);
 
                 stream.videoType === 'camera'
-                && APP.UI.disableCameraButton(false);
+                    && APP.UI.setCameraButtonEnabled(true);
             } else {
                 this.videoMuted = false;
                 this.isSharingScreen = false;
@@ -971,7 +971,7 @@ export default {
                 this.audioMuted = false;
             }
 
-            APP.UI.disableMicrophoneButton(false);
+            APP.UI.setMicrophoneButtonEnabled(true);
             APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
         });
     },

@@ -598,26 +598,28 @@ const Toolbar = {
     },
 
     /**
-     * Marks video icon as disabled or not.
-     * @param {boolean} disabled if icon should look like disabled or not
+     * Enables / disables audio toolbar button.
+     *
+     * @param {boolean} enabled indicates if the button should be enabled
+     * or disabled
      */
-    disableVideoIcon (disabled) {
+    setVideoIconEnabled (enabled) {
         var $btn = $('#toolbar_button_camera');
 
         $btn
-            .prop("disabled", disabled)
-            .attr("data-i18n", disabled
-                ? "[content]toolbar.cameraDisabled"
-                : "[content]toolbar.videomute")
-            .attr("shortcut", disabled ? "" : "toggleVideoPopover");
+            .prop("disabled", !enabled)
+            .attr("data-i18n", enabled
+                ? "[content]toolbar.videomute"
+                : "[content]toolbar.cameraDisabled")
+            .attr("shortcut", enabled ? "toggleVideoPopover" : "");
 
-        disabled
-            ? $btn.attr("disabled", "disabled")
-            : $btn.removeAttr("disabled");
+        enabled
+            ? $btn.removeAttr("disabled")
+            : $btn.attr("disabled", "disabled");
 
         APP.translation.translateElement($btn);
 
-        disabled && this.toggleVideoIcon(disabled);
+        !enabled && this.toggleVideoIcon(!enabled);
     },
 
     /**
@@ -633,26 +635,28 @@ const Toolbar = {
     },
 
     /**
-     * Marks audio icon as disabled or not.
-     * @param {boolean} disabled if icon should look like disabled or not
+     * Enables / disables audio toolbar button.
+     *
+     * @param {boolean} enabled indicates if the button should be enabled
+     * or disabled
      */
-    disableAudioIcon (disabled) {
+    setAudioIconEnabled (enabled) {
         var $btn = $('#toolbar_button_mute');
 
         $btn
-            .prop("disabled", disabled)
-            .attr("data-i18n", disabled
-                ? "[content]toolbar.micDisabled"
-                : "[content]toolbar.mute")
-            .attr("shortcut", disabled ? "" : "mutePopover");
+            .prop("disabled", !enabled)
+            .attr("data-i18n", enabled
+                ? "[content]toolbar.mute"
+                : "[content]toolbar.micDisabled")
+            .attr("shortcut", enabled ? "mutePopover" : "");
 
-        disabled
-            ? $btn.attr("disabled", "disabled")
-            : $btn.removeAttr("disabled");
+        enabled
+            ? $btn.removeAttr("disabled")
+            : $btn.attr("disabled", "disabled");
 
         APP.translation.translateElement($btn);
 
-        disabled && this.toggleAudioIcon(disabled);
+        !enabled && this.toggleAudioIcon(!enabled);
     },
 
     /**
@@ -823,7 +827,7 @@ const Toolbar = {
      * @param elementId the element identifier
      * @param isToggled indicates if the element should be toggled or untoggled
      */
-        _setToggledState(elementId, isToggled) {
+     _setToggledState(elementId, isToggled) {
         $("#" + elementId).toggleClass("toggled", isToggled);
     }
 };

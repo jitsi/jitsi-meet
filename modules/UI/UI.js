@@ -1459,23 +1459,23 @@ UI.onSharedVideoStop = function (id, attributes) {
 };
 
 /**
- * Disables camera toolbar button.
+ * Enables / disables camera toolbar button.
  *
- * @param {boolean} disable indicates if the camera button should be disabled
- * or enabled
+ * @param {boolean} enabled indicates if the camera button should be enabled
+ * or disabled
  */
-UI.disableCameraButton = function (disable) {
-    Toolbar.disableVideoIcon(disable);
+UI.setCameraButtonEnabled = function (enabled) {
+    Toolbar.setVideoIconEnabled(enabled);
 };
 
 /**
- * Disables microphone toolbar button.
+ * Enables / disables microphone toolbar button.
  *
- * @param {boolean} disable indicates if the microphone button should be
- * disabled or enabled
+ * @param {boolean} enabled indicates if the microphone button should be
+ * enabled or disabled
  */
-UI.disableMicrophoneButton = function (disable) {
-    Toolbar.disableAudioIcon(disable);
+UI.setMicrophoneButtonEnabled = function (enabled) {
+    Toolbar.setAudioIconEnabled(enabled);
 };
 
 UI.showRingOverLay = function () {

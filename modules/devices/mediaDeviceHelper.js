@@ -58,7 +58,7 @@ function getNewAudioInputDevice(newDevices, localAudio) {
         // Otherwise we assume that we don't have any audio input devices
         // to use and that's why disable microphone button on UI.
         else {
-            APP.UI.disableMicrophoneButton(true);
+            APP.UI.setMicrophoneButtonEnabled(false);
         }
     } else {
         // And here we handle case when we already have some device working,
@@ -100,7 +100,7 @@ function getNewVideoInputDevice(newDevices, localVideo) {
         // Otherwise we assume that we don't have any video input devices
         // to use and that's why disable microphone button on UI.
         else {
-            APP.UI.disableCameraButton(true);
+            APP.UI.setCameraButtonEnabled(false);
         }
     } else {
         // And here we handle case when we already have some device working,
