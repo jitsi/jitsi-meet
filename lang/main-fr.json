@@ -291,7 +291,7 @@
     "connection": {
         "ERROR": "Erreur",
         "CONNECTING": "Connexion en cours",
-        "RECONNECTING": "Un problème réseau est survenue. Reconnexion en cours...",
+        "RECONNECTING": "Un problème réseau est survenu. Reconnexion en cours...",
         "CONNFAIL": "Échec de la connexion",
         "AUTHENTICATING": "Authentification en cours",
         "AUTHFAIL": "Échec de l'authentification",
