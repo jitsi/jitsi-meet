@@ -28,6 +28,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     // screen respecting ratio.
     VIDEO_LAYOUT_FIT: 'both',
     SHOW_CONTACTLIST_AVATARS: false,
+    ALWAYS_DISPLAY_SMALL_VIDEO: true,
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */

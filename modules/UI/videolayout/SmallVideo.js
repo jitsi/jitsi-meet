@@ -450,6 +450,9 @@ SmallVideo.prototype.isVideoPlayable = function() {
 SmallVideo.prototype.selectDisplayMode = function() {
     // Display name is always and only displayed when user is on the stage
     if (this.isCurrentlyOnLargeVideo()) {
+        if(interfaceConfig.ALWAYS_DISPLAY_SMALL_VIDEO) {
+            return DISPLAY_VIDEO;
+        }
         return DISPLAY_BLACKNESS;
     } else if (this.isVideoPlayable() && this.selectVideoElement().length) {
         return DISPLAY_VIDEO;
