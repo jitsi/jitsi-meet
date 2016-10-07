@@ -43,10 +43,6 @@ const buttonHandlers = {
             emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
     },
-    "toolbar_button_security": function () {
-        JitsiMeetJS.analytics.sendEvent('toolbar.lock.clicked');
-        emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
-    },
     "toolbar_button_link": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
         Invite.openLinkDialog();
@@ -189,10 +185,6 @@ const defaultToolbarButtons = {
         shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
         content: 'Share screen',
         i18n: '[content]toolbar.sharescreen'
-    },
-    'security': {
-        id: 'toolbar_button_security',
-        tooltipKey: 'toolbar.lock'
     },
     'invite': {
         id: 'toolbar_button_link',
@@ -391,24 +383,6 @@ Toolbar = {
     isEnabled() {
         return this.enabled;
     },
-    /**
-     * Unlocks the lock button state.
-     */
-    unlockLockButton () {
-        if ($("#toolbar_button_security").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("toolbar_button_security",
-                                "icon-security icon-security-locked");
-    },
-
-    /**
-     * Updates the lock button state to locked.
-     */
-    lockLockButton () {
-        if ($("#toolbar_button_security").hasClass("icon-security"))
-            UIUtil.buttonClick("toolbar_button_security",
-                                "icon-security icon-security-locked");
-    },
-
     /**
      * Shows or hides authentication button
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
