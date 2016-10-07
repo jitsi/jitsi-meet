@@ -345,7 +345,6 @@ UI.mucJoined = function () {
  */
 UI.handleToggleFilmStrip = () => {
     UI.toggleFilmStrip();
-    VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
@@ -729,6 +728,7 @@ UI.toggleSmileys = function () {
 UI.toggleFilmStrip = function () {
     var self = FilmStrip;
     self.toggleFilmStrip.apply(self, arguments);
+    VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
