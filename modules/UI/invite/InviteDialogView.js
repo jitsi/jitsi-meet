@@ -1,8 +1,5 @@
 /* global $, APP, JitsiMeetJS */
 
-import UIEvents from '../../../service/UI/UIEvents';
-
-
 /**
  * Substate for password
  * @type {{LOCKED: string, UNLOCKED: string}}
@@ -130,17 +127,18 @@ export default class InviteDialogView {
         let roomLockDesc = APP.translation.translateString(roomLockDescKey);
         let roomUnlockKey = 'roomUnlocked';
         let roomUnlock = APP.translation.translateString(roomUnlockKey);
-
+        let classes = 'button-control button-control_light copyInviteLink';
         return (
             `<div class="input-control">
                 <label class="input-control__label for="inviteLinkRef">
                     ${this.dialog.titleString}
                 </label>
                 <div class="input-control__container">
-                    <input class="input-control__input" id="inviteLinkRef"
-                           type="text" ${this.inviteAttributes} readonly>
-                    <button id="copyInviteLink" data-i18n="${copyKey}"
-                            class="button-control button-control_light">
+                    <input class="input-control__input inviteLink"
+                           id="inviteLinkRef" type="text"
+                           ${this.inviteAttributes} readonly>
+                    <button data-i18n="${copyKey}"
+                            class="${classes}">
                         ${copyText}
                     </button>
                 </div>
@@ -284,27 +282,16 @@ export default class InviteDialogView {
         let $passInput = $('#newPasswordInput');
         let $addPassBtn = $('#addPasswordBtn');
 
-        $('#copyInviteLink').on('click', this.copyToClipboard);
+        $('.copyInviteLink').on('click', this.copyToClipboard);
         $addPassBtn.on('click', () => {
             let newPass = $passInput.val();
-            let addPassCb = () => {
-                this.model.password = newPass;
-                $.prompt.goToState(States.LOCKED);
-                this.updateView();
-            };
 
             if(newPass) {
-                APP.UI.emitEvent(UIEvents.LOCK_ROOM, newPass, addPassCb);
+                this.model.setRoomLocked(newPass);
             }
         });
         $('#inviteDialogRemovePassword').on('click', () => {
-            let removePassCb = () => {
-                this.model.removePassword();
-                $.prompt.goToState(States.UNLOCKED);
-                this.updateView();
-            };
-
-            APP.UI.emitEvent(UIEvents.UNLOCK_ROOM, removePassCb);
+            this.model.setRoomUnlocked();
         });
         $passInput.keyup(this.disableAddPassIfInputEmpty.bind(this));
     }
@@ -328,8 +315,7 @@ export default class InviteDialogView {
      * Copying text to clipboard
      */
     copyToClipboard() {
-        let inviteLink = document.getElementById('inviteLinkRef');
-
+        let inviteLink = document.getElementById('#inviteLinkRef');
         if (inviteLink && inviteLink.select) {
             inviteLink.select();
 
@@ -347,13 +333,15 @@ export default class InviteDialogView {
      * Method syncing the view and the model
      */
     updateView() {
-        $('#inviteDialogPassword').text(this.model.password);
+        $('#inviteDialogPassword').text(this.model.getPassword());
         $('#newPasswordInput').val('');
         this.disableAddPassIfInputEmpty();
 
         this.updateInviteLink();
 
-        if(this.model.roomLocked) {
+        console.log('from view is locked', this.model.isLocked());
+
+        if(this.model.isLocked()) {
             $.prompt.goToState(States.LOCKED);
         } else {
             $.prompt.goToState(States.UNLOCKED);
@@ -363,8 +351,8 @@ export default class InviteDialogView {
         let roomLocked = `.${this.lockHint}`;
         let roomUnlocked = `.${this.unlockHint}`;
 
-        let showDesc = this.model.roomLocked ? roomLocked : roomUnlocked;
-        let hideDesc = !this.model.roomLocked ? roomLocked : roomUnlocked;
+        let showDesc = this.model.isLocked() ? roomLocked : roomUnlocked;
+        let hideDesc = !this.model.isLocked() ? roomLocked : roomUnlocked;
 
         $(showDesc).show();
         $(hideDesc).hide();
@@ -373,12 +361,14 @@ export default class InviteDialogView {
     updateInviteLink() {
         // If the invite dialog has been already opened we update the
         // information.
-        let inviteLink = document.getElementById('inviteLinkRef');
-        if (inviteLink) {
+        let inviteLink = document.querySelectorAll('.inviteLink');
+        let list = Array.from(inviteLink);
+        list.forEach((inviteLink) => {
             inviteLink.value = this.model.inviteUrl;
             inviteLink.select();
-            $('#inviteLinkRef').parent()
-                .find('button[value=true]').prop('disabled', false);
-        }
+        });
+
+        $('#inviteLinkRef').parent()
+            .find('button[value=true]').prop('disabled', false);
     }
 }

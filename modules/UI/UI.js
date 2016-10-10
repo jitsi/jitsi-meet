@@ -1067,10 +1067,8 @@ UI.markVideoInterrupted = function (interrupted) {
  */
 UI.markRoomLocked = function (locked) {
     if (locked) {
-        UI.ContactList.setRoomLocked();
         UI.Invite.setRoomLocked();
     } else {
-        UI.ContactList.setRoomUnlocked();
         UI.Invite.setRoomUnlocked();
     }
 

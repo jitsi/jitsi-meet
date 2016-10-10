@@ -13,19 +13,11 @@ class ContactList {
         this.conference = conference;
         this.contacts = [];
         this.roomLocked = false;
-
-        this.registerListeners();
         ContactListView.init(this);
     }
 
-    registerListeners() {
-        this.conference.on(event, (locked) => {
-            if (locked) {
-                this.setRoomLocked();
-            } else {
-                this.setRoomUnlocked();
-            }
-        });
+    isLocked() {
+        return APP.UI.Invite.isLocked();
     }
 
     /**
@@ -70,22 +62,6 @@ class ContactList {
         this.contacts = this.contacts.filter((el) => el.id !== id);
         this.publish(UIEvents.REMOVE_CONTACT, { id });
         return this.contacts;
-    }
-
-    /**
-     * Marking room as locked
-     */
-    setRoomLocked() {
-        this.roomLocked = true;
-        this.publish(UIEvents.TOGGLE_ROOM_LOCK);
-    }
-
-    /**
-     * Marking room as unlocked
-     */
-    setRoomUnlocked() {
-        this.roomLocked = false;
-        this.publish(UIEvents.TOGGLE_ROOM_LOCK);
     }
 
     /**

@@ -116,11 +116,6 @@ export default {
     LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed",
 
     /**
-     * Requesting room password for invite dialog
-     */
-    REQUEST_ROOM_PASSWORD: "UI.request_room_password",
-
-    /**
      * Unlocking the room
      */
     UNLOCK_ROOM: "UI.unlock_room",

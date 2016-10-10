@@ -70,6 +70,7 @@ var ContactListView = {
         this.unlockKey = 'roomUnlocked';
         this.addInviteButton();
         this.registerListeners();
+        this.toggleLock();
     },
     /**
      * Adds layout for invite button
@@ -147,7 +148,8 @@ var ContactListView = {
      * @returns {Promise}
      */
     toggleLock() {
-        let isLocked = this.model.roomLocked;
+        console.log('toggle lock in contact list');
+        let isLocked = this.model.isLocked();
         let showKey = isLocked ? this.lockKey : this.unlockKey;
         let hideKey = !isLocked ? this.lockKey : this.unlockKey;
         let showId = `contactList${showKey}`;

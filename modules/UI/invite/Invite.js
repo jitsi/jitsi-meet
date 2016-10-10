@@ -1,9 +1,8 @@
-/* global APP, JitsiMeetJS */
+/* global JitsiMeetJS, APP */
 
-import InviteDialog from './InviteDialog';
 import InviteDialogView from './InviteDialogView';
-import UIEvents from '../../../service/UI/UIEvents';
 import createRoomLocker from './RoomLocker';
+import UIEvents from  '../../../service/UI/UIEvents';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
@@ -11,6 +10,7 @@ class Invite {
     constructor(conference) {
         this.conference = conference;
         this.createRoomLocker(conference);
+        this.initDialog();
         this.registerListeners();
     }
 
@@ -20,14 +20,23 @@ class Invite {
             console.log("Received channel password lock change: ", locked,
                 error);
 
-            if (locked) {
-                this.setRoomLocked();
-            } else {
-                this.setRoomUnlocked();
-            }
+            // if (locked) {
+            //     this.lockRoom();
+            // } else {
+            //     this.unlockRoom();
+            // }
 
             this.roomLocker.lockedElsewhere = locked;
+            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
         });
+    }
+
+    updateView() {
+        if (!this.view) {
+            this.initDialog();
+        }
+
+        this.view.updateView();
     }
 
     createRoomLocker(room = this.conference) {
@@ -44,117 +53,76 @@ class Invite {
      * Opens the invite link dialog.
      */
     openLinkDialog () {
-        let promise;
-
         if (!this.view) {
-            promise = this.initDialog();
-        } else {
-            promise = Promise.resolve();
+            this.initDialog();
         }
 
-        promise.then(() => this.view.open());
+        this.view.open();
     }
 
     initDialog() {
-        let options = {};
-
-        return new Promise((resolve) => {
-            this.getPassword().then(password => {
-                options.password = password;
-                options.isModerator = this.isModerator;
-                options.inviteUrl = this.inviteUrl;
-
-                this.model = new InviteDialog(options);
-                this.view = new InviteDialogView(this.model);
-                this.model.addView(this.view);
-                resolve();
-            });
-        });
+        this.password = this.getPassword();
+        this.view = new InviteDialogView(this);
     }
 
     getPassword() {
-        return new Promise((resolve) => {
-            let event = UIEvents.REQUEST_ROOM_PASSWORD;
-
-            APP.UI.emitEvent(event, (room) => {
-                resolve(room.password);
-            });
-        });
+        return this.roomLocker.password;
     }
 
     setLocalAsModerator() {
-        let promise;
         this.isModerator = true;
 
-        if(!this.model) {
-            promise = this.initDialog();
-        } else {
-            promise = Promise.resolve();
-        }
-
-        promise.then(() => {
-            this.model.setLocalAsModerator();
-        });
+        this.updateView();
     }
 
     unsetLocalAsModerator() {
-        let promise;
-
-        if(!this.model) {
-            promise = this.initDialog();
-        } else {
-            promise = Promise.resolve();
-        }
-
-        promise.then(() => {
-            this.model.unsetLocalAsModerator();
-        });
+        this.isModerator = false;
+        this.updateView();
     }
 
     setRoomUnlocked() {
-        let promise;
-
-        if(!this.model) {
-            promise = this.initDialog();
-        } else {
-            promise = Promise.resolve();
+        if (this.isModerator) {
+            this.unlockRoom();
         }
+    }
 
-        promise.then(() => {
-            this.model.setRoomUnlocked();
+    unlockRoom() {
+        this.roomLocker.lock().then(() => {
+            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+            this.updateView();
         });
     }
 
-    setRoomLocked() {
-        let promise;
-
-        if(!this.model) {
-            promise = this.initDialog();
-        } else {
-            promise = Promise.resolve();
+    setRoomLocked(newPass) {
+        if (this.isModerator) {
+            this.lockRoom(newPass);
         }
+    }
 
-        promise.then(() => {
-            return this.getPassword();
-        }).then((password) => {
-            this.model.setRoomLocked(password);
-        });
+    lockRoom(newPass) {
+        if (newPass || !this.roomLocker.isLocked) {
+            this.roomLocker.lock(newPass).then(() => {
+                APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+                this.updateView();
+            });
+        }
     }
 
     /**
      * Updates the room invite url.
      */
     updateInviteUrl (newInviteUrl) {
-        let promise;
-        if (!this.model) {
-            promise = this.initDialog();
-        } else {
-            promise = Promise.resolve();
-        }
+        this.inviteUrl = newInviteUrl;
+        this.updateView();
+    }
 
-        promise.then(() => {
-            this.model.updateInviteUrl(newInviteUrl);
-        });
+    getEncodedInviteUrl() {
+        return encodeURI(this.inviteUrl);
+    }
+
+    isLocked() {
+        console.log(this.roomLocker.isLocked);
+        return this.roomLocker.isLocked;
     }
 }
 

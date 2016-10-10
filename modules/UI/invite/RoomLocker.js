@@ -1,5 +1,4 @@
 /* global APP, JitsiMeetJS */
-import UIEvents from  '../../../service/UI/UIEvents';
 import askForPassword from './AskForPassword';
 
 /**
@@ -48,10 +47,6 @@ export default function createRoomLocker (room) {
     function lock (newPass) {
         return room.lock(newPass).then(function () {
             password = newPass;
-
-            let { ROOM_LOCKED, ROOM_UNLOCKED} = UIEvents;
-            let event = password ? ROOM_LOCKED : ROOM_UNLOCKED;
-            APP.UI.emitEvent(event);
         }).catch(function (err) {
             console.error(err);
             if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {
