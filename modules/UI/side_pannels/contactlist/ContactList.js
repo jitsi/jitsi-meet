@@ -16,6 +16,11 @@ class ContactList {
         ContactListView.init(this);
     }
 
+    /**
+     * Is locked flag
+     * Delegates to Invite module
+     * @returns {Boolean}
+     */
     isLocked() {
         return APP.UI.Invite.isLocked();
     }

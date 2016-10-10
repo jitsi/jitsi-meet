@@ -361,6 +361,9 @@ export default class InviteDialogView {
         $(hideDesc).hide();
     }
 
+    /**
+     * Updates invite link
+     */
     updateInviteLink() {
         // If the invite dialog has been already opened we update the
         // information.

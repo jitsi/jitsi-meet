@@ -6,6 +6,11 @@ import UIEvents from  '../../../service/UI/UIEvents';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
+/**
+ * Invite module
+ * Constructor takes conference object giving
+ * ability to subscribe on its events
+ */
 class Invite {
     constructor(conference) {
         this.conference = conference;
@@ -14,6 +19,10 @@ class Invite {
         this.registerListeners();
     }
 
+    /**
+     * Registering listeners.
+     * Primarily listeners for conference events.
+     */
     registerListeners() {
         let event = ConferenceEvents.LOCK_STATE_CHANGED;
         this.conference.on(event, (locked, error) => {
@@ -35,6 +44,11 @@ class Invite {
         });
     }
 
+    /**
+     * Updates the view.
+     * If dialog hasn't been defined -
+     * creates it and updates
+     */
     updateView() {
         if (!this.view) {
             this.initDialog();
@@ -43,12 +57,22 @@ class Invite {
         this.view.updateView();
     }
 
+    /**
+     * Room locker factory
+     * @param room
+     * @returns {Object} RoomLocker
+     * @factory
+     */
     createRoomLocker(room = this.conference) {
         let roomLocker = createRoomLocker(room);
         this.roomLocker = roomLocker;
         return this.getRoomLocker();
     }
 
+    /**
+     * Room locker getter
+     * @returns {Object} RoomLocker
+     */
     getRoomLocker() {
         return this.roomLocker;
     }
@@ -64,26 +88,46 @@ class Invite {
         this.view.open();
     }
 
+    /**
+     * Dialog initialization.
+     * creating view object using as a model this module
+     */
     initDialog() {
         this.password = this.getPassword();
         this.view = new InviteDialogView(this);
     }
 
+    /**
+     * Password getter
+     * @returns {String} password
+     */
     getPassword() {
         return this.roomLocker.password;
     }
 
+    /**
+     * Sets local as moderator
+     * Used to show UI states
+     */
     setLocalAsModerator() {
         this.isModerator = true;
 
         this.updateView();
     }
 
+    /**
+     * Unsets local as moderator
+     * Used fo show UI states
+     */
     unsetLocalAsModerator() {
         this.isModerator = false;
         this.updateView();
     }
 
+    /**
+     * Allows to unlock the room.
+     * If the current user is moderator.
+     */
     setRoomUnlocked() {
         if (this.isModerator) {
             this.roomLocker.lock().then(() => {
@@ -93,6 +137,12 @@ class Invite {
         }
     }
 
+    /**
+     * Allows to lock the room if
+     * the current user is moderator.
+     * Takes the password.
+     * @param {String} newPass
+     */
     setRoomLocked(newPass) {
         let isModerator = this.isModerator;
         if (isModerator && (newPass || !this.roomLocker.isLocked)) {
@@ -111,10 +161,20 @@ class Invite {
         this.updateView();
     }
 
+    /**
+     * Helper method for encoding
+     * Invite URL
+     * @returns {string}
+     */
     getEncodedInviteUrl() {
         return encodeURI(this.inviteUrl);
     }
 
+    /**
+     * Is locked flag.
+     * Delegates to room locker
+     * @returns {Boolean} isLocked
+     */
     isLocked() {
         return this.roomLocker.isLocked;
     }

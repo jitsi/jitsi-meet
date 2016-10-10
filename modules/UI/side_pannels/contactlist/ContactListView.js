@@ -56,6 +56,11 @@ function createDisplayNameParagraph(key, displayName) {
     return p;
 }
 
+/**
+ * Getter for current contact element
+ * @param id
+ * @returns {JQuery}
+ */
 function getContactEl (id) {
     return $(`#contacts>li[id="${id}"]`);
 }
@@ -217,6 +222,11 @@ var ContactListView = {
         getContactEl(id).toggleClass('clickable', isClickable);
     },
 
+    /**
+     * Changes display name of the user
+     * defined by its id
+     * @param data
+     */
     onDisplayNameChange (data) {
         let { id, name } = data;
         if(!name)
@@ -231,6 +241,10 @@ var ContactListView = {
         }
     },
 
+    /**
+     * Changes user avatar
+     * @param data
+     */
     changeUserAvatar (data) {
         let { id, avatar } = data;
         // set the avatar in the contact list
