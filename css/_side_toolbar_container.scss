@@ -4,8 +4,6 @@
 #sideToolbarContainer {
     position: absolute;
     top: 0;
-    //magic 10px for toolbar height. TODO: fix it
-    bottom: 10px;
     left: $defaultToolbarSize;
     width: 0;
     background-color: rgba(0,0,0,0.8);
@@ -24,7 +22,7 @@
     /**
      * Form elements and blocks.
      */
-    input, label, select, a,
+    input, select, a,
     .sideToolbarBlock, .input-control, .button-control {
         display: inline-block;
         margin-top: 15px;
@@ -46,11 +44,20 @@
      * Specify styling of elements inside a block.
      */
     .sideToolbarBlock {
-        input, label, button, a, select {
+        input, button, a, select {
             margin-top: 5px;
             margin-left: 0;
             width: 100%;
         }
+        input[type='checkbox'] {
+            width: auto !important;
+            display: inline;
+            > label {
+                margin-top: 5px;
+                width: 80%;
+            }
+        }
+
     }
 
     /**

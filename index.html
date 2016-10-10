@@ -30,15 +30,15 @@
             <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
 
             <div id="enter_room_container">
-                    <div id="enter_room_form" >
-                        <div id="domain_name"></div>
-                        <div id="enter_room">
-                            <input id="enter_room_field" type="text" autofocus/>
-                            <div class="icon-reload" id="reload_roomname"></div>
-                            <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
+                <div id="enter_room_form" >
+                    <div id="domain_name"></div>
+                    <div id="enter_room">
+                        <input id="enter_room_field" type="text" autofocus/>
+                        <div class="icon-reload" id="reload_roomname"></div>
+                        <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
 
-                        </div>
                     </div>
+                </div>
             </div>
             <div id="brand_header"></div>
             <input type='checkbox' name='checkbox' id="disable_welcome"/>
@@ -202,23 +202,19 @@
                             <div id="moderatorOptionsTitle" class="subTitle hide" data-i18n="settings.moderator"></div>
                             <div id="startMutedOptions" class="hide">
                                 <div class="sideToolbarBlock first">
-                                    <aui-label for="startAudioMuted">
-                                        <p data-i18n="settings.startAudioMuted"></p>
-                                    </aui-label>
-                                    <aui-toggle id="startAudioMuted" label="Audio muted"></aui-toggle>
+                                    <input type="checkbox" id="startAudioMuted">
+                                    <label class="startMutedLabel" for="startAudioMuted" data-i18n="settings.startAudioMuted"></label>
                                 </div>
                                 <div class="sideToolbarBlock">
-                                    <aui-label for="startVideoMuted" >
-                                        <p data-i18n="settings.startVideoMuted"></p>
-                                    </aui-label>
-                                    <aui-toggle id="startVideoMuted" label="Video muted"></aui-toggle>
+                                    <input type="checkbox" id="startVideoMuted">
+                                    <label class="startMutedLabel" for="startVideoMuted" data-i18n="settings.startVideoMuted"></label>
                                 </div>
                             </div>
-                            <div id="followMeOptions" class="sideToolbarBlock hide">
-                                <aui-label for="followMeCheckBox">
-                                    <p data-i18n="settings.followMe"></p>
-                                </aui-label>
-                                <aui-toggle id="followMeCheckBox" label="Follow Me"></aui-toggle>
+                            <div id="followMeOptions" class="hide">
+                                <div class="sideToolbarBlock">
+                                    <input type="checkbox" id="followMeCheckBox">
+                                    <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
+                                </div>
                             </div>
                         </div>
                     </form>
