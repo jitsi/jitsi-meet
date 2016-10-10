@@ -508,6 +508,11 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
  * @param show whether to show or hide.
  */
 SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
+    // Don't create and show dominant speaker indicator if
+    // DISABLE_DOMINANT_SPEAKER_INDICATOR is true
+    if (interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR)
+        return;
+
     if (!this.container) {
         console.warn( "Unable to set dominant speaker indicator - "
             + this.videoSpanId + " does not exist");
