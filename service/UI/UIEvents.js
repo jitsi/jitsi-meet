@@ -114,17 +114,7 @@ export default {
      * Notifies that the avatar is displayed or not on the largeVideo.
      */
     LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed",
-
-    /**
-     * Unlocking the room
-     */
-    UNLOCK_ROOM: "UI.unlock_room",
-
-    /**
-     * Locking the room
-     */
-    LOCK_ROOM: "UI.lock_room",
-
+    
     /**
      * Toggling room lock
      */
