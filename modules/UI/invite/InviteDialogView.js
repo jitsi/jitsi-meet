@@ -89,6 +89,8 @@ export default class InviteDialogView {
      * @param f
      */
     closeFunction(e, v, m, f) {
+        $(document).off('click', '.copyInviteLink', this.copyToClipboard);
+
         if(!v && !m && !f)
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
     }
@@ -130,7 +132,7 @@ export default class InviteDialogView {
         let classes = 'button-control button-control_light copyInviteLink';
         return (
             `<div class="input-control">
-                <label class="input-control__label for="inviteLinkRef">
+                <label class="input-control__label" for="inviteLinkRef">
                     ${this.dialog.titleString}
                 </label>
                 <div class="input-control__container">
@@ -281,7 +283,7 @@ export default class InviteDialogView {
         let $passInput = $('#newPasswordInput');
         let $addPassBtn = $('#addPasswordBtn');
 
-        $('.copyInviteLink').on('click', this.copyToClipboard);
+        $(document).on('click', '.copyInviteLink', this.copyToClipboard);
         $addPassBtn.on('click', () => {
             let newPass = $passInput.val();
 
@@ -314,18 +316,22 @@ export default class InviteDialogView {
      * Copying text to clipboard
      */
     copyToClipboard() {
-        let inviteLink = document.getElementById('#inviteLinkRef');
-        if (inviteLink && inviteLink.select) {
-            inviteLink.select();
+        $('.inviteLink').each(function () {
+            let $el = $(this).closest('.jqistate');
 
-            try {
-                document.execCommand('copy');
-                inviteLink.blur();
+            // TOFIX: We can select only visible elements
+            if($el.css('display') === 'block') {
+                this.select();
+
+                try {
+                    document.execCommand('copy');
+                    this.blur();
+                }
+                catch (err) {
+                    console.error('error when copy the text');
+                }
             }
-            catch (err) {
-                console.error('error when copy the text');
-            }
-        }
+        });
     }
 
     /**
