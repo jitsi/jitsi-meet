@@ -17,17 +17,21 @@ class Invite {
     registerListeners() {
         let event = ConferenceEvents.LOCK_STATE_CHANGED;
         this.conference.on(event, (locked, error) => {
+            let oldLockState = this.roomLocker.lockedElsewhere;
+
             console.log("Received channel password lock change: ", locked,
                 error);
 
-            // if (locked) {
-            //     this.lockRoom();
-            // } else {
-            //     this.unlockRoom();
-            // }
+            if (!locked) {
+                this.roomLocker.resetPassword();
+            }
 
-            this.roomLocker.lockedElsewhere = locked;
-            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+            if (oldLockState !== locked) {
+                this.roomLocker.lockedElsewhere = locked;
+                APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+                this.updateView();
+            }
+
         });
     }
 
@@ -82,25 +86,16 @@ class Invite {
 
     setRoomUnlocked() {
         if (this.isModerator) {
-            this.unlockRoom();
+            this.roomLocker.lock().then(() => {
+                APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+                this.updateView();
+            });
         }
-    }
-
-    unlockRoom() {
-        this.roomLocker.lock().then(() => {
-            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
-            this.updateView();
-        });
     }
 
     setRoomLocked(newPass) {
-        if (this.isModerator) {
-            this.lockRoom(newPass);
-        }
-    }
-
-    lockRoom(newPass) {
-        if (newPass || !this.roomLocker.isLocked) {
+        let isModerator = this.isModerator;
+        if (isModerator && (newPass || !this.roomLocker.isLocked)) {
             this.roomLocker.lock(newPass).then(() => {
                 APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
                 this.updateView();
@@ -121,7 +116,6 @@ class Invite {
     }
 
     isLocked() {
-        console.log(this.roomLocker.isLocked);
         return this.roomLocker.isLocked;
     }
 }

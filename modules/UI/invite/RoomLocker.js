@@ -90,6 +90,15 @@ export default function createRoomLocker (room) {
         },
 
         /**
+         * Reset the password. Can be useful when room
+         * has been unlocked from elsewhere and we can use
+         * this method for sync the pass
+         */
+        resetPassword() {
+          password = null;
+        },
+
+        /**
          * Asks user for required conference password.
          */
         requirePassword () {

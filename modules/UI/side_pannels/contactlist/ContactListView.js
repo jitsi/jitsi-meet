@@ -148,7 +148,6 @@ var ContactListView = {
      * @returns {Promise}
      */
     toggleLock() {
-        console.log('toggle lock in contact list');
         let isLocked = this.model.isLocked();
         let showKey = isLocked ? this.lockKey : this.unlockKey;
         let hideKey = !isLocked ? this.lockKey : this.unlockKey;

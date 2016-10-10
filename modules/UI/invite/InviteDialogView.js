@@ -268,7 +268,6 @@ export default class InviteDialogView {
             size: 'medium'
         });
         $.prompt.goToState(initial);
-        console.log('initial state:', initial);
 
         this.registerListeners();
         this.updateView();
@@ -338,8 +337,6 @@ export default class InviteDialogView {
         this.disableAddPassIfInputEmpty();
 
         this.updateInviteLink();
-
-        console.log('from view is locked', this.model.isLocked());
 
         if(this.model.isLocked()) {
             $.prompt.goToState(States.LOCKED);
