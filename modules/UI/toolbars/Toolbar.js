@@ -1,7 +1,6 @@
 /* global APP, $, config, interfaceConfig, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-import Invite from '../invite/Invite';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
 let emitter = null;
@@ -45,7 +44,7 @@ const buttonHandlers = {
     },
     "toolbar_button_link": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-        Invite.openLinkDialog();
+        APP.UI.Invite.openLinkDialog();
     },
     "toolbar_button_chat": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');

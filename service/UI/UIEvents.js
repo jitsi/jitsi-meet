@@ -28,7 +28,6 @@ export default {
      * current video playing time.
      */
     UPDATE_SHARED_VIDEO: "UI.update_shared_video",
-    ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_KICKED: "UI.user_kicked",
     REMOTE_AUDIO_MUTED: "UI.remote_audio_muted",
     FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",

@@ -1,8 +1,8 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
 import {openConnection} from './connection';
-//FIXME:
-import createRoomLocker from './modules/UI/authentication/RoomLocker';
-//FIXME:
+import Invite from './modules/UI/invite/Invite';
+import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
+
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 
 import ConnectionQuality from './modules/connectionquality/connectionquality';
@@ -598,6 +598,8 @@ export default {
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
 
+                APP.UI.ContactList = new ContactList(room);
+
                 // if user didn't give access to mic or camera or doesn't have
                 // them at all, we disable corresponding toolbar buttons
                 if (!tracks.find((t) => t.isAudioTrack())) {
@@ -909,8 +911,9 @@ export default {
     _createRoom (localTracks) {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
+        APP.UI.Invite = new Invite(room);
         this._setLocalAudioVideoStreams(localTracks);
-        roomLocker = createRoomLocker(room);
+        roomLocker = APP.UI.Invite.getRoomLocker();
         this._room = room; // FIXME do not use this
 
         let email = APP.settings.getEmail();
@@ -1338,13 +1341,6 @@ export default {
             APP.UI.updateRecordingState(status);
         });
 
-        room.on(ConferenceEvents.LOCK_STATE_CHANGED, (state, error) => {
-            console.log("Received channel password lock change: ", state,
-                error);
-            APP.UI.markRoomLocked(state);
-            roomLocker.lockedElsewhere = state;
-        });
-
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
             APP.UI.updateUserStatus(id, status);
         });
@@ -1369,21 +1365,6 @@ export default {
                 url, "extension_store_window",
                 "resizable,scrollbars=yes,status=1");
         });
-
-        APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
-            if (room.isModerator()) {
-                let promise = roomLocker.isLocked
-                    ? roomLocker.askToUnlock()
-                    : roomLocker.askToLock();
-                promise.then(() => {
-                    APP.UI.markRoomLocked(roomLocker.isLocked);
-                });
-            } else {
-                roomLocker.notifyModeratorRequired();
-            }
-        });
-
-
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muteLocalVideo);

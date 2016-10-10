@@ -1,6 +1,7 @@
 /* global APP */
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import ContactListView from './ContactListView';
 import Contact from './Contact';
 
 /**
@@ -8,8 +9,23 @@ import Contact from './Contact';
  * @class ContactList
  */
 class ContactList {
-    constructor() {
+    constructor(conference) {
+        this.conference = conference;
         this.contacts = [];
+        this.roomLocked = false;
+
+        this.registerListeners();
+        ContactListView.init(this);
+    }
+
+    registerListeners() {
+        this.conference.on(event, (locked) => {
+            if (locked) {
+                this.setRoomLocked();
+            } else {
+                this.setRoomUnlocked();
+            }
+        });
     }
 
     /**

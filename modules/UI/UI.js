@@ -4,9 +4,6 @@ var UI = {};
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
-import Invite from './invite/Invite';
-import ContactListClass from "./side_pannels/contactlist/ContactList";
-import ContactListView from "./side_pannels/contactlist/ContactListView";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
@@ -31,7 +28,6 @@ UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./feedback/Feedback");
-var ContactList;
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -244,7 +240,7 @@ UI.showChatError = function (err, msg) {
  * @param {string} displayName new nickname
  */
 UI.changeDisplayName = function (id, displayName) {
-    ContactList.onDisplayNameChange(id, displayName);
+    UI.ContactList.onDisplayNameChange(id, displayName);
     VideoLayout.onDisplayNameChanged(id, displayName);
 
     if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
@@ -294,14 +290,14 @@ UI.initConference = function () {
     // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
     var inviteURL = window.location.protocol + "//" +
         window.location.host + window.location.pathname;
-    Invite.updateInviteUrl(inviteURL);
+    APP.UI.Invite.updateInviteUrl(inviteURL);
     // Clean up the URL displayed by the browser
     if (window.history && typeof window.history.replaceState === 'function') {
         window.history.replaceState({}, document.title, inviteURL);
     }
 
     // Add myself to the contact list.
-    ContactList.addContact(id, true);
+    UI.ContactList.addContact(id, true);
 
     // Update default button states before showing the toolbar
     // if local role changes buttons state will be again updated.
@@ -472,10 +468,6 @@ UI.start = function () {
     }
     VideoLayout.resizeVideoArea(true, true);
 
-    ContactList = new ContactListClass();
-    ContactListView.init(ContactList);
-    ContactList.setRoomUnlocked();
-
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
@@ -612,7 +604,7 @@ UI.addUser = function (user) {
     var id = user.getId();
     var displayName = user.getDisplayName();
     UI.hideRingOverLay();
-    ContactList.addContact(id);
+    UI.ContactList.addContact(id);
 
     messageHandler.notify(
         displayName,'notify.somebody', 'connected', 'notify.connected'
@@ -639,7 +631,7 @@ UI.addUser = function (user) {
  * @param {string} displayName user nickname
  */
 UI.removeUser = function (id, displayName) {
-    ContactList.removeContact(id);
+    UI.ContactList.removeContact(id);
 
     messageHandler.notify(
         displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
@@ -674,9 +666,9 @@ UI.updateLocalRole = function (isModerator) {
     VideoLayout.showModeratorIndicator();
 
     if (isModerator) {
-        Invite.setLocalAsModerator();
+        APP.UI.Invite.setLocalAsModerator();
     } else {
-        Invite.unsetLocalAsModerator();
+        APP.UI.Invite.unsetLocalAsModerator();
     }
 
     Toolbar.showSipCallButton(isModerator);
@@ -903,7 +895,7 @@ UI.dockToolbar = function (isDock) {
  */
 function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
-    ContactList.changeUserAvatar(id, avatarUrl);
+    UI.ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
         Profile.changeAvatar(avatarUrl);
     }
@@ -1075,11 +1067,11 @@ UI.markVideoInterrupted = function (interrupted) {
  */
 UI.markRoomLocked = function (locked) {
     if (locked) {
-        ContactList.setRoomLocked();
-        Invite.setRoomLocked();
+        UI.ContactList.setRoomLocked();
+        UI.Invite.setRoomLocked();
     } else {
-        ContactList.setRoomUnlocked();
-        Invite.setRoomUnlocked();
+        UI.ContactList.setRoomUnlocked();
+        UI.Invite.setRoomUnlocked();
     }
 
 };
@@ -1562,7 +1554,7 @@ UI.showKeyboardShortcutsPanel = function(show) {
  * Opens the invite link dialog.
  */
 UI.openLinkDialog = function () {
-    Invite.openLinkDialog();
+    APP.UI.Invite.openLinkDialog();
 };
 
 module.exports = UI;

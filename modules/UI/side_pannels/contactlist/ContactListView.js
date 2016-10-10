@@ -1,7 +1,6 @@
 /* global $, APP, interfaceConfig */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
-import Invite from '../../invite/Invite';
 import UIUtil from '../../util/UIUtil';
 
 let numberOfContacts = 0;
@@ -82,7 +81,7 @@ var ContactListView = {
         let htmlLayout =  this.getInviteButtonLayout();
         title.insertAdjacentHTML('afterend', htmlLayout);
         $(document).on('click', '#addParticipantsBtn', () => {
-            Invite.openLinkDialog();
+            APP.UI.Invite.openLinkDialog();
         });
     },
     /**

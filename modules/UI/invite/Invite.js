@@ -1,17 +1,43 @@
-/* global APP */
+/* global APP, JitsiMeetJS */
 
 import InviteDialog from './InviteDialog';
 import InviteDialogView from './InviteDialogView';
 import UIEvents from '../../../service/UI/UIEvents';
+import createRoomLocker from './RoomLocker';
+
+const ConferenceEvents = JitsiMeetJS.events.conference;
 
 class Invite {
     constructor(conference) {
         this.conference = conference;
+        this.createRoomLocker(conference);
         this.registerListeners();
     }
 
     registerListeners() {
+        let event = ConferenceEvents.LOCK_STATE_CHANGED;
+        this.conference.on(event, (locked, error) => {
+            console.log("Received channel password lock change: ", locked,
+                error);
 
+            if (locked) {
+                this.setRoomLocked();
+            } else {
+                this.setRoomUnlocked();
+            }
+
+            this.roomLocker.lockedElsewhere = locked;
+        });
+    }
+
+    createRoomLocker(room = this.conference) {
+        let roomLocker = createRoomLocker(room);
+        this.roomLocker = roomLocker;
+        return this.getRoomLocker();
+    }
+
+    getRoomLocker() {
+        return this.roomLocker;
     }
 
     /**
@@ -132,5 +158,4 @@ class Invite {
     }
 }
 
-const InviteModule = new Invite();
-export default InviteModule;
+export default Invite;
