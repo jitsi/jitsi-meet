@@ -38,10 +38,8 @@
   "devDependencies": {
     "babel-core": "*",
     "babel-loader": "*",
-    "babel-plugin-transform-object-rest-spread": "*",
     "babel-polyfill": "*",
     "babel-preset-es2015": "6.14.0",
-    "babel-register": "*",
     "clean-css": "*",
     "css-loader": "*",
     "eslint": "*",
