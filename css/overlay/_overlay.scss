@@ -1,48 +1,30 @@
-.overlay {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: $overlayZ;
-    background: #21B9FC; /* Old browsers */
-    opacity: 0.75;
-    display: block;
-}
-
-.overlay_transparent {
-    background: rgba(22, 185, 252, .9);
-}
-
 .overlay_container {
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     position: fixed;
     z-index: $overlayZ;
+    background: rgba(22, 185, 252, .9);
 }
 
 .overlay_content {
     color: #fff;
-    font-weight: normal;
-    font-size: 20px;
     text-align: center;
     width: 400px;
     height: 250px;
     top: 50%;
     left: 50%;
-    position:absolute;
+    position: absolute;
     margin-top: -125px;
     margin-left: -200px;
 }
 
-
 .overlay_text_small {
+    display: block;
     font-size: 18px;
 }
 
 .overlay_icon {
-    position: relative;
-    z-index: 1013;
-    float: none;
     font-size: 100px;
 }

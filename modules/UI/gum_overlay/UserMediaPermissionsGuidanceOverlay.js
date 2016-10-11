@@ -11,12 +11,11 @@ let $overlay;
 function buildOverlayHtml(browser) {
     $overlay = $(`
         <div class='overlay_container'>
-            <div class='overlay overlay_transparent' />
             <div class='overlay_content'>
                 <span class="overlay_icon icon-microphone"></span>
                 <span class="overlay_icon icon-camera"></span>
                 <span data-i18n='[html]userMedia.${browser}GrantPermissions' 
-                    class='overlay_text overlay_text_small'></span>
+                      class='overlay_text_small'></span>
             </div>
         </div>`);
 
