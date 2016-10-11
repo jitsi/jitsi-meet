@@ -1372,7 +1372,8 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
-            ConnectionQuality.updateLocalStats(stats, connectionIsInterrupted);
+            ConnectionQuality.updateLocalStats(
+                stats, connectionIsInterrupted, localVideo);
         });
 
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
@@ -1382,6 +1383,12 @@ export default {
                 let data = {
                     bitrate: stats.bitrate,
                     packetLoss: stats.packetLoss};
+                if (localVideo && localVideo.resolution) {
+                    data.resolution = {
+                        inputHeight: localVideo.resolution
+                    };
+                }
+
                 try {
                     room.broadcastEndpointMessage({
                         type: this.commands.defaults.CONNECTION_QUALITY,
@@ -1394,10 +1401,15 @@ export default {
         room.on(ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             (participant, payload) => {
                 switch(payload.type) {
-                    case this.commands.defaults.CONNECTION_QUALITY:
-                        ConnectionQuality.updateRemoteStats(participant.getId(),
-                            payload.values);
+                    case this.commands.defaults.CONNECTION_QUALITY: {
+                        let id = participant.getId();
+                        ConnectionQuality.updateRemoteStats(
+                            id,
+                            payload.values,
+                            APP.UI.getRemoteVideoType(id),
+                            APP.UI.isRemoteVideoMuted(id));
                         break;
+                    }
                     default:
                         console.warn("Unknown datachannel message", payload);
                 }

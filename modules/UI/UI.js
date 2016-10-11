@@ -779,6 +779,15 @@ UI.getRemoteVideoType = function (jid) {
     return VideoLayout.getRemoteVideoType(jid);
 };
 
+/**
+ * Return the mute state of the remote video.
+ * @param jid the jid for the remote video
+ * @returns the video mute state.
+ */
+UI.isRemoteVideoMuted = function (jid) {
+    return VideoLayout.isRemoteVideoMuted(jid);
+};
+
 UI.connectionIndicatorShowMore = function(id) {
     VideoLayout.showMore(id);
 };
