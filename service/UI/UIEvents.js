@@ -28,7 +28,6 @@ export default {
      * current video playing time.
      */
     UPDATE_SHARED_VIDEO: "UI.update_shared_video",
-    ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_KICKED: "UI.user_kicked",
     REMOTE_AUDIO_MUTED: "UI.remote_audio_muted",
     FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",
@@ -114,5 +113,30 @@ export default {
     /**
      * Notifies that the avatar is displayed or not on the largeVideo.
      */
-    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed"
+    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed",
+    
+    /**
+     * Toggling room lock
+     */
+    TOGGLE_ROOM_LOCK: "UI.toggle_room_lock",
+
+    /**
+     * Adding contact to contact list
+     */
+    ADD_CONTACT: "UI.add_contact",
+
+    /**
+     * Removing the contact from contact list
+     */
+    REMOVE_CONTACT: "UI.remove_contact",
+
+    /**
+     * Changed user avatar
+     */
+    CHANGE_USER_AVATAR: "UI.change_user_avatar",
+
+    /**
+     * Display name changed
+     */
+    DISPLAY_NAME_CHANGED: "UI.display_name_changed"
 };

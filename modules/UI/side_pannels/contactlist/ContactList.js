@@ -1,151 +1,105 @@
-/* global $, APP, interfaceConfig */
-import Avatar from '../../avatar/Avatar';
+/* global APP */
+
 import UIEvents from '../../../../service/UI/UIEvents';
-import UIUtil from '../../util/UIUtil';
-
-let numberOfContacts = 0;
+import ContactListView from './ContactListView';
+import Contact from './Contact';
 
 /**
- * Updates the number of participants in the contact list button and sets
- * the glow
- * @param delta indicates whether a new user has joined (1) or someone has
- * left(-1)
+ * Model for Contact list
+ * @class ContactList
  */
-function updateNumberOfParticipants(delta) {
-    numberOfContacts += delta;
-
-    if (numberOfContacts <= 0) {
-        console.error("Invalid number of participants: " + numberOfContacts);
-        return;
+class ContactList {
+    constructor(conference) {
+        this.conference = conference;
+        this.contacts = [];
+        this.roomLocked = false;
+        ContactListView.init(this);
     }
 
-    $("#numberOfParticipants").text(numberOfContacts);
-
-    $("#contacts_container>div.title").text(
-        APP.translation.translateString("contactlist")
-            + ' (' + numberOfContacts + ')');
-}
-
-/**
- * Creates the avatar element.
- *
- * @return {object} the newly created avatar element
- */
-function createAvatar(jid) {
-    let avatar = document.createElement('img');
-    avatar.className = "icon-avatar avatar";
-    avatar.src = Avatar.getAvatarUrl(jid);
-
-    return avatar;
-}
-
-/**
- * Creates the display name paragraph.
- *
- * @param displayName the display name to set
- */
-function createDisplayNameParagraph(key, displayName) {
-    let p = document.createElement('p');
-    if (displayName) {
-        p.innerHTML = displayName;
-    } else if(key) {
-        p.setAttribute("data-i18n",key);
-        p.innerHTML = APP.translation.translateString(key);
+    /**
+     * Is locked flag
+     * Delegates to Invite module
+     * @returns {Boolean}
+     */
+    isLocked() {
+        return APP.UI.Invite.isLocked();
     }
 
-    return p;
-}
-
-function getContactEl (id) {
-    return $(`#contacts>li[id="${id}"]`);
-}
-
-/**
- * Contact list.
- */
-var ContactList = {
-    init (emitter) {
-        this.emitter = emitter;
-    },
     /**
-     * Indicates if the chat is currently visible.
-     *
-     * @return <tt>true</tt> if the chat is currently visible, <tt>false</tt> -
-     * otherwise
+     * Wrapper on emit method
+     * @param type
+     * @param data
      */
-    isVisible () {
-        return UIUtil.isVisible(document.getElementById("contactlist"));
-    },
+    publish(type, data) {
+        APP.UI.emitEvent(type, data);
+    }
 
     /**
-     * Adds a contact for the given id.
-     * @param isLocal is an id for the local user.
+     * Wrapper on addListener
+     * @param type
+     * @param handler
      */
-    addContact (id, isLocal) {
-        let contactlist = $('#contacts');
+    subscribe(type, handler) {
+        APP.UI.addListener(type, handler);
+    }
 
-        let newContact = document.createElement('li');
-        newContact.id = id;
-        newContact.className = "clickable";
-        newContact.onclick = (event) => {
-            if (event.currentTarget.className === "clickable") {
-                this.emitter.emit(UIEvents.CONTACT_CLICKED, id);
-            }
-        };
+    /**
+     * Adding new participant
+     * @param id
+     * @param isLocal
+     */
+    addContact(id, isLocal) {
+        let isExist = this.contacts.some((el) => el.id === id);
 
-        if (interfaceConfig.SHOW_CONTACTLIST_AVATARS)
-            newContact.appendChild(createAvatar(id));
-
-        newContact.appendChild(
-            createDisplayNameParagraph(
-                isLocal ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME : null,
-                isLocal ? null : interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME));
-
-        if (APP.conference.isLocalId(id)) {
-            contactlist.prepend(newContact);
-        } else {
-            contactlist.append(newContact);
+        if (!isExist) {
+            let newContact = new Contact({ id, isLocal });
+            this.contacts.push(newContact);
+            this.publish(UIEvents.ADD_CONTACT, { id, isLocal });
         }
-        updateNumberOfParticipants(1);
-    },
+    }
 
     /**
-     * Removes a contact for the given id.
-     *
+     * Removing participant
+     * @param id
+     * @returns {Array|*}
      */
-    removeContact (id) {
-        let contact = getContactEl(id);
+    removeContact(id) {
+        this.contacts = this.contacts.filter((el) => el.id !== id);
+        this.publish(UIEvents.REMOVE_CONTACT, { id });
+        return this.contacts;
+    }
 
-        if (contact.length > 0) {
-            contact.remove();
-            updateNumberOfParticipants(-1);
-        }
-    },
-
-    setClickable (id, isClickable) {
-        getContactEl(id).toggleClass('clickable', isClickable);
-    },
-
-    onDisplayNameChange (id, displayName) {
-        if(!displayName)
+    /**
+     * Changing the display name
+     * @param id
+     * @param name
+     */
+    onDisplayNameChange (id, name) {
+        if(!name)
             return;
         if (id === 'localVideoContainer') {
             id = APP.conference.getMyUserId();
         }
-        let contactName = $(`#contacts #${id}>p`);
 
-        if (contactName.text() !== displayName) {
-            contactName.text(displayName);
-        }
-    },
-
-    changeUserAvatar (id, avatarUrl) {
-        // set the avatar in the contact list
-        let contact = $(`#${id}>img`);
-        if (contact.length > 0) {
-            contact.attr('src', avatarUrl);
-        }
+        let contacts = this.contacts.filter((el) => el.id === id);
+        contacts.forEach((el) => {
+            el.name = name;
+        });
+        this.publish(UIEvents.DISPLAY_NAME_CHANGED, { id, name });
     }
-};
+
+    /**
+     * Changing the avatar
+     * @param id
+     * @param avatar
+     */
+    changeUserAvatar (id, avatar) {
+        let contacts = this.contacts.filter((el) => el.id === id);
+        contacts.forEach((el) => {
+            el.avatar = avatar;
+        });
+        this.publish(UIEvents.CHANGE_USER_AVATAR, { id, avatar });
+    }
+}
 
 export default ContactList;

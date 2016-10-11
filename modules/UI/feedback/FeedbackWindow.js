@@ -1,6 +1,12 @@
-/* global $, APP, interfaceConfig, AJS */
+/* global $, APP, interfaceConfig */
 
-const selector = '#aui-feedback-dialog';
+const labels = {
+    1: 'Very Bad',
+    2: 'Bad',
+    3: 'Average',
+    4: 'Good',
+    5: 'Very Good'
+};
 
 /**
  * Toggles the appropriate css class for the given number of stars, to
@@ -9,12 +15,18 @@ const selector = '#aui-feedback-dialog';
  * @param starCount the number of stars, for which to toggle the css class
  */
 function toggleStars(starCount) {
+    let labelEl = $('#starLabel');
+    let label = starCount >= 0 ?
+        labels[starCount + 1] :
+        '';
+
     $('#stars > a').each(function(index, el) {
         if (index <= starCount) {
             el.classList.add("starHover");
         } else
             el.classList.remove("starHover");
     });
+    labelEl.text(label);
 }
 
 /**
@@ -23,63 +35,51 @@ function toggleStars(starCount) {
  * @returns {string} the contructed html string
  */
 function createRateFeedbackHTML() {
-    let rateExperience
-            = APP.translation.translateString('dialog.rateExperience'),
-        feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
+    let feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
 
     let starClassName = (interfaceConfig.ENABLE_FEEDBACK_ANIMATION)
-                            ? "icon-star shake-rotate"
-                            : "icon-star";
+        ? "icon-star-full shake-rotate"
+        : "icon-star-full";
 
     return `
-        <div class="aui-dialog2-content feedback__content">
-            <form action="javascript:false;" onsubmit="return false;">
-                <div class="feedback__rating">
-                    <h2>${ rateExperience }</h2>
-                    <p class="star-label">&nbsp;</p>
-                    <div id="stars" class="feedback-stars">
-                        <a class="star-btn">
-                            <i class=${ starClassName }></i>
-                        </a>
-                        <a class="star-btn">
-                            <i class=${ starClassName }></i>
-                        </a>
-                        <a class="star-btn">
-                            <i class=${ starClassName }></i>
-                        </a>
-                        <a class="star-btn">
-                            <i class=${ starClassName }></i>
-                        </a>
-                        <a class="star-btn">
-                            <i class=${ starClassName }></i>
-                        </a>
-                    </div>
-                    <p>&nbsp;</p>
-                    <p>${ feedbackHelp }</p>
+        <form id="feedbackForm"
+            action="javascript:false;" onsubmit="return false;">
+            <div class="rating">
+                <div class="star-label">
+                    <p id="starLabel">&nbsp;</p>
                 </div>
-                <textarea id="feedbackTextArea" rows="10" cols="40" autofocus>
-                </textarea>
-            </form>
-            <footer class="aui-dialog2-footer feedback__footer">
-                <div class="aui-dialog2-footer-actions">
-                    <button
-                        id="dialog-close-button"
-                        class="aui-button aui-button_close">Close</button>
-                    <button
-                        id="dialog-submit-button"
-                        class="aui-button aui-button_submit">Submit</button>
+                <div id="stars" class="feedback-stars">
+                    <a class="star-btn">
+                        <i class=${ starClassName }></i>
+                    </a>
+                    <a class="star-btn">
+                        <i class=${ starClassName }></i>
+                    </a>
+                    <a class="star-btn">
+                        <i class=${ starClassName }></i>
+                    </a>
+                    <a class="star-btn">
+                        <i class=${ starClassName }></i>
+                    </a>
+                    <a class="star-btn">
+                        <i class=${ starClassName }></i>
+                    </a>
                 </div>
-            </footer>
-        </div>
-`;
+            </div>
+            <div class="details">
+                <textarea id="feedbackTextArea" class="input-control__input"
+                    placeholder="${ feedbackHelp }"></textarea>
+            </div>
+        </form>`;
 }
 
 /**
- * Callback for Rate Feedback
+ * Feedback is loaded callback
+ * Calls when Modal window is in DOM
  *
  * @param Feedback
  */
-let onLoadRateFunction = function (Feedback) {
+let onLoadFunction = function (Feedback) {
     $('#stars > a').each((index, el) => {
         el.onmouseover = function(){
             toggleStars(index);
@@ -89,6 +89,7 @@ let onLoadRateFunction = function (Feedback) {
         };
         el.onclick = function(){
             Feedback.feedbackScore = index + 1;
+            Feedback.setFeedbackMessage();
         };
     });
 
@@ -97,27 +98,42 @@ let onLoadRateFunction = function (Feedback) {
         toggleStars(Feedback.feedbackScore - 1);
     }
 
-    if (Feedback.feedbackText && Feedback.feedbackText.length > 0)
-        $('#feedbackTextArea').text(Feedback.feedbackText);
-
-    let submitBtn = Feedback.$el.find('#dialog-submit-button');
-    let closeBtn = Feedback.$el.find('#dialog-close-button');
-
-    if (submitBtn && submitBtn.length) {
-        submitBtn.on('click', (e) => {
-            e.preventDefault();
-            Feedback.onFeedbackSubmitted();
-        });
-    }
-    if (closeBtn && closeBtn.length) {
-        closeBtn.on('click', (e) => {
-            e.preventDefault();
-            Feedback.hide();
-        });
-    }
+    if (Feedback.feedbackMessage && Feedback.feedbackMessage.length > 0)
+        $('#feedbackTextArea').text(Feedback.feedbackMessage);
 
     $('#feedbackTextArea').focus();
 };
+
+/**
+ * On Feedback Submitted callback
+ *
+ * @param Feedback
+ */
+function onFeedbackSubmitted(Feedback) {
+    let form = $('#feedbackForm');
+    let message = form.find('textarea').val();
+
+    APP.conference.sendFeedback(
+        Feedback.feedbackScore,
+        message);
+
+    // TODO: make sendFeedback return true or false.
+    Feedback.submitted = true;
+
+    //Remove history is submitted
+    Feedback.feedbackScore = -1;
+    Feedback.feedbackMessage = '';
+    Feedback.onHide();
+}
+
+/**
+ * On Feedback Closed callback
+ *
+ * @param Feedback
+ */
+function onFeedbackClosed(Feedback) {
+    Feedback.onHide();
+}
 
 /**
  * @class Dialog
@@ -125,73 +141,45 @@ let onLoadRateFunction = function (Feedback) {
  */
 export default class Dialog {
 
-    constructor(options) {
+    constructor() {
         this.feedbackScore = -1;
-        this.feedbackText = null;
+        this.feedbackMessage = '';
         this.submitted = false;
-        this.onCloseCallback = null;
+        this.onCloseCallback = function() {};
 
-        this.states = {
-            rate_feedback: {
-                getHtml: createRateFeedbackHTML,
-                onLoad: onLoadRateFunction
-            }
-        };
-        this.state = options.state || 'rate_feedback';
-
-        this.window = AJS.dialog2(selector, {
-            closeOnOutsideClick: true
-        });
-        this.$el = this.window.$el;
-
-        AJS.dialog2(selector).on("hide", function() {
-            if (this.onCloseCallback) {
-                this.onCloseCallback();
-                this.onCloseCallback = null;
-            }
-        }.bind(this));
-
-        this.setState();
+        this.setDefoulOptions();
     }
 
-    setState(state) {
-        let newState = state || this.state;
+    setDefoulOptions() {
+        var self = this;
 
-        let htmlStr = this.states[newState].getHtml(this);
+        this.options = {
+            titleKey: 'dialog.rateExperience',
+            msgString: createRateFeedbackHTML(),
+            loadedFunction: function() {onLoadFunction(self);},
+            submitFunction: function() {onFeedbackSubmitted(self);},
+            closeFunction: function() {onFeedbackClosed(self);},
+            wrapperClass: 'feedback',
+            size: 'medium'
+        };
+    }
 
-        this.$el.html(htmlStr);
+    setFeedbackMessage() {
+        let message = $('#feedbackTextArea').val();
 
-        this.states[newState].onLoad(this);
+        this.feedbackMessage = message;
     }
 
     show(cb) {
-        this.setState('rate_feedback');
-        if (typeof cb == 'function') {
+        const options = this.options;
+        if (typeof cb === 'function') {
             this.onCloseCallback = cb;
         }
 
-        this.window.show();
-
+        this.window = APP.UI.messageHandler.openTwoButtonDialog(options);
     }
 
-    hide() {
-        this.window.hide();
-    }
-
-    onFeedbackSubmitted() {
-        let message = this.$el.find('textarea').val();
-        let self = this;
-
-        if (message && message.length > 0) {
-            self.feedbackText = message;
-        }
-
-        APP.conference.sendFeedback(self.feedbackScore,
-                                    self.feedbackText);
-
-        // TO DO: make sendFeedback return true or false.
-        self.submitted = true;
-
-        this.hide();
+    onHide() {
+        this.onCloseCallback(this.feedbackScore, this.feedbackMessage);
     }
 }

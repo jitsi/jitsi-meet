@@ -1,3 +1,9 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
 /* Variables BEGIN */
 
 @import 'variables';
@@ -10,12 +16,22 @@
 
 /* Mixins END */
 
+/* Animations BEGIN */
+
+@import "animations";
+
+/* Animations END */
+
 /* Fonts BEGIN */
 
 @import 'font';
 @import 'font-awesome';
 
 /* Fonts END */
+
+/* Theme  BEGIN */
+@import "themes/light";
+/* Theme END */
 
 /* Modules BEGIN */
 
@@ -25,8 +41,6 @@
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
 @import 'videolayout_default';
-@import 'jquery-impromptu';
-@import 'modaldialog';
 @import 'notice';
 @import 'popup_menu';
 @import 'recording';
@@ -43,6 +57,8 @@
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';
-
+@import 'input-control/input-control';
+@import 'shortcuts/main';
+@import 'buttons/button-control';
 
 /* Modules END */

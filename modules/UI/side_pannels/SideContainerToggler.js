@@ -14,7 +14,10 @@ const SideContainerToggler = {
      * @param eventEmitter
      */
     init(eventEmitter) {
+        let innerSelect = '#sideToolbarContainer .sideToolbarContainer__inner';
         this.eventEmitter = eventEmitter;
+        this.$sidebarContainer = $("#sideToolbarContainer");
+        this.$sidebarInner = $(innerSelect);
 
         // Adds a listener for the animation end event that would take care
         // of hiding all internal containers when the extendedToolbarPanel is
@@ -43,14 +46,16 @@ const SideContainerToggler = {
             this.hide();
         }
         else {
-            if (this.isVisible())
-                $("#sideToolbarContainer").children().each(function() {
-                    if ($(this).id !== elementId && $(this).hasClass("show"))
-                        SideContainerToggler.hideInnerContainer($(this));
+            if (this.isVisible()) {
+                this.$sidebarContainer.children().each(function() {
+                    let $this = $(this);
+                    $this.removeClass('slideInExt slideOutExt');
+                    if ($this.id !== elementId && $this.hasClass("show"))
+                        SideContainerToggler.hideInnerContainer($this);
                 });
-
-            if (!this.isVisible())
+            } else {
                 this.show();
+            }
 
             this.showInnerContainer(elementSelector);
         }
@@ -61,7 +66,7 @@ const SideContainerToggler = {
      * otherwise returns {false}.
      */
     isVisible() {
-        return $("#sideToolbarContainer").hasClass("slideInExt");
+        return this.$sidebarInner.hasClass("show");
     },
 
     /**
@@ -76,8 +81,12 @@ const SideContainerToggler = {
      * Hides the side toolbar panel with a slide out animation.
      */
     hide() {
-        $("#sideToolbarContainer")
-            .removeClass("slideInExt").addClass("slideOutExt");
+        this.$sidebarContainer
+            .removeClass('slideInExtContainer')
+            .addClass('slideOutExtContainer');
+        this.$sidebarInner
+            .removeClass("slideInExt")
+            .addClass("slideOutExt");
     },
 
     /**
@@ -85,8 +94,12 @@ const SideContainerToggler = {
      */
     show() {
         if (!this.isVisible())
-            $("#sideToolbarContainer")
-                .removeClass("slideOutExt").addClass("slideInExt");
+            this.$sidebarContainer
+                .removeClass('slideOutExtContainer')
+                .addClass('slideInExtContainer');
+            this.$sidebarInner
+                .removeClass("slideOutExt")
+                .addClass("slideInExt");
     },
 
     /**
@@ -96,7 +109,8 @@ const SideContainerToggler = {
      * element to hide
      */
     hideInnerContainer(containerSelector) {
-        containerSelector.removeClass("show").addClass("hide");
+        containerSelector
+            .removeClass("show").addClass("hide");
 
         this.eventEmitter.emit(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             containerSelector.attr('id'), false);
