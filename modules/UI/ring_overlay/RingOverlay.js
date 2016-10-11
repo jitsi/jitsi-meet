@@ -23,20 +23,30 @@ function onAvatarDisplayed(shown) {
 class RingOverlay {
     /**
      * @param callee instance of User class from TokenData.js
+     * @param {boolean} dontPlayAudio if true the ringing sound wont be played.
      */
-    constructor(callee) {
+    constructor(callee, dontPlayAudio) {
         this._containerId = 'ringOverlay';
         this._audioContainerId = 'ringOverlayRinging';
         this.isRinging = true;
         this.callee = callee;
+        this.dontPlayAudio = dontPlayAudio;
         this.render();
-        this.audio = document.getElementById(this._audioContainerId);
-        this.audio.play();
-        this._setAudioTimeout();
+        if(!dontPlayAudio)
+            this._initAudio();
         this._timeout = setTimeout(() => {
             this.destroy();
             this.render();
         }, 30000);
+    }
+
+    /**
+     * Initializes the audio element and setups the interval for playing it.
+     */
+    _initAudio() {
+        this.audio = document.getElementById(this._audioContainerId);
+        this.audio.play();
+        this._setAudioTimeout();
     }
 
     /**
@@ -60,6 +70,8 @@ class RingOverlay {
     _getHtmlStr(callee) {
         let callingLabel = this.isRinging? "<p>Calling...</p>" : "";
         let callerStateLabel =  this.isRinging? "" : " isn't available";
+        let audioHTML = this.dontPlayAudio? "" :
+            `<audio id="${this._audioContainerId}" src="./sounds/ring.ogg" />`;
         return `
             <div id="${this._containerId}" class='ringing' >
                 <div class='ringing__content'>
@@ -69,7 +81,7 @@ class RingOverlay {
                         <p>${callee.getName()}${callerStateLabel}</p>
                     </div>
                 </div>
-                <audio id="${this._audioContainerId}" src="./sounds/ring.ogg" />
+                ${audioHTML}
             </div>`;
     }
 
@@ -86,6 +98,7 @@ class RingOverlay {
      * related to the ring overlay.
      */
     destroy() {
+        this.isRinging = false;
         this._stopAudio();
         this._detach();
     }
@@ -99,7 +112,6 @@ class RingOverlay {
     }
 
     _stopAudio() {
-        this.isRinging = false;
         if (this.interval) {
             clearInterval(this.interval);
         }
@@ -123,13 +135,14 @@ export default {
      * Shows the ring overlay for the passed callee.
      * @param callee {class User} the callee. Instance of User class from
      * TokenData.js
+     * @param {boolean} dontPlayAudio if true the ringing sound wont be played.
      */
-    show(callee) {
+    show(callee, dontPlayAudio = false) {
         if(overlay) {
             this.hide();
         }
 
-        overlay = new RingOverlay(callee);
+        overlay = new RingOverlay(callee, dontPlayAudio);
         APP.UI.addListener(UIEvents.LARGE_VIDEO_AVATAR_DISPLAYED,
             onAvatarDisplayed);
     },
