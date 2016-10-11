@@ -178,6 +178,22 @@ class Invite {
     isLocked() {
         return this.roomLocker.isLocked;
     }
+
+    /**
+     * Set flag locked from elsewhere to room locker
+     */
+    lockFromElsewhere() {
+        this.roomLocker.lockedElsewhere = true;
+        APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+    }
+
+    /**
+     * Unset flag locked from elsewhere to room locker
+     */
+    unlockFromElsewhere() {
+        this.roomLocker.lockedElsewhere = false;
+        APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
+    }
 }
 
 export default Invite;
