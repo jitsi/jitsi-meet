@@ -100,38 +100,12 @@
                 <div id="notice" class="notice" style="display: none">
                     <span id="noticeText" class="noticeText"></span>
                 </div>
-                <span id="mainToolbar" class="toolbar"></span>
+                <div id="mainToolbar" class="toolbar"></div>
         </div>
         <div id="subject" class="hide"></div>
 
         <div id="extendedToolbar" class="toolbar">
-            <a class="button" id="toolbar_button_profile" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile">
-                <img id="avatar" src="images/avatar2.png"/>
-            </a>
-            <a class="button icon-contactList" id="toolbar_contact_list" shortcut="contactlistpopover">
-                <span class="badge-round">
-                    <span id="numberOfParticipants"></span>
-                </span>
-            </a>
-            <!--a class="button icon-link" id="toolbar_button_link"></a-->
-            <a class="button icon-chat" id="toolbar_button_chat" shortcut="toggleChatPopover">
-                <span class="badge-round">
-                    <span id="unreadMessages"></span>
-                </span>
-            </a>
-            <a class="button" id="toolbar_button_record" style="display: none"></a>
-            <a class="button icon-share-doc" id="toolbar_button_etherpad"></a>
-            <a class="button icon-shared-video" id="toolbar_button_sharedvideo" style="display: none">
-                <ul id="sharedVideoMutedPopup" class="loginmenu extendedToolbarPopup">
-                    <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
-                </ul>
-            </a>
-            <a class="button icon-telephone" id="toolbar_button_sip" style="display: none"></a>
-            <a class="button icon-dialpad" id="toolbar_button_dialpad" style="display: none"></a>
-            <a class="button icon-settings" id="toolbar_button_settings"></a>
-            <a class="button icon-raised-hand" id="toolbar_button_raisehand" shortcut="raiseHandPopover"></a>
-            <a class="button icon-toggle-filmstrip" id="toolbar_film_strip" data-container="body" shortcut="filmstripPopover"></a>
-            <a class="button icon-feedback" id="feedbackButton"></a>
+            <div id="extendedToolbarButtons"></div>
 
             <div id="sideToolbarContainer">
                 <div id="profile_container" class="sideToolbarContainer__inner">

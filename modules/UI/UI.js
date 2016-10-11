@@ -1021,7 +1021,7 @@ UI.addMessage = function (from, displayName, message, stamp) {
 // eslint-disable-next-line no-unused-vars
 UI.updateDTMFSupport = function (isDTMFSupported) {
     //TODO: enable when the UI is ready
-    //Toolbar.showDialPadButton(dtmfSupport);
+    //Toolbar.showDialPadButton(isDTMFSupported);
 };
 
 /**
