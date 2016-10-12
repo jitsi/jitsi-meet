@@ -6,68 +6,7 @@ import SideContainerToggler from "../side_pannels/SideContainerToggler";
 let emitter = null;
 let Toolbar;
 
-/**
- * Opens the invite link dialog.
- */
-function openLinkDialog () {
-    let inviteAttributes;
-
-    if (roomUrl === null) {
-        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-    } else {
-        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
-    }
-
-    let inviteLinkId = "inviteLinkRef";
-    let focusInviteLink = function() {
-        $('#' + inviteLinkId)
-            .focus()
-            .select();
-    };
-
-    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, title, null,
-        '<input id="' + inviteLinkId + '" type="text" '
-            + inviteAttributes + ' readonly/>',
-        false, "dialog.copy",
-        function (e, v) {
-            if (v && roomUrl) {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-
-                focusInviteLink();
-
-                document.execCommand('copy');
-            }
-            else {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
-            }
-        },
-        function (event) {
-            if (!roomUrl) {
-                if (event && event.target) {
-                    $(event.target).find('button[value=true]')
-                        .prop('disabled', true);
-                }
-            }
-            else {
-                focusInviteLink();
-            }
-        },
-        function (e, v, m, f) {
-            if(!v && !m && !f)
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
-        },
-        'Copy' // Focus Copy button.
-    );
-}
-
 const buttonHandlers = {
-    "toolbar_button_authentication": function() {
-        JitsiMeetJS.analytics.sendEvent('toolbar.authentication.toggled');
-        emitter.emit(UIEvents.TOGGLE_AUTHENTICATION);
-    },
     "toolbar_button_profile": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
         emitter.emit(UIEvents.TOGGLE_PROFILE);
@@ -186,11 +125,6 @@ const buttonHandlers = {
 };
 
 const defaultToolbarButtons = {
-    'authentication': {
-        id: 'toolbar_button_authentication',
-        tooltipKey: 'toolbar.authenticate',
-        sideContainerId: 'authentication_container'
-    },
     'microphone': {
         id: 'toolbar_button_mute',
         tooltipKey: 'toolbar.mute',
@@ -457,11 +391,9 @@ Toolbar = {
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
     showAuthenticateButton (show) {
-        if (UIUtil.isButtonEnabled('authentication') && show) {
-            $('#toolbar_button_authentication').css({display: "inline"});
-        } else {
-            $('#toolbar_button_authentication').css({display: "none"});
-        }
+        let display = show ? 'block' : 'none';
+
+        $('#authenticationContainer').css({display});
     },
 
     showEtherpadButton () {
@@ -515,12 +447,14 @@ Toolbar = {
      * @param authIdentity identity name to be displayed.
      */
     setAuthenticatedIdentity (authIdentity) {
+        let selector = $('#toolbar_auth_identity');
+
         if (authIdentity) {
-            let selector = $('#toolbar_auth_identity');
             selector.css({display: "list-item"});
             selector.text(authIdentity);
         } else {
-            $('#toolbar_auth_identity').css({display: "none"});
+            selector.css({display: "none"});
+            selector.text('');
         }
     },
 
@@ -529,7 +463,7 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLoginButton (show) {
-        if (UIUtil.isButtonEnabled('authentication') && show) {
+        if (show) {
             $('#toolbar_button_login').css({display: "list-item"});
         } else {
             $('#toolbar_button_login').css({display: "none"});
@@ -541,7 +475,7 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLogoutButton (show) {
-        if (UIUtil.isButtonEnabled('authentication') && show) {
+        if (show) {
             $('#toolbar_button_logout').css({display: "list-item"});
         } else {
             $('#toolbar_button_logout').css({display: "none"});

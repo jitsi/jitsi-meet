@@ -362,8 +362,6 @@ function registerListeners() {
 
     UI.addListener(UIEvents.TOGGLE_FULLSCREEN, UI.toggleFullScreen);
 
-    UI.addListener(UIEvents.TOGGLE_AUTHENTICATION, UI.toggleAuthentication);
-
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
     UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
@@ -722,13 +720,6 @@ UI.toggleFilmStrip = function () {
  */
 UI.isFilmStripVisible = function () {
     return FilmStrip.isFilmStripVisible();
-};
-
-/**
- * Toggles authentication panel.
- */
-UI.toggleAuthentication = function () {
-    UI.toggleSidePanel("authentication_container");
 };
 
 /**
@@ -1149,11 +1140,12 @@ UI.notifyFocusLeft = function () {
  * @param {string} [login] current login
  */
 UI.updateAuthInfo = function (isAuthEnabled, login) {
+    let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(isAuthEnabled);
+    Toolbar.showAuthenticateButton(showAuth);
 
-    if (isAuthEnabled) {
+    if (showAuth) {
         Toolbar.setAuthenticatedIdentity(login);
 
         Toolbar.showLoginButton(!loggedIn);

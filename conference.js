@@ -1086,7 +1086,6 @@ export default {
             }
         );
 
-
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
             if (user.isHidden())
                 return;
