@@ -23,16 +23,16 @@ function onAvatarDisplayed(shown) {
 class RingOverlay {
     /**
      * @param callee instance of User class from TokenData.js
-     * @param {boolean} dontPlayAudio if true the ringing sound wont be played.
+     * @param {boolean} disableRingingSound if true the ringing sound wont be played.
      */
-    constructor(callee, dontPlayAudio) {
+    constructor(callee, disableRingingSound) {
         this._containerId = 'ringOverlay';
         this._audioContainerId = 'ringOverlayRinging';
         this.isRinging = true;
         this.callee = callee;
-        this.dontPlayAudio = dontPlayAudio;
+        this.disableRingingSound = disableRingingSound;
         this.render();
-        if(!dontPlayAudio)
+        if(!disableRingingSound)
             this._initAudio();
         this._timeout = setTimeout(() => {
             this.destroy();
@@ -68,10 +68,11 @@ class RingOverlay {
      * Builds and appends the ring overlay to the html document
      */
     _getHtmlStr(callee) {
-        let callingLabel = this.isRinging? "<p>Calling...</p>" : "";
-        let callerStateLabel =  this.isRinging? "" : " isn't available";
-        let audioHTML = this.dontPlayAudio? "" :
-            `<audio id="${this._audioContainerId}" src="./sounds/ring.ogg" />`;
+        let callingLabel = this.isRinging ? "<p>Calling...</p>" : "";
+        let callerStateLabel =  this.isRinging ? "" : " isn't available";
+        let audioHTML = this.disableRingingSound ? ""
+            : "<audio id=\"" + this._audioContainerId
+                + "\" src=\"./sounds/ring.ogg\" />";
         return `
             <div id="${this._containerId}" class='ringing' >
                 <div class='ringing__content'>
@@ -135,14 +136,14 @@ export default {
      * Shows the ring overlay for the passed callee.
      * @param callee {class User} the callee. Instance of User class from
      * TokenData.js
-     * @param {boolean} dontPlayAudio if true the ringing sound wont be played.
+     * @param {boolean} disableRingingSound if true the ringing sound wont be played.
      */
-    show(callee, dontPlayAudio = false) {
+    show(callee, disableRingingSound = false) {
         if(overlay) {
             this.hide();
         }
 
-        overlay = new RingOverlay(callee, dontPlayAudio);
+        overlay = new RingOverlay(callee, disableRingingSound);
         APP.UI.addListener(UIEvents.LARGE_VIDEO_AVATAR_DISPLAYED,
             onAvatarDisplayed);
     },
