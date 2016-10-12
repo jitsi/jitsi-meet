@@ -380,7 +380,7 @@ class ConferenceConnector {
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
-            APP.UI.notifyVideoConferencingNotAvailable();
+            APP.UI.showPageReloadOverlay();
             break;
 
         case ConferenceErrors.CONFERENCE_MAX_USERS:

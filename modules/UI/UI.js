@@ -14,12 +14,12 @@ import Recording from "./recording/Recording";
 import GumPermissionsOverlay
     from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
+import PageReloadOverlay from './reload_overlay/PageReloadOverlay';
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
-import { reload } from '../util/helpers';
 import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
 
@@ -1110,23 +1110,8 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
  * Notify the user that the video conferencing service is badly broken and
  * the page should be reloaded.
  */
-UI.notifyVideoConferencingNotAvailable = function () {
-    let title = APP.translation.generateTranslationHTML(
-        'dialog.serviceUnavailable'
-    );
-    let msg = APP.translation.generateTranslationHTML(
-        'dialog.serviceUnavailableMsg'
-    );
-    messageHandler.openDialog(
-        title,
-        msg,
-        true, // persistent
-        [{title: 'retry'}],
-        function () {
-            reload();
-            return false;
-        }
-    );
+UI.showPageReloadOverlay = function () {
+    PageReloadOverlay.show(15 /* will reload in 15 seconds */);
 };
 
 /**
