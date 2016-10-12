@@ -1,6 +1,6 @@
 /* global $, APP, JitsiMeetJS */
 import UIEvents from "../../../service/UI/UIEvents";
-import FeedabckWindow from "./FeedbackWindow";
+import FeedbackWindow from "./FeedbackWindow";
 
 /**
  * Shows / hides the feedback button.
@@ -49,7 +49,7 @@ var Feedback = {
 
         _showFeedbackButton(this.enabled);
 
-        this.window = new FeedabckWindow({});
+        this.window = new FeedbackWindow();
 
         $("#feedbackButton").click(Feedback.openFeedbackWindow);
 

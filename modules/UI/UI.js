@@ -4,7 +4,6 @@ var UI = {};
 import Chat from "./side_pannels/chat/Chat";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
-import ContactList from "./side_pannels/contactlist/ContactList";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
@@ -29,7 +28,6 @@ UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./feedback/Feedback");
-
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -242,7 +240,7 @@ UI.showChatError = function (err, msg) {
  * @param {string} displayName new nickname
  */
 UI.changeDisplayName = function (id, displayName) {
-    ContactList.onDisplayNameChange(id, displayName);
+    UI.ContactList.onDisplayNameChange(id, displayName);
     VideoLayout.onDisplayNameChanged(id, displayName);
 
     if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
@@ -292,14 +290,16 @@ UI.initConference = function () {
     // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
     var inviteURL = window.location.protocol + "//" +
         window.location.host + window.location.pathname;
-    Toolbar.updateRoomUrl(inviteURL);
+
+    this.emitEvent(UIEvents.INVITE_URL_INITIALISED, inviteURL);
+
     // Clean up the URL displayed by the browser
     if (window.history && typeof window.history.replaceState === 'function') {
         window.history.replaceState({}, document.title, inviteURL);
     }
 
     // Add myself to the contact list.
-    ContactList.addContact(id, true);
+    UI.ContactList.addContact(id, true);
 
     // Update default button states before showing the toolbar
     // if local role changes buttons state will be again updated.
@@ -345,7 +345,6 @@ UI.mucJoined = function () {
  */
 UI.handleToggleFilmStrip = () => {
     UI.toggleFilmStrip();
-    VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
@@ -470,8 +469,6 @@ UI.start = function () {
         VideoLayout.initLargeVideo();
     }
     VideoLayout.resizeVideoArea(true, true);
-
-    ContactList.init(eventEmitter);
 
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
@@ -609,7 +606,7 @@ UI.addUser = function (user) {
     var id = user.getId();
     var displayName = user.getDisplayName();
     UI.hideRingOverLay();
-    ContactList.addContact(id);
+    UI.ContactList.addContact(id);
 
     messageHandler.notify(
         displayName,'notify.somebody', 'connected', 'notify.connected'
@@ -636,7 +633,7 @@ UI.addUser = function (user) {
  * @param {string} displayName user nickname
  */
 UI.removeUser = function (id, displayName) {
-    ContactList.removeContact(id);
+    UI.ContactList.removeContact(id);
 
     messageHandler.notify(
         displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
@@ -729,6 +726,7 @@ UI.toggleSmileys = function () {
 UI.toggleFilmStrip = function () {
     var self = FilmStrip;
     self.toggleFilmStrip.apply(self, arguments);
+    VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
@@ -786,28 +784,33 @@ UI.connectionIndicatorShowMore = function(id) {
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     console.log('password is required');
-    var message = '<h2 data-i18n="dialog.passwordRequired">';
-    message += APP.translation.translateString(
-        "dialog.passwordRequired");
-    message += '</h2>' +
-        '<input name="username" type="text" ' +
-        'placeholder="user@domain.net" autofocus>' +
-        '<input name="password" ' +
-        'type="password" data-i18n="[placeholder]dialog.userPassword"' +
-        ' placeholder="user password">';
-    messageHandler.openTwoButtonDialog(null, null, null, message,
-        true,
-        "dialog.Ok",
-        function (e, v, m, f) {
-            if (v) {
-                if (f.username && f.password) {
-                    callback(f.username, f.password);
-                }
-            }
-        },
-        null, null, ':input:first'
+    let titleKey = "dialog.passwordRequired";
+    let titleString = APP.translation.translateString(titleKey);
 
+    let message = (
+        `<input name="username" type="text"
+                placeholder="user@domain.net" autofocus>
+         <input name="password" type="password"
+                data-i18n="[placeholder]dialog.userPassword"
+                placeholder="user password">`
     );
+
+    let submitFunction = (e, v, m, f) => {
+        if (v) {
+            if (f.username && f.password) {
+                callback(f.username, f.password);
+            }
+        }
+    };
+
+    messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString,
+        msgString: message,
+        leftButtonKey: 'dialog.Ok',
+        submitFunction,
+        focus: ':input:first'
+    });
 };
 
 UI.askForNickname = function () {
@@ -888,7 +891,7 @@ UI.dockToolbar = function (isDock) {
  */
 function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
-    ContactList.changeUserAvatar(id, avatarUrl);
+    UI.ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
         Profile.changeAvatar(avatarUrl);
     }
@@ -1051,18 +1054,6 @@ UI.markVideoInterrupted = function (interrupted) {
         VideoLayout.onVideoInterrupted();
     } else {
         VideoLayout.onVideoRestored();
-    }
-};
-
-/**
- * Mark room as locked or not.
- * @param {boolean} locked if room is locked.
- */
-UI.markRoomLocked = function (locked) {
-    if (locked) {
-        Toolbar.lockLockButton();
-    } else {
-        Toolbar.unlockLockButton();
     }
 };
 
@@ -1254,24 +1245,27 @@ UI.showExtensionRequiredDialog = function (url) {
  * @param url {string} the url of the extension.
  */
 UI.showExtensionExternalInstallationDialog = function (url) {
-    messageHandler.openTwoButtonDialog(
-        "dialog.externalInstallationTitle",
-        null,
-        "dialog.externalInstallationMsg",
-        null,
-        true,
-        "dialog.goToStore",
-        function(e,v) {
-            if (v) {
-                e.preventDefault();
-                eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
-            }
-        },
-        function () {},
-        function () {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+    let submitFunction = function(e,v){
+        if (v) {
+            e.preventDefault();
+            eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
         }
-    );
+    };
+
+    let closeFunction = function () {
+        eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+    };
+
+    messageHandler.openTwoButtonDialog({
+        titleKey: 'dialog.externalInstallationTitle',
+        titleString: '',
+        msgKey: 'dialog.externalInstallationMsg',
+        msgString: '',
+        leftButtonKey: 'dialog.goToStore',
+        submitFunction,
+        loadedFunction: $.noop,
+        closeFunction
+    });
 };
 
 
@@ -1518,7 +1512,12 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
  * Shows or hides the keyboard shortcuts panel, depending on the current state.'
  */
 UI.toggleKeyboardShortcutsPanel = function() {
-    $('#keyboard-shortcuts').toggle();
+    let titleKey = 'keyboardShortcuts.keyboardShortcuts';
+    let title = APP.translation.translateString(titleKey);
+    let msg = $('#keyboard-shortcuts').html();
+    let buttons = { Close: true };
+
+    messageHandler.openDialog(title, msg, true, buttons);
 };
 
 /**

@@ -1,4 +1,9 @@
 /**
+* Theme
+*/
+@import 'themes/light';
+
+/**
  * Style variables
  */
 $baseFontFamily: 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -21,7 +26,8 @@ $thumbnailToolbarHeight: 25px;
  */
 $defaultColor: #F1F1F1;
 $defaultSideBarFontColor: #44A5FF;
-$defaultDarkColor: #4F4F4F;
+$defaultSemiDarkColor: #ACACAC;
+$defaultDarkColor: #2b3d5c;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
@@ -33,11 +39,8 @@ $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #12499C;
 
 // Main controls
-$inputBackground: rgba(132, 132, 132, .5);
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
-$inputBorderColor: #EBEBEB;
-$buttonBackground: #44A5FF;
 
 // Video layout.
 $videoThumbnailHovered: #BFEBFF;
@@ -58,6 +61,7 @@ $rateStarLabelColor: #333;
  */
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
+$sidebarWidth: 200px;
 
 /**
  * Z-indexes. TODO: Replace this by a function.
@@ -65,3 +69,17 @@ $defaultWatermarkLink: '../images/watermark.png';
 $tooltipsZ: 901;
 $toolbarZ: 900;
 $overlayZ: 800;
+
+/**
+ * Font Colors TODO: Change colors when general dialogs are implemented.
+ */
+$defaultFontColor: #777;
+$defaultLightFontColor: #F1F1F1;
+$defaultDarkFontColor: #000;
+$buttonFontColor: #777;
+$buttonHoverFontColor: #287ade;
+$auiPrimaryButtonBg: #3572b0;
+$auiPrimaryButtonHoverBg: #57647b;
+$auiPrimaryButtonColor: #fff;
+$auiIconColor: #707070;
+$inputControlEmColor: #f29424;
