@@ -18,6 +18,14 @@
   animation:         $animations;
 }
 
+@mixin flex() {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
 /**
  * Keyframes mixin.
  */
@@ -62,4 +70,10 @@
     -o-transition:      $transition;
     -webkit-transition: $transition;
     transition:         $transition;
+}
+
+@mixin box-shadow($type, $h, $y, $blur, $color) {
+    -webkit-box-shadow: $type $h $y $blur $color;
+    -moz-box-shadow: $type $h $y $blur $color;
+    box-shadow: $type $h $y $blur $color;
 }

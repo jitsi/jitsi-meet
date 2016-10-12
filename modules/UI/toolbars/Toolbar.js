@@ -3,64 +3,8 @@ import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
-let roomUrl = null;
 let emitter = null;
-
-/**
- * Opens the invite link dialog.
- */
-function openLinkDialog () {
-    let inviteAttributes;
-
-    if (roomUrl === null) {
-        inviteAttributes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-    } else {
-        inviteAttributes = "value=\"" + encodeURI(roomUrl) + "\"";
-    }
-
-    let inviteLinkId = "inviteLinkRef";
-    let focusInviteLink = function() {
-        $('#' + inviteLinkId).focus();
-        $('#' + inviteLinkId).select();
-    };
-
-    let title = APP.translation.generateTranslationHTML("dialog.shareLink");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, title, null,
-        '<input id="' + inviteLinkId + '" type="text" '
-            + inviteAttributes + ' readonly/>',
-        false, "dialog.copy",
-        function (e, v) {
-            if (v && roomUrl) {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.button');
-
-                focusInviteLink();
-
-                document.execCommand('copy');
-            }
-            else {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.cancel');
-            }
-        },
-        function (event) {
-            if (!roomUrl) {
-                if (event && event.target) {
-                    $(event.target).find('button[value=true]')
-                        .prop('disabled', true);
-                }
-            }
-            else {
-                focusInviteLink();
-            }
-        },
-        function (e, v, m, f) {
-            if(!v && !m && !f)
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
-        },
-        'Copy' // Focus Copy button.
-    );
-}
+let Toolbar;
 
 const buttonHandlers = {
     "toolbar_button_profile": function () {
@@ -98,13 +42,9 @@ const buttonHandlers = {
             emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
     },
-    "toolbar_button_security": function () {
-        JitsiMeetJS.analytics.sendEvent('toolbar.lock.clicked');
-        emitter.emit(UIEvents.ROOM_LOCK_CLICKED);
-    },
     "toolbar_button_link": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-        openLinkDialog();
+        emitter.emit(UIEvents.INVITE_CLICKED);
     },
     "toolbar_button_chat": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
@@ -158,21 +98,20 @@ const buttonHandlers = {
         emitter.emit(UIEvents.AUTH_CLICKED);
     },
     "toolbar_button_logout": function () {
+        let titleKey = "dialog.logoutTitle";
+        let msgKey = "dialog.logoutQuestion";
         JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
         // Ask for confirmation
-        APP.UI.messageHandler.openTwoButtonDialog(
-            "dialog.logoutTitle",
-            null,
-            "dialog.logoutQuestion",
-            null,
-            false,
-            "dialog.Yes",
-            function (evt, yes) {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            msgKey,
+            leftButtonKey: "dialog.Yes",
+            submitFunction: function (evt, yes) {
                 if (yes) {
                     emitter.emit(UIEvents.LOGOUT);
                 }
             }
-        );
+        });
     },
     "toolbar_film_strip": function () {
         JitsiMeetJS.analytics.sendEvent(
@@ -245,10 +184,6 @@ const defaultToolbarButtons = {
         shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
         content: 'Share screen',
         i18n: '[content]toolbar.sharescreen'
-    },
-    'security': {
-        id: 'toolbar_button_security',
-        tooltipKey: 'toolbar.lock'
     },
     'invite': {
         id: 'toolbar_button_link',
@@ -344,27 +279,28 @@ function showSipNumberInput () {
     let defaultNumber = config.defaultSipNumber
         ? config.defaultSipNumber
         : '';
-
+    let titleKey = "dialog.sipMsg";
     let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
-    APP.UI.messageHandler.openTwoButtonDialog(
-        null, null, null,
-        `<h2>${sipMsg}</h2>
-            <input
-                name="sipNumber"
-                type="text"
-                value="${defaultNumber}"
-                autofocus>`,
-        false, "dialog.Dial",
-        function (e, v, m, f) {
+    let msgString = (`
+            <input name="sipNumber" type="text"
+                   value="${defaultNumber}" autofocus>
+    `);
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        titleString: sipMsg,
+        msgString,
+        leftButtonKey: "dialog.Dial",
+        submitFunction: function (e, v, m, f) {
             if (v && f.sipNumber) {
                 emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
             }
         },
-        null, null, ':input:first'
-    );
+        focus: ':input:first'
+    });
 }
 
-const Toolbar = {
+Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
         // The toolbar is enabled by default.
@@ -446,41 +382,6 @@ const Toolbar = {
     isEnabled() {
         return this.enabled;
     },
-    /**
-     * Updates the room invite url.
-     */
-    updateRoomUrl (newRoomUrl) {
-        roomUrl = newRoomUrl;
-
-        // If the invite dialog has been already opened we update the
-        // information.
-        let inviteLink = document.getElementById('inviteLinkRef');
-        if (inviteLink) {
-            inviteLink.value = roomUrl;
-            inviteLink.select();
-            $('#inviteLinkRef').parent()
-                .find('button[value=true]').prop('disabled', false);
-        }
-    },
-
-    /**
-     * Unlocks the lock button state.
-     */
-    unlockLockButton () {
-        if ($("#toolbar_button_security").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("toolbar_button_security",
-                                "icon-security icon-security-locked");
-    },
-
-    /**
-     * Updates the lock button state to locked.
-     */
-    lockLockButton () {
-        if ($("#toolbar_button_security").hasClass("icon-security"))
-            UIUtil.buttonClick("toolbar_button_security",
-                                "icon-security icon-security-locked");
-    },
-
     /**
      * Shows or hides authentication button
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide

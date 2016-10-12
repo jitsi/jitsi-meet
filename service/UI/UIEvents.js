@@ -23,12 +23,15 @@ export default {
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     SHARED_VIDEO_CLICKED: "UI.start_shared_video",
     /**
+     * Indicates that an invite button has been clicked.
+     */
+    INVITE_CLICKED: "UI.invite_clicked",
+    /**
      * Updates shared video with params: url, state, time(optional)
      * Where url is the video link, state is stop/start/pause and time is the
      * current video playing time.
      */
     UPDATE_SHARED_VIDEO: "UI.update_shared_video",
-    ROOM_LOCK_CLICKED: "UI.room_lock_clicked",
     USER_KICKED: "UI.user_kicked",
     REMOTE_AUDIO_MUTED: "UI.remote_audio_muted",
     FULLSCREEN_TOGGLE: "UI.fullscreen_toggle",
@@ -114,5 +117,40 @@ export default {
     /**
      * Notifies that the avatar is displayed or not on the largeVideo.
      */
-    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed"
+    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed",
+    
+    /**
+     * Toggling room lock
+     */
+    TOGGLE_ROOM_LOCK: "UI.toggle_room_lock",
+
+    /**
+     * Adding contact to contact list
+     */
+    CONTACT_ADDED: "UI.contact_added",
+
+    /**
+     * Removing the contact from contact list
+     */
+    CONTACT_REMOVED: "UI.contact_removed",
+
+    /**
+     * Indicates that a user avatar has changed.
+     */
+    USER_AVATAR_CHANGED: "UI.user_avatar_changed",
+
+    /**
+     * Display name changed.
+     */
+    DISPLAY_NAME_CHANGED: "UI.display_name_changed",
+
+    /**
+     * Indicates that the invite url has been initialised.
+     */
+    INVITE_URL_INITIALISED: "UI.invite_url_initialised",
+
+    /**
+     * Indicates that a password is required for the call.
+     */
+    PASSWORD_REQUIRED: "UI.password_required"
 };

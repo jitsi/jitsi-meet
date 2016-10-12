@@ -1,8 +1,8 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
 import {openConnection} from './connection';
-//FIXME:
-import createRoomLocker from './modules/UI/authentication/RoomLocker';
-//FIXME:
+import Invite from './modules/UI/invite/Invite';
+import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
+
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 
 import ConnectionQuality from './modules/connectionquality/connectionquality';
@@ -26,7 +26,7 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
-let room, connection, localAudio, localVideo, roomLocker;
+let room, connection, localAudio, localVideo;
 
 /**
  * Indicates whether the connection is interrupted or not.
@@ -363,18 +363,7 @@ class ConferenceConnector {
         switch (err) {
             // room is locked by the password
         case ConferenceErrors.PASSWORD_REQUIRED:
-            APP.UI.markRoomLocked(true);
-            roomLocker.requirePassword().then(function () {
-                let pass = roomLocker.password;
-                // we received that password is required, but user is trying
-                // anyway to login without a password, mark room as not locked
-                // in case he succeeds (maybe someone removed the password
-                // meanwhile), if it is still locked another password required
-                // will be received and the room again will be marked as locked
-                if (!pass)
-                    APP.UI.markRoomLocked(false);
-                room.join(roomLocker.password);
-            });
+            APP.UI.emitEvent(UIEvents.PASSWORD_REQUIRED);
             break;
 
         case ConferenceErrors.CONNECTION_ERROR:
@@ -403,8 +392,7 @@ class ConferenceConnector {
             }, 5000);
 
             // notify user that auth is required
-
-            AuthHandler.requireAuth(room, roomLocker.password);
+            AuthHandler.requireAuth(room, this.invite.getRoomLocker().password);
             break;
 
         case ConferenceErrors.RESERVATION_ERROR:
@@ -575,6 +563,8 @@ export default {
                 this._createRoom(tracks);
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
+
+                APP.UI.ContactList = new ContactList(room);
 
                 // if user didn't give access to mic or camera or doesn't have
                 // them at all, we disable corresponding toolbar buttons
@@ -888,7 +878,7 @@ export default {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
         this._setLocalAudioVideoStreams(localTracks);
-        roomLocker = createRoomLocker(room);
+        this.invite = new Invite(room);
         this._room = room; // FIXME do not use this
 
         let email = APP.settings.getEmail();
@@ -1316,13 +1306,6 @@ export default {
             APP.UI.updateRecordingState(status);
         });
 
-        room.on(ConferenceEvents.LOCK_STATE_CHANGED, (state, error) => {
-            console.log("Received channel password lock change: ", state,
-                error);
-            APP.UI.markRoomLocked(state);
-            roomLocker.lockedElsewhere = state;
-        });
-
         room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
             APP.UI.updateUserStatus(id, status);
         });
@@ -1346,19 +1329,6 @@ export default {
             window.open(
                 url, "extension_store_window",
                 "resizable,scrollbars=yes,status=1");
-        });
-
-        APP.UI.addListener(UIEvents.ROOM_LOCK_CLICKED, () => {
-            if (room.isModerator()) {
-                let promise = roomLocker.isLocked
-                    ? roomLocker.askToUnlock()
-                    : roomLocker.askToLock();
-                promise.then(() => {
-                    APP.UI.markRoomLocked(roomLocker.isLocked);
-                });
-            } else {
-                roomLocker.notifyModeratorRequired();
-            }
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);

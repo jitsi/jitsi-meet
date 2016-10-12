@@ -6,13 +6,13 @@
     position:absolute;
     top: 0px;
     left: $defaultToolbarSize;
-    width: 0%;
-    height: 100%;
-    max-width: 200px;
+    width: 0;
     background-color: rgba(0,0,0,0.8);
+    height: 100%;
+    max-width: $sidebarWidth;
     z-index: 800;
     overflow: hidden;
-    letter-spacing: 1px;
+    letter-spacing: $titleLetterSpacing;
 
     /**
      * Labels inside the side panel.
@@ -24,7 +24,8 @@
     /**
      * Form elements and blocks.
      */
-    input, label, select, button, a, .sideToolbarBlock {
+    input, label, select, a,
+    .sideToolbarBlock, .input-control, .button-control {
         display: inline-block;
         margin-top: 15px;
         margin-left: 10%;
@@ -36,7 +37,7 @@
      */
     select, input[type="button"], input[type="text"],
     input[type="reset"], input[type="submit"] {
-        color: $defaultColor;
+        color: $inputColor;
         background: $inputBackground;
         border: none;
     }
@@ -63,7 +64,10 @@
      */
     .sideToolbarContainer__inner {
         display: none;
-        width: 200px;
+        height: 100%;
+        width: $sidebarWidth;
+        position: absolute;
+        box-sizing: border-box;
         color: #FFF;
 
         /**
@@ -99,6 +103,14 @@
          */
         .first {
             margin-top: 0px !important;
+        }
+
+        /**
+         * Buttons in the side toolbar container.
+         */
+        .button-control {
+            margin: 9px 0;
+            width: 100%;
         }
     }
 }

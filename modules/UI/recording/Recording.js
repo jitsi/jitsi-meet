@@ -55,9 +55,9 @@ function _requestLiveStreamId() {
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
+                title: msg,
                 html:
-                    `<h2>${msg}</h2>
-                    <input name="streamId" type="text"
+                    `<input name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     placeholder="${token}" autofocus>`,
                 persistent: false,
@@ -89,7 +89,8 @@ function _requestLiveStreamId() {
             },
 
             state1: {
-                html: `<h2>${msg}</h2> ${streamIdRequired}`,
+                title: msg,
+                html: streamIdRequired,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},
@@ -120,30 +121,30 @@ function _requestLiveStreamId() {
  * @returns {Promise}
  */
 function _requestRecordingToken () {
-    let msg = APP.translation.generateTranslationHTML("dialog.recordingToken");
+    let titleKey = "dialog.recordingToken";
     let token = APP.translation.translateString("dialog.token");
-
+    let messageString = (
+        `<input name="recordingToken" type="text"
+                data-i18n="[placeholder]dialog.token"
+                placeholder="${token}" autofocus>`
+    );
     return new Promise(function (resolve, reject) {
-        dialog = APP.UI.messageHandler.openTwoButtonDialog(
-            null, null, null,
-            `<h2>${msg}</h2>
-             <input name="recordingToken" type="text"
-                    data-i18n="[placeholder]dialog.token"
-                    placeholder="${token}" autofocus>`,
-            false, "dialog.Save",
-            function (e, v, m, f) {
+        dialog = APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            messageString,
+            leftButtonKey: 'dialog.Save',
+            submitFunction: function (e, v, m, f) {
                 if (v && f.recordingToken) {
                     resolve(UIUtil.escapeHtml(f.recordingToken));
                 } else {
                     reject(APP.UI.messageHandler.CANCEL);
                 }
             },
-            null,
-            function () {
+            closeFunction: function () {
                 dialog = null;
             },
-            ':input:first'
-        );
+            focus: ':input:first'
+        });
     });
 }
 
@@ -170,25 +171,21 @@ function _showStopRecordingPrompt (recordingType) {
     }
 
     return new Promise(function (resolve, reject) {
-        dialog = APP.UI.messageHandler.openTwoButtonDialog(
-            title,
-            null,
-            message,
-            null,
-            false,
-            buttonKey,
-            function(e,v) {
+        dialog = APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey: title,
+            messageKey: message,
+            leftButtonKey: buttonKey,
+            submitFunction: function(e,v) {
                 if (v) {
                     resolve();
                 } else {
                     reject();
                 }
             },
-            null,
-            function () {
+            closeFunction: function () {
                 dialog = null;
             }
-        );
+        });
     });
 }
 
