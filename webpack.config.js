@@ -1,16 +1,18 @@
 /* global __dirname */
 
-import process from 'process';
+require('babel-polyfill'); // Define Object.assign() from ES6 in ES5.
 
-const aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
-const minimize
+var process = require('process');
+
+var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
+var minimize
     = process.argv.indexOf('-p') != -1
         || process.argv.indexOf('--optimize-minimize') != -1;
-const strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
+var strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
 
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
-const config = {
+var config = {
     devtool: 'source-map',
     module: {
         loaders: [{
@@ -18,6 +20,11 @@ const config = {
 
             exclude: __dirname + '/node_modules/',
             loader: 'babel',
+            query: {
+                presets: [
+                    'es2015'
+                ]
+            },
             test: /\.js$/
         },{
             // Expose jquery as the globals $ and jQuery because it is expected
@@ -91,27 +98,26 @@ const config = {
     }
 };
 
-export default [{
-    // The Webpack configuration to bundle app.bundle.js (aka APP).
+module.exports = [
 
-    ...config,
-    entry: {
-       'app.bundle': './app.js'
-    },
-    output: {
-        ...config.output,
-        library: 'APP'
-    }
-}, {
+    // The Webpack configuration to bundle app.bundle.js (aka APP).
+    Object.assign({}, config, {
+        entry: {
+            'app.bundle': './app.js'
+        },
+        output: Object.assign({}, config.output, {
+            library: 'APP'
+        })
+    }),
+
     // The Webpack configuration to bundle external_api.js (aka
     // JitsiMeetExternalAPI).
-
-    ...config,
-    entry: {
-       'external_api': './modules/API/external/external_api.js'
-    },
-    output: {
-        ...config.output,
-        library: 'JitsiMeetExternalAPI'
-    }
-}];
+    Object.assign({}, config, {
+        entry: {
+            'external_api': './modules/API/external/external_api.js'
+        },
+        output: Object.assign({}, config.output, {
+            library: 'JitsiMeetExternalAPI'
+        })
+    })
+];

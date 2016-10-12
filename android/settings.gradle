@@ -1,0 +1,7 @@
+rootProject.name = 'jitsi-meet-react'
+
+include ':app'
+include ':react-native-vector-icons'
+project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
+include ':react-native-webrtc'
+project(':react-native-webrtc').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webrtc/android')

@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "BQNXB4G3KQ.org.jitsi.JitsiMeet.ios",
+                "paths": [ "*" ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,45 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.jitsi.jitsi_meet_react"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- WebRTC -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="22" />
+
+    <application
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:name=".MainApplication"
+      android:theme="@style/AppTheme">
+      <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+        android:label="@string/app_name"
+        android:launchMode="singleTask"
+        android:name=".MainActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.LAUNCHER" />
+            <data android:host="beta.meet.jit.si" android:scheme="https" />
+            <data android:host="chaos.hipchat.me" android:scheme="https" />
+            <data android:host="enso.me" android:scheme="https" />
+            <data android:host="meet.jit.si" android:scheme="https" />
+        </intent-filter>
+      </activity>
+      <activity
+        android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+    </application>
+</manifest>
