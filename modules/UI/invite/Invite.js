@@ -38,7 +38,7 @@ class Invite {
             this.setLockedFromElsewhere(locked);
         });
 
-        this.conference.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
+        this.conference.on(ConferenceEvents.USER_ROLE_CHANGED, (id) => {
             if (APP.conference.isLocalId(id)
                     && this.isModerator !== this.conference.isModerator) {
 

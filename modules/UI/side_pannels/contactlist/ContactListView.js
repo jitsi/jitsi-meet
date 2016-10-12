@@ -137,7 +137,6 @@ var ContactListView = {
      * Setup listeners
      */
     registerListeners() {
-        let model = this.model;
         let removeContact = this.onRemoveContact.bind(this);
         let changeAvatar = this.changeUserAvatar.bind(this);
         let displayNameChange = this.onDisplayNameChange.bind(this);
