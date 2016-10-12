@@ -25,8 +25,8 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.hasRemoteVideoMenu = false;
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
-    this.getAudioMutedIndicator();
-    this.getVideoMutedIndicator();
+    this.toggleAudioMutedIndicator(this.isAudioMuted);
+    this.toggleVideoMutedIndicator(this.isVideoMuted);
     this.createDisplayNameWrapper();
     this.setDisplayName();
     this.flipX = false;

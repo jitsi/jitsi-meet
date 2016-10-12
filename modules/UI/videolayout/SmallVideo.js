@@ -215,7 +215,7 @@ SmallVideo.prototype.hideIndicator = function () {
  * @param {boolean} isMuted indicates if the muted element should be shown
  * or hidden
  */
-SmallVideo.prototype.showAudioIndicator = function(isMuted) {
+SmallVideo.prototype.toggleAudioMutedIndicator = function(isMuted) {
     var audioMutedIndicator = this.getAudioMutedIndicator();
 
     if (!isMuted) {
@@ -266,7 +266,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
  * @param {boolean} isMuted indicates if we should set the view to muted view
  * or not
  */
-SmallVideo.prototype.setVideoMutedView = function(isMuted) {
+SmallVideo.prototype.toggleVideoMutedIndicator = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 

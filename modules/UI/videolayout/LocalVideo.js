@@ -26,8 +26,8 @@ function LocalVideo(VideoLayout, emitter) {
     
     this.createConnectionIndicator();
     this.addAudioLevelIndicator();
-    this.getAudioMutedIndicator();
-    this.getVideoMutedIndicator();
+    this.toggleAudioMutedIndicator(this.isAudioMuted);
+    this.toggleVideoMutedIndicator(this.isVideoMuted);
     this.createDisplayNameWrapper();
     // Set default display name.
     this.setDisplayName();
