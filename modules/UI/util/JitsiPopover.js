@@ -29,8 +29,8 @@ var JitsiPopover = (function () {
         this.element = element;
         this.template = ' <div class="jitsipopover ' + this.options.skin +
             '"><div class="arrow"></div>' +
-            '<div class="jitsipopover-content"></div>' +
-            '<div class="jitsiPopupmenuPadding"></div></div>';
+            '<div class="jitsipopover__content"></div>' +
+            '<div class="jitsipopover__menu-padding"></div></div>';
         var self = this;
         this.element.on("mouseenter", function () {
             self.elementIsHovered = true;
