@@ -1450,12 +1450,15 @@ UI.hideRingOverLay = function () {
 };
 
 /**
- * Indicates if the ring overlay is currently visible.
+ * Indicates if any the "top" overlays are currently visible. The check includes
+ * the call overlay, GUM permissions overlay and a page reload overlay.
  *
- * @returns {*|boolean} {true} if the ring overlay is visible, {false} otherwise
+ * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
  */
-UI.isRingOverlayVisible = function () {
-    return RingOverlay.isVisible();
+UI.isOverlayVisible = function () {
+    return RingOverlay.isVisible()
+        || PageReloadOverlay.isVisible()
+        || GumPermissionsOverlay.isVisible();
 };
 
 /**

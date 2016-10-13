@@ -87,6 +87,14 @@ function start(timeoutSeconds) {
 
 export default {
     /**
+     * Checks whether the page reload overlay has been displayed.
+     * @return {boolean} <tt>true</tt> if the page reload overlay is currently
+     * visible or <tt>false</tt> otherwise.
+     */
+    isVisible() {
+        return $overlay && $overlay.parents('body').length > 0;
+    },
+    /**
      * Shows the page reload overlay which will do the conference reload after
      * the given amount of time.
      *
@@ -97,7 +105,7 @@ export default {
 
         !$overlay && buildReloadOverlayHtml();
 
-        if (!$overlay.parents('body').length) {
+        if (!this.isVisible()) {
             $overlay.appendTo('body');
             start(timeoutSeconds);
         }

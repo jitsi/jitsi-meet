@@ -24,6 +24,14 @@ function buildOverlayHtml(browser) {
 
 export default {
     /**
+     * Checks whether the overlay is currently visible.
+     * @return {boolean} <tt>true</tt> if the overlay is visible
+     * or <tt>false</tt> otherwise.
+     */
+    isVisible () {
+        return $overlay && $overlay.parents('body').length > 0;
+    },
+    /**
      * Shows browser-specific overlay with guidance how to proceed with
      * gUM prompt.
      * @param {string} browser - name of browser for which to show the
@@ -32,7 +40,7 @@ export default {
     show(browser) {
         !$overlay && buildOverlayHtml(browser);
 
-        !$overlay.parents('body').length && $overlay.appendTo('body');
+        !this.isVisible() && $overlay.appendTo('body');
     },
 
     /**
