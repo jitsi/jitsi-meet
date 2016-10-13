@@ -117,24 +117,18 @@ export default class LargeVideoManager {
 
         this.updateInProcess = true;
 
-        let container = this.getContainer(this.state);
-
         // Include hide()/fadeOut only if we're switching between users
-        let preUpdate;
-        let isUserSwitch = this.newStreamData.id != this.id;
-        if (isUserSwitch) {
-            preUpdate = container.hide();
-        } else {
-            preUpdate = Promise.resolve();
-        }
+        const isUserSwitch = this.newStreamData.id != this.id;
+        const container = this.getContainer(this.state);
+        const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
-            let {id, stream, videoType, resolve} = this.newStreamData;
+            const { id, stream, videoType, resolve } = this.newStreamData;
             this.newStreamData = null;
 
             console.info("hover in %s", id);
             this.state = videoType;
-            let container = this.getContainer(this.state);
+            const container = this.getContainer(this.state);
             container.setStream(stream, videoType);
 
             // change the avatar url on large
@@ -147,18 +141,18 @@ export default class LargeVideoManager {
             // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
             // its stream whether exist and is muted to set isVideoMuted
             // in rest of the cases it is false
-            let showAvatar = false;
-            if (videoType == VIDEO_CONTAINER_TYPE)
-                showAvatar = stream ? stream.isMuted() : true;
+            let showAvatar
+                = (videoType === VIDEO_CONTAINER_TYPE)
+                    && (!stream || stream.isMuted());
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
             // there was a user switch(image is lost on stream detach) or if
             // the video was not rendered, before the connection has failed.
-            let isHavingConnectivityIssues
+            const isHavingConnectivityIssues
                 = APP.conference.isParticipantConnectionActive(id) === false;
             if (isHavingConnectivityIssues
-                    && (isUserSwitch | !container.wasVideoRendered)) {
+                    && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
             }
 
@@ -178,14 +172,17 @@ export default class LargeVideoManager {
             // show the avatar on large if needed
             container.showAvatar(showAvatar);
 
-            // Make sure no notification about remote failure is shown as
-            // it's UI conflicts with the one for local connection interrupted.
-            if (APP.conference.isConnectionInterrupted()) {
-                this.updateParticipantConnStatusIndication(id, true);
-            } else {
-                this.updateParticipantConnStatusIndication(
-                    id, !isHavingConnectivityIssues);
+            // Clean up audio level after previous speaker.
+            if (showAvatar) {
+                this.updateLargeVideoAudioLevel(0);
             }
+
+            // Make sure no notification about remote failure is shown as
+            // its UI conflicts with the one for local connection interrupted.
+            this.updateParticipantConnStatusIndication(
+                    id,
+                    APP.conference.isConnectionInterrupted()
+                        || !isHavingConnectivityIssues);
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
