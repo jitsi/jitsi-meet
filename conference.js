@@ -38,13 +38,6 @@ let connectionIsInterrupted = false;
  */
 let DSExternalInstallationInProgress = false;
 
-/**
- * Listens whether conference had been left from local user when we are trying
- * to navigate away from current page.
- * @type {HangupConferenceLeftListener}
- */
-let conferenceLeftListener = null;
-
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
 /**
@@ -217,50 +210,6 @@ function maybeRedirectToWelcomePage(showThankYou) {
         APP.settings.setWelcomePageEnabled(true);
         window.location.pathname = "/";
     }, 3000);
-}
-
-
-/**
- * Listens for CONFERENCE_LEFT event after hangup function has been executed.
- */
-class HangupConferenceLeftListener {
-    /**
-     * Creates HangupConferenceLeftListener and start listening for conference
-     * left event. On CONFERENCE_LEFT event calls should disconnect the user
-     * and maybe show the feedback dialog.
-     * @param {boolean} [requestFeedback=false] if user feedback should be
-     * requested
-     */
-    constructor(requestFeedback) {
-        this.requestFeedback = requestFeedback;
-        room.on(ConferenceEvents.CONFERENCE_LEFT,
-            this._handleConferenceLeft.bind(this));
-    }
-
-    /**
-     * Handles the conference left event.
-     * @private
-     */
-    _handleConferenceLeft() {
-        this._disconnectAndShowFeedback()
-            .then(() => {
-                APP.API.notifyReadyToClose();
-                maybeRedirectToWelcomePage();
-            }).catch(console.log);
-    }
-
-    /**
-     * Executes connection.disconnect and shows the feedback dialog
-     * @returns Promise.
-     * @private
-     */
-    _disconnectAndShowFeedback() {
-        APP.UI.hideRingOverLay();
-        connection.disconnect();
-        APP.API.notifyConferenceLeft(APP.conference.roomName);
-        return (this.requestFeedback) ?
-            APP.UI.requestFeedback() : Promise.resolve();
-    }
 }
 
 /**
@@ -484,6 +433,17 @@ function sendTokenDataStats() {
     if(group) {
         APP.conference.logEvent("group", group);
     }
+}
+
+/**
+ * Disconnects the connection.
+ * @returns resolved Promise. We need this in order to make the Promise.all
+ * call in hangup() to resolve when all operations are finished.
+ */
+function disconnect() {
+    connection.disconnect();
+    APP.API.notifyConferenceLeft(APP.conference.roomName);
+    return Promise.resolve();
 }
 
 /**
@@ -1784,13 +1744,20 @@ export default {
      * requested
      */
     hangup (requestFeedback = false) {
-        if (!conferenceLeftListener) {
-            conferenceLeftListener
-                = new HangupConferenceLeftListener(requestFeedback);
-        }
-
-        //FIXME: Do something for the use case when we are not receiving
-        // CONFERENCE_LEFT for some reason
-        room.leave();
+        APP.UI.hideRingOverLay();
+        let requestFeedbackPromise = requestFeedback
+                ? APP.UI.requestFeedback().catch(() => Promise.resolve())
+                : Promise.resolve();
+        // All promises are returning Promise.resolve to make Promise.all to
+        // be resolved when both Promises are finished. Otherwise Promise.all
+        // will reject on first rejected Promise and we can redirect the page
+        // before all operations are done.
+        Promise.all([
+            requestFeedbackPromise,
+            room.leave().then(disconnect, disconnect)
+        ]).then(() => {
+            APP.API.notifyReadyToClose();
+            maybeRedirectToWelcomePage();
+        });
     }
 };
