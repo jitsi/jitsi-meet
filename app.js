@@ -19,6 +19,7 @@ import 'aui-experimental-css';
 window.toastr = require("toastr");
 
 import URLProcessor from "./modules/config/URLProcessor";
+import ConferenceUrl from './modules/URL/ConferenceUrl';
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 
 import UI from "./modules/UI/UI";
@@ -45,6 +46,18 @@ function pushHistoryState(roomName, URL) {
         return e;
     }
     return null;
+}
+
+/**
+ * Replaces current history state(replaces the URL displayed by the browser).
+ * @param {string} newUrl the URL string which is to be displayed by the browser
+ * to the user.
+ */
+function replaceHistoryState (newUrl) {
+    if (window.history
+        && typeof window.history.replaceState === 'function') {
+        window.history.replaceState({}, document.title, newUrl);
+    }
 }
 
 /**
@@ -107,6 +120,10 @@ function setTokenData() {
 
 function init() {
     setTokenData();
+    // Initialize the conference URL handler
+    ConferenceUrl.init(window.location);
+    // Clean up the URL displayed by the browser
+    replaceHistoryState(ConferenceUrl.getInviteUrl());
     var isUIReady = APP.UI.start();
     if (isUIReady) {
         APP.conference.init({roomName: buildRoomName()}).then(function () {

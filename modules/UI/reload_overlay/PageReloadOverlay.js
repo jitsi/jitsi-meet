@@ -1,6 +1,6 @@
 /* global $, APP, AJS */
 
-import { reload } from '../../util/helpers';
+import ConferenceUrl from '../../URL/ConferenceUrl';
 
 let $overlay;
 
@@ -78,9 +78,8 @@ function start(timeoutSeconds) {
         updateDisplay();
 
         if (timeLeft === 0) {
-            console.info("Reloading!");
             window.clearInterval(intervalId);
-            reload();
+            ConferenceUrl.reload();
         }
     }, 1000);
 }

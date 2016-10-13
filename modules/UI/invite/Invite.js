@@ -3,6 +3,7 @@
 import InviteDialogView from './InviteDialogView';
 import createRoomLocker from './RoomLocker';
 import UIEvents from  '../../../service/UI/UIEvents';
+import ConferenceUrl from '../../URL/ConferenceUrl';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
@@ -14,6 +15,7 @@ const ConferenceEvents = JitsiMeetJS.events.conference;
 class Invite {
     constructor(conference) {
         this.conference = conference;
+        this.inviteUrl = ConferenceUrl.getInviteUrl();
         this.createRoomLocker(conference);
         this.registerListeners();
     }
@@ -47,11 +49,6 @@ class Invite {
 
         APP.UI.addListener( UIEvents.INVITE_CLICKED,
                             () => { this.openLinkDialog(); });
-
-        APP.UI.addListener( UIEvents.INVITE_URL_INITIALISED,
-                            (inviteUrl) => {
-                                this.updateInviteUrl(inviteUrl);
-                            });
 
         APP.UI.addListener( UIEvents.PASSWORD_REQUIRED,
             () => {

@@ -258,19 +258,6 @@ UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
  */
 UI.initConference = function () {
     let id = APP.conference.getMyUserId();
-
-    // Do not include query parameters in the invite URL
-    // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
-    var inviteURL = window.location.protocol + "//" +
-        window.location.host + window.location.pathname;
-
-    this.emitEvent(UIEvents.INVITE_URL_INITIALISED, inviteURL);
-
-    // Clean up the URL displayed by the browser
-    if (window.history && typeof window.history.replaceState === 'function') {
-        window.history.replaceState({}, document.title, inviteURL);
-    }
-
     // Add myself to the contact list.
     UI.ContactList.addContact(id, true);
 
