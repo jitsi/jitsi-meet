@@ -73,9 +73,8 @@ const buttonHandlers = {
     },
     "toolbar_button_fullScreen": function() {
         JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
-        UIUtil.buttonClick("toolbar_button_fullScreen",
-            "icon-full-screen icon-exit-full-screen");
-        emitter.emit(UIEvents.FULLSCREEN_TOGGLE);
+
+        emitter.emit(UIEvents.TOGGLE_FULLSCREEN);
     },
     "toolbar_button_sip": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
@@ -357,6 +356,11 @@ Toolbar = {
         APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
             (isRaisedHand) => {
                 this._setToggledState("toolbar_button_raisehand", isRaisedHand);
+            });
+
+        APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED,
+            (isFullScreen) => {
+                Toolbar._handleFullScreenToggled(isFullScreen);
             });
 
         if(!APP.tokenData.isGuest) {
@@ -657,6 +661,8 @@ Toolbar = {
 
     /**
      * Handles the side toolbar toggle.
+     *
+     * @param {string} containerId the identifier of the container element
      */
     _handleSideToolbarContainerToggled(containerId) {
         Object.keys(defaultToolbarButtons).forEach(
@@ -673,6 +679,25 @@ Toolbar = {
                 }
             }
         );
+    },
+
+    /**
+     * Handles full screen toggled.
+     *
+     * @param {boolean} isFullScreen indicates if we're currently in full
+     * screen mode
+     */
+    _handleFullScreenToggled(isFullScreen) {
+        let element
+            = document.getElementById("toolbar_button_fullScreen");
+
+        element.className = isFullScreen
+            ? element.className
+                .replace("icon-full-screen", "icon-exit-full-screen")
+            : element.className
+                .replace("icon-exit-full-screen", "icon-full-screen");
+
+        Toolbar._setToggledState("toolbar_button_fullScreen", isFullScreen);
     },
 
     /**

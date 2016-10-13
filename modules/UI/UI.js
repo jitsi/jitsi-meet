@@ -143,13 +143,22 @@ function setupToolbars() {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
  */
 UI.toggleFullScreen = function() {
-                            // alternative standard method
-    let isNotFullScreen = !document.fullscreenElement &&
-            !document.mozFullScreenElement && // current working methods
-        !document.webkitFullscreenElement &&
-        !document.msFullscreenElement;
+    let isFullScreen = document.fullscreenElement
+            || document.mozFullScreenElement // current working methods
+            || document.webkitFullscreenElement
+            || document.msFullscreenElement;
 
-    if (isNotFullScreen) {
+    if (isFullScreen) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    } else {
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen();
         } else if (document.documentElement.msRequestFullscreen) {
@@ -159,16 +168,6 @@ UI.toggleFullScreen = function() {
         } else if (document.documentElement.webkitRequestFullscreen) {
             document.documentElement
                 .webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
         }
     }
 };
@@ -380,7 +379,7 @@ function registerListeners() {
         }
     });
 
-    UI.addListener(UIEvents.FULLSCREEN_TOGGLE, UI.toggleFullScreen);
+    UI.addListener(UIEvents.TOGGLE_FULLSCREEN, UI.toggleFullScreen);
 
     UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
 
@@ -415,7 +414,16 @@ function bindEvents() {
     // Resize and reposition videos in full screen mode.
     $(document).on(
         'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-        onResize
+        () => {
+            let isFullScreen = document.fullscreenElement
+                || document.mozFullScreenElement // current working methods
+                || document.webkitFullscreenElement
+                || document.msFullscreenElement;
+
+            eventEmitter.emit(UIEvents.FULLSCREEN_TOGGLED, isFullScreen);
+
+            onResize();
+        }
     );
 
     $(window).resize(onResize);
