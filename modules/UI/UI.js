@@ -416,7 +416,7 @@ function bindEvents() {
         'webkitfullscreenchange mozfullscreenchange fullscreenchange',
         () => {
             let isFullScreen = document.fullscreenElement
-                || document.mozFullScreenElement // current working methods
+                || document.mozFullScreenElement
                 || document.webkitFullscreenElement
                 || document.msFullscreenElement;
 
