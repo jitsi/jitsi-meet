@@ -63,6 +63,7 @@ class Etherpad extends LargeContainer {
 
         const iframe = document.createElement('iframe');
 
+        iframe.id = "etherpadIFrame";
         iframe.src = domain + name + '?' + options;
         iframe.frameBorder = 0;
         iframe.scrolling = "no";
