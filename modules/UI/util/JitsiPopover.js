@@ -76,7 +76,7 @@ var JitsiPopover = (function () {
      */
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
-        $(".jitsipopover > .jitsipopover-content").html(this.options.content);
+        $(".jitsipopover > .jitsipopover__content").html(this.options.content);
         var self = this;
         $(".jitsipopover").on("mouseenter", function () {
             self.popoverIsHovered = true;
@@ -103,7 +103,7 @@ var JitsiPopover = (function () {
                 $(".jitsipopover").css(
                     {top: position.top, left: position.left, display: "table"});
                 $(".jitsipopover > .arrow").css({left: calcLeft});
-                $(".jitsipopover > .jitsiPopupmenuPadding").css(
+                $(".jitsipopover > .jitsipopover__menu-padding").css(
                     {left: calcLeft - 50});
             }
         });

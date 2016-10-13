@@ -95,21 +95,47 @@ ConnectionIndicator.prototype.generateText = function () {
         return `${width}x${height}`;
     }).join(', ') || 'N/A';
 
-    var result = "<table style='width:100%'>" +
-        "<tr>" +
-        "<td><span data-i18n='connectionindicator.bitrate'>" +
-        translate("connectionindicator.bitrate") + "</span></td>" +
-        "<td><span class='jitsipopover__green'>&darr;</span>" +
-        downloadBitrate + " <span class='jitsipopover__orange'>&uarr;</span>" +
-        uploadBitrate + "</td>" +
-        "</tr><tr>" +
-        "<td><span data-i18n='connectionindicator.packetloss'>" +
-        translate("connectionindicator.packetloss") + "</span></td>" +
-        "<td>" + packetLoss  + "</td>" +
-        "</tr><tr>" +
-        "<td><span data-i18n='connectionindicator.resolution'>" +
-        translate("connectionindicator.resolution") + "</span></td>" +
-        "<td>" + resolutionStr + "</td></tr></table>";
+    let headerKey = 'connectionindicator.header';
+    let result = (
+        `<table style='width:100%'>
+            <tr>
+                <td>
+                    <span class="jitsipopover__title"
+                        data-i18n="">${translate(headerKey)}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.bitrate'>
+                        ${translate("connectionindicator.bitrate")}
+                    </span>
+                </td>
+                <td>
+                    <span class='jitsipopover__green'>&darr;</span>
+                    ${downloadBitrate}
+                    <span class='jitsipopover__orange'>&uarr;</span>
+                    ${uploadBitrate}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.packetloss'>
+                        ${translate("connectionindicator.packetloss")}
+                    </span>
+                </td>
+                <td>${packetLoss}</td>
+            </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.resolution'>
+                        ${translate("connectionindicator.resolution")}
+                    </span>
+                </td>
+                <td>
+                    ${resolutionStr}
+                </td>
+            </tr>
+        </table>`);
 
     if(this.videoContainer.videoSpanId == "localVideoContainer") {
         result += "<a class=\"jitsipopover__showmore link\" " +
@@ -232,7 +258,7 @@ ConnectionIndicator.prototype.generateText = function () {
 
         result += transport + "</table>";
     }
-    
+
     return result;
 };
 
