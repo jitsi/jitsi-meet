@@ -525,7 +525,7 @@ UI.start = function () {
     }
 
     if(APP.tokenData.callee) {
-        UI.showRingOverLay();
+        UI.showRingOverlay();
     }
 
     // Return true to indicate that the UI has been fully started and
@@ -1472,8 +1472,8 @@ UI.setMicrophoneButtonEnabled = function (enabled) {
     Toolbar.setAudioIconEnabled(enabled);
 };
 
-UI.showRingOverLay = function () {
-    RingOverlay.show(APP.tokenData.callee);
+UI.showRingOverlay = function () {
+    RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);
     FilmStrip.toggleFilmStrip(false);
 };
 
