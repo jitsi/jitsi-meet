@@ -8,98 +8,89 @@
     min-width: 100px;
     padding: 1px;
     text-align: left;
-    color: #333333;
-    background-color: #ffffff;
+    color: $auiDialogColor;
+    background-color: $auiDialogContentBg;
     background-clip: padding-box;
-    border: 1px solid #cccccc;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
+    border: 1px solid $popoverBorderColorFallback;
+    border: 1px solid $popoverBorderColor;
+    border-radius: 3px;
     /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
     white-space: normal;
     margin-top: -10px;
     margin-bottom: 35px;
-}
 
-.jitsipopover.black
-{
-    background-color: rgba(0,0,0,0.8);
-    color: #ffffff;
-}
+    &__title {
+        text-align: center;
+    }
 
-.jitsipopover-content {
-    padding: 9px 14px;
-    font-size: 10pt;
-    white-space:pre-wrap;
-    text-align: center;
-}
+    &__content {
+        padding: em(5) em(10);
+        font-size: em(14);
+        white-space:pre-wrap;
+        text-align: center;
+    }
 
-.jitsipopover > .arrow,
-.jitsipopover > .arrow:after {
-    position: absolute;
-    display: block;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-}
 
-.jitsipopover > .arrow {
-    border-width: 11px;
-    left: 50%;
-    margin-left: -11px;
-    border-bottom-width: 0;
-    border-top-color: #999999;
-    border-top-color: rgba(0, 0, 0, 0.25);
-    bottom: -11px;
-}
-.jitsipopover > .arrow:after {
-    border-width: 10px;
-    content: " ";
-    bottom: 1px;
-    margin-left: -10px;
-    border-bottom-width: 0;
-    border-top-color: #ffffff;
-}
+    &__icon {
+        margin-right: 5px;
+    }
 
-.jitsipopover.black > .arrow:after
-{
-    border-top-color: rgba(0, 0, 0, 0.8);
-}
+    &__green
+    {
+        @extend .jitsipopover__icon;
+        color: #4abd04;
+    }
 
-.jitsiPopupmenuPadding {
-    height: 35px;
-    width: 100px;
-    position: absolute;
-    bottom: -35px;
-}
+    &__orange
+    {
+        @extend .jitsipopover__icon;
+        color: #ffa800;
+    }
 
-.jitsipopover_green
-{
-    color: #4abd04;
-}
+    &__menu-padding {
+        height: 35px;
+        width: 100px;
+        position: absolute;
+        bottom: -35px;
+    }
 
-.jitsipopover_orange
-{
-    color: #ffa800;
-}
+    &__showmore
+    {
+        display: block;
+        text-align: center;
+        width: 90px;
+        margin: 10px auto;
+    }
 
-.jitsipopover_blue
-{
-    color: #21B9FC;
-}
 
-.jitsipopover_showmore
-{
-    background-color: #21B9FC;
-    color: #ffffff;
-    cursor: pointer;
-    border-radius: 3px;
-    text-align: center;
-    width: 90px;
-    height: 16px;
-    padding-top: 4px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin: 15px auto 0px auto;
+    &__clear {
+        position: absolute;
+        display: block;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+    }
+
+    > .arrow {
+        border-width: 5px;
+        left: 50%;
+        margin-left: -5px;
+        border-bottom-width: 0;
+        border-top-color: $popoverArrowBorderColorFallback;
+        border-top-color: $popoverArrowBorderColor;
+        bottom: -5px;
+        @extend .jitsipopover__clear;
+
+        &:after {
+            border-width: 5px;
+            content: " ";
+            bottom: 1px;
+            margin-left: -5px;
+            border-bottom-width: 0;
+            border-top-color: $auiDialogContentBg;
+            @extend .jitsipopover__clear;
+        }
+    }
 }
