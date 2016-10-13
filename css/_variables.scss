@@ -1,4 +1,9 @@
 /**
+* Theme
+*/
+@import 'themes/main';
+
+/**
  * Style variables
  */
 $baseFontFamily: 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -28,10 +33,10 @@ $tooltipBg: rgba(0,0,0, 0.7);
 
 // Toolbar
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
+
 $toolbarBadgeBackground: #165ECC;
 $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #12499C;
-$splitterToolbarButtonLeftMargin: 0px;
 
 // Main controls
 $inputSemiBackground: rgba(132, 132, 132, .8);

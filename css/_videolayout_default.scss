@@ -275,8 +275,13 @@
 .connection_info, .connection_info > table
 {
     text-align: left;
-    font-size: 11px;
-    color: #ffffff;
+    font-size: 12px;
+    font-weight: 400;
+    color: $auiDialogColor;
+
+    td {
+        padding: 5px 0;
+    }
 }
 
 #localVideoContainer>span.status:hover,

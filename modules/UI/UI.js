@@ -758,6 +758,7 @@ UI.getRemoteVideoType = function (jid) {
 
 UI.connectionIndicatorShowMore = function(id) {
     VideoLayout.showMore(id);
+    return false;
 };
 
 // FIXME check if someone user this

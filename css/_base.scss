@@ -184,6 +184,7 @@ form {
 }
 
 .link {
+    cursor: pointer;
     color: $linkFontColor;
     @include transition(color .1s ease-out);
 
