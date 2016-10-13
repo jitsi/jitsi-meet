@@ -1,4 +1,4 @@
-/* global APP, $, config */
+/* global APP, $, config, interfaceConfig */
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
@@ -19,6 +19,8 @@ function ConnectionIndicator(videoContainer, id) {
     this.transport = [];
     this.popover = null;
     this.id = id;
+    // the last value received converted into bars from connectionQualityValues
+    this.lastQuality = 0;
     this.create();
 }
 
@@ -31,13 +33,15 @@ function ConnectionIndicator(videoContainer, id) {
  *         30: string,
  *         0: string}}
  */
+const BAR_5 = 98;
+const BAR_3 = 64;
 ConnectionIndicator.connectionQualityValues = {
-    98: "18px", //full
-    81: "15px",//4 bars
-    64: "11px",//3 bars
-    47: "7px",//2 bars
-    30: "3px",//1 bar
-    0: "0px"//empty
+    [BAR_5] : "18px", //full
+    81      : "15px",//4 bars
+    [BAR_3] : "11px",//3 bars
+    47      : "7px",//2 bars
+    30      : "3px",//1 bar
+    0       : "0px"//empty
 };
 
 ConnectionIndicator.getIP = function(value) {
@@ -291,6 +295,16 @@ ConnectionIndicator.prototype.create = function () {
 };
 
 /**
+ * Whether connection indicator is currently visible.
+ * @returns {Element|*|boolean} whether connection indicator is visible.
+ * @private
+ */
+ConnectionIndicator.prototype._isVisible = function () {
+    return this.connectionIndicatorContainer
+        && this.connectionIndicatorContainer.style.display !== "none";
+};
+
+/**
  * Removes the indicator
  */
 ConnectionIndicator.prototype.remove = function() {
@@ -333,11 +347,11 @@ ConnectionIndicator.prototype.updateConnectionQuality =
         this.connectionIndicatorContainer.style.display = "none";
         this.popover.forceHide();
         return;
-    } else {
-        if(this.connectionIndicatorContainer.style.display == "none") {
-            this.connectionIndicatorContainer.style.display = "block";
-        }
+    } else if (!interfaceConfig.CONNECTION_INDICATOR_AUTOHIDE_ENABLED
+                && !this._isVisible()) {
+        this.connectionIndicatorContainer.style.display = "block";
     }
+
     if (object) {
         this.bandwidth = object.bandwidth;
         this.bitrate = object.bitrate;
@@ -347,12 +361,38 @@ ConnectionIndicator.prototype.updateConnectionQuality =
             this.resolution = object.resolution;
         }
     }
+    var currentQuality = 0;
     for (var quality in ConnectionIndicator.connectionQualityValues) {
         if (percent >= quality) {
             this.fullIcon.style.width =
                 ConnectionIndicator.connectionQualityValues[quality];
+            currentQuality = quality;
         }
     }
+
+    if (interfaceConfig.CONNECTION_INDICATOR_AUTOHIDE_ENABLED) {
+        // let's decide whether to show or hide the indicator
+        if (!this._isVisible()) {
+            // if not visible and it is growing skip
+            //  (currentQuality > this.lastQuality[0])
+
+            // if it drops to 3 bars or less, show it
+            if (currentQuality - this.lastQuality <= (BAR_3 - BAR_5)) {
+                this.connectionIndicatorContainer.style.display = "block";
+                if (this.hideTimeout)
+                    clearTimeout(this.hideTimeout);
+            }
+        } else if (currentQuality == BAR_5) {
+            // let's schedule a hide after certain timeout
+            this.hideTimeout = setTimeout(() => {
+                this.hideIndicator();
+            }, interfaceConfig.CONNECTION_INDICATOR_HIDE_TIMEOUT);
+        }
+
+        // store
+        this.lastQuality = currentQuality;
+    }
+
     if (object && typeof object.isResolutionHD === 'boolean') {
         this.isResolutionHD = object.isResolutionHD;
     }
