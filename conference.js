@@ -1302,7 +1302,12 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
-            ConnectionQuality.updateLocalStats(stats, connectionIsInterrupted);
+            ConnectionQuality.updateLocalStats(
+                stats,
+                connectionIsInterrupted,
+                localVideo.videoType,
+                localVideo.isMuted(),
+                localVideo.resolution);
         });
 
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
@@ -1312,6 +1317,10 @@ export default {
                 let data = {
                     bitrate: stats.bitrate,
                     packetLoss: stats.packetLoss};
+                if (localVideo && localVideo.resolution) {
+                    data.resolution = localVideo.resolution;
+                }
+
                 try {
                     room.broadcastEndpointMessage({
                         type: this.commands.defaults.CONNECTION_QUALITY,
@@ -1324,10 +1333,16 @@ export default {
         room.on(ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             (participant, payload) => {
                 switch(payload.type) {
-                    case this.commands.defaults.CONNECTION_QUALITY:
-                        ConnectionQuality.updateRemoteStats(participant.getId(),
-                            payload.values);
+                    case this.commands.defaults.CONNECTION_QUALITY: {
+                        let remoteVideo = participant.getTracks()
+                            .find(tr => tr.isVideoTrack());
+                        ConnectionQuality.updateRemoteStats(
+                            participant.getId(),
+                            payload.values,
+                            remoteVideo ? remoteVideo.videoType : undefined,
+                            remoteVideo ? remoteVideo.isMuted() : undefined);
                         break;
+                    }
                     default:
                         console.warn("Unknown datachannel message", payload);
                 }
