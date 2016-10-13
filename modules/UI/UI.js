@@ -140,36 +140,11 @@ function setupToolbars() {
 /**
  * Toggles the application in and out of full screen mode
  * (a.k.a. presentation mode in Chrome).
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
  */
 UI.toggleFullScreen = function() {
-    let isFullScreen = document.fullscreenElement
-            || document.mozFullScreenElement // current working methods
-            || document.webkitFullscreenElement
-            || document.msFullscreenElement;
-
-    if (isFullScreen) {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
-    } else {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement
-                .webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-    }
+    (UIUtil.isFullScreen())
+        ? UIUtil.exitFullScreen()
+        : UIUtil.enterFullScreen();
 };
 
 /**
@@ -415,12 +390,8 @@ function bindEvents() {
     $(document).on(
         'webkitfullscreenchange mozfullscreenchange fullscreenchange',
         () => {
-            let isFullScreen = document.fullscreenElement
-                || document.mozFullScreenElement
-                || document.webkitFullscreenElement
-                || document.msFullscreenElement;
-
-            eventEmitter.emit(UIEvents.FULLSCREEN_TOGGLED, isFullScreen);
+            eventEmitter.emit(  UIEvents.FULLSCREEN_TOGGLED,
+                                UIUtil.isFullScreen());
 
             onResize();
         }
