@@ -178,6 +178,11 @@ export default class LargeVideoManager {
             // show the avatar on large if needed
             container.showAvatar(showAvatar);
 
+            // clean up audio level after previous speaker
+            if (showAvatar) {
+                this.updateLargeVideoAudioLevel(0);
+            }
+
             // Make sure no notification about remote failure is shown as
             // it's UI conflicts with the one for local connection interrupted.
             if (APP.conference.isConnectionInterrupted()) {
