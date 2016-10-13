@@ -327,16 +327,6 @@ var VideoLayout = {
         return smallVideo ? smallVideo.getVideoType() : null;
     },
 
-    /**
-     * Return the mute state of the remote video.
-     * @param id the id for the remote video
-     * @returns {boolean} the video mute state.
-     */
-    isRemoteVideoMuted (id) {
-        let smallVideo = VideoLayout.getSmallVideo(id);
-        return smallVideo ? smallVideo.isVideoMuted : null;
-    },
-
     isPinned (id) {
         return (pinnedId) ? (id === pinnedId) : false;
     },

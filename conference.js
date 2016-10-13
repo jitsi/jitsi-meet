@@ -1373,7 +1373,11 @@ export default {
 
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
             ConnectionQuality.updateLocalStats(
-                stats, connectionIsInterrupted, localVideo);
+                stats,
+                connectionIsInterrupted,
+                localVideo.videoType,
+                localVideo.isMuted(),
+                localVideo.resolution);
         });
 
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
@@ -1384,9 +1388,7 @@ export default {
                     bitrate: stats.bitrate,
                     packetLoss: stats.packetLoss};
                 if (localVideo && localVideo.resolution) {
-                    data.resolution = {
-                        inputHeight: localVideo.resolution
-                    };
+                    data.resolution = localVideo.resolution;
                 }
 
                 try {
@@ -1402,12 +1404,13 @@ export default {
             (participant, payload) => {
                 switch(payload.type) {
                     case this.commands.defaults.CONNECTION_QUALITY: {
-                        let id = participant.getId();
+                        let remoteVideo = participant.getTracks()
+                            .find(tr => tr.isVideoTrack());
                         ConnectionQuality.updateRemoteStats(
-                            id,
+                            participant.getId(),
                             payload.values,
-                            APP.UI.getRemoteVideoType(id),
-                            APP.UI.isRemoteVideoMuted(id));
+                            remoteVideo ? remoteVideo.videoType : undefined,
+                            remoteVideo ? remoteVideo.isMuted() : undefined);
                         break;
                     }
                     default:
