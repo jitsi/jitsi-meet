@@ -220,7 +220,7 @@ export default class InviteDialogView {
                         </p>
                         <a class="link input-control__right"
                            id="inviteDialogRemovePassword"
-                           href="#" data-i18n="${removePassKey}">
+                           data-i18n="${removePassKey}">
                            ${removePassText}
                        </a>
                     </div>
