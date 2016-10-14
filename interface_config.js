@@ -20,6 +20,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     // the toolbar buttons line is intentionally left in one line, to be able
     // to easily override values or remove them using regex
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'hangup'], // jshint ignore:line
+    MAIN_TOOLBAR_SPLITTER_INDEX: -1,
     TOOLBAR_BUTTONS: ['profile', 'authentication', 'microphone', 'camera', 'desktop', 'recording', 'security', 'raisehand', 'chat', 'etherpad', 'sharedvideo', 'sip', 'dialpad', 'settings', 'hangup', 'filmstrip', 'contacts'], // jshint ignore:line
     SETTINGS_SECTIONS: ['language', 'devices', 'moderator'],
     // Determines how the video would fit the screen. 'both' would fit the whole
