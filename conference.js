@@ -1302,12 +1302,14 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
+            // if we say video muted we will use old method of calculating
+            // quality and will not depend on localVideo if it is missing
             ConnectionQuality.updateLocalStats(
                 stats,
                 connectionIsInterrupted,
-                localVideo.videoType,
-                localVideo.isMuted(),
-                localVideo.resolution);
+                localVideo ? localVideo.videoType : undefined,
+                localVideo ? localVideo.isMuted() : true,
+                localVideo ? localVideo.resolution : null);
         });
 
         ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
