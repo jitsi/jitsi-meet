@@ -15,7 +15,6 @@ class Invite {
     constructor(conference) {
         this.conference = conference;
         this.createRoomLocker(conference);
-        this.initDialog();
         this.registerListeners();
     }
 
