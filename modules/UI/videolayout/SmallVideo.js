@@ -220,7 +220,8 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
     var audioMutedIndicator = this.getAudioMutedIndicator();
 
     if (!isMuted) {
-        audioMutedIndicator.hide();
+        // hide and close tooltip
+        audioMutedIndicator.hide().trigger('mouseleave');
     }
     else {
         audioMutedIndicator.show();
@@ -273,7 +274,12 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
 
     var videoMutedSpan = this.getVideoMutedIndicator();
 
-    videoMutedSpan[isMuted ? 'show' : 'hide']();
+    if (isMuted) {
+        videoMutedSpan.show();
+    } else {
+        // hide and close tooltip
+        videoMutedSpan.hide().trigger('mouseleave');
+    }
 };
 
 /**
@@ -368,7 +374,9 @@ SmallVideo.prototype.updateAudioLevelIndicator = function (lvl) {
  * Removes the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.removeModeratorIndicator = function () {
-    $('#' + this.videoSpanId + ' .focusindicator').remove();
+    $('#' + this.videoSpanId + ' .focusindicator')
+        .remove()
+        .trigger('mouseleave'); // close tooltip
 };
 
 /**
@@ -528,7 +536,14 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     UIUtil.setTooltip(indicatorSpan, "speaker", "top");
     APP.translation.translateElement($(indicatorSpan));
 
-    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+    if (show) {
+        $(indicatorSpan)
+            .css('visibility', 'visible');
+    } else {
+        $(indicatorSpan)
+            .css('visibility', 'hidden')
+            .trigger('mouseleave'); // close tooltip
+    }
 };
 
 /**
@@ -552,7 +567,14 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     UIUtil.setTooltip(indicatorSpan, "raisedHand", "top");
     APP.translation.translateElement($(indicatorSpan));
 
-    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+    if (show) {
+        $(indicatorSpan)
+            .css('visibility', 'visible');
+    } else {
+        $(indicatorSpan)
+            .css('visibility', 'hidden')
+            .trigger('mouseleave'); // close tooltip
+    }
 };
 
 /**
