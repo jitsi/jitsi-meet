@@ -31,22 +31,17 @@ var messageHandler = {
      * message, if a message title is not provided.
      * @param messageKey the key used to find the translation of the message,
      * if a message is not provided.
-     * @param title the title of the message. If a falsy value is provided,
-     * titleKey will be used to get a title via the translation API.
      * @param message the message to show. If a falsy value is provided,
      * messageKey will be used to get a message via the translation API.
      * @param closeFunction function to be called after
      * the prompt is closed (optional)
      * @return the prompt that was created, or null
      */
-    openMessageDialog: function(titleKey, messageKey, title, message,
-                                closeFunction) {
+    openMessageDialog: function(titleKey, messageKey, message, closeFunction) {
         if (!popupEnabled)
             return null;
 
-        if (!title) {
-            title = APP.translation.generateTranslationHTML(titleKey);
-        }
+        let title = APP.translation.generateTranslationHTML(titleKey);
         if (!message) {
             message = APP.translation.generateTranslationHTML(messageKey);
         }

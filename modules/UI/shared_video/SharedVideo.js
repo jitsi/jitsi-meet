@@ -93,7 +93,7 @@ export default class SharedVideoManager {
             dialog = APP.UI.messageHandler.openMessageDialog(
                 "dialog.shareVideoTitle",
                 "dialog.alreadySharedVideoMsg",
-                null, null,
+                null,
                 function () {
                     dialog = null;
                 }

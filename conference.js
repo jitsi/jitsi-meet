@@ -195,7 +195,7 @@ function maybeRedirectToWelcomePage(showThankYou) {
 
     if (showThankYou) {
         APP.UI.messageHandler.openMessageDialog(
-            null, null, null,
+            null, null,
             APP.translation.translateString(
                 "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
             )

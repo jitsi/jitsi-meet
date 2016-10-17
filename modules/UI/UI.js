@@ -1219,7 +1219,6 @@ UI.showExtensionRequiredDialog = function (url) {
     messageHandler.openMessageDialog(
         "dialog.extensionRequired",
         null,
-        null,
         APP.translation.generateTranslationHTML(
             "dialog.firefoxExtensionPrompt", {url: url}));
 };
@@ -1397,7 +1396,6 @@ UI.showTrackNotWorkingDialog = function (stream) {
         "dialog.error",
         stream.isAudioTrack()? "dialog.micNotSendingData" :
             "dialog.cameraNotSendingData",
-        null,
         null);
 };
 

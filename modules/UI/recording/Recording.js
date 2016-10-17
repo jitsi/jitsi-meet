@@ -365,7 +365,7 @@ var Recording = {
                     dialog = APP.UI.messageHandler.openMessageDialog(
                         self.recordingTitle,
                         self.recordingBusy,
-                        null, null,
+                        null,
                         function () {
                             dialog = null;
                         }
@@ -376,7 +376,7 @@ var Recording = {
                     dialog = APP.UI.messageHandler.openMessageDialog(
                         self.recordingTitle,
                         self.recordingUnavailable,
-                        null, null,
+                        null,
                         function () {
                             dialog = null;
                         }
