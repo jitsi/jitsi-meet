@@ -1,6 +1,14 @@
 .input-control {
     padding: 16px 0;
 
+    &:first-child {
+        padding-top: 0;
+    }
+
+    &:last-child {
+        padding-bottom: 0;
+    }
+
     &__text {
         margin: 8px 0;
         font-size: 1em

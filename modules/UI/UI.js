@@ -74,21 +74,27 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
  * Prompt user for nickname.
  */
 function promptDisplayName() {
-    let nickRequiredMsg
-        = APP.translation.translateString("dialog.displayNameRequired");
+    let labelKey = 'dialog.enterDisplayName';
+    let labelStr = APP.translation.translateString(labelKey);
+    let titleStr
+        = APP.translation.translateString('dialog.displayNameRequired');
     let defaultNickMsg = APP.translation.translateString("defaultNickname");
-    let message = `
-        <h2 data-i18n="dialog.displayNameRequired">${nickRequiredMsg}</h2>
-        <input name="displayName" type="text"
+    let message = (
+        `<div class="input-control">
+            <label class="input-control__label">${labelStr}</label>
+            <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
-               placeholder="${defaultNickMsg}" autofocus>`;
+               class="input-control__input"
+               placeholder="${defaultNickMsg}" autofocus>
+         </div>`
+    );
 
     // Don't use a translation string, because we're too early in the call and
     // the translation may not be initialised.
     let buttons = {Ok:true};
 
     let dialog = messageHandler.openDialog(
-        null,
+        titleStr,
         message,
         true,
         buttons,

@@ -67,6 +67,10 @@
             border: 1px solid $primaryButtonHoverBackground;
             background-color: $primaryButtonHoverBackground;
         }
+
+        &[disabled] {
+            color: $primaryButtonColor;
+        }
     }
 
     &_close {
