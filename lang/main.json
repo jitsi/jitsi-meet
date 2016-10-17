@@ -133,7 +133,7 @@
         "setPasswordLabel": "Lock your room with a password."
     },
     "profile": {
-        "title": "PROFILE",
+        "title": "Profile",
         "setDisplayNameLabel": "Set your display name",
         "setEmailLabel": "Set your gravatar email"
     },
