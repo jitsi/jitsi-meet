@@ -373,6 +373,15 @@ var messageHandler = {
 
     enablePopups: function (enable) {
         popupEnabled = enable;
+    },
+
+    /**
+     * Returns true if dialog is opened
+     * false otherwise
+     * @returns {boolean} isOpened
+     */
+    isDialogOpened: function () {
+        return !!$.prompt.getCurrentStateName();
     }
 };
 
