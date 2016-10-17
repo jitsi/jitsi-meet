@@ -72,9 +72,10 @@ $notificationColor: #FFFFFF;
 $notificationBackground: $tooltipBg;
 $notificationTitleColor: $notificationColor;
 $notificationMessageColor: $notificationColor;
+$notificationLinkColor: $notificationColor;
+$notificationOpacity: 0.9;
 $notificationPadding: 15px 20px;
 $notificationBorderRadius: 4px;
-$notificationLinkColor: $notificationColor;
 
 /**
  * Misc.
