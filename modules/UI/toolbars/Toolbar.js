@@ -710,7 +710,10 @@ Toolbar = {
                 this._addMainToolbarButton(
                     button,
                     (index === 0),
-                    (index === interfaceConfig.MAIN_TOOLBAR_BUTTONS.length -1));
+                    (index === interfaceConfig.MAIN_TOOLBAR_BUTTONS.length -1),
+                    (interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX !== undefined
+                        && index
+                            === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX));
             }
         });
     },
@@ -723,13 +726,16 @@ Toolbar = {
      * toolbar
      * @param {boolean} isLast indicates if this is the last button in the
      * toolbar
+     * @param {boolean} isSplitter if this button is a splitter button for
+     * the dialog, which means that a special splitter style will be applied
      */
-    _addMainToolbarButton(button, isFirst, isLast) {
+    _addMainToolbarButton(button, isFirst, isLast, isSplitter) {
         let buttonElement = document.createElement("a");
         if (button.className)
             buttonElement.className = button.className
                                     + ((isFirst) ? " first" : "")
-                                    + ((isLast) ? " last" : "");
+                                    + ((isLast) ? " last" : "")
+                                    + ((isSplitter) ? " splitter": "");
 
         buttonElement.id = button.id;
 
