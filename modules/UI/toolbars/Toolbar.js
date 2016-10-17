@@ -711,7 +711,7 @@ Toolbar = {
                     button,
                     (index === 0),
                     (index === interfaceConfig.MAIN_TOOLBAR_BUTTONS.length -1),
-                    (interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX
+                    (interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX !== undefined
                         && index
                             === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX));
             }
