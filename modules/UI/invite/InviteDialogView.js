@@ -280,21 +280,38 @@ export default class InviteDialogView {
      * used in dialog
      */
     registerListeners() {
-        let $passInput = $('#newPasswordInput');
-        let $addPassBtn = $('#addPasswordBtn');
+        const ENTER_KEY = 13;
+        let addPasswordBtn = '#addPasswordBtn';
+        let copyInviteLink = '.copyInviteLink';
+        let newPasswordInput = '#newPasswordInput';
+        let removePassword = '#inviteDialogRemovePassword';
 
-        $(document).on('click', '.copyInviteLink', this.copyToClipboard);
-        $addPassBtn.on('click', () => {
-            let newPass = $passInput.val();
-
-            if(newPass) {
-                this.model.setRoomLocked(newPass);
-            }
-        });
-        $('#inviteDialogRemovePassword').on('click', () => {
+        $(document).on('click', copyInviteLink, this.copyToClipboard);
+        $(removePassword).on('click', () => {
             this.model.setRoomUnlocked();
         });
-        $passInput.keyup(this.disableAddPassIfInputEmpty.bind(this));
+        let boundSetPassword = this.setPassword.bind(this);
+        $(document).on('click', addPasswordBtn, boundSetPassword);
+        let boundDisablePass = this.disableAddPassIfInputEmpty.bind(this);
+        $(document).on('keypress', newPasswordInput, boundDisablePass);
+
+        // We need to handle keydown event because impromptu
+        // is listening to it too for closing the dialog
+        $(newPasswordInput).on('keydown', (e) => {
+            if (e.keyCode === ENTER_KEY) {
+                e.stopPropagation();
+                this.setPassword();
+            }
+        });
+    }
+
+    setPassword() {
+        let $passInput = $('#newPasswordInput');
+        let newPass = $passInput.val();
+
+        if(newPass) {
+            this.model.setRoomLocked(newPass);
+        }
     }
 
     /**
