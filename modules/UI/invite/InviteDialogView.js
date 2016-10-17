@@ -15,8 +15,8 @@ const States = {
  */
 export default class InviteDialogView {
     constructor(model) {
-        let InviteAttributesKey = 'inviteUrlDefaultMsg';
-        let title = APP.translation.translateString(InviteAttributesKey);
+        let inviteAttributesKey = 'inviteUrlDefaultMsg';
+        let title = APP.translation.translateString(inviteAttributesKey);
 
         this.unlockHint = "unlockHint";
         this.lockHint = "lockHint";
@@ -24,7 +24,7 @@ export default class InviteDialogView {
 
         if (this.model.inviteUrl === null) {
             this.inviteAttributes = (
-                `data-i18n="[value]inviteUrlDefaultMsg" value="${title}"`
+                `data-i18n="[value]${inviteAttributesKey}" value="${title}"`
             );
         } else {
             let encodedInviteUrl = this.model.getEncodedInviteUrl();
@@ -43,11 +43,7 @@ export default class InviteDialogView {
         dialog.submitFunction = this.submitFunction.bind(this);
         dialog.loadedFunction = this.loadedFunction.bind(this);
 
-        let titleKey = "dialog.shareLink";
-        let titleString = APP.translation.generateTranslationHTML(titleKey);
-
-        dialog.titleKey = titleKey;
-        dialog.titleString = titleString;
+        dialog.titleKey = "dialog.shareLink";
         this.dialog = dialog;
 
         this.dialog.states = this.getStates();
@@ -101,7 +97,7 @@ export default class InviteDialogView {
      */
     getStates() {
         let {
-            titleString
+            titleKey
         } = this.dialog;
         let doneKey = 'dialog.done';
         let doneMsg = APP.translation.translateString(doneKey);
@@ -110,12 +106,12 @@ export default class InviteDialogView {
         buttons[`${doneMsg}`] = true;
 
         states[States.UNLOCKED] = {
-            title: titleString,
+            titleKey,
             html: this.getShareLinkBlock() + this.getAddPasswordBlock(),
             buttons
         };
         states[States.LOCKED] = {
-            title: titleString,
+            titleKey,
             html: this.getShareLinkBlock() + this.getPasswordBlock(),
             buttons
         };
@@ -135,10 +131,12 @@ export default class InviteDialogView {
         let roomUnlockKey = 'roomUnlocked';
         let roomUnlock = APP.translation.translateString(roomUnlockKey);
         let classes = 'button-control button-control_light copyInviteLink';
+        let title = APP.translation.translateString(this.dialog.titleKey);
         return (
             `<div class="input-control">
-                <label class="input-control__label" for="inviteLinkRef">
-                    ${this.dialog.titleString}
+                <label class="input-control__label" for="inviteLinkRef"
+                    data-i18n="${this.dialog.titleKey}">
+                        ${title}
                 </label>
                 <div class="input-control__container">
                     <input class="input-control__input inviteLink"

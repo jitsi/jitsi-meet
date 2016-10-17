@@ -99,13 +99,13 @@ function LoginDialog(successCallback, cancelCallback) {
             }
         },
         connecting: {
-            title: APP.translation.translateString('dialog.connecting'),
+            titleKey: 'dialog.connecting',
             html:   '<div id="connectionStatus"></div>',
             buttons: [],
             defaultButton: 0
         },
         finished: {
-            title: APP.translation.translateString('dialog.error'),
+            titleKey: 'dialog.error',
             html:   '<div id="errorMessage"></div>',
             buttons: finishedButtons,
             defaultButton: 0,

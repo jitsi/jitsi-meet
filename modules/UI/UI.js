@@ -76,12 +76,11 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
 function promptDisplayName() {
     let labelKey = 'dialog.enterDisplayName';
     let labelStr = APP.translation.translateString(labelKey);
-    let titleStr
-        = APP.translation.translateString('dialog.displayNameRequired');
     let defaultNickMsg = APP.translation.translateString("defaultNickname");
     let message = (
         `<div class="input-control">
-            <label class="input-control__label">${labelStr}</label>
+            <label data-i18n="${labelKey}" 
+                class="input-control__label">${labelStr}</label>
             <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
                class="input-control__input"
@@ -94,7 +93,7 @@ function promptDisplayName() {
     let buttons = {Ok:true};
 
     let dialog = messageHandler.openDialog(
-        titleStr,
+        'dialog.displayNameRequired',
         message,
         true,
         buttons,
@@ -769,7 +768,6 @@ UI.connectionIndicatorShowMore = function(id) {
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     console.log('password is required');
-    let titleKey = "dialog.passwordRequired";
 
     let message = (
         `<input name="username" type="text"
@@ -788,7 +786,7 @@ UI.showLoginPopup = function(callback) {
     };
 
     messageHandler.openTwoButtonDialog({
-        titleKey,
+        titleKey : "dialog.passwordRequired",
         msgString: message,
         leftButtonKey: 'dialog.Ok',
         submitFunction,
@@ -1493,12 +1491,11 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
  */
 UI.toggleKeyboardShortcutsPanel = function() {
     if (!messageHandler.isDialogOpened()) {
-        let titleKey = 'keyboardShortcuts.keyboardShortcuts';
-        let title = APP.translation.translateString(titleKey);
         let msg = $('#keyboard-shortcuts').html();
         let buttons = { Close: true };
 
-        messageHandler.openDialog(title, msg, true, buttons);
+        messageHandler.openDialog(
+            'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
     } else {
         messageHandler.closeDialog();
     }

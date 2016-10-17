@@ -41,13 +41,12 @@ var messageHandler = {
         if (!popupEnabled)
             return null;
 
-        let title = APP.translation.generateTranslationHTML(titleKey);
         if (!message) {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
         return $.prompt(message, {
-            title: this._getFormattedTitleString(title),
+            title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,
             classes: this._getDialogClasses(),
@@ -107,7 +106,6 @@ var messageHandler = {
         buttons.push({title: cancelButton, value: false});
 
         var message = msgString;
-        var title = APP.translation.generateTranslationHTML(titleKey);
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
@@ -117,7 +115,7 @@ var messageHandler = {
         }
 
         twoButtonDialog = $.prompt(message, {
-            title: this._getFormattedTitleString(title),
+            title: this._getFormattedTitleString(titleKey),
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
@@ -146,7 +144,7 @@ var messageHandler = {
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
      *
-     * @param titleString the title of the message
+     * @param titleKey the key for the title of the message
      * @param msgString the text of the message
      * @param persistent boolean value which determines whether the message is
      *        persistent or not
@@ -158,13 +156,13 @@ var messageHandler = {
      *        loaded
      * @param closeFunction function to be called on dialog close
      */
-    openDialog: function (titleString, msgString, persistent, buttons,
+    openDialog: function (titleKey, msgString, persistent, buttons,
                               submitFunction, loadedFunction, closeFunction) {
         if (!popupEnabled)
             return;
 
         let args = {
-            title: this._getFormattedTitleString(titleString),
+            title: this._getFormattedTitleString(titleKey),
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
@@ -187,13 +185,12 @@ var messageHandler = {
      *
      * @return the title string formatted as a div.
      */
-    _getFormattedTitleString(titleString) {
+    _getFormattedTitleString(titleKey) {
         let $titleString = $('<h2>');
         $titleString.addClass('aui-dialog2-header-main');
-        $titleString.append(titleString);
-        titleString = $('<div>').append($titleString).html();
-
-        return titleString;
+        $titleString.attr('data-i18n',titleKey);
+        $titleString.append(APP.translation.translateString(titleKey));
+        return $('<div>').append($titleString).html();
     },
 
     /**
@@ -238,9 +235,9 @@ var messageHandler = {
 
         for (let state in statesObject) {
             let currentState = statesObject[state];
-            if(currentState.title) {
-                let title = currentState.title;
-                currentState.title = this._getFormattedTitleString(title);
+            if(currentState.titleKey) {
+                currentState.title
+                    = this._getFormattedTitleString(currentState.titleKey);
             }
         }
         return new Impromptu(statesObject, options);
