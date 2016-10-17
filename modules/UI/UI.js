@@ -770,7 +770,6 @@ UI.connectionIndicatorShowMore = function(id) {
 UI.showLoginPopup = function(callback) {
     console.log('password is required');
     let titleKey = "dialog.passwordRequired";
-    let titleString = APP.translation.translateString(titleKey);
 
     let message = (
         `<input name="username" type="text"
@@ -790,7 +789,6 @@ UI.showLoginPopup = function(callback) {
 
     messageHandler.openTwoButtonDialog({
         titleKey,
-        titleString,
         msgString: message,
         leftButtonKey: 'dialog.Ok',
         submitFunction,
@@ -1242,7 +1240,6 @@ UI.showExtensionExternalInstallationDialog = function (url) {
 
     messageHandler.openTwoButtonDialog({
         titleKey: 'dialog.externalInstallationTitle',
-        titleString: '',
         msgKey: 'dialog.externalInstallationMsg',
         msgString: '',
         leftButtonKey: 'dialog.goToStore',
