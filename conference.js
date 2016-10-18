@@ -1721,7 +1721,7 @@ export default {
     /**
      * Toggles the local "raised hand" status.
      */
-    maybeToggleRaisedHand() {
+    toggleRaisedHand() {
         this.setRaisedHand(!this.isHandRaised);
     },
 

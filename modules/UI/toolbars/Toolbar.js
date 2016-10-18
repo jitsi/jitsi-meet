@@ -120,7 +120,7 @@ const buttonHandlers = {
     "toolbar_button_raisehand": function () {
         JitsiMeetJS.analytics.sendEvent(
             'toolbar.raiseHand.clicked');
-        APP.conference.maybeToggleRaisedHand();
+        APP.conference.toggleRaisedHand();
     }
 };
 
@@ -262,7 +262,7 @@ const defaultToolbarButtons = {
         shortcutAttr: "raiseHandPopover",
         shortcutFunc: function() {
             JitsiMeetJS.analytics.sendEvent("shortcut.raisehand.clicked");
-            APP.conference.maybeToggleRaisedHand();
+            APP.conference.toggleRaisedHand();
         },
         shortcutDescription: "keyboardShortcuts.raiseHand",
         content: "Raise Hand",
