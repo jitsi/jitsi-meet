@@ -276,10 +276,6 @@ function _visitNode(node, callback) {
                 }
             }
 
-            // Required by:
-            // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-            userAgent += ' Chrome/31.';
-
             navigator.userAgent = userAgent;
         })();
     }
