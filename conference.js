@@ -423,19 +423,6 @@ class ConferenceConnector {
 }
 
 /**
- * Sends statistics from APP.tokenData
- */
-function sendTokenDataStats() {
-    let {server, group} = APP.tokenData;
-    if(server) {
-        APP.conference.logEvent("server." + server, 1);
-    }
-    if(group) {
-        APP.conference.logEvent("group", group);
-    }
-}
-
-/**
  * Disconnects the connection.
  * @returns resolved Promise. We need this in order to make the Promise.all
  * call in hangup() to resolve when all operations are finished.
@@ -515,7 +502,6 @@ export default {
         return JitsiMeetJS.init(config)
             .then(() => {
                 setAnalyticsPermanentProperties();
-                sendTokenDataStats();
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
                 console.log('initialized with %s local tracks', tracks.length);
