@@ -352,6 +352,7 @@ export default class InviteDialogView {
         if (!pass)
             pass = APP.translation.translateString("passwordSetRemotely");
 
+        $('#inviteDialogPassword').attr("data-i18n", "passwordSetRemotely");
         $('#inviteDialogPassword').text(pass);
         $('#newPasswordInput').val('');
         this.disableAddPassIfInputEmpty();
