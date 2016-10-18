@@ -68,7 +68,8 @@ function createRateFeedbackHTML() {
             </div>
             <div class="details">
                 <textarea id="feedbackTextArea" class="input-control__input"
-                    placeholder="${ feedbackHelp }"></textarea>
+                    placeholder="${ feedbackHelp }" 
+                    data-i18n="[placeholder]dialog.feedbackHelp"></textarea>
             </div>
         </form>`;
 }
