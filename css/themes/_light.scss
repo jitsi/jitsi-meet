@@ -46,7 +46,5 @@ $linkHoverFontColor: darken(#3572b0, 10%);
 $dropdownColor: #333;
 
 // Popover colors
-$popoverArrowBorderColor: rgba(0, 0, 0, 0.25);
-$popoverArrowBorderColorFallback: #999999;
-$popoverBorderColor: rgba(0, 0, 0, 0.2);
-$popoverBorderColorFallback: #cccccc;
+$popoverBg: #000;
+$popoverFontColor: #ffffff;

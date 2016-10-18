@@ -8,11 +8,10 @@
     min-width: 100px;
     padding: 1px;
     text-align: left;
-    color: $auiDialogColor;
-    background-color: $auiDialogContentBg;
+    color: $popoverFontColor;
+    background-color: $popoverBg;
     background-clip: padding-box;
-    border: 1px solid $popoverBorderColorFallback;
-    border: 1px solid $popoverBorderColor;
+    border: 1px solid $popoverBg;
     border-radius: 3px;
     /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
@@ -65,7 +64,6 @@
         margin: 10px auto;
     }
 
-
     &__clear {
         position: absolute;
         display: block;
@@ -80,8 +78,7 @@
         left: 50%;
         margin-left: -5px;
         border-bottom-width: 0;
-        border-top-color: $popoverArrowBorderColorFallback;
-        border-top-color: $popoverArrowBorderColor;
+        border-top-color: $popoverBg;
         bottom: -5px;
         @extend .jitsipopover__clear;
 
@@ -91,7 +88,7 @@
             bottom: 1px;
             margin-left: -5px;
             border-bottom-width: 0;
-            border-top-color: $auiDialogContentBg;
+            border-top-color: $popoverBg;
             @extend .jitsipopover__clear;
         }
     }
