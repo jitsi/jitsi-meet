@@ -48,17 +48,36 @@
 .feedback.aui-dialog2{
     .aui-dialog2{
         &-header {
-            background-color: $auiDialogContentBg;
+            background-color: $feedbackContentBg;
             border-bottom-color: transparent;
             padding-top: 30px;
             h2 {
+                color: $feedbackTextColor;
                 text-align: center;
             }
         }
 
         &-content {
+            background-color: $feedbackContentBg;
             text-align: center;
             padding: 10px 40px 20px 40px;
+
+            .input-control{
+                &__input {
+                    background-color: $feedbackInputBg;
+                    color: $feedbackInputTextColor;
+
+                    &::-webkit-input-placeholder {
+                        color: $feedbackInputPlaceholderColor;
+                    }
+                    &::-moz-placeholder {  /* Firefox 19+ */
+                        color: $feedbackInputPlaceholderColor;
+                    }
+                    &:-ms-input-placeholder {
+                        color: $feedbackInputPlaceholderColor;
+                    }
+                }
+            }
 
             .rating {
                 line-height: 1.2;
@@ -68,10 +87,12 @@
                 .star-label {
                     height: 16px;
                     font-size: 14px;
+                    color: $rateStarLabelColor;
                 }
                 .star-btn {
+                    display: inline-block;
                     color: $rateStarDefault;
-                    font-size: 36px;
+                    font-size: 34px;
                     position: relative;
                     cursor: pointer;
                     outline: none;
@@ -97,7 +118,7 @@
             }
         }
         &-footer {
-            background-color: $auiDialogContentBg;
+            background-color: $feedbackContentBg;
             border-top-color: transparent;
         }
     }

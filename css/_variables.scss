@@ -47,9 +47,17 @@ $raiseHandBg: #D6D61E;
 $audioLevelBg: #44A5FF;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 
+/**
+ * Feedback Modal
+ */
+$feedbackContentBg: #fff;
+$feedbackInputBg: #fff;
+$feedbackTextColor: #000;
+$feedbackInputTextColor: #333;
+$feedbackInputPlaceholderColor: #777;
+$rateStarLabelColor: #333;
 $rateStarDefault: #ccc;
 $rateStarActivity: #165ecc;
-$rateStarLabelColor: #333;
 
 /**
  * Misc.
