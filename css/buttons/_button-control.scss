@@ -60,7 +60,7 @@
     &_primary {
         background-color: $primaryButtonBackground;
         border: 1px solid $primaryButtonBackground;
-        color: $primaryButtonColor;
+        color: $primaryButtonColor !important;
         font-weight: $primaryButtonFontWeight;
 
         &:hover {
