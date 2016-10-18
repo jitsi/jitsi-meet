@@ -128,27 +128,31 @@ function LoginDialog(successCallback, cancelCallback) {
     /**
      * Displays error message in 'finished' state which allows either to cancel
      * or retry.
-     * @param message the final message to be displayed.
+     * @param messageKey the key to the message to be displayed.
+     * @param code the code error (optional)
      */
-    this.displayError = function (message) {
+    this.displayError = function (messageKey, code) {
 
         let finishedState = connDialog.getState('finished');
 
         let errorMessageElem = finishedState.find('#errorMessage');
-        errorMessageElem.text(message);
+        errorMessageElem.attr("data-i18n", messageKey);
+        errorMessageElem.text(
+            APP.translation.translateString(messageKey) + (code ? code : ''));
 
         connDialog.goToState('finished');
     };
 
     /**
      *  Show message as connection status.
-     * @param {string} message
+     * @param {string} messageKey the key to the message
      */
-    this.displayConnectionStatus = function (message) {
+    this.displayConnectionStatus = function (messageKey) {
         let connectingState = connDialog.getState('connecting');
 
         let connectionStatus = connectingState.find('#connectionStatus');
-        connectionStatus.text(message);
+        connectionStatus.attr("data-i18n", messageKey);
+        connectionStatus.text(APP.translation.translateString(messageKey));
     };
 
     /**

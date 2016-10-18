@@ -146,16 +146,13 @@ function doXmppAuth (room, lockPassword) {
                 room.getName(), APP.conference._getConferenceOptions()
             );
 
-            loginDialog.displayConnectionStatus(
-                APP.translation.translateString('connection.FETCH_SESSION_ID')
-            );
+            loginDialog.displayConnectionStatus('connection.FETCH_SESSION_ID');
 
             newRoom.room.moderator.authenticate().then(function () {
                 connection.disconnect();
 
                 loginDialog.displayConnectionStatus(
-                    APP.translation.translateString('connection.GOT_SESSION_ID')
-                );
+                    'connection.GOT_SESSION_ID');
 
                 // authenticate conference on the fly
                 room.join(lockPassword);
@@ -166,11 +163,8 @@ function doXmppAuth (room, lockPassword) {
 
                 console.error('Auth on the fly failed', error);
 
-                let errorMsg = APP.translation.translateString(
-                    'connection.GET_SESSION_ID_ERROR'
-                );
-
-                loginDialog.displayError(errorMsg + code);
+                loginDialog.displayError(
+                    'connection.GET_SESSION_ID_ERROR', code);
             });
         }, function (err) {
             loginDialog.displayError(err);
