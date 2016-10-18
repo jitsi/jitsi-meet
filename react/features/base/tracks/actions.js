@@ -26,9 +26,9 @@ const JitsiTrackEvents = JitsiMeetJS.events.track;
 export function createLocalTracks(options = {}) {
     return dispatch =>
         JitsiMeetJS.createLocalTracks({
+            cameraDeviceId: options.cameraDeviceId,
             devices: options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ],
             facingMode: options.facingMode || CAMERA_FACING_MODE.USER,
-            cameraDeviceId: options.cameraDeviceId,
             micDeviceId: options.micDeviceId
         })
         .then(localTracks => dispatch(_updateLocalTracks(localTracks)))
@@ -233,10 +233,31 @@ function _disposeAndRemoveTracks(tracks) {
 }
 
 /**
- * Determines which local media tracks should be added, and which - removed.
+ * Finds the first <tt>JitsiLocalTrack</tt> in a specific array/list of
+ * <tt>JitsiTrack</tt>s which is of a specific <tt>MEDIA_TYPE</tt>.
+ *
+ * @param {JitsiTrack[]} tracks - The array/list of <tt>JitsiTrack</tt>s to look
+ * through.
+ * @param {MEDIA_TYPE} mediaType - The <tt>MEDIA_TYPE</tt> of the first
+ * <tt>JitsiLocalTrack</tt> to be returned.
+ * @returns {JitsiLocalTrack} The first <tt>JitsiLocalTrack</tt>, if any, in the
+ * specified <tt>tracks</tt> of the specified <tt>mediaType</tt>.
+ */
+function _getLocalTrack(tracks, mediaType) {
+    return tracks.find(track =>
+        track.isLocal()
+
+            // XXX JitsiTrack#getType() returns a MEDIA_TYPE value in the terms
+            // of lib-jitsi-meet while mediaType is in the terms of
+            // jitsi-meet-react.
+            && track.getType() === mediaType);
+}
+
+/**
+ * Determines which local media tracks should be added and which removed.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} currentTracks - List of
- * existing media tracks.
+ * current/existing media tracks.
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} newTracks - List of new media
  * tracks.
  * @private
@@ -246,22 +267,18 @@ function _disposeAndRemoveTracks(tracks) {
  * }}
  */
 function _getLocalTracksToChange(currentTracks, newTracks) {
-    const currentLocalAudio
-        = currentTracks.find(t => t.isLocal() && t.isAudioTrack());
-    const currentLocalVideo
-        = currentTracks.find(t => t.isLocal() && t.isVideoTrack());
-    const newLocalAudio = newTracks.find(t => t.isLocal() && t.isAudioTrack());
-    const newLocalVideo = newTracks.find(t => t.isLocal() && t.isVideoTrack());
-    const tracksToRemove = [];
     const tracksToAdd = [];
+    const tracksToRemove = [];
 
-    if (newLocalAudio) {
-        tracksToAdd.push(newLocalAudio);
-        currentLocalAudio && tracksToRemove.push(currentLocalAudio);
-    }
-    if (newLocalVideo) {
-        tracksToAdd.push(newLocalVideo);
-        currentLocalVideo && tracksToRemove.push(currentLocalVideo);
+    for (const mediaType of [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ]) {
+        const newTrack = _getLocalTrack(newTracks, mediaType);
+
+        if (newTrack) {
+            const currentTrack = _getLocalTrack(currentTracks, mediaType);
+
+            tracksToAdd.push(newTrack);
+            currentTrack && tracksToRemove.push(currentTrack);
+        }
     }
 
     return {
