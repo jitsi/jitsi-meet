@@ -92,7 +92,7 @@
                 .star-btn {
                     display: inline-block;
                     color: $rateStarDefault;
-                    font-size: 34px;
+                    font-size: $rateStarSize;
                     position: relative;
                     cursor: pointer;
                     outline: none;
@@ -120,6 +120,10 @@
         &-footer {
             background-color: $feedbackContentBg;
             border-top-color: transparent;
+
+            .button-control {
+                color: $feedbackCancelFontColor;
+            }
         }
     }
 }
