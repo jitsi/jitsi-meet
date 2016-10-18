@@ -47,3 +47,10 @@
         right: 0;
     }
 }
+
+/**
+ * Set a specific color for read only style.
+ */
+input:read-only {
+    color: $readOnlyInputColor;
+}
