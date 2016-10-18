@@ -257,7 +257,7 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
 
     if (newLocalAudio) {
         tracksToAdd.push(newLocalAudio);
-        currentLocalAudio && tracksToRemove.push(newLocalVideo);
+        currentLocalAudio && tracksToRemove.push(currentLocalAudio);
     }
     if (newLocalVideo) {
         tracksToAdd.push(newLocalVideo);
