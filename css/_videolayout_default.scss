@@ -25,9 +25,8 @@
     position:absolute;
     text-align:right;
     height:196px;
-    padding: 10px 10px 10px 5px;
+    padding: 10px 10px 17px 5px;
     bottom: 0;
-    left: 0;
     right: 0;
     width:auto;
     border: 2px solid transparent;
@@ -603,4 +602,39 @@
 
 .moveToCorner + .moveToCorner {
     right: 80px;
+}
+
+.filmstripToolbar {
+    width: 20px;
+    position: absolute;
+    right: 4px;
+    bottom: 20px;
+    z-index: 6;
+
+    button {
+        font-size: 14px;
+        line-height: 1.2;
+        text-align: center;
+        background: transparent;
+        opacity: 0.7;
+        height: auto;
+        width: 100%;
+        padding: 0;
+        margin: 0 1px;
+        border: none;
+
+        -webkit-appearance: none;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        i {
+            cursor: pointer;
+        }
+    }
+}
+
+.filmstripToolbar + #remoteVideos {
+    padding-right: 24px;
 }

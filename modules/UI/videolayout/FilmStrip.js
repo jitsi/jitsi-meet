@@ -12,6 +12,46 @@ const FilmStrip = {
     init (eventEmitter) {
         this.filmStrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
+        this.filmStripIsVisible = true;
+        this.renderFilmstripToolbar();
+        this.activateHideButton();
+    },
+
+    /**
+     * Attach 'click' listener to "hide filmstrip" button
+     */
+    activateHideButton () {
+        $('#videospace').on('click', '#hideVideoToolbar', () => {
+            var icon = document.querySelector('#hideVideoToolbar i');
+
+            this.filmStripIsVisible = !this.filmStripIsVisible;
+            this.toggleFilmStrip(this.filmStripIsVisible);
+
+            icon.classList.remove(
+                this.filmStripIsVisible ? 'icon-menu-up' : 'icon-menu-down');
+            icon.classList.add(
+                this.filmStripIsVisible ? 'icon-menu-down' : 'icon-menu-up');
+        });
+    },
+
+    /**
+     * Shows toolbar on the right of the filmstrip
+     */
+    renderFilmstripToolbar () {
+        // create toolbar
+        var container = document.createElement('div');
+        container.className = 'filmstripToolbar';
+
+        container.innerHTML = `
+            <button id="hideVideoToolbar">
+                <i class="icon-menu-${this.filmStripIsVisible ? 'down' : 'up'}">
+                </i>
+            </button>
+        `;
+
+        // show toolbar
+        document.querySelector('#videospace')
+            .insertBefore(container, document.querySelector('#remoteVideos'));
     },
 
     /**
