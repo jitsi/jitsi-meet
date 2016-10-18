@@ -77,3 +77,21 @@
     -moz-box-shadow: $type $h $y $blur $color;
     box-shadow: $type $h $y $blur $color;
 }
+
+/**
+* Mixin styling placeholder
+**/
+@mixin placeholder() {
+    $selectors: (
+        "::-webkit-input-placeholder",
+        "::-moz-placeholder",
+        ":-moz-placeholder",
+        ":-ms-input-placeholder"
+    );
+
+    @each $selector in $selectors {
+        #{$selector} {
+            @content;
+        }
+    }
+}
