@@ -131,10 +131,12 @@ const TOOLTIP_POSITIONS = {
      * @param position the position of the tooltip in relation to the element
      */
     setTooltip: function (element, key, position) {
-        element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
-        element.setAttribute('data-i18n', '[content]' + key);
+        if (element !== null) {
+            element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
+            element.setAttribute('data-i18n', '[content]' + key);
 
-        APP.translation.translateElement($(element));
+            APP.translation.translateElement($(element));
+        }      
     },
 
     /**
