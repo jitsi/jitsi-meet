@@ -47,3 +47,7 @@
         right: 0;
     }
 }
+
+input:read-only {
+    color: $readOnlyInputColor;
+}
