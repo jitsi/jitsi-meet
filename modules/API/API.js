@@ -50,7 +50,8 @@ function initCommands() {
         "toggle-film-strip": APP.UI.toggleFilmStrip,
         "toggle-chat": APP.UI.toggleChat,
         "toggle-contact-list": APP.UI.toggleContactList,
-        "toggle-share-screen": APP.conference.toggleScreenSharing,
+        "toggle-share-screen":
+            APP.conference.toggleScreenSharing.bind(APP.conference),
         "video-hangup": () => APP.conference.hangup()
     };
     Object.keys(commands).forEach(function (key) {
