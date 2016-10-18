@@ -62,6 +62,12 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
     return options.join('');
 }
 
+/**
+ * Replace html select element to select2 custom dropdown
+ *
+ * @param {jQueryElement} $el native select element
+ * @param {function} onSelectedCb fired if item is selected
+ */
 function initSelect2($el, onSelectedCb) {
     $el.auiSelect2({
         minimumResultsForSearch: Infinity,

@@ -9,6 +9,20 @@ form.aui {
     }
 
 }
+.select2-results{
+    &::-webkit-scrollbar {
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-track-piece {
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #3572b0;
+    }
+}
 .aui-select2-drop{
     z-index: 901;
 }
