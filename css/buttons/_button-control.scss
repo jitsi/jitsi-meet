@@ -4,6 +4,7 @@
     border: 1px solid $buttonBorder;
     vertical-align: baseline;
     height: 30px;
+    min-width: 60px;
     padding: 4px 10px;
     margin: 0;
     line-height: 1.5em;
@@ -13,7 +14,6 @@
     font-size: 14px;
     margin-left: 10px;
     color: $buttonColor;
-    letter-spacing: $letterSpacing;
     font-weight: $buttonFontWeight;
     @include transition(background-color .1s ease-out);
 

@@ -36,13 +36,16 @@ input[type='text'], input[type='password'], textarea {
     color: $inputColor;
     border-radius: $borderRadius;
     line-height: 32px;
-    letter-spacing: $letterSpacing;
     height: 32px;
     text-align: left;
     border:1px solid $inputBorderColor;
     background-color: $inputBackground;
     outline: none; /* removes the default outline */
     resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
+@include placeholder {
+    color: $inputColor;
 }
 
 textarea {
@@ -61,7 +64,6 @@ button, input, select, textarea {
     vertical-align: baseline;
     color: $inputColor;
     font-size: 1em;
-    letter-spacing: $letterSpacing;
 }
 
 button, select, input[type="button"],

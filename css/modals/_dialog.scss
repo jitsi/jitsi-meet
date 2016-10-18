@@ -37,7 +37,6 @@
                 h2 {
                     font-size: em(20, 12);
                     font-weight: $dialogTitleFontWeight;
-                    letter-spacing: $titleLetterSpacing;
                     color: $auiDialogColor;
                 }
 
@@ -58,7 +57,6 @@
 
                 p,span, h3 {
                     font-weight: $labelFontWeight;
-                    letter-spacing: $letterSpacing;
                 }
 
                 &:last-child {

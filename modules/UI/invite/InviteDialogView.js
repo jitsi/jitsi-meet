@@ -103,16 +103,21 @@ export default class InviteDialogView {
         let {
             titleString
         } = this.dialog;
-
+        let doneKey = 'dialog.done';
+        let doneMsg = APP.translation.translateString(doneKey);
         let states = {};
+        let buttons = {};
+        buttons[`${doneMsg}`] = true;
 
         states[States.UNLOCKED] = {
             title: titleString,
-            html: this.getShareLinkBlock() + this.getAddPasswordBlock()
+            html: this.getShareLinkBlock() + this.getAddPasswordBlock(),
+            buttons
         };
         states[States.LOCKED] = {
             title: titleString,
-            html: this.getShareLinkBlock() + this.getPasswordBlock()
+            html: this.getShareLinkBlock() + this.getPasswordBlock(),
+            buttons
         };
 
         return states;
@@ -125,7 +130,7 @@ export default class InviteDialogView {
     getShareLinkBlock() {
         let copyKey = 'dialog.copy';
         let copyText = APP.translation.translateString(copyKey);
-        let roomLockDescKey = 'roomLocked';
+        let roomLockDescKey = 'dialog.roomLocked';
         let roomLockDesc = APP.translation.translateString(roomLockDescKey);
         let roomUnlockKey = 'roomUnlocked';
         let roomUnlock = APP.translation.translateString(roomUnlockKey);
@@ -165,6 +170,8 @@ export default class InviteDialogView {
         let addPassText = APP.translation.translateString(addPassKey);
         let addKey = 'dialog.add';
         let addText = APP.translation.translateString(addKey);
+        let hintKey = 'dialog.createPassword';
+        let hintMsg = APP.translation.translateString(hintKey);
         let html;
 
         if (this.model.isModerator) {
@@ -175,7 +182,7 @@ export default class InviteDialogView {
                        data-i18n="${addPassKey}">${addPassText}</label>
                 <div class="input-control__container">
                     <input class="input-control__input" id="newPasswordInput"
-                           type="text">
+                           type="text" placeholder="${hintMsg}">
                     <button id="addPasswordBtn" id="inviteDialogAddPassword"
                             disabled data-i18n="${addKey}"
                             class="button-control button-control_light">
@@ -242,7 +249,6 @@ export default class InviteDialogView {
      * Opening the dialog
      */
     open() {
-        let leftButton;
         let {
             submitFunction,
             loadedFunction,
@@ -250,23 +256,12 @@ export default class InviteDialogView {
         } = this.dialog;
 
         let states = this.getStates();
-
-        let buttons = [];
-        let leftButtonKey = "dialog.Invite";
-        let cancelButton
-            = APP.translation.generateTranslationHTML("dialog.Cancel");
-        buttons.push({title: cancelButton, value: false});
-
-        leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
-        buttons.push({ title: leftButton, value: true});
-
         let initial = this.model.roomLocked ? States.LOCKED : States.UNLOCKED;
 
         APP.UI.messageHandler.openDialogWithStates(states, {
             submit: submitFunction,
             loaded: loadedFunction,
             close: closeFunction,
-            buttons,
             size: 'medium'
         });
         $.prompt.goToState(initial);
