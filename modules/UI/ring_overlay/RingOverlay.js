@@ -13,7 +13,7 @@ let overlay = null;
  * @param {boolean} shown indicates whether the avatar on the large video is
  *  currently displayed or not.
  */
-function onAvatarDisplayed(shown) {
+function onAvatarVisible(shown) {
     overlay._changeBackground(shown);
 }
 
@@ -148,7 +148,7 @@ export default {
 
         overlay = new RingOverlay(callee, disableRingingSound);
         APP.UI.addListener(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE,
-            onAvatarDisplayed);
+            onAvatarVisible);
     },
 
     /**
@@ -162,7 +162,7 @@ export default {
         overlay.destroy();
         overlay = null;
         APP.UI.removeListener(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE,
-            onAvatarDisplayed);
+            onAvatarVisible);
         return true;
     },
 
