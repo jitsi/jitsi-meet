@@ -27,6 +27,7 @@ $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
 // Toolbar
+$toolbarBackground: rgba(0, 0, 0, 0.5);
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 $toolbarBadgeBackground: #165ECC;
 $toolbarBadgeColor: #FFFFFF;
@@ -47,7 +48,7 @@ $raiseHandBg: #D6D61E;
 $audioLevelBg: #44A5FF;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
-$videoStateIndicatorBackground: $tooltipBg;
+$videoStateIndicatorBackground: $toolbarBackground;
 
 /**
  * Feedback Modal

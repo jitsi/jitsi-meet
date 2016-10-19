@@ -550,51 +550,39 @@
     background: $videoStateIndicatorBackground;
     color: $videoStateIndicatorColor;
     font-size: 13px;
-    line-height: 1.4;
+    line-height: 20px;
     text-align: center;
-    display: block;
-    min-width: 37px;
-    padding: 10px 0;
+    min-width: 40px;
+    height: 40px;
+    padding: 10px 5px;
     border-radius: 50%;
+    position: absolute;
+    box-sizing: border-box;
 }
 
-#videoResolutionLabel {
+#videoResolutionLabel,
+.centeredVideoLabel {
     display: none;
-    position: absolute;
-    top: 30px;
-    right: 30px;
     z-index: 1011;
 }
 
 .centeredVideoLabel {
-    display: none;
-    position: absolute;
     bottom: 45%;
-    top: auto;
-    right: auto;
-    left: auto;
-    line-height: 28px;
-    height: 28px;
-    width: auto;
-    padding: 5px;
-    margin-right: auto;
-    margin-left: auto;
-    background: rgba(0,0,0,.5);
-    color: #FFF;
-    z-index: 1011;
     border-radius: 2px;
     -webkit-transition: all 2s 2s linear;
     transition: all 2s 2s linear;
+
+    &.moveToCorner {
+        bottom: auto;
+    }
 }
 
 .moveToCorner {
+    position: absolute;
     top: 30px;
-    right: 80px; /*leave free space for the HD label*/
-    margin-right: 0px;
-    margin-left: auto;
-    background: rgba(0,0,0,.3);
-    color: rgba(255,255,255,.5);
+    right: 30px;
 }
 
-.hidden {
+.moveToCorner + .moveToCorner {
+    right: 80px;
 }
