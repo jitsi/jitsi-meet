@@ -30,15 +30,15 @@
             <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
 
             <div id="enter_room_container">
-                    <div id="enter_room_form" >
-                        <div id="domain_name"></div>
-                        <div id="enter_room">
-                            <input id="enter_room_field" type="text" autofocus/>
-                            <div class="icon-reload" id="reload_roomname"></div>
-                            <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
+                <div id="enter_room_form" >
+                    <div id="domain_name"></div>
+                    <div id="enter_room">
+                        <input id="enter_room_field" type="text" autofocus/>
+                        <div class="icon-reload" id="reload_roomname"></div>
+                        <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
 
-                        </div>
                     </div>
+                </div>
             </div>
             <div id="brand_header"></div>
             <input type='checkbox' name='checkbox' id="disable_welcome"/>
@@ -179,37 +179,45 @@
                 </div>
                 <div id="settings_container" class="sideToolbarContainer__inner">
                     <div class="title" data-i18n="settings.title"></div>
-                    <select id="languages_selectbox" class="first hide"></select>
-                    <div id="deviceOptionsTitle" class="subTitle hide" data-i18n="settings.audioVideo"></div>
-                    <div id="devicesOptions" class="hide">
-                        <div class="sideToolbarBlock first">
-                            <label class="first" data-i18n="settings.selectCamera"></label>
-                            <select id="selectCamera"></select>
+                    <form class="aui">
+                        <div id="languagesSelectWrapper" class="first hide">
+                            <select id="languagesSelect" style="width: 80%; margin-left: 10%"></select>
                         </div>
-                        <div class="sideToolbarBlock">
-                            <label data-i18n="settings.selectMic"></label>
-                            <select  id="selectMic"></select>
+                        <div id="deviceOptionsWrapper" class="hide">
+                            <div id="deviceOptionsTitle" class="subTitle hide" data-i18n="settings.audioVideo"></div>
+                            <div class="sideToolbarBlock first">
+                                <label class="first" data-i18n="settings.selectCamera"></label>
+                                <select id="selectCamera"></select>
+                            </div>
+                            <div class="sideToolbarBlock">
+                                <label data-i18n="settings.selectMic"></label>
+                                <select id="selectMic"></select>
+                            </div>
+                            <div class="sideToolbarBlock">
+                                <label data-i18n="settings.selectAudioOutput"></label>
+                                <select id="selectAudioOutput"></select>
+                            </div>
                         </div>
-                        <div class="sideToolbarBlock">
-                            <label data-i18n="settings.selectAudioOutput"></label>
-                            <select  id="selectAudioOutput"></select>
+                        <div id="moderatorOptionsWrapper" class="hide">
+                            <div id="moderatorOptionsTitle" class="subTitle hide" data-i18n="settings.moderator"></div>
+                            <div id="startMutedOptions" class="hide">
+                                <div class="sideToolbarBlock first">
+                                    <input type="checkbox" id="startAudioMuted">
+                                    <label class="startMutedLabel" for="startAudioMuted" data-i18n="settings.startAudioMuted"></label>
+                                </div>
+                                <div class="sideToolbarBlock">
+                                    <input type="checkbox" id="startVideoMuted">
+                                    <label class="startMutedLabel" for="startVideoMuted" data-i18n="settings.startVideoMuted"></label>
+                                </div>
+                            </div>
+                            <div id="followMeOptions" class="hide">
+                                <div class="sideToolbarBlock">
+                                    <input type="checkbox" id="followMeCheckBox">
+                                    <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div id="moderatorOptionsTitle" class="subTitle hide" data-i18n="settings.moderator"></div>
-                    <div id = "startMutedOptions" class="hide">
-                        <div class="sideToolbarBlock first">
-                            <input type="checkbox" id="startAudioMuted">
-                            <label class="startMutedLabel" for="startAudioMuted" data-i18n="settings.startAudioMuted"></label>
-                        </div>
-                        <div class="sideToolbarBlock">
-                            <input type="checkbox" id="startVideoMuted">
-                            <label class="startMutedLabel" for="startVideoMuted" data-i18n="settings.startVideoMuted"></label>
-                        </div>
-                    </div>
-                    <div id="followMeOptions" class="sideToolbarBlock hide">
-                        <input type="checkbox" id="followMeCheckBox">
-                        <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
