@@ -29,10 +29,12 @@
         android:name=".MainActivity">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.LAUNCHER" />
             <data android:host="beta.meet.jit.si" android:scheme="https" />
             <data android:host="chaos.hipchat.me" android:scheme="https" />
             <data android:host="enso.me" android:scheme="https" />
