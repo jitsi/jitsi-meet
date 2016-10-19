@@ -32,9 +32,8 @@
         text-align: center;
     }
 
-
     &__icon {
-        margin-right: 5px;
+        margin-right: 2px;
     }
 
     &__green
@@ -56,8 +55,7 @@
         bottom: -35px;
     }
 
-    &__showmore
-    {
+    &__showmore {
         display: block;
         text-align: center;
         width: 90px;
@@ -74,22 +72,23 @@
     }
 
     > .arrow {
-        border-width: 5px;
+        border-width: 5px 2.5px 0 2.5px;
         left: 50%;
         margin-left: -5px;
+        @extend .jitsipopover__clear;
         border-bottom-width: 0;
         border-top-color: $popoverBg;
         bottom: -5px;
-        @extend .jitsipopover__clear;
+
 
         &:after {
             border-width: 5px;
             content: " ";
             bottom: 1px;
             margin-left: -5px;
+            @extend .jitsipopover__clear;
             border-bottom-width: 0;
             border-top-color: $popoverBg;
-            @extend .jitsipopover__clear;
         }
     }
 }

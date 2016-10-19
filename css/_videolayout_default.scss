@@ -261,29 +261,6 @@
     height: 13px;
 }
 
-.connection_info
-{
-    float: left;
-    padding-bottom: 5px;
-}
-
-.connection_info > table
-{
-    white-space: nowrap;
-}
-
-.connection_info, .connection_info > table
-{
-    text-align: left;
-    font-size: 12px;
-    font-weight: 400;
-    color: $popoverFontColor;
-
-    td {
-        padding: 5px 0;
-    }
-}
-
 #localVideoContainer>span.status:hover,
 #localVideoContainer .displayname:hover {
     cursor: text;

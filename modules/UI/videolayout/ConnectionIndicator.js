@@ -95,15 +95,8 @@ ConnectionIndicator.prototype.generateText = function () {
         return `${width}x${height}`;
     }).join(', ') || 'N/A';
 
-    let headerKey = 'connectionindicator.header';
     let result = (
-        `<table style='width:100%'>
-            <tr>
-                <td>
-                    <span class="jitsipopover__title"
-                        data-i18n="">${translate(headerKey)}</span>
-                </td>
-            </tr>
+        `<table class="connection-info__container" style='width:100%'>
             <tr>
                 <td>
                     <span data-i18n='connectionindicator.bitrate'>
@@ -111,10 +104,8 @@ ConnectionIndicator.prototype.generateText = function () {
                     </span>
                 </td>
                 <td>
-                    <span class='jitsipopover__green'>&darr;</span>
-                    ${downloadBitrate}
-                    <span class='jitsipopover__orange'>&uarr;</span>
-                    ${uploadBitrate}
+                    <span class='jitsipopover__green'>&darr;</span>${downloadBitrate}
+                    <span class='jitsipopover__orange'>&uarr;</span>${uploadBitrate}
                 </td>
             </tr>
             <tr>
@@ -245,7 +236,7 @@ ConnectionIndicator.prototype.generateText = function () {
 
         }
 
-        result += "<table  style='width:100%'>" +
+        result += "<table class='connection-info__container' style='width:100%'>" +
             "<tr>" +
             "<td>" +
             "<span data-i18n='connectionindicator.bandwidth'>" +
@@ -292,7 +283,7 @@ ConnectionIndicator.prototype.create = function () {
         this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
         $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
-        {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'>" +
+        {content: "<div class=\"connection-info\" data-i18n='connectionindicator.na'>" +
             APP.translation.translateString("connectionindicator.na") + "</div>",
             skin: "black"});
 
@@ -405,9 +396,9 @@ ConnectionIndicator.prototype.updatePopoverData = function (force) {
     // popover is visible or we force to do so.
     if(this.popover.popoverShown || force) {
         this.popover.updateContent(
-            `<div class="connection_info">${this.generateText()}</div>`
+            `<div class="connection-info">${this.generateText()}</div>`
         );
-        APP.translation.translateElement($(".connection_info"));
+        APP.translation.translateElement($(".connection-info"));
     }
 };
 
