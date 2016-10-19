@@ -2,15 +2,15 @@
  * Toolbar side panel main container element.
  */
 #sideToolbarContainer {
-    position: absolute;
-    top: 0;
-    left: $defaultToolbarSize;
-    width: 0;
     background-color: rgba(0,0,0,0.8);
     height: 100%;
+    left: $defaultToolbarSize;
     max-width: $sidebarWidth;
-    z-index: 800;
     overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 800;
 
     /**
      * Labels inside the side panel.
@@ -33,8 +33,8 @@
     /**
      * Specify colors for edit elements.
      */
-    select, input[type="button"], input[type="text"],
-    input[type="reset"], input[type="submit"] {
+    select, input[type="button"], input[type="text"], input[type="reset"],
+    input[type="submit"] {
         color: $inputColor;
         background: $inputBackground;
         border: none;
@@ -45,19 +45,18 @@
      */
     .sideToolbarBlock {
         input, button, a, select {
-            margin-top: 5px;
             margin-left: 0;
+            margin-top: 5px;
             width: 100%;
         }
         input[type='checkbox'] {
-            width: auto !important;
             display: inline;
+            width: auto !important;
             > label {
                 margin-top: 5px;
                 width: 80%;
             }
         }
-
     }
 
     /**
@@ -74,9 +73,7 @@
         /**
          * Titles and subtitles of inner containers.
          */
-         div.title,
-         div.subTitle {
-            text-align: left;
+        div.title, div.subTitle {
             margin: 10px 0;
         }
 
@@ -85,18 +82,19 @@
          */
         div.title {
             color: $defaultColor !important;
-            text-align: center;
             font-size: 16px;
+            text-align: center;
         }
 
         /**
          * Subtitle specific properties.
          */
         div.subTitle {
+            color: $defaultSideBarFontColor !important;
             font-size: 11px;
             font-weight: 500;
-            color: $defaultSideBarFontColor !important;
             margin-left: 10%;
+            text-align: left;
         }
 
         /**

@@ -4,7 +4,6 @@ deploy-local.sh
 libs/
 all.css
 *css.map
-*js.map
 unsupported_browser.css
 .remote-sync.json
 .sync-config.cson

@@ -1,4 +1,4 @@
-/* global APP, $, JitsiMeetJS, interfaceConfig, AJS */
+/* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
 
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
@@ -70,11 +70,11 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
  */
 function initSelect2($el, onSelectedCb) {
     $el.auiSelect2({
-        minimumResultsForSearch: Infinity,
-        dropdownCssClass: 'dropdown-dark',
         containerCssClass: 'input-container-dark',
+        dropdownCssClass: 'dropdown-dark',
+        minimumResultsForSearch: Infinity
     });
-    if (typeof onSelectedCb === 'function'){
+    if (typeof onSelectedCb === 'function') {
         $el.change(onSelectedCb);
     }
 }
@@ -143,14 +143,10 @@ export default {
             });
 
             // FOLLOW ME
-            let followMeToggle = document.getElementById('followMeCheckBox');
-            followMeToggle.addEventListener('change', function() {
-                let isFollowMeEnabled = followMeToggle.checked;
-
-                emitter.emit(
-                    UIEvents.FOLLOW_ME_ENABLED,
-                    isFollowMeEnabled
-                );
+            const followMeToggle = document.getElementById('followMeCheckBox');
+            followMeToggle.addEventListener('change', () => {
+                const isFollowMeEnabled = followMeToggle.checked;
+                emitter.emit(UIEvents.FOLLOW_ME_ENABLED, isFollowMeEnabled);
             });
 
             UIUtil.showElement(wrapperId);
@@ -189,7 +185,7 @@ export default {
         if (show && UIUtil.isSettingEnabled('moderator')) {
             // Only show the subtitle if this isn't the only setting section.
             if (!$("#moderatorOptionsTitle").is(":visible")
-                && interfaceConfig.SETTINGS_SECTIONS.length > 1)
+                    && interfaceConfig.SETTINGS_SECTIONS.length > 1)
                 UIUtil.showElement("moderatorOptionsTitle");
 
             UIUtil.showElement("startMutedOptions");

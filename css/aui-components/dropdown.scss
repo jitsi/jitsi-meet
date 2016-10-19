@@ -2,13 +2,13 @@ form.aui {
     .aui-select2-container {
         background-color: transparent;
 
-        > a{
+        > a {
             margin: 0 auto !important;
             width: 100% !important;
         }
     }
-
 }
+
 .select2-results{
     &::-webkit-scrollbar {
         background-color: transparent;
@@ -23,10 +23,12 @@ form.aui {
         background-color: #3572b0;
     }
 }
-.aui-select2-drop{
+
+.aui-select2-drop {
     z-index: 901;
 }
-.select2-drop-mask{
+
+.select2-drop-mask {
     z-index: 900;
 }
 
@@ -39,8 +41,8 @@ form.aui{
         }
     }
 }
-//
-.aui-dropdown2.aui-style-default.dropdown-dark{
+
+.aui-dropdown2.aui-style-default.dropdown-dark {
     background-color: $defaultBackground;
     border-color: transparent;
 }
