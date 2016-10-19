@@ -546,16 +546,24 @@
                     0px 0px 1px rgba(0,0,0,0.3);
 }
 
+.video-state-indicator {
+    background: $videoStateIndicatorBackground;
+    color: $videoStateIndicatorColor;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+    display: block;
+    min-width: 37px;
+    padding: 10px 0;
+    border-radius: 50%;
+}
+
 #videoResolutionLabel {
     display: none;
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(0,0,0,.5);
-    padding: 10px;
-    color: rgba(255,255,255,.5);
+    top: 30px;
+    right: 30px;
     z-index: 1011;
-    border-radius: 50%;
 }
 
 .centeredVideoLabel {
@@ -580,8 +588,8 @@
 }
 
 .moveToCorner {
-    top: 5px;
-    right: 50px; /*leave free space for the HD label*/
+    top: 30px;
+    right: 80px; /*leave free space for the HD label*/
     margin-right: 0px;
     margin-left: auto;
     background: rgba(0,0,0,.3);
