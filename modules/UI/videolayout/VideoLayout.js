@@ -494,7 +494,7 @@ var VideoLayout = {
      * @param {boolean} isMuted
      */
     showLocalAudioIndicator (isMuted) {
-        localVideoThumbnail.showAudioIndicator(isMuted);
+        localVideoThumbnail.toggleAudioMutedIndicator(isMuted);
     },
 
     /**
@@ -532,13 +532,13 @@ var VideoLayout = {
      */
     onAudioMute (id, isMuted) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.showAudioIndicator(isMuted);
+            localVideoThumbnail.toggleAudioMutedIndicator(isMuted);
         } else {
             let remoteVideo = remoteVideos[id];
             if (!remoteVideo)
                 return;
 
-            remoteVideo.showAudioIndicator(isMuted);
+            remoteVideo.toggleAudioMutedIndicator(isMuted);
             if (APP.conference.isModerator) {
                 remoteVideo.updateRemoteVideoMenu(isMuted);
             }
@@ -550,11 +550,11 @@ var VideoLayout = {
      */
     onVideoMute (id, value) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setVideoMutedView(value);
+            localVideoThumbnail.toggleVideoMutedIndicator(value);
         } else {
             let remoteVideo = remoteVideos[id];
             if (remoteVideo)
-                remoteVideo.setVideoMutedView(value);
+                remoteVideo.toggleVideoMutedIndicator(value);
         }
 
         if (this.isCurrentlyOnLarge(id)) {

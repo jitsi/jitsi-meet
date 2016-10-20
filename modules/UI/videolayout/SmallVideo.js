@@ -215,8 +215,7 @@ SmallVideo.prototype.hideIndicator = function () {
  * @param {boolean} isMuted indicates if the muted element should be shown
  * or hidden
  */
-SmallVideo.prototype.showAudioIndicator = function(isMuted) {
-
+SmallVideo.prototype.toggleAudioMutedIndicator = function(isMuted) {
     var audioMutedIndicator = this.getAudioMutedIndicator();
 
     if (!isMuted) {
@@ -242,7 +241,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
     }
 
     audioMutedSpan = document.createElement('span');
-    audioMutedSpan.className = 'audioMuted toolbar-icon';
+    audioMutedSpan.className = 'audioMuted toolbar-icon no-stretch';
 
     UIUtil.setTooltip(audioMutedSpan,
         "videothumbnail.mute",
@@ -267,7 +266,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
  * @param {boolean} isMuted indicates if we should set the view to muted view
  * or not
  */
-SmallVideo.prototype.setVideoMutedView = function(isMuted) {
+SmallVideo.prototype.toggleVideoMutedIndicator = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 
@@ -290,7 +289,7 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
     }
 
     videoMutedSpan = document.createElement('span');
-    videoMutedSpan.className = 'videoMuted toolbar-icon';
+    videoMutedSpan.className = 'videoMuted toolbar-icon no-stretch';
 
     this.container
         .querySelector('.videocontainer__toolbar')
@@ -325,7 +324,7 @@ SmallVideo.prototype.addModeratorIndicator = function () {
     }
 
     indicatorSpan = document.createElement('span');
-    indicatorSpan.className = 'focusindicator toolbar-icon right';
+    indicatorSpan.className = 'focusindicator toolbar-icon right no-stretch';
 
     this.container
         .querySelector('.videocontainer__toolbar')
@@ -339,6 +338,21 @@ SmallVideo.prototype.addModeratorIndicator = function () {
         "top-left");
 
     indicatorSpan.appendChild(moderatorIndicator);
+};
+
+SmallVideo.prototype.createDisplayNameWrapper = function () {
+    var nameWrapper = $('#' + this.videoSpanId + ' .name-wrapper');
+
+    if (nameWrapper.length) {
+        return;
+    }
+
+    nameWrapper = document.createElement('span');
+    nameWrapper.className = 'name-wrapper auto-stretch';
+
+    this.container
+        .querySelector('.videocontainer__toolbar')
+        .appendChild(nameWrapper);
 };
 
 /**

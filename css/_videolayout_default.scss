@@ -174,10 +174,8 @@
  */
 .videocontainer .displayname,
 .videocontainer .editdisplayname {
-    display: inline-block;
-    position: absolute;
-    left: 30%;
-    width: 40%;
+    display: block;
+    width: 100%;
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
@@ -291,6 +289,10 @@
     z-index: 2;
 }
 
+.videocontainer .name-wrapper {
+    overflow: hidden;
+}
+
 /**
  * Video thumbnail toolbar icon.
  */
@@ -319,8 +321,8 @@
  * Toolbar icons positioned on the right.
  */
 .toolbar-icon.right {
-  float: right;
   margin: 0px 0px 0px 5px;
+  order: 10;
 }
 
 .videocontainer>span.indicator {
