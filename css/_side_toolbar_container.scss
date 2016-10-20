@@ -24,7 +24,7 @@
      */
     input, select, a,
     .sideToolbarBlock, .input-control, .button-control {
-        display: inline-block;
+        display: block;
         margin-top: 15px;
         margin-left: 10%;
         width: 80%;
@@ -117,4 +117,30 @@
 #device_settings {
     width : auto !important;
     text-align: center;
+}
+
+/**
+ * Profile
+ */
+.auth_container {
+    ul {
+        padding: 0;
+
+        li {
+            list-style-type: none;
+
+            a.authButton {
+                width: 160px;
+                margin: 10px 20px;
+                padding: 3px 29px;
+                box-sizing: border-box;
+                background-color: #06a5df;
+                border-radius: 4px;
+                cursor: pointer;
+                color: $defaultColor;
+                text-decoration: none;
+                text-align: center;
+            }
+        }
+    }
 }

@@ -17,6 +17,10 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
     INVITATION_POWERED_BY: true,
+    /**
+     * If we should show authentication block in profile
+     */
+    AUTHENTICATION_ENABLE: true,
     // the toolbar buttons line is intentionally left in one line, to be able
     // to easily override values or remove them using regex
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'hangup'], // jshint ignore:line

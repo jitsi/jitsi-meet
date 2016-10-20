@@ -764,6 +764,7 @@ UI.getRemoteVideoType = function (jid) {
 
 UI.connectionIndicatorShowMore = function(id) {
     VideoLayout.showMore(id);
+    return false;
 };
 
 // FIXME check if someone user this
@@ -1140,11 +1141,12 @@ UI.notifyFocusLeft = function () {
  * @param {string} [login] current login
  */
 UI.updateAuthInfo = function (isAuthEnabled, login) {
+    let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(isAuthEnabled);
+    Toolbar.showAuthenticateButton(showAuth);
 
-    if (isAuthEnabled) {
+    if (showAuth) {
         Toolbar.setAuthenticatedIdentity(login);
 
         Toolbar.showLoginButton(!loggedIn);
