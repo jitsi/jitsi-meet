@@ -151,6 +151,7 @@
     },
     "connectionindicator":
     {
+        "header": "Connection data",
         "bitrate": "Bitrate:",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",

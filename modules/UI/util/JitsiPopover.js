@@ -29,8 +29,8 @@ var JitsiPopover = (function () {
         this.element = element;
         this.template = ' <div class="jitsipopover ' + this.options.skin +
             '"><div class="arrow"></div>' +
-            '<div class="jitsipopover-content"></div>' +
-            '<div class="jitsiPopupmenuPadding"></div></div>';
+            '<div class="jitsipopover__content"></div>' +
+            '<div class="jitsipopover__menu-padding"></div></div>';
         var self = this;
         this.element.on("mouseenter", function () {
             self.elementIsHovered = true;
@@ -76,7 +76,7 @@ var JitsiPopover = (function () {
      */
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
-        $(".jitsipopover > .jitsipopover-content").html(this.options.content);
+        $(".jitsipopover > .jitsipopover__content").html(this.options.content);
         var self = this;
         $(".jitsipopover").on("mouseenter", function () {
             self.popoverIsHovered = true;
@@ -103,7 +103,7 @@ var JitsiPopover = (function () {
                 $(".jitsipopover").css(
                     {top: position.top, left: position.left, display: "table"});
                 $(".jitsipopover > .arrow").css({left: calcLeft});
-                $(".jitsipopover > .jitsiPopupmenuPadding").css(
+                $(".jitsipopover > .jitsipopover__menu-padding").css(
                     {left: calcLeft - 50});
             }
         });
