@@ -8,16 +8,15 @@ function getPasswordInputHtml() {
     let placeholder = config.hosts.authdomain
         ? "user identity"
         : "user@domain.net";
-    let passRequiredMsg = APP.translation.translateString(
-        "dialog.passwordRequired"
-    );
+
     return `
-        <h2 data-i18n="dialog.passwordRequired">${passRequiredMsg}</h2>
-        <input name="username" type="text" placeholder=${placeholder} autofocus>
+        <input name="username" type="text" 
+               class="input-control__input"
+               placeholder=${placeholder} autofocus>
         <input name="password" type="password"
+               class="input-control__input"
                data-i18n="[placeholder]dialog.userPassword"
-               placeholder="user password">
-        `;
+               placeholder="user password">`;
 }
 
 /**
@@ -80,6 +79,7 @@ function LoginDialog(successCallback, cancelCallback) {
 
     const states = {
         login: {
+            title: APP.translation.translateString('dialog.passwordRequired'),
             html: getPasswordInputHtml(),
             buttons: loginButtons,
             focus: ':input:first',

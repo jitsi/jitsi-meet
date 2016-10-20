@@ -1141,11 +1141,12 @@ UI.notifyFocusLeft = function () {
  * @param {string} [login] current login
  */
 UI.updateAuthInfo = function (isAuthEnabled, login) {
+    let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(isAuthEnabled);
+    Toolbar.showAuthenticateButton(showAuth);
 
-    if (isAuthEnabled) {
+    if (showAuth) {
         Toolbar.setAuthenticatedIdentity(login);
 
         Toolbar.showLoginButton(!loggedIn);

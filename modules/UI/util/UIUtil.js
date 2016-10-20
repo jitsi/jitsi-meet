@@ -205,6 +205,15 @@ const TOOLTIP_POSITIONS = {
     },
 
     /**
+     * Indicates if Authentication Section should be shown
+     *
+     * @returns {boolean}
+     */
+    isAuthenticationEnabled: function() {
+        return interfaceConfig.AUTHENTICATION_ENABLE;
+    },
+
+    /**
      * Shows the element given by id.
      *
      * @param {String} the identifier of the element to show

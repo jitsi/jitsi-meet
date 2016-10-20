@@ -391,11 +391,9 @@ Toolbar = {
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
     showAuthenticateButton (show) {
-        if (UIUtil.isButtonEnabled('authentication') && show) {
-            $('#authentication').css({display: "inline"});
-        } else {
-            $('#authentication').css({display: "none"});
-        }
+        let display = show ? 'block' : 'none';
+
+        $('#authenticationContainer').css({display});
     },
 
     showEtherpadButton () {
@@ -449,12 +447,14 @@ Toolbar = {
      * @param authIdentity identity name to be displayed.
      */
     setAuthenticatedIdentity (authIdentity) {
+        let selector = $('#toolbar_auth_identity');
+
         if (authIdentity) {
-            let selector = $('#toolbar_auth_identity');
             selector.css({display: "list-item"});
             selector.text(authIdentity);
         } else {
-            $('#toolbar_auth_identity').css({display: "none"});
+            selector.css({display: "none"});
+            selector.text('');
         }
     },
 
@@ -463,7 +463,7 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLoginButton (show) {
-        if (UIUtil.isButtonEnabled('authentication') && show) {
+        if (show) {
             $('#toolbar_button_login').css({display: "list-item"});
         } else {
             $('#toolbar_button_login').css({display: "none"});
@@ -475,7 +475,7 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLogoutButton (show) {
-        if (UIUtil.isButtonEnabled('authentication') && show) {
+        if (show) {
             $('#toolbar_button_logout').css({display: "list-item"});
         } else {
             $('#toolbar_button_logout').css({display: "none"});

@@ -20,7 +20,11 @@
     }
 
     &__input {
-        margin: 8px 0;
+        margin-bottom: 8px;
+
+        &:last-child {
+            margin-bottom: inherit;
+        }
 
         &::selection {
             background-color: $defaultDarkSelectionColor;
