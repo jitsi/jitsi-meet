@@ -22,7 +22,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.emitter = emitter;
     this.videoSpanId = `participant_${this.id}`;
     SmallVideo.call(this, VideoLayout);
-    this.hasRemoteVideoMenu = false;
+    this.hasRemoteVideoMenu = true;
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
     this.setDisplayName();
@@ -75,14 +75,17 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
  * to display in the popup
  */
 RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
-    this.popover = new JitsiPopover(
-        $("#" + this.videoSpanId + " .remotevideomenu"),
-        {   content: popupMenuElement.outerHTML,
-            skin: "black"});
+    let options = {
+        content: popupMenuElement.outerHTML,
+        skin: "black",
+        hasArrow: false
+    };
+    let element = $("#" + this.videoSpanId + " .remotevideomenu");
+    this.popover = new JitsiPopover(element, options);
 
     // override popover show method to make sure we will update the content
     // before showing the popover
-    var origShowFunc = this.popover.show;
+    let origShowFunc = this.popover.show;
     this.popover.show = function () {
         // update content by forcing it, to finish even if popover
         // is not visible
