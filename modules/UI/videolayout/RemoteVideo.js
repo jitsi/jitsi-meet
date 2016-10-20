@@ -22,7 +22,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.emitter = emitter;
     this.videoSpanId = `participant_${this.id}`;
     SmallVideo.call(this, VideoLayout);
-    this.hasRemoteVideoMenu = true;
+    this.hasRemoteVideoMenu = false;
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
     this.setDisplayName();
