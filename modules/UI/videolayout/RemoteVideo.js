@@ -507,9 +507,10 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
 
 /**
  * Sets the display name for the given video span id.
+ *
+ * @param displayName the display name to set
  */
-RemoteVideo.prototype.setDisplayName = function(displayName, key) {
-
+RemoteVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
         console.warn( "Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
@@ -525,10 +526,6 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
             if (displaynameSpan.text() !== displayName)
                 displaynameSpan.text(displayName);
         }
-        else if (key && key.length > 0) {
-            var nameHtml = APP.translation.generateTranslationHTML(key);
-            $('#' + this.videoSpanId + '_name').html(nameHtml);
-        }
         else
             $('#' + this.videoSpanId + '_name').text(
                 interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
@@ -536,7 +533,6 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         $('#' + this.videoSpanId)[0]
-            .querySelector('.videocontainer__toolbar')
             .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {

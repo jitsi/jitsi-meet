@@ -36,12 +36,6 @@ function SmallVideo(VideoLayout) {
     this.VideoLayout = VideoLayout;
 }
 
-function setVisibility(selector, show) {
-    if (selector && selector.length > 0) {
-        selector.css("visibility", show ? "visible" : "hidden");
-    }
-}
-
 /**
  * Returns the identifier of this small video.
  *
@@ -396,6 +390,16 @@ SmallVideo.prototype.$avatar = function () {
 };
 
 /**
+ * Returns the display name element, which appears on the video thumbnail.
+ *
+ * @return {jQuery} a jQuery selector pointing to the display name element of
+ * the video thumbnail
+ */
+SmallVideo.prototype.$displayName = function () {
+    return $('#' + this.videoSpanId + ' .displayname');
+};
+
+/**
  * Enables / disables the css responsible for focusing/pinning a video
  * thumbnail.
  *
@@ -479,10 +483,15 @@ SmallVideo.prototype.updateView = function () {
 
     // Determine whether video, avatar or blackness should be displayed
     let displayMode = this.selectDisplayMode();
-    // Show/hide video
-    setVisibility(this.selectVideoElement(), displayMode === DISPLAY_VIDEO);
-    // Show/hide the avatar
-    setVisibility(this.$avatar(), displayMode === DISPLAY_AVATAR);
+    // Show/hide video.
+    UIUtil.setVisibility(   this.selectVideoElement(),
+                            displayMode === DISPLAY_VIDEO);
+    // Show/hide the avatar.
+    UIUtil.setVisibility(   this.$avatar(),
+                            displayMode === DISPLAY_AVATAR);
+    // Show/hide the display name.
+    UIUtil.setVisibility(   this.$displayName(),
+                            displayMode === DISPLAY_BLACKNESS);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {

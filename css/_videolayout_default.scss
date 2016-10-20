@@ -67,7 +67,6 @@
     box-sizing: border-box; // Includes the padding in the 100% width.
     height: $thumbnailToolbarHeight;
     max-height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
     padding: 0 5px 0 5px;
 }
 
@@ -176,8 +175,10 @@
 .videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    left: 30%;
-    width: 40%;
+    left: 10%;
+    width: 80%;
+    top: 50%;
+    margin-top: -12px;
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
