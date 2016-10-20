@@ -2,16 +2,15 @@
  * Toolbar side panel main container element.
  */
 #sideToolbarContainer {
-    display: inline-block;
-    position:absolute;
-    top: 0px;
-    left: $defaultToolbarSize;
-    width: 0;
     background-color: rgba(0,0,0,0.8);
     height: 100%;
+    left: $defaultToolbarSize;
     max-width: $sidebarWidth;
-    z-index: 800;
     overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 800;
 
     /**
      * Labels inside the side panel.
@@ -23,7 +22,7 @@
     /**
      * Form elements and blocks.
      */
-    input, label, select, a,
+    input, select, a,
     .sideToolbarBlock, .input-control, .button-control {
         display: block;
         margin-top: 15px;
@@ -34,8 +33,8 @@
     /**
      * Specify colors for edit elements.
      */
-    select, input[type="button"], input[type="text"],
-    input[type="reset"], input[type="submit"] {
+    select, input[type="button"], input[type="text"], input[type="reset"],
+    input[type="submit"] {
         color: $inputColor;
         background: $inputBackground;
         border: none;
@@ -45,16 +44,18 @@
      * Specify styling of elements inside a block.
      */
     .sideToolbarBlock {
-        input, label, button, a, select {
-            margin-top: 5px;
+        input, button, a, select {
             margin-left: 0;
+            margin-top: 5px;
             width: 100%;
         }
-
-        .startMutedLabel,
-        .followMeLabel {
+        input[type='checkbox'] {
             display: inline;
-            margin-top: 0;
+            width: auto !important;
+            > label {
+                margin-top: 5px;
+                width: 80%;
+            }
         }
     }
 
@@ -72,36 +73,35 @@
         /**
          * Titles and subtitles of inner containers.
          */
-        > div.title,
-          div.subTitle {
-            text-align: left;
-            margin: 10px 0px 10px 0px;
+        div.title, div.subTitle {
+            margin: 10px 0;
         }
 
         /**
          * Main title size.
          */
-        > div.title {
+        div.title {
             color: $defaultColor !important;
-            text-align: center;
             font-size: 16px;
+            text-align: center;
         }
 
         /**
          * Subtitle specific properties.
          */
-        > div.subTitle {
+        div.subTitle {
+            color: $defaultSideBarFontColor !important;
             font-size: 11px;
             font-weight: 500;
-            color: $defaultSideBarFontColor !important;
             margin-left: 10%;
+            text-align: left;
         }
 
         /**
          * First element after a title.
          */
         .first {
-            margin-top: 0px !important;
+            margin-top: 0 !important;
         }
 
         /**
@@ -119,12 +119,6 @@
     text-align: center;
 }
 
-#startAudioMuted,
-#startVideoMuted,
-#followMeCheckBox {
-    width: 13px !important;
-}
-
 /**
  * Profile
  */
@@ -135,7 +129,7 @@
         li {
             list-style-type: none;
 
-            a.authButton{
+            a.authButton {
                 width: 160px;
                 margin: 10px 20px;
                 padding: 3px 29px;
