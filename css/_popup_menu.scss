@@ -1,7 +1,7 @@
 /*Initialize*/
 ul.popupmenu {
-    padding: 0px 10px 0px 10px;
-    margin: 0;
+    padding: 0;
+    margin: 2px 0;
     bottom: 0;
     width: 100px;
     height: auto;
@@ -13,8 +13,7 @@ ul.popupmenu li {
 }
 
 ul.popupmenu li:hover {
-    background-color: rgba(256, 256, 256, .2);
-    border-radius:3px;
+    background-color: $popupMenuSelectedItemBackground;
 }
 
 /*Link Appearance*/
