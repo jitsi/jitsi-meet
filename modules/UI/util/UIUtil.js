@@ -237,6 +237,18 @@ const TOOLTIP_POSITIONS = {
         $("#"+id).addClass("hide");
     },
 
+    /**
+     * Shows / hides the element with the given jQuery selector.
+     *
+     * @param {jQuery} selector the jQuery selector of the element to show/hide
+     * @param {boolean} isVisible
+     */
+    setVisibility(selector, isVisible) {
+        if (selector && selector.length > 0) {
+            selector.css("visibility", isVisible ? "visible" : "hidden");
+        }
+    },
+
     hideDisabledButtons: function (mappings) {
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
