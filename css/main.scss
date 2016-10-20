@@ -4,23 +4,12 @@
 
 /* Functions END */
 
-/* Variables BEGIN */
-
-@import 'variables';
-
-/* Variables END */
 
 /* Mixins BEGIN */
 
 @import "mixins";
 
 /* Mixins END */
-
-/* Animations BEGIN */
-
-@import "animations";
-
-/* Animations END */
 
 /* Fonts BEGIN */
 
@@ -32,6 +21,12 @@
 /* Theme  BEGIN */
 @import "themes/main";
 /* Theme END */
+
+/* Animations BEGIN */
+
+@import "animations";
+
+/* Animations END */
 
 /* Modules BEGIN */
 
