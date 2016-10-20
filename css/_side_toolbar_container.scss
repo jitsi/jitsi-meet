@@ -22,7 +22,7 @@
     /**
      * Form elements and blocks.
      */
-    input, select, a,
+    select, a,
     .sideToolbarBlock, .input-control, .button-control {
         display: block;
         margin-top: 15px;
@@ -33,18 +33,21 @@
     /**
      * Specify colors for edit elements.
      */
-    select, input[type="button"], input[type="text"], input[type="reset"],
-    input[type="submit"] {
+    select, input[type="button"], input[type="reset"], input[type="submit"] {
         color: $inputColor;
         background: $inputBackground;
         border: none;
+    }
+
+    .input-control__container {
+      font-size: em(14, 12);
     }
 
     /**
      * Specify styling of elements inside a block.
      */
     .sideToolbarBlock {
-        input, button, a, select {
+        button, a, select {
             margin-left: 0;
             margin-top: 5px;
             width: 100%;

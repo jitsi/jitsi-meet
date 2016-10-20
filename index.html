@@ -138,11 +138,11 @@
                     <div class="title" data-i18n="profile.title"></div>
                     <div class="sideToolbarBlock first">
                         <label class="first" data-i18n="profile.setDisplayNameLabel"></label>
-                        <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name">
+                        <input class="input-control__input" type="text" id="setDisplayName" data-i18n="[placeholder]settings.name">
                     </div>
                     <div class="sideToolbarBlock">
                         <label data-i18n="profile.setEmailLabel"></label>
-                        <input data-i18n="[placeholder]profile.setEmailInput" type="text" id="setEmail">
+                        <input class="input-control__input" data-i18n="[placeholder]profile.setEmailInput" type="text" id="setEmail">
                     </div>
                     <div class="sideToolbarBlock auth_container" id="authenticationContainer">
                         <p data-i18n="toolbar.authenticate"></p>
@@ -161,7 +161,9 @@
                     <div id="nickname">
                         <span data-i18n="chat.nickname.title"></span>
                         <form>
-                            <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
+                            <div class="input-control__container">
+                                <input class="input-control_input" type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
+                            </div>
                         </form>
                     </div>
 
