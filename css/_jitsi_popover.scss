@@ -6,12 +6,10 @@
     display: none;
     max-width: 300px;
     min-width: 100px;
-    padding: 1px;
     text-align: left;
     color: $popoverFontColor;
     background-color: $popoverBg;
     background-clip: padding-box;
-    border: 1px solid $popoverBg;
     border-radius: 3px;
     /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/

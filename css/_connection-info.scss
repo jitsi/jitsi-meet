@@ -12,7 +12,8 @@
 .connection-info
 {
     float: left;
-    padding-bottom: 5px;
+    padding: 5px;
+    padding-left: 0;
     @extend %connection-info;
 
     > table {
