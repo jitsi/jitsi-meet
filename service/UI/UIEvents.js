@@ -118,8 +118,8 @@ export default {
     /**
      * Notifies that the avatar is displayed or not on the largeVideo.
      */
-    LARGE_VIDEO_AVATAR_DISPLAYED: "UI.large_video_avatar_displayed",
-    
+    LARGE_VIDEO_AVATAR_VISIBLE: "UI.large_video_avatar_visible",
+
     /**
      * Toggling room lock
      */
