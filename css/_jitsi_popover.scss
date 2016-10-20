@@ -19,35 +19,6 @@
     margin-top: -10px;
     margin-bottom: 35px;
 
-    &__title {
-        text-align: left;
-        margin: 0;
-        padding: 0;
-    }
-
-    &__content {
-        padding: em(5) em(10);
-        font-size: em(14);
-        white-space:pre-wrap;
-        text-align: center;
-    }
-
-    &__icon {
-        margin-right: 2px;
-    }
-
-    &__green
-    {
-        @extend .jitsipopover__icon;
-        color: #4abd04;
-    }
-
-    &__orange
-    {
-        @extend .jitsipopover__icon;
-        color: #ffa800;
-    }
-
     &__menu-padding {
         height: 35px;
         width: 100px;
@@ -62,33 +33,18 @@
         margin: 10px auto;
     }
 
-    &__clear {
+    > .arrow {
         position: absolute;
         display: block;
+        left: 50%;
+        bottom: -5px;
+        margin-left: -5px;
         width: 0;
         height: 0;
         border-color: transparent;
-        border-style: solid;
-    }
-
-    > .arrow {
-        border-width: 5px 2.5px 0 2.5px;
-        left: 50%;
-        margin-left: -5px;
-        @extend .jitsipopover__clear;
-        border-bottom-width: 0;
         border-top-color: $popoverBg;
-        bottom: -5px;
-
-
-        &:after {
-            border-width: 5px;
-            content: " ";
-            bottom: 1px;
-            margin-left: -5px;
-            @extend .jitsipopover__clear;
-            border-bottom-width: 0;
-            border-top-color: $popoverBg;
-        }
+        border-style: solid;
+        border-width: 5px;
+        border-bottom-width: 0;
     }
 }

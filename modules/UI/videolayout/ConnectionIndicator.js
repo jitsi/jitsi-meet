@@ -80,10 +80,10 @@ ConnectionIndicator.prototype.generateText = function () {
         packetLoss = "N/A";
     } else {
 
-        packetLoss = "<span class='jitsipopover__green'>&darr;</span>" +
+        packetLoss = "<span class='connection-info__download'>&darr;</span>" +
             (this.packetLoss.download !== null ?
                 this.packetLoss.download : "N/A") +
-            "% <span class='jitsipopover__orange'>&uarr;</span>" +
+            "% <span class='connection-info__upload'>&uarr;</span>" +
             (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") +
             "%";
     }
@@ -104,8 +104,8 @@ ConnectionIndicator.prototype.generateText = function () {
                     </span>
                 </td>
                 <td>
-                    <span class='jitsipopover__green'>&darr;</span>${downloadBitrate}
-                    <span class='jitsipopover__orange'>&uarr;</span>${uploadBitrate}
+                    <span class='connection-info__download'>&darr;</span>${downloadBitrate}
+                    <span class='connection-info__upload'>&uarr;</span>${uploadBitrate}
                 </td>
             </tr>
             <tr>
@@ -242,9 +242,9 @@ ConnectionIndicator.prototype.generateText = function () {
             "<span data-i18n='connectionindicator.bandwidth'>" +
             translate("connectionindicator.bandwidth") + "</span>" +
             "</td><td>" +
-            "<span class='jitsipopover__green'>&darr;</span>" +
+            "<span class='connection-info__download'>&darr;</span>" +
             downloadBandwidth +
-            " <span class='jitsipopover__orange'>&uarr;</span>" +
+            " <span class='connection-info__upload'>&uarr;</span>" +
             uploadBandwidth + "</td></tr>";
 
         result += transport + "</table>";
