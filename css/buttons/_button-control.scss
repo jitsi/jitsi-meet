@@ -34,7 +34,7 @@
     }
 
     &:active {
-        @include box-shadow(inset, 0, 0, 1px, $buttonShadowColor);
+        @include box-shadow(0, 0, 1px, $buttonShadowColor, true);
     }
 
     &_light {
@@ -60,7 +60,7 @@
     &_primary {
         background-color: $primaryButtonBackground;
         border: 1px solid $primaryButtonBackground;
-        color: $primaryButtonColor;
+        color: $primaryButtonColor !important;
         font-weight: $primaryButtonFontWeight;
 
         &:hover {

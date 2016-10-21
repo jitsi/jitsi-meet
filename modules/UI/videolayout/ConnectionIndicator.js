@@ -78,10 +78,10 @@ ConnectionIndicator.prototype.generateText = function () {
         packetLoss = "N/A";
     } else {
 
-        packetLoss = "<span class='jitsipopover_green'>&darr;</span>" +
+        packetLoss = "<span class='connection-info__download'>&darr;</span>" +
             (this.packetLoss.download !== null ?
                 this.packetLoss.download : "N/A") +
-            "% <span class='jitsipopover_orange'>&uarr;</span>" +
+            "% <span class='connection-info__upload'>&uarr;</span>" +
             (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") +
             "%";
     }
@@ -93,26 +93,40 @@ ConnectionIndicator.prototype.generateText = function () {
         return `${width}x${height}`;
     }).join(', ') || 'N/A';
 
-    var result = "<table style='width:100%'>" +
-        "<tr>" +
-        "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.bitrate'></span></td>" +
-        "<td><span class='jitsipopover_green'>&darr;</span>" +
-        downloadBitrate + " <span class='jitsipopover_orange'>&uarr;</span>" +
-        uploadBitrate + "</td>" +
-        "</tr><tr>" +
-        "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.packetloss'></span></td>" +
-        "<td>" + packetLoss  + "</td>" +
-        "</tr><tr>" +
-        "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.resolution'></span></td>" +
-        "<td>" + resolutionStr + "</td></tr></table>";
+    let result = (
+        `<table class="connection-info__container" style='width:100%'>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.bitrate'></span>
+                </td>
+                <td>
+                    <span class='connection-info__download'>&darr;</span>${downloadBitrate}
+                    <span class='connection-info__upload'>&uarr;</span>${uploadBitrate}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.packetloss'></span>
+                </td>
+                <td>${packetLoss}</td>
+            </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.resolution'></span>
+                </td>
+                <td>
+                    ${resolutionStr}
+                </td>
+            </tr>
+        </table>`);
 
     if(this.videoContainer.videoSpanId == "localVideoContainer") {
-        result += "<div class=\"jitsipopover_showmore\" " +
+        result += "<a class=\"jitsipopover__showmore link\" " +
             "onclick = \"APP.UI.connectionIndicatorShowMore('" +
             // FIXME: we do not know local id when this text is generated
             //this.id + "')\"  data-i18n='connectionindicator." +
             "local')\"  data-i18n='connectionindicator." +
-                (this.showMoreValue ? "less" : "more") + "'></div><br />";
+                (this.showMoreValue ? "less" : "more") + "'></a>";
     }
 
     if (this.showMoreValue) {
@@ -131,7 +145,7 @@ ConnectionIndicator.prototype.generateText = function () {
 
         if (!this.transport || this.transport.length === 0) {
             transport = "<tr>" +
-                "<td><span class='jitsipopover_blue' " +
+                "<td><span " +
                 "data-i18n='connectionindicator.address'></span></td>" +
                 "<td> N/A</td></tr>";
         } else {
@@ -163,15 +177,17 @@ ConnectionIndicator.prototype.generateText = function () {
             var local_address_key = "connectionindicator.localaddress";
             var remote_address_key = "connectionindicator.remoteaddress";
             var localTransport =
-                "<tr><td><span class='jitsipopover_blue' data-i18n='" +
+                "<tr><td><span data-i18n='" +
                 local_address_key +"' data-i18n-options='" +
-                    JSON.stringify({count: data.localIP.length}) + "'></span></td><td> " +
+                    JSON.stringify({count: data.localIP.length})
+                        + "'></span></td><td> " +
                 ConnectionIndicator.getStringFromArray(data.localIP) +
                 "</td></tr>";
             transport =
-                "<tr><td><span class='jitsipopover_blue' data-i18n='" +
+                "<tr><td><span data-i18n='" +
                 remote_address_key + "' data-i18n-options='" +
-                    JSON.stringify({count: data.remoteIP.length}) + "'></span></td><td> " +
+                    JSON.stringify({count: data.remoteIP.length})
+                        + "'></span></td><td> " +
                 ConnectionIndicator.getStringFromArray(data.remoteIP) +
                 "</td></tr>";
 
@@ -180,14 +196,16 @@ ConnectionIndicator.prototype.generateText = function () {
 
             transport += "<tr>" +
                 "<td>" +
-                "<span class='jitsipopover_blue' data-i18n='" + key_remote +
+                "<span data-i18n='" + key_remote +
                 "' data-i18n-options='" +
-                JSON.stringify({count: this.transport.length}) + "'></span></td><td>";
+                    JSON.stringify({count: this.transport.length})
+                        + "'></span></td><td>";
             localTransport += "<tr>" +
                 "<td>" +
-                "<span class='jitsipopover_blue' data-i18n='" + key_local +
+                "<span data-i18n='" + key_local +
                 "' data-i18n-options='" +
-                JSON.stringify({count: this.transport.length}) + "'></span></td><td>";
+                    JSON.stringify({count: this.transport.length})
+                        + "'></span></td><td>";
 
             transport +=
                 ConnectionIndicator.getStringFromArray(data.remotePort);
@@ -196,19 +214,20 @@ ConnectionIndicator.prototype.generateText = function () {
             transport += "</td></tr>";
             transport += localTransport + "</td></tr>";
             transport +="<tr>" +
-                "<td><span class='jitsipopover_blue' data-i18n='connectionindicator.transport'></span></td>" +
+                "<td><span data-i18n='connectionindicator.transport'>" +
+                    "</span></td>" +
                 "<td>" + this.transport[0].type + "</td></tr>";
 
         }
 
-        result += "<table  style='width:100%'>" +
+        result += "<table class='connection-info__container' style='width:100%'>" +
             "<tr>" +
             "<td>" +
-            "<span class='jitsipopover_blue' data-i18n='connectionindicator.bandwidth'></span>" +
+            "<span data-i18n='connectionindicator.bandwidth'></span>" +
             "</td><td>" +
-            "<span class='jitsipopover_green'>&darr;</span>" +
+            "<span class='connection-info__download'>&darr;</span>" +
             downloadBandwidth +
-            " <span class='jitsipopover_orange'>&uarr;</span>" +
+            " <span class='connection-info__upload'>&uarr;</span>" +
             uploadBandwidth + "</td></tr>";
 
         result += transport + "</table>";
@@ -247,8 +266,9 @@ ConnectionIndicator.prototype.create = function () {
         this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
         $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
-        {content: "<div class=\"connection_info\" data-i18n='connectionindicator.na'></div>",
-            skin: "black"});
+        {content: "<div class=\"connection-info\" " +
+                        "data-i18n='connectionindicator.na'></div>",
+        skin: "black"});
 
     // override popover show method to make sure we will update the content
     // before showing the popover
@@ -359,7 +379,7 @@ ConnectionIndicator.prototype.updatePopoverData = function (force) {
     // popover is visible or we force to do so.
     if(this.popover.popoverShown || force) {
         this.popover.updateContent(
-            `<div class="connection_info">${this.generateText()}</div>`
+            `<div class="connection-info">${this.generateText()}</div>`
         );
     }
 };

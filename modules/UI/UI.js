@@ -758,6 +758,7 @@ UI.getRemoteVideoType = function (jid) {
 
 UI.connectionIndicatorShowMore = function(id) {
     VideoLayout.showMore(id);
+    return false;
 };
 
 // FIXME check if someone user this
@@ -1045,15 +1046,20 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
 };
 
 /**
- * Show user feedback dialog if its required or just show "thank you" dialog.
- * @returns {Promise} when dialog is closed.
+ * Show user feedback dialog if its required and enabled after pressing the
+ * hangup button.
+ * @returns {Promise} Resolved with value - false if the dialog is enabled and
+ * resolved with true if the dialog is disabled or the feedback was already
+ * submitted. Rejected if another dialog is already displayed. This values are
+ * used to display or not display the thank you dialog from 
+ * conference.maybeRedirectToWelcomePage method.
  */
-UI.requestFeedback = function () {
+UI.requestFeedbackOnHangup = function () {
     if (Feedback.isVisible())
         return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
     // Feedback has been submitted already.
     else if (Feedback.isEnabled() && Feedback.isSubmitted())
-        return Promise.resolve();
+        return Promise.resolve(true);
     else
         return new Promise(function (resolve) {
             if (Feedback.isEnabled()) {
@@ -1061,10 +1067,10 @@ UI.requestFeedback = function () {
                 // window and immidiately start the conference dispose timeout.
                 if (Feedback.getFeedbackScore() > 0) {
                     Feedback.openFeedbackWindow();
-                    resolve();
+                    resolve(false);
 
                 } else { // Otherwise we'll wait for user's feedback.
-                    Feedback.openFeedbackWindow(resolve);
+                    Feedback.openFeedbackWindow(() => resolve(false));
                 }
             } else {
                 // If the feedback functionality isn't enabled we show a thank
@@ -1122,11 +1128,12 @@ UI.notifyFocusLeft = function () {
  * @param {string} [login] current login
  */
 UI.updateAuthInfo = function (isAuthEnabled, login) {
+    let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(isAuthEnabled);
+    Toolbar.showAuthenticateButton(showAuth);
 
-    if (isAuthEnabled) {
+    if (showAuth) {
         Toolbar.setAuthenticatedIdentity(login);
 
         Toolbar.showLoginButton(!loggedIn);

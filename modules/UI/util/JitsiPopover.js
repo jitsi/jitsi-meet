@@ -8,17 +8,14 @@ var JitsiPopover = (function () {
      */
     function JitsiPopover(element, options)
     {
-        this.options = {
-            skin: "white",
-            content: ""
-        };
-        if(options)
-        {
-            if(options.skin)
-                this.options.skin = options.skin;
+        let { skin, content, hasArrow } = options;
+        this.options = {};
+        this.options.skin = skin || 'white';
+        this.options.content = content || '';
+        this.options.hasArrow = true;
 
-            if(options.content)
-                this.options.content = options.content;
+        if (typeof(hasArrow) !== 'undefined') {
+            this.options.hasArrow = false;
         }
 
         this.elementIsHovered = false;
@@ -27,10 +24,7 @@ var JitsiPopover = (function () {
 
         element.data("jitsi_popover", this);
         this.element = element;
-        this.template = ' <div class="jitsipopover ' + this.options.skin +
-            '"><div class="arrow"></div>' +
-            '<div class="jitsipopover-content"></div>' +
-            '<div class="jitsiPopupmenuPadding"></div></div>';
+        this.template = this.getTemplate();
         var self = this;
         this.element.on("mouseenter", function () {
             self.elementIsHovered = true;
@@ -42,6 +36,22 @@ var JitsiPopover = (function () {
             }, 10);
         });
     }
+
+    /**
+     * Returns template for popover
+     */
+    JitsiPopover.prototype.getTemplate = function () {
+        let arrow = '';
+        if (this.options.hasArrow) {
+            arrow = '<div class="arrow"></div>';
+        }
+        return  (
+            `<div class="jitsipopover ${this.options.skin}">
+                ${arrow}
+                <div class="jitsipopover__content"></div>
+            <div class="jitsipopover__menu-padding"></div></div>`
+        );
+    };
 
     /**
      * Shows the popover
@@ -76,7 +86,7 @@ var JitsiPopover = (function () {
      */
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
-        let popoverElem = $(".jitsipopover > .jitsipopover-content");
+        let popoverElem = $(".jitsipopover > .jitsipopover__content");
         popoverElem.html(this.options.content);
         APP.translation.translateElement(popoverElem);
         var self = this;
@@ -105,7 +115,7 @@ var JitsiPopover = (function () {
                 $(".jitsipopover").css(
                     {top: position.top, left: position.left, display: "table"});
                 $(".jitsipopover > .arrow").css({left: calcLeft});
-                $(".jitsipopover > .jitsiPopupmenuPadding").css(
+                $(".jitsipopover > .jitsipopover__menu-padding").css(
                     {left: calcLeft - 50});
             }
         });

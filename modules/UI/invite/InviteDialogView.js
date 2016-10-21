@@ -250,7 +250,7 @@ export default class InviteDialogView {
         $(removePassword).on('click', () => {
             this.model.setRoomUnlocked();
         });
-        let boundSetPassword = this.setPassword.bind(this);
+        let boundSetPassword = this._setPassword.bind(this);
         $(document).on('click', addPasswordBtn, boundSetPassword);
         let boundDisablePass = this.disableAddPassIfInputEmpty.bind(this);
         $(document).on('keypress', newPasswordInput, boundDisablePass);
@@ -260,12 +260,16 @@ export default class InviteDialogView {
         $(newPasswordInput).on('keydown', (e) => {
             if (e.keyCode === ENTER_KEY) {
                 e.stopPropagation();
-                this.setPassword();
+                this._setPassword();
             }
         });
     }
 
-    setPassword() {
+    /**
+     * Marking room as locked
+     * @private
+     */
+    _setPassword() {
         let $passInput = $('#newPasswordInput');
         let newPass = $passInput.val();
 

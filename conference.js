@@ -420,19 +420,6 @@ class ConferenceConnector {
 }
 
 /**
- * Sends statistics from APP.tokenData
- */
-function sendTokenDataStats() {
-    let {server, group} = APP.tokenData;
-    if(server) {
-        APP.conference.logEvent("server." + server, 1);
-    }
-    if(group) {
-        APP.conference.logEvent("group", group);
-    }
-}
-
-/**
  * Disconnects the connection.
  * @returns resolved Promise. We need this in order to make the Promise.all
  * call in hangup() to resolve when all operations are finished.
@@ -512,7 +499,6 @@ export default {
         return JitsiMeetJS.init(config)
             .then(() => {
                 setAnalyticsPermanentProperties();
-                sendTokenDataStats();
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
                 console.log('initialized with %s local tracks', tracks.length);
@@ -1095,7 +1081,6 @@ export default {
                 APP.UI.updateAuthInfo(authEnabled, authLogin);
             }
         );
-
 
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
             if (user.isHidden())
@@ -1759,8 +1744,11 @@ export default {
     hangup (requestFeedback = false) {
         APP.UI.hideRingOverLay();
         let requestFeedbackPromise = requestFeedback
-                ? APP.UI.requestFeedback().catch(() => Promise.resolve())
-                : Promise.resolve();
+                ? APP.UI.requestFeedbackOnHangup()
+                // false - because the thank you dialog shouldn't be displayed
+                    .catch(() => Promise.resolve(false))
+                : Promise.resolve(true);// true - because the thank you dialog
+                //should be displayed
         // All promises are returning Promise.resolve to make Promise.all to
         // be resolved when both Promises are finished. Otherwise Promise.all
         // will reject on first rejected Promise and we can redirect the page
@@ -1768,9 +1756,9 @@ export default {
         Promise.all([
             requestFeedbackPromise,
             room.leave().then(disconnect, disconnect)
-        ]).then(() => {
+        ]).then(values => {
             APP.API.notifyReadyToClose();
-            maybeRedirectToWelcomePage();
+            maybeRedirectToWelcomePage(values[0]);
         });
     }
 };

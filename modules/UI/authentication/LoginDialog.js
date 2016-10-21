@@ -8,13 +8,14 @@ function getPasswordInputHtml() {
     let placeholder = config.hosts.authdomain
         ? "user identity"
         : "user@domain.net";
+
     return `
-        <h2 data-i18n="dialog.passwordRequired"></h2>
-        <input name="username" type="text" placeholder=${placeholder} autofocus>
+        <input name="username" type="text" 
+               class="input-control__input"
+               placeholder=${placeholder} autofocus>
         <input name="password" type="password"
-               data-i18n="[placeholder]dialog.userPassword"
-               placeholder="user password">
-        `;
+               class="input-control__input"
+               data-i18n="[placeholder]dialog.userPassword">`;
 }
 
 /**
@@ -77,6 +78,7 @@ function LoginDialog(successCallback, cancelCallback) {
 
     const states = {
         login: {
+            titleKey: 'dialog.passwordRequired',
             html: getPasswordInputHtml(),
             buttons: loginButtons,
             focus: ':input:first',

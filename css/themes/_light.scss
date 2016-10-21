@@ -23,6 +23,12 @@ $primaryButtonFontWeight: 400;
 $buttonShadowColor: #192d4f;
 
 /**
+* Connection indicator
+**/
+$downloadConnectionIconColor: #4abd04;
+$uploadConnectionIconColor: #ffa800;
+
+/**
  * Dialog colors
  **/
 $auiDialogColor: #333;
@@ -44,3 +50,8 @@ $hintFontSize: em(13, 14);
 $linkFontColor: #3572b0;
 $linkHoverFontColor: darken(#3572b0, 10%);
 $dropdownColor: #333;
+
+// Popover colors
+$popoverBg: #000;
+$popoverFontColor: #ffffff;
+$popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);

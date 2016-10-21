@@ -260,24 +260,6 @@
     height: 13px;
 }
 
-.connection_info
-{
-    float: left;
-    padding-bottom: 5px;
-}
-
-.connection_info > table
-{
-    white-space: nowrap;
-}
-
-.connection_info, .connection_info > table
-{
-    text-align: left;
-    font-size: 11px;
-    color: #ffffff;
-}
-
 #localVideoContainer>span.status:hover,
 #localVideoContainer .displayname:hover {
     cursor: text;
