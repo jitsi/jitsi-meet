@@ -94,7 +94,8 @@ function LoginDialog(successCallback, cancelCallback) {
                     }
                 } else {
                     // User cancelled
-                    cancelCallback();
+                    if (typeof cancelCallback === "function")
+                        cancelCallback();
                 }
             }
         },
@@ -115,7 +116,8 @@ function LoginDialog(successCallback, cancelCallback) {
                     connDialog.goToState('login');
                 } else {
                     // User cancelled
-                    cancelCallback();
+                    if (typeof cancelCallback === "function")
+                        cancelCallback();
                 }
             }
         }
