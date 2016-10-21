@@ -170,14 +170,6 @@ class Invite {
     }
 
     /**
-     * Updates the room invite url.
-     */
-    updateInviteUrl (newInviteUrl) {
-        this.inviteUrl = newInviteUrl;
-        this.updateView();
-    }
-
-    /**
      * Helper method for encoding
      * Invite URL
      * @returns {string}
