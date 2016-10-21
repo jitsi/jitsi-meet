@@ -94,16 +94,19 @@ export default {
             ));
             initSelect2(selectEl, () => {
                 const val = selectEl.val();
-
-                selectInput[0].dataset.i18n = `languages:${val}`;
+                
+                if (selectInput.indexOf(0))
+                    selectInput[0].dataset.i18n = `languages:${val}`;
+                
                 APP.translation.translateElement(selectInput);
                 emitter.emit(UIEvents.LANG_CHANGED, val);
             });
             //find new selectInput element
             selectInput = $(`#s2id_${selectId} .select2-chosen`);
             //first select fix for languages options
-            selectInput[0].dataset.i18n =
-                `languages:${APP.translation.getCurrentLanguage()}`;
+            if (selectInput.indexOf(0))
+                selectInput[0].dataset.i18n =
+                    `languages:${APP.translation.getCurrentLanguage()}`;
 
             APP.translation.translateElement(selectEl);
 
