@@ -164,7 +164,7 @@ function doXmppAuth (room, lockPassword) {
                 console.error('Auth on the fly failed', error);
 
                 loginDialog.displayError(
-                    'connection.GET_SESSION_ID_ERROR', code);
+                    'connection.GET_SESSION_ID_ERROR', {code: code});
             });
         }, function (err) {
             loginDialog.displayError(err);

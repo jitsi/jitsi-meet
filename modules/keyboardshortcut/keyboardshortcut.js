@@ -190,8 +190,7 @@ var KeyboardShortcut = {
         let descriptionClass = "shortcuts-list__description";
         descriptionElement.className = descriptionClass;
         descriptionElement.setAttribute("data-i18n", shortcutDescriptionKey);
-        descriptionElement.innerHTML
-            = APP.translation.translateString(shortcutDescriptionKey);
+        APP.translation.translateElement($(descriptionElement));
 
         listElement.appendChild(spanElement);
         listElement.appendChild(descriptionElement);

@@ -75,16 +75,13 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
  */
 function promptDisplayName() {
     let labelKey = 'dialog.enterDisplayName';
-    let labelStr = APP.translation.translateString(labelKey);
-    let defaultNickMsg = APP.translation.translateString("defaultNickname");
     let message = (
         `<div class="input-control">
-            <label data-i18n="${labelKey}" 
-                class="input-control__label">${labelStr}</label>
+            <label data-i18n="${labelKey}" class="input-control__label"></label>
             <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
                class="input-control__input"
-               placeholder="${defaultNickMsg}" autofocus>
+               autofocus>
          </div>`
     );
 
@@ -166,11 +163,10 @@ UI.notifyGracefulShutdown = function () {
  * Notify user that reservation error happened.
  */
 UI.notifyReservationError = function (code, msg) {
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.reservationError");
     var message = APP.translation.generateTranslationHTML(
         "dialog.reservationErrorMsg", {code: code, msg: msg});
-    messageHandler.openDialog(title, message, true, {}, () => false);
+    messageHandler.openDialog(
+        "dialog.reservationError", message, true, {}, () => false);
 };
 
 /**
@@ -189,9 +185,8 @@ UI.notifyKicked = function () {
 UI.notifyConferenceDestroyed = function (reason) {
     //FIXME: use Session Terminated from translation, but
     // 'reason' text comes from XMPP packet and is not translated
-    const title
-        = APP.translation.generateTranslationHTML("dialog.sessTerminated");
-    messageHandler.openDialog(title, reason, true, {}, () => false);
+    messageHandler.openDialog(
+        "dialog.sessTerminated", reason, true, {}, () => false);
 };
 
 /**
@@ -919,9 +914,6 @@ UI.setUserAvatarUrl = function (id, url) {
  * @param {string} stropheErrorMsg raw Strophe error message
  */
 UI.notifyConnectionFailed = function (stropheErrorMsg) {
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.error");
-
     var message;
     if (stropheErrorMsg) {
         message = APP.translation.generateTranslationHTML(
@@ -931,7 +923,7 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
             "dialog.connectError");
     }
 
-    messageHandler.openDialog(title, message, true, {}, () => false);
+    messageHandler.openDialog("dialog.error", message, true, {}, () => false);
 };
 
 
@@ -939,13 +931,10 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
  * Notify user that maximum users limit has been reached.
  */
 UI.notifyMaxUsersLimitReached = function () {
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.error");
-
     var message = APP.translation.generateTranslationHTML(
             "dialog.maxUsersLimitReached");
 
-    messageHandler.openDialog(title, message, true, {}, () => false);
+    messageHandler.openDialog("dialog.error", message, true, {}, () => false);
 };
 
 /**
@@ -1112,14 +1101,11 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
  * Notify user that focus left the conference so page should be reloaded.
  */
 UI.notifyFocusLeft = function () {
-    let title = APP.translation.generateTranslationHTML(
-        'dialog.serviceUnavailable'
-    );
     let msg = APP.translation.generateTranslationHTML(
         'dialog.jicofoUnavailable'
     );
     messageHandler.openDialog(
-        title,
+        'dialog.serviceUnavailable',
         msg,
         true, // persistent
         [{title: 'retry'}],
@@ -1284,8 +1270,6 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
         }
     }
 
-    let title = getTitleKey();
-    let titleMsg = `<span data-i18n="${title}"></span>`;
     let cameraJitsiTrackErrorMsg = cameraError
         ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
         : undefined;
@@ -1339,7 +1323,7 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     deviceErrorDialog && deviceErrorDialog.close();
 
     deviceErrorDialog = messageHandler.openDialog(
-        titleMsg,
+        getTitleKey(),
         message,
         false,
         {Ok: true},
@@ -1362,8 +1346,6 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
             deviceErrorDialog = null;
         }
     );
-
-    APP.translation.translateElement($(".jqibox"));
 
     function getTitleKey() {
         let title = "dialog.error";

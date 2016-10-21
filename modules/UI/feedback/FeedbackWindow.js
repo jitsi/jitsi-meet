@@ -35,7 +35,6 @@ function toggleStars(starCount) {
  * @returns {string} the contructed html string
  */
 function createRateFeedbackHTML() {
-    let feedbackHelp = APP.translation.translateString('dialog.feedbackHelp');
 
     let starClassName = (interfaceConfig.ENABLE_FEEDBACK_ANIMATION)
         ? "icon-star-full shake-rotate"
@@ -67,8 +66,7 @@ function createRateFeedbackHTML() {
                 </div>
             </div>
             <div class="details">
-                <textarea id="feedbackTextArea" class="input-control__input"
-                    placeholder="${ feedbackHelp }" 
+                <textarea id="feedbackTextArea" class="input-control__input" 
                     data-i18n="[placeholder]dialog.feedbackHelp"></textarea>
             </div>
         </form>`;
@@ -148,10 +146,10 @@ export default class Dialog {
         this.submitted = false;
         this.onCloseCallback = function() {};
 
-        this.setDefoulOptions();
+        this.setDefaulOptions();
     }
 
-    setDefoulOptions() {
+    setDefaulOptions() {
         var self = this;
 
         this.options = {

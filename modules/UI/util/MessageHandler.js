@@ -45,7 +45,7 @@ var messageHandler = {
             message = APP.translation.generateTranslationHTML(messageKey);
         }
 
-        return $.prompt(message, {
+        let dialog = $.prompt(message, {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,
@@ -55,6 +55,8 @@ var messageHandler = {
                     closeFunction(e, v, m, f);
             }
         });
+        APP.translation.translateElement(dialog);
+        return dialog;
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
@@ -137,6 +139,7 @@ var messageHandler = {
                 }
             }
         });
+        APP.translation.translateElement(twoButtonDialog);
         return twoButtonDialog;
     },
 
@@ -177,7 +180,9 @@ var messageHandler = {
             args.closeText = '';
         }
 
-        return new Impromptu(msgString, args);
+        let dialog = new Impromptu(msgString, args);
+        APP.translation.translateElement(dialog.getPrompt());
+        return dialog;
     },
 
     /**
@@ -189,7 +194,6 @@ var messageHandler = {
         let $titleString = $('<h2>');
         $titleString.addClass('aui-dialog2-header-main');
         $titleString.attr('data-i18n',titleKey);
-        $titleString.append(APP.translation.translateString(titleKey));
         return $('<div>').append($titleString).html();
     },
 
@@ -224,8 +228,10 @@ var messageHandler = {
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
+     * @param options impromptu options
+     * @param translateOptions options passed to translation
      */
-    openDialogWithStates: function (statesObject, options) {
+    openDialogWithStates: function (statesObject, options, translateOptions) {
         if (!popupEnabled)
             return;
         let { classes, size } = options;
@@ -240,7 +246,9 @@ var messageHandler = {
                     = this._getFormattedTitleString(currentState.titleKey);
             }
         }
-        return new Impromptu(statesObject, options);
+        let dialog = new Impromptu(statesObject, options);
+        APP.translation.translateElement(dialog.getPrompt(), translateOptions);
+        return dialog;
     },
 
     /**
@@ -329,20 +337,18 @@ var messageHandler = {
         if (displayName) {
             displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
         } else {
-            displayNameSpan += "data-i18n='" + displayNameKey +
-                "'>" + APP.translation.translateString(displayNameKey);
+            displayNameSpan += "data-i18n='" + displayNameKey + "'>";
         }
         displayNameSpan += "</span>";
-        return toastr.info(
+        let element = toastr.info(
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
-                    " data-i18n-options='" + JSON.stringify(messageArguments)
-                        + "'"
-                    : "") + ">" +
-            APP.translation.translateString(messageKey,
-                messageArguments) +
-            '</span>', null, options);
+                    " data-i18n-options='"
+                        + JSON.stringify(messageArguments) + "'"
+                    : "") + "></span>", null, options);
+        APP.translation.translateElement(element);
+        return element;
     },
 
     /**

@@ -1,5 +1,5 @@
 {
-    "contactlist": "Participants",
+    "contactlist": "Participants (__pcount__)",
     "addParticipants": "Add Participants",
     "roomLocked": "Callers must enter a password",
     "roomUnlocked": "Anyone with the link can join",
@@ -340,7 +340,7 @@
         "ATTACHED": "Attached",
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
-        "GET_SESSION_ID_ERROR": "Get session-id error: ",
+        "GET_SESSION_ID_ERROR": "Get session-id error: __code__",
         "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues..."
     },
     "recording":

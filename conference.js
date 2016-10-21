@@ -194,12 +194,9 @@ function maybeRedirectToWelcomePage(showThankYou) {
     }
 
     if (showThankYou) {
-        APP.UI.messageHandler.openMessageDialog(
-            null, "dialog.thankYou",
-            APP.translation.translateString(
-                "dialog.thankYou", {appName:interfaceConfig.APP_NAME}
-            )
-        );
+        APP.UI.messageHandler.openMessageDialog(null, null,
+            APP.translation.generateTranslationHTML(
+                "dialog.thankYou", {appName:interfaceConfig.APP_NAME}));
     }
 
     if (!config.enableWelcomePage) {
@@ -1050,21 +1047,20 @@ export default {
                 // TrackErrors.GENERAL
                 // and any other
                 let dialogTxt;
-                let dialogTitle;
+                let dialogTitleKey;
 
                 if (err.name === TrackErrors.PERMISSION_DENIED) {
                     dialogTxt = APP.translation.generateTranslationHTML(
                         "dialog.screenSharingPermissionDeniedError");
-                    dialogTitle = APP.translation.generateTranslationHTML(
-                        "dialog.error");
+                    dialogTitleKey = "dialog.error";
                 } else {
                     dialogTxt = APP.translation.generateTranslationHTML(
                         "dialog.failtoinstall");
-                    dialogTitle = APP.translation.generateTranslationHTML(
-                        "dialog.permissionDenied");
+                    dialogTitleKey = "dialog.permissionDenied";
                 }
 
-                APP.UI.messageHandler.openDialog(dialogTitle, dialogTxt, false);
+                APP.UI.messageHandler.openDialog(
+                    dialogTitleKey, dialogTxt, false);
             });
         } else {
             createLocalTracks({ devices: ['video'] }).then(

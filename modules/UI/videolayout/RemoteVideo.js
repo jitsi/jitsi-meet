@@ -109,16 +109,10 @@ RemoteVideo.prototype._generatePopupContent = function () {
     var mutedIndicator = "<i class='icon-mic-disabled'></i>";
 
     var doMuteHTML = mutedIndicator +
-        " <div " +
-        "data-i18n='videothumbnail.domute'>" +
-        APP.translation.translateString("videothumbnail.domute") +
-        "</div>";
+        " <div data-i18n='videothumbnail.domute'></div>";
 
     var mutedHTML = mutedIndicator +
-        " <div " +
-        "data-i18n='videothumbnail.muted'>" +
-        APP.translation.translateString("videothumbnail.muted") +
-        "</div>";
+        " <div data-i18n='videothumbnail.muted'></div>";
 
     muteLinkItem.id = "mutelink_" + this.id;
 
@@ -150,10 +144,7 @@ RemoteVideo.prototype._generatePopupContent = function () {
     var ejectMenuItem = document.createElement('li');
     var ejectLinkItem = document.createElement('a');
 
-    var ejectText = "<div " +
-        "data-i18n='videothumbnail.kick'>" +
-        APP.translation.translateString("videothumbnail.kick") +
-        "</div>";
+    var ejectText = "<div data-i18n='videothumbnail.kick'></div>";
 
     ejectLinkItem.className = 'ejectlink';
     ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
@@ -166,6 +157,8 @@ RemoteVideo.prototype._generatePopupContent = function () {
 
     ejectMenuItem.appendChild(ejectLinkItem);
     popupmenuElement.appendChild(ejectMenuItem);
+
+    APP.translation.translateElement($(popupmenuElement));
 
     return popupmenuElement;
 };

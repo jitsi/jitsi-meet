@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, APP */
 var JitsiPopover = (function () {
     /**
      * Constructs new JitsiPopover and attaches it to the element
@@ -76,7 +76,9 @@ var JitsiPopover = (function () {
      */
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
-        $(".jitsipopover > .jitsipopover-content").html(this.options.content);
+        let popoverElem = $(".jitsipopover > .jitsipopover-content");
+        popoverElem.html(this.options.content);
+        APP.translation.translateElement(popoverElem);
         var self = this;
         $(".jitsipopover").on("mouseenter", function () {
             self.popoverIsHovered = true;

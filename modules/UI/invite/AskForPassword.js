@@ -8,12 +8,10 @@ import UIUtil from '../util/UIUtil';
  */
 export default function askForPassword () {
     let titleKey = "dialog.passwordRequired";
-    let passMsg = APP.translation.translateString("dialog.password");
     let msgString = `
         <input name="lockKey" type="text"
                data-i18n="[placeholder]dialog.password"
-               placeholder="${passMsg}" autofocus>
-    `;
+               autofocus>`;
     return new Promise(function (resolve, reject) {
         APP.UI.messageHandler.openTwoButtonDialog({
             titleKey,

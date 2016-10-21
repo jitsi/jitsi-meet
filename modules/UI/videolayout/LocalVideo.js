@@ -96,14 +96,12 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
             editableText.value = displayName;
         }
 
-        var defaultNickname = APP.translation.translateString(
-            "defaultNickname", {name: "Jane Pink"});
         editableText.setAttribute('style', 'display:none;');
-        editableText.setAttribute('data-18n',
+        editableText.setAttribute('data-i18n',
             '[placeholder]defaultNickname');
         editableText.setAttribute("data-i18n-options",
             JSON.stringify({name: "Jane Pink"}));
-        editableText.setAttribute("placeholder", defaultNickname);
+        APP.translation.translateElement($(editableText));
 
         this.container
             .querySelector('.videocontainer__toolbar')
@@ -253,7 +251,8 @@ LocalVideo.prototype._buildContextMenu = function () {
         events: {
             show : function(options){
                 options.items.flip.name =
-                    APP.translation.translateString("videothumbnail.flip");
+                    APP.translation.generateTranslationHTML(
+                        "videothumbnail.flip");
             }
         }
     });

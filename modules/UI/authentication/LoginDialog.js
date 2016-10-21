@@ -1,4 +1,4 @@
-/* global APP, config */
+/* global $, APP, config */
 
 /**
  * Build html for "password required" dialog.
@@ -8,11 +8,8 @@ function getPasswordInputHtml() {
     let placeholder = config.hosts.authdomain
         ? "user identity"
         : "user@domain.net";
-    let passRequiredMsg = APP.translation.translateString(
-        "dialog.passwordRequired"
-    );
     return `
-        <h2 data-i18n="dialog.passwordRequired">${passRequiredMsg}</h2>
+        <h2 data-i18n="dialog.passwordRequired"></h2>
         <input name="username" type="text" placeholder=${placeholder} autofocus>
         <input name="password" type="password"
                data-i18n="[placeholder]dialog.userPassword"
@@ -68,7 +65,7 @@ function LoginDialog(successCallback, cancelCallback) {
         value: true
     }];
     let finishedButtons = [{
-        title: APP.translation.translateString('dialog.retry'),
+        title: APP.translation.generateTranslationHTML('dialog.retry'),
         value: 'retry'
     }];
 
@@ -129,16 +126,16 @@ function LoginDialog(successCallback, cancelCallback) {
      * Displays error message in 'finished' state which allows either to cancel
      * or retry.
      * @param messageKey the key to the message to be displayed.
-     * @param code the code error (optional)
+     * @param options the options to the error message (optional)
      */
-    this.displayError = function (messageKey, code) {
+    this.displayError = function (messageKey, options) {
 
         let finishedState = connDialog.getState('finished');
 
         let errorMessageElem = finishedState.find('#errorMessage');
         errorMessageElem.attr("data-i18n", messageKey);
-        errorMessageElem.text(
-            APP.translation.translateString(messageKey) + (code ? code : ''));
+
+        APP.translation.translateElement($(errorMessageElem), options);
 
         connDialog.goToState('finished');
     };
@@ -152,7 +149,7 @@ function LoginDialog(successCallback, cancelCallback) {
 
         let connectionStatus = connectingState.find('#connectionStatus');
         connectionStatus.attr("data-i18n", messageKey);
-        connectionStatus.text(APP.translation.translateString(messageKey));
+        APP.translation.translateElement($(connectionStatus));
     };
 
     /**
@@ -206,9 +203,6 @@ export default {
      * @returns dialog
      */
     showAuthRequiredDialog: function (roomName, onAuthNow) {
-        var title = APP.translation.generateTranslationHTML(
-            "dialog.WaitingForHost"
-        );
         var msg = APP.translation.generateTranslationHTML(
             "dialog.WaitForHostMsg", {room: roomName}
         );
@@ -219,7 +213,7 @@ export default {
         var buttons = [{title: buttonTxt, value: "authNow"}];
 
         return APP.UI.messageHandler.openDialog(
-            title,
+            "dialog.WaitingForHost",
             msg,
             true,
             buttons,

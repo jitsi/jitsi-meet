@@ -203,8 +203,10 @@ class Invite {
      * @param isLocked
      */
     setLockedFromElsewhere(isLocked) {
-        let oldLockState = this.roomLocker.lockedElsewhere;
-        if (oldLockState !== isLocked) {
+        // isLocked can be 1, true or false
+        let newLockState = (isLocked === 1) || isLocked;
+        let oldLockState = this.roomLocker.isLocked;
+        if (oldLockState !== newLockState) {
             this.roomLocker.lockedElsewhere = isLocked;
             APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
             this.updateView();
