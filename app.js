@@ -24,6 +24,7 @@ import RoomnameGenerator from './modules/util/RoomnameGenerator';
 import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";
 import conference from './conference';
+import ConferenceUrl from './modules/URL/ConferenceUrl';
 import API from './modules/API/API';
 
 import UIEvents from './service/UI/UIEvents';
@@ -45,6 +46,18 @@ function pushHistoryState(roomName, URL) {
         return e;
     }
     return null;
+}
+
+/**
+ * Replaces current history state(replaces the URL displayed by the browser).
+ * @param {string} newUrl the URL string which is to be displayed by the browser
+ * to the user.
+ */
+function replaceHistoryState (newUrl) {
+    if (window.history
+        && typeof window.history.replaceState === 'function') {
+        window.history.replaceState({}, document.title, newUrl);
+    }
 }
 
 /**
@@ -82,6 +95,12 @@ const APP = {
     UI,
     settings,
     conference,
+    /**
+     * After the APP has been initialized provides utility methods for dealing
+     * with the conference room URL(address).
+     * @type ConferenceUrl
+     */
+    ConferenceUrl : null,
     connection: null,
     API,
     init () {
@@ -107,6 +126,10 @@ function setTokenData() {
 
 function init() {
     setTokenData();
+    // Initialize the conference URL handler
+    APP.ConferenceUrl = new ConferenceUrl(window.location);
+    // Clean up the URL displayed by the browser
+    replaceHistoryState(APP.ConferenceUrl.getInviteUrl());
     var isUIReady = APP.UI.start();
     if (isUIReady) {
         APP.conference.init({roomName: buildRoomName()}).then(function () {
