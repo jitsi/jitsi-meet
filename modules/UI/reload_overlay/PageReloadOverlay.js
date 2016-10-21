@@ -70,7 +70,6 @@ function start(timeoutSeconds) {
 
         if (timeLeft >= 1) {
             timeLeft -= 1;
-            console.info("Reloading in " + timeLeft + " seconds...");
         }
 
         updateDisplay();
@@ -80,6 +79,9 @@ function start(timeoutSeconds) {
             APP.ConferenceUrl.reload();
         }
     }, 1000);
+
+    console.info(
+        "The conference will be reloaded after " + timeLeft + " seconds.");
 }
 
 export default {
