@@ -1,88 +1,100 @@
 /* global $, APP, AJS */
 
-let $overlay;
+import Overlay from '../overlay/Overlay';
 
 /**
- * Conference reload counter in seconds.
- * @type {number}
+ * An overlay dialog which is shown before the conference is reloaded. Shows
+ * a warning message and counts down towards the reload.
  */
-let timeLeft;
-
-/**
- * Conference reload timeout in seconds.
- * @type {number}
- */
-let timeout;
-
-/**
- * Internal function that constructs overlay with the warning message and count
- * down towards the conference reload.
- */
-function buildReloadOverlayHtml() {
-    $overlay = $(`
-        <div class='overlay_container'>
-            <div class='overlay_content'>
-                <span data-i18n='dialog.serviceUnavailable' 
-                      class='overlay_text_small'></span>
-                <span data-i18n='dialog.conferenceReloadMsg' 
-                      class='overlay_text_small'></span>
-                <div>
-                    <div id='reloadProgressBar' class="aui-progress-indicator">
-                        <span class="aui-progress-indicator-value"></span>
-                    </div>
-                    <span id='reloadSecRemaining' class='overlay_text_small'>
-                    </span>
+class PageReloadOverlayImpl extends Overlay{
+    /**
+     * Creates new <tt>PageReloadOverlayImpl</tt>
+     * @param {number} timeoutSeconds how long the overlay dialog will be
+     * displayed, before the conference will be reloaded.
+     */
+    constructor(timeoutSeconds) {
+        super();
+        /**
+         * Conference reload counter in seconds.
+         * @type {number}
+         */
+        this.timeLeft = timeoutSeconds;
+        /**
+         * Conference reload timeout in seconds.
+         * @type {number}
+         */
+        this.timeout = timeoutSeconds;
+    }
+    /**
+     * Constructs overlay body with the warning message and count down towards
+     * the conference reload.
+     * @override
+     */
+    _buildOverlayContent() {
+        return `
+            <span data-i18n='dialog.serviceUnavailable' 
+                  class='overlay_text_small'></span>
+            <span data-i18n='dialog.conferenceReloadMsg' 
+                  class='overlay_text_small'></span>
+            <div>
+                <div id='reloadProgressBar' class="aui-progress-indicator">
+                    <span class="aui-progress-indicator-value"></span>
                 </div>
-            </div>
-        </div>`);
+                <span id='reloadSecRemaining' class='overlay_text_small'>
+                </span>
+            </div>`;
+    }
 
-    APP.translation.translateElement($overlay);
+    /**
+     * Updates the progress indicator position and the label with the time left.
+     */
+    updateDisplay() {
+
+        const timeLeftTxt
+            = APP.translation.translateString(
+                "dialog.conferenceReloadTimeLeft",
+                { seconds: this.timeLeft });
+        $("#reloadSecRemaining").text(timeLeftTxt);
+
+        const ratio = (this.timeout - this.timeLeft) / this.timeout;
+        AJS.progressBars.update("#reloadProgressBar", ratio);
+    }
+
+    /**
+     * Starts the reload countdown with the animation.
+     * @override
+     */
+    _onShow() {
+
+        // Initialize displays
+        this.updateDisplay();
+
+        var intervalId = window.setInterval(function() {
+
+            if (this.timeLeft >= 1) {
+                this.timeLeft -= 1;
+            }
+
+            this.updateDisplay();
+
+            if (this.timeLeft === 0) {
+                window.clearInterval(intervalId);
+                APP.ConferenceUrl.reload();
+            }
+        }.bind(this), 1000);
+
+        console.info(
+            "The conference will be reloaded after "
+                + this.timeLeft + " seconds.");
+    }
 }
 
 /**
- * Updates the progress indicator position and the label with the time left.
+ * Holds the page reload overlay instance.
+ *
+ * {@type PageReloadOverlayImpl}
  */
-function updateDisplay() {
-
-    const timeLeftTxt
-        = APP.translation.translateString(
-            "dialog.conferenceReloadTimeLeft",
-            { seconds: timeLeft });
-    $("#reloadSecRemaining").text(timeLeftTxt);
-
-    const ratio = (timeout-timeLeft)/timeout;
-    AJS.progressBars.update("#reloadProgressBar", ratio);
-}
-
-/**
- * Starts the reload countdown with the animation.
- * @param {number} timeoutSeconds how many seconds before the conference
- * reload will happen.
- */
-function start(timeoutSeconds) {
-
-    timeLeft = timeout = timeoutSeconds;
-
-    // Initialize displays
-    updateDisplay();
-
-    var intervalId = window.setInterval(function() {
-
-        if (timeLeft >= 1) {
-            timeLeft -= 1;
-        }
-
-        updateDisplay();
-
-        if (timeLeft === 0) {
-            window.clearInterval(intervalId);
-            APP.ConferenceUrl.reload();
-        }
-    }, 1000);
-
-    console.info(
-        "The conference will be reloaded after " + timeLeft + " seconds.");
-}
+let overlay;
 
 export default {
     /**
@@ -91,7 +103,7 @@ export default {
      * visible or <tt>false</tt> otherwise.
      */
     isVisible() {
-        return $overlay && $overlay.parents('body').length > 0;
+        return overlay && overlay.isVisible();
     },
     /**
      * Shows the page reload overlay which will do the conference reload after
@@ -102,11 +114,9 @@ export default {
      */
     show(timeoutSeconds) {
 
-        !$overlay && buildReloadOverlayHtml();
-
-        if (!this.isVisible()) {
-            $overlay.appendTo('body');
-            start(timeoutSeconds);
+        if (!overlay) {
+            overlay = new PageReloadOverlayImpl(timeoutSeconds);
         }
+        overlay.show();
     }
 };
