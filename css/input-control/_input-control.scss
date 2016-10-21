@@ -20,6 +20,8 @@
     }
 
     &__input {
+        margin-bottom: 8px;
+        @include transition(all .2s ease-in);
 
         &:last-child {
             margin-bottom: inherit;
@@ -27,6 +29,11 @@
 
         &::selection {
             background-color: $defaultDarkSelectionColor;
+        }
+
+        &.error {
+            color: $errorColor;
+            border-color: $errorColor;
         }
     }
 
@@ -40,6 +47,10 @@
 
         span {
             vertical-align: middle;
+        }
+
+        &_error {
+            color: $errorColor;
         }
     }
 

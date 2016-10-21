@@ -46,6 +46,11 @@ class Invite {
             }
         });
 
+        this.conference.on(ConferenceEvents.CONFERENCE_JOINED, () => {
+            let roomLocker = this.getRoomLocker();
+            roomLocker.hideRequirePasswordDialog();
+        });
+
         APP.UI.addListener( UIEvents.INVITE_CLICKED,
                             () => { this.openLinkDialog(); });
 
