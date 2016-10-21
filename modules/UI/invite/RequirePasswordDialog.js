@@ -23,19 +23,16 @@ export default class RequirePasswordDialog {
     }
 
     _getBodyMessage() {
-        let passMsg = APP.translation.translateString("dialog.password");
-        let label = APP.translation.translateString(this.labelKey);
-        let error = APP.translation.translateString(this.errorKey);
         return (
             `<div class="input-control">
                 <label class="input-control__label"
-                       data-i18n="${this.labelKey}">${label}</label>
+                       data-i18n="${this.labelKey}"></label>
                 <input class="input-control__input" name="lockKey" type="text"
                    data-i18n="[placeholder]dialog.password"
-                   placeholder="${passMsg}" autofocus id="${this.inputId}">
+                   autofocus id="${this.inputId}">
                 <p class="input-control__hint input-control__hint_error hide"
                    id="${this.errorId}"
-                   data-i18n="${this.errorKey}">${error}</p>
+                   data-i18n="${this.errorKey}"></p>
             </div>`
         );
     }
