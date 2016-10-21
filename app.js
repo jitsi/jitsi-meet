@@ -19,12 +19,12 @@ import 'aui-experimental-css';
 window.toastr = require("toastr");
 
 import URLProcessor from "./modules/config/URLProcessor";
-import ConferenceUrl from './modules/URL/ConferenceUrl';
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 
 import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";
 import conference from './conference';
+import ConferenceUrl from './modules/URL/ConferenceUrl';
 import API from './modules/API/API';
 
 import UIEvents from './service/UI/UIEvents';
@@ -95,6 +95,12 @@ const APP = {
     UI,
     settings,
     conference,
+    /**
+     * After the APP has been initialized provides utility methods for dealing
+     * with the conference room URL(address).
+     * @type ConferenceUrl
+     */
+    ConferenceUrl : null,
     connection: null,
     API,
     init () {
@@ -121,9 +127,9 @@ function setTokenData() {
 function init() {
     setTokenData();
     // Initialize the conference URL handler
-    ConferenceUrl.init(window.location);
+    APP.ConferenceUrl = new ConferenceUrl(window.location);
     // Clean up the URL displayed by the browser
-    replaceHistoryState(ConferenceUrl.getInviteUrl());
+    replaceHistoryState(APP.ConferenceUrl.getInviteUrl());
     var isUIReady = APP.UI.start();
     if (isUIReady) {
         APP.conference.init({roomName: buildRoomName()}).then(function () {

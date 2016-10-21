@@ -3,7 +3,6 @@
 import InviteDialogView from './InviteDialogView';
 import createRoomLocker from './RoomLocker';
 import UIEvents from  '../../../service/UI/UIEvents';
-import ConferenceUrl from '../../URL/ConferenceUrl';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
@@ -15,7 +14,7 @@ const ConferenceEvents = JitsiMeetJS.events.conference;
 class Invite {
     constructor(conference) {
         this.conference = conference;
-        this.inviteUrl = ConferenceUrl.getInviteUrl();
+        this.inviteUrl = APP.ConferenceUrl.getInviteUrl();
         this.createRoomLocker(conference);
         this.registerListeners();
     }

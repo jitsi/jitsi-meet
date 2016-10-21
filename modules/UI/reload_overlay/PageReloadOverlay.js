@@ -1,7 +1,5 @@
 /* global $, APP, AJS */
 
-import ConferenceUrl from '../../URL/ConferenceUrl';
-
 let $overlay;
 
 /**
@@ -79,7 +77,7 @@ function start(timeoutSeconds) {
 
         if (timeLeft === 0) {
             window.clearInterval(intervalId);
-            ConferenceUrl.reload();
+            APP.ConferenceUrl.reload();
         }
     }, 1000);
 }
