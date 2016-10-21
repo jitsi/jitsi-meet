@@ -118,8 +118,13 @@ export default function createRoomLocker (room) {
             );
         },
 
+        /**
+         * Hides require password dialog
+         */
         hideRequirePasswordDialog() {
-            requirePasswordDialog.close();
+            if (requirePasswordDialog.isOpened) {
+                requirePasswordDialog.close();
+            }
         }
     };
 }

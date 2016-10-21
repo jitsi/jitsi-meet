@@ -17,11 +17,20 @@ export default class RequirePasswordDialog {
         this.isOpened = false;
     }
 
+    /**
+     * Registering dialog listeners
+     * @private
+     */
     _registerListeners() {
         let el = document.getElementById(this.inputId);
         el.addEventListener('keypress', this._hideError.bind(this));
     }
 
+    /**
+     * Helper method returning dialog body
+     * @returns {string}
+     * @private
+     */
     _getBodyMessage() {
         return (
             `<div class="input-control">
@@ -37,6 +46,10 @@ export default class RequirePasswordDialog {
         );
     }
 
+    /**
+     * Asking for a password
+     * @returns {Promise}
+     */
     askForPassword() {
         if (!this.isOpened) {
             return this.open();
@@ -49,6 +62,10 @@ export default class RequirePasswordDialog {
         });
     }
 
+    /**
+     * Opens the dialog
+     * @returns {Promise}
+     */
     open() {
         let { titleKey } = this;
         let msgString = this._getBodyMessage();
@@ -73,6 +90,14 @@ export default class RequirePasswordDialog {
         });
     }
 
+    /**
+     * Submit dialog callback
+     * @param e - event
+     * @param v - value
+     * @param m - message
+     * @param f - form
+     * @private
+     */
     _submitFunction(e, v, m, f) {
         e.preventDefault();
 
@@ -83,23 +108,38 @@ export default class RequirePasswordDialog {
         }
     }
 
+    /**
+     * Close dialog callback
+     * @private
+     */
     _closeFunction() {
         this._hideError();
         this.close();
     }
 
+    /**
+     * Method showing error hint
+     * @private
+     */
     _showError() {
         let className = this.inputErrorClass;
         document.getElementById(this.errorId).classList.remove('hide');
         document.getElementById(this.inputId).classList.add(className);
     }
 
+    /**
+     * Method hiding error hint
+     * @private
+     */
     _hideError() {
         let className = this.inputErrorClass;
         document.getElementById(this.errorId).classList.add('hide');
         document.getElementById(this.inputId).classList.remove(className);
     }
 
+    /**
+     * Close the dialog
+     */
     close() {
         APP.UI.messageHandler.closeDialog();
         this.isOpened = false;
