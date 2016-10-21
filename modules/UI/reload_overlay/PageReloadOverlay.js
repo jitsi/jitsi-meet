@@ -32,15 +32,15 @@ class PageReloadOverlayImpl extends Overlay{
      */
     _buildOverlayContent() {
         return `
-            <span data-i18n='dialog.serviceUnavailable' 
-                  class='overlay_text_small'></span>
+            <span data-i18n='dialog.conferenceReloadTitle' 
+                  class='reload_overlay_title'></span>
             <span data-i18n='dialog.conferenceReloadMsg' 
-                  class='overlay_text_small'></span>
+                  class='reload_overlay_msg'></span>
             <div>
                 <div id='reloadProgressBar' class="aui-progress-indicator">
                     <span class="aui-progress-indicator-value"></span>
                 </div>
-                <span id='reloadSecRemaining' class='overlay_text_small'>
+                <span id='reloadSecRemaining' class='reload_overlay_msg'>
                 </span>
             </div>`;
     }
