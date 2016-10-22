@@ -99,6 +99,7 @@
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
         "filmstrip": "Show / hide videos",
+        "profile": "Edit your profile",
         "raiseHand": "Raise hand to speak"
     },
     "bottomtoolbar": {
@@ -135,7 +136,8 @@
     "profile": {
         "title": "Profile",
         "setDisplayNameLabel": "Set your display name",
-        "setEmailLabel": "Set your gravatar email"
+        "setEmailLabel": "Set your gravatar email",
+        "setEmailInput": "Enter e-mail"
     },
     "videothumbnail":
     {
