@@ -1051,7 +1051,7 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
  * @returns {Promise} Resolved with value - false if the dialog is enabled and
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed. This values are
- * used to display or not display the thank you dialog from 
+ * used to display or not display the thank you dialog from
  * conference.maybeRedirectToWelcomePage method.
  */
 UI.requestFeedbackOnHangup = function () {
@@ -1207,9 +1207,8 @@ UI.getLargeVideo = function () {
 UI.showExtensionRequiredDialog = function (url) {
     messageHandler.openMessageDialog(
         "dialog.extensionRequired",
-        null,
-        APP.translation.generateTranslationHTML(
-            "dialog.firefoxExtensionPrompt", {url: url}));
+        "dialog.firefoxExtensionPrompt",
+        {url: url});
 };
 
 /**
@@ -1232,7 +1231,6 @@ UI.showExtensionExternalInstallationDialog = function (url) {
     messageHandler.openTwoButtonDialog({
         titleKey: 'dialog.externalInstallationTitle',
         msgKey: 'dialog.externalInstallationMsg',
-        msgString: '',
         leftButtonKey: 'dialog.goToStore',
         submitFunction,
         loadedFunction: $.noop,
@@ -1379,8 +1377,7 @@ UI.showTrackNotWorkingDialog = function (stream) {
     messageHandler.openMessageDialog(
         "dialog.error",
         stream.isAudioTrack()? "dialog.micNotSendingData" :
-            "dialog.cameraNotSendingData",
-        null);
+            "dialog.cameraNotSendingData");
 };
 
 UI.updateDevicesAvailability = function (id, devices) {

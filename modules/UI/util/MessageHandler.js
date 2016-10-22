@@ -29,23 +29,19 @@ var messageHandler = {
      *
      * @param titleKey the key used to find the translation of the title of the
      * message, if a message title is not provided.
-     * @param messageKey the key used to find the translation of the message,
-     * if a message is not provided.
-     * @param message the message to show. If a falsy value is provided,
-     * messageKey will be used to get a message via the translation API.
+     * @param messageKey the key used to find the translation of the message
+     * @param i18nOptions the i18n options (optional)
      * @param closeFunction function to be called after
      * the prompt is closed (optional)
      * @return the prompt that was created, or null
      */
-    openMessageDialog: function(titleKey, messageKey, message, closeFunction) {
+    openMessageDialog:
+        function(titleKey, messageKey, i18nOptions, closeFunction) {
         if (!popupEnabled)
             return null;
 
-        if (!message) {
-            message = APP.translation.generateTranslationHTML(messageKey);
-        }
-
-        let dialog = $.prompt(message, {
+        let dialog = $.prompt(
+            APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,
@@ -55,7 +51,7 @@ var messageHandler = {
                     closeFunction(e, v, m, f);
             }
         });
-        APP.translation.translateElement(dialog);
+        APP.translation.translateElement(dialog, i18nOptions);
         return dialog;
     },
     /**

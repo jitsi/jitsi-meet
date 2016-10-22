@@ -194,9 +194,8 @@ function maybeRedirectToWelcomePage(showThankYou) {
     }
 
     if (showThankYou) {
-        APP.UI.messageHandler.openMessageDialog(null, null,
-            APP.translation.generateTranslationHTML(
-                "dialog.thankYou", {appName:interfaceConfig.APP_NAME}));
+        APP.UI.messageHandler.openMessageDialog(
+            null, "dialog.thankYou", {appName:interfaceConfig.APP_NAME});
     }
 
     if (!config.enableWelcomePage) {
