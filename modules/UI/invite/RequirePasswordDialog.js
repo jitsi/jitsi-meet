@@ -100,7 +100,16 @@ export default class RequirePasswordDialog {
      */
     _submitFunction(e, v, m, f) {
         e.preventDefault();
+        this._processInput(v, f);
+    }
 
+    /**
+     * Processing input in dialog
+     * @param v - value
+     * @param f - form
+     * @private
+     */
+    _processInput(v, f) {
         if (v && f.lockKey) {
             this.resolve(UIUtil.escapeHtml(f.lockKey));
         } else {
@@ -112,7 +121,8 @@ export default class RequirePasswordDialog {
      * Close dialog callback
      * @private
      */
-    _closeFunction() {
+    _closeFunction(e, v, m, f) {
+        this._processInput(v, f);
         this._hideError();
         this.close();
     }
