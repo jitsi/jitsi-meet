@@ -123,8 +123,10 @@ export default class RequirePasswordDialog {
      */
     _showError() {
         let className = this.inputErrorClass;
+        let input = document.getElementById(this.inputId);
         document.getElementById(this.errorId).classList.remove('hide');
-        document.getElementById(this.inputId).classList.add(className);
+        input.classList.add(className);
+        input.select();
     }
 
     /**
