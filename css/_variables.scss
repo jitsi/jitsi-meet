@@ -27,6 +27,7 @@ $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
 // Toolbar
+$toolbarBackground: rgba(0, 0, 0, 0.5);
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 $toolbarBadgeBackground: #165ECC;
 $toolbarBadgeColor: #FFFFFF;
@@ -46,6 +47,8 @@ $dominantSpeakerBg: #165ecc;
 $raiseHandBg: #D6D61E;
 $audioLevelBg: #44A5FF;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
+$videoStateIndicatorColor: $defaultColor;
+$videoStateIndicatorBackground: $toolbarBackground;
 
 /**
  * Feedback Modal
@@ -84,8 +87,9 @@ $sidebarWidth: 200px;
  */
 $tooltipsZ: 901;
 $toolbarZ: 900;
-$overlayZ: 800;
+$overlayZ: 902;
 $notificationZ: 1012;
+$ringingZ: 800;
 
 /**
  * Font Colors TODO: Change colors when general dialogs are implemented.
@@ -106,6 +110,6 @@ $linkHoverFontColor: #287ade;
 /**
  * Forms
  */
-$inputBg: #505F79;
-$inputBgHover: #505F79;
-$inputFontColor: #ECEEF1;
+$inputBg: $inputSemiBackground;
+$inputBgHover: $inputSemiBackground;
+$inputFontColor: $defaultDarkFontColor;

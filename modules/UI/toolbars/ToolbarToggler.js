@@ -34,9 +34,10 @@ function hideToolbar(force) { // eslint-disable-line no-unused-vars
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (Toolbar.isHovered()
-            || APP.UI.isRingOverlayVisible()
-            || SideContainerToggler.isVisible()) {
+    if (force !== true &&
+            (Toolbar.isHovered()
+                || APP.UI.isRingOverlayVisible()
+                || SideContainerToggler.isVisible())) {
         toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
     } else {
         Toolbar.hide();

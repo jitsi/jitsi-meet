@@ -14,12 +14,12 @@ import Recording from "./recording/Recording";
 import GumPermissionsOverlay
     from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
+import PageReloadOverlay from './reload_overlay/PageReloadOverlay';
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
-import { reload } from '../util/helpers';
 import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
 
@@ -190,13 +190,6 @@ UI.notifyConferenceDestroyed = function (reason) {
 };
 
 /**
- * Notify user that Jitsi Videobridge is not accessible.
- */
- UI.notifyBridgeDown = function () {
-    messageHandler.showError("dialog.error", "dialog.bridgeUnavailable");
-};
-
-/**
  * Show chat error.
  * @param err the Error
  * @param msg
@@ -259,19 +252,6 @@ UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
  */
 UI.initConference = function () {
     let id = APP.conference.getMyUserId();
-
-    // Do not include query parameters in the invite URL
-    // "https:" + "//" + "example.com:8888" + "/SomeConference1245"
-    var inviteURL = window.location.protocol + "//" +
-        window.location.host + window.location.pathname;
-
-    this.emitEvent(UIEvents.INVITE_URL_INITIALISED, inviteURL);
-
-    // Clean up the URL displayed by the browser
-    if (window.history && typeof window.history.replaceState === 'function') {
-        window.history.replaceState({}, document.title, inviteURL);
-    }
-
     // Add myself to the contact list.
     UI.ContactList.addContact(id, true);
 
@@ -1104,22 +1084,11 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
 };
 
 /**
- * Notify user that focus left the conference so page should be reloaded.
+ * Notify the user that the video conferencing service is badly broken and
+ * the page should be reloaded.
  */
-UI.notifyFocusLeft = function () {
-    let msg = APP.translation.generateTranslationHTML(
-        'dialog.jicofoUnavailable'
-    );
-    messageHandler.openDialog(
-        'dialog.serviceUnavailable',
-        msg,
-        true, // persistent
-        [{title: 'retry'}],
-        function () {
-            reload();
-            return false;
-        }
-    );
+UI.showPageReloadOverlay = function () {
+    PageReloadOverlay.show(15 /* will reload in 15 seconds */);
 };
 
 /**
@@ -1445,6 +1414,18 @@ UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
     FilmStrip.toggleFilmStrip(true);
+};
+
+/**
+ * Indicates if any the "top" overlays are currently visible. The check includes
+ * the call overlay, GUM permissions overlay and a page reload overlay.
+ *
+ * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
+ */
+UI.isOverlayVisible = function () {
+    return RingOverlay.isVisible()
+        || PageReloadOverlay.isVisible()
+        || GumPermissionsOverlay.isVisible();
 };
 
 /**

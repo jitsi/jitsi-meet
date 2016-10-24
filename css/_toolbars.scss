@@ -1,5 +1,5 @@
 .toolbar {
-    background-color: rgba(0,0,0,0.5);
+    background-color: $toolbarBackground;
     position: relative;
     z-index: $toolbarZ;
     height: 100%;
