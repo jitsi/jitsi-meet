@@ -3,6 +3,10 @@ form.aui {
         background-color: transparent;
 
         > a {
+            background-color: $inputBg !important;
+            color: $inputFontColor !important;
+            border-color: $inputBg !important;
+            text-shadow: none !important;
             margin: 0 auto !important;
             width: 100% !important;
         }
@@ -30,16 +34,6 @@ form.aui {
 
 .select2-drop-mask {
     z-index: 900;
-}
-
-//Dark theme
-form.aui{
-    //Placeholder
-    .aui-select2-container.input-container-dark {
-        a.select2-choice {
-            text-shadow: none;
-        }
-    }
 }
 
 .aui-dropdown2.aui-style-default.dropdown-dark {
