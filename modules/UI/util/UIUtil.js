@@ -1,4 +1,4 @@
-/* global $, APP, AJS, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
@@ -106,7 +106,7 @@ const TOOLTIP_POSITIONS = {
      * <tt>tooltip-n</tt>) and the attribute <tt>content</tt>.
      */
     activateTooltips() {
-        AJS.$('[data-tooltip]').tooltip({
+        $('[data-tooltip]').tipsy({
             gravity() {
                 return this.getAttribute('data-tooltip');
             },

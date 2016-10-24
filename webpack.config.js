@@ -98,6 +98,7 @@ var config = {
                 'jQuery-Impromptu/dist/jquery-impromptu'
                     + (minimize ? '.min' : '')
                     + '.js',
+            tipsy: 'tipsy/src/javascripts/jquery.tipsy.js',
         },
         packageAlias: 'browser'
     }

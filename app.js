@@ -15,6 +15,7 @@ import 'aui';
 import 'aui-experimental';
 import 'aui-css';
 import 'aui-experimental-css';
+import 'tipsy';
 
 window.toastr = require("toastr");
 
