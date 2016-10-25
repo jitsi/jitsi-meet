@@ -20,7 +20,6 @@
     }
 
     &__input {
-        margin-bottom: 8px;
 
         &:last-child {
             margin-bottom: inherit;
@@ -47,6 +46,8 @@
     &__container {
         position: relative;
         width: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
         @include flex();
 
         .button-control {
