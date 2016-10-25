@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJS, interfaceConfig */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -550,7 +550,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
 
 /**
  * Gets (creating if necessary) the "indicator" span for this SmallVideo.
- * 
+ *
  * @param options.id {String} element ID
  * @param options.content {String} HTML content of the indicator
  * @param options.tooltip {String} The key that should be passed to tooltip
@@ -570,11 +570,8 @@ SmallVideo.prototype.getIndicatorSpan = function(options) {
 
     indicator.innerHTML = options.content;
 
-    // This element will be translated by UIUtil.setTooltip and 
-    // that's why it is not translated here.
-    // Do not translate the same element multiple times in a row
-    // because it prevents tooltip from disappearing.
     UIUtil.setTooltip(indicator, options.tooltip, "top");
+    APP.translation.translateElement($(indicator));
 
     this.container.appendChild(indicator);
 
