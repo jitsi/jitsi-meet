@@ -105,7 +105,7 @@
         <div id="subject" class="hide"></div>
 
         <div id="extendedToolbar" class="toolbar">
-            <a class="button" id="toolbar_button_profile" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile" content="Edit your profile">
+            <a class="button" id="toolbar_button_profile" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile">
                 <img id="avatar" src="images/avatar2.png"/>
             </a>
             <a class="button icon-contactList" id="toolbar_contact_list" shortcut="contactlistpopover">
@@ -138,11 +138,11 @@
                     <div class="title" data-i18n="profile.title"></div>
                     <div class="sideToolbarBlock first">
                         <label class="first" data-i18n="profile.setDisplayNameLabel"></label>
-                        <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
+                        <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name">
                     </div>
                     <div class="sideToolbarBlock">
                         <label data-i18n="profile.setEmailLabel"></label>
-                        <input type="text" id="setEmail" placeholder="Enter e-mail">
+                        <input data-i18n="[placeholder]profile.setEmailInput" type="text" id="setEmail">
                     </div>
                     <div class="sideToolbarBlock auth_container" id="authenticationContainer">
                         <p data-i18n="toolbar.authenticate"></p>
@@ -175,7 +175,7 @@
                     </div>
                 </div>
                 <div id="contacts_container" class="sideToolbarContainer__inner">
-                    <div class="title" data-i18n="contactlist"></div>
+                    <div class="title" data-i18n="contactlist" data-i18n-options='{"pcount":"1"}'></div>
                     <ul id="contacts"></ul>
                 </div>
                 <div id="settings_container" class="sideToolbarContainer__inner">

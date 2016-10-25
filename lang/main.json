@@ -1,5 +1,5 @@
 {
-    "contactlist": "Participants",
+    "contactlist": "Participants (__pcount__)",
     "addParticipants": "Add Participants",
     "roomLocked": "Callers must enter a password",
     "roomUnlocked": "Anyone with the link can join",
@@ -99,6 +99,7 @@
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
         "filmstrip": "Show / hide videos",
+        "profile": "Edit your profile",
         "raiseHand": "Raise hand to speak"
     },
     "bottomtoolbar": {
@@ -135,7 +136,8 @@
     "profile": {
         "title": "Profile",
         "setDisplayNameLabel": "Set your display name",
-        "setEmailLabel": "Set your gravatar email"
+        "setEmailLabel": "Set your gravatar email",
+        "setEmailInput": "Enter e-mail"
     },
     "videothumbnail":
     {
@@ -342,7 +344,7 @@
         "ATTACHED": "Attached",
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
-        "GET_SESSION_ID_ERROR": "Get session-id error: ",
+        "GET_SESSION_ID_ERROR": "Get session-id error: __code__",
         "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues..."
     },
     "recording":

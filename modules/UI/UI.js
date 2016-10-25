@@ -75,17 +75,13 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
  */
 function promptDisplayName() {
     let labelKey = 'dialog.enterDisplayName';
-    let labelStr = APP.translation.translateString(labelKey);
-    let titleStr
-        = APP.translation.translateString('dialog.displayNameRequired');
-    let defaultNickMsg = APP.translation.translateString("defaultNickname");
     let message = (
         `<div class="input-control">
-            <label class="input-control__label">${labelStr}</label>
+            <label data-i18n="${labelKey}" class="input-control__label"></label>
             <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
                class="input-control__input"
-               placeholder="${defaultNickMsg}" autofocus>
+               autofocus>
          </div>`
     );
 
@@ -94,7 +90,7 @@ function promptDisplayName() {
     let buttons = {Ok:true};
 
     let dialog = messageHandler.openDialog(
-        titleStr,
+        'dialog.displayNameRequired',
         message,
         true,
         buttons,
@@ -167,11 +163,10 @@ UI.notifyGracefulShutdown = function () {
  * Notify user that reservation error happened.
  */
 UI.notifyReservationError = function (code, msg) {
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.reservationError");
     var message = APP.translation.generateTranslationHTML(
         "dialog.reservationErrorMsg", {code: code, msg: msg});
-    messageHandler.openDialog(title, message, true, {}, () => false);
+    messageHandler.openDialog(
+        "dialog.reservationError", message, true, {}, () => false);
 };
 
 /**
@@ -190,9 +185,8 @@ UI.notifyKicked = function () {
 UI.notifyConferenceDestroyed = function (reason) {
     //FIXME: use Session Terminated from translation, but
     // 'reason' text comes from XMPP packet and is not translated
-    const title
-        = APP.translation.generateTranslationHTML("dialog.sessTerminated");
-    messageHandler.openDialog(title, reason, true, {}, () => false);
+    messageHandler.openDialog(
+        "dialog.sessTerminated", reason, true, {}, () => false);
 };
 
 /**
@@ -750,8 +744,6 @@ UI.connectionIndicatorShowMore = function(id) {
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     console.log('password is required');
-    let titleKey = "dialog.passwordRequired";
-    let titleString = APP.translation.translateString(titleKey);
 
     let message = (
         `<input name="username" type="text"
@@ -770,8 +762,7 @@ UI.showLoginPopup = function(callback) {
     };
 
     messageHandler.openTwoButtonDialog({
-        titleKey,
-        titleString,
+        titleKey : "dialog.passwordRequired",
         msgString: message,
         leftButtonKey: 'dialog.Ok',
         submitFunction,
@@ -904,9 +895,6 @@ UI.setUserAvatarUrl = function (id, url) {
  * @param {string} stropheErrorMsg raw Strophe error message
  */
 UI.notifyConnectionFailed = function (stropheErrorMsg) {
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.error");
-
     var message;
     if (stropheErrorMsg) {
         message = APP.translation.generateTranslationHTML(
@@ -916,7 +904,7 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
             "dialog.connectError");
     }
 
-    messageHandler.openDialog(title, message, true, {}, () => false);
+    messageHandler.openDialog("dialog.error", message, true, {}, () => false);
 };
 
 
@@ -924,13 +912,10 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
  * Notify user that maximum users limit has been reached.
  */
 UI.notifyMaxUsersLimitReached = function () {
-    var title = APP.translation.generateTranslationHTML(
-        "dialog.error");
-
     var message = APP.translation.generateTranslationHTML(
             "dialog.maxUsersLimitReached");
 
-    messageHandler.openDialog(title, message, true, {}, () => false);
+    messageHandler.openDialog("dialog.error", message, true, {}, () => false);
 };
 
 /**
@@ -1046,7 +1031,7 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
  * @returns {Promise} Resolved with value - false if the dialog is enabled and
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed. This values are
- * used to display or not display the thank you dialog from 
+ * used to display or not display the thank you dialog from
  * conference.maybeRedirectToWelcomePage method.
  */
 UI.requestFeedbackOnHangup = function () {
@@ -1191,10 +1176,8 @@ UI.getLargeVideo = function () {
 UI.showExtensionRequiredDialog = function (url) {
     messageHandler.openMessageDialog(
         "dialog.extensionRequired",
-        null,
-        null,
-        APP.translation.generateTranslationHTML(
-            "dialog.firefoxExtensionPrompt", {url: url}));
+        "dialog.firefoxExtensionPrompt",
+        {url: url});
 };
 
 /**
@@ -1216,9 +1199,7 @@ UI.showExtensionExternalInstallationDialog = function (url) {
 
     messageHandler.openTwoButtonDialog({
         titleKey: 'dialog.externalInstallationTitle',
-        titleString: '',
         msgKey: 'dialog.externalInstallationMsg',
-        msgString: '',
         leftButtonKey: 'dialog.goToStore',
         submitFunction,
         loadedFunction: $.noop,
@@ -1263,8 +1244,6 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
         }
     }
 
-    let title = getTitleKey();
-    let titleMsg = `<span data-i18n="${title}"></span>`;
     let cameraJitsiTrackErrorMsg = cameraError
         ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
         : undefined;
@@ -1318,7 +1297,7 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     deviceErrorDialog && deviceErrorDialog.close();
 
     deviceErrorDialog = messageHandler.openDialog(
-        titleMsg,
+        getTitleKey(),
         message,
         false,
         {Ok: true},
@@ -1341,8 +1320,6 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
             deviceErrorDialog = null;
         }
     );
-
-    APP.translation.translateElement($(".jqibox"));
 
     function getTitleKey() {
         let title = "dialog.error";
@@ -1369,9 +1346,7 @@ UI.showTrackNotWorkingDialog = function (stream) {
     messageHandler.openMessageDialog(
         "dialog.error",
         stream.isAudioTrack()? "dialog.micNotSendingData" :
-            "dialog.cameraNotSendingData",
-        null,
-        null);
+            "dialog.cameraNotSendingData");
 };
 
 UI.updateDevicesAvailability = function (id, devices) {
@@ -1483,12 +1458,11 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
  */
 UI.toggleKeyboardShortcutsPanel = function() {
     if (!messageHandler.isDialogOpened()) {
-        let titleKey = 'keyboardShortcuts.keyboardShortcuts';
-        let title = APP.translation.translateString(titleKey);
         let msg = $('#keyboard-shortcuts').html();
         let buttons = { Close: true };
 
-        messageHandler.openDialog(title, msg, true, buttons);
+        messageHandler.openDialog(
+            'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
     } else {
         messageHandler.closeDialog();
     }

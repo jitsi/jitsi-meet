@@ -29,30 +29,20 @@ var messageHandler = {
      *
      * @param titleKey the key used to find the translation of the title of the
      * message, if a message title is not provided.
-     * @param messageKey the key used to find the translation of the message,
-     * if a message is not provided.
-     * @param title the title of the message. If a falsy value is provided,
-     * titleKey will be used to get a title via the translation API.
-     * @param message the message to show. If a falsy value is provided,
-     * messageKey will be used to get a message via the translation API.
+     * @param messageKey the key used to find the translation of the message
+     * @param i18nOptions the i18n options (optional)
      * @param closeFunction function to be called after
      * the prompt is closed (optional)
      * @return the prompt that was created, or null
      */
-    openMessageDialog: function(titleKey, messageKey, title, message,
-                                closeFunction) {
+    openMessageDialog:
+        function(titleKey, messageKey, i18nOptions, closeFunction) {
         if (!popupEnabled)
             return null;
 
-        if (!title) {
-            title = APP.translation.generateTranslationHTML(titleKey);
-        }
-        if (!message) {
-            message = APP.translation.generateTranslationHTML(messageKey);
-        }
-
-        return $.prompt(message, {
-            title: this._getFormattedTitleString(title),
+        let dialog = $.prompt(
+            APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
+            title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,
             classes: this._getDialogClasses(),
@@ -61,12 +51,14 @@ var messageHandler = {
                     closeFunction(e, v, m, f);
             }
         });
+        APP.translation.translateElement(dialog, i18nOptions);
+        return dialog;
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
      *
-     * @param titleString the title of the message
+     * @param titleKey the key for the title of the message
      * @param msgString the text of the message
      * @param persistent boolean value which determines whether the message is
      *        persistent or not
@@ -84,7 +76,6 @@ var messageHandler = {
     openTwoButtonDialog: function(options) {
         let {
             titleKey,
-            titleString,
             msgKey,
             msgString,
             leftButtonKey,
@@ -112,10 +103,7 @@ var messageHandler = {
             = APP.translation.generateTranslationHTML("dialog.Cancel");
         buttons.push({title: cancelButton, value: false});
 
-        var message = msgString, title = titleString;
-        if (titleKey) {
-            title = APP.translation.generateTranslationHTML(titleKey);
-        }
+        var message = msgString;
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
@@ -125,7 +113,7 @@ var messageHandler = {
         }
 
         twoButtonDialog = $.prompt(message, {
-            title: this._getFormattedTitleString(title),
+            title: this._getFormattedTitleString(titleKey),
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
@@ -147,6 +135,7 @@ var messageHandler = {
                 }
             }
         });
+        APP.translation.translateElement(twoButtonDialog);
         return twoButtonDialog;
     },
 
@@ -154,7 +143,7 @@ var messageHandler = {
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
      *
-     * @param titleString the title of the message
+     * @param titleKey the key for the title of the message
      * @param msgString the text of the message
      * @param persistent boolean value which determines whether the message is
      *        persistent or not
@@ -166,13 +155,13 @@ var messageHandler = {
      *        loaded
      * @param closeFunction function to be called on dialog close
      */
-    openDialog: function (titleString, msgString, persistent, buttons,
+    openDialog: function (titleKey, msgString, persistent, buttons,
                               submitFunction, loadedFunction, closeFunction) {
         if (!popupEnabled)
             return;
 
         let args = {
-            title: this._getFormattedTitleString(titleString),
+            title: this._getFormattedTitleString(titleKey),
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
@@ -187,7 +176,9 @@ var messageHandler = {
             args.closeText = '';
         }
 
-        return new Impromptu(msgString, args);
+        let dialog = new Impromptu(msgString, args);
+        APP.translation.translateElement(dialog.getPrompt());
+        return dialog;
     },
 
     /**
@@ -195,13 +186,11 @@ var messageHandler = {
      *
      * @return the title string formatted as a div.
      */
-    _getFormattedTitleString(titleString) {
+    _getFormattedTitleString(titleKey) {
         let $titleString = $('<h2>');
         $titleString.addClass('aui-dialog2-header-main');
-        $titleString.append(titleString);
-        titleString = $('<div>').append($titleString).html();
-
-        return titleString;
+        $titleString.attr('data-i18n',titleKey);
+        return $('<div>').append($titleString).html();
     },
 
     /**
@@ -235,8 +224,10 @@ var messageHandler = {
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
+     * @param options impromptu options
+     * @param translateOptions options passed to translation
      */
-    openDialogWithStates: function (statesObject, options) {
+    openDialogWithStates: function (statesObject, options, translateOptions) {
         if (!popupEnabled)
             return;
         let { classes, size } = options;
@@ -246,12 +237,14 @@ var messageHandler = {
 
         for (let state in statesObject) {
             let currentState = statesObject[state];
-            if(currentState.title) {
-                let title = currentState.title;
-                currentState.title = this._getFormattedTitleString(title);
+            if(currentState.titleKey) {
+                currentState.title
+                    = this._getFormattedTitleString(currentState.titleKey);
             }
         }
-        return new Impromptu(statesObject, options);
+        let dialog = new Impromptu(statesObject, options);
+        APP.translation.translateElement(dialog.getPrompt(), translateOptions);
+        return dialog;
     },
 
     /**
@@ -340,20 +333,18 @@ var messageHandler = {
         if (displayName) {
             displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
         } else {
-            displayNameSpan += "data-i18n='" + displayNameKey +
-                "'>" + APP.translation.translateString(displayNameKey);
+            displayNameSpan += "data-i18n='" + displayNameKey + "'>";
         }
         displayNameSpan += "</span>";
-        return toastr.info(
+        let element = toastr.info(
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
-                    " data-i18n-options='" + JSON.stringify(messageArguments)
-                        + "'"
-                    : "") + ">" +
-            APP.translation.translateString(messageKey,
-                messageArguments) +
-            '</span>', null, options);
+                    " data-i18n-options='"
+                        + JSON.stringify(messageArguments) + "'"
+                    : "") + "></span>", null, options);
+        APP.translation.translateElement(element);
+        return element;
     },
 
     /**

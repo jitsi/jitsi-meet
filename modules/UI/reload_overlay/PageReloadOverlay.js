@@ -40,7 +40,9 @@ class PageReloadOverlayImpl extends Overlay{
                 <div id='reloadProgressBar' class="aui-progress-indicator">
                     <span class="aui-progress-indicator-value"></span>
                 </div>
-                <span id='reloadSecRemaining' class='reload_overlay_msg'>
+                <span id='reloadSecRemaining' 
+                      data-i18n="dialog.conferenceReloadTimeLeft" 
+                      class='reload_overlay_msg'>
                 </span>
             </div>`;
     }
@@ -50,11 +52,8 @@ class PageReloadOverlayImpl extends Overlay{
      */
     updateDisplay() {
 
-        const timeLeftTxt
-            = APP.translation.translateString(
-                "dialog.conferenceReloadTimeLeft",
-                { seconds: this.timeLeft });
-        $("#reloadSecRemaining").text(timeLeftTxt);
+        APP.translation.translateElement(
+            $("#reloadSecRemaining"), { seconds: this.timeLeft });
 
         const ratio = (this.timeout - this.timeLeft) / this.timeout;
         AJS.progressBars.update("#reloadProgressBar", ratio);

@@ -93,7 +93,7 @@ export default class SharedVideoManager {
             dialog = APP.UI.messageHandler.openMessageDialog(
                 "dialog.shareVideoTitle",
                 "dialog.alreadySharedVideoMsg",
-                null, null,
+                null,
                 function () {
                     dialog = null;
                 }
@@ -750,24 +750,19 @@ function showStopVideoPropmpt() {
  */
 function requestVideoLink() {
     let i18n = APP.translation;
-    const title = i18n.generateTranslationHTML("dialog.shareVideoTitle");
     const cancelButton = i18n.generateTranslationHTML("dialog.Cancel");
     const shareButton = i18n.generateTranslationHTML("dialog.Share");
     const backButton = i18n.generateTranslationHTML("dialog.Back");
     const linkError
         = i18n.generateTranslationHTML("dialog.shareVideoLinkError");
-    const i18nOptions = {url: defaultSharedVideoLink};
-    const defaultUrl = i18n.translateString("defaultLink", i18nOptions);
 
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
-                title: title,
+                titleKey: "dialog.shareVideoTitle",
                 html:  `
                     <input name="sharedVideoUrl" type="text"
                            data-i18n="[placeholder]defaultLink"
-                           data-i18n-options="${JSON.stringify(i18nOptions)}"
-                           placeholder="${defaultUrl}"
                            autofocus>`,
                 persistent: false,
                 buttons: [
@@ -802,7 +797,7 @@ function requestVideoLink() {
             },
 
             state1: {
-                title: title,
+                titleKey: "dialog.shareVideoTitle",
                 html: linkError,
                 persistent: false,
                 buttons: [
@@ -825,7 +820,8 @@ function requestVideoLink() {
             close: function () {
                 dialog = null;
             }
+        }, {
+            url: defaultSharedVideoLink
         });
-
     });
 }

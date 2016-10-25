@@ -1,4 +1,4 @@
-/* global APP, config */
+/* global $, APP, config */
 
 /**
  * Build html for "password required" dialog.
@@ -15,8 +15,7 @@ function getPasswordInputHtml() {
                placeholder=${placeholder} autofocus>
         <input name="password" type="password"
                class="input-control__input"
-               data-i18n="[placeholder]dialog.userPassword"
-               placeholder="user password">`;
+               data-i18n="[placeholder]dialog.userPassword">`;
 }
 
 /**
@@ -67,7 +66,7 @@ function LoginDialog(successCallback, cancelCallback) {
         value: true
     }];
     let finishedButtons = [{
-        title: APP.translation.translateString('dialog.retry'),
+        title: APP.translation.generateTranslationHTML('dialog.retry'),
         value: 'retry'
     }];
 
@@ -79,7 +78,7 @@ function LoginDialog(successCallback, cancelCallback) {
 
     const states = {
         login: {
-            title: APP.translation.translateString('dialog.passwordRequired'),
+            titleKey: 'dialog.passwordRequired',
             html: getPasswordInputHtml(),
             buttons: loginButtons,
             focus: ':input:first',
@@ -99,13 +98,13 @@ function LoginDialog(successCallback, cancelCallback) {
             }
         },
         connecting: {
-            title: APP.translation.translateString('dialog.connecting'),
+            titleKey: 'dialog.connecting',
             html:   '<div id="connectionStatus"></div>',
             buttons: [],
             defaultButton: 0
         },
         finished: {
-            title: APP.translation.translateString('dialog.error'),
+            titleKey: 'dialog.error',
             html:   '<div id="errorMessage"></div>',
             buttons: finishedButtons,
             defaultButton: 0,
@@ -128,27 +127,31 @@ function LoginDialog(successCallback, cancelCallback) {
     /**
      * Displays error message in 'finished' state which allows either to cancel
      * or retry.
-     * @param message the final message to be displayed.
+     * @param messageKey the key to the message to be displayed.
+     * @param options the options to the error message (optional)
      */
-    this.displayError = function (message) {
+    this.displayError = function (messageKey, options) {
 
         let finishedState = connDialog.getState('finished');
 
         let errorMessageElem = finishedState.find('#errorMessage');
-        errorMessageElem.text(message);
+        errorMessageElem.attr("data-i18n", messageKey);
+
+        APP.translation.translateElement($(errorMessageElem), options);
 
         connDialog.goToState('finished');
     };
 
     /**
      *  Show message as connection status.
-     * @param {string} message
+     * @param {string} messageKey the key to the message
      */
-    this.displayConnectionStatus = function (message) {
+    this.displayConnectionStatus = function (messageKey) {
         let connectingState = connDialog.getState('connecting');
 
         let connectionStatus = connectingState.find('#connectionStatus');
-        connectionStatus.text(message);
+        connectionStatus.attr("data-i18n", messageKey);
+        APP.translation.translateElement($(connectionStatus));
     };
 
     /**
@@ -202,9 +205,6 @@ export default {
      * @returns dialog
      */
     showAuthRequiredDialog: function (roomName, onAuthNow) {
-        var title = APP.translation.generateTranslationHTML(
-            "dialog.WaitingForHost"
-        );
         var msg = APP.translation.generateTranslationHTML(
             "dialog.WaitForHostMsg", {room: roomName}
         );
@@ -215,7 +215,7 @@ export default {
         var buttons = [{title: buttonTxt, value: "authNow"}];
 
         return APP.UI.messageHandler.openDialog(
-            title,
+            "dialog.WaitingForHost",
             msg,
             true,
             buttons,

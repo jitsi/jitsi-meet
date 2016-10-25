@@ -89,9 +89,6 @@ module.exports = {
 
         i18n.init(options, initCompleted);
     },
-    translateString: function (key, options) {
-        return i18n.t(key, options);
-    },
     setLanguage: function (lang) {
         if(!lang)
             lang = DEFAULT_LANG;
@@ -100,16 +97,19 @@ module.exports = {
     getCurrentLanguage: function () {
         return i18n.lng();
     },
-    translateElement: function (selector) {
-        selector.i18n();
+    translateElement: function (selector, options) {
+        // i18next expects undefined if options are missing, check if its null
+        selector.i18n(
+            options === null ? undefined : options);
     },
     generateTranslationHTML: function (key, options) {
         var str = "<span data-i18n=\"" + key + "\"";
         if (options) {
-            str += " data-i18n-options=\"" + JSON.stringify(options) + "\"";
+            str += " data-i18n-options='" + JSON.stringify(options) + "'";
         }
         str += ">";
-        str += this.translateString(key, options);
+        // i18next expects undefined if options ARE missing, check if its null
+        str += i18n.t(key, options === null ? undefined : options);
         str += "</span>";
         return str;
 

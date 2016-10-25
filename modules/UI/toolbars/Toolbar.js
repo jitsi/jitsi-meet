@@ -279,7 +279,6 @@ function showSipNumberInput () {
         ? config.defaultSipNumber
         : '';
     let titleKey = "dialog.sipMsg";
-    let sipMsg = APP.translation.generateTranslationHTML("dialog.sipMsg");
     let msgString = (`
             <input name="sipNumber" type="text"
                    value="${defaultNumber}" autofocus>
@@ -287,7 +286,6 @@ function showSipNumberInput () {
 
     APP.UI.messageHandler.openTwoButtonDialog({
         titleKey,
-        titleString: sipMsg,
         msgString,
         leftButtonKey: "dialog.Dial",
         submitFunction: function (e, v, m, f) {

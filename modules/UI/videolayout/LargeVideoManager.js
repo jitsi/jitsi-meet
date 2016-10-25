@@ -379,9 +379,10 @@ export default class LargeVideoManager {
      */
     _setRemoteConnectionMessage (msgKey, msgOptions) {
         if (msgKey) {
-            let text = APP.translation.translateString(msgKey, msgOptions);
             $('#remoteConnectionMessage')
-                .attr("data-i18n", msgKey).text(text);
+                .attr("data-i18n", msgKey)
+                .attr("data-i18n-options", JSON.stringify(msgOptions));
+            APP.translation.translateElement($('#remoteConnectionMessage'));
         }
 
         this.videoContainer.positionRemoteConnectionMessage();
@@ -400,7 +401,8 @@ export default class LargeVideoManager {
     _setLocalConnectionMessage (msgKey, msgOptions) {
         $('#localConnectionMessage')
             .attr("data-i18n", msgKey)
-            .text(APP.translation.translateString(msgKey, msgOptions));
+            .attr("data-i18n-options", JSON.stringify(msgOptions));
+        APP.translation.translateElement($('#localConnectionMessage'));
     }
 
     /**

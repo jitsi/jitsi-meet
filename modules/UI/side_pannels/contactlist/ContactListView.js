@@ -21,9 +21,8 @@ function updateNumberOfParticipants(delta) {
 
     $("#numberOfParticipants").text(numberOfContacts);
 
-    $("#contacts_container>div.title").text(
-        APP.translation.translateString("contactlist")
-            + ' (' + numberOfContacts + ')');
+    APP.translation.translateElement(
+        $("#contacts_container>div.title"), {pcount: numberOfContacts});
 }
 
 /**
@@ -50,7 +49,6 @@ function createDisplayNameParagraph(key, displayName) {
         p.innerHTML = displayName;
     } else if(key) {
         p.setAttribute("data-i18n",key);
-        p.innerHTML = APP.translation.translateString(key);
     }
 
     return p;
@@ -82,10 +80,11 @@ var ContactListView = {
      */
     addInviteButton() {
         let container = document.getElementById('contacts_container');
-        let title = container.firstElementChild;
 
-        let htmlLayout =  this.getInviteButtonLayout();
-        title.insertAdjacentHTML('afterend', htmlLayout);
+        container.firstElementChild // this is the title
+            .insertAdjacentHTML('afterend', this.getInviteButtonLayout());
+
+        APP.translation.translateElement($(container));
         $(document).on('click', '#addParticipantsBtn', () => {
             APP.UI.emitEvent(UIEvents.INVITE_CLICKED);
         });
@@ -97,32 +96,26 @@ var ContactListView = {
         let classes = 'button-control button-control_primary';
         classes += ' button-control_full-width';
         let key = 'addParticipants';
-        let text = APP.translation.translateString(key);
 
         let lockedHtml = this.getLockDescriptionLayout(this.lockKey);
         let unlockedHtml = this.getLockDescriptionLayout(this.unlockKey);
 
-        let html = (
+        return (
             `<div class="sideToolbarBlock first">
                 <button id="addParticipantsBtn" 
                          data-i18n="${key}" 
-                         class="${classes}">
-                    ${text}
-                </button>
+                         class="${classes}"></button>
                 <div>
                     ${lockedHtml}
                     ${unlockedHtml}
                 </div>
             </div>`);
-
-        return html;
     },
     /**
      * Adds layout for lock description
      */
     getLockDescriptionLayout(key) {
         let classes = "input-control__hint input-control_full-width";
-        let description = APP.translation.translateString(key);
         let padlockSuffix = '';
         if (key === this.lockKey) {
             padlockSuffix = '-locked';
@@ -130,7 +123,7 @@ var ContactListView = {
 
         return `<p id="contactList${key}" class="${classes}">
                     <span class="icon-security${padlockSuffix}"></span>
-                    <span data-i18n="${key}">${description}</span>
+                    <span data-i18n="${key}"></span>
                 </p>`;
     },
     /**
@@ -198,6 +191,7 @@ var ContactListView = {
             createDisplayNameParagraph(
                 isLocal ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME : null,
                 isLocal ? null : interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME));
+        APP.translation.translateElement($(newContact));
 
         if (APP.conference.isLocalId(id)) {
             contactlist.prepend(newContact);

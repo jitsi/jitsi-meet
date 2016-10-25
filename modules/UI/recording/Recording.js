@@ -41,8 +41,6 @@ function _isRecordingButtonEnabled() {
  * @returns {Promise}
  */
 function _requestLiveStreamId() {
-    const msg = APP.translation.generateTranslationHTML("dialog.liveStreaming");
-    const token = APP.translation.translateString("dialog.streamKey");
     const cancelButton
         = APP.translation.generateTranslationHTML("dialog.Cancel");
     const backButton = APP.translation.generateTranslationHTML("dialog.Back");
@@ -55,11 +53,11 @@ function _requestLiveStreamId() {
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
-                title: msg,
+                titleKey: "dialog.liveStreaming",
                 html:
                     `<input name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
-                    placeholder="${token}" autofocus>`,
+                    autofocus>`,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},
@@ -89,7 +87,7 @@ function _requestLiveStreamId() {
             },
 
             state1: {
-                title: msg,
+                titleKey: "dialog.liveStreaming",
                 html: streamIdRequired,
                 persistent: false,
                 buttons: [
@@ -122,11 +120,10 @@ function _requestLiveStreamId() {
  */
 function _requestRecordingToken () {
     let titleKey = "dialog.recordingToken";
-    let token = APP.translation.translateString("dialog.token");
     let messageString = (
         `<input name="recordingToken" type="text"
                 data-i18n="[placeholder]dialog.token"
-                placeholder="${token}" autofocus>`
+                autofocus>`
     );
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openTwoButtonDialog({
@@ -297,8 +294,7 @@ var Recording = {
 
         selector.addClass(this.baseClass);
         selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);
-        selector.attr("content",
-            APP.translation.translateString(this.recordingButtonTooltip));
+        APP.translation.translateElement(selector);
 
         var self = this;
         selector.click(function () {
@@ -365,7 +361,7 @@ var Recording = {
                     dialog = APP.UI.messageHandler.openMessageDialog(
                         self.recordingTitle,
                         self.recordingBusy,
-                        null, null,
+                        null,
                         function () {
                             dialog = null;
                         }
@@ -376,7 +372,7 @@ var Recording = {
                     dialog = APP.UI.messageHandler.openMessageDialog(
                         self.recordingTitle,
                         self.recordingUnavailable,
-                        null, null,
+                        null,
                         function () {
                             dialog = null;
                         }
@@ -505,7 +501,7 @@ var Recording = {
         moveToCorner(labelSelector, !isCentered);
 
         labelTextSelector.attr("data-i18n", textKey);
-        labelTextSelector.text(APP.translation.translateString(textKey));
+        APP.translation.translateElement(labelSelector);
     },
 
     /**

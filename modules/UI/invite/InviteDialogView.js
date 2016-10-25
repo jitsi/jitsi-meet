@@ -15,20 +15,15 @@ const States = {
  */
 export default class InviteDialogView {
     constructor(model) {
-        let InviteAttributesKey = 'inviteUrlDefaultMsg';
-        let title = APP.translation.translateString(InviteAttributesKey);
-
         this.unlockHint = "unlockHint";
         this.lockHint = "lockHint";
         this.model = model;
 
         if (this.model.inviteUrl === null) {
-            this.inviteAttributes = (
-                `data-i18n="[value]inviteUrlDefaultMsg" value="${title}"`
-            );
+            this.inviteAttributes = `data-i18n="[value]inviteUrlDefaultMsg"`;
         } else {
-            let encodedInviteUrl = this.model.getEncodedInviteUrl();
-            this.inviteAttributes = `value="${encodedInviteUrl}"`;
+            this.inviteAttributes
+                = `value="${this.model.getEncodedInviteUrl()}"`;
         }
 
         this.initDialog();
@@ -43,11 +38,7 @@ export default class InviteDialogView {
         dialog.submitFunction = this.submitFunction.bind(this);
         dialog.loadedFunction = this.loadedFunction.bind(this);
 
-        let titleKey = "dialog.shareLink";
-        let titleString = APP.translation.generateTranslationHTML(titleKey);
-
-        dialog.titleKey = titleKey;
-        dialog.titleString = titleString;
+        dialog.titleKey = "dialog.shareLink";
         this.dialog = dialog;
 
         this.dialog.states = this.getStates();
@@ -101,21 +92,20 @@ export default class InviteDialogView {
      */
     getStates() {
         let {
-            titleString
+            titleKey
         } = this.dialog;
-        let doneKey = 'dialog.done';
-        let doneMsg = APP.translation.translateString(doneKey);
+        let doneMsg = APP.translation.generateTranslationHTML('dialog.done');
         let states = {};
         let buttons = {};
         buttons[`${doneMsg}`] = true;
 
         states[States.UNLOCKED] = {
-            title: titleString,
+            titleKey,
             html: this.getShareLinkBlock() + this.getAddPasswordBlock(),
             buttons
         };
         states[States.LOCKED] = {
-            title: titleString,
+            titleKey,
             html: this.getShareLinkBlock() + this.getPasswordBlock(),
             buttons
         };
@@ -128,34 +118,24 @@ export default class InviteDialogView {
      * @returns {string}
      */
     getShareLinkBlock() {
-        let copyKey = 'dialog.copy';
-        let copyText = APP.translation.translateString(copyKey);
-        let roomLockDescKey = 'dialog.roomLocked';
-        let roomLockDesc = APP.translation.translateString(roomLockDescKey);
-        let roomUnlockKey = 'roomUnlocked';
-        let roomUnlock = APP.translation.translateString(roomUnlockKey);
         let classes = 'button-control button-control_light copyInviteLink';
         return (
             `<div class="input-control">
-                <label class="input-control__label" for="inviteLinkRef">
-                    ${this.dialog.titleString}
-                </label>
+                <label class="input-control__label" for="inviteLinkRef"
+                    data-i18n="${this.dialog.titleKey}"></label>
                 <div class="input-control__container">
                     <input class="input-control__input inviteLink"
                            id="inviteLinkRef" type="text"
                            ${this.inviteAttributes} readonly>
-                    <button data-i18n="${copyKey}"
-                            class="${classes}">
-                        ${copyText}
-                    </button>
+                    <button data-i18n="dialog.copy" class="${classes}"></button>
                 </div>
                 <p class="input-control__hint ${this.lockHint}">
                    <span class="icon-security-locked"></span>
-                   <span data-i18n="${roomLockDescKey}">${roomLockDesc}</span>
+                   <span data-i18n="dialog.roomLocked"></span>
                 </p>
                 <p class="input-control__hint ${this.unlockHint}">
                    <span class="icon-security"></span>
-                   <span data-i18n="${roomUnlockKey}">${roomUnlock}</span>
+                   <span data-i18n="roomUnlocked"></span>
                 </p>
             </div>`
         );
@@ -166,27 +146,21 @@ export default class InviteDialogView {
      * @returns {string}
      */
     getAddPasswordBlock() {
-        let addPassKey = 'dialog.addPassword';
-        let addPassText = APP.translation.translateString(addPassKey);
-        let addKey = 'dialog.add';
-        let addText = APP.translation.translateString(addKey);
-        let hintKey = 'dialog.createPassword';
-        let hintMsg = APP.translation.translateString(hintKey);
         let html;
 
         if (this.model.isModerator) {
             html = (`
             <div class="input-control">
-                <label class="input-control__label
-                       for="newPasswordInput"
-                       data-i18n="${addPassKey}">${addPassText}</label>
+                <label class="input-control__label"
+                       for="newPasswordInput" data-i18n="dialog.addPassword">
+               </label>
                 <div class="input-control__container">
                     <input class="input-control__input" id="newPasswordInput"
-                           type="text" placeholder="${hintMsg}">
+                           type="text" 
+                           data-i18n="[placeholder]dialog.createPassword">
                     <button id="addPasswordBtn" id="inviteDialogAddPassword"
-                            disabled data-i18n="${addKey}"
+                            disabled data-i18n="dialog.add"
                             class="button-control button-control_light">
-                        ${addText}
                     </button>
                 </div>
             </div>
@@ -204,22 +178,16 @@ export default class InviteDialogView {
      */
     getPasswordBlock() {
         let { password, isModerator } = this.model;
-        let removePassKey = 'dialog.removePassword';
-        let removePassText = APP.translation.translateString(removePassKey);
-        let currentPassKey = 'dialog.currentPassword';
-        let currentPassText = APP.translation.translateString(currentPassKey);
-        let passwordKey = "dialog.passwordLabel";
-        let passwordText = APP.translation.translateString(passwordKey);
 
         if (isModerator) {
             return (`
                 <div class="input-control">
                     <label class="input-control__label"
-                           data-i18n="${passwordKey}">${passwordText}</label>
+                           data-i18n="dialog.passwordLabel"></label>
                     <div class="input-control__container">
-                        <p class="input-control__text"
-                           data-i18n="${currentPassKey}">
-                            ${currentPassText}
+                        <p>
+                            <span class="input-control__text"
+                                  data-i18n="dialog.currentPassword"></span>
                             <span id="inviteDialogPassword"
                                   class="input-control__em">
                                 ${password}
@@ -227,9 +195,7 @@ export default class InviteDialogView {
                         </p>
                         <a class="link input-control__right"
                            id="inviteDialogRemovePassword"
-                           data-i18n="${removePassKey}">
-                           ${removePassText}
-                       </a>
+                           data-i18n="dialog.removePassword"></a>
                     </div>
                 </div>
             `);
@@ -355,10 +321,17 @@ export default class InviteDialogView {
      */
     updateView() {
         let pass = this.model.getPassword();
-        if (!pass)
-            pass = APP.translation.translateString("passwordSetRemotely");
+        if (this.model.getRoomLocker().lockedElsewhere || !pass)
+            $('#inviteDialogPassword').attr("data-i18n", "passwordSetRemotely");
+        else
+            $('#inviteDialogPassword').text(pass);
 
-        $('#inviteDialogPassword').text(pass);
+        // if we are not moderator we cannot remove password
+        if (APP.conference.isModerator)
+            $('#inviteDialogRemovePassword').show();
+        else
+            $('#inviteDialogRemovePassword').hide();
+
         $('#newPasswordInput').val('');
         this.disableAddPassIfInputEmpty();
 
