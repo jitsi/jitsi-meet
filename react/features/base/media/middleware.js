@@ -42,15 +42,10 @@ function resetInitialMediaState(store) {
     const { dispatch, getState } = store;
     const state = getState()['features/base/media'];
 
-    if (state.audio.muted) {
-        dispatch(audioMutedChanged(false));
-    }
-    if (state.video.facingMode !== CAMERA_FACING_MODE.USER) {
-        dispatch(cameraFacingModeChanged(CAMERA_FACING_MODE.USER));
-    }
-    if (state.video.muted) {
-        dispatch(videoMutedChanged(false));
-    }
+    state.audio.muted && dispatch(audioMutedChanged(false));
+    (state.video.facingMode !== CAMERA_FACING_MODE.USER)
+        && dispatch(cameraFacingModeChanged(CAMERA_FACING_MODE.USER));
+    state.video.muted && dispatch(videoMutedChanged(false));
 }
 
 /**

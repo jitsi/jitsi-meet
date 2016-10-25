@@ -34,7 +34,7 @@ export function disposeLib() {
  */
 export function initLib() {
     return (dispatch, getState) => {
-        const config = getState()['features/base/lib'].config;
+        const config = getState()['features/base/lib-jitsi-meet'].config;
 
         if (!config) {
             throw new Error('Cannot initialize lib-jitsi-meet without config');

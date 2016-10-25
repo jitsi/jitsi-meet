@@ -8,7 +8,7 @@ import {
 } from './actionTypes';
 
 /**
- * Initial state of 'features/base/lib'.
+ * Initial state of 'features/base/lib-jitsi-meet'.
  *
  * @type {{
  *      initializationError: null,
@@ -31,7 +31,7 @@ const INITIAL_STATE = {
 };
 
 ReducerRegistry.register(
-    'features/base/lib',
+    'features/base/lib-jitsi-meet',
     (state = INITIAL_STATE, action) => {
         switch (action.type) {
         case LIB_DISPOSED:

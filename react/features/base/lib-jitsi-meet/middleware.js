@@ -19,26 +19,23 @@ import { SET_CONFIG } from './actionTypes';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case PARTICIPANT_LEFT:
-        if (action.participant.local) {
-            store.dispatch(disposeLib());
-        }
+        action.participant.local && store.dispatch(disposeLib());
         break;
 
     case SET_CONFIG: {
         const { dispatch, getState } = store;
-        const libInitialized = getState()['features/base/lib'].initialized;
+        const initialized
+            = getState()['features/base/lib-jitsi-meet'].initialized;
 
         // XXX If we already have config, that means new config is coming, which
         // means that we should dispose instance of lib initialized with
         // previous config first.
         // TODO Currently 'disposeLib' actually does not dispose lib-jitsi-meet.
         // This functionality should be implemented.
-        const promise = libInitialized
-            ? dispatch(disposeLib())
-            : Promise.resolve();
+        const promise
+            = initialized ? dispatch(disposeLib()) : Promise.resolve();
 
-        promise
-            .then(dispatch(initLib()));
+        promise.then(dispatch(initLib()));
 
         break;
     }
