@@ -114,9 +114,8 @@ const TOOLTIP_POSITIONS = {
             title() {
                 return this.getAttribute('content');
             },
-
             html: true, // Handle multiline tooltips.
-
+            opacity: 1,
             // The following two prevent tooltips from being stuck:
             hoverable: false, // Make custom tooltips behave like native ones.
             live: true // Attach listener to document element.
