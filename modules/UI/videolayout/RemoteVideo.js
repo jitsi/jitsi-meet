@@ -78,7 +78,8 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
     let options = {
         content: popupMenuElement.outerHTML,
         skin: "black",
-        hasArrow: false
+        hasArrow: false,
+        onBeforePosition: el => APP.translation.translateElement(el)
     };
     let element = $("#" + this.videoSpanId + " .remotevideomenu");
     this.popover = new JitsiPopover(element, options);

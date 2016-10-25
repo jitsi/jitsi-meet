@@ -1,4 +1,4 @@
-/* global $, config */
+/* global $, APP, config */
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
@@ -265,10 +265,12 @@ ConnectionIndicator.prototype.create = function () {
     this.videoContainer.container.appendChild(
         this.connectionIndicatorContainer);
     this.popover = new JitsiPopover(
-        $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
-        {content: "<div class=\"connection-info\" " +
+        $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"), {
+            content: "<div class=\"connection-info\" " +
                         "data-i18n='connectionindicator.na'></div>",
-        skin: "black"});
+            skin: "black",
+            onBeforePosition: el => APP.translation.translateElement(el)
+        });
 
     // override popover show method to make sure we will update the content
     // before showing the popover

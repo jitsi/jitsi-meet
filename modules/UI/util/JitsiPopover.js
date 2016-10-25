@@ -1,22 +1,26 @@
-/* global $, APP */
+/* global $ */
 var JitsiPopover = (function () {
+    /**
+     * The default options
+     */
+    const defaultOptions = {
+        skin: 'white',
+        content: '',
+        hasArrow: true,
+        onBeforePosition: undefined
+    };
+
     /**
      * Constructs new JitsiPopover and attaches it to the element
      * @param element jquery selector
      * @param options the options for the popover.
+     *  - {Function} onBeforePosition - function executed just before
+     *      positioning the popover. Useful for translation.
      * @constructor
      */
     function JitsiPopover(element, options)
     {
-        let { skin, content, hasArrow } = options;
-        this.options = {};
-        this.options.skin = skin || 'white';
-        this.options.content = content || '';
-        this.options.hasArrow = true;
-
-        if (typeof(hasArrow) !== 'undefined') {
-            this.options.hasArrow = false;
-        }
+        this.options = Object.assign({}, defaultOptions, options);
 
         this.elementIsHovered = false;
         this.popoverIsHovered = false;
@@ -88,7 +92,9 @@ var JitsiPopover = (function () {
         $("body").append(this.template);
         let popoverElem = $(".jitsipopover > .jitsipopover__content");
         popoverElem.html(this.options.content);
-        APP.translation.translateElement(popoverElem);
+        if(typeof this.options.onBeforePosition === "function") {
+            this.options.onBeforePosition($(".jitsipopover"));
+        }
         var self = this;
         $(".jitsipopover").on("mouseenter", function () {
             self.popoverIsHovered = true;
