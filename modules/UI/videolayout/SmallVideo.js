@@ -555,7 +555,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
  * @param options.content {String} HTML content of the indicator
  * @param options.tooltip {String} The key that should be passed to tooltip
  *
- * @returns {HTMLElement} the raised hand indicator
+ * @returns {HTMLElement} DOM represention of the indicator
  */
 SmallVideo.prototype.getIndicatorSpan = function(options) {
     var indicator = this.container.querySelector('#' + options.id);
@@ -570,6 +570,10 @@ SmallVideo.prototype.getIndicatorSpan = function(options) {
 
     indicator.innerHTML = options.content;
 
+    // This element will be translated by UIUtil.setTooltip and 
+    // that's why it is not translated here.
+    // Do not translate the same element multiple times in a row
+    // because it prevents tooltip from disappearing.
     UIUtil.setTooltip(indicator, options.tooltip, "top");
 
     this.container.appendChild(indicator);
