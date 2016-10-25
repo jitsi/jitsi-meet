@@ -104,7 +104,7 @@
     "bottomtoolbar": {
         "chat": "Open / close chat",
         "filmstrip": "Show / hide videos",
-        "contactlist": "Open / close contact list"
+        "contactlist": "View and invite participants"
     },
     "chat":{
         "nickname": {
