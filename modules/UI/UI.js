@@ -21,6 +21,7 @@ import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
+import RandomUtil from "../util/RandomUtil";
 import UIErrors from './UIErrors';
 
 var EventEmitter = require("events");
@@ -1046,7 +1047,7 @@ UI.updateDTMFSupport = function (isDTMFSupported) {
  * @returns {Promise} Resolved with value - false if the dialog is enabled and
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed. This values are
- * used to display or not display the thank you dialog from 
+ * used to display or not display the thank you dialog from
  * conference.maybeRedirectToWelcomePage method.
  */
 UI.requestFeedbackOnHangup = function () {
@@ -1103,7 +1104,8 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
  * the page should be reloaded.
  */
 UI.showPageReloadOverlay = function () {
-    PageReloadOverlay.show(15 /* will reload in 15 seconds */);
+    // Reload the page after 10 - 30 seconds
+    PageReloadOverlay.show(10 + RandomUtil.randomInt(0, 20));
 };
 
 /**
