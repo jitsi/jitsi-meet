@@ -1,8 +1,20 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP, interfaceConfig, _ */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
 
+const sidePannelsContainerId = 'sideToolbarContainer';
+const compiledTpl = _.template(`
+    <div id="contacts_container" class="sideToolbarContainer__inner">
+        <div class="title" data-i18n="contactlist"
+            data-i18n-options='{"pcount":"1"}'></div>
+        <ul id="contacts"></ul>
+    </div>`);
+
+function initHTML() {
+    $(`#${sidePannelsContainerId}`)
+        .append(compiledTpl());
+}
 let numberOfContacts = 0;
 
 /**
@@ -67,10 +79,19 @@ function getContactEl (id) {
  * Contact list.
  */
 var ContactListView = {
-    init (model) {
-        this.model = model;
+    init () {
+        initHTML();
         this.lockKey = 'roomLocked';
         this.unlockKey = 'roomUnlocked';
+    },
+
+    /**
+     * setup ContactList Model into ContactList View
+     *
+     * @param model
+     */
+    setup (model) {
+        this.model = model;
         this.addInviteButton();
         this.registerListeners();
         this.toggleLock();

@@ -14,7 +14,8 @@ class ContactList {
         this.conference = conference;
         this.contacts = [];
         this.roomLocked = false;
-        ContactListView.init(this);
+        //setup ContactList Model into ContactList View
+        ContactListView.setup(this);
     }
 
     /**
