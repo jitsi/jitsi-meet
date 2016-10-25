@@ -156,7 +156,8 @@ export default class InviteDialogView {
                </label>
                 <div class="input-control__container">
                     <input class="input-control__input" id="newPasswordInput"
-                           type="text" data-i18n="dialog.createPassword">
+                           type="text" 
+                           data-i18n="[placeholder]dialog.createPassword">
                     <button id="addPasswordBtn" id="inviteDialogAddPassword"
                             disabled data-i18n="dialog.add"
                             class="button-control button-control_light">

@@ -98,7 +98,9 @@ module.exports = {
         return i18n.lng();
     },
     translateElement: function (selector, options) {
-        selector.i18n(options);
+        // i18next expects undefined if options are missing, check if its null
+        selector.i18n(
+            options === null ? undefined : options);
     },
     generateTranslationHTML: function (key, options) {
         var str = "<span data-i18n=\"" + key + "\"";
@@ -106,7 +108,8 @@ module.exports = {
             str += " data-i18n-options='" + JSON.stringify(options) + "'";
         }
         str += ">";
-        str += i18n.t(key, options);
+        // i18next expects undefined if options ARE missing, check if its null
+        str += i18n.t(key, options === null ? undefined : options);
         str += "</span>";
         return str;
 

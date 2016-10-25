@@ -146,10 +146,10 @@ export default class Dialog {
         this.submitted = false;
         this.onCloseCallback = function() {};
 
-        this.setDefaulOptions();
+        this.setDefaultOptions();
     }
 
-    setDefaulOptions() {
+    setDefaultOptions() {
         var self = this;
 
         this.options = {
