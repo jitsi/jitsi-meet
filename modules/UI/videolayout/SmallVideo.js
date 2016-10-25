@@ -519,16 +519,13 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
     }
 
-    var indicatorSpanId = "dominantspeakerindicator";
-    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+    var indicatorSpan = this.getIndicatorSpan({
+        id: 'dominantspeakerindicator',
+        content: '<i id="indicatoricon" class="fa fa-bullhorn"></i>',
+        tooltip: 'speaker'
+    });
 
-    indicatorSpan.innerHTML
-        = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
-    // adds a tooltip
-    UIUtil.setTooltip(indicatorSpan, "speaker", "top");
-    APP.translation.translateElement($(indicatorSpan));
-
-    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+    indicatorSpan.style.display = show ? "" : "none";
 };
 
 /**
@@ -542,35 +539,43 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         return;
     }
 
-    var indicatorSpanId = "raisehandindicator";
-    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+    var indicatorSpan = this.getIndicatorSpan({
+        id: 'raisehandindicator',
+        content: '<i id="indicatoricon" class="icon-raised-hand"></i>',
+        tooltip: 'raisedHand'
+    });
 
-    indicatorSpan.innerHTML
-        = "<i id='indicatoricon' class='icon-raised-hand'></i>";
-
-    // adds a tooltip
-    UIUtil.setTooltip(indicatorSpan, "raisedHand", "top");
-    APP.translation.translateElement($(indicatorSpan));
-
-    $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
+    indicatorSpan.style.display = show ? "" : "none";
 };
 
 /**
- * Gets (creating if necessary) the "indicator" span for this SmallVideo
-  identified by an ID.
+ * Gets (creating if necessary) the "indicator" span for this SmallVideo.
+ *
+ * @param options.id {String} element ID
+ * @param options.content {String} HTML content of the indicator
+ * @param options.tooltip {String} The key that should be passed to tooltip
+ *
+ * @returns {HTMLElement} DOM represention of the indicator
  */
-SmallVideo.prototype.getIndicatorSpan = function(id) {
-    var indicatorSpan;
-    var spans = $(`#${this.videoSpanId}>[id=${id}`);
-    if (spans.length <= 0) {
-        indicatorSpan = document.createElement('span');
-        indicatorSpan.id = id;
-        indicatorSpan.className = "indicator";
-        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
-    } else {
-        indicatorSpan = spans[0];
+SmallVideo.prototype.getIndicatorSpan = function(options) {
+    var indicator = this.container.querySelector('#' + options.id);
+
+    if (indicator) {
+        return indicator;
     }
-    return indicatorSpan;
+
+    indicator = document.createElement('span');
+    indicator.className = 'indicator';
+    indicator.id = options.id;
+
+    indicator.innerHTML = options.content;
+
+    UIUtil.setTooltip(indicator, options.tooltip, "top");
+    APP.translation.translateElement($(indicator));
+
+    this.container.appendChild(indicator);
+
+    return indicator;
 };
 
 /**
