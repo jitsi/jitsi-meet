@@ -61,6 +61,10 @@
     }
 }
 
+.input-control__input {
+  font-size: $inputFontSize;
+}
+
 /**
  * Set a specific color for read only style.
  */
