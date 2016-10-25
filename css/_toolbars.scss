@@ -16,8 +16,7 @@
     z-index: $toolbarZ;
     pointer-events: none;
     min-height: 100px;
-    transform: translateY(-100%);
-    -webkit-transform: translateY(-100%);
+    opacity: 0;
 }
 
 #subject {
@@ -273,5 +272,13 @@ a.button>#avatar {
 }
 
 /**
- * END of slide in animation for extended toolbar panel.
+ * START of fade in animation for main toolbar
  */
+
+.fadeIn {
+    @include animation('fadeIn .3s forwards');
+}
+
+.fadeOut {
+    @include animation('fadeOut .3s forwards');
+}
