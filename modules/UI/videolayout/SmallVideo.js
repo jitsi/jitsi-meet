@@ -525,7 +525,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         tooltip: 'speaker'
     });
 
-    $(indicatorSpan)[show ? "show" : "hide"]();
+    indicatorSpan.style.display = show ? "" : "none";
 };
 
 /**
@@ -545,7 +545,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         tooltip: 'raisedHand'
     });
 
-    $(indicatorSpan)[show ? "show" : "hide"]();
+    indicatorSpan.style.display = show ? "" : "none";
 };
 
 /**
