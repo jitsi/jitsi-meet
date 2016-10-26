@@ -26,7 +26,9 @@ $defaultDarkColor: #2b3d5c;
 $defaultBackground: #474747;
 $tooltipBg: rgba(0,0,0, 0.7);
 
-// Toolbar
+/**
+ * Toolbar
+ */
 $toolbarBackground: rgba(0, 0, 0, 0.5);
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 $toolbarBadgeBackground: #165ECC;
@@ -34,11 +36,15 @@ $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #12499C;
 $splitterToolbarButtonLeftMargin: 0px;
 
-// Main controls
+/*
+ * Main controls
+ */
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 
-// Video layout.
+/*
+ * Video layout
+ */
 $videoThumbnailHovered: rgba(22, 94, 204, .4);
 $videoThumbnailSelected: #165ECC;
 $participantNameColor: #fff;
@@ -65,7 +71,9 @@ $rateStarActivity: #165ecc;
 $rateStarSize: 34px;
 $feedbackCancelFontColor: #333;
 
-// Notifications
+/**
+ * Notifications
+ */
 $notificationFontSize: 13px;
 $notificationColor: #FFFFFF;
 $notificationBackground: $tooltipBg;
@@ -91,26 +99,36 @@ $toolbarZ: 900;
 $overlayZ: 902;
 $notificationZ: 1012;
 $ringingZ: 800;
+$dropdownZ: 901;
+$dropdownMaskZ: 900;
 
 /**
- * Font Colors TODO: Change colors when general dialogs are implemented.
+ * Font Colors
  */
 $defaultFontColor: #777;
 $defaultLightFontColor: #F1F1F1;
 $defaultDarkFontColor: #000;
-$buttonFontColor: #777;
-$buttonHoverFontColor: #287ade;
-$auiPrimaryButtonBg: #3572b0;
-$auiPrimaryButtonHoverBg: #57647b;
-$auiPrimaryButtonColor: #fff;
-$auiIconColor: #707070;
-$inputControlEmColor: #f29424;
-$linkFontColor: #489afe;
-$linkHoverFontColor: #287ade;
 
 /**
  * Forms
  */
+<<<<<<< 1291023cbed3044a9f3acc2b8c7d47ff05e5aee4
 $inputBg: $inputSemiBackground;
 $inputBgHover: $inputSemiBackground;
 $inputFontColor: $defaultDarkFontColor;
+=======
+//dropdown
+$selectFontColor: $defaultLightFontColor;
+$selectBg: $defaultBackground;
+$selectActiveBg: $defaultBackground;
+$selectActiveItemBg: $defaultDarkColor;
+//inputs
+$inputControlEmColor: #f29424;
+//buttons
+$linkFontColor: #489afe;
+$linkHoverFontColor: #287ade;
+
+// Main controls TODO: looks like we don't use it
+$inputSemiBackground: rgba(132, 132, 132, .8);
+$inputLightBackground: #EBEBEB;
+>>>>>>> dropdown styles fixes

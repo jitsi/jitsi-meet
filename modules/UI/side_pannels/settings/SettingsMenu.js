@@ -70,8 +70,6 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
  */
 function initSelect2($el, onSelectedCb) {
     $el.auiSelect2({
-        containerCssClass: 'input-container-dark',
-        dropdownCssClass: 'dropdown-dark',
         minimumResultsForSearch: Infinity
     });
     if (typeof onSelectedCb === 'function') {

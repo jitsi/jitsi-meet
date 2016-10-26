@@ -1,42 +1,67 @@
-form.aui {
-    .aui-select2-container {
-        background-color: transparent;
 
-        > a {
-            background-color: $inputBg !important;
-            color: $inputFontColor !important;
-            border-color: $inputBg !important;
-            text-shadow: none !important;
-            margin: 0 auto !important;
-            width: 100% !important;
+.select2-container.aui-select2-container {
+    background-color: transparent !important;
+
+    a.select2-choice {
+        height: 28px !important;
+        line-height: 18px !important;
+        width: 100% !important;
+        background-color: $selectBg !important;
+        border-color: $selectBg !important;
+        color: $selectFontColor !important;
+        text-shadow: none !important;
+        font-size: 12px !important;
+        margin: 0 auto !important;
+
+        &:after {
+            border-top-color: $selectFontColor;
+        }
+    }
+
+    &.select2-dropdown-open{
+        a.select2-choice {
+            background-color: $selectActiveBg !important;
+            border-color: $selectActiveBg !important;
         }
     }
 }
 
-.select2-results{
-    &::-webkit-scrollbar {
-        background-color: transparent;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-    &::-webkit-scrollbar-track-piece {
-        background-color: transparent;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #3572b0;
-    }
-}
+.select2-drop.aui-select2-drop.aui-style-default {
+    z-index: $dropdownZ;
+    background-color: $selectActiveBg;
+    border-color: $selectActiveBg;
 
-.aui-select2-drop {
-    z-index: 901;
+    .select2-results{
+        background-color: $selectActiveBg;
+        border-color: $selectActiveBg;
+
+        &::-webkit-scrollbar {
+            background-color: transparent;
+        }
+        &::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+        &::-webkit-scrollbar-track-piece {
+            background-color: transparent;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: $selectActiveItemBg;
+        }
+
+        .select2-result{
+            &.select2-highlighted{
+                background-color: $selectActiveItemBg;
+            }
+
+            .select2-result-label{
+                font-size: 12px;
+                line-height: 20px;
+            }
+        }
+
+    }
 }
 
 .select2-drop-mask {
-    z-index: 900;
-}
-
-.aui-dropdown2.aui-style-default.dropdown-dark {
-    background-color: $defaultBackground;
-    border-color: transparent;
+    z-index: $dropdownMaskZ;
 }
