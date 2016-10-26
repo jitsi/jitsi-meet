@@ -2,13 +2,15 @@
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
+import UIUtil from "../util/UIUtil";
 
 /**
  * Constructs new connection indicator.
  * @param videoContainer the video container associated with the indicator.
+ * @param videoId the identifier of the video
  * @constructor
  */
-function ConnectionIndicator(videoContainer, id) {
+function ConnectionIndicator(videoContainer, videoId) {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
     this.packetLoss = null;
@@ -18,7 +20,7 @@ function ConnectionIndicator(videoContainer, id) {
     this.isResolutionHD = null;
     this.transport = [];
     this.popover = null;
-    this.id = id;
+    this.id = videoId;
     this.create();
 }
 
@@ -247,6 +249,7 @@ ConnectionIndicator.prototype.showMore = function () {
 
 function createIcon(classes, iconClass) {
     var icon = document.createElement("span");
+    icon.classList.add("indicatoricon");
     for(var i in classes) {
         icon.classList.add(classes[i]);
     }
@@ -259,18 +262,22 @@ function createIcon(classes, iconClass) {
  * Creates the indicator
  */
 ConnectionIndicator.prototype.create = function () {
-    this.connectionIndicatorContainer = document.createElement("div");
-    this.connectionIndicatorContainer.className = "connectionindicator";
-    this.connectionIndicatorContainer.style.display = "none";
-    this.videoContainer.container.appendChild(
-        this.connectionIndicatorContainer);
-    this.popover = new JitsiPopover(
-        $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"), {
-            content: "<div class=\"connection-info\" " +
-                        "data-i18n='connectionindicator.na'></div>",
-            skin: "black",
-            onBeforePosition: el => APP.translation.translateElement(el)
-        });
+    let indicatorId = 'connectionindicator';
+    let element = UIUtil.getVideoThumbnailIndicatorSpan({
+        videoSpanId: this.videoContainer.videoSpanId,
+        indicatorId
+    });
+    element.classList.add('hide');
+    this.connectionIndicatorContainer = element;
+
+    let popoverContent = (
+        `<div class="connection-info" data-i18n="${indicatorId}.na"></div>`
+    );
+    this.popover = new JitsiPopover(element, {
+        content: popoverContent,
+        skin: "black",
+        onBeforePosition: el => APP.translation.translateElement(el)
+    });
 
     // override popover show method to make sure we will update the content
     // before showing the popover
