@@ -406,7 +406,7 @@ const TOOLTIP_POSITIONS = {
     getVideoThumbnailIndicatorSpan(opts = {}) {
         let indicatorId = opts.indicatorId;
         let videoSpanId = opts.videoSpanId;
-        let indicators = $(`#${videoSpanId} #${indicatorId}]`);
+        let indicators = $(`#${videoSpanId} [id="${indicatorId}"]`);
         let indicatorSpan;
 
         if (indicators.length <= 0) {
