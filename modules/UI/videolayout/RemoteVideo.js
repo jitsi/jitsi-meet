@@ -31,6 +31,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
     this.setDisplayName();
+    this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
     /**

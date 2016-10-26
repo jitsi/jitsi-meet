@@ -156,6 +156,26 @@ SmallVideo.getStreamElementID = function (stream) {
 };
 
 /**
+ * Configures hoverIn/hoverOut handlers.
+ */
+SmallVideo.prototype.bindHoverHandler = function () {
+    // Add hover handler
+    var self = this;
+    $(this.container).hover(
+        function () {
+            self.showDisplayName(true);
+        },
+        function () {
+            // If the video has been "pinned" by the user we want to
+            // keep the display name on place.
+            if (!self.VideoLayout.isLargeVideoVisible() ||
+                !self.VideoLayout.isCurrentlyOnLarge(self.id))
+                self.showDisplayName(false);
+        }
+    );
+};
+
+/**
  * Updates the data for the indicator
  * @param id the id of the indicator
  * @param percent the percent for connection quality
