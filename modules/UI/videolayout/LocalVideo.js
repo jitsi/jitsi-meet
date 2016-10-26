@@ -114,7 +114,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
 
                 e.preventDefault();
                 e.stopPropagation();
-                $localDisplayName.hide();
+                UIUtil.setVisibility($localDisplayName, false);
                 $editDisplayName.show();
                 $editDisplayName.focus();
                 $editDisplayName.select();
@@ -122,7 +122,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
                 $editDisplayName.one("focusout", function () {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
                     $editDisplayName.hide();
-                    $localDisplayName.show();
+                    UIUtil.setVisibility($localDisplayName, true);
                 });
 
                 $editDisplayName.on('keydown', function (e) {
