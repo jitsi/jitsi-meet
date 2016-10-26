@@ -32,8 +32,8 @@ class Toolbar extends AbstractToolbar {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onCameraFacingModeToggle
-            = this._onCameraFacingModeToggle.bind(this);
+        this._toggleCameraFacingMode
+            = this._toggleCameraFacingMode.bind(this);
     }
 
     /**
@@ -60,7 +60,7 @@ class Toolbar extends AbstractToolbar {
                     <ToolbarButton
                         iconName = 'reload'
                         iconstyle = { styles.whiteIcon }
-                        onClick = { this._onCameraFacingModeToggle }
+                        onClick = { this._toggleCameraFacingMode }
                         style = { styles.toggleCameraFacingModeButton }
                         underlayColor = 'transparent' />
                 </View>
@@ -98,7 +98,7 @@ class Toolbar extends AbstractToolbar {
      * @private
      * @returns {void}
      */
-    _onCameraFacingModeToggle() {
+    _toggleCameraFacingMode() {
         this.props.dispatch(toggleCameraFacingMode());
     }
 }
