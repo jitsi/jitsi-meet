@@ -283,6 +283,7 @@
         "stopLiveStreaming": "Stop live streaming",
         "stopRecording": "Stop recording",
         "doNotShowWarningAgain": "Don't show this warning again",
+        "doNotShowMessageAgain": "Don't show this message again",
         "permissionDenied": "Permission Denied",
         "screenSharingPermissionDeniedError": "You have not granted permission to share your screen.",
         "micErrorPresent": "There was an error connecting to your microphone.",
@@ -300,7 +301,10 @@
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to restart the application.",
         "goToStore": "Go to the webstore",
         "externalInstallationTitle": "Extension required",
-        "externalInstallationMsg": "You need to install our desktop sharing extension."
+        "externalInstallationMsg": "You need to install our desktop sharing extension.",
+        "muteParticipantTitle": "Mute this participant?",
+        "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
+        "muteParticipantButton": "Mute"
     },
     "email":
     {
