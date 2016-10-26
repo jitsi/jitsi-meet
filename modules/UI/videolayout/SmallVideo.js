@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, JitsiMeetJS, interfaceConfig */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -506,9 +506,9 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     });
 
     if (show) {
-        indicatorSpan.classList.add('hide');
+        indicatorSpan.classList.add('show');
     } else {
-        indicatorSpan.classList.remove('hide')
+        indicatorSpan.classList.remove('show');
     }
 };
 
@@ -532,9 +532,9 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     });
 
     if (show) {
-        indicatorSpan.classList.add('hide');
+        indicatorSpan.classList.add('show');
     } else {
-        indicatorSpan.classList.remove('hide')
+        indicatorSpan.classList.remove('show');
     }
 };
 

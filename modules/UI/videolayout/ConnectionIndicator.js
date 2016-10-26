@@ -267,13 +267,12 @@ ConnectionIndicator.prototype.create = function () {
         videoSpanId: this.videoContainer.videoSpanId,
         indicatorId
     });
-    element.classList.add('hide');
     this.connectionIndicatorContainer = element;
 
     let popoverContent = (
         `<div class="connection-info" data-i18n="${indicatorId}.na"></div>`
     );
-    this.popover = new JitsiPopover(element, {
+    this.popover = new JitsiPopover($(element), {
         content: popoverContent,
         skin: "black",
         onBeforePosition: el => APP.translation.translateElement(el)
