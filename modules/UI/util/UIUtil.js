@@ -388,7 +388,31 @@ const TOOLTIP_POSITIONS = {
                 "cursor": "default"
             });
         }
+    },
+
+    /**
+     * Gets (creating if necessary) an "indicator" span for a video thumbnail.
+     *
+     * @param videoSpanId the identifier of the video thumbnail span
+     * @param elementId the identifier of the indicator element, we're looking
+     * for
+     */
+    getVideoThumbnailIndicatorSpan(videoSpanId, elementId) {
+        var indicatorSpan;
+        var spans = $(`#${videoSpanId} [id=${elementId}]`);
+        if (spans.length <= 0) {
+            indicatorSpan = document.createElement('span');
+            indicatorSpan.id = elementId;
+            indicatorSpan.className = "indicator";
+            document.getElementById(videoSpanId)
+                .querySelector(".videocontainer__toptoolbar")
+                .appendChild(indicatorSpan);
+        } else {
+            indicatorSpan = spans[0];
+        }
+        return indicatorSpan;
     }
+
 };
 
 export default UIUtil;

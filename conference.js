@@ -1260,10 +1260,6 @@ export default {
             APP.UI.updateRecordingState(status);
         });
 
-        room.on(ConferenceEvents.USER_STATUS_CHANGED, function (id, status) {
-            APP.UI.updateUserStatus(id, status);
-        });
-
         room.on(ConferenceEvents.KICKED, () => {
             APP.UI.hideStats();
             APP.UI.notifyKicked();

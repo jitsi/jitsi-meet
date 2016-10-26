@@ -127,37 +127,6 @@ SmallVideo.prototype.getVideoType = function () {
 };
 
 /**
- * Shows the presence status message for the given video.
- */
-SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
-    if (!this.container) {
-        // No container
-        return;
-    }
-
-    var statusSpan = $('#' + this.videoSpanId + '>span.status');
-    if (!statusSpan.length) {
-        //Add status span
-        statusSpan = document.createElement('span');
-        statusSpan.className = 'status';
-        statusSpan.id = this.videoSpanId + '_status';
-        $('#' + this.videoSpanId)[0].appendChild(statusSpan);
-
-        statusSpan = $('#' + this.videoSpanId + '>span.status');
-    }
-
-    // Display status
-    if (statusMsg && statusMsg.length) {
-        $('#' + this.videoSpanId + '_status').text(statusMsg);
-        statusSpan.get(0).setAttribute("style", "display:inline-block;");
-    }
-    else {
-        // Hide
-        statusSpan.get(0).setAttribute("style", "display:none;");
-    }
-};
-
-/**
  * Creates an audio or video element for a particular MediaStream.
  */
 SmallVideo.createStreamElement = function (stream) {
@@ -529,10 +498,12 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     }
 
     var indicatorSpanId = "dominantspeakerindicator";
-    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+    var indicatorSpan
+        = UIUtil.getVideoThumbnailIndicatorSpan(this.videoSpanId,
+                                                indicatorSpanId);
 
     indicatorSpan.innerHTML
-        = "<i id='indicatoricon' class='fa fa-bullhorn'></i>";
+        = "<i class='indicatoricon fa fa-bullhorn'></i>";
     // adds a tooltip
     UIUtil.setTooltip(indicatorSpan, "speaker", "top");
     APP.translation.translateElement($(indicatorSpan));
@@ -552,34 +523,18 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     }
 
     var indicatorSpanId = "raisehandindicator";
-    var indicatorSpan = this.getIndicatorSpan(indicatorSpanId);
+    var indicatorSpan
+        = UIUtil.getVideoThumbnailIndicatorSpan(this.videoSpanId,
+                                                indicatorSpanId);
 
     indicatorSpan.innerHTML
-        = "<i id='indicatoricon' class='icon-raised-hand'></i>";
+        = "<i class='indicatoricon icon-raised-hand'></i>";
 
     // adds a tooltip
     UIUtil.setTooltip(indicatorSpan, "raisedHand", "top");
     APP.translation.translateElement($(indicatorSpan));
 
     $(indicatorSpan).css("visibility", show ? "visible" : "hidden");
-};
-
-/**
- * Gets (creating if necessary) the "indicator" span for this SmallVideo
-  identified by an ID.
- */
-SmallVideo.prototype.getIndicatorSpan = function(id) {
-    var indicatorSpan;
-    var spans = $(`#${this.videoSpanId}>[id=${id}`);
-    if (spans.length <= 0) {
-        indicatorSpan = document.createElement('span');
-        indicatorSpan.id = id;
-        indicatorSpan.className = "indicator";
-        $('#' + this.videoSpanId)[0].appendChild(indicatorSpan);
-    } else {
-        indicatorSpan = spans[0];
-    }
-    return indicatorSpan;
 };
 
 /**

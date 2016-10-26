@@ -2,13 +2,15 @@
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
+import UIUtil from "../util/UIUtil";
 
 /**
  * Constructs new connection indicator.
  * @param videoContainer the video container associated with the indicator.
+ * @param videoId the identifier of the video
  * @constructor
  */
-function ConnectionIndicator(videoContainer, id) {
+function ConnectionIndicator(videoContainer, videoId) {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
     this.packetLoss = null;
@@ -18,7 +20,7 @@ function ConnectionIndicator(videoContainer, id) {
     this.isResolutionHD = null;
     this.transport = [];
     this.popover = null;
-    this.id = id;
+    this.id = videoId;
     this.create();
 }
 
@@ -264,6 +266,7 @@ ConnectionIndicator.prototype.showMore = function () {
 
 function createIcon(classes, iconClass) {
     var icon = document.createElement("span");
+    icon.classList.add("indicatoricon");
     for(var i in classes) {
         icon.classList.add(classes[i]);
     }
@@ -276,13 +279,13 @@ function createIcon(classes, iconClass) {
  * Creates the indicator
  */
 ConnectionIndicator.prototype.create = function () {
-    this.connectionIndicatorContainer = document.createElement("div");
-    this.connectionIndicatorContainer.className = "connectionindicator";
-    this.connectionIndicatorContainer.style.display = "none";
-    this.videoContainer.container.appendChild(
-        this.connectionIndicatorContainer);
+    var indicatorElemId = "connectionindicator";
+    this.connectionIndicatorContainer
+        = UIUtil.getVideoThumbnailIndicatorSpan(this.videoContainer.videoSpanId,
+                                                indicatorElemId);
+
     this.popover = new JitsiPopover(
-        $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"),
+        $("#" + this.videoContainer.videoSpanId + " > #connectionindicator"),
         {content: "<div class=\"connection-info\" data-i18n='connectionindicator.na'>" +
             APP.translation.translateString("connectionindicator.na") + "</div>",
             skin: "black"});
