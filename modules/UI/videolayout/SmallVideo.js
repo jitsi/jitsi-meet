@@ -163,9 +163,17 @@ SmallVideo.prototype.bindHoverHandler = function () {
     var self = this;
     $(this.container).hover(
         function () {
+            if (!self.VideoLayout.isCurrentlyOnLarge(self.id)) {
+                $('#' + self.videoSpanId + ' .videocontainer__overlay')
+                    .removeClass("hide")
+                    .addClass("show-inline");
+            }
             self.showDisplayName(true);
         },
         function () {
+            $('#' + self.videoSpanId + ' .videocontainer__overlay')
+                .removeClass("show-inline")
+                .addClass("hide");
             // If the video has been "pinned" by the user we want to
             // keep the display name on place.
             if (!self.VideoLayout.isLargeVideoVisible() ||

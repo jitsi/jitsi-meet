@@ -62,7 +62,7 @@
 .videocontainer__toptoolbar {
     position: absolute;
     left: 0;
-    z-index: 1;
+    z-index: 3;
     width: 100%;
     box-sizing: border-box; // Includes the padding in the 100% width.
 }
@@ -79,6 +79,15 @@
     padding: $toolbarPadding;
     padding-bottom: 0;
     height: $thumbnailIndicatorSize + $toolbarPadding;
+}
+
+.videocontainer__overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background: rgba(0,0,0,.6);
+    z-index: 2;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused,

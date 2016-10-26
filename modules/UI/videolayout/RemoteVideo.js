@@ -576,6 +576,10 @@ RemoteVideo.createContainer = function (spanId) {
     toolbar.className = "videocontainer__toolbar";
     container.appendChild(toolbar);
 
+    let overlay = document.createElement('div');
+    overlay.className = "videocontainer__overlay";
+    container.appendChild(overlay);
+
     var remotes = document.getElementById('remoteVideos');
     return remotes.appendChild(container);
 };
