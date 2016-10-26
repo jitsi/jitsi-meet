@@ -65,16 +65,20 @@
     z-index: 1;
     width: 100%;
     box-sizing: border-box; // Includes the padding in the 100% width.
-    height: $thumbnailToolbarHeight;
-    padding: 0 5px 0 5px;
 }
 
 .videocontainer__toolbar {
     bottom: 0;
+    padding: 0 5px 0 5px;
+    height: $thumbnailToolbarHeight;
 }
 
 .videocontainer__toptoolbar {
+    $toolbarPadding: 5px;
     top: 0;
+    padding: $toolbarPadding;
+    padding-bottom: 0;
+    height: $thumbnailIndicatorSize + $toolbarPadding;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused,
@@ -277,6 +281,7 @@
 }
 
 .videocontainer__toptoolbar span.indicator {
+    position: relative;
     font-size: 8pt;
     text-align: center;
     line-height: $thumbnailToolbarHeight;
@@ -292,10 +297,13 @@
     border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
 
     .indicatoricon {
-        width: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-        height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-        line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-        margin-left: 5px; // TOP toolbar padding;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        @include transform(translateY(-50%));
+        width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
     }
 
     .connection.connection_empty
