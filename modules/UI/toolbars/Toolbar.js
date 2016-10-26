@@ -608,7 +608,7 @@ Toolbar = {
      * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
      */
     isVisible() {
-        return this.toolbarSelector.hasClass("slideInY");
+        return this.toolbarSelector.hasClass("fadeIn");
     },
 
     /**
@@ -616,7 +616,9 @@ Toolbar = {
      * parameter.
      */
     hide() {
-        this.toolbarSelector.toggleClass("slideInY").toggleClass("slideOutY");
+        this.toolbarSelector
+            .removeClass("fadeIn")
+            .addClass("fadeOut");
 
         let slideInAnimation = (SideContainerToggler.isVisible)
                                     ? "slideInExtX"
@@ -634,8 +636,9 @@ Toolbar = {
      * parameter.
      */
     show() {
-        if (this.toolbarSelector.hasClass("slideOutY"))
-            this.toolbarSelector.toggleClass("slideOutY");
+        if (this.toolbarSelector.hasClass("fadeOut")) {
+            this.toolbarSelector.removeClass("fadeOut");
+        }
 
         let slideInAnimation = (SideContainerToggler.isVisible)
                                 ? "slideInExtX"
@@ -644,10 +647,11 @@ Toolbar = {
                                 ? "slideOutExtX"
                                 : "slideOutX";
 
-        if (this.extendedToolbarSelector.hasClass(slideOutAnimation))
+        if (this.extendedToolbarSelector.hasClass(slideOutAnimation)) {
             this.extendedToolbarSelector.toggleClass(slideOutAnimation);
+        }
 
-        this.toolbarSelector.toggleClass("slideInY");
+        this.toolbarSelector.addClass("fadeIn");
         this.extendedToolbarSelector.toggleClass(slideInAnimation);
     },
 

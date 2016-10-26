@@ -40,3 +40,39 @@ export function reportError (e, msg = "") {
         window.onerror(msg, null, null,
             null, e);
 }
+
+/**
+ * Creates a debounced function that delays invoking func until after wait
+ * milliseconds have elapsed since the last time the debounced
+ * function was invoked
+ * @param fn
+ * @param wait
+ * @param options
+ * @returns {function(...[*])}
+ */
+export function debounce(fn, wait = 0, options = {}) {
+    let leading = options.leading || false;
+    let trailing = true;
+    let isCalled = false;
+
+    if (typeof options.trailing !== 'undefined') {
+        trailing = options.trailing;
+    }
+
+    return (...args) => {
+        if(!isCalled) {
+            if (leading) {
+                fn(...args);
+            }
+
+            setTimeout(() => {
+                isCalled = false;
+                if (trailing) {
+                    fn(...args);
+                }
+            }, wait);
+
+            isCalled = true;
+        }
+    };
+}

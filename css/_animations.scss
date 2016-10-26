@@ -3,7 +3,7 @@
 **/
 
 /**
- * START of slide in animation for extended toolbar.
+ *   Slide in animation for extended toolbar.
  */
 @include keyframes(slideInX) {
     0% { transform: translateX(-100%); }
@@ -26,12 +26,9 @@
 }
 
 /**
- * END of slide out animation for extended toolbar.
+ *   Slide in / out animation for main toolbar.
  */
 
-/**
- * START of slide in / out animation for main toolbar.
- */
 @include keyframes(slideInY) {
     100% { transform: translateY(0%); }
 }
@@ -42,11 +39,7 @@
 }
 
 /**
- * END of slide in / out animation for main toolbar.
- */
-
-/**
- * START of slide in animation for extended toolbar (inner) panel.
+ *   Slide in animation for extended toolbar (inner) panel.
  */
 
 // FIX: Can't use percentage because of breaking animation when width is changed
@@ -62,11 +55,7 @@
 }
 
 /**
- * END of slide in animation for extended toolbar (inner) panel.
- */
-
-/**
-* START of slide in animation for extended toolbar container
+*   Slide in animation for extended toolbar container
 **/
 
 @include keyframes(slideOutExtContainer) {
@@ -80,5 +69,15 @@
 }
 
 /**
-* END of slide in animation for extended toolbar container
+*   Fade in / out animations
 **/
+
+@include keyframes(fadeIn) {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@include keyframes(fadeOut) {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}

@@ -23,6 +23,7 @@ import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
 import RandomUtil from "../util/RandomUtil";
 import UIErrors from './UIErrors';
+import { debounce } from "../util/helpers";
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -433,9 +434,10 @@ UI.start = function () {
     bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        $("#videoconference_page").mousemove(function () {
-            return UI.showToolbar();
-        });
+        let debouncedShowToolbar = debounce(() => {
+            UI.showToolbar();
+        }, 100, { leading: true, trailing: false });
+        $("#videoconference_page").mousemove(debouncedShowToolbar);
         setupToolbars();
         setupChat();
 
