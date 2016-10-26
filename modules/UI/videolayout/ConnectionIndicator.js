@@ -249,7 +249,6 @@ ConnectionIndicator.prototype.showMore = function () {
 
 function createIcon(classes, iconClass) {
     var icon = document.createElement("span");
-    icon.classList.add("indicatoricon");
     for(var i in classes) {
         icon.classList.add(classes[i]);
     }
@@ -267,6 +266,7 @@ ConnectionIndicator.prototype.create = function () {
         videoSpanId: this.videoContainer.videoSpanId,
         indicatorId
     });
+    element.classList.add('show');
     this.connectionIndicatorContainer = element;
 
     let popoverContent = (
@@ -289,13 +289,19 @@ ConnectionIndicator.prototype.create = function () {
         origShowFunc.call(this.popover);
     }.bind(this);
 
-    this.emptyIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_empty"], "icon-connection"));
-    this.fullIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_full"], "icon-connection"));
-    this.interruptedIndicator = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_lost"],"icon-connection-lost"));
+    let connectionIconContainer = document.createElement('div');
+    connectionIconContainer.className = 'connection indicatoricon';
+
+
+    this.emptyIcon = connectionIconContainer.appendChild(
+        createIcon(["connection_empty"], "icon-connection"));
+    this.fullIcon = connectionIconContainer.appendChild(
+        createIcon(["connection_full"], "icon-connection"));
+    this.interruptedIndicator = connectionIconContainer.appendChild(
+        createIcon(["connection_lost"],"icon-connection-lost"));
+
     $(this.interruptedIndicator).hide();
+    this.connectionIndicatorContainer.appendChild(connectionIconContainer);
 };
 
 /**

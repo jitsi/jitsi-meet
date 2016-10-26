@@ -414,10 +414,14 @@ const TOOLTIP_POSITIONS = {
             indicatorSpan.className = 'indicator';
             indicatorSpan.id = indicatorId;
 
-            indicatorSpan.innerHTML = opts.content;
+            if(opts.content) {
+                indicatorSpan.innerHTML = opts.content;
+            }
 
-            this.setTooltip(indicatorSpan, opts.tooltip, "top");
-            APP.translation.translateElement($(indicatorSpan));
+            if (opts.tooltip) {
+                this.setTooltip(indicatorSpan, opts.tooltip, "top");
+                APP.translation.translateElement($(indicatorSpan));
+            }
 
             document.getElementById(videoSpanId)
                 .querySelector('.videocontainer__toptoolbar')
