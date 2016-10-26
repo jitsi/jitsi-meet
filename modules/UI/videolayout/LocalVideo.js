@@ -103,7 +103,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         APP.translation.translateElement($(editableText));
 
         this.container
-            .querySelector('.videocontainer__toolbar')
             .appendChild(editableText);
 
         var self = this;
