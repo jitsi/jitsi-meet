@@ -18,6 +18,7 @@ import {reportError} from './modules/util/helpers';
 
 import UIUtil from './modules/UI/util/UIUtil';
 
+const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
@@ -511,6 +512,7 @@ export default {
             }).then(([tracks, con]) => {
                 console.log('initialized with %s local tracks', tracks.length);
                 APP.connection = connection = con;
+                this._bindConnectionFailedHandler(con);
                 this._createRoom(tracks);
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
@@ -546,6 +548,28 @@ export default {
      */
     isLocalId (id) {
         return this.getMyUserId() === id;
+    },
+    /**
+     * Binds a handler that will handle the case when the connection is dropped
+     * in the middle of the conference.
+     * @param {JitsiConnection} connection the connection to which the handler
+     * will be bound to.
+     * @private
+     */
+    _bindConnectionFailedHandler (connection) {
+        const handler = function (error, errMsg) {
+            if (ConnectionErrors.OTHER_ERROR === error) {
+                // - item-not-found
+                // - connection dropped(closed by Strophe unexpectedly
+                //   possible due too many transport errors)
+                console.error("XMPP connection error: " + errMsg);
+                APP.UI.showPageReloadOverlay();
+                connection.removeEventListener(
+                    ConnectionEvents.CONNECTION_FAILED, handler);
+            }
+        };
+        connection.addEventListener(
+            ConnectionEvents.CONNECTION_FAILED, handler);
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.

@@ -21,6 +21,7 @@ import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
+import RandomUtil from "../util/RandomUtil";
 import UIErrors from './UIErrors';
 
 var EventEmitter = require("events");
@@ -1088,7 +1089,8 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
  * the page should be reloaded.
  */
 UI.showPageReloadOverlay = function () {
-    PageReloadOverlay.show(15 /* will reload in 15 seconds */);
+    // Reload the page after 10 - 30 seconds
+    PageReloadOverlay.show(10 + RandomUtil.randomInt(0, 20));
 };
 
 /**
