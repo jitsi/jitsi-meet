@@ -4,18 +4,13 @@ import Invite from './modules/UI/invite/Invite';
 import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
-
-import ConnectionQuality from './modules/connectionquality/connectionquality';
-
 import Recorder from './modules/recorder/Recorder';
-
-import CQEvents from './service/connectionquality/CQEvents';
-import UIEvents from './service/UI/UIEvents';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
+import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
@@ -26,6 +21,8 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
+
+const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
 
 let room, connection, localAudio, localVideo;
 
@@ -769,7 +766,7 @@ export default {
      * Returns the stats.
      */
     getStats() {
-        return ConnectionQuality.getStats();
+        return room.connectionQuality.getStats();
     },
     // end used by torture
 
@@ -1253,7 +1250,6 @@ export default {
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
             connectionIsInterrupted = true;
-            ConnectionQuality.updateLocalConnectionQuality(0);
             APP.UI.showLocalConnectionInterrupted(true);
         });
 
@@ -1310,10 +1306,11 @@ export default {
             });
         }
 
+        // TODO: Move this to the library.
         room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
             // if we say video muted we will use old method of calculating
             // quality and will not depend on localVideo if it is missing
-            ConnectionQuality.updateLocalStats(
+            room.connectionQuality.updateLocalStats(
                 stats,
                 connectionIsInterrupted,
                 localVideo ? localVideo.videoType : undefined,
@@ -1321,9 +1318,11 @@ export default {
                 localVideo ? localVideo.resolution : null);
         });
 
-        ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
+        room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
+
+                // TODO: Move this to the library.
                 // Send only the data that remote participants care about.
                 let data = {
                     bitrate: stats.bitrate,
@@ -1341,28 +1340,10 @@ export default {
                 }
             });
 
-        room.on(ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (participant, payload) => {
-                switch(payload.type) {
-                    case this.commands.defaults.CONNECTION_QUALITY: {
-                        let remoteVideo = participant.getTracks()
-                            .find(tr => tr.isVideoTrack());
-                        ConnectionQuality.updateRemoteStats(
-                            participant.getId(),
-                            payload.values,
-                            remoteVideo ? remoteVideo.videoType : undefined,
-                            remoteVideo ? remoteVideo.isMuted() : undefined);
-                        break;
-                    }
-                    default:
-                        console.warn("Unknown datachannel message", payload);
-                }
-            });
-
-        ConnectionQuality.addListener(CQEvents.REMOTESTATS_UPDATED,
+        room.on(ConnectionQualityEvents.REMOTE_STATS_UPDATED,
             (id, percent, stats) => {
                 APP.UI.updateRemoteStats(id, percent, stats);
-            });
+        });
 
         room.addCommandListener(this.commands.defaults.ETHERPAD, ({value}) => {
             APP.UI.initEtherpad(value);
