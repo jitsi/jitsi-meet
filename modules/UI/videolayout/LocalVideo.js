@@ -70,7 +70,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         document.getElementById(this.videoSpanId)
-            .querySelector('.videocontainer__toolbar')
             .appendChild(nameSpan);
 
 
@@ -104,7 +103,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         APP.translation.translateElement($(editableText));
 
         this.container
-            .querySelector('.videocontainer__toolbar')
             .appendChild(editableText);
 
         var self = this;

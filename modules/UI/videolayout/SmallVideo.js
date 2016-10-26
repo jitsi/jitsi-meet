@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, JitsiMeetJS, interfaceConfig */
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -34,12 +34,6 @@ function SmallVideo(VideoLayout) {
     this.videoStream = null;
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
-}
-
-function setVisibility(selector, show) {
-    if (selector && selector.length > 0) {
-        selector.css("visibility", show ? "visible" : "hidden");
-    }
 }
 
 /**
@@ -130,37 +124,6 @@ SmallVideo.prototype.setVideoType = function (videoType) {
  */
 SmallVideo.prototype.getVideoType = function () {
     return this.videoType;
-};
-
-/**
- * Shows the presence status message for the given video.
- */
-SmallVideo.prototype.setPresenceStatus = function (statusMsg) {
-    if (!this.container) {
-        // No container
-        return;
-    }
-
-    var statusSpan = $('#' + this.videoSpanId + '>span.status');
-    if (!statusSpan.length) {
-        //Add status span
-        statusSpan = document.createElement('span');
-        statusSpan.className = 'status';
-        statusSpan.id = this.videoSpanId + '_status';
-        $('#' + this.videoSpanId)[0].appendChild(statusSpan);
-
-        statusSpan = $('#' + this.videoSpanId + '>span.status');
-    }
-
-    // Display status
-    if (statusMsg && statusMsg.length) {
-        $('#' + this.videoSpanId + '_status').text(statusMsg);
-        statusSpan.get(0).setAttribute("style", "display:inline-block;");
-    }
-    else {
-        // Hide
-        statusSpan.get(0).setAttribute("style", "display:none;");
-    }
 };
 
 /**
@@ -396,6 +359,16 @@ SmallVideo.prototype.$avatar = function () {
 };
 
 /**
+ * Returns the display name element, which appears on the video thumbnail.
+ *
+ * @return {jQuery} a jQuery selector pointing to the display name element of
+ * the video thumbnail
+ */
+SmallVideo.prototype.$displayName = function () {
+    return $('#' + this.videoSpanId + ' .displayname');
+};
+
+/**
  * Enables / disables the css responsible for focusing/pinning a video
  * thumbnail.
  *
@@ -479,10 +452,15 @@ SmallVideo.prototype.updateView = function () {
 
     // Determine whether video, avatar or blackness should be displayed
     let displayMode = this.selectDisplayMode();
-    // Show/hide video
-    setVisibility(this.selectVideoElement(), displayMode === DISPLAY_VIDEO);
-    // Show/hide the avatar
-    setVisibility(this.$avatar(), displayMode === DISPLAY_AVATAR);
+    // Show/hide video.
+    UIUtil.setVisibility(   this.selectVideoElement(),
+                            displayMode === DISPLAY_VIDEO);
+    // Show/hide the avatar.
+    UIUtil.setVisibility(   this.$avatar(),
+                            displayMode === DISPLAY_AVATAR);
+    // Show/hide the display name.
+    UIUtil.setVisibility(   this.$displayName(),
+                            displayMode === DISPLAY_BLACKNESS);
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
@@ -519,13 +497,21 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
     }
 
-    var indicatorSpan = this.getIndicatorSpan({
-        id: 'dominantspeakerindicator',
-        content: '<i id="indicatoricon" class="fa fa-bullhorn"></i>',
+    let indicatorSpanId = "dominantspeakerindicator";
+    let content = `<i id="indicatoricon"
+        '             class="indicatoricon fa fa-bullhorn"></i>`;
+    let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
+        videoSpanId: this.videoSpanId,
+        indicatorId: indicatorSpanId,
+        content,
         tooltip: 'speaker'
     });
 
-    indicatorSpan.style.display = show ? "" : "none";
+    if (show) {
+        indicatorSpan.classList.add('show');
+    } else {
+        indicatorSpan.classList.remove('show');
+    }
 };
 
 /**
@@ -539,43 +525,21 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         return;
     }
 
-    var indicatorSpan = this.getIndicatorSpan({
-        id: 'raisehandindicator',
-        content: '<i id="indicatoricon" class="icon-raised-hand"></i>',
+    let indicatorSpanId = "raisehandindicator";
+    let content = `<i id="indicatoricon"
+                      class="icon-raised-hand indicatoricon"></i>`;
+    let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
+        indicatorId: indicatorSpanId,
+        videoSpanId: this.videoSpanId,
+        content,
         tooltip: 'raisedHand'
     });
 
-    indicatorSpan.style.display = show ? "" : "none";
-};
-
-/**
- * Gets (creating if necessary) the "indicator" span for this SmallVideo.
- *
- * @param options.id {String} element ID
- * @param options.content {String} HTML content of the indicator
- * @param options.tooltip {String} The key that should be passed to tooltip
- *
- * @returns {HTMLElement} DOM represention of the indicator
- */
-SmallVideo.prototype.getIndicatorSpan = function(options) {
-    var indicator = this.container.querySelector('#' + options.id);
-
-    if (indicator) {
-        return indicator;
+    if (show) {
+        indicatorSpan.classList.add('show');
+    } else {
+        indicatorSpan.classList.remove('show');
     }
-
-    indicator = document.createElement('span');
-    indicator.className = 'indicator';
-    indicator.id = options.id;
-
-    indicator.innerHTML = options.content;
-
-    UIUtil.setTooltip(indicator, options.tooltip, "top");
-    APP.translation.translateElement($(indicator));
-
-    this.container.appendChild(indicator);
-
-    return indicator;
 };
 
 /**
