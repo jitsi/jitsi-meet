@@ -306,37 +306,43 @@
         line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
     }
 
-    .connection.connection_empty
-    {
-        color: #8B8B8B;/*#FFFFFF*/
-        overflow: hidden;
+    .connection {
+        position: relative;
+        margin: 0 auto;
+        width: 12px;
+        height: 8px;
+
+        &_empty
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #8B8B8B;/*#FFFFFF*/
+            overflow: hidden;
+        }
+
+        &_lost
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #8B8B8B;
+            overflow: visible;
+        }
+
+        &_full
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #FFFFFF;/*#15A1ED*/
+            overflow: hidden;
+        }
     }
 
-    .connection.connection_lost
-    {
-        color: #8B8B8B;
-        overflow: visible;
-    }
-
-    .connection.connection_full
-    {
-        color: #FFFFFF;/*#15A1ED*/
-        overflow: hidden;
-    }
-
-    .connection,
     .icon-connection,
     .icon-connection-lost {
         font-size: 6pt;
-        line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    }
-
-    .connection
-    {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        border: 0px;
     }
 }
 

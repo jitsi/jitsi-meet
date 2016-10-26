@@ -50,6 +50,15 @@
   border-radius: 50%;
 }
 
+/**
+* Absolute position the element at the top left corner
+**/
+@mixin topLeft() {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 @mixin absoluteAligning($sizeX, $sizeY) {
   top: 50%;
   left: 50%;
