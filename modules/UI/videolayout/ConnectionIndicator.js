@@ -34,12 +34,12 @@ function ConnectionIndicator(videoContainer, videoId) {
  *         0: string}}
  */
 ConnectionIndicator.connectionQualityValues = {
-    98: "18px", //full
-    81: "15px",//4 bars
-    64: "11px",//3 bars
-    47: "7px",//2 bars
-    30: "3px",//1 bar
-    0: "0px"//empty
+    98: "100%", //full
+    81: "80%",//4 bars
+    64: "55%",//3 bars
+    47: "40%",//2 bars
+    30: "20%",//1 bar
+    0: "0"//empty
 };
 
 ConnectionIndicator.getIP = function(value) {
