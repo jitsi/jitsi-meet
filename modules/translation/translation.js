@@ -1,15 +1,15 @@
 /* global $, require, config, interfaceConfig */
-var i18n = require("i18next-client");
+import i18n from 'i18next';
+import XHR from 'i18next-xhr-backend';
+import jqueryI18next from 'jquery-i18next';
 var languages = require("../../service/translation/languages");
+var languagesR = require("json!../../lang/languages.json");
+var mainR = require("json!../../lang/main.json");
 var DEFAULT_LANG = languages.EN;
 
-i18n.addPostProcessor(
-    "resolveAppName",
-    value => value.replace("__app__", interfaceConfig.APP_NAME));
-
 var defaultOptions = {
-    detectLngQS: "lang",
-    useCookie: false,
+    compatibilityAPI: 'v1',
+    compatibilityJSON: 'v1',
     fallbackLng: DEFAULT_LANG,
     load: "unspecific",
     resGetPath: 'lang/__ns__-__lng__.json',
@@ -21,48 +21,11 @@ var defaultOptions = {
     fallbackOnNull: true,
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
-    app: interfaceConfig.APP_NAME,
-    getAsync: true,
-    defaultValueFromContent: false,
-    customLoad: function(lng, ns, options, done) {
-        var resPath = "lang/__ns__-__lng__.json";
-        if(lng === languages.EN)
-            resPath = "lang/__ns__.json";
-        var url = i18n.functions.applyReplacement(resPath,
-                                                 { lng: lng, ns: ns });
-        i18n.functions.ajax({
-            url: url,
-            success: function(data) {
-                i18n.functions.log('loaded: ' + url);
-                done(null, data);
-            },
-            error : function(xhr, status, error) {
-                if ((status && status == 200) ||
-                    (xhr && xhr.status && xhr.status == 200)) {
-                    // file loaded but invalid json, stop waste time !
-                    i18n.functions.error('There is a typo in: ' + url);
-                } else if ((status && status == 404) ||
-                    (xhr && xhr.status && xhr.status == 404)) {
-                    i18n.functions.log('Does not exist: ' + url);
-                } else {
-                    var theStatus = status ? status :
-                        ((xhr && xhr.status) ? xhr.status : null);
-                    i18n.functions.log(theStatus + ' when loading ' + url);
-                }
-
-                done(error, {});
-            },
-            dataType: "json",
-            async : options.getAsync
-        });
-    }
-    //              options for caching
-//                useLocalStorage: true,
-//                localStorageExpirationTime: 86400000 // in ms, default 1 week
+    app: interfaceConfig.APP_NAME
 };
 
 function initCompleted() {
-    $("[data-i18n]").i18n();
+    $("[data-i18n]").localize();
 }
 
 function getLangFromQuery() {
@@ -98,7 +61,21 @@ module.exports = {
             options.lng = lang;
         }
 
-        i18n.init(options, initCompleted);
+        i18n.use(XHR)
+            .use({
+                type: 'postProcessor',
+                name: "resolveAppName",
+                process:
+                    function (res, key) {
+                        return i18n.t(key, {app: interfaceConfig.APP_NAME});
+                    }
+            })
+            .init(options, initCompleted);
+        // adds default language which is preloaded from code
+        i18n.addResourceBundle(DEFAULT_LANG, 'main', mainR, true, true);
+        i18n.addResourceBundle(
+            DEFAULT_LANG, 'languages', languagesR, true, true);
+        jqueryI18next.init(i18n, $, {useOptionsAttr: true});
     },
     setLanguage: function (lang) {
         if(!lang)
@@ -110,7 +87,7 @@ module.exports = {
     },
     translateElement: function (selector, options) {
         // i18next expects undefined if options are missing, check if its null
-        selector.i18n(
+        selector.localize(
             options === null ? undefined : options);
     },
     generateTranslationHTML: function (key, options) {
@@ -124,5 +101,8 @@ module.exports = {
         str += "</span>";
         return str;
 
+    },
+    addLanguageChangedListener: function(listener) {
+        i18n.on('languageChanged', listener);
     }
 };

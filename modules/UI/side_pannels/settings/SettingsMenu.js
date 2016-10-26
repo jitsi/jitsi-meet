@@ -105,6 +105,9 @@ export default {
 
             APP.translation.translateElement(selectEl);
 
+            APP.translation.addLanguageChangedListener(
+                lng => selectInput[0].dataset.i18n = `languages:${lng}`);
+
             UIUtil.showElement(wrapperId);
         }
         // DEVICES LIST
