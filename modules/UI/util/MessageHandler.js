@@ -59,6 +59,7 @@ var messageHandler = {
      * parameter and the second is Cancel.
      *
      * @param titleKey the key for the title of the message
+     * @param msgKey the key for the message
      * @param msgString the text of the message
      * @param persistent boolean value which determines whether the message is
      *        persistent or not

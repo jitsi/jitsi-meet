@@ -170,7 +170,7 @@ function _showStopRecordingPrompt (recordingType) {
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openTwoButtonDialog({
             titleKey: title,
-            messageKey: message,
+            msgKey: message,
             leftButtonKey: buttonKey,
             submitFunction: function(e,v) {
                 if (v) {
