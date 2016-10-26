@@ -185,7 +185,7 @@
     left: 10%;
     width: 80%;
     top: 50%;
-    margin-top: -12px;
+    @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
