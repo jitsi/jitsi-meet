@@ -222,11 +222,9 @@ if (!interfaceConfig.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
 
         var spanElement = document.createElement('span');
-        spanElement.className = 'remotevideomenu toolbar-icon right';
+        spanElement.className = 'remotevideomenu';
 
-        this.container
-            .querySelector('.videocontainer__toolbar')
-            .appendChild(spanElement);
+        this.container.appendChild(spanElement);
 
         var menuElement = document.createElement('i');
         menuElement.className = 'icon-menu-up';
@@ -557,6 +555,10 @@ RemoteVideo.createContainer = function (spanId) {
     let container = document.createElement('span');
     container.id = spanId;
     container.className = 'videocontainer';
+
+    let indicatorBar = document.createElement('div');
+    indicatorBar.className = "videocontainer__toptoolbar";
+    container.appendChild(indicatorBar);
 
     let toolbar = document.createElement('div');
     toolbar.className = "videocontainer__toolbar";

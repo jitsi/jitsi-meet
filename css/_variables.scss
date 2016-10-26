@@ -11,10 +11,10 @@ $hangupFontSize: 2em;
 $defaultToolbarSize: 50px;
 
 // Video layout.
-$thumbnailIndicatorSize: 23px;
+$thumbnailToolbarHeight: 22px;
 $thumbnailIndicatorBorder: 0px;
+$thumbnailIndicatorSize: $thumbnailToolbarHeight;
 $thumbnailVideoMargin: 2px;
-$thumbnailToolbarHeight: 25px;
 
 /**
  * Color variables.
@@ -46,6 +46,7 @@ $thumbnailPictogramColor: #fff;
 $dominantSpeakerBg: #165ecc;
 $raiseHandBg: #D6D61E;
 $audioLevelBg: #44A5FF;
+$connectionIndicatorBg: #48CC8C;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
 $videoStateIndicatorBackground: $toolbarBackground;
