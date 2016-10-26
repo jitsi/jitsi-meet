@@ -7,6 +7,11 @@ import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 import JitsiPopover from "../util/JitsiPopover";
 
+const MUTED_DIALOG_BUTTON_VALUES = {
+    cancel: 0,
+    muted: 1
+};
+
 /**
  * Creates new instance of the <tt>RemoteVideo</tt>.
  * @param user {JitsiParticipant} the user for whom remote video instance will
@@ -130,15 +135,21 @@ RemoteVideo.prototype._generatePopupContent = function () {
     }
 
     // Delegate event to the document.
-    $(document).on("click", "#mutelink_" + this.id, function(){
-
+    $(document).on("click", "#mutelink_" + this.id, () => {
         if (this.isAudioMuted)
             return;
 
-        this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
+        RemoteVideo.showMuteParticipantDialog().then(reason => {
+            if(reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
+                this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
+            }
+        }).catch(e => {
+            //currently shouldn't be called
+            console.error(e);
+        });
 
         this.popover.forceHide();
-    }.bind(this));
+    });
 
     muteMenuItem.appendChild(muteLinkItem);
     popupmenuElement.appendChild(muteMenuItem);
@@ -568,6 +579,49 @@ RemoteVideo.createContainer = function (spanId) {
 
     var remotes = document.getElementById('remoteVideos');
     return remotes.appendChild(container);
+};
+
+/**
+ * Shows 2 button dialog for confirmation from the user for muting remote
+ * participant.
+ */
+RemoteVideo.showMuteParticipantDialog = function () {
+    //FIXME: don't show again checkbox is implemented very dirty. we should add
+    // this functionality to MessageHandler class.
+    if (window.localStorage
+        && window.localStorage.getItem(
+            "dontShowMuteParticipantDialog") === "true") {
+        return Promise.resolve(MUTED_DIALOG_BUTTON_VALUES.muted);
+    }
+    let msgString =
+        `<div data-i18n="dialog.muteParticipantBody"></div>
+        <br />
+        <label>
+            <input type='checkbox' checked id='doNotShowMessageAgain' />
+            <span data-i18n='dialog.doNotShowMessageAgain'></span>
+        </label>`;
+    return new Promise(resolve => {
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey : "dialog.muteParticipantTitle",
+            msgString,
+            leftButtonKey: 'dialog.muteParticipantButton',
+            submitFunction: () => {
+                if(window.localStorage) {
+                    let form  = $.prompt.getPrompt();
+                    if (form) {
+                        let input = form.find("#doNotShowMessageAgain");
+                        if (input.length) {
+                            window.localStorage.setItem(
+                                "dontShowMuteParticipantDialog",
+                                input.prop("checked"));
+                        }
+                    }
+                }
+                resolve(MUTED_DIALOG_BUTTON_VALUES.muted);
+            },
+            closeFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.cancel)
+        });
+    });
 };
 
 export default RemoteVideo;
