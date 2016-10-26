@@ -498,10 +498,12 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
     }
 
     let indicatorSpanId = "dominantspeakerindicator";
+    let content = `<i id="indicatoricon"
+        '             class="indicatoricon fa fa-bullhorn"></i>`;
     let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
         videoSpanId: this.videoSpanId,
         indicatorId: indicatorSpanId,
-        content: '<i id="indicatoricon" class="fa fa-bullhorn"></i>',
+        content,
         tooltip: 'speaker'
     });
 
@@ -524,10 +526,12 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     }
 
     let indicatorSpanId = "raisehandindicator";
+    let content = `<i id="indicatoricon"
+                      class="icon-raised-hand indicatoricon"></i>`;
     let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
         indicatorId: indicatorSpanId,
         videoSpanId: this.videoSpanId,
-        content: '<i id="indicatoricon" class="icon-raised-hand"></i>',
+        content,
         tooltip: 'raisedHand'
     });
 
