@@ -54,18 +54,6 @@ SmallVideo.prototype.isVisible = function () {
     return $('#' + this.videoSpanId).is(':visible');
 };
 
-SmallVideo.prototype.showDisplayName = function(isShow) {
-    var nameSpan = $('#' + this.videoSpanId + ' .displayname').get(0);
-    if (isShow) {
-        if (nameSpan && nameSpan.innerHTML && nameSpan.innerHTML.length)
-            nameSpan.setAttribute("style", "display:inline-block;");
-    }
-    else {
-        if (nameSpan)
-            nameSpan.setAttribute("style", "display:none;");
-    }
-};
-
 /**
  * Enables / disables the device availability icons for this small video.
  * @param {enable} set to {true} to enable and {false} to disable
@@ -160,25 +148,24 @@ SmallVideo.getStreamElementID = function (stream) {
  */
 SmallVideo.prototype.bindHoverHandler = function () {
     // Add hover handler
-    var self = this;
     $(this.container).hover(
-        function () {
-            if (!self.VideoLayout.isCurrentlyOnLarge(self.id)) {
-                $('#' + self.videoSpanId + ' .videocontainer__overlay')
+        () => {
+            if (!this.VideoLayout.isCurrentlyOnLarge(this.id)) {
+                $('#' + this.videoSpanId + ' .videocontainer__overlay')
                     .removeClass("hide")
                     .addClass("show-inline");
+                UIUtil.setVisibility(this.$displayName(), true);
             }
-            self.showDisplayName(true);
         },
-        function () {
-            $('#' + self.videoSpanId + ' .videocontainer__overlay')
+        () => {
+            $('#' + this.videoSpanId + ' .videocontainer__overlay')
                 .removeClass("show-inline")
                 .addClass("hide");
             // If the video has been "pinned" by the user we want to
             // keep the display name on place.
-            if (!self.VideoLayout.isLargeVideoVisible() ||
-                !self.VideoLayout.isCurrentlyOnLarge(self.id))
-                self.showDisplayName(false);
+            if (!this.VideoLayout.isLargeVideoVisible() ||
+                !this.VideoLayout.isCurrentlyOnLarge(this.id))
+                UIUtil.setVisibility(this.$displayName(), false);
         }
     );
 };
