@@ -1,13 +1,17 @@
 
-.select2-container.aui-select2-container {
-    background-color: transparent !important;
+.select2-container{
+    width: 100%;
+    background-color: transparent;
 
-    a.select2-choice {
+    a.select2-choice,
+    a.select2-choice .select2-arrow {
         height: 28px !important;
-        line-height: 18px !important;
-        width: 100% !important;
-        background-color: $selectBg !important;
+        line-height: 28px !important;
+        background-color: $selectBg;
+        background-image: none;
         border-color: $selectBg !important;
+    }
+    a.select2-choice {
         color: $selectFontColor !important;
         text-shadow: none !important;
         font-size: 12px !important;
@@ -22,11 +26,17 @@
         a.select2-choice {
             background-color: $selectActiveBg !important;
             border-color: $selectActiveBg !important;
+            box-shadow: none;
         }
+    }
+
+    .select2-arrow {
+        border-left: none;
     }
 }
 
-.select2-drop.aui-select2-drop.aui-style-default {
+.select2-drop {
+    width: 100%;
     z-index: $dropdownZ;
     background-color: $selectActiveBg;
     border-color: $selectActiveBg;
@@ -34,6 +44,7 @@
     .select2-results{
         background-color: $selectActiveBg;
         border-color: $selectActiveBg;
+        color: $selectFontColor;
 
         &::-webkit-scrollbar {
             background-color: transparent;

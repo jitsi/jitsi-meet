@@ -1,4 +1,4 @@
-/* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
+/* global $, APP, interfaceConfig, JitsiMeetJS */
 
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
@@ -126,7 +126,7 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
  * @param {function} onSelectedCb fired if item is selected
  */
 function initSelect2($el, onSelectedCb) {
-    $el.auiSelect2({
+    $el.select2({
         minimumResultsForSearch: Infinity
     });
     if (typeof onSelectedCb === 'function') {
@@ -141,7 +141,7 @@ export default {
         if (UIUtil.isSettingEnabled('language')) {
             const wrapperId = 'languagesSelectWrapper';
             const selectId = 'languagesSelect';
-            const selectEl = AJS.$(`#${selectId}`);
+            const selectEl = $(`#${selectId}`);
             let selectInput;
 
             selectEl.html(generateLanguagesOptions(
@@ -311,9 +311,9 @@ export default {
      * @param {{ deviceId, label, kind }[]} devices list of available devices
      */
     changeDevicesList (devices) {
-        let $selectCamera= AJS.$('#selectCamera'),
-            $selectMic = AJS.$('#selectMic'),
-            $selectAudioOutput = AJS.$('#selectAudioOutput'),
+        let $selectCamera= $('#selectCamera'),
+            $selectMic = $('#selectMic'),
+            $selectAudioOutput = $('#selectAudioOutput'),
             $selectAudioOutputParent = $selectAudioOutput.parent();
 
         let audio = devices.filter(device => device.kind === 'audioinput'),

@@ -98,6 +98,10 @@ var config = {
                 'jQuery-Impromptu/dist/jquery-impromptu'
                     + (minimize ? '.min' : '')
                     + '.js',
+            select2:
+                'select2/dist/js/select2'
+                + (minimize ? '.min' : '')
+                + '.js'
         },
         packageAlias: 'browser'
     }

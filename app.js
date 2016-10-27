@@ -16,6 +16,9 @@ import 'aui-experimental';
 import 'aui-css';
 import 'aui-experimental-css';
 
+import 'select2';
+import 'select2-css';
+
 window.toastr = require("toastr");
 
 import URLProcessor from "./modules/config/URLProcessor";
