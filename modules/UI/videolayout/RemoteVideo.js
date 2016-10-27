@@ -6,7 +6,6 @@ import SmallVideo from "./SmallVideo";
 import UIUtils from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 import JitsiPopover from "../util/JitsiPopover";
-import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 const MUTED_DIALOG_BUTTON_VALUES = {
     cancel: 0,
@@ -653,36 +652,18 @@ RemoteVideo.createContainer = function (spanId) {
  * participant.
  */
 RemoteVideo.showMuteParticipantDialog = function () {
-    //FIXME: don't show again checkbox is implemented very dirty. we should add
-    // this functionality to MessageHandler class.
-    if (jitsiLocalStorage.getItem(
-            "dontShowMuteParticipantDialog") === "true") {
-        return Promise.resolve(MUTED_DIALOG_BUTTON_VALUES.muted);
-    }
-    let msgString =
-        `<div data-i18n="dialog.muteParticipantBody"></div>
-        <br />
-        <label>
-            <input type='checkbox' checked id='doNotShowMessageAgain' />
-            <span data-i18n='dialog.doNotShowMessageAgain'></span>
-        </label>`;
     return new Promise(resolve => {
         APP.UI.messageHandler.openTwoButtonDialog({
             titleKey : "dialog.muteParticipantTitle",
-            msgString,
-            leftButtonKey: 'dialog.muteParticipantButton',
-            submitFunction: () => {
-                let form  = $.prompt.getPrompt();
-                if (form) {
-                    let input = form.find("#doNotShowMessageAgain");
-                    if (input.length) {
-                        jitsiLocalStorage.setItem(
-                            "dontShowMuteParticipantDialog",
-                            input.prop("checked"));
-                    }
-                }
-                resolve(MUTED_DIALOG_BUTTON_VALUES.muted);
+            msgString: "<div data-i18n='dialog.muteParticipantBody'></div>",
+            leftButtonKey: "dialog.muteParticipantButton",
+            dontShowAgain: {
+                id: "dontShowMuteParticipantDialog",
+                textKey: "dialog.doNotShowMessageAgain",
+                checked: true,
+                buttonValues: [true]
             },
+            submitFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.muted),
             closeFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.cancel)
         });
     });
