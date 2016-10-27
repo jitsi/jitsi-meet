@@ -31,6 +31,7 @@ var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
 var Feedback = require("./feedback/Feedback");
 import FollowMe from "../FollowMe";
+import jitsiLocalStorage from '../util/JitsiLocalStorage';
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
@@ -1239,7 +1240,7 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     }
 
     if (showDoNotShowWarning) {
-        if (window.localStorage[localStoragePropName] === "true") {
+        if (jitsiLocalStorage.getItem(localStoragePropName) === "true") {
             return;
         }
     }
@@ -1308,8 +1309,8 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
                 let input = form.find("#doNotShowWarningAgain");
 
                 if (input.length) {
-                    window.localStorage[localStoragePropName] =
-                        input.prop("checked");
+                    jitsiLocalStorage.setItem(localStoragePropName,
+                        input.prop("checked"));
                 }
             }
         },
