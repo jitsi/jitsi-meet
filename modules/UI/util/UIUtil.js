@@ -136,7 +136,7 @@ const TOOLTIP_POSITIONS = {
             element.setAttribute('data-i18n', '[content]' + key);
 
             APP.translation.translateElement($(element));
-        }      
+        }
     },
 
     /**
@@ -235,6 +235,18 @@ const TOOLTIP_POSITIONS = {
             $("#"+id).removeClass("show");
 
         $("#"+id).addClass("hide");
+    },
+
+    /**
+     * Shows / hides the element with the given jQuery selector.
+     *
+     * @param {jQuery} selector the jQuery selector of the element to show/hide
+     * @param {boolean} isVisible
+     */
+    setVisibility(selector, isVisible) {
+        if (selector && selector.length > 0) {
+            selector.css("visibility", isVisible ? "visible" : "hidden");
+        }
     },
 
     hideDisabledButtons: function (mappings) {
@@ -376,6 +388,49 @@ const TOOLTIP_POSITIONS = {
                 "cursor": "default"
             });
         }
+    },
+
+    /**
+     * Gets an "indicator" span for a video thumbnail.
+     * If element doesn't exist then creates it and appends
+     * video span container.
+     *
+     * @param {object} opts
+     * @param opts.indicatorId {String} - identificator of indicator
+     * @param opts.videoSpanId {String} - identificator of video span
+     * @param opts.content {String} HTML content of indicator
+     * @param opts.tooltip {String} - tooltip key for translation
+     *
+     * @returns {HTMLSpanElement} indicatorSpan
+     */
+    getVideoThumbnailIndicatorSpan(opts = {}) {
+        let indicatorId = opts.indicatorId;
+        let videoSpanId = opts.videoSpanId;
+        let indicators = $(`#${videoSpanId} [id="${indicatorId}"]`);
+        let indicatorSpan;
+
+        if (indicators.length <= 0) {
+            indicatorSpan = document.createElement('span');
+            indicatorSpan.className = 'indicator';
+            indicatorSpan.id = indicatorId;
+
+            if(opts.content) {
+                indicatorSpan.innerHTML = opts.content;
+            }
+
+            if (opts.tooltip) {
+                this.setTooltip(indicatorSpan, opts.tooltip, "top");
+                APP.translation.translateElement($(indicatorSpan));
+            }
+
+            document.getElementById(videoSpanId)
+                .querySelector('.videocontainer__toptoolbar')
+                .appendChild(indicatorSpan);
+        } else {
+            indicatorSpan = indicators[0];
+        }
+
+        return indicatorSpan;
     }
 };
 

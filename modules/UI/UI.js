@@ -609,10 +609,6 @@ UI.removeUser = function (id, displayName) {
     VideoLayout.removeParticipantContainer(id);
 };
 
-UI.updateUserStatus = function (id, status) {
-    VideoLayout.setPresenceStatus(id, status);
-};
-
 /**
  * Update videotype for specified user.
  * @param {string} id user id

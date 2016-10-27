@@ -2,13 +2,15 @@
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
+import UIUtil from "../util/UIUtil";
 
 /**
  * Constructs new connection indicator.
  * @param videoContainer the video container associated with the indicator.
+ * @param videoId the identifier of the video
  * @constructor
  */
-function ConnectionIndicator(videoContainer, id) {
+function ConnectionIndicator(videoContainer, videoId) {
     this.videoContainer = videoContainer;
     this.bandwidth = null;
     this.packetLoss = null;
@@ -18,7 +20,7 @@ function ConnectionIndicator(videoContainer, id) {
     this.isResolutionHD = null;
     this.transport = [];
     this.popover = null;
-    this.id = id;
+    this.id = videoId;
     this.create();
 }
 
@@ -32,12 +34,12 @@ function ConnectionIndicator(videoContainer, id) {
  *         0: string}}
  */
 ConnectionIndicator.connectionQualityValues = {
-    98: "18px", //full
-    81: "15px",//4 bars
-    64: "11px",//3 bars
-    47: "7px",//2 bars
-    30: "3px",//1 bar
-    0: "0px"//empty
+    98: "100%", //full
+    81: "80%",//4 bars
+    64: "55%",//3 bars
+    47: "40%",//2 bars
+    30: "20%",//1 bar
+    0: "0"//empty
 };
 
 ConnectionIndicator.getIP = function(value) {
@@ -259,18 +261,22 @@ function createIcon(classes, iconClass) {
  * Creates the indicator
  */
 ConnectionIndicator.prototype.create = function () {
-    this.connectionIndicatorContainer = document.createElement("div");
-    this.connectionIndicatorContainer.className = "connectionindicator";
-    this.connectionIndicatorContainer.style.display = "none";
-    this.videoContainer.container.appendChild(
-        this.connectionIndicatorContainer);
-    this.popover = new JitsiPopover(
-        $("#" + this.videoContainer.videoSpanId + " > .connectionindicator"), {
-            content: "<div class=\"connection-info\" " +
-                        "data-i18n='connectionindicator.na'></div>",
-            skin: "black",
-            onBeforePosition: el => APP.translation.translateElement(el)
-        });
+    let indicatorId = 'connectionindicator';
+    let element = UIUtil.getVideoThumbnailIndicatorSpan({
+        videoSpanId: this.videoContainer.videoSpanId,
+        indicatorId
+    });
+    element.classList.add('show');
+    this.connectionIndicatorContainer = element;
+
+    let popoverContent = (
+        `<div class="connection-info" data-i18n="${indicatorId}.na"></div>`
+    );
+    this.popover = new JitsiPopover($(element), {
+        content: popoverContent,
+        skin: "black",
+        onBeforePosition: el => APP.translation.translateElement(el)
+    });
 
     // override popover show method to make sure we will update the content
     // before showing the popover
@@ -283,13 +289,19 @@ ConnectionIndicator.prototype.create = function () {
         origShowFunc.call(this.popover);
     }.bind(this);
 
-    this.emptyIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_empty"], "icon-connection"));
-    this.fullIcon = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_full"], "icon-connection"));
-    this.interruptedIndicator = this.connectionIndicatorContainer.appendChild(
-        createIcon(["connection", "connection_lost"],"icon-connection-lost"));
+    let connectionIconContainer = document.createElement('div');
+    connectionIconContainer.className = 'connection indicatoricon';
+
+
+    this.emptyIcon = connectionIconContainer.appendChild(
+        createIcon(["connection_empty"], "icon-connection"));
+    this.fullIcon = connectionIconContainer.appendChild(
+        createIcon(["connection_full"], "icon-connection"));
+    this.interruptedIndicator = connectionIconContainer.appendChild(
+        createIcon(["connection_lost"],"icon-connection-lost"));
+
     $(this.interruptedIndicator).hide();
+    this.connectionIndicatorContainer.appendChild(connectionIconContainer);
 };
 
 /**
@@ -320,7 +332,6 @@ ConnectionIndicator.prototype.updateConnectionStatusIndicator
         $(this.interruptedIndicator).show();
         $(this.emptyIcon).hide();
         $(this.fullIcon).hide();
-        this.updateConnectionQuality(0 /* zero bars */);
     }
 };
 
@@ -425,6 +436,13 @@ ConnectionIndicator.prototype.updateResolutionIndicator = function () {
 
         VideoLayout.updateResolutionLabel(showResolutionLabel);
     }
+};
+
+/**
+ * Adds a hover listener to the popover.
+ */
+ConnectionIndicator.prototype.addPopoverHoverListener = function (listener) {
+    this.popover.addOnHoverPopover(listener);
 };
 
 export default ConnectionIndicator;

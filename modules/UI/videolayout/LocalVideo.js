@@ -11,6 +11,8 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
+    this.createConnectionIndicator();
+    this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
     this.isLocal = true;
@@ -27,7 +29,6 @@ function LocalVideo(VideoLayout, emitter) {
     // Set default display name.
     this.setDisplayName();
 
-    this.createConnectionIndicator();
     this.addAudioLevelIndicator();
 }
 
@@ -70,7 +71,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         document.getElementById(this.videoSpanId)
-            .querySelector('.videocontainer__toolbar')
             .appendChild(nameSpan);
 
 
@@ -104,7 +104,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         APP.translation.translateElement($(editableText));
 
         this.container
-            .querySelector('.videocontainer__toolbar')
             .appendChild(editableText);
 
         var self = this;
@@ -115,7 +114,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
 
                 e.preventDefault();
                 e.stopPropagation();
-                $localDisplayName.hide();
+                UIUtil.setVisibility($localDisplayName, false);
                 $editDisplayName.show();
                 $editDisplayName.focus();
                 $editDisplayName.select();
@@ -123,7 +122,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
                 $editDisplayName.one("focusout", function () {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
                     $editDisplayName.hide();
-                    $localDisplayName.show();
+                    UIUtil.setVisibility($localDisplayName, true);
                 });
 
                 $editDisplayName.on('keydown', function (e) {

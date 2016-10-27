@@ -450,15 +450,6 @@ var VideoLayout = {
     },
 
     /**
-     * Shows the presence status message for the given video.
-     */
-    setPresenceStatus (id, statusMsg) {
-        let remoteVideo = remoteVideos[id];
-        if (remoteVideo)
-            remoteVideo.setPresenceStatus(statusMsg);
-    },
-
-    /**
      * Shows a visual indicator for the moderator of the conference.
      * On local or remote participants.
      */

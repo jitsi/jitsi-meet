@@ -31,6 +31,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
     this.setDisplayName();
+    this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
     /**
@@ -233,11 +234,9 @@ if (!interfaceConfig.filmStripOnly) {
     RemoteVideo.prototype.addRemoteVideoMenu = function () {
 
         var spanElement = document.createElement('span');
-        spanElement.className = 'remotevideomenu toolbar-icon right';
+        spanElement.className = 'remotevideomenu';
 
-        this.container
-            .querySelector('.videocontainer__toolbar')
-            .appendChild(spanElement);
+        this.container.appendChild(spanElement);
 
         var menuElement = document.createElement('i');
         menuElement.className = 'icon-menu-up';
@@ -512,9 +511,10 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
 
 /**
  * Sets the display name for the given video span id.
+ *
+ * @param displayName the display name to set
  */
-RemoteVideo.prototype.setDisplayName = function(displayName, key) {
-
+RemoteVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
         console.warn( "Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
@@ -530,10 +530,6 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
             if (displaynameSpan.text() !== displayName)
                 displaynameSpan.text(displayName);
         }
-        else if (key && key.length > 0) {
-            var nameHtml = APP.translation.generateTranslationHTML(key);
-            $('#' + this.videoSpanId + '_name').html(nameHtml);
-        }
         else
             $('#' + this.videoSpanId + '_name').text(
                 interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
@@ -541,7 +537,6 @@ RemoteVideo.prototype.setDisplayName = function(displayName, key) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         $('#' + this.videoSpanId)[0]
-            .querySelector('.videocontainer__toolbar')
             .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
@@ -573,9 +568,17 @@ RemoteVideo.createContainer = function (spanId) {
     container.id = spanId;
     container.className = 'videocontainer';
 
+    let indicatorBar = document.createElement('div');
+    indicatorBar.className = "videocontainer__toptoolbar";
+    container.appendChild(indicatorBar);
+
     let toolbar = document.createElement('div');
     toolbar.className = "videocontainer__toolbar";
     container.appendChild(toolbar);
+
+    let overlay = document.createElement('div');
+    overlay.className = "videocontainer__hoverOverlay";
+    container.appendChild(overlay);
 
     var remotes = document.getElementById('remoteVideos');
     return remotes.appendChild(container);

@@ -58,17 +58,36 @@
 /**
  * The toolbar of the video thumbnail.
  */
-.videocontainer__toolbar {
+.videocontainer__toolbar,
+.videocontainer__toptoolbar {
     position: absolute;
-    bottom: 0;
     left: 0;
-    z-index: 1;
+    z-index: 3;
     width: 100%;
     box-sizing: border-box; // Includes the padding in the 100% width.
-    height: $thumbnailToolbarHeight;
-    max-height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.videocontainer__toolbar {
+    bottom: 0;
     padding: 0 5px 0 5px;
+    height: $thumbnailToolbarHeight;
+}
+
+.videocontainer__toptoolbar {
+    $toolbarPadding: 5px;
+    top: 0;
+    padding: $toolbarPadding;
+    padding-bottom: 0;
+    height: $thumbnailIndicatorSize + $toolbarPadding;
+}
+
+.videocontainer__hoverOverlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    background: rgba(0,0,0,.6);
+    z-index: 2;
 }
 
 #remoteVideos .videocontainer.videoContainerFocused,
@@ -176,8 +195,10 @@
 .videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    left: 30%;
-    width: 40%;
+    left: 10%;
+    width: 80%;
+    top: 50%;
+    @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
@@ -200,72 +221,10 @@
     padding: 0;
 }
 
-.videocontainer>span.status {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    background: rgba(0,0,0,.7);
-    text-align: center;
-    text-overflow: ellipsis;
-    width: 70%;
-    height: 15%;
-    left: 15%;
-    bottom: 2%;
-    padding: 5px;
-    font-size: 10pt;
-    overflow: hidden;
-    white-space: nowrap;
-    z-index: 2;
-    border-radius:3px;
-}
-
-.connectionindicator
-{
-    display: inline-block;
-    position: absolute;
-    top: 7px;
-    right: 0;
-    padding: 0px 5px;
-    z-index: 3;
-    width: 18px;
-    height: 13px;
-}
-
-.connection.connection_empty
-{
-    color: #8B8B8B;/*#FFFFFF*/
-    overflow: hidden;
-}
-
-.connection.connection_lost
-{
-    color: #8B8B8B;
-    overflow: visible;
-}
-
-.connection.connection_full
-{
-    color: #FFFFFF;/*#15A1ED*/
-    overflow: hidden;
-}
-
-.connection
-{
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    font-size: 8pt;
-    border: 0px;
-    width: 18px;
-    height: 13px;
-}
-
-#localVideoContainer>span.status:hover,
 #localVideoContainer .displayname:hover {
     cursor: text;
 }
 
-.videocontainer>span.status,
 .videocontainer .displayname {
     pointer-events: none;
 }
@@ -278,7 +237,6 @@
     pointer-events: auto !important;
 }
 
-.videocontainer>a.status,
 .videocontainer>a.displayname {
     display: inline-block;
     position: absolute;
@@ -323,25 +281,92 @@
   margin: 0px 0px 0px 5px;
 }
 
-.videocontainer>span.indicator {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    @include circle($thumbnailIndicatorSize);
-    box-sizing: border-box;
-    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    z-index: 3;
-    text-align: center;
-    background: $dominantSpeakerBg;
-    margin: 7px;
-    display: inline-block;
-    color: $thumbnailPictogramColor;
-    font-size: 8pt;
-    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+#raisehandindicator {
+  background: $raiseHandBg;
 }
 
-.videocontainer>#raisehandindicator {
-    background: $raiseHandBg;
+#connectionindicator {
+  background: $connectionIndicatorBg;
+}
+
+.videocontainer__toptoolbar span.indicator {
+    position: relative;
+    font-size: 8pt;
+    text-align: center;
+    line-height: $thumbnailToolbarHeight;
+    display: none;
+    padding: 0;
+    margin-right: 5px;
+    float: left;
+    @include circle($thumbnailIndicatorSize);
+    box-sizing: border-box;
+    z-index: 3;
+    background: $dominantSpeakerBg;
+    color: $thumbnailPictogramColor;
+    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+
+    .indicatoricon {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        @include transform(translateY(-50%));
+        width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+    }
+
+    .connection {
+        position: relative;
+        margin: 0 auto;
+        width: 12px;
+        height: 8px;
+
+        &_empty
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #8B8B8B;/*#FFFFFF*/
+            overflow: hidden;
+        }
+
+        &_lost
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #8B8B8B;
+            overflow: visible;
+        }
+
+        &_full
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #FFFFFF;/*#15A1ED*/
+            overflow: hidden;
+        }
+    }
+
+    .icon-connection,
+    .icon-connection-lost {
+        font-size: 6pt;
+    }
+}
+
+.remotevideomenu
+{
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    margin: 7px;
+    z-index: 3;
+    width: 18px;
+    height: 13px;
+    color: #FFF;
+    font-size: 8pt;
 }
 
 /**
@@ -382,12 +407,6 @@
         filter: blur(0.5px);
         background: $audioLevelBg;
     }
-}
-
-#indicatoricon {
-    width: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
 }
 
 #reloadPresentation {
