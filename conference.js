@@ -37,7 +37,6 @@ import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
  * Known custom conference commands.
  */
 const commands = {
-    CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     AVATAR_URL: "avatar-url",
     AVATAR_ID: "avatar-id",
@@ -1299,26 +1298,10 @@ export default {
         }
 
         room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
-            (percent, stats) => {
-                APP.UI.updateLocalStats(percent, stats);
+            (stats) => {
+                APP.UI.updateLocalStats(stats.connectionQuality, stats);
 
-                // TODO: Move this to the library.
-                // Send only the data that remote participants care about.
-                let data = {
-                    bitrate: stats.bitrate,
-                    packetLoss: stats.packetLoss};
-                if (localVideo && localVideo.resolution) {
-                    data.resolution = localVideo.resolution;
-                }
-
-                try {
-                    room.broadcastEndpointMessage({
-                        type: this.commands.defaults.CONNECTION_QUALITY,
-                        values: data });
-                } catch (e) {
-                    reportError(e);
-                }
-            });
+        });
 
         room.on(ConnectionQualityEvents.REMOTE_STATS_UPDATED,
             (id, percent, stats) => {
