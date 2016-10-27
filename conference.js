@@ -1298,18 +1298,6 @@ export default {
             });
         }
 
-        // TODO: Move this to the library.
-        room.on(ConferenceEvents.CONNECTION_STATS, (stats) => {
-            // if we say video muted we will use old method of calculating
-            // quality and will not depend on localVideo if it is missing
-            room.connectionQuality.updateLocalStats(
-                stats,
-                !this.isConnectionInterrupted(),
-                localVideo ? localVideo.videoType : undefined,
-                localVideo ? localVideo.isMuted() : true,
-                localVideo ? localVideo.resolution : null);
-        });
-
         room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
             (percent, stats) => {
                 APP.UI.updateLocalStats(percent, stats);
