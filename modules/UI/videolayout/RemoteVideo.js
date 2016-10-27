@@ -131,20 +131,16 @@ RemoteVideo.prototype._generatePopupContent = function () {
             id: 'mutelink_' + this.id,
             handler: muteHandler,
             icon: 'icon-mic-disabled',
-            text: {
-                className: muteClassName,
-                data: {
-                    i18n: muteTranslationKey
-                }
+            className: muteClassName,
+            data: {
+                i18n: muteTranslationKey
             }
         }, {
             id: 'ejectlink_' + this.id,
             handler: kickHandler,
             icon: 'icon-kick',
-            text: {
-                data: {
-                    i18n: 'videothumbnail.kick'
-                }
+            data: {
+                i18n: 'videothumbnail.kick'
             }
         }
     ];
@@ -185,7 +181,8 @@ RemoteVideo.prototype._generatePopupMenuItem = function (opts = {}) {
         id,
         handler,
         icon,
-        text
+        data,
+        className
     } = opts;
 
     handler = handler || $.noop;
@@ -195,6 +192,10 @@ RemoteVideo.prototype._generatePopupMenuItem = function (opts = {}) {
 
     let linkItem = document.createElement('a');
     linkItem.className = 'popupmenu__link';
+
+    if (className) {
+        linkItem.className += ` ${className}`;
+    }
 
     if (icon) {
         let indicator = document.createElement('span');
@@ -206,11 +207,12 @@ RemoteVideo.prototype._generatePopupMenuItem = function (opts = {}) {
     let textContent = document.createElement('span');
     textContent.className = 'popupmenu__text';
 
-    let dataKeys = Object.keys(text.data);
-    dataKeys.forEach(key => {
-        textContent.dataset[key] = text.data[key];
-    });
-    textContent.className +=  ` ${text.className}` || '';
+    if (data) {
+        let dataKeys = Object.keys(data);
+        dataKeys.forEach(key => {
+            textContent.dataset[key] = data[key];
+        });
+    }
 
     linkItem.appendChild(textContent);
     linkItem.id = id;
