@@ -333,13 +333,13 @@ export default class LargeVideoManager {
         }
 
         if (show) {
-            $('#localConnectionMessage').css({display: "block"});
             // Avatar message conflicts with 'videoConnectionMessage',
             // so it must be hidden
             this.showRemoteConnectionMessage(false);
-        } else {
-            $('#localConnectionMessage').css({display: "none"});
         }
+
+        document.querySelector('#localConnectionMessage')
+                .classList.toggle('hide', !show);
     }
 
     /**

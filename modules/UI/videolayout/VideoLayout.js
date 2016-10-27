@@ -1136,12 +1136,8 @@ var VideoLayout = {
      * video stream is currently HD.
      */
     updateResolutionLabel(isResolutionHD) {
-        let videoResolutionLabel = $("#videoResolutionLabel");
-
-        if (isResolutionHD && !videoResolutionLabel.is(":visible"))
-            videoResolutionLabel.css({display: "block"});
-        else if (!isResolutionHD && videoResolutionLabel.is(":visible"))
-            videoResolutionLabel.css({display: "none"});
+        document.querySelector('#videoResolutionLabel')
+                .classList.toggle('show', isResolutionHD);
     },
 
     /**
