@@ -446,7 +446,7 @@ UI.start = function () {
             $('#notice').css({display: 'block'});
         }
     } else {
-        $("#mainToolbarContainer").css("display", "none");
+        document.querySelector('#mainToolbarContainer').classList.add('hide');
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;

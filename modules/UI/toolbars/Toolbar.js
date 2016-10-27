@@ -417,9 +417,8 @@ Toolbar = {
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
     showAuthenticateButton (show) {
-        let display = show ? 'block' : 'none';
-
-        $('#authenticationContainer').css({display});
+        document.querySelector('#authenticationContainer')
+                .classList.toggle('hide', !show);
     },
 
     showEtherpadButton () {
@@ -430,14 +429,12 @@ Toolbar = {
 
     // Shows or hides the 'shared video' button.
     showSharedVideoButton () {
-        let $element = $('#toolbar_button_sharedvideo');
-        if (UIUtil.isButtonEnabled('sharedvideo')
-                && config.disableThirdPartyRequests !== true) {
-            $element.css({display: "inline-block"});
-            UIUtil.setTooltip($element.get(0), 'toolbar.sharedvideo', 'right');
-        } else {
-            $('#toolbar_button_sharedvideo').css({display: "none"});
+        if (!UIUtil.isButtonEnabled('sharedvideo')) {
+            return;
         }
+        var el = document.querySelector('#toolbar_button_sharedvideo');
+        UIUtil.setTooltip(el, 'toolbar.sharedvideo', 'right');
+        el.classList.toggle('hide', config.disableThirdPartyRequests === true);
     },
 
     // checks whether desktop sharing is enabled and whether
@@ -451,21 +448,20 @@ Toolbar = {
 
     // Shows or hides SIP calls button
     showSipCallButton (show) {
-        if (APP.conference.sipGatewayEnabled()
-            && UIUtil.isButtonEnabled('sip') && show) {
-            $('#toolbar_button_sip').css({display: "inline-block"});
-        } else {
-            $('#toolbar_button_sip').css({display: "none"});
+        if (!UIUtil.isButtonEnabled('sip')) {
+            return;
         }
+        document.querySelector('#toolbar_button_sip').classList
+                .toggle('hide', !(show && APP.conference.sipGatewayEnabled()));
     },
 
     // Shows or hides the dialpad button
     showDialPadButton (show) {
-        if (UIUtil.isButtonEnabled('dialpad') && show) {
-            $('#toolbar_button_dialpad').css({display: "inline-block"});
-        } else {
-            $('#toolbar_button_dialpad').css({display: "none"});
+        if (!UIUtil.isButtonEnabled('dialpad')) {
+            return;
         }
+        document.querySelector('#toolbar_button_dialpad')
+                .classList.toggle('hide', !show);
     },
 
     /**
@@ -474,14 +470,8 @@ Toolbar = {
      */
     setAuthenticatedIdentity (authIdentity) {
         let selector = $('#toolbar_auth_identity');
-
-        if (authIdentity) {
-            selector.css({display: "list-item"});
-            selector.text(authIdentity);
-        } else {
-            selector.css({display: "none"});
-            selector.text('');
-        }
+        selector.text(authIdentity ? authIdentity : '');
+        selector.get(0).classList.toggle('hide', !authIdentity);
     },
 
     /**
@@ -489,11 +479,8 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLoginButton (show) {
-        if (show) {
-            $('#toolbar_button_login').css({display: "list-item"});
-        } else {
-            $('#toolbar_button_login').css({display: "none"});
-        }
+        document.querySelector('#toolbar_button_login')
+                .classList.toggle('hide', !show);
     },
 
     /**
@@ -501,11 +488,8 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLogoutButton (show) {
-        if (show) {
-            $('#toolbar_button_logout').css({display: "list-item"});
-        } else {
-            $('#toolbar_button_logout').css({display: "none"});
-        }
+        document.querySelector('#toolbar_button_logout')
+                .classList.toggle('hide', !show);
     },
 
     /**

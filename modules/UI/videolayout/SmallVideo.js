@@ -216,15 +216,7 @@ SmallVideo.prototype.hideIndicator = function () {
  * or hidden
  */
 SmallVideo.prototype.showAudioIndicator = function(isMuted) {
-
-    var audioMutedIndicator = this.getAudioMutedIndicator();
-
-    if (!isMuted) {
-        audioMutedIndicator.hide();
-    }
-    else {
-        audioMutedIndicator.show();
-    }
+    this.getAudioMutedIndicator().classList.toggle('hide', !isMuted);
     this.isAudioMuted = isMuted;
 };
 
@@ -235,9 +227,10 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
  * @returns {jQuery|HTMLElement} the audio muted indicator
  */
 SmallVideo.prototype.getAudioMutedIndicator = function () {
-    var audioMutedSpan = $('#' + this.videoSpanId + ' .audioMuted');
+    var selector = '#' + this.videoSpanId + ' .audioMuted';
+    var audioMutedSpan = document.querySelector(selector);
 
-    if (audioMutedSpan.length) {
+    if (audioMutedSpan) {
         return audioMutedSpan;
     }
 
@@ -257,7 +250,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
     mutedIndicator.className = 'icon-mic-disabled';
     audioMutedSpan.appendChild(mutedIndicator);
 
-    return $('#' + this.videoSpanId + ' .audioMuted');
+    return audioMutedSpan;
 };
 
 /**
@@ -270,10 +263,7 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
 SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
-
-    var videoMutedSpan = this.getVideoMutedIndicator();
-
-    videoMutedSpan[isMuted ? 'show' : 'hide']();
+    this.getVideoMutedIndicator().classList.toggle('hide', !isMuted);
 };
 
 /**
@@ -283,9 +273,10 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
  * @returns {jQuery|HTMLElement} the video muted indicator
  */
 SmallVideo.prototype.getVideoMutedIndicator = function () {
-    var videoMutedSpan = $('#' + this.videoSpanId + ' .videoMuted');
+    var selector = '#' + this.videoSpanId + ' .videoMuted';
+    var videoMutedSpan = document.querySelector(selector);
 
-    if (videoMutedSpan.length) {
+    if (videoMutedSpan) {
         return videoMutedSpan;
     }
 
@@ -305,7 +296,7 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
 
     videoMutedSpan.appendChild(mutedIndicator);
 
-    return $('#' + this.videoSpanId + ' .videoMuted');
+    return videoMutedSpan;
 };
 
 /**
@@ -574,11 +565,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         tooltip: 'speaker'
     });
 
-    if (show) {
-        indicatorSpan.classList.add('show');
-    } else {
-        indicatorSpan.classList.remove('show');
-    }
+    indicatorSpan.classList.toggle('show', show);
 };
 
 /**
@@ -602,11 +589,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         tooltip: 'raisedHand'
     });
 
-    if (show) {
-        indicatorSpan.classList.add('show');
-    } else {
-        indicatorSpan.classList.remove('show');
-    }
+    indicatorSpan.classList.toggle('show', show);
 };
 
 /**
