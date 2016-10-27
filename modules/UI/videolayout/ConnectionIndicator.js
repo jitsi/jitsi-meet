@@ -332,7 +332,6 @@ ConnectionIndicator.prototype.updateConnectionStatusIndicator
         $(this.interruptedIndicator).show();
         $(this.emptyIcon).hide();
         $(this.fullIcon).hide();
-        this.updateConnectionQuality(0 /* zero bars */);
     }
 };
 
