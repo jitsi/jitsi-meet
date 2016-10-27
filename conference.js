@@ -1304,7 +1304,7 @@ export default {
             // quality and will not depend on localVideo if it is missing
             room.connectionQuality.updateLocalStats(
                 stats,
-                this.isConnectionInterrupted(),
+                !this.isConnectionInterrupted(),
                 localVideo ? localVideo.videoType : undefined,
                 localVideo ? localVideo.isMuted() : true,
                 localVideo ? localVideo.resolution : null);
