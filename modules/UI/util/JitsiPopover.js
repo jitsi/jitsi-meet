@@ -98,12 +98,25 @@ var JitsiPopover = (function () {
         var self = this;
         $(".jitsipopover").on("mouseenter", function () {
             self.popoverIsHovered = true;
+            if(typeof self.onHoverPopover === "function") {
+                self.onHoverPopover(self.popoverIsHovered);
+            }
         }).on("mouseleave", function () {
             self.popoverIsHovered = false;
             self.hide();
+            if(typeof self.onHoverPopover === "function") {
+                self.onHoverPopover(self.popoverIsHovered);
+            }
         });
 
         this.refreshPosition();
+    };
+
+    /**
+     * Adds a hover listener to the popover.
+     */
+    JitsiPopover.prototype.addOnHoverPopover = function (listener) {
+        this.onHoverPopover = listener;
     };
 
     /**

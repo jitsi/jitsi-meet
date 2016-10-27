@@ -21,11 +21,27 @@ const DISPLAY_VIDEO = 0;
 const DISPLAY_AVATAR = 1;
 /**
  * Display mode constant used when neither video nor avatar is being displayed
- * on the small video.
+ * on the small video. And we just show the display name.
  * @type {number}
  * @constant
  */
-const DISPLAY_BLACKNESS = 2;
+const DISPLAY_BLACKNESS_WITH_NAME = 2;
+
+/**
+ * Display mode constant used when video is displayed and display name
+ * at the same time.
+ * @type {number}
+ * @constant
+ */
+const DISPLAY_VIDEO_WITH_NAME = 3;
+
+/**
+ * Display mode constant used when neither video nor avatar is being displayed
+ * on the small video. And we just show the display name.
+ * @type {number}
+ * @constant
+ */
+const DISPLAY_AVATAR_WITH_NAME = 4;
 
 function SmallVideo(VideoLayout) {
     this.isAudioMuted = false;
@@ -34,6 +50,7 @@ function SmallVideo(VideoLayout) {
     this.videoStream = null;
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
+    this.videoIsHovered = false;
 }
 
 /**
@@ -144,30 +161,26 @@ SmallVideo.getStreamElementID = function (stream) {
 };
 
 /**
- * Configures hoverIn/hoverOut handlers.
+ * Configures hoverIn/hoverOut handlers. Depends on connection indicator.
  */
 SmallVideo.prototype.bindHoverHandler = function () {
     // Add hover handler
     $(this.container).hover(
         () => {
-            if (!this.VideoLayout.isCurrentlyOnLarge(this.id)) {
-                $('#' + this.videoSpanId + ' .videocontainer__overlay')
-                    .removeClass("hide")
-                    .addClass("show-inline");
-                UIUtil.setVisibility(this.$displayName(), true);
-            }
+            this.videoIsHovered = true;
+            this.updateView();
         },
         () => {
-            $('#' + this.videoSpanId + ' .videocontainer__overlay')
-                .removeClass("show-inline")
-                .addClass("hide");
-            // If the video has been "pinned" by the user we want to
-            // keep the display name on place.
-            if (!this.VideoLayout.isLargeVideoVisible() ||
-                !this.VideoLayout.isCurrentlyOnLarge(this.id))
-                UIUtil.setVisibility(this.$displayName(), false);
+            this.videoIsHovered = false;
+            this.updateView();
         }
     );
+    if (this.connectionIndicator) {
+        this.connectionIndicator.addPopoverHoverListener(
+            () => {
+                this.updateView();
+            });
+    }
 };
 
 /**
@@ -433,17 +446,32 @@ SmallVideo.prototype.isVideoPlayable = function() {
  * Determines what should be display on the thumbnail.
  *
  * @return {number} one of <tt>DISPLAY_VIDEO</tt>,<tt>DISPLAY_AVATAR</tt>
- * or <tt>DISPLAY_BLACKNESS</tt>.
+ * or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
  */
 SmallVideo.prototype.selectDisplayMode = function() {
     // Display name is always and only displayed when user is on the stage
     if (this.isCurrentlyOnLargeVideo()) {
-        return DISPLAY_BLACKNESS;
+        return DISPLAY_BLACKNESS_WITH_NAME;
     } else if (this.isVideoPlayable() && this.selectVideoElement().length) {
-        return DISPLAY_VIDEO;
+        // check hovering and change state to video with name
+        return this._isHovered() ?
+            DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
     } else {
-        return DISPLAY_AVATAR;
+        // check hovering and change state to avatar with name
+        return this._isHovered() ?
+            DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
     }
+};
+
+/**
+ * Checks whether current video is considered hovered. Currently it is hovered
+ * if the mouse is over the video, or if the connection
+ * indicator is shown(hovered).
+ * @private
+ */
+SmallVideo.prototype._isHovered = function () {
+    return this.videoIsHovered
+        || this.connectionIndicator.popover.popoverIsHovered;
 };
 
 /**
@@ -469,13 +497,23 @@ SmallVideo.prototype.updateView = function () {
     let displayMode = this.selectDisplayMode();
     // Show/hide video.
     UIUtil.setVisibility(   this.selectVideoElement(),
-                            displayMode === DISPLAY_VIDEO);
+                            (displayMode === DISPLAY_VIDEO
+                                || displayMode === DISPLAY_VIDEO_WITH_NAME));
     // Show/hide the avatar.
     UIUtil.setVisibility(   this.$avatar(),
-                            displayMode === DISPLAY_AVATAR);
+                            (displayMode === DISPLAY_AVATAR
+                                || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // Show/hide the display name.
     UIUtil.setVisibility(   this.$displayName(),
-                            displayMode === DISPLAY_BLACKNESS);
+                            (displayMode === DISPLAY_BLACKNESS_WITH_NAME
+                                || displayMode === DISPLAY_VIDEO_WITH_NAME
+                                || displayMode === DISPLAY_AVATAR_WITH_NAME));
+    // show hide overlay when there is a video or avatar under
+    // the display name
+    UIUtil.setVisibility(   $('#' + this.videoSpanId
+                                + ' .videocontainer__overlay'),
+                            (displayMode === DISPLAY_AVATAR_WITH_NAME
+                                || displayMode === DISPLAY_VIDEO_WITH_NAME));
 };
 
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {

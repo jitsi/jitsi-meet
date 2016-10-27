@@ -11,6 +11,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
+    this.createConnectionIndicator();
     this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
@@ -28,7 +29,6 @@ function LocalVideo(VideoLayout, emitter) {
     // Set default display name.
     this.setDisplayName();
 
-    this.createConnectionIndicator();
     this.addAudioLevelIndicator();
 }
 

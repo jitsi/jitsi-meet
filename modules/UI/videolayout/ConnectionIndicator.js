@@ -439,4 +439,11 @@ ConnectionIndicator.prototype.updateResolutionIndicator = function () {
     }
 };
 
+/**
+ * Adds a hover listener to the popover.
+ */
+ConnectionIndicator.prototype.addPopoverHoverListener = function (listener) {
+    this.popover.addOnHoverPopover(listener);
+};
+
 export default ConnectionIndicator;
