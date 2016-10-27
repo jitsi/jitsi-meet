@@ -577,7 +577,7 @@ RemoteVideo.createContainer = function (spanId) {
     container.appendChild(toolbar);
 
     let overlay = document.createElement('div');
-    overlay.className = "videocontainer__overlay";
+    overlay.className = "videocontainer__hoverOverlay";
     container.appendChild(overlay);
 
     var remotes = document.getElementById('remoteVideos');

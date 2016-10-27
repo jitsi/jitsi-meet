@@ -512,7 +512,7 @@ SmallVideo.prototype.updateView = function () {
     // show hide overlay when there is a video or avatar under
     // the display name
     UIUtil.setVisibility(   $('#' + this.videoSpanId
-                                + ' .videocontainer__overlay'),
+                                + ' .videocontainer__hoverOverlay'),
                             (displayMode === DISPLAY_AVATAR_WITH_NAME
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
 };
