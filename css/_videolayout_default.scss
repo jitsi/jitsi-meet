@@ -472,7 +472,7 @@
 
 .userAvatar {
     @include circle(60px);
-    @include absoluteAligning(60px, 60px);
+    @include absoluteAligning();
 }
 
 .sharedVideoAvatar {

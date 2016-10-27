@@ -109,74 +109,117 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
  * @private
  */
 RemoteVideo.prototype._generatePopupContent = function () {
-    var popupmenuElement = document.createElement('ul');
+    let popupmenuElement = document.createElement('ul');
     popupmenuElement.className = 'popupmenu';
     popupmenuElement.id = `remote_popupmenu_${this.id}`;
 
-    var muteMenuItem = document.createElement('li');
-    var muteLinkItem = document.createElement('a');
-
-    var mutedIndicator = "<i class='icon-mic-disabled'></i>";
-
-    var doMuteHTML = mutedIndicator +
-        " <div data-i18n='videothumbnail.domute'></div>";
-
-    var mutedHTML = mutedIndicator +
-        " <div data-i18n='videothumbnail.muted'></div>";
-
-    muteLinkItem.id = "mutelink_" + this.id;
-
+    let muteTranslationKey;
+    let muteClassName;
     if (this.isAudioMuted) {
-        muteLinkItem.innerHTML = mutedHTML;
-        muteLinkItem.className = 'mutelink disabled';
-    }
-    else {
-        muteLinkItem.innerHTML = doMuteHTML;
-        muteLinkItem.className = 'mutelink';
+        muteTranslationKey = 'videothumbnail.muted';
+        muteClassName = 'mutelink disabled';
+    } else {
+        muteTranslationKey = 'videothumbnail.domute';
+        muteClassName = 'mutelink';
     }
 
-    // Delegate event to the document.
-    $(document).on("click", "#mutelink_" + this.id, () => {
-        if (this.isAudioMuted)
-            return;
+    let muteHandler = this._muteHandler.bind(this);
+    let kickHandler = this._kickHandler.bind(this);
 
-        RemoteVideo.showMuteParticipantDialog().then(reason => {
-            if(reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
-                this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
+    let menuItems = [
+        {
+            id: 'mutelink_' + this.id,
+            handler: muteHandler,
+            icon: 'icon-mic-disabled',
+            text: {
+                className: muteClassName,
+                data: {
+                    i18n: muteTranslationKey
+                }
             }
-        }).catch(e => {
-            //currently shouldn't be called
-            console.error(e);
-        });
+        }, {
+            id: 'ejectlink_' + this.id,
+            handler: kickHandler,
+            icon: 'icon-kick',
+            text: {
+                data: {
+                    i18n: 'videothumbnail.kick'
+                }
+            }
+        }
+    ];
 
-        this.popover.forceHide();
+    menuItems.forEach(el => {
+        let menuItem = this._generatePopupMenuItem(el);
+        popupmenuElement.appendChild(menuItem);
     });
-
-    muteMenuItem.appendChild(muteLinkItem);
-    popupmenuElement.appendChild(muteMenuItem);
-
-    var ejectIndicator = "<i style='float:left;' class='icon-kick'></i>";
-
-    var ejectMenuItem = document.createElement('li');
-    var ejectLinkItem = document.createElement('a');
-
-    var ejectText = "<div data-i18n='videothumbnail.kick'></div>";
-
-    ejectLinkItem.className = 'ejectlink';
-    ejectLinkItem.innerHTML = ejectIndicator + ' ' + ejectText;
-    ejectLinkItem.id = "ejectlink_" + this.id;
-
-    $(document).on("click", "#ejectlink_" + this.id, function(){
-        this.emitter.emit(UIEvents.USER_KICKED, this.id);
-        this.popover.forceHide();
-    }.bind(this));
-
-    ejectMenuItem.appendChild(ejectLinkItem);
-    popupmenuElement.appendChild(ejectMenuItem);
 
     APP.translation.translateElement($(popupmenuElement));
 
     return popupmenuElement;
+};
+
+RemoteVideo.prototype._muteHandler = function () {
+    if (this.isAudioMuted)
+        return;
+
+    RemoteVideo.showMuteParticipantDialog().then(reason => {
+        if(reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
+            this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
+        }
+    }).catch(e => {
+        //currently shouldn't be called
+        console.error(e);
+    });
+
+    this.popover.forceHide();
+};
+
+RemoteVideo.prototype._kickHandler = function () {
+    this.emitter.emit(UIEvents.USER_KICKED, this.id);
+    this.popover.forceHide();
+};
+
+RemoteVideo.prototype._generatePopupMenuItem = function (opts = {}) {
+    let {
+        id,
+        handler,
+        icon,
+        text
+    } = opts;
+
+    handler = handler || $.noop;
+
+    let menuItem = document.createElement('li');
+    menuItem.className = 'popupmenu__item';
+
+    let linkItem = document.createElement('a');
+    linkItem.className = 'popupmenu__link';
+
+    if (icon) {
+        let indicator = document.createElement('span');
+        indicator.className = 'popupmenu__icon';
+        indicator.innerHTML = `<i class="${icon}"></i>`;
+        linkItem.appendChild(indicator);
+    }
+
+    let textContent = document.createElement('span');
+    textContent.className = 'popupmenu__text';
+
+    let dataKeys = Object.keys(text.data);
+    dataKeys.forEach(key => {
+        textContent.dataset[key] = text.data[key];
+    });
+    textContent.className +=  ` ${text.className}` || '';
+
+    linkItem.appendChild(textContent);
+    linkItem.id = id;
+
+    // Delegate event to the document.
+    $(document).on("click", `#${id}`, handler);
+    menuItem.appendChild(linkItem);
+
+    return menuItem;
 };
 
 /**
