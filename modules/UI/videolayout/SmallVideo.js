@@ -471,7 +471,8 @@ SmallVideo.prototype.selectDisplayMode = function() {
  */
 SmallVideo.prototype._isHovered = function () {
     return this.videoIsHovered
-        || this.connectionIndicator.popover.popoverIsHovered;
+        || (this.connectionIndicator
+            && this.connectionIndicator.popover.popoverIsHovered);
 };
 
 /**

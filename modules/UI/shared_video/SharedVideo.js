@@ -625,7 +625,7 @@ function SharedVideoThumb (url)
     this.videoSpanId = "sharedVideoContainer";
     this.container = this.createContainer(this.videoSpanId);
     this.container.onclick = this.videoClick.bind(this);
-
+    this.bindHoverHandler();
     SmallVideo.call(this, VideoLayout);
     this.isVideoMuted = true;
 }
