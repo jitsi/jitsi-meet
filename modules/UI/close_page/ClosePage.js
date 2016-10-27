@@ -1,14 +1,18 @@
-/* global $, _ */
+/* global $, _, APP */
 
 const compiledTpl = _.template(`
     <div class="close-message">
         <div class="thanks-msg">
-            <p><%= thankMsg %></p>
+            <p data-i18n="<%= thankMsg %>"
+               data-i18n-options='{ "postProcess": "resolveAppName" }'></p>
         </div>
         <div class="hint-msg">
             <p>
                 <span>Did you know?</span>
-                <span class="hint-msg__holder"><%= hintMsg %></span>
+                <span class="hint-msg__holder"
+                    data-i18n="<%= hintMsg %>"
+                    data-i18n-options='{ "postProcess": "resolveAppName" }'>
+                </span>
             </p>
             <div class="happy-software"></div>
         </div>
@@ -20,10 +24,10 @@ const compiledTpl = _.template(`
  * @param {boolean} feedback
  * @returns {string}
  */
-function getThankMas(feedback) {
+function getThankMsg(feedback) {
     return feedback ?
-        'Thank you for your feedback!' :
-        'Thank you for using jitsi';
+        'closePage.thankMessage.withFeedback' :
+        'closePage.thankMessage.withoutFeedback';
 }
 
 /**
@@ -33,8 +37,7 @@ function getThankMas(feedback) {
  */
 function getHintMsg() {
     //TODO: add randomizer
-    return `you can use video calls with jitsi 
-            for your business`;
+    return 'closePage.hintMessage';
 }
 
 /**
@@ -51,13 +54,13 @@ export default class ClosePage {
      * Render closePage into <body>
      */
     render() {
-        let fb = this.feedback;
-        let htmlStr = compiledTpl({
-            thankMsg: getThankMas(fb),
+        const fb = this.feedback;
+        const $html = $(compiledTpl({
+            thankMsg: getThankMsg(fb),
             hintMsg: getHintMsg()
-        });
+        }));
 
-        $('body').html(htmlStr);
+        $('body').html(APP.translation.translateElement($html));
     }
 }
 
