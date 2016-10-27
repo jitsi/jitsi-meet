@@ -27,11 +27,6 @@ const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
 let room, connection, localAudio, localVideo;
 
 /**
- * Indicates whether the connection is interrupted or not.
- */
-let connectionIsInterrupted = false;
-
-/**
  * Indicates whether extension external installation is in progress or not.
  */
 let DSExternalInstallationInProgress = false;
@@ -677,7 +672,7 @@ export default {
      * false otherwise.
      */
     isConnectionInterrupted () {
-        return connectionIsInterrupted;
+        return this._room.isConnectionInterrupted();
     },
     /**
      * Finds JitsiParticipant for given id.
@@ -1100,7 +1095,6 @@ export default {
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
             APP.API.notifyConferenceJoined(APP.conference.roomName);
-            connectionIsInterrupted = false;
             APP.UI.markVideoInterrupted(false);
         });
 
@@ -1249,12 +1243,10 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
-            connectionIsInterrupted = true;
             APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
-            connectionIsInterrupted = false;
             APP.UI.showLocalConnectionInterrupted(false);
         });
 
@@ -1307,12 +1299,12 @@ export default {
         }
 
         // TODO: Move this to the library.
-        room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
+        room.on(ConferenceEvents.CONNECTION_STATS, (stats) => {
             // if we say video muted we will use old method of calculating
             // quality and will not depend on localVideo if it is missing
             room.connectionQuality.updateLocalStats(
                 stats,
-                connectionIsInterrupted,
+                this.isConnectionInterrupted(),
                 localVideo ? localVideo.videoType : undefined,
                 localVideo ? localVideo.isMuted() : true,
                 localVideo ? localVideo.resolution : null);
