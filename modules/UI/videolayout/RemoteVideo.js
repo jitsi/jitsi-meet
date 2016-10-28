@@ -34,6 +34,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
+    this.popupMenuIsHovered = false;
     /**
      * The flag is set to <tt>true</tt> after the 'onplay' event has been
      * triggered on the current video element. It goes back to <tt>false</tt>
@@ -89,6 +90,10 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
     };
     let element = $("#" + this.videoSpanId + " .remotevideomenu");
     this.popover = new JitsiPopover(element, options);
+    this.popover.addOnHoverPopover(isHovered => {
+        this.popupMenuIsHovered = isHovered;
+        this.updateView();
+    });
 
     // override popover show method to make sure we will update the content
     // before showing the popover
@@ -100,6 +105,19 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
         // call the original show, passing its actual this
         origShowFunc.call(this.popover);
     }.bind(this);
+};
+
+/**
+ * Checks whether current video is considered hovered. Currently it is hovered
+ * if the mouse is over the video, or if the connection indicator or the popup
+ * menu is shown(hovered).
+ * @private
+ * NOTE: extends SmallVideo's method
+ */
+RemoteVideo.prototype._isHovered = function () {
+    let isHovered = SmallVideo.prototype._isHovered.call(this)
+        || this.popupMenuIsHovered;
+    return isHovered;
 };
 
 /**

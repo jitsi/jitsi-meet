@@ -83,6 +83,11 @@ var JitsiPopover = (function () {
     JitsiPopover.prototype.forceHide = function () {
         $(".jitsipopover").remove();
         this.popoverShown = false;
+        if(this.popoverIsHovered) { //the browser is not firing hover events
+            //when the element was on hover if got removed.
+            this.popoverIsHovered = false;
+            this.onHoverPopover(this.popoverIsHovered);
+        }
     };
 
     /**
