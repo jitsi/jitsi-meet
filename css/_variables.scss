@@ -38,6 +38,7 @@ $splitterToolbarButtonLeftMargin: 0px;
 
 /*
  * Main controls
+ * TODO: looks like we don't use it
  */
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
@@ -112,11 +113,6 @@ $defaultDarkFontColor: #000;
 /**
  * Forms
  */
-<<<<<<< 1291023cbed3044a9f3acc2b8c7d47ff05e5aee4
-$inputBg: $inputSemiBackground;
-$inputBgHover: $inputSemiBackground;
-$inputFontColor: $defaultDarkFontColor;
-=======
 //dropdown
 $selectFontColor: $defaultLightFontColor;
 $selectBg: $defaultBackground;
@@ -127,8 +123,3 @@ $inputControlEmColor: #f29424;
 //buttons
 $linkFontColor: #489afe;
 $linkHoverFontColor: #287ade;
-
-// Main controls TODO: looks like we don't use it
-$inputSemiBackground: rgba(132, 132, 132, .8);
-$inputLightBackground: #EBEBEB;
->>>>>>> dropdown styles fixes
