@@ -1,6 +1,6 @@
 {
     "contactlist": "Participants (__pcount__)",
-    "addParticipants": "Add Participants",
+    "addParticipants": "Share the link",
     "roomLocked": "Callers must enter a password",
     "roomUnlocked": "Anyone with the link can join",
     "passwordSetRemotely": "set by another participant",
