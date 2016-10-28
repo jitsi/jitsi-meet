@@ -83,6 +83,11 @@ module.exports = {
         let options = defaultOptions;
 
         let lang = getLangFromQuery() || settingsLang || config.defaultLanguage;
+        // XXX If none of the above has been set then the 'lang' will be
+        // 'undefined' and the i18n lib will try to auto detect user's
+        // preferred language based on browser's locale.
+        // The interface config option allows to disable this auto detection
+        // by specifying the fallback language in that case.
         let langDetection = interfaceConfig.LANG_DETECTION;
 
         if (!langDetection && !lang) {
