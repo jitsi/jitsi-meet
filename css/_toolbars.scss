@@ -274,11 +274,10 @@ a.button>#avatar {
 /**
  * START of fade in animation for main toolbar
  */
-
 .fadeIn {
-    @include animation('fadeIn .3s forwards');
+    @include animation('fadeIn .3s linear .2s forwards');
 }
 
 .fadeOut {
-    @include animation('fadeOut .3s forwards');
+    @include animation('fadeOut .5s linear forwards');
 }
