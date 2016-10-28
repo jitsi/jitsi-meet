@@ -16,6 +16,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     SHOW_POWERED_BY: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     APP_NAME: "Jitsi Meet",
+    LANG_DETECTION: false,    // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
     /**
      * If we should show authentication block in profile
