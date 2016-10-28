@@ -83,6 +83,12 @@ module.exports = {
         let options = defaultOptions;
 
         let lang = getLangFromQuery() || settingsLang || config.defaultLanguage;
+        let langDetection = interfaceConfig.LANG_DETECTION;
+
+        if (!langDetection && !lang) {
+            lang = DEFAULT_LANG;
+        }
+
         if (lang) {
             options.lng = lang;
         }
