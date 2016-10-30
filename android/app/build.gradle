@@ -1,4 +1,15 @@
-apply plugin: "com.android.application"
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 import com.android.build.OutputFile
 
@@ -65,7 +76,7 @@ import com.android.build.OutputFile
  * ]
  */
 
-apply from: "../../node_modules/react-native/react.gradle"
+apply from: '../../node_modules/react-native/react.gradle'
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -84,24 +95,24 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion '23.0.1'
 
     defaultConfig {
-        applicationId "org.jitsi.jitsi_meet_react"
+        applicationId 'org.jitsi.jitsi_meet_react'
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters 'armeabi-v7a', 'x86'
         }
         packagingOptions {
             // The project react-native does not provide 64-bit binaries at the
             // time of this writing. Unfortunately, packaging any 64-bit
             // binaries into the .apk will crash the app at runtime on 64-bit
             // platforms.
-            exclude "lib/x86_64/libjingle_peerconnection_so.so"
-            exclude "lib/arm64-v8a/libjingle_peerconnection_so.so"
+            exclude 'lib/x86_64/libjingle_peerconnection_so.so'
+            exclude 'lib/arm64-v8a/libjingle_peerconnection_so.so'
         }
     }
     splits {
@@ -109,13 +120,13 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include 'armeabi-v7a', 'x86'
         }
     }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     // applicationVariants are e.g. debug, release
@@ -123,7 +134,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ['armeabi-v7a':1, 'x86':2]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -133,17 +144,23 @@ android {
     }
 }
 
-if (project.hasProperty("JITSI_SIGNING")
-        && new File(project.property("JITSI_SIGNING")).exists()) {
-    apply from: project.property("JITSI_SIGNING");
+if (project.hasProperty('JITSI_SIGNING')
+        && new File(project.property('JITSI_SIGNING')).exists()) {
+    apply from: project.property('JITSI_SIGNING');
 }
 
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-webrtc')
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.facebook.react:react-native:+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+        transitive = true
+    }
 }
 
 apply from: '../../node_modules/react-native-vector-icons/fonts.gradle'
