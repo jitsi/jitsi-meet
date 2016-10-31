@@ -36,15 +36,26 @@ export const styles = {
     },
 
     /**
-     * Participants container style.
+     * The style of the Container which represents the very film strip.
      */
     filmStrip: {
+        alignItems: 'flex-end',
         alignSelf: 'stretch',
         bottom: 10,
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'column',
+        left: 0,
         position: 'absolute',
-        right: 5
+        right: 0
+    },
+
+    /**
+     * The style of the content container of the ScrollView which is placed
+     * inside filmStrip and which contains the participants' thumbnails in order
+     * to allow scrolling through them if they do not fit within the display.
+     */
+    filmStripScrollViewContentContainer: {
+        paddingHorizontal: 10
     },
 
     /**

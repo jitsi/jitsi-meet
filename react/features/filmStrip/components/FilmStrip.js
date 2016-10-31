@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { ScrollView } from 'react-native';
 
 import { Container } from '../../base/react';
 
@@ -22,14 +23,34 @@ class FilmStrip extends Component {
             <Container
                 style = { styles.filmStrip }
                 visible = { this.props.visible }>
-                {
-                    this.props.participants
-                        .sort((a, b) => b.local - a.local)
-                        .map(p =>
-                            <Thumbnail
-                                key = { p.id }
-                                participant = { p } />)
-                }
+                <ScrollView
+
+                    // eslint-disable-next-line react/jsx-curly-spacing
+                    contentContainerStyle = {
+                        styles.filmStripScrollViewContentContainer
+                    } // eslint-disable-line react/jsx-curly-spacing
+                    horizontal = { true }
+                    showsHorizontalScrollIndicator = { false }
+                    showsVerticalScrollIndicator = { false }>
+                    {
+                        this.props.participants
+
+                            // Group the remote participants so that the local
+                            // participant does not appear in between remote
+                            // participants.
+                            .sort((a, b) => b.local - a.local)
+
+                            // Have the local participant at the rightmost side.
+                            // Then have the remote participants from right to
+                            // left with the newest added/joined to the leftmost
+                            // side.
+                            .reverse()
+                            .map(p =>
+                                <Thumbnail
+                                    key = { p.id }
+                                    participant = { p } />)
+                    }
+                </ScrollView>
             </Container>
         );
     }
