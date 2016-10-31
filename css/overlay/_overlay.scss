@@ -1,30 +1,51 @@
-.overlay_container {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    z-index: $overlayZ;
-    background: rgba(22, 185, 252, .9);
+.overlay {
+    &__container {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: $overlayZ;
+        background: $defaultBackground;
+    }
+
+    &__content {
+        margin: 0 auto;
+        width: 56%;
+
+        &_bottom {
+            position: absolute;
+            bottom: 0;
+        }
+    }
 }
 
-.overlay_content {
+.inlay {
+    margin-top: 14%;
+    @include border-radius(3px);
+    padding: 40px 38px 44px;
     color: #fff;
+    background: lighten($defaultBackground, 20%);
     text-align: center;
-    width: 400px;
-    height: 250px;
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    margin-top: -125px;
-    margin-left: -200px;
-}
 
-.overlay_text_small {
-    display: block;
-    font-size: 18px;
-}
+    &__title {
+        margin: 12px 0;
+        padding-bottom: 17px;
+        color: $popoverFontColor;
+        font-size: 21px;
+        letter-spacing: 0.3px;
+        border-bottom: 1px solid $auiBorderColor;
+    }
 
-.overlay_icon {
-    font-size: 100px;
+    &__text {
+        color: $popoverFontColor;
+        display: block;
+        margin-top: 22px;
+        font-size: 16px;
+    }
+
+    &__icon {
+        margin: 0 10px;
+        font-size: 50px;
+    }
 }

@@ -22,11 +22,19 @@ class GUMOverlayImpl extends Overlay {
      * @inheritDoc
      */
     _buildOverlayContent() {
-        return `
-            <span class="overlay_icon icon-microphone"></span>
-            <span class="overlay_icon icon-camera"></span>
-            <span data-i18n='[html]userMedia.${this.browser}GrantPermissions' 
-                  class='overlay_text_small'></span>`;
+    // `<span data-i18n='[html]userMedia.${this.browser}GrantPermissions'
+    // class='inlay__text'></span>`
+        let title = 'HipChat Video needs to use your microphone and camera.';
+        let text;
+        text = 'Select "Allow" when your browser asks for these permissions.';
+        return (
+            `<div class="inlay">
+                <span class="inlay__icon icon-microphone"></span>
+                <span class="inlay__icon icon-camera"></span>
+                <h3 class="inlay__title">${title}</h3>
+                <span class='inlay__text'>${text}</span>
+            </div>`
+        );
     }
 }
 
