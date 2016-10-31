@@ -2,12 +2,13 @@
 import i18n from 'i18next';
 import XHR from 'i18next-xhr-backend';
 import jqueryI18next from 'jquery-i18next';
-var languages = require("../../service/translation/languages");
-var languagesR = require("json!../../lang/languages.json");
-var mainR = require("json!../../lang/main.json");
-var DEFAULT_LANG = languages.EN;
+import languagesR from "../../lang/languages.json";
+import mainR from "../../lang/main.json";
+import languages from "../../service/translation/languages";
 
-var defaultOptions = {
+const DEFAULT_LANG = languages.EN;
+
+const defaultOptions = {
     compatibilityAPI: 'v1',
     compatibilityJSON: 'v1',
     fallbackLng: DEFAULT_LANG,
@@ -41,8 +42,8 @@ function getLangFromQuery() {
     return null;
 }
 
-module.exports = {
-    init: function (settingsLang) {
+class Translation {
+    init (settingsLang) {
         let options = defaultOptions;
 
         let lang = getLangFromQuery() || settingsLang || config.defaultLanguage;
@@ -65,10 +66,9 @@ module.exports = {
             .use({
                 type: 'postProcessor',
                 name: "resolveAppName",
-                process:
-                    function (res, key) {
-                        return i18n.t(key, {app: interfaceConfig.APP_NAME});
-                    }
+                process: (res, key) => {
+                    return i18n.t(key, {app: options.app});
+                }
             })
             .init(options, initCompleted);
         // adds default language which is preloaded from code
@@ -76,33 +76,34 @@ module.exports = {
         i18n.addResourceBundle(
             DEFAULT_LANG, 'languages', languagesR, true, true);
         jqueryI18next.init(i18n, $, {useOptionsAttr: true});
-    },
-    setLanguage: function (lang) {
+    }
+
+    setLanguage (lang) {
         if(!lang)
             lang = DEFAULT_LANG;
         i18n.setLng(lang, defaultOptions, initCompleted);
-    },
-    getCurrentLanguage: function () {
+    }
+
+    getCurrentLanguage () {
         return i18n.lng();
-    },
-    translateElement: function (selector, options) {
+    }
+
+    translateElement (selector, options) {
         // i18next expects undefined if options are missing, check if its null
         selector.localize(
             options === null ? undefined : options);
-    },
-    generateTranslationHTML: function (key, options) {
-        var str = "<span data-i18n=\"" + key + "\"";
-        if (options) {
-            str += " data-i18n-options='" + JSON.stringify(options) + "'";
-        }
-        str += ">";
-        // i18next expects undefined if options ARE missing, check if its null
-        str += i18n.t(key, options === null ? undefined : options);
-        str += "</span>";
-        return str;
+    }
 
-    },
-    addLanguageChangedListener: function(listener) {
+    generateTranslationHTML (key, options) {
+        let optAttr = options
+            ? ` data-i18n-options='${JSON.stringify(options)}'` : "";
+        let text = i18n.t(key, options === null ? undefined : options);
+        return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
+    }
+
+    addLanguageChangedListener(listener) {
         i18n.on('languageChanged', listener);
     }
-};
+}
+
+export default new Translation();
