@@ -10,13 +10,22 @@
     }
 
     &__content {
+        position: absolute;
         margin: 0 auto;
+        height: 100%;
         width: 56%;
+        left: 50%;
+        @include transform(translateX(-50%));
 
         &_bottom {
             position: absolute;
             bottom: 0;
         }
+    }
+
+    &__policy {
+        position: absolute;
+        bottom: 24px;
     }
 }
 

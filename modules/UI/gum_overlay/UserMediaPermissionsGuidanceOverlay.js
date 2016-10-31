@@ -1,4 +1,4 @@
-/* global */
+/* global interfaceConfig */
 
 import Overlay from '../overlay/Overlay';
 
@@ -27,7 +27,7 @@ class GUMOverlayImpl extends Overlay {
         let title = 'HipChat Video needs to use your microphone and camera.';
         let text;
         text = 'Select "Allow" when your browser asks for these permissions.';
-        return (
+        let content = (
             `<div class="inlay">
                 <span class="inlay__icon icon-microphone"></span>
                 <span class="inlay__icon icon-camera"></span>
@@ -35,6 +35,19 @@ class GUMOverlayImpl extends Overlay {
                 <span class='inlay__text'>${text}</span>
             </div>`
         );
+
+        if (interfaceConfig.HAS_POLICY) {
+            content += (
+                `<div class="policy overlay__policy">
+                    <p class="policy__text" data-i18n="policyText"></p>
+                    <div class="policy__logo">
+                        <img src=""/>
+                    </div>
+                </div>`
+            );
+        }
+
+        return content;
     }
 }
 
