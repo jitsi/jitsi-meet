@@ -8,7 +8,8 @@
  */
 
 #import "AppDelegate.h"
-
+#import <Crashlytics/Crashlytics.h>
+#import <Fabric/Fabric.h>
 #import "RCTBundleURLProvider.h"
 #import "RCTLinkingManager.h"
 #import "RCTRootView.h"
@@ -28,6 +29,8 @@ continueUserActivity:(NSUserActivity *)userActivity
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [Fabric with:@[[Crashlytics class]]];
+
   NSURL *jsCodeLocation
     = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
                                                      fallbackResource:nil];
