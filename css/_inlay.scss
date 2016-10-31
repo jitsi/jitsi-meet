@@ -3,7 +3,7 @@
     @include border-radius(3px);
     padding: 40px 38px 44px;
     color: #fff;
-    background: lighten($defaultBackground, 20%);
+    background: lighten(desaturate($defaultBackground, 70%), 20%);
     text-align: center;
 
     &__title {
