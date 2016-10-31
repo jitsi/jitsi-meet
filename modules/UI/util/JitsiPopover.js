@@ -53,7 +53,8 @@ var JitsiPopover = (function () {
             `<div class="jitsipopover ${this.options.skin}">
                 ${arrow}
                 <div class="jitsipopover__content"></div>
-            <div class="jitsipopover__menu-padding"></div></div>`
+                <div class="jitsipopover__menu-padding"></div>
+            </div>`
         );
     };
 

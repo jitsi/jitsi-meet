@@ -113,11 +113,23 @@
 /**
  * Hovered video thumbnail.
  */
-#remoteVideos .videocontainer:hover {
-    cursor: hand;
-    border: 2px solid $videoThumbnailHovered;
-    box-shadow: inset 0 0 3px $videoThumbnailHovered,
-              0 0 3px $videoThumbnailHovered;
+#remoteVideos .videocontainer {
+    .remotevideomenu {
+        display: none;
+    }
+
+    /**
+     * Show/hide items for hover event here
+     */
+    &:hover {
+        cursor: hand;
+        border: 2px solid $videoThumbnailHovered;
+        box-shadow: inset 0 0 3px $videoThumbnailHovered,
+            0 0 3px $videoThumbnailHovered;
+        .remotevideomenu {
+            display: inline-block;
+        }
+    }
 }
 
 #localVideoWrapper {

@@ -516,7 +516,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     }
 
     $(streamElement).click(onClickHandler);
-},
+};
 
 /**
  * Show/hide peer container for the given id.

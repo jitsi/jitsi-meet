@@ -15,13 +15,12 @@
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
     white-space: normal;
     margin-top: -10px;
-    margin-bottom: 35px;
 
     &__menu-padding {
-        height: 35px;
+        height: 10px;
         width: 100px;
         position: absolute;
-        bottom: -35px;
+        bottom: -10px;
     }
 
     &__showmore {
