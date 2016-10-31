@@ -1214,7 +1214,11 @@ UI.showExtensionExternalInstallationDialog = function (url) {
  * @param {JitsiTrackError} cameraError
  */
 UI.showDeviceErrorDialog = function (micError, cameraError) {
-    let localStoragePropName = "doNotShowErrorAgain";
+    let dontShowAgain = {
+        id: "doNotShowWarningAgain",
+        localStorageKey: "doNotShowErrorAgain",
+        textKey: "dialog.doNotShowWarningAgain"
+    };
     let isMicJitsiTrackErrorAndHasName = micError && micError.name &&
         micError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
     let isCameraJitsiTrackErrorAndHasName = cameraError && cameraError.name &&
@@ -1231,17 +1235,11 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
     }
 
     if (micError) {
-        localStoragePropName += "-mic-" + micError.name;
+        dontShowAgain.localStorageKey += "-mic-" + micError.name;
     }
 
     if (cameraError) {
-        localStoragePropName += "-camera-" + cameraError.name;
-    }
-
-    if (showDoNotShowWarning) {
-        if (window.localStorage[localStoragePropName] === "true") {
-            return;
-        }
+        dontShowAgain.localStorageKey += "-camera-" + cameraError.name;
     }
 
     let cameraJitsiTrackErrorMsg = cameraError
@@ -1266,12 +1264,6 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
         micError.message
             ? `<div>${micError.message}</div>`
             : ``;
-    let doNotShowWarningAgainSection = showDoNotShowWarning
-        ? `<label>
-            <input type='checkbox' id='doNotShowWarningAgain'>
-            <span data-i18n='dialog.doNotShowWarningAgain'></span>
-           </label>`
-        : ``;
     let message = '';
 
     if (micError) {
@@ -1290,8 +1282,6 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
             ${additionalCameraErrorMsg}`;
     }
 
-    message = `${message}${doNotShowWarningAgainSection}`;
-
     // To make sure we don't have multiple error dialogs open at the same time,
     // we will just close the previous one if we are going to show a new one.
     deviceErrorDialog && deviceErrorDialog.close();
@@ -1301,24 +1291,14 @@ UI.showDeviceErrorDialog = function (micError, cameraError) {
         message,
         false,
         {Ok: true},
-        function () {
-            let form  = $.prompt.getPrompt();
-
-            if (form) {
-                let input = form.find("#doNotShowWarningAgain");
-
-                if (input.length) {
-                    window.localStorage[localStoragePropName] =
-                        input.prop("checked");
-                }
-            }
-        },
+        function () {},
         null,
         function () {
             // Reset dialog reference to null to avoid memory leaks when
             // user closed the dialog manually.
             deviceErrorDialog = null;
-        }
+        },
+        showDoNotShowWarning ? dontShowAgain : undefined
     );
 
     function getTitleKey() {
