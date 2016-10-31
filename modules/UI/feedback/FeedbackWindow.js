@@ -116,6 +116,7 @@ function onFeedbackSubmitted(Feedback) {
         Feedback.feedbackScore,
         message);
 
+    Feedback.submitted = true;
     Feedback.onHide();
 
     //Remove history is submitted
@@ -141,6 +142,7 @@ export default class Dialog {
     constructor() {
         this.feedbackScore = -1;
         this.feedbackMessage = '';
+        this.submitted = false;
         this.onCloseCallback = function() {};
         this.setDefaultOptions();
     }
