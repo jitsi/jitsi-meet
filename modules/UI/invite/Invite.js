@@ -40,9 +40,9 @@ class Invite {
 
         this.conference.on(ConferenceEvents.USER_ROLE_CHANGED, (id) => {
             if (APP.conference.isLocalId(id)
-                    && this.isModerator !== this.conference.isModerator) {
+                    && this.isModerator !== this.conference.isModerator()) {
 
-                this.setModerator(this.conference.isModerator);
+                this.setModerator(this.conference.isModerator());
             }
         });
 
@@ -116,7 +116,6 @@ class Invite {
      * creating view object using as a model this module
      */
     initDialog() {
-        this.password = this.getPassword();
         this.view = new InviteDialogView(this);
     }
 
@@ -191,10 +190,8 @@ class Invite {
      * @param isLocked
      */
     setLockedFromElsewhere(isLocked) {
-        // isLocked can be 1, true or false
-        let newLockState = (isLocked === 1) || isLocked;
         let oldLockState = this.roomLocker.isLocked;
-        if (oldLockState !== newLockState) {
+        if (oldLockState !== isLocked) {
             this.roomLocker.lockedElsewhere = isLocked;
             APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
             this.updateView();

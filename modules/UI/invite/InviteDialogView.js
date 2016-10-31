@@ -177,7 +177,8 @@ export default class InviteDialogView {
      * @returns {string}
      */
     getPasswordBlock() {
-        let { password, isModerator } = this.model;
+        let password = this.model.getPassword();
+        let { isModerator } = this.model;
 
         if (isModerator) {
             return (`
@@ -321,13 +322,17 @@ export default class InviteDialogView {
      */
     updateView() {
         let pass = this.model.getPassword();
-        if (this.model.getRoomLocker().lockedElsewhere || !pass)
+        let { isModerator } = this.model;
+        if (this.model.getRoomLocker().lockedElsewhere || !pass) {
             $('#inviteDialogPassword').attr("data-i18n", "passwordSetRemotely");
-        else
+            APP.translation.translateElement($('#inviteDialogPassword'));
+        } else {
+            $('#inviteDialogPassword').removeAttr("data-i18n");
             $('#inviteDialogPassword').text(pass);
+        }
 
         // if we are not moderator we cannot remove password
-        if (APP.conference.isModerator)
+        if (isModerator)
             $('#inviteDialogRemovePassword').show();
         else
             $('#inviteDialogRemovePassword').hide();
