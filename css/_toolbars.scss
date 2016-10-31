@@ -42,22 +42,7 @@
     margin-right: auto;
     width: auto;
     border-radius: 3px;
-
-    /**
-     * First button in the toolbar.
-     */
-    .first {
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-
-    /**
-     * Last button in the toolbar.
-     */
-    .last {
-        border-bottom-right-radius: 3px;
-        border-top-right-radius: 3px;
-    }
+    overflow: hidden;
 
     /**
      * Splitter button in the toolbar.
@@ -75,8 +60,8 @@
     display: flex;
     width: $defaultToolbarSize;
     height: 100%;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     padding-top: 10px;
     box-sizing: border-box;
     flex-direction: column;
