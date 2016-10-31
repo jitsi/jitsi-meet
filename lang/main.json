@@ -372,5 +372,14 @@
         "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
         "error": "Live streaming failed. Please try again.",
         "busy": "All recorders are currently busy. Please try again later."
+    },
+    "closePage":
+    {
+        "thankMessage": {
+            "withFeedback": "Thank you for your feedback!",
+            "withoutFeedback": "Thank you for using __app__"
+        },
+        "hintMessage": "you can use video calls with __app__ for your business"
+
     }
 }

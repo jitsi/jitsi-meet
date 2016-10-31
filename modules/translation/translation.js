@@ -110,7 +110,7 @@ module.exports = {
     },
     translateElement: function (selector, options) {
         // i18next expects undefined if options are missing, check if its null
-        selector.i18n(
+        return selector.i18n(
             options === null ? undefined : options);
     },
     generateTranslationHTML: function (key, options) {
