@@ -219,7 +219,10 @@ const defaultToolbarButtons = {
         id: 'toolbar_contact_list',
         tooltipKey: 'bottomtoolbar.contactlist',
         className: 'button icon-contactList',
-        sideContainerId: 'contacts_container'
+        sideContainerId: 'contacts_container',
+        html: `<span class="badge-round">
+                   <span id="numberOfParticipants"></span>
+               </span>`
     },
     'profile': {
         id: 'toolbar_button_profile',
@@ -295,7 +298,12 @@ const defaultToolbarButtons = {
     'sharedvideo': {
         id: 'toolbar_button_sharedvideo',
         tooltipKey: 'toolbar.sharedvideo',
-        className: 'button icon-shared-video'
+        className: 'button icon-shared-video',
+        html: `<ul id="sharedVideoMutedPopup" 
+                   class="loginmenu extendedToolbarPopup">
+                   <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
+               </ul>
+`
     },
     'sip': {
         id: 'toolbar_button_sip',
