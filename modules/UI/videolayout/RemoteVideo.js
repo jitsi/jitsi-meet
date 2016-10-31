@@ -26,6 +26,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.id = user.getId();
     this.emitter = emitter;
     this.videoSpanId = `participant_${this.id}`;
+    this.videoSpanId = this.videoSpanId.replace(/\./g, '-');
     SmallVideo.call(this, VideoLayout);
     this.hasRemoteVideoMenu = false;
     this.addRemoteVideoContainer();
@@ -58,7 +59,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
 RemoteVideo.prototype.constructor = RemoteVideo;
 
-RemoteVideo.prototype.addRemoteVideoContainer = function() {
+RemoteVideo.prototype.addRemoteVideoContainer = function () {
     this.container = RemoteVideo.createContainer(this.videoSpanId);
 
     this.initBrowserSpecificProperties();
@@ -116,7 +117,7 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
  */
 RemoteVideo.prototype._isHovered = function () {
     let isHovered = SmallVideo.prototype._isHovered.call(this)
-        || this.popupMenuIsHovered;
+            || this.popupMenuIsHovered;
     return isHovered;
 };
 
@@ -178,7 +179,7 @@ RemoteVideo.prototype._muteHandler = function () {
         return;
 
     RemoteVideo.showMuteParticipantDialog().then(reason => {
-        if(reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
+        if (reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
             this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
         }
     }).catch(e => {
@@ -254,7 +255,7 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
 
     // generate content, translate it and add it to document only if
     // popover is visible or we force to do so.
-    if(this.popover.popoverShown || force) {
+    if (this.popover.popoverShown || force) {
         this.popover.updateContent(this._generatePopupContent());
     }
 };
@@ -262,7 +263,7 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
 /**
  * @inheritDoc
  */
-RemoteVideo.prototype.setMutedView = function(isMuted) {
+RemoteVideo.prototype.setMutedView = function (isMuted) {
     SmallVideo.prototype.setMutedView.call(this, isMuted);
     // Update 'mutedWhileDisconnected' flag
     this._figureOutMutedWhileDisconnected(this.isConnectionActive() === false);
@@ -278,13 +279,13 @@ RemoteVideo.prototype.setMutedView = function(isMuted) {
  * @private
  */
 RemoteVideo.prototype._figureOutMutedWhileDisconnected
-= function(isDisconnected) {
-    if (isDisconnected && this.isVideoMuted) {
-        this.mutedWhileDisconnected = true;
-    } else if (!isDisconnected && !this.isVideoMuted) {
-        this.mutedWhileDisconnected = false;
-    }
-};
+        = function (isDisconnected) {
+            if (isDisconnected && this.isVideoMuted) {
+                this.mutedWhileDisconnected = true;
+            } else if (!isDisconnected && !this.isVideoMuted) {
+                this.mutedWhileDisconnected = false;
+            }
+        };
 
 /**
  * Adds the remote video menu element for the given <tt>id</tt> in the
@@ -311,7 +312,7 @@ if (!interfaceConfig.filmStripOnly) {
     };
 
 } else {
-    RemoteVideo.prototype.addRemoteVideoMenu = function() {};
+    RemoteVideo.prototype.addRemoteVideoMenu = function () {};
 }
 
 /**
@@ -336,7 +337,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
     }
 
     console.info((isVideo ? "Video" : "Audio") +
-                 " removed " + this.id, select);
+            " removed " + this.id, select);
 
     // when removing only the video element and we are on stage
     // update the stage
@@ -354,7 +355,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
  * @return {boolean} <tt>true</tt> if the user's connection is fine or
  * <tt>false</tt> otherwise.
  */
-RemoteVideo.prototype.isConnectionActive = function() {
+RemoteVideo.prototype.isConnectionActive = function () {
     return this.user.isConnectionActive();
 };
 
@@ -367,7 +368,7 @@ RemoteVideo.prototype.isConnectionActive = function() {
  */
 RemoteVideo.prototype.isVideoPlayable = function () {
     return SmallVideo.prototype.isVideoPlayable.call(this)
-        && this.hasVideoStarted() && !this.mutedWhileDisconnected;
+            && this.hasVideoStarted() && !this.mutedWhileDisconnected;
 };
 
 /**
@@ -376,7 +377,7 @@ RemoteVideo.prototype.isVideoPlayable = function () {
 RemoteVideo.prototype.updateView = function () {
 
     this.updateConnectionStatusIndicator(
-        null /* will obtain the status from 'conference' */);
+            null /* will obtain the status from 'conference' */);
 
     // This must be called after 'updateConnectionStatusIndicator' because it
     // affects the display mode by modifying 'mutedWhileDisconnected' flag
@@ -405,14 +406,14 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
     // Update 'mutedWhileDisconnected' flag
     this._figureOutMutedWhileDisconnected(!isActive);
 
-    if(this.connectionIndicator)
+    if (this.connectionIndicator)
         this.connectionIndicator.updateConnectionStatusIndicator(isActive);
 
     // Toggle thumbnail video problem filter
     this.selectVideoElement().toggleClass(
-        "videoThumbnailProblemFilter", !isActive);
+            "videoThumbnailProblemFilter", !isActive);
     this.$avatar().toggleClass(
-        "videoThumbnailProblemFilter", !isActive);
+            "videoThumbnailProblemFilter", !isActive);
 };
 
 /**
@@ -493,7 +494,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     };
     this.container.onclick = onClickHandler;
 
-    if(!stream.getOriginalStream())
+    if (!stream.getOriginalStream())
         return;
 
     let streamElement = SmallVideo.createStreamElement(stream);
@@ -517,44 +518,42 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     $(streamElement).click(onClickHandler);
 },
+        /**
+         * Show/hide peer container for the given id.
+         */
+        RemoteVideo.prototype.showPeerContainer = function (state) {
+            if (!this.container)
+                return;
 
-/**
- * Show/hide peer container for the given id.
- */
-RemoteVideo.prototype.showPeerContainer = function (state) {
-    if (!this.container)
-        return;
+            var isHide = state === 'hide';
+            var resizeThumbnails = false;
 
-    var isHide = state === 'hide';
-    var resizeThumbnails = false;
+            if (!isHide) {
+                if (!$(this.container).is(':visible')) {
+                    resizeThumbnails = true;
+                    $(this.container).show();
+                }
+                // Call updateView, so that we'll figure out if avatar
+                // should be displayed based on video muted status and whether or not
+                // it's in the lastN set
+                this.updateView();
+            } else if ($(this.container).is(':visible') && isHide)
+            {
+                resizeThumbnails = true;
+                $(this.container).hide();
+                if (this.connectionIndicator)
+                    this.connectionIndicator.hide();
+            }
 
-    if (!isHide) {
-        if (!$(this.container).is(':visible')) {
-            resizeThumbnails = true;
-            $(this.container).show();
-        }
-        // Call updateView, so that we'll figure out if avatar
-        // should be displayed based on video muted status and whether or not
-        // it's in the lastN set
-        this.updateView();
-    }
-    else if ($(this.container).is(':visible') && isHide)
-    {
-        resizeThumbnails = true;
-        $(this.container).hide();
-        if(this.connectionIndicator)
-            this.connectionIndicator.hide();
-    }
+            if (resizeThumbnails) {
+                this.VideoLayout.resizeThumbnails();
+            }
 
-    if (resizeThumbnails) {
-        this.VideoLayout.resizeThumbnails();
-    }
+            // We want to be able to pin a participant from the contact list, even
+            // if he's not in the lastN set!
+            // ContactList.setClickable(id, !isHide);
 
-    // We want to be able to pin a participant from the contact list, even
-    // if he's not in the lastN set!
-    // ContactList.setClickable(id, !isHide);
-
-};
+        };
 
 RemoteVideo.prototype.updateResolution = function (resolution) {
     if (this.connectionIndicator) {
@@ -577,9 +576,9 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
  *
  * @param displayName the display name to set
  */
-RemoteVideo.prototype.setDisplayName = function(displayName) {
+RemoteVideo.prototype.setDisplayName = function (displayName) {
     if (!this.container) {
-        console.warn( "Unable to set displayName - " + this.videoSpanId +
+        console.warn("Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
         return;
     }
@@ -592,15 +591,14 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
             var displaynameSpan = $('#' + this.videoSpanId + '_name');
             if (displaynameSpan.text() !== displayName)
                 displaynameSpan.text(displayName);
-        }
-        else
+        } else
             $('#' + this.videoSpanId + '_name').text(
-                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+                    interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
     } else {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         $('#' + this.videoSpanId)[0]
-            .appendChild(nameSpan);
+                .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
             $(nameSpan).text(displayName);
@@ -617,7 +615,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
  *
  * @param videoElementId the id of local or remote video element.
  */
-RemoteVideo.prototype.removeRemoteVideoMenu = function() {
+RemoteVideo.prototype.removeRemoteVideoMenu = function () {
     var menuSpan = $('#' + this.videoSpanId + '> .remotevideomenu');
     if (menuSpan.length) {
         this.popover.forceHide();
@@ -655,12 +653,12 @@ RemoteVideo.showMuteParticipantDialog = function () {
     //FIXME: don't show again checkbox is implemented very dirty. we should add
     // this functionality to MessageHandler class.
     if (window.localStorage
-        && window.localStorage.getItem(
-            "dontShowMuteParticipantDialog") === "true") {
+            && window.localStorage.getItem(
+                    "dontShowMuteParticipantDialog") === "true") {
         return Promise.resolve(MUTED_DIALOG_BUTTON_VALUES.muted);
     }
     let msgString =
-        `<div data-i18n="dialog.muteParticipantBody"></div>
+            `<div data-i18n="dialog.muteParticipantBody"></div>
         <br />
         <label>
             <input type='checkbox' checked id='doNotShowMessageAgain' />
@@ -668,18 +666,18 @@ RemoteVideo.showMuteParticipantDialog = function () {
         </label>`;
     return new Promise(resolve => {
         APP.UI.messageHandler.openTwoButtonDialog({
-            titleKey : "dialog.muteParticipantTitle",
+            titleKey: "dialog.muteParticipantTitle",
             msgString,
             leftButtonKey: 'dialog.muteParticipantButton',
             submitFunction: () => {
-                if(window.localStorage) {
-                    let form  = $.prompt.getPrompt();
+                if (window.localStorage) {
+                    let form = $.prompt.getPrompt();
                     if (form) {
                         let input = form.find("#doNotShowMessageAgain");
                         if (input.length) {
                             window.localStorage.setItem(
-                                "dontShowMuteParticipantDialog",
-                                input.prop("checked"));
+                                    "dontShowMuteParticipantDialog",
+                                    input.prop("checked"));
                         }
                     }
                 }
