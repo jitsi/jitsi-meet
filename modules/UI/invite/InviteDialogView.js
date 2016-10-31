@@ -323,10 +323,13 @@ export default class InviteDialogView {
     updateView() {
         let pass = this.model.getPassword();
         let { isModerator } = this.model;
-        if (this.model.getRoomLocker().lockedElsewhere || !pass)
+        if (this.model.getRoomLocker().lockedElsewhere || !pass) {
             $('#inviteDialogPassword').attr("data-i18n", "passwordSetRemotely");
-        else
+            APP.translation.translateElement($('#inviteDialogPassword'));
+        } else {
+            $('#inviteDialogPassword').removeAttr("data-i18n");
             $('#inviteDialogPassword').text(pass);
+        }
 
         // if we are not moderator we cannot remove password
         if (isModerator)
