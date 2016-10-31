@@ -22,32 +22,31 @@ class GUMOverlayImpl extends Overlay {
      * @inheritDoc
      */
     _buildOverlayContent() {
-    // `<span data-i18n='[html]userMedia.${this.browser}GrantPermissions'
-    // class='inlay__text'></span>`
-        let title = 'HipChat Video needs to use your microphone and camera.';
-        let text;
-        text = 'Select "Allow" when your browser asks for these permissions.';
-        let content = (
-            `<div class="inlay">
-                <span class="inlay__icon icon-microphone"></span>
-                <span class="inlay__icon icon-camera"></span>
-                <h3 class="inlay__title">${title}</h3>
-                <span class='inlay__text'>${text}</span>
-            </div>`
-        );
-
-        if (interfaceConfig.HAS_POLICY) {
-            content += (
-                `<div class="policy overlay__policy">
-                    <p class="policy__text" data-i18n="policyText"></p>
-                    <div class="policy__logo">
-                        <img src=""/>
-                    </div>
+        let textKey = `userMedia.${this.browser}GrantPermissions`;
+        let titleKey = 'startupoverlay.title';
+        let policyTextKey = 'startupoverlay.policyText';
+        let policyLogo = '';
+        let policyLogoSrc = interfaceConfig.POLICY_LOGO;
+        if (policyLogoSrc) {
+            policyLogo += (
+                `<div class="policy__logo">
+                    <img src="${policyLogoSrc}"/>
                 </div>`
             );
         }
 
-        return content;
+        return (
+            `<div class="inlay">
+                <span class="inlay__icon icon-microphone"></span>
+                <span class="inlay__icon icon-camera"></span>
+                <h3 class="inlay__title" data-i18n="${titleKey}"></h3>
+                <span class='inlay__text'data-i18n='[html]${textKey}'></span>
+            </div>
+            <div class="policy overlay__policy">
+                <p class="policy__text" data-i18n="[html]${policyTextKey}"></p>
+                ${policyLogo}
+            </div>`
+        );
     }
 }
 
