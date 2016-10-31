@@ -183,27 +183,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFC745141CB829B300673F38 /* libRCTWebRTC.a in Frameworks */,
-				BF9643941C34FBF900B0BBDF /* libstdc++.tbd in Frameworks */,
-				BF9643921C34FBF100B0BBDF /* libsqlite3.tbd in Frameworks */,
 				BF9643901C34FBEB00B0BBDF /* libc.tbd in Frameworks */,
-				BF96438E1C34FBE100B0BBDF /* VideoToolbox.framework in Frameworks */,
-				BF96438C1C34FBD700B0BBDF /* CoreVideo.framework in Frameworks */,
-				BF96438A1C34FBD100B0BBDF /* CoreAudio.framework in Frameworks */,
-				BF9643881C34FBC800B0BBDF /* GLKit.framework in Frameworks */,
-				BF9643861C34FBC100B0BBDF /* CoreGraphics.framework in Frameworks */,
+				BF9643921C34FBF100B0BBDF /* libsqlite3.tbd in Frameworks */,
+				BF9643941C34FBF900B0BBDF /* libstdc++.tbd in Frameworks */,
 				BF9643841C34FBBB00B0BBDF /* AudioToolbox.framework in Frameworks */,
 				BF9643821C34FBB300B0BBDF /* AVFoundation.framework in Frameworks */,
+				BF96438A1C34FBD100B0BBDF /* CoreAudio.framework in Frameworks */,
+				BF9643861C34FBC100B0BBDF /* CoreGraphics.framework in Frameworks */,
+				BF96438C1C34FBD700B0BBDF /* CoreVideo.framework in Frameworks */,
+				BF9643881C34FBC800B0BBDF /* GLKit.framework in Frameworks */,
+				B30EF2311DC0ED7C00690F45 /* WebRTC.framework in Frameworks */,
+				BF96438E1C34FBE100B0BBDF /* VideoToolbox.framework in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
-				B30EF2311DC0ED7C00690F45 /* WebRTC.framework in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
+				BFC745141CB829B300673F38 /* libRCTWebRTC.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				3847F11906B4479A9162628F /* libRNVectorIcons.a in Frameworks */,
 			);
@@ -271,12 +271,12 @@
 		13B07FAE1A68108700A75B9A /* app */ = {
 			isa = PBXGroup;
 			children = (
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
+				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = app;
@@ -302,6 +302,7 @@
 			isa = PBXGroup;
 			children = (
 				B96AF9B6FBC0453798399985 /* FontAwesome.ttf */,
+				2602576B1D0A7703001E3363 /* jitsi.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -317,8 +318,9 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				BFC7450D1CB829A700673F38 /* RCTWebRTC.xcodeproj */,
-				146833FF1AC3E56700842450 /* React.xcodeproj */,
+				BF96438F1C34FBEB00B0BBDF /* libc.tbd */,
+				BF9643911C34FBF100B0BBDF /* libsqlite3.tbd */,
+				BF9643931C34FBF900B0BBDF /* libstdc++.tbd */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
 				00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */,
@@ -327,7 +329,9 @@
 				139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */,
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
+				BFC7450D1CB829A700673F38 /* RCTWebRTC.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
+				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				22418656B14845609F953A42 /* RNVectorIcons.xcodeproj */,
 			);
 			name = Libraries;
@@ -344,20 +348,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				B30EF2301DC0ED7C00690F45 /* WebRTC.framework */,
-				B3B083EB1D4955FF0069CEE7 /* jitsi-meet-react.entitlements */,
-				2602576B1D0A7703001E3363 /* jitsi.ttf */,
-				BF9643931C34FBF900B0BBDF /* libstdc++.tbd */,
-				BF9643911C34FBF100B0BBDF /* libsqlite3.tbd */,
-				BF96438F1C34FBEB00B0BBDF /* libc.tbd */,
-				BF96438D1C34FBE100B0BBDF /* VideoToolbox.framework */,
-				BF96438B1C34FBD700B0BBDF /* CoreVideo.framework */,
-				BF9643891C34FBD100B0BBDF /* CoreAudio.framework */,
-				BF9643871C34FBC800B0BBDF /* GLKit.framework */,
-				BF9643851C34FBC100B0BBDF /* CoreGraphics.framework */,
-				BF9643831C34FBBB00B0BBDF /* AudioToolbox.framework */,
-				BF9643811C34FBB300B0BBDF /* AVFoundation.framework */,
 				13B07FAE1A68108700A75B9A /* app */,
+				B3BA19B71DC6B02F00BCD481 /* Frameworks */,
+				B3B083EB1D4955FF0069CEE7 /* jitsi-meet-react.entitlements */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				6956B374CC3C453DB7B8E82D /* Resources */,
@@ -372,6 +365,21 @@
 				13B07F961A680F5B00A75B9A /* jitsi-meet-react.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B3BA19B71DC6B02F00BCD481 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BF9643831C34FBBB00B0BBDF /* AudioToolbox.framework */,
+				BF9643811C34FBB300B0BBDF /* AVFoundation.framework */,
+				BF9643891C34FBD100B0BBDF /* CoreAudio.framework */,
+				BF9643851C34FBC100B0BBDF /* CoreGraphics.framework */,
+				BF96438B1C34FBD700B0BBDF /* CoreVideo.framework */,
+				BF9643871C34FBC800B0BBDF /* GLKit.framework */,
+				BF96438D1C34FBE100B0BBDF /* VideoToolbox.framework */,
+				B30EF2301DC0ED7C00690F45 /* WebRTC.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		BFC7450E1CB829A700673F38 /* Products */ = {
@@ -643,7 +651,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-webrtc/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-webrtc/**",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -672,7 +683,10 @@
 				CODE_SIGN_ENTITLEMENTS = "jitsi-meet-react.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-webrtc/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-webrtc/**",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
