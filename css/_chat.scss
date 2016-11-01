@@ -107,6 +107,10 @@
     float: left;
     padding-left: 5px;
     font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 95%;
+    overflow: hidden;
 }
 
 #chat_container .timestamp {
