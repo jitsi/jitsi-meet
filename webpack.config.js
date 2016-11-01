@@ -58,6 +58,11 @@ var config = {
                 name: '[path][name].[ext]'
             },
             test: /\.(gif|png|svg)$/
+        },{
+            //Adds the ability to import json files.
+            loader: 'json',
+            exclude: __dirname + '/node_modules/',
+            test: /\.json$/
         }],
         noParse: [
             // Do not parse the files of the Strophe.js library or at least

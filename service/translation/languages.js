@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     getLanguages : function () {
         var languages = [];
         for (var lang in this)

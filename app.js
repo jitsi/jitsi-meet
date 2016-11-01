@@ -29,6 +29,7 @@ import API from './modules/API/API';
 
 import UIEvents from './service/UI/UIEvents';
 import getTokenData from "./modules/TokenData/TokenData";
+import translation from "./modules/translation/translation";
 
 /**
  * Tries to push history state with the following parameters:
@@ -95,6 +96,7 @@ const APP = {
     UI,
     settings,
     conference,
+    translation,
     /**
      * After the APP has been initialized provides utility methods for dealing
      * with the conference room URL(address).
@@ -106,7 +108,6 @@ const APP = {
     init () {
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
-        this.translation = require("./modules/translation/translation");
         this.configFetch = require("./modules/config/HttpConfigFetch");
         this.tokenData = getTokenData();
     }

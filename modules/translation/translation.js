@@ -1,15 +1,16 @@
 /* global $, require, config, interfaceConfig */
-var i18n = require("i18next-client");
-var languages = require("../../service/translation/languages");
-var DEFAULT_LANG = languages.EN;
+import i18n from 'i18next';
+import XHR from 'i18next-xhr-backend';
+import jqueryI18next from 'jquery-i18next';
+import languagesR from "../../lang/languages.json";
+import mainR from "../../lang/main.json";
+import languages from "../../service/translation/languages";
 
-i18n.addPostProcessor(
-    "resolveAppName",
-    value => value.replace("__app__", interfaceConfig.APP_NAME));
+const DEFAULT_LANG = languages.EN;
 
-var defaultOptions = {
-    detectLngQS: "lang",
-    useCookie: false,
+const defaultOptions = {
+    compatibilityAPI: 'v1',
+    compatibilityJSON: 'v1',
     fallbackLng: DEFAULT_LANG,
     load: "unspecific",
     resGetPath: 'lang/__ns__-__lng__.json',
@@ -21,48 +22,11 @@ var defaultOptions = {
     fallbackOnNull: true,
     fallbackOnEmpty: true,
     useDataAttrOptions: true,
-    app: interfaceConfig.APP_NAME,
-    getAsync: true,
-    defaultValueFromContent: false,
-    customLoad: function(lng, ns, options, done) {
-        var resPath = "lang/__ns__-__lng__.json";
-        if(lng === languages.EN)
-            resPath = "lang/__ns__.json";
-        var url = i18n.functions.applyReplacement(resPath,
-                                                 { lng: lng, ns: ns });
-        i18n.functions.ajax({
-            url: url,
-            success: function(data) {
-                i18n.functions.log('loaded: ' + url);
-                done(null, data);
-            },
-            error : function(xhr, status, error) {
-                if ((status && status == 200) ||
-                    (xhr && xhr.status && xhr.status == 200)) {
-                    // file loaded but invalid json, stop waste time !
-                    i18n.functions.error('There is a typo in: ' + url);
-                } else if ((status && status == 404) ||
-                    (xhr && xhr.status && xhr.status == 404)) {
-                    i18n.functions.log('Does not exist: ' + url);
-                } else {
-                    var theStatus = status ? status :
-                        ((xhr && xhr.status) ? xhr.status : null);
-                    i18n.functions.log(theStatus + ' when loading ' + url);
-                }
-
-                done(error, {});
-            },
-            dataType: "json",
-            async : options.getAsync
-        });
-    }
-    //              options for caching
-//                useLocalStorage: true,
-//                localStorageExpirationTime: 86400000 // in ms, default 1 week
+    app: interfaceConfig.APP_NAME
 };
 
 function initCompleted() {
-    $("[data-i18n]").i18n();
+    $("[data-i18n]").localize();
 }
 
 function getLangFromQuery() {
@@ -78,8 +42,8 @@ function getLangFromQuery() {
     return null;
 }
 
-module.exports = {
-    init: function (settingsLang) {
+class Translation {
+    init (settingsLang) {
         let options = defaultOptions;
 
         let lang = getLangFromQuery() || settingsLang || config.defaultLanguage;
@@ -98,31 +62,48 @@ module.exports = {
             options.lng = lang;
         }
 
-        i18n.init(options, initCompleted);
-    },
-    setLanguage: function (lang) {
+        i18n.use(XHR)
+            .use({
+                type: 'postProcessor',
+                name: "resolveAppName",
+                process: (res, key) => {
+                    return i18n.t(key, {app: options.app});
+                }
+            })
+            .init(options, initCompleted);
+        // adds default language which is preloaded from code
+        i18n.addResourceBundle(DEFAULT_LANG, 'main', mainR, true, true);
+        i18n.addResourceBundle(
+            DEFAULT_LANG, 'languages', languagesR, true, true);
+        jqueryI18next.init(i18n, $, {useOptionsAttr: true});
+    }
+
+    setLanguage (lang) {
         if(!lang)
             lang = DEFAULT_LANG;
         i18n.setLng(lang, defaultOptions, initCompleted);
-    },
-    getCurrentLanguage: function () {
-        return i18n.lng();
-    },
-    translateElement: function (selector, options) {
-        // i18next expects undefined if options are missing, check if its null
-        selector.i18n(
-            options === null ? undefined : options);
-    },
-    generateTranslationHTML: function (key, options) {
-        var str = "<span data-i18n=\"" + key + "\"";
-        if (options) {
-            str += " data-i18n-options='" + JSON.stringify(options) + "'";
-        }
-        str += ">";
-        // i18next expects undefined if options ARE missing, check if its null
-        str += i18n.t(key, options === null ? undefined : options);
-        str += "</span>";
-        return str;
-
     }
-};
+
+    getCurrentLanguage () {
+        return i18n.lng();
+    }
+
+    translateElement (selector, options) {
+        // i18next expects undefined if options are missing, check if its null
+        selector.localize(
+            options === null ? undefined : options);
+    }
+
+    generateTranslationHTML (key, options) {
+        let optAttr = options
+            ? ` data-i18n-options='${JSON.stringify(options)}'` : "";
+        let text = i18n.t(key, options === null ? undefined : options);
+        return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
+    }
+
+    addLanguageChangedListener(listener) {
+        i18n.on('languageChanged', listener);
+    }
+}
+
+export default new Translation();
