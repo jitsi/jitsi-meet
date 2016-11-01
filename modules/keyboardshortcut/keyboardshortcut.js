@@ -83,7 +83,7 @@ var KeyboardShortcut = {
                     _shortcuts[key].function(e);
                 }
                 else if (!isNaN(num) && num >= 0 && num <= 9) {
-                    APP.UI.clickOnVideo(num + 1);
+                    APP.UI.clickOnVideo(num);
                 }
             //esc while the smileys are visible hides them
             } else if (key === "ESCAPE" &&

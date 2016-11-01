@@ -819,9 +819,23 @@ UI.emitEvent = function (type, options) {
 };
 
 UI.clickOnVideo = function (videoNumber) {
-    var remoteVideos = $(".videocontainer:not(#mixedstream)");
-    if (remoteVideos.length > videoNumber) {
-        remoteVideos[videoNumber].click();
+    let videos = $(".videocontainer:not(#mixedstream)").toArray();
+
+    // Remove large video container if matched and reverse order of
+    // remote video containers
+    let videosMap = videos.filter(el => el.id !== 'largeVideoContainer')
+          .reduce((videoObj, video) => {
+              if(video.id === 'localVideoContainer') {
+                  videoObj.local = video;
+              } else {
+                  videoObj.remote.unshift(video);
+              }
+              return videoObj;
+          }, { local: null, remote: [] });
+
+    let sortedVideos = [videosMap.local, ...videosMap.remote];
+    if (sortedVideos.length > videoNumber) {
+        $(sortedVideos[videoNumber]).click();
     }
 };
 
