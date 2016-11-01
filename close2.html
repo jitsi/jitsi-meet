@@ -7,6 +7,8 @@
         div.innerHTML = msg;
     }
     function translate() {
+        translateStr('thanksMessage',
+            'Thank you for using ' + interfaceConfig.APP_NAME);
         translateStr('hintMessage',
             'You can use video calls with '
             + interfaceConfig.APP_NAME +' for your business');
@@ -14,17 +16,17 @@
     </script>
 </head>
 <body onload="translate();">
-<div class="redirectPageMessage">
-    <div class="thanks-msg">
-        <p id="thanksMessage">Thank you for your feedback!</p>
+    <div class="redirectPageMessage">
+        <div class="thanks-msg">
+            <p id="thanksMessage"></p>
+        </div>
+        <div class="hint-msg">
+            <p>
+                <span>Did you know?</span>
+                <span class="hint-msg__holder" id="hintMessage"></span>
+            </p>
+            <div class="happy-software"></div>
+        </div>
     </div>
-    <div class="hint-msg">
-        <p>
-            <span>Did you know?</span>
-            <span class="hint-msg__holder" id="hintMessage"></span>
-        </p>
-        <div class="happy-software"></div>
-    </div>
-</div>
 </body>
 </html>
