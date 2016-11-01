@@ -185,14 +185,15 @@ function muteLocalVideo (muted) {
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
  *
- * @param {object} data Feedback data
- * @param {boolean} data.showThankYou - whether we should show thank you dialog
- * @param {boolean} data.feedbackSubmitted - whether feedback was submitted
+ * @param {object} options Feedback data
+ * @param {boolean} options.thankYouDialogVisible - whether we should
+ * show thank you dialog
+ * @param {boolean} options.feedbackSubmitted - whether feedback was submitted
  */
-function maybeRedirectToWelcomePage(data) {
+function maybeRedirectToWelcomePage(options) {
     // if close page is enabled redirect to it, without further action
     if (config.enableClosePage) {
-        if (data.feedbackSubmitted)
+        if (options.feedbackSubmitted)
             window.location.pathname = "close.html";
         else
             window.location.pathname = "close2.html";
@@ -200,7 +201,7 @@ function maybeRedirectToWelcomePage(data) {
     }
 
     // else: show thankYou dialog only if there is no feedback
-    if (data.showThankYou)
+    if (options.thankYouDialogVisible)
         APP.UI.messageHandler.openMessageDialog(
             null, "dialog.thankYou", {appName:interfaceConfig.APP_NAME});
 

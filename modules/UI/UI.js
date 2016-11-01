@@ -1039,7 +1039,7 @@ UI.requestFeedbackOnHangup = function () {
     // Feedback has been submitted already.
     else if (Feedback.isEnabled() && Feedback.isSubmitted()) {
         return Promise.resolve({
-            showThankYou : true,
+            thankYouDialogVisible : true,
             feedbackSubmitted: true
         });
     }
@@ -1047,15 +1047,16 @@ UI.requestFeedbackOnHangup = function () {
         return new Promise(function (resolve) {
             if (Feedback.isEnabled()) {
                 Feedback.openFeedbackWindow(
-                    (data) => {
-                        data.showThankYou = false;
-                        resolve(data);
+                    (options) => {
+                        options.thankYouDialogVisible = false;
+                        resolve(options);
                     });
             } else {
                 // If the feedback functionality isn't enabled we show a thank
                 // you dialog. Signaling it (true), so the caller
                 // of requestFeedback can act on it
-                resolve({showThankYou : true, feedbackSubmitted: false});
+                resolve(
+                    {thankYouDialogVisible : true, feedbackSubmitted: false});
             }
         });
 };
