@@ -184,29 +184,34 @@ function muteLocalVideo (muted) {
  * If requested show a thank you dialog before that.
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
- * @param {boolean} showThankYou whether we should show a thank you dialog
+ *
+ * @param {object} options Feedback data
+ * @param {boolean} options.thankYouDialogVisible - whether we should
+ * show thank you dialog
+ * @param {boolean} options.feedbackSubmitted - whether feedback was submitted
  */
-function maybeRedirectToWelcomePage(showThankYou) {
-
+function maybeRedirectToWelcomePage(options) {
     // if close page is enabled redirect to it, without further action
     if (config.enableClosePage) {
-        window.location.pathname = "close.html";
+        if (options.feedbackSubmitted)
+            window.location.pathname = "close.html";
+        else
+            window.location.pathname = "close2.html";
         return;
     }
 
-    if (showThankYou) {
+    // else: show thankYou dialog only if there is no feedback
+    if (options.thankYouDialogVisible)
         APP.UI.messageHandler.openMessageDialog(
             null, "dialog.thankYou", {appName:interfaceConfig.APP_NAME});
-    }
 
-    if (!config.enableWelcomePage) {
-        return;
+    // if Welcome page is enabled redirect to welcome page after 3 sec.
+    if (config.enableWelcomePage) {
+        setTimeout(() => {
+            APP.settings.setWelcomePageEnabled(true);
+            window.location.pathname = "/";
+        }, 3000);
     }
-    // redirect to welcome page
-    setTimeout(() => {
-        APP.settings.setWelcomePageEnabled(true);
-        window.location.pathname = "/";
-    }, 3000);
 }
 
 /**
