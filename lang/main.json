@@ -77,7 +77,7 @@
     },
     "startupoverlay": {
         "policyText": "&nbsp;",
-        "title": "Jitsi Meet needs to use your microphone and camera."
+        "title": "__app__ needs to use your microphone and camera."
     },
     "toolbar": {
         "mute": "Mute / Unmute",

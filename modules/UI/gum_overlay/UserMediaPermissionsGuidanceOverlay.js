@@ -24,6 +24,7 @@ class GUMOverlayImpl extends Overlay {
     _buildOverlayContent() {
         let textKey = `userMedia.${this.browser}GrantPermissions`;
         let titleKey = 'startupoverlay.title';
+        let titleOptions = '{ "postProcess": "resolveAppName" }';
         let policyTextKey = 'startupoverlay.policyText';
         let policyLogo = '';
         let policyLogoSrc = interfaceConfig.POLICY_LOGO;
@@ -39,7 +40,8 @@ class GUMOverlayImpl extends Overlay {
             `<div class="inlay">
                 <span class="inlay__icon icon-microphone"></span>
                 <span class="inlay__icon icon-camera"></span>
-                <h3 class="inlay__title" data-i18n="${titleKey}"></h3>
+                <h3 class="inlay__title" data-i18n="${titleKey}"
+                    data-i18n-options='${titleOptions}'></h3>
                 <span class='inlay__text'data-i18n='[html]${textKey}'></span>
             </div>
             <div class="policy overlay__policy">
