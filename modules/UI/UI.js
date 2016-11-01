@@ -1037,25 +1037,25 @@ UI.requestFeedbackOnHangup = function () {
     if (Feedback.isVisible())
         return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
     // Feedback has been submitted already.
-    else if (Feedback.isEnabled() && Feedback.isSubmitted())
-        return Promise.resolve(true);
+    else if (Feedback.isEnabled() && Feedback.isSubmitted()) {
+        return Promise.resolve({
+            showThankYou : true,
+            feedbackSubmitted: true
+        });
+    }
     else
         return new Promise(function (resolve) {
             if (Feedback.isEnabled()) {
-                // If the user has already entered feedback, we'll show the
-                // window and immidiately start the conference dispose timeout.
-                if (Feedback.getFeedbackScore() > 0) {
-                    Feedback.openFeedbackWindow();
-                    resolve(false);
-
-                } else { // Otherwise we'll wait for user's feedback.
-                    Feedback.openFeedbackWindow(() => resolve(false));
-                }
+                Feedback.openFeedbackWindow(
+                    (data) => {
+                        data.showThankYou = false;
+                        resolve(data);
+                    });
             } else {
                 // If the feedback functionality isn't enabled we show a thank
                 // you dialog. Signaling it (true), so the caller
                 // of requestFeedback can act on it
-                resolve(true);
+                resolve({showThankYou : true, feedbackSubmitted: false});
             }
         });
 };
