@@ -631,6 +631,10 @@ RemoteVideo.createContainer = function (spanId) {
     container.id = spanId;
     container.className = 'videocontainer';
 
+    let wrapper = document.createElement('div');
+    wrapper.className = 'videocontainer__wrapper';
+    container.appendChild(wrapper);
+
     let indicatorBar = document.createElement('div');
     indicatorBar.className = "videocontainer__toptoolbar";
     container.appendChild(indicatorBar);

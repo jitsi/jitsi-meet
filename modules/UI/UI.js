@@ -819,12 +819,11 @@ UI.emitEvent = function (type, options) {
 };
 
 UI.clickOnVideo = function (videoNumber) {
-    let videos = $(".videocontainer:not(#mixedstream)").toArray();
+    let videos = $("#remoteVideos .videocontainer:not(#mixedstream)").toArray();
 
-    // Remove large video container if matched and reverse order of
-    // remote video containers
-    let videosMap = videos.filter(el => el.id !== 'largeVideoContainer')
-          .reduce((videoObj, video) => {
+    // Separate remotes from local videocontainer and reverse order of
+    // remote ones
+    let videosMap = videos.reduce((videoObj, video) => {
               if(video.id === 'localVideoContainer') {
                   videoObj.local = video;
               } else {
