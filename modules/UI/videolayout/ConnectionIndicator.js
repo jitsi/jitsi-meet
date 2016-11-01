@@ -5,6 +5,23 @@ import VideoLayout from "./VideoLayout";
 import UIUtil from "../util/UIUtil";
 
 /**
+ * Maps a connection quality value (in percent) to the width of the "full" icon.
+ */
+const qualityToWidth = [
+    // Full (5 bars)
+    {percent: 80, width: "100%"},
+    // 4 bars
+    {percent: 60, width: "80%"},
+    // 3 bars
+    {percent: 40, width: "55%"},
+    // 2 bars
+    {percent: 20, width: "40%"},
+    // 1 bar
+    {percent: 0, width: "20%"}
+    // Note: we never show 0 bars.
+];
+
+/**
  * Constructs new connection indicator.
  * @param videoContainer the video container associated with the indicator.
  * @param videoId the identifier of the video
@@ -23,24 +40,6 @@ function ConnectionIndicator(videoContainer, videoId) {
     this.id = videoId;
     this.create();
 }
-
-/**
- * Values for the connection quality
- * @type {{98: string,
- *         81: string,
- *         64: string,
- *         47: string,
- *         30: string,
- *         0: string}}
- */
-ConnectionIndicator.connectionQualityValues = {
-    98: "100%", //full
-    81: "80%",//4 bars
-    64: "55%",//3 bars
-    47: "40%",//2 bars
-    30: "20%",//1 bar
-    0: "0"//empty
-};
 
 ConnectionIndicator.getIP = function(value) {
     return value.substring(0, value.lastIndexOf(":"));
@@ -360,12 +359,10 @@ ConnectionIndicator.prototype.updateConnectionQuality =
             this.resolution = object.resolution;
         }
     }
-    for (var quality in ConnectionIndicator.connectionQualityValues) {
-        if (percent >= quality) {
-            this.fullIcon.style.width =
-                ConnectionIndicator.connectionQualityValues[quality];
-        }
-    }
+
+    let width = qualityToWidth.find(x => percent >= x.percent);
+    this.fullIcon.style.width = width.width;
+
     if (object && typeof object.isResolutionHD === 'boolean') {
         this.isResolutionHD = object.isResolutionHD;
     }

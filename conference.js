@@ -4,18 +4,13 @@ import Invite from './modules/UI/invite/Invite';
 import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
-
-import ConnectionQuality from './modules/connectionquality/connectionquality';
-
 import Recorder from './modules/recorder/Recorder';
-
-import CQEvents from './service/connectionquality/CQEvents';
-import UIEvents from './service/UI/UIEvents';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import {reportError} from './modules/util/helpers';
 
+import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
@@ -27,12 +22,9 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
-let room, connection, localAudio, localVideo;
+const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
 
-/**
- * Indicates whether the connection is interrupted or not.
- */
-let connectionIsInterrupted = false;
+let room, connection, localAudio, localVideo;
 
 /**
  * Indicates whether extension external installation is in progress or not.
@@ -45,7 +37,6 @@ import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
  * Known custom conference commands.
  */
 const commands = {
-    CONNECTION_QUALITY: "stats",
     EMAIL: "email",
     AVATAR_URL: "avatar-url",
     AVATAR_ID: "avatar-id",
@@ -685,7 +676,7 @@ export default {
      * false otherwise.
      */
     isConnectionInterrupted () {
-        return connectionIsInterrupted;
+        return this._room.isConnectionInterrupted();
     },
     /**
      * Finds JitsiParticipant for given id.
@@ -774,7 +765,7 @@ export default {
      * Returns the stats.
      */
     getStats() {
-        return ConnectionQuality.getStats();
+        return room.connectionQuality.getStats();
     },
     // end used by torture
 
@@ -1108,7 +1099,6 @@ export default {
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.UI.mucJoined();
             APP.API.notifyConferenceJoined(APP.conference.roomName);
-            connectionIsInterrupted = false;
             APP.UI.markVideoInterrupted(false);
         });
 
@@ -1257,13 +1247,10 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
-            connectionIsInterrupted = true;
-            ConnectionQuality.updateLocalConnectionQuality(0);
             APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
-            connectionIsInterrupted = false;
             APP.UI.showLocalConnectionInterrupted(false);
         });
 
@@ -1315,59 +1302,16 @@ export default {
             });
         }
 
-        room.on(ConferenceEvents.CONNECTION_STATS, function (stats) {
-            // if we say video muted we will use old method of calculating
-            // quality and will not depend on localVideo if it is missing
-            ConnectionQuality.updateLocalStats(
-                stats,
-                connectionIsInterrupted,
-                localVideo ? localVideo.videoType : undefined,
-                localVideo ? localVideo.isMuted() : true,
-                localVideo ? localVideo.resolution : null);
+        room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
+            (stats) => {
+                APP.UI.updateLocalStats(stats.connectionQuality, stats);
+
         });
 
-        ConnectionQuality.addListener(CQEvents.LOCALSTATS_UPDATED,
-            (percent, stats) => {
-                APP.UI.updateLocalStats(percent, stats);
-                // Send only the data that remote participants care about.
-                let data = {
-                    bitrate: stats.bitrate,
-                    packetLoss: stats.packetLoss};
-                if (localVideo && localVideo.resolution) {
-                    data.resolution = localVideo.resolution;
-                }
-
-                try {
-                    room.broadcastEndpointMessage({
-                        type: this.commands.defaults.CONNECTION_QUALITY,
-                        values: data });
-                } catch (e) {
-                    reportError(e);
-                }
-            });
-
-        room.on(ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (participant, payload) => {
-                switch(payload.type) {
-                    case this.commands.defaults.CONNECTION_QUALITY: {
-                        let remoteVideo = participant.getTracks()
-                            .find(tr => tr.isVideoTrack());
-                        ConnectionQuality.updateRemoteStats(
-                            participant.getId(),
-                            payload.values,
-                            remoteVideo ? remoteVideo.videoType : undefined,
-                            remoteVideo ? remoteVideo.isMuted() : undefined);
-                        break;
-                    }
-                    default:
-                        console.warn("Unknown datachannel message", payload);
-                }
-            });
-
-        ConnectionQuality.addListener(CQEvents.REMOTESTATS_UPDATED,
-            (id, percent, stats) => {
-                APP.UI.updateRemoteStats(id, percent, stats);
-            });
+        room.on(ConnectionQualityEvents.REMOTE_STATS_UPDATED,
+            (id, stats) => {
+                APP.UI.updateRemoteStats(id, stats.connectionQuality, stats);
+        });
 
         room.addCommandListener(this.commands.defaults.ETHERPAD, ({value}) => {
             APP.UI.initEtherpad(value);
@@ -1378,9 +1322,10 @@ export default {
             APP.UI.setUserEmail(from, data.value);
         });
 
-        room.addCommandListener(this.commands.defaults.AVATAR_URL,
-        (data, from) => {
-            APP.UI.setUserAvatarUrl(from, data.value);
+        room.addCommandListener(
+            this.commands.defaults.AVATAR_URL,
+            (data, from) => {
+                APP.UI.setUserAvatarUrl(from, data.value);
         });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
