@@ -1,10 +1,10 @@
-/* global $, _ */
+/* global $ */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import Settings from '../../../settings/Settings';
 
-const sidePannelsContainerId = 'sideToolbarContainer';
-const compiledTpl = _.template(`
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
     <div id="profile_container" class="sideToolbarContainer__inner">
         <div class="title" data-i18n="profile.title"></div>
         <div class="sideToolbarBlock first">
@@ -31,10 +31,11 @@ const compiledTpl = _.template(`
                 </li>
             </ul>
         </div>
-    </div>`);
+    </div>`;
+
 function initHTML() {
-    $(`#${sidePannelsContainerId}`)
-        .append(compiledTpl());
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
 }
 
 export default {

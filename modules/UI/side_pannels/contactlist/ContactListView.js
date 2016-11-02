@@ -1,21 +1,21 @@
-/* global $, APP, interfaceConfig, _ */
+/* global $, APP, interfaceConfig */
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
 
-const sidePannelsContainerId = 'sideToolbarContainer';
-const compiledTpl = _.template(`
+let numberOfContacts = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
     <div id="contacts_container" class="sideToolbarContainer__inner">
         <div class="title" data-i18n="contactlist"
             data-i18n-options='{"pcount":"1"}'></div>
         <ul id="contacts"></ul>
-    </div>`);
+    </div>`;
 
 function initHTML() {
-    $(`#${sidePannelsContainerId}`)
-        .append(compiledTpl());
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
 }
-let numberOfContacts = 0;
 
 /**
  * Updates the number of participants in the contact list button and sets

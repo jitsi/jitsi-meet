@@ -1,12 +1,12 @@
-/* global $, _, APP, AJS, interfaceConfig, JitsiMeetJS */
+/* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
 
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
 import Settings from '../../../settings/Settings';
 
-const sidePannelsContainerId = 'sideToolbarContainer';
-const compiledTpl = _.template(`
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
     <div id="settings_container" class="sideToolbarContainer__inner">
         <div class="title" data-i18n="settings.title"></div>
         <form class="aui">
@@ -55,10 +55,11 @@ const compiledTpl = _.template(`
                 </div>
             </div>
         </form>
-    </div>`);
+    </div>`;
+
 function initHTML() {
-    $(`#${sidePannelsContainerId}`)
-        .append(compiledTpl());
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
 }
 
 /**

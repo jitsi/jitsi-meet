@@ -1,4 +1,4 @@
-/* global APP, $, _ */
+/* global APP, $ */
 
 import {processReplacements, linkify} from './Replacement';
 import CommandsProcessor from './Commands';
@@ -10,8 +10,9 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
 
-const sidePannelsContainerId = 'sideToolbarContainer';
-const compiledTpl = _.template(`
+let unreadMessages = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
     <div id="chat_container" class="sideToolbarContainer__inner">
         <div id="nickname">
             <span data-i18n="chat.nickname.title"></span>
@@ -31,13 +32,12 @@ const compiledTpl = _.template(`
                 <img src="images/smile.svg"/>
             </div>
         </div>
-    </div>`);
-function initHTML() {
-    $(`#${sidePannelsContainerId}`)
-        .append(compiledTpl());
-}
+    </div>`;
 
-var unreadMessages = 0;
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
  * The container id, which is and the element id.
