@@ -17,13 +17,20 @@ import {
  */
 const INITIAL_STATE = {
     config: {
-        // FIXME Lib-jitsi-meet uses HTML script elements to asynchronously
-        // load certain pieces of JavaScript. Unfortunately, the technique
-        // doesn't work on React Native (because there are no HTML elements
-        // in the first place). Fortunately, these pieces of JavaScript
-        // currently involve third parties and we can temporarily disable
-        // them (until we implement an alternative to async script elements
-        // on React Native).
+        // FIXME The support for audio levels in lib-jitsi-meet polls the
+        // statistics of WebRTC at a short interval multiple times a second.
+        // Unfortunately, React Native is slow to fetch these statistics from
+        // the native WebRTC API, through the React Native bridge and eventually
+        // to JavaScript. Because the audio levels are of no interest to the
+        // mobile app, it is fastest to merely disable them.
+        disableAudioLevels: true,
+
+        // FIXME Lib-jitsi-meet uses HTML script elements to asynchronously load
+        // certain pieces of JavaScript. Unfortunately, the technique doesn't
+        // work on React Native (because there are no HTML elements in the first
+        // place). Fortunately, these pieces of JavaScript currently involve
+        // third parties and we can temporarily disable them (until we implement
+        // an alternative to async script elements on React Native).
         disableThirdPartyRequests: true
     },
     initializationError: null,
