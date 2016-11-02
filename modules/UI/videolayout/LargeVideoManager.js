@@ -382,7 +382,8 @@ export default class LargeVideoManager {
             $('#remoteConnectionMessage')
                 .attr("data-i18n", msgKey)
                 .attr("data-i18n-options", JSON.stringify(msgOptions));
-            APP.translation.translateElement($('#remoteConnectionMessage'));
+            APP.translation.translateElement(
+                $('#remoteConnectionMessage'), msgOptions);
         }
 
         this.videoContainer.positionRemoteConnectionMessage();
@@ -394,14 +395,12 @@ export default class LargeVideoManager {
      *
      * @param {string} msgKey the translation key which will be used to get
      * the message text to be displayed on the large video.
-     * @param {object} msgOptions translation options object
      *
      * @private
      */
-    _setLocalConnectionMessage (msgKey, msgOptions) {
+    _setLocalConnectionMessage (msgKey) {
         $('#localConnectionMessage')
-            .attr("data-i18n", msgKey)
-            .attr("data-i18n-options", JSON.stringify(msgOptions));
+            .attr("data-i18n", msgKey);
         APP.translation.translateElement($('#localConnectionMessage'));
     }
 
