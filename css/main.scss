@@ -29,15 +29,12 @@
 
 /* Fonts END */
 
-/* Theme  BEGIN */
-@import "themes/main";
-/* Theme END */
-
 /* Modules BEGIN */
 
 @import 'toastr';
 @import 'base';
 @import 'overlay/overlay';
+@import 'inlay';
 @import 'reload_overlay/reload_overlay';
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
@@ -65,5 +62,6 @@
 @import "connection-info";
 @import 'aui-components/dropdown';
 @import '404';
+@import 'policy';
 
 /* Modules END */

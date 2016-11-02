@@ -69,5 +69,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     // disables the ringing sound when the RingOverlay is shown.
     DISABLE_RINGING: false,
     AUDIO_LEVEL_PRIMARY_COLOR: "rgba(255,255,255,0.4)",
-    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.2)"
+    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.2)",
+    POLICY_LOGO: null
 };

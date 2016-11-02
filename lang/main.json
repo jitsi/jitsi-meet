@@ -75,6 +75,10 @@
             "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems."
         }
     },
+    "startupoverlay": {
+        "policyText": "&nbsp;",
+        "title": "__app__ needs to use your microphone and camera."
+    },
     "toolbar": {
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",

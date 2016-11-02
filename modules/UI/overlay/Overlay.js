@@ -34,8 +34,8 @@ export default class Overlay{
         let overlayContent = this._buildOverlayContent();
 
         this.$overlay = $(`
-            <div class='overlay_container'>
-                <div class='overlay_content'>
+            <div class='overlay__container'>
+                <div class='overlay__content'>
                     ${overlayContent}
                 </div>
             </div>`);
