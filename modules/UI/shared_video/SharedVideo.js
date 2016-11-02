@@ -761,7 +761,8 @@ function requestVideoLink() {
             state0: {
                 titleKey: "dialog.shareVideoTitle",
                 html:  `
-                    <input name="sharedVideoUrl" type="text"
+                    <input class="input-control__input"
+                           name="sharedVideoUrl" type="text"
                            data-i18n="[placeholder]defaultLink"
                            autofocus>`,
                 persistent: false,
