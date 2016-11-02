@@ -4,6 +4,18 @@
     z-index: $toolbarZ;
     height: 100%;
     pointer-events: auto;
+
+    /**
+     * Splitter button in the toolbar.
+     */
+    &__splitter {
+        display: inline-block;
+        vertical-align: middle;
+        width: 1px;
+        height: 50%;
+        margin: 0 $splitterToolbarButtonMargin;
+        background: $splitterColor;
+    }
 }
 
 #mainToolbarContainer{
@@ -42,21 +54,7 @@
     margin-right: auto;
     width: auto;
     border-radius: 3px;
-
-    .button:first-child {
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-    .button:last-child {
-        border-bottom-right-radius: 3px;
-        border-top-right-radius: 3px;
-    }
-    /**
-     * Splitter button in the toolbar.
-     */
-    .splitter {
-        margin-left: $splitterToolbarButtonLeftMargin;
-    }
+    overflow: hidden;
 }
 
 #extendedToolbar {

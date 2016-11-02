@@ -769,9 +769,15 @@ Toolbar = {
         };
         let id = places[place];
         let buttonElement = document.createElement("a");
-        if (button.className)
-            buttonElement.className = button.className
-                + ((isSplitter) ? " splitter": "");
+        if (button.className) {
+            buttonElement.className = button.className;
+        }
+
+        if (isSplitter) {
+            let splitter = document.createElement('span');
+            splitter.className = 'toolbar__splitter';
+            document.getElementById(id).appendChild(splitter);
+        }
 
         buttonElement.id = button.id;
 
