@@ -2,17 +2,22 @@ import Chat from './chat/Chat';
 import SettingsMenu from './settings/SettingsMenu';
 import Profile from './profile/Profile';
 import ContactListView from './contactlist/ContactListView';
+import UIUtil from '../util/UIUtil';
 
 const SidePanels = {
     init (eventEmitter) {
         //Initialize chat
-        Chat.init(eventEmitter);
+        if (UIUtil.isButtonEnabled('chat'))
+            Chat.init(eventEmitter);
         //Initialize settings
-        SettingsMenu.init(eventEmitter);
+        if (UIUtil.isButtonEnabled('settings'))
+            SettingsMenu.init(eventEmitter);
         //Initialize profile
-        Profile.init(eventEmitter);
+        if (UIUtil.isButtonEnabled('profile'))
+            Profile.init(eventEmitter);
         //Initialize contact list view
-        ContactListView.init();
+        if (UIUtil.isButtonEnabled('contacts'))
+            ContactListView.init();
     }
 };
 
