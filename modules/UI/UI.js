@@ -1434,31 +1434,4 @@ UI.hideUserMediaPermissionsGuidanceOverlay = function () {
     GumPermissionsOverlay.hide();
 };
 
-/**
- * Shows or hides the keyboard shortcuts panel, depending on the current state.'
- */
-UI.toggleKeyboardShortcutsPanel = function() {
-    if (!messageHandler.isDialogOpened()) {
-        let msg = $('#keyboard-shortcuts').html();
-        let buttons = { Close: true };
-
-        messageHandler.openDialog(
-            'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
-    } else {
-        messageHandler.closeDialog();
-    }
-
-};
-
-/**
- * Shows or hides the keyboard shortcuts panel.'
- */
-UI.showKeyboardShortcutsPanel = function(show) {
-    if (show) {
-        $('#keyboard-shortcuts').show();
-    } else {
-        $('#keyboard-shortcuts').hide();
-    }
-};
-
 module.exports = UI;

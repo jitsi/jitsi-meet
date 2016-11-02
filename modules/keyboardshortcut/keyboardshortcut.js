@@ -1,6 +1,11 @@
 /* global APP, $, JitsiMeetJS */
 
 /**
+ * The reference to the shortcut dialogs when opened.
+ */
+let keyboardShortcutDialog = null;
+
+/**
  * Initialise global shortcuts.
  * Global shortcuts are shortcuts for features that don't have a button or
  * link associated with the action. In other words they represent actions
@@ -9,12 +14,12 @@
 function initGlobalShortcuts() {
 
     KeyboardShortcut.registerShortcut("ESCAPE", null, function() {
-        APP.UI.showKeyboardShortcutsPanel(false);
+        showKeyboardShortcutsPanel(false);
     });
 
     KeyboardShortcut.registerShortcut("?", null, function() {
         JitsiMeetJS.analytics.sendEvent("shortcut.shortcut.help");
-        APP.UI.toggleKeyboardShortcutsPanel();
+        showKeyboardShortcutsPanel(true);
     }, "keyboardShortcuts.toggleShortcuts");
 
     // register SPACE shortcut in two steps to insure visibility of help message
@@ -30,6 +35,28 @@ function initGlobalShortcuts() {
      */
     KeyboardShortcut._addShortcutToHelp("0", "keyboardShortcuts.focusLocal");
     KeyboardShortcut._addShortcutToHelp("1-9", "keyboardShortcuts.focusRemote");
+}
+
+/**
+ * Shows or hides the keyboard shortcuts dialog.
+ * @param {boolean} show whether to show or hide the dialog
+ */
+function showKeyboardShortcutsPanel(show) {
+    if (show
+        && !APP.UI.messageHandler.isDialogOpened()
+        && keyboardShortcutDialog === null) {
+
+        let msg = $('#keyboard-shortcuts').html();
+        let buttons = { Close: true };
+
+        keyboardShortcutDialog = APP.UI.messageHandler.openDialog(
+            'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
+    } else {
+        if (keyboardShortcutDialog !== null) {
+            keyboardShortcutDialog.close();
+            keyboardShortcutDialog = null;
+        }
+    }
 }
 
 /**

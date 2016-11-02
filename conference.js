@@ -176,7 +176,8 @@ function muteLocalVideo (muted) {
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
  *
- * @param {object} options Feedback data
+ * @param {object} options used to decide which particular close page to show
+ * or if close page is disabled, whether we should show the thankyou dialog
  * @param {boolean} options.thankYouDialogVisible - whether we should
  * show thank you dialog
  * @param {boolean} options.feedbackSubmitted - whether feedback was submitted
