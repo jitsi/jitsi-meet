@@ -4,6 +4,18 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
 
 let numberOfContacts = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="contacts_container" class="sideToolbarContainer__inner">
+        <div class="title" data-i18n="contactlist"
+            data-i18n-options='{"pcount":"1"}'></div>
+        <ul id="contacts"></ul>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
  * Updates the number of participants in the contact list button and sets
@@ -67,10 +79,19 @@ function getContactEl (id) {
  * Contact list.
  */
 var ContactListView = {
-    init (model) {
-        this.model = model;
+    init () {
+        initHTML();
         this.lockKey = 'roomLocked';
         this.unlockKey = 'roomUnlocked';
+    },
+
+    /**
+     * setup ContactList Model into ContactList View
+     *
+     * @param model
+     */
+    setup (model) {
+        this.model = model;
         this.addInviteButton();
         this.registerListeners();
         this.toggleLock();

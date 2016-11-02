@@ -3,8 +3,44 @@ import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import Settings from '../../../settings/Settings';
 
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="profile_container" class="sideToolbarContainer__inner">
+        <div class="title" data-i18n="profile.title"></div>
+        <div class="sideToolbarBlock first">
+            <label class="first" data-i18n="profile.setDisplayNameLabel">
+            </label>
+            <input type="text" id="setDisplayName"
+                data-i18n="[placeholder]settings.name">
+        </div>
+        <div class="sideToolbarBlock">
+            <label data-i18n="profile.setEmailLabel"></label>
+            <input id="setEmail" type="text" 
+                data-i18n="[placeholder]profile.setEmailInput">
+        </div>
+        <div id="authenticationContainer" 
+             class="sideToolbarBlock auth_container">
+            <p data-i18n="toolbar.authenticate"></p>
+            <ul>
+                <li id="toolbar_auth_identity"></li>
+                <li id="toolbar_button_login">
+                    <a class="authButton" data-i18n="toolbar.login"></a>
+                </li>
+                <li id="toolbar_button_logout">
+                    <a class="authButton" data-i18n="toolbar.logout"></a>
+                </li>
+            </ul>
+        </div>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
+
 export default {
     init (emitter) {
+        initHTML();
         // DISPLAY NAME
         function updateDisplayName () {
             emitter.emit(UIEvents.NICKNAME_CHANGED, $('#setDisplayName').val());

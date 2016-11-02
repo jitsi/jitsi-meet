@@ -2,6 +2,7 @@
 var UI = {};
 
 import Chat from "./side_pannels/chat/Chat";
+import SidePanels from "./side_pannels/SidePanels";
 import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
 import Avatar from "./avatar/Avatar";
@@ -125,20 +126,13 @@ function promptDisplayName() {
 }
 
 /**
- * Initialize chat.
- */
-function setupChat() {
-    Chat.init(eventEmitter);
-    $("#toggle_smileys").click(function() {
-        Chat.toggleSmileys();
-    });
-}
-
-/**
- * Initialize toolbars.
+ * Initialize toolbars with side panels.
  */
 function setupToolbars() {
+    // Initialize toolbar buttons
     Toolbar.init(eventEmitter);
+    // Initialize side panels
+    SidePanels.init(eventEmitter);
 }
 
 /**
@@ -439,7 +433,6 @@ UI.start = function () {
         }, 100, { leading: true, trailing: false });
         $("#videoconference_page").mousemove(debouncedShowToolbar);
         setupToolbars();
-        setupChat();
 
         // Initialise the recording module.
         if (config.enableRecording)
@@ -482,8 +475,6 @@ UI.start = function () {
             "newestOnTop": false
         };
 
-        SettingsMenu.init(eventEmitter);
-        Profile.init(eventEmitter);
     }
 
     if(APP.tokenData.callee) {

@@ -5,6 +5,63 @@ import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
 import Settings from '../../../settings/Settings';
 
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="settings_container" class="sideToolbarContainer__inner">
+        <div class="title" data-i18n="settings.title"></div>
+        <form class="aui">
+            <div id="languagesSelectWrapper" 
+                class="sideToolbarBlock first hide">
+                <select id="languagesSelect"></select>
+            </div>
+            <div id="deviceOptionsWrapper" class="hide">
+                <div id="deviceOptionsTitle" class="subTitle hide" 
+                    data-i18n="settings.audioVideo"></div>
+                <div class="sideToolbarBlock first">
+                    <label class="first" data-i18n="settings.selectCamera">
+                    </label>
+                    <select id="selectCamera"></select>
+                </div>
+                <div class="sideToolbarBlock">
+                    <label data-i18n="settings.selectMic"></label>
+                    <select id="selectMic"></select>
+                </div>
+                <div class="sideToolbarBlock">
+                    <label data-i18n="settings.selectAudioOutput"></label>
+                    <select id="selectAudioOutput"></select>
+                </div>
+            </div>
+            <div id="moderatorOptionsWrapper" class="hide">
+                <div id="moderatorOptionsTitle" class="subTitle hide" 
+                    data-i18n="settings.moderator"></div>
+                <div id="startMutedOptions" class="hide">
+                    <div class="sideToolbarBlock first">
+                        <input type="checkbox" id="startAudioMuted">
+                        <label class="startMutedLabel" for="startAudioMuted" 
+                            data-i18n="settings.startAudioMuted"></label>
+                    </div>
+                    <div class="sideToolbarBlock">
+                        <input type="checkbox" id="startVideoMuted">
+                        <label class="startMutedLabel" for="startVideoMuted" 
+                            data-i18n="settings.startVideoMuted"></label>
+                    </div>
+                </div>
+                <div id="followMeOptions" class="hide">
+                    <div class="sideToolbarBlock">
+                        <input type="checkbox" id="followMeCheckBox">
+                        <label class="followMeLabel" for="followMeCheckBox" 
+                            data-i18n="settings.followMe"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
+
 /**
  * Generate html select options for available languages.
  *
@@ -79,6 +136,7 @@ function initSelect2($el, onSelectedCb) {
 
 export default {
     init (emitter) {
+        initHTML();
         //LANGUAGES BOX
         if (UIUtil.isSettingEnabled('language')) {
             const wrapperId = 'languagesSelectWrapper';

@@ -10,7 +10,34 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
 
-var unreadMessages = 0;
+let unreadMessages = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="chat_container" class="sideToolbarContainer__inner">
+        <div id="nickname">
+            <span data-i18n="chat.nickname.title"></span>
+            <form>
+                <input type='text' id="nickinput" autofocus 
+                    data-i18n="[placeholder]chat.nickname.popover">
+            </form>
+        </div>
+
+        <div id="chatconversation"></div>
+        <audio id="chatNotification" src="sounds/incomingMessage.wav" 
+            preload="auto"></audio>
+        <textarea id="usermsg" autofocus 
+            data-i18n="[placeholder]chat.messagebox"></textarea>
+        <div id="smileysarea">
+            <div id="smileys" id="toggle_smileys">
+                <img src="images/smile.svg"/>
+            </div>
+        </div>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
  * The container id, which is and the element id.
@@ -137,9 +164,14 @@ var Chat = {
      * Initializes chat related interface.
      */
     init (eventEmitter) {
+        initHTML();
         if (APP.settings.getDisplayName()) {
             Chat.setChatConversationMode(true);
         }
+
+        $("#toggle_smileys").click(function() {
+            Chat.toggleSmileys();
+        });
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
