@@ -54,7 +54,14 @@
     margin-right: auto;
     width: auto;
     border-radius: 3px;
-    overflow: hidden;
+    .button:first-child {
+        border-bottom-left-radius: 3px;
+        border-top-left-radius: 3px;
+    }
+    .button:last-child {
+        border-bottom-right-radius: 3px;
+        border-top-right-radius: 3px;
+    }
 }
 
 #extendedToolbar {
