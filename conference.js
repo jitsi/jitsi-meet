@@ -370,11 +370,6 @@ class ConferenceConnector {
 
         case ConferenceErrors.FOCUS_LEFT:
         case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
-            // Log the page reload event
-            // FIXME (CallStats - issue) this event will not make it to
-            // the CallStats, because the log queue is not flushed, before
-            // "fabric terminated" is sent to the backed
-            APP.conference.logEvent('page.reload');
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
