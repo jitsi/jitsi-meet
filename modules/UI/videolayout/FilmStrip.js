@@ -14,7 +14,6 @@ const FilmStrip = {
         this.iconMenuUpClassName = 'icon-menu-up';
         this.filmStrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
-        this.filmStripIsVisible = true;
         this._initFilmStripToolbar();
         this.registerListeners();
     },
@@ -39,11 +38,12 @@ const FilmStrip = {
      */
     _generateFilmStripToolbar() {
         let container = document.createElement('div');
+        let isVisible = this.isFilmStripVisible();
         container.className = 'filmstripToolbar';
 
         container.innerHTML = `
             <button id="hideVideoToolbar">
-                <i class="icon-menu-${this.filmStripIsVisible ? 'down' : 'up'}">
+                <i class="icon-menu-${isVisible ? 'down' : 'up'}">
                 </i>
             </button>
         `;
@@ -55,17 +55,15 @@ const FilmStrip = {
      * Attach 'click' listener to "hide filmstrip" button
      */
     registerListeners() {
-        $('#videospace').on('click', '#hideVideoToolbar', () => {
+        let toggleFilmstripMethod = this.toggleFilmStrip.bind(this);
+        let selector = '#hideVideoToolbar';
+        $('#videospace').on('click', selector, toggleFilmstripMethod);
 
-            this.filmStripIsVisible = !this.filmStripIsVisible;
-            this.toggleFilmStrip(this.filmStripIsVisible);
-
-            if (this.filmStripIsVisible) {
-                this.showMenuDownIcon();
-            } else {
-                this.showMenuUpIcon();
-            }
-        });
+        let eventEmitter = this.eventEmitter;
+        let event = UIEvents.TOGGLE_FILM_STRIP;
+        if (eventEmitter) {
+            eventEmitter.addListener(event, toggleFilmstripMethod);
+        }
     },
 
     /**
@@ -95,12 +93,20 @@ const FilmStrip = {
      * value.
      */
     toggleFilmStrip(visible) {
-        if (typeof visible === 'boolean'
-            && this.isFilmStripVisible() == visible) {
+        let isVisibleDefined = typeof visible === 'boolean';
+        if (!isVisibleDefined) {
+            visible = this.isFilmStripVisible();
+        } else if (this.isFilmStripVisible() === visible) {
             return;
         }
 
         this.filmStrip.toggleClass("hidden");
+
+        if (!visible) {
+            this.showMenuDownIcon();
+        } else {
+            this.showMenuUpIcon();
+        }
 
         // Emit/fire UIEvents.TOGGLED_FILM_STRIP.
         var eventEmitter = this.eventEmitter;
