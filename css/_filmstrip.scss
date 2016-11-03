@@ -1,16 +1,56 @@
-.filmstrip {
-    &__videos {
-        @include flex();
-        flex-direction: row-reverse;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
+%align-right {
+    @include flex();
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
 
-        position:absolute;
-        text-align:right;
+.filmstrip {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px 10px 17px 5px;
+    @extend %align-right;
+
+    &__toolbar {
+        @include flex();
+        flex-direction: column-reverse;
+        flex-wrap: nowrap;
+        position: relative;
+        z-index: 1;                     // Set z-index to make element visible
+        width: 20px;
+
+        button {
+            font-size: 14px;
+            line-height: 1.2;
+            text-align: center;
+            background: transparent;
+            opacity: 0.7;
+            height: auto;
+            width: 100%;
+            padding: 0;
+            margin: 0 1px;
+            border: none;
+            outline: none;
+
+            -webkit-appearance: none;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            i {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &__videos {
+        @extend %align-right;
+        position:relative;
         height:196px;
-        padding: 10px 10px 17px 5px;
+        padding: 0;
         bottom: 0;
-        right: 0;
         width:auto;
         border: 2px solid transparent;
         z-index: 5;
@@ -69,8 +109,4 @@
             }
         }
     }
-}
-
-.filmstripToolbar + #remoteVideos {
-    padding-right: 24px;
 }

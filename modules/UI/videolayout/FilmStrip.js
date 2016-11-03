@@ -39,7 +39,7 @@ const FilmStrip = {
     _generateFilmStripToolbar() {
         let container = document.createElement('div');
         let isVisible = this.isFilmStripVisible();
-        container.className = 'filmstripToolbar';
+        container.className = 'filmstrip__toolbar';
 
         container.innerHTML = `
             <button id="hideVideoToolbar">
