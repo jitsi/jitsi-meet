@@ -516,7 +516,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     }
 
     $(streamElement).click(onClickHandler);
-},
+};
 
 /**
  * Show/hide peer container for the given id.
@@ -629,7 +629,7 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
 RemoteVideo.createContainer = function (spanId) {
     let container = document.createElement('span');
     container.id = spanId;
-    container.className = 'videocontainer';
+    container.className = 'videocontainer videocontainer_remote';
 
     let wrapper = document.createElement('div');
     wrapper.className = 'videocontainer__background';
