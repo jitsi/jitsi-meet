@@ -819,23 +819,14 @@ UI.emitEvent = function (type, options) {
 };
 
 UI.clickOnVideo = function (videoNumber) {
-    let videos = $("#remoteVideos .videocontainer:not(#mixedstream)").toArray();
+    let videos = $("#remoteVideos .videocontainer:not(#mixedstream)");
+    let videosLength = videos.length;
 
-    // Separate remotes from local videocontainer and reverse order of
-    // remote ones
-    let videosMap = videos.reduce((videoObj, video) => {
-              if(video.id === 'localVideoContainer') {
-                  videoObj.local = video;
-              } else {
-                  videoObj.remote.unshift(video);
-              }
-              return videoObj;
-          }, { local: null, remote: [] });
-
-    let sortedVideos = [videosMap.local, ...videosMap.remote];
-    if (sortedVideos.length > videoNumber) {
-        $(sortedVideos[videoNumber]).click();
+    if(videosLength <= videoNumber) {
+        return;
     }
+    let videoIndex = videoNumber === 0 ? 0 : videosLength - videoNumber;
+    videos[videoIndex].click();
 };
 
 //Used by torture
