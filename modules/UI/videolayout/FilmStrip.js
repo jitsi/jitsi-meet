@@ -117,6 +117,10 @@ const FilmStrip = {
         }
     },
 
+    /**
+     * Shows if filmstrip is visible
+     * @returns {boolean}
+     */
     isFilmStripVisible() {
         return !this.filmStrip.hasClass('hidden');
     },
@@ -128,6 +132,10 @@ const FilmStrip = {
         });
     },
 
+    /**
+     * Returns the height of filmstrip
+     * @returns {number} height
+     */
     getFilmStripHeight() {
         if (this.isFilmStripVisible()) {
             return this.filmStrip.outerHeight();
@@ -136,12 +144,20 @@ const FilmStrip = {
         }
     },
 
+    /**
+     * Returns the width of filmstip
+     * @returns {number} width
+     */
     getFilmStripWidth() {
         return this.filmStrip.innerWidth()
             - parseInt(this.filmStrip.css('paddingLeft'), 10)
             - parseInt(this.filmStrip.css('paddingRight'), 10);
     },
 
+    /**
+     * Calculates the size for thumbnails: local and remote one
+     * @returns {*|{localVideo, remoteVideo}}
+     */
     calculateThumbnailSize() {
         let availableSizes = this.calculateAvailableSize();
         let width = availableSizes.availableWidth;
@@ -184,6 +200,11 @@ const FilmStrip = {
         return { localRatio, remoteRatio };
     },
 
+    /**
+     * Calculates available size for one thumbnail according to
+     * the current window size
+     * @returns {{availableWidth: number, availableHeight: number}}
+     */
     calculateAvailableSize() {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let thumbs = this.getThumbs(true);
@@ -259,6 +280,13 @@ const FilmStrip = {
         return { availableWidth, availableHeight };
     },
 
+    /**
+     * Takes the available size for thumbnail and calculates
+     * final size of thumbnails
+     * @param availableWidth
+     * @param availableHeight
+     * @returns {{localVideo, remoteVideo}}
+     */
     calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
         let { localRatio, remoteRatio } = this.normalizeThumbnailRatio();
         let { remoteThumbs } = this.getThumbs(true);
@@ -289,6 +317,14 @@ const FilmStrip = {
         };
     },
 
+    /**
+     * Resizes thumbnails
+     * @param local
+     * @param remote
+     * @param animate
+     * @param forceUpdate
+     * @returns {Promise}
+     */
     resizeThumbnails(local, remote,
                       animate = false, forceUpdate = false) {
 
@@ -327,6 +363,11 @@ const FilmStrip = {
         });
     },
 
+    /**
+     * Returns thumbnails of the filmstrip
+     * @param only_visible
+     * @returns {object} thumbnails
+     */
     getThumbs(only_visible = false) {
         let selector = 'span';
         if (only_visible) {
