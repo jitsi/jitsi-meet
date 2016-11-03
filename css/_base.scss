@@ -1,0 +1,203 @@
+* {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body{
+    margin:0px;
+    height:100%;
+    color: $defaultColor;
+    font-size: 12px;
+    font-weight: 400;
+    background: #000000;
+    overflow: hidden;
+}
+
+p {
+    margin: 0;
+}
+
+html, body, input, textarea, keygen, select, button {
+    font-family: $baseFontFamily !important;
+}
+
+#nowebrtc {
+    display:none;
+}
+
+.no-fa-video-camera, .fa-microphone-slash {
+    color: #636363;
+}
+
+input[type='text'], input[type='password'], textarea {
+    display: inline-block;
+    width: 100%;
+    padding: 5px 7px;
+    color: $inputColor;
+    border-radius: $borderRadius;
+    line-height: 32px;
+    height: 32px;
+    text-align: left;
+    border:1px solid $inputBorderColor;
+    background-color: $inputBackground;
+    outline: none; /* removes the default outline */
+    resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
+@include placeholder {
+    color: $placeHolderColor;
+}
+
+textarea {
+    overflow: hidden;
+    word-wrap: break-word;
+    resize: none;
+    line-height: 1.5em;
+}
+
+button.no-icon {
+    padding: 0 1em;
+}
+
+button, input, select, textarea {
+    margin: 0;
+    vertical-align: baseline;
+    color: $inputColor;
+    font-size: 1em;
+}
+
+button, select, input[type="button"],
+input[type="reset"], input[type="submit"] {
+    height: 32px;
+    line-height: 32px;
+    padding-left: 4px;
+    padding-right: 4px;
+    cursor: pointer;
+}
+
+button {
+    color: #FFF;
+    background-color: $buttonBackground;
+    border-radius: $borderRadius;
+}
+
+button,
+form {
+    display: block;
+}
+
+.watermark {
+    display: block;
+    position: absolute;
+    top: 15;
+    width: 186px;
+    height: 74px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 2;
+}
+
+.leftwatermark {
+    display: none;
+    left: $defaultToolbarSize;
+    margin-left: 10px;
+    background-image: url($defaultWatermarkLink);
+    background-position: center left;
+}
+
+.rightwatermark {
+    display: none;
+    right: 15;
+    background-position: center right;
+}
+
+.poweredby {
+    display: none;
+    position: absolute;
+    left: 25;
+    bottom: 7;
+    font-size: 11pt;
+    color: rgba(255,255,255,.50);
+    text-decoration: none;
+    z-index: 100;
+}
+
+.connected {
+    color: #21B9FC;
+    font-size: 12px;
+}
+
+.lastN, .disconnected {
+    color: #a3a3a3;
+    font-size: 12px;
+}
+
+/**
+ * Hides an element.
+ */
+.hide {
+    display: none !important;
+}
+
+/**
+ * Shows an element.
+ */
+.show {
+    display: block !important;
+}
+
+/**
+ * Shows an inline element.
+ */
+.show-inline {
+    display: inline-block !important;
+}
+
+/**
+ * Shows a flex element.
+ */
+.show-flex {
+    display: -webkit-box !important;
+    display: -moz-box !important;
+    display: -ms-flexbox !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+}
+
+/**
+* Tooltips
+**/
+.tipsy {
+    z-index: $tooltipsZ;
+    &-inner {
+        background-color: $tooltipBg;
+    }
+
+    &-arrow {
+        border-color: $tooltipBg;
+    }
+}
+
+/**
+* Dialogs fade
+*/
+.aui-blanket {
+    visibility: visible;
+}
+
+.link {
+    cursor: pointer;
+    color: $linkFontColor;
+    @include transition(color .1s ease-out);
+
+    &:hover {
+        color: $linkHoverFontColor;
+        text-decoration: underline;
+        @include transition(color .1s ease-in);
+    }
+}
+
+#inviteLinkRef {
+    -webkit-user-select: text;
+    user-select: text;
+}

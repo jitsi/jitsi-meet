@@ -1,9 +1,10 @@
-var Smileys = require("./smileys.json");
+/* jshint -W101 */
+import { regexes } from './smileys';
+
 /**
  * Processes links and smileys in "body"
  */
-function processReplacements(body)
-{
+export function processReplacements(body) {
     //make links clickable
     body = linkify(body);
 
@@ -17,8 +18,7 @@ function processReplacements(body)
  * Finds and replaces all links in the links in "body"
  * with their <a href=""></a>
  */
-function linkify(inputText)
-{
+export function linkify(inputText) {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;
 
     //URLs starting with http://, https://, or ftp://
@@ -29,7 +29,7 @@ function linkify(inputText)
     replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
 
-    //Change email addresses to mailto:: links.
+    //Change email addresses to mailto: links.
     replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
     replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
 
@@ -39,24 +39,17 @@ function linkify(inputText)
 /**
  * Replaces common smiley strings with images
  */
-function smilify(body)
-{
+function smilify(body) {
     if(!body) {
         return body;
     }
 
-    var regexs = Smileys["regexs"];
-    for(var smiley in regexs) {
-        if(regexs.hasOwnProperty(smiley)) {
-            body = body.replace(regexs[smiley],
+    for(var smiley in regexes) {
+        if(regexes.hasOwnProperty(smiley)) {
+            body = body.replace(regexes[smiley],
                     '<img class="smiley" src="images/smileys/' + smiley + '.svg">');
         }
     }
 
     return body;
 }
-
-module.exports = {
-    processReplacements: processReplacements,
-    linkify: linkify
-};

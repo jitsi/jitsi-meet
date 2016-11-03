@@ -20,7 +20,7 @@ Add the following properties to <code>/usr/share/jitsi-videobridge/.sip-communic
 - org.jitsi.videobridge.log.INFLUX_PASS=pass
 
 ## Enable logging for Jicofo
-Add the same properties as above to <code>/usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties</code>.
+Add the same properties as above to <code>/usr/share/jicofo/.sip-communicator/sip-communicator.properties</code>.
 
 ## Enable logging for Jitsi Meet itself
 Change "logStats" to "true" in <code>/etc/jitsi/meet/you-domain.config.js</code> or the <code>config.js</code> file used in your installation.

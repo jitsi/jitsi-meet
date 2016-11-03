@@ -1,0 +1,146 @@
+/**
+ * Toolbar side panel main container element.
+ */
+#sideToolbarContainer {
+    background-color: rgba(0,0,0,0.8);
+    height: 100%;
+    left: $defaultToolbarSize;
+    max-width: $sidebarWidth;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 800;
+
+    /**
+     * Labels inside the side panel.
+     */
+    label {
+        color: $defaultColor;
+    }
+
+    /**
+     * Form elements and blocks.
+     */
+    input, select, a,
+    .sideToolbarBlock, .input-control, .button-control {
+        display: block;
+        margin-top: 15px;
+        margin-left: 10%;
+        width: 80%;
+    }
+
+    /**
+     * Specify colors for edit elements.
+     */
+    select, input[type="button"], input[type="text"], input[type="reset"],
+    input[type="submit"] {
+        color: $inputColor;
+        background: $inputBackground;
+        border: none;
+    }
+
+    /**
+     * Specify styling of elements inside a block.
+     */
+    .sideToolbarBlock {
+        input, button, a, select {
+            margin-left: 0;
+            margin-top: 5px;
+            width: 100%;
+        }
+        input[type='checkbox'] {
+            display: inline;
+            width: auto !important;
+            > label {
+                margin-top: 5px;
+                width: 80%;
+            }
+        }
+    }
+
+    /**
+     * Inner container, for example contact list, settings or profile.
+     */
+    .sideToolbarContainer__inner {
+        display: none;
+        height: 100%;
+        width: $sidebarWidth;
+        position: absolute;
+        box-sizing: border-box;
+        color: #FFF;
+
+        /**
+         * Titles and subtitles of inner containers.
+         */
+        div.title, div.subTitle {
+            margin: 10px 0;
+        }
+
+        /**
+         * Main title size.
+         */
+        div.title {
+            color: $defaultColor !important;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /**
+         * Subtitle specific properties.
+         */
+        div.subTitle {
+            color: $defaultSideBarFontColor !important;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 10%;
+            text-align: left;
+        }
+
+        /**
+         * First element after a title.
+         */
+        .first {
+            margin-top: 0 !important;
+        }
+
+        /**
+         * Buttons in the side toolbar container.
+         */
+        .button-control {
+            margin: 9px 0;
+            width: 100%;
+        }
+    }
+}
+
+#device_settings {
+    width : auto !important;
+    text-align: center;
+}
+
+/**
+ * Profile
+ */
+.auth_container {
+    ul {
+        padding: 0;
+
+        li {
+            list-style-type: none;
+
+            a.authButton {
+                width: 160px;
+                margin: 10px 20px;
+                padding: 3px 29px;
+                box-sizing: border-box;
+                background-color: #06a5df;
+                border-radius: 4px;
+                cursor: pointer;
+                color: $defaultColor;
+                text-decoration: none;
+                text-align: center;
+            }
+        }
+    }
+}

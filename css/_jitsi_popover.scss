@@ -1,0 +1,48 @@
+.jitsipopover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1010;
+    display: none;
+    max-width: 300px;
+    min-width: 100px;
+    text-align: left;
+    color: $popoverFontColor;
+    background-color: $popoverBg;
+    background-clip: padding-box;
+    border-radius: 3px;
+    /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
+    /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
+    white-space: normal;
+    margin-top: -10px;
+    margin-bottom: 35px;
+
+    &__menu-padding {
+        height: 35px;
+        width: 100px;
+        position: absolute;
+        bottom: -35px;
+    }
+
+    &__showmore {
+        display: block;
+        text-align: center;
+        width: 90px;
+        margin: 10px auto;
+    }
+
+    > .arrow {
+        position: absolute;
+        display: block;
+        left: 50%;
+        bottom: -5px;
+        margin-left: -5px;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-top-color: $popoverBg;
+        border-style: solid;
+        border-width: 5px;
+        border-bottom-width: 0;
+    }
+}

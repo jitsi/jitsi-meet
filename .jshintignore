@@ -1,6 +1,6 @@
-node_modules
-libs
-replacement.js
-prezi.js
-muc.js
-app.js
+debian/
+libs/
+node_modules/
+react/
+analytics.js
+webpack.config.babel.js

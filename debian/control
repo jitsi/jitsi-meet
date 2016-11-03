@@ -3,33 +3,38 @@ Section: net
 Priority: extra
 Maintainer: Jitsi Team <dev@jitsi.org>
 Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
-Build-Depends: debhelper (>= 8.0.0), libjs-strophe (>= 1.1.3), yui-compressor,
- libjs-jquery, libjs-jquery-ui
+Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.6
 Homepage: https://jitsi.org/meet
 
 Package: jitsi-meet
 Architecture: all
-Pre-Depends: jitsi-videobridge
-Depends: ${misc:Depends}, nginx, jitsi-meet-prosody, libjs-strophe (>= 1.1.3),
- libjs-jquery, libjs-jquery-ui
+Depends: ${misc:Depends}, jitsi-videobridge, jitsi-meet-prosody,
+ openjdk-8-jre-headless | nginx
 Description: WebRTC JavaScript video conferences
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with nginx
+ forwarding and relaying, configured to work with jetty instance
+ running embedded into Jitsi Videobridge
 
 Package: jitsi-meet-prosody
 Architecture: all
-Pre-Depends: openssl, prosody | prosody-trunk, jitsi-videobridge
-Depends: ${misc:Depends}, jicofo
+Depends: ${misc:Depends}, openssl, prosody | prosody-trunk, jitsi-videobridge, jicofo
 Description: Prosody configuration for Jitsi Meet
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with nginx
+ forwarding and relaying, configured to work with jetty instance
+ running embedded into Jitsi Videobridge
  .
  This package contains configuration for Prosody to be used with
  Jitsi Meet.
+
+Package: jitsi-meet-tokens
+Architecture: all
+Depends: ${misc:Depends}, prosody-trunk (>= 1nightly607), libssl-dev, luarocks, jitsi-meet-prosody
+Description: Prosody token authentication plugin for Jitsi Meet
+

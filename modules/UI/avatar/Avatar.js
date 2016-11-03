@@ -1,155 +1,114 @@
-var Settings = require("../../settings/Settings");
-var MediaStreamType = require("../../../service/RTC/MediaStreamTypes");
+/* global MD5, config, interfaceConfig, APP */
 
-var users = {};
-var activeSpeakerJid;
+let users = {};
 
-function setVisibility(selector, show) {
-    if (selector && selector.length > 0) {
-        selector.css("visibility", show ? "visible" : "hidden");
-    }
-}
-
-function isUserMuted(jid) {
-    // XXX(gp) we may want to rename this method to something like
-    // isUserStreaming, for example.
-    if (jid && jid != APP.xmpp.myJid()) {
-        var resource = Strophe.getResourceFromJid(jid);
-        if (!require("../videolayout/VideoLayout").isInLastN(resource)) {
-            return true;
+export default {
+    /**
+     * Sets prop in users object.
+     * @param id {string} user id
+     * @param prop {string} name of the prop
+     * @param val {string} value to be set
+     */
+    _setUserProp: function (id, prop, val) {
+        // FIXME: Fixes the issue with not be able to return avatar for the
+        // local user when the conference has been left. Maybe there is beter
+        // way to solve it.
+        if(APP.conference.isLocalId(id)) {
+            id = "local";
         }
-    }
-
-    if (!APP.RTC.remoteStreams[jid] || !APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE]) {
-        return null;
-    }
-    return APP.RTC.remoteStreams[jid][MediaStreamType.VIDEO_TYPE].muted;
-}
-
-function getGravatarUrl(id, size) {
-    if(id === APP.xmpp.myJid() || !id) {
-        id = Settings.getSettings().uid;
-    }
-    return 'https://www.gravatar.com/avatar/' +
-        MD5.hexdigest(id.trim().toLowerCase()) +
-        "?d=wavatar&size=" + (size || "30");
-}
-
-var Avatar = {
+        if(!val || (users[id] && users[id][prop] === val))
+            return;
+        if(!users[id])
+            users[id] = {};
+        users[id][prop] = val;
+    },
 
     /**
      * Sets the user's avatar in the settings menu(if local user), contact list
      * and thumbnail
-     * @param jid jid of the user
-     * @param id email or userID to be used as a hash
+     * @param id id of the user
+     * @param email email or nickname to be used as a hash
      */
-    setUserAvatar: function (jid, id) {
-        if (id) {
-            if (users[jid] === id) {
-                return;
-            }
-            users[jid] = id;
-        }
-        var thumbUrl = getGravatarUrl(users[jid] || jid, 100);
-        var contactListUrl = getGravatarUrl(users[jid] || jid);
-        var resourceJid = Strophe.getResourceFromJid(jid);
-        var thumbnail = $('#participant_' + resourceJid);
-        var avatar = $('#avatar_' + resourceJid);
-
-        // set the avatar in the settings menu if it is local user and get the
-        // local video container
-        if (jid === APP.xmpp.myJid()) {
-            $('#avatar').get(0).src = thumbUrl;
-            thumbnail = $('#localVideoContainer');
-        }
-
-        // set the avatar in the contact list
-        var contact = $('#' + resourceJid + '>img');
-        if (contact && contact.length > 0) {
-            contact.get(0).src = contactListUrl;
-        }
-
-        // set the avatar in the thumbnail
-        if (avatar && avatar.length > 0) {
-            avatar[0].src = thumbUrl;
-        } else {
-            if (thumbnail && thumbnail.length > 0) {
-                avatar = document.createElement('img');
-                avatar.id = 'avatar_' + resourceJid;
-                avatar.className = 'userAvatar';
-                avatar.src = thumbUrl;
-                thumbnail.append(avatar);
-            }
-        }
-
-        //if the user is the current active speaker - update the active speaker
-        // avatar
-        if (jid === activeSpeakerJid) {
-            this.updateActiveSpeakerAvatarSrc(jid);
-        }
+    setUserEmail: function (id, email) {
+        this._setUserProp(id, "email", email);
     },
 
     /**
-     * Hides or shows the user's avatar
-     * @param jid jid of the user
-     * @param show whether we should show the avatar or not
-     * video because there is no dominant speaker and no focused speaker
+     * Sets the user's avatar in the settings menu(if local user), contact list
+     * and thumbnail
+     * @param id id of the user
+     * @param url the url for the avatar
      */
-    showUserAvatar: function (jid, show) {
-        if (users[jid]) {
-            var resourceJid = Strophe.getResourceFromJid(jid);
-            var video = $('#participant_' + resourceJid + '>video');
-            var avatar = $('#avatar_' + resourceJid);
-
-            if (jid === APP.xmpp.myJid()) {
-                video = $('#localVideoWrapper>video');
-            }
-            if (show === undefined || show === null) {
-                show = isUserMuted(jid);
-            }
-
-            //if the user is the currently focused, the dominant speaker or if
-            //there is no focused and no dominant speaker and the large video is
-            //currently shown
-            if (activeSpeakerJid === jid && require("../videolayout/VideoLayout").isLargeVideoOnTop()) {
-                setVisibility($("#largeVideo"), !show);
-                setVisibility($('#activeSpeaker'), show);
-                setVisibility(avatar, false);
-                setVisibility(video, false);
-            } else {
-                if (video && video.length > 0) {
-                    setVisibility(video, !show);
-                    setVisibility(avatar, show);
-                }
-            }
-        }
+    setUserAvatarUrl: function (id, url) {
+        this._setUserProp(id, "url", url);
     },
 
     /**
-     * Updates the src of the active speaker avatar
-     * @param jid of the current active speaker
+     * Sets the user's avatar id.
+     * @param id id of the user
+     * @param avatarId an id to be used for the avatar
      */
-    updateActiveSpeakerAvatarSrc: function (jid) {
-        if (!jid) {
-            jid = APP.xmpp.findJidFromResource(
-                require("../videolayout/VideoLayout").getLargeVideoState().userResourceJid);
+    setUserAvatarID: function (id, avatarId) {
+        this._setUserProp(id, "avatarId", avatarId);
+    },
+
+    /**
+     * Returns the URL of the image for the avatar of a particular user,
+     * identified by its id.
+     * @param {string} userId user id
+     */
+    getAvatarUrl: function (userId) {
+        if (config.disableThirdPartyRequests) {
+            return 'images/avatar2.png';
         }
-        var avatar = $("#activeSpeakerAvatar")[0];
-        var url = getGravatarUrl(users[jid],
-            interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE);
-        if (jid === activeSpeakerJid && avatar.src === url) {
-            return;
+
+        if (!userId || APP.conference.isLocalId(userId)) {
+            userId = "local";
         }
-        activeSpeakerJid = jid;
-        var isMuted = isUserMuted(jid);
-        if (jid && isMuted !== null) {
-            avatar.src = url;
-            setVisibility($("#largeVideo"), !isMuted);
-            Avatar.showUserAvatar(jid, isMuted);
+
+        let avatarId = null;
+        const user = users[userId];
+
+        // The priority is url, email and lowest is avatarId
+        if(user) {
+            if(user.url)
+                return user.url;
+
+            if (user.email)
+                avatarId = user.email;
+            else {
+                avatarId = user.avatarId;
+            }
         }
+
+        // If the ID looks like an email, we'll use gravatar.
+        // Otherwise, it's a random avatar, and we'll use the configured
+        // URL.
+        let random = !avatarId || avatarId.indexOf('@') < 0;
+
+        if (!avatarId) {
+            console.warn(
+                `No avatar stored yet for ${userId} - using ID as avatar ID`);
+            avatarId = userId;
+        }
+        avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());
+
+
+        let urlPref = null;
+        let urlSuf = null;
+        if (!random) {
+            urlPref = 'https://www.gravatar.com/avatar/';
+            urlSuf = "?d=wavatar&size=200";
+        }
+        else if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
+            urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
+            urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
+        }
+        else {
+            urlPref = 'https://robohash.org/';
+            urlSuf = ".png?size=200x200";
+        }
+
+        return urlPref + avatarId + urlSuf;
     }
-
 };
-
-
-module.exports = Avatar;

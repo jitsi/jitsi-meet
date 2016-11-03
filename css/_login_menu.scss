@@ -1,0 +1,58 @@
+/*Initialize*/
+ul.loginmenu {
+    font-family: $baseFontFamily;
+    line-height: normal;
+    display:none;
+    position: absolute;
+    margin: 0;
+    padding: 5px;
+    padding-bottom: 7px;
+    top: 45px;
+    left: -5px;
+    background-color: rgba(0,0,0,0.9);
+    border: 1px solid rgba(256, 256, 256, 0.2);
+    border-radius:8px;
+}
+
+ul.loginmenu li {
+    list-style-type: none;
+    padding: 7px;
+    color: #fff;
+    font-size: 11pt;
+    cursor: default;
+    white-space: pre;
+}
+
+ul.loginmenu:after {
+    content: url('../images/dropdownPointer.png');
+    display: block;
+    position: absolute;
+    top: -7px;
+    left: 18px;
+}
+
+a.disabled {
+    color: gray !important;
+    pointer-events: none;
+}
+
+.loginmenuPadding {
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    top: -30px;
+    left: 0px;
+}
+
+.loginmenu.extendedToolbarPopup {
+    left: 55px;
+    top: 0px;
+}
+
+ul.loginmenu.extendedToolbarPopup:after {
+    content: url('../images/leftDropdownPointer.png');
+    display: block;
+    position: absolute;
+    top: 18px;
+    left: -7px;
+}

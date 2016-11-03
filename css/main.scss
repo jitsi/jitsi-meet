@@ -1,0 +1,67 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
+/* Variables BEGIN */
+
+@import 'variables';
+
+/* Variables END */
+
+/* Mixins BEGIN */
+
+@import "mixins";
+
+/* Mixins END */
+
+/* Animations BEGIN */
+
+@import "animations";
+
+/* Animations END */
+
+/* Fonts BEGIN */
+
+@import 'font';
+@import 'font-awesome';
+
+/* Fonts END */
+
+/* Modules BEGIN */
+
+@import 'toastr';
+@import 'base';
+@import 'overlay/overlay';
+@import 'inlay';
+@import 'reload_overlay/reload_overlay';
+@import 'modals/dialog';
+@import 'modals/feedback/feedback';
+@import 'videolayout_default';
+@import 'notice';
+@import 'popup_menu';
+@import 'recording';
+@import 'login_menu';
+@import 'popover';
+@import 'jitsi_popover';
+@import 'contact_list';
+@import 'chat';
+@import 'ringing/ringing';
+@import 'welcome_page';
+@import 'toolbars';
+@import 'side_toolbar_container';
+@import 'device_settings_dialog';
+@import 'jquery.contextMenu';
+@import 'keyboard-shortcuts';
+@import 'redirect_page';
+@import 'input-control/input-control';
+@import 'shortcuts/main';
+@import 'buttons/button-control';
+@import "modals/invite/invite";
+@import "connection-info";
+@import 'aui-components/dropdown';
+@import '404';
+@import 'policy';
+
+/* Modules END */

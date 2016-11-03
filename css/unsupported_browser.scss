@@ -1,0 +1,138 @@
+@import 'variables';
+
+body {
+    width:100%;
+    height:100%;
+    background-color: white;
+    color: #424242;
+    font-family: $baseFontFamily;
+    font-size: 28px;
+    margin:0;
+    padding:0;
+}
+#wrap{
+    display: block;
+    position: absolute;
+    width:500px;
+    height: 565px;
+    overflow:hidden;
+    text-align: center;
+    margin: auto;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+.firefox{
+    font-size: 11pt;
+    color: #c8c8c8;
+    width: 468px;
+    text-align: center;
+    margin: 30px auto 0px auto;
+    padding-left: 15px;
+}
+#text{
+    display:inline-block;
+    font-size: 28px;
+    /* width: 568px; */
+    vertical-align:middle;
+    padding-top: 25px;
+}
+
+a {
+    color: #087dba;
+    text-decoration:none;
+}
+
+.browser {
+    width: 138px;
+    height: 163px;
+    margin-top: 5px;
+    background-color: #e8e8e8;
+    border: 1px solid #cfcfcf;
+    border-radius: 10px;
+}
+
+.browser_wrapper
+{
+    width: 138px;
+    /* height: 188px; */
+    vertical-align: middle;
+    color: #929391;
+    font-size: 20px;
+    float: left;
+    margin-left: 15px;
+    margin-top: 5px;
+}
+
+.browser_text
+{
+    height: 2em;
+}
+.supported_browsers
+{
+    margin: 0px auto 0px auto;
+    /* width: 660px; */
+}
+
+.clear
+{
+    clear: both;
+}
+
+.button
+{
+    background-color: #62c82a;
+    border: 1px solid #3c8117;
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 12px;
+    text-align: center;
+    width: 115px;
+    height: 26px;
+    padding-top: 13px;
+    margin: 15px auto 0px auto;
+}
+
+.logo
+{
+    margin: 20px auto 0px auto;
+}
+
+#chrome_logo
+{
+    width: 78px;
+    height: 78px;
+    background-image: url('../images/chrome.png');
+}
+#chromium_logo
+{
+    width: 77px;
+    height: 78px;
+    background-image: url('../images/chromium.png');
+}
+#firefox_logo
+{
+    width: 86px;
+    height: 80px;
+    background-image: url('../images/firefox.png');
+}
+
+#opera_logo
+{
+    width: 73px;
+    height: 78px;
+    background-image: url('../images/opera.png');
+}
+
+#safari_logo
+{
+    width: 78px;
+    height: 79px;
+    background-image: url('../images/safari.png');
+}
+
+#ie_logo
+{
+    width: 80px;
+    height: 78px;
+    background-image: url('../images/ie.png');
+}
+

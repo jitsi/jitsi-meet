@@ -1,83 +1,77 @@
-/* global $, Util, nickname:true */
-var Replacement = require("./Replacement");
-var CommandsProcessor = require("./Commands");
-var ToolbarToggler = require("../../toolbars/ToolbarToggler");
-var smileys = require("./smileys.json").smileys;
-var NicknameHandler = require("../../util/NicknameHandler");
-var UIUtil = require("../../util/UIUtil");
-var UIEvents = require("../../../../service/UI/UIEvents");
+/* global APP, $ */
 
-var notificationInterval = false;
-var unreadMessages = 0;
+import {processReplacements, linkify} from './Replacement';
+import CommandsProcessor from './Commands';
+import ToolbarToggler from '../../toolbars/ToolbarToggler';
+import VideoLayout from "../../videolayout/VideoLayout";
 
+import UIUtil from '../../util/UIUtil';
+import UIEvents from '../../../../service/UI/UIEvents';
+
+import { smileys } from './smileys';
+
+let unreadMessages = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="chat_container" class="sideToolbarContainer__inner">
+        <div id="nickname">
+            <span data-i18n="chat.nickname.title"></span>
+            <form>
+                <input type='text' id="nickinput" autofocus 
+                    data-i18n="[placeholder]chat.nickname.popover">
+            </form>
+        </div>
+
+        <div id="chatconversation"></div>
+        <audio id="chatNotification" src="sounds/incomingMessage.wav" 
+            preload="auto"></audio>
+        <textarea id="usermsg" autofocus 
+            data-i18n="[placeholder]chat.messagebox"></textarea>
+        <div id="smileysarea">
+            <div id="smileys" id="toggle_smileys">
+                <img src="images/smile.svg"/>
+            </div>
+        </div>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
- * Shows/hides a visual notification, indicating that a message has arrived.
+ * The container id, which is and the element id.
  */
-function setVisualNotification(show) {
-    var unreadMsgElement = document.getElementById('unreadMessages');
-    var unreadMsgBottomElement
-        = document.getElementById('bottomUnreadMessages');
+var CHAT_CONTAINER_ID = "chat_container";
 
-    var glower = $('#chatButton');
-    var bottomGlower = $('#chatBottomButton');
+/**
+ *  Updates visual notification, indicating that a message has arrived.
+ */
+function updateVisualNotification() {
+    var unreadMsgElement = document.getElementById('unreadMessages');
 
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
-        unreadMsgBottomElement.innerHTML = unreadMessages.toString();
 
         ToolbarToggler.dockToolbar(true);
 
         var chatButtonElement
-            = document.getElementById('chatButton').parentNode;
+            = document.getElementById('toolbar_button_chat');
         var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
             UIUtil.getTextWidth(unreadMsgElement)) / 2;
         var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
-            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 3;
+            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 5;
 
         unreadMsgElement.setAttribute(
             'style',
                 'top:' + topIndent +
                 '; left:' + leftIndent + ';');
-
-        var chatBottomButtonElement
-            = document.getElementById('chatBottomButton').parentNode;
-        var bottomLeftIndent = (UIUtil.getTextWidth(chatBottomButtonElement) -
-            UIUtil.getTextWidth(unreadMsgBottomElement)) / 2;
-        var bottomTopIndent = (UIUtil.getTextHeight(chatBottomButtonElement) -
-            UIUtil.getTextHeight(unreadMsgBottomElement)) / 2 - 2;
-
-        unreadMsgBottomElement.setAttribute(
-            'style',
-                'top:' + bottomTopIndent +
-                '; left:' + bottomLeftIndent + ';');
-
-
-        if (!glower.hasClass('icon-chat-simple')) {
-            glower.removeClass('icon-chat');
-            glower.addClass('icon-chat-simple');
-        }
     }
     else {
         unreadMsgElement.innerHTML = '';
-        unreadMsgBottomElement.innerHTML = '';
-        glower.removeClass('icon-chat-simple');
-        glower.addClass('icon-chat');
     }
 
-    if (show && !notificationInterval) {
-        notificationInterval = window.setInterval(function () {
-            glower.toggleClass('active');
-            bottomGlower.toggleClass('active glowing');
-        }, 800);
-    }
-    else if (!show && notificationInterval) {
-        window.clearInterval(notificationInterval);
-        notificationInterval = false;
-        glower.removeClass('active');
-        bottomGlower.removeClass('glowing');
-        bottomGlower.addClass('active');
-    }
+    $(unreadMsgElement).parent()[unreadMessages > 0 ? 'show' : 'hide']();
 }
 
 
@@ -85,8 +79,8 @@ function setVisualNotification(show) {
  * Returns the current time in the format it is shown to the user
  * @returns {string}
  */
-function getCurrentTime() {
-    var now     = new Date();
+function getCurrentTime(stamp) {
+    var now     = (stamp? new Date(stamp): new Date());
     var hour    = now.getHours();
     var minute  = now.getMinutes();
     var second  = now.getSeconds();
@@ -102,8 +96,7 @@ function getCurrentTime() {
     return hour+':'+minute+':'+second;
 }
 
-function toggleSmileys()
-{
+function toggleSmileys() {
     var smileys = $('#smileysContainer');
     if(!smileys.is(':visible')) {
         smileys.show("slide", { direction: "down", duration: 300});
@@ -143,7 +136,7 @@ function addSmileys() {
         smileysContainer.appendChild(smileyContainer);
     }
 
-    $("#chatspace").append(smileysContainer);
+    $("#chat_container").append(smileysContainer);
 }
 
 /**
@@ -151,7 +144,7 @@ function addSmileys() {
  */
 function resizeChatConversation() {
     var msgareaHeight = $('#usermsg').outerHeight();
-    var chatspace = $('#chatspace');
+    var chatspace = $('#' + CHAT_CONTAINER_ID);
     var width = chatspace.width();
     var chat = $('#chatconversation');
     var smileys = $('#smileysarea');
@@ -166,46 +159,42 @@ function resizeChatConversation() {
 /**
  * Chat related user interface.
  */
-var Chat = (function (my) {
+var Chat = {
     /**
      * Initializes chat related interface.
      */
-    my.init = function () {
-        if(NicknameHandler.getNickname())
+    init (eventEmitter) {
+        initHTML();
+        if (APP.settings.getDisplayName()) {
             Chat.setChatConversationMode(true);
-        NicknameHandler.addListener(UIEvents.NICKNAME_CHANGED,
-            function (nickname) {
-                Chat.setChatConversationMode(true);
-            });
+        }
+
+        $("#toggle_smileys").click(function() {
+            Chat.toggleSmileys();
+        });
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var val = UIUtil.escapeHtml(this.value);
+                let val = this.value;
                 this.value = '';
-                if (!NicknameHandler.getNickname()) {
-                    NicknameHandler.setNickname(val);
-
-                    return;
-                }
+                eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
             }
         });
 
-        $('#usermsg').keydown(function (event) {
+        var usermsg = $('#usermsg');
+        usermsg.keydown(function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 var value = this.value;
-                $('#usermsg').val('').trigger('autosize.resize');
+                usermsg.val('').trigger('autosize.resize');
                 this.focus();
-                var command = new CommandsProcessor(value);
-                if(command.isCommand())
-                {
+                var command = new CommandsProcessor(value, eventEmitter);
+                if (command.isCommand()) {
                     command.processCommand();
-                }
-                else
-                {
+                } else {
                     var message = UIUtil.escapeHtml(value);
-                    APP.xmpp.sendChatMessage(message, NicknameHandler.getNickname());
+                    eventEmitter.emit(UIEvents.MESSAGE_CREATED, message);
                 }
             }
         });
@@ -214,33 +203,49 @@ var Chat = (function (my) {
             resizeChatConversation();
             Chat.scrollChatToBottom();
         };
-        $('#usermsg').autosize({callback: onTextAreaResize});
+        usermsg.autosize({callback: onTextAreaResize});
 
-        $("#chatspace").bind("shown",
-            function () {
+        eventEmitter.on(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            function(containerId, isVisible) {
+                if (containerId !== CHAT_CONTAINER_ID || !isVisible)
+                    return;
+
                 unreadMessages = 0;
-                setVisualNotification(false);
+                updateVisualNotification();
+
+                // Undock the toolbar when the chat is shown and if we're in a
+                // video mode.
+                if (VideoLayout.isLargeVideoVisible()) {
+                    ToolbarToggler.dockToolbar(false);
+                }
+
+                // if we are in conversation mode focus on the text input
+                // if we are not, focus on the display name input
+                if (APP.settings.getDisplayName())
+                    $('#usermsg').focus();
+                else
+                    $('#nickinput').focus();
             });
 
         addSmileys();
-    };
+        updateVisualNotification();
+    },
 
     /**
      * Appends the given message to the chat conversation.
      */
-    my.updateChatConversation = function (from, displayName, message) {
+    updateChatConversation (id, displayName, message, stamp) {
         var divClassName = '';
 
-        if (APP.xmpp.myJid() === from) {
+        if (APP.conference.isLocalId(id)) {
             divClassName = "localuser";
-        }
-        else {
+        } else {
             divClassName = "remoteuser";
 
             if (!Chat.isVisible()) {
                 unreadMessages++;
                 UIUtil.playSoundNotification('chatNotification');
-                setVisualNotification(true);
+                updateVisualNotification();
             }
         }
 
@@ -250,28 +255,27 @@ var Chat = (function (my) {
         var escMessage = message.replace(/</g, '&lt;').
             replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
         var escDisplayName = UIUtil.escapeHtml(displayName);
-        message = Replacement.processReplacements(escMessage);
+        message = processReplacements(escMessage);
 
         var messageContainer =
             '<div class="chatmessage">'+
-                '<img src="../images/chatArrow.svg" class="chatArrow">' +
+                '<img src="images/chatArrow.svg" class="chatArrow">' +
                 '<div class="username ' + divClassName +'">' + escDisplayName +
-                '</div>' + '<div class="timestamp">' + getCurrentTime() +
+                '</div>' + '<div class="timestamp">' + getCurrentTime(stamp) +
                 '</div>' + '<div class="usermessage">' + message + '</div>' +
             '</div>';
 
         $('#chatconversation').append(messageContainer);
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
-    };
+    },
 
     /**
      * Appends error message to the conversation
      * @param errorMessage the received error message.
      * @param originalText the original message.
      */
-    my.chatAddError = function(errorMessage, originalText)
-    {
+    chatAddError (errorMessage, originalText) {
         errorMessage = UIUtil.escapeHtml(errorMessage);
         originalText = UIUtil.escapeHtml(originalText);
 
@@ -282,76 +286,73 @@ var Chat = (function (my) {
             (errorMessage? (' Reason: ' + errorMessage) : '') +  '</div>');
         $('#chatconversation').animate(
             { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
-    };
+    },
 
     /**
      * Sets the subject to the UI
      * @param subject the subject
      */
-    my.chatSetSubject = function(subject)
-    {
-        if(subject)
+    setSubject (subject) {
+        if (subject) {
             subject = subject.trim();
-        $('#subject').html(Replacement.linkify(UIUtil.escapeHtml(subject)));
-        if(subject === "")
-        {
+        }
+        $('#subject').html(linkify(UIUtil.escapeHtml(subject)));
+        if (subject) {
+            $("#subject").css({display: "block"});
+        } else {
             $("#subject").css({display: "none"});
         }
-        else
-        {
-            $("#subject").css({display: "block"});
-        }
-    };
-
-
+    },
 
     /**
      * Sets the chat conversation mode.
+     * Conversation mode is the normal chat mode, non conversation mode is
+     * where we ask user to input its display name.
+     * @param {boolean} isConversationMode if chat should be in
+     * conversation mode or not.
      */
-    my.setChatConversationMode = function (isConversationMode) {
+    setChatConversationMode (isConversationMode) {
+        $('#' + CHAT_CONTAINER_ID)
+            .toggleClass('is-conversation-mode', isConversationMode);
+
+        // this is needed when we transition from no conversation mode to
+        // conversation mode. When user enters his nickname and hits enter,
+        // to focus on the write area.
         if (isConversationMode) {
-            $('#nickname').css({visibility: 'hidden'});
-            $('#chatconversation').css({visibility: 'visible'});
-            $('#usermsg').css({visibility: 'visible'});
-            $('#smileysarea').css({visibility: 'visible'});
             $('#usermsg').focus();
         }
-    };
+    },
 
     /**
      * Resizes the chat area.
      */
-    my.resizeChat = function () {
-        var chatSize = require("../SidePanelToggler").getPanelSize();
-
-        $('#chatspace').width(chatSize[0]);
-        $('#chatspace').height(chatSize[1]);
+    resizeChat (width, height) {
+        $('#' + CHAT_CONTAINER_ID).width(width).height(height);
 
         resizeChatConversation();
-    };
+    },
 
     /**
      * Indicates if the chat is currently visible.
      */
-    my.isVisible = function () {
-        return $('#chatspace').is(":visible");
-    };
+    isVisible () {
+        return UIUtil.isVisible(
+            document.getElementById(CHAT_CONTAINER_ID));
+    },
     /**
      * Shows and hides the window with the smileys
      */
-    my.toggleSmileys = toggleSmileys;
+    toggleSmileys,
 
     /**
      * Scrolls chat to the bottom.
      */
-    my.scrollChatToBottom = function() {
+    scrollChatToBottom () {
         setTimeout(function () {
             $('#chatconversation').scrollTop(
                 $('#chatconversation')[0].scrollHeight);
         }, 5);
-    };
+    }
+};
 
-
-    return my;
-}(Chat || {}));
-module.exports = Chat;
+export default Chat;

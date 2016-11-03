@@ -1,0 +1,31 @@
+.overlay {
+    &__container {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: $overlayZ;
+        background: $defaultBackground;
+    }
+
+    &__content {
+        position: absolute;
+        margin: 0 auto;
+        height: 100%;
+        width: 56%;
+        left: 50%;
+        @include transform(translateX(-50%));
+
+        &_bottom {
+            position: absolute;
+            bottom: 0;
+        }
+    }
+
+    &__policy {
+        position: absolute;
+        bottom: 24px;
+        width: 100%;
+    }
+}

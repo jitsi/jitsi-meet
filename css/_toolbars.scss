@@ -1,0 +1,273 @@
+.toolbar {
+    background-color: $toolbarBackground;
+    position: relative;
+    z-index: $toolbarZ;
+    height: 100%;
+    pointer-events: auto;
+
+    /**
+     * Splitter button in the toolbar.
+     */
+    &__splitter {
+        display: inline-block;
+        vertical-align: middle;
+        width: 1px;
+        height: 50%;
+        margin: 0 $splitterToolbarButtonMargin;
+        background: $splitterColor;
+    }
+}
+
+#mainToolbarContainer{
+    display: block;
+    position: absolute;
+    text-align: center;
+    top:0;
+    left:0;
+    right:0;
+    z-index: $toolbarZ;
+    pointer-events: none;
+    min-height: 100px;
+    opacity: 0;
+}
+
+#subject {
+    position: relative;
+    z-index: 3;
+    width: auto;
+    padding: 5px;
+    margin-left: 40%;
+    margin-right: 40%;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(255,255,255,.85) , rgba(255,255,255,.35));
+    box-shadow: 0 0 2px #000000, 0 0 10px #000000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+#mainToolbar {
+    height: $defaultToolbarSize;
+    display: inline-block;
+    position: relative;
+    top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+#extendedToolbar {
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    width: $defaultToolbarSize;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding-top: 10px;
+    box-sizing: border-box;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+}
+
+#toolbar_button_hangup {
+    color: #BF2117;
+    font-size: $hangupFontSize !important;
+}
+
+#toolbar_button_etherpad {
+    display: none;
+}
+
+#mainToolbar a.button:last-child::after {
+    content: none;
+}
+
+.button {
+    display: inline-block;
+    position: relative;
+    color: #FFFFFF;
+    top:0px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    text-align: center;
+    z-index: 1;
+    font-size: $toolbarFontSize !important;
+    line-height: 50px !important;
+    vertical-align: middle;
+}
+
+.button[disabled] {
+    opacity: 0.5;
+}
+
+.button.unclickable {
+    cursor: default;
+}
+
+.button.toggled {
+    background: $toolbarToggleBackground !important;
+}
+
+a.button.unclickable:hover,
+a.button.unclickable:active,
+a.button.unclickable.selected{
+    cursor: default;
+    background: none;
+}
+
+a.button:hover,
+a.button:active,
+a.button.selected {
+    cursor: pointer;
+    text-decoration: none;
+    // sum opacity with background layer should give us 0.8
+    background: $toolbarSelectBackground;
+}
+
+a.button>#avatar {
+    width: 30px;
+    border-radius: 50%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#feedbackButton {
+    margin-top: auto;
+}
+
+/**
+ * Round badge.
+ */
+.badge-round {
+    background-color: $toolbarBadgeBackground;
+    color: $toolbarBadgeColor;
+    font-size: 9px;
+    line-height: 13px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 50%;
+    min-width: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    vertical-align: middle;
+    // Do not inherit the font-family from the toolbar button, because it's an
+    // icon style.
+    font-family: $baseFontFamily;
+}
+
+/**
+ * Toolbar specific round badge.
+ */
+.toolbar .badge-round {
+    position: absolute;
+    right: 9px;
+    bottom: 9px;
+}
+
+/**
+ * START of slide in animation for extended toolbar.
+ */
+@include keyframes(slideInX) {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0%); }
+}
+
+.slideInX {
+  @include animation('slideInX .5s forwards');
+}
+
+@include keyframes(slideOutX) {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+.slideOutX {
+  @include animation('slideOutX .5s forwards');
+}
+
+@include keyframes(slideInExtX) {
+    0% { transform: translateX(-500%); }
+    100% { transform: translateX(0%); }
+}
+
+.slideInExtX {
+  @include animation('slideInExtX .5s forwards');
+}
+
+@include keyframes(slideOutExtX) {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-500%); }
+}
+
+.slideOutExtX {
+  @include animation('slideOutExtX .5s forwards');
+}
+
+/**
+ * END of slide out animation for extended toolbar.
+ */
+
+/**
+ * START of slide in / out animation for main toolbar.
+ */
+@include keyframes(slideInY) {
+    100% { transform: translateY(0%); }
+}
+
+.slideInY {
+  @include animation('slideInY .5s forwards');
+}
+
+@include keyframes(slideOutY) {
+    0% { transform: translateY(0%); }
+    100% { transform: translateY(-100%); }
+}
+
+.slideOutY {
+    @include animation('slideOutY .5s forwards');
+}
+/**
+ * END of slide in / out animation for main toolbar.
+ */
+
+/**
+ * START of slide in animation for extended toolbar panel.
+ */
+@include keyframes(slideInExt) {
+    from { width: 0px; }
+    to   { width: 200px; } // TO FIX: Make this value a percentage.
+}
+
+.slideInExt {
+    @include animation("slideInExt .5s forwards");
+}
+
+@include keyframes(slideOutExt) {
+  from { width: 200px; } // TO FIX: Make this value a percentage.
+  to   { width: 0px; }
+}
+
+.slideOutExt {
+  @include animation("slideOutExt .5s forwards");
+}
+
+/**
+ * START of fade in animation for main toolbar
+ */
+.fadeIn {
+    @include animation('fadeIn .3s linear .2s forwards');
+}
+
+.fadeOut {
+    @include animation('fadeOut .5s linear forwards');
+}

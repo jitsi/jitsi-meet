@@ -1,114 +1,149 @@
-/* global $, interfaceConfig, Moderator, DesktopStreaming.showDesktopSharingButton */
+/* global APP, config, $, interfaceConfig */
 
-var toolbarTimeoutObject,
-    toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+import UIUtil from '../util/UIUtil';
+import Toolbar from './Toolbar';
+import SideContainerToggler from "../side_pannels/SideContainerToggler";
+
+let toolbarTimeoutObject;
+let toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+/**
+ * If true the toolbar will be always displayed
+ */
+let alwaysVisibleToolbar = false;
 
 function showDesktopSharingButton() {
-    if (APP.desktopsharing.isDesktopSharingEnabled()) {
-        $('#desktopsharing').css({display: "inline"});
+    if (APP.conference.isDesktopSharingEnabled &&
+        UIUtil.isButtonEnabled('desktop')) {
+        $('#toolbar_button_desktopsharing').css({display: "inline-block"});
     } else {
-        $('#desktopsharing').css({display: "none"});
+        $('#toolbar_button_desktopsharing').css({display: "none"});
     }
 }
 
 /**
  * Hides the toolbar.
+ *
+ * @param force {true} to force the hiding of the toolbar without caring about
+ * the extended toolbar side panels.
  */
-function hideToolbar() {
-    var header = $("#header"),
-        bottomToolbar = $("#bottomToolbar");
-    var isToolbarHover = false;
-    header.find('*').each(function () {
-        var id = $(this).attr('id');
-        if ($("#" + id + ":hover").length > 0) {
-            isToolbarHover = true;
-        }
-    });
-    if ($("#bottomToolbar:hover").length > 0) {
-        isToolbarHover = true;
+function hideToolbar(force) { // eslint-disable-line no-unused-vars
+    if (alwaysVisibleToolbar) {
+        return;
     }
 
     clearTimeout(toolbarTimeoutObject);
     toolbarTimeoutObject = null;
 
-    if (!isToolbarHover) {
-        header.hide("slide", { direction: "up", duration: 300});
-        $('#subject').animate({top: "-=40"}, 300);
-        if ($("#remoteVideos").hasClass("hidden")) {
-            bottomToolbar.hide(
-                "slide", {direction: "right", duration: 300});
-        }
-    }
-    else {
+    if (force !== true &&
+            (Toolbar.isHovered()
+                || APP.UI.isRingOverlayVisible()
+                || SideContainerToggler.isVisible())) {
         toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+    } else {
+        Toolbar.hide();
+        $('#subject').animate({top: "-=40"}, 300);
     }
 }
 
-var ToolbarToggler = {
+const ToolbarToggler = {
+    /**
+     * Initializes the ToolbarToggler
+     */
+    init() {
+        alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
+
+        // disabled
+        //this._registerWindowClickListeners();
+    },
+
+    /**
+     * Registers click listeners handling the show and hode of toolbars when
+     * user clicks outside of toolbar area.
+     */
+    _registerWindowClickListeners() {
+        $(window).click(function() {
+            (Toolbar.isEnabled() && Toolbar.isVisible())
+                ? hideToolbar(true)
+                : this.showToolbar();
+        }.bind(this));
+
+        Toolbar.registerClickListeners(function(event){
+            event.stopPropagation();
+        });
+    },
+
+    /**
+     * Sets the value of alwaysVisibleToolbar variable.
+     * @param value {boolean} the new value of alwaysVisibleToolbar variable
+     */
+    setAlwaysVisibleToolbar(value) {
+        alwaysVisibleToolbar = value;
+    },
+
+    /**
+     * Resets the value of alwaysVisibleToolbar variable to the default one.
+     */
+    resetAlwaysVisibleToolbar() {
+        alwaysVisibleToolbar = (config.alwaysVisibleToolbar === true);
+    },
+
     /**
      * Shows the main toolbar.
+     * @param timeout (optional) to specify custom timeout value
      */
-    showToolbar: function () {
-        var header = $("#header"),
-            bottomToolbar = $("#bottomToolbar");
-        if (!header.is(':visible') || !bottomToolbar.is(":visible")) {
-            header.show("slide", { direction: "up", duration: 300});
-            $('#subject').animate({top: "+=40"}, 300);
-            if (!bottomToolbar.is(":visible")) {
-                bottomToolbar.show(
-                    "slide", {direction: "right", duration: 300});
-            }
+    showToolbar (timeout) {
+        if (interfaceConfig.filmStripOnly) {
+            return;
+        }
 
+        var updateTimeout = false;
+        if (Toolbar.isEnabled() && !Toolbar.isVisible()) {
+            Toolbar.show();
+            $('#subject').animate({top: "+=40"}, 300);
+            updateTimeout = true;
+        }
+
+        if (updateTimeout) {
             if (toolbarTimeoutObject) {
                 clearTimeout(toolbarTimeoutObject);
                 toolbarTimeoutObject = null;
             }
-            toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            toolbarTimeoutObject
+                = setTimeout(hideToolbar, timeout || toolbarTimeout);
             toolbarTimeout = interfaceConfig.TOOLBAR_TIMEOUT;
-        }
-
-        if (APP.xmpp.isModerator())
-        {
-//            TODO: Enable settings functionality.
-//                  Need to uncomment the settings button in index.html.
-//            $('#settingsButton').css({visibility:"visible"});
         }
 
         // Show/hide desktop sharing button
         showDesktopSharingButton();
     },
 
-
     /**
      * Docks/undocks the toolbar.
      *
      * @param isDock indicates what operation to perform
      */
-    dockToolbar: function (isDock) {
+    dockToolbar (isDock) {
+        if (interfaceConfig.filmStripOnly || !Toolbar.isEnabled()) {
+            return;
+        }
+
         if (isDock) {
             // First make sure the toolbar is shown.
-            if (!$('#header').is(':visible')) {
+            if (!Toolbar.isVisible()) {
                 this.showToolbar();
             }
 
             // Then clear the time out, to dock the toolbar.
-            if (toolbarTimeoutObject) {
-                clearTimeout(toolbarTimeoutObject);
-                toolbarTimeoutObject = null;
-            }
-        }
-        else {
-            if (!$('#header').is(':visible')) {
+            clearTimeout(toolbarTimeoutObject);
+            toolbarTimeoutObject = null;
+        } else {
+            if (Toolbar.isVisible()) {
+                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
+            } else {
                 this.showToolbar();
             }
-            else {
-                toolbarTimeoutObject = setTimeout(hideToolbar, toolbarTimeout);
-            }
         }
-    },
-
-    showDesktopSharingButton: showDesktopSharingButton
-
+    }
 };
 
 module.exports = ToolbarToggler;

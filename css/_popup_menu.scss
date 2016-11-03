@@ -1,0 +1,69 @@
+/**
+* Initialize
+**/
+
+.popupmenu {
+    padding: 0;
+    margin: 2px 0;
+    bottom: 0;
+    width: 100px;
+    height: auto;
+
+    &:first-child {
+        margin-top: 2px;
+    }
+
+    &__item {
+        list-style-type: none;
+        text-align: left;
+        height: 35px;
+
+        &:hover {
+            background-color: $popupMenuSelectedItemBackground;
+        }
+    }
+
+    // Link Appearance
+    &__link {
+        display: block;
+        box-sizing: border-box;
+        text-decoration: none;
+        color: #fff;
+        padding: 5px;
+        height: 100%;
+        font-size: 9pt;
+        width: 100%;
+        cursor: hand;
+
+        &.disabled {
+            color: gray !important;
+            pointer-events: none;
+        }
+    }
+
+    &__text {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    &__icon {
+        vertical-align: middle;
+        position: relative;
+        display: inline-block;
+        width: 20px;
+        height: 100%;
+        text-align: center;
+
+        > * {
+            @include absoluteAligning();
+        }
+    }
+
+    .icon-kick {
+        font-size: 8pt;
+    }
+}
+
+span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
+    display:block !important;
+}

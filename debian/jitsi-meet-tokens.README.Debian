@@ -1,0 +1,7 @@
+Token authentication plugin for Jitsi Meet
+----------------------------
+
+Jitsi Meet is a WebRTC video conferencing application. This package contains
+Prosody plugin which enables token authentication in Jitsi Meet installation.
+
+ -- Pawel Domas <pawel.domas@jitsi.org>  Mon, 2 Nov 2015 14:45:00 -0600

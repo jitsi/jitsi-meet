@@ -1,265 +1,166 @@
-var CanvasUtil = require("./CanvasUtils");
+/* global interfaceConfig */
 
-var ASDrawContext = $('#activeSpeakerAudioLevel')[0].getContext('2d');
-
-function initActiveSpeakerAudioLevels() {
-    var ASRadius = interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE / 2;
-    var ASCenter = (interfaceConfig.ACTIVE_SPEAKER_AVATAR_SIZE + ASRadius) / 2;
-
-// Draw a circle.
-    ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
-
-// Add a shadow around the circle
-    ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
-    ASDrawContext.shadowOffsetX = 0;
-    ASDrawContext.shadowOffsetY = 0;
-}
+import UIUtil from "../util/UIUtil";
 
 /**
- * The audio Levels plugin.
+ * Responsible for drawing audio levels.
  */
-var AudioLevels = (function(my) {
-    var audioLevelCanvasCache = {};
-
-    my.LOCAL_LEVEL = 'local';
-
-    my.init = function () {
-        initActiveSpeakerAudioLevels();
-    }
+const AudioLevels = {
 
     /**
-     * Updates the audio level canvas for the given peerJid. If the canvas
-     * didn't exist we create it.
+     * The number of dots.
+     *
+     * IMPORTANT: functions below assume that this is an odd number.
      */
-    my.updateAudioLevelCanvas = function (peerJid, VideoLayout) {
-        var resourceJid = null;
-        var videoSpanId = null;
-        if (!peerJid)
-            videoSpanId = 'localVideoContainer';
-        else {
-            resourceJid = Strophe.getResourceFromJid(peerJid);
+    _AUDIO_LEVEL_DOTS: 5,
 
-            videoSpanId = 'participant_' + resourceJid;
-        }
+    /**
+     * Creates the audio level indicator span element.
+     *
+     * IMPORTANT: This function assumes that the number of dots is an
+     * odd number.
+     *
+     * @return {Element} the document element representing audio levels
+     */
+    createThumbnailAudioLevelIndicator() {
 
-        var videoSpan = document.getElementById(videoSpanId);
+        let audioSpan = document.createElement('span');
+        audioSpan.className = 'audioindicator';
 
-        if (!videoSpan) {
-            if (resourceJid)
-                console.error("No video element for jid", resourceJid);
+        this.sideDotsCount = Math.floor(this._AUDIO_LEVEL_DOTS/2);
+
+        for (let i = 0; i < this._AUDIO_LEVEL_DOTS; i++) {
+            let audioDot = document.createElement('span');
+
+            // The median index will be equal to the number of dots on each
+            // side.
+            if (i === this.sideDotsCount)
+                audioDot.className = "audiodot-middle";
             else
-                console.error("No video element for local video.");
+                audioDot.className = (i < this.sideDotsCount)
+                                    ? "audiodot-top"
+                                    : "audiodot-bottom";
 
-            return;
+            audioSpan.appendChild(audioDot);
         }
-
-        var audioLevelCanvas = $('#' + videoSpanId + '>canvas');
-
-        var videoSpaceWidth = $('#remoteVideos').width();
-        var thumbnailSize = VideoLayout.calculateThumbnailSize(videoSpaceWidth);
-        var thumbnailWidth = thumbnailSize[0];
-        var thumbnailHeight = thumbnailSize[1];
-
-        if (!audioLevelCanvas || audioLevelCanvas.length === 0) {
-
-            audioLevelCanvas = document.createElement('canvas');
-            audioLevelCanvas.className = "audiolevel";
-            audioLevelCanvas.style.bottom = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
-            audioLevelCanvas.style.left = "-" + interfaceConfig.CANVAS_EXTRA/2 + "px";
-            resizeAudioLevelCanvas( audioLevelCanvas,
-                    thumbnailWidth,
-                    thumbnailHeight);
-
-            videoSpan.appendChild(audioLevelCanvas);
-        } else {
-            audioLevelCanvas = audioLevelCanvas.get(0);
-
-            resizeAudioLevelCanvas( audioLevelCanvas,
-                    thumbnailWidth,
-                    thumbnailHeight);
-        }
-    };
+        return audioSpan;
+    },
 
     /**
-     * Updates the audio level UI for the given resourceJid.
+     * Updates the audio level UI for the given id.
      *
-     * @param resourceJid the resource jid indicating the video element for
-     * which we draw the audio level
-     * @param audioLevel the newAudio level to render
+     * @param {string} id id of the user for whom we draw the audio level
+     * @param {number} audioLevel the newAudio level to render
      */
-    my.updateAudioLevel = function (resourceJid, audioLevel, largeVideoResourceJid) {
-        drawAudioLevelCanvas(resourceJid, audioLevel);
+    updateThumbnailAudioLevel (id, audioLevel) {
 
-        var videoSpanId = getVideoSpanId(resourceJid);
+        // First make sure we are sensitive enough.
+        audioLevel *= 1.2;
+        audioLevel = Math.min(audioLevel, 1);
 
-        var audioLevelCanvas = $('#' + videoSpanId + '>canvas').get(0);
+        // Let's now stretch the audio level over the number of dots we have.
+        let stretchedAudioLevel = (this.sideDotsCount + 1) * audioLevel;
+        let dotLevel = 0.0;
 
-        if (!audioLevelCanvas)
-            return;
+        for (let i = 0; i < (this.sideDotsCount + 1); i++) {
 
-        var drawContext = audioLevelCanvas.getContext('2d');
-
-        var canvasCache = audioLevelCanvasCache[resourceJid];
-
-        drawContext.clearRect (0, 0,
-                audioLevelCanvas.width, audioLevelCanvas.height);
-        drawContext.drawImage(canvasCache, 0, 0);
-
-        if(resourceJid === AudioLevels.LOCAL_LEVEL) {
-            if(!APP.xmpp.myJid()) {
-                return;
-            }
-            resourceJid = APP.xmpp.myResource();
+            dotLevel = Math.min(1, Math.max(0, (stretchedAudioLevel - i)));
+            this._setDotLevel(id, i, dotLevel);
         }
-
-        if(resourceJid  === largeVideoResourceJid) {
-            window.requestAnimationFrame(function () {
-                AudioLevels.updateActiveSpeakerAudioLevel(audioLevel);
-            });
-        }
-    };
-
-    my.updateActiveSpeakerAudioLevel = function(audioLevel) {
-        if($("#activeSpeaker").css("visibility") == "hidden")
-            return;
-
-
-        ASDrawContext.clearRect(0, 0, 300, 300);
-        if(audioLevel == 0)
-            return;
-
-        ASDrawContext.shadowBlur = getShadowLevel(audioLevel);
-
-
-        // Fill the shape.
-        ASDrawContext.fill();
-    };
+    },
 
     /**
-     * Resizes the given audio level canvas to match the given thumbnail size.
-     */
-    function resizeAudioLevelCanvas(audioLevelCanvas,
-                                    thumbnailWidth,
-                                    thumbnailHeight) {
-        audioLevelCanvas.width = thumbnailWidth + interfaceConfig.CANVAS_EXTRA;
-        audioLevelCanvas.height = thumbnailHeight + interfaceConfig.CANVAS_EXTRA;
-    }
-
-    /**
-     * Draws the audio level canvas into the cached canvas object.
+     * Fills the dot(s) with the specified "index", with as much opacity as
+     * indicated by "opacity".
      *
-     * @param resourceJid the resource jid indicating the video element for
-     * which we draw the audio level
-     * @param audioLevel the newAudio level to render
+     * @param {string} elementID the parent audio indicator span element
+     * @param {number} index the index of the dots to fill, where 0 indicates
+     * the middle dot and the following increments point toward the
+     * corresponding pair of dots.
+     * @param {number} opacity the opacity to set for the specified dot.
      */
-    function drawAudioLevelCanvas(resourceJid, audioLevel) {
-        if (!audioLevelCanvasCache[resourceJid]) {
+    _setDotLevel(elementID, index, opacity) {
 
-            var videoSpanId = getVideoSpanId(resourceJid);
+        let audioSpan = document.getElementById(elementID)
+            .getElementsByClassName("audioindicator");
 
-            var audioLevelCanvasOrig = $('#' + videoSpanId + '>canvas').get(0);
-
-            /*
-             * FIXME Testing has shown that audioLevelCanvasOrig may not exist.
-             * In such a case, the method CanvasUtil.cloneCanvas may throw an
-             * error. Since audio levels are frequently updated, the errors have
-             * been observed to pile into the console, strain the CPU.
-             */
-            if (audioLevelCanvasOrig)
-            {
-                audioLevelCanvasCache[resourceJid]
-                    = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
-            }
-        }
-
-        var canvas = audioLevelCanvasCache[resourceJid];
-
-        if (!canvas)
-            return;
-
-        var drawContext = canvas.getContext('2d');
-
-        drawContext.clearRect(0, 0, canvas.width, canvas.height);
-
-        var shadowLevel = getShadowLevel(audioLevel);
-
-        if (shadowLevel > 0)
-            // drawContext, x, y, w, h, r, shadowColor, shadowLevel
-            CanvasUtil.drawRoundRectGlow(   drawContext,
-                interfaceConfig.CANVAS_EXTRA/2, interfaceConfig.CANVAS_EXTRA/2,
-                canvas.width - interfaceConfig.CANVAS_EXTRA,
-                canvas.height - interfaceConfig.CANVAS_EXTRA,
-                interfaceConfig.CANVAS_RADIUS,
-                interfaceConfig.SHADOW_COLOR,
-                shadowLevel);
-    }
-
-    /**
-     * Returns the shadow/glow level for the given audio level.
-     *
-     * @param audioLevel the audio level from which we determine the shadow
-     * level
-     */
-    function getShadowLevel (audioLevel) {
-        var shadowLevel = 0;
-
-        if (audioLevel <= 0.3) {
-            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
-        }
-        else if (audioLevel <= 0.6) {
-            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
-        }
-        else {
-            shadowLevel = Math.round(interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
-        }
-        return shadowLevel;
-    }
-
-    /**
-     * Returns the video span id corresponding to the given resourceJid or local
-     * user.
-     */
-    function getVideoSpanId(resourceJid) {
-        var videoSpanId = null;
-        if (resourceJid === AudioLevels.LOCAL_LEVEL
-                || (APP.xmpp.myResource() && resourceJid
-                    === APP.xmpp.myResource()))
-            videoSpanId = 'localVideoContainer';
+        // Make sure the audio span is still around.
+        if (audioSpan && audioSpan.length > 0)
+            audioSpan = audioSpan[0];
         else
-            videoSpanId = 'participant_' + resourceJid;
+            return;
 
-        return videoSpanId;
-    }
+        let audioTopDots
+            = audioSpan.getElementsByClassName("audiodot-top");
+        let audioDotMiddle
+            = audioSpan.getElementsByClassName("audiodot-middle");
+        let audioBottomDots
+            = audioSpan.getElementsByClassName("audiodot-bottom");
+
+        // First take care of the middle dot case.
+        if (index === 0){
+            audioDotMiddle[0].style.opacity = opacity;
+            return;
+        }
+
+        // Index > 0 : we are setting non-middle dots.
+        index--;
+        audioBottomDots[index].style.opacity = opacity;
+        audioTopDots[this.sideDotsCount - index - 1].style.opacity = opacity;
+    },
 
     /**
-     * Indicates that the remote video has been resized.
+     * Updates the audio level of the large video.
+     *
+     * @param audioLevel the new audio level to set.
      */
-    $(document).bind('remotevideo.resized', function (event, width, height) {
-        var resized = false;
-        $('#remoteVideos>span>canvas').each(function() {
-            var canvas = $(this).get(0);
-            if (canvas.width !== width + interfaceConfig.CANVAS_EXTRA) {
-                canvas.width = width + interfaceConfig.CANVAS_EXTRA;
-                resized = true;
-            }
+    updateLargeVideoAudioLevel(elementId, audioLevel) {
+        let element = document.getElementById(elementId);
 
-            if (canvas.heigh !== height + interfaceConfig.CANVAS_EXTRA) {
-                canvas.height = height + interfaceConfig.CANVAS_EXTRA;
-                resized = true;
-            }
-        });
+        if(!UIUtil.isVisible(element))
+            return;
 
-        if (resized)
-            Object.keys(audioLevelCanvasCache).forEach(function (resourceJid) {
-                audioLevelCanvasCache[resourceJid].width
-                    = width + interfaceConfig.CANVAS_EXTRA;
-                audioLevelCanvasCache[resourceJid].height
-                    = height + interfaceConfig.CANVAS_EXTRA;
-            });
-    });
+        let level = parseFloat(audioLevel);
 
-    return my;
+        level = isNaN(level) ? 0 : level;
 
-})(AudioLevels || {});
+        let shadowElement = element.getElementsByClassName("dynamic-shadow");
 
-module.exports = AudioLevels;
+        if (shadowElement && shadowElement.length > 0)
+            shadowElement = shadowElement[0];
+
+        shadowElement.style.boxShadow = this._updateLargeVideoShadow(level);
+    },
+
+    /**
+     * Updates the large video shadow effect.
+     */
+    _updateLargeVideoShadow (level) {
+        var scale = 2,
+
+        // Internal circle audio level.
+        int = {
+            level: level > 0.15 ? 20 : 0,
+            color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR
+        },
+
+        // External circle audio level.
+        ext = {
+            level: (int.level * scale * level + int.level).toFixed(0),
+            color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR
+        };
+
+        // Internal blur.
+        int.blur = int.level ? 2 : 0;
+
+        // External blur.
+        ext.blur = ext.level ? 6 : 0;
+
+        return [
+            `0 0 ${ int.blur }px ${ int.level }px ${ int.color }`,
+            `0 0 ${ ext.blur }px ${ ext.level }px ${ ext.color }`
+        ].join(', ');
+    }
+};
+
+export default AudioLevels;

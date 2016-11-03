@@ -1,628 +1,878 @@
-/* global APP,$, buttonClick, config, lockRoom,
-   setSharedKey, Util */
-var messageHandler = require("../util/MessageHandler");
-var BottomToolbar = require("./BottomToolbar");
-var Prezi = require("../prezi/Prezi");
-var Etherpad = require("../etherpad/Etherpad");
-var PanelToggler = require("../side_pannels/SidePanelToggler");
-var Authentication = require("../authentication/Authentication");
-var UIUtil = require("../util/UIUtil");
-var AuthenticationEvents
-    = require("../../../service/authentication/AuthenticationEvents");
+/* global APP, $, config, interfaceConfig, JitsiMeetJS */
+import UIUtil from '../util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
+import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
-var roomUrl = null;
-var sharedKey = '';
-var UI = null;
+let emitter = null;
+let Toolbar;
 
-var buttonHandlers =
-{
+/**
+ * Handlers for toolbar buttons.
+ *
+ * buttonId {string}: handler {function}
+ */
+const buttonHandlers = {
+    "toolbar_button_profile": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
+        emitter.emit(UIEvents.TOGGLE_PROFILE);
+    },
     "toolbar_button_mute": function () {
-        return APP.UI.toggleAudio();
-    },
-    "toolbar_button_camera": function () {
-        return APP.UI.toggleVideo();
-    },
-    /*"toolbar_button_authentication": function () {
-        return Toolbar.authenticateClicked();
-    },*/
-    "toolbar_button_record": function () {
-        return toggleRecording();
-    },
-    "toolbar_button_security": function () {
-        return Toolbar.openLockDialog();
-    },
-    "toolbar_button_link": function () {
-        return Toolbar.openLinkDialog();
-    },
-    "toolbar_button_chat": function () {
-        return BottomToolbar.toggleChat();
-    },
-    "toolbar_button_prezi": function () {
-        return Prezi.openPreziDialog();
-    },
-    "toolbar_button_etherpad": function () {
-        return Etherpad.toggleEtherpad(0);
-    },
-    "toolbar_button_desktopsharing": function () {
-        return APP.desktopsharing.toggleScreenSharing();
-    },
-    "toolbar_button_fullScreen": function()
-    {
-        UIUtil.buttonClick("#fullScreen", "icon-full-screen icon-exit-full-screen");
-        return Toolbar.toggleFullScreen();
-    },
-    "toolbar_button_sip": function () {
-        return callSipButtonClicked();
-    },
-    "toolbar_button_settings": function () {
-        PanelToggler.toggleSettingsMenu();
-    },
-    "toolbar_button_hangup": function () {
-        return hangup();
-    },
-    "toolbar_button_login": function () {
-        Toolbar.authenticateClicked();
-    },
-    "toolbar_button_logout": function () {
-        // Ask for confirmation
-        messageHandler.openTwoButtonDialog(
-            "dialog.logoutTitle",
-            null,
-            "dialog.logoutQuestion",
-            null,
-            false,
-            "dialog.Yes",
-            function (evt, yes) {
-                if (yes) {
-                    APP.xmpp.logout(function (url) {
-                        if (url) {
-                            window.location.href = url;
-                        } else {
-                            hangup();
-                        }
-                    });
-                }
-            });
-    }
-};
+        let sharedVideoManager = APP.UI.getSharedVideoManager();
 
-function hangup() {
-    APP.xmpp.disposeConference();
-    if(config.enableWelcomePage)
-    {
-        setTimeout(function()
-        {
-            window.localStorage.welcomePageDisabled = false;
-            window.location.pathname = "/";
-        }, 10000);
-
-    }
-
-    var title = APP.translation.generateTranslatonHTML(
-        "dialog.sessTerminated");
-    var msg = APP.translation.generateTranslatonHTML(
-        "dialog.hungUp");
-    var button = APP.translation.generateTranslatonHTML(
-        "dialog.joinAgain");
-    var buttons = [];
-    buttons.push({title: button, value: true});
-
-    UI.messageHandler.openDialog(
-        title,
-        msg,
-        true,
-        buttons,
-        function(event, value, message, formVals)
-        {
-            window.location.reload();
-            return false;
-        }
-    );
-}
-
-/**
- * Starts or stops the recording for the conference.
- */
-
-function toggleRecording() {
-    APP.xmpp.toggleRecording(function (callback) {
-        var msg = APP.translation.generateTranslatonHTML(
-            "dialog.recordingToken");
-        var token = APP.translation.translateString("dialog.token");
-        APP.UI.messageHandler.openTwoButtonDialog(null, null, null,
-                '<h2>' + msg + '</h2>' +
-                '<input name="recordingToken" type="text" ' +
-                ' data-i18n="[placeholder]dialog.token" ' +
-                'placeholder="' + token + '" autofocus>',
-            false,
-            "dialog.Save",
-            function (e, v, m, f) {
-                if (v) {
-                    var token = f.recordingToken;
-
-                    if (token) {
-                        callback(UIUtil.escapeHtml(token));
-                    }
-                }
-            },
-            null,
-            function () { },
-            ':input:first'
-        );
-    }, Toolbar.setRecordingButtonState, Toolbar.setRecordingButtonState);
-}
-
-/**
- * Locks / unlocks the room.
- */
-function lockRoom(lock) {
-    var currentSharedKey = '';
-    if (lock)
-        currentSharedKey = sharedKey;
-
-    APP.xmpp.lockRoom(currentSharedKey, function (res) {
-        // password is required
-        if (sharedKey)
-        {
-            console.log('set room password');
-            Toolbar.lockLockButton();
-        }
-        else
-        {
-            console.log('removed room password');
-            Toolbar.unlockLockButton();
-        }
-    }, function (err) {
-        console.warn('setting password failed', err);
-        messageHandler.showError("dialog.lockTitle",
-            "dialog.lockMessage");
-        Toolbar.setSharedKey('');
-    }, function () {
-        console.warn('room passwords not supported');
-        messageHandler.showError("dialog.warning",
-            "dialog.passwordNotSupported");
-        Toolbar.setSharedKey('');
-    });
-};
-
-/**
- * Invite participants to conference.
- */
-function inviteParticipants() {
-    if (roomUrl === null)
-        return;
-
-    var sharedKeyText = "";
-    if (sharedKey && sharedKey.length > 0) {
-        sharedKeyText =
-            APP.translation.translateString("email.sharedKey",
-                {sharedKey: sharedKey});
-        sharedKeyText = sharedKeyText.replace(/\n/g, "%0D%0A");
-    }
-
-    var supportedBrowsers = "Chromium, Google Chrome " +
-        APP.translation.translateString("email.and") + " Opera";
-    var conferenceName = roomUrl.substring(roomUrl.lastIndexOf('/') + 1);
-    var subject = APP.translation.translateString("email.subject",
-        {appName:interfaceConfig.APP_NAME, conferenceName: conferenceName});
-    var body = APP.translation.translateString("email.body",
-        {appName:interfaceConfig.APP_NAME, sharedKeyText: sharedKeyText,
-            roomUrl: roomUrl, supportedBrowsers: supportedBrowsers});
-    body = body.replace(/\n/g, "%0D%0A");
-
-    if (window.localStorage.displayname) {
-        body += "%0D%0A%0D%0A" + window.localStorage.displayname;
-    }
-
-    if (interfaceConfig.INVITATION_POWERED_BY) {
-        body += "%0D%0A%0D%0A--%0D%0Apowered by jitsi.org";
-    }
-
-    window.open("mailto:?subject=" + subject + "&body=" + body, '_blank');
-}
-
-function callSipButtonClicked()
-{
-    var defaultNumber
-        = config.defaultSipNumber ? config.defaultSipNumber : '';
-
-    var sipMsg = APP.translation.generateTranslatonHTML(
-        "dialog.sipMsg");
-    messageHandler.openTwoButtonDialog(null, null, null,
-        '<h2>' + sipMsg + '</h2>' +
-        '<input name="sipNumber" type="text"' +
-        ' value="' + defaultNumber + '" autofocus>',
-        false,
-        "dialog.Dial",
-        function (e, v, m, f) {
-            if (v) {
-                var numberInput = f.sipNumber;
-                if (numberInput) {
-                    APP.xmpp.dial(
-                        numberInput, 'fromnumber', UI.getRoomName(), sharedKey);
-                }
-            }
-        },
-        null,
-        ':input:first'
-    );
-}
-
-var Toolbar = (function (my) {
-
-    my.init = function (ui) {
-        for(var k in buttonHandlers)
-            $("#" + k).click(buttonHandlers[k]);
-        UI = ui;
-        // Update login info
-        APP.xmpp.addListener(
-            AuthenticationEvents.IDENTITY_UPDATED,
-            function (authenticationEnabled, userIdentity) {
-
-                var loggedIn = false;
-                if (userIdentity) {
-                    loggedIn = true;
-                }
-
-                Toolbar.showAuthenticateButton(authenticationEnabled);
-
-                if (authenticationEnabled) {
-                    Toolbar.setAuthenticatedIdentity(userIdentity);
-
-                    Toolbar.showLoginButton(!loggedIn);
-                    Toolbar.showLogoutButton(loggedIn);
-                }
-            }
-        );
-    },
-
-    /**
-     * Sets shared key
-     * @param sKey the shared key
-     */
-    my.setSharedKey = function (sKey) {
-        sharedKey = sKey;
-    };
-
-    my.authenticateClicked = function () {
-        Authentication.focusAuthenticationWindow();
-        if (!APP.xmpp.isExternalAuthEnabled()) {
-            Authentication.xmppAuthenticate();
-            return;
-        }
-        // Get authentication URL
-        if (!APP.xmpp.getMUCJoined()) {
-            APP.xmpp.getLoginUrl(UI.getRoomName(), function (url) {
-                // If conference has not been started yet - redirect to login page
-                window.location.href = url;
-            });
-        } else {
-            APP.xmpp.getPopupLoginUrl(UI.getRoomName(), function (url) {
-                // Otherwise - open popup with authentication URL
-                var authenticationWindow = Authentication.createAuthenticationWindow(
-                    function () {
-                        // On popup closed - retry room allocation
-                        APP.xmpp.allocateConferenceFocus(
-                            APP.UI.getRoomName(),
-                            function () { console.info("AUTH DONE"); }
-                        );
-                    }, url);
-                if (!authenticationWindow) {
-                    messageHandler.openMessageDialog(
-                        null, "dialog.popupError");
-                }
-            });
-        }
-    };
-
-    /**
-     * Updates the room invite url.
-     */
-    my.updateRoomUrl = function (newRoomUrl) {
-        roomUrl = newRoomUrl;
-
-        // If the invite dialog has been already opened we update the information.
-        var inviteLink = document.getElementById('inviteLinkRef');
-        if (inviteLink) {
-            inviteLink.value = roomUrl;
-            inviteLink.select();
-            document.getElementById('jqi_state0_buttonInvite').disabled = false;
-        }
-    };
-
-    /**
-     * Disables and enables some of the buttons.
-     */
-    my.setupButtonsFromConfig = function () {
-        if (config.disablePrezi)
-        {
-            $("#prezi_button").css({display: "none"});
-        }
-    };
-
-    /**
-     * Opens the lock room dialog.
-     */
-    my.openLockDialog = function () {
-        // Only the focus is able to set a shared key.
-        if (!APP.xmpp.isModerator()) {
-            if (sharedKey) {
-                messageHandler.openMessageDialog(null,
-                    "dialog.passwordError");
-            } else {
-                messageHandler.openMessageDialog(null, "dialog.passwordError2");
-            }
-        } else {
-            if (sharedKey) {
-                messageHandler.openTwoButtonDialog(null, null,
-                    "dialog.passwordCheck",
-                    null,
-                    false,
-                    "dialog.Remove",
-                    function (e, v) {
-                        if (v) {
-                            Toolbar.setSharedKey('');
-                            lockRoom(false);
-                        }
-                    });
-            } else {
-                var msg = APP.translation.generateTranslatonHTML(
-                    "dialog.passwordMsg");
-                var yourPassword = APP.translation.translateString(
-                    "dialog.yourPassword");
-                messageHandler.openTwoButtonDialog(null, null, null,
-                    '<h2>' + msg + '</h2>' +
-                        '<input name="lockKey" type="text"' +
-                        ' data-i18n="[placeholder]dialog.yourPassword" ' +
-                        'placeholder="' + yourPassword + '" autofocus>',
-                    false,
-                    "dialog.Save",
-                    function (e, v, m, f) {
-                        if (v) {
-                            var lockKey = f.lockKey;
-
-                            if (lockKey) {
-                                Toolbar.setSharedKey(
-                                    UIUtil.escapeHtml(lockKey));
-                                lockRoom(true);
-                            }
-                        }
-                    },
-                    null, null, 'input:first'
-                );
-            }
-        }
-    };
-
-    /**
-     * Opens the invite link dialog.
-     */
-    my.openLinkDialog = function () {
-        var inviteAttreibutes;
-
-        if (roomUrl === null) {
-            inviteAttreibutes = 'data-i18n="[value]roomUrlDefaultMsg" value="' +
-            APP.translation.translateString("roomUrlDefaultMsg") + '"';
-        } else {
-            inviteAttreibutes = "value=\"" + encodeURI(roomUrl) + "\"";
-        }
-        messageHandler.openTwoButtonDialog("dialog.shareLink",
-            null, null,
-            '<input id="inviteLinkRef" type="text" ' +
-                inviteAttreibutes + ' onclick="this.select();" readonly>',
-            false,
-            "dialog.Invite",
-            function (e, v) {
-                if (v) {
-                    if (roomUrl) {
-                        inviteParticipants();
-                    }
-                }
-            },
-            function () {
-                if (roomUrl) {
-                    document.getElementById('inviteLinkRef').select();
-                } else {
-                    document.getElementById('jqi_state0_buttonInvite')
-                        .disabled = true;
-                }
-            }
-        );
-    };
-
-    /**
-     * Opens the settings dialog.
-     * FIXME: not used ?
-     */
-    my.openSettingsDialog = function () {
-        var settings1 = APP.translation.generateTranslatonHTML(
-            "dialog.settings1");
-        var settings2 = APP.translation.generateTranslatonHTML(
-            "dialog.settings2");
-        var settings3 = APP.translation.generateTranslatonHTML(
-            "dialog.settings3");
-
-        var yourPassword = APP.translation.translateString(
-            "dialog.yourPassword");
-
-        messageHandler.openTwoButtonDialog(null,
-            '<h2>' + settings1 + '</h2>' +
-                '<input type="checkbox" id="initMuted">' +
-                settings2 + '<br/>' +
-                '<input type="checkbox" id="requireNicknames">' +
-                 settings3 +
-                '<input id="lockKey" type="text" placeholder="' + yourPassword +
-                '" data-i18n="[placeholder]dialog.yourPassword" autofocus>',
-            null,
-            null,
-            false,
-            "dialog.Save",
-            function () {
-                document.getElementById('lockKey').focus();
-            },
-            function (e, v) {
-                if (v) {
-                    if ($('#initMuted').is(":checked")) {
-                        // it is checked
-                    }
-
-                    if ($('#requireNicknames').is(":checked")) {
-                        // it is checked
-                    }
-                    /*
-                    var lockKey = document.getElementById('lockKey');
-
-                    if (lockKey.value) {
-                        setSharedKey(lockKey.value);
-                        lockRoom(true);
-                    }
-                    */
-                }
-            }
-        );
-    };
-
-    /**
-     * Toggles the application in and out of full screen mode
-     * (a.k.a. presentation mode in Chrome).
-     */
-    my.toggleFullScreen = function () {
-        var fsElement = document.documentElement;
-
-        if (!document.mozFullScreen && !document.webkitIsFullScreen) {
-            //Enter Full Screen
-            if (fsElement.mozRequestFullScreen) {
-                fsElement.mozRequestFullScreen();
+        if (APP.conference.audioMuted) {
+            // If there's a shared video with the volume "on" and we aren't
+            // the video owner, we warn the user
+            // that currently it's not possible to unmute.
+            if (sharedVideoManager
+                && sharedVideoManager.isSharedVideoVolumeOn()
+                && !sharedVideoManager.isSharedVideoOwner()) {
+                UIUtil.animateShowElement(
+                    $("#unableToUnmutePopup"), true, 5000);
             }
             else {
-                fsElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+                JitsiMeetJS.analytics.sendEvent('toolbar.audio.unmuted');
+                emitter.emit(UIEvents.AUDIO_MUTED, false, true);
             }
         } else {
-            //Exit Full Screen
-            if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else {
-                document.webkitCancelFullScreen();
-            }
+            JitsiMeetJS.analytics.sendEvent('toolbar.audio.muted');
+            emitter.emit(UIEvents.AUDIO_MUTED, true, true);
         }
-    };
-    /**
-     * Unlocks the lock button state.
-     */
-    my.unlockLockButton = function () {
-        if ($("#lockIcon").hasClass("icon-security-locked"))
-            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
-    };
-    /**
-     * Updates the lock button state to locked.
-     */
-    my.lockLockButton = function () {
-        if ($("#lockIcon").hasClass("icon-security"))
-            UIUtil.buttonClick("#lockIcon", "icon-security icon-security-locked");
-    };
+    },
+    "toolbar_button_camera": function () {
+        if (APP.conference.videoMuted) {
+            JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
+            emitter.emit(UIEvents.VIDEO_MUTED, false);
+        } else {
+            JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
+            emitter.emit(UIEvents.VIDEO_MUTED, true);
+        }
+    },
+    "toolbar_button_link": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
+        emitter.emit(UIEvents.INVITE_CLICKED);
+    },
+    "toolbar_button_chat": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
+        emitter.emit(UIEvents.TOGGLE_CHAT);
+    },
+    "toolbar_contact_list": function () {
+        JitsiMeetJS.analytics.sendEvent(
+            'toolbar.contacts.toggled');
+        emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
+    },
+    "toolbar_button_etherpad": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
+        emitter.emit(UIEvents.ETHERPAD_CLICKED);
+    },
+    "toolbar_button_sharedvideo": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.sharedvideo.clicked');
+        emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
+    },
+    "toolbar_button_desktopsharing": function () {
+        if (APP.conference.isSharingScreen) {
+            JitsiMeetJS.analytics.sendEvent('toolbar.screen.disabled');
+        } else {
+            JitsiMeetJS.analytics.sendEvent('toolbar.screen.enabled');
+        }
+        emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
+    },
+    "toolbar_button_fullScreen": function() {
+        JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
 
+        emitter.emit(UIEvents.TOGGLE_FULLSCREEN);
+    },
+    "toolbar_button_sip": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
+        showSipNumberInput();
+    },
+    "toolbar_button_dialpad": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.sip.dialpad.clicked');
+        dialpadButtonClicked();
+    },
+    "toolbar_button_settings": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.settings.toggled');
+        emitter.emit(UIEvents.TOGGLE_SETTINGS);
+    },
+    "toolbar_button_hangup": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
+        emitter.emit(UIEvents.HANGUP);
+    },
+    "toolbar_button_login": function () {
+        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.login.clicked');
+        emitter.emit(UIEvents.AUTH_CLICKED);
+    },
+    "toolbar_button_logout": function () {
+        let titleKey = "dialog.logoutTitle";
+        let msgKey = "dialog.logoutQuestion";
+        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
+        // Ask for confirmation
+        APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey,
+            msgKey,
+            leftButtonKey: "dialog.Yes",
+            submitFunction: function (evt, yes) {
+                if (yes) {
+                    emitter.emit(UIEvents.LOGOUT);
+                }
+            }
+        });
+    },
+    "toolbar_film_strip": function () {
+        JitsiMeetJS.analytics.sendEvent(
+            'toolbar.filmstrip.toggled');
+        emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
+    },
+    "toolbar_button_raisehand": function () {
+        JitsiMeetJS.analytics.sendEvent(
+            'toolbar.raiseHand.clicked');
+        APP.conference.maybeToggleRaisedHand();
+    }
+};
+
+/**
+ * All toolbars buttons description
+ */
+const defaultToolbarButtons = {
+    'microphone': {
+        id: 'toolbar_button_mute',
+        tooltipKey: 'toolbar.mute',
+        className: "button icon-microphone",
+        shortcut: 'M',
+        shortcutAttr: 'mutePopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
+            APP.conference.toggleAudioMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.mute",
+        popups: [
+            {
+                id: "micMutedPopup",
+                className: "loginmenu",
+                dataAttr: "[html]toolbar.micMutedPopup"
+            },
+            {
+                id: "unableToUnmutePopup",
+                className: "loginmenu",
+                dataAttr: "[html]toolbar.unableToUnmutePopup"
+            },
+            {
+                id: "talkWhileMutedPopup",
+                className: "loginmenu",
+                dataAttr: "[html]toolbar.talkWhileMutedPopup"
+            }
+        ],
+        content: "Mute / Unmute",
+        i18n: "[content]toolbar.mute"
+    },
+    'camera': {
+        id: 'toolbar_button_camera',
+        tooltipKey: 'toolbar.videomute',
+        className: "button icon-camera",
+        shortcut: 'V',
+        shortcutAttr: 'toggleVideoPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
+            APP.conference.toggleVideoMuted();
+        },
+        shortcutDescription: "keyboardShortcuts.videoMute",
+        content: "Start / stop camera",
+        i18n: "[content]toolbar.videomute"
+    },
+    'desktop': {
+        id: 'toolbar_button_desktopsharing',
+        tooltipKey: 'toolbar.sharescreen',
+        className: 'button icon-share-desktop',
+        shortcut: 'D',
+        shortcutAttr: 'toggleDesktopSharingPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
+            APP.conference.toggleScreenSharing();
+        },
+        shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
+        content: 'Share screen',
+        i18n: '[content]toolbar.sharescreen'
+    },
+    'invite': {
+        id: 'toolbar_button_link',
+        tooltipKey: 'toolbar.invite',
+        className: 'button icon-link',
+        content: 'Invite others',
+        i18n: '[content]toolbar.invite'
+    },
+    'chat': {
+        id: 'toolbar_button_chat',
+        tooltipKey: 'toolbar.chat',
+        className: 'button icon-chat',
+        shortcut: 'C',
+        shortcutAttr: 'toggleChatPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
+            APP.UI.toggleChat();
+        },
+        shortcutDescription: 'keyboardShortcuts.toggleChat',
+        sideContainerId: 'chat_container',
+        html: `<span class="badge-round">
+                   <span id="unreadMessages"></span>
+               </span>`
+    },
+    'contacts': {
+        id: 'toolbar_contact_list',
+        tooltipKey: 'bottomtoolbar.contactlist',
+        className: 'button icon-contactList',
+        sideContainerId: 'contacts_container',
+        html: `<span class="badge-round">
+                   <span id="numberOfParticipants"></span>
+               </span>`
+    },
+    'profile': {
+        id: 'toolbar_button_profile',
+        tooltipKey: 'profile.setDisplayNameLabel',
+        className: 'button',
+        sideContainerId: 'profile_container',
+        html: `<img id="avatar" src="images/avatar2.png"/>`
+    },
+    'etherpad': {
+        id: 'toolbar_button_etherpad',
+        tooltipKey: 'toolbar.etherpad',
+        className: 'button icon-share-doc'
+    },
+    'fullscreen': {
+        id: 'toolbar_button_fullScreen',
+        tooltipKey: 'toolbar.fullscreen',
+        className: "button icon-full-screen",
+        shortcut: 'S',
+        shortcutAttr: 'toggleFullscreenPopover',
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.fullscreen.toggled');
+            APP.UI.toggleFullScreen();
+        },
+        shortcutDescription: "keyboardShortcuts.fullScreen",
+        content: "Enter / Exit Full Screen",
+        i18n: "[content]toolbar.fullscreen"
+    },
+    'settings': {
+        id: 'toolbar_button_settings',
+        tooltipKey: 'toolbar.Settings',
+        className: 'button icon-settings',
+        sideContainerId: "settings_container"
+    },
+    'hangup': {
+        id: 'toolbar_button_hangup',
+        tooltipKey: 'toolbar.hangup',
+        className: "button icon-hangup",
+        content: "Hang Up",
+        i18n: "[content]toolbar.hangup"
+    },
+    'filmstrip': {
+        id: 'toolbar_film_strip',
+        tooltipKey: 'toolbar.filmstrip',
+        className: "button icon-toggle-filmstrip",
+        shortcut: "F",
+        shortcutAttr: "filmstripPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
+            APP.UI.toggleFilmStrip();
+        },
+        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
+    },
+    'raisehand': {
+        id: "toolbar_button_raisehand",
+        tooltipKey: 'toolbar.raiseHand',
+        className: "button icon-raised-hand",
+        shortcut: "R",
+        shortcutAttr: "raiseHandPopover",
+        shortcutFunc: function() {
+            JitsiMeetJS.analytics.sendEvent("shortcut.raisehand.clicked");
+            APP.conference.maybeToggleRaisedHand();
+        },
+        shortcutDescription: "keyboardShortcuts.raiseHand",
+        content: "Raise Hand",
+        i18n: "[content]toolbar.raiseHand"
+    },
+    //init and btn handler: Recording.initRecordingButton (Recording.js)
+    'recording': {
+        id: 'toolbar_button_record',
+        tooltipKey: 'liveStreaming.buttonTooltip',
+        className: 'button'
+    },
+    'sharedvideo': {
+        id: 'toolbar_button_sharedvideo',
+        tooltipKey: 'toolbar.sharedvideo',
+        className: 'button icon-shared-video',
+        html: `<ul id="sharedVideoMutedPopup" 
+                   class="loginmenu extendedToolbarPopup">
+                   <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
+               </ul>
+`
+    },
+    'sip': {
+        id: 'toolbar_button_sip',
+        tooltipKey: 'toolbar.sip',
+        className: 'button icon-telephone'
+    },
+    'dialpad': {
+        id: 'toolbar_button_dialpad',
+        tooltipKey: 'toolbar.dialpad',
+        className: 'button icon-dialpad',
+        //TODO: remove it after UI.updateDTMFSupport fix
+        hidden: true
+    }
+};
+
+function dialpadButtonClicked() {
+    //TODO show the dialpad box
+}
+
+function showSipNumberInput () {
+    let defaultNumber = config.defaultSipNumber
+        ? config.defaultSipNumber
+        : '';
+    let titleKey = "dialog.sipMsg";
+    let msgString = (`
+            <input name="sipNumber" type="text"
+                   value="${defaultNumber}" autofocus>`);
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        msgString,
+        leftButtonKey: "dialog.Dial",
+        submitFunction: function (e, v, m, f) {
+            if (v && f.sipNumber) {
+                emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
+            }
+        },
+        focus: ':input:first'
+    });
+}
+
+/**
+ * Get place for toolbar button.
+ * Now it can be in main toolbar or in extended (left) toolbar
+ *
+ * @param btn {string}
+ * @returns {string}
+ */
+function getToolbarButtonPlace (btn) {
+    return interfaceConfig.MAIN_TOOLBAR_BUTTONS.includes(btn) ?
+        'main' :
+        'extended';
+}
+
+Toolbar = {
+    init (eventEmitter) {
+        emitter = eventEmitter;
+        // The toolbar is enabled by default.
+        this.enabled = true;
+        this.toolbarSelector = $("#mainToolbarContainer");
+        this.extendedToolbarSelector = $("#extendedToolbar");
+
+        // Initialise the toolbar buttons.
+        // The main toolbar will only take into account
+        // it's own configuration from interface_config.
+        this._initToolbarButtons();
+
+        this._setShortcutsAndTooltips();
+
+        this._setButtonHandlers();
+
+        APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            (containerId, isVisible) => {
+                Toolbar._handleSideToolbarContainerToggled( containerId,
+                                                            isVisible);
+            });
+
+        APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
+            (isRaisedHand) => {
+                this._setToggledState("toolbar_button_raisehand", isRaisedHand);
+            });
+
+        APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED,
+            (isFullScreen) => {
+                Toolbar._handleFullScreenToggled(isFullScreen);
+            });
+
+        if(!APP.tokenData.isGuest) {
+            $("#toolbar_button_profile").addClass("unclickable");
+            UIUtil.removeTooltip(
+                document.getElementById('toolbar_button_profile'));
+        }
+    },
+    /**
+     * Enables / disables the toolbar.
+     * @param {e} set to {true} to enable the toolbar or {false}
+     * to disable it
+     */
+    enable (e) {
+        this.enabled = e;
+        if (!e && this.isVisible())
+            this.hide(false);
+    },
+    /**
+     * Indicates if the bottom toolbar is currently enabled.
+     * @return {this.enabled}
+     */
+    isEnabled() {
+        return this.enabled;
+    },
     /**
      * Shows or hides authentication button
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
-    my.showAuthenticateButton = function (show) {
-        if (show) {
-            $('#authentication').css({display: "inline"});
-        }
-        else {
-            $('#authentication').css({display: "none"});
-        }
-    };
+    showAuthenticateButton (show) {
+        let display = show ? 'block' : 'none';
 
-    // Shows or hides the 'recording' button.
-    my.showRecordingButton = function (show) {
-        if (!config.enableRecording) {
-            return;
-        }
+        $('#authenticationContainer').css({display});
+    },
 
-        if (show) {
-            $('#recording').css({display: "inline"});
+    showEtherpadButton () {
+        if (!$('#toolbar_button_etherpad').is(":visible")) {
+            $('#toolbar_button_etherpad').css({display: 'inline-block'});
         }
-        else {
-            $('#recording').css({display: "none"});
-        }
-    };
+    },
 
-    // Sets the state of the recording button
-    my.setRecordingButtonState = function (isRecording) {
-        if (isRecording) {
-            $('#recordButton').removeClass("icon-recEnable");
-            $('#recordButton').addClass("icon-recEnable active");
+    // Shows or hides the 'shared video' button.
+    showSharedVideoButton () {
+        let $element = $('#toolbar_button_sharedvideo');
+        if (UIUtil.isButtonEnabled('sharedvideo')
+                && config.disableThirdPartyRequests !== true) {
+            $element.css({display: "inline-block"});
+            UIUtil.setTooltip($element.get(0), 'toolbar.sharedvideo', 'right');
         } else {
-            $('#recordButton').removeClass("icon-recEnable active");
-            $('#recordButton').addClass("icon-recEnable");
+            $('#toolbar_button_sharedvideo').css({display: "none"});
         }
-    };
+    },
+
+    // checks whether desktop sharing is enabled and whether
+    // we have params to start automatically sharing
+    checkAutoEnableDesktopSharing () {
+        if (UIUtil.isButtonEnabled('desktop')
+            && config.autoEnableDesktopSharing) {
+            emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
+        }
+    },
 
     // Shows or hides SIP calls button
-    my.showSipCallButton = function (show) {
-        if (APP.xmpp.isSipGatewayEnabled() && show) {
-            $('#sipCallButton').css({display: "inline-block"});
+    showSipCallButton (show) {
+        if (APP.conference.sipGatewayEnabled()
+            && UIUtil.isButtonEnabled('sip') && show) {
+            $('#toolbar_button_sip').css({display: "inline-block"});
         } else {
-            $('#sipCallButton').css({display: "none"});
+            $('#toolbar_button_sip').css({display: "none"});
         }
-    };
+    },
+
+    // Shows or hides the dialpad button
+    showDialPadButton (show) {
+        if (UIUtil.isButtonEnabled('dialpad') && show) {
+            $('#toolbar_button_dialpad').css({display: "inline-block"});
+        } else {
+            $('#toolbar_button_dialpad').css({display: "none"});
+        }
+    },
 
     /**
      * Displays user authenticated identity name(login).
      * @param authIdentity identity name to be displayed.
      */
-    my.setAuthenticatedIdentity = function (authIdentity) {
+    setAuthenticatedIdentity (authIdentity) {
+        let selector = $('#toolbar_auth_identity');
+
         if (authIdentity) {
-            $('#toolbar_auth_identity').css({display: "list-item"});
-            $('#toolbar_auth_identity').text(authIdentity);
+            selector.css({display: "list-item"});
+            selector.text(authIdentity);
         } else {
-            $('#toolbar_auth_identity').css({display: "none"});
+            selector.css({display: "none"});
+            selector.text('');
         }
-    };
+    },
 
     /**
      * Shows/hides login button.
      * @param show <tt>true</tt> to show
      */
-    my.showLoginButton = function (show) {
+    showLoginButton (show) {
         if (show) {
             $('#toolbar_button_login').css({display: "list-item"});
         } else {
             $('#toolbar_button_login').css({display: "none"});
         }
-    };
+    },
 
     /**
      * Shows/hides logout button.
      * @param show <tt>true</tt> to show
      */
-    my.showLogoutButton = function (show) {
+    showLogoutButton (show) {
         if (show) {
             $('#toolbar_button_logout').css({display: "list-item"});
         } else {
             $('#toolbar_button_logout').css({display: "none"});
         }
-    };
+    },
 
     /**
-     * Sets the state of the button. The button has blue glow if desktop
+     * Update the state of the button. The button has blue glow if desktop
      * streaming is active.
-     * @param active the state of the desktop streaming.
      */
-    my.changeDesktopSharingButtonState = function (active) {
-        var button = $("#desktopsharing > a");
-        if (active)
-        {
-            button.addClass("glow");
-        }
-        else
-        {
-            button.removeClass("glow");
-        }
-    };
+    updateDesktopSharingButtonState () {
+        this._setToggledState(  "toolbar_button_desktopsharing",
+                                APP.conference.isSharingScreen);
+    },
 
-    return my;
-}(Toolbar || {}));
+    /**
+     * Marks video icon as muted or not.
+     *
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    toggleVideoIcon (muted) {
+        $('#toolbar_button_camera').toggleClass("icon-camera-disabled", muted);
 
-module.exports = Toolbar;
+        this._setToggledState("toolbar_button_camera", muted);
+    },
+
+    /**
+     * Enables / disables audio toolbar button.
+     *
+     * @param {boolean} enabled indicates if the button should be enabled
+     * or disabled
+     */
+    setVideoIconEnabled (enabled) {
+        this._setMediaIconEnabled(
+                '#toolbar_button_camera',
+                enabled,
+                /* data-i18n attribute value */
+                `[content]toolbar.${enabled ? 'videomute' : 'cameraDisabled'}`,
+                /* shortcut attribute value */
+                'toggleVideoPopover');
+
+        enabled || this.toggleVideoIcon(!enabled);
+    },
+
+    /**
+     * Enables/disables the toolbar button associated with a specific media such
+     * as audio or video.
+     *
+     * @param {string} btn - The jQuery selector <tt>string</tt> which
+     * identifies the toolbar button to be enabled/disabled.
+     * @param {boolean} enabled - <tt>true</tt> to enable the specified
+     * <tt>btn</tt>  or <tt>false</tt> to disable it.
+     * @param {string} dataI18n - The value to assign to the <tt>data-i18n</tt>
+     * attribute of the specified <tt>btn</tt>.
+     * @param {string} shortcut - The value, if any, to assign to the
+     * <tt>shortcut</tt> attribute of the specified <tt>btn</tt> if the toolbar
+     * button is enabled.
+     */
+    _setMediaIconEnabled(btn, enabled, dataI18n, shortcut) {
+        const $btn = $(btn);
+
+        $btn
+            .prop('disabled', !enabled)
+            .attr('data-i18n', dataI18n)
+            .attr('shortcut', enabled && shortcut ? shortcut : '');
+
+        enabled
+            ? $btn.removeAttr('disabled')
+            : $btn.attr('disabled', 'disabled');
+
+        APP.translation.translateElement($btn);
+    },
+
+    /**
+     * Marks audio icon as muted or not.
+     *
+     * @param {boolean} muted if icon should look like muted or not
+     */
+    toggleAudioIcon(muted) {
+        $('#toolbar_button_mute')
+            .toggleClass("icon-microphone", !muted)
+            .toggleClass("icon-mic-disabled", muted);
+
+        this._setToggledState("toolbar_button_mute", muted);
+    },
+
+    /**
+     * Enables / disables audio toolbar button.
+     *
+     * @param {boolean} enabled indicates if the button should be enabled
+     * or disabled
+     */
+    setAudioIconEnabled (enabled) {
+        this._setMediaIconEnabled(
+                '#toolbar_button_mute',
+                enabled,
+                /* data-i18n attribute value */
+                `[content]toolbar.${enabled ? 'mute' : 'micDisabled'}`,
+                /* shortcut attribute value */
+                'mutePopover');
+
+        enabled || this.toggleAudioIcon(!enabled);
+    },
+
+    /**
+     * Indicates if the toolbar is currently hovered.
+     * @return {boolean} true if the toolbar is currently hovered,
+     * false otherwise
+     */
+    isHovered() {
+        var hovered = false;
+        this.toolbarSelector.find('*').each(function () {
+            let id = $(this).attr('id');
+            if ($(`#${id}:hover`).length > 0) {
+                hovered = true;
+                // break each
+                return false;
+            }
+        });
+        if (hovered)
+            return true;
+        if ($("#bottomToolbar:hover").length > 0
+            || $("#extendedToolbar:hover").length > 0
+            || SideContainerToggler.isHovered()) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns true if this toolbar is currently visible, or false otherwise.
+     * @return <tt>true</tt> if currently visible, <tt>false</tt> - otherwise
+     */
+    isVisible() {
+        return this.toolbarSelector.hasClass("fadeIn");
+    },
+
+    /**
+     * Hides the toolbar with animation or not depending on the animate
+     * parameter.
+     */
+    hide() {
+        this.toolbarSelector
+            .removeClass("fadeIn")
+            .addClass("fadeOut");
+
+        let slideInAnimation = (SideContainerToggler.isVisible)
+                                    ? "slideInExtX"
+                                    : "slideInX";
+        let slideOutAnimation = (SideContainerToggler.isVisible)
+                                    ? "slideOutExtX"
+                                    : "slideOutX";
+
+        this.extendedToolbarSelector.toggleClass(slideInAnimation)
+            .toggleClass(slideOutAnimation);
+    },
+
+    /**
+     * Shows the toolbar with animation or not depending on the animate
+     * parameter.
+     */
+    show() {
+        if (this.toolbarSelector.hasClass("fadeOut")) {
+            this.toolbarSelector.removeClass("fadeOut");
+        }
+
+        let slideInAnimation = (SideContainerToggler.isVisible)
+                                ? "slideInExtX"
+                                : "slideInX";
+        let slideOutAnimation = (SideContainerToggler.isVisible)
+                                ? "slideOutExtX"
+                                : "slideOutX";
+
+        if (this.extendedToolbarSelector.hasClass(slideOutAnimation)) {
+            this.extendedToolbarSelector.toggleClass(slideOutAnimation);
+        }
+
+        this.toolbarSelector.addClass("fadeIn");
+        this.extendedToolbarSelector.toggleClass(slideInAnimation);
+    },
+
+    registerClickListeners(listener) {
+        $('#mainToolbarContainer').click(listener);
+
+        $("#extendedToolbar").click(listener);
+    },
+
+    /**
+     * Handles the side toolbar toggle.
+     *
+     * @param {string} containerId the identifier of the container element
+     */
+    _handleSideToolbarContainerToggled(containerId) {
+        Object.keys(defaultToolbarButtons).forEach(
+            id => {
+                if (!UIUtil.isButtonEnabled(id))
+                    return;
+
+                var button = defaultToolbarButtons[id];
+
+                if (button.sideContainerId
+                    && button.sideContainerId === containerId) {
+                    UIUtil.buttonClick(button.id, "selected");
+                    return;
+                }
+            }
+        );
+    },
+
+    /**
+     * Handles full screen toggled.
+     *
+     * @param {boolean} isFullScreen indicates if we're currently in full
+     * screen mode
+     */
+    _handleFullScreenToggled(isFullScreen) {
+        let element
+            = document.getElementById("toolbar_button_fullScreen");
+
+        element.className = isFullScreen
+            ? element.className
+                .replace("icon-full-screen", "icon-exit-full-screen")
+            : element.className
+                .replace("icon-exit-full-screen", "icon-full-screen");
+
+        Toolbar._setToggledState("toolbar_button_fullScreen", isFullScreen);
+    },
+
+    /**
+     * Initialise toolbar buttons.
+     */
+    _initToolbarButtons() {
+        interfaceConfig.TOOLBAR_BUTTONS.forEach((value, index) => {
+            let place = getToolbarButtonPlace(value);
+
+            if (value && value in defaultToolbarButtons) {
+                let button = defaultToolbarButtons[value];
+                this._addToolbarButton(
+                    button,
+                    place,
+                    (interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX !== undefined
+                        && index
+                            === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX));
+            }
+        });
+    },
+
+    /**
+     * Adds the given button to the main (top) or extended (left) toolbar.
+     *
+     * @param {Object} the button to add.
+     * @param {boolean} isFirst indicates if this is the first button in the
+     * toolbar
+     * @param {boolean} isLast indicates if this is the last button in the
+     * toolbar
+     * @param {boolean} isSplitter if this button is a splitter button for
+     * the dialog, which means that a special splitter style will be applied
+     */
+    _addToolbarButton(button, place, isSplitter) {
+        const places = {
+            main: 'mainToolbar',
+            extended: 'extendedToolbarButtons'
+        };
+        let id = places[place];
+        let buttonElement = document.createElement("a");
+        if (button.className) {
+            buttonElement.className = button.className;
+        }
+
+        if (isSplitter) {
+            let splitter = document.createElement('span');
+            splitter.className = 'toolbar__splitter';
+            document.getElementById(id).appendChild(splitter);
+        }
+
+        buttonElement.id = button.id;
+
+        if (button.html)
+            buttonElement.innerHTML = button.html;
+
+        //TODO: remove it after UI.updateDTMFSupport fix
+        if (button.hidden)
+            buttonElement.style.display = 'none';
+
+        if (button.shortcutAttr)
+            buttonElement.setAttribute("shortcut", button.shortcutAttr);
+
+        if (button.content)
+            buttonElement.setAttribute("content", button.content);
+
+        if (button.i18n)
+            buttonElement.setAttribute("data-i18n", button.i18n);
+
+        buttonElement.setAttribute("data-container", "body");
+        buttonElement.setAttribute("data-placement", "bottom");
+        this._addPopups(buttonElement, button.popups);
+
+        document.getElementById(id)
+            .appendChild(buttonElement);
+    },
+
+    _addPopups(buttonElement, popups = []) {
+        popups.forEach((popup) => {
+            let popupElement = document.createElement("ul");
+            popupElement.id = popup.id;
+            popupElement.className = popup.className;
+            let liElement = document.createElement("li");
+            liElement.setAttribute("data-i18n", popup.dataAttr);
+            popupElement.appendChild(liElement);
+            buttonElement.appendChild(popupElement);
+        });
+    },
+
+    /**
+     * Sets the toggled state of the given element depending on the isToggled
+     * parameter.
+     *
+     * @param elementId the element identifier
+     * @param isToggled indicates if the element should be toggled or untoggled
+     */
+     _setToggledState(elementId, isToggled) {
+        $("#" + elementId).toggleClass("toggled", isToggled);
+    },
+
+    /**
+     * Sets Shortcuts and Tooltips for all toolbar buttons
+     *
+     * @private
+     */
+    _setShortcutsAndTooltips() {
+        Object.keys(defaultToolbarButtons).forEach(
+            id => {
+                if (UIUtil.isButtonEnabled(id)) {
+                    let button = defaultToolbarButtons[id];
+                    let buttonElement = document.getElementById(button.id);
+                    if (!buttonElement) return false;
+                    let tooltipPosition
+                        = (interfaceConfig.MAIN_TOOLBAR_BUTTONS
+                        .indexOf(id) > -1)
+                        ? "bottom" : "right";
+
+                    UIUtil.setTooltip(  buttonElement,
+                        button.tooltipKey,
+                        tooltipPosition);
+
+                    if (button.shortcut)
+                        APP.keyboardshortcut.registerShortcut(
+                            button.shortcut,
+                            button.shortcutAttr,
+                            button.shortcutFunc,
+                            button.shortcutDescription
+                        );
+                }
+            }
+        );
+    },
+
+    /**
+     * Sets Handlers for all toolbar buttons
+     *
+     * @private
+     */
+    _setButtonHandlers() {
+        Object.keys(buttonHandlers).forEach(
+            buttonId => $(`#${buttonId}`).click(function(event) {
+                !$(this).prop('disabled') && buttonHandlers[buttonId](event);
+            })
+        );
+    }
+};
+
+export default Toolbar;

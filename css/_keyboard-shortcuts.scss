@@ -1,0 +1,25 @@
+#keyboard-shortcuts {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: $defaultToolbarSize;
+    overflow: hidden;
+    padding: 20px;
+    margin-left: 10px;
+    z-index: 10;
+    border-radius: $borderRadius;
+    background-attachment: scroll;
+    background-size: auto auto;
+    color: rgba(255, 255, 255, .8);
+    background-color: rgba(0, 0, 0, .8);
+}
+
+#keyboard-shortcuts .item-action {
+    color: #209EFF;
+    font-size: 14pt;
+    padding-right: 5px;
+}
+
+#keyboard-shortcuts-list {
+    list-style-type: none;
+}

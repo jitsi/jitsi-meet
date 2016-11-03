@@ -20,42 +20,49 @@ The next step for embedding Jitsi Meet is to create the Jitsi Meet API object
     var height = 700;
     var api = new JitsiMeetExternalAPI(domain, room, width, height);
 </script>
-``` 
+```
 You can paste that lines in your html code where you want to be placed the Jitsi Meet conference
 or you can specify the parent HTML element for the Jitsi Meet conference in the JitsiMeetExternalAPI
 constructor.
 ```javascript
     var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement);
-``` 
+```
 If you don't specify room the user will enter in new conference with random room name.
+
+You can overwrite options set in config.js and interface_config.js. For example, to enable the film-strip-only interface mode and disable simulcast, you can use:
+```javascript
+    var configOverwrite = {enableSimulcast: false};
+    var interfaceConfigOverwrite = {filmStripOnly: true};
+    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, true, configOverwrite, interfaceConfigOverwrite);
+```
 
 Controlling embedded Jitsi Meet Conference
 =========
 
 You can control the embedded Jitsi Meet conference using the JitsiMeetExternalAPI object.
 
-You can send command to Jitsi Meet conference using ```executeCommand```. 
+You can send command to Jitsi Meet conference using ```executeCommand```.
 ```
 api.executeCommand(command, arguments)
 ```
 The ```command``` parameter is String object with the name of the command.
-The ```arguments``` parameter is array with the arguments required by the command. 
+The ```arguments``` parameter is array with the arguments required by the command.
 If no arguments are required by the command this parameter can be omitted or you can pass empty array.
 Currently we support the following commands:
 
 
-* **displayName** - sets the display name of the local participant. This command requires one argument - 
+* **displayName** - sets the display name of the local participant. This command requires one argument -
 the new display name to be set
 ```
 api.executeCommand('displayName', ['New Nickname']);
 ```
-* **muteAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
+* **toggleAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
 ```
-api.executeCommand('muteAudio', [])
+api.executeCommand('toggleAudio', [])
 ```
-* **muteVideo** - mutes / unmutes the video for the local participant. No arguments are required.
+* **toggleVideo** - mutes / unmutes the video for the local participant. No arguments are required.
 ```
-api.executeCommand('muteVideo', [])
+api.executeCommand('toggleVideo', [])
 ```
 * **toggleFilmStrip** - hides / shows the film strip. No arguments are required.
 ```
@@ -70,7 +77,17 @@ api.executeCommand('toggleChat', [])
 api.executeCommand('toggleContactList', [])
 ```
 
-You can also execute multiple commands using the method ```executeCommands```. 
+* **toggleShareScreen** - starts / stops the screen sharing. No arguments are required.
+```
+api.executeCommand('toggleShareScreen', [])
+```
+
+* **hangup** - Hangups the call. No arguments are required.
+```
+api.executeCommand('hangup', [])
+```
+
+You can also execute multiple commands using the method ```executeCommands```.
 ```
 api.executeCommands(commands)
 ```
@@ -78,7 +95,7 @@ The ```commands``` parameter is object with keys the names of the commands and v
 commands.
 
 ```
-api.executeCommands({displayName: ['nickname'], muteAudio: []});
+api.executeCommands({displayName: ['nickname'], toggleAudio: []});
 ```
 
 You can add event listeners to the embedded Jitsi Meet using ```addEventListener``` method.
@@ -129,9 +146,25 @@ The listener will receive object with the following structure:
 jid: jid //the jid of the participant
 }
 ```
+* **video-conference-joined** - event notifications fired when the local user has joined the video conference.
+The listener will receive object with the following structure:
+```
+{
+roomName: room //the room name of the conference
+}
+```
+* **video-conference-left** - event notifications fired when the local user has left the video conference.
+The listener will receive object with the following structure:
+```
+{
+roomName: room //the room name of the conference
+}
+```
+
+* **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
 
 You can also add multiple event listeners by using ```addEventListeners```.
-This method requires one argument of type Object. The object argument must 
+This method requires one argument of type Object. The object argument must
 have keys with the names of the events and values the listeners of the events.
 
 ```
@@ -166,4 +199,4 @@ You can remove the embedded Jitsi Meet Conference with the following code:
 api.dispose()
 ```
 
-It is a good practice to remove the conference before the page is unloaded. 
+It is a good practice to remove the conference before the page is unloaded.

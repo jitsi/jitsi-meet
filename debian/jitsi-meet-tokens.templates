@@ -1,0 +1,14 @@
+Template: jitsi-meet-tokens/appid
+Type: string
+_Description: The application ID to be used by token authentication plugin:
+  Application ID:
+
+Template: jitsi-meet-tokens/appsecret
+Type: password
+_Description: The application secret to be used by token authentication plugin:
+  Application secret:
+
+Template: jitsi-meet-prosody/prosody_config
+Type: string
+_Description: The location of Jitsi Meet Prosody config file
+  Jitsi-meet Prosody config file location:

@@ -1,2 +1,2 @@
 version=3
-https://github.com/jitsi/jitsi-meet/releases/ /jitsi/jitsi-meet/archive/(\S+)\.tar\.gz
+opts="uversionmangle=s/^/1.0./" https://github.com/jitsi/jitsi-meet/releases/ /jitsi/jitsi-meet/archive/(\S+)\.tar\.gz

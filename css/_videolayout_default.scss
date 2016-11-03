@@ -1,0 +1,640 @@
+#videoconference_page {
+    min-height: 100%;
+}
+
+#videospace {
+    display: block;
+    min-height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+}
+
+#remoteVideos {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+
+    position:absolute;
+    text-align:right;
+    height:196px;
+    padding: 10px 10px 17px 5px;
+    bottom: 0;
+    right: 0;
+    width:auto;
+    border: 2px solid transparent;
+    z-index: 5;
+    transition: bottom 2s;
+    overflow: visible !important;
+    font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
+}
+
+#remotevideos.hidden {
+    bottom: -196px;
+}
+
+.videocontainer {
+    position: relative;
+    text-align: center;
+}
+
+#remoteVideos .videocontainer {
+    display: none;
+    position: relative;
+    background-color: black;
+    background-size: contain;
+    border-radius:1px;
+    margin: 0 $thumbnailVideoMargin;
+}
+
+/**
+ * The toolbar of the video thumbnail.
+ */
+.videocontainer__toolbar,
+.videocontainer__toptoolbar {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    width: 100%;
+    box-sizing: border-box; // Includes the padding in the 100% width.
+}
+
+.videocontainer__toolbar {
+    bottom: 0;
+    padding: 0 5px 0 5px;
+    height: $thumbnailToolbarHeight;
+}
+
+.videocontainer__toptoolbar {
+    $toolbarPadding: 5px;
+    top: 0;
+    padding: $toolbarPadding;
+    padding-bottom: 0;
+    height: $thumbnailIndicatorSize + $toolbarPadding;
+}
+
+.videocontainer__hoverOverlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    background: rgba(0,0,0,.6);
+    z-index: 2;
+}
+
+#remoteVideos .videocontainer.videoContainerFocused,
+#remoteVideos .videocontainer:hover {
+    cursor: hand;
+    margin-right: $thumbnailVideoMargin - 2;
+    margin-left: $thumbnailVideoMargin - 2;
+    margin-top: -2px;
+}
+/**
+ * Focused video thumbnail.
+ */
+#remoteVideos .videocontainer.videoContainerFocused {
+    transition-duration: 0.5s;
+    -webkit-transition-duration: 0.5s;
+    -webkit-animation-name: greyPulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: 1;
+    border: 2px solid $videoThumbnailSelected !important;
+    box-shadow: inset 0 0 3px $videoThumbnailSelected,
+                0 0 3px $videoThumbnailSelected !important;
+}
+
+/**
+ * Hovered video thumbnail.
+ */
+#remoteVideos .videocontainer:hover {
+    cursor: hand;
+    border: 2px solid $videoThumbnailHovered;
+    box-shadow: inset 0 0 3px $videoThumbnailHovered,
+              0 0 3px $videoThumbnailHovered;
+}
+
+#localVideoWrapper {
+    display:inline-block;
+}
+
+/* With TemasysWebRTC plugin <object/> element is used
+   instead of <video/> */
+#remoteVideos .videocontainer>video,
+#remoteVideos .videocontainer>object {
+    cursor: hand;
+    border-radius:1px;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.flipVideoX {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+}
+
+#localVideoWrapper>video,
+#localVideoWrapper>object {
+    cursor: hand;
+    border-radius:1px !important;
+    object-fit: cover;
+}
+
+#largeVideo,
+#largeVideoWrapper,
+#largeVideoContainer {
+    overflow: hidden;
+    text-align: center;
+}
+
+#largeVideo,
+#largeVideoWrapper
+{
+    object-fit: cover;
+}
+
+#sharedVideo,
+#etherpad,
+#localVideoWrapper>video,
+#localVideoWrapper>object,
+#localVideoWrapper,
+#largeVideoWrapper,
+#largeVideoWrapper>video,
+#largeVideoWrapper>object,
+.videocontainer>video,
+.videocontainer>object {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+#etherpad {
+    text-align: center;
+}
+
+#etherpad {
+    z-index: 0;
+}
+
+/**
+ * Positions video thumbnail display name and editor.
+ */
+.videocontainer .displayname,
+.videocontainer .editdisplayname {
+    display: inline-block;
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    top: 50%;
+    @include transform(translateY(-40%));
+    color: $participantNameColor;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 100;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: $thumbnailToolbarHeight;
+    z-index: 2;
+}
+
+/**
+ * Positions video thumbnail display name editor.
+ */
+.videocontainer .editdisplayname {
+    outline: none;
+    border: none;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+#localVideoContainer .displayname:hover {
+    cursor: text;
+}
+
+.videocontainer .displayname {
+    pointer-events: none;
+}
+
+.videocontainer .editdisplayname {
+    height: auto;
+}
+
+#localDisplayName {
+    pointer-events: auto !important;
+}
+
+.videocontainer>a.displayname {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    bottom: 0;
+    right: 0;
+    padding: 3px 5px;
+    font-size: 9pt;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/**
+ * Video thumbnail toolbar icon.
+ */
+.videocontainer .toolbar-icon {
+    font-size: 8pt;
+    text-align: center;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    color: #FFFFFF;
+    width: 12px;
+    line-height: $thumbnailToolbarHeight;
+    height: $thumbnailToolbarHeight;
+    padding: 0;
+    border: 0;
+    margin: 0px 5px 0px 0px;
+    float: left;
+}
+
+/**
+ * Toolbar icon internal i elements (font icons).
+ */
+.toolbar-icon>i {
+    line-height: $thumbnailToolbarHeight;
+}
+
+/**
+ * Toolbar icons positioned on the right.
+ */
+.toolbar-icon.right {
+  float: right;
+  margin: 0px 0px 0px 5px;
+}
+
+#raisehandindicator {
+  background: $raiseHandBg;
+}
+
+#connectionindicator {
+  background: $connectionIndicatorBg;
+}
+
+.videocontainer__toptoolbar span.indicator {
+    position: relative;
+    font-size: 8pt;
+    text-align: center;
+    line-height: $thumbnailToolbarHeight;
+    display: none;
+    padding: 0;
+    margin-right: 5px;
+    float: left;
+    @include circle($thumbnailIndicatorSize);
+    box-sizing: border-box;
+    z-index: 3;
+    background: $dominantSpeakerBg;
+    color: $thumbnailPictogramColor;
+    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+
+    .indicatoricon {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        @include transform(translateY(-50%));
+        width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+    }
+
+    .connection {
+        position: relative;
+        margin: 0 auto;
+        width: 12px;
+        height: 8px;
+
+        &_empty
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #8B8B8B;/*#FFFFFF*/
+            overflow: hidden;
+        }
+
+        &_lost
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #8B8B8B;
+            overflow: visible;
+        }
+
+        &_full
+        {
+            @include topLeft();
+            max-width: 12px;
+            width: 12px;
+            color: #FFFFFF;/*#15A1ED*/
+            overflow: hidden;
+        }
+    }
+
+    .icon-connection,
+    .icon-connection-lost {
+        font-size: 6pt;
+    }
+}
+
+.remotevideomenu
+{
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    margin: 7px;
+    z-index: 3;
+    width: 18px;
+    height: 13px;
+    color: #FFF;
+    font-size: 8pt;
+}
+
+/**
+ * Audio indicator on video thumbnails.
+ */
+.videocontainer>span.audioindicator {
+    position: absolute;
+    display: inline-block;
+    left: 6px;
+    top: 50%;
+    margin-top: -17px;
+    width: 6px;
+    height: 35px;
+    z-index: 2;
+    border: none;
+
+    .audiodot-top,
+    .audiodot-bottom,
+    .audiodot-middle {
+        opacity: 0;
+        display: inline-block;
+        @include circle(5px);
+        background: $audioLevelShadow;
+        margin: 1px 0 1px 0;
+        transition: opacity .25s ease-in-out;
+        -moz-transition: opacity .25s ease-in-out;
+    }
+
+    span.audiodot-top::after,
+    span.audiodot-bottom::after,
+    span.audiodot-middle::after {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        -webkit-filter: blur(0.5px);
+        filter: blur(0.5px);
+        background: $audioLevelBg;
+    }
+}
+
+#reloadPresentation {
+    display: none;
+    position: absolute;
+    color: #FFFFFF;
+    top: 0;
+    right:0;
+    padding: 10px 10px;
+    font-size: 11pt;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    background-clip: padding-box;
+    -webkit-border-radius: 5px;
+    -webkit-background-clip: padding-box;
+    z-index: 20; /*The reload button should appear on top of the header!*/
+}
+
+.audiolevel {
+    display: inline-block;
+    position: absolute;
+    z-index: 0;
+    border-radius:1px;
+    pointer-events: none;
+}
+
+#dominantSpeaker {
+    visibility: hidden;
+    width: 300px;
+    height: 300px;
+    margin: auto;
+    position: relative;
+}
+
+#mixedstream {
+    display:none !important;
+}
+
+#dominantSpeakerAvatar,
+.dynamic-shadow {
+    width: 200px;
+    height: 200px;
+}
+
+#dominantSpeakerAvatar {
+    top: 50px;
+    margin: auto;
+    position: relative;
+    border-radius: 100px;
+    visibility: inherit;
+    background-color: #000000;
+}
+
+.dynamic-shadow {
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -100px;
+    transition: box-shadow 0.3s ease;
+}
+
+.userAvatar {
+    @include circle(60px);
+    @include absoluteAligning();
+}
+
+.sharedVideoAvatar {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.noMic {
+    position: absolute;
+    border-radius: 8px;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/noMic.png");
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.noVideo {
+    position: absolute;
+    border-radius: 8px;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/noVideo.png");
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.videoMessageFilter {
+    -webkit-filter: grayscale(.5) opacity(0.8);
+    filter: grayscale(.5) opacity(0.8);
+}
+
+.remoteVideoProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+.videoProblemFilter {
+    -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
+    filter: blur(10px) grayscale(.5) opacity(0.8);
+}
+
+.videoThumbnailProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+#remoteConnectionMessage {
+    display: none;
+    position: absolute;
+    width: auto;
+    z-index: 2;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+
+    background: rgba(0,0,0,.5);
+    border-radius: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#localConnectionMessage {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top:50%;
+    z-index: 2;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+}
+
+.video-state-indicator {
+    background: $videoStateIndicatorBackground;
+    color: $videoStateIndicatorColor;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 10px 5px;
+    border-radius: 50%;
+    position: absolute;
+    box-sizing: border-box;
+}
+
+#videoResolutionLabel,
+.centeredVideoLabel {
+    display: none;
+    z-index: 1011;
+}
+
+.centeredVideoLabel {
+    bottom: 45%;
+    border-radius: 2px;
+    -webkit-transition: all 2s 2s linear;
+    transition: all 2s 2s linear;
+
+    &.moveToCorner {
+        bottom: auto;
+    }
+}
+
+.moveToCorner {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+
+.moveToCorner + .moveToCorner {
+    right: 80px;
+}
+
+.filmstripToolbar {
+    width: 20px;
+    position: absolute;
+    right: 4px;
+    bottom: 20px;
+    z-index: 6;
+
+    button {
+        font-size: 14px;
+        line-height: 1.2;
+        text-align: center;
+        background: transparent;
+        opacity: 0.7;
+        height: auto;
+        width: 100%;
+        padding: 0;
+        margin: 0 1px;
+        border: none;
+
+        -webkit-appearance: none;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        i {
+            cursor: pointer;
+        }
+    }
+}
+
+.filmstripToolbar + #remoteVideos {
+    padding-right: 24px;
+}
