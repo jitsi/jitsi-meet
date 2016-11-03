@@ -10,36 +10,35 @@ const FilmStrip = {
      * emit/fire {UIEvents} (such as {UIEvents.TOGGLED_FILM_STRIP}).
      */
     init (eventEmitter) {
+        this.iconMenuDownClassName = 'icon-menu-down';
+        this.iconMenuUpClassName = 'icon-menu-up';
         this.filmStrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
         this.filmStripIsVisible = true;
-        this.renderFilmstripToolbar();
-        this.activateHideButton();
+        this._initFilmStripToolbar();
+        this.registerListeners();
     },
 
     /**
-     * Attach 'click' listener to "hide filmstrip" button
+     * Initializes the filmstrip toolbar
      */
-    activateHideButton () {
-        $('#videospace').on('click', '#hideVideoToolbar', () => {
-            var icon = document.querySelector('#hideVideoToolbar i');
+    _initFilmStripToolbar() {
+        let toolbar = this._generateFilmStripToolbar();
 
-            this.filmStripIsVisible = !this.filmStripIsVisible;
-            this.toggleFilmStrip(this.filmStripIsVisible);
+        document.querySelector('#videospace')
+            .insertBefore(toolbar, document.querySelector('#remoteVideos'));
 
-            icon.classList.remove(
-                this.filmStripIsVisible ? 'icon-menu-up' : 'icon-menu-down');
-            icon.classList.add(
-                this.filmStripIsVisible ? 'icon-menu-down' : 'icon-menu-up');
-        });
+        let iconSelector = '#hideVideoToolbar i';
+        this.toggleFilmStripIcon = document.querySelector(iconSelector);
     },
 
     /**
-     * Shows toolbar on the right of the filmstrip
+     * Generates HTML layout for filmstrip toolbar
+     * @returns {HTMLElement}
+     * @private
      */
-    renderFilmstripToolbar () {
-        // create toolbar
-        var container = document.createElement('div');
+    _generateFilmStripToolbar() {
+        let container = document.createElement('div');
         container.className = 'filmstripToolbar';
 
         container.innerHTML = `
@@ -49,9 +48,42 @@ const FilmStrip = {
             </button>
         `;
 
-        // show toolbar
-        document.querySelector('#videospace')
-            .insertBefore(container, document.querySelector('#remoteVideos'));
+        return container;
+    },
+
+    /**
+     * Attach 'click' listener to "hide filmstrip" button
+     */
+    registerListeners() {
+        $('#videospace').on('click', '#hideVideoToolbar', () => {
+
+            this.filmStripIsVisible = !this.filmStripIsVisible;
+            this.toggleFilmStrip(this.filmStripIsVisible);
+
+            if (this.filmStripIsVisible) {
+                this.showMenuDownIcon();
+            } else {
+                this.showMenuUpIcon();
+            }
+        });
+    },
+
+    /**
+     * Changes classes of icon for showing down state
+     */
+    showMenuDownIcon() {
+        let icon = this.toggleFilmStripIcon;
+        icon.classList.add(this.iconMenuDownClassName);
+        icon.classList.remove(this.iconMenuUpClassName);
+    },
+
+    /**
+     * Changes classes of icon for showing up state
+     */
+    showMenuUpIcon() {
+        let icon = this.toggleFilmStripIcon;
+        icon.classList.add(this.iconMenuUpClassName);
+        icon.classList.remove(this.iconMenuDownClassName);
     },
 
     /**
@@ -62,7 +94,7 @@ const FilmStrip = {
      * (i.e. toggled); otherwise, the visibility will be set to the specified
      * value.
      */
-    toggleFilmStrip (visible) {
+    toggleFilmStrip(visible) {
         if (typeof visible === 'boolean'
             && this.isFilmStripVisible() == visible) {
             return;
@@ -79,18 +111,18 @@ const FilmStrip = {
         }
     },
 
-    isFilmStripVisible () {
+    isFilmStripVisible() {
         return !this.filmStrip.hasClass('hidden');
     },
 
-    setupFilmStripOnly () {
+    setupFilmStripOnly() {
         this.filmStrip.css({
             padding: "0px 0px 18px 0px",
             right: 0
         });
     },
 
-    getFilmStripHeight () {
+    getFilmStripHeight() {
         if (this.isFilmStripVisible()) {
             return this.filmStrip.outerHeight();
         } else {
@@ -98,7 +130,7 @@ const FilmStrip = {
         }
     },
 
-    getFilmStripWidth () {
+    getFilmStripWidth() {
         return this.filmStrip.innerWidth()
             - parseInt(this.filmStrip.css('paddingLeft'), 10)
             - parseInt(this.filmStrip.css('paddingRight'), 10);
@@ -115,7 +147,7 @@ const FilmStrip = {
     /**
      * Normalizes local and remote thumbnail ratios
      */
-    normalizeThumbnailRatio () {
+    normalizeThumbnailRatio() {
         let remoteHeightRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_HEIGHT;
         let remoteWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_WIDTH;
 
@@ -251,7 +283,7 @@ const FilmStrip = {
         };
     },
 
-    resizeThumbnails (local, remote,
+    resizeThumbnails(local, remote,
                       animate = false, forceUpdate = false) {
 
         return new Promise(resolve => {
@@ -289,7 +321,7 @@ const FilmStrip = {
         });
     },
 
-    getThumbs (only_visible = false) {
+    getThumbs(only_visible = false) {
         let selector = 'span';
         if (only_visible) {
             selector += ':visible';
