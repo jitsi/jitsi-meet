@@ -43,13 +43,20 @@
 .videocontainer {
     position: relative;
     text-align: center;
+
+    &__background {
+        @include topLeft();
+        width: 100%;
+        height: 100%;
+        background-color: black;
+    }
 }
 
 #remoteVideos .videocontainer {
     display: none;
     position: relative;
-    background-color: black;
     background-size: contain;
+    border: 2px solid transparent;
     border-radius:1px;
     margin: 0 $thumbnailVideoMargin;
 }
@@ -92,9 +99,6 @@
 #remoteVideos .videocontainer.videoContainerFocused,
 #remoteVideos .videocontainer:hover {
     cursor: hand;
-    margin-right: $thumbnailVideoMargin - 2;
-    margin-left: $thumbnailVideoMargin - 2;
-    margin-top: -2px;
 }
 /**
  * Focused video thumbnail.
