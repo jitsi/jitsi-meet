@@ -23,9 +23,9 @@ const FilmStrip = {
      */
     _initFilmStripToolbar() {
         let toolbar = this._generateFilmStripToolbar();
+        let container = document.querySelector('.filmstrip');
 
-        document.querySelector('#videospace')
-            .insertBefore(toolbar, document.querySelector('#remoteVideos'));
+        UIUtil.prependChild(container, toolbar);
 
         let iconSelector = '#hideVideoToolbar i';
         this.toggleFilmStripIcon = document.querySelector(iconSelector);

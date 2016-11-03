@@ -166,21 +166,23 @@
                     <img id="recordingSpinner" class="recordingSpinner" src="images/spin.svg"></img>
                 </span>
             </div>
-
-            <div id="remoteVideos">
-                <span id="localVideoContainer" class="videocontainer videocontainer_small">
-                    <div class="videocontainer__background"></div>
-                    <span id="localVideoWrapper">
-                        <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
+            <div class="filmstrip">
+                <div class="filmstrip__videos" id="remoteVideos">
+                    <span id="localVideoContainer" class="videocontainer videocontainer_small">
+                        <div class="videocontainer__background"></div>
+                        <span id="localVideoWrapper">
+                            <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
+                        </span>
+                        <audio id="localAudio" autoplay muted></audio>
+                        <div class="videocontainer__toolbar"></div>
+                        <div class="videocontainer__toptoolbar"></div>
+                        <div class="videocontainer__hoverOverlay"></div>
                     </span>
-                    <audio id="localAudio" autoplay muted></audio>
-                    <div class="videocontainer__toolbar"></div>
-                    <div class="videocontainer__toptoolbar"></div>
-                    <div class="videocontainer__hoverOverlay"></div>
-                </span>
-                <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
-                <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
+                    <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
+                    <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
+                </div>
             </div>
+
         </div>
     </div>
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
