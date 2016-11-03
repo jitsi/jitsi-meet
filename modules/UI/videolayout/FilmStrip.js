@@ -58,12 +58,6 @@ const FilmStrip = {
         let toggleFilmstripMethod = this.toggleFilmStrip.bind(this);
         let selector = '#hideVideoToolbar';
         $('#videospace').on('click', selector, toggleFilmstripMethod);
-
-        let eventEmitter = this.eventEmitter;
-        let event = UIEvents.TOGGLE_FILM_STRIP;
-        if (eventEmitter) {
-            eventEmitter.addListener(event, toggleFilmstripMethod);
-        }
     },
 
     /**
