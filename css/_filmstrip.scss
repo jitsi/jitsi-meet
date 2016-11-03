@@ -9,7 +9,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    padding: 10px 10px 17px 5px;
+    padding: 10px 5px;
     @extend %align-right;
 
     &__toolbar {
@@ -18,7 +18,7 @@
         flex-wrap: nowrap;
         position: relative;
         z-index: 1;                     // Set z-index to make element visible
-        width: 20px;
+        width: 17px;
 
         button {
             font-size: 14px;
@@ -29,7 +29,7 @@
             height: auto;
             width: 100%;
             padding: 0;
-            margin: 0 1px;
+            margin: 0;
             border: none;
             outline: none;
 
