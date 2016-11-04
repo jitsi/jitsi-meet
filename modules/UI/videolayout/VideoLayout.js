@@ -1136,8 +1136,13 @@ var VideoLayout = {
      * video stream is currently HD.
      */
     updateResolutionLabel(isResolutionHD) {
-        document.querySelector('#videoResolutionLabel')
-                .classList.toggle('show', isResolutionHD);
+        let id = 'videoResolutionLabel';
+
+        if (isResolutionHD) {
+            UIUtil.showElement(id);
+        } else {
+            UIUtil.hideElement(id);
+        }
     },
 
     /**
