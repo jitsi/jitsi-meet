@@ -629,7 +629,7 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
 RemoteVideo.createContainer = function (spanId) {
     let container = document.createElement('span');
     container.id = spanId;
-    container.className = 'videocontainer videocontainer_remote';
+    container.className = 'videocontainer';
 
     let wrapper = document.createElement('div');
     wrapper.className = 'videocontainer__background';
