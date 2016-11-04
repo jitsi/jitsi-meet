@@ -28,7 +28,7 @@ import ConferenceUrl from './modules/URL/ConferenceUrl';
 import API from './modules/API/API';
 
 import UIEvents from './service/UI/UIEvents';
-import getTokenData from "./modules/TokenData/TokenData";
+import getTokenData from "./modules/tokendata/TokenData";
 import translation from "./modules/translation/translation";
 
 /**
