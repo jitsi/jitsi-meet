@@ -85,6 +85,8 @@
     "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js",
     "strophe-caps": "./node_modules/strophejs-plugins/caps/strophe.caps.jsonly.js",
     "tooltip": "./node_modules/bootstrap/js/tooltip.js",
-    "select2-css": "./node_modules/select2/dist/css/select2.css"
+    "select2-css": "./node_modules/select2/dist/css/select2.css",
+    "select2": "./node_modules/select2/dist/js/select2.js",
+    "tipsy-css": "./node_modules/tipsy/src/stylesheets/tipsy.css"
   }
 }

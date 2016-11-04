@@ -118,8 +118,9 @@ const TOOLTIP_POSITIONS = {
             html: true, // Handle multiline tooltips.
 
             // The following two prevent tooltips from being stuck:
-            hoverable: false, // Make custom tooltips behave like native ones.
-            live: true // Attach listener to document element.
+            //hoverable: false, // Make custom tooltips behave like native ones.
+
+            //live: true // Attach listener to document element.
         });
     },
 

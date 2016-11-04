@@ -156,7 +156,8 @@ export default {
                 emitter.emit(UIEvents.LANG_CHANGED, val);
             });
             //find new selectInput element
-            selectInput = $(`#s2id_${selectId} .select2-chosen`);
+            selectInput = $(`#${wrapperId} .select2-selection__rendered`);
+
             //first select fix for languages options
             selectInput[0].dataset.i18n =
                 `languages:${APP.translation.getCurrentLanguage()}`;

@@ -40,6 +40,9 @@ var config = {
             loader: 'imports?define=>false&this=>window',
             test: strophe
         },{
+            loader: 'imports?$=jquery',
+            test: /\/node_modules\/select2\/dist\/js/
+        },{
             // Allow CSS to be imported into JavaScript.
 
             loaders: [

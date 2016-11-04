@@ -11,11 +11,13 @@ import "strophe-caps";
 import "jQuery-Impromptu";
 import "autosize";
 
-import 'aui';
-import 'aui-experimental';
-import 'aui-css';
-import 'aui-experimental-css';
+// import 'aui';
+// import 'aui-experimental';
+// import 'aui-css';
+// import 'aui-experimental-css';
 
+import 'tipsy';
+import 'tipsy-css';
 import 'select2';
 import 'select2-css';
 
