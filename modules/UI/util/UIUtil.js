@@ -228,7 +228,12 @@ const SHOW_CLASSES = {
      * @param {String} the identifier of the element to show
      */
     showElement(id) {
-        let element = document.getElementById(id);
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
         if (!element) {
             return;
@@ -249,7 +254,12 @@ const SHOW_CLASSES = {
      * @param {String} the identifier of the element to hide
      */
     hideElement(id) {
-        let element = document.getElementById(id);
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
         if (!element) {
             return;
