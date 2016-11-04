@@ -33,18 +33,7 @@ class FilmStrip extends Component {
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }>
                     {
-                        this.props.participants
-
-                            // Group the remote participants so that the local
-                            // participant does not appear in between remote
-                            // participants.
-                            .sort((a, b) => b.local - a.local)
-
-                            // Have the local participant at the rightmost side.
-                            // Then have the remote participants from right to
-                            // left with the newest added/joined to the leftmost
-                            // side.
-                            .reverse()
+                        this._sort(this.props.participants)
                             .map(p =>
                                 <Thumbnail
                                     key = { p.id }
@@ -53,6 +42,40 @@ class FilmStrip extends Component {
                 </ScrollView>
             </Container>
         );
+    }
+
+    /**
+     * Sorts a specific array of <tt>Participant</tt>s in display order.
+     *
+     * @param {Participant[]} participants - The array of <tt>Participant</tt>s
+     * to sort in display order.
+     * @private
+     * @returns {Participant[]} A new array containing the elements of the
+     * specified <tt>participants</tt> array sorted in display order.
+     */
+    _sort(participants) {
+        // XXX Array.prototype.sort() is not appropriate because (1) it operates
+        // in place and (2) it is not necessarily stable.
+
+        const sortedParticipants = [];
+
+        // Group the remote participants so that the local participant does not
+        // appear in between remote participants. Have the remote participants
+        // from right to left with the newest added/joined to the leftmost side.
+        for (let i = participants.length - 1; i >= 0; --i) {
+            const p = participants[i];
+
+            p.local || sortedParticipants.push(p);
+        }
+
+        // Have the local participant at the rightmost side.
+        for (let i = participants.length - 1; i >= 0; --i) {
+            const p = participants[i];
+
+            p.local && sortedParticipants.push(p);
+        }
+
+        return sortedParticipants;
     }
 }
 
