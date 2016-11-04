@@ -219,10 +219,17 @@ const TOOLTIP_POSITIONS = {
      * @param {String} the identifier of the element to show
      */
     showElement(id) {
-        if ($("#"+id).hasClass("hide"))
-            $("#"+id).removeClass("hide");
+        let element = document.getElementById(id);
 
-        $("#"+id).addClass("show");
+        if (!element) {
+            return;
+        }
+
+        if(element.classList.contains('hide')) {
+            element.classList.remove('hide');
+        }
+
+        element.classList.add('show');
     },
 
     /**
@@ -231,10 +238,17 @@ const TOOLTIP_POSITIONS = {
      * @param {String} the identifier of the element to hide
      */
     hideElement(id) {
-        if ($("#"+id).hasClass("show"))
-            $("#"+id).removeClass("show");
+        let element = document.getElementById(id);
 
-        $("#"+id).addClass("hide");
+        if (!element) {
+            return;
+        }
+
+        if(element.classList.contains('show')) {
+            element.classList.remove('show');
+        }
+
+        element.classList.add('hide');
     },
 
     /**

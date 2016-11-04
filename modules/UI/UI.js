@@ -443,10 +443,10 @@ UI.start = function () {
         // Display notice message at the top of the toolbar
         if (config.noticeMessage) {
             $('#noticeText').text(config.noticeMessage);
-            $('#notice').css({display: 'block'});
+            UIUtil.showElement('notice');
         }
     } else {
-        document.querySelector('#mainToolbarContainer').classList.add('hide');
+        UIUtil.hideElement('mainToolbarContainer');
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
