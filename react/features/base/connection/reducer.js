@@ -46,7 +46,7 @@ ReducerRegistry.register('features/base/connection',
             return {
                 ...state,
                 connectionOptions: {
-                    ...(state.connectionOptions || {}),
+                    ...state.connectionOptions,
                     ...buildConnectionOptions(action.domain)
                 }
             };

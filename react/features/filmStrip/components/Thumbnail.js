@@ -81,8 +81,9 @@ class Thumbnail extends Component {
         //    participants would be hearing themselves.
         const audioMuted = !audioTrack || audioTrack.muted;
         const renderAudio = !audioMuted && !audioTrack.local;
+        const participantId = participant.id;
         const participantNotInLargeVideo
-            = participant.id !== largeVideo.participantId;
+            = participantId !== largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
 
         return (
@@ -96,7 +97,7 @@ class Thumbnail extends Component {
                             = { audioTrack.jitsiTrack.getOriginalStream() } /> }
 
                 <ParticipantView
-                    participantId = { participant.id }
+                    participantId = { participantId }
                     showAvatar = { participantNotInLargeVideo }
                     showVideo = { participantNotInLargeVideo }
                     zOrder = { 1 } />
@@ -104,7 +105,7 @@ class Thumbnail extends Component {
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
                     && <ModeratorIndicator /> }
 
-                { participant.speaking
+                { participant.dominantSpeaker
                     && <DominantSpeakerIndicator /> }
 
                 { audioMuted

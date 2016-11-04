@@ -25,8 +25,9 @@ import {
  * @property {boolean} local - If true, participant is local.
  * @property {boolean} pinned - If true, participant is currently a
  * "PINNED_ENDPOINT".
- * @property {boolean} speaking - If true, participant is currently a dominant
- * speaker.
+ * @property {boolean} dominantSpeaker - If this participant is the dominant
+ * speaker in the (associated) conference, <tt>true</tt>; otherwise,
+ * <tt>false</tt>.
  * @property {string} email - Participant email.
  */
 
@@ -36,7 +37,7 @@ import {
  * @type {string[]}
  */
 const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
-    = [ 'id', 'local', 'pinned', 'speaking' ];
+    = [ 'dominantSpeaker', 'id', 'local', 'pinned' ];
 
 /**
  * Reducer function for a single participant.
@@ -53,10 +54,11 @@ function participant(state, action) {
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
-        return {
-            ...state,
-            speaking: state.id === action.participant.id
-        };
+        return (
+            _setStateProperty(
+                    state,
+                    'dominantSpeaker',
+                    state.id === action.participant.id));
 
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
@@ -68,8 +70,7 @@ function participant(state, action) {
                 avatar: state.avatar || _getAvatarURL(id, state.email)
             };
         }
-
-        return state;
+        break;
 
     case PARTICIPANT_JOINED: {
         const participant = action.participant; // eslint-disable-line no-shadow
@@ -94,7 +95,7 @@ function participant(state, action) {
             name,
             pinned: participant.pinned || false,
             role: participant.role || PARTICIPANT_ROLE.NONE,
-            speaking: participant.speaking || false
+            dominantSpeaker: participant.dominantSpeaker || false
         };
     }
 
@@ -117,19 +118,18 @@ function participant(state, action) {
 
             return newState;
         }
-
-        return state;
+        break;
 
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
-        return {
-            ...state,
-            pinned: state.id === action.participant.id
-        };
-
-    default:
-        return state;
+        return (
+            _setStateProperty(
+                    state,
+                    'pinned',
+                    state.id === action.participant.id));
     }
+
+    return state;
 }
 
 /**
@@ -200,4 +200,31 @@ function _getAvatarURL(participantId, email) {
     }
 
     return urlPref + avatarId + urlSuf;
+}
+
+/**
+ * Sets a specific property of a specific state to a specific value. Prevents
+ * unnecessary state changes (when the specified <tt>value</tt> is equal to the
+ * value of the specified <tt>property</tt> of the specified <tt>state</tt>).
+ *
+ * @param {Object} state - The (Redux) state from which a new state is to be
+ * constructed by setting the specified <tt>property</tt> to the specified
+ * <tt>value</tt>.
+ * @param {string} property - The property of <tt>state</tt> which is to be
+ * assigned the specified <tt>value</tt> (in the new state).
+ * @param {*} value - The value to assign to the specified <tt>property</tt>.
+ * @returns {Object} The specified <tt>state</tt> if the value of the specified
+ * <tt>property</tt> equals the specified <tt>value/tt>; otherwise, a new state
+ * constructed from the specified <tt>state</tt> by setting the specified
+ * <tt>property</tt> to the specified <tt>value</tt>.
+ */
+function _setStateProperty(state, property, value) {
+    if (state[property] !== value) {
+        return {
+            ...state,
+            [property]: value
+        };
+    }
+
+    return state;
 }
