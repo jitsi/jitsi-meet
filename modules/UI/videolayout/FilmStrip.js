@@ -12,6 +12,7 @@ const FilmStrip = {
     init (eventEmitter) {
         this.iconMenuDownClassName = 'icon-menu-down';
         this.iconMenuUpClassName = 'icon-menu-up';
+        this.filmStripContainerClassName = 'filmstrip';
         this.filmStrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
         this._initFilmStripToolbar();
@@ -23,7 +24,8 @@ const FilmStrip = {
      */
     _initFilmStripToolbar() {
         let toolbar = this._generateFilmStripToolbar();
-        let container = document.querySelector('.filmstrip');
+        let className = this.filmStripContainerClassName;
+        let container = document.querySelector(`.${className}`);
 
         UIUtil.prependChild(container, toolbar);
 
@@ -203,6 +205,7 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
+            - this.getFilmstripPanelsWidth()
             - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
@@ -265,12 +268,32 @@ const FilmStrip = {
     },
 
     /**
-     * Calculate the thumbnail size in order to fit all the thumnails in passed
+     *
+     * Calculates width of all panels inside filmstrip
+     * @returns {number} width
+     */
+    getFilmstripPanelsWidth() {
+        let filmstripPanelsWidth = 0;
+        let className = this.filmStripContainerClassName;
+        $(`.${className}`)
+            .children()
+            .each(function () {
+                if (this.id !== 'remoteVideos') {
+                    filmstripPanelsWidth += $(this).outerWidth();
+                }
+            });
+
+        return filmstripPanelsWidth;
+    },
+
+    /**
+     Calculate the thumbnail size in order to fit all the thumnails in passed
      * dimensions.
      * NOTE: Here we assume that the remote and local thumbnails are with the
      * same height.
      * @param {int} availableWidth the maximum width for all thumbnails
      * @param {int} availableHeight the maximum height for all thumbnails
+     * @returns {{localVideo, remoteVideo}}
      */
     calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
         /**
@@ -317,10 +340,12 @@ const FilmStrip = {
             (remoteLocalWidthRatio * numberRemoteThumbs + 1), availableHeight *
             interfaceConfig.LOCAL_THUMBNAIL_RATIO);
         const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
-        return { localVideo:{
+        return {
+                    localVideo:{
                         thumbWidth: lW,
                         thumbHeight: h
-                    }, remoteVideo: {
+                    },
+                    remoteVideo: {
                         thumbWidth: lW * remoteLocalWidthRatio,
                         thumbHeight: h
                     }
