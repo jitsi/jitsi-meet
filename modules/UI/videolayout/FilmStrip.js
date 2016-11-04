@@ -12,6 +12,7 @@ const FilmStrip = {
     init (eventEmitter) {
         this.iconMenuDownClassName = 'icon-menu-down';
         this.iconMenuUpClassName = 'icon-menu-up';
+        this.filmStripContainerClassName = 'filmstrip';
         this.filmStrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
         this._initFilmStripToolbar();
@@ -23,7 +24,8 @@ const FilmStrip = {
      */
     _initFilmStripToolbar() {
         let toolbar = this._generateFilmStripToolbar();
-        let container = document.querySelector('.filmstrip');
+        let className = this.filmStripContainerClassName;
+        let container = document.querySelector(`.${className}`);
 
         UIUtil.prependChild(container, toolbar);
 
@@ -213,6 +215,7 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
+            - this.getFilmstripPanelsWidth()
             - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
@@ -272,6 +275,24 @@ const FilmStrip = {
             = Math.min(maxHeight, window.innerHeight - 18);
 
         return { availableWidth, availableHeight };
+    },
+
+    /**
+    * Calculates width of all panels inside filmstrip
+    * @returns {number} width
+    */
+    getFilmstripPanelsWidth() {
+        let filmstripPanelsWidth = 0;
+        let className = this.filmStripContainerClassName;
+        $(`.${className}`)
+            .children()
+            .each(function () {
+                if (this.id !== 'remoteVideos') {
+                    filmstripPanelsWidth += $(this).outerWidth();
+                }
+            });
+
+        return filmstripPanelsWidth;
     },
 
     /**
