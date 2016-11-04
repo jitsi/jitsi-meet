@@ -387,9 +387,16 @@ var Recording = {
      * @param show {true} to show the recording button, {false} to hide it
      */
     showRecordingButton (show) {
-        var visibility = show && _isRecordingButtonEnabled();
-        document.querySelector('#toolbar_button_record')
-                .classList.toggle('hide', !visibility);
+        let isVisible = show && _isRecordingButtonEnabled();
+        let id = 'toolbar_button_record';
+
+        console.log('recording is visible', isVisible);
+
+        if (isVisible) {
+            UIUtil.showElement(id);
+        } else {
+            UIUtil.hideElement(id);
+        }
     },
 
     /**
@@ -472,6 +479,13 @@ var Recording = {
             labelSelector.css({display: "inline-block"});
 
         // Recording spinner
+        let spinnerId = 'recordingSpinner';
+        if(recordingState === Status.RETRYING) {
+            UIUtil.showElement(spinnerId);
+        } else {
+            UIUtil.hideElement(spinnerId);
+        }
+
         document.querySelector('#recordingSpinner').classList
                 .toggle('show-inline', recordingState === Status.RETRYING);
     },
