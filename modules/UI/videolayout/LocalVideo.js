@@ -110,11 +110,17 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         $('#localVideoContainer .displayname')
             .bind("click", function (e) {
                 let $editDisplayName = $('#editDisplayName');
-                let $localDisplayName = $('#localDisplayName');
 
                 e.preventDefault();
                 e.stopPropagation();
-                UIUtil.setVisibility($localDisplayName, false);
+                // we set display to be hidden
+                self.hideDisplayName = true;
+                // update the small video vide to hide the display name
+                self.updateView();
+                // disables further updates in the thumbnail to stay in the
+                // edit mode
+                self.disableUpdateView = true;
+
                 $editDisplayName.show();
                 $editDisplayName.focus();
                 $editDisplayName.select();
@@ -122,7 +128,11 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
                 $editDisplayName.one("focusout", function () {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
                     $editDisplayName.hide();
-                    UIUtil.setVisibility($localDisplayName, true);
+                    // stop editing, display displayName and resume updating
+                    // the thumbnail
+                    self.hideDisplayName = false;
+                    self.disableUpdateView = false;
+                    self.updateView();
                 });
 
                 $editDisplayName.on('keydown', function (e) {

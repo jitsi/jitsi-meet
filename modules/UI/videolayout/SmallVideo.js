@@ -51,6 +51,9 @@ function SmallVideo(VideoLayout) {
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
     this.videoIsHovered = false;
+    this.hideDisplayName = false;
+    // we can stop updating the thumbnail
+    this.disableUpdateView = false;
 }
 
 /**
@@ -484,6 +487,9 @@ SmallVideo.prototype._isHovered = function () {
  * video because there is no dominant speaker and no focused speaker
  */
 SmallVideo.prototype.updateView = function () {
+    if (this.disableUpdateView)
+        return;
+
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
@@ -506,7 +512,8 @@ SmallVideo.prototype.updateView = function () {
                                 || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // Show/hide the display name.
     UIUtil.setVisibility(   this.$displayName(),
-                            (displayMode === DISPLAY_BLACKNESS_WITH_NAME
+                            !this.hideDisplayName
+                            && (displayMode === DISPLAY_BLACKNESS_WITH_NAME
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME
                                 || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // show hide overlay when there is a video or avatar under
