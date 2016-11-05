@@ -76,7 +76,7 @@ export default class RequirePasswordDialog {
             let submitFunction = this._submitFunction.bind(this);
             let closeFunction = this._closeFunction.bind(this);
 
-            APP.UI.messageHandler.openTwoButtonDialog({
+            this._dialog = APP.UI.messageHandler.openTwoButtonDialog({
                 titleKey,
                 msgString,
                 leftButtonKey: "dialog.Ok",
@@ -153,7 +153,9 @@ export default class RequirePasswordDialog {
      * Close the dialog
      */
     close() {
-        APP.UI.messageHandler.closeDialog();
+        if (this._dialog) {
+            this._dialog.close();
+        }
         this.isOpened = false;
     }
 }

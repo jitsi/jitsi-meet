@@ -68,7 +68,7 @@ class Invite {
                     // will be marked as locked.
                     if (!pass)
                         this.setLockedFromElsewhere(false);
-                    this.conference.join(roomLocker.password);
+                    this.conference.join(pass);
                 });
             });
     }

@@ -339,13 +339,6 @@ var messageHandler = {
     },
 
     /**
-     * Closes currently opened dialog.
-     */
-    closeDialog: function () {
-        $.prompt.close();
-    },
-
-    /**
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
