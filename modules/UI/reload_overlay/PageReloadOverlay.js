@@ -116,6 +116,13 @@ export default {
         if (!overlay) {
             overlay = new PageReloadOverlayImpl(timeoutSeconds);
         }
+        // Log the page reload event
+        if (!this.isVisible()) {
+            // FIXME (CallStats - issue) this event will not make it to
+            // the CallStats, because the log queue is not flushed, before
+            // "fabric terminated" is sent to the backed
+            APP.conference.logEvent('page.reload');
+        }
         overlay.show();
     }
 };
