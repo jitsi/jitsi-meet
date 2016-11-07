@@ -126,7 +126,7 @@ var messageHandler = {
         if (!popupEnabled)
             return null;
 
-        let dialog = $.prompt(
+        let dialog = new Impromptu(
             APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
@@ -218,7 +218,7 @@ var messageHandler = {
             classes.prompt += ` ${wrapperClass}`;
         }
 
-        twoButtonDialog = $.prompt(message, {
+        twoButtonDialog = new Impromptu(message, {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             buttons: buttons,
