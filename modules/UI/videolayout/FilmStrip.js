@@ -160,6 +160,12 @@ const FilmStrip = {
         return this.calculateThumbnailSizeFromAvailable(width, height);
     },
 
+    /**
+     * Calculates available size for one thumbnail according to
+     * the current window size.
+     *
+     * @returns {{availableWidth: number, availableHeight: number}}
+     */
     calculateAvailableSize() {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let thumbs = this.getThumbs(true);
