@@ -160,45 +160,6 @@ const FilmStrip = {
         return this.calculateThumbnailSizeFromAvailable(width, height);
     },
 
-    /**
-     * Normalizes local and remote thumbnail ratios
-     */
-    normalizeThumbnailRatio() {
-        let remoteHeightRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_HEIGHT;
-        let remoteWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO_WIDTH;
-
-        let localHeightRatio = interfaceConfig.LOCAL_THUMBNAIL_RATIO_HEIGHT;
-        let localWidthRatio = interfaceConfig.LOCAL_THUMBNAIL_RATIO_WIDTH;
-
-        let commonHeightRatio = remoteHeightRatio * localHeightRatio;
-
-        let localRatioCoefficient = localWidthRatio / localHeightRatio;
-        let remoteRatioCoefficient = remoteWidthRatio / remoteHeightRatio;
-
-        remoteWidthRatio = commonHeightRatio * remoteRatioCoefficient;
-        remoteHeightRatio = commonHeightRatio;
-
-        localWidthRatio = commonHeightRatio * localRatioCoefficient;
-        localHeightRatio = commonHeightRatio;
-
-        let localRatio = {
-            widthRatio: localWidthRatio,
-            heightRatio: localHeightRatio
-        };
-
-        let remoteRatio = {
-            widthRatio: remoteWidthRatio,
-            heightRatio: remoteHeightRatio
-        };
-
-        return { localRatio, remoteRatio };
-    },
-
-    /**
-     * Calculates available size for one thumbnail according to
-     * the current window size
-     * @returns {{availableWidth: number, availableHeight: number}}
-     */
     calculateAvailableSize() {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let thumbs = this.getThumbs(true);
@@ -275,40 +236,66 @@ const FilmStrip = {
     },
 
     /**
-     * Takes the available size for thumbnail and calculates
-     * final size of thumbnails
-     * @param availableWidth
-     * @param availableHeight
-     * @returns {{localVideo, remoteVideo}}
+     * Calculate the thumbnail size in order to fit all the thumnails in passed
+     * dimensions.
+     * NOTE: Here we assume that the remote and local thumbnails are with the
+     * same height.
+     * @param {int} availableWidth the maximum width for all thumbnails
+     * @param {int} availableHeight the maximum height for all thumbnails
      */
     calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
-        let { localRatio, remoteRatio } = this.normalizeThumbnailRatio();
-        let { remoteThumbs } = this.getThumbs(true);
-        let remoteProportion = remoteRatio.widthRatio * remoteThumbs.length;
-        let widthProportion = remoteProportion + localRatio.widthRatio;
+        /**
+         * Let:
+         * lW - width of the local thumbnail
+         * rW - width of the remote thumbnail
+         * h - the height of the thumbnails
+         * remoteRatio - width:height for the remote thumbnail
+         * localRatio - width:height for the local thumbnail
+         * numberRemoteThumbs - number of remote thumbnails (we have only one
+         * local thumbnail)
+         *
+         * Since the height for local thumbnail = height for remote thumbnail
+         * and we know the ratio (width:height) for the local and for the
+         * remote thumbnail we can find rW/lW:
+         * rW / remoteRatio = lW / localRatio then -
+         * remoteLocalWidthRatio = rW / lW = remoteRatio / localRatio
+         * and rW = lW * remoteRatio / localRatio = lW * remoteLocalWidthRatio
+         * And the total width for the thumbnails is:
+         * totalWidth = rW * numberRemoteThumbs + lW
+         * = lW * remoteLocalWidthRatio * numberRemoteThumbs + lW =
+         * lW * (remoteLocalWidthRatio * numberRemoteThumbs + 1)
+         * and the h = lW/localRatio
+         *
+         * In order to fit all the thumbails in the area defined by
+         * availableWidth * availableHeight we should check one of the
+         * following options:
+         * 1) if availableHeight == h - totalWidth should be less than
+         * availableWidth
+         * 2) if availableWidth ==  totalWidth - h should be less than
+         * availableHeight
+         *
+         * 1) or 2) will be true and we are going to use it to calculate all
+         * sizes.
+         *
+         * if 1) is true that means that
+         * availableHeight/h > availableWidth/totalWidth otherwise 2) is true
+         */
 
-        let heightUnit = availableHeight / localRatio.heightRatio;
-        let widthUnit = availableWidth / widthProportion;
-
-        if (heightUnit < widthUnit) {
-            widthUnit = heightUnit;
-        }
-        else
-            heightUnit = widthUnit;
-
-        let localVideo = {
-            thumbWidth: widthUnit * localRatio.widthRatio,
-            thumbHeight: heightUnit * localRatio.heightRatio
-        };
-        let remoteVideo = {
-            thumbWidth: widthUnit * remoteRatio.widthRatio,
-            thumbHeight: widthUnit * remoteRatio.heightRatio
-        };
-
-        return {
-            localVideo,
-            remoteVideo
-        };
+        const numberRemoteThumbs = this.getThumbs(true).remoteThumbs.length;
+        const remoteLocalWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO /
+            interfaceConfig.LOCAL_THUMBNAIL_RATIO;
+        const lW = Math.min(availableWidth /
+            (remoteLocalWidthRatio * numberRemoteThumbs + 1), availableHeight *
+            interfaceConfig.LOCAL_THUMBNAIL_RATIO);
+        const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
+        return { localVideo:{
+                        thumbWidth: lW,
+                        thumbHeight: h
+                    }, remoteVideo: {
+                        thumbWidth: lW * remoteLocalWidthRatio,
+                        thumbHeight: h
+                    }
+                };
     },
 
     /**
