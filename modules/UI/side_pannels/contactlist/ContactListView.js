@@ -136,7 +136,7 @@ var ContactListView = {
      * Adds layout for lock description
      */
     getLockDescriptionLayout(key) {
-        let classes = "input-control__hint input-control_full-width";
+        let classes = "form-control__hint form-control_full-width";
         let padlockSuffix = '';
         if (key === this.lockKey) {
             padlockSuffix = '-locked';

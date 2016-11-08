@@ -72,7 +72,7 @@
         }
     }
 
-    .input-control:not(:last-child) {
+    .form-control:not(:last-child) {
         border-bottom: 1px solid $auiBorderColor;
     }
 }
