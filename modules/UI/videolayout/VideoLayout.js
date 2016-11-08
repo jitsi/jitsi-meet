@@ -621,6 +621,7 @@ var VideoLayout = {
         // since we don't want to switch to local video.
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
+        // FIXME: there is no "videoactive.jingle" event.
         if (!pinnedId
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
