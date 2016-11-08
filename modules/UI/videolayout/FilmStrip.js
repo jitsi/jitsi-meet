@@ -205,7 +205,7 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
-            - this.getFilmstripPanelsWidth()
+            - this._getFilmstripWidthExceptThumbnails()
             - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
@@ -268,22 +268,24 @@ const FilmStrip = {
     },
 
     /**
-     *
-     * Calculates width of all panels inside filmstrip
-     * @returns {number} width
+     * Traverse all elements inside the filmstrip
+     * and calculates the sum of all of them except
+     * remote videos element. Used for calculation of
+     * available width for video thumbnails
+     * @returns {number} calculated width
+     * @private
      */
-    getFilmstripPanelsWidth() {
-        let filmstripPanelsWidth = 0;
+    _getFilmstripWidthExceptThumbnails() {
         let className = this.filmStripContainerClassName;
+        let width = 0;
         $(`.${className}`)
             .children()
             .each(function () {
                 if (this.id !== 'remoteVideos') {
-                    filmstripPanelsWidth += $(this).outerWidth();
+                    width += $(this).outerWidth();
                 }
             });
-
-        return filmstripPanelsWidth;
+        return width;
     },
 
     /**
