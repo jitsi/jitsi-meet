@@ -118,13 +118,11 @@ const buttonHandlers = {
         });
     },
     "toolbar_film_strip": function () {
-        JitsiMeetJS.analytics.sendEvent(
-            'toolbar.filmstrip.toggled');
+        JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
         emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
     },
     "toolbar_button_raisehand": function () {
-        JitsiMeetJS.analytics.sendEvent(
-            'toolbar.raiseHand.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
         APP.conference.maybeToggleRaisedHand();
     }
 };

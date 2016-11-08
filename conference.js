@@ -432,8 +432,8 @@ function disconnect() {
 }
 
 /**
- * Set permanent ptoperties to analytics.
- * NOTE: Has to be used after JitsiMeetJS.init. otherwise analytics will be
+ * Set permanent properties to analytics.
+ * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be
  * null.
  */
 function setAnalyticsPermanentProperties() {
