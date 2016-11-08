@@ -399,7 +399,8 @@
 }
 
 .userAvatar {
-    @include circle(60px);
+    @include maxSize(60px);
+    @include circle(50%);
     @include absoluteAligning();
 }
 
