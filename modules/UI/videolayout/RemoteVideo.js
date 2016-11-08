@@ -440,11 +440,10 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
 
     var self = this;
 
-    // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
-    // when video playback starts
+    // Triggers when video playback starts
     var onPlayingHandler = function () {
         self.wasVideoPlayed = true;
-        self.VideoLayout.videoactive(streamElement, self.id);
+        self.VideoLayout.remoteVideoActive(streamElement, self.id);
         streamElement.onplaying = null;
         // Refresh to show the video
         self.updateView();

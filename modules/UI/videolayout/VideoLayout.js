@@ -423,12 +423,13 @@ var VideoLayout = {
         remoteVideo.updateView();
     },
 
-    videoactive (videoelem, resourceJid) {
+    // FIXME: what does this do???
+    remoteVideoActive(videoElement, resourceJid) {
 
-        console.info(resourceJid + " video is now active", videoelem);
+        console.info(resourceJid + " video is now active", videoElement);
 
         VideoLayout.resizeThumbnails(
-            false, false, function() {$(videoelem).show();});
+            false, false, function() {$(videoElement).show();});
 
         // Update the large video to the last added video only if there's no
         // current dominant, focused speaker or update it to
