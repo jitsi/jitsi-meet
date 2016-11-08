@@ -1,8 +1,7 @@
-import { createStyleSheet } from '../../base/styles';
+import { ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
  * The style of the conference UI (component).
- * TODO Make styles more generic and reusable. Use ColorPalette for all colors.
  */
 export const styles = createStyleSheet({
     /**
@@ -18,7 +17,7 @@ export const styles = createStyleSheet({
      */
     conference: {
         alignSelf: 'stretch',
-        backgroundColor: '#111111',
+        backgroundColor: ColorPalette.appBackground,
         flex: 1
     },
 

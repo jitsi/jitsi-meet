@@ -63,7 +63,7 @@ export const styles = createStyleSheet({
      * Navigator container style.
      */
     navContainer: {
-        backgroundColor: '#111111',
+        backgroundColor: ColorPalette.appBackground,
         flex: 1
     },
 
