@@ -406,13 +406,11 @@ var VideoLayout = {
     addRemoteVideoContainer (id, remoteVideo) {
         remoteVideos[id] = remoteVideo;
 
-        let videoType = VideoLayout.getRemoteVideoType(id);
-        if (!videoType) {
+        if (!remoteVideo.getVideoType()) {
             // make video type the default one (camera)
             // FIXME container type is not a video type
-            videoType = VIDEO_CONTAINER_TYPE;
+            remoteVideo.setVideoType(VIDEO_CONTAINER_TYPE);
         }
-        remoteVideo.setVideoType(videoType);
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
@@ -425,12 +423,13 @@ var VideoLayout = {
         remoteVideo.updateView();
     },
 
-    videoactive (videoelem, resourceJid) {
+    // FIXME: what does this do???
+    remoteVideoActive(videoElement, resourceJid) {
 
-        console.info(resourceJid + " video is now active", videoelem);
+        console.info(resourceJid + " video is now active", videoElement);
 
         VideoLayout.resizeThumbnails(
-            false, false, function() {$(videoelem).show();});
+            false, false, function() {$(videoElement).show();});
 
         // Update the large video to the last added video only if there's no
         // current dominant, focused speaker or update it to
@@ -623,6 +622,7 @@ var VideoLayout = {
         // since we don't want to switch to local video.
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
+        // FIXME: there is no "videoactive.jingle" event.
         if (!pinnedId
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {

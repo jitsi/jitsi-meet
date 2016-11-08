@@ -120,7 +120,10 @@ SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
 
 /**
  * Sets the type of the video displayed by this instance.
- * @param videoType 'camera' or 'desktop'
+ * Note that this is a string without clearly defined or checked values, and
+ * it is NOT one of the strings defined in service/RTC/VideoType in
+ * lib-jitsi-meet.
+ * @param videoType 'camera' or 'desktop', or 'sharedvideo'.
  */
 SmallVideo.prototype.setVideoType = function (videoType) {
     this.videoType = videoType;
@@ -128,7 +131,10 @@ SmallVideo.prototype.setVideoType = function (videoType) {
 
 /**
  * Returns the type of the video displayed by this instance.
- * @returns {String} 'camera', 'screen' or undefined.
+ * Note that this is a string without clearly defined or checked values, and
+ * it is NOT one of the strings defined in service/RTC/VideoType in
+ * lib-jitsi-meet.
+ * @returns {String} 'camera', 'screen', 'sharedvideo', or undefined.
  */
 SmallVideo.prototype.getVideoType = function () {
     return this.videoType;
