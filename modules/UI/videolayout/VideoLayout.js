@@ -406,13 +406,11 @@ var VideoLayout = {
     addRemoteVideoContainer (id, remoteVideo) {
         remoteVideos[id] = remoteVideo;
 
-        let videoType = VideoLayout.getRemoteVideoType(id);
-        if (!videoType) {
+        if (!remoteVideo.getVideoType()) {
             // make video type the default one (camera)
             // FIXME container type is not a video type
-            videoType = VIDEO_CONTAINER_TYPE;
+            remoteVideo.setVideoType(VIDEO_CONTAINER_TYPE);
         }
-        remoteVideo.setVideoType(videoType);
 
         // In case this is not currently in the last n we don't show it.
         if (localLastNCount && localLastNCount > 0 &&
