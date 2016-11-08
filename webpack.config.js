@@ -4,7 +4,6 @@ require('babel-polyfill'); // Define Object.assign() from ES6 in ES5.
 
 var process = require('process');
 
-var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
 var minimize
     = process.argv.indexOf('-p') != -1
         || process.argv.indexOf('--optimize-minimize') != -1;
@@ -44,23 +43,11 @@ var config = {
             test: /\/node_modules\/select2\/dist\/js/
         },{
             // Allow CSS to be imported into JavaScript.
-
             loaders: [
                 'style',
                 'css'
             ],
             test: /\.css$/
-        },{
-            // Emit the static assets of AUI such as images that are referenced
-            // by CSS into the output path.
-
-            include: aui_css,
-            loader: 'file',
-            query: {
-                context: aui_css,
-                name: '[path][name].[ext]'
-            },
-            test: /\.(gif|png|svg)$/
         },{
             //Adds the ability to import json files.
             loader: 'json',
@@ -88,14 +75,6 @@ var config = {
     },
     resolve: {
         alias: {
-            aui:
-                '@atlassian/aui/dist/aui/js/aui'
-                    + (minimize ? '.min' : '')
-                    + '.js',
-            'aui-experimental':
-                '@atlassian/aui/dist/aui/js/aui-experimental'
-                    + (minimize ? '.min' : '')
-                    + '.js',
             jquery: 'jquery/dist/jquery' + (minimize ? '.min' : '') + '.js',
             'jQuery-Impromptu':
                 'jQuery-Impromptu/dist/jquery-impromptu'

@@ -16,7 +16,6 @@
   "readmeFilename": "README.md",
   "//": "Callstats.io does not work with recent versions of jsSHA (2.0.1 in particular)",
   "dependencies": {
-    "@atlassian/aui": "^6.0.0",
     "async": "0.9.0",
     "autosize": "^1.18.13",
     "bootstrap": "3.1.1",
@@ -78,8 +77,6 @@
     "lint"
   ],
   "browser": {
-    "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
-    "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
     "autosize": "./node_modules/autosize/build/jquery.autosize.js",
     "popover": "./node_modules/bootstrap/js/popover.js",
     "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js",

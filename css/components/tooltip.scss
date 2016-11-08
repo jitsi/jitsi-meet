@@ -1,0 +1,17 @@
+
+.tipsy {
+    z-index: $tooltipsZ;
+    font-size: 12px;
+    line-height: 20px;
+    font-family: Arial, sans-serif;
+    padding: 4px;
+    text-align: left;
+
+    &-inner {
+        background-color: $tooltipBg;
+    }
+
+    &-arrow {
+        border-color: $tooltipBg;
+    }
+}

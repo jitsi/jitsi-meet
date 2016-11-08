@@ -165,20 +165,6 @@ form {
 }
 
 /**
-* Tooltips
-**/
-.tipsy {
-    z-index: $tooltipsZ;
-    &-inner {
-        background-color: $tooltipBg;
-    }
-
-    &-arrow {
-        border-color: $tooltipBg;
-    }
-}
-
-/**
 * Dialogs fade
 */
 .aui-blanket {
