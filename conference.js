@@ -1437,11 +1437,21 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
-            var smallVideoId = smallVideo.getId();
+            let smallVideoId = smallVideo.getId();
+            let isLocal = APP.conference.isLocalId(smallVideoId);
+
+            let eventName
+                = (isPinned ? "pinned" : "unpinned") + "." +
+                        (isLocal ? "local" : "remote");
+            let participantCount = room.getParticipantCount();
+            JitsiMeetJS.analytics.sendEvent(
+                    eventName,
+                    { value: participantCount });
+
             // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
             // the participant is on the large video ?
             if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
-                && !APP.conference.isLocalId(smallVideoId)) {
+                && !isLocal) {
 
                 // When the library starts supporting multiple pins we would
                 // pass the isPinned parameter together with the identifier,
