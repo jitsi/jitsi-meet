@@ -1,5 +1,5 @@
 /* global APP, JitsiMeetJS */
-import askForPassword from './AskForPassword';
+import RequirePasswordDialog from './RequirePasswordDialog';
 
 /**
  * Show notification that user cannot set password for the conference
@@ -31,7 +31,7 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
  */
 export default function createRoomLocker (room) {
     let password;
-
+    let requirePasswordDialog = new RequirePasswordDialog();
     /**
      * If the room was locked from someone other than us, we indicate it with
      * this property in order to have correct roomLocker state of isLocked.
@@ -104,7 +104,7 @@ export default function createRoomLocker (room) {
          * Asks user for required conference password.
          */
         requirePassword () {
-            return askForPassword().then(
+            return requirePasswordDialog.askForPassword().then(
                 newPass => { password = newPass; }
             ).catch(
                 reason => {
@@ -116,6 +116,15 @@ export default function createRoomLocker (room) {
                         console.error(reason);
                 }
             );
+        },
+
+        /**
+         * Hides require password dialog
+         */
+        hideRequirePasswordDialog() {
+            if (requirePasswordDialog.isOpened) {
+                requirePasswordDialog.close();
+            }
         }
     };
 }

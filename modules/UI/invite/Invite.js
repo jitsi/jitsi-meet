@@ -32,7 +32,7 @@ class Invite {
                 error);
 
             if (!locked) {
-                this.roomLocker.resetPassword();
+                this.getRoomLocker().resetPassword();
             }
 
             this.setLockedFromElsewhere(locked);
@@ -46,14 +46,20 @@ class Invite {
             }
         });
 
+        this.conference.on(ConferenceEvents.CONFERENCE_JOINED, () => {
+            let roomLocker = this.getRoomLocker();
+            roomLocker.hideRequirePasswordDialog();
+        });
+
         APP.UI.addListener( UIEvents.INVITE_CLICKED,
                             () => { this.openLinkDialog(); });
 
         APP.UI.addListener( UIEvents.PASSWORD_REQUIRED,
             () => {
+                let roomLocker = this.getRoomLocker();
                 this.setLockedFromElsewhere(true);
-                this.roomLocker.requirePassword().then(() => {
-                    let pass = this.roomLocker.password;
+                roomLocker.requirePassword().then(() => {
+                    let pass = roomLocker.password;
                     // we received that password is required, but user is trying
                     // anyway to login without a password, mark room as not
                     // locked in case he succeeds (maybe someone removed the
@@ -62,7 +68,7 @@ class Invite {
                     // will be marked as locked.
                     if (!pass)
                         this.setLockedFromElsewhere(false);
-                    this.conference.join(this.roomLocker.password);
+                    this.conference.join(pass);
                 });
             });
     }
@@ -124,7 +130,7 @@ class Invite {
      * @returns {String} password
      */
     getPassword() {
-        return this.roomLocker.password;
+        return this.getRoomLocker().password;
     }
 
     /**
@@ -144,7 +150,7 @@ class Invite {
      */
     setRoomUnlocked() {
         if (this.isModerator) {
-            this.roomLocker.lock().then(() => {
+            this.getRoomLocker().lock().then(() => {
                 APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
                 this.updateView();
             });
@@ -159,8 +165,8 @@ class Invite {
      */
     setRoomLocked(newPass) {
         let isModerator = this.isModerator;
-        if (isModerator && (newPass || !this.roomLocker.isLocked)) {
-            this.roomLocker.lock(newPass).then(() => {
+        if (isModerator && (newPass || !this.getRoomLocker().isLocked)) {
+            this.getRoomLocker().lock(newPass).then(() => {
                 APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
                 this.updateView();
             });
@@ -182,7 +188,7 @@ class Invite {
      * @returns {Boolean} isLocked
      */
     isLocked() {
-        return this.roomLocker.isLocked;
+        return this.getRoomLocker().isLocked;
     }
 
     /**
@@ -190,9 +196,10 @@ class Invite {
      * @param isLocked
      */
     setLockedFromElsewhere(isLocked) {
-        let oldLockState = this.roomLocker.isLocked;
+        let roomLocker = this.getRoomLocker();
+        let oldLockState = roomLocker.isLocked;
         if (oldLockState !== isLocked) {
-            this.roomLocker.lockedElsewhere = isLocked;
+            roomLocker.lockedElsewhere = isLocked;
             APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK);
             this.updateView();
         }
