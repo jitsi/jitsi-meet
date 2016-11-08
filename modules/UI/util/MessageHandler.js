@@ -1,4 +1,4 @@
-/* global $, APP, toastr, Impromptu */
+/* global $, APP, toastr */
 
 import UIUtil from './UIUtil';
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
@@ -126,7 +126,7 @@ var messageHandler = {
         if (!popupEnabled)
             return null;
 
-        let dialog = new Impromptu(
+        let dialog = $.prompt(
             APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
@@ -138,7 +138,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(dialog, i18nOptions);
-        return dialog;
+        return $.prompt.getApi();
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
@@ -218,7 +218,7 @@ var messageHandler = {
             classes.prompt += ` ${wrapperClass}`;
         }
 
-        twoButtonDialog = new Impromptu(message, {
+        twoButtonDialog = $.prompt(message, {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             buttons: buttons,
@@ -242,7 +242,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(twoButtonDialog);
-        return twoButtonDialog;
+        return $.prompt.getApi();
     },
 
     /**
@@ -300,10 +300,10 @@ var messageHandler = {
             args.closeText = '';
         }
 
-        let dialog = new Impromptu(
+        let dialog = $.prompt(
             msgString + generateDontShowCheckbox(dontShowAgain), args);
-        APP.translation.translateElement(dialog.getPrompt());
-        return dialog;
+        APP.translation.translateElement(dialog);
+        return $.prompt.getApi();
     },
 
     /**
@@ -360,9 +360,9 @@ var messageHandler = {
                     = this._getFormattedTitleString(currentState.titleKey);
             }
         }
-        let dialog = new Impromptu(statesObject, options);
-        APP.translation.translateElement(dialog.getPrompt(), translateOptions);
-        return dialog;
+        let dialog = $.prompt(statesObject, options);
+        APP.translation.translateElement(dialog, translateOptions);
+        return $.prompt.getApi();
     },
 
     /**
