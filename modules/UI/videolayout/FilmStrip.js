@@ -1,4 +1,4 @@
-/* global $, interfaceConfig */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -58,6 +58,29 @@ const FilmStrip = {
         let toggleFilmstripMethod = this.toggleFilmStrip.bind(this);
         let selector = '#hideVideoToolbar';
         $('#videospace').on('click', selector, toggleFilmstripMethod);
+
+        this._registerToggleFilmstripShortcut();
+    },
+
+    /**
+     * Registering toggle filmstrip shortcut
+     * @private
+     */
+    _registerToggleFilmstripShortcut() {
+        let shortcut = 'F';
+        let shortcutAttr = 'filmstripPopover';
+        let description = 'keyboardShortcuts.toggleFilmstrip';
+        let handler = () => {
+            JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
+            APP.UI.toggleFilmStrip();
+        };
+
+        APP.keyboardshortcut.registerShortcut(
+            shortcut,
+            shortcutAttr,
+            handler,
+            description
+        );
     },
 
     /**
