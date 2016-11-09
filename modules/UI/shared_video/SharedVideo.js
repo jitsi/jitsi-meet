@@ -84,6 +84,14 @@ export default class SharedVideoManager {
 
         if(APP.conference.isLocalId(this.from)) {
             showStopVideoPropmpt().then(() => {
+                    // make sure we stop updates for playing before we send stop
+                    // if we stop it after receiving self presence, we can end
+                    // up sending stop playing, and on the other end it will not
+                    // stop
+                    if(this.intervalId) {
+                         clearInterval(this.intervalId);
+                         this.intervalId = null;
+                    }
                     this.emitter.emit(
                         UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
                     JitsiMeetJS.analytics.sendEvent('sharedvideo.stoped');
@@ -421,11 +429,6 @@ export default class SharedVideoManager {
                 this.initialAttributes = attributes;
                 return;
             }
-        }
-
-        if(this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
         }
 
         this.emitter.removeListener(UIEvents.AUDIO_MUTED,
