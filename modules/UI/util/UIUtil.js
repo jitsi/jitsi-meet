@@ -27,9 +27,7 @@ const TOOLTIP_POSITIONS = {
      * Returns the available video width.
      */
     getAvailableVideoWidth: function () {
-        let rightPanelWidth = 0;
-
-        return window.innerWidth - rightPanelWidth;
+        return window.innerWidth;
     },
 
     /**
