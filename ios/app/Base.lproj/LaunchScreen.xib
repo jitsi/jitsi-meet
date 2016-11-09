@@ -11,12 +11,17 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView opaque="NO" userInteractionEnabled="NO" contentMode="center" fixedFrame="YES" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="4B8-Xf-NDE">
+                <imageView opaque="NO" userInteractionEnabled="NO" contentMode="center" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="4B8-Xf-NDE">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 </imageView>
             </subviews>
             <color key="backgroundColor" red="0.090196078431372548" green="0.62745098039215685" blue="0.85882352941176465" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="4B8-Xf-NDE" secondAttribute="bottom" id="aFF-BR-glX"/>
+                <constraint firstItem="4B8-Xf-NDE" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="glR-YN-1GF"/>
+                <constraint firstAttribute="trailing" secondItem="4B8-Xf-NDE" secondAttribute="trailing" id="tva-gl-jRX"/>
+                <constraint firstItem="4B8-Xf-NDE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="yaV-1V-oEh"/>
+            </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="548" y="455"/>
