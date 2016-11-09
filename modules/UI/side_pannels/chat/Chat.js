@@ -297,11 +297,7 @@ var Chat = {
             subject = subject.trim();
         }
         $('#subject').html(linkify(UIUtil.escapeHtml(subject)));
-        if (subject) {
-            $("#subject").css({display: "block"});
-        } else {
-            $("#subject").css({display: "none"});
-        }
+        document.querySelector('#subject').classList.toggle('hide', !subject);
     },
 
     /**

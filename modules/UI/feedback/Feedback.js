@@ -7,7 +7,7 @@ import FeedbackWindow from "./FeedbackWindow";
  * @private
  */
 function _toggleFeedbackIcon() {
-    $('#feedbackButtonDiv').toggleClass("hidden");
+    document.querySelector('#feedbackButton').classList.toggle('hidden');
 }
 
 /**
@@ -17,12 +17,7 @@ function _toggleFeedbackIcon() {
  * @private
  */
 function _showFeedbackButton (show) {
-    var feedbackButton = $("#feedbackButtonDiv");
-
-    if (show)
-        feedbackButton.css("display", "block");
-    else
-        feedbackButton.css("display", "none");
+    document.querySelector('#feedbackButton').classList.toggle('hide', !show);
 }
 
 /**
