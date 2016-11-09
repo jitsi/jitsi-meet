@@ -58,7 +58,7 @@ const commands = {
  * Max length of the display names. If we receive longer display name the
  * additional chars are going to be cut.
  */
-const MAX_DISPLAYNAME_LENGTH = 50;
+const MAX_DISPLAY_NAME_LENGTH = 50;
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
@@ -288,7 +288,7 @@ function changeLocalEmail(email = '') {
  */
 function changeLocalDisplayName(nickname = '') {
     const formattedNickname
-        = nickname.trim().substr(0, MAX_DISPLAYNAME_LENGTH);
+        = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
 
     if (formattedNickname === APP.settings.getDisplayName()) {
         return;
@@ -1276,7 +1276,7 @@ export default {
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
             const formattedDisplayName
-                = displayName.substr(0, MAX_DISPLAYNAME_LENGTH);
+                = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
             APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
             APP.UI.changeDisplayName(id, formattedDisplayName);
         });
