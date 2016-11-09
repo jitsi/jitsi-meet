@@ -33,13 +33,14 @@ export default class RequirePasswordDialog {
      */
     _getBodyMessage() {
         return (
-            `<div class="input-control">
+            `<div class="form-control">
                 <label class="input-control__label"
                        data-i18n="${this.labelKey}"></label>
-                <input class="input-control__input" name="lockKey" type="text"
+                <input class="input-control__input input-control"
+                       name="lockKey" type="text"
                    data-i18n="[placeholder]dialog.password"
                    autofocus id="${this.inputId}">
-                <p class="input-control__hint input-control__hint_error hide"
+                <p class="form-control__hint form-control__hint_error hide"
                    id="${this.errorId}"
                    data-i18n="${this.errorKey}"></p>
             </div>`

@@ -11,10 +11,10 @@ function getPasswordInputHtml() {
 
     return `
         <input name="username" type="text" 
-               class="form-control__input"
+               class="input-control"
                placeholder=${placeholder} autofocus>
         <input name="password" type="password"
-               class="form-control__input"
+               class="input-control"
                data-i18n="[placeholder]dialog.userPassword">`;
 }
 

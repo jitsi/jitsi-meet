@@ -31,16 +31,6 @@
     }
 
     /**
-     * Specify colors for edit elements.
-     */
-    select, input[type="button"], input[type="text"], input[type="reset"],
-    input[type="submit"] {
-        color: $inputColor;
-        background: $inputBackground;
-        border: none;
-    }
-
-    /**
      * Specify styling of elements inside a block.
      */
     .sideToolbarBlock {

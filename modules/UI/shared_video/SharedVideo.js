@@ -765,6 +765,7 @@ function requestVideoLink() {
                 titleKey: "dialog.shareVideoTitle",
                 html:  `
                     <input name="sharedVideoUrl" type="text"
+                           class="input-control"
                            data-i18n="[placeholder]defaultLink"
                            autofocus>`,
                 persistent: false,

@@ -124,7 +124,7 @@ export default class InviteDialogView {
                 <label class="form-control__label" for="inviteLinkRef"
                     data-i18n="${this.dialog.titleKey}"></label>
                 <div class="form-control__container">
-                    <input class="form-control__input inviteLink"
+                    <input class="input-control inviteLink"
                            id="inviteLinkRef" type="text"
                            ${this.inviteAttributes} readonly>
                     <button data-i18n="dialog.copy" class="${classes}"></button>
@@ -155,7 +155,8 @@ export default class InviteDialogView {
                        for="newPasswordInput" data-i18n="dialog.addPassword">
                </label>
                 <div class="form-control__container">
-                    <input class="form-control__input" id="newPasswordInput"
+                    <input class="input-control"
+                           id="newPasswordInput"
                            type="text" 
                            data-i18n="[placeholder]dialog.createPassword">
                     <button id="addPasswordBtn" id="inviteDialogAddPassword"

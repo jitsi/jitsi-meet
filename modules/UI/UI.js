@@ -84,8 +84,7 @@ function promptDisplayName() {
             <label data-i18n="${labelKey}" class="form-control__label"></label>
             <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
-               class="form-control__input"
-               autofocus>
+               class="input-control" autofocus>
          </div>`
     );
 
@@ -742,9 +741,11 @@ UI.showLoginPopup = function(callback) {
 
     let message = (
         `<input name="username" type="text"
-                placeholder="user@domain.net" autofocus>
+                placeholder="user@domain.net"
+                class="input-control" autofocus>
          <input name="password" type="password"
                 data-i18n="[placeholder]dialog.userPassword"
+                class="input-control"
                 placeholder="user password">`
     );
 

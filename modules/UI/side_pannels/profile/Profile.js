@@ -10,12 +10,12 @@ const htmlStr = `
         <div class="sideToolbarBlock first">
             <label class="first" data-i18n="profile.setDisplayNameLabel">
             </label>
-            <input type="text" id="setDisplayName"
+            <input class="input-control" type="text" id="setDisplayName"
                 data-i18n="[placeholder]settings.name">
         </div>
         <div class="sideToolbarBlock">
             <label data-i18n="profile.setEmailLabel"></label>
-            <input id="setEmail" type="text" 
+            <input id="setEmail" type="text" class="input-control" 
                 data-i18n="[placeholder]profile.setEmailInput">
         </div>
         <div id="authenticationContainer" 

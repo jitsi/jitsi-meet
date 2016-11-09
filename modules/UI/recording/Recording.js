@@ -55,7 +55,8 @@ function _requestLiveStreamId() {
             state0: {
                 titleKey: "dialog.liveStreaming",
                 html:
-                    `<input name="streamId" type="text"
+                    `<input  class="input-control"
+                    name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     autofocus>`,
                 persistent: false,
@@ -123,6 +124,7 @@ function _requestRecordingToken () {
     let messageString = (
         `<input name="recordingToken" type="text"
                 data-i18n="[placeholder]dialog.token"
+                class="input-control"
                 autofocus>`
     );
     return new Promise(function (resolve, reject) {

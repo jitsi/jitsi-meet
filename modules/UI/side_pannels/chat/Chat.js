@@ -17,7 +17,8 @@ const htmlStr = `
         <div id="nickname">
             <span data-i18n="chat.nickname.title"></span>
             <form>
-                <input type='text' id="nickinput" autofocus 
+                <input type='text'
+                       class="input-control" id="nickinput" autofocus
                     data-i18n="[placeholder]chat.nickname.popover">
             </form>
         </div>
