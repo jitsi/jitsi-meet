@@ -13,7 +13,7 @@
             <subviews>
                 <imageView opaque="NO" userInteractionEnabled="NO" contentMode="center" fixedFrame="YES" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="4B8-Xf-NDE">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 </imageView>
             </subviews>
             <color key="backgroundColor" red="0.090196078431372548" green="0.62745098039215685" blue="0.85882352941176465" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
