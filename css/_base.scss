@@ -187,3 +187,8 @@ form {
     -webkit-user-select: text;
     user-select: text;
 }
+
+// remove the default border highlight on an input text element
+*:focus {
+    outline: none;
+}

@@ -11,6 +11,7 @@
 
                 &__rendered {
                     color: $defaultColor;
+                    line-height: 26px;
                 }
             }
         }
@@ -26,17 +27,15 @@
         border-color: $selectActiveBg;
         color: $selectFontColor;
 
-        &::-webkit-scrollbar {
-            background-color: transparent;
-        }
-        &::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-        &::-webkit-scrollbar-track-piece {
-            background-color: transparent;
-        }
-        &::-webkit-scrollbar-thumb {
-            background-color: $selectActiveItemBg;
+        &__options {
+            &::-webkit-scrollbar,
+            &::-webkit-scrollbar-track,
+            &::-webkit-scrollbar-track-piece {
+                background-color: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: $selectActiveItemBg;
+            }
         }
 
         &__option{
@@ -48,7 +47,7 @@
                 background-color: $selectActiveBg;
             }
             //highlighted item
-            &--highlighted{
+            &--highlighted[aria-selected]{
                 background-color: $selectActiveItemBg;
             }
         }

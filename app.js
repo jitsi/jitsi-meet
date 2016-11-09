@@ -11,10 +11,9 @@ import "strophe-caps";
 import "jQuery-Impromptu";
 import "autosize";
 
-// import 'aui';
-// import 'aui-experimental';
-// import 'aui-css';
-// import 'aui-experimental-css';
+// TODO: remove it after styles cleaning
+import 'aui';
+import 'aui-css';
 
 import 'tipsy';
 import 'tipsy-css';
