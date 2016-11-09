@@ -46,6 +46,12 @@ const commands = {
 };
 
 /**
+ * Max length of the display names. If we receive longer display name the
+ * additional chars are going to be cut.
+ */
+const MAX_DISPLAY_NAME_LENGTH = 50;
+
+/**
  * Open Connection. When authentication failed it shows auth dialog.
  * @param roomName the room name to use
  * @returns Promise<JitsiConnection>
@@ -273,15 +279,16 @@ function changeLocalEmail(email = '') {
  * @param nickname {string} the new display name
  */
 function changeLocalDisplayName(nickname = '') {
-    nickname = nickname.trim();
+    const formattedNickname
+        = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
 
-    if (nickname === APP.settings.getDisplayName()) {
+    if (formattedNickname === APP.settings.getDisplayName()) {
         return;
     }
 
-    APP.settings.setDisplayName(nickname);
-    room.setDisplayName(nickname);
-    APP.UI.changeDisplayName(APP.conference.getMyUserId(), nickname);
+    APP.settings.setDisplayName(formattedNickname);
+    room.setDisplayName(formattedNickname);
+    APP.UI.changeDisplayName(APP.conference.getMyUserId(), formattedNickname);
 }
 
 class ConferenceConnector {
@@ -1252,8 +1259,10 @@ export default {
         });
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
-            APP.API.notifyDisplayNameChanged(id, displayName);
-            APP.UI.changeDisplayName(id, displayName);
+            const formattedDisplayName
+                = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
+            APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
+            APP.UI.changeDisplayName(id, formattedDisplayName);
         });
 
         room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
