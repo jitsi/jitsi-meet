@@ -64,14 +64,14 @@
          * Titles and subtitles of inner containers.
          */
         div.title, div.subTitle {
-            margin: 10px 0;
+            margin: 24px 0 11px;
         }
 
         /**
          * Main title size.
          */
         div.title {
-            color: $toolbarTitleColor !important;
+            color: $toolbarTitleColor;
             text-align: center;
             font-size: $toolbarTitleFontSize;
         }

@@ -75,3 +75,12 @@ $popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
 
 // Toolbar
 $splitterColor: #ccc;
+
+/**
+ * Forms
+ */
+//dropdown
+$selectFontColor: $baseLight;
+$selectBg: $controlBackground;
+$selectActiveBg: darken($controlBackground, 5%);
+$selectActiveItemBg: darken($controlBackground, 10%);
