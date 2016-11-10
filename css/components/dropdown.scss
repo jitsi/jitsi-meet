@@ -26,6 +26,8 @@
         background-color: $selectActiveBg;
         border-color: $selectActiveBg;
         color: $selectFontColor;
+        margin: 4px 0 0;
+        padding: 0;
 
         &__options {
             &::-webkit-scrollbar,
