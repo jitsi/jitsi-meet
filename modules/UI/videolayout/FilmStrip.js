@@ -205,7 +205,7 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
-            - this._getFilmstripWidthExceptThumbnails()
+            - this._getFilmstripExtraPanelsWidth()
             - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
@@ -271,11 +271,12 @@ const FilmStrip = {
      * Traverse all elements inside the filmstrip
      * and calculates the sum of all of them except
      * remote videos element. Used for calculation of
-     * available width for video thumbnails
+     * available width for video thumbnails.
+     *
      * @returns {number} calculated width
      * @private
      */
-    _getFilmstripWidthExceptThumbnails() {
+    _getFilmstripExtraPanelsWidth() {
         let className = this.filmStripContainerClassName;
         let width = 0;
         $(`.${className}`)
