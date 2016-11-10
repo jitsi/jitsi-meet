@@ -79,6 +79,10 @@
         "policyText": "&nbsp;",
         "title": "__app__ needs to use your microphone and camera."
     },
+    "suspendedoverlay": {
+        "title": "Your video call was interrupted, because this computer went to sleep.",
+        "rejoinKeyTitle": "Rejoin"
+    },
     "toolbar": {
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",

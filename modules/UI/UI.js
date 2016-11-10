@@ -16,6 +16,7 @@ import GumPermissionsOverlay
     from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
 import PageReloadOverlay from './reload_overlay/PageReloadOverlay';
+import SuspendedOverlay from './suspended_overlay/SuspendedOverlay';
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
@@ -1399,12 +1400,14 @@ UI.hideRingOverLay = function () {
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes
- * the call overlay, GUM permissions overlay and a page reload overlay.
+ * the call overlay, suspended overlay, GUM permissions overlay
+ * and a page reload overlay.
  *
  * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
  */
 UI.isOverlayVisible = function () {
     return RingOverlay.isVisible()
+        || SuspendedOverlay.isVisible()
         || PageReloadOverlay.isVisible()
         || GumPermissionsOverlay.isVisible();
 };
@@ -1425,6 +1428,13 @@ UI.isRingOverlayVisible = function () {
  */
 UI.showUserMediaPermissionsGuidanceOverlay = function (browser) {
     GumPermissionsOverlay.show(browser);
+};
+
+/**
+ * Shows suspended overlay with a button to rejoin conference.
+ */
+UI.showSuspendedOverlay = function () {
+    SuspendedOverlay.show();
 };
 
 /**

@@ -7,7 +7,7 @@
     text-align: center;
 
     &__title {
-        margin: 12px 0;
+        margin: 17px 0;
         padding-bottom: 17px;
         color: $popoverFontColor;
         font-size: 21px;
@@ -25,5 +25,9 @@
     &__icon {
         margin: 0 10px;
         font-size: 50px;
+    }
+
+    &__button {
+        float: none !important;
     }
 }
