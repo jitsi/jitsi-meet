@@ -72,7 +72,7 @@ const FilmStrip = {
         let description = 'keyboardShortcuts.toggleFilmstrip';
         let handler = () => {
             JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
-            APP.UI.toggleFilmStrip();
+            this.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP);
         };
 
         APP.keyboardshortcut.registerShortcut(
