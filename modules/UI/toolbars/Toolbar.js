@@ -117,10 +117,6 @@ const buttonHandlers = {
             }
         });
     },
-    "toolbar_film_strip": function () {
-        JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
-        emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
-    },
     "toolbar_button_raisehand": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
         APP.conference.maybeToggleRaisedHand();
@@ -260,18 +256,6 @@ const defaultToolbarButtons = {
         className: "button icon-hangup",
         content: "Hang Up",
         i18n: "[content]toolbar.hangup"
-    },
-    'filmstrip': {
-        id: 'toolbar_film_strip',
-        tooltipKey: 'toolbar.filmstrip',
-        className: "button icon-toggle-filmstrip",
-        shortcut: "F",
-        shortcutAttr: "filmstripPopover",
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
-            APP.UI.toggleFilmStrip();
-        },
-        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
     },
     'raisehand': {
         id: "toolbar_button_raisehand",
