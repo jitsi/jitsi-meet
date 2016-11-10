@@ -12,6 +12,7 @@ const FilmStrip = {
     init (eventEmitter) {
         this.iconMenuDownClassName = 'icon-menu-down';
         this.iconMenuUpClassName = 'icon-menu-up';
+        this.filmStripContainerClassName = 'filmstrip';
         this.filmStrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
         this._initFilmStripToolbar();
@@ -23,7 +24,8 @@ const FilmStrip = {
      */
     _initFilmStripToolbar() {
         let toolbar = this._generateFilmStripToolbar();
-        let container = document.querySelector('.filmstrip');
+        let className = this.filmStripContainerClassName;
+        let container = document.querySelector(`.${className}`);
 
         UIUtil.prependChild(container, toolbar);
 
@@ -203,6 +205,7 @@ const FilmStrip = {
          */
         let videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
+            - this._getFilmstripExtraPanelsWidth()
             - UIUtil.parseCssInt(this.filmStrip.css('right'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingLeft'), 10)
             - UIUtil.parseCssInt(this.filmStrip.css('paddingRight'), 10)
@@ -262,6 +265,28 @@ const FilmStrip = {
             = Math.min(maxHeight, window.innerHeight - 18);
 
         return { availableWidth, availableHeight };
+    },
+
+    /**
+     * Traverse all elements inside the filmstrip
+     * and calculates the sum of all of them except
+     * remote videos element. Used for calculation of
+     * available width for video thumbnails.
+     *
+     * @returns {number} calculated width
+     * @private
+     */
+    _getFilmstripExtraPanelsWidth() {
+        let className = this.filmStripContainerClassName;
+        let width = 0;
+        $(`.${className}`)
+            .children()
+            .each(function () {
+                if (this.id !== 'remoteVideos') {
+                    width += $(this).outerWidth();
+                }
+            });
+        return width;
     },
 
     /**
