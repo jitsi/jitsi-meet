@@ -30,7 +30,7 @@ var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
-var Feedback = require("./feedback/Feedback");
+import Feedback from "./feedback/Feedback";
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();

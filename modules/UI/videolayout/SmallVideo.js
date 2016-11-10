@@ -222,6 +222,8 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
     } else {
         UIUtil.hideElement(mutedIndicator);
     }
+
+    this.isAudioMuted = isMuted;
 };
 
 /**
