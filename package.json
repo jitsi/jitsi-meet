@@ -54,7 +54,7 @@
     "babel-preset-es2015": "6.14.0",
     "clean-css": "*",
     "css-loader": "*",
-    "eslint": "~3",
+    "eslint": ">=3",
     "eslint-plugin-jsdoc": "*",
     "eslint-plugin-react": "*",
     "eslint-plugin-react-native": "*",
