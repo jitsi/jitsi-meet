@@ -401,9 +401,12 @@ Toolbar = {
      * @param show <tt>true</tt> to show or <tt>false</tt> to hide
      */
     showAuthenticateButton (show) {
-        let display = show ? 'block' : 'none';
-
-        $('#authenticationContainer').css({display});
+        let id = 'authenticationContainer';
+        if (show) {
+            UIUtil.showElement(id);
+        } else {
+            UIUtil.hideElement(id);
+        }
     },
 
     showEtherpadButton () {
@@ -414,13 +417,16 @@ Toolbar = {
 
     // Shows or hides the 'shared video' button.
     showSharedVideoButton () {
-        let $element = $('#toolbar_button_sharedvideo');
-        if (UIUtil.isButtonEnabled('sharedvideo')
-                && config.disableThirdPartyRequests !== true) {
-            $element.css({display: "inline-block"});
-            UIUtil.setTooltip($element.get(0), 'toolbar.sharedvideo', 'right');
+        let id = 'toolbar_button_sharedvideo';
+        let shouldShow = UIUtil.isButtonEnabled('sharedvideo')
+                && !config.disableThirdPartyRequests;
+
+        if (shouldShow) {
+            let el = document.getElementById(id);
+            UIUtil.setTooltip(el, 'toolbar.sharedvideo', 'right');
+            UIUtil.showElement(id);
         } else {
-            $('#toolbar_button_sharedvideo').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     },
 
@@ -435,20 +441,25 @@ Toolbar = {
 
     // Shows or hides SIP calls button
     showSipCallButton (show) {
-        if (APP.conference.sipGatewayEnabled()
-            && UIUtil.isButtonEnabled('sip') && show) {
-            $('#toolbar_button_sip').css({display: "inline-block"});
+        let shouldShow = APP.conference.sipGatewayEnabled()
+            && UIUtil.isButtonEnabled('sip') && show;
+        let id = 'toolbar_button_sip';
+
+        if (shouldShow) {
+            UIUtil.showElement(id);
         } else {
-            $('#toolbar_button_sip').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     },
 
     // Shows or hides the dialpad button
     showDialPadButton (show) {
-        if (UIUtil.isButtonEnabled('dialpad') && show) {
-            $('#toolbar_button_dialpad').css({display: "inline-block"});
+        let shouldShow = UIUtil.isButtonEnabled('dialpad') && show;
+        let id = 'toolbar_button_dialpad';
+        if (shouldShow) {
+            UIUtil.showElement(id);
         } else {
-            $('#toolbar_button_dialpad').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     },
 
@@ -457,14 +468,13 @@ Toolbar = {
      * @param authIdentity identity name to be displayed.
      */
     setAuthenticatedIdentity (authIdentity) {
-        let selector = $('#toolbar_auth_identity');
-
-        if (authIdentity) {
-            selector.css({display: "list-item"});
-            selector.text(authIdentity);
+        let id = 'toolbar_auth_identity';
+        if(authIdentity) {
+            UIUtil.showElement(id);
+            $(`#${id}`).text(authIdentity);
         } else {
-            selector.css({display: "none"});
-            selector.text('');
+            UIUtil.hideElement(id);
+            $(`#${id}`).text('');
         }
     },
 
@@ -473,10 +483,11 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLoginButton (show) {
+        let id = 'toolbar_button_login';
         if (show) {
-            $('#toolbar_button_login').css({display: "list-item"});
+            UIUtil.showElement(id);
         } else {
-            $('#toolbar_button_login').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     },
 
@@ -485,10 +496,11 @@ Toolbar = {
      * @param show <tt>true</tt> to show
      */
     showLogoutButton (show) {
+        let id = 'toolbar_button_logout';
         if (show) {
-            $('#toolbar_button_logout').css({display: "list-item"});
+            UIUtil.showElement(id);
         } else {
-            $('#toolbar_button_logout').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     },
 

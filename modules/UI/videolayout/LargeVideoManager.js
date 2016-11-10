@@ -332,13 +332,14 @@ export default class LargeVideoManager {
             show = APP.conference.isConnectionInterrupted();
         }
 
+        let id = 'localConnectionMessage';
         if (show) {
-            $('#localConnectionMessage').css({display: "block"});
+            UIUtil.showElement(id);
             // Avatar message conflicts with 'videoConnectionMessage',
             // so it must be hidden
             this.showRemoteConnectionMessage(false);
         } else {
-            $('#localConnectionMessage').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     }
 

@@ -387,10 +387,15 @@ var Recording = {
      * @param show {true} to show the recording button, {false} to hide it
      */
     showRecordingButton (show) {
-        if (_isRecordingButtonEnabled() && show) {
-            $('#toolbar_button_record').css({display: "inline-block"});
+        let isVisible = show && _isRecordingButtonEnabled();
+        let id = 'toolbar_button_record';
+
+        console.log('recording is visible', isVisible);
+
+        if (isVisible) {
+            UIUtil.showElement(id);
         } else {
-            $('#toolbar_button_record').css({display: "none"});
+            UIUtil.hideElement(id);
         }
     },
 
@@ -474,10 +479,15 @@ var Recording = {
             labelSelector.css({display: "inline-block"});
 
         // Recording spinner
-        if (recordingState === Status.RETRYING)
-            $("#recordingSpinner").show();
-        else
-            $("#recordingSpinner").hide();
+        let spinnerId = 'recordingSpinner';
+        if(recordingState === Status.RETRYING) {
+            UIUtil.showElement(spinnerId);
+        } else {
+            UIUtil.hideElement(spinnerId);
+        }
+
+        document.querySelector('#recordingSpinner').classList
+                .toggle('show-inline', recordingState === Status.RETRYING);
     },
     // checks whether recording is enabled and whether we have params
     // to start automatically recording

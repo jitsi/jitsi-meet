@@ -1,36 +1,12 @@
 /* global $, APP, JitsiMeetJS */
-import UIEvents from "../../../service/UI/UIEvents";
 import FeedbackWindow from "./FeedbackWindow";
-
-/**
- * Shows / hides the feedback button.
- * @private
- */
-function _toggleFeedbackIcon() {
-    $('#feedbackButtonDiv').toggleClass("hidden");
-}
-
-/**
- * Shows / hides the feedback button.
- * @param {show} set to {true} to show the feedback button or to  {false}
- * to hide it
- * @private
- */
-function _showFeedbackButton (show) {
-    var feedbackButton = $("#feedbackButtonDiv");
-
-    if (show)
-        feedbackButton.css("display", "block");
-    else
-        feedbackButton.css("display", "none");
-}
 
 /**
  * Defines all methods in connection to the Feedback window.
  *
  * @type {{openFeedbackWindow: Function}}
  */
-var Feedback = {
+const Feedback = {
 
     /**
      * Initialise the Feedback functionality.
@@ -47,24 +23,15 @@ var Feedback = {
         if (typeof this.enabled == "undefined")
             this.enabled = true;
 
-        _showFeedbackButton(this.enabled);
-
         this.window = new FeedbackWindow();
+        this.emitter = emitter;
 
         $("#feedbackButton").click(Feedback.openFeedbackWindow);
-
-        // Show / hide the feedback button whenever the film strip is
-        // shown / hidden.
-        emitter.addListener(UIEvents.TOGGLE_FILM_STRIP, function () {
-            _toggleFeedbackIcon();
-        });
     },
     /**
      * Enables/ disabled the feedback feature.
      */
     enableFeedback: function (enable) {
-        if (this.enabled !== enable)
-            _showFeedbackButton(enable);
         this.enabled = enable;
     },
 
@@ -125,4 +92,4 @@ var Feedback = {
     }
 };
 
-module.exports = Feedback;
+export default Feedback;

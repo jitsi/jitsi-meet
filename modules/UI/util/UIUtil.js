@@ -19,6 +19,15 @@ const TOOLTIP_POSITIONS = {
 };
 
 /**
+ * Associates the default display type with corresponding CSS class
+ */
+const SHOW_CLASSES = {
+    'block': 'show',
+    'inline': 'show-inline',
+    'list-item': 'show-list-item'
+};
+
+/**
  * Created by hristo on 12/22/14.
  */
  var UIUtil = {
@@ -217,10 +226,24 @@ const TOOLTIP_POSITIONS = {
      * @param {String} the identifier of the element to show
      */
     showElement(id) {
-        if ($("#"+id).hasClass("hide"))
-            $("#"+id).removeClass("hide");
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
-        $("#"+id).addClass("show");
+        if (!element) {
+            return;
+        }
+
+        if(element.classList.contains('hide')) {
+            element.classList.remove('hide');
+        }
+
+        let type = this.getElementDefaultDisplay(element.tagName);
+        let className = SHOW_CLASSES[type];
+        element.classList.add(className);
     },
 
     /**
@@ -229,10 +252,40 @@ const TOOLTIP_POSITIONS = {
      * @param {String} the identifier of the element to hide
      */
     hideElement(id) {
-        if ($("#"+id).hasClass("show"))
-            $("#"+id).removeClass("show");
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
-        $("#"+id).addClass("hide");
+        if (!element) {
+            return;
+        }
+
+        let type = this.getElementDefaultDisplay(element.tagName);
+        let className = SHOW_CLASSES[type];
+
+        if(element.classList.contains(className)) {
+            element.classList.remove(className);
+        }
+
+        element.classList.add('hide');
+    },
+
+    /**
+     * Returns default display style for the tag
+     * @param tag
+     * @returns {*}
+     */
+    getElementDefaultDisplay(tag) {
+        let tempElement = document.createElement(tag);
+
+        document.body.appendChild(tempElement);
+        let style = window.getComputedStyle(tempElement).display;
+        document.body.removeChild(tempElement);
+
+        return style;
     },
 
     /**
