@@ -22,8 +22,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * If we should show authentication block in profile
      */
     AUTHENTICATION_ENABLE: true,
-    // the toolbar buttons line is intentionally left in one line, to be able
-    // to easily override values or remove them using regex
     /**
      * The index of the splitter button in the main toolbar. The splitter
      * button is a button in the toolbar that will be applied a special styling
