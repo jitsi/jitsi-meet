@@ -1,3 +1,5 @@
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var ConfigUtil = {
     /**
      * Method overrides JSON properties in <tt>config</tt> and
@@ -31,10 +33,10 @@ var ConfigUtil = {
             for (key in newConfig[configRoot]) {
                 value = newConfig[configRoot][key];
                 if (confObj[key] && typeof confObj[key] !== typeof value) {
-                    console.log("Overriding a " + configRoot +
+                    logger.log("Overriding a " + configRoot +
                         " property with a property of different type.");
                 }
-                console.info("Overriding " + key + " with: " + value);
+                logger.info("Overriding " + key + " with: " + value);
                 confObj[key] = value;
             }
         }

@@ -1,4 +1,5 @@
 /* global JitsiMeetJS, APP */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import InviteDialogView from './InviteDialogView';
 import createRoomLocker from './RoomLocker';
@@ -28,7 +29,7 @@ class Invite {
         this.conference.on(ConferenceEvents.LOCK_STATE_CHANGED,
             (locked, error) => {
 
-            console.log("Received channel password lock change: ", locked,
+            logger.log("Received channel password lock change: ", locked,
                 error);
 
             if (!locked) {

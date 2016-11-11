@@ -1,4 +1,6 @@
 /* global config, interfaceConfig, getConfigParamsFromUrl */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var configUtils = require('./Util');
 var params = {};
 
@@ -29,7 +31,7 @@ var URLProcessor = {
         };
         for (var key in params) {
             if (typeof key !== "string") {
-                console.warn("Invalid config key: ", key);
+                logger.warn("Invalid config key: ", key);
                 continue;
             }
             var confObj = null, confKey;

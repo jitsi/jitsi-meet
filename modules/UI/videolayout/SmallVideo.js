@@ -1,4 +1,6 @@
 /* global $, JitsiMeetJS, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -503,7 +505,7 @@ SmallVideo.prototype.updateView = function () {
             // Init avatar
             this.avatarChanged(Avatar.getAvatarUrl(this.id));
         } else {
-            console.error("Unable to init avatar - no id", this);
+            logger.error("Unable to init avatar - no id", this);
             return;
         }
     }
@@ -561,7 +563,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
 
     if (!this.container) {
-        console.warn( "Unable to set dominant speaker indicator - "
+        logger.warn( "Unable to set dominant speaker indicator - "
             + this.videoSpanId + " does not exist");
         return;
     }
@@ -589,7 +591,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
  */
 SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     if (!this.container) {
-        console.warn( "Unable to raised hand indication - "
+        logger.warn( "Unable to raised hand indication - "
             + this.videoSpanId + " does not exist");
         return;
     }

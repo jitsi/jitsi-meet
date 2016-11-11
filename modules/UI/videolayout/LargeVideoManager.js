@@ -1,4 +1,5 @@
 /* global $, APP, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
@@ -126,7 +127,7 @@ export default class LargeVideoManager {
             const { id, stream, videoType, resolve } = this.newStreamData;
             this.newStreamData = null;
 
-            console.info("hover in %s", id);
+            logger.info("hover in %s", id);
             this.state = videoType;
             const container = this.getContainer(this.state);
             container.setStream(stream, videoType);

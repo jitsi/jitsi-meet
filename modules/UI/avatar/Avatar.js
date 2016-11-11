@@ -22,6 +22,7 @@
  */
 
 /* global MD5, config, interfaceConfig, APP */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 let users = {};
 
@@ -110,7 +111,7 @@ export default {
         let random = !avatarId || avatarId.indexOf('@') < 0;
 
         if (!avatarId) {
-            console.warn(
+            logger.warn(
                 `No avatar stored yet for ${userId} - using ID as avatar ID`);
             avatarId = userId;
         }

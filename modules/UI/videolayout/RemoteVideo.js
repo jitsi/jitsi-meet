@@ -1,4 +1,5 @@
 /* global $, APP, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import ConnectionIndicator from './ConnectionIndicator';
 
@@ -191,7 +192,7 @@ RemoteVideo.prototype._muteHandler = function () {
         }
     }).catch(e => {
         //currently shouldn't be called
-        console.error(e);
+        logger.error(e);
     });
 
     this.popover.forceHide();
@@ -343,7 +344,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
         this.wasVideoPlayed = false;
     }
 
-    console.info((isVideo ? "Video" : "Audio") +
+    logger.info((isVideo ? "Video" : "Audio") +
                  " removed " + this.id, select);
 
     // when removing only the video element and we are on stage
@@ -408,7 +409,7 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
         }
     }
 
-    console.debug(this.id + " thumbnail is connection active ? " + isActive);
+    logger.debug(this.id + " thumbnail is connection active ? " + isActive);
 
     // Update 'mutedWhileDisconnected' flag
     this._figureOutMutedWhileDisconnected(!isActive);
@@ -427,7 +428,7 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
  * Removes RemoteVideo from the page.
  */
 RemoteVideo.prototype.remove = function () {
-    console.log("Remove thumbnail", this.id);
+    logger.log("Remove thumbnail", this.id);
     this.removeConnectionIndicator();
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
@@ -586,7 +587,7 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
  */
 RemoteVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        console.warn( "Unable to set displayName - " + this.videoSpanId +
+        logger.warn( "Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
         return;
     }

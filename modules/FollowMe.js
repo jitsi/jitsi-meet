@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIEvents from '../service/UI/UIEvents';
 import VideoLayout from './UI/videolayout/VideoLayout';
@@ -308,7 +309,7 @@ class FollowMe {
 
         if (!this._conference.isParticipantModerator(id))
         {
-            console.warn('Received follow-me command ' +
+            logger.warn('Received follow-me command ' +
                 'not from moderator');
             return;
         }

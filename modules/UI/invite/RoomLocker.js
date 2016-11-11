@@ -1,4 +1,6 @@
 /* global APP, JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import RequirePasswordDialog from './RequirePasswordDialog';
 
 /**
@@ -6,7 +8,7 @@ import RequirePasswordDialog from './RequirePasswordDialog';
  * because server doesn't support that.
  */
 function notifyPasswordNotSupported () {
-    console.warn('room passwords not supported');
+    logger.warn('room passwords not supported');
     APP.UI.messageHandler.showError(
         "dialog.warning", "dialog.passwordNotSupported");
 }
@@ -16,7 +18,7 @@ function notifyPasswordNotSupported () {
  * @param {Error} err error
  */
 function notifyPasswordFailed(err) {
-    console.warn('setting password failed', err);
+    logger.warn('setting password failed', err);
     APP.UI.messageHandler.showError(
         "dialog.lockTitle", "dialog.lockMessage");
 }
@@ -64,7 +66,7 @@ export default function createRoomLocker (room) {
                 if (!password)
                     lockedElsewhere = false;
             }).catch(function (err) {
-                console.error(err);
+                logger.error(err);
                 if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {
                     notifyPasswordNotSupported();
                 } else {
@@ -113,7 +115,7 @@ export default function createRoomLocker (room) {
                     // pass stays between attempts
                     password = null;
                     if (reason !== APP.UI.messageHandler.CANCEL)
-                        console.error(reason);
+                        logger.error(reason);
                 }
             );
         },

@@ -1,5 +1,6 @@
 /* global $, config, getRoomName */
 /* application specific logic */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import "babel-polyfill";
 import "jquery";
@@ -42,7 +43,7 @@ function pushHistoryState(roomName, URL) {
             'VideoChat', `Room: ${roomName}`, URL
         );
     } catch (e) {
-        console.warn("Push history state failed with parameters:",
+        logger.warn("Push history state failed with parameters:",
             'VideoChat', `Room: ${roomName}`, URL, e);
         return e;
     }
@@ -145,7 +146,7 @@ function init() {
         }).catch(function (err) {
             APP.UI.hideRingOverLay();
             APP.API.notifyConferenceLeft(APP.conference.roomName);
-            console.error(err);
+            logger.error(err);
         });
     }
 }
@@ -169,7 +170,7 @@ function obtainConfigAndInit() {
                 if (success) {
                     var now = APP.connectionTimes["configuration.fetched"] =
                         window.performance.now();
-                    console.log("(TIME) configuration fetched:\t", now);
+                    logger.log("(TIME) configuration fetched:\t", now);
                     init();
                 } else {
                     // Show obtain config error,
@@ -189,7 +190,7 @@ function obtainConfigAndInit() {
 
 $(document).ready(function () {
     var now = APP.connectionTimes["document.ready"] = window.performance.now();
-    console.log("(TIME) document ready:\t", now);
+    logger.log("(TIME) document ready:\t", now);
 
     URLProcessor.setConfigParametersFromUrl();
     APP.init();

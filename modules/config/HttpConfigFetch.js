@@ -1,4 +1,5 @@
 /* global $, config, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var configUtil = require('./Util');
 
@@ -16,7 +17,7 @@ var HttpConfig = {
      * @param complete
      */
     obtainConfig: function (endpoint, roomName, complete) {
-        console.info(
+        logger.info(
             "Send config request to " + endpoint + " for room: " + roomName);
 
 
@@ -28,7 +29,7 @@ var HttpConfig = {
                 data: JSON.stringify({"roomName": roomName}),
                 dataType: 'json',
                 error: function(jqXHR, textStatus, errorThrown) {
-                    console.error("Get config error: ", jqXHR, errorThrown);
+                    logger.error("Get config error: ", jqXHR, errorThrown);
                     var error = "Get config response status: " + textStatus;
                     complete(false, error);
                 },
@@ -39,7 +40,7 @@ var HttpConfig = {
                         complete(true);
                         return;
                     } catch (exception) {
-                        console.error("Parse config error: ", exception);
+                        logger.error("Parse config error: ", exception);
                         complete(false, exception);
                     }
                 }

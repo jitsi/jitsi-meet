@@ -1,4 +1,5 @@
 /* global $, APP, AJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Overlay from '../overlay/Overlay';
 
@@ -82,7 +83,7 @@ class PageReloadOverlayImpl extends Overlay{
             }
         }.bind(this), 1000);
 
-        console.info(
+        logger.info(
             "The conference will be reloaded after "
                 + this.timeLeft + " seconds.");
     }

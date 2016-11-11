@@ -24,6 +24,7 @@
     "haste-resolver-webpack-plugin": "^0.2.2",
     "i18next": "3.4.4",
     "i18next-xhr-backend": "1.1.0",
+    "jitsi-meet-logger": "jitsi/jitsi-meet-logger",
     "jquery": "~2.1.1",
     "jquery-contextmenu": "*",
     "jquery-i18next": "1.1.0",

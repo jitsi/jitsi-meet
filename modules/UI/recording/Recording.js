@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
@@ -327,7 +329,7 @@ var Recording = {
                         }).catch(
                             reason => {
                                 if (reason !== APP.UI.messageHandler.CANCEL)
-                                    console.error(reason);
+                                    logger.error(reason);
                                 else
                                     JitsiMeetJS.analytics.sendEvent(
                                         'recording.canceled');
@@ -350,7 +352,7 @@ var Recording = {
                         }).catch(
                             reason => {
                                 if (reason !== APP.UI.messageHandler.CANCEL)
-                                    console.error(reason);
+                                    logger.error(reason);
                                 else
                                     JitsiMeetJS.analytics.sendEvent(
                                         'recording.canceled');

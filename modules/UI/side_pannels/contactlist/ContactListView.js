@@ -1,4 +1,6 @@
 /* global $, APP, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
@@ -27,7 +29,7 @@ function updateNumberOfParticipants(delta) {
     numberOfContacts += delta;
 
     if (numberOfContacts <= 0) {
-        console.error("Invalid number of participants: " + numberOfContacts);
+        logger.error("Invalid number of participants: " + numberOfContacts);
         return;
     }
 

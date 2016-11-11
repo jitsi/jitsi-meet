@@ -1,4 +1,6 @@
 /* global APP, getConfigParamsFromUrl */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -131,13 +133,13 @@ function onSystemMessage(message) {
     switch (message.type) {
         case "eventStatus":
             if(!message.name || !message.value) {
-                console.warn("Unknown system message format", message);
+                logger.warn("Unknown system message format", message);
                 break;
             }
             events[message.name] = message.value;
             break;
         default:
-            console.warn("Unknown system message type", message);
+            logger.warn("Unknown system message type", message);
     }
 }
 

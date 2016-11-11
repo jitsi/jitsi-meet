@@ -1,4 +1,6 @@
 /* global $, config, interfaceConfig, APP, JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import ConnectionIndicator from "./ConnectionIndicator";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -40,7 +42,7 @@ LocalVideo.prototype.constructor = LocalVideo;
  */
 LocalVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        console.warn(
+        logger.warn(
                 "Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
         return;
