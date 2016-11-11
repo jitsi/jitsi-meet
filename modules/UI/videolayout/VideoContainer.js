@@ -32,6 +32,10 @@ function getStreamOwnerId(stream) {
  * ratio and fits available area with it's larger dimension. This method
  * ensures that whole video will be visible and can leave empty areas.
  *
+ * @param videoWidth the width of the video to position
+ * @param videoHeight the height of the video to position
+ * @param videoSpaceWidth the width of the available space
+ * @param videoSpaceHeight the height of the available space
  * @return an array with 2 elements, the video width and the video height
  */
 function getDesktopVideoSize(videoWidth,

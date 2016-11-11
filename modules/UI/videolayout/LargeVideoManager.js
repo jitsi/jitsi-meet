@@ -24,7 +24,7 @@ export default class LargeVideoManager {
             () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
-        // use the same video container to handle and desktop tracks
+        // use the same video container to handle desktop tracks
         this.addContainer("desktop", this.videoContainer);
 
         this.width = 0;
