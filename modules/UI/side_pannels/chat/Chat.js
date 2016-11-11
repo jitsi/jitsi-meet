@@ -296,10 +296,10 @@ var Chat = {
         let toggleFunction;
         if (subject) {
             subject = subject.trim();
-            toggleFunction = UIUtil.showElement.bind(UIUtil);
-        } else {
-            toggleFunction = UIUtil.hideElement.bind(UIUtil);
         }
+
+        toggleFunction = subject ? UIUtil.showElement : UIUtil.hideElement;
+        toggleFunction = toggleFunction.bind(UIUtil);
 
         let subjectId = 'subject';
         let html = linkify(UIUtil.escapeHtml(subject));
