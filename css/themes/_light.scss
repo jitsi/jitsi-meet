@@ -80,7 +80,7 @@ $splitterColor: #ccc;
  * Forms
  */
 //dropdown
-$selectFontColor: $baseLight;
+$selectFontColor: $controlColor;
 $selectBg: $controlBackground;
 $selectActiveBg: darken($controlBackground, 5%);
-$selectActiveItemBg: darken($controlBackground, 10%);
+$selectActiveItemBg: darken($controlBackground, 20%);
