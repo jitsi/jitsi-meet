@@ -16,7 +16,7 @@
      * Labels inside the side panel.
      */
     label {
-        color: $defaultColor;
+        color: $baseLight;
     }
 
     /**
@@ -81,9 +81,9 @@
          * Main title size.
          */
         div.title {
-            color: $defaultColor !important;
-            font-size: 16px;
+            color: $toolbarTitleColor !important;
             text-align: center;
+            font-size: $toolbarTitleFontSize;
         }
 
         /**
