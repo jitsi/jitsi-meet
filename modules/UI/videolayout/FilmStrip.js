@@ -157,7 +157,7 @@ const FilmStrip = {
      */
     getFilmStripHeight() {
         if (this.isFilmStripVisible()) {
-            return this.filmStrip.outerHeight();
+            return $(`.${this.filmStripContainerClassName}`).outerHeight();
         } else {
             return 0;
         }
