@@ -387,12 +387,10 @@ var Recording = {
      * @param show {true} to show the recording button, {false} to hide it
      */
     showRecordingButton (show) {
-        let isVisible = show && _isRecordingButtonEnabled();
+        let shouldShow = show && _isRecordingButtonEnabled();
         let id = 'toolbar_button_record';
 
-        console.log('recording is visible', isVisible);
-
-        if (isVisible) {
+        if (shouldShow) {
             UIUtil.showElement(id);
         } else {
             UIUtil.hideElement(id);
@@ -485,9 +483,6 @@ var Recording = {
         } else {
             UIUtil.hideElement(spinnerId);
         }
-
-        document.querySelector('#recordingSpinner').classList
-                .toggle('show-inline', recordingState === Status.RETRYING);
     },
     // checks whether recording is enabled and whether we have params
     // to start automatically recording

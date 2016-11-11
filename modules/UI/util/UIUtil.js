@@ -241,7 +241,7 @@ const SHOW_CLASSES = {
             element.classList.remove('hide');
         }
 
-        let type = this.getElementDefaultDisplay(element.tagName);
+        let type = this._getElementDefaultDisplay(element.tagName);
         let className = SHOW_CLASSES[type];
         element.classList.add(className);
     },
@@ -263,7 +263,7 @@ const SHOW_CLASSES = {
             return;
         }
 
-        let type = this.getElementDefaultDisplay(element.tagName);
+        let type = this._getElementDefaultDisplay(element.tagName);
         let className = SHOW_CLASSES[type];
 
         if(element.classList.contains(className)) {
@@ -277,8 +277,9 @@ const SHOW_CLASSES = {
      * Returns default display style for the tag
      * @param tag
      * @returns {*}
+     * @private
      */
-    getElementDefaultDisplay(tag) {
+    _getElementDefaultDisplay(tag) {
         let tempElement = document.createElement(tag);
 
         document.body.appendChild(tempElement);
