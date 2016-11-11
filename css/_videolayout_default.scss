@@ -22,110 +22,128 @@
         height: 100%;
         background-color: black;
     }
-}
 
-/**
- * The toolbar of the video thumbnail.
- */
-.videocontainer__toolbar,
-.videocontainer__toptoolbar {
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    width: 100%;
-    box-sizing: border-box; // Includes the padding in the 100% width.
-}
-
-.videocontainer__toolbar {
-    bottom: 0;
-    padding: 0 5px 0 5px;
-    height: $thumbnailToolbarHeight;
-}
-
-.videocontainer__toptoolbar {
-    $toolbarPadding: 5px;
-    top: 0;
-    padding: $toolbarPadding;
-    padding-bottom: 0;
-
-    span.indicator {
-        position: relative;
-        font-size: 8px;
-        text-align: center;
-        line-height: $thumbnailToolbarHeight;
-        display: none;
-        padding: 0;
-        margin-right: em(5, 8);
-        float: left;
-        @include circle($thumbnailIndicatorSize);
-        box-sizing: border-box;
+    /**
+     * The toolbar of the video thumbnail.
+     */
+    &__toolbar,
+    &__toptoolbar {
+        position: absolute;
+        left: 0;
         z-index: 3;
-        background: $dominantSpeakerBg;
-        color: $thumbnailPictogramColor;
-        border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+        width: 100%;
+        box-sizing: border-box; // Includes the padding in the 100% width.
+    }
 
-        &:last-child {
-            margin-right: 0;
-        }
+    &__toolbar {
+        bottom: 0;
+        padding: 0 5px 0 5px;
+        height: $thumbnailToolbarHeight;
+    }
 
-        .indicatoricon {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            @include transform(translateY(-50%));
-            width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-            height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-            line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-        }
+    &__toptoolbar {
+        $toolbarPadding: 5px;
+        top: 0;
+        padding: $toolbarPadding;
+        padding-bottom: 0;
 
-        .connection {
+        span.indicator {
             position: relative;
-            margin: 0 auto;
-            width: 12px;
-            height: 8px;
+            font-size: 8px;
+            text-align: center;
+            line-height: $thumbnailIndicatorSize;
+            display: none;
+            padding: 0;
+            margin-right: em(5, 8);
+            float: left;
+            @include circle($thumbnailIndicatorSize);
+            box-sizing: border-box;
+            z-index: 3;
+            background: $dominantSpeakerBg;
+            color: $thumbnailPictogramColor;
+            border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
 
-            &_empty
-            {
-                @include topLeft();
-                max-width: 12px;
-                width: 12px;
-                color: #8B8B8B;/*#FFFFFF*/
-                overflow: hidden;
+            &:last-child {
+                margin-right: 0;
             }
 
-            &_lost
-            {
-                @include topLeft();
-                max-width: 12px;
-                width: 12px;
-                color: #8B8B8B;
-                overflow: visible;
+            .indicatoricon {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                @include transform(translateY(-50%));
+                width: 100%;
             }
 
-            &_full
-            {
-                @include topLeft();
-                max-width: 12px;
+            .connection {
+                position: relative;
+                margin: 0 auto;
                 width: 12px;
-                color: #FFFFFF;/*#15A1ED*/
-                overflow: hidden;
-            }
-        }
+                height: 8px;
 
-        .icon-connection,
-        .icon-connection-lost {
-            font-size: 1em;
+                &_empty
+                {
+                    @include topLeft();
+                    max-width: 12px;
+                    width: 12px;
+                    color: #8B8B8B;/*#FFFFFF*/
+                    overflow: hidden;
+                }
+
+                &_lost
+                {
+                    @include topLeft();
+                    max-width: 12px;
+                    width: 12px;
+                    color: #8B8B8B;
+                    overflow: visible;
+                }
+
+                &_full
+                {
+                    @include topLeft();
+                    max-width: 12px;
+                    width: 12px;
+                    color: #FFFFFF;/*#15A1ED*/
+                    overflow: hidden;
+                }
+            }
+
+            .icon-connection,
+            .icon-connection-lost {
+                font-size: 1em;
+            }
         }
     }
-}
 
-.videocontainer__hoverOverlay {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    visibility: hidden;
-    background: rgba(0,0,0,.6);
-    z-index: 2;
+    &_small {
+        span.indicator {
+            font-size: 5px;
+
+            .connection {
+                height: 5px;
+            }
+        }
+    }
+
+    &_medium {
+        span.indicator {
+            font-size: 6px;
+
+            .connection {
+                height: 6px;
+            }
+        }
+    }
+
+    &__hoverOverlay {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        visibility: hidden;
+        background: rgba(0,0,0,.6);
+        z-index: 2;
+    }
 }
 
 #localVideoWrapper {

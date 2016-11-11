@@ -401,12 +401,8 @@ const FilmStrip = {
                     height: remote.thumbHeight + 2
                 }, this._getAnimateOptions(animate, resolve));
             }));
-            promises.push(new Promise((resolve) => {
-                let fontSize = this._getIndicatorFontSize(remote.thumbHeight);
-                this.filmStrip.find('.indicator').animate({
-                    fontSize
-                }, this._getAnimateOptions(animate, resolve));
-            }));
+
+            this._setThumbnailsClasses(remote.thumbHeight);
 
             if (!animate) {
                 resolve();
@@ -432,25 +428,32 @@ const FilmStrip = {
     },
 
     /**
-     * Returns font size for indicators according to current
-     * height of thumbnail
+     * Set thumbnail classes according to the current size of thumbnail
      * @param height
-     * @returns {Number} - font size for current height
      * @private
      */
-    _getIndicatorFontSize(height) {
+    _setThumbnailsClasses(height) {
         const { SMALL, MEDIUM } = ThumbnailSizes;
-        let fontSize;
+        const { localThumb, remoteThumbs } = this.getThumbs();
+        let smallClass = 'videocontainer_small';
+        let mediumClass = 'videocontainer_medium';
+        let className = '';
 
         if (height <= SMALL) {
-            fontSize = 5;
+            className = smallClass;
         } else if (height > SMALL && height <= MEDIUM) {
-            fontSize = 6;
-        } else {
-            fontSize = 8;
+            className = mediumClass;
         }
 
-        return fontSize;
+        localThumb
+            .removeClass(`${smallClass} ${mediumClass}`)
+            .addClass(className);
+
+        if (remoteThumbs) {
+            remoteThumbs
+                .removeClass(`${smallClass} ${mediumClass}`)
+                .addClass(className);
+        }
     },
 
     /**
