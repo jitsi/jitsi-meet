@@ -47,7 +47,76 @@
     top: 0;
     padding: $toolbarPadding;
     padding-bottom: 0;
-    height: $thumbnailIndicatorSize + $toolbarPadding;
+
+    span.indicator {
+        position: relative;
+        font-size: 8px;
+        text-align: center;
+        line-height: $thumbnailToolbarHeight;
+        display: none;
+        padding: 0;
+        margin-right: em(5, 8);
+        float: left;
+        @include circle($thumbnailIndicatorSize);
+        box-sizing: border-box;
+        z-index: 3;
+        background: $dominantSpeakerBg;
+        color: $thumbnailPictogramColor;
+        border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        .indicatoricon {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            @include transform(translateY(-50%));
+            width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+            height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+            line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
+        }
+
+        .connection {
+            position: relative;
+            margin: 0 auto;
+            width: 12px;
+            height: 8px;
+
+            &_empty
+            {
+                @include topLeft();
+                max-width: 12px;
+                width: 12px;
+                color: #8B8B8B;/*#FFFFFF*/
+                overflow: hidden;
+            }
+
+            &_lost
+            {
+                @include topLeft();
+                max-width: 12px;
+                width: 12px;
+                color: #8B8B8B;
+                overflow: visible;
+            }
+
+            &_full
+            {
+                @include topLeft();
+                max-width: 12px;
+                width: 12px;
+                color: #FFFFFF;/*#15A1ED*/
+                overflow: hidden;
+            }
+        }
+
+        .icon-connection,
+        .icon-connection-lost {
+            font-size: 1em;
+        }
+    }
 }
 
 .videocontainer__hoverOverlay {
@@ -217,72 +286,6 @@
   background: $connectionIndicatorBg;
 }
 
-.videocontainer__toptoolbar span.indicator {
-    position: relative;
-    font-size: 8pt;
-    text-align: center;
-    line-height: $thumbnailToolbarHeight;
-    display: none;
-    padding: 0;
-    margin-right: 5px;
-    float: left;
-    @include circle($thumbnailIndicatorSize);
-    box-sizing: border-box;
-    z-index: 3;
-    background: $dominantSpeakerBg;
-    color: $thumbnailPictogramColor;
-    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
-
-    .indicatoricon {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        @include transform(translateY(-50%));
-        width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-        height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-        line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-    }
-
-    .connection {
-        position: relative;
-        margin: 0 auto;
-        width: 12px;
-        height: 8px;
-
-        &_empty
-        {
-            @include topLeft();
-            max-width: 12px;
-            width: 12px;
-            color: #8B8B8B;/*#FFFFFF*/
-            overflow: hidden;
-        }
-
-        &_lost
-        {
-            @include topLeft();
-            max-width: 12px;
-            width: 12px;
-            color: #8B8B8B;
-            overflow: visible;
-        }
-
-        &_full
-        {
-            @include topLeft();
-            max-width: 12px;
-            width: 12px;
-            color: #FFFFFF;/*#15A1ED*/
-            overflow: hidden;
-        }
-    }
-
-    .icon-connection,
-    .icon-connection-lost {
-        font-size: 6pt;
-    }
-}
-
 .remotevideomenu
 {
     display: inline-block;
@@ -400,8 +403,10 @@
 
 .userAvatar {
     @include maxSize(60px);
-    @include circle(50%);
     @include absoluteAligning();
+    border-radius: 50%;
+    height: 50%;
+    width: auto;
 }
 
 .sharedVideoAvatar {

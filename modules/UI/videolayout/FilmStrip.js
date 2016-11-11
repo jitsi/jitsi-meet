@@ -3,6 +3,15 @@
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
+/**
+ * Contains sizes of thumbnails
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const ThumbnailSizes = {
+    SMALL: 60,
+    MEDIUM: 80
+};
+
 const FilmStrip = {
     /**
      *
@@ -368,37 +377,80 @@ const FilmStrip = {
 
         return new Promise(resolve => {
             let thumbs = this.getThumbs(!forceUpdate);
-            if(thumbs.localThumb)
-                thumbs.localThumb.animate({
-                    height: local.thumbHeight,
-                    width: local.thumbWidth
-                }, {
-                    queue: false,
-                    duration: animate ? 500 : 0,
-                    complete:  resolve
-                });
-            if(thumbs.remoteThumbs)
-                thumbs.remoteThumbs.animate({
-                    height: remote.thumbHeight,
-                    width: remote.thumbWidth
-                }, {
-                    queue: false,
-                    duration: animate ? 500 : 0,
-                    complete:  resolve
-                });
+            let promises = [];
 
-            this.filmStrip.animate({
-                // adds 2 px because of small video 1px border
-                height: remote.thumbHeight + 2
-            }, {
-                queue: false,
-                duration: animate ? 500 : 0
-            });
+            if(thumbs.localThumb) {
+                promises.push(new Promise((resolve) => {
+                    thumbs.localThumb.animate({
+                        height: local.thumbHeight,
+                        width: local.thumbWidth
+                    }, this._getAnimateOptions(animate, resolve));
+                }));
+            }
+            if(thumbs.remoteThumbs) {
+                promises.push(new Promise((resolve) => {
+                    thumbs.remoteThumbs.animate({
+                        height: remote.thumbHeight,
+                        width: remote.thumbWidth
+                    }, this._getAnimateOptions(animate, resolve));
+                }));
+            }
+            promises.push(new Promise((resolve) => {
+                this.filmStrip.animate({
+                    // adds 2 px because of small video 1px border
+                    height: remote.thumbHeight + 2
+                }, this._getAnimateOptions(animate, resolve));
+            }));
+            promises.push(new Promise((resolve) => {
+                let fontSize = this._getIndicatorFontSize(remote.thumbHeight);
+                this.filmStrip.find('.indicator').animate({
+                    fontSize
+                }, this._getAnimateOptions(animate, resolve));
+            }));
 
             if (!animate) {
                 resolve();
             }
+
+            Promise.all(promises).then(resolve);
         });
+    },
+
+    /**
+     * Helper method. Returns options for jQuery animation
+     * @param animate {Boolean} - animation flag
+     * @param cb {Function} - complete callback
+     * @returns {Object} - animation options object
+     * @private
+     */
+    _getAnimateOptions(animate, cb = $.noop) {
+        return {
+            queue: false,
+            duration: animate ? 500 : 0,
+            complete: cb
+        };
+    },
+
+    /**
+     * Returns font size for indicators according to current
+     * height of thumbnail
+     * @param height
+     * @returns {Number} - font size for current height
+     * @private
+     */
+    _getIndicatorFontSize(height) {
+        const { SMALL, MEDIUM } = ThumbnailSizes;
+        let fontSize;
+
+        if (height <= SMALL) {
+            fontSize = 5;
+        } else if (height > SMALL && height <= MEDIUM) {
+            fontSize = 6;
+        } else {
+            fontSize = 8;
+        }
+
+        return fontSize;
     },
 
     /**
