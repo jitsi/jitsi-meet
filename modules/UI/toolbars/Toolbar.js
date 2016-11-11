@@ -311,7 +311,8 @@ function showSipNumberInput () {
         : '';
     let titleKey = "dialog.sipMsg";
     let msgString = (`
-            <input name="sipNumber" type="text"
+            <input class="input-control"
+                   name="sipNumber" type="text"
                    value="${defaultNumber}" autofocus>`);
 
     APP.UI.messageHandler.openTwoButtonDialog({

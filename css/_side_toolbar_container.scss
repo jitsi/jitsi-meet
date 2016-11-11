@@ -23,21 +23,11 @@
      * Form elements and blocks.
      */
     input, select, a,
-    .sideToolbarBlock, .input-control, .button-control {
+    .sideToolbarBlock, .form-control, .button-control {
         display: block;
         margin-top: 15px;
         margin-left: 10%;
         width: 80%;
-    }
-
-    /**
-     * Specify colors for edit elements.
-     */
-    select, input[type="button"], input[type="text"], input[type="reset"],
-    input[type="submit"] {
-        color: $inputColor;
-        background: $inputBackground;
-        border: none;
     }
 
     /**

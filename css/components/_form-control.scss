@@ -1,4 +1,4 @@
-.input-control {
+.form-control {
     padding: 16px 0;
 
     &:first-child {
@@ -17,24 +17,6 @@
     &__label {
         font-size: 1em;
         font-weight: $labelFontWeight;
-    }
-
-    &__input {
-        margin-bottom: 8px;
-        @include transition(all .2s ease-in);
-
-        &:last-child {
-            margin-bottom: inherit;
-        }
-
-        &::selection {
-            background-color: $defaultDarkSelectionColor;
-        }
-
-        &.error {
-            color: $errorColor;
-            border-color: $errorColor;
-        }
     }
 
     &__em {

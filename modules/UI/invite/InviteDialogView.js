@@ -120,20 +120,20 @@ export default class InviteDialogView {
     getShareLinkBlock() {
         let classes = 'button-control button-control_light copyInviteLink';
         return (
-            `<div class="input-control">
-                <label class="input-control__label" for="inviteLinkRef"
+            `<div class="form-control">
+                <label class="form-control__label" for="inviteLinkRef"
                     data-i18n="${this.dialog.titleKey}"></label>
-                <div class="input-control__container">
-                    <input class="input-control__input inviteLink"
+                <div class="form-control__container">
+                    <input class="input-control inviteLink"
                            id="inviteLinkRef" type="text"
                            ${this.inviteAttributes} readonly>
                     <button data-i18n="dialog.copy" class="${classes}"></button>
                 </div>
-                <p class="input-control__hint ${this.lockHint}">
+                <p class="form-control__hint ${this.lockHint}">
                    <span class="icon-security-locked"></span>
                    <span data-i18n="dialog.roomLocked"></span>
                 </p>
-                <p class="input-control__hint ${this.unlockHint}">
+                <p class="form-control__hint ${this.unlockHint}">
                    <span class="icon-security"></span>
                    <span data-i18n="roomUnlocked"></span>
                 </p>
@@ -150,12 +150,13 @@ export default class InviteDialogView {
 
         if (this.model.isModerator) {
             html = (`
-            <div class="input-control">
-                <label class="input-control__label"
+            <div class="form-control">
+                <label class="form-control__label"
                        for="newPasswordInput" data-i18n="dialog.addPassword">
                </label>
-                <div class="input-control__container">
-                    <input class="input-control__input" id="newPasswordInput"
+                <div class="form-control__container">
+                    <input class="input-control"
+                           id="newPasswordInput"
                            type="text" 
                            data-i18n="[placeholder]dialog.createPassword">
                     <button id="addPasswordBtn" id="inviteDialogAddPassword"
@@ -182,19 +183,19 @@ export default class InviteDialogView {
 
         if (isModerator) {
             return (`
-                <div class="input-control">
-                    <label class="input-control__label"
+                <div class="form-control">
+                    <label class="form-control__label"
                            data-i18n="dialog.passwordLabel"></label>
-                    <div class="input-control__container">
+                    <div class="form-control__container">
                         <p>
-                            <span class="input-control__text"
+                            <span class="form-control__text"
                                   data-i18n="dialog.currentPassword"></span>
                             <span id="inviteDialogPassword"
-                                  class="input-control__em">
+                                  class="form-control__em">
                                 ${password}
                             </span>
                         </p>
-                        <a class="link input-control__right"
+                        <a class="link form-control__right"
                            id="inviteDialogRemovePassword"
                            data-i18n="dialog.removePassword"></a>
                     </div>
@@ -202,7 +203,7 @@ export default class InviteDialogView {
             `);
         } else {
             return (`
-                <div class="input-control">
+                <div class="form-control">
                     <p>A participant protected this call with a password.</p>
                 </div>
             `);
