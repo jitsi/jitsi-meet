@@ -169,20 +169,6 @@ form {
 }
 
 /**
-* Tooltips
-**/
-.tipsy {
-    z-index: $tooltipsZ;
-    &-inner {
-        background-color: $tooltipBg;
-    }
-
-    &-arrow {
-        border-color: $tooltipBg;
-    }
-}
-
-/**
 * Dialogs fade
 */
 .aui-blanket {
@@ -204,4 +190,9 @@ form {
 #inviteLinkRef {
     -webkit-user-select: text;
     user-select: text;
+}
+
+// remove the default border highlight on an input text element
+*:focus {
+    outline: none;
 }

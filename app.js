@@ -11,9 +11,14 @@ import "strophe-caps";
 import "jQuery-Impromptu";
 import "autosize";
 
+// TODO: remove it after styles cleaning and progressbar fix
+// use new select2 plugin
+window.Select2 = require('select2');
+import 'select2-css';
 import 'aui';
-import 'aui-experimental';
 import 'aui-css';
+// don't overwrite new select2 plugin
+require('aui-experimental');
 import 'aui-experimental-css';
 
 window.toastr = require("toastr");

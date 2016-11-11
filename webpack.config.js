@@ -40,8 +40,10 @@ var config = {
             loader: 'imports?define=>false&this=>window',
             test: strophe
         },{
+            loader: 'imports?$=jquery',
+            test: /\/node_modules\/select2\/dist\/js/
+        },{
             // Allow CSS to be imported into JavaScript.
-
             loaders: [
                 'style',
                 'css'
@@ -58,6 +60,7 @@ var config = {
                 name: '[path][name].[ext]'
             },
             test: /\.(gif|png|svg)$/
+
         },{
             //Adds the ability to import json files.
             loader: 'json',
@@ -98,6 +101,10 @@ var config = {
                 'jQuery-Impromptu/dist/jquery-impromptu'
                     + (minimize ? '.min' : '')
                     + '.js',
+            select2:
+                'select2/dist/js/select2'
+                    + (minimize ? '.min' : '')
+                    + '.js'
         },
         packageAlias: 'browser'
     }

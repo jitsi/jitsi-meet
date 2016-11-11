@@ -1,4 +1,4 @@
-/* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
+/* global $, APP, interfaceConfig, JitsiMeetJS */
 
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
@@ -63,30 +63,23 @@ function initHTML() {
 }
 
 /**
- * Generate html select options for available languages.
+ * Generate select options data for available languages.
  *
- * @param {string[]} items available languages
- * @param {string} [currentLang] current language
- * @returns {string}
+ * @returns {object}
  */
-function generateLanguagesOptions(items, currentLang) {
-    return items.map(function (lang) {
-        let attrs = {
-            value: lang,
-            'data-i18n': `languages:${lang}`
+function getSelectLanguagesData(){
+    const langItems = languages.getLanguages();
+
+    return langItems.map(function (lang) {
+        return {
+            id: lang,
+            text: lang
         };
-
-        if (lang === currentLang) {
-            attrs.selected = 'selected';
-        }
-
-        let attrsStr = UIUtil.attrsToString(attrs);
-        return `<option ${attrsStr}></option>`;
-    }).join('');
+    });
 }
 
 /**
- * Generate html select options for available physical devices.
+ * Generate select options data for available physical devices.
  *
  * @param {{ deviceId, label }[]} items available devices
  * @param {string} [selectedId] id of selected device
@@ -94,83 +87,89 @@ function generateLanguagesOptions(items, currentLang) {
  *      is granted
  * @returns {string}
  */
-function generateDevicesOptions(items, selectedId, permissionGranted) {
+function generateDevicesData(items, selectedId, permissionGranted){
     if (!permissionGranted && items.length) {
-        return '<option data-i18n="settings.noPermission"></option>';
-    }
-
-    var options = items.map(function (item) {
-        let attrs = {
-            value: item.deviceId
+        return {
+            i18n: 'settings.noPermission',
+            selected: true
         };
-
-        if (item.deviceId === selectedId) {
-            attrs.selected = 'selected';
-        }
-
-        let attrsStr = UIUtil.attrsToString(attrs);
-        return `<option ${attrsStr}>${item.label}</option>`;
-    });
-
+    }
     if (!items.length) {
-        options.unshift('<option data-i18n="settings.noDevice"></option>');
+        return {
+            i18n: 'settings.noDevice',
+            selected: true
+        };
     }
 
-    return options.join('');
+    return items.map(function (item) {
+        return {
+            id: item.deviceId,
+            selected: item.deviceId === selectedId,
+            text: item.label
+        };
+    });
 }
 
 /**
  * Replace html select element to select2 custom dropdown
  *
  * @param {jQueryElement} $el native select element
- * @param {function} onSelectedCb fired if item is selected
+ * @param {object} options custom options
  */
-function initSelect2($el, onSelectedCb) {
-    $el.auiSelect2({
+function initSelect2($el, options = {}) {
+    let defaults = {
         minimumResultsForSearch: Infinity
-    });
-    if (typeof onSelectedCb === 'function') {
-        $el.change(onSelectedCb);
-    }
+    };
+
+    Object.assign(defaults, options);
+
+    return $el.select2(defaults);
 }
 
 export default {
     init (emitter) {
         initHTML();
+
         //LANGUAGES BOX
         if (UIUtil.isSettingEnabled('language')) {
-            const wrapperId = 'languagesSelectWrapper';
-            const selectId = 'languagesSelect';
-            const selectEl = AJS.$(`#${selectId}`);
+            const languageWrapperId = 'languagesSelectWrapper';
+            const languageSelectId = 'languagesSelect';
+            const $languageSelectEl = $(`#${languageSelectId}`);
             let selectInput;
 
-            selectEl.html(generateLanguagesOptions(
-                languages.getLanguages(),
-                APP.translation.getCurrentLanguage()
-            ));
-            initSelect2(selectEl, () => {
-                const val = selectEl.val();
+            initSelect2(
+                $languageSelectEl,
+                {
+                    data: getSelectLanguagesData(languages.getLanguages()),
+                    // render option items function
+                    templateResult: function (state) {
+                        var $state = $(
+                            `<span data-i18n="languages:${state.id}"></span>`
+                        );
+                        APP.translation.translateElement($state);
 
-                selectInput[0].dataset.i18n = `languages:${val}`;
-                APP.translation.translateElement(selectInput);
-                emitter.emit(UIEvents.LANG_CHANGED, val);
-            });
-            //find new selectInput element
-            selectInput = $(`#s2id_${selectId} .select2-chosen`);
-            //first select fix for languages options
-            selectInput[0].dataset.i18n =
-                `languages:${APP.translation.getCurrentLanguage()}`;
+                        return $state;
+                    },
+                }
+            );
 
-            APP.translation.translateElement(selectEl);
-
+            // find new selectInput element
+            selectInput = $(`#select2-${languageSelectId}-container`);
             APP.translation.addLanguageChangedListener(
                 lng => selectInput[0].dataset.i18n = `languages:${lng}`);
 
-            UIUtil.showElement(wrapperId);
+            // onChange event
+            $languageSelectEl.change(function (e) {
+                const val = e.currentTarget.value;
+
+                emitter.emit(UIEvents.LANG_CHANGED, val);
+            });
+            UIUtil.showElement(languageWrapperId);
         }
+
         // DEVICES LIST
         if (UIUtil.isSettingEnabled('devices')) {
-            const wrapperId = 'deviceOptionsWrapper';
+            const devicesWrapperId = 'deviceOptionsWrapper';
 
             JitsiMeetJS.mediaDevices.isDeviceListAvailable()
                 .then((isDeviceListAvailable) => {
@@ -179,12 +178,14 @@ export default {
                         this._initializeDeviceSelectionSettings(emitter);
                     }
                 });
+
             // Only show the subtitle if this isn't the only setting section.
             if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
                 UIUtil.showElement("deviceOptionsTitle");
 
-            UIUtil.showElement(wrapperId);
+            UIUtil.showElement(devicesWrapperId);
         }
+
         // MODERATOR
         if (UIUtil.isSettingEnabled('moderator')) {
             const wrapperId = 'moderatorOptionsWrapper';
@@ -311,9 +312,9 @@ export default {
      * @param {{ deviceId, label, kind }[]} devices list of available devices
      */
     changeDevicesList (devices) {
-        let $selectCamera= AJS.$('#selectCamera'),
-            $selectMic = AJS.$('#selectMic'),
-            $selectAudioOutput = AJS.$('#selectAudioOutput'),
+        let $selectCamera= $('#selectCamera'),
+            $selectMic = $('#selectMic'),
+            $selectAudioOutput = $('#selectAudioOutput'),
             $selectAudioOutputParent = $selectAudioOutput.parent();
 
         let audio = devices.filter(device => device.kind === 'audioinput'),
@@ -331,35 +332,64 @@ export default {
             audioPermissionGranted =
                 JitsiMeetJS.mediaDevices.isDevicePermissionGranted('audio');
 
-        $selectCamera
-            .html(generateDevicesOptions(
-                video,
-                selectedVideoDevice ? selectedVideoDevice.deviceId : '',
-                videoPermissionGranted))
+        /**
+         * render option items function
+         *
+         * @param state {object}
+         * @returns {string}
+         */
+        function formatResultItem(state){
+            var el = state.element;
+
+            if (el) {
+                if (state.i18n)
+                    el.dataset.i18n = state.i18n;
+            }
+
+            return state.text;
+        }
+
+        initSelect2(
+            $selectCamera, {
+                data: generateDevicesData(
+                    video,
+                    selectedVideoDevice ? selectedVideoDevice.deviceId : '',
+                    videoPermissionGranted
+                ),
+                templateResult: formatResultItem
+            })
             .prop('disabled', !video.length || !videoPermissionGranted);
 
-        initSelect2($selectCamera);
-
-        $selectMic
-            .html(generateDevicesOptions(
-                audio,
-                selectedAudioDevice ? selectedAudioDevice.deviceId : '',
-                audioPermissionGranted))
+        initSelect2(
+            $selectMic, {
+                data: generateDevicesData(
+                    audio,
+                    selectedAudioDevice ? selectedAudioDevice.deviceId : '',
+                    audioPermissionGranted
+                ),
+                templateResult: formatResultItem
+            })
             .prop('disabled', !audio.length || !audioPermissionGranted);
-
-        initSelect2($selectMic);
+        //TODO: remove is it unuseful
+        // if (selectedAudioDevice) {
+        //     $selectMic
+        //     .find(`option[value="${selectedAudioDevice.deviceId}"]`)
+        //     .prop('selected', true);
+        //     $selectMic.select();
+        // }
 
         if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
-            $selectAudioOutput
-                .html(generateDevicesOptions(
+            initSelect2($selectAudioOutput, {
+                data: generateDevicesData(
                     audioOutput,
                     selectedAudioOutputDevice
                         ? selectedAudioOutputDevice.deviceId
                         : 'default',
-                    videoPermissionGranted || audioPermissionGranted))
-                .prop('disabled', !audioOutput.length ||
-                    (!videoPermissionGranted && !audioPermissionGranted));
-            initSelect2($selectAudioOutput);
+                    videoPermissionGranted || audioPermissionGranted
+                ),
+                templateResult: formatResultItem
+            }).prop('disabled', !audioOutput.length ||
+                (!videoPermissionGranted && !audioPermissionGranted));
 
             $selectAudioOutputParent.show();
         } else {

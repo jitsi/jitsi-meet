@@ -41,6 +41,7 @@
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
     "retry": "0.6.1",
+    "select2": "^4.0.3",
     "strophe": "^1.2.2",
     "strophejs-plugins": "^0.0.6",
     "toastr": "^2.0.3",
@@ -83,6 +84,7 @@
     "popover": "./node_modules/bootstrap/js/popover.js",
     "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js",
     "strophe-caps": "./node_modules/strophejs-plugins/caps/strophe.caps.jsonly.js",
-    "tooltip": "./node_modules/bootstrap/js/tooltip.js"
+    "tooltip": "./node_modules/bootstrap/js/tooltip.js",
+    "select2-css": "./node_modules/select2/dist/css/select2.css"
   }
 }
