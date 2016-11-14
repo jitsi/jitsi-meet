@@ -3,19 +3,18 @@
     <link rel="stylesheet" href="css/all.css"/>
     <!--#include virtual="title.html" -->
     <script><!--#include virtual="/interface_config.js" --></script>
-    <script>function translateStr(id, msg) {
-        var div = document.getElementById(id);
-        div.innerHTML = msg;
-    }
-    function translate() {
-        translateStr('thanksMessage',
-            'Thank you for using ' + interfaceConfig.APP_NAME);
-        translateStr('hintMessage',
-            'You can pin participants by clicking on their thumbnails');
-    }
+    <script src="randomizer.js"></script>
+    <script src="utils.js"></script>
+    <script>
+        function onDocumentReady() {
+            insertTextMsgIntoDocument('thanksMessage',
+                'Thank you for using ' + interfaceConfig.APP_NAME);
+            insertTextMsgIntoDocument('hintMessage',
+                randomizer.getItem());
+        }
     </script>
 </head>
-<body onload="translate();">
+<body onload="onDocumentReady();">
     <div class="redirectPageMessage">
         <div class="thanks-msg">
             <p id="thanksMessage"></p>
