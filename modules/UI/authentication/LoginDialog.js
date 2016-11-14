@@ -206,7 +206,7 @@ export default {
      */
     showAuthRequiredDialog: function (roomName, onAuthNow) {
         var msg = APP.translation.generateTranslationHTML(
-            "dialog.WaitForHostMsg", {room: roomName}
+            "[html]dialog.WaitForHostMsg", {room: roomName}
         );
 
         var buttonTxt = APP.translation.generateTranslationHTML(

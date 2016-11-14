@@ -127,7 +127,8 @@ var messageHandler = {
             return null;
 
         let dialog = $.prompt(
-            APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
+            APP.translation.generateTranslationHTML(messageKey, i18nOptions),
+            {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,

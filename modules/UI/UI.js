@@ -1179,7 +1179,7 @@ UI.getLargeVideo = function () {
 UI.showExtensionRequiredDialog = function (url) {
     messageHandler.openMessageDialog(
         "dialog.extensionRequired",
-        "dialog.firefoxExtensionPrompt",
+        "[html]dialog.firefoxExtensionPrompt",
         {url: url});
 };
 
