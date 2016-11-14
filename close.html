@@ -3,21 +3,16 @@
     <link rel="stylesheet" href="css/all.css"/>
     <!--#include virtual="title.html" -->
     <script><!--#include virtual="/interface_config.js" --></script>
-    <script src="static/randomizer.js"></script>
+    <script src="randomizer.js"></script>
+    <script src="utils.js"></script>
     <script>
-        var randomizer = new Randomizer();
-
-        function translateStr(id, msg) {
-            var div = document.getElementById(id);
-            div.innerHTML = msg;
-        }
-        function translate() {
-            translateStr('hintMessage',
+        function onDocumentReady() {
+            insertTextMsgIntoDocument('hintMessage',
                 randomizer.getItem());
         }
     </script>
 </head>
-<body onload="translate();">
+<body onload="onDocumentReady();">
 <div class="redirectPageMessage">
     <div class="thanks-msg">
         <p id="thanksMessage">Thank you for your feedback!</p>
