@@ -22,41 +22,97 @@
         height: 100%;
         background-color: black;
     }
-}
 
-/**
- * The toolbar of the video thumbnail.
- */
-.videocontainer__toolbar,
-.videocontainer__toptoolbar {
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    width: 100%;
-    box-sizing: border-box; // Includes the padding in the 100% width.
-}
+    /**
+     * The toolbar of the video thumbnail.
+     */
+    &__toolbar,
+    &__toptoolbar {
+        position: absolute;
+        left: 0;
+        z-index: 3;
+        width: 100%;
+        box-sizing: border-box; // Includes the padding in the 100% width.
+    }
 
-.videocontainer__toolbar {
-    bottom: 0;
-    padding: 0 5px 0 5px;
-    height: $thumbnailToolbarHeight;
-}
+    &__toolbar {
+        bottom: 0;
+        padding: 0 5px 0 5px;
+        height: $thumbnailToolbarHeight;
+    }
 
-.videocontainer__toptoolbar {
-    $toolbarPadding: 5px;
-    top: 0;
-    padding: $toolbarPadding;
-    padding-bottom: 0;
-    height: $thumbnailIndicatorSize + $toolbarPadding;
-}
+    &__toptoolbar {
+        $toolbarPadding: 5px;
+        top: 0;
+        padding: $toolbarPadding;
+        padding-bottom: 0;
 
-.videocontainer__hoverOverlay {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    visibility: hidden;
-    background: rgba(0,0,0,.6);
-    z-index: 2;
+        span.indicator {
+            position: relative;
+            font-size: 8px;
+            text-align: center;
+            line-height: $thumbnailIndicatorSize;
+            display: none;
+            padding: 0;
+            margin-right: em(5, 8);
+            float: left;
+            @include circle($thumbnailIndicatorSize);
+            box-sizing: border-box;
+            z-index: 3;
+            background: $dominantSpeakerBg;
+            color: $thumbnailPictogramColor;
+            border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            .indicatoricon {
+                @include absoluteAligning();
+            }
+
+            .connection {
+                position: relative;
+                display: inline-block;
+                margin: 0 auto;
+                left: 0;
+                @include transform(translate(0, -50%));
+
+                &_empty
+                {
+                    color: #8B8B8B;/*#FFFFFF*/
+                    overflow: hidden;
+                }
+
+                &_lost
+                {
+                    color: #8B8B8B;
+                    overflow: visible;
+                }
+
+                &_full
+                {
+                    @include topLeft();
+                    color: #FFFFFF;/*#15A1ED*/
+                    overflow: hidden;
+                }
+            }
+
+            .icon-connection,
+            .icon-connection-lost {
+                font-size: 1em;
+            }
+        }
+    }
+
+    &__hoverOverlay {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        visibility: hidden;
+        background: rgba(0,0,0,.6);
+        z-index: 2;
+    }
 }
 
 #localVideoWrapper {
@@ -217,72 +273,6 @@
   background: $connectionIndicatorBg;
 }
 
-.videocontainer__toptoolbar span.indicator {
-    position: relative;
-    font-size: 8pt;
-    text-align: center;
-    line-height: $thumbnailToolbarHeight;
-    display: none;
-    padding: 0;
-    margin-right: 5px;
-    float: left;
-    @include circle($thumbnailIndicatorSize);
-    box-sizing: border-box;
-    z-index: 3;
-    background: $dominantSpeakerBg;
-    color: $thumbnailPictogramColor;
-    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
-
-    .indicatoricon {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        @include transform(translateY(-50%));
-        width: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-        height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-        line-height: $thumbnailIndicatorSize - 2 * $thumbnailIndicatorBorder;
-    }
-
-    .connection {
-        position: relative;
-        margin: 0 auto;
-        width: 12px;
-        height: 8px;
-
-        &_empty
-        {
-            @include topLeft();
-            max-width: 12px;
-            width: 12px;
-            color: #8B8B8B;/*#FFFFFF*/
-            overflow: hidden;
-        }
-
-        &_lost
-        {
-            @include topLeft();
-            max-width: 12px;
-            width: 12px;
-            color: #8B8B8B;
-            overflow: visible;
-        }
-
-        &_full
-        {
-            @include topLeft();
-            max-width: 12px;
-            width: 12px;
-            color: #FFFFFF;/*#15A1ED*/
-            overflow: hidden;
-        }
-    }
-
-    .icon-connection,
-    .icon-connection-lost {
-        font-size: 6pt;
-    }
-}
-
 .remotevideomenu
 {
     display: inline-block;
@@ -400,8 +390,10 @@
 
 .userAvatar {
     @include maxSize(60px);
-    @include circle(50%);
     @include absoluteAligning();
+    border-radius: 50%;
+    height: 50%;
+    width: auto;
 }
 
 .sharedVideoAvatar {
