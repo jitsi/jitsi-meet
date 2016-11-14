@@ -28,6 +28,25 @@ const SHOW_CLASSES = {
 };
 
 /**
+ * Contains sizes of thumbnails
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const ThumbnailSizes = {
+    SMALL: 60,
+    MEDIUM: 80
+};
+
+/**
+ * Contains font sizes for thumbnail indicators
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const IndicatorFontSizes = {
+    SMALL: 5,
+    MEDIUM: 6,
+    NORMAL: 8
+};
+
+/**
  * Created by hristo on 12/22/14.
  */
  var UIUtil = {
@@ -463,6 +482,7 @@ const SHOW_CLASSES = {
 
         if (indicators.length <= 0) {
             indicatorSpan = document.createElement('span');
+
             indicatorSpan.className = 'indicator';
             indicatorSpan.id = indicatorId;
 
@@ -475,6 +495,8 @@ const SHOW_CLASSES = {
                 APP.translation.translateElement($(indicatorSpan));
             }
 
+            this._resizeIndicator(indicatorSpan);
+
             document.getElementById(videoSpanId)
                 .querySelector('.videocontainer__toptoolbar')
                 .appendChild(indicatorSpan);
@@ -483,6 +505,37 @@ const SHOW_CLASSES = {
         }
 
         return indicatorSpan;
+    },
+
+    /**
+     * Resizing indicator element passing via argument
+     * according to the current thumbnail size
+     * @param {HTMLElement} indicator - indicator element
+     * @private
+     */
+    _resizeIndicator(indicator) {
+        let height = $('#localVideoContainer').height();
+        let fontSize = this.getIndicatorFontSize(height);
+        $(indicator).css('font-size', fontSize);
+    },
+
+    /**
+     * Returns font size for indicators according to current
+     * height of thumbnail
+     * @param {Number} - height - current height of thumbnail
+     * @returns {Number} - font size for current height
+     */
+    getIndicatorFontSize(height) {
+        const { SMALL, MEDIUM } = ThumbnailSizes;
+        let fontSize = IndicatorFontSizes.NORMAL;
+
+        if (height <= SMALL) {
+            fontSize = IndicatorFontSizes.SMALL;
+        } else if (height > SMALL && height <= MEDIUM) {
+            fontSize = IndicatorFontSizes.MEDIUM;
+        }
+
+        return fontSize;
     }
 };
 

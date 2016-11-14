@@ -3,15 +3,6 @@
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
-/**
- * Contains sizes of thumbnails
- * @type {{SMALL: number, MEDIUM: number}}
- */
-const ThumbnailSizes = {
-    SMALL: 60,
-    MEDIUM: 80
-};
-
 const FilmStrip = {
     /**
      *
@@ -402,7 +393,14 @@ const FilmStrip = {
                 }, this._getAnimateOptions(animate, resolve));
             }));
 
-            this._setThumbnailsClasses(remote.thumbHeight);
+            promises.push(new Promise(() => {
+                let { localThumb } = this.getThumbs();
+                let height = localThumb.height();
+                let fontSize = UIUtil.getIndicatorFontSize(height);
+                this.filmStrip.find('.indicator').animate({
+                    fontSize
+                }, this._getAnimateOptions(animate, resolve));
+            }));
 
             if (!animate) {
                 resolve();
@@ -425,35 +423,6 @@ const FilmStrip = {
             duration: animate ? 500 : 0,
             complete: cb
         };
-    },
-
-    /**
-     * Set thumbnail classes according to the current size of thumbnail
-     * @param height
-     * @private
-     */
-    _setThumbnailsClasses(height) {
-        const { SMALL, MEDIUM } = ThumbnailSizes;
-        const { localThumb, remoteThumbs } = this.getThumbs();
-        let smallClass = 'videocontainer_small';
-        let mediumClass = 'videocontainer_medium';
-        let className = '';
-
-        if (height <= SMALL) {
-            className = smallClass;
-        } else if (height > SMALL && height <= MEDIUM) {
-            className = mediumClass;
-        }
-
-        localThumb
-            .removeClass(`${smallClass} ${mediumClass}`)
-            .addClass(className);
-
-        if (remoteThumbs) {
-            remoteThumbs
-                .removeClass(`${smallClass} ${mediumClass}`)
-                .addClass(className);
-        }
     },
 
     /**
