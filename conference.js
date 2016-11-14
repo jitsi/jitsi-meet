@@ -566,6 +566,10 @@ export default {
                 APP.UI.showPageReloadOverlay();
                 connection.removeEventListener(
                     ConnectionEvents.CONNECTION_FAILED, handler);
+                // FIXME it feels like the conference should be stopped
+                // by lib-jitsi-meet
+                if (room)
+                    room.leave();
             }
         };
         connection.addEventListener(
