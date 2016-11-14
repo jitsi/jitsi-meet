@@ -17,6 +17,10 @@ $thumbnailToolbarHeight: 22px;
 $thumbnailIndicatorBorder: 0px;
 $thumbnailIndicatorSize: $thumbnailToolbarHeight;
 $thumbnailVideoMargin: 2px;
+$thumbnailsBorder: 2px;
+$thumbnailVideoBorder: 2px;
+$hideFilmstripButtonWidth: 17px;
+
 
 /**
  * Color variables.
@@ -30,6 +34,8 @@ $tooltipBg: rgba(0,0,0, 0.7);
 /**
  * Toolbar
  */
+$toolbarTitleColor: #FFFFFF;
+$toolbarTitleFontSize: 19px;
 $toolbarBackground: rgba(0, 0, 0, 0.5);
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
 $toolbarBadgeBackground: #165ECC;
@@ -90,9 +96,9 @@ $notificationWidth: 215px;
 /**
  * Misc.
  */
-$borderRadius: 4px;
+$borderRadius: 3px;
 $defaultWatermarkLink: '../images/watermark.png';
-$sidebarWidth: 200px;
+$sidebarWidth: 220px;
 
 $happySoftwareBackground: transparent;
 
@@ -117,11 +123,6 @@ $defaultDarkFontColor: #000;
 /**
  * Forms
  */
-//dropdown
-$selectFontColor: $defaultLightFontColor;
-$selectBg: $defaultBackground;
-$selectActiveBg: $defaultBackground;
-$selectActiveItemBg: $defaultDarkColor;
 //inputs
 $inputControlEmColor: #f29424;
 //buttons

@@ -1,4 +1,15 @@
 /**
+ * Base
+ */
+$baseLight: #FFFFFF;
+
+/**
+* Controls
+*/
+$controlBackground: $baseLight;
+$controlColor: #333333;
+
+/**
 * Buttons
 */
 $buttonBackground: #f5f5f5;
@@ -17,7 +28,7 @@ $buttonLinkColor: #0090e8;
 
 $primaryButtonBackground: #3572b0;
 $primaryButtonHoverBackground: #2a67a5;
-$primaryButtonColor: #fff;
+$primaryButtonColor: $baseLight;
 $primaryButtonFontWeight: 400;
 
 $buttonShadowColor: #192d4f;
@@ -38,14 +49,14 @@ $uploadConnectionIconColor: #ffa800;
  **/
 $auiDialogColor: #333;
 $auiDialogBg: #f5f5f5;
-$auiDialogContentBg: #fff;
+$auiDialogContentBg: $baseLight;
 $auiBorderColor: #ccc;
 $dialogTitleFontWeight: 400;
 
 // Main controls
-$inputBackground: #fff;
+$inputBackground: $controlBackground;
 $inputBorderColor: #ccc;
-$inputColor: #333;
+$inputColor: $controlColor;
 $placeHolderColor: #a7a7a7;
 $readOnlyInputColor: #a7a7a7;
 $defaultDarkSelectionColor: #ccc;
@@ -64,3 +75,12 @@ $popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
 
 // Toolbar
 $splitterColor: #ccc;
+
+/**
+ * Forms
+ */
+//dropdown
+$selectFontColor: $controlColor;
+$selectBg: $controlBackground;
+$selectActiveBg: darken($controlBackground, 5%);
+$selectActiveItemBg: darken($controlBackground, 20%);

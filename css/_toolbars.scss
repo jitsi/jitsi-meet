@@ -252,7 +252,7 @@ a.button>#avatar {
  */
 @include keyframes(slideInExt) {
     from { width: 0px; }
-    to   { width: 200px; } // TO FIX: Make this value a percentage.
+    to   { width: $sidebarWidth; } // TO FIX: Make this value a percentage.
 }
 
 .slideInExt {
@@ -260,7 +260,7 @@ a.button>#avatar {
 }
 
 @include keyframes(slideOutExt) {
-  from { width: 200px; } // TO FIX: Make this value a percentage.
+  from { width: $sidebarWidth; } // TO FIX: Make this value a percentage.
   to   { width: 0px; }
 }
 
