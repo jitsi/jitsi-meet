@@ -10,26 +10,21 @@
     ];
 
     /**
-     * Creates a new Randomiser.
-     *
-     * @class
+     * Creates a randomiser.
+     * Put in in Global scope
      */
-    function Randomizer(){
-        this.items = items;
-    }
+    window.randomizer = {
+        /**
+         * Get a random integer between 0 and items length.
+         *
+         * @return {string} a random integer
+         */
+        getItem: function (){
+            var l = items.length - 1;
+            var n = Math.round(Math.random() * l);
 
-    /**
-     * Get a random integer between 0 and items length.
-     *
-     * @return {string} a random integer
-     */
-    Randomizer.prototype.getItem = function (){
-        var l = this.items.length - 1;
-        var n = Math.round(Math.random() * l);
-
-        return this.items[n];
+            return items[n];
+        }
     };
-
-    window.Randomizer = Randomizer;
 })();
 
