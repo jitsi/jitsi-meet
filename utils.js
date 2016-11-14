@@ -66,18 +66,3 @@ function getConfigParamsFromUrl(source, dontParse) {
     });
     return result;
 }
-
-/**
- * Inserts text message
- * into DOM element
- *
- * @param id {string} element identificator
- * @param msg {string} text message
- */
-// eslint-disable-next-line no-unused-vars
-function insertTextMsgIntoDocument(id, msg){
-    var el = document.getElementById(id);
-
-    if (el)
-        el.innerText = msg;
-}

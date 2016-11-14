@@ -3,19 +3,12 @@
     <link rel="stylesheet" href="css/all.css"/>
     <!--#include virtual="title.html" -->
     <script><!--#include virtual="/interface_config.js" --></script>
-    <script src="randomizer.js"></script>
-    <script src="utils.js"></script>
-    <script>
-        function onDocumentReady() {
-            insertTextMsgIntoDocument('hintMessage',
-                randomizer.getItem());
-        }
-    </script>
+    <script src="close.js"></script>
 </head>
-<body onload="onDocumentReady();">
+<body>
 <div class="redirectPageMessage">
     <div class="thanks-msg">
-        <p id="thanksMessage">Thank you for your feedback!</p>
+        <p>Thank you for your feedback!</p>
     </div>
     <div class="hint-msg">
         <p>
