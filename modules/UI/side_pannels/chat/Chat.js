@@ -157,6 +157,11 @@ function resizeChatConversation() {
     chat.height(window.innerHeight - 15 - msgareaHeight);
 }
 
+function deferredFocus(id){
+    setTimeout(function (){
+        $(`#${id}`).focus();
+    }, 400);
+}
 /**
  * Chat related user interface.
  */
@@ -180,6 +185,7 @@ var Chat = {
                 let val = this.value;
                 this.value = '';
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
+                deferredFocus('usermsg');
             }
         });
 
@@ -223,9 +229,9 @@ var Chat = {
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
                 if (APP.settings.getDisplayName())
-                    $('#usermsg').focus();
+                    deferredFocus('usermsg');
                 else
-                    $('#nickinput').focus();
+                    deferredFocus('nickinput');
             });
 
         addSmileys();
@@ -318,13 +324,6 @@ var Chat = {
     setChatConversationMode (isConversationMode) {
         $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
-
-        // this is needed when we transition from no conversation mode to
-        // conversation mode. When user enters his nickname and hits enter,
-        // to focus on the write area.
-        if (isConversationMode) {
-            $('#usermsg').focus();
-        }
     },
 
     /**
