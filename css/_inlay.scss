@@ -3,7 +3,7 @@
     @include border-radius(3px);
     padding: 40px 38px 44px;
     color: #fff;
-    background: lighten(desaturate($defaultBackground, 70%), 20%);
+    background: $inlayColorBg;
     text-align: center;
 
     &__title {
@@ -12,7 +12,7 @@
         color: $popoverFontColor;
         font-size: 21px;
         letter-spacing: 0.3px;
-        border-bottom: 1px solid $auiBorderColor;
+        border-bottom: 1px solid $inlayBorderColor;
     }
 
     &__text {

@@ -62,20 +62,18 @@
             text-align: center;
             padding: 10px 40px 20px 40px;
 
-            .form-control{
-                &__input {
-                    background-color: $feedbackInputBg;
-                    color: $feedbackInputTextColor;
+            .input-control {
+                background-color: $feedbackInputBg;
+                color: $feedbackInputTextColor;
 
-                    &::-webkit-input-placeholder {
-                        color: $feedbackInputPlaceholderColor;
-                    }
-                    &::-moz-placeholder {  /* Firefox 19+ */
-                        color: $feedbackInputPlaceholderColor;
-                    }
-                    &:-ms-input-placeholder {
-                        color: $feedbackInputPlaceholderColor;
-                    }
+                &::-webkit-input-placeholder {
+                    color: $feedbackInputPlaceholderColor;
+                }
+                &::-moz-placeholder {  /* Firefox 19+ */
+                    color: $feedbackInputPlaceholderColor;
+                }
+                &:-ms-input-placeholder {
+                    color: $feedbackInputPlaceholderColor;
                 }
             }
 
