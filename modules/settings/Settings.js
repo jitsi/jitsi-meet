@@ -9,11 +9,6 @@ function generateUniqueId() {
     return _p8() + _p8() + _p8() + _p8();
 }
 
-if (!jitsiLocalStorage.getItem("jitsiMeetId")) {
-    jitsiLocalStorage.setItem("jitsiMeetId",generateUniqueId());
-    console.log("generated id", jitsiLocalStorage.getItem("jitsiMeetId"));
-}
-
 let avatarUrl = '';
 
 let email = UIUtil.unescapeHtml(jitsiLocalStorage.getItem("email") || '');
