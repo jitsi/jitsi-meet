@@ -157,6 +157,12 @@ function resizeChatConversation() {
     chat.height(window.innerHeight - 15 - msgareaHeight);
 }
 
+/**
+ * Focus input after 400 ms
+ * Found input by id
+ *
+ * @param id {string} input id
+ */
 function deferredFocus(id){
     setTimeout(function (){
         $(`#${id}`).focus();
