@@ -154,6 +154,19 @@ LocalVideo.prototype.createConnectionIndicator = function() {
 };
 
 LocalVideo.prototype.changeVideo = function (stream) {
+    // FIXME temporary workaround for the fact that 'endedHandler' is not called
+    // This is to avoid potential side effect of the fact that multiple video
+    // elements are leaked into the 'localVideoWrapper' after screen sharing
+    if (this.videoStream) {
+        var localVideoElement = document.getElementById(this.localVideoId);
+        if (localVideoElement) {
+            this.videoStream.detach(localVideoElement);
+            var container = localVideoElement.parentNode;
+            if (container) {
+                container.removeChild(localVideoElement);
+            }
+        }
+    }
     this.videoStream = stream;
 
     let localVideoClick = (event) => {
@@ -192,6 +205,9 @@ LocalVideo.prototype.changeVideo = function (stream) {
     // Attach WebRTC stream
     localVideo = stream.attach(localVideo);
 
+    // FIXME this is never called for some reason
+    // It was expected for this callback to be called whenever local video
+    // stream is switched between camera and screen videos.
     let endedHandler = () => {
         localVideoContainer.removeChild(localVideo);
         // when removing only the video element and we are on stage
