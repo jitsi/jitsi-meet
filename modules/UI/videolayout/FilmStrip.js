@@ -57,9 +57,12 @@ const FilmStrip = {
      * Attach 'click' listener to "hide filmstrip" button
      */
     registerListeners() {
-        let toggleFilmstripMethod = this.toggleFilmStrip.bind(this);
-        let selector = '#hideVideoToolbar';
-        $('#videospace').on('click', selector, toggleFilmstripMethod);
+        // Important:
+        // Firing the event instead of executing toggleFilmstrip method because
+        // it's important to hide the filmstrip by UI.toggleFilmstrip in order
+        // to correctly resize the video area.
+        $('#hideVideoToolbar').on('click',
+            () => this.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP));
 
         this._registerToggleFilmstripShortcut();
     },
@@ -72,10 +75,11 @@ const FilmStrip = {
         let shortcut = 'F';
         let shortcutAttr = 'filmstripPopover';
         let description = 'keyboardShortcuts.toggleFilmstrip';
-        let handler = () => {
-            JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
-            this.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP);
-        };
+        // Important:
+        // Firing the event instead of executing toggleFilmstrip method because
+        // it's important to hide the filmstrip by UI.toggleFilmstrip in order
+        // to correctly resize the video area.
+        let handler = () => this.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP);
 
         APP.keyboardshortcut.registerShortcut(
             shortcut,
@@ -110,6 +114,11 @@ const FilmStrip = {
      * of the film strip. If not specified, the visibility will be flipped
      * (i.e. toggled); otherwise, the visibility will be set to the specified
      * value.
+     *
+     * Note:
+     * This method shouldn't be executed directly to hide the filmstrip.
+     * It's important to hide the filmstrip with UI.toggleFilmstrip in order
+     * to correctly resize the video area.
      */
     toggleFilmStrip(visible) {
         let isVisibleDefined = typeof visible === 'boolean';
@@ -118,7 +127,7 @@ const FilmStrip = {
         } else if (this.isFilmStripVisible() === visible) {
             return;
         }
-
+        JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
         this.filmStrip.toggleClass("hidden");
 
         if (!visible) {
