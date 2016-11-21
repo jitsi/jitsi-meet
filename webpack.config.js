@@ -2,6 +2,7 @@
 
 require('babel-polyfill'); // Define Object.assign() from ES6 in ES5.
 
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HasteResolverPlugin = require('haste-resolver-webpack-plugin');
 var process = require('process');
 var webpack = require('webpack');
@@ -12,7 +13,8 @@ var minimize
         || process.argv.indexOf('--optimize-minimize') !== -1;
 var node_modules = __dirname + '/node_modules/';
 var plugins = [
-    new HasteResolverPlugin()
+    new HasteResolverPlugin(),
+    new ExtractTextPlugin('[name].css')
 ];
 var strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
 
@@ -66,11 +68,17 @@ var config = {
         }, {
             // Allow CSS to be imported into JavaScript.
 
-            loaders: [
-                'style',
-                'css'
-            ],
+            loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
             test: /\.css$/
+        }, {
+            // Allow SASS to be imported into JavaScript.
+
+            loader: ExtractTextPlugin.extract(
+                'style-loader',
+                'css-loader!sass-loader'
+            ),
+            // Allow to import either .scss or .sass files
+            test: /\.s[ca]ss$/
         }, {
             // Emit the static assets of AUI such as images that are referenced
             // by CSS into the output path.

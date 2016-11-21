@@ -11,11 +11,8 @@ import "strophe-disco";
 import "strophe-caps";
 import "jQuery-Impromptu";
 import "autosize";
-
 import 'aui';
 import 'aui-experimental';
-import 'aui-css';
-import 'aui-experimental-css';
 
 window.toastr = require("toastr");
 

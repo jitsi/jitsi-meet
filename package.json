@@ -64,6 +64,7 @@
     "eslint-plugin-react": "*",
     "eslint-plugin-react-native": "*",
     "expose-loader": "*",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "*",
     "haste-resolver-webpack-plugin": "^0.2.2",
     "imports-loader": "*",
@@ -71,6 +72,7 @@
     "json-loader": "0.5.4",
     "node-sass": "^3.8.0",
     "precommit-hook": "3.0.0",
+    "sass-loader": "*",
     "string-replace-loader": "*",
     "style-loader": "*",
     "webpack": "*"
