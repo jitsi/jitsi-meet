@@ -7,6 +7,8 @@ var ConfigUtil = {
      * @param config the config object for which we'll be overriding properties
      * @param interfaceConfig the interfaceConfig object for which we'll be
      *                        overriding properties.
+     * @param loggingConfig the logging config object for which we'll be
+     *        overriding properties.
      * @param newConfig object containing configuration properties. Destination
      *        object is selected based on root property name:
      *        {
@@ -14,11 +16,15 @@ var ConfigUtil = {
      *             // config.js properties to be
      *          },
      *          interfaceConfig: {
-     *             // interfaceConfig.js properties here
+     *             // interface_config.js properties here
+     *          },
+     *          loggingConfig: {
+     *             // logging_config.js properties here
      *          }
      *        }
      */
-    overrideConfigJSON: function (config, interfaceConfig, newConfig) {
+    overrideConfigJSON: function (config,
+                                  interfaceConfig, loggingConfig, newConfig) {
         var configRoot, key, value, confObj;
         for (configRoot in newConfig) {
             confObj = null;
@@ -26,6 +32,8 @@ var ConfigUtil = {
                 confObj = config;
             } else if (configRoot == "interfaceConfig") {
                 confObj = interfaceConfig;
+            } else if (configRoot == "loggingConfig") {
+                confObj = loggingConfig;
             } else {
                 continue;
             }

@@ -1,4 +1,4 @@
-/* global config, interfaceConfig, getConfigParamsFromUrl */
+/* global config, interfaceConfig, loggingConfig, getConfigParamsFromUrl */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var configUtils = require('./Util');
@@ -27,7 +27,8 @@ var URLProcessor = {
         // }
         var configJSON = {
             config: {},
-            interfaceConfig: {}
+            interfaceConfig: {},
+            loggingConfig: {}
         };
         for (var key in params) {
             if (typeof key !== "string") {
@@ -47,6 +48,9 @@ var URLProcessor = {
             } else if (key.indexOf("interfaceConfig.") === 0) {
                 confObj = configJSON.interfaceConfig;
                 confKey = key.substr("interfaceConfig.".length);
+            } else if (key.indexOf("loggingConfig.") === 0) {
+                confObj = configJSON.loggingConfig;
+                confKey = key.substr("loggingConfig.".length);
             }
 
             if (!confObj)
@@ -54,7 +58,8 @@ var URLProcessor = {
 
             confObj[confKey] = params[key];
         }
-        configUtils.overrideConfigJSON(config, interfaceConfig, configJSON);
+        configUtils.overrideConfigJSON(
+            config, interfaceConfig, loggingConfig, configJSON);
     }
 };
 

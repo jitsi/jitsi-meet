@@ -464,8 +464,6 @@ export default {
      */
     init(options) {
         this.roomName = options.roomName;
-        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
-
         // attaches global error handler, if there is already one, respect it
         if(JitsiMeetJS.getGlobalOnErrorHandler){
             var oldOnErrorHandler = window.onerror;

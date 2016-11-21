@@ -1,4 +1,4 @@
-/* global $, config, getRoomName */
+/* global $, config, getRoomName, loggingConfig, JitsiMeetJS */
 /* application specific logic */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -19,6 +19,8 @@ import 'aui-experimental-css';
 
 window.toastr = require("toastr");
 
+const Logger = require("jitsi-meet-logger");
+
 import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
 
@@ -31,6 +33,7 @@ import API from './modules/API/API';
 import UIEvents from './service/UI/UIEvents';
 import getTokenData from "./modules/tokendata/TokenData";
 import translation from "./modules/translation/translation";
+
 
 /**
  * Tries to push history state with the following parameters:
@@ -79,6 +82,36 @@ function buildRoomName () {
     return roomName;
 }
 
+/**
+ * Adjusts the logging levels.
+ * @private
+ */
+function configureLoggingLevels () {
+    // NOTE The library Logger is separated from the app loggers, so the levels
+    // have to be set in two places
+
+    // Set default logging level
+    const defaultLogLevel
+        = loggingConfig.defaultLogLevel || JitsiMeetJS.logLevels.TRACE;
+    Logger.setLogLevel(defaultLogLevel);
+    JitsiMeetJS.setLogLevel(defaultLogLevel);
+
+    // NOTE console was used on purpose here to go around the logging
+    // and always print the default logging level to the console
+    console.info("Default logging level set to: " + defaultLogLevel);
+
+    // Set log level for each logger
+    if (loggingConfig) {
+        Object.keys(loggingConfig).forEach(function(loggerName) {
+            if ('defaultLogLevel' !== loggerName) {
+                const level = loggingConfig[loggerName];
+                Logger.setLogLevelById(level, loggerName);
+                JitsiMeetJS.setLogLevelById(level, loggerName);
+            }
+        });
+    }
+}
+
 const APP = {
     // Used by do_external_connect.js if we receive the attach data after
     // connect was already executed. status property can be "initialized",
@@ -107,6 +140,7 @@ const APP = {
     connection: null,
     API,
     init () {
+        configureLoggingLevels();
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.configFetch = require("./modules/config/HttpConfigFetch");
