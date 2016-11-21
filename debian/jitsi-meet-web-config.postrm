@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for jitsi-meet
+# postrm script for jitsi-meet-web-config
 #
 # see: dh_installdeb(1)
 
@@ -37,7 +37,11 @@ case "$1" in
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
             rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.jks
             rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.p12
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME.key
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME.crt
         fi
+        # Clear the debconf variable
+        db_purge
     ;;
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;
