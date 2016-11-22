@@ -20,6 +20,7 @@ import 'aui-experimental-css';
 window.toastr = require("toastr");
 
 const Logger = require("jitsi-meet-logger");
+const LogCollector = Logger.LogCollector;
 
 import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
@@ -34,6 +35,7 @@ import UIEvents from './service/UI/UIEvents';
 import getTokenData from "./modules/tokendata/TokenData";
 import translation from "./modules/translation/translation";
 
+const ConferenceEvents = JitsiMeetJS.events.conference;
 
 /**
  * Tries to push history state with the following parameters:
@@ -132,6 +134,16 @@ const APP = {
     conference,
     translation,
     /**
+     * The log collector which captures JS console logs for this app.
+     * @type {LogCollector}
+     */
+    logCollector: null,
+    /**
+     * Indicates if the log collector has been started (it will not be started
+     * if the welcome page is displayed).
+     */
+    logCollectorStarted : false,
+    /**
      * After the APP has been initialized provides utility methods for dealing
      * with the conference room URL(address).
      * @type ConferenceUrl
@@ -140,11 +152,40 @@ const APP = {
     connection: null,
     API,
     init () {
-        configureLoggingLevels();
+        this.initLogging();
         this.keyboardshortcut =
             require("./modules/keyboardshortcut/keyboardshortcut");
         this.configFetch = require("./modules/config/HttpConfigFetch");
         this.tokenData = getTokenData();
+    },
+    initLogging () {
+        // Adjust logging level
+        configureLoggingLevels();
+        // Start the LogCollector and register it as the global log transport
+        if (!this.logCollector) {
+            this.logCollector = new LogCollector({
+                storeLogs: (logJSON) => {
+                    // Try catch was used, because there are many variables
+                    // on the way that could be uninitialized if the storeLogs
+                    // attempt would be made very early (which is unlikely)
+                    try {
+                        // Currently it makes sense to store the log only
+                        // if CallStats is enabled
+                        if (APP.logCollectorStarted
+                                && APP.conference
+                                && APP.conference.isCallstatsEnabled()) {
+                            APP.conference.logJSON(logJSON);
+                        }
+                    } catch (error) {
+                        // NOTE console is intentional here
+                        console.error(
+                            "Failed to store the logs: ", logJSON, error);
+                    }
+                }
+            });
+            Logger.addGlobalTransport(this.logCollector);
+            JitsiMeetJS.addGlobalLogTransport(this.logCollector);
+        }
     }
 };
 
@@ -168,7 +209,25 @@ function init() {
     replaceHistoryState(APP.ConferenceUrl.getInviteUrl());
     var isUIReady = APP.UI.start();
     if (isUIReady) {
+        // Start the LogCollector's periodic "store logs" task only if we're in
+        // the conference and not on the welcome page.
+        APP.logCollector.start();
+        APP.logCollectorStarted = true;
+
         APP.conference.init({roomName: buildRoomName()}).then(function () {
+
+            // Will flush the logs, before the stats are disposed
+            if (APP.logCollector) {
+                APP.conference.addConferenceListener(
+                    ConferenceEvents.BEFORE_STATISTICS_DISPOSED,
+                    () => {
+                        if (APP.logCollector) {
+                            APP.logCollector.flush();
+                        }
+                    }
+                );
+            }
+
             APP.UI.initConference();
 
             APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
@@ -237,6 +296,11 @@ $(document).ready(function () {
 });
 
 $(window).bind('beforeunload', function () {
+    // Stop the LogCollector
+    if (APP.logCollectorStarted) {
+        APP.logCollector.stop();
+        APP.logCollectorStarted = false;
+    }
     APP.API.dispose();
 });
 

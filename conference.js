@@ -1744,6 +1744,15 @@ export default {
         }
     },
     /**
+     * Methods logs an application event given in the JSON format.
+     * @param {string} logJSON an event to be logged in JSON format
+     */
+    logJSON(logJSON) {
+        if (room) {
+            room.sendApplicationLog(logJSON);
+        }
+    },
+    /**
      * Disconnect from the conference and optionally request user feedback.
      * @param {boolean} [requestFeedback=false] if user feedback should be
      * requested
