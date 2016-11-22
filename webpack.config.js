@@ -2,6 +2,7 @@
 
 require('babel-polyfill'); // Define Object.assign() from ES6 in ES5.
 
+var HasteResolverPlugin = require('haste-resolver-webpack-plugin');
 var process = require('process');
 
 var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
@@ -16,16 +17,19 @@ var config = {
     devtool: 'source-map',
     module: {
         loaders: [{
-            // Transpile ES2015 (aka ES6) to ES5.
+            // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
+            // as well.
 
             exclude: __dirname + '/node_modules/',
             loader: 'babel',
             query: {
                 presets: [
-                    'es2015'
+                    'es2015',
+                    'react',
+                    'stage-1'
                 ]
             },
-            test: /\.js$/
+            test: /\.jsx?$/
         },{
             // Expose jquery as the globals $ and jQuery because it is expected
             // to be available in such a form by multiple jitsi-meet
@@ -83,6 +87,9 @@ var config = {
         path: __dirname + '/build',
         sourceMapFilename: '[name].' + (minimize ? 'min' : 'js') + '.map'
     },
+    plugins: [
+        new HasteResolverPlugin()
+    ],
     resolve: {
         alias: {
             aui:
