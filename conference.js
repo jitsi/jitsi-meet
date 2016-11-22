@@ -13,6 +13,8 @@ import {reportError} from './modules/util/helpers';
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 
+import analytics from './modules/analytics/analytics';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -438,26 +440,6 @@ function disconnect() {
     return Promise.resolve();
 }
 
-/**
- * Set permanent properties to analytics.
- * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be
- * null.
- */
-function setAnalyticsPermanentProperties() {
-    let permanentProperties = {
-        userAgent: navigator.userAgent,
-        roomName: APP.conference.roomName
-    };
-    let {server, group} = APP.tokenData;
-    if(server) {
-        permanentProperties.server = server;
-    }
-    if(group) {
-        permanentProperties.group = group;
-    }
-    JitsiMeetJS.analytics.addPermanentProperties(permanentProperties);
-}
-
 export default {
     isModerator: false,
     audioMuted: false,
@@ -504,9 +486,11 @@ export default {
             };
         }
 
-        return JitsiMeetJS.init(config)
-            .then(() => {
-                setAnalyticsPermanentProperties();
+        return JitsiMeetJS.init(
+            Object.assign(
+                {enableAnalyticsLogging: analytics.isEnabled()}, config)
+            ).then(() => {
+                analytics.init();
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
                 console.log('initialized with %s local tracks', tracks.length);

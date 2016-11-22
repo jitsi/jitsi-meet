@@ -38,7 +38,7 @@ var URLProcessor = {
                 confKey = key.substr("config.".length);
 
                 // prevent passing some parameters which can inject scripts
-                if (confKey === 'analyticsScriptUrl'
+                if (confKey === 'analyticsScriptUrls'
                     || confKey === 'callStatsCustomScriptUrl')
                     continue;
 

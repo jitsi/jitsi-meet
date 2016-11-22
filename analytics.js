@@ -27,5 +27,7 @@
         action + '.' + data.browserName, label, value);
   };
 
-  ctx.Analytics = Analytics;
+  if(typeof ctx.analyticsHandlers === "undefined")
+    ctx.analyticsHandlers = [];
+  ctx.analyticsHandlers.push(Analytics);
 }(window));
