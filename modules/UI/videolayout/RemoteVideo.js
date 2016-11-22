@@ -105,6 +105,14 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
         // call the original show, passing its actual this
         origShowFunc.call(this.popover);
     }.bind(this);
+
+    // override popover hide method so we can cleanup click handlers
+    let origHideFunc = this.popover.forceHide;
+    this.popover.forceHide = function () {
+        $(document).off("click", '#mutelink_' + this.id);
+        $(document).off("click", '#ejectlink_' + this.id);
+        origHideFunc.call(this.popover);
+    }.bind(this);
 };
 
 /**
