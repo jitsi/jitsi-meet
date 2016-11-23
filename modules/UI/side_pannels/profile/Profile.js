@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, APP, JitsiMeetJS */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import Settings from '../../../settings/Settings';
@@ -18,15 +18,15 @@ const htmlStr = `
             <input id="setEmail" type="text" class="input-control" 
                 data-i18n="[placeholder]profile.setEmailInput">
         </div>
-        <div id="authenticationContainer" 
+        <div id="profile_auth_container" 
              class="sideToolbarBlock auth_container">
             <p data-i18n="toolbar.authenticate"></p>
             <ul>
-                <li id="toolbar_auth_identity"></li>
-                <li id="toolbar_button_login">
+                <li id="profile_auth_identity"></li>
+                <li id="profile_button_login">
                     <a class="authButton" data-i18n="toolbar.login"></a>
                 </li>
-                <li id="toolbar_button_logout">
+                <li id="profile_button_logout">
                     <a class="authButton" data-i18n="toolbar.logout"></a>
                 </li>
             </ul>
@@ -68,6 +68,34 @@ export default {
                     updateEmail();
                 }
             }).focusout(updateEmail);
+
+        // LOGIN
+        function loginClicked () {
+            JitsiMeetJS.analytics.sendEvent('authenticate.login.clicked');
+            emitter.emit(UIEvents.AUTH_CLICKED);
+        }
+
+        $('#profile_button_login').click(loginClicked);
+
+        // LOGOUT
+        function logoutClicked () {
+            let titleKey = "dialog.logoutTitle";
+            let msgKey = "dialog.logoutQuestion";
+            JitsiMeetJS.analytics.sendEvent('authenticate.logout.clicked');
+            // Ask for confirmation
+            APP.UI.messageHandler.openTwoButtonDialog({
+                titleKey: titleKey,
+                msgKey: msgKey,
+                leftButtonKey: "dialog.Yes",
+                submitFunction: function (evt, yes) {
+                    if (yes) {
+                        emitter.emit(UIEvents.LOGOUT);
+                    }
+                }
+            });
+        }
+
+        $('#profile_button_logout').click(logoutClicked);
     },
 
     /**
@@ -92,5 +120,46 @@ export default {
      */
     changeAvatar (avatarUrl) {
         $('#avatar').attr('src', avatarUrl);
+    },
+
+    /**
+     * Shows or hides authentication related buttons
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
+     */
+    showAuthenticationButtons (show) {
+        let id = 'profile_auth_container';
+        UIUtil.showOrHideElement(id, show);
+    },
+
+    /**
+     * Shows/hides login button.
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
+     */
+    showLoginButton (show) {
+        let id = 'profile_button_login';
+
+        UIUtil.showOrHideElement(id, show);
+    },
+
+    /**
+     * Shows/hides logout button.
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
+     */
+    showLogoutButton (show) {
+        let id = 'profile_button_logout';
+
+        UIUtil.showOrHideElement(id, show);
+    },
+
+    /**
+     * Displays user's authenticated identity name (login).
+     * @param {string} authIdentity identity name to be displayed.
+     */
+    setAuthenticatedIdentity (authIdentity) {
+        let id = 'profile_auth_identity';
+
+        UIUtil.showOrHideElement(id, !!authIdentity);
+
+        $(`#${id}`).text(authIdentity ? authIdentity : '');
     }
 };

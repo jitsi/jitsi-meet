@@ -97,26 +97,6 @@ const buttonHandlers = {
         JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
         emitter.emit(UIEvents.HANGUP);
     },
-    "toolbar_button_login": function () {
-        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.login.clicked');
-        emitter.emit(UIEvents.AUTH_CLICKED);
-    },
-    "toolbar_button_logout": function () {
-        let titleKey = "dialog.logoutTitle";
-        let msgKey = "dialog.logoutQuestion";
-        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
-        // Ask for confirmation
-        APP.UI.messageHandler.openTwoButtonDialog({
-            titleKey,
-            msgKey,
-            leftButtonKey: "dialog.Yes",
-            submitFunction: function (evt, yes) {
-                if (yes) {
-                    emitter.emit(UIEvents.LOGOUT);
-                }
-            }
-        });
-    },
     "toolbar_button_raisehand": function () {
         JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
         APP.conference.maybeToggleRaisedHand();
@@ -397,14 +377,6 @@ Toolbar = {
     isEnabled() {
         return this.enabled;
     },
-    /**
-     * Shows or hides authentication button
-     * @param show <tt>true</tt> to show or <tt>false</tt> to hide
-     */
-    showAuthenticateButton (show) {
-        let id = 'authenticationContainer';
-        UIUtil.showOrHideElement(id, show);
-    },
 
     showEtherpadButton () {
         if (!$('#toolbar_button_etherpad').is(":visible")) {
@@ -449,41 +421,6 @@ Toolbar = {
         let id = 'toolbar_button_dialpad';
 
         UIUtil.showOrHideElement(id, shouldShow);
-    },
-
-    /**
-     * Displays user authenticated identity name(login).
-     * @param authIdentity identity name to be displayed.
-     */
-    setAuthenticatedIdentity (authIdentity) {
-        let id = 'toolbar_auth_identity';
-
-        if(authIdentity) {
-            $(`#${id}`).text(authIdentity);
-        } else {
-            $(`#${id}`).text('');
-        }
-        UIUtil.showOrHideElement(id, !!authIdentity);
-    },
-
-    /**
-     * Shows/hides login button.
-     * @param show <tt>true</tt> to show
-     */
-    showLoginButton (show) {
-        let id = 'toolbar_button_login';
-
-        UIUtil.showOrHideElement(id, show);
-    },
-
-    /**
-     * Shows/hides logout button.
-     * @param show <tt>true</tt> to show
-     */
-    showLogoutButton (show) {
-        let id = 'toolbar_button_logout';
-
-        UIUtil.showOrHideElement(id, show);
     },
 
     /**

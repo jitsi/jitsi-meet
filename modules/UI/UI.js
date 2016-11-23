@@ -1105,13 +1105,13 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(showAuth);
+    Profile.showAuthenticationButtons(showAuth);
 
     if (showAuth) {
-        Toolbar.setAuthenticatedIdentity(login);
+        Profile.setAuthenticatedIdentity(login);
 
-        Toolbar.showLoginButton(!loggedIn);
-        Toolbar.showLogoutButton(loggedIn);
+        Profile.showLoginButton(!loggedIn);
+        Profile.showLogoutButton(loggedIn);
     }
 };
 
