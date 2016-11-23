@@ -358,6 +358,12 @@ var VideoLayout = {
                 if(smallVideo && smallVideo.hasVideo()) {
                     this.updateLargeVideo(currentDominantSpeaker);
                 }
+            } else {
+                // if there is no currentDominantSpeaker, it can also be
+                // that local participant is the dominant speaker
+                // we should act as a participant has left and was on large
+                // and we should choose somebody (electLastVisibleVideo)
+                this.updateLargeVideo(this.electLastVisibleVideo());
             }
 
             eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, false);
