@@ -162,7 +162,7 @@ const APP = {
         // Adjust logging level
         configureLoggingLevels();
         // Start the LogCollector and register it as the global log transport
-        if (!this.logCollector) {
+        if (!this.logCollector && !loggingConfig.disableLogCollector) {
             this.logCollector = new LogCollector({
                 storeLogs: (logJSON) => {
                     // Try catch was used, because there are many variables
@@ -211,8 +211,10 @@ function init() {
     if (isUIReady) {
         // Start the LogCollector's periodic "store logs" task only if we're in
         // the conference and not on the welcome page.
-        APP.logCollector.start();
-        APP.logCollectorStarted = true;
+        if (APP.logCollector) {
+            APP.logCollector.start();
+            APP.logCollectorStarted = true;
+        }
 
         APP.conference.init({roomName: buildRoomName()}).then(function () {
 
