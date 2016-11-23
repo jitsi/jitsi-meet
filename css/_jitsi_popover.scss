@@ -14,13 +14,13 @@
     /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
     white-space: normal;
-    margin-top: -13px;
+    margin-top: -$popoverMenuPadding;
 
     &__menu-padding {
-        height: 10px;
+        height: $popoverMenuPadding;
         width: 100px;
         position: absolute;
-        bottom: -13px;
+        bottom: -$popoverMenuPadding;
     }
 
     &__showmore {
