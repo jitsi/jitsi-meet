@@ -439,7 +439,7 @@ var messageHandler = {
      * @param messageKey the key from the language file for the text of the
      * message.
      * @param messageArguments object with the arguments for the message.
-     * @param options object with language options.
+     * @param options passed to toastr (e.g. timeOut)
      */
     notify: function(displayName, displayNameKey, cls, messageKey,
                      messageArguments, options) {

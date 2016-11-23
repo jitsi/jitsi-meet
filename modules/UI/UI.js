@@ -474,7 +474,9 @@ UI.start = function () {
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut",
-            "newestOnTop": false
+            "newestOnTop": false,
+            // this is the default toastr close button html, just adds tabIndex
+            "closeHtml": '<button type="button" tabIndex="-1">&times;</button>'
         };
 
     }
