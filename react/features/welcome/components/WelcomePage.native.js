@@ -22,7 +22,9 @@ class WelcomePage extends AbstractWelcomePage {
     render() {
         return (
             <View style = { styles.container }>
-                { this._renderLocalVideo() }
+                {
+                    this._renderLocalVideo()
+                }
                 <View style = { styles.roomContainer }>
                     <Text style = { styles.title }>Enter room name</Text>
                     <TextInput

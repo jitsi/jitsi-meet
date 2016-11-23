@@ -34,7 +34,7 @@
                 window.removeEventListener(
                     'error', loadErrHandler, true /* capture phase */);
             }
-        }
+        };
         window.addEventListener(
             'error', loadErrHandler, true /* capture phase type of listener */);
     </script>
@@ -50,141 +50,7 @@
     <!--#include virtual="plugin.head.html" -->
   </head>
   <body>
-    <div id="welcome_page">
-        <div id="welcome_page_header">
-            <a target="_new">
-                <div class="watermark leftwatermark"></div>
-            </a>
-            <a target="_new">
-                <div class="watermark rightwatermark"></div>
-            </a>
-            <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
-
-            <div id="enter_room_container">
-                <div id="enter_room_form" >
-                    <div id="domain_name"></div>
-                    <div id="enter_room">
-                        <input id="enter_room_field" type="text" autofocus/>
-                        <div class="icon-reload" id="reload_roomname"></div>
-                        <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
-
-                    </div>
-                </div>
-            </div>
-            <div id="brand_header"></div>
-            <input type='checkbox' name='checkbox' id="disable_welcome"/>
-            <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
-            <div id="header_text">
-                <!--#include virtual="plugin.header.text.html" -->
-            </div>
-        </div>
-        <div id="welcome_page_main">
-            <div id="features">
-                <div class="feature_row">
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature1.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature1.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                        </div>
-                    </div>
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature2.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature2.content">
-                        </div>
-                    </div>
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature3.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature3.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                        </div>
-                    </div>
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature4.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature4.content">
-                        </div>
-                    </div>
-                </div>
-                <div class="feature_row">
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature5.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature5.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                            </div>
-                    </div>
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature6.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature6.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                            </div>
-                    </div>
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature7.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature7.content" data-i18n-options='{ "postProcess": "resolveAppName" }'></div>
-                    </div>
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature8.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature8.content"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--#include virtual="plugin.welcomepage.footer.html" -->
-    </div>
-    <div id="videoconference_page">
-        <div id="mainToolbarContainer">
-                <div id="notice" class="notice" style="display: none">
-                    <span id="noticeText" class="noticeText"></span>
-                </div>
-                <div id="mainToolbar" class="toolbar"></div>
-        </div>
-        <div id="subject" class="hide"></div>
-
-        <div id="extendedToolbar" class="toolbar">
-            <div id="extendedToolbarButtons"></div>
-
-            <a class="button icon-feedback" id="feedbackButton"></a>
-
-            <div id="sideToolbarContainer"></div>
-        </div>
-        <div id="videospace">
-            <div id="largeVideoContainer" class="videocontainer">
-                <div id="sharedVideo"><div id="sharedVideoIFrame"></div></div>
-                <div id="etherpad"></div>
-                <a target="_new"><div class="watermark leftwatermark"></div></a>
-                <a target="_new"><div class="watermark rightwatermark"></div></a>
-                <a class="poweredby" href="http://jitsi.org" target="_new">
-                    <span data-i18n="poweredby"></span> jitsi.org
-                </a>
-                <div id="dominantSpeaker">
-                    <div class="dynamic-shadow"></div>
-                    <img id="dominantSpeakerAvatar" src=""/>
-                </div>
-                <span id="remoteConnectionMessage"></span>
-                <div id="largeVideoWrapper">
-                    <video id="largeVideo" muted="true" autoplay></video>
-                </div>
-                <span id="localConnectionMessage"></span>
-                <span id="videoResolutionLabel" class="video-state-indicator moveToCorner">HD</span>
-                <span id="recordingLabel" class="video-state-indicator centeredVideoLabel">
-                    <span id="recordingLabelText"></span>
-                    <img id="recordingSpinner" class="recordingSpinner" src="images/spin.svg"></img>
-                </span>
-            </div>
-            <div class="filmstrip">
-                <div class="filmstrip__videos" id="remoteVideos">
-                    <span id="localVideoContainer" class="videocontainer">
-                        <div class="videocontainer__background"></div>
-                        <span id="localVideoWrapper">
-                            <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
-                        </span>
-                        <audio id="localAudio" autoplay muted></audio>
-                        <div class="videocontainer__toolbar"></div>
-                        <div class="videocontainer__toptoolbar"></div>
-                        <div class="videocontainer__hoverOverlay"></div>
-                    </span>
-                    <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
-                    <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
-                </div>
-            </div>
-
-        </div>
-    </div>
+    <div id="react"></div>
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
         <div class="content">
             <ul id="keyboard-shortcuts-list" class="shortcuts-list">
