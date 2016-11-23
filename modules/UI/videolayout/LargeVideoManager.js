@@ -333,13 +333,13 @@ export default class LargeVideoManager {
         }
 
         let id = 'localConnectionMessage';
+
+        UIUtil.showOrHideElement(id, show);
+
         if (show) {
-            UIUtil.showElement(id);
             // Avatar message conflicts with 'videoConnectionMessage',
             // so it must be hidden
             this.showRemoteConnectionMessage(false);
-        } else {
-            UIUtil.hideElement(id);
         }
     }
 

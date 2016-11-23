@@ -403,11 +403,7 @@ Toolbar = {
      */
     showAuthenticateButton (show) {
         let id = 'authenticationContainer';
-        if (show) {
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
-        }
+        UIUtil.showOrHideElement(id, show);
     },
 
     showEtherpadButton () {
@@ -425,10 +421,8 @@ Toolbar = {
         if (shouldShow) {
             let el = document.getElementById(id);
             UIUtil.setTooltip(el, 'toolbar.sharedvideo', 'right');
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
         }
+        UIUtil.showOrHideElement(id, shouldShow);
     },
 
     // checks whether desktop sharing is enabled and whether
@@ -446,22 +440,15 @@ Toolbar = {
             && UIUtil.isButtonEnabled('sip') && show;
         let id = 'toolbar_button_sip';
 
-        if (shouldShow) {
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
-        }
+        UIUtil.showOrHideElement(id, shouldShow);
     },
 
     // Shows or hides the dialpad button
     showDialPadButton (show) {
         let shouldShow = UIUtil.isButtonEnabled('dialpad') && show;
         let id = 'toolbar_button_dialpad';
-        if (shouldShow) {
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
-        }
+
+        UIUtil.showOrHideElement(id, shouldShow);
     },
 
     /**
@@ -470,13 +457,13 @@ Toolbar = {
      */
     setAuthenticatedIdentity (authIdentity) {
         let id = 'toolbar_auth_identity';
+
         if(authIdentity) {
-            UIUtil.showElement(id);
             $(`#${id}`).text(authIdentity);
         } else {
-            UIUtil.hideElement(id);
             $(`#${id}`).text('');
         }
+        UIUtil.showOrHideElement(id, !!authIdentity);
     },
 
     /**
@@ -485,11 +472,8 @@ Toolbar = {
      */
     showLoginButton (show) {
         let id = 'toolbar_button_login';
-        if (show) {
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
-        }
+
+        UIUtil.showOrHideElement(id, show);
     },
 
     /**
@@ -498,11 +482,8 @@ Toolbar = {
      */
     showLogoutButton (show) {
         let id = 'toolbar_button_logout';
-        if (show) {
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
-        }
+
+        UIUtil.showOrHideElement(id, show);
     },
 
     /**

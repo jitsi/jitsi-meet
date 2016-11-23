@@ -215,13 +215,10 @@ SmallVideo.prototype.hideIndicator = function () {
  * @param {boolean} isMuted indicates if the muted element should be shown
  * or hidden
  */
-SmallVideo.prototype.showAudioIndicator = function(isMuted) {
+SmallVideo.prototype.showAudioIndicator = function (isMuted) {
     let mutedIndicator = this.getAudioMutedIndicator();
-    if (isMuted) {
-        UIUtil.showElement(mutedIndicator);
-    } else {
-        UIUtil.hideElement(mutedIndicator);
-    }
+
+    UIUtil.showOrHideElement(mutedIndicator, isMuted);
 
     this.isAudioMuted = isMuted;
 };
@@ -270,11 +267,8 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.updateView();
 
     let element = this.getVideoMutedIndicator();
-    if (isMuted) {
-        UIUtil.showElement(element);
-    } else {
-        UIUtil.hideElement(element);
-    }
+
+    UIUtil.showOrHideElement(element, isMuted);
 };
 
 /**
@@ -576,11 +570,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         tooltip: 'speaker'
     });
 
-    if (show) {
-        UIUtil.showElement(indicatorSpan);
-    } else {
-        UIUtil.hideElement(indicatorSpan);
-    }
+    UIUtil.showOrHideElement(indicatorSpan, show);
 };
 
 /**
@@ -604,11 +594,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         tooltip: 'raisedHand'
     });
 
-    if (show) {
-        UIUtil.showElement(indicatorSpan);
-    } else {
-        UIUtil.hideElement(indicatorSpan);
-    }
+    UIUtil.showOrHideElement(indicatorSpan, show);
 };
 
 /**

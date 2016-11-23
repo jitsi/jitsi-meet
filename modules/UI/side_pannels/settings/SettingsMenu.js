@@ -268,11 +268,9 @@ export default {
      * @param {boolean} show {true} to show those options, {false} to hide them
      */
     showFollowMeOptions (show) {
-        if (show && UIUtil.isSettingEnabled('moderator')) {
-            UIUtil.showElement("followMeOptions");
-        } else {
-            UIUtil.hideElement("followMeOptions");
-        }
+        UIUtil.showOrHideElement(
+            "followMeOptions",
+            show && UIUtil.isSettingEnabled('moderator'));
     },
 
     /**

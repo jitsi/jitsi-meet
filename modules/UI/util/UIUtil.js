@@ -266,6 +266,21 @@ const IndicatorFontSizes = {
     },
 
     /**
+     * Shows or hides the element given (optionally by id).
+     *
+     * @param {string|HTMLElement} idOrElement the identifier or the element
+     *        to show/hide
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
+     */
+    showOrHideElement(idOrElement, show) {
+        if (show) {
+            this.showElement(idOrElement);
+        } else {
+            this.hideElement(idOrElement);
+        }
+    },
+
+    /**
      * Hides the element given by id.
      *
      * @param {String} the identifier of the element to hide
