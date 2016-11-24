@@ -4,12 +4,27 @@ require('babel-polyfill'); // Define Object.assign() from ES6 in ES5.
 
 var HasteResolverPlugin = require('haste-resolver-webpack-plugin');
 var process = require('process');
+var webpack = require('webpack');
 
 var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
 var minimize
     = process.argv.indexOf('-p') != -1
         || process.argv.indexOf('--optimize-minimize') != -1;
+var plugins = [
+    new HasteResolverPlugin()
+];
 var strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
+
+if (minimize) {
+    // XXX Webpack's command line argument -p is not enough. Further
+    // optimizations are made possible by the use of DefinePlugin and NODE_ENV
+    // with value 'production'. For example, React takes advantage of these.
+    plugins.push(new webpack.DefinePlugin({
+        'process.env': {
+            NODE_ENV: JSON.stringify('production')
+        }
+    }));
+}
 
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
@@ -87,9 +102,7 @@ var config = {
         path: __dirname + '/build',
         sourceMapFilename: '[name].' + (minimize ? 'min' : 'js') + '.map'
     },
-    plugins: [
-        new HasteResolverPlugin()
-    ],
+    plugins: plugins,
     resolve: {
         alias: {
             aui:
