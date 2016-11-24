@@ -33,7 +33,7 @@ You can overwrite options set in config.js and interface_config.js. For example,
 ```javascript
     var configOverwrite = {enableSimulcast: false};
     var interfaceConfigOverwrite = {filmStripOnly: true};
-    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, true, configOverwrite, interfaceConfigOverwrite);
+    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite);
 ```
 
 Controlling embedded Jitsi Meet Conference
@@ -54,7 +54,7 @@ Currently we support the following commands:
 * **displayName** - sets the display name of the local participant. This command requires one argument -
 the new display name to be set
 ```
-api.executeCommand('displayName', ['New Nickname']);
+api.executeCommand('displayName', 'New Nickname');
 ```
 * **toggleAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
 ```
