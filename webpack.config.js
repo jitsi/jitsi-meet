@@ -10,6 +10,7 @@ var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
 var minimize
     = process.argv.indexOf('-p') != -1
         || process.argv.indexOf('--optimize-minimize') != -1;
+var node_modules = __dirname + '/node_modules/';
 var plugins = [
     new HasteResolverPlugin()
 ];
@@ -35,14 +36,18 @@ var config = {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
 
-            exclude: __dirname + '/node_modules/',
+            exclude: node_modules,
             loader: 'babel',
             query: {
+                // XXX The require.resolve bellow solves failures to locate the
+                // presets when lib-jitsi-meet, for example, is npm linked in
+                // jitsi-meet. The require.resolve, of course, mandates the use
+                // of the prefix babel-preset- in the preset names.
                 presets: [
-                    'es2015',
-                    'react',
-                    'stage-1'
-                ]
+                    'babel-preset-es2015',
+                    'babel-preset-react',
+                    'babel-preset-stage-1'
+                ].map(require.resolve)
             },
             test: /\.jsx?$/
         },{
@@ -80,7 +85,7 @@ var config = {
         },{
             //Adds the ability to import json files.
             loader: 'json',
-            exclude: __dirname + '/node_modules/',
+            exclude: node_modules,
             test: /\.json$/
         }],
         noParse: [
