@@ -1,4 +1,4 @@
-/* global $, APP, AJS, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 import KeyboardShortcut from '../../keyboardshortcut/keyboardshortcut';
 
@@ -132,7 +132,7 @@ const IndicatorFontSizes = {
      * <tt>tooltip-n</tt>) and the attribute <tt>content</tt>.
      */
     activateTooltips() {
-        AJS.$('[data-tooltip]').tooltip({
+        $('[data-tooltip]').tipsy({
             gravity() {
                 return this.getAttribute('data-tooltip');
             },
@@ -140,9 +140,8 @@ const IndicatorFontSizes = {
             title() {
                 return this.getAttribute('content');
             },
-
             html: true, // Handle multiline tooltips.
-
+            opacity: 1,
             // The following two prevent tooltips from being stuck:
             hoverable: false, // Make custom tooltips behave like native ones.
             live: true // Attach listener to document element.

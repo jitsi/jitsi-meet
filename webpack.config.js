@@ -58,6 +58,12 @@ var config = {
             loader: 'expose?$!expose?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         },{
+            //use tipsy that depend on $
+            //prepends $ = jquery
+
+            loader: 'imports?$=jquery',
+            test: /\/node_modules\/tipsy\/src\/javascripts\/.*\/js/
+        },{
             // Disable AMD for the Strophe.js library or its imports will fail
             // at runtime.
 
@@ -123,6 +129,7 @@ var config = {
                 'jQuery-Impromptu/dist/jquery-impromptu'
                     + (minimize ? '.min' : '')
                     + '.js',
+            tipsy: 'tipsy/src/javascripts/jquery.tipsy.js',
         },
         packageAlias: 'browser'
     }
