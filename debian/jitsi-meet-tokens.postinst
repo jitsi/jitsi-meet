@@ -21,16 +21,11 @@ set -e
 case "$1" in
     configure)
 
-        if [ -f "/etc/jitsi/videobridge/config" ] ; then
-            . /etc/jitsi/videobridge/config
-        fi
-
-        if [ -f "/etc/jitsi/jicofo/config" ] ; then
-            . /etc/jitsi/jicofo/config
-        fi
-
         # loading debconf
         . /usr/share/debconf/confmodule
+
+        db_get jitsi-meet-prosody/jvb-hostname
+        JVB_HOSTNAME="$RET"
 
         db_get jitsi-meet-tokens/appid
         if [ "$RET" = "false" ] ; then
@@ -45,14 +40,10 @@ case "$1" in
         fi
         APP_SECRET=$RET
 
-        # We can adjust Prosody config only if there is Jvb or Jicofo domain configured
         PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
-        if [ ! -f "$PROSODY_HOST_CONFIG" ] ; then
-            PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JICOFO_HOSTNAME.cfg.lua"
-        fi
 
         # Store config filename for purge
-        db_set jitsi-meet-prosody/prosody_config $PROSODY_HOST_CONFIG
+        db_set jitsi-meet-prosody/prosody_config "$PROSODY_HOST_CONFIG"
 
         db_stop
 
