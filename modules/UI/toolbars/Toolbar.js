@@ -255,7 +255,9 @@ const defaultToolbarButtons = {
     'recording': {
         id: 'toolbar_button_record',
         tooltipKey: 'liveStreaming.buttonTooltip',
-        className: 'button'
+        className: 'button',
+        hidden: true // will be displayed once
+                     // the recording functionality is detected
     },
     'sharedvideo': {
         id: 'toolbar_button_sharedvideo',
@@ -270,7 +272,9 @@ const defaultToolbarButtons = {
     'sip': {
         id: 'toolbar_button_sip',
         tooltipKey: 'toolbar.sip',
-        className: 'button icon-telephone'
+        className: 'button icon-telephone',
+        hidden: true // will be displayed once
+                     // the SIP calls functionality is detected
     },
     'dialpad': {
         id: 'toolbar_button_dialpad',
