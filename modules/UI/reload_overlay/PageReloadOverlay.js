@@ -31,20 +31,22 @@ class PageReloadOverlayImpl extends Overlay{
      * @override
      */
     _buildOverlayContent() {
-        return `
-            <span data-i18n='dialog.conferenceReloadTitle' 
-                  class='reload_overlay_title'></span>
-            <span data-i18n='dialog.conferenceReloadMsg' 
-                  class='reload_overlay_msg'></span>
-            <div>
-                <div id='reloadProgressBar' class="aui-progress-indicator">
-                    <span class="aui-progress-indicator-value"></span>
-                </div>
-                <span id='reloadSecRemaining' 
-                      data-i18n="dialog.conferenceReloadTimeLeft" 
-                      class='reload_overlay_msg'>
-                </span>
-            </div>`;
+        return `<div class="inlay">
+                    <span data-i18n='dialog.conferenceReloadTitle'
+                          class='reload_overlay_title'></span>
+                    <span data-i18n='dialog.conferenceReloadMsg'
+                          class='reload_overlay_msg'></span>
+                    <div>
+                        <div id='reloadProgressBar'
+                            class="aui-progress-indicator">
+                            <span class="aui-progress-indicator-value"></span>
+                        </div>
+                        <span id='reloadSecRemaining'
+                              data-i18n="dialog.conferenceReloadTimeLeft"
+                            class='reload_overlay_msg'>
+                        </span>
+                    </div>
+                </div>`;
     }
 
     /**
