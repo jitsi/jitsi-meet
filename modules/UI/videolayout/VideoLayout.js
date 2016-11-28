@@ -341,13 +341,19 @@ var VideoLayout = {
      * @param id the identifier of the video thumbnail
      */
     handleVideoThumbClicked (id) {
+        var smallVideo = VideoLayout.getSmallVideo(id);
         if(pinnedId) {
             var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
-            if (oldSmallVideo && !interfaceConfig.filmStripOnly)
+            if (oldSmallVideo && !interfaceConfig.filmStripOnly) {
                 oldSmallVideo.focus(false);
+                // as no pinned event will be sent for local video
+                // and we will unpin old one, lets signal it
+                // otherwise we will just send the new pinned one
+                if (smallVideo.isLocal)
+                    eventEmitter.emit(
+                        UIEvents.PINNED_ENDPOINT, oldSmallVideo, false);
+            }
         }
-
-        var smallVideo = VideoLayout.getSmallVideo(id);
 
         // Unpin if currently pinned.
         if (pinnedId === id)
