@@ -290,7 +290,15 @@ var messageHandler = {
             buttons: buttons,
             defaultButton: 1,
             promptspeed: 0,
-            loaded: loadedFunction,
+            loaded: function() {
+                if (loadedFunction) {
+                    loadedFunction.apply(this, arguments);
+                }
+                // Hide the close button
+                if (persistent) {
+                    $(".jqiclose", this).hide();
+                }
+            },
             submit: dontShowAgainSubmitFunctionWrapper(
                 dontShowAgain, submitFunction),
             close: closeFunction,
