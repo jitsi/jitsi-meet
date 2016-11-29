@@ -25,7 +25,7 @@ import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
-import { randomInt } from "../util/RandomUtil";
+import { randomInt } from "../../react/features/base/util/randomUtil";
 import UIErrors from './UIErrors';
 import { debounce } from "../util/helpers";
 

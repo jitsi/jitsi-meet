@@ -1,6 +1,8 @@
 /* global $, interfaceConfig, APP */
 
-import { generateRoomWithoutSeparator } from '../../util/RoomnameGenerator';
+import {
+    generateRoomWithoutSeparator
+} from '../../../react/features/base/util/roomnameGenerator';
 import UIUtil from '../util/UIUtil';
 
 var animateTimeout, updateTimeout;
