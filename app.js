@@ -21,6 +21,7 @@ window.toastr = require("toastr");
 
 const Logger = require("jitsi-meet-logger");
 const LogCollector = Logger.LogCollector;
+import JitsiMeetLogStorage from "./modules/util/JitsiMeetLogStorage";
 
 import URLProcessor from "./modules/config/URLProcessor";
 import RoomnameGenerator from './modules/util/RoomnameGenerator';
@@ -163,26 +164,7 @@ const APP = {
         configureLoggingLevels();
         // Start the LogCollector and register it as the global log transport
         if (!this.logCollector && !loggingConfig.disableLogCollector) {
-            this.logCollector = new LogCollector({
-                storeLogs: (logJSON) => {
-                    // Try catch was used, because there are many variables
-                    // on the way that could be uninitialized if the storeLogs
-                    // attempt would be made very early (which is unlikely)
-                    try {
-                        // Currently it makes sense to store the log only
-                        // if CallStats is enabled
-                        if (APP.logCollectorStarted
-                                && APP.conference
-                                && APP.conference.isCallstatsEnabled()) {
-                            APP.conference.logJSON(logJSON);
-                        }
-                    } catch (error) {
-                        // NOTE console is intentional here
-                        console.error(
-                            "Failed to store the logs: ", logJSON, error);
-                    }
-                }
-            });
+            this.logCollector = new LogCollector(new JitsiMeetLogStorage());
             Logger.addGlobalTransport(this.logCollector);
             JitsiMeetJS.addGlobalLogTransport(this.logCollector);
         }
