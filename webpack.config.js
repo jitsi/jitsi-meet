@@ -8,8 +8,8 @@ var webpack = require('webpack');
 
 var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
 var minimize
-    = process.argv.indexOf('-p') != -1
-        || process.argv.indexOf('--optimize-minimize') != -1;
+    = process.argv.indexOf('-p') !== -1
+        || process.argv.indexOf('--optimize-minimize') !== -1;
 var node_modules = __dirname + '/node_modules/';
 var plugins = [
     new HasteResolverPlugin()
@@ -32,7 +32,7 @@ if (minimize) {
 var config = {
     devtool: 'source-map',
     module: {
-        loaders: [{
+        loaders: [ {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
 
@@ -50,20 +50,20 @@ var config = {
                 ].map(require.resolve)
             },
             test: /\.jsx?$/
-        },{
+        }, {
             // Expose jquery as the globals $ and jQuery because it is expected
             // to be available in such a form by multiple jitsi-meet
             // dependencies including AUI, lib-jitsi-meet.
 
             loader: 'expose?$!expose?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
-        },{
+        }, {
             // Disable AMD for the Strophe.js library or its imports will fail
             // at runtime.
 
             loader: 'imports?define=>false&this=>window',
             test: strophe
-        },{
+        }, {
             // Allow CSS to be imported into JavaScript.
 
             loaders: [
@@ -71,7 +71,7 @@ var config = {
                 'css'
             ],
             test: /\.css$/
-        },{
+        }, {
             // Emit the static assets of AUI such as images that are referenced
             // by CSS into the output path.
 
@@ -82,13 +82,15 @@ var config = {
                 name: '[path][name].[ext]'
             },
             test: /\.(gif|png|svg)$/
-        },{
-            //Adds the ability to import json files.
+        }, {
+            // Enable the import of JSON files.
+
             loader: 'json',
             exclude: node_modules,
             test: /\.json$/
-        }],
+        } ],
         noParse: [
+
             // Do not parse the files of the Strophe.js library or at least
             // parts of the properties of the Strophe global variable will be
             // missing and strophejs-plugins will fail at runtime.
@@ -122,7 +124,7 @@ var config = {
             'jQuery-Impromptu':
                 'jQuery-Impromptu/dist/jquery-impromptu'
                     + (minimize ? '.min' : '')
-                    + '.js',
+                    + '.js'
         },
         packageAlias: 'browser'
     }
