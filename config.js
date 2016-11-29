@@ -26,7 +26,7 @@ var config = { // eslint-disable-line no-unused-vars
     desktopSharingChromeExtId: 'diibjkoicjeejcmhdnailmkgecihlobk',
     // The media sources to use when using screen sharing with the Chrome
     // extension.
-    desktopSharingChromeSources: ['screen', 'window'],
+    desktopSharingChromeSources: ['screen', 'window', 'tab'],
     // Required version of Chrome extension
     desktopSharingChromeMinExtVersion: '0.1',
 
