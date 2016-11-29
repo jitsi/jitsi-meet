@@ -1,39 +1,26 @@
-import { ColorPalette, createStyleSheet } from '../../base/styles';
+import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
- * Welcome page container style.
+ * The default color of text on the WelcomePage.
  */
-const container = {
-    alignSelf: 'stretch',
-    backgroundColor: ColorPalette.jitsiBlue,
-    bottom: 0,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0
-};
+const TEXT_COLOR = ColorPalette.white;
 
 /**
- * The welcome page style.
- * TODO: Make styles more generic and reusable. Use color palette for all
- * colors.
+ * The styles of WelcomePage.
  */
 export const styles = createStyleSheet({
     /**
-     * Join button text style.
+     * Join button style.
      */
     button: {
-        backgroundColor: 'white',
-        borderColor: 'white',
+        backgroundColor: ColorPalette.white,
+        borderColor: ColorPalette.white,
         borderRadius: 8,
         borderWidth: 1,
         height: 45,
         justifyContent: 'center',
-        marginBottom: 10,
-        marginTop: 10
+        marginBottom: BoxModel.margin,
+        marginTop: BoxModel.margin
     },
 
     /**
@@ -46,25 +33,56 @@ export const styles = createStyleSheet({
     },
 
     /**
-     * Welcome page container style.
+     * The style of the top-level container of WelcomePage.
      */
-    container,
+    container: {
+        alignSelf: 'stretch',
+        backgroundColor: ColorPalette.blue,
+        flex: 1
+    },
+
+    /**
+     * The style of the legal-related content such as (hyper)links to Privacy
+     * Policy and Terms of Service displayed on the WelcomePage.
+     */
+    legaleseContainer: {
+        flex: 0,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+
+    /**
+     * The style of a piece of legal-related content such as a (hyper)link to
+     * Privacy Policy or Terms of Service displayed on the WelcomePage.
+     */
+    legaleseItem: {
+        color: TEXT_COLOR,
+        margin: BoxModel.margin
+    },
+
+    /**
+     * The style of the View displayed over the local video. The latter is
+     * thought of as the background (content) of WelcomePage. The former is
+     * thought of as the foreground (content) of WelcomePage.
+     */
+    localVideoOverlay: {
+        bottom: 0,
+        flex: 1,
+        flexDirection: 'column',
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
 
     /**
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
-        ...container,
-        backgroundColor: 'transparent',
-        padding: 30
-    },
-
-    /**
-     * Navigator container style.
-     */
-    navContainer: {
-        backgroundColor: ColorPalette.appBackground,
-        flex: 1
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        margin: 3 * BoxModel.margin
     },
 
     /**
@@ -72,11 +90,11 @@ export const styles = createStyleSheet({
      */
     textInput: {
         backgroundColor: 'transparent',
-        borderColor: 'white',
+        borderColor: ColorPalette.white,
         borderRadius: 8,
         borderStyle: 'solid',
         borderWidth: 1,
-        color: 'white',
+        color: TEXT_COLOR,
         fontSize: 23,
         height: 50,
         padding: 4,
@@ -87,9 +105,9 @@ export const styles = createStyleSheet({
      * Application title style.
      */
     title: {
-        color: '#fff',
+        color: TEXT_COLOR,
         fontSize: 25,
-        marginBottom: 20,
+        marginBottom: 2 * BoxModel.margin,
         textAlign: 'center'
     }
 });

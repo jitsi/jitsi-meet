@@ -35,7 +35,7 @@ const container = {
  */
 const icon = {
     alignSelf: 'center',
-    color: ColorPalette.jitsiDarkGrey,
+    color: ColorPalette.darkGrey,
     fontSize: 24
 };
 
@@ -49,7 +49,7 @@ export const styles = createStyleSheet({
      */
     icon: {
         ...icon,
-        color: ColorPalette.jitsiDarkGrey
+        color: ColorPalette.darkGrey
     },
 
     /**
@@ -74,7 +74,7 @@ export const styles = createStyleSheet({
      */
     toolbarButton: {
         ...button,
-        backgroundColor: 'white',
+        backgroundColor: ColorPalette.white,
         marginLeft: 20,
         marginRight: 20,
         opacity: 0.8
@@ -104,6 +104,6 @@ export const styles = createStyleSheet({
      */
     whiteIcon: {
         ...icon,
-        color: 'white'
+        color: ColorPalette.white
     }
 });

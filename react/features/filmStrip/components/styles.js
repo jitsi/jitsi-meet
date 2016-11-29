@@ -1,4 +1,4 @@
-import { ColorPalette } from '../../base/styles';
+import { BoxModel, ColorPalette } from '../../base/styles';
 
 /**
  * Film strip related styles common to both Web and native.
@@ -9,7 +9,7 @@ export const styles = {
      */
     audioMutedIndicator: {
         backgroundColor: 'transparent',
-        color: 'white',
+        color: ColorPalette.white,
         left: 20,
         position: 'absolute',
         top: 1
@@ -19,7 +19,7 @@ export const styles = {
      * Dominant speaker indicator style.
      */
     dominantSpeakerIndicator: {
-        color: 'white',
+        color: ColorPalette.white,
         fontSize: 15
     },
 
@@ -27,7 +27,7 @@ export const styles = {
      * Dominant speaker indicator background style.
      */
     dominantSpeakerIndicatorBackground: {
-        backgroundColor: ColorPalette.jitsiBlue,
+        backgroundColor: ColorPalette.blue,
         borderRadius: 15,
         bottom: 2,
         left: 1,
@@ -41,7 +41,7 @@ export const styles = {
     filmStrip: {
         alignItems: 'flex-end',
         alignSelf: 'stretch',
-        bottom: 10,
+        bottom: BoxModel.margin,
         flex: 1,
         flexDirection: 'column',
         left: 0,
@@ -55,7 +55,7 @@ export const styles = {
      * to allow scrolling through them if they do not fit within the display.
      */
     filmStripScrollViewContentContainer: {
-        paddingHorizontal: 10
+        paddingHorizontal: BoxModel.padding
     },
 
     /**
@@ -63,7 +63,7 @@ export const styles = {
      */
     moderatorIndicator: {
         backgroundColor: 'transparent',
-        color: 'white',
+        color: ColorPalette.white,
         left: 1,
         position: 'absolute',
         top: 1
@@ -74,7 +74,7 @@ export const styles = {
      */
     thumbnail: {
         alignItems: 'stretch',
-        backgroundColor: 'black',
+        backgroundColor: ColorPalette.appBackground,
         borderColor: '#424242',
         borderStyle: 'solid',
         borderWidth: 1,
@@ -88,8 +88,8 @@ export const styles = {
      * Pinned video thumbnail style.
      */
     thumbnailPinned: {
-        borderColor: ColorPalette.jitsiBlue,
-        shadowColor: 'black',
+        borderColor: ColorPalette.blue,
+        shadowColor: ColorPalette.black,
         shadowOffset: {
             height: 5,
             width: 5
@@ -102,7 +102,7 @@ export const styles = {
      */
     videoMutedIndicator: {
         backgroundColor: 'transparent',
-        color: 'white',
+        color: ColorPalette.white,
         left: 35,
         position: 'absolute',
         top: 1

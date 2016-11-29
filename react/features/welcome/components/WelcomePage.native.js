@@ -2,11 +2,22 @@ import React from 'react';
 import { Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import {
-    AbstractWelcomePage,
-    mapStateToProps
-} from './AbstractWelcomePage';
+import { Link } from '../../base/react';
+import { ColorPalette } from '../../base/styles';
+
+import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
 import { styles } from './styles';
+
+/**
+ * The URL at which the privacy policy is available to the user.
+ */
+const PRIVACY_POLICY_URL = 'https://www.atlassian.com/legal/privacy-policy';
+
+/**
+ * The URL at which the terms of service are available to the user.
+ */
+const TERMS_OF_SERVICE_URL
+    = 'https://www.atlassian.com/legal/customer-agreement';
 
 /**
  * The native container rendering the welcome page.
@@ -25,6 +36,25 @@ class WelcomePage extends AbstractWelcomePage {
                 {
                     this._renderLocalVideo()
                 }
+                {
+                    this._renderLocalVideoOverlay()
+                }
+            </View>
+        );
+    }
+
+    /**
+     * Renders a View over the local video. The latter is thought of as the
+     * background (content) of this WelcomePage. The former is thought of as the
+     * foreground (content) of this WelcomePage such as the room name input, the
+     * button to initiate joining the specified room, etc.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderLocalVideoOverlay() {
+        return (
+            <View style = { styles.localVideoOverlay }>
                 <View style = { styles.roomContainer }>
                     <Text style = { styles.title }>Enter room name</Text>
                     <TextInput
@@ -39,9 +69,21 @@ class WelcomePage extends AbstractWelcomePage {
                         disabled = { this._isJoinDisabled() }
                         onPress = { this._onJoinClick }
                         style = { styles.button }
-                        underlayColor = 'white'>
+                        underlayColor = { ColorPalette.white }>
                         <Text style = { styles.buttonText }>JOIN</Text>
                     </TouchableHighlight>
+                </View>
+                <View style = { styles.legaleseContainer }>
+                    <Link
+                        style = { styles.legaleseItem }
+                        url = { PRIVACY_POLICY_URL }>
+                        Privacy Policy
+                    </Link>
+                    <Link
+                        style = { styles.legaleseItem }
+                        url = { TERMS_OF_SERVICE_URL }>
+                        Terms of Service
+                    </Link>
                 </View>
             </View>
         );

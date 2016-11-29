@@ -76,7 +76,7 @@ class Toolbar extends AbstractToolbar {
                         onClick = { this._onHangup }
                         style = {{
                             ...styles.toolbarButton,
-                            backgroundColor: ColorPalette.jitsiRed
+                            backgroundColor: ColorPalette.red
                         }}
                         underlayColor = { underlayColor } />
                     <ToolbarButton
