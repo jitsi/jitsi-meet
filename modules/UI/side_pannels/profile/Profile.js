@@ -128,7 +128,7 @@ export default {
      */
     showAuthenticationButtons (show) {
         let id = 'profile_auth_container';
-        UIUtil.showOrHideElement(id, show);
+        UIUtil.setVisible(id, show);
     },
 
     /**
@@ -138,7 +138,7 @@ export default {
     showLoginButton (show) {
         let id = 'profile_button_login';
 
-        UIUtil.showOrHideElement(id, show);
+        UIUtil.setVisible(id, show);
     },
 
     /**
@@ -148,7 +148,7 @@ export default {
     showLogoutButton (show) {
         let id = 'profile_button_logout';
 
-        UIUtil.showOrHideElement(id, show);
+        UIUtil.setVisible(id, show);
     },
 
     /**
@@ -158,7 +158,7 @@ export default {
     setAuthenticatedIdentity (authIdentity) {
         let id = 'profile_auth_identity';
 
-        UIUtil.showOrHideElement(id, !!authIdentity);
+        UIUtil.setVisible(id, !!authIdentity);
 
         $(`#${id}`).text(authIdentity ? authIdentity : '');
     }

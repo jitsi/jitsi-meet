@@ -392,7 +392,7 @@ var Recording = {
         let shouldShow = show && _isRecordingButtonEnabled();
         let id = 'toolbar_button_record';
 
-        UIUtil.showOrHideElement(id, shouldShow);
+        UIUtil.setVisible(id, shouldShow);
     },
 
     /**
@@ -476,7 +476,7 @@ var Recording = {
 
         // Recording spinner
         let spinnerId = 'recordingSpinner';
-        UIUtil.showOrHideElement(
+        UIUtil.setVisible(
             spinnerId, recordingState === Status.RETRYING);
     },
     // checks whether recording is enabled and whether we have params

@@ -240,52 +240,13 @@ const IndicatorFontSizes = {
     },
 
     /**
-     * Shows the element given by id.
-     *
-     * @param {String} the identifier of the element to show
-     */
-    showElement(id) {
-        let element;
-        if (id instanceof HTMLElement) {
-            element = id;
-        } else {
-            element = document.getElementById(id);
-        }
-
-        if (!element) {
-            return;
-        }
-
-        if(element.classList.contains('hide')) {
-            element.classList.remove('hide');
-        }
-
-        let type = this._getElementDefaultDisplay(element.tagName);
-        let className = SHOW_CLASSES[type];
-        element.classList.add(className);
-    },
-
-    /**
-     * Shows or hides the element given (optionally by id).
+     * Shows / hides the element given by id.
      *
      * @param {string|HTMLElement} idOrElement the identifier or the element
      *        to show/hide
      * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
      */
-    showOrHideElement(idOrElement, show) {
-        if (show) {
-            this.showElement(idOrElement);
-        } else {
-            this.hideElement(idOrElement);
-        }
-    },
-
-    /**
-     * Hides the element given by id.
-     *
-     * @param {String} the identifier of the element to hide
-     */
-    hideElement(id) {
+    setVisible(id, visible) {
         let element;
         if (id instanceof HTMLElement) {
             element = id;
@@ -297,14 +258,20 @@ const IndicatorFontSizes = {
             return;
         }
 
+        if (!visible)
+            element.classList.add('hide');
+        else if (element.classList.contains('hide')) {
+            element.classList.remove('hide');
+        }
+
         let type = this._getElementDefaultDisplay(element.tagName);
         let className = SHOW_CLASSES[type];
 
-        if(element.classList.contains(className)) {
-            element.classList.remove(className);
+        if (visible) {
+            element.classList.add(className);
         }
-
-        element.classList.add('hide');
+        else if (element.classList.contains(className))
+            element.classList.remove(className);
     },
 
     /**
@@ -326,12 +293,13 @@ const IndicatorFontSizes = {
     /**
      * Shows / hides the element with the given jQuery selector.
      *
-     * @param {jQuery} selector the jQuery selector of the element to show/hide
+     * @param {jQuery} jquerySelector the jQuery selector of the element to
+     * show / shide
      * @param {boolean} isVisible
      */
-    setVisibility(selector, isVisible) {
-        if (selector && selector.length > 0) {
-            selector.css("visibility", isVisible ? "visible" : "hidden");
+    setVisibleBySelector(jquerySelector, isVisible) {
+        if (jquerySelector && jquerySelector.length > 0) {
+            jquerySelector.css("visibility", isVisible ? "visible" : "hidden");
         }
     },
 

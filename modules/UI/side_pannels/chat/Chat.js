@@ -306,18 +306,14 @@ var Chat = {
      * @param subject the subject
      */
     setSubject (subject) {
-        let toggleFunction;
         if (subject) {
             subject = subject.trim();
         }
 
-        toggleFunction = subject ? UIUtil.showElement : UIUtil.hideElement;
-        toggleFunction = toggleFunction.bind(UIUtil);
-
         let subjectId = 'subject';
         let html = linkify(UIUtil.escapeHtml(subject));
         $(`#${subjectId}`).html(html);
-        toggleFunction(subjectId);
+        UIUtil.setVisible(subjectId, subject && subject.length > 0);
     },
 
     /**

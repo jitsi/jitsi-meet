@@ -398,7 +398,7 @@ Toolbar = {
             let el = document.getElementById(id);
             UIUtil.setTooltip(el, 'toolbar.sharedvideo', 'right');
         }
-        UIUtil.showOrHideElement(id, shouldShow);
+        UIUtil.setVisible(id, shouldShow);
     },
 
     // checks whether desktop sharing is enabled and whether
@@ -416,7 +416,7 @@ Toolbar = {
             && UIUtil.isButtonEnabled('sip') && show;
         let id = 'toolbar_button_sip';
 
-        UIUtil.showOrHideElement(id, shouldShow);
+        UIUtil.setVisible(id, shouldShow);
     },
 
     // Shows or hides the dialpad button
@@ -424,7 +424,7 @@ Toolbar = {
         let shouldShow = UIUtil.isButtonEnabled('dialpad') && show;
         let id = 'toolbar_button_dialpad';
 
-        UIUtil.showOrHideElement(id, shouldShow);
+        UIUtil.setVisible(id, shouldShow);
     },
 
     /**

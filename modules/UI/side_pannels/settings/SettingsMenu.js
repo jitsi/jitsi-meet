@@ -166,7 +166,7 @@ export default {
             APP.translation.addLanguageChangedListener(
                 lng => selectInput[0].dataset.i18n = `languages:${lng}`);
 
-            UIUtil.showElement(wrapperId);
+            UIUtil.setVisible(wrapperId, true);
         }
         // DEVICES LIST
         if (UIUtil.isSettingEnabled('devices')) {
@@ -181,9 +181,9 @@ export default {
                 });
             // Only show the subtitle if this isn't the only setting section.
             if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.showElement("deviceOptionsTitle");
+                UIUtil.setVisible("deviceOptionsTitle", true);
 
-            UIUtil.showElement(wrapperId);
+            UIUtil.setVisible(wrapperId, true);
         }
         // MODERATOR
         if (UIUtil.isSettingEnabled('moderator')) {
@@ -208,7 +208,7 @@ export default {
                 emitter.emit(UIEvents.FOLLOW_ME_ENABLED, isFollowMeEnabled);
             });
 
-            UIUtil.showElement(wrapperId);
+            UIUtil.setVisible(wrapperId, true);
         }
     },
 
@@ -245,15 +245,15 @@ export default {
             // Only show the subtitle if this isn't the only setting section.
             if (!$("#moderatorOptionsTitle").is(":visible")
                     && interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.showElement("moderatorOptionsTitle");
+                UIUtil.setVisible("moderatorOptionsTitle", true);
 
-            UIUtil.showElement("startMutedOptions");
+            UIUtil.setVisible("startMutedOptions", true);
         } else {
             // Only show the subtitle if this isn't the only setting section.
             if ($("#moderatorOptionsTitle").is(":visible"))
-                UIUtil.hideElement("moderatorOptionsTitle");
+                UIUtil.setVisible("moderatorOptionsTitle", false);
 
-            UIUtil.hideElement("startMutedOptions");
+            UIUtil.setVisible("startMutedOptions", false);
         }
     },
 
@@ -268,7 +268,7 @@ export default {
      * @param {boolean} show {true} to show those options, {false} to hide them
      */
     showFollowMeOptions (show) {
-        UIUtil.showOrHideElement(
+        UIUtil.setVisible(
             "followMeOptions",
             show && UIUtil.isSettingEnabled('moderator'));
     },

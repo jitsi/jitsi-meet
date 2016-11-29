@@ -334,7 +334,7 @@ export default class LargeVideoManager {
 
         let id = 'localConnectionMessage';
 
-        UIUtil.showOrHideElement(id, show);
+        UIUtil.setVisible(id, show);
 
         if (show) {
             // Avatar message conflicts with 'videoConnectionMessage',
