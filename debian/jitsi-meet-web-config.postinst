@@ -192,8 +192,34 @@ case "$1" in
 
             invoke-rc.d nginx reload
         elif [[ "$FORCE_APACHE" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
-            echo "Apache2 server is installed, automatic configuration is not supported at this time."
-            echo "You need to configure yourselve the virtual host for your domain."
+            # this is a reconfigure, lets just delete old links
+            if [ "$RECONFIGURING" = "true" ] ; then
+                a2dissite $JVB_HOSTNAME_OLD.conf
+                rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+            fi
+
+            # apache2 config
+            if [ ! -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf ] ; then
+                # when creating new config, make sure all needed modules are enabled
+                a2enmod rewrite ssl headers proxy_http include
+                cp /usr/share/doc/jitsi-meet-web/jitsi-meet.example-apache /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+                a2ensite $JVB_HOSTNAME.conf
+                sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+            fi
+
+            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                # replace self-signed certificate paths with user provided ones
+                CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
+                CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
+                sed -i "s/ssl_certificate_key\ \/etc\/jitsi\/meet\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
+                    /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+                CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
+                CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
+                sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
+                    /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+            fi
+
+            invoke-rc.d apache2 reload
         fi
 
         # and we're done with debconf

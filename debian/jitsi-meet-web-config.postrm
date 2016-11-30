@@ -27,6 +27,9 @@ case "$1" in
         if [ -x "/etc/init.d/nginx" ]; then
             invoke-rc.d nginx reload
         fi
+        if [ -x "/etc/init.d/apache2" ]; then
+            invoke-rc.d apache2 reload
+        fi
     ;;
     purge)
         db_get jitsi-meet/jvb-hostname
@@ -35,6 +38,8 @@ case "$1" in
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
             rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+            rm -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+            rm -f /etc/apache2/sites-enabled/$JVB_HOSTNAME.conf
             rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.jks
             rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.p12
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME.key
