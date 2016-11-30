@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { Conference } from '../../conference';
+
 /**
  * The web container rendering the welcome page.
  */
@@ -12,14 +14,23 @@ export default class WelcomePage extends Component {
      * @returns {ReactElement|null}
      */
     render() {
+        // FIXME The rendering of Conference bellow is a very quick and dirty
+        // temporary fix for the following issue: when the WelcomePage is
+        // disabled, app.js expects Conference to be rendered already and only
+        // then it builds a room name but the App component expects the room
+        // name to be built already (by looking at the window's location) in
+        // order to choose between WelcomePage and Conference.
         return (
-            <div id = 'welcome_page'>
-                {
-                    this._renderHeader()
-                }
-                {
-                    this._renderMain()
-                }
+            <div>
+                <div id = 'welcome_page'>
+                    {
+                        this._renderHeader()
+                    }
+                    {
+                        this._renderMain()
+                    }
+                </div>
+                <Conference />
             </div>
         );
     }
