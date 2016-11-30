@@ -211,11 +211,11 @@ case "$1" in
                 # replace self-signed certificate paths with user provided ones
                 CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
                 CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
-                sed -i "s/ssl_certificate_key\ \/etc\/jitsi\/meet\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
+                sed -i "s/SSLCertificateKeyFile\ \/etc\/jitsi\/meet\/.*key/SSLCertificateKeyFile\ $CERT_KEY_ESC/g" \
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
                 CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
                 CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
-                sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
+                sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
 
