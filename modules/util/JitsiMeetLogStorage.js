@@ -17,12 +17,25 @@ export default class JitsiMeetLogStorage {
     }
 
     /**
+     * @return {boolean} <tt>true</tt> when this storage is ready or
+     * <tt>false</tt> otherwise.
+     */
+    isReady() {
+        return APP.logCollectorStarted && APP.conference;
+    }
+
+    /**
      * Called by the <tt>LogCollector</tt> to store a series of log lines into
      * batch.
      * @param {string|object[]}logEntries an array containing strings
      * representing log lines or aggregated lines objects.
      */
     storeLogs(logEntries) {
+
+        if (!APP.conference.isCallstatsEnabled()) {
+            // Discard the logs if CallStats is not enabled.
+            return;
+        }
 
         let logJSON = '{"log' + this.counter + '":"\n';
         for (let i = 0, len = logEntries.length; i < len; i++) {
@@ -43,13 +56,7 @@ export default class JitsiMeetLogStorage {
         // on the way that could be uninitialized if the storeLogs
         // attempt would be made very early (which is unlikely)
         try {
-            // Currently it makes sense to store the log only
-            // if CallStats is enabled
-            if (APP.logCollectorStarted
-                    && APP.conference
-                    && APP.conference.isCallstatsEnabled()) {
-                APP.conference.logJSON(logJSON);
-            }
+            APP.conference.logJSON(logJSON);
         } catch (error) {
             // NOTE console is intentional here
             console.error(

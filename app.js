@@ -162,7 +162,10 @@ const APP = {
     initLogging () {
         // Adjust logging level
         configureLoggingLevels();
-        // Start the LogCollector and register it as the global log transport
+        // Create the LogCollector and register it as the global log transport.
+        // It is done early to capture as much logs as possible. Captured logs
+        // will be cached, before the JitsiMeetLogStorage gets ready (statistics
+        // module is initialized).
         if (!this.logCollector && !loggingConfig.disableLogCollector) {
             this.logCollector = new LogCollector(new JitsiMeetLogStorage());
             Logger.addGlobalTransport(this.logCollector);
@@ -189,19 +192,29 @@ function init() {
     APP.ConferenceUrl = new ConferenceUrl(window.location);
     // Clean up the URL displayed by the browser
     replaceHistoryState(APP.ConferenceUrl.getInviteUrl());
-    var isUIReady = APP.UI.start();
+    const isUIReady = APP.UI.start();
     if (isUIReady) {
-        // Start the LogCollector's periodic "store logs" task only if we're in
-        // the conference and not on the welcome page.
-        if (APP.logCollector) {
-            APP.logCollector.start();
-            APP.logCollectorStarted = true;
-        }
-
         APP.conference.init({roomName: buildRoomName()}).then(function () {
 
-            // Will flush the logs, before the stats are disposed
             if (APP.logCollector) {
+                // Start the LogCollector's periodic "store logs" task only if
+                // we're in the conference and not on the welcome page. This is
+                // determined by the value of "isUIReady" const above.
+                APP.logCollector.start();
+                APP.logCollectorStarted = true;
+                // Make an attempt to flush in case a lot of logs have been
+                // cached, before the collector was started.
+                APP.logCollector.flush();
+
+                // This event listener will flush the logs, before
+                // the statistics module (CallStats) is stopped.
+                //
+                // NOTE The LogCollector is not stopped, because this event can
+                // be triggered multiple times during single conference
+                // (whenever statistics module is stopped). That includes
+                // the case when Jicofo terminates the single person left in the
+                // room. It will then restart the media session when someone
+                // eventually join the room which will start the stats again.
                 APP.conference.addConferenceListener(
                     ConferenceEvents.BEFORE_STATISTICS_DISPOSED,
                     () => {
