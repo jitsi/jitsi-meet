@@ -113,8 +113,10 @@ export default {
      *
      * @param {number} timeoutSeconds how many seconds before the conference
      * reload will happen.
+     * @param {string} reason a label string identifying the reason for the page
+     * reload which will be included in details of the log event
      */
-    show(timeoutSeconds) {
+    show(timeoutSeconds, reason) {
 
         if (!overlay) {
             overlay = new PageReloadOverlayImpl(timeoutSeconds);
@@ -124,7 +126,8 @@ export default {
             // FIXME (CallStats - issue) this event will not make it to
             // the CallStats, because the log queue is not flushed, before
             // "fabric terminated" is sent to the backed
-            APP.conference.logEvent('page.reload');
+            APP.conference.logEvent(
+                'page.reload', undefined /* value */, reason /* label */);
         }
         overlay.show();
     }

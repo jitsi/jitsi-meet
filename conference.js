@@ -387,7 +387,7 @@ class ConferenceConnector {
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
-            APP.UI.showPageReloadOverlay();
+            APP.UI.showPageReloadOverlay(err);
             break;
 
         case ConferenceErrors.CONFERENCE_MAX_USERS:
@@ -550,7 +550,8 @@ export default {
                 // - connection dropped(closed by Strophe unexpectedly
                 //   possible due too many transport errors)
                 logger.error("XMPP connection error: " + errMsg);
-                APP.UI.showPageReloadOverlay();
+                APP.UI.showPageReloadOverlay(
+                    "xmpp-conn-dropped:" + errMsg);
                 connection.removeEventListener(
                     ConnectionEvents.CONNECTION_FAILED, handler);
                 // FIXME it feels like the conference should be stopped
@@ -1736,14 +1737,16 @@ export default {
      * @param {string} name the event name
      * @param {int} value the value (it's int because google analytics supports
      * only int).
+     * @param {string} label short text which provides more info about the event
+     * which allows to distinguish between few event cases of the same name
      * NOTE: Should be used after conference.init
      */
-    logEvent(name, value) {
+    logEvent(name, value, label) {
         if(JitsiMeetJS.analytics) {
-            JitsiMeetJS.analytics.sendEvent(name, {value});
+            JitsiMeetJS.analytics.sendEvent(name, {value, label});
         }
         if(room) {
-            room.sendApplicationLog(JSON.stringify({name, value}));
+            room.sendApplicationLog(JSON.stringify({name, value, label}));
         }
     },
     /**

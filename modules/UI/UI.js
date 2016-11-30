@@ -1092,10 +1092,13 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
 /**
  * Notify the user that the video conferencing service is badly broken and
  * the page should be reloaded.
+ *
+ * @param {string} a label string identifying the reason for the page reload
+ * which will be included in details of the log event.
  */
-UI.showPageReloadOverlay = function () {
+UI.showPageReloadOverlay = function (reason) {
     // Reload the page after 10 - 30 seconds
-    PageReloadOverlay.show(10 + RandomUtil.randomInt(0, 20));
+    PageReloadOverlay.show(10 + RandomUtil.randomInt(0, 20), reason);
 };
 
 /**
