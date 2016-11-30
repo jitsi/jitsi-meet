@@ -1,3 +1,5 @@
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var JSSHA = require('jssha');
 
 module.exports = {
@@ -22,7 +24,7 @@ module.exports = {
         var attemptFirstAddress;
 
         config.bosh = config.boshList[idx];
-        console.log('Setting config.bosh to ' + config.bosh +
+        logger.log('Setting config.bosh to ' + config.bosh +
             ' (idx=' + idx + ')');
 
         if (config.boshAttemptFirstList &&
@@ -34,10 +36,10 @@ module.exports = {
 
             if (attemptFirstAddress != config.bosh) {
                 config.boshAttemptFirst = attemptFirstAddress;
-                console.log('Setting config.boshAttemptFirst=' +
+                logger.log('Setting config.boshAttemptFirst=' +
                     attemptFirstAddress + ' (idx=' + idx + ')');
             } else {
-                console.log('Not setting boshAttemptFirst, address matches.');
+                logger.log('Not setting boshAttemptFirst, address matches.');
             }
         }
     }

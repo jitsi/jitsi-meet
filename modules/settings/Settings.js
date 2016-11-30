@@ -1,4 +1,6 @@
 /* global JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import UIUtil from '../UI/util/UIUtil';
 import jitsiLocalStorage from '../util/JitsiLocalStorage';
 
@@ -37,7 +39,7 @@ if (audioOutputDeviceId !==
     JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
     JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
         .catch((ex) => {
-            console.warn('Failed to set audio output device from local ' +
+            logger.warn('Failed to set audio output device from local ' +
                 'storage. Default audio output device will be used' +
                 'instead.', ex);
         });

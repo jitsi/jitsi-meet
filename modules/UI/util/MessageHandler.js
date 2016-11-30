@@ -1,4 +1,5 @@
 /* global $, APP, toastr */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from './UIUtil';
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
@@ -79,7 +80,7 @@ function dontShowTheDialog(options) {
 function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
     if(isDontShowAgainEnabled(options)) {
         return (...args) => {
-            console.debug(args, options.buttonValues);
+            logger.debug(args, options.buttonValues);
             //args[1] is the value associated with the pressed button
             if(!options.buttonValues || options.buttonValues.length === 0
                 || options.buttonValues.indexOf(args[1]) !== -1 ) {
@@ -417,7 +418,7 @@ var messageHandler = {
      */
     openReportDialog: function(titleKey, msgKey, error) {
         this.openMessageDialog(titleKey, msgKey);
-        console.log(error);
+        logger.log(error);
         //FIXME send the error to the server
     },
 

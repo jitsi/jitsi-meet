@@ -1,4 +1,5 @@
 /* global $, APP, JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 /**
  * Substate for password
@@ -312,7 +313,7 @@ export default class InviteDialogView {
                     this.blur();
                 }
                 catch (err) {
-                    console.error('error when copy the text');
+                    logger.error('error when copy the text');
                 }
             }
         });

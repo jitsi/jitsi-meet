@@ -1,4 +1,5 @@
 /* global config, APP, $, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import FilmStrip from "./FilmStrip";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -261,19 +262,19 @@ var VideoLayout = {
         if (lastVisible.length) {
             let id = getPeerContainerResourceId(lastVisible[0]);
             if (remoteVideos[id]) {
-                console.info("electLastVisibleVideo: " + id);
+                logger.info("electLastVisibleVideo: " + id);
                 return id;
             }
             // The RemoteVideo was removed (but the DOM elements may still
             // exist).
         }
 
-        console.info("Last visible video no longer exists");
+        logger.info("Last visible video no longer exists");
         thumbs = FilmStrip.getThumbs().remoteThumbs;
         if (thumbs.length) {
             let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
-                console.info("electLastVisibleVideo: " + id);
+                logger.info("electLastVisibleVideo: " + id);
                 return id;
             }
             // The RemoteVideo was removed (but the DOM elements may
@@ -281,10 +282,10 @@ var VideoLayout = {
         }
 
         // Go with local video
-        console.info("Fallback to local video...");
+        logger.info("Fallback to local video...");
 
         let id = APP.conference.getMyUserId();
-        console.info("electLastVisibleVideo: " + id);
+        logger.info("electLastVisibleVideo: " + id);
 
         return id;
     },
@@ -438,7 +439,7 @@ var VideoLayout = {
     // FIXME: what does this do???
     remoteVideoActive(videoElement, resourceJid) {
 
-        console.info(resourceJid + " video is now active", videoElement);
+        logger.info(resourceJid + " video is now active", videoElement);
 
         VideoLayout.resizeThumbnails(
             false, false, function() {$(videoElement).show();});
@@ -736,11 +737,11 @@ var VideoLayout = {
             if (resourceJid &&
                 lastNEndpoints.indexOf(resourceJid) < 0 &&
                 localLastNSet.indexOf(resourceJid) < 0) {
-                console.log("Remove from last N", resourceJid);
+                logger.log("Remove from last N", resourceJid);
                 if (smallVideo)
                     smallVideo.showPeerContainer('hide');
                 else if (!APP.conference.isLocalId(resourceJid))
-                    console.error("No remote video for: " + resourceJid);
+                    logger.error("No remote video for: " + resourceJid);
                 isReceived = false;
             } else if (resourceJid &&
                 //TOFIX: smallVideo may be undefined
@@ -753,7 +754,7 @@ var VideoLayout = {
                 if (smallVideo)
                     smallVideo.showPeerContainer('avatar');
                 else if (!APP.conference.isLocalId(resourceJid))
-                    console.error("No remote video for: " + resourceJid);
+                    logger.error("No remote video for: " + resourceJid);
                 isReceived = false;
             }
 
@@ -780,7 +781,7 @@ var VideoLayout = {
                     remoteVideo.showPeerContainer('show');
 
                 if (!remoteVideo.isVisible()) {
-                    console.log("Add to last N", resourceJid);
+                    logger.log("Add to last N", resourceJid);
 
                     remoteVideo.addRemoteStreamElement(remoteVideo.videoStream);
 
@@ -881,23 +882,23 @@ var VideoLayout = {
     removeParticipantContainer (id) {
         // Unlock large video
         if (pinnedId === id) {
-            console.info("Focused video owner has left the conference");
+            logger.info("Focused video owner has left the conference");
             pinnedId = null;
         }
 
         if (currentDominantSpeaker === id) {
-            console.info("Dominant speaker has left the conference");
+            logger.info("Dominant speaker has left the conference");
             currentDominantSpeaker = null;
         }
 
         var remoteVideo = remoteVideos[id];
         if (remoteVideo) {
             // Remove remote video
-            console.info("Removing remote video: " + id);
+            logger.info("Removing remote video: " + id);
             delete remoteVideos[id];
             remoteVideo.remove();
         } else {
-            console.warn("No remote video for " + id);
+            logger.warn("No remote video for " + id);
         }
 
         VideoLayout.resizeThumbnails();
@@ -908,12 +909,12 @@ var VideoLayout = {
             return;
         }
 
-        console.info("Peer video type changed: ", id, newVideoType);
+        logger.info("Peer video type changed: ", id, newVideoType);
 
         var smallVideo;
         if (APP.conference.isLocalId(id)) {
             if (!localVideoThumbnail) {
-                console.warn("Local video not ready yet");
+                logger.warn("Local video not ready yet");
                 return;
             }
             smallVideo = localVideoThumbnail;
@@ -937,7 +938,7 @@ var VideoLayout = {
             if (remoteVideo) {
                 remoteVideo.connectionIndicator.showMore();
             } else {
-                console.info("Error - no remote video for id: " + id);
+                logger.info("Error - no remote video for id: " + id);
             }
         }
     },
@@ -994,7 +995,7 @@ var VideoLayout = {
         if (smallVideo) {
             smallVideo.avatarChanged(avatarUrl);
         } else {
-            console.warn(
+            logger.warn(
                 "Missed avatar update - no small video yet for " + id
             );
         }

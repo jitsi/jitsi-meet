@@ -1,4 +1,6 @@
 /* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var UI = {};
 
 import Chat from "./side_pannels/chat/Chat";
@@ -503,7 +505,7 @@ UI.addLocalStream = function (track) {
         VideoLayout.changeLocalVideo(track);
         break;
     default:
-        console.error("Unknown stream type: " + track.getType());
+        logger.error("Unknown stream type: " + track.getType());
         break;
     }
 };
@@ -541,7 +543,7 @@ UI.initEtherpad = function (name) {
     if (etherpadManager || !config.etherpad_base || !name) {
         return;
     }
-    console.log('Etherpad is enabled');
+    logger.log('Etherpad is enabled');
     etherpadManager
         = new EtherpadManager(config.etherpad_base, name, eventEmitter);
     Toolbar.showEtherpadButton();
@@ -739,7 +741,7 @@ UI.connectionIndicatorShowMore = function(id) {
 
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
-    console.log('password is required');
+    logger.log('password is required');
 
     let message = (
         `<input name="username" type="text"

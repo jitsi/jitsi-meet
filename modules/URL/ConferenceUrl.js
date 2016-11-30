@@ -1,4 +1,4 @@
-/* global console */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import { redirect } from '../util/helpers';
 
@@ -45,8 +45,8 @@ export default class ConferenceUrl {
          */
         this.inviteURL
             = location.protocol + "//" + location.host + location.pathname;
-        console.info("Stored original conference URL: " + this.originalURL);
-        console.info("Conference URL for invites: " + this.inviteURL);
+        logger.info("Stored original conference URL: " + this.originalURL);
+        logger.info("Conference URL for invites: " + this.inviteURL);
     }
     /**
      * Obtains the conference invite URL.
@@ -67,7 +67,7 @@ export default class ConferenceUrl {
      * Reloads the conference using original URL with all of the parameters.
      */
     reload() {
-        console.info("Reloading the conference using URL: " + this.originalURL);
+        logger.info("Reloading the conference using URL: " + this.originalURL);
         redirect(this.originalURL);
     }
 }

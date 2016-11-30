@@ -1,3 +1,5 @@
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 /**
  * Implements API class that embeds Jitsi Meet in external applications.
  */
@@ -72,7 +74,7 @@ function sendMessage(postis, object) {
  */
 function changeEventStatus(postis, event, status) {
     if(!(event in events)) {
-        console.error("Not supported event name.");
+        logger.error("Not supported event name.");
         return;
     }
     sendMessage(postis, {
@@ -174,7 +176,7 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
  */
 JitsiMeetExternalAPI.prototype.executeCommand = function(name, argumentsList) {
     if(!(name in commands)) {
-        console.error("Not supported command name.");
+        logger.error("Not supported command name.");
         return;
     }
     var argumentsArray = argumentsList;
@@ -306,7 +308,7 @@ JitsiMeetExternalAPI.prototype.addEventListeners = function(object) {
  */
 JitsiMeetExternalAPI.prototype.addEventListener = function(event, listener) {
     if(!(event in events)) {
-        console.error("Not supported event name.");
+        logger.error("Not supported event name.");
         return;
     }
     // We cannot remove listeners from postis that's why we are handling the
@@ -328,7 +330,7 @@ JitsiMeetExternalAPI.prototype.addEventListener = function(event, listener) {
 JitsiMeetExternalAPI.prototype.removeEventListener = function(event) {
     if(!(event in this.eventHandlers))
     {
-        console.error("The event " + event + " is not registered.");
+        logger.error("The event " + event + " is not registered.");
         return;
     }
     delete this.eventHandlers[event];
