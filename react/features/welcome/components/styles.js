@@ -66,6 +66,13 @@ export const styles = createStyleSheet({
      * thought of as the foreground (content) of WelcomePage.
      */
     localVideoOverlay: {
+        // Since (1) the top-level container of WelcomePage is not transparent
+        // and, more importantly, (2) this View is displayed over the local
+        // video, this View would better not have a background color.
+        // Otherwise, Views within this View will inherit its background color
+        // and Text, for example, will display non-transparent rectangles over
+        // the local video.
+        backgroundColor: 'transparent',
         bottom: 0,
         flex: 1,
         flexDirection: 'column',
