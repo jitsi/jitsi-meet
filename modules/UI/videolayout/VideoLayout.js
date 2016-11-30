@@ -1150,11 +1150,7 @@ var VideoLayout = {
     updateResolutionLabel(isResolutionHD) {
         let id = 'videoResolutionLabel';
 
-        if (isResolutionHD) {
-            UIUtil.showElement(id);
-        } else {
-            UIUtil.hideElement(id);
-        }
+        UIUtil.setVisible(id, isResolutionHD);
     },
 
     /**

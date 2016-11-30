@@ -294,9 +294,10 @@ function changeLocalDisplayName(nickname = '') {
 }
 
 class ConferenceConnector {
-    constructor(resolve, reject) {
+    constructor(resolve, reject, invite) {
         this._resolve = resolve;
         this._reject = reject;
+        this._invite = invite;
         this.reconnectTimeout = null;
         room.on(ConferenceEvents.CONFERENCE_JOINED,
             this._handleConferenceJoined.bind(this));
@@ -340,7 +341,8 @@ class ConferenceConnector {
             }, 5000);
 
             // notify user that auth is required
-            AuthHandler.requireAuth(room, this.invite.getRoomLocker().password);
+            AuthHandler.requireAuth(
+                room, this._invite.getRoomLocker().password);
             break;
 
         case ConferenceErrors.RESERVATION_ERROR:
@@ -521,7 +523,8 @@ export default {
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
-                    (new ConferenceConnector(resolve, reject)).connect();
+                    (new ConferenceConnector(
+                        resolve, reject, this.invite)).connect();
                 });
         });
     },

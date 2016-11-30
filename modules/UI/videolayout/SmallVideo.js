@@ -215,13 +215,10 @@ SmallVideo.prototype.hideIndicator = function () {
  * @param {boolean} isMuted indicates if the muted element should be shown
  * or hidden
  */
-SmallVideo.prototype.showAudioIndicator = function(isMuted) {
+SmallVideo.prototype.showAudioIndicator = function (isMuted) {
     let mutedIndicator = this.getAudioMutedIndicator();
-    if (isMuted) {
-        UIUtil.showElement(mutedIndicator);
-    } else {
-        UIUtil.hideElement(mutedIndicator);
-    }
+
+    UIUtil.setVisible(mutedIndicator, isMuted);
 
     this.isAudioMuted = isMuted;
 };
@@ -270,11 +267,8 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.updateView();
 
     let element = this.getVideoMutedIndicator();
-    if (isMuted) {
-        UIUtil.showElement(element);
-    } else {
-        UIUtil.hideElement(element);
-    }
+
+    UIUtil.setVisible(element, isMuted);
 };
 
 /**
@@ -511,24 +505,24 @@ SmallVideo.prototype.updateView = function () {
     // Determine whether video, avatar or blackness should be displayed
     let displayMode = this.selectDisplayMode();
     // Show/hide video.
-    UIUtil.setVisibility(   this.selectVideoElement(),
-                            (displayMode === DISPLAY_VIDEO
+    UIUtil.setVisibleBySelector(this.selectVideoElement(),
+                                (displayMode === DISPLAY_VIDEO
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
     // Show/hide the avatar.
-    UIUtil.setVisibility(   this.$avatar(),
-                            (displayMode === DISPLAY_AVATAR
+    UIUtil.setVisibleBySelector(this.$avatar(),
+                                (displayMode === DISPLAY_AVATAR
                                 || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // Show/hide the display name.
-    UIUtil.setVisibility(   this.$displayName(),
-                            !this.hideDisplayName
-                            && (displayMode === DISPLAY_BLACKNESS_WITH_NAME
+    UIUtil.setVisibleBySelector(this.$displayName(),
+                                !this.hideDisplayName
+                                && (displayMode === DISPLAY_BLACKNESS_WITH_NAME
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME
                                 || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // show hide overlay when there is a video or avatar under
     // the display name
-    UIUtil.setVisibility(   $('#' + this.videoSpanId
+    UIUtil.setVisibleBySelector($('#' + this.videoSpanId
                                 + ' .videocontainer__hoverOverlay'),
-                            (displayMode === DISPLAY_AVATAR_WITH_NAME
+                                (displayMode === DISPLAY_AVATAR_WITH_NAME
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
 };
 
@@ -576,11 +570,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         tooltip: 'speaker'
     });
 
-    if (show) {
-        UIUtil.showElement(indicatorSpan);
-    } else {
-        UIUtil.hideElement(indicatorSpan);
-    }
+    UIUtil.setVisible(indicatorSpan, show);
 };
 
 /**
@@ -604,11 +594,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         tooltip: 'raisedHand'
     });
 
-    if (show) {
-        UIUtil.showElement(indicatorSpan);
-    } else {
-        UIUtil.hideElement(indicatorSpan);
-    }
+    UIUtil.setVisible(indicatorSpan, show);
 };
 
 /**

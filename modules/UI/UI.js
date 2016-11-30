@@ -443,10 +443,10 @@ UI.start = function () {
         // Display notice message at the top of the toolbar
         if (config.noticeMessage) {
             $('#noticeText').text(config.noticeMessage);
-            UIUtil.showElement('notice');
+            UIUtil.setVisible('notice', true);
         }
     } else {
-        UIUtil.hideElement('mainToolbarContainer');
+        UIUtil.setVisible('mainToolbarContainer', false);
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
@@ -1105,13 +1105,13 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(showAuth);
+    Profile.showAuthenticationButtons(showAuth);
 
     if (showAuth) {
-        Toolbar.setAuthenticatedIdentity(login);
+        Profile.setAuthenticatedIdentity(login);
 
-        Toolbar.showLoginButton(!loggedIn);
-        Toolbar.showLogoutButton(loggedIn);
+        Profile.showLoginButton(!loggedIn);
+        Profile.showLogoutButton(loggedIn);
     }
 };
 
