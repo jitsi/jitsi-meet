@@ -73,7 +73,7 @@ Link.propTypes = {
     /**
      * Notifies that this Link failed to open the URL associated with it.
      */
-    onLinkingOpenURLRejected: React.PropTypes.function,
+    onLinkingOpenURLRejected: React.PropTypes.func,
 
     /**
      * The CSS style to be applied to this Link for the purposes of display.
