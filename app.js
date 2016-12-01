@@ -192,9 +192,18 @@ function init() {
     APP.ConferenceUrl = new ConferenceUrl(window.location);
     // Clean up the URL displayed by the browser
     replaceHistoryState(APP.ConferenceUrl.getInviteUrl());
+
+    // TODO The execution of the mobile app starts from react/index.native.js.
+    // Similarly, the execution of the Web app should start from
+    // react/index.web.js for the sake of consistency and ease of understanding.
+    // Temporarily though because we are at the beginning of introducing React
+    // into the Web app, allow the execution of the Web app to start from app.js
+    // in order to reduce the complexity of the beginning step.
+    require('./react');
+
     const isUIReady = APP.UI.start();
     if (isUIReady) {
-        APP.conference.init({roomName: buildRoomName()}).then(function () {
+        APP.conference.init({roomName: buildRoomName()}).then(() => {
 
             if (APP.logCollector) {
                 // Start the LogCollector's periodic "store logs" task only if
@@ -227,13 +236,13 @@ function init() {
 
             APP.UI.initConference();
 
-            APP.UI.addListener(UIEvents.LANG_CHANGED, function (language) {
+            APP.UI.addListener(UIEvents.LANG_CHANGED, language => {
                 APP.translation.setLanguage(language);
                 APP.settings.setLanguage(language);
             });
 
             APP.keyboardshortcut.init();
-        }).catch(function (err) {
+        }).catch(err => {
             APP.UI.hideRingOverLay();
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             logger.error(err);
@@ -283,14 +292,6 @@ $(document).ready(function () {
     logger.log("(TIME) document ready:\t", now);
 
     URLProcessor.setConfigParametersFromUrl();
-
-    // TODO The execution of the mobile app starts from react/index.native.js.
-    // Similarly, the execution of the Web app should start from
-    // react/index.web.js for the sake of consistency and ease of understanding.
-    // Temporarily though because we are at the beginning of introducing React
-    // into the Web app, allow the execution of the Web app to start from app.js
-    // in order to reduce the complexity of the beginning step.
-    require('./react');
 
     APP.init();
 
