@@ -6,6 +6,16 @@ import React, { Component } from 'react';
  */
 export class Audio extends Component {
     /**
+     * Audio component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        muted: React.PropTypes.bool,
+        stream: React.PropTypes.object
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -18,13 +28,3 @@ export class Audio extends Component {
         return null;
     }
 }
-
-/**
- * Audio component's property types.
- *
- * @static
- */
-Audio.propTypes = {
-    muted: React.PropTypes.bool,
-    stream: React.PropTypes.object
-};

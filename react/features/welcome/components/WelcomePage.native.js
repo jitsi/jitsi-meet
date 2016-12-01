@@ -26,6 +26,13 @@ const TERMS_OF_SERVICE_URL
  */
 class WelcomePage extends AbstractWelcomePage {
     /**
+     * WelcomePage component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractWelcomePage.propTypes
+
+    /**
      * Renders a prompt for entering a room name.
      *
      * @returns {ReactElement}
@@ -89,12 +96,5 @@ class WelcomePage extends AbstractWelcomePage {
         );
     }
 }
-
-/**
- * WelcomePage component's property types.
- *
- * @static
- */
-WelcomePage.propTypes = AbstractWelcomePage.propTypes;
 
 export default connect(mapStateToProps)(WelcomePage);

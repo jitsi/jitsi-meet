@@ -21,6 +21,14 @@ const TOOLBAR_TIMEOUT_MS = 5000;
  * The conference page of the application.
  */
 class Conference extends Component {
+    /**
+     * Conference component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        dispatch: React.PropTypes.func
+    }
 
     /**
      * Initializes a new Conference instance.
@@ -124,14 +132,5 @@ class Conference extends Component {
         }
     }
 }
-
-/**
- * Conference component's property types.
- *
- * @static
- */
-Conference.propTypes = {
-    dispatch: React.PropTypes.func
-};
 
 export default reactReduxConnect()(Conference);

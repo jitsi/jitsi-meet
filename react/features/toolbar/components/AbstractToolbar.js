@@ -16,6 +16,18 @@ import { styles } from './styles';
  */
 export class AbstractToolbar extends Component {
     /**
+     * AbstractToolbar component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        audioMuted: React.PropTypes.bool,
+        dispatch: React.PropTypes.func,
+        videoMuted: React.PropTypes.bool,
+        visible: React.PropTypes.bool.isRequired
+    }
+
+    /**
      * Initializes a new AbstractToolbar instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -103,18 +115,6 @@ export class AbstractToolbar extends Component {
         this.props.dispatch(toggleVideoMuted());
     }
 }
-
-/**
- * AbstractToolbar component's property types.
- *
- * @static
- */
-AbstractToolbar.propTypes = {
-    audioMuted: React.PropTypes.bool,
-    dispatch: React.PropTypes.func,
-    videoMuted: React.PropTypes.bool,
-    visible: React.PropTypes.bool.isRequired
-};
 
 /**
  * Maps parts of media state to component props.

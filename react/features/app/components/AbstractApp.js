@@ -30,6 +30,21 @@ const DEFAULT_CONFIG = {
  */
 export class AbstractApp extends Component {
     /**
+     * AbstractApp component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        config: React.PropTypes.object,
+        store: React.PropTypes.object,
+
+        /**
+         * The URL, if any, with which the app was launched.
+         */
+        url: React.PropTypes.string
+    }
+
+    /**
      * Init lib-jitsi-meet and create local participant when component is going
      * to be mounted.
      *
@@ -113,18 +128,3 @@ export class AbstractApp extends Component {
         this.props.store.dispatch(appNavigate(url));
     }
 }
-
-/**
- * AbstractApp component's property types.
- *
- * @static
- */
-AbstractApp.propTypes = {
-    config: React.PropTypes.object,
-    store: React.PropTypes.object,
-
-    /**
-     * The URL, if any, with which the app was launched.
-     */
-    url: React.PropTypes.string
-};

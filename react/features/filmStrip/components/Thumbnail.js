@@ -27,6 +27,19 @@ import {
  */
 class Thumbnail extends Component {
     /**
+     * Thumbnail component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        audioTrack: React.PropTypes.object,
+        dispatch: React.PropTypes.func,
+        largeVideo: React.PropTypes.object,
+        participant: React.PropTypes.object,
+        videoTrack: React.PropTypes.object
+    }
+
+    /**
      * Initializes new Video Thumbnail component.
      *
      * @param {Object} props - Component props.
@@ -118,19 +131,6 @@ class Thumbnail extends Component {
         );
     }
 }
-
-/**
- * Thumbnail component's property types.
- *
- * @static
- */
-Thumbnail.propTypes = {
-    audioTrack: React.PropTypes.object,
-    dispatch: React.PropTypes.func,
-    largeVideo: React.PropTypes.object,
-    participant: React.PropTypes.object,
-    videoTrack: React.PropTypes.object
-};
 
 /**
  * Function that maps parts of Redux state tree into component props.

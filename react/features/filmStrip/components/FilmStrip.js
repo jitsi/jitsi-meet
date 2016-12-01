@@ -14,6 +14,16 @@ import { styles } from './_';
  */
 class FilmStrip extends Component {
     /**
+     * FilmStrip component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        participants: React.PropTypes.array,
+        visible: React.PropTypes.bool.isRequired
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -78,16 +88,6 @@ class FilmStrip extends Component {
         return sortedParticipants;
     }
 }
-
-/**
- * FilmStrip component's property types.
- *
- * @static
- */
-FilmStrip.propTypes = {
-    participants: React.PropTypes.array,
-    visible: React.PropTypes.bool.isRequired
-};
 
 /**
  * Function that maps parts of Redux state tree into component props.

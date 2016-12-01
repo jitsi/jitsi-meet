@@ -12,6 +12,20 @@ import { styles } from './styles';
  */
 class LargeVideo extends Component {
     /**
+     * LargeVideo component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        /**
+         * The ID of the participant (to be) depicted by LargeVideo.
+         *
+         * @private
+         */
+        _participantId: React.PropTypes.string
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -27,21 +41,6 @@ class LargeVideo extends Component {
         );
     }
 }
-
-/**
- * LargeVideo component's property types.
- *
- * @static
- */
-LargeVideo.propTypes = {
-
-    /**
-     * The ID of the participant (to be) depicted by LargeVideo.
-     *
-     * @private
-     */
-    _participantId: React.PropTypes.string
-};
 
 /**
  * Maps (parts of) the Redux state to the associated LargeVideo's props.

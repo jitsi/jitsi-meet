@@ -14,6 +14,12 @@ import AbstractContainer from './AbstractContainer';
  * @extends AbstractContainer
  */
 export class Container extends AbstractContainer {
+    /**
+     * Container component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractContainer.propTypes
 
     /**
      * Implements React's {@link Component#render()}.
@@ -74,10 +80,3 @@ export class Container extends AbstractContainer {
         return component;
     }
 }
-
-/**
- * Container component's property types.
- *
- * @static
- */
-Container.propTypes = AbstractContainer.propTypes;

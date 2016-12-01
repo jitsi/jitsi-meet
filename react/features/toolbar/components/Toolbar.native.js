@@ -23,6 +23,13 @@ import ToolbarButton from './ToolbarButton';
  */
 class Toolbar extends AbstractToolbar {
     /**
+     * Toolbar component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractToolbar.propTypes
+
+    /**
      * Initializes a new Toolbar instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -115,12 +122,5 @@ Object.assign(Toolbar.prototype, {
     videoIcon: 'webCam',
     videoMutedIcon: 'camera-disabled'
 });
-
-/**
- * Toolbar component's property types.
- *
- * @static
- */
-Toolbar.propTypes = AbstractToolbar.propTypes;
 
 export default connect(mapStateToProps)(Toolbar);

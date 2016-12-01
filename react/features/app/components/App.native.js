@@ -12,6 +12,13 @@ import { AbstractApp } from './AbstractApp';
  */
 export class App extends AbstractApp {
     /**
+     * App component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractApp.propTypes
+
+    /**
      * Initializes a new App instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -126,10 +133,3 @@ export class App extends AbstractApp {
         this._openURL(event.url);
     }
 }
-
-/**
- * App component's property types.
- *
- * @static
- */
-App.propTypes = AbstractApp.propTypes;

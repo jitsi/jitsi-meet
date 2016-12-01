@@ -7,6 +7,33 @@ import { Linking, Text } from 'react-native';
  */
 export class Link extends Component {
     /**
+     * Link component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        /**
+         * The children to be displayed within this Link.
+         */
+        children: React.PropTypes.node,
+
+        /**
+         * Notifies that this Link failed to open the URL associated with it.
+         */
+        onLinkingOpenURLRejected: React.PropTypes.func,
+
+        /**
+         * The CSS style to be applied to this Link for the purposes of display.
+         */
+        style: React.PropTypes.object,
+
+        /**
+         * The URL to be opened when this Link is clicked/pressed.
+         */
+        url: React.PropTypes.string
+    }
+
+    /**
      * Initializes a new Link instance.
      *
      * @param {Object} props - Component properties.
@@ -60,28 +87,3 @@ export class Link extends Component {
             .catch(reason => this._onLinkingOpenURLRejected(reason));
     }
 }
-
-/**
- * Link component's property types.
- */
-Link.propTypes = {
-    /**
-     * The children to be displayed within this Link.
-     */
-    children: React.PropTypes.node,
-
-    /**
-     * Notifies that this Link failed to open the URL associated with it.
-     */
-    onLinkingOpenURLRejected: React.PropTypes.func,
-
-    /**
-     * The CSS style to be applied to this Link for the purposes of display.
-     */
-    style: React.PropTypes.object,
-
-    /**
-     * The URL to be opened when this Link is clicked/pressed.
-     */
-    url: React.PropTypes.string
-};
