@@ -546,24 +546,34 @@ export default {
      */
     _bindConnectionFailedHandler (connection) {
         const handler = function (error, errMsg) {
-            if (ConnectionErrors.OTHER_ERROR === error ||
-                ConnectionErrors.SERVER_ERROR === error) {
-                // - item-not-found
-                // - connection dropped(closed by Strophe unexpectedly
-                //   possible due too many transport errors)
-                const isNetworkFailure
-                    = error !== ConnectionErrors.SERVER_ERROR;
-                logger.error("XMPP connection error: " + errMsg);
-                APP.UI.showPageReloadOverlay(
-                    isNetworkFailure,
-                    "xmpp-conn-dropped:" + errMsg);
-                connection.removeEventListener(
-                    ConnectionEvents.CONNECTION_FAILED, handler);
-                // FIXME it feels like the conference should be stopped
-                // by lib-jitsi-meet
-                if (room)
-                    room.leave();
+            /* eslint-disable no-case-declarations */
+            switch (error) {
+                case ConnectionErrors.CONNECTION_DROPPED_ERROR:
+                case ConnectionErrors.OTHER_ERROR:
+                case ConnectionErrors.SERVER_ERROR:
+
+                    logger.error("XMPP connection error: " + errMsg);
+
+                    // From all of the cases above only CONNECTION_DROPPED_ERROR
+                    // is considered a network type of failure
+                    const isNetworkFailure
+                        = error === ConnectionErrors.CONNECTION_DROPPED_ERROR;
+
+                    APP.UI.showPageReloadOverlay(
+                        isNetworkFailure,
+                        "xmpp-conn-dropped:" + errMsg);
+
+                    connection.removeEventListener(
+                        ConnectionEvents.CONNECTION_FAILED, handler);
+
+                    // FIXME it feels like the conference should be stopped
+                    // by lib-jitsi-meet
+                    if (room)
+                        room.leave();
+
+                    break;
             }
+            /* eslint-enable no-case-declarations */
         };
         connection.addEventListener(
             ConnectionEvents.CONNECTION_FAILED, handler);
