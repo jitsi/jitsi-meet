@@ -387,7 +387,8 @@ class ConferenceConnector {
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
-            APP.UI.showPageReloadOverlay(err);
+            APP.UI.showPageReloadOverlay(
+                false /* not a network type of failure */, err);
             break;
 
         case ConferenceErrors.CONFERENCE_MAX_USERS:
@@ -545,12 +546,16 @@ export default {
      */
     _bindConnectionFailedHandler (connection) {
         const handler = function (error, errMsg) {
-            if (ConnectionErrors.OTHER_ERROR === error) {
+            if (ConnectionErrors.OTHER_ERROR === error ||
+                ConnectionErrors.SERVER_ERROR === error) {
                 // - item-not-found
                 // - connection dropped(closed by Strophe unexpectedly
                 //   possible due too many transport errors)
+                const isNetworkFailure
+                    = error !== ConnectionErrors.SERVER_ERROR;
                 logger.error("XMPP connection error: " + errMsg);
                 APP.UI.showPageReloadOverlay(
+                    isNetworkFailure,
                     "xmpp-conn-dropped:" + errMsg);
                 connection.removeEventListener(
                     ConnectionEvents.CONNECTION_FAILED, handler);
