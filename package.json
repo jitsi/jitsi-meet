@@ -44,8 +44,8 @@
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
     "retry": "0.6.1",
-    "strophe": "^1.2.2",
-    "strophejs-plugins": "^0.0.6",
+    "strophe": "1.2.4",
+    "strophejs-plugins": "0.0.7",
     "toastr": "^2.0.3",
     "url-polyfill": "github/url-polyfill",
     "xmldom": "^0.1.27"

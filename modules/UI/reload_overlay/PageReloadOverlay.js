@@ -113,10 +113,13 @@ export default {
      *
      * @param {number} timeoutSeconds how many seconds before the conference
      * reload will happen.
+     * @param {boolean} isNetworkFailure <tt>true</tt> indicates that it's
+     * caused by network related failure or <tt>false</tt> when it's
+     * the infrastructure.
      * @param {string} reason a label string identifying the reason for the page
      * reload which will be included in details of the log event
      */
-    show(timeoutSeconds, reason) {
+    show(timeoutSeconds, isNetworkFailure, reason) {
 
         if (!overlay) {
             overlay = new PageReloadOverlayImpl(timeoutSeconds);
