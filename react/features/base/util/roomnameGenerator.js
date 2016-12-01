@@ -1,4 +1,4 @@
-import RandomUtil from './RandomUtil';
+import RandomUtil from './randomUtil';
 
 /**
 * The list of available nouns. It is used while generating new room names.
@@ -145,7 +145,7 @@ const PATTERNS = [
  * @singleton
  * @const
  **/
-const RoomnameGenerator = {
+export const RoomnameGenerator = {
 
     /**
     * Method generating new room names without separator based on available
@@ -158,6 +158,7 @@ const RoomnameGenerator = {
         // from patterns with fewer options will have higher probability of
         // being chosen that names from patterns with more options).
         let name = RandomUtil.randomElement(PATTERNS);
+
         let word;
         const reduceFunction = (acc, template) => {
             word = RandomUtil.randomElement(CATEGORIES[template]);
@@ -185,11 +186,11 @@ const RoomnameGenerator = {
         const categories = Object.keys(CATEGORIES);
 
         for (let i = 0, length = categories.length; i < length; i += 1) {
-            if (s.indexOf(CATEGORIES[i]) >= 0) {
+            const category = categories[i];
+
+            if (s.indexOf(category) >= 0) {
                 return true;
             }
         }
     }
 };
-
-export default RoomnameGenerator;
