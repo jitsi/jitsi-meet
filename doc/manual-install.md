@@ -131,9 +131,9 @@ Or autostart it by adding the line in `/etc/rc.local`:
 
 ## Install Jitsi Conference Focus (jicofo)
 
-Install JDK and Ant if missing:
+Install JDK and Maven if missing:
 ```
-apt-get install default-jdk ant
+apt-get install default-jdk maven
 ```
 
 _NOTE: When installing on older Debian releases keep in mind that you need JDK >= 1.7._
@@ -145,12 +145,13 @@ git clone https://github.com/jitsi/jicofo.git
 Build distribution package. Replace {os-name} with one of: 'lin', 'lin64', 'macosx', 'win', 'win64'.
 ```sh
 cd jicofo
-ant dist.{os-name}
+mvn package -DskipTests -Dassembly.skipAssembly=false
 ```
 Run jicofo:
 ```sh
-cd dist/{os-name}'
-./jicofo.sh --domain=jitsi.example.com --secret=YOURSECRET2 --user_domain=auth.jitsi.example.com --user_name=focus --user_password=YOURSECRET3
+unzip target/jicofo-{os-name}-1.0-SNAPSHOT.zip
+cd jicofo-{os-name}-1.0-SNAPSHOT'
+./jicofo.sh --host=localhost --domain=jitsi.example.com --secret=YOURSECRET2 --user_domain=auth.jitsi.example.com --user_name=focus --user_password=YOURSECRET3
 ```
 
 ## Deploy Jitsi Meet
@@ -159,6 +160,9 @@ Checkout and configure Jitsi Meet:
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
 mv jitsi-meet/ jitsi.example.com
+npm install -g browserify
+npm install
+make
 ```
 
 Edit host names in `/srv/jitsi.example.com/config.js` (see also the example config file):
@@ -167,7 +171,8 @@ var config = {
     hosts: {
         domain: 'jitsi.example.com',
         muc: 'conference.jitsi.example.com',
-        bridge: 'jitsi-videobridge.jitsi.example.com'
+        bridge: 'jitsi-videobridge.jitsi.example.com',
+        focus: 'focus.jitsi.example.com'
     },
     useNicks: false,
     bosh: '//jitsi.example.com/http-bind', // FIXME: use xep-0156 for that
