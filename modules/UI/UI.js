@@ -1400,13 +1400,13 @@ UI.setMicrophoneButtonEnabled = function (enabled) {
 
 UI.showRingOverlay = function () {
     RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);
-    FilmStrip.toggleFilmStrip(false);
+    FilmStrip.toggleFilmStrip(false, false);
 };
 
 UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
-    FilmStrip.toggleFilmStrip(true);
+    FilmStrip.toggleFilmStrip(true, false);
 };
 
 /**

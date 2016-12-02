@@ -114,20 +114,24 @@ const FilmStrip = {
      * of the film strip. If not specified, the visibility will be flipped
      * (i.e. toggled); otherwise, the visibility will be set to the specified
      * value.
+     * @param {Boolean} sendAnalytics - if true analytics event will be send.
+     * default: true.
      *
      * Note:
      * This method shouldn't be executed directly to hide the filmstrip.
      * It's important to hide the filmstrip with UI.toggleFilmstrip in order
      * to correctly resize the video area.
      */
-    toggleFilmStrip(visible) {
+    toggleFilmStrip(visible, sendAnalytics = true) {
         let isVisibleDefined = typeof visible === 'boolean';
         if (!isVisibleDefined) {
             visible = this.isFilmStripVisible();
         } else if (this.isFilmStripVisible() === visible) {
             return;
         }
-        JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
+        if(sendAnalytics) {
+            JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
+        }
         this.filmStrip.toggleClass("hidden");
 
         if (!visible) {
