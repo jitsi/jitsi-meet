@@ -13,6 +13,8 @@ WEBPACK = ./node_modules/.bin/webpack
 
 all: update-deps compile deploy clean
 
+all-dev: compile-dev deploy clean
+
 # FIXME: there is a problem with node-sass not correctly installed (compiled)
 # a quick fix to make sure it is installed on every update
 # the problem appears on linux and not on macosx
@@ -21,6 +23,9 @@ update-deps:
 
 compile:
 	$(WEBPACK) -p
+
+compile-dev:
+	$(WEBPACK)
 
 clean:
 	rm -fr $(BUILD_DIR)
@@ -32,10 +37,10 @@ deploy-init:
 
 deploy-appbundle:
 	cp \
-		$(BUILD_DIR)/app.bundle.min.js \
-		$(BUILD_DIR)/app.bundle.min.map \
-		$(BUILD_DIR)/external_api.min.js \
-		$(BUILD_DIR)/external_api.min.map \
+		$(BUILD_DIR)/app.bundle.js \
+		$(BUILD_DIR)/app.bundle.map \
+		$(BUILD_DIR)/external_api.js \
+		$(BUILD_DIR)/external_api.map \
 		$(OUTPUT_DIR)/analytics.js \
 		$(DEPLOY_DIR)
 

@@ -42,6 +42,7 @@
     "react-router": "^3.0.0",
     "react-router-redux": "^4.0.7",
     "redux": "^3.5.2",
+    "redux-logger": "^2.7.4",
     "redux-thunk": "^2.1.0",
     "retry": "0.6.1",
     "strophe": "1.2.4",
