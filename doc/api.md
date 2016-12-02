@@ -146,14 +146,14 @@ The listener will receive object with the following structure:
 jid: jid //the jid of the participant
 }
 ```
-* **video-conference-joined** - event notifications fired when the local user has joined the video conference.
+* **videoConferenceJoined** - event notifications fired when the local user has joined the video conference.
 The listener will receive object with the following structure:
 ```
 {
 roomName: room //the room name of the conference
 }
 ```
-* **video-conference-left** - event notifications fired when the local user has left the video conference.
+* **videoConferenceLeft** - event notifications fired when the local user has left the video conference.
 The listener will receive object with the following structure:
 ```
 {
