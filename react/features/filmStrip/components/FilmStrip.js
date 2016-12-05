@@ -95,7 +95,6 @@ class FilmStrip extends Component {
  * @param {Object} state - Redux state.
  * @returns {{
  *      participants: Participant[],
- *      tracks: (JitsiLocalTrack|JitsiRemoteTrack)[]
  *  }}
  */
 function mapStateToProps(state) {

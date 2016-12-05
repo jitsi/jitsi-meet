@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../redux';
+import { ReducerRegistry, setStateProperty } from '../redux';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -7,62 +7,64 @@ import {
 } from './actionTypes';
 
 /**
- * Initial Redux state.
- *
- * @type {{
- *      jitsiConnection: (JitsiConnection|null),
- *      connectionOptions: Object
- *  }}
+ * Reduces the Redux actions of the feature base/connection.
  */
-const INITIAL_STATE = {
-    jitsiConnection: null,
-    connectionOptions: null
-};
+ReducerRegistry.register('features/base/connection', (state = {}, action) => {
+    switch (action.type) {
+    case CONNECTION_DISCONNECTED:
+        return _connectionDisconnected(state, action);
+
+    case CONNECTION_ESTABLISHED:
+        return _connectionEstablished(state, action);
+
+    case SET_DOMAIN:
+        return _setDomain(state, action);
+    }
+
+    return state;
+});
 
 /**
- * Listen for actions that contain the connection object, so that
- * it can be stored for use by other action creators.
+ * Reduces a specific Redux action CONNECTION_DISCONNECTED of the feature
+ * base/connection.
+ *
+ * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {Action} action - The Redux action CONNECTION_DISCONNECTED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
  */
-ReducerRegistry.register('features/base/connection',
-    (state = INITIAL_STATE, action) => {
-        switch (action.type) {
-        case CONNECTION_DISCONNECTED:
-            if (state.jitsiConnection === action.connection) {
-                return {
-                    ...state,
-                    jitsiConnection: null
-                };
-            }
+function _connectionDisconnected(state, action) {
+    if (state.jitsiConnection === action.connection) {
+        return setStateProperty(state, 'jitsiConnection', undefined);
+    }
 
-            return state;
-
-        case CONNECTION_ESTABLISHED:
-            return {
-                ...state,
-                jitsiConnection: action.connection
-            };
-
-        case SET_DOMAIN:
-            return {
-                ...state,
-                connectionOptions: {
-                    ...state.connectionOptions,
-                    ...buildConnectionOptions(action.domain)
-                }
-            };
-
-        default:
-            return state;
-        }
-    });
+    return state;
+}
 
 /**
- * Builds connection options based on domain.
+ * Reduces a specific Redux action CONNECTION_ESTABLISHED of the feature
+ * base/connection.
  *
- * @param {string} domain - Domain name.
+ * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {Action} action - The Redux action CONNECTION_ESTABLISHED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _connectionEstablished(state, action) {
+    return setStateProperty(state, 'jitsiConnection', action.connection);
+}
+
+/**
+ * Constructs options to be passed to the constructor of JitsiConnection based
+ * on a specific domain.
+ *
+ * @param {string} domain - The domain with which the returned options are to be
+ * populated.
  * @returns {Object}
  */
-function buildConnectionOptions(domain) {
+function _constructConnectionOptions(domain) {
     // FIXME The HTTPS scheme for the BOSH URL works with meet.jit.si on both
     // mobile & Web. It also works with beta.meet.jit.si on Web. Unfortunately,
     // it doesn't work with beta.meet.jit.si on mobile. Temporarily, use the
@@ -79,15 +81,11 @@ function buildConnectionOptions(domain) {
                 boshProtocol = windowLocation.protocol;
             }
         }
-        if (!boshProtocol) {
-            boshProtocol = 'http:';
-        }
+        boshProtocol || (boshProtocol = 'http:');
     }
 
     // Default to the HTTPS scheme for the BOSH URL.
-    if (!boshProtocol) {
-        boshProtocol = 'https:';
-    }
+    boshProtocol || (boshProtocol = 'https:');
 
     return {
         bosh: `${boshProtocol}//${domain}/http-bind`,
@@ -95,6 +93,25 @@ function buildConnectionOptions(domain) {
             domain,
             focus: `focus.${domain}`,
             muc: `conference.${domain}`
+        }
+    };
+}
+
+/**
+ * Reduces a specific Redux action SET_DOMAIN of the feature base/connection.
+ *
+ * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {Action} action - The Redux action SET_DOMAIN to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _setDomain(state, action) {
+    return {
+        ...state,
+        connectionOptions: {
+            ...state.connectionOptions,
+            ..._constructConnectionOptions(action.domain)
         }
     };
 }

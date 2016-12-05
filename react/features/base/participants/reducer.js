@@ -1,6 +1,6 @@
 /* global MD5 */
 
-import { ReducerRegistry } from '../redux';
+import { ReducerRegistry, setStateProperty } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -55,7 +55,7 @@ function participant(state, action) {
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
         return (
-            _setStateProperty(
+            setStateProperty(
                     state,
                     'dominantSpeaker',
                     state.id === action.participant.id));
@@ -123,7 +123,7 @@ function participant(state, action) {
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
         return (
-            _setStateProperty(
+            setStateProperty(
                     state,
                     'pinned',
                     state.id === action.participant.id));
@@ -200,31 +200,4 @@ function _getAvatarURL(participantId, email) {
     }
 
     return urlPref + avatarId + urlSuf;
-}
-
-/**
- * Sets a specific property of a specific state to a specific value. Prevents
- * unnecessary state changes (when the specified <tt>value</tt> is equal to the
- * value of the specified <tt>property</tt> of the specified <tt>state</tt>).
- *
- * @param {Object} state - The (Redux) state from which a new state is to be
- * constructed by setting the specified <tt>property</tt> to the specified
- * <tt>value</tt>.
- * @param {string} property - The property of <tt>state</tt> which is to be
- * assigned the specified <tt>value</tt> (in the new state).
- * @param {*} value - The value to assign to the specified <tt>property</tt>.
- * @returns {Object} The specified <tt>state</tt> if the value of the specified
- * <tt>property</tt> equals the specified <tt>value/tt>; otherwise, a new state
- * constructed from the specified <tt>state</tt> by setting the specified
- * <tt>property</tt> to the specified <tt>value</tt>.
- */
-function _setStateProperty(state, property, value) {
-    if (state[property] !== value) {
-        return {
-            ...state,
-            [property]: value
-        };
-    }
-
-    return state;
 }

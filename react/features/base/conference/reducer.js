@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../redux';
+import { ReducerRegistry, setStateProperty } from '../redux';
 
 import {
     CONFERENCE_JOINED,
@@ -33,10 +33,11 @@ ReducerRegistry.register('features/base/conference',
     (state = INITIAL_STATE, action) => {
         switch (action.type) {
         case CONFERENCE_JOINED:
-            return {
-                ...state,
-                jitsiConference: action.conference.jitsiConference
-            };
+            return (
+                setStateProperty(
+                        state,
+                        'jitsiConference',
+                        action.conference.jitsiConference));
 
         case CONFERENCE_LEFT:
             if (state.jitsiConference === action.conference.jitsiConference) {
@@ -52,10 +53,11 @@ ReducerRegistry.register('features/base/conference',
             break;
 
         case CONFERENCE_WILL_LEAVE:
-            return {
-                ...state,
-                leavingJitsiConference: action.conference.jitsiConference
-            };
+            return (
+                setStateProperty(
+                        state,
+                        'leavingJitsiConference',
+                        action.conference.jitsiConference));
 
         case SET_ROOM: {
             let room = action.room;
@@ -63,16 +65,9 @@ ReducerRegistry.register('features/base/conference',
             // Technically, there're multiple values which don't represent
             // valid room names. Practically, each of them is as bad as the rest
             // of them because we can't use any of them to join a conference.
-            if (!isRoomValid(room)) {
-                room = INITIAL_STATE.room;
-            }
-            if (state.room !== room) {
-                return {
-                    ...state,
-                    room
-                };
-            }
-            break;
+            isRoomValid(room) || (room = INITIAL_STATE.room);
+
+            return setStateProperty(state, 'room', room);
         }
         }
 
