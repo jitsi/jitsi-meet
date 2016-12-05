@@ -9,15 +9,10 @@ import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
 import { styles } from './styles';
 
 /**
- * The URL at which the privacy policy is available to the user.
+ * The URL at which the terms and conditions (of service) are available to the
+ * user.
  */
-const PRIVACY_POLICY_URL = 'https://www.atlassian.com/legal/privacy-policy';
-
-/**
- * The URL at which the terms of service are available to the user.
- */
-const TERMS_OF_SERVICE_URL
-    = 'https://www.atlassian.com/legal/customer-agreement';
+const TERMS_AND_CONDITIONS_URL = 'https://jitsi.org/meet/terms';
 
 /**
  * The native container rendering the welcome page.
@@ -83,13 +78,8 @@ class WelcomePage extends AbstractWelcomePage {
                 <View style = { styles.legaleseContainer }>
                     <Link
                         style = { styles.legaleseItem }
-                        url = { PRIVACY_POLICY_URL }>
-                        Privacy Policy
-                    </Link>
-                    <Link
-                        style = { styles.legaleseItem }
-                        url = { TERMS_OF_SERVICE_URL }>
-                        Terms of Service
+                        url = { TERMS_AND_CONDITIONS_URL }>
+                        Terms and Conditions
                     </Link>
                 </View>
             </View>
