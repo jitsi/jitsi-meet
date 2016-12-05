@@ -4,7 +4,7 @@ import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
 import { VideoTrack } from '../../base/media';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { RoomnameGenerator as RoomnameGen } from '../../base/util';
+import { generateRoomWithoutSeparator } from '../../base/util';
 
 /**
  * Base (abstract) class for container component rendering the welcome page.
@@ -113,7 +113,7 @@ export class AbstractWelcomePage extends Component {
      * @returns {void}
      */
     _updateRoomname() {
-        const generatedRoomname = RoomnameGen.generateRoomWithoutSeparator();
+        const generatedRoomname = generateRoomWithoutSeparator();
         const roomPlaceholder = '';
         const updateTimeoutId = setTimeout(this._updateRoomname, 10000);
 

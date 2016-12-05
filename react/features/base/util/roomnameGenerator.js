@@ -1,4 +1,4 @@
-import RandomUtil from './randomUtil';
+import { randomElement } from './randomUtil';
 
 /**
 * The list of available nouns. It is used while generating new room names.
@@ -140,57 +140,49 @@ const PATTERNS = [
 ];
 
 /**
- * Singleton object responsible for generating of new room names.
- *
- * @singleton
- * @const
+ * Method generating new room names without separator based on available
+ * patterns.
+ * @returns {string} name - result room name
  **/
-export const RoomnameGenerator = {
+export function generateRoomWithoutSeparator() {
+    // XXX Note that if more than one pattern is available, the choice of
+    // 'name' won't have a uniform distribution amongst all patterns (names
+    // from patterns with fewer options will have higher probability of
+    // being chosen that names from patterns with more options).
+    let name = randomElement(PATTERNS);
 
-    /**
-    * Method generating new room names without separator based on available
-    * patterns.
-    * @returns {string} name - result room name
-    **/
-    generateRoomWithoutSeparator() {
-        // XXX Note that if more than one pattern is available, the choice of
-        // 'name' won't have a uniform distribution amongst all patterns (names
-        // from patterns with fewer options will have higher probability of
-        // being chosen that names from patterns with more options).
-        let name = RandomUtil.randomElement(PATTERNS);
+    let word;
+    const reduceFunction = (acc, template) => {
+        word = randomElement(CATEGORIES[template]);
 
-        let word;
-        const reduceFunction = (acc, template) => {
-            word = RandomUtil.randomElement(CATEGORIES[template]);
+        return acc.replace(template, word);
+    };
 
-            return acc.replace(template, word);
-        };
-
-        while (this._hasTemplate(name)) {
-            const categories = Object.keys(CATEGORIES);
-
-            name = categories.reduce(reduceFunction, name);
-        }
-
-        return name;
-    },
-
-    /*
-     * Returns true if the string 'str' contains one of the
-     * template strings.
-     * @argument {string} str - String containing categories.
-     *
-     * @private
-     **/
-    _hasTemplate(s) {
+    while (hasTemplate(name)) {
         const categories = Object.keys(CATEGORIES);
 
-        for (let i = 0, length = categories.length; i < length; i += 1) {
-            const category = categories[i];
+        name = categories.reduce(reduceFunction, name);
+    }
 
-            if (s.indexOf(category) >= 0) {
-                return true;
-            }
+    return name;
+}
+
+/**
+ * Returns true if the string 'str' contains one of the
+ * template strings.
+ * @param {string} s - String containing categories.
+ * @returns {boolean} - Returns true if template exists.
+ **/
+export function hasTemplate(s) {
+    const categories = Object.keys(CATEGORIES);
+
+    for (let i = 0, length = categories.length; i < length; i += 1) {
+        const category = categories[i];
+
+        if (s.indexOf(category) >= 0) {
+            return true;
         }
     }
-};
+
+    return false;
+}
