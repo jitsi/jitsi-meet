@@ -84,9 +84,12 @@
     "lint"
   ],
   "browser": {
+    "aui": "@atlassian/aui/lib/js/aui.js",
     "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
+    "aui-experimental": "@atlassian/aui/lib/js/aui-experimental.js",
     "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
     "autosize": "./node_modules/autosize/build/jquery.autosize.js",
+    "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js",
     "popover": "./node_modules/bootstrap/js/popover.js",
     "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js",
     "strophe-caps": "./node_modules/strophejs-plugins/caps/strophe.caps.jsonly.js",

@@ -112,19 +112,7 @@ var config = {
     plugins: plugins,
     resolve: {
         alias: {
-            aui:
-                '@atlassian/aui/dist/aui/js/aui'
-                    + (minimize ? '.min' : '')
-                    + '.js',
-            'aui-experimental':
-                '@atlassian/aui/dist/aui/js/aui-experimental'
-                    + (minimize ? '.min' : '')
-                    + '.js',
-            jquery: 'jquery/dist/jquery' + (minimize ? '.min' : '') + '.js',
-            'jQuery-Impromptu':
-                'jQuery-Impromptu/dist/jquery-impromptu'
-                    + (minimize ? '.min' : '')
-                    + '.js'
+            jquery: 'jquery/dist/jquery' + (minimize ? '.min' : '') + '.js'
         },
         packageAlias: 'browser'
     }
