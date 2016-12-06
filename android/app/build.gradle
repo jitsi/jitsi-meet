@@ -101,8 +101,8 @@ android {
         applicationId 'org.jitsi.jitsi_meet_react'
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName '1.0'
+        versionCode Integer.parseInt("${version}")
+        versionName "1.0.${version}"
         ndk {
             abiFilters 'armeabi-v7a', 'x86'
         }
