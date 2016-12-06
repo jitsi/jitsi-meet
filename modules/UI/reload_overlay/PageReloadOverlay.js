@@ -12,8 +12,13 @@ class PageReloadOverlayImpl extends Overlay{
      * Creates new <tt>PageReloadOverlayImpl</tt>
      * @param {number} timeoutSeconds how long the overlay dialog will be
      * displayed, before the conference will be reloaded.
+     * @param {boolean} isDisconnect indicates if this reload screen is created
+     * to indicate a disconnect
+     * @param {boolean} isNetworkFailure <tt>true</tt> indicates that it's
+     * caused by network related failure or <tt>false</tt> when it's
+     * the infrastructure.
      */
-    constructor(timeoutSeconds) {
+    constructor(timeoutSeconds, isNetworkFailure) {
         super();
         /**
          * Conference reload counter in seconds.
@@ -25,6 +30,13 @@ class PageReloadOverlayImpl extends Overlay{
          * @type {number}
          */
         this.timeout = timeoutSeconds;
+
+        /**
+         * Indicates that a network related failure is the reason for the
+         * reload.
+         * @type {boolean}
+         */
+        this.isNetworkFailure = isNetworkFailure;
     }
     /**
      * Constructs overlay body with the warning message and count down towards
@@ -32,10 +44,27 @@ class PageReloadOverlayImpl extends Overlay{
      * @override
      */
     _buildOverlayContent() {
+        let title = (this.isNetworkFailure)
+                        ? "dialog.conferenceDisconnectTitle"
+                        : "dialog.conferenceReloadTitle";
+        let message = (this.isNetworkFailure)
+                        ? "dialog.conferenceDisconnectMsg"
+                        : "dialog.conferenceReloadMsg";
+
+        let button = (this.isNetworkFailure)
+                    ? `<button id="reconnectNow" data-i18n="dialog.reconnectNow"
+                    class="button-control button-control_primary
+                            button-control_center"></button>`
+                    : "";
+
+        $(document).on('click', '#reconnectNow', () => {
+            APP.ConferenceUrl.reload();
+        });
+
         return `<div class="inlay">
-                    <span data-i18n='dialog.conferenceReloadTitle'
+                    <span data-i18n=${title}
                           class='reload_overlay_title'></span>
-                    <span data-i18n='dialog.conferenceReloadMsg'
+                    <span data-i18n=${message}
                           class='reload_overlay_msg'></span>
                     <div>
                         <div id='reloadProgressBar'
@@ -47,6 +76,7 @@ class PageReloadOverlayImpl extends Overlay{
                             class='reload_overlay_msg'>
                         </span>
                     </div>
+                    ${button}
                 </div>`;
     }
 
@@ -122,7 +152,8 @@ export default {
     show(timeoutSeconds, isNetworkFailure, reason) {
 
         if (!overlay) {
-            overlay = new PageReloadOverlayImpl(timeoutSeconds);
+            overlay
+                = new PageReloadOverlayImpl(timeoutSeconds, isNetworkFailure);
         }
         // Log the page reload event
         if (!this.isVisible()) {
@@ -132,6 +163,7 @@ export default {
             APP.conference.logEvent(
                 'page.reload', undefined /* value */, reason /* label */);
         }
-        overlay.show();
+        // If it's a network failure we enable the light overlay.
+        overlay.show(isNetworkFailure);
     }
 };

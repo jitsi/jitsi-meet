@@ -28,13 +28,19 @@ export default class Overlay{
     }
     /**
      * Constructs the HTML body of the overlay dialog.
+     *
+     * @param isLightOverlay indicates that this will be a light overlay look
+     * and feel.
      */
-    buildOverlayHtml() {
+    buildOverlayHtml(isLightOverlay) {
 
         let overlayContent = this._buildOverlayContent();
 
+        let containerClass = isLightOverlay ? "overlay__container-light"
+                                            : "overlay__container";
+
         this.$overlay = $(`
-            <div class='overlay__container'>
+            <div class=${containerClass}>
                 <div class='overlay__content'>
                     ${overlayContent}
                 </div>
@@ -61,10 +67,13 @@ export default class Overlay{
     /**
      * Shows the overlay dialog adn attaches the underlying HTML representation
      * to the DOM.
+     *
+     * @param isLightOverlay indicates that this will be a light overlay look
+     * and feel.
      */
-    show() {
+    show(isLightOverlay) {
 
-        !this.$overlay && this.buildOverlayHtml();
+        !this.$overlay && this.buildOverlayHtml(isLightOverlay);
 
         if (!this.isVisible()) {
             this.$overlay.appendTo('body');
