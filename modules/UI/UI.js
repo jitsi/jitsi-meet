@@ -17,7 +17,7 @@ import Recording from "./recording/Recording";
 import GumPermissionsOverlay
     from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
-import PageReloadOverlay from './reload_overlay/PageReloadOverlay';
+import * as PageReloadOverlay from './reload_overlay/PageReloadOverlay';
 import SuspendedOverlay from './suspended_overlay/SuspendedOverlay';
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
