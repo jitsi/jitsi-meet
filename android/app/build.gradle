@@ -98,7 +98,7 @@ android {
     buildToolsVersion '23.0.1'
 
     defaultConfig {
-        applicationId 'org.jitsi.jitsi_meet_react'
+        applicationId 'org.jitsi.meet'
         minSdkVersion 16
         targetSdkVersion 22
         versionCode Integer.parseInt("${version}")

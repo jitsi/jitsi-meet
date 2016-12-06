@@ -1,4 +1,4 @@
-package org.jitsi.jitsi_meet_react;
+package org.jitsi.meet;
 
 import android.app.Application;
 import android.util.Log;
