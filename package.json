@@ -34,7 +34,7 @@
     "postis": "^2.2.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
-    "react-native": "0.38.0",
+    "react-native": "0.39.0",
     "react-native-vector-icons": "^3.0.0",
     "react-native-webrtc": "jitsi/react-native-webrtc",
     "react-redux": "^4.4.6",
