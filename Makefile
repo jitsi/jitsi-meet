@@ -10,10 +10,12 @@ STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 STYLES_UNSUPPORTED_BROWSER = css/unsupported_browser.scss
 WEBPACK = ./node_modules/.bin/webpack
+WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 
 all: update-deps compile deploy clean
 
-all-dev: compile-dev deploy clean
+dev-server:
+	$(WEBPACK_DEV_SERVER)
 
 # FIXME: there is a problem with node-sass not correctly installed (compiled)
 # a quick fix to make sure it is installed on every update
