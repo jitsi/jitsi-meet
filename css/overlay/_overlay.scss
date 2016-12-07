@@ -1,5 +1,6 @@
 .overlay {
-    &__container {
+    &__container,
+    &__container-light {
         top: 0;
         left: 0;
         width: 100%;
@@ -7,6 +8,10 @@
         position: fixed;
         z-index: $overlayZ;
         background: $defaultBackground;
+    }
+
+    &__container-light {
+        @include transparentBg($defaultBackground, 0.7);
     }
 
     &__content {
