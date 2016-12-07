@@ -27,6 +27,19 @@ import {
  */
 class Thumbnail extends Component {
     /**
+     * Thumbnail component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        audioTrack: React.PropTypes.object,
+        dispatch: React.PropTypes.func,
+        largeVideo: React.PropTypes.object,
+        participant: React.PropTypes.object,
+        videoTrack: React.PropTypes.object
+    }
+
+    /**
      * Initializes new Video Thumbnail component.
      *
      * @param {Object} props - Component props.
@@ -81,8 +94,9 @@ class Thumbnail extends Component {
         //    participants would be hearing themselves.
         const audioMuted = !audioTrack || audioTrack.muted;
         const renderAudio = !audioMuted && !audioTrack.local;
+        const participantId = participant.id;
         const participantNotInLargeVideo
-            = participant.id !== largeVideo.participantId;
+            = participantId !== largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
 
         return (
@@ -96,7 +110,7 @@ class Thumbnail extends Component {
                             = { audioTrack.jitsiTrack.getOriginalStream() } /> }
 
                 <ParticipantView
-                    participantId = { participant.id }
+                    participantId = { participantId }
                     showAvatar = { participantNotInLargeVideo }
                     showVideo = { participantNotInLargeVideo }
                     zOrder = { 1 } />
@@ -104,7 +118,7 @@ class Thumbnail extends Component {
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
                     && <ModeratorIndicator /> }
 
-                { participant.speaking
+                { participant.dominantSpeaker
                     && <DominantSpeakerIndicator /> }
 
                 { audioMuted
@@ -117,19 +131,6 @@ class Thumbnail extends Component {
         );
     }
 }
-
-/**
- * Thumbnail component's property types.
- *
- * @static
- */
-Thumbnail.propTypes = {
-    audioTrack: React.PropTypes.object,
-    dispatch: React.PropTypes.func,
-    largeVideo: React.PropTypes.object,
-    participant: React.PropTypes.object,
-    videoTrack: React.PropTypes.object
-};
 
 /**
  * Function that maps parts of Redux state tree into component props.

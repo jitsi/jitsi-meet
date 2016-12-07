@@ -1,4 +1,5 @@
 /* global $, APP, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
@@ -24,7 +25,7 @@ export default class LargeVideoManager {
             () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
-        // use the same video container to handle and desktop tracks
+        // use the same video container to handle desktop tracks
         this.addContainer("desktop", this.videoContainer);
 
         this.width = 0;
@@ -126,7 +127,7 @@ export default class LargeVideoManager {
             const { id, stream, videoType, resolve } = this.newStreamData;
             this.newStreamData = null;
 
-            console.info("hover in %s", id);
+            logger.info("hover in %s", id);
             this.state = videoType;
             const container = this.getContainer(this.state);
             container.setStream(stream, videoType);
@@ -332,13 +333,14 @@ export default class LargeVideoManager {
             show = APP.conference.isConnectionInterrupted();
         }
 
+        let id = 'localConnectionMessage';
+
+        UIUtil.setVisible(id, show);
+
         if (show) {
-            $('#localConnectionMessage').css({display: "block"});
             // Avatar message conflicts with 'videoConnectionMessage',
             // so it must be hidden
             this.showRemoteConnectionMessage(false);
-        } else {
-            $('#localConnectionMessage').css({display: "none"});
         }
     }
 

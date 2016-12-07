@@ -63,7 +63,15 @@
   top: 50%;
   left: 50%;
   position: absolute;
-  @include transform(translate(-50%, -50%))
+  @include transform(translate(-50%, -50%));
+}
+
+/**
+* Defines the maximum width and height
+**/
+@mixin maxSize($value) {
+    max-width: $value;
+    max-height: $value;
 }
 
 @mixin transform($func) {

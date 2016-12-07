@@ -1,4 +1,6 @@
 /* global JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import UIUtil from '../UI/util/UIUtil';
 import jitsiLocalStorage from '../util/JitsiLocalStorage';
 
@@ -7,11 +9,6 @@ function generateUniqueId() {
         return (Math.random().toString(16) + "000000000").substr(2, 8);
     }
     return _p8() + _p8() + _p8() + _p8();
-}
-
-if (!jitsiLocalStorage.getItem("jitsiMeetId")) {
-    jitsiLocalStorage.setItem("jitsiMeetId",generateUniqueId());
-    console.log("generated id", jitsiLocalStorage.getItem("jitsiMeetId"));
 }
 
 let avatarUrl = '';
@@ -42,7 +39,7 @@ if (audioOutputDeviceId !==
     JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
     JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
         .catch((ex) => {
-            console.warn('Failed to set audio output device from local ' +
+            logger.warn('Failed to set audio output device from local ' +
                 'storage. Default audio output device will be used' +
                 'instead.', ex);
         });

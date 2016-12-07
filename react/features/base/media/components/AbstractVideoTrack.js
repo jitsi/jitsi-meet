@@ -12,6 +12,24 @@ import { Video } from './_';
  */
 export class AbstractVideoTrack extends Component {
     /**
+     * AbstractVideoTrack component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        dispatch: React.PropTypes.func,
+        videoTrack: React.PropTypes.object,
+        waitForVideoStarted: React.PropTypes.bool,
+
+        /**
+         * The z-order of the Video of AbstractVideoTrack in the stacking space
+         * of all Videos. For more details, refer to the zOrder property of the
+         * Video class for React Native.
+         */
+        zOrder: React.PropTypes.number
+    }
+
+    /**
      * Initializes a new AbstractVideoTrack instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -115,24 +133,6 @@ export class AbstractVideoTrack extends Component {
         this.setState({ videoTrack });
     }
 }
-
-/**
- * AbstractVideoTrack component's property types.
- *
- * @static
- */
-AbstractVideoTrack.propTypes = {
-    dispatch: React.PropTypes.func,
-    videoTrack: React.PropTypes.object,
-    waitForVideoStarted: React.PropTypes.bool,
-
-    /**
-     * The z-order of the Video of AbstractVideoTrack in the stacking space of
-     * all Videos. For more details, refer to the zOrder property of the Video
-     * class for React Native.
-     */
-    zOrder: React.PropTypes.number
-};
 
 /**
  * Returns null if a specific value is falsy; otherwise, returns the specified

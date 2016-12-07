@@ -1,4 +1,5 @@
 /* global $, APP, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import ConnectionIndicator from './ConnectionIndicator';
 
@@ -105,6 +106,14 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
         // call the original show, passing its actual this
         origShowFunc.call(this.popover);
     }.bind(this);
+
+    // override popover hide method so we can cleanup click handlers
+    let origHideFunc = this.popover.forceHide;
+    this.popover.forceHide = function () {
+        $(document).off("click", '#mutelink_' + this.id);
+        $(document).off("click", '#ejectlink_' + this.id);
+        origHideFunc.call(this.popover);
+    }.bind(this);
 };
 
 /**
@@ -183,7 +192,7 @@ RemoteVideo.prototype._muteHandler = function () {
         }
     }).catch(e => {
         //currently shouldn't be called
-        console.error(e);
+        logger.error(e);
     });
 
     this.popover.forceHide();
@@ -302,7 +311,7 @@ if (!interfaceConfig.filmStripOnly) {
         this.container.appendChild(spanElement);
 
         var menuElement = document.createElement('i');
-        menuElement.className = 'icon-menu-up';
+        menuElement.className = 'icon-menu';
         menuElement.title = 'Remote user controls';
         spanElement.appendChild(menuElement);
 
@@ -335,7 +344,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
         this.wasVideoPlayed = false;
     }
 
-    console.info((isVideo ? "Video" : "Audio") +
+    logger.info((isVideo ? "Video" : "Audio") +
                  " removed " + this.id, select);
 
     // when removing only the video element and we are on stage
@@ -400,7 +409,7 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
         }
     }
 
-    console.debug(this.id + " thumbnail is connection active ? " + isActive);
+    logger.debug(this.id + " thumbnail is connection active ? " + isActive);
 
     // Update 'mutedWhileDisconnected' flag
     this._figureOutMutedWhileDisconnected(!isActive);
@@ -419,7 +428,7 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
  * Removes RemoteVideo from the page.
  */
 RemoteVideo.prototype.remove = function () {
-    console.log("Remove thumbnail", this.id);
+    logger.log("Remove thumbnail", this.id);
     this.removeConnectionIndicator();
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
@@ -440,11 +449,10 @@ RemoteVideo.prototype.waitForPlayback = function (streamElement, stream) {
 
     var self = this;
 
-    // Register 'onplaying' listener to trigger 'videoactive' on VideoLayout
-    // when video playback starts
+    // Triggers when video playback starts
     var onPlayingHandler = function () {
         self.wasVideoPlayed = true;
-        self.VideoLayout.videoactive(streamElement, self.id);
+        self.VideoLayout.remoteVideoActive(streamElement, self.id);
         streamElement.onplaying = null;
         // Refresh to show the video
         self.updateView();
@@ -516,7 +524,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     }
 
     $(streamElement).click(onClickHandler);
-},
+};
 
 /**
  * Show/hide peer container for the given id.
@@ -579,7 +587,7 @@ RemoteVideo.prototype.hideConnectionIndicator = function () {
  */
 RemoteVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        console.warn( "Unable to set displayName - " + this.videoSpanId +
+        logger.warn( "Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
         return;
     }
@@ -630,6 +638,10 @@ RemoteVideo.createContainer = function (spanId) {
     let container = document.createElement('span');
     container.id = spanId;
     container.className = 'videocontainer';
+
+    let wrapper = document.createElement('div');
+    wrapper.className = 'videocontainer__background';
+    container.appendChild(wrapper);
 
     let indicatorBar = document.createElement('div');
     indicatorBar.className = "videocontainer__toptoolbar";

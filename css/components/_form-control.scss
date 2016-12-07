@@ -1,4 +1,4 @@
-.input-control {
+.form-control {
     padding: 16px 0;
 
     &:first-child {
@@ -19,17 +19,6 @@
         font-weight: $labelFontWeight;
     }
 
-    &__input {
-
-        &:last-child {
-            margin-bottom: inherit;
-        }
-
-        &::selection {
-            background-color: $defaultDarkSelectionColor;
-        }
-    }
-
     &__em {
         color: $inputControlEmColor;
     }
@@ -40,6 +29,10 @@
 
         span {
             vertical-align: middle;
+        }
+
+        &_error {
+            color: $errorColor;
         }
     }
 

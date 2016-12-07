@@ -6,6 +6,29 @@ import React, { Component } from 'react';
  * @abstract
  */
 export default class AbstractToolbarButton extends Component {
+    /**
+     * AbstractToolbarButton component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        /**
+         * The name of the Icon of this AbstractToolbarButton.
+         */
+        iconName: React.PropTypes.string,
+
+        /**
+         * The style of the Icon of this AbstractToolbarButton.
+         */
+        iconStyle: React.PropTypes.object,
+        onClick: React.PropTypes.func,
+        style:
+            React.PropTypes.oneOfType([
+                React.PropTypes.array,
+                React.PropTypes.object
+            ]),
+        underlayColor: React.PropTypes.any
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -34,28 +57,3 @@ export default class AbstractToolbarButton extends Component {
         return React.createElement(type, props);
     }
 }
-
-/**
- * AbstractToolbarButton component's property types.
- *
- * @static
- */
-AbstractToolbarButton.propTypes = {
-
-    /**
-     * The name of the Icon of this AbstractToolbarButton.
-     */
-    iconName: React.PropTypes.string,
-
-    /**
-     * The style of the Icon of this AbstractToolbarButton.
-     */
-    iconStyle: React.PropTypes.object,
-    onClick: React.PropTypes.func,
-    style:
-        React.PropTypes.oneOfType([
-            React.PropTypes.array,
-            React.PropTypes.object
-        ]),
-    underlayColor: React.PropTypes.any
-};

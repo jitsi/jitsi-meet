@@ -1,4 +1,5 @@
-/* global $, APP, toastr, Impromptu */
+/* global $, APP, toastr */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from './UIUtil';
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
@@ -79,7 +80,7 @@ function dontShowTheDialog(options) {
 function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
     if(isDontShowAgainEnabled(options)) {
         return (...args) => {
-            console.debug(args, options.buttonValues);
+            logger.debug(args, options.buttonValues);
             //args[1] is the value associated with the pressed button
             if(!options.buttonValues || options.buttonValues.length === 0
                 || options.buttonValues.indexOf(args[1]) !== -1 ) {
@@ -127,7 +128,8 @@ var messageHandler = {
             return null;
 
         let dialog = $.prompt(
-            APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
+            APP.translation.generateTranslationHTML(messageKey, i18nOptions),
+            {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,
@@ -138,7 +140,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(dialog, i18nOptions);
-        return dialog;
+        return $.prompt.getApi();
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
@@ -242,7 +244,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(twoButtonDialog);
-        return twoButtonDialog;
+        return $.prompt.getApi();
     },
 
     /**
@@ -289,7 +291,15 @@ var messageHandler = {
             buttons: buttons,
             defaultButton: 1,
             promptspeed: 0,
-            loaded: loadedFunction,
+            loaded: function() {
+                if (loadedFunction) {
+                    loadedFunction.apply(this, arguments);
+                }
+                // Hide the close button
+                if (persistent) {
+                    $(".jqiclose", this).hide();
+                }
+            },
             submit: dontShowAgainSubmitFunctionWrapper(
                 dontShowAgain, submitFunction),
             close: closeFunction,
@@ -300,10 +310,10 @@ var messageHandler = {
             args.closeText = '';
         }
 
-        let dialog = new Impromptu(
+        let dialog = $.prompt(
             msgString + generateDontShowCheckbox(dontShowAgain), args);
-        APP.translation.translateElement(dialog.getPrompt());
-        return dialog;
+        APP.translation.translateElement(dialog);
+        return $.prompt.getApi();
     },
 
     /**
@@ -339,13 +349,6 @@ var messageHandler = {
     },
 
     /**
-     * Closes currently opened dialog.
-     */
-    closeDialog: function () {
-        $.prompt.close();
-    },
-
-    /**
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
@@ -367,9 +370,9 @@ var messageHandler = {
                     = this._getFormattedTitleString(currentState.titleKey);
             }
         }
-        let dialog = new Impromptu(statesObject, options);
-        APP.translation.translateElement(dialog.getPrompt(), translateOptions);
-        return dialog;
+        let dialog = $.prompt(statesObject, options);
+        APP.translation.translateElement(dialog, translateOptions);
+        return $.prompt.getApi();
     },
 
     /**
@@ -415,7 +418,7 @@ var messageHandler = {
      */
     openReportDialog: function(titleKey, msgKey, error) {
         this.openMessageDialog(titleKey, msgKey);
-        console.log(error);
+        logger.log(error);
         //FIXME send the error to the server
     },
 
@@ -445,7 +448,7 @@ var messageHandler = {
      * @param messageKey the key from the language file for the text of the
      * message.
      * @param messageArguments object with the arguments for the message.
-     * @param options object with language options.
+     * @param options passed to toastr (e.g. timeOut)
      */
     notify: function(displayName, displayNameKey, cls, messageKey,
                      messageArguments, options) {

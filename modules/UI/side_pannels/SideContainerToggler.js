@@ -109,6 +109,16 @@ const SideContainerToggler = {
      * element to show
      */
     showInnerContainer(containerSelector) {
+
+        // Before showing the container, make sure there is no other visible.
+        // If we quickly show a container, while another one is animating
+        // and animation never ends, so we do not really hide the first one and
+        // we end up with to shown panels
+        $("#sideToolbarContainer").children().each(function() {
+            if ($(this).hasClass("show"))
+                SideContainerToggler.hideInnerContainer($(this));
+        });
+
         containerSelector.removeClass("hide").addClass("show");
 
         this.eventEmitter.emit(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,

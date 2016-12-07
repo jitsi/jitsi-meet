@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
@@ -55,7 +57,8 @@ function _requestLiveStreamId() {
             state0: {
                 titleKey: "dialog.liveStreaming",
                 html:
-                    `<input name="streamId" type="text"
+                    `<input  class="input-control"
+                    name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     autofocus>`,
                 persistent: false,
@@ -123,6 +126,7 @@ function _requestRecordingToken () {
     let messageString = (
         `<input name="recordingToken" type="text"
                 data-i18n="[placeholder]dialog.token"
+                class="input-control"
                 autofocus>`
     );
     return new Promise(function (resolve, reject) {
@@ -325,7 +329,7 @@ var Recording = {
                         }).catch(
                             reason => {
                                 if (reason !== APP.UI.messageHandler.CANCEL)
-                                    console.error(reason);
+                                    logger.error(reason);
                                 else
                                     JitsiMeetJS.analytics.sendEvent(
                                         'recording.canceled');
@@ -348,7 +352,7 @@ var Recording = {
                         }).catch(
                             reason => {
                                 if (reason !== APP.UI.messageHandler.CANCEL)
-                                    console.error(reason);
+                                    logger.error(reason);
                                 else
                                     JitsiMeetJS.analytics.sendEvent(
                                         'recording.canceled');
@@ -387,11 +391,10 @@ var Recording = {
      * @param show {true} to show the recording button, {false} to hide it
      */
     showRecordingButton (show) {
-        if (_isRecordingButtonEnabled() && show) {
-            $('#toolbar_button_record').css({display: "inline-block"});
-        } else {
-            $('#toolbar_button_record').css({display: "none"});
-        }
+        let shouldShow = show && _isRecordingButtonEnabled();
+        let id = 'toolbar_button_record';
+
+        UIUtil.setVisible(id, shouldShow);
     },
 
     /**
@@ -474,10 +477,9 @@ var Recording = {
             labelSelector.css({display: "inline-block"});
 
         // Recording spinner
-        if (recordingState === Status.RETRYING)
-            $("#recordingSpinner").show();
-        else
-            $("#recordingSpinner").hide();
+        let spinnerId = 'recordingSpinner';
+        UIUtil.setVisible(
+            spinnerId, recordingState === Status.RETRYING);
     },
     // checks whether recording is enabled and whether we have params
     // to start automatically recording

@@ -8,6 +8,20 @@ import { styles } from './styles';
  */
 export default class Avatar extends Component {
     /**
+     * Avatar component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        /**
+         * The optional style to add to an Avatar in order to customize its base
+         * look (and feel).
+         */
+        style: React.PropTypes.object,
+        uri: React.PropTypes.string
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -23,18 +37,3 @@ export default class Avatar extends Component {
         );
     }
 }
-
-/**
- * Avatar component's property types.
- *
- * @static
- */
-Avatar.propTypes = {
-
-    /**
-     * The optional style to add to an Avatar in order to customize its base
-     * look (and feel).
-     */
-    style: React.PropTypes.object,
-    uri: React.PropTypes.string
-};

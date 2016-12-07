@@ -1,4 +1,6 @@
 /* global APP, JitsiMeetJS, config */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
 
@@ -84,7 +86,7 @@ function connect(id, password, roomName) {
 
         function handleConnectionFailed(err) {
             unsubscribe();
-            console.error("CONNECTION FAILED:", err);
+            logger.error("CONNECTION FAILED:", err);
             reject(err);
         }
 

@@ -24,16 +24,14 @@ ReducerRegistry.register(
                     participantId: action.newValue
                 };
             }
-
-            return state;
+            break;
 
         case LARGE_VIDEO_PARTICIPANT_CHANGED:
             return {
                 ...state,
                 participantId: action.participantId
             };
-
-        default:
-            return state;
         }
+
+        return state;
     });

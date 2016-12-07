@@ -79,6 +79,10 @@
         "policyText": "&nbsp;",
         "title": "__app__ needs to use your microphone and camera."
     },
+    "suspendedoverlay": {
+        "title": "Your video call was interrupted, because this computer went to sleep.",
+        "rejoinKeyTitle": "Rejoin"
+    },
     "toolbar": {
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",
@@ -199,6 +203,7 @@
         "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference can set a password.",
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
         "connectErrorWithMsg": "Oops! Something went wrong and we couldn't connect to the conference: __msg__",
+        "incorrectPassword": "Password is incorrect",
         "connecting": "Connecting",
         "copy": "Copy",
         "error": "Error",

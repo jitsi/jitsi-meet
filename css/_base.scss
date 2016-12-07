@@ -29,36 +29,6 @@ html, body, input, textarea, keygen, select, button {
     color: #636363;
 }
 
-input[type='text'], input[type='password'], textarea {
-    display: inline-block;
-    width: 100%;
-    padding: 5px 7px;
-    color: $inputColor;
-    border-radius: $borderRadius;
-    line-height: 32px;
-    height: 32px;
-    text-align: left;
-    border:1px solid $inputBorderColor;
-    background-color: $inputBackground;
-    outline: none; /* removes the default outline */
-    resize: none; /* prevents the user-resizing, adjust to taste */
-}
-
-@include placeholder {
-    color: $placeHolderColor;
-}
-
-textarea {
-    overflow: hidden;
-    word-wrap: break-word;
-    resize: none;
-    line-height: 1.5em;
-}
-
-button.no-icon {
-    padding: 0 1em;
-}
-
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
@@ -75,10 +45,26 @@ input[type="reset"], input[type="submit"] {
     cursor: pointer;
 }
 
+textarea {
+    overflow: hidden;
+    word-wrap: break-word;
+    resize: none;
+    line-height: 1.5em;
+}
+
+input[type='text'], input[type='password'], textarea {
+    outline: none; /* removes the default outline */
+    resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
 button {
     color: #FFF;
     background-color: $buttonBackground;
     border-radius: $borderRadius;
+
+    &.no-icon {
+        padding: 0 1em;
+    }
 }
 
 button,
@@ -133,38 +119,6 @@ form {
 }
 
 /**
- * Hides an element.
- */
-.hide {
-    display: none !important;
-}
-
-/**
- * Shows an element.
- */
-.show {
-    display: block !important;
-}
-
-/**
- * Shows an inline element.
- */
-.show-inline {
-    display: inline-block !important;
-}
-
-/**
- * Shows a flex element.
- */
-.show-flex {
-    display: -webkit-box !important;
-    display: -moz-box !important;
-    display: -ms-flexbox !important;
-    display: -webkit-flex !important;
-    display: flex !important;
-}
-
-/**
 * Tooltips
 **/
 .tipsy {
@@ -183,18 +137,6 @@ form {
 */
 .aui-blanket {
     visibility: visible;
-}
-
-.link {
-    cursor: pointer;
-    color: $linkFontColor;
-    @include transition(color .1s ease-out);
-
-    &:hover {
-        color: $linkHoverFontColor;
-        text-decoration: underline;
-        @include transition(color .1s ease-in);
-    }
 }
 
 #inviteLinkRef {

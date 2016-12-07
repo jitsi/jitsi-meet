@@ -1,12 +1,14 @@
 /* global APP, JitsiMeetJS */
-import askForPassword from './AskForPassword';
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
+import RequirePasswordDialog from './RequirePasswordDialog';
 
 /**
  * Show notification that user cannot set password for the conference
  * because server doesn't support that.
  */
 function notifyPasswordNotSupported () {
-    console.warn('room passwords not supported');
+    logger.warn('room passwords not supported');
     APP.UI.messageHandler.showError(
         "dialog.warning", "dialog.passwordNotSupported");
 }
@@ -16,7 +18,7 @@ function notifyPasswordNotSupported () {
  * @param {Error} err error
  */
 function notifyPasswordFailed(err) {
-    console.warn('setting password failed', err);
+    logger.warn('setting password failed', err);
     APP.UI.messageHandler.showError(
         "dialog.lockTitle", "dialog.lockMessage");
 }
@@ -31,7 +33,7 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
  */
 export default function createRoomLocker (room) {
     let password;
-
+    let requirePasswordDialog = new RequirePasswordDialog();
     /**
      * If the room was locked from someone other than us, we indicate it with
      * this property in order to have correct roomLocker state of isLocked.
@@ -64,7 +66,7 @@ export default function createRoomLocker (room) {
                 if (!password)
                     lockedElsewhere = false;
             }).catch(function (err) {
-                console.error(err);
+                logger.error(err);
                 if (err === ConferenceErrors.PASSWORD_NOT_SUPPORTED) {
                     notifyPasswordNotSupported();
                 } else {
@@ -104,7 +106,7 @@ export default function createRoomLocker (room) {
          * Asks user for required conference password.
          */
         requirePassword () {
-            return askForPassword().then(
+            return requirePasswordDialog.askForPassword().then(
                 newPass => { password = newPass; }
             ).catch(
                 reason => {
@@ -113,9 +115,18 @@ export default function createRoomLocker (room) {
                     // pass stays between attempts
                     password = null;
                     if (reason !== APP.UI.messageHandler.CANCEL)
-                        console.error(reason);
+                        logger.error(reason);
                 }
             );
+        },
+
+        /**
+         * Hides require password dialog
+         */
+        hideRequirePasswordDialog() {
+            if (requirePasswordDialog.isOpened) {
+                requirePasswordDialog.close();
+            }
         }
     };
 }

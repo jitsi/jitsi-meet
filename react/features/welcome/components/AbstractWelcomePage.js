@@ -12,6 +12,17 @@ import { getLocalVideoTrack } from '../../base/tracks';
  */
 export class AbstractWelcomePage extends Component {
     /**
+     * AbstractWelcomePage component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        dispatch: React.PropTypes.func,
+        localVideoTrack: React.PropTypes.object,
+        room: React.PropTypes.string
+    }
+
+    /**
      * Initializes a new AbstractWelcomePage instance, including the initial
      * state of the room name input.
      *
@@ -90,17 +101,6 @@ export class AbstractWelcomePage extends Component {
         );
     }
 }
-
-/**
- * AbstractWelcomePage component's property types.
- *
- * @static
- */
-AbstractWelcomePage.propTypes = {
-    dispatch: React.PropTypes.func,
-    localVideoTrack: React.PropTypes.object,
-    room: React.PropTypes.string
-};
 
 /**
  * Selects local video track from tracks in state, local participant and room

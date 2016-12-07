@@ -1,4 +1,6 @@
 /* global $, JitsiMeetJS, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -51,6 +53,9 @@ function SmallVideo(VideoLayout) {
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
     this.videoIsHovered = false;
+    this.hideDisplayName = false;
+    // we can stop updating the thumbnail
+    this.disableUpdateView = false;
 }
 
 /**
@@ -117,7 +122,10 @@ SmallVideo.prototype.setDeviceAvailabilityIcons = function (devices) {
 
 /**
  * Sets the type of the video displayed by this instance.
- * @param videoType 'camera' or 'desktop'
+ * Note that this is a string without clearly defined or checked values, and
+ * it is NOT one of the strings defined in service/RTC/VideoType in
+ * lib-jitsi-meet.
+ * @param videoType 'camera' or 'desktop', or 'sharedvideo'.
  */
 SmallVideo.prototype.setVideoType = function (videoType) {
     this.videoType = videoType;
@@ -125,7 +133,10 @@ SmallVideo.prototype.setVideoType = function (videoType) {
 
 /**
  * Returns the type of the video displayed by this instance.
- * @returns {String} 'camera', 'screen' or undefined.
+ * Note that this is a string without clearly defined or checked values, and
+ * it is NOT one of the strings defined in service/RTC/VideoType in
+ * lib-jitsi-meet.
+ * @returns {String} 'camera', 'screen', 'sharedvideo', or undefined.
  */
 SmallVideo.prototype.getVideoType = function () {
     return this.videoType;
@@ -206,16 +217,11 @@ SmallVideo.prototype.hideIndicator = function () {
  * @param {boolean} isMuted indicates if the muted element should be shown
  * or hidden
  */
-SmallVideo.prototype.showAudioIndicator = function(isMuted) {
+SmallVideo.prototype.showAudioIndicator = function (isMuted) {
+    let mutedIndicator = this.getAudioMutedIndicator();
 
-    var audioMutedIndicator = this.getAudioMutedIndicator();
+    UIUtil.setVisible(mutedIndicator, isMuted);
 
-    if (!isMuted) {
-        audioMutedIndicator.hide();
-    }
-    else {
-        audioMutedIndicator.show();
-    }
     this.isAudioMuted = isMuted;
 };
 
@@ -223,12 +229,13 @@ SmallVideo.prototype.showAudioIndicator = function(isMuted) {
  * Returns the audio muted indicator jquery object. If it doesn't exists -
  * creates it.
  *
- * @returns {jQuery|HTMLElement} the audio muted indicator
+ * @returns {HTMLElement} the audio muted indicator
  */
 SmallVideo.prototype.getAudioMutedIndicator = function () {
-    var audioMutedSpan = $('#' + this.videoSpanId + ' .audioMuted');
+    let selector = '#' + this.videoSpanId + ' .audioMuted';
+    let audioMutedSpan = document.querySelector(selector);
 
-    if (audioMutedSpan.length) {
+    if (audioMutedSpan) {
         return audioMutedSpan;
     }
 
@@ -239,16 +246,15 @@ SmallVideo.prototype.getAudioMutedIndicator = function () {
         "videothumbnail.mute",
         "top");
 
+    let mutedIndicator = document.createElement('i');
+    mutedIndicator.className = 'icon-mic-disabled';
+    audioMutedSpan.appendChild(mutedIndicator);
+
     this.container
         .querySelector('.videocontainer__toolbar')
         .appendChild(audioMutedSpan);
 
-
-    var mutedIndicator = document.createElement('i');
-    mutedIndicator.className = 'icon-mic-disabled';
-    audioMutedSpan.appendChild(mutedIndicator);
-
-    return $('#' + this.videoSpanId + ' .audioMuted');
+    return audioMutedSpan;
 };
 
 /**
@@ -262,9 +268,9 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 
-    var videoMutedSpan = this.getVideoMutedIndicator();
+    let element = this.getVideoMutedIndicator();
 
-    videoMutedSpan[isMuted ? 'show' : 'hide']();
+    UIUtil.setVisible(element, isMuted);
 };
 
 /**
@@ -274,9 +280,10 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
  * @returns {jQuery|HTMLElement} the video muted indicator
  */
 SmallVideo.prototype.getVideoMutedIndicator = function () {
-    var videoMutedSpan = $('#' + this.videoSpanId + ' .videoMuted');
+    var selector = '#' + this.videoSpanId + ' .videoMuted';
+    var videoMutedSpan = document.querySelector(selector);
 
-    if (videoMutedSpan.length) {
+    if (videoMutedSpan) {
         return videoMutedSpan;
     }
 
@@ -296,7 +303,7 @@ SmallVideo.prototype.getVideoMutedIndicator = function () {
 
     videoMutedSpan.appendChild(mutedIndicator);
 
-    return $('#' + this.videoSpanId + ' .videoMuted');
+    return videoMutedSpan;
 };
 
 /**
@@ -484,12 +491,15 @@ SmallVideo.prototype._isHovered = function () {
  * video because there is no dominant speaker and no focused speaker
  */
 SmallVideo.prototype.updateView = function () {
+    if (this.disableUpdateView)
+        return;
+
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
             this.avatarChanged(Avatar.getAvatarUrl(this.id));
         } else {
-            console.error("Unable to init avatar - no id", this);
+            logger.error("Unable to init avatar - no id", this);
             return;
         }
     }
@@ -497,23 +507,24 @@ SmallVideo.prototype.updateView = function () {
     // Determine whether video, avatar or blackness should be displayed
     let displayMode = this.selectDisplayMode();
     // Show/hide video.
-    UIUtil.setVisibility(   this.selectVideoElement(),
-                            (displayMode === DISPLAY_VIDEO
+    UIUtil.setVisibleBySelector(this.selectVideoElement(),
+                                (displayMode === DISPLAY_VIDEO
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
     // Show/hide the avatar.
-    UIUtil.setVisibility(   this.$avatar(),
-                            (displayMode === DISPLAY_AVATAR
+    UIUtil.setVisibleBySelector(this.$avatar(),
+                                (displayMode === DISPLAY_AVATAR
                                 || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // Show/hide the display name.
-    UIUtil.setVisibility(   this.$displayName(),
-                            (displayMode === DISPLAY_BLACKNESS_WITH_NAME
+    UIUtil.setVisibleBySelector(this.$displayName(),
+                                !this.hideDisplayName
+                                && (displayMode === DISPLAY_BLACKNESS_WITH_NAME
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME
                                 || displayMode === DISPLAY_AVATAR_WITH_NAME));
     // show hide overlay when there is a video or avatar under
     // the display name
-    UIUtil.setVisibility(   $('#' + this.videoSpanId
+    UIUtil.setVisibleBySelector($('#' + this.videoSpanId
                                 + ' .videocontainer__hoverOverlay'),
-                            (displayMode === DISPLAY_AVATAR_WITH_NAME
+                                (displayMode === DISPLAY_AVATAR_WITH_NAME
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
 };
 
@@ -546,7 +557,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
 
     if (!this.container) {
-        console.warn( "Unable to set dominant speaker indicator - "
+        logger.warn( "Unable to set dominant speaker indicator - "
             + this.videoSpanId + " does not exist");
         return;
     }
@@ -561,11 +572,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         tooltip: 'speaker'
     });
 
-    if (show) {
-        indicatorSpan.classList.add('show');
-    } else {
-        indicatorSpan.classList.remove('show');
-    }
+    UIUtil.setVisible(indicatorSpan, show);
 };
 
 /**
@@ -574,7 +581,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
  */
 SmallVideo.prototype.showRaisedHandIndicator = function (show) {
     if (!this.container) {
-        console.warn( "Unable to raised hand indication - "
+        logger.warn( "Unable to raised hand indication - "
             + this.videoSpanId + " does not exist");
         return;
     }
@@ -589,11 +596,7 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         tooltip: 'raisedHand'
     });
 
-    if (show) {
-        indicatorSpan.classList.add('show');
-    } else {
-        indicatorSpan.classList.remove('show');
-    }
+    UIUtil.setVisible(indicatorSpan, show);
 };
 
 /**

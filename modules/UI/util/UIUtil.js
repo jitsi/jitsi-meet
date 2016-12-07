@@ -19,6 +19,34 @@ const TOOLTIP_POSITIONS = {
 };
 
 /**
+ * Associates the default display type with corresponding CSS class
+ */
+const SHOW_CLASSES = {
+    'block': 'show',
+    'inline': 'show-inline',
+    'list-item': 'show-list-item'
+};
+
+/**
+ * Contains sizes of thumbnails
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const ThumbnailSizes = {
+    SMALL: 60,
+    MEDIUM: 80
+};
+
+/**
+ * Contains font sizes for thumbnail indicators
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const IndicatorFontSizes = {
+    SMALL: 5,
+    MEDIUM: 6,
+    NORMAL: 8
+};
+
+/**
  * Created by hristo on 12/22/14.
  */
  var UIUtil = {
@@ -27,9 +55,7 @@ const TOOLTIP_POSITIONS = {
      * Returns the available video width.
      */
     getAvailableVideoWidth: function () {
-        let rightPanelWidth = 0;
-
-        return window.innerWidth - rightPanelWidth;
+        return window.innerWidth;
     },
 
     /**
@@ -214,38 +240,66 @@ const TOOLTIP_POSITIONS = {
     },
 
     /**
-     * Shows the element given by id.
+     * Shows / hides the element given by id.
      *
-     * @param {String} the identifier of the element to show
+     * @param {string|HTMLElement} idOrElement the identifier or the element
+     *        to show/hide
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
      */
-    showElement(id) {
-        if ($("#"+id).hasClass("hide"))
-            $("#"+id).removeClass("hide");
+    setVisible(id, visible) {
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
-        $("#"+id).addClass("show");
+        if (!element) {
+            return;
+        }
+
+        if (!visible)
+            element.classList.add('hide');
+        else if (element.classList.contains('hide')) {
+            element.classList.remove('hide');
+        }
+
+        let type = this._getElementDefaultDisplay(element.tagName);
+        let className = SHOW_CLASSES[type];
+
+        if (visible) {
+            element.classList.add(className);
+        }
+        else if (element.classList.contains(className))
+            element.classList.remove(className);
     },
 
     /**
-     * Hides the element given by id.
-     *
-     * @param {String} the identifier of the element to hide
+     * Returns default display style for the tag
+     * @param tag
+     * @returns {*}
+     * @private
      */
-    hideElement(id) {
-        if ($("#"+id).hasClass("show"))
-            $("#"+id).removeClass("show");
+    _getElementDefaultDisplay(tag) {
+        let tempElement = document.createElement(tag);
 
-        $("#"+id).addClass("hide");
+        document.body.appendChild(tempElement);
+        let style = window.getComputedStyle(tempElement).display;
+        document.body.removeChild(tempElement);
+
+        return style;
     },
 
     /**
      * Shows / hides the element with the given jQuery selector.
      *
-     * @param {jQuery} selector the jQuery selector of the element to show/hide
+     * @param {jQuery} jquerySelector the jQuery selector of the element to
+     * show / shide
      * @param {boolean} isVisible
      */
-    setVisibility(selector, isVisible) {
-        if (selector && selector.length > 0) {
-            selector.css("visibility", isVisible ? "visible" : "hidden");
+    setVisibleBySelector(jquerySelector, isVisible) {
+        if (jquerySelector && jquerySelector.length > 0) {
+            jquerySelector.css("visibility", isVisible ? "visible" : "hidden");
         }
     },
 
@@ -411,6 +465,7 @@ const TOOLTIP_POSITIONS = {
 
         if (indicators.length <= 0) {
             indicatorSpan = document.createElement('span');
+
             indicatorSpan.className = 'indicator';
             indicatorSpan.id = indicatorId;
 
@@ -423,6 +478,8 @@ const TOOLTIP_POSITIONS = {
                 APP.translation.translateElement($(indicatorSpan));
             }
 
+            this._resizeIndicator(indicatorSpan);
+
             document.getElementById(videoSpanId)
                 .querySelector('.videocontainer__toptoolbar')
                 .appendChild(indicatorSpan);
@@ -431,6 +488,37 @@ const TOOLTIP_POSITIONS = {
         }
 
         return indicatorSpan;
+    },
+
+    /**
+     * Resizing indicator element passing via argument
+     * according to the current thumbnail size
+     * @param {HTMLElement} indicator - indicator element
+     * @private
+     */
+    _resizeIndicator(indicator) {
+        let height = $('#localVideoContainer').height();
+        let fontSize = this.getIndicatorFontSize(height);
+        $(indicator).css('font-size', fontSize);
+    },
+
+    /**
+     * Returns font size for indicators according to current
+     * height of thumbnail
+     * @param {Number} - height - current height of thumbnail
+     * @returns {Number} - font size for current height
+     */
+    getIndicatorFontSize(height) {
+        const { SMALL, MEDIUM } = ThumbnailSizes;
+        let fontSize = IndicatorFontSizes.NORMAL;
+
+        if (height <= SMALL) {
+            fontSize = IndicatorFontSizes.SMALL;
+        } else if (height > SMALL && height <= MEDIUM) {
+            fontSize = IndicatorFontSizes.MEDIUM;
+        }
+
+        return fontSize;
     }
 };
 

@@ -30,3 +30,8 @@ Type: boolean
 Default: false
 _Description: for internal use
  for internal use.
+
+Template: jitsi-videobridge/jvb-hostname
+Type: string
+_Description: Hostname:
+ The Jitsi Meet web config package needs the DNS hostname of your instance.

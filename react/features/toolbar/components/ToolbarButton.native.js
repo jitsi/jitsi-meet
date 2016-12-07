@@ -11,6 +11,12 @@ import AbstractToolbarButton from './AbstractToolbarButton';
  * @extends AbstractToolbarButton
  */
 export default class ToolbarButton extends AbstractToolbarButton {
+    /**
+     * ToolbarButton component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractToolbarButton.propTypes
 
     /**
      * Renders the button of this Toolbar button.
@@ -39,10 +45,3 @@ export default class ToolbarButton extends AbstractToolbarButton {
         return super._renderIcon(Icon);
     }
 }
-
-/**
- * ToolbarButton component's property types.
- *
- * @static
- */
-ToolbarButton.propTypes = AbstractToolbarButton.propTypes;

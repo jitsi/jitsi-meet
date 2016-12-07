@@ -1,0 +1,121 @@
+%align-right {
+    @include flex();
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.filmstrip {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px 5px;
+    @extend %align-right;
+
+    &__toolbar {
+        @include flex();
+        flex-direction: column-reverse;
+        flex-wrap: nowrap;
+        position: relative;
+        z-index: 1;                     // Set z-index to make element visible
+        width: $hideFilmstripButtonWidth;
+
+        button {
+            font-size: 14px;
+            line-height: 1.2;
+            text-align: center;
+            background: transparent;
+            opacity: 0.7;
+            height: auto;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            border: none;
+            outline: none;
+
+            -webkit-appearance: none;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            i {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &__videos {
+        @extend %align-right;
+        position:relative;
+        height:196px;
+        padding: 0;
+        padding-left: 17px;
+        bottom: 0;
+        width:auto;
+        border: $thumbnailsBorder solid transparent;
+        z-index: 5;
+        transition: bottom 2s;
+        overflow: visible !important;
+        font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
+
+        &.hidden {
+            bottom: -196px;
+        }
+
+        .videocontainer {
+            display: none;
+            position: relative;
+            background-size: contain;
+            border: $thumbnailVideoBorder solid transparent;
+            border-radius:1px;
+            margin: 0 $thumbnailVideoMargin;
+
+            &.videoContainerFocused, &:hover {
+                cursor: hand;
+            }
+
+            /**
+            * Focused video thumbnail.
+            */
+            &.videoContainerFocused {
+                transition-duration: 0.5s;
+                -webkit-transition-duration: 0.5s;
+                -webkit-animation-name: greyPulse;
+                -webkit-animation-duration: 2s;
+                -webkit-animation-iteration-count: 1;
+                border: $thumbnailVideoBorder solid $videoThumbnailSelected !important;
+                box-shadow: inset 0 0 3px $videoThumbnailSelected,
+                0 0 3px $videoThumbnailSelected !important;
+            }
+
+            .remotevideomenu {
+                display: none;
+            }
+
+            /**
+            * Hovered video thumbnail.
+            */
+            &:hover {
+                cursor: hand;
+                border: $thumbnailVideoBorder solid $videoThumbnailHovered;
+                box-shadow: inset 0 0 3px $videoThumbnailHovered,
+                0 0 3px $videoThumbnailHovered;
+
+                .remotevideomenu {
+                    display: inline-block;
+                }
+            }
+
+            /* With TemasysWebRTC plugin <object/> element is used
+            instead of <video/> */
+            & > video,
+            & > object {
+                cursor: hand;
+                border-radius:1px;
+                object-fit: cover;
+                overflow: hidden;
+            }
+        }
+    }
+}

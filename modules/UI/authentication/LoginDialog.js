@@ -11,10 +11,10 @@ function getPasswordInputHtml() {
 
     return `
         <input name="username" type="text" 
-               class="input-control__input"
+               class="input-control"
                placeholder=${placeholder} autofocus>
         <input name="password" type="password"
-               class="input-control__input"
+               class="input-control"
                data-i18n="[placeholder]dialog.userPassword">`;
 }
 
@@ -206,7 +206,7 @@ export default {
      */
     showAuthRequiredDialog: function (roomName, onAuthNow) {
         var msg = APP.translation.generateTranslationHTML(
-            "dialog.WaitForHostMsg", {room: roomName}
+            "[html]dialog.WaitForHostMsg", {room: roomName}
         );
 
         var buttonTxt = APP.translation.generateTranslationHTML(

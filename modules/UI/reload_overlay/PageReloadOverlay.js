@@ -1,4 +1,5 @@
 /* global $, APP, AJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Overlay from '../overlay/Overlay';
 
@@ -31,20 +32,22 @@ class PageReloadOverlayImpl extends Overlay{
      * @override
      */
     _buildOverlayContent() {
-        return `
-            <span data-i18n='dialog.conferenceReloadTitle' 
-                  class='reload_overlay_title'></span>
-            <span data-i18n='dialog.conferenceReloadMsg' 
-                  class='reload_overlay_msg'></span>
-            <div>
-                <div id='reloadProgressBar' class="aui-progress-indicator">
-                    <span class="aui-progress-indicator-value"></span>
-                </div>
-                <span id='reloadSecRemaining' 
-                      data-i18n="dialog.conferenceReloadTimeLeft" 
-                      class='reload_overlay_msg'>
-                </span>
-            </div>`;
+        return `<div class="inlay">
+                    <span data-i18n='dialog.conferenceReloadTitle'
+                          class='reload_overlay_title'></span>
+                    <span data-i18n='dialog.conferenceReloadMsg'
+                          class='reload_overlay_msg'></span>
+                    <div>
+                        <div id='reloadProgressBar'
+                            class="aui-progress-indicator">
+                            <span class="aui-progress-indicator-value"></span>
+                        </div>
+                        <span id='reloadSecRemaining'
+                              data-i18n="dialog.conferenceReloadTimeLeft"
+                            class='reload_overlay_msg'>
+                        </span>
+                    </div>
+                </div>`;
     }
 
     /**
@@ -82,7 +85,7 @@ class PageReloadOverlayImpl extends Overlay{
             }
         }.bind(this), 1000);
 
-        console.info(
+        logger.info(
             "The conference will be reloaded after "
                 + this.timeLeft + " seconds.");
     }
@@ -110,11 +113,24 @@ export default {
      *
      * @param {number} timeoutSeconds how many seconds before the conference
      * reload will happen.
+     * @param {boolean} isNetworkFailure <tt>true</tt> indicates that it's
+     * caused by network related failure or <tt>false</tt> when it's
+     * the infrastructure.
+     * @param {string} reason a label string identifying the reason for the page
+     * reload which will be included in details of the log event
      */
-    show(timeoutSeconds) {
+    show(timeoutSeconds, isNetworkFailure, reason) {
 
         if (!overlay) {
             overlay = new PageReloadOverlayImpl(timeoutSeconds);
+        }
+        // Log the page reload event
+        if (!this.isVisible()) {
+            // FIXME (CallStats - issue) this event will not make it to
+            // the CallStats, because the log queue is not flushed, before
+            // "fabric terminated" is sent to the backed
+            APP.conference.logEvent(
+                'page.reload', undefined /* value */, reason /* label */);
         }
         overlay.show();
     }

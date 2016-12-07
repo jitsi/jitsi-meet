@@ -1,0 +1,43 @@
+
+<VirtualHost *:80>
+    ServerName jitsi-meet.example.com
+    Redirect permanent / https://jitsi-meet.example.com/
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</VirtualHost>
+
+<VirtualHost *:443>
+
+  ServerName jitsi-meet.example.com
+
+  SSLProtocol TLSv1 TLSv1.1 TLSv1.2
+  SSLEngine on
+  SSLProxyEngine on
+  SSLCertificateFile /etc/jitsi/meet/jitsi-meet.example.com.crt
+  SSLCertificateKeyFile /etc/jitsi/meet/jitsi-meet.example.com.key
+  SSLCipherSuite "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA256:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EDH+aRSA+AESGCM:EDH+aRSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!MEDIUM:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED"
+  SSLHonorCipherOrder on
+  Header set Strict-Transport-Security "max-age=31536000"
+
+  DocumentRoot "/usr/share/jitsi-meet"
+  <Directory "/usr/share/jitsi-meet">
+    Options Indexes MultiViews Includes FollowSymLinks
+    AddOutputFilter Includes html
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  Alias "/config.js" "/etc/jitsi/meet/jitsi-meet.example.com-config.js"
+  <Location /config.js>
+    Require all granted
+  </Location>
+
+  ProxyPreserveHost on
+  ProxyPass /http-bind http://localhost:5280/http-bind/
+  ProxyPassReverse /http-bind http://localhost:5280/http-bind/
+
+  RewriteEngine on
+  RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
+</VirtualHost>

@@ -1,6 +1,6 @@
 /* global MD5 */
 
-import { ReducerRegistry } from '../redux';
+import { ReducerRegistry, setStateProperty } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -25,8 +25,9 @@ import {
  * @property {boolean} local - If true, participant is local.
  * @property {boolean} pinned - If true, participant is currently a
  * "PINNED_ENDPOINT".
- * @property {boolean} speaking - If true, participant is currently a dominant
- * speaker.
+ * @property {boolean} dominantSpeaker - If this participant is the dominant
+ * speaker in the (associated) conference, <tt>true</tt>; otherwise,
+ * <tt>false</tt>.
  * @property {string} email - Participant email.
  */
 
@@ -36,7 +37,7 @@ import {
  * @type {string[]}
  */
 const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
-    = [ 'id', 'local', 'pinned', 'speaking' ];
+    = [ 'dominantSpeaker', 'id', 'local', 'pinned' ];
 
 /**
  * Reducer function for a single participant.
@@ -53,10 +54,11 @@ function participant(state, action) {
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
-        return {
-            ...state,
-            speaking: state.id === action.participant.id
-        };
+        return (
+            setStateProperty(
+                    state,
+                    'dominantSpeaker',
+                    state.id === action.participant.id));
 
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
@@ -68,8 +70,7 @@ function participant(state, action) {
                 avatar: state.avatar || _getAvatarURL(id, state.email)
             };
         }
-
-        return state;
+        break;
 
     case PARTICIPANT_JOINED: {
         const participant = action.participant; // eslint-disable-line no-shadow
@@ -94,7 +95,7 @@ function participant(state, action) {
             name,
             pinned: participant.pinned || false,
             role: participant.role || PARTICIPANT_ROLE.NONE,
-            speaking: participant.speaking || false
+            dominantSpeaker: participant.dominantSpeaker || false
         };
     }
 
@@ -117,19 +118,18 @@ function participant(state, action) {
 
             return newState;
         }
-
-        return state;
+        break;
 
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
-        return {
-            ...state,
-            pinned: state.id === action.participant.id
-        };
-
-    default:
-        return state;
+        return (
+            setStateProperty(
+                    state,
+                    'pinned',
+                    state.id === action.participant.id));
     }
+
+    return state;
 }
 
 /**

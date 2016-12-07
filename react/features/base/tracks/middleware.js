@@ -109,7 +109,8 @@ function _mutedChanged(store, action, mediaType) {
  * @param {Action} action - The Redux action <tt>TRACK_UPDATED</tt> which is
  * being dispatched in the specified <tt>store</tt>.
  * @private
- * @returns {void}
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified <tt>action</tt>.
  */
 function _trackUpdated(store, next, action) {
     // Determine the muted state of the local track before the update.

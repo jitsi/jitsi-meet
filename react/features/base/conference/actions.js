@@ -6,10 +6,7 @@ import {
     participantLeft,
     participantRoleChanged
 } from '../participants';
-import {
-    trackAdded,
-    trackRemoved
-} from '../tracks';
+import { trackAdded, trackRemoved } from '../tracks';
 
 import {
     CONFERENCE_JOINED,
@@ -46,7 +43,7 @@ export function createConference() {
         const conference
             = connection.initJitsiConference(room, { openSctp: true });
 
-        dispatch(_setupConferenceListeners(conference));
+        _setupConferenceListeners(conference, dispatch);
 
         conference.join();
     };
@@ -60,11 +57,12 @@ export function createConference() {
  * joined by the local participant.
  * @returns {Function}
  */
-export function conferenceJoined(conference) {
+function _conferenceJoined(conference) {
     return (dispatch, getState) => {
-        const localTracks = getState()['features/base/tracks']
-            .filter(t => t.local)
-            .map(t => t.jitsiTrack);
+        const localTracks
+            = getState()['features/base/tracks']
+                .filter(t => t.local)
+                .map(t => t.jitsiTrack);
 
         if (localTracks.length) {
             _addLocalTracksToConference(conference, localTracks);
@@ -91,7 +89,7 @@ export function conferenceJoined(conference) {
  *      }
  *  }}
  */
-export function conferenceLeft(conference) {
+function _conferenceLeft(conference) {
     return {
         type: CONFERENCE_LEFT,
         conference: {
@@ -144,48 +142,45 @@ export function setRoom(room) {
 /**
  * Setup various conference event handlers.
  *
- * @param {JitsiConference} conference - Conference instance.
+ * @param {JitsiConference} conference - The JitsiConference instance.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
  * @private
- * @returns {Function}
+ * @returns {void}
  */
-function _setupConferenceListeners(conference) {
-    return dispatch => {
-        conference.on(
+function _setupConferenceListeners(conference, dispatch) {
+    conference.on(
             JitsiConferenceEvents.CONFERENCE_JOINED,
-            () => dispatch(conferenceJoined(conference)));
-        conference.on(
+            () => dispatch(_conferenceJoined(conference)));
+    conference.on(
             JitsiConferenceEvents.CONFERENCE_LEFT,
-            () => dispatch(conferenceLeft(conference)));
+            () => dispatch(_conferenceLeft(conference)));
 
-        conference.on(
+    conference.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             id => dispatch(dominantSpeakerChanged(id)));
 
-        conference.on(
+    conference.on(
             JitsiConferenceEvents.TRACK_ADDED,
-            track =>
-                track && !track.isLocal() && dispatch(trackAdded(track)));
-        conference.on(
+            t => t && !t.isLocal() && dispatch(trackAdded(t)));
+    conference.on(
             JitsiConferenceEvents.TRACK_REMOVED,
-            track =>
-                track && !track.isLocal() && dispatch(trackRemoved(track)));
+            t => t && !t.isLocal() && dispatch(trackRemoved(t)));
 
-        conference.on(
+    conference.on(
             JitsiConferenceEvents.USER_JOINED,
             (id, user) => dispatch(participantJoined({
                 id,
                 name: user.getDisplayName(),
                 role: user.getRole()
             })));
-        conference.on(
+    conference.on(
             JitsiConferenceEvents.USER_LEFT,
             id => dispatch(participantLeft(id)));
-        conference.on(
+    conference.on(
             JitsiConferenceEvents.USER_ROLE_CHANGED,
             (id, role) => dispatch(participantRoleChanged(id, role)));
 
-        conference.addCommandListener(
+    conference.addCommandListener(
             EMAIL_COMMAND,
             (data, id) => dispatch(changeParticipantEmail(id, data.value)));
-    };
 }

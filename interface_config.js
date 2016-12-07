@@ -22,8 +22,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * If we should show authentication block in profile
      */
     AUTHENTICATION_ENABLE: true,
-    // the toolbar buttons line is intentionally left in one line, to be able
-    // to easily override values or remove them using regex
     /**
      * The index of the splitter button in the main toolbar. The splitter
      * button is a button in the toolbar that will be applied a special styling
@@ -58,10 +56,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,
-    LOCAL_THUMBNAIL_RATIO_WIDTH: 16,
-    LOCAL_THUMBNAIL_RATIO_HEIGHT: 9,
-    REMOTE_THUMBNAIL_RATIO_WIDTH: 1,
-    REMOTE_THUMBNAIL_RATIO_HEIGHT: 1,
     // Enables feedback star animation.
     ENABLE_FEEDBACK_ANIMATION: false,
     DISABLE_FOCUS_INDICATOR: false,
@@ -70,5 +64,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     DISABLE_RINGING: false,
     AUDIO_LEVEL_PRIMARY_COLOR: "rgba(255,255,255,0.4)",
     AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.2)",
-    POLICY_LOGO: null
+    POLICY_LOGO: null,
+    LOCAL_THUMBNAIL_RATIO: 16/9, //16:9
+    REMOTE_THUMBNAIL_RATIO: 1 //1:1
 };

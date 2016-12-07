@@ -22,7 +22,9 @@ export function loadConfig(host, configLocation = '/config.js') {
             return config;
         })
         .catch(error => {
-            console.error('Failed to load config.js from remote server', error);
+            console.error(
+                    `Failed to load ${configLocation} from ${host}`,
+                    error);
 
             throw error;
         });

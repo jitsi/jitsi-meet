@@ -97,34 +97,8 @@ const buttonHandlers = {
         JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
         emitter.emit(UIEvents.HANGUP);
     },
-    "toolbar_button_login": function () {
-        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.login.clicked');
-        emitter.emit(UIEvents.AUTH_CLICKED);
-    },
-    "toolbar_button_logout": function () {
-        let titleKey = "dialog.logoutTitle";
-        let msgKey = "dialog.logoutQuestion";
-        JitsiMeetJS.analytics.sendEvent('toolbar.authenticate.logout.clicked');
-        // Ask for confirmation
-        APP.UI.messageHandler.openTwoButtonDialog({
-            titleKey,
-            msgKey,
-            leftButtonKey: "dialog.Yes",
-            submitFunction: function (evt, yes) {
-                if (yes) {
-                    emitter.emit(UIEvents.LOGOUT);
-                }
-            }
-        });
-    },
-    "toolbar_film_strip": function () {
-        JitsiMeetJS.analytics.sendEvent(
-            'toolbar.filmstrip.toggled');
-        emitter.emit(UIEvents.TOGGLE_FILM_STRIP);
-    },
     "toolbar_button_raisehand": function () {
-        JitsiMeetJS.analytics.sendEvent(
-            'toolbar.raiseHand.clicked');
+        JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
         APP.conference.maybeToggleRaisedHand();
     }
 };
@@ -263,18 +237,6 @@ const defaultToolbarButtons = {
         content: "Hang Up",
         i18n: "[content]toolbar.hangup"
     },
-    'filmstrip': {
-        id: 'toolbar_film_strip',
-        tooltipKey: 'toolbar.filmstrip',
-        className: "button icon-toggle-filmstrip",
-        shortcut: "F",
-        shortcutAttr: "filmstripPopover",
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent("shortcut.film.toggled");
-            APP.UI.toggleFilmStrip();
-        },
-        shortcutDescription: "keyboardShortcuts.toggleFilmstrip"
-    },
     'raisehand': {
         id: "toolbar_button_raisehand",
         tooltipKey: 'toolbar.raiseHand',
@@ -293,7 +255,9 @@ const defaultToolbarButtons = {
     'recording': {
         id: 'toolbar_button_record',
         tooltipKey: 'liveStreaming.buttonTooltip',
-        className: 'button'
+        className: 'button',
+        hidden: true // will be displayed once
+                     // the recording functionality is detected
     },
     'sharedvideo': {
         id: 'toolbar_button_sharedvideo',
@@ -308,7 +272,9 @@ const defaultToolbarButtons = {
     'sip': {
         id: 'toolbar_button_sip',
         tooltipKey: 'toolbar.sip',
-        className: 'button icon-telephone'
+        className: 'button icon-telephone',
+        hidden: true // will be displayed once
+                     // the SIP calls functionality is detected
     },
     'dialpad': {
         id: 'toolbar_button_dialpad',
@@ -329,7 +295,8 @@ function showSipNumberInput () {
         : '';
     let titleKey = "dialog.sipMsg";
     let msgString = (`
-            <input name="sipNumber" type="text"
+            <input class="input-control"
+                   name="sipNumber" type="text"
                    value="${defaultNumber}" autofocus>`);
 
     APP.UI.messageHandler.openTwoButtonDialog({
@@ -414,15 +381,6 @@ Toolbar = {
     isEnabled() {
         return this.enabled;
     },
-    /**
-     * Shows or hides authentication button
-     * @param show <tt>true</tt> to show or <tt>false</tt> to hide
-     */
-    showAuthenticateButton (show) {
-        let display = show ? 'block' : 'none';
-
-        $('#authenticationContainer').css({display});
-    },
 
     showEtherpadButton () {
         if (!$('#toolbar_button_etherpad').is(":visible")) {
@@ -432,14 +390,15 @@ Toolbar = {
 
     // Shows or hides the 'shared video' button.
     showSharedVideoButton () {
-        let $element = $('#toolbar_button_sharedvideo');
-        if (UIUtil.isButtonEnabled('sharedvideo')
-                && config.disableThirdPartyRequests !== true) {
-            $element.css({display: "inline-block"});
-            UIUtil.setTooltip($element.get(0), 'toolbar.sharedvideo', 'right');
-        } else {
-            $('#toolbar_button_sharedvideo').css({display: "none"});
+        let id = 'toolbar_button_sharedvideo';
+        let shouldShow = UIUtil.isButtonEnabled('sharedvideo')
+                && !config.disableThirdPartyRequests;
+
+        if (shouldShow) {
+            let el = document.getElementById(id);
+            UIUtil.setTooltip(el, 'toolbar.sharedvideo', 'right');
         }
+        UIUtil.setVisible(id, shouldShow);
     },
 
     // checks whether desktop sharing is enabled and whether
@@ -453,61 +412,19 @@ Toolbar = {
 
     // Shows or hides SIP calls button
     showSipCallButton (show) {
-        if (APP.conference.sipGatewayEnabled()
-            && UIUtil.isButtonEnabled('sip') && show) {
-            $('#toolbar_button_sip').css({display: "inline-block"});
-        } else {
-            $('#toolbar_button_sip').css({display: "none"});
-        }
+        let shouldShow = APP.conference.sipGatewayEnabled()
+            && UIUtil.isButtonEnabled('sip') && show;
+        let id = 'toolbar_button_sip';
+
+        UIUtil.setVisible(id, shouldShow);
     },
 
     // Shows or hides the dialpad button
     showDialPadButton (show) {
-        if (UIUtil.isButtonEnabled('dialpad') && show) {
-            $('#toolbar_button_dialpad').css({display: "inline-block"});
-        } else {
-            $('#toolbar_button_dialpad').css({display: "none"});
-        }
-    },
+        let shouldShow = UIUtil.isButtonEnabled('dialpad') && show;
+        let id = 'toolbar_button_dialpad';
 
-    /**
-     * Displays user authenticated identity name(login).
-     * @param authIdentity identity name to be displayed.
-     */
-    setAuthenticatedIdentity (authIdentity) {
-        let selector = $('#toolbar_auth_identity');
-
-        if (authIdentity) {
-            selector.css({display: "list-item"});
-            selector.text(authIdentity);
-        } else {
-            selector.css({display: "none"});
-            selector.text('');
-        }
-    },
-
-    /**
-     * Shows/hides login button.
-     * @param show <tt>true</tt> to show
-     */
-    showLoginButton (show) {
-        if (show) {
-            $('#toolbar_button_login').css({display: "list-item"});
-        } else {
-            $('#toolbar_button_login').css({display: "none"});
-        }
-    },
-
-    /**
-     * Shows/hides logout button.
-     * @param show <tt>true</tt> to show
-     */
-    showLogoutButton (show) {
-        if (show) {
-            $('#toolbar_button_logout').css({display: "list-item"});
-        } else {
-            $('#toolbar_button_logout').css({display: "none"});
-        }
+        UIUtil.setVisible(id, shouldShow);
     },
 
     /**

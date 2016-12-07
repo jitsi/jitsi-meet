@@ -12,6 +12,13 @@ import { styles } from './styles';
  */
 class VideoTrack extends AbstractVideoTrack {
     /**
+     * VideoTrack component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractVideoTrack.propTypes
+
+    /**
      * Initializes a new VideoTrack instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -152,12 +159,5 @@ class VideoTrack extends AbstractVideoTrack {
         }
     }
 }
-
-/**
- * VideoTrack component's property types.
- *
- * @static
- */
-VideoTrack.propTypes = AbstractVideoTrack.propTypes;
 
 export default connect()(VideoTrack);

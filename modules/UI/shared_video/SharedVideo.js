@@ -1,5 +1,6 @@
 /* global $, APP, YT, onPlayerReady, onPlayerStateChange, onPlayerError,
 JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -75,7 +76,7 @@ export default class SharedVideoManager {
                         JitsiMeetJS.analytics.sendEvent('sharedvideo.started');
                     },
                     err => {
-                        console.log('SHARED VIDEO CANCELED', err);
+                        logger.log('SHARED VIDEO CANCELED', err);
                         JitsiMeetJS.analytics.sendEvent('sharedvideo.canceled');
                     }
             );
@@ -84,6 +85,14 @@ export default class SharedVideoManager {
 
         if(APP.conference.isLocalId(this.from)) {
             showStopVideoPropmpt().then(() => {
+                    // make sure we stop updates for playing before we send stop
+                    // if we stop it after receiving self presence, we can end
+                    // up sending stop playing, and on the other end it will not
+                    // stop
+                    if(this.intervalId) {
+                         clearInterval(this.intervalId);
+                         this.intervalId = null;
+                    }
                     this.emitter.emit(
                         UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
                     JitsiMeetJS.analytics.sendEvent('sharedvideo.stoped');
@@ -269,7 +278,7 @@ export default class SharedVideoManager {
         };
 
         window.onPlayerError = function(event) {
-            console.error("Error in the player:", event.data);
+            logger.error("Error in the player:", event.data);
             // store the error player, so we can remove it
             self.errorInPlayer = event.target;
         };
@@ -305,7 +314,7 @@ export default class SharedVideoManager {
                 && player.getVolume() != attributes.volume) {
 
                 player.setVolume(attributes.volume);
-                console.info("Player change of volume:" + attributes.volume);
+                logger.info("Player change of volume:" + attributes.volume);
                 this.showSharedVideoMutedPopup(false);
             }
 
@@ -329,7 +338,7 @@ export default class SharedVideoManager {
     processTime (player, attributes, forceSeek)
     {
         if(forceSeek) {
-            console.info("Player seekTo:", attributes.time);
+            logger.info("Player seekTo:", attributes.time);
             player.seekTo(attributes.time);
             return;
         }
@@ -341,7 +350,7 @@ export default class SharedVideoManager {
         // if we drift more than the interval for checking
         // sync, the interval is in milliseconds
         if(diff > updateInterval/1000) {
-            console.info("Player seekTo:", attributes.time,
+            logger.info("Player seekTo:", attributes.time,
                 " current time is:", currentPosition, " diff:", diff);
             player.seekTo(attributes.time);
         }
@@ -421,11 +430,6 @@ export default class SharedVideoManager {
                 this.initialAttributes = attributes;
                 return;
             }
-        }
-
-        if(this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
         }
 
         this.emitter.removeListener(UIEvents.AUDIO_MUTED,
@@ -666,7 +670,7 @@ SharedVideoThumb.prototype.videoClick = function () {
  * Removes RemoteVideo from the page.
  */
 SharedVideoThumb.prototype.remove = function () {
-    console.log("Remove shared video thumb", this.id);
+    logger.log("Remove shared video thumb", this.id);
 
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
@@ -683,7 +687,7 @@ SharedVideoThumb.prototype.remove = function () {
  */
 SharedVideoThumb.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        console.warn( "Unable to set displayName - " + this.videoSpanId +
+        logger.warn( "Unable to set displayName - " + this.videoSpanId +
             " does not exist");
         return;
     }
@@ -762,6 +766,7 @@ function requestVideoLink() {
                 titleKey: "dialog.shareVideoTitle",
                 html:  `
                     <input name="sharedVideoUrl" type="text"
+                           class="input-control"
                            data-i18n="[placeholder]defaultLink"
                            autofocus>`,
                 persistent: false,

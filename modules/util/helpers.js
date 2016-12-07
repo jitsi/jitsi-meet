@@ -1,3 +1,5 @@
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 /**
  * Create deferred object.
  * @returns {{promise, resolve, reject}}
@@ -35,7 +37,7 @@ export function redirect (url) {
  * @param msg {string} [optional] the message printed in addition to the error
  */
 export function reportError (e, msg = "") {
-    console.error(msg, e);
+    logger.error(msg, e);
     if(window.onerror)
         window.onerror(msg, null, null,
             null, e);

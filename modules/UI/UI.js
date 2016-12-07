@@ -1,4 +1,6 @@
 /* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var UI = {};
 
 import Chat from "./side_pannels/chat/Chat";
@@ -16,6 +18,7 @@ import GumPermissionsOverlay
     from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
 import PageReloadOverlay from './reload_overlay/PageReloadOverlay';
+import SuspendedOverlay from './suspended_overlay/SuspendedOverlay';
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
@@ -30,7 +33,7 @@ var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
 var messageHandler = UI.messageHandler;
 var JitsiPopover = require("./util/JitsiPopover");
-var Feedback = require("./feedback/Feedback");
+import Feedback from "./feedback/Feedback";
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -79,12 +82,11 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
 function promptDisplayName() {
     let labelKey = 'dialog.enterDisplayName';
     let message = (
-        `<div class="input-control">
-            <label data-i18n="${labelKey}" class="input-control__label"></label>
+        `<div class="form-control">
+            <label data-i18n="${labelKey}" class="form-control__label"></label>
             <input name="displayName" type="text"
                data-i18n="[placeholder]defaultNickname"
-               class="input-control__input"
-               autofocus>
+               class="input-control" autofocus>
          </div>`
     );
 
@@ -443,10 +445,10 @@ UI.start = function () {
         // Display notice message at the top of the toolbar
         if (config.noticeMessage) {
             $('#noticeText').text(config.noticeMessage);
-            $('#notice').css({display: 'block'});
+            UIUtil.setVisible('notice', true);
         }
     } else {
-        $("#mainToolbarContainer").css("display", "none");
+        UIUtil.setVisible('mainToolbarContainer', false);
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
@@ -474,7 +476,9 @@ UI.start = function () {
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut",
-            "newestOnTop": false
+            "newestOnTop": false,
+            // this is the default toastr close button html, just adds tabIndex
+            "closeHtml": '<button type="button" tabIndex="-1">&times;</button>'
         };
 
     }
@@ -501,7 +505,7 @@ UI.addLocalStream = function (track) {
         VideoLayout.changeLocalVideo(track);
         break;
     default:
-        console.error("Unknown stream type: " + track.getType());
+        logger.error("Unknown stream type: " + track.getType());
         break;
     }
 };
@@ -539,7 +543,7 @@ UI.initEtherpad = function (name) {
     if (etherpadManager || !config.etherpad_base || !name) {
         return;
     }
-    console.log('Etherpad is enabled');
+    logger.log('Etherpad is enabled');
     etherpadManager
         = new EtherpadManager(config.etherpad_base, name, eventEmitter);
     Toolbar.showEtherpadButton();
@@ -737,13 +741,15 @@ UI.connectionIndicatorShowMore = function(id) {
 
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
-    console.log('password is required');
+    logger.log('password is required');
 
     let message = (
         `<input name="username" type="text"
-                placeholder="user@domain.net" autofocus>
+                placeholder="user@domain.net"
+                class="input-control" autofocus>
          <input name="password" type="password"
                 data-i18n="[placeholder]dialog.userPassword"
+                class="input-control"
                 placeholder="user password">`
     );
 
@@ -819,10 +825,14 @@ UI.emitEvent = function (type, options) {
 };
 
 UI.clickOnVideo = function (videoNumber) {
-    var remoteVideos = $(".videocontainer:not(#mixedstream)");
-    if (remoteVideos.length > videoNumber) {
-        remoteVideos[videoNumber].click();
+    let videos = $("#remoteVideos .videocontainer:not(#mixedstream)");
+    let videosLength = videos.length;
+
+    if(videosLength <= videoNumber) {
+        return;
     }
+    let videoIndex = videoNumber === 0 ? 0 : videosLength - videoNumber;
+    videos[videoIndex].click();
 };
 
 //Used by torture
@@ -1082,10 +1092,16 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
 /**
  * Notify the user that the video conferencing service is badly broken and
  * the page should be reloaded.
+ *
+ * @param {boolean} isNetworkFailure <tt>true</tt> indicates that it's caused by
+ * network related failure or <tt>false</tt> when it's the infrastructure.
+ * @param {string} a label string identifying the reason for the page reload
+ * which will be included in details of the log event.
  */
-UI.showPageReloadOverlay = function () {
+UI.showPageReloadOverlay = function (isNetworkFailure, reason) {
     // Reload the page after 10 - 30 seconds
-    PageReloadOverlay.show(10 + RandomUtil.randomInt(0, 20));
+    PageReloadOverlay.show(
+        10 + RandomUtil.randomInt(0, 20), isNetworkFailure, reason);
 };
 
 /**
@@ -1097,13 +1113,13 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
     let loggedIn = !!login;
 
-    Toolbar.showAuthenticateButton(showAuth);
+    Profile.showAuthenticationButtons(showAuth);
 
     if (showAuth) {
-        Toolbar.setAuthenticatedIdentity(login);
+        Profile.setAuthenticatedIdentity(login);
 
-        Toolbar.showLoginButton(!loggedIn);
-        Toolbar.showLogoutButton(loggedIn);
+        Profile.showLoginButton(!loggedIn);
+        Profile.showLogoutButton(loggedIn);
     }
 };
 
@@ -1173,7 +1189,7 @@ UI.getLargeVideo = function () {
 UI.showExtensionRequiredDialog = function (url) {
     messageHandler.openMessageDialog(
         "dialog.extensionRequired",
-        "dialog.firefoxExtensionPrompt",
+        "[html]dialog.firefoxExtensionPrompt",
         {url: url});
 };
 
@@ -1384,23 +1400,25 @@ UI.setMicrophoneButtonEnabled = function (enabled) {
 
 UI.showRingOverlay = function () {
     RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);
-    FilmStrip.toggleFilmStrip(false);
+    FilmStrip.toggleFilmStrip(false, false);
 };
 
 UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
-    FilmStrip.toggleFilmStrip(true);
+    FilmStrip.toggleFilmStrip(true, false);
 };
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes
- * the call overlay, GUM permissions overlay and a page reload overlay.
+ * the call overlay, suspended overlay, GUM permissions overlay
+ * and a page reload overlay.
  *
  * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
  */
 UI.isOverlayVisible = function () {
     return RingOverlay.isVisible()
+        || SuspendedOverlay.isVisible()
         || PageReloadOverlay.isVisible()
         || GumPermissionsOverlay.isVisible();
 };
@@ -1421,6 +1439,13 @@ UI.isRingOverlayVisible = function () {
  */
 UI.showUserMediaPermissionsGuidanceOverlay = function (browser) {
     GumPermissionsOverlay.show(browser);
+};
+
+/**
+ * Shows suspended overlay with a button to rejoin conference.
+ */
+UI.showSuspendedOverlay = function () {
+    SuspendedOverlay.show();
 };
 
 /**

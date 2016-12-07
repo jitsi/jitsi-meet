@@ -1,8 +1,6 @@
-import {
-    conferenceWillLeave,
-    createConference
-} from '../conference';
+import { conferenceWillLeave } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';
+
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
@@ -21,90 +19,81 @@ const JitsiConnectionEvents = JitsiMeetJS.events.connection;
 export function connect() {
     return (dispatch, getState) => {
         const state = getState();
-        const connectionOpts
+        const connectionOptions
             = state['features/base/connection'].connectionOptions;
         const room = state['features/base/conference'].room;
-        const connection = new JitsiMeetJS.JitsiConnection(
-            connectionOpts.appId,
-            connectionOpts.token,
-            {
-                ...connectionOpts,
-                bosh: connectionOpts.bosh + (
-                    room ? `?room=${room}` : ''
-                )
-            }
-        );
+        const connection
+            = new JitsiMeetJS.JitsiConnection(
+                connectionOptions.appId,
+                connectionOptions.token,
+                {
+                    ...connectionOptions,
+                    bosh: connectionOptions.bosh + (room ? `?room=${room}` : '')
+                });
 
-        return new Promise((resolve, reject) => {
-            connection.addEventListener(
+        connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                handleConnectionDisconnected);
-            connection.addEventListener(
+                connectionDisconnected);
+        connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                handleConnectionEstablished);
-            connection.addEventListener(
+                connectionEstablished);
+        connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_FAILED,
-                handleConnectionFailed);
+                connectionFailed);
 
-            connection.connect();
+        connection.connect();
 
-            /**
-             * Dispatches CONNECTION_DISCONNECTED action when connection is
-             * disconnected.
-             *
-             * @param {string} message - Disconnect reason.
-             * @returns {void}
-             */
-            function handleConnectionDisconnected(message) {
-                connection.removeEventListener(
+        /**
+         * Dispatches CONNECTION_DISCONNECTED action when connection is
+         * disconnected.
+         *
+         * @param {string} message - Disconnect reason.
+         * @returns {void}
+         */
+        function connectionDisconnected(message) {
+            connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                    handleConnectionDisconnected);
+                    connectionDisconnected);
 
-                dispatch(_connectionDisconnected(connection, message));
-            }
+            dispatch(_connectionDisconnected(connection, message));
+        }
 
-            /**
-             * Resolves external promise when connection is established.
-             *
-             * @returns {void}
-             */
-            function handleConnectionEstablished() {
-                unsubscribe();
-                resolve(connection);
-            }
+        /**
+         * Resolves external promise when connection is established.
+         *
+         * @returns {void}
+         */
+        function connectionEstablished() {
+            unsubscribe();
+            dispatch(_connectionEstablished(connection));
+        }
 
-            /**
-             * Rejects external promise when connection fails.
-             *
-             * @param {JitsiConnectionErrors} err - Connection error.
-             * @returns {void}
-             */
-            function handleConnectionFailed(err) {
-                unsubscribe();
-                console.error('CONNECTION FAILED:', err);
-                reject(err);
-            }
+        /**
+         * Rejects external promise when connection fails.
+         *
+         * @param {JitsiConnectionErrors} err - Connection error.
+         * @returns {void}
+         */
+        function connectionFailed(err) {
+            unsubscribe();
+            console.error('CONNECTION FAILED:', err);
+            dispatch(_connectionFailed(connection, err));
+        }
 
-            /**
-             * Unsubscribes connection instance from CONNECTION_ESTABLISHED
-             * and CONNECTION_FAILED events.
-             *
-             * @returns {void}
-             */
-            function unsubscribe() {
-                connection.removeEventListener(
+        /**
+         * Unsubscribes connection instance from CONNECTION_ESTABLISHED
+         * and CONNECTION_FAILED events.
+         *
+         * @returns {void}
+         */
+        function unsubscribe() {
+            connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                    handleConnectionEstablished
-                );
-                connection.removeEventListener(
+                    connectionEstablished);
+            connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_FAILED,
-                    handleConnectionFailed
-                );
-            }
-        })
-        .catch(err => dispatch(_connectionFailed(err)))
-        .then(con => dispatch(_connectionEstablished(con)))
-        .then(() => dispatch(createConference()));
+                    connectionFailed);
+        }
     };
 }
 
@@ -162,8 +151,7 @@ export function setDomain(domain) {
 /**
  * Create an action for when the signaling connection has been lost.
  *
- * @param {JitsiConnection} connection - The JitsiConnection which was
- * disconnected.
+ * @param {JitsiConnection} connection - The JitsiConnection which disconnected.
  * @param {string} message - Error message.
  * @private
  * @returns {{
@@ -183,9 +171,13 @@ function _connectionDisconnected(connection, message) {
 /**
  * Create an action for when the signaling connection has been established.
  *
- * @param {JitsiConnection} connection - JitsiConnection instance.
+ * @param {JitsiConnection} connection - The JitsiConnection which was
+ * established.
  * @private
- * @returns {{type: CONNECTION_ESTABLISHED, connection: JitsiConnection}}
+ * @returns {{
+ *     type: CONNECTION_ESTABLISHED,
+ *     connection: JitsiConnection
+ * }}
  */
 function _connectionEstablished(connection) {
     return {
@@ -197,13 +189,19 @@ function _connectionEstablished(connection) {
 /**
  * Create an action for when the signaling connection could not be created.
  *
+ * @param {JitsiConnection} connection - The JitsiConnection which failed.
  * @param {string} error - Error message.
  * @private
- * @returns {{type: CONNECTION_FAILED, error: string}}
+ * @returns {{
+ *     type: CONNECTION_FAILED,
+ *     connection: JitsiConnection,
+ *     error: string
+ * }}
  */
-function _connectionFailed(error) {
+function _connectionFailed(connection, error) {
     return {
         type: CONNECTION_FAILED,
+        connection,
         error
     };
 }

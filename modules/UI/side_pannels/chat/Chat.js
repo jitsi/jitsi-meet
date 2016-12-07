@@ -17,7 +17,8 @@ const htmlStr = `
         <div id="nickname">
             <span data-i18n="chat.nickname.title"></span>
             <form>
-                <input type='text' id="nickinput" autofocus 
+                <input type='text'
+                       class="input-control" id="nickinput" autofocus
                     data-i18n="[placeholder]chat.nickname.popover">
             </form>
         </div>
@@ -157,6 +158,17 @@ function resizeChatConversation() {
 }
 
 /**
+ * Focus input after 400 ms
+ * Found input by id
+ *
+ * @param id {string} input id
+ */
+function deferredFocus(id){
+    setTimeout(function (){
+        $(`#${id}`).focus();
+    }, 400);
+}
+/**
  * Chat related user interface.
  */
 var Chat = {
@@ -179,6 +191,7 @@ var Chat = {
                 let val = this.value;
                 this.value = '';
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
+                deferredFocus('usermsg');
             }
         });
 
@@ -222,9 +235,9 @@ var Chat = {
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
                 if (APP.settings.getDisplayName())
-                    $('#usermsg').focus();
+                    deferredFocus('usermsg');
                 else
-                    $('#nickinput').focus();
+                    deferredFocus('nickinput');
             });
 
         addSmileys();
@@ -296,12 +309,11 @@ var Chat = {
         if (subject) {
             subject = subject.trim();
         }
-        $('#subject').html(linkify(UIUtil.escapeHtml(subject)));
-        if (subject) {
-            $("#subject").css({display: "block"});
-        } else {
-            $("#subject").css({display: "none"});
-        }
+
+        let subjectId = 'subject';
+        let html = linkify(UIUtil.escapeHtml(subject));
+        $(`#${subjectId}`).html(html);
+        UIUtil.setVisible(subjectId, subject && subject.length > 0);
     },
 
     /**
@@ -314,13 +326,6 @@ var Chat = {
     setChatConversationMode (isConversationMode) {
         $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
-
-        // this is needed when we transition from no conversation mode to
-        // conversation mode. When user enters his nickname and hits enter,
-        // to focus on the write area.
-        if (isConversationMode) {
-            $('#usermsg').focus();
-        }
     },
 
     /**

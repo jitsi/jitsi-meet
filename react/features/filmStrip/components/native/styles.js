@@ -1,6 +1,18 @@
-import { createStyleSheet } from '../../../base/styles';
+import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
 import { styles as platformIndependentStyles } from '../styles';
+
+/**
+ * The base/default style of indicators such as audioMutedIndicator,
+ * moderatorIndicator, and videoMutedIndicator.
+ */
+const indicator = {
+    textShadowColor: ColorPalette.black,
+    textShadowOffset: {
+        height: -1,
+        width: 0
+    }
+};
 
 /**
  * Native-specific styles for the film strip.
@@ -10,13 +22,7 @@ export const styles = createStyleSheet(platformIndependentStyles, {
     /**
      * Audio muted indicator style.
      */
-    audioMutedIndicator: {
-        textShadowColor: 'black',
-        textShadowOffset: {
-            height: -1,
-            width: 0
-        }
-    },
+    audioMutedIndicator: indicator,
 
     /**
      * Dominant speaker indicator background style.
@@ -29,13 +35,7 @@ export const styles = createStyleSheet(platformIndependentStyles, {
     /**
      * Moderator indicator style.
      */
-    moderatorIndicator: {
-        textShadowColor: 'black',
-        textShadowOffset: {
-            height: -1,
-            width: 0
-        }
-    },
+    moderatorIndicator: indicator,
 
     /**
      * Video thumbnail style.
@@ -48,11 +48,5 @@ export const styles = createStyleSheet(platformIndependentStyles, {
    /**
      * Video muted indicator style.
      */
-    videoMutedIndicator: {
-        textShadowColor: 'black',
-        textShadowOffset: {
-            height: -1,
-            width: 0
-        }
-    }
+    videoMutedIndicator: indicator
 });

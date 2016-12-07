@@ -1,4 +1,6 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import {openConnection} from './connection';
 import Invite from './modules/UI/invite/Invite';
 import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
@@ -12,6 +14,8 @@ import {reportError} from './modules/util/helpers';
 
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
+
+import analytics from './modules/analytics/analytics';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -44,6 +48,12 @@ const commands = {
     SHARED_VIDEO: "shared-video",
     CUSTOM_ROLE: "custom-role"
 };
+
+/**
+ * Max length of the display names. If we receive longer display name the
+ * additional chars are going to be cut.
+ */
+const MAX_DISPLAY_NAME_LENGTH = 50;
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
@@ -158,7 +168,7 @@ function muteLocalMedia(localMedia, muted, localMediaTypeString) {
     const method = muted ? 'mute' : 'unmute';
 
     localMedia[method]().catch(reason => {
-        console.warn(`${localMediaTypeString} ${method} was rejected:`, reason);
+        logger.warn(`${localMediaTypeString} ${method} was rejected:`, reason);
     });
 }
 
@@ -246,7 +256,7 @@ function createLocalTracks (options, checkForPermissionPrompt) {
             });
             return tracks;
         }).catch(function (err) {
-            console.error(
+            logger.error(
                 'failed to create local tracks', options.devices, err);
             return Promise.reject(err);
         });
@@ -273,21 +283,23 @@ function changeLocalEmail(email = '') {
  * @param nickname {string} the new display name
  */
 function changeLocalDisplayName(nickname = '') {
-    nickname = nickname.trim();
+    const formattedNickname
+        = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
 
-    if (nickname === APP.settings.getDisplayName()) {
+    if (formattedNickname === APP.settings.getDisplayName()) {
         return;
     }
 
-    APP.settings.setDisplayName(nickname);
-    room.setDisplayName(nickname);
-    APP.UI.changeDisplayName(APP.conference.getMyUserId(), nickname);
+    APP.settings.setDisplayName(formattedNickname);
+    room.setDisplayName(formattedNickname);
+    APP.UI.changeDisplayName(APP.conference.getMyUserId(), formattedNickname);
 }
 
 class ConferenceConnector {
-    constructor(resolve, reject) {
+    constructor(resolve, reject, invite) {
         this._resolve = resolve;
         this._reject = reject;
+        this._invite = invite;
         this.reconnectTimeout = null;
         room.on(ConferenceEvents.CONFERENCE_JOINED,
             this._handleConferenceJoined.bind(this));
@@ -301,7 +313,7 @@ class ConferenceConnector {
         this._reject(err);
     }
     _onConferenceFailed(err, ...params) {
-        console.error('CONFERENCE FAILED:', err, ...params);
+        logger.error('CONFERENCE FAILED:', err, ...params);
         APP.UI.hideRingOverLay();
         switch (err) {
             // room is locked by the password
@@ -331,7 +343,8 @@ class ConferenceConnector {
             }, 5000);
 
             // notify user that auth is required
-            AuthHandler.requireAuth(room, this.invite.getRoomLocker().password);
+            AuthHandler.requireAuth(
+                room, this._invite.getRoomLocker().password);
             break;
 
         case ConferenceErrors.RESERVATION_ERROR:
@@ -370,16 +383,12 @@ class ConferenceConnector {
 
         case ConferenceErrors.FOCUS_LEFT:
         case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
-            // Log the page reload event
-            // FIXME (CallStats - issue) this event will not make it to
-            // the CallStats, because the log queue is not flushed, before
-            // "fabric terminated" is sent to the backed
-            APP.conference.logEvent('page.reload');
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
-            APP.UI.showPageReloadOverlay();
+            APP.UI.showPageReloadOverlay(
+                false /* not a network type of failure */, err);
             break;
 
         case ConferenceErrors.CONFERENCE_MAX_USERS:
@@ -394,7 +403,7 @@ class ConferenceConnector {
         }
     }
     _onConferenceError(err, ...params) {
-        console.error('CONFERENCE Error:', err, params);
+        logger.error('CONFERENCE Error:', err, params);
         switch (err) {
         case ConferenceErrors.CHAT_ERROR:
             {
@@ -403,7 +412,7 @@ class ConferenceConnector {
             }
             break;
         default:
-            console.error("Unknown error.");
+            logger.error("Unknown error.", err);
         }
     }
     _unsubscribe() {
@@ -436,26 +445,6 @@ function disconnect() {
     return Promise.resolve();
 }
 
-/**
- * Set permanent ptoperties to analytics.
- * NOTE: Has to be used after JitsiMeetJS.init. otherwise analytics will be
- * null.
- */
-function setAnalyticsPermanentProperties() {
-    let permanentProperties = {
-        userAgent: navigator.userAgent,
-        roomName: APP.conference.roomName
-    };
-    let {server, group} = APP.tokenData;
-    if(server) {
-        permanentProperties.server = server;
-    }
-    if(group) {
-        permanentProperties.group = group;
-    }
-    JitsiMeetJS.analytics.addPermanentProperties(permanentProperties);
-}
-
 export default {
     isModerator: false,
     audioMuted: false,
@@ -478,8 +467,6 @@ export default {
      */
     init(options) {
         this.roomName = options.roomName;
-        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.TRACE);
-
         // attaches global error handler, if there is already one, respect it
         if(JitsiMeetJS.getGlobalOnErrorHandler){
             var oldOnErrorHandler = window.onerror;
@@ -502,12 +489,14 @@ export default {
             };
         }
 
-        return JitsiMeetJS.init(config)
-            .then(() => {
-                setAnalyticsPermanentProperties();
+        return JitsiMeetJS.init(
+            Object.assign(
+                {enableAnalyticsLogging: analytics.isEnabled()}, config)
+            ).then(() => {
+                analytics.init();
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
-                console.log('initialized with %s local tracks', tracks.length);
+                logger.log('initialized with %s local tracks', tracks.length);
                 APP.connection = connection = con;
                 this._bindConnectionFailedHandler(con);
                 this._createRoom(tracks);
@@ -535,7 +524,8 @@ export default {
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
-                    (new ConferenceConnector(resolve, reject)).connect();
+                    (new ConferenceConnector(
+                        resolve, reject, this.invite)).connect();
                 });
         });
     },
@@ -556,15 +546,34 @@ export default {
      */
     _bindConnectionFailedHandler (connection) {
         const handler = function (error, errMsg) {
-            if (ConnectionErrors.OTHER_ERROR === error) {
-                // - item-not-found
-                // - connection dropped(closed by Strophe unexpectedly
-                //   possible due too many transport errors)
-                console.error("XMPP connection error: " + errMsg);
-                APP.UI.showPageReloadOverlay();
-                connection.removeEventListener(
-                    ConnectionEvents.CONNECTION_FAILED, handler);
+            /* eslint-disable no-case-declarations */
+            switch (error) {
+                case ConnectionErrors.CONNECTION_DROPPED_ERROR:
+                case ConnectionErrors.OTHER_ERROR:
+                case ConnectionErrors.SERVER_ERROR:
+
+                    logger.error("XMPP connection error: " + errMsg);
+
+                    // From all of the cases above only CONNECTION_DROPPED_ERROR
+                    // is considered a network type of failure
+                    const isNetworkFailure
+                        = error === ConnectionErrors.CONNECTION_DROPPED_ERROR;
+
+                    APP.UI.showPageReloadOverlay(
+                        isNetworkFailure,
+                        "xmpp-conn-dropped:" + errMsg);
+
+                    connection.removeEventListener(
+                        ConnectionEvents.CONNECTION_FAILED, handler);
+
+                    // FIXME it feels like the conference should be stopped
+                    // by lib-jitsi-meet
+                    if (room)
+                        room.leave();
+
+                    break;
             }
+            /* eslint-enable no-case-declarations */
         };
         connection.addEventListener(
             ConnectionEvents.CONNECTION_FAILED, handler);
@@ -886,7 +895,7 @@ export default {
             } else if (track.isVideoTrack()) {
                 return this.useVideoStream(track);
             } else {
-                console.error(
+                logger.error(
                     "Ignored not an audio nor a video track: ", track);
                 return Promise.resolve();
             }
@@ -978,11 +987,11 @@ export default {
     videoSwitchInProgress: false,
     toggleScreenSharing (shareScreen = !this.isSharingScreen) {
         if (this.videoSwitchInProgress) {
-            console.warn("Switch in progress.");
+            logger.warn("Switch in progress.");
             return;
         }
         if (!this.isDesktopSharingEnabled) {
-            console.warn("Cannot toggle screen sharing: not supported.");
+            logger.warn("Cannot toggle screen sharing: not supported.");
             return;
         }
 
@@ -1036,7 +1045,7 @@ export default {
                 this.videoSwitchInProgress = false;
                 JitsiMeetJS.analytics.sendEvent(
                     'conference.sharingDesktop.start');
-                console.log('sharing local desktop');
+                logger.log('sharing local desktop');
             }).catch((err) => {
                 // close external installation dialog to show the error.
                 if(externalInstallation)
@@ -1048,7 +1057,7 @@ export default {
                     return;
                 }
 
-                console.error('failed to share local desktop', err);
+                logger.error('failed to share local desktop', err);
 
                 if (err.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
                     APP.UI.showExtensionRequiredDialog(
@@ -1085,11 +1094,11 @@ export default {
                 this.videoSwitchInProgress = false;
                 JitsiMeetJS.analytics.sendEvent(
                     'conference.sharingDesktop.stop');
-                console.log('sharing local video');
+                logger.log('sharing local video');
             }).catch((err) => {
                 this.useVideoStream(null);
                 this.videoSwitchInProgress = false;
-                console.error('failed to share local video', err);
+                logger.error('failed to share local video', err);
             });
         }
     },
@@ -1115,7 +1124,7 @@ export default {
             if (user.isHidden())
                 return;
 
-            console.log('USER %s connnected', id, user);
+            logger.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
             APP.UI.addUser(user);
 
@@ -1123,7 +1132,7 @@ export default {
             APP.UI.updateUserRole(user);
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
-            console.log('USER %s LEFT', id, user);
+            logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
             APP.UI.onSharedVideoStop(id);
@@ -1132,7 +1141,7 @@ export default {
 
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
-                console.info(`My role changed, new role: ${role}`);
+                logger.info(`My role changed, new role: ${role}`);
                 if (this.isModerator !== room.isModerator()) {
                     this.isModerator = room.isModerator();
                     APP.UI.updateLocalRole(room.isModerator());
@@ -1190,7 +1199,7 @@ export default {
             {
                 this.audioLevelsMap[id] = lvl;
                 if(config.debugAudioLevels)
-                    console.log("AudioLevel:" + id + "/" + lvl);
+                    logger.log("AudioLevel:" + id + "/" + lvl);
             }
 
             APP.UI.setAudioLevel(id, lvl);
@@ -1257,8 +1266,10 @@ export default {
         });
 
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
-            APP.API.notifyDisplayNameChanged(id, displayName);
-            APP.UI.changeDisplayName(id, displayName);
+            const formattedDisplayName
+                = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
+            APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
+            APP.UI.changeDisplayName(id, formattedDisplayName);
         });
 
         room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
@@ -1269,7 +1280,7 @@ export default {
         });
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
-            console.log("Received recorder status change: ", status, error);
+            logger.log("Received recorder status change: ", status, error);
             APP.UI.updateRecordingState(status);
         });
 
@@ -1277,6 +1288,30 @@ export default {
             APP.UI.hideStats();
             APP.UI.notifyKicked();
             // FIXME close
+        });
+
+        room.on(ConferenceEvents.SUSPEND_DETECTED, () => {
+            // After wake up, we will be in a state where conference is left
+            // there will be dialog shown to user.
+            // We do not want video/audio as we show an overlay and after it
+            // user need to rejoin or close, while waking up we can detect
+            // camera wakeup as a problem with device.
+            // We also do not care about device change, which happens
+            // on resume after suspending PC.
+            if (this.deviceChangeListener)
+                JitsiMeetJS.mediaDevices.removeEventListener(
+                    JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
+                    this.deviceChangeListener);
+
+            // stop local video
+            if (localVideo)
+                localVideo.dispose();
+            // stop local audio
+            if (localAudio)
+                localAudio.dispose();
+
+            // show overlay
+            APP.UI.showSuspendedOverlay();
         });
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
@@ -1442,11 +1477,21 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
-            var smallVideoId = smallVideo.getId();
+            let smallVideoId = smallVideo.getId();
+            let isLocal = APP.conference.isLocalId(smallVideoId);
+
+            let eventName
+                = (isPinned ? "pinned" : "unpinned") + "." +
+                        (isLocal ? "local" : "remote");
+            let participantCount = room.getParticipantCount();
+            JitsiMeetJS.analytics.sendEvent(
+                    eventName,
+                    { value: participantCount });
+
             // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
             // the participant is on the large video ?
             if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
-                && !APP.conference.isLocalId(smallVideoId)) {
+                && !isLocal) {
 
                 // When the library starts supporting multiple pins we would
                 // pass the isPinned parameter together with the identifier,
@@ -1471,7 +1516,7 @@ export default {
                 })
                 .then(([stream]) => {
                     this.useVideoStream(stream);
-                    console.log('switched local video device');
+                    logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
                 .catch((err) => {
@@ -1493,7 +1538,7 @@ export default {
                 })
                 .then(([stream]) => {
                     this.useAudioStream(stream);
-                    console.log('switched local audio device');
+                    logger.log('switched local audio device');
                     APP.settings.setMicDeviceId(micDeviceId, true);
                 })
                 .catch((err) => {
@@ -1509,9 +1554,9 @@ export default {
                 JitsiMeetJS.analytics.sendEvent(
                     'settings.changeDevice.audioOut');
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
-                    .then(() => console.log('changed audio output device'))
+                    .then(() => logger.log('changed audio output device'))
                     .catch((err) => {
-                        console.warn('Failed to change audio output device. ' +
+                        logger.warn('Failed to change audio output device. ' +
                             'Default or previously set audio output device ' +
                             'will be used instead.', err);
                         APP.UI.setSelectedAudioOutputFromSettings();
@@ -1603,11 +1648,12 @@ export default {
                 APP.UI.onAvailableDevicesChanged(devices);
             });
 
+            this.deviceChangeListener = (devices) =>
+                window.setTimeout(
+                    () => this._onDeviceListChanged(devices), 0);
             JitsiMeetJS.mediaDevices.addEventListener(
                 JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
-                (devices) =>
-                    window.setTimeout(
-                        () => this._onDeviceListChanged(devices), 0));
+                this.deviceChangeListener);
         }
     },
     /**
@@ -1706,14 +1752,25 @@ export default {
      * @param {string} name the event name
      * @param {int} value the value (it's int because google analytics supports
      * only int).
+     * @param {string} label short text which provides more info about the event
+     * which allows to distinguish between few event cases of the same name
      * NOTE: Should be used after conference.init
      */
-    logEvent(name, value) {
+    logEvent(name, value, label) {
         if(JitsiMeetJS.analytics) {
-            JitsiMeetJS.analytics.sendEvent(name, {value});
+            JitsiMeetJS.analytics.sendEvent(name, {value, label});
         }
         if(room) {
-            room.sendApplicationLog(JSON.stringify({name, value}));
+            room.sendApplicationLog(JSON.stringify({name, value, label}));
+        }
+    },
+    /**
+     * Methods logs an application event given in the JSON format.
+     * @param {string} logJSON an event to be logged in JSON format
+     */
+    logJSON(logJSON) {
+        if (room) {
+            room.sendApplicationLog(logJSON);
         }
     },
     /**
