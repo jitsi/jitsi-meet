@@ -59,17 +59,34 @@ ReducerRegistry.register('features/base/conference',
                         'leavingJitsiConference',
                         action.conference.jitsiConference));
 
-        case SET_ROOM: {
-            let room = action.room;
-
-            // Technically, there're multiple values which don't represent
-            // valid room names. Practically, each of them is as bad as the rest
-            // of them because we can't use any of them to join a conference.
-            isRoomValid(room) || (room = INITIAL_STATE.room);
-
-            return setStateProperty(state, 'room', room);
-        }
+        case SET_ROOM:
+            return _setRoom(state, action);
         }
 
         return state;
     });
+
+/**
+ * Reduces a specific Redux action SET_ROOM of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_ROOM to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setRoom(state, action) {
+    let room = action.room;
+
+    if (isRoomValid(room)) {
+        // XXX Lib-jitsi-meet does not accept uppercase letters.
+        room = room.toLowerCase();
+    } else {
+        // Technically, there are multiple values which don't represent valid
+        // room names. Practically, each of them is as bad as the rest of them
+        // because we can't use any of them to join a conference.
+        room = INITIAL_STATE.room;
+    }
+
+    return setStateProperty(state, 'room', room);
+}

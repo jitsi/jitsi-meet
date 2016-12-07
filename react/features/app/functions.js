@@ -19,7 +19,7 @@ function _getRoomAndDomainFromUrlObject(url) {
 
     if (url) {
         domain = url.hostname;
-        room = url.pathname.substr(1).toLowerCase();
+        room = url.pathname.substr(1);
 
         // Convert empty string to undefined to simplify checks.
         if (room === '') {
