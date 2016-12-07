@@ -50,18 +50,41 @@ export function appNavigate(urlOrRoom) {
             // race conditions when we will start to load config multiple times.
             dispatch(setDomain(domain));
 
-            // If domain has changed, that means we need to load new config
-            // for that new domain and set it, and only after that we can
-            // navigate to different route.
+            // If domain has changed, we need to load the config of the new
+            // domain and set it, and only after that we can navigate to
+            // different route.
             loadConfig(`https://${domain}`)
-                .then(config => {
-                    // We set room name only here to prevent race conditions on
-                    // app start to not make app re-render conference page for
-                    // two times.
-                    dispatch(setRoom(room));
-                    dispatch(setConfig(config));
-                    _navigate(getState());
-                });
+                .then(
+                    config => configLoaded(/* err */ undefined, config),
+                    err => configLoaded(err, /* config */ undefined));
+        }
+
+        /**
+         * Notifies that an attempt to load the config(uration) of domain has
+         * completed.
+         *
+         * @param {string|undefined} err - If the loading has failed, the error
+         * detailing the cause of the failure.
+         * @param {Object|undefined} config - If the loading has succeeded, the
+         * loaded config(uration).
+         * @returns {void}
+         */
+        function configLoaded(err, config) {
+            if (err) {
+                // XXX The failure could be, for example, because of a
+                // certificate-related error. In which case the connection will
+                // fail later in Strophe anyway even if we use the default
+                // config here.
+
+                // The function loadConfig will log the err.
+                return;
+            }
+
+            // We set room name only here to prevent race conditions on app
+            // start to not make app re-render conference page for two times.
+            dispatch(setRoom(room));
+            dispatch(setConfig(config));
+            _navigate(getState());
         }
     };
 }
