@@ -17,6 +17,9 @@ import UIUtil from './modules/UI/util/UIUtil';
 
 import analytics from './modules/analytics/analytics';
 
+// For remote control testing:
+// import remoteControlReceiver from './modules/remotecontrol/Receiver';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -999,6 +1002,8 @@ export default {
         let externalInstallation = false;
 
         if (shareScreen) {
+            // For remote control testing:
+            // remoteControlReceiver.start();
             createLocalTracks({
                 devices: ['desktop'],
                 desktopSharingExtensionExternalInstallation: {
@@ -1088,6 +1093,8 @@ export default {
                     dialogTitleKey, dialogTxt, false);
             });
         } else {
+            // For remote control testing:
+            // remoteControlReceiver.stop();
             createLocalTracks({ devices: ['video'] }).then(
                 ([stream]) => this.useVideoStream(stream)
             ).then(() => {
@@ -1616,12 +1623,23 @@ export default {
     },
     /**
     * Adds any room listener.
-    * @param eventName one of the ConferenceEvents
-    * @param callBack the function to be called when the event occurs
+    * @param {string} eventName one of the ConferenceEvents
+    * @param {Function} listener the function to be called when the event
+    * occurs
     */
-    addConferenceListener(eventName, callBack) {
-        room.on(eventName, callBack);
+    addConferenceListener(eventName, listener) {
+        room.on(eventName, listener);
     },
+
+    /**
+    * Removes any room listener.
+    * @param {string} eventName one of the ConferenceEvents
+    * @param {Function} listener the listener to be removed.
+    */
+    removeConferenceListener(eventName, listener) {
+        room.off(eventName, listener);
+    },
+
     /**
      * Inits list of current devices and event listener for device change.
      * @private
@@ -1797,5 +1815,17 @@ export default {
             APP.API.notifyReadyToClose();
             maybeRedirectToWelcomePage(values[0]);
         });
+    },
+
+    /**
+     * Sends a message via the data channel.
+     * @param to {string} the id of the endpoint that should receive the
+     * message. If "" the message will be sent to all participants.
+     * @param payload {object} the payload of the message.
+     * @throws NetworkError or InvalidStateError or Error if the operation
+     * fails.
+     */
+    sendEndpointMessage (to, payload) {
+        room.sendEndpointMessage(to, payload);
     }
 };
