@@ -22,6 +22,8 @@ import conference from './conference';
 import API from './modules/API/API';
 
 import translation from "./modules/translation/translation";
+// For remote control testing:
+// import remoteControlController from "./modules/remotecontrol/Controller";
 
 const APP = {
     // Used by do_external_connect.js if we receive the attach data after

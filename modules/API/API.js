@@ -202,6 +202,14 @@ export default {
     },
 
     /**
+     * Sends remote control event.
+     * @param {object} event the event.
+     */
+    sendRemoteControlEvent(event) {
+        sendMessage({method: "remote-control-event", params: event});
+    },
+
+    /**
      * Removes the listeners.
      */
     dispose: function () {
