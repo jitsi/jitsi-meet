@@ -25,7 +25,7 @@ import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
-import RandomUtil from "../util/RandomUtil";
+import { randomInt } from "../util/RandomUtil";
 import UIErrors from './UIErrors';
 import { debounce } from "../util/helpers";
 
@@ -1100,8 +1100,7 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
  */
 UI.showPageReloadOverlay = function (isNetworkFailure, reason) {
     // Reload the page after 10 - 30 seconds
-    PageReloadOverlay.show(
-        10 + RandomUtil.randomInt(0, 20), isNetworkFailure, reason);
+    PageReloadOverlay.show(10 + randomInt(0, 20), isNetworkFailure, reason);
 };
 
 /**
