@@ -7,6 +7,14 @@ var process = require('process');
 var webpack = require('webpack');
 
 var aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
+
+/**
+ * The URL of the Jitsi Meet deployment to be proxy to in the context of
+ * development with webpack-dev-server.
+ */
+var devServerProxyTarget
+    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://beta.meet.jit.si';
+
 var minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
@@ -30,6 +38,17 @@ if (minimize) {
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
 var config = {
+    devServer: {
+        https: true,
+        inline: true,
+        proxy: {
+            '/': {
+                bypass: devServerProxyBypass,
+                secure: false,
+                target: devServerProxyTarget
+            }
+        }
+    },
     devtool: 'source-map',
     module: {
         loaders: [ {
@@ -107,6 +126,7 @@ var config = {
         filename: '[name]' + (minimize ? '.min' : '') + '.js',
         libraryTarget: 'umd',
         path: __dirname + '/build',
+        publicPath: '/libs/',
         sourceMapFilename: '[name].' + (minimize ? 'min' : 'js') + '.map'
     },
     plugins: plugins,
@@ -118,7 +138,7 @@ var config = {
     }
 };
 
-module.exports = [
+var configs = [
 
     // The Webpack configuration to bundle app.bundle.js (aka APP).
     Object.assign({}, config, {
@@ -141,3 +161,45 @@ module.exports = [
         })
     })
 ];
+
+module.exports = configs;
+
+/**
+ * Determines whether a specific (HTTP) request is to bypass the proxy of
+ * webpack-dev-server (i.e. is to be handled by the proxy target) and, if not,
+ * which local file is to be served in response to the request.
+ *
+ * @param {Object} request - The (HTTP) request received by the proxy.
+ * @returns {string|undefined} If the request is to be served by the proxy
+ * target, undefined; otherwise, the path to the local file to be served.
+ */
+function devServerProxyBypass(request) {
+    var path = request.path;
+
+    // Use local files from the css and libs directories.
+    if (path.startsWith('/css/')) {
+        return path;
+    }
+    if (configs.some(function (c) {
+                if (path.startsWith(c.output.publicPath)) {
+                    if (!minimize) {
+                        // Since webpack-dev-server is serving non-minimized
+                        // artifacts, serve them even if the minimized ones are
+                        // requested.
+                        Object.keys(c.entry).some(function (e) {
+                            var name = e + '.min.js';
+
+                            if (path.indexOf(name) !== -1) {
+                                path = path.replace(name, e + '.js');
+
+                                return true;
+                            }
+                        });
+                    }
+
+                    return true;
+                }
+            })) {
+        return path;
+    }
+}

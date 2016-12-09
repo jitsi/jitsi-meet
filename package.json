@@ -73,7 +73,8 @@
     "precommit-hook": "3.0.0",
     "string-replace-loader": "*",
     "style-loader": "*",
-    "webpack": "*"
+    "webpack": "^1.14.0",
+    "webpack-dev-server": "^1.16.2"
   },
   "license": "Apache-2.0",
   "scripts": {
