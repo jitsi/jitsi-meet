@@ -12,6 +12,12 @@ Installing Jitsi Meet is quite a simple experience. For Debian-based systems, we
 
 For other systems, or if you wish to install all components manually, see the [detailed manual installation instructions](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md).
 
+## Download
+
+You can download Debian/Ubuntu binaries:
+* [stable](https://download.jitsi.org/stable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianStableRepository))
+* [nightly](https://download.jitsi.org/unstable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianNightlyRepository))
+
 ## Building the sources
 
 Jitsi Meet uses [Browserify](http://browserify.org). If you want to make changes in the code you need to [install Browserify](http://browserify.org/#install). Browserify requires [nodejs](http://nodejs.org).
