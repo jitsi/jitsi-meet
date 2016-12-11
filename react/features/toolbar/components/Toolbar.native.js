@@ -2,17 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import {
-    MEDIA_TYPE,
-    toggleCameraFacingMode
-} from '../../base/media';
+import { MEDIA_TYPE, toggleCameraFacingMode } from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 
-import {
-    AbstractToolbar,
-    mapStateToProps
-} from './AbstractToolbar';
+import { AbstractToolbar, mapStateToProps } from './AbstractToolbar';
 import { styles } from './styles';
 import ToolbarButton from './ToolbarButton';
 
@@ -50,49 +44,80 @@ class Toolbar extends AbstractToolbar {
      * @returns {ReactElement}
      */
     render() {
-        const audioButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.AUDIO);
-        const videoButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.VIDEO);
-        const underlayColor = ColorPalette.buttonUnderlay;
-
-        // TODO Use correct Jitsi icon for camera switch button when available.
-
-        /* eslint-disable react/jsx-handler-names */
-
         return (
             <Container
                 style = { styles.toolbarContainer }
                 visible = { this.props.visible }>
-
-                <View style = { styles.toggleCameraFacingModeContainer }>
-                    <ToolbarButton
-                        iconName = 'reload'
-                        iconstyle = { styles.whiteIcon }
-                        onClick = { this._toggleCameraFacingMode }
-                        style = { styles.toggleCameraFacingModeButton }
-                        underlayColor = 'transparent' />
-                </View>
-                <View style = { styles.toolbarButtonsContainer }>
-                    <ToolbarButton
-                        iconName = { audioButtonStyles.iconName }
-                        iconStyle = { audioButtonStyles.iconStyle }
-                        onClick = { this._toggleAudio }
-                        style = { audioButtonStyles.buttonStyle } />
-                    <ToolbarButton
-                        iconName = 'hangup'
-                        iconStyle = { styles.whiteIcon }
-                        onClick = { this._onHangup }
-                        style = {{
-                            ...styles.toolbarButton,
-                            backgroundColor: ColorPalette.red
-                        }}
-                        underlayColor = { underlayColor } />
-                    <ToolbarButton
-                        iconName = { videoButtonStyles.iconName }
-                        iconStyle = { videoButtonStyles.iconStyle }
-                        onClick = { this._toggleVideo }
-                        style = { videoButtonStyles.buttonStyle } />
-                </View>
+                {
+                    this._renderPrimaryToolbar()
+                }
+                {
+                    this._renderSecondaryToolbar()
+                }
             </Container>
+        );
+    }
+
+    /**
+     * Renders the toolbar which contains the primary buttons such as hangup,
+     * audio and video mute.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderPrimaryToolbar() {
+        const audioButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.AUDIO);
+        const videoButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.VIDEO);
+
+        /* eslint-disable react/jsx-handler-names */
+
+        return (
+            <View style = { styles.primaryToolbar }>
+                <ToolbarButton
+                    iconName = { audioButtonStyles.iconName }
+                    iconStyle = { audioButtonStyles.iconStyle }
+                    onClick = { this._toggleAudio }
+                    style = { audioButtonStyles.buttonStyle } />
+                <ToolbarButton
+                    iconName = 'hangup'
+                    iconStyle = { styles.whiteIcon }
+                    onClick = { this._onHangup }
+                    style = {{
+                        ...styles.toolbarButton,
+                        backgroundColor: ColorPalette.red
+                    }}
+                    underlayColor = { ColorPalette.buttonUnderlay } />
+                <ToolbarButton
+                    iconName = { videoButtonStyles.iconName }
+                    iconStyle = { videoButtonStyles.iconStyle }
+                    onClick = { this._toggleVideo }
+                    style = { videoButtonStyles.buttonStyle } />
+            </View>
+        );
+
+        /* eslint-enable react/jsx-handler-names */
+    }
+
+    /**
+     * Renders the toolbar which contains the secondary buttons such as toggle
+     * camera facing mode.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderSecondaryToolbar() {
+        /* eslint-disable react/jsx-handler-names */
+
+        // TODO Use an appropriate icon for toggle camera facing mode.
+        return (
+            <View style = { styles.secondaryToolbar }>
+                <ToolbarButton
+                    iconName = 'reload'
+                    iconStyle = { styles.whiteIcon }
+                    onClick = { this._toggleCameraFacingMode }
+                    style = { styles.toggleCameraFacingModeButton }
+                    underlayColor = 'transparent' />
+            </View>
         );
 
         /* eslint-enable react/jsx-handler-names */
