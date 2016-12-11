@@ -46,6 +46,7 @@ export const styles = createStyleSheet({
      * Policy and Terms of Service displayed on the WelcomePage.
      */
     legaleseContainer: {
+        alignItems: 'center',
         flex: 0,
         flexDirection: 'row',
         justifyContent: 'center'
@@ -57,6 +58,7 @@ export const styles = createStyleSheet({
      */
     legaleseItem: {
         color: TEXT_COLOR,
+        fontSize: 12,
         margin: BoxModel.margin
     },
 

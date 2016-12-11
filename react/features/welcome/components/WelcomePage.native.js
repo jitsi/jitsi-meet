@@ -9,10 +9,19 @@ import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
 import { styles } from './styles';
 
 /**
- * The URL at which the terms and conditions (of service) are available to the
- * user.
+ * The URL at which the privacy policy is available to the user.
  */
-const TERMS_AND_CONDITIONS_URL = 'https://jitsi.org/meet/terms';
+const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+
+/**
+ * The URL at which the user may send feedback.
+ */
+const SEND_FEEDBACK_URL = 'mailto:support@jitsi.org';
+
+/**
+ * The URL at which the terms (of service/use) are available to the user.
+ */
+const TERMS_URL = 'https://jitsi.org/meet/terms';
 
 /**
  * The native container rendering the welcome page.
@@ -41,6 +50,35 @@ class WelcomePage extends AbstractWelcomePage {
                 {
                     this._renderLocalVideoOverlay()
                 }
+            </View>
+        );
+    }
+
+    /**
+     * Renders legal-related content such as Terms of service/use, Privacy
+     * policy, etc.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderLegalese() {
+        return (
+            <View style = { styles.legaleseContainer }>
+                <Link
+                    style = { styles.legaleseItem }
+                    url = { TERMS_URL }>
+                    Terms
+                </Link>
+                <Link
+                    style = { styles.legaleseItem }
+                    url = { PRIVACY_URL }>
+                    Privacy
+                </Link>
+                <Link
+                    style = { styles.legaleseItem }
+                    url = { SEND_FEEDBACK_URL }>
+                    Send feedback
+                </Link>
             </View>
         );
     }
@@ -75,13 +113,9 @@ class WelcomePage extends AbstractWelcomePage {
                         <Text style = { styles.buttonText }>JOIN</Text>
                     </TouchableHighlight>
                 </View>
-                <View style = { styles.legaleseContainer }>
-                    <Link
-                        style = { styles.legaleseItem }
-                        url = { TERMS_AND_CONDITIONS_URL }>
-                        Terms and Conditions
-                    </Link>
-                </View>
+                {
+                    this._renderLegalese()
+                }
             </View>
         );
     }
