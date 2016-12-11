@@ -85,6 +85,9 @@ function _visitNode(node, callback) {
 
 (global => {
 
+    // Polyfill for URL constructor
+    require('url-polyfill');
+
     const DOMParser = require('xmldom').DOMParser;
 
     // addEventListener
@@ -210,30 +213,6 @@ function _visitNode(node, callback) {
         };
     }
 
-    // performance
-    if (typeof global.performance === 'undefined') {
-        global.performance = {
-            now() {
-                return 0;
-            }
-        };
-    }
-
-    // sessionStorage
-    //
-    // Required by:
-    // - Strophe
-    if (typeof global.sessionStorage === 'undefined') {
-        global.sessionStorage = {
-            /* eslint-disable no-empty-function */
-            getItem() {},
-            removeItem() {},
-            setItem() {}
-
-            /* eslint-enable no-empty-function */
-        };
-    }
-
     const navigator = global.navigator;
 
     if (navigator) {
@@ -280,6 +259,30 @@ function _visitNode(node, callback) {
         })();
     }
 
+    // performance
+    if (typeof global.performance === 'undefined') {
+        global.performance = {
+            now() {
+                return 0;
+            }
+        };
+    }
+
+    // sessionStorage
+    //
+    // Required by:
+    // - Strophe
+    if (typeof global.sessionStorage === 'undefined') {
+        global.sessionStorage = {
+            /* eslint-disable no-empty-function */
+            getItem() {},
+            removeItem() {},
+            setItem() {}
+
+            /* eslint-enable no-empty-function */
+        };
+    }
+
     // WebRTC
     require('./polyfills-webrtc');
 
@@ -309,8 +312,5 @@ function _visitNode(node, callback) {
             });
         }
     }
-
-    // Polyfill for URL constructor
-    require('url-polyfill');
 
 })(global || window || this); // eslint-disable-line no-invalid-this

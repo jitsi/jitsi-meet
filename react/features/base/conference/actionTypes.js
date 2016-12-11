@@ -1,3 +1,5 @@
+import { Symbol } from '../react';
+
 /**
  * Action type to signal that we are joining the conference.
  *
@@ -8,7 +10,7 @@
  *      }
  * }
  */
-export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
+export const CONFERENCE_JOINED = Symbol('CONFERENCE_JOINED');
 
 /**
  * Action type to signal that we have left the conference.
@@ -20,7 +22,7 @@ export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
  *      }
  * }
  */
-export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
+export const CONFERENCE_LEFT = Symbol('CONFERENCE_LEFT');
 
 /**
  * Action type to signal that we will leave the specified conference.
@@ -32,7 +34,7 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
  *      }
  * }
  */
-export const CONFERENCE_WILL_LEAVE = 'CONFERENCE_WILL_LEAVE';
+export const CONFERENCE_WILL_LEAVE = Symbol('CONFERENCE_WILL_LEAVE');
 
 /**
  * The type of the Redux action which sets the name of the room of the
@@ -43,4 +45,4 @@ export const CONFERENCE_WILL_LEAVE = 'CONFERENCE_WILL_LEAVE';
  *      room: string
  * }
  */
-export const SET_ROOM = 'SET_ROOM';
+export const SET_ROOM = Symbol('SET_ROOM');
