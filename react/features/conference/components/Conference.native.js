@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
-import {
-    connect,
-    disconnect
-} from '../../base/connection';
+import { connect, disconnect } from '../../base/connection';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../filmStrip';
 import { LargeVideo } from '../../largeVideo';

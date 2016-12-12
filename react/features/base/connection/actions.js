@@ -105,8 +105,8 @@ export function connect() {
 export function disconnect() {
     return (dispatch, getState) => {
         const state = getState();
-        const conference = state['features/base/conference'].jitsiConference;
-        const connection = state['features/base/connection'].jitsiConnection;
+        const conference = state['features/base/conference'].conference;
+        const connection = state['features/base/connection'].connection;
 
         let promise;
 

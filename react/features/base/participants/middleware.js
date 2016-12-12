@@ -17,9 +17,7 @@ import { LOCAL_PARTICIPANT_DEFAULT_ID } from './constants';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED:
-        store.dispatch(
-            localParticipantIdChanged(
-                action.conference.jitsiConference.myUserId()));
+        store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
         break;
 
     case CONFERENCE_LEFT:

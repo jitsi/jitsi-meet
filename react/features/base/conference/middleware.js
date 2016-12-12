@@ -95,7 +95,7 @@ function _pinParticipant(store, next, action) {
         pin = !localParticipant || !localParticipant.pinned;
     }
     if (pin) {
-        const conference = state['features/base/conference'].jitsiConference;
+        const conference = state['features/base/conference'].conference;
 
         try {
             conference.pinParticipant(id);
@@ -105,6 +105,35 @@ function _pinParticipant(store, next, action) {
     }
 
     return next(action);
+}
+
+/**
+ * Synchronizes local tracks from state with local tracks in JitsiConference
+ * instance.
+ *
+ * @param {Store} store - Redux store.
+ * @param {Object} action - Action object.
+ * @private
+ * @returns {Promise}
+ */
+function _syncConferenceLocalTracksWithState(store, action) {
+    const state = store.getState()['features/base/conference'];
+    const conference = state.conference;
+    let promise;
+
+    // XXX The conference may already be in the process of being left, that's
+    // why we should not add/remove local tracks to such conference.
+    if (conference && conference !== state.leaving) {
+        const track = action.track.jitsiTrack;
+
+        if (action.type === TRACK_ADDED) {
+            promise = _addLocalTracksToConference(conference, [ track ]);
+        } else {
+            promise = _removeLocalTracksFromConference(conference, [ track ]);
+        }
+    }
+
+    return promise || Promise.resolve();
 }
 
 /**
@@ -131,34 +160,4 @@ function _trackAddedOrRemoved(store, next, action) {
     }
 
     return next(action);
-}
-
-/**
- * Synchronizes local tracks from state with local tracks in JitsiConference
- * instance.
- *
- * @param {Store} store - Redux store.
- * @param {Object} action - Action object.
- * @private
- * @returns {Promise}
- */
-function _syncConferenceLocalTracksWithState(store, action) {
-    const conferenceState = store.getState()['features/base/conference'];
-    const conference = conferenceState.jitsiConference;
-    const leavingConference = conferenceState.leavingJitsiConference;
-    let promise;
-
-    // XXX The conference in state might be already in 'leaving' state, that's
-    // why we should not add/remove local tracks to such conference.
-    if (conference && conference !== leavingConference) {
-        const track = action.track.jitsiTrack;
-
-        if (action.type === TRACK_ADDED) {
-            promise = _addLocalTracksToConference(conference, [ track ]);
-        } else {
-            promise = _removeLocalTracksFromConference(conference, [ track ]);
-        }
-    }
-
-    return promise || Promise.resolve();
 }

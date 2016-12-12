@@ -20,7 +20,7 @@ import './reducer';
 export function selectParticipant() {
     return (dispatch, getState) => {
         const state = getState();
-        const conference = state['features/base/conference'].jitsiConference;
+        const conference = state['features/base/conference'].conference;
 
         if (conference) {
             const largeVideo = state['features/largeVideo'];

@@ -19,34 +19,52 @@ import { _addLocalTracksToConference } from './functions';
 import './middleware';
 import './reducer';
 
-const JitsiConferenceEvents = JitsiMeetJS.events.conference;
-
 /**
- * Initializes a new conference.
+ * Adds conference (event) listeners.
  *
- * @returns {Function}
+ * @param {JitsiConference} conference - The JitsiConference instance.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @private
+ * @returns {void}
  */
-export function createConference() {
-    return (dispatch, getState) => {
-        const state = getState();
-        const connection = state['features/base/connection'].jitsiConnection;
-        const room = state['features/base/conference'].room;
+function _addConferenceListeners(conference, dispatch) {
+    const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 
-        if (!connection) {
-            throw new Error('Cannot create conference without connection');
-        }
-        if (typeof room === 'undefined' || room === '') {
-            throw new Error('Cannot join conference without room name');
-        }
+    conference.on(
+            JitsiConferenceEvents.CONFERENCE_JOINED,
+            (...args) => dispatch(_conferenceJoined(conference, ...args)));
+    conference.on(
+            JitsiConferenceEvents.CONFERENCE_LEFT,
+            (...args) => dispatch(_conferenceLeft(conference, ...args)));
 
-        // TODO Take options from config.
-        const conference
-            = connection.initJitsiConference(room, { openSctp: true });
+    conference.on(
+            JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
+            (...args) => dispatch(dominantSpeakerChanged(...args)));
 
-        _setupConferenceListeners(conference, dispatch);
+    conference.on(
+            JitsiConferenceEvents.TRACK_ADDED,
+            t => t && !t.isLocal() && dispatch(trackAdded(t)));
+    conference.on(
+            JitsiConferenceEvents.TRACK_REMOVED,
+            t => t && !t.isLocal() && dispatch(trackRemoved(t)));
 
-        conference.join();
-    };
+    conference.on(
+            JitsiConferenceEvents.USER_JOINED,
+            (id, user) => dispatch(participantJoined({
+                id,
+                name: user.getDisplayName(),
+                role: user.getRole()
+            })));
+    conference.on(
+            JitsiConferenceEvents.USER_LEFT,
+            (...args) => dispatch(participantLeft(...args)));
+    conference.on(
+            JitsiConferenceEvents.USER_ROLE_CHANGED,
+            (...args) => dispatch(participantRoleChanged(...args)));
+
+    conference.addCommandListener(
+            EMAIL_COMMAND,
+            (data, id) => dispatch(changeParticipantEmail(id, data.value)));
 }
 
 /**
@@ -70,37 +88,31 @@ function _conferenceJoined(conference) {
 
         dispatch({
             type: CONFERENCE_JOINED,
-            conference: {
-                jitsiConference: conference
-            }
+            conference
         });
     };
 }
 
 /**
- * Signal that we have left the conference.
+ * Signals that a specific conference has been left.
  *
  * @param {JitsiConference} conference - The JitsiConference instance which was
  * left by the local participant.
  * @returns {{
  *      type: CONFERENCE_LEFT,
- *      conference: {
- *          jitsiConference: JitsiConference
- *      }
+ *      conference: JitsiConference
  *  }}
  */
 function _conferenceLeft(conference) {
     return {
         type: CONFERENCE_LEFT,
-        conference: {
-            jitsiConference: conference
-        }
+        conference
     };
 }
 
 /**
- * Signal the intention of the application to have the local participant leave a
- * specific conference. Similar in fashion to CONFERENCE_LEFT. Contrary to it
+ * Signals the intention of the application to have the local participant leave
+ * a specific conference. Similar in fashion to CONFERENCE_LEFT. Contrary to it
  * though, it's not guaranteed because CONFERENCE_LEFT may be triggered by
  * lib-jitsi-meet and not the application.
  *
@@ -108,17 +120,43 @@ function _conferenceLeft(conference) {
  * be left by the local participant.
  * @returns {{
  *      type: CONFERENCE_LEFT,
- *      conference: {
- *          jitsiConference: JitsiConference
- *      }
+ *      conference: JitsiConference
  *  }}
  */
 export function conferenceWillLeave(conference) {
     return {
         type: CONFERENCE_WILL_LEAVE,
-        conference: {
-            jitsiConference: conference
+        conference
+    };
+}
+
+/**
+ * Initializes a new conference.
+ *
+ * @returns {Function}
+ */
+export function createConference() {
+    return (dispatch, getState) => {
+        const state = getState();
+        const connection = state['features/base/connection'].connection;
+
+        if (!connection) {
+            throw new Error('Cannot create conference without connection');
         }
+
+        const room = state['features/base/conference'].room;
+
+        if (typeof room === 'undefined' || room === '') {
+            throw new Error('Cannot join conference without room name');
+        }
+
+        // TODO Take options from config.
+        const conference
+            = connection.initJitsiConference(room, { openSctp: true });
+
+        _addConferenceListeners(conference, dispatch);
+
+        conference.join();
     };
 }
 
@@ -137,50 +175,4 @@ export function setRoom(room) {
         type: SET_ROOM,
         room
     };
-}
-
-/**
- * Setup various conference event handlers.
- *
- * @param {JitsiConference} conference - The JitsiConference instance.
- * @param {Dispatch} dispatch - The Redux dispatch function.
- * @private
- * @returns {void}
- */
-function _setupConferenceListeners(conference, dispatch) {
-    conference.on(
-            JitsiConferenceEvents.CONFERENCE_JOINED,
-            () => dispatch(_conferenceJoined(conference)));
-    conference.on(
-            JitsiConferenceEvents.CONFERENCE_LEFT,
-            () => dispatch(_conferenceLeft(conference)));
-
-    conference.on(
-            JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-            id => dispatch(dominantSpeakerChanged(id)));
-
-    conference.on(
-            JitsiConferenceEvents.TRACK_ADDED,
-            t => t && !t.isLocal() && dispatch(trackAdded(t)));
-    conference.on(
-            JitsiConferenceEvents.TRACK_REMOVED,
-            t => t && !t.isLocal() && dispatch(trackRemoved(t)));
-
-    conference.on(
-            JitsiConferenceEvents.USER_JOINED,
-            (id, user) => dispatch(participantJoined({
-                id,
-                name: user.getDisplayName(),
-                role: user.getRole()
-            })));
-    conference.on(
-            JitsiConferenceEvents.USER_LEFT,
-            id => dispatch(participantLeft(id)));
-    conference.on(
-            JitsiConferenceEvents.USER_ROLE_CHANGED,
-            (id, role) => dispatch(participantRoleChanged(id, role)));
-
-    conference.addCommandListener(
-            EMAIL_COMMAND,
-            (data, id) => dispatch(changeParticipantEmail(id, data.value)));
 }
