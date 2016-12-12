@@ -1,75 +1,225 @@
-import { ReducerRegistry, setStateProperty } from '../redux';
+import JitsiMeetJS from '../lib-jitsi-meet';
+import {
+    ReducerRegistry,
+    setStateProperties,
+    setStateProperty
+} from '../redux';
 
 import {
+    CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
+    SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
 import { isRoomValid } from './functions';
-
-const INITIAL_STATE = {
-    jitsiConference: null,
-
-    /**
-     * Instance of JitsiConference that is currently in 'leaving' state.
-     */
-    leavingJitsiConference: null,
-
-    /**
-     * The name of the room of the conference (to be) joined (i.e.
-     * {@link #jitsiConference}).
-     *
-     * @type {string}
-     */
-    room: null
-};
 
 /**
  * Listen for actions that contain the conference object, so that it can be
  * stored for use by other action creators.
  */
-ReducerRegistry.register('features/base/conference',
-    (state = INITIAL_STATE, action) => {
-        switch (action.type) {
-        case CONFERENCE_JOINED:
-            return (
-                setStateProperty(
-                        state,
-                        'jitsiConference',
-                        action.conference.jitsiConference));
+ReducerRegistry.register('features/base/conference', (state = {}, action) => {
+    switch (action.type) {
+    case CONFERENCE_FAILED:
+        return _conferenceFailed(state, action);
 
-        case CONFERENCE_LEFT:
-            if (state.jitsiConference === action.conference.jitsiConference) {
-                return {
-                    ...state,
-                    jitsiConference: null,
-                    leavingJitsiConference: state.leavingJitsiConference
-                        === action.conference.jitsiConference
-                            ? null
-                            : state.leavingJitsiConference
-                };
-            }
-            break;
+    case CONFERENCE_JOINED:
+        return _conferenceJoined(state, action);
 
-        case CONFERENCE_WILL_LEAVE:
-            return (
-                setStateProperty(
-                        state,
-                        'leavingJitsiConference',
-                        action.conference.jitsiConference));
+    case CONFERENCE_LEFT:
+        return _conferenceLeft(state, action);
 
-        case SET_ROOM: {
-            let room = action.room;
+    case CONFERENCE_WILL_LEAVE:
+        return _conferenceWillLeave(state, action);
 
-            // Technically, there're multiple values which don't represent
-            // valid room names. Practically, each of them is as bad as the rest
-            // of them because we can't use any of them to join a conference.
-            isRoomValid(room) || (room = INITIAL_STATE.room);
+    case SET_PASSWORD:
+        return _setPassword(state, action);
 
-            return setStateProperty(state, 'room', room);
-        }
-        }
+    case SET_ROOM:
+        return _setRoom(state, action);
+    }
 
+    return state;
+});
+
+/**
+ * Reduces a specific Redux action CONFERENCE_FAILED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_FAILED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceFailed(state, action) {
+    const conference = action.conference;
+
+    if (state.conference && state.conference !== conference) {
         return state;
-    });
+    }
+
+    const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
+    const passwordRequired
+        = JitsiConferenceErrors.PASSWORD_REQUIRED === action.error
+            ? conference
+            : undefined;
+
+    return (
+        setStateProperties(state, {
+            conference: undefined,
+            leaving: undefined,
+            password: undefined,
+
+            /**
+             * The JitsiConference instance which requires a password to join.
+             *
+             * @type {JitsiConference}
+             */
+            passwordRequired
+        }));
+}
+
+/**
+ * Reduces a specific Redux action CONFERENCE_JOINED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_JOINED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceJoined(state, action) {
+    return (
+        setStateProperties(state, {
+            /**
+             * The JitsiConference instance represented by the Redux state of
+             * the feature base/conference.
+             *
+             * @type {JitsiConference}
+             */
+            conference: action.conference,
+            leaving: undefined,
+            passwordRequired: undefined
+        }));
+}
+
+/**
+ * Reduces a specific Redux action CONFERENCE_LEFT of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_LEFT to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceLeft(state, action) {
+    const conference = action.conference;
+
+    if (state.conference !== conference) {
+        return state;
+    }
+
+    return (
+        setStateProperties(state, {
+            conference: undefined,
+            leaving: undefined,
+            password: undefined,
+            passwordRequired: undefined
+        }));
+}
+
+/**
+ * Reduces a specific Redux action CONFERENCE_WILL_LEAVE of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_WILL_LEAVE to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceWillLeave(state, action) {
+    const conference = action.conference;
+
+    if (state.conference !== conference) {
+        return state;
+    }
+
+    return (
+        setStateProperties(state, {
+            /**
+             * The JitsiConference instance which is currently in the process of
+             * being left.
+             *
+             * @type {JitsiConference}
+             */
+            leaving: conference,
+            passwordRequired: undefined
+        }));
+}
+
+/**
+ * Reduces a specific Redux action SET_PASSWORD of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_PASSWORD to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setPassword(state, action) {
+    const conference = action.conference;
+
+    switch (action.method) {
+    case conference.join:
+        if (state.passwordRequired === conference) {
+            return (
+                setStateProperties(state, {
+                    /**
+                     * The password with which the conference is to be joined.
+                     *
+                     * @type {string}
+                     */
+                    password: action.password,
+                    passwordRequired: undefined
+                }));
+        }
+        break;
+    }
+
+    return state;
+}
+
+/**
+ * Reduces a specific Redux action SET_ROOM of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_ROOM to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setRoom(state, action) {
+    let room = action.room;
+
+    if (isRoomValid(room)) {
+        // XXX Lib-jitsi-meet does not accept uppercase letters.
+        room = room.toLowerCase();
+    } else {
+        // Technically, there are multiple values which don't represent valid
+        // room names. Practically, each of them is as bad as the rest of them
+        // because we can't use any of them to join a conference.
+        room = undefined;
+    }
+
+    /**
+     * The name of the room of the conference (to be) joined.
+     *
+     * @type {string}
+     */
+    return setStateProperty(state, 'room', room);
+}

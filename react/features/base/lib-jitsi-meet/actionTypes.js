@@ -1,3 +1,5 @@
+import { Symbol } from '../react';
+
 /**
  * Action to signal that lib-jitsi-meet library was disposed.
  *
@@ -5,7 +7,7 @@
  *     type: LIB_DISPOSED
  * }
  */
-export const LIB_DISPOSED = 'LIB_DISPOSED';
+export const LIB_DISPOSED = Symbol('LIB_DISPOSED');
 
 /**
  * Action to signal that lib-jitsi-meet initialized failed with error.
@@ -15,7 +17,7 @@ export const LIB_DISPOSED = 'LIB_DISPOSED';
  *     error: Error
  * }
  */
-export const LIB_INIT_ERROR = 'LIB_INIT_ERROR';
+export const LIB_INIT_ERROR = Symbol('LIB_INIT_ERROR');
 
 /**
  * Action to signal that lib-jitsi-meet initialization succeeded.
@@ -24,7 +26,7 @@ export const LIB_INIT_ERROR = 'LIB_INIT_ERROR';
  *     type: LIB_INITIALIZED
  * }
  */
-export const LIB_INITIALIZED = 'LIB_INITIALIZED';
+export const LIB_INITIALIZED = Symbol('LIB_INITIALIZED');
 
 /**
  * Action to signal that config was set.
@@ -34,4 +36,4 @@ export const LIB_INITIALIZED = 'LIB_INITIALIZED';
  *     config: Object
  * }
  */
-export const SET_CONFIG = 'SET_CONFIG';
+export const SET_CONFIG = Symbol('SET_CONFIG');

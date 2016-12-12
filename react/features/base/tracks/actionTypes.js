@@ -1,3 +1,5 @@
+import { Symbol } from '../react';
+
 /**
  * Action for when a track has been added to the conference,
  * local or remote.
@@ -7,7 +9,7 @@
  *     track: Track
  * }
  */
-export const TRACK_ADDED = 'TRACK_ADDED';
+export const TRACK_ADDED = Symbol('TRACK_ADDED');
 
 /**
  * Action for when a track has been removed from the conference,
@@ -18,7 +20,7 @@ export const TRACK_ADDED = 'TRACK_ADDED';
  *     track: Track
  * }
  */
-export const TRACK_REMOVED = 'TRACK_REMOVED';
+export const TRACK_REMOVED = Symbol('TRACK_REMOVED');
 
 /**
  * Action for when a track properties were updated.
@@ -28,4 +30,4 @@ export const TRACK_REMOVED = 'TRACK_REMOVED';
  *     track: Track
  * }
  */
-export const TRACK_UPDATED = 'TRACK_UPDATED';
+export const TRACK_UPDATED = Symbol('TRACK_UPDATED');

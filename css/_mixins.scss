@@ -151,3 +151,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/**
+ * Creates a semi-transparent background with the given color and alpha
+ * (opacity) value.
+ */
+@mixin transparentBg($color, $alpha) {
+  background-color: rgba(red($color), green($color), blue($color), $alpha);
+}

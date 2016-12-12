@@ -24,7 +24,7 @@ const LogCollector = Logger.LogCollector;
 import JitsiMeetLogStorage from "./modules/util/JitsiMeetLogStorage";
 
 import URLProcessor from "./modules/config/URLProcessor";
-import RoomnameGenerator from './modules/util/RoomnameGenerator';
+import { generateRoomWithoutSeparator } from './modules/util/RoomnameGenerator';
 
 import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";
@@ -75,7 +75,7 @@ function buildRoomName () {
     let roomName = getRoomName();
 
     if(!roomName) {
-        let word = RoomnameGenerator.generateRoomWithoutSeparator();
+        let word = generateRoomWithoutSeparator();
         roomName = word.toLowerCase();
         let historyURL = window.location.href + word;
         //Trying to push state with current URL + roomName

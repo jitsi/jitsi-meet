@@ -59,15 +59,31 @@ ReducerRegistry.register(
             };
 
         case SET_CONFIG:
-            return {
-                ...state,
-                config: {
-                    ...action.config,
-                    ...state.config
-                }
-            };
+            return _setConfig(state, action);
 
         default:
             return state;
         }
     });
+
+/**
+ * Reduces a specific Redux action SET_CONFIG of the feature
+ * base/lib-jitsi-meet.
+ *
+ * @param {Object} state - The Redux state of the feature base/lib-jitsi-meet.
+ * @param {Action} action - The Redux action SET_CONFIG to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/lib-jitsi-meet after the
+ * reduction of the specified action.
+ */
+function _setConfig(state, action) {
+    return {
+        ...state,
+        config: {
+            // The final config is the result of augmenting the default config
+            // with whatever the deployment has chosen to override/overwrite.
+            ...INITIAL_STATE.config,
+            ...action.config
+        }
+    };
+}

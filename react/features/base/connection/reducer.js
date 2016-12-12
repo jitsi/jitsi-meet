@@ -35,8 +35,8 @@ ReducerRegistry.register('features/base/connection', (state = {}, action) => {
  * reduction of the specified action.
  */
 function _connectionDisconnected(state, action) {
-    if (state.jitsiConnection === action.connection) {
-        return setStateProperty(state, 'jitsiConnection', undefined);
+    if (state.connection === action.connection) {
+        return setStateProperty(state, 'connection', undefined);
     }
 
     return state;
@@ -53,7 +53,7 @@ function _connectionDisconnected(state, action) {
  * reduction of the specified action.
  */
 function _connectionEstablished(state, action) {
-    return setStateProperty(state, 'jitsiConnection', action.connection);
+    return setStateProperty(state, 'connection', action.connection);
 }
 
 /**

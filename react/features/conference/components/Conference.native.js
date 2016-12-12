@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
-import {
-    connect,
-    disconnect
-} from '../../base/connection';
+import { connect, disconnect } from '../../base/connection';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../filmStrip';
 import { LargeVideo } from '../../largeVideo';
 import { Toolbar } from '../../toolbar';
 
+import PasswordRequiredPrompt from './PasswordRequiredPrompt';
 import { styles } from './styles';
 
 /**
@@ -27,6 +25,14 @@ class Conference extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * The indicator which determines whether a password is required to join
+         * the conference and has not been provided yet.
+         *
+         * @private
+         * @type {JitsiConference}
+         */
+        _passwordRequired: React.PropTypes.object,
         dispatch: React.PropTypes.func
     }
 
@@ -95,6 +101,10 @@ class Conference extends Component {
                 <LargeVideo />
                 <Toolbar visible = { toolbarVisible } />
                 <FilmStrip visible = { !toolbarVisible } />
+
+                {
+                    this._renderPrompt()
+                }
             </Container>
         );
     }
@@ -131,6 +141,46 @@ class Conference extends Component {
                 = setTimeout(this._onClick, TOOLBAR_TIMEOUT_MS);
         }
     }
+
+    /**
+     * Renders a prompt if necessary such as when a password is required to join
+     * the conference.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderPrompt() {
+        const passwordRequired = this.props._passwordRequired;
+
+        if (passwordRequired) {
+            return (
+                <PasswordRequiredPrompt conference = { passwordRequired } />
+            );
+        }
+
+        return null;
+    }
 }
 
-export default reactReduxConnect()(Conference);
+/**
+ * Maps (parts of) the Redux state to the associated Conference's props.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _passwordRequired: boolean
+ * }}
+ */
+function mapStateToProps(state) {
+    return {
+        /**
+         * The indicator which determines whether a password is required to join
+         * the conference and has not been provided yet.
+         *
+         * @private
+         * @type {JitsiConference}
+         */
+        _passwordRequired: state['features/base/conference'].passwordRequired
+    };
+}
+
+export default reactReduxConnect(mapStateToProps)(Conference);

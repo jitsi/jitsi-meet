@@ -1,73 +1,82 @@
 /**
+ * Alphanumeric characters.
  * @const
  */
-var ALPHANUM = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const ALPHANUM
+    = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 /**
- * Hexadecimal digits.
+ * Hexadecimal digit characters.
  * @const
  */
-var HEX_DIGITS = '0123456789abcdef';
+const HEX_DIGITS = '0123456789abcdef';
 
 /**
- * Generates random int within the range [min, max]
- * @param min the minimum value for the generated number
- * @param max the maximum value for the generated number
- * @returns random int number
+ * Generate a string with random alphanumeric characters with a specific length.
+ *
+ * @param {number} length - The length of the string to return.
+ * @returns {string} A string of random alphanumeric characters with the
+ * specified length.
  */
-function randomInt(min, max) {
+export function randomAlphanumString(length) {
+    return _randomString(length, ALPHANUM);
+}
+
+/**
+ * Get random element of array or string.
+ *
+ * @param {Array|string} arr - Source.
+ * @returns {Array|string} Array element or string character.
+ */
+export function randomElement(arr) {
+    return arr[randomInt(0, arr.length - 1)];
+}
+
+/**
+ * Returns a random hex digit.
+ *
+ * @returns {Array|string}
+ */
+export function randomHexDigit() {
+    return randomElement(HEX_DIGITS);
+}
+
+/**
+ * Generates a string of random hexadecimal digits with a specific length.
+ *
+ * @param {number} length - The length of the string to return.
+ * @returns {string} A string of random hexadecimal digits with the specified
+ * length.
+ */
+export function randomHexString(length) {
+    return _randomString(length, HEX_DIGITS);
+}
+
+/**
+ * Generates random int within the range [min, max].
+ *
+ * @param {number} min - The minimum value for the generated number.
+ * @param {number} max - The maximum value for the generated number.
+ * @returns {number} Random int number.
+ */
+export function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
- * Get random element from array or string.
- * @param {Array|string} arr source
- * @returns array element or string character
+ * Generates a string of random characters with a specific length.
+ *
+ * @param {number} length - The length of the string to return.
+ * @param {string} characters - The characters from which the returned string is
+ * to be constructed.
+ * @returns {string} A string of random characters with the specified length.
  */
-function randomElement(arr) {
-    return arr[randomInt(0, arr.length -1)];
-}
+function _randomString(length, characters) {
+    let result = '';
 
-/**
- * Generate random alphanumeric string.
- * @param {number} length expected string length
- * @returns {string} random string of specified length
- */
-function randomAlphanumStr(length) {
-    var result = '';
-
-    for (var i = 0; i < length; i += 1) {
-        result += randomElement(ALPHANUM);
+    for (let i = 0; i < length; ++i) {
+        result += randomElement(characters);
     }
 
     return result;
 }
-
-/**
- * Exported interface.
- */
-var RandomUtil = {
-    /**
-     * Returns a random hex digit.
-     * @returns {*}
-     */
-    randomHexDigit: function() {
-        return randomElement(HEX_DIGITS);
-    },
-    /**
-     * Returns a random string of hex digits with length 'len'.
-     * @param len the length.
-     */
-    randomHexString: function (len) {
-        var ret = '';
-        while (len--) {
-            ret += this.randomHexDigit();
-        }
-        return ret;
-    },
-    randomElement: randomElement,
-    randomAlphanumStr: randomAlphanumStr,
-    randomInt: randomInt
-};
-
-module.exports = RandomUtil;

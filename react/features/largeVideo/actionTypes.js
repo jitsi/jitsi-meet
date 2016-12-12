@@ -1,3 +1,5 @@
+import { Symbol } from '../base/react';
+
 /**
  * Action to change the participant to be displayed in LargeVideo.
  *
@@ -7,4 +9,4 @@
  * }
  */
 export const LARGE_VIDEO_PARTICIPANT_CHANGED
-    = 'LARGE_VIDEO_PARTICIPANT_CHANGED';
+    = Symbol('LARGE_VIDEO_PARTICIPANT_CHANGED');

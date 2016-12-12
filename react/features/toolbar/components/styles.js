@@ -53,20 +53,32 @@ export const styles = createStyleSheet({
     },
 
     /**
+     * The style of the toolbar which contains the primary buttons such as
+     * hangup, audio and video mute.
+     */
+    primaryToolbar: {
+        ...container,
+        bottom: 30,
+        height: 60,
+        justifyContent: 'center'
+    },
+
+    /**
+     * The style of the toolbar which contains the secondary buttons such as
+     * toggle camera facing mode.
+     */
+    secondaryToolbar: {
+        ...container,
+        height: 60,
+        justifyContent: 'flex-end'
+    },
+
+    /**
      * The toggle camera facing mode button style.
      */
     toggleCameraFacingModeButton: {
         ...button,
         backgroundColor: 'transparent'
-    },
-
-    /**
-     * Container for toggle camera facing mode button.
-     */
-    toggleCameraFacingModeContainer: {
-        ...container,
-        height: 60,
-        justifyContent: 'flex-end'
     },
 
     /**
@@ -78,16 +90,6 @@ export const styles = createStyleSheet({
         marginLeft: 20,
         marginRight: 20,
         opacity: 0.8
-    },
-
-    /**
-     * The toolbar buttons container style.
-     */
-    toolbarButtonsContainer: {
-        ...container,
-        bottom: 30,
-        height: 60,
-        justifyContent: 'center'
     },
 
     /**

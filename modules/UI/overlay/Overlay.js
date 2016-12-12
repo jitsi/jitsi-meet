@@ -15,26 +15,38 @@ export default class Overlay{
          * @type {jQuery}
          */
         this.$overlay = null;
+
+        /**
+         * Indicates if this overlay should use the light look & feel or the
+         * standard one.
+         * @type {boolean}
+         */
+        this.isLightOverlay = false;
     }
     /**
      * Template method which should be used by subclasses to provide the overlay
      * content. The contents provided by this method are later subject to
      * the translation using {@link APP.translation.translateElement}.
      * @return {string} HTML representation of the overlay dialog contents.
-     * @private
+     * @protected
      */
     _buildOverlayContent() {
         return '';
     }
     /**
      * Constructs the HTML body of the overlay dialog.
+     *
+     * @private
      */
-    buildOverlayHtml() {
+    _buildOverlayHtml() {
 
         let overlayContent = this._buildOverlayContent();
 
+        let containerClass = this.isLightOverlay    ? "overlay__container-light"
+                                                    : "overlay__container";
+
         this.$overlay = $(`
-            <div class='overlay__container'>
+            <div class=${containerClass}>
                 <div class='overlay__content'>
                     ${overlayContent}
                 </div>
@@ -53,18 +65,18 @@ export default class Overlay{
     /**
      * Template method called just after the overlay is displayed for the first
      * time.
-     * @private
+     * @protected
      */
     _onShow() {
         // To be overridden by subclasses.
     }
     /**
-     * Shows the overlay dialog adn attaches the underlying HTML representation
+     * Shows the overlay dialog and attaches the underlying HTML representation
      * to the DOM.
      */
     show() {
 
-        !this.$overlay && this.buildOverlayHtml();
+        !this.$overlay && this._buildOverlayHtml();
 
         if (!this.isVisible()) {
             this.$overlay.appendTo('body');
