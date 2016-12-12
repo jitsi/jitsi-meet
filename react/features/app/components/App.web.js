@@ -1,5 +1,7 @@
+/* global APP, $ */
 import React from 'react';
 import { Provider } from 'react-redux';
+import { compose } from 'redux';
 import {
     browserHistory,
     Route,
@@ -11,6 +13,7 @@ import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
 
 import { AbstractApp } from './AbstractApp';
+import settings from '../../../../modules/settings/Settings';
 
 /**
  * Root application component.
@@ -23,7 +26,7 @@ export class App extends AbstractApp {
      *
      * @static
      */
-    static propTypes = AbstractApp.propTypes
+    static propTypes = AbstractApp.propTypes;
 
     /**
      * Initializes a new App instance.
@@ -44,28 +47,19 @@ export class App extends AbstractApp {
         // Bind event handlers so they are only bound once for every instance.
         this._onRouteEnter = this._onRouteEnter.bind(this);
         this._routerCreateElement = this._routerCreateElement.bind(this);
+        this._getRoute = this._getRoute.bind(this);
+        this._getRoutes = this._getRoutes.bind(this);
     }
 
     /**
-     * Temporarily, prevents the super from dispatching Redux actions until they
-     * are integrated into the Web App.
+     * Init translation from old app.
      *
-     * @returns {void}
+     * @inheritdoc
      */
-    componentWillMount() {
-        // FIXME Do not override the super once the dispatching of Redux actions
-        // is integrated into the Web App.
-    }
+    componentWillMount(...args) {
+        super.componentWillMount(...args);
 
-    /**
-     * Temporarily, prevents the super from dispatching Redux actions until they
-     * are integrated into the Web App.
-     *
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        // FIXME Do not override the super once the dispatching of Redux actions
-        // is integrated into the Web App.
+        APP.translation.init(settings.getLanguage());
     }
 
     /**
@@ -75,19 +69,14 @@ export class App extends AbstractApp {
      * @returns {ReactElement}
      */
     render() {
-        const routes = RouteRegistry.getRoutes();
+
 
         return (
             <Provider store = { this.props.store }>
                 <Router
                     createElement = { this._routerCreateElement }
                     history = { this.history }>
-                    { routes.map(r =>
-                        <Route
-                            component = { r.component }
-                            key = { r.component }
-                            path = { r.path } />
-                    ) }
+                    { this._getRoutes() }
                 </Router>
             </Provider>
         );
@@ -115,6 +104,38 @@ export class App extends AbstractApp {
     }
 
     /**
+     * Returns routes for application.
+     *
+     * @returns {Array}
+     * @private
+     */
+    _getRoutes() {
+        const routes = RouteRegistry.getRoutes();
+
+        return routes.map(this._getRoute);
+    }
+
+    /**
+     * Method returns route for React Router.
+     *
+     * @param {Object} route - Object that describes route.
+     * @returns {ReactElement}
+     * @private
+     */
+    _getRoute(route) {
+        const onEnter = route.onEnter || $.noop;
+        const handler = compose(this._onRouteEnter, onEnter);
+
+        return (
+            <Route
+                component = { route.component }
+                key = { route.component }
+                onEnter = { handler }
+                path = { route.path } />
+        );
+    }
+
+    /**
      * Invoked by react-router to notify this App that a Route is about to be
      * rendered.
      *
@@ -122,6 +143,7 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     _onRouteEnter() {
+
         // XXX The following is mandatory. Otherwise, moving back & forward
         // through the browser's history could leave this App on the Conference
         // page without a room name.

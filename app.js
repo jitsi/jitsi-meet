@@ -1,4 +1,4 @@
-/* global $, config, getRoomName, loggingConfig, JitsiMeetJS */
+/* global $, config, loggingConfig, JitsiMeetJS */
 /* application specific logic */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -24,9 +24,6 @@ const LogCollector = Logger.LogCollector;
 import JitsiMeetLogStorage from "./modules/util/JitsiMeetLogStorage";
 
 import URLProcessor from "./modules/config/URLProcessor";
-import {
-    generateRoomWithoutSeparator
-} from './react/features/base/util/roomnameGenerator';
 
 import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";
@@ -34,58 +31,8 @@ import conference from './conference';
 import ConferenceUrl from './modules/URL/ConferenceUrl';
 import API from './modules/API/API';
 
-import UIEvents from './service/UI/UIEvents';
 import getTokenData from "./modules/tokendata/TokenData";
 import translation from "./modules/translation/translation";
-
-const ConferenceEvents = JitsiMeetJS.events.conference;
-
-/**
- * Tries to push history state with the following parameters:
- * 'VideoChat', `Room: ${roomName}`, URL. If fail, prints the error and returns
- * it.
- */
-function pushHistoryState(roomName, URL) {
-    try {
-        window.history.pushState(
-            'VideoChat', `Room: ${roomName}`, URL
-        );
-    } catch (e) {
-        logger.warn("Push history state failed with parameters:",
-            'VideoChat', `Room: ${roomName}`, URL, e);
-        return e;
-    }
-    return null;
-}
-
-/**
- * Replaces current history state(replaces the URL displayed by the browser).
- * @param {string} newUrl the URL string which is to be displayed by the browser
- * to the user.
- */
-function replaceHistoryState (newUrl) {
-    if (window.history
-        && typeof window.history.replaceState === 'function') {
-        window.history.replaceState({}, document.title, newUrl);
-    }
-}
-
-/**
- * Builds and returns the room name.
- */
-function buildRoomName () {
-    let roomName = getRoomName();
-
-    if(!roomName) {
-        let word = generateRoomWithoutSeparator();
-        roomName = word.toLowerCase();
-        let historyURL = window.location.href + word;
-        //Trying to push state with current URL + roomName
-        pushHistoryState(word, historyURL);
-    }
-
-    return roomName;
-}
 
 /**
  * Adjusts the logging levels.
@@ -192,8 +139,6 @@ function init() {
     setTokenData();
     // Initialize the conference URL handler
     APP.ConferenceUrl = new ConferenceUrl(window.location);
-    // Clean up the URL displayed by the browser
-    replaceHistoryState(APP.ConferenceUrl.getInviteUrl());
 
     // TODO The execution of the mobile app starts from react/index.native.js.
     // Similarly, the execution of the Web app should start from
@@ -202,54 +147,6 @@ function init() {
     // into the Web app, allow the execution of the Web app to start from app.js
     // in order to reduce the complexity of the beginning step.
     require('./react');
-
-    const isUIReady = APP.UI.start();
-    if (isUIReady) {
-        APP.conference.init({roomName: buildRoomName()}).then(() => {
-
-            if (APP.logCollector) {
-                // Start the LogCollector's periodic "store logs" task only if
-                // we're in the conference and not on the welcome page. This is
-                // determined by the value of "isUIReady" const above.
-                APP.logCollector.start();
-                APP.logCollectorStarted = true;
-                // Make an attempt to flush in case a lot of logs have been
-                // cached, before the collector was started.
-                APP.logCollector.flush();
-
-                // This event listener will flush the logs, before
-                // the statistics module (CallStats) is stopped.
-                //
-                // NOTE The LogCollector is not stopped, because this event can
-                // be triggered multiple times during single conference
-                // (whenever statistics module is stopped). That includes
-                // the case when Jicofo terminates the single person left in the
-                // room. It will then restart the media session when someone
-                // eventually join the room which will start the stats again.
-                APP.conference.addConferenceListener(
-                    ConferenceEvents.BEFORE_STATISTICS_DISPOSED,
-                    () => {
-                        if (APP.logCollector) {
-                            APP.logCollector.flush();
-                        }
-                    }
-                );
-            }
-
-            APP.UI.initConference();
-
-            APP.UI.addListener(UIEvents.LANG_CHANGED, language => {
-                APP.translation.setLanguage(language);
-                APP.settings.setLanguage(language);
-            });
-
-            APP.keyboardshortcut.init();
-        }).catch(err => {
-            APP.UI.hideRingOverLay();
-            APP.API.notifyConferenceLeft(APP.conference.roomName);
-            logger.error(err);
-        });
-    }
 }
 
 /**
@@ -296,9 +193,6 @@ $(document).ready(function () {
     URLProcessor.setConfigParametersFromUrl();
 
     APP.init();
-
-    APP.translation.init(settings.getLanguage());
-
     APP.API.init(APP.tokenData.externalAPISettings);
 
     obtainConfigAndInit();
