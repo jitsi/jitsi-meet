@@ -34,7 +34,7 @@
     "postis": "^2.2.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
-    "react-native": "0.39.0",
+    "react-native": "0.39.2",
     "react-native-prompt": "^1.0.0",
     "react-native-vector-icons": "^3.0.0",
     "react-native-webrtc": "jitsi/react-native-webrtc",
@@ -51,7 +51,7 @@
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
-    "babel-core": "*",
+    "babel-core": "^6.18.0",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.8",
     "babel-polyfill": "*",
@@ -68,7 +68,7 @@
     "file-loader": "*",
     "haste-resolver-webpack-plugin": "^0.2.2",
     "imports-loader": "*",
-    "jshint": "2.8.0",
+    "jshint": "2.9.4",
     "json-loader": "0.5.4",
     "node-sass": "^3.8.0",
     "precommit-hook": "3.0.0",
