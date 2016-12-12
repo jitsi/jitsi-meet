@@ -1,4 +1,4 @@
-/* global interfaceConfig, APP  */
+/* global interfaceConfig, APP, $  */
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,8 +11,6 @@ import {
 const RIGHT_WATERMARK_STYLES = {
     backgroundImage: 'url(images/rightwatermark.png)'
 };
-
-import { Conference } from '../../conference';
 
 /**
  * The web container rendering the welcome page.
@@ -91,6 +89,9 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
+
+        // XXX Temporary solution until we add React translation.
+        APP.translation.translateElement($('#welcome_page'));
     }
 
     /**
@@ -115,12 +116,6 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        // FIXME The rendering of Conference bellow is a very quick and dirty
-        // temporary fix for the following issue: when the WelcomePage is
-        // disabled, app.js expects Conference to be rendered already and only
-        // then it builds a room name but the App component expects the room
-        // name to be built already (by looking at the window's location) in
-        // order to choose between WelcomePage and Conference.
         return (
             <div>
                 <div id = 'welcome_page'>
@@ -131,7 +126,6 @@ class WelcomePage extends AbstractWelcomePage {
                         this._renderMain()
                     }
                 </div>
-                <Conference />
             </div>
         );
     }
@@ -350,17 +344,6 @@ class WelcomePage extends AbstractWelcomePage {
         if (event.keyCode === RETURN_BUTTON_CODE) {
             this._onJoin();
         }
-    }
-
-    /**
-    * We override this method for web app for not dispatching 'set room' action.
-    *
-    * @returns {null}
-    * @override
-    * @protected
-    **/
-    _onJoin() {
-        return null;
     }
 
     /**
