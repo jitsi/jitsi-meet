@@ -1,4 +1,4 @@
-/* global APP, interfaceConfig */
+/* global interfaceConfig, APP, $  */
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -52,6 +52,9 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
+
+        // XXX Temporary solution until we add React translation.
+        APP.translation.translateElement($('#welcome_page'));
     }
 
     /**
@@ -61,12 +64,6 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        // FIXME The rendering of Conference bellow is a very quick and dirty
-        // temporary fix for the following issue: when the WelcomePage is
-        // disabled, app.js expects Conference to be rendered already and only
-        // then it builds a room name but the App component expects the room
-        // name to be built already (by looking at the window's location) in
-        // order to choose between WelcomePage and Conference.
         return (
             <div>
                 <div id = 'welcome_page'>
@@ -77,7 +74,6 @@ class WelcomePage extends AbstractWelcomePage {
                         this._renderMain()
                     }
                 </div>
-                <Conference />
             </div>
         );
     }
@@ -357,6 +353,43 @@ class WelcomePage extends AbstractWelcomePage {
         }
 
         return null;
+    }
+
+    /**
+    * Handles updating roomname.
+    *
+    * @private
+    * @returns {void}
+    **/
+    _onUpdateRoomname() {
+        this._updateRoomname();
+    }
+
+    /**
+    * Event handler for changing room name input from web.
+    *
+    * @inheritdoc
+    * @override
+    * @protected
+    */
+    _onRoomChange() {
+        super._onRoomChange(this.roomNameInput.value);
+    }
+
+    /**
+    * Handles 'keydown' event and initiate joining the room if 'return' button
+    * was pressed.
+    *
+    * @param {Event} event - Key down event object.
+    * @returns {void}
+    * @private
+    */
+    _onKeyDown(event) {
+        const RETURN_BUTTON_CODE = 13;
+
+        if (event.keyCode === RETURN_BUTTON_CODE) {
+            this._onJoin();
+        }
     }
 
     /**
