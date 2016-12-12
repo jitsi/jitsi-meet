@@ -2,6 +2,18 @@ import { Symbol } from '../react';
 
 /**
  * The type of the Redux action which signals that a specific conference has
+ * failed.
+ *
+ * {
+ *     type: CONFERENCE_FAILED,
+ *     conference: JitsiConference,
+ *     error: string
+ * }
+ */
+export const CONFERENCE_FAILED = Symbol('CONFERENCE_FAILED');
+
+/**
+ * The type of the Redux action which signals that a specific conference has
  * been joined.
  *
  * {
@@ -32,6 +44,19 @@ export const CONFERENCE_LEFT = Symbol('CONFERENCE_LEFT');
  * }
  */
 export const CONFERENCE_WILL_LEAVE = Symbol('CONFERENCE_WILL_LEAVE');
+
+/**
+ * The type of the Redux action which sets the password to join or lock a
+ * specific JitsiConference.
+ *
+ * {
+ *     type: SET_PASSWORD,
+ *     conference: JitsiConference,
+ *     method: Function
+ *     password: string
+ * }
+ */
+export const SET_PASSWORD = Symbol('SET_PASSWORD');
 
 /**
  * The type of the Redux action which sets the name of the room of the

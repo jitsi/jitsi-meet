@@ -6,9 +6,11 @@ import {
 } from '../redux';
 
 import {
+    CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
+    SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
 import { isRoomValid } from './functions';
@@ -19,6 +21,9 @@ import { isRoomValid } from './functions';
  */
 ReducerRegistry.register('features/base/conference', (state = {}, action) => {
     switch (action.type) {
+    case CONFERENCE_FAILED:
+        return _conferenceFailed(state, action);
+
     case CONFERENCE_JOINED:
         return _conferenceJoined(state, action);
 
@@ -28,12 +33,53 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
     case CONFERENCE_WILL_LEAVE:
         return _conferenceWillLeave(state, action);
 
+    case SET_PASSWORD:
+        return _setPassword(state, action);
+
     case SET_ROOM:
         return _setRoom(state, action);
     }
 
     return state;
 });
+
+/**
+ * Reduces a specific Redux action CONFERENCE_FAILED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_FAILED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceFailed(state, action) {
+    const conference = action.conference;
+
+    if (state.conference && state.conference !== conference) {
+        return state;
+    }
+
+    const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
+    const passwordRequired
+        = JitsiConferenceErrors.PASSWORD_REQUIRED === action.error
+            ? conference
+            : undefined;
+
+    return (
+        setStateProperties(state, {
+            conference: undefined,
+            leaving: undefined,
+            password: undefined,
+
+            /**
+             * The JitsiConference instance which requires a password to join.
+             *
+             * @type {JitsiConference}
+             */
+            passwordRequired
+        }));
+}
 
 /**
  * Reduces a specific Redux action CONFERENCE_JOINED of the feature
@@ -55,7 +101,8 @@ function _conferenceJoined(state, action) {
              * @type {JitsiConference}
              */
             conference: action.conference,
-            leaving: undefined
+            leaving: undefined,
+            passwordRequired: undefined
         }));
 }
 
@@ -79,7 +126,9 @@ function _conferenceLeft(state, action) {
     return (
         setStateProperties(state, {
             conference: undefined,
-            leaving: undefined
+            leaving: undefined,
+            password: undefined,
+            passwordRequired: undefined
         }));
 }
 
@@ -108,8 +157,41 @@ function _conferenceWillLeave(state, action) {
              *
              * @type {JitsiConference}
              */
-            leaving: conference
+            leaving: conference,
+            passwordRequired: undefined
         }));
+}
+
+/**
+ * Reduces a specific Redux action SET_PASSWORD of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_PASSWORD to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setPassword(state, action) {
+    const conference = action.conference;
+
+    switch (action.method) {
+    case conference.join:
+        if (state.passwordRequired === conference) {
+            return (
+                setStateProperties(state, {
+                    /**
+                     * The password with which the conference is to be joined.
+                     *
+                     * @type {string}
+                     */
+                    password: action.password,
+                    passwordRequired: undefined
+                }));
+        }
+        break;
+    }
+
+    return state;
 }
 
 /**

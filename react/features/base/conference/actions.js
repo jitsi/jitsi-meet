@@ -9,9 +9,11 @@ import {
 import { trackAdded, trackRemoved } from '../tracks';
 
 import {
+    CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
+    SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
 import { EMAIL_COMMAND } from './constants';
@@ -30,6 +32,9 @@ import './reducer';
 function _addConferenceListeners(conference, dispatch) {
     const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 
+    conference.on(
+            JitsiConferenceEvents.CONFERENCE_FAILED,
+            (...args) => dispatch(_conferenceFailed(conference, ...args)));
     conference.on(
             JitsiConferenceEvents.CONFERENCE_JOINED,
             (...args) => dispatch(_conferenceJoined(conference, ...args)));
@@ -65,6 +70,26 @@ function _addConferenceListeners(conference, dispatch) {
     conference.addCommandListener(
             EMAIL_COMMAND,
             (data, id) => dispatch(changeParticipantEmail(id, data.value)));
+}
+
+/**
+ * Signals that a specific conference has failed.
+ *
+ * @param {JitsiConference} conference - The JitsiConference that has failed.
+ * @param {string} error - The error describing/detailing the cause of the
+ * failure.
+ * @returns {{
+ *     type: CONFERENCE_FAILED,
+ *     conference: JitsiConference,
+ *     error: string
+ * }}
+ */
+function _conferenceFailed(conference, error) {
+    return {
+        type: CONFERENCE_FAILED,
+        conference,
+        error
+    };
 }
 
 /**
@@ -144,7 +169,7 @@ export function createConference() {
             throw new Error('Cannot create conference without connection');
         }
 
-        const room = state['features/base/conference'].room;
+        const { password, room } = state['features/base/conference'];
 
         if (typeof room === 'undefined' || room === '') {
             throw new Error('Cannot join conference without room name');
@@ -156,7 +181,32 @@ export function createConference() {
 
         _addConferenceListeners(conference, dispatch);
 
-        conference.join();
+        conference.join(password);
+    };
+}
+
+/**
+ * Sets the password to join or lock a specific JitsiConference.
+ *
+ * @param {JitsiConference} conference - The JitsiConference which requires a
+ * password to join or is to be locked with the specified password.
+ * @param {Function} method - The JitsiConference method of password protection
+ * such as join or lock.
+ * @param {string} password - The password with which the specified conference
+ * is to be joined or locked.
+ * @returns {{
+ *     type: SET_PASSWORD,
+ *     conference: JitsiConference,
+ *     method: Function,
+ *     password: string
+ * }}
+ */
+export function setPassword(conference, method, password) {
+    return {
+        type: SET_PASSWORD,
+        conference,
+        method,
+        password
     };
 }
 
