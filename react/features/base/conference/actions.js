@@ -13,6 +13,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
+    LOCK_STATE_CHANGED,
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
@@ -45,6 +46,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             (...args) => dispatch(dominantSpeakerChanged(...args)));
+
+    conference.on(
+            JitsiConferenceEvents.LOCK_STATE_CHANGED,
+            (...args) => dispatch(_lockStateChanged(conference, ...args)));
 
     conference.on(
             JitsiConferenceEvents.TRACK_ADDED,
@@ -182,6 +187,27 @@ export function createConference() {
         _addConferenceListeners(conference, dispatch);
 
         conference.join(password);
+    };
+}
+
+/**
+ * Signals that the lock state of a specific JitsiConference changed.
+ *
+ * @param {JitsiConference} conference - The JitsiConference which had its lock
+ * state changed.
+ * @param {boolean} locked - If the specified conference became locked, true;
+ * otherwise, false.
+ * @returns {{
+ *     type: LOCK_STATE_CHANGED,
+ *     conference: JitsiConference,
+ *     locked: boolean
+ * }}
+ */
+function _lockStateChanged(conference, locked) {
+    return {
+        type: LOCK_STATE_CHANGED,
+        conference,
+        locked
     };
 }
 

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 
 import { appNavigate } from '../../app';
-import {
-    toggleAudioMuted,
-    toggleVideoMuted
-} from '../../base/media';
+import { toggleAudioMuted, toggleVideoMuted } from '../../base/media';
 import { ColorPalette } from '../../base/styles';
 
 import { styles } from './styles';
@@ -23,6 +20,12 @@ export class AbstractToolbar extends Component {
     static propTypes = {
         audioMuted: React.PropTypes.bool,
         dispatch: React.PropTypes.func,
+
+        /**
+         * The indicator which determines whether the conference is
+         * locked/password-protected.
+         */
+        locked: React.PropTypes.bool,
         videoMuted: React.PropTypes.bool,
         visible: React.PropTypes.bool.isRequired
     }
@@ -39,6 +42,7 @@ export class AbstractToolbar extends Component {
         // Bind event handlers so they are only bound once for every instance.
         this._onHangup = this._onHangup.bind(this);
         this._toggleAudio = this._toggleAudio.bind(this);
+        this._toggleLock = this._toggleLock.bind(this);
         this._toggleVideo = this._toggleVideo.bind(this);
     }
 
@@ -50,33 +54,32 @@ export class AbstractToolbar extends Component {
      * button to get styles for.
      * @protected
      * @returns {{
-     *      buttonStyle: Object,
      *      iconName: string,
-     *      iconStyle: Object
+     *      iconStyle: Object,
+     *      style: Object
      * }}
      */
     _getMuteButtonStyles(mediaType) {
-        let buttonStyle;
         let iconName;
         let iconStyle;
+        let style = styles.primaryToolbarButton;
 
         if (this.props[`${mediaType}Muted`]) {
-            buttonStyle = {
-                ...styles.toolbarButton,
-                backgroundColor: ColorPalette.buttonUnderlay
-            };
             iconName = this[`${mediaType}MutedIcon`];
             iconStyle = styles.whiteIcon;
+            style = {
+                ...style,
+                backgroundColor: ColorPalette.buttonUnderlay
+            };
         } else {
-            buttonStyle = styles.toolbarButton;
             iconName = this[`${mediaType}Icon`];
             iconStyle = styles.icon;
         }
 
         return {
-            buttonStyle,
             iconName,
-            iconStyle
+            iconStyle,
+            style
         };
     }
 
@@ -96,7 +99,7 @@ export class AbstractToolbar extends Component {
     }
 
     /**
-     * Dispatches action to toggle the mute state of the audio/microphone.
+     * Dispatches an action to toggle the mute state of the audio/microphone.
      *
      * @protected
      * @returns {void}
@@ -106,7 +109,18 @@ export class AbstractToolbar extends Component {
     }
 
     /**
-     * Dispatches action to toggle the mute state of the video/camera.
+     * Dispatches an action to toggle the lock i.e. password protection of the
+     * conference.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _toggleLock() {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * Dispatches an action to toggle the mute state of the video/camera.
      *
      * @protected
      * @returns {void}
@@ -123,10 +137,19 @@ export class AbstractToolbar extends Component {
  * @returns {{ audioMuted: boolean, videoMuted: boolean }}
  */
 export function mapStateToProps(state) {
+    const conference = state['features/base/conference'];
     const media = state['features/base/media'];
 
     return {
         audioMuted: media.audio.muted,
+
+        /**
+         * The indicator which determines whether the conference is
+         * locked/password-protected.
+         *
+         * @type {boolean}
+         */
+        locked: conference.locked,
         videoMuted: media.video.muted
     };
 }

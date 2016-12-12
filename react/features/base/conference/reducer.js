@@ -10,6 +10,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
+    LOCK_STATE_CHANGED,
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
@@ -32,6 +33,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case CONFERENCE_WILL_LEAVE:
         return _conferenceWillLeave(state, action);
+
+    case LOCK_STATE_CHANGED:
+        return _lockStateChanged(state, action);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
@@ -70,6 +74,7 @@ function _conferenceFailed(state, action) {
         setStateProperties(state, {
             conference: undefined,
             leaving: undefined,
+            locked: undefined,
             password: undefined,
 
             /**
@@ -92,6 +97,14 @@ function _conferenceFailed(state, action) {
  * reduction of the specified action.
  */
 function _conferenceJoined(state, action) {
+    const conference = action.conference;
+
+    // FIXME The indicator which determines whether a JitsiConference is locked
+    // i.e. password-protected is private to lib-jitsi-meet. However, the
+    // library does not fire LOCK_STATE_CHANGED upon joining a JitsiConference
+    // with a password.
+    const locked = conference.room.locked || undefined;
+
     return (
         setStateProperties(state, {
             /**
@@ -100,8 +113,15 @@ function _conferenceJoined(state, action) {
              *
              * @type {JitsiConference}
              */
-            conference: action.conference,
+            conference,
             leaving: undefined,
+
+            /**
+             * The indicator which determines whether the conference is locked.
+             *
+             * @type {boolean}
+             */
+            locked,
             passwordRequired: undefined
         }));
 }
@@ -127,6 +147,7 @@ function _conferenceLeft(state, action) {
         setStateProperties(state, {
             conference: undefined,
             leaving: undefined,
+            locked: undefined,
             password: undefined,
             passwordRequired: undefined
         }));
@@ -160,6 +181,24 @@ function _conferenceWillLeave(state, action) {
             leaving: conference,
             passwordRequired: undefined
         }));
+}
+
+/**
+ * Reduces a specific Redux action LOCK_STATE_CHANGED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action LOCK_STATE_CHANGED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _lockStateChanged(state, action) {
+    if (state.conference !== action.conference) {
+        return state;
+    }
+
+    return setStateProperty(state, 'locked', action.locked || undefined);
 }
 
 /**

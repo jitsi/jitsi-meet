@@ -77,13 +77,13 @@ class Toolbar extends AbstractToolbar {
                     iconName = { audioButtonStyles.iconName }
                     iconStyle = { audioButtonStyles.iconStyle }
                     onClick = { this._toggleAudio }
-                    style = { audioButtonStyles.buttonStyle } />
+                    style = { audioButtonStyles.style } />
                 <ToolbarButton
                     iconName = 'hangup'
                     iconStyle = { styles.whiteIcon }
                     onClick = { this._onHangup }
                     style = {{
-                        ...styles.toolbarButton,
+                        ...styles.primaryToolbarButton,
                         backgroundColor: ColorPalette.red
                     }}
                     underlayColor = { ColorPalette.buttonUnderlay } />
@@ -91,7 +91,7 @@ class Toolbar extends AbstractToolbar {
                     iconName = { videoButtonStyles.iconName }
                     iconStyle = { videoButtonStyles.iconStyle }
                     onClick = { this._toggleVideo }
-                    style = { videoButtonStyles.buttonStyle } />
+                    style = { videoButtonStyles.style } />
             </View>
         );
 
@@ -106,21 +106,33 @@ class Toolbar extends AbstractToolbar {
      * @returns {ReactElement}
      */
     _renderSecondaryToolbar() {
-        /* eslint-disable react/jsx-handler-names */
+        const iconStyle = styles.whiteIcon;
+        const style = styles.secondaryToolbarButton;
+        const underlayColor = 'transparent';
+
+        /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
         // TODO Use an appropriate icon for toggle camera facing mode.
         return (
             <View style = { styles.secondaryToolbar }>
                 <ToolbarButton
                     iconName = 'reload'
-                    iconStyle = { styles.whiteIcon }
+                    iconStyle = { iconStyle }
                     onClick = { this._toggleCameraFacingMode }
-                    style = { styles.toggleCameraFacingModeButton }
-                    underlayColor = 'transparent' />
+                    style = { style }
+                    underlayColor = { underlayColor } />
+                <ToolbarButton
+                    iconName = {
+                        this.props.locked ? 'security-locked' : 'security'
+                    }
+                    iconStyle = { iconStyle }
+                    onClick = { this._toggleLock }
+                    style = { style }
+                    underlayColor = { underlayColor } />
             </View>
         );
 
-        /* eslint-enable react/jsx-handler-names */
+        /* eslint-enable react/jsx-curly-spacing,react/jsx-handler-names */
     }
 
     /**
