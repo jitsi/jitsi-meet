@@ -126,7 +126,7 @@ class Toolbar extends AbstractToolbar {
                         this.props.locked ? 'security-locked' : 'security'
                     }
                     iconStyle = { iconStyle }
-                    onClick = { this._toggleLock }
+                    onClick = { this._onRoomLock }
                     style = { style }
                     underlayColor = { underlayColor } />
             </View>

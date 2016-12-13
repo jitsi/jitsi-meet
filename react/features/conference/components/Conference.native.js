@@ -5,6 +5,7 @@ import { connect, disconnect } from '../../base/connection';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../filmStrip';
 import { LargeVideo } from '../../largeVideo';
+import { RoomLockPrompt } from '../../room-lock';
 import { Toolbar } from '../../toolbar';
 
 import PasswordRequiredPrompt from './PasswordRequiredPrompt';
@@ -33,6 +34,15 @@ class Conference extends Component {
          * @type {JitsiConference}
          */
         _passwordRequired: React.PropTypes.object,
+
+        /**
+         * The indicator which determines whether the user has requested to lock
+         * the conference/room.
+         *
+         * @private
+         * @type {JitsiConference}
+         */
+        _roomLockRequested: React.PropTypes.object,
         dispatch: React.PropTypes.func
     }
 
@@ -143,18 +153,49 @@ class Conference extends Component {
     }
 
     /**
+     * Renders a prompt if a password is required to join the conference.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderPasswordRequiredPrompt() {
+        const required = this.props._passwordRequired;
+
+        if (required) {
+            return (
+                <PasswordRequiredPrompt conference = { required } />
+            );
+        }
+
+        return null;
+    }
+
+    /**
      * Renders a prompt if necessary such as when a password is required to join
-     * the conference.
+     * the conference or the user has requested to lock the conference/room.
      *
      * @private
      * @returns {ReactElement}
      */
     _renderPrompt() {
-        const passwordRequired = this.props._passwordRequired;
+        return (
+            this._renderPasswordRequiredPrompt()
+                || this._renderRoomLockPrompt()
+        );
+    }
 
-        if (passwordRequired) {
+    /**
+     * Renders a prompt if the user has requested to lock the conference/room.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderRoomLockPrompt() {
+        const requested = this.props._roomLockRequested;
+
+        if (requested) {
             return (
-                <PasswordRequiredPrompt conference = { passwordRequired } />
+                <RoomLockPrompt conference = { requested } />
             );
         }
 
@@ -179,7 +220,16 @@ function mapStateToProps(state) {
          * @private
          * @type {JitsiConference}
          */
-        _passwordRequired: state['features/base/conference'].passwordRequired
+        _passwordRequired: state['features/base/conference'].passwordRequired,
+
+        /**
+         * The indicator which determines whether the user has requested to lock
+         * the conference/room.
+         *
+         * @private
+         * @type {JitsiConference}
+         */
+        _roomLockRequested: state['features/room-lock'].requested
     };
 }
 

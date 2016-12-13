@@ -8,7 +8,6 @@ import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import { createConference } from './actions';
-import { SET_PASSWORD } from './actionTypes';
 import {
     _addLocalTracksToConference,
     _handleParticipantError,
@@ -28,9 +27,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
-
-    case SET_PASSWORD:
-        return _setPassword(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -106,56 +102,6 @@ function _pinParticipant(store, next, action) {
         } catch (err) {
             _handleParticipantError(err);
         }
-    }
-
-    return next(action);
-}
-
-/**
- * Notifies the feature base/conference that the action <tt>SET_PASSWORD</tt> is
- * being dispatched within a specific Redux store. Joins or locks a specific
- * <tt>JitsiConference</tt> with a specific password.
- *
- * @param {Store} store - The Redux store in which the specified action is being
- * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
- * specified action to the specified store.
- * @param {Action} action - The Redux action <tt>SET_PASSWORD</tt> which is
- * being dispatched in the specified store.
- * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
- */
-function _setPassword(store, next, action) {
-    const { conference, method } = action;
-
-    switch (method) {
-    case conference.join: {
-        let state = store.getState()['features/base/conference'];
-
-        // Make sure that the action will set a password for a conference that
-        // the application wants joined.
-        if (state.passwordRequired === conference) {
-            const result = next(action);
-
-            // Join the conference with the newly-set password.
-            const password = action.password;
-
-            // Make sure that the action did set the password.
-            state = store.getState()['features/base/conference'];
-            if (state.password === password
-                    && !state.passwordRequired
-
-                    // Make sure that the application still wants the conference
-                    // joined.
-                    && !state.conference) {
-                method.call(conference, password);
-            }
-
-            return result;
-        }
-        break;
-    }
     }
 
     return next(action);

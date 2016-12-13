@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { appNavigate } from '../../app';
 import { toggleAudioMuted, toggleVideoMuted } from '../../base/media';
 import { ColorPalette } from '../../base/styles';
+import { beginRoomLockRequest } from '../../room-lock';
 
 import { styles } from './styles';
 
@@ -41,8 +42,8 @@ export class AbstractToolbar extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onHangup = this._onHangup.bind(this);
+        this._onRoomLock = this._onRoomLock.bind(this);
         this._toggleAudio = this._toggleAudio.bind(this);
-        this._toggleLock = this._toggleLock.bind(this);
         this._toggleVideo = this._toggleVideo.bind(this);
     }
 
@@ -99,6 +100,17 @@ export class AbstractToolbar extends Component {
     }
 
     /**
+     * Dispatches an action to set the lock i.e. password protection of the
+     * conference/room.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _onRoomLock() {
+        this.props.dispatch(beginRoomLockRequest());
+    }
+
+    /**
      * Dispatches an action to toggle the mute state of the audio/microphone.
      *
      * @protected
@@ -106,17 +118,6 @@ export class AbstractToolbar extends Component {
      */
     _toggleAudio() {
         this.props.dispatch(toggleAudioMuted());
-    }
-
-    /**
-     * Dispatches an action to toggle the lock i.e. password protection of the
-     * conference.
-     *
-     * @protected
-     * @returns {void}
-     */
-    _toggleLock() {
-        // TODO Auto-generated method stub
     }
 
     /**
