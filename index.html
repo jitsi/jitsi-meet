@@ -58,6 +58,8 @@
                     }
 
                     var delay = Math.pow(2, retryCount) * 2000;
+                    if (isNaN(delay) || delay < 2000 || delay > 60000)
+                        delay = 10000;
 
                     document.body.innerHTML
                         = "<div style='"
