@@ -28,10 +28,6 @@
                 && criticalFiles.some(
                     function(file) { return fileRef.indexOf(file) !== -1 })) {
                 window.onload = function() {
-                    document.body.innerHTML
-                        = "The application failed to load, missing file: "
-                        + fileRef;
-
                     // The whole complex part below implements page reloads with
                     // "exponential backoff". The retry attempt is passes as
                     // "rCounter" query parameter
@@ -63,9 +59,28 @@
 
                     var delay = Math.pow(2, retryCount) * 2000;
 
-                    document.body.innerHTML +=
-                        "<br/> The page will reload shortly... "
-                            + "<a href='" + href + "' >(reload)</a>";
+                    document.body.innerHTML
+                        = "<div style='"
+                            + "position: absolute;top: 50%;left: 50%;"
+                            + "text-align: center;"
+                            + "transform: translate(-50%, -50%)'>"
+                            + "The application failed to load."
+                            + "<a id='showMore' style='"
+                            + "text-decoration: underline;"
+                            + "cursor: pointer'>more</a>"
+                            + "<div id='moreInfo' style='"
+                            + "display: none'>" + fileRef + "</div>"
+                            + "<br/> "
+                            + "The page should reload shortly... "
+                            + "<a href='" + href + "'"
+                            + " style='text-decoration: underline'>reload</a>"
+                            + "</div>";
+                    document.getElementById("showMore")
+                        .addEventListener('click', function () {
+                           document
+                               .getElementById("moreInfo")
+                               .setAttribute("style", "display: block;");
+                        });
 
                     window.setTimeout(
                         function () { window.location.replace(href); }, delay);
