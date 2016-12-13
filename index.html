@@ -63,6 +63,10 @@
 
                     var delay = Math.pow(2, retryCount) * 2000;
 
+                    document.body.innerHTML +=
+                        "<br/> The page will reload shortly... "
+                            + "<a href='" + href + "' >(reload)</a>";
+
                     window.setTimeout(
                         function () { window.location.replace(href); }, delay);
                 };
