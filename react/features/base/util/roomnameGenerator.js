@@ -1,10 +1,15 @@
-import { randomElement } from './randomUtil';
+import { randomElement } from './RandomUtil';
+
+/*
+ const _NOUN_ = [
+ ];
+ */
 
 /**
-* The list of available nouns. It is used while generating new room names.
-* @const
-**/
-const PLURAL_NOUNS = [
+ * The list of plural nouns.
+ * @const
+ */
+const _PLURALNOUN_ = [
     'Aliens', 'Animals', 'Antelopes', 'Ants', 'Apes', 'Apples', 'Baboons',
     'Bacteria', 'Badgers', 'Bananas', 'Bats', 'Bears', 'Birds', 'Bonobos',
     'Brides', 'Bugs', 'Bulls', 'Butterflies', 'Cheetahs', 'Cherries', 'Chicken',
@@ -23,11 +28,21 @@ const PLURAL_NOUNS = [
     'Witches', 'Wizards', 'Wolves', 'Workers', 'Worms', 'Zebras'
 ];
 
+/*
+ const _PLACE_ = [
+ 'Pub', 'University', 'Airport', 'Library', 'Mall', 'Theater', 'Stadium',
+ 'Office', 'Show', 'Gallows', 'Beach', 'Cemetery', 'Hospital', 'Reception',
+ 'Restaurant', 'Bar', 'Church', 'House', 'School', 'Square', 'Village',
+ 'Cinema', 'Movies', 'Party', 'Restroom', 'End', 'Jail', 'PostOffice',
+ 'Station', 'Circus', 'Gates', 'Entrance', 'Bridge'
+ ];
+ */
+
 /**
-* The list of available verbs. It is used while generating new room names.
-* @const
-**/
-const VERBS = [
+ * The list of verbs.
+ * @const
+ */
+const _VERB_ = [
     'Abandon', 'Adapt', 'Advertise', 'Answer', 'Anticipate', 'Appreciate',
     'Approach', 'Argue', 'Ask', 'Bite', 'Blossom', 'Blush', 'Breathe', 'Breed',
     'Bribe', 'Burn', 'Calculate', 'Clean', 'Code', 'Communicate', 'Compute',
@@ -48,10 +63,10 @@ const VERBS = [
 ];
 
 /**
-* The list of available adverbs. It is used while generating new room names.
-* @const
-**/
-const ADVERBS = [
+ * The list of adverbs.
+ * @const
+ */
+const _ADVERB_ = [
     'Absently', 'Accurately', 'Accusingly', 'Adorably', 'AllTheTime', 'Alone',
     'Always', 'Amazingly', 'Angrily', 'Anxiously', 'Anywhere', 'Appallingly',
     'Apparently', 'Articulately', 'Astonishingly', 'Badly', 'Barely',
@@ -81,10 +96,10 @@ const ADVERBS = [
 ];
 
 /**
-* The list of available adjectives. It is used while generating new room names.
-* @const
-**/
-const ADJECTIVES = [
+ * The list of adjectives.
+ * @const
+ */
+const _ADJECTIVE_ = [
     'Abominable', 'Accurate', 'Adorable', 'All', 'Alleged', 'Ancient', 'Angry',
     'Anxious', 'Appalling', 'Apparent', 'Astonishing', 'Attractive', 'Awesome',
     'Baby', 'Bad', 'Beautiful', 'Benign', 'Big', 'Bitter', 'Blind', 'Blue',
@@ -120,66 +135,103 @@ const ADJECTIVES = [
     'Worried', 'Yellow', 'Young', 'Zealous'
 ];
 
+/*
+ const _PRONOUN_ = [
+ ];
+ */
+
+/*
+ const _CONJUNCTION_ = [
+ 'And', 'Or', 'For', 'Above', 'Before', 'Against', 'Between'
+ ];
+ */
+
 /**
  * Maps a string (category name) to the array of words from that category.
  * @const
- **/
+ */
 const CATEGORIES = {
-    '_PLURALNOUN_': PLURAL_NOUNS,
-    '_VERB_': VERBS,
-    '_ADVERB_': ADVERBS,
-    '_ADJECTIVE_': ADJECTIVES
+    _ADJECTIVE_,
+    _ADVERB_,
+    _PLURALNOUN_,
+    _VERB_
+
+//    _CONJUNCTION_,
+//    _NOUN_,
+//    _PLACE_,
+//    _PRONOUN_,
 };
 
 /**
-* The list of available patterns for new room names generating.
-* @const
-**/
+ * The list of room name patterns.
+ * @const
+ */
 const PATTERNS = [
     '_ADJECTIVE__PLURALNOUN__VERB__ADVERB_'
+
+    // BeautifulFungiOrSpaghetti
+//    '_ADJECTIVE__PLURALNOUN__CONJUNCTION__PLURALNOUN_',
+
+    // AmazinglyScaryToy
+//    '_ADVERB__ADJECTIVE__NOUN_',
+
+    // NeitherTrashNorRifle
+//    'Neither_NOUN_Nor_NOUN_',
+//    'Either_NOUN_Or_NOUN_',
+
+    // EitherCopulateOrInvestigate
+//    'Either_VERB_Or_VERB_',
+//    'Neither_VERB_Nor_VERB_',
+
+//    'The_ADJECTIVE__ADJECTIVE__NOUN_',
+//    'The_ADVERB__ADJECTIVE__NOUN_',
+//    'The_ADVERB__ADJECTIVE__NOUN_s',
+//    'The_ADVERB__ADJECTIVE__PLURALNOUN__VERB_',
+
+    // WolvesComputeBadly
+//    '_PLURALNOUN__VERB__ADVERB_',
+
+    // UniteFacilitateAndMerge
+//    '_VERB__VERB_And_VERB_',
+
+    // NastyWitchesAtThePub
+//    '_ADJECTIVE__PLURALNOUN_AtThe_PLACE_',
 ];
 
 /**
- * Method generating new room names without separator based on available
- * patterns.
- * @returns {string} name - result room name
- **/
+ * Generates a new room name.
+ *
+ * @returns {string} A newly-generated room name.
+ */
 export function generateRoomWithoutSeparator() {
-    // XXX Note that if more than one pattern is available, the choice of
-    // 'name' won't have a uniform distribution amongst all patterns (names
-    // from patterns with fewer options will have higher probability of
-    // being chosen that names from patterns with more options).
+    // XXX Note that if more than one pattern is available, the choice of 'name'
+    // won't have a uniform distribution amongst all patterns (names from
+    // patterns with fewer options will have higher probability of being chosen
+    // that names from patterns with more options).
     let name = randomElement(PATTERNS);
 
-    let word;
-    const reduceFunction = (acc, template) => {
-        word = randomElement(CATEGORIES[template]);
-
-        return acc.replace(template, word);
-    };
-
     while (hasTemplate(name)) {
-        const categories = Object.keys(CATEGORIES);
+        for (const template in CATEGORIES) { // eslint-disable-line guard-for-in
+            const word = randomElement(CATEGORIES[template]);
 
-        name = categories.reduce(reduceFunction, name);
+            name = name.replace(template, word);
+        }
     }
 
     return name;
 }
 
 /**
- * Returns true if the string 'str' contains one of the
- * template strings.
+ * Determines whether a specific string contains at least one of the
+ * templates/categories.
+ *
  * @param {string} s - String containing categories.
- * @returns {boolean} - Returns true if template exists.
- **/
-export function hasTemplate(s) {
-    const categories = Object.keys(CATEGORIES);
-
-    for (let i = 0, length = categories.length; i < length; i += 1) {
-        const category = categories[i];
-
-        if (s.indexOf(category) >= 0) {
+ * @returns {boolean} True if the specified string contains at least one of the
+ * templates/categories; otherwise, false.
+ */
+function hasTemplate(s) {
+    for (const template in CATEGORIES) {
+        if (s.indexOf(template) >= 0) {
             return true;
         }
     }

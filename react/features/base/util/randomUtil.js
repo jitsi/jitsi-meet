@@ -1,30 +1,35 @@
 /**
- * String consisting of alphanumeric characters
+ * Alphanumeric characters.
  * @const
  */
 const ALPHANUM
-= '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 /**
- * String consisting of hexadecimal digits.
+ * Hexadecimal digit characters.
  * @const
  */
 const HEX_DIGITS = '0123456789abcdef';
 
 /**
- * Returns a random string of hex digits with length defined by argument.
+ * Generate a string with random alphanumeric characters with a specific length.
  *
- * @param {number} length - The length of string.
- * @returns {string} Random hex string.
+ * @param {number} length - The length of the string to return.
+ * @returns {string} A string of random alphanumeric characters with the
+ * specified length.
  */
-export function randomHexString(length) {
-    let result = '';
+export function randomAlphanumString(length) {
+    return _randomString(length, ALPHANUM);
+}
 
-    for (let i = 0; i < length; i += 1) {
-        result += randomHexDigit();
-    }
-
-    return result;
+/**
+ * Get random element of array or string.
+ *
+ * @param {Array|string} arr - Source.
+ * @returns {Array|string} Array element or string character.
+ */
+export function randomElement(arr) {
+    return arr[randomInt(0, arr.length - 1)];
 }
 
 /**
@@ -37,13 +42,14 @@ export function randomHexDigit() {
 }
 
 /**
- * Get random element from array of string.
+ * Generates a string of random hexadecimal digits with a specific length.
  *
- * @param {Array|string} arr - Source.
- * @returns {Array|string} Array element or string character.
+ * @param {number} length - The length of the string to return.
+ * @returns {string} A string of random hexadecimal digits with the specified
+ * length.
  */
-export function randomElement(arr) {
-    return arr[randomInt(0, arr.length - 1)];
+export function randomHexString(length) {
+    return _randomString(length, HEX_DIGITS);
 }
 
 /**
@@ -58,18 +64,19 @@ export function randomInt(min, max) {
 }
 
 /**
- * Generate random alphanumeric string.
+ * Generates a string of random characters with a specific length.
  *
- * @param {number} length - Expected string length.
- * @returns {string} Random string of specified length.
+ * @param {number} length - The length of the string to return.
+ * @param {string} characters - The characters from which the returned string is
+ * to be constructed.
+ * @returns {string} A string of random characters with the specified length.
  */
-export function randomAlphanumStr(length) {
+function _randomString(length, characters) {
     let result = '';
 
-    for (let i = 0; i < length; i += 1) {
-        result += randomElement(ALPHANUM);
+    for (let i = 0; i < length; ++i) {
+        result += randomElement(characters);
     }
 
     return result;
 }
-
