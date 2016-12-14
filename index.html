@@ -61,6 +61,9 @@
                     if (isNaN(delay) || delay < 2000 || delay > 60000)
                         delay = 10000;
 
+                    var showMoreText = "show more";
+                    var showLessText = "show less";
+
                     document.body.innerHTML
                         = "<div style='"
                         + "position: absolute;top: 50%;left: 50%;"
@@ -78,7 +81,7 @@
                         + "<a id='showMore' style='"
                         + "text-decoration: underline;"
                         + "font-size:small;"
-                        + "cursor: pointer'>show more</a>"
+                        + "cursor: pointer'>" + showMoreText + "</a>"
                         + "&nbsp;&nbsp;&nbsp;"
                         + "<a href='" + href + "' style='"
                         + "text-decoration: underline;"
@@ -91,19 +94,19 @@
                             var moreInfoElem
                                     = document.getElementById("moreInfo");
 
-                            if (showMoreElem.innerHTML === "show more") {
+                            if (showMoreElem.innerHTML === showMoreText) {
                                 moreInfoElem.setAttribute(
                                     "style",
                                     "display: block;"
                                     + "color:#FF991F;"
                                     + "font-size:small;"
                                     + "user-select:text;");
-                                showMoreElem.innerHTML = "show less";
+                                showMoreElem.innerHTML = showLessText;
                             }
                             else {
                                 moreInfoElem.setAttribute(
                                     "style", "display: none;");
-                                showMoreElem.innerHTML = "show more";
+                                showMoreElem.innerHTML = showMoreText;
                             }
                         });
 
