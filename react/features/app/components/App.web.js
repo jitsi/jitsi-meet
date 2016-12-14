@@ -1,4 +1,4 @@
-/* global APP, $ */
+/* global APP, JitsiMeetJS, loggingConfig $ */
 import React from 'react';
 import { Provider } from 'react-redux';
 import { compose } from 'redux';
@@ -19,7 +19,10 @@ import settings from '../../../../modules/settings/Settings';
 import URLProcessor from '../../../../modules/config/URLProcessor';
 import getTokenData from '../../../../modules/tokendata/TokenData';
 import JitsiMeetLogStorage from '../../../../modules/util/JitsiMeetLogStorage';
+
+// eslint-disable-next-line max-len
 import KeyboardShortcut from '../../../../modules/keyboardshortcut/keyboardshortcut';
+
 const Logger = require('jitsi-meet-logger');
 const LogCollector = Logger.LogCollector;
 
@@ -103,7 +106,8 @@ export class App extends AbstractApp {
          * @returns {void}
          */
         function configureLoggingLevels() {
-            // NOTE The library Logger is separated from the app loggers, so the levels
+            // NOTE The library Logger is separated from
+            // the app loggers, so the levels
             // have to be set in two places
 
             // Set default logging level
