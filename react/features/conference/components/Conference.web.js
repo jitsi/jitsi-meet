@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig, config */
+/* global APP, $, interfaceConfig */
 
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
@@ -7,11 +7,7 @@ import {
     connect,
     disconnect
 } from '../../base/connection';
-import ConferenceUrl from '../../../../modules/URL/ConferenceUrl';
-import HttpConfigFetch from '../../../../modules/config/HttpConfigFetch';
-import BoshAddressChoice from '../../../../modules/config/BoshAddressChoice';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import { obtainConfigAndInit } from '../actions';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -33,88 +29,7 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentDidMount() {
-
-        /**
-         * If JWT token data it will be used for local user settings.
-         *
-         * @returns {void}
-         */
-        function setTokenData() {
-            const localUser = APP.tokenData.caller;
-
-            if (localUser) {
-                const email = localUser.getEmail();
-                const avatarUrl = localUser.getAvatarUrl();
-                const name = localUser.getName();
-
-                APP.settings.setEmail((email || '').trim(), true);
-                APP.settings.setAvatarUrl((avatarUrl || '').trim());
-                APP.settings.setDisplayName((name || '').trim(), true);
-            }
-        }
-
-        /**
-         *  Initialization of the app.
-         *
-         *  @returns {void}
-         */
-        function init() {
-            setTokenData();
-
-            // Initialize the conference URL handler
-            APP.ConferenceUrl = new ConferenceUrl(window.location);
-        }
-
-        /**
-         * If we have an HTTP endpoint for getting config.json configured
-         * we're going to read it and override properties from config.js and
-         * interfaceConfig.js. If there is no endpoint we'll just
-         * continue with initialization.
-         * Keep in mind that if the endpoint has been configured and we fail
-         * to obtain the config for any reason then the conference won't
-         * start and error message will be displayed to the user.
-         *
-         * @returns {void}
-         */
-        function obtainConfigAndInit() {
-            const room = APP.conference.roomName;
-
-            if (config.configLocation) {
-                const configFetch = HttpConfigFetch;
-                const location = config.configLocation;
-
-                configFetch.obtainConfig(location, room, obtainConfigHandler);
-            } else {
-                BoshAddressChoice.chooseAddress(config, room);
-                init();
-            }
-        }
-
-        /**
-         * Obtain config handler.
-         *
-         * @param {boolean} success - Equals to true if
-         * config has been obtained w/o errors.
-         * @param {Object} error - Error object if there is error occured
-         * while fetching config.
-         * @returns {void}
-         */
-        function obtainConfigHandler(success, error) {
-            if (success) {
-                const now = window.performance.now();
-
-                APP.connectionTimes['configuration.fetched'] = now;
-                logger.log('(TIME) configuration fetched:\t', now);
-                init();
-            } else {
-                // Show obtain config error,
-                // pass the error object for report
-                APP.UI.messageHandler.openReportDialog(
-                    null, 'dialog.connectError', error);
-            }
-        }
-
-        obtainConfigAndInit();
+        this.props.dispatch(obtainConfigAndInit());
         APP.UI.start();
 
         // XXX Temporary solution until we add React translation.
