@@ -62,7 +62,7 @@ export default class Conference extends Component {
                             <div className = 'watermark rightwatermark' />
                         </a>
                         <a
-                            className = 'poweredby'
+                            className = 'poweredby hide'
                             href = 'http://jitsi.org'
                             target = '_new'>
                             <span data-i18n = 'poweredby' /> jitsi.org
