@@ -1,4 +1,5 @@
-/* global APP, $, interfaceConfig */
+/* global APP, $, interfaceConfig, config */
+
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
@@ -9,6 +10,8 @@ import {
 import ConferenceUrl from '../../../../modules/URL/ConferenceUrl';
 import HttpConfigFetch from '../../../../modules/config/HttpConfigFetch';
 import BoshAddressChoice from '../../../../modules/config/BoshAddressChoice';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * For legacy reasons, inline style for display none.
@@ -30,6 +33,7 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentDidMount() {
+
         /**
          * If JWT token data it will be used for local user settings.
          *
@@ -39,11 +43,16 @@ class Conference extends Component {
             const localUser = APP.tokenData.caller;
 
             if (localUser) {
-                APP.settings.setEmail((localUser.getEmail() || '').trim(), true);
-                APP.settings.setAvatarUrl((localUser.getAvatarUrl() || '').trim());
-                APP.settings.setDisplayName((localUser.getName() || '').trim(), true);
+                const email = localUser.getEmail();
+                const avatarUrl = localUser.getAvatarUrl();
+                const name = localUser.getName();
+
+                APP.settings.setEmail((email || '').trim(), true);
+                APP.settings.setAvatarUrl((avatarUrl || '').trim());
+                APP.settings.setDisplayName((name || '').trim(), true);
             }
         }
+
         /**
          *  Initialization of the app.
          *
@@ -55,26 +64,28 @@ class Conference extends Component {
             // Initialize the conference URL handler
             APP.ConferenceUrl = new ConferenceUrl(window.location);
         }
+
         /**
-         * If we have an HTTP endpoint for getting config.json configured we're going to
-         * read it and override properties from config.js and interfaceConfig.js.
-         * If there is no endpoint we'll just continue with initialization.
-         * Keep in mind that if the endpoint has been configured and we fail to obtain
-         * the config for any reason then the conference won't start and error message
-         * will be displayed to the user.
+         * If we have an HTTP endpoint for getting config.json configured
+         * we're going to read it and override properties from config.js and
+         * interfaceConfig.js. If there is no endpoint we'll just
+         * continue with initialization.
+         * Keep in mind that if the endpoint has been configured and we fail
+         * to obtain the config for any reason then the conference won't
+         * start and error message will be displayed to the user.
          *
          * @returns {void}
          */
         function obtainConfigAndInit() {
-            const roomName = APP.conference.roomName;
+            const room = APP.conference.roomName;
 
             if (config.configLocation) {
                 const configFetch = HttpConfigFetch;
                 const location = config.configLocation;
 
-                configFetch.obtainConfig(location, roomName, obtainConfigHandler);
+                configFetch.obtainConfig(location, room, obtainConfigHandler);
             } else {
-                BoshAddressChoice.chooseAddress(config, roomName);
+                BoshAddressChoice.chooseAddress(config, room);
                 init();
             }
         }
