@@ -1,4 +1,4 @@
-/* global APP, JitsiMeetJS, loggingConfig $ */
+/* global $ */
 import React from 'react';
 import { Provider } from 'react-redux';
 import { compose } from 'redux';
@@ -13,18 +13,7 @@ import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
 
 import { AbstractApp } from './AbstractApp';
-import settings from '../../../../modules/settings/Settings';
-
-
-import URLProcessor from '../../../../modules/config/URLProcessor';
-import getTokenData from '../../../../modules/tokendata/TokenData';
-import JitsiMeetLogStorage from '../../../../modules/util/JitsiMeetLogStorage';
-
-// eslint-disable-next-line max-len
-import KeyboardShortcut from '../../../../modules/keyboardshortcut/keyboardshortcut';
-
-const Logger = require('jitsi-meet-logger');
-const LogCollector = Logger.LogCollector;
+import { appInit } from '../actions';
 
 
 /**
@@ -64,78 +53,13 @@ export class App extends AbstractApp {
     }
 
     /**
-     * Init translation from old app.
+     * Inits the app before component will mount.
      *
      * @inheritdoc
      */
     componentWillMount(...args) {
         super.componentWillMount(...args);
-
-        URLProcessor.setConfigParametersFromUrl();
-
-        /* APP.init BEGIN */
-
-        /*  Init logging BEGIN */
-
-        // Adjust logging level
-        configureLoggingLevels();
-
-        // Create the LogCollector and register it as the global log transport.
-        // It is done early to capture as much logs as possible. Captured logs
-        // will be cached, before the JitsiMeetLogStorage gets ready (statistics
-        // module is initialized).
-        if (!APP.logCollector && !loggingConfig.disableLogCollector) {
-            APP.logCollector = new LogCollector(new JitsiMeetLogStorage());
-            Logger.addGlobalTransport(APP.logCollector);
-            JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
-        }
-
-        /*  Init logging BEGIN */
-
-        APP.keyboardshortcut = KeyboardShortcut;
-        APP.tokenData = getTokenData();
-
-        /* APP.init END */
-
-        APP.API.init(APP.tokenData.externalAPISettings);
-
-        /**
-         * Adjusts the logging levels.
-         *
-         * @private
-         * @returns {void}
-         */
-        function configureLoggingLevels() {
-            // NOTE The library Logger is separated from
-            // the app loggers, so the levels
-            // have to be set in two places
-
-            // Set default logging level
-            const defaultLogLevel
-                = loggingConfig.defaultLogLevel || JitsiMeetJS.logLevels.TRACE;
-
-            Logger.setLogLevel(defaultLogLevel);
-            JitsiMeetJS.setLogLevel(defaultLogLevel);
-
-            // NOTE console was used on purpose here to go around the logging
-            // and always print the default logging level to the console
-            console.info(`Default logging level set to: ${defaultLogLevel}`);
-
-            // Set log level for each logger
-            if (loggingConfig) {
-                Object.keys(loggingConfig).forEach(loggerName => {
-                    if (loggerName !== 'defaultLogLevel') {
-                        const level = loggingConfig[loggerName];
-
-                        Logger.setLogLevelById(level, loggerName);
-                        JitsiMeetJS.setLogLevelById(level, loggerName);
-                    }
-                });
-            }
-        }
-
-
-        APP.translation.init(settings.getLanguage());
+        this.props.store.dispatch(appInit());
     }
 
     /**
