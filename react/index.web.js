@@ -1,3 +1,4 @@
+/* global APP */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
@@ -14,6 +15,8 @@ import {
     MiddlewareRegistry,
     ReducerRegistry
 } from './features/base/redux';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 // Create combined reducer from all reducers in registry + routerReducer from
 // 'react-router-redux' module (stores location updates from history).
@@ -45,10 +48,33 @@ if (typeof window === 'object'
 // Create Redux store with our reducer and middleware.
 const store = createStore(reducer, middleware);
 
-// Render the main Component.
-ReactDOM.render(
-    <App
-        config = { config }
-        store = { store }
-        url = { window.location.toString() } />,
-    document.getElementById('react'));
+/**
+ * Render the app when DOM tree has been loaded.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const now = window.performance.now();
+
+    APP.connectionTimes['document.ready'] = now;
+    logger.log('(TIME) document ready:\t', now);
+
+    // Render the main Component.
+    ReactDOM.render(
+        <App
+            config = { config }
+            store = { store }
+            url = { window.location.toString() } />,
+        document.getElementById('react'));
+});
+
+/**
+ * Stop collecting the logs and disposing the API when
+ * user closes the page.
+ */
+window.addEventListener('beforeunload', () => {
+    // Stop the LogCollector
+    if (APP.logCollectorStarted) {
+        APP.logCollector.stop();
+        APP.logCollectorStarted = false;
+    }
+    APP.API.dispose();
+});
