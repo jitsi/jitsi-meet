@@ -4,6 +4,7 @@ import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
 import { VideoTrack } from '../../base/media';
 import { getLocalVideoTrack } from '../../base/tracks';
+import { generateRoomWithoutSeparator } from '../../base/util';
 
 /**
  * Base (abstract) class for container component rendering the welcome page.
@@ -34,15 +35,32 @@ export class AbstractWelcomePage extends Component {
         /**
          * Save room name into component's local state.
          *
-         * @type {{room: string}}
+         * @type {Object}
+         * @property {string} room - Room name.
+         * @property {string} roomPlaceholder - Room placeholder
+         * that's used as a placeholder for input.
+         * @property {string} generatedRoomname - Automatically generated
+         * room name.
+         * @property {number|null} animateTimeoutId - Identificator for
+         * letter animation timeout.
+         * @property {nubmer|null} updateTimeoutId - Identificator for
+         * updating generated room name.
          */
         this.state = {
-            room: ''
+            room: '',
+            roomPlaceholder: '',
+            generatedRoomname: '',
+            animateTimeoutId: null,
+            updateTimeoutId: null
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onJoinClick = this._onJoinClick.bind(this);
+        const roomnameChanging = this._animateRoomnameChanging.bind(this);
+
+        this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._updateRoomname = this._updateRoomname.bind(this);
+        this._animateRoomnameChanging = roomnameChanging.bind(this);
     }
 
     /**
@@ -53,6 +71,26 @@ export class AbstractWelcomePage extends Component {
      */
     componentWillReceiveProps(nextProps) {
         this.setState({ room: nextProps.room });
+    }
+
+    /**
+    * This method is executed when method will be unmounted from DOM.
+    *
+    * @inheritdoc
+    */
+    componentWillUnmount() {
+        this._clearTimeouts();
+    }
+
+    /**
+    * Method that clears timeouts for animations and updates of room name.
+    *
+    * @private
+    * @returns {void}
+    */
+    _clearTimeouts() {
+        clearTimeout(this.state.animateTimeoutId);
+        clearTimeout(this.state.updateTimeoutId);
     }
 
     /**
@@ -68,13 +106,64 @@ export class AbstractWelcomePage extends Component {
     }
 
     /**
-     * Handles click on 'Join' button.
+     * Method triggering generation of new room name and
+     * initiating animation of its changing.
      *
      * @protected
      * @returns {void}
      */
-    _onJoinClick() {
-        this.props.dispatch(appNavigate(this.state.room));
+    _updateRoomname() {
+        const generatedRoomname = generateRoomWithoutSeparator();
+        const roomPlaceholder = '';
+        const updateTimeoutId = setTimeout(this._updateRoomname, 10000);
+
+        this._clearTimeouts();
+        this.setState({
+            updateTimeoutId,
+            generatedRoomname,
+            roomPlaceholder
+        }, () => this._animateRoomnameChanging(generatedRoomname));
+    }
+
+    /**
+     * Method animating changing room name.
+     *
+     * @param {string} word - The part of room name that should
+     * be added to placeholder.
+     * @private
+     * @returns {void}
+     */
+    _animateRoomnameChanging(word) {
+        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
+        let animateTimeoutId = null;
+
+        if (word.length > 1) {
+            animateTimeoutId = setTimeout(() => {
+                this._animateRoomnameChanging(word.substring(1, word.length));
+            }, 70);
+        }
+
+        this.setState({
+            animateTimeoutId,
+            roomPlaceholder
+        });
+    }
+
+    /**
+     * Handles joining. Either by clicking on 'Join' button
+     * or by pressing 'Enter' in room name input field.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _onJoin() {
+        const { room, generatedRoomname } = this.state;
+
+        if (room && room.length) {
+            this.props.dispatch(appNavigate(room));
+        } else {
+            this.props.dispatch(appNavigate(generatedRoomname));
+        }
     }
 
     /**

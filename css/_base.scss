@@ -84,7 +84,6 @@ form {
 }
 
 .leftwatermark {
-    display: none;
     left: $defaultToolbarSize;
     margin-left: 10px;
     background-image: url($defaultWatermarkLink);
@@ -92,13 +91,11 @@ form {
 }
 
 .rightwatermark {
-    display: none;
     right: 15;
     background-position: center right;
 }
 
 .poweredby {
-    display: none;
     position: absolute;
     left: 25;
     bottom: 7;

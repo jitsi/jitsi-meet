@@ -1,9 +1,9 @@
 import { randomElement } from './RandomUtil';
 
 /*
-const _NOUN_ = [
-];
-*/
+ const _NOUN_ = [
+ ];
+ */
 
 /**
  * The list of plural nouns.
@@ -29,14 +29,14 @@ const _PLURALNOUN_ = [
 ];
 
 /*
-const _PLACE_ = [
-    'Pub', 'University', 'Airport', 'Library', 'Mall', 'Theater', 'Stadium',
-    'Office', 'Show', 'Gallows', 'Beach', 'Cemetery', 'Hospital', 'Reception',
-    'Restaurant', 'Bar', 'Church', 'House', 'School', 'Square', 'Village',
-    'Cinema', 'Movies', 'Party', 'Restroom', 'End', 'Jail', 'PostOffice',
-    'Station', 'Circus', 'Gates', 'Entrance', 'Bridge'
-];
-*/
+ const _PLACE_ = [
+ 'Pub', 'University', 'Airport', 'Library', 'Mall', 'Theater', 'Stadium',
+ 'Office', 'Show', 'Gallows', 'Beach', 'Cemetery', 'Hospital', 'Reception',
+ 'Restaurant', 'Bar', 'Church', 'House', 'School', 'Square', 'Village',
+ 'Cinema', 'Movies', 'Party', 'Restroom', 'End', 'Jail', 'PostOffice',
+ 'Station', 'Circus', 'Gates', 'Entrance', 'Bridge'
+ ];
+ */
 
 /**
  * The list of verbs.
@@ -136,15 +136,15 @@ const _ADJECTIVE_ = [
 ];
 
 /*
-const _PRONOUN_ = [
-];
-*/
+ const _PRONOUN_ = [
+ ];
+ */
 
 /*
-const _CONJUNCTION_ = [
-    'And', 'Or', 'For', 'Above', 'Before', 'Against', 'Between'
-];
-*/
+ const _CONJUNCTION_ = [
+ 'And', 'Or', 'For', 'Above', 'Before', 'Against', 'Between'
+ ];
+ */
 
 /**
  * Maps a string (category name) to the array of words from that category.

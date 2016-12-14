@@ -50,7 +50,7 @@
     float: left;
 }
 
-#domain_name
+.domain-name
 {
     float: left;
     height: 55px;
@@ -61,37 +61,51 @@
     color: $defaultDarkColor;
 }
 
-#enter_room_field {
-    font-size: 15px;
-    border: none;
-    -webkit-appearance: none;
-    width: 228px;
-    height: 55px;
-    line-height: 55px;
-    font-weight: 500;
-    box-shadow: none;
-    float: left;
-    background-color: #FFFFFF;
-    position: relative;
-    z-index: 2;
-}
+.enter-room {
+    &__field {
+        font-size: 15px;
+        border: none;
+        -webkit-appearance: none;
+        width: 228px;
+        height: 55px;
+        line-height: 55px;
+        font-weight: 500;
+        box-shadow: none;
+        float: left;
+        background-color: #FFFFFF;
+        position: relative;
+        z-index: 2;
+    }
 
-#enter_room_button {
-    width: 73px;
-    height: 45px;
-    background-color: #21B9FC;
-    moz-border-radius: 1px;
-    -webkit-border-radius: 1px;
-    color: #ffffff;
-    font-weight: 600;
-    border: none;
-    margin-top: 5px;
-    font-size: 19px;
-    padding-top: 6px;
-    outline: none;
-    float:left;
-    position: relative;
-    z-index: 2;
+    &__reload {
+        display: block;
+        width: 30px;
+        color: #acacac;
+        font-size: 1.9em;
+        line-height: 55px;
+        z-index: 3;
+        float:  left;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    &__button {
+        width: 73px;
+        height: 45px;
+        background-color: #21B9FC;
+        moz-border-radius: 1px;
+        -webkit-border-radius: 1px;
+        color: #ffffff;
+        font-weight: 600;
+        border: none;
+        margin-top: 5px;
+        font-size: 19px;
+        padding-top: 6px;
+        outline: none;
+        float:left;
+        position: relative;
+        z-index: 2;
+    }
 }
 
 #enter_room_container {
@@ -183,17 +197,4 @@
     padding-top: 30px;
     line-height: 22px;
     font-weight: 200;
-}
-
-#reload_roomname
-{
-    width: 30px;
-    color: #acacac;
-    font-size: 1.9em;
-    line-height: 55px;
-    z-index: 3;
-    float:  left;
-    cursor: pointer;
-    text-align: center;
-    display: none;
 }
