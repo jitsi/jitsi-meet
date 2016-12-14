@@ -106,7 +106,7 @@ class Toolbar extends AbstractToolbar {
      * @returns {ReactElement}
      */
     _renderSecondaryToolbar() {
-        const iconStyle = styles.whiteIcon;
+        const iconStyle = styles.secondaryToolbarIcon;
         const style = styles.secondaryToolbarButton;
         const underlayColor = 'transparent';
 
@@ -116,7 +116,7 @@ class Toolbar extends AbstractToolbar {
         return (
             <View style = { styles.secondaryToolbar }>
                 <ToolbarButton
-                    iconName = 'reload'
+                    iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this._toggleCameraFacingMode }
                     style = { style }
@@ -156,7 +156,7 @@ class Toolbar extends AbstractToolbar {
 Object.assign(Toolbar.prototype, {
     audioIcon: 'microphone',
     audioMutedIcon: 'mic-disabled',
-    videoIcon: 'webCam',
+    videoIcon: 'camera',
     videoMutedIcon: 'camera-disabled'
 });
 
