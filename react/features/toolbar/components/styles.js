@@ -23,13 +23,13 @@ const button = {
  * height: number, justifyContent: string, margin: number, width: number}}
  */
 const smallButton = {
-    borderRadius: 15,
+    borderRadius: 20,
     flex: 0,
     flexDirection: 'column',
-    height: 30,
+    height: 40,
     justifyContent: 'center',
     margin: BoxModel.margin / 2,
-    width: 30
+    width: 40
 };
 
 /**
@@ -50,7 +50,7 @@ const icon = {
  */
 const smallIcon = {
     ...icon,
-    fontSize: 16
+    fontSize: 18
 };
 
 /**
