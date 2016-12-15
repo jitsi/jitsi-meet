@@ -8,7 +8,10 @@ function enterRoom() {
         val = $enterRoomField.data("room-name");
     }
     if (val) {
-        window.location.pathname = "/" + val;
+        if (val.slice(-1) !== "/") {
+            window.location.pathname += "/";
+        }
+        window.location.pathname += val;
     }
 }
 

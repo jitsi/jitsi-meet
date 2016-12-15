@@ -20,15 +20,17 @@ function getRoomName () { // eslint-disable-line no-unused-vars
         roomName = config.getroomnode(path);
     } else {
         /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-         location ~ ^/([a-zA-Z0-9]+)$ {
-         rewrite ^/(.*)$ / break;
-         }
-        */
+         * This is making assumptions about how the URL->room mapping happens.
+         * It assumes that the room name is expressed in the URL in the last
+         * part of the (non-empty) URL path, that matches the regular
+         * expression pattern used for rewrite rules in NGINX: [a-zA-Z0-9=\?]+
+         */
         if (path.length > 1) {
-            roomName = path.substr(1).toLowerCase();
+            var regex = /\/([a-zA-Z0-9=\?]+)$/g;
+            var match = regex.exec(path);
+            if ( match && match.length > 0 ) {
+                roomName = match[1].toLowerCase();
+            }
         }
     }
 

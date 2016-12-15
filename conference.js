@@ -211,7 +211,14 @@ function maybeRedirectToWelcomePage(options) {
     if (config.enableWelcomePage) {
         setTimeout(() => {
             APP.settings.setWelcomePageEnabled(true);
-            window.location.pathname = "/";
+            if ( window.location.pathname.lastIndexOf("/") > -1 ) {
+                window.location.pathname =
+                    window.location.pathname.substring(
+                        0, window.location.pathname.lastIndexOf("/") + 1);
+            }
+            else {
+                window.location.pathname = "/";
+            }
         }, 3000);
     }
 }
