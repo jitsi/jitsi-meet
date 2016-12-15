@@ -1,7 +1,7 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import {openConnection} from './connection';
+import { openConnection } from './connection';
 import Invite from './modules/UI/invite/Invite';
 import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 
@@ -14,14 +14,13 @@ import {reportError} from './modules/util/helpers';
 
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
+import { ConferenceConnector } from './react/features/base/util';
 
 import analytics from './modules/analytics/analytics';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
-
 const ConferenceEvents = JitsiMeetJS.events.conference;
-const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
@@ -295,145 +294,6 @@ function changeLocalDisplayName(nickname = '') {
     APP.UI.changeDisplayName(APP.conference.getMyUserId(), formattedNickname);
 }
 
-class ConferenceConnector {
-    constructor(resolve, reject, invite) {
-        this._resolve = resolve;
-        this._reject = reject;
-        this._invite = invite;
-        this.reconnectTimeout = null;
-        room.on(ConferenceEvents.CONFERENCE_JOINED,
-            this._handleConferenceJoined.bind(this));
-        room.on(ConferenceEvents.CONFERENCE_FAILED,
-            this._onConferenceFailed.bind(this));
-        room.on(ConferenceEvents.CONFERENCE_ERROR,
-            this._onConferenceError.bind(this));
-    }
-    _handleConferenceFailed(err) {
-        this._unsubscribe();
-        this._reject(err);
-    }
-    _onConferenceFailed(err, ...params) {
-        logger.error('CONFERENCE FAILED:', err, ...params);
-        APP.UI.hideRingOverLay();
-        switch (err) {
-            // room is locked by the password
-        case ConferenceErrors.PASSWORD_REQUIRED:
-            APP.UI.emitEvent(UIEvents.PASSWORD_REQUIRED);
-            break;
-
-        case ConferenceErrors.CONNECTION_ERROR:
-            {
-                let [msg] = params;
-                APP.UI.notifyConnectionFailed(msg);
-            }
-            break;
-
-        case ConferenceErrors.NOT_ALLOWED_ERROR:
-            {
-                // let's show some auth not allowed page
-                window.location.pathname = "authError.html";
-            }
-            break;
-
-            // not enough rights to create conference
-        case ConferenceErrors.AUTHENTICATION_REQUIRED:
-            // schedule reconnect to check if someone else created the room
-            this.reconnectTimeout = setTimeout(function () {
-                room.join();
-            }, 5000);
-
-            // notify user that auth is required
-            AuthHandler.requireAuth(
-                room, this._invite.getRoomLocker().password);
-            break;
-
-        case ConferenceErrors.RESERVATION_ERROR:
-            {
-                let [code, msg] = params;
-                APP.UI.notifyReservationError(code, msg);
-            }
-            break;
-
-        case ConferenceErrors.GRACEFUL_SHUTDOWN:
-            APP.UI.notifyGracefulShutdown();
-            break;
-
-        case ConferenceErrors.JINGLE_FATAL_ERROR:
-            APP.UI.notifyInternalError();
-            break;
-
-        case ConferenceErrors.CONFERENCE_DESTROYED:
-            {
-                let [reason] = params;
-                APP.UI.hideStats();
-                APP.UI.notifyConferenceDestroyed(reason);
-            }
-            break;
-
-            // FIXME FOCUS_DISCONNECTED is confusing event name.
-            // What really happens there is that the library is not ready yet,
-            // because Jicofo is not available, but it is going to give
-            // it another try.
-        case ConferenceErrors.FOCUS_DISCONNECTED:
-            {
-                let [focus, retrySec] = params;
-                APP.UI.notifyFocusDisconnected(focus, retrySec);
-            }
-            break;
-
-        case ConferenceErrors.FOCUS_LEFT:
-        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
-            // FIXME the conference should be stopped by the library and not by
-            // the app. Both the errors above are unrecoverable from the library
-            // perspective.
-            room.leave().then(() => connection.disconnect());
-            APP.UI.showPageReloadOverlay(
-                false /* not a network type of failure */, err);
-            break;
-
-        case ConferenceErrors.CONFERENCE_MAX_USERS:
-            connection.disconnect();
-            APP.UI.notifyMaxUsersLimitReached();
-            break;
-        case ConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
-            window.location.reload();
-            break;
-        default:
-            this._handleConferenceFailed(err, ...params);
-        }
-    }
-    _onConferenceError(err, ...params) {
-        logger.error('CONFERENCE Error:', err, params);
-        switch (err) {
-        case ConferenceErrors.CHAT_ERROR:
-            {
-                let [code, msg] = params;
-                APP.UI.showChatError(code, msg);
-            }
-            break;
-        default:
-            logger.error("Unknown error.", err);
-        }
-    }
-    _unsubscribe() {
-        room.off(
-            ConferenceEvents.CONFERENCE_JOINED, this._handleConferenceJoined);
-        room.off(
-            ConferenceEvents.CONFERENCE_FAILED, this._onConferenceFailed);
-        if (this.reconnectTimeout !== null) {
-            clearTimeout(this.reconnectTimeout);
-        }
-        AuthHandler.closeAuth();
-    }
-    _handleConferenceJoined() {
-        this._unsubscribe();
-        this._resolve();
-    }
-    connect() {
-        room.join();
-    }
-}
-
 /**
  * Disconnects the connection.
  * @returns resolved Promise. We need this in order to make the Promise.all
@@ -467,68 +327,89 @@ export default {
      */
     init(options) {
         this.roomName = options.roomName;
+
         // attaches global error handler, if there is already one, respect it
-        if(JitsiMeetJS.getGlobalOnErrorHandler){
-            var oldOnErrorHandler = window.onerror;
-            window.onerror = function (message, source, lineno, colno, error) {
-                JitsiMeetJS.getGlobalOnErrorHandler(
-                    message, source, lineno, colno, error);
-
-                if(oldOnErrorHandler)
-                    oldOnErrorHandler(message, source, lineno, colno, error);
-            };
-
-            var oldOnUnhandledRejection = window.onunhandledrejection;
-            window.onunhandledrejection = function(event) {
-
-            JitsiMeetJS.getGlobalOnErrorHandler(
-                    null, null, null, null, event.reason);
-
-                if(oldOnUnhandledRejection)
-                    oldOnUnhandledRejection(event);
-            };
+        if (JitsiMeetJS.getGlobalOnErrorHandler) {
+            this.setGlobalErrorHandler();
         }
 
-        return JitsiMeetJS.init(
-            Object.assign(
-                {enableAnalyticsLogging: analytics.isEnabled()}, config)
-            ).then(() => {
+        const jitsiMeetJSConfig = Object.assign({
+            enableAnalyticsLogging: analytics.isEnabled()
+        }, config);
+
+        return JitsiMeetJS.init(jitsiMeetJSConfig)
+            .then(() => {
                 analytics.init();
                 return createInitialLocalTracksAndConnect(options.roomName);
-            }).then(([tracks, con]) => {
-                logger.log('initialized with %s local tracks', tracks.length);
-                APP.connection = connection = con;
-                this._bindConnectionFailedHandler(con);
-                this._createRoom(tracks);
-                this.isDesktopSharingEnabled =
-                    JitsiMeetJS.isDesktopSharingEnabled();
+            })
+            .then((...args) => this.setupConference(...args));
+    },
 
-                if (UIUtil.isButtonEnabled('contacts'))
-                    APP.UI.ContactList = new ContactList(room);
+    setGlobalErrorHandler() {
+        const oldOnErrorHandler = window.onerror;
+        const newOnErrorHandler = (message, source, lineno, colno, error) => {
+            JitsiMeetJS.getGlobalOnErrorHandler(
+                message, source, lineno, colno, error);
 
-                // if user didn't give access to mic or camera or doesn't have
-                // them at all, we disable corresponding toolbar buttons
-                if (!tracks.find((t) => t.isAudioTrack())) {
-                    APP.UI.setMicrophoneButtonEnabled(false);
-                }
+            if(oldOnErrorHandler) {
+                oldOnErrorHandler(message, source, lineno, colno, error);
+            }
+        };
 
-                if (!tracks.find((t) => t.isVideoTrack())) {
-                    APP.UI.setCameraButtonEnabled(false);
-                }
+        window.onerror = newOnErrorHandler;
 
-                this._initDeviceList();
+        const oldOnUnhandledRejection = window.onunhandledrejection;
+        const newOnUnhandledRejection = (event) => {
+            JitsiMeetJS.getGlobalOnErrorHandler(
+                null, null, null, null, event.reason);
 
-                if (config.iAmRecorder)
-                    this.recorder = new Recorder();
+            if(oldOnUnhandledRejection)
+                oldOnUnhandledRejection(event);
+        };
 
-                // XXX The API will take care of disconnecting from the XMPP
-                // server (and, thus, leaving the room) on unload.
-                return new Promise((resolve, reject) => {
-                    (new ConferenceConnector(
-                        resolve, reject, this.invite)).connect();
-                });
+        window.onunhandledrejection = newOnUnhandledRejection;
+    },
+
+    setupConference([tracks, con]) {
+        logger.log('initialized with %s local tracks', tracks.length);
+        APP.connection = connection = con;
+        this._bindConnectionFailedHandler(con);
+        this._createRoom(tracks);
+        this.isDesktopSharingEnabled =
+            JitsiMeetJS.isDesktopSharingEnabled();
+
+        if (UIUtil.isButtonEnabled('contacts'))
+            APP.UI.ContactList = new ContactList(room);
+
+        // if user didn't give access to mic or camera or doesn't have
+        // them at all, we disable corresponding toolbar buttons
+        if (!tracks.find((t) => t.isAudioTrack())) {
+            APP.UI.setMicrophoneButtonEnabled(false);
+        }
+
+        if (!tracks.find((t) => t.isVideoTrack())) {
+            APP.UI.setCameraButtonEnabled(false);
+        }
+
+        this._initDeviceList();
+
+        if (config.iAmRecorder)
+            this.recorder = new Recorder();
+
+        // XXX The API will take care of disconnecting from the XMPP
+        // server (and, thus, leaving the room) on unload.
+        return new Promise((resolve, reject) => {
+            const conferenceConnector = new ConferenceConnector({
+                resolve,
+                reject,
+                room,
+                connection,
+                invite: this.invite
+            });
+            conferenceConnector.connect();
         });
     },
+
     /**
      * Check if id is id of the local user.
      * @param {string} id id to check
