@@ -99,11 +99,13 @@ class WelcomePage extends AbstractWelcomePage {
                     <Text style = { styles.title }>Enter room name</Text>
                     <TextInput
                         autoCapitalize = 'none'
+                        autoComplete = { false }
                         autoCorrect = { false }
                         autoFocus = { true }
                         onChangeText = { this._onRoomChange }
                         placeholder = 'room name'
                         style = { styles.textInput }
+                        underlineColorAndroid = 'transparent'
                         value = { this.state.room } />
                     <TouchableHighlight
                         disabled = { this._isJoinDisabled() }
