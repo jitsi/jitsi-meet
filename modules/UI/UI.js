@@ -396,20 +396,6 @@ UI.getSharedVideoManager = function () {
  */
 UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
-    var setupWelcomePage = null;
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
-       Settings.isWelcomePageEnabled()) {
-        $("#videoconference_page").hide();
-        if (!setupWelcomePage)
-            setupWelcomePage = require("./welcome_page/WelcomePage");
-        setupWelcomePage();
-
-        // Return false to indicate that the UI hasn't been fully started and
-        // conference ready. We're still waiting for input from the user.
-        return false;
-    }
-
-    $("#welcome_page").hide();
 
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
