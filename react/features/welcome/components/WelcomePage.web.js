@@ -3,8 +3,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Conference } from '../../conference';
-
 import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
 
 /**
@@ -126,19 +124,6 @@ class WelcomePage extends AbstractWelcomePage {
         }, () => {
             APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
         });
-    }
-
-    /**
-     * Overrides the super in order to prevent the dispatching of the Redux
-     * action SET_ROOM.
-     *
-     * @override
-     * @protected
-     * @returns {null}
-     */
-    _onJoin() {
-        // Don't call the super implementation and thus prevent the dispatching
-        // of the Redux action SET_ROOM.
     }
 
     /**
@@ -363,33 +348,6 @@ class WelcomePage extends AbstractWelcomePage {
     **/
     _onUpdateRoomname() {
         this._updateRoomname();
-    }
-
-    /**
-    * Event handler for changing room name input from web.
-    *
-    * @inheritdoc
-    * @override
-    * @protected
-    */
-    _onRoomChange() {
-        super._onRoomChange(this.roomNameInput.value);
-    }
-
-    /**
-    * Handles 'keydown' event and initiate joining the room if 'return' button
-    * was pressed.
-    *
-    * @param {Event} event - Key down event object.
-    * @returns {void}
-    * @private
-    */
-    _onKeyDown(event) {
-        const RETURN_BUTTON_CODE = 13;
-
-        if (event.keyCode === RETURN_BUTTON_CODE) {
-            this._onJoin();
-        }
     }
 
     /**
