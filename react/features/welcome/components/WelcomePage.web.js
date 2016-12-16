@@ -345,7 +345,7 @@ class WelcomePage extends AbstractWelcomePage {
     *
     * @private
     * @returns {void}
-    **/
+    */
     _onUpdateRoomname() {
         this._updateRoomname();
     }
