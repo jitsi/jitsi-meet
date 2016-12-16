@@ -13,10 +13,8 @@ function enterRoom() {
 }
 
 function setupWelcomePage() {
-    /*
-    * XXX: We left only going to conference page here because transitions via
-    * React Router isn't implemented yet.
-    */
+    // XXX: We left only going to conference page here because transitions via
+    // React Router isn't implemented yet.
 
     $("#enter_room_button").click(function() {
         enterRoom();

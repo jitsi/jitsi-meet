@@ -1,111 +1,57 @@
-/* global interfaceConfig, APP  */
+/* global APP, interfaceConfig */
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    AbstractWelcomePage,
-    mapStateToProps
-} from './AbstractWelcomePage';
+import { Conference } from '../../conference';
 
-const RIGHT_WATERMARK_STYLES = {
+import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
+
+/**
+ * The CSS style of the element with CSS class <tt>rightwatermark</tt>.
+ */
+const RIGHT_WATERMARK_STYLE = {
     backgroundImage: 'url(images/rightwatermark.png)'
 };
 
-import { Conference } from '../../conference';
+/* eslint-disable require-jsdoc */
 
 /**
- * The web container rendering the welcome page.
+ * The Web container rendering the welcome page.
+ *
+ * @extends AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage {
 
+/* eslint-enable require-jsdoc */
+
     /**
-    * Constructor function of WelcomePage.
-    *
-    * @param {Object} props - Props to be set.
-    **/
+     * Initializes a new WelcomePage instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
     constructor(props) {
         super(props);
+
         this._initState();
 
         // Bind event handlers so they are only bound once for every instance.
-        const onToggleDisableWelcome = this._onToggleDisableWelcomePage;
-
-        this._onRoomChange = this._onRoomChange.bind(this);
+        this._onDisableWelcomeChange = this._onDisableWelcomeChange.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
-        this._setInput = this._setInput.bind(this);
-        this._onUpdateRoomname = this._onUpdateRoomname.bind(this);
-        this._onToggleDisableWelcomePage = onToggleDisableWelcome.bind(this);
+        this._onRoomChange = this._onRoomChange.bind(this);
     }
 
     /**
-    * Method that initializes state of the component.
-    *
-    * @returns {void}
-    **/
-    _initState() {
-        const showPoweredBy = interfaceConfig.SHOW_POWERED_BY;
-        const generateRoomnames
-            = interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE;
-        const enableWelcomePage = true;
-        const showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
-        const showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
-        let jitsiWatermarkLink = '';
-        let brandWatermarkLink = '';
-
-        if (showJitsiWatermark) {
-            jitsiWatermarkLink = interfaceConfig.JITSI_WATERMARK_LINK;
-        }
-
-        if (showBrandWatermark) {
-            brandWatermarkLink = interfaceConfig.BRAND_WATERMARK_LINK;
-        }
-
-        this.state = Object.assign({}, this.state, {
-            showPoweredBy,
-            generateRoomnames,
-            showJitsiWatermark,
-            showBrandWatermark,
-            jitsiWatermarkLink,
-            brandWatermarkLink,
-            enableWelcomePage
-        });
-    }
-
-    /**
-    * Returns the domain name.
-    *
-    * @private
-    * @returns {string} Domain name.
-    **/
-    _getDomain() {
-        return `${window.location.protocol}//${window.location.host}/`;
-    }
-
-    /**
-    * This method is executed when comonent is mounted.
-    *
-    * @inheritdoc
-    */
+     * This method is executed when comonent is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
     componentDidMount() {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
-    }
-
-    /**
-    * Handles toggling disable welcome page checkbox
-    *
-    * @returns {void}
-    **/
-    _onToggleDisableWelcomePage() {
-        const shouldEnable = this.state.enableWelcomePage;
-
-        this.setState({
-            enableWelcomePage: !shouldEnable
-        }, () => {
-            APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
-        });
     }
 
     /**
@@ -137,14 +83,116 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-    * Sets input element as property of class.
-    *
-    * @param {HTMLInputElement} input - input element to be set.
-    * @returns {void}
-    * @private
-    **/
-    _setInput(input) {
-        this.roomNameInput = input;
+     * Returns the domain name.
+     *
+     * @private
+     * @returns {string} Domain name.
+     */
+    _getDomain() {
+        return `${window.location.protocol}//${window.location.host}/`;
+    }
+
+    /**
+     * Method that initializes state of the component.
+     *
+     * @returns {void}
+     */
+    _initState() {
+        const showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
+        const showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
+
+        this.state = {
+            ...this.state,
+            brandWatermarkLink:
+                showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
+            enableWelcomePage: true,
+            generateRoomnames:
+                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
+            jitsiWatermarkLink:
+                showJitsiWatermark ? interfaceConfig.JITSI_WATERMARK_LINK : '',
+            showBrandWatermark,
+            showJitsiWatermark,
+            showPoweredBy: interfaceConfig.SHOW_POWERED_BY
+        };
+    }
+
+    /**
+     * Handles <tt>change</tt> event of the checkbox which allows specifying
+     * whether the WelcomePage is disabled.
+     *
+     * @param {Event} event - The (HTML) Event which details the change such as
+     * the EventTarget.
+     * @returns {void}
+     */
+    _onDisableWelcomeChange(event) {
+        this.setState({
+            enableWelcomePage: !event.target.value
+        }, () => {
+            APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
+        });
+    }
+
+    /**
+     * Overrides the super in order to prevent the dispatching of the Redux
+     * action SET_ROOM.
+     *
+     * @override
+     * @protected
+     * @returns {null}
+     */
+    _onJoin() {
+        // Don't call the super implementation and thus prevent the dispatching
+        // of the Redux action SET_ROOM.
+    }
+
+    /**
+     * Handles 'keydown' event to initiate joining the room when the
+     * 'Enter/Return' button is pressed.
+     *
+     * @param {Event} event - Key down event object.
+     * @private
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        if (event.keyCode === /* Enter */ 13) {
+            this._onJoin();
+        }
+    }
+
+    /**
+     * Overrides the super to account for the differences in the argument types
+     * provided by HTML and React Native text inputs.
+     *
+     * @inheritdoc
+     * @override
+     * @param {Event} event - The (HTML) Event which details the change such as
+     * the EventTarget.
+     * @protected
+     */
+    _onRoomChange(event) {
+        super._onRoomChange(event.target.value);
+    }
+
+    /**
+     * Method that returns brand watermark element if it is enabled.
+     *
+     * @private
+     * @returns {ReactElement|null} Watermark element or null.
+     */
+    _renderBrandWatermark() {
+        if (this.state.showBrandWatermark) {
+            return (
+                <a
+                    href = { this.state.brandWatermarkLink }
+                    target = '_new'>
+                    <div
+                        className = 'watermark rightwatermark'
+                        style = { RIGHT_WATERMARK_STYLE } />
+                </a>
+            );
+        }
+
+        return null;
     }
 
     /**
@@ -196,6 +244,8 @@ class WelcomePage extends AbstractWelcomePage {
         );
     }
 
+/* eslint-disable require-jsdoc */
+
     /**
      * Renders the header part of this WelcomePage.
      *
@@ -203,32 +253,46 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     _renderHeader() {
+
+/* eslint-enable require-jsdoc */
+
         return (
             <div id = 'welcome_page_header'>
-                { this._renderJitsiWatermark() }
-                { this._renderBrandWatermark() }
-                { this._renderPoweredBy() }
+                {
+                    this._renderJitsiWatermark()
+                }
+                {
+                    this._renderBrandWatermark()
+                }
+                {
+                    this._renderPoweredBy()
+                }
                 <div id = 'enter_room_container'>
                     <div id = 'enter_room_form'>
-                        <div className = 'domain-name' >
-                            { this._getDomain() }
+                        <div className = 'domain-name'>
+                            {
+                                this._getDomain()
+                            }
                         </div>
                         <div id = 'enter_room'>
                             <input
                                 autoFocus = { true }
                                 className = 'enter-room__field'
-                                data-room-name =
-                                    { this.state.generatedRoomname }
+                                data-room-name
+                                    = { this.state.generatedRoomname }
                                 id = 'enter_room_field'
                                 onChange = { this._onRoomChange }
                                 onKeyDown = { this._onKeyDown }
                                 placeholder = { this.state.roomPlaceholder }
-                                ref = { this._setInput }
                                 type = 'text'
                                 value = { this.state.room } />
+
+                            { /* eslint-disable react/jsx-handler-names */ }
                             <div
                                 className = 'icon-reload enter-room__reload'
-                                onClick = { this._onUpdateRoomname } />
+                                onClick = { this._updateRoomname } />
+                            { /* eslint-enable react/jsx-handler-names */ }
+
                             <button
                                 className = 'enter-room__button'
                                 data-i18n = 'welcomepage.go'
@@ -243,7 +307,7 @@ class WelcomePage extends AbstractWelcomePage {
                     checked = { !this.state.enableWelcomePage }
                     id = 'disable_welcome'
                     name = 'checkbox'
-                    onChange = { this._onToggleDisableWelcomePage }
+                    onChange = { this._onDisableWelcomeChange }
                     type = 'checkbox' />
                 <label
                     className = 'disable_welcome_position'
@@ -255,31 +319,11 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-    * Method that returns brand watermark element if it is enabled.
-    *
-    * @returns {ReactElement|null} Watermark element or null.
-    **/
-    _renderBrandWatermark() {
-        if (this.state.showBrandWatermark) {
-            return (
-                <a
-                    href = { this.state.brandWatermarkLink }
-                    target = '_new'>
-                    <div
-                        className = 'watermark rightwatermark'
-                        style = { RIGHT_WATERMARK_STYLES } />
-                </a>
-            );
-        }
-
-        return null;
-    }
-
-    /**
-    * Method that returns jitsi watermark element if it is enabled.
-    *
-    * @returns {ReactElement|null} Watermark element or null.
-    **/
+     * Method that returns jitsi watermark element if it is enabled.
+     *
+     * @private
+     * @returns {ReactElement|null} Watermark element or null.
+     */
     _renderJitsiWatermark() {
         if (this.state.showJitsiWatermark) {
             return (
@@ -295,11 +339,11 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-    * Renders powered by block if it is enabled
-    *
-    * @returns {void}
-    * @private
-    **/
+     * Renders powered by block if it is enabled.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
     _renderPoweredBy() {
         if (this.state.showPoweredBy) {
             return (
@@ -312,54 +356,6 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
-        return null;
-    }
-
-    /**
-    * Handles updating roomname.
-    *
-    * @private
-    * @returns {void}
-    **/
-    _onUpdateRoomname() {
-        this._updateRoomname();
-    }
-
-    /**
-    * Event handler for changing room name input from web.
-    *
-    * @inheritdoc
-    * @override
-    * @protected
-    */
-    _onRoomChange() {
-        super._onRoomChange(this.roomNameInput.value);
-    }
-
-    /**
-    * Handles 'keydown' event and initiate joining the room if 'return' button
-    * was pressed.
-    *
-    * @param {Event} event - Key down event object.
-    * @returns {void}
-    * @private
-    */
-    _onKeyDown(event) {
-        const RETURN_BUTTON_CODE = 13;
-
-        if (event.keyCode === RETURN_BUTTON_CODE) {
-            this._onJoin();
-        }
-    }
-
-    /**
-    * We override this method for web app for not dispatching 'set room' action.
-    *
-    * @returns {null}
-    * @override
-    * @protected
-    **/
-    _onJoin() {
         return null;
     }
 
