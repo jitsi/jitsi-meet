@@ -34,14 +34,14 @@
 .icon-avatar:before {
   content: "\e901";
 }
-.icon-autorenew:before {
-  content: "\e903";
-}
 .icon-hangup:before {
   content: "\e905";
 }
 .icon-chat:before {
   content: "\e906";
+}
+.icon-download:before {
+  content: "\e902";
 }
 .icon-edit:before {
   content: "\e907";
@@ -55,9 +55,6 @@
 .icon-kick:before {
   content: "\e904";
 }
-.icon-menu:before {
-  content: "\e91f";
-}
 .icon-menu-up:before {
   content: "\e91f";
 }
@@ -69,9 +66,6 @@
 }
 .icon-exit-full-screen:before {
   content: "\e90c";
-}
-.icon-star:before {
-    content: "\e916";
 }
 .icon-star-full:before {
   content: "\e90a";
@@ -109,6 +103,12 @@
 .icon-settings:before {
   content: "\e915";
 }
+.icon-star:before {
+  content: "\e916";
+}
+.icon-switch-camera:before {
+  content: "\e921";
+}
 .icon-share-desktop:before {
   content: "\e917";
 }
@@ -133,7 +133,6 @@
 .icon-recEnable:before {
   content: "\e614";
 }
-// FIXME not used anymore - consider removing in the next font update
 .icon-presentation:before {
   content: "\e603";
 }
