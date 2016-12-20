@@ -22,8 +22,7 @@ import conference from './conference';
 import API from './modules/API/API';
 
 import translation from "./modules/translation/translation";
-// For remote control testing:
-// import remoteControlController from "./modules/remotecontrol/Controller";
+import remoteControl from "./modules/remotecontrol/remotecontrol";
 
 const APP = {
     // Used by do_external_connect.js if we receive the attach data after
@@ -61,7 +60,8 @@ const APP = {
      */
     ConferenceUrl : null,
     connection: null,
-    API
+    API,
+    remoteControl
 };
 
 // TODO The execution of the mobile app starts from react/index.native.js.

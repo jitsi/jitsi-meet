@@ -488,6 +488,7 @@ export default {
             }).then(([tracks, con]) => {
                 logger.log('initialized with %s local tracks', tracks.length);
                 APP.connection = connection = con;
+                APP.remoteControl.init();
                 this._bindConnectionFailedHandler(con);
                 this._createRoom(tracks);
                 this.isDesktopSharingEnabled =

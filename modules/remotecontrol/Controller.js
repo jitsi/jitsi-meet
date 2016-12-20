@@ -1,5 +1,7 @@
 /* global $, APP */
 import * as KeyCodes from "../keycode/keycode";
+import {EVENT_TYPES, API_EVENT_TYPE}
+    from "../../service/remotecontrol/Constants";
 
 /**
  * Extract the keyboard key from the keyboard event.
@@ -42,11 +44,21 @@ function getModifiers(event) {
  * It listens for mouse and keyboard events and sends them to the receiver
  * party of the remote control session.
  */
-class Controller {
+export default class Controller {
     /**
      * Creates new instance.
      */
-    constructor() {}
+    constructor() {
+        this.enabled = false;
+    }
+
+    /**
+     * Enables / Disables the remote control
+     * @param {boolean} enabled the new state.
+     */
+    enable(enabled) {
+        this.enabled = enabled;
+    }
 
     /**
      * Starts processing the mouse and keyboard events.
@@ -54,29 +66,34 @@ class Controller {
      * attaching the listeners on.
      */
     start(area) {
+        if(!this.enabled)
+            return;
         this.area = area;
         this.area.mousemove(event => {
             const position = this.area.position();
-            this._sendEvent({
-                type: "mousemove",
+            this._sendRemoteControlEvent({
+                type: EVENT_TYPES.mousemove,
                 x: (event.pageX - position.left)/this.area.width(),
                 y: (event.pageY - position.top)/this.area.height()
             });
         });
-        this.area.mousedown(this._onMouseClickHandler.bind(this, "mousedown"));
-        this.area.mouseup(this._onMouseClickHandler.bind(this, "mouseup"));
+        this.area.mousedown(this._onMouseClickHandler.bind(this,
+            EVENT_TYPES.mousedown));
+        this.area.mouseup(this._onMouseClickHandler.bind(this,
+            EVENT_TYPES.mouseup));
         this.area.dblclick(
-            this._onMouseClickHandler.bind(this, "mousedblclick"));
+            this._onMouseClickHandler.bind(this, EVENT_TYPES.mousedblclick));
         this.area.contextmenu(() => false);
         this.area[0].onmousewheel = event => {
-            this._sendEvent({
-                type: "mousescroll",
+            this._sendRemoteControlEvent({
+                type: EVENT_TYPES.mousescroll,
                 x: event.deltaX,
                 y: event.deltaY
             });
         };
-        $(window).keydown(this._onKeyPessHandler.bind(this, "keydown"));
-        $(window).keyup(this._onKeyPessHandler.bind(this, "keyup"));
+        $(window).keydown(this._onKeyPessHandler.bind(this,
+            EVENT_TYPES.keydown));
+        $(window).keyup(this._onKeyPessHandler.bind(this, EVENT_TYPES.keyup));
     }
 
     /**
@@ -99,7 +116,7 @@ class Controller {
      * @param {Event} event the mouse event.
      */
     _onMouseClickHandler(type, event) {
-        this._sendEvent({
+        this._sendRemoteControlEvent({
             type: type,
             button: event.which
         });
@@ -111,7 +128,7 @@ class Controller {
      * @param {Event} event the key event.
      */
     _onKeyPessHandler(type, event) {
-        this._sendEvent({
+        this._sendRemoteControlEvent({
             type: type,
             key: getKey(event),
             modifiers: getModifiers(event),
@@ -123,14 +140,13 @@ class Controller {
      * @param {Object} event the remote control event.
      */
     _sendRemoteControlEvent(event) {
+        if(!this.enabled)
+            return;
         try{
             APP.conference.sendEndpointMessage("",
-                {type: "remote-control-event", event});
+                {type: API_EVENT_TYPE, event});
         } catch (e) {
             // failed to send the event.
         }
     }
 }
-
-
-export default new Controller();

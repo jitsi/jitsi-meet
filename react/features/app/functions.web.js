@@ -23,7 +23,7 @@ export function init() {
 
     APP.keyboardshortcut = KeyboardShortcut;
     APP.tokenData = getTokenData();
-    APP.API.init(APP.tokenData.externalAPISettings);
+    APP.API.init(APP.tokenData.jwt ? {forceEnable: true} : undefined);
 
     APP.translation.init(settings.getLanguage());
 }

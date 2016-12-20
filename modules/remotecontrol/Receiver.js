@@ -1,4 +1,7 @@
 /* global APP, JitsiMeetJS */
+import {DISCO_REMOTE_CONTROL_FEATURE, API_EVENT_TYPE}
+    from "../../service/remotecontrol/Constants";
+
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
 /**
@@ -7,20 +10,36 @@ const ConferenceEvents = JitsiMeetJS.events.conference;
  * API module. From there the events can be received from wrapper application
  * and executed.
  */
-class Receiver {
+export default class Receiver {
     /**
      * Creates new instance.
      * @constructor
      */
-    constructor() {}
+    constructor() {
+        this.enabled = false;
+    }
+
+    /**
+     * Enables / Disables the remote control
+     * @param {boolean} enabled the new state.
+     */
+    enable(enabled) {
+        if(this.enabled !== enabled && enabled === true) {
+            this.enabled = enabled;
+            // Announce remote control support.
+            APP.connection.addFeature(DISCO_REMOTE_CONTROL_FEATURE, true);
+        }
+    }
 
     /**
      * Attaches listener for ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED events.
      */
     start() {
-        APP.conference.addConferenceListener(
-            ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            this._onRemoteControlEvent);
+        if(this.enabled) {
+            APP.conference.addConferenceListener(
+                ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                this._onRemoteControlEvent);
+        }
     }
 
     /**
@@ -39,9 +58,7 @@ class Receiver {
      * @param {Object} event the remote control event.
      */
     _onRemoteControlEvent(participant, event) {
-        if(event.type === "remote-control-event")
+        if(event.type === API_EVENT_TYPE && this.enabled)
             APP.API.sendRemoteControlEvent(event.event);
     }
 }
-
-export default new Receiver();
