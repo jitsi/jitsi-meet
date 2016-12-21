@@ -18,7 +18,7 @@ export class VideoMutedIndicator extends Component {
         return (
             <Icon
                 name = 'eye-slash'
-                style = { styles.videoMutedIndicator } />
+                style = { styles.thumbnailIndicator } />
         );
     }
 }

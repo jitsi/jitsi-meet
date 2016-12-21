@@ -16,7 +16,7 @@ export class AudioMutedIndicator extends Component {
         return (
             <Icon
                 name = 'microphone-slash'
-                style = { styles.audioMutedIndicator } />
+                style = { styles.thumbnailIndicator } />
         );
     }
 }
