@@ -954,9 +954,13 @@ export default {
         const options = config;
 
         if (config.enableRecording && !config.recordingType) {
-            options.recordingType = config.hosts
-            && (typeof config.hosts.jirecon !== 'undefined')
-                ? 'jirecon' : 'colibri';
+            const jirecon = config.hosts.jirecon;
+
+            if (config.hosts && (typeof jirecon !== 'undefined')) {
+                options.recordingType = 'jirecon';
+            } else {
+                options.recordingType = 'colibri';
+            }
         }
 
         return options;
@@ -1246,12 +1250,18 @@ export default {
         });
 
         room.on(ConferenceEvents.TRACK_MUTE_CHANGED, track => {
+            let handler;
+
             if (!track) {
                 return;
             }
 
-            const handler = track.getType() === 'audio'
-                ? APP.UI.setAudioMuted : APP.UI.setVideoMuted;
+            if (track.getType() === 'audio') {
+                handler = APP.UI.setAudioMuted;
+            } else {
+                handler = APP.UI.setVideoMuted;
+            }
+
             let id;
             const mute = track.isMuted();
 
@@ -1268,7 +1278,7 @@ export default {
             handler(id, mute);
         });
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
-            let normalizedLvl;
+            let normalizedLvl = lvl;
 
             if (this.isLocalId(id) && localAudio && localAudio.isMuted()) {
                 normalizedLvl = 0;
