@@ -863,7 +863,7 @@ export default {
          * @returns {void}
          */
         addCommandListener(...args) {
-            room.addCommandListener.apply(...args);
+            room.addCommandListener(...args);
         },
 
         /**
