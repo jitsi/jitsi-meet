@@ -915,6 +915,30 @@ export default {
         return options;
     },
 
+    useVideoStreamNew (newStream) {
+        if (localVideo) {
+            localVideo.disposeNew();
+        }
+        room.replaceStream(localVideo, newStream)
+            .then(() => {
+                localVideo = newStream;
+                if (newStream) {
+                    this.videoMuted = newStream.isMuted();
+                    this.isSharingScreen = newStream.videoType === 'desktop';
+
+                    APP.UI.addLocalStream(newStream);
+
+                    newStream.videoType === 'camera'
+                        && APP.UI.setCameraButtonEnabled(true);
+                } else {
+                    this.videoMuted = false;
+                    this.isSharingScreen = false;
+                }
+                APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                APP.UI.updateDesktopSharingButtons();
+            });
+    },
+
     /**
      * Start using provided video stream.
      * Stops previous video stream.
@@ -1518,7 +1542,8 @@ export default {
                     micDeviceId: null
                 })
                 .then(([stream]) => {
-                    this.useVideoStream(stream);
+                    //this.useVideoStream(stream);
+                    this.useVideoStreamNew(stream);
                     logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
