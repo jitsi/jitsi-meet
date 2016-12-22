@@ -6,7 +6,7 @@ import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
  * @type {Object}
  */
 const button = {
-    borderRadius: 35,
+    borderRadius: 30,
     borderWidth: 0,
     flex: 0,
     flexDirection: 'row',
@@ -14,6 +14,22 @@ const button = {
     justifyContent: 'center',
     margin: BoxModel.margin,
     width: 60
+};
+
+/**
+ * Small toolbar button.
+ *
+ * @type {{borderRadius: number, flex: number, flexDirection: string,
+ * height: number, justifyContent: string, margin: number, width: number}}
+ */
+const smallButton = {
+    borderRadius: 20,
+    flex: 0,
+    flexDirection: 'column',
+    height: 40,
+    justifyContent: 'center',
+    margin: BoxModel.margin / 2,
+    width: 40
 };
 
 /**
@@ -25,6 +41,16 @@ const icon = {
     alignSelf: 'center',
     color: ColorPalette.darkGrey,
     fontSize: 24
+};
+
+/**
+ * Small toolbar button icon.
+ *
+ * @type {{fontSize: number}}
+ */
+const smallIcon = {
+    ...icon,
+    fontSize: 18
 };
 
 /**
@@ -65,7 +91,7 @@ export const styles = createStyleSheet({
     primaryToolbarButton: {
         ...button,
         backgroundColor: ColorPalette.white,
-        opacity: 0.8
+        opacity: 0.7
     },
 
     /**
@@ -76,16 +102,17 @@ export const styles = createStyleSheet({
         ...toolbar,
         bottom: 0,
         flexDirection: 'column',
-        right: 0,
-        top: 0
+        right: BoxModel.margin,
+        top: BoxModel.margin * 2
     },
 
     /**
      * The style of button in secondaryToolbar.
      */
     secondaryToolbarButton: {
-        ...button,
-        backgroundColor: 'transparent'
+        ...smallButton,
+        backgroundColor: ColorPalette.darkGrey,
+        opacity: 0.7
     },
 
     /**
@@ -104,6 +131,14 @@ export const styles = createStyleSheet({
      */
     whiteIcon: {
         ...icon,
+        color: ColorPalette.white
+    },
+
+    /**
+     * The secondary toolbar icon style.
+     */
+    secondaryToolbarIcon: {
+        ...smallIcon,
         color: ColorPalette.white
     }
 });

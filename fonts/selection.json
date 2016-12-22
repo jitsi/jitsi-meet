@@ -88,32 +88,6 @@
     {
       "icon": {
         "paths": [
-          "M800 330c34 52 54 116 54 182 0 188-154 342-342 342v128l-170-172 170-170v128c142 0 256-114 256-256 0-44-12-84-30-120zM512 256c-142 0-256 114-256 256 0 44 10 84 30 120l-62 62c-34-52-54-116-54-182 0-188 154-342 342-342v-128l170 172-170 170v-128z"
-        ],
-        "isMulticolor": false,
-        "isMulticolor2": false,
-        "tags": [
-          "autorenew"
-        ],
-        "grid": 0,
-        "attrs": []
-      },
-      "attrs": [],
-      "properties": {
-        "id": 68,
-        "order": 84,
-        "ligatures": "autorenew",
-        "prevSize": 32,
-        "code": 59651,
-        "name": "autorenew"
-      },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 69
-    },
-    {
-      "icon": {
-        "paths": [
           "M512 384c-68 0-134 10-196 30v132c0 16-10 34-24 40-42 20-80 46-114 78-8 8-18 12-30 12s-22-4-30-12l-106-106c-8-8-12-18-12-30s4-22 12-30c130-124 306-200 500-200s370 76 500 200c8 8 12 18 12 30s-4 22-12 30l-106 106c-8 8-18 12-30 12s-22-4-30-12c-34-32-72-58-114-78-14-6-24-20-24-38v-132c-62-20-128-32-196-32z"
         ],
         "isMulticolor": false,
@@ -734,6 +708,32 @@
       "setIdx": 0,
       "setId": 2,
       "iconIdx": 718
+    },
+    {
+      "icon": {
+        "paths": [
+          "M640 662l150-150-150-150v108h-256v-108l-150 150 150 150v-108h256v108zM854 170c46 0 84 40 84 86v512c0 46-38 86-84 86h-684c-46 0-84-40-84-86v-512c0-46 38-86 84-86h136l78-84h256l78 84h136z"
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "switch_camera"
+        ],
+        "grid": 0,
+        "attrs": []
+      },
+      "attrs": [],
+      "properties": {
+        "id": 741,
+        "order": 108,
+        "ligatures": "switch_camera",
+        "prevSize": 32,
+        "code": 59681,
+        "name": "switch-camera"
+      },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 742
     },
     {
       "icon": {

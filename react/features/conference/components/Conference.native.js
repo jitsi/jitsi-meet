@@ -55,7 +55,7 @@ class Conference extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { toolbarVisible: false };
+        this.state = { toolbarVisible: true };
 
         /**
          * The numerical ID of the timeout in milliseconds after which the

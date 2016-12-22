@@ -86,6 +86,8 @@ class Thumbnail extends Component {
             };
         }
 
+        const thumbToolbarStyle = styles.thumbnailIndicatorContainer;
+
         // We don't render audio in any of the following:
         // 1. The audio (source) is muted. There's no practical reason (that we
         //    know of, anyway) why we'd want to render it given that it's
@@ -121,11 +123,13 @@ class Thumbnail extends Component {
                 { participant.dominantSpeaker
                     && <DominantSpeakerIndicator /> }
 
-                { audioMuted
-                    && <AudioMutedIndicator /> }
+                <Container style = { thumbToolbarStyle }>
+                    { audioMuted
+                        && <AudioMutedIndicator /> }
 
-                { videoMuted
-                    && <VideoMutedIndicator /> }
+                    { videoMuted
+                        && <VideoMutedIndicator /> }
+                </Container>
 
             </Container>
         );
