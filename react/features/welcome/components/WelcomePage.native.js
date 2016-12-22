@@ -98,6 +98,7 @@ class WelcomePage extends AbstractWelcomePage {
                 <View style = { styles.roomContainer }>
                     <Text style = { styles.title }>Enter room name</Text>
                     <TextInput
+                        accessibilityLabel = { 'Input room name.' }
                         autoCapitalize = 'none'
                         autoComplete = { false }
                         autoCorrect = { false }
@@ -108,6 +109,7 @@ class WelcomePage extends AbstractWelcomePage {
                         underlineColorAndroid = 'transparent'
                         value = { this.state.room } />
                     <TouchableHighlight
+                        accessibilityLabel = { 'Tap to Join.' }
                         disabled = { this._isJoinDisabled() }
                         onPress = { this._onJoin }
                         style = { styles.button }
