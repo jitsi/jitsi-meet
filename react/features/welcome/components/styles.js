@@ -101,7 +101,6 @@ export const styles = createStyleSheet({
         backgroundColor: 'transparent',
         borderColor: ColorPalette.white,
         borderRadius: 8,
-        borderStyle: 'solid',
         borderWidth: 1,
         color: TEXT_COLOR,
         fontSize: 23,
