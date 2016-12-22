@@ -94,7 +94,6 @@
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js",
     "popover": "./node_modules/bootstrap/js/popover.js",
     "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js",
-    "strophe-caps": "./node_modules/strophejs-plugins/caps/strophe.caps.jsonly.js",
     "tooltip": "./node_modules/bootstrap/js/tooltip.js"
   }
 }

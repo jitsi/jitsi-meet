@@ -8,7 +8,6 @@ import "jquery-contextmenu";
 import "jquery-ui";
 import "strophe";
 import "strophe-disco";
-import "strophe-caps";
 import "jQuery-Impromptu";
 import "autosize";
 
