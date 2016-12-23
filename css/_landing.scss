@@ -10,6 +10,10 @@
         max-width: 40em;
         text-align: center;
         color: $landingTextColor;
+
+        a:active {
+            text-decoration: none;
+        }
     }
 
     &__text {
@@ -31,7 +35,7 @@
 
     &__logo {
         width: 77px;
-        height: auto;
+        height: 108px;
     }
 
     &__button {
