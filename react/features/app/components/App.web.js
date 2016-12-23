@@ -123,7 +123,7 @@ export class App extends AbstractApp {
      */
     _getRoute(route) {
         const onEnter = route.onEnter || $.noop;
-        const handler = compose(this._onRouteEnter, onEnter);
+        const handler = compose(this._onRouteEnter, onEnter(this.props.store));
 
         return (
             <Route

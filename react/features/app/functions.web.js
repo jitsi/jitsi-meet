@@ -16,6 +16,9 @@ import KeyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut
 const Logger = require('jitsi-meet-logger');
 const LogCollector = Logger.LogCollector;
 
+// XXX We should import landing feature here in order to
+// update router registry.
+import '../landing';
 
 /**
  * Gets room name and domain from URL object.
@@ -78,8 +81,8 @@ export function _getRoomAndDomainFromUrlString(url) {
 
             url
                 = match[1] /* URL protocol */
-                + '://enso.hipchat.me/'
-                + url.substring(regex.lastIndex);
+                   + '://enso.hipchat.me/'
+                   + url.substring(regex.lastIndex);
 
             /* eslint-enable no-param-reassign, prefer-template */
         }
@@ -99,8 +102,8 @@ export function _getRoomAndDomainFromUrlString(url) {
 export function _getRouteToRender(stateOrGetState) {
     const state
         = typeof stateOrGetState === 'function'
-        ? stateOrGetState()
-        : stateOrGetState;
+            ? stateOrGetState()
+            : stateOrGetState;
     const room = state['features/base/conference'].room;
     const component = isRoomValid(room) ? Conference : WelcomePage;
 

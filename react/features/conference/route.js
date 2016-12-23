@@ -1,5 +1,5 @@
 import { RouteRegistry } from '../base/navigator';
-
+import { detectIOS, detectAndroid, serializeQuery } from '../base/util';
 import { Conference } from './components';
 import { obtainConfigAndInit } from './functions';
 
