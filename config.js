@@ -76,5 +76,7 @@ var config = { // eslint-disable-line no-unused-vars
     // If true - all users without token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
-    enableUserRolesBasedOnToken: false
+    enableUserRolesBasedOnToken: false,
+    // Suspending video might cause problems with audio playback. Disabling until these are fixed.
+    disableSuspendVideo: true
 };

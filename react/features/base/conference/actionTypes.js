@@ -46,6 +46,18 @@ export const CONFERENCE_LEFT = Symbol('CONFERENCE_LEFT');
 export const CONFERENCE_WILL_LEAVE = Symbol('CONFERENCE_WILL_LEAVE');
 
 /**
+ * The type of the Redux action which signals that the lock state of a specific
+ * <tt>JitsiConference</tt> changed.
+ *
+ * {
+ *     type: LOCK_STATE_CHANGED,
+ *     conference: JitsiConference,
+ *     locked: boolean
+ * }
+ */
+export const LOCK_STATE_CHANGED = Symbol('LOCK_STATE_CHANGED');
+
+/**
  * The type of the Redux action which sets the password to join or lock a
  * specific JitsiConference.
  *

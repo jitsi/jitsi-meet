@@ -26,6 +26,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		B30EF2311DC0ED7C00690F45 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30EF2301DC0ED7C00690F45 /* WebRTC.framework */; };
 		B30EF2331DC0EEA500690F45 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30EF2301DC0ED7C00690F45 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A9D0251E0481E10009343D /* POSIX.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A9D0241E0481E10009343D /* POSIX.m */; };
 		BF9643821C34FBB300B0BBDF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9643811C34FBB300B0BBDF /* AVFoundation.framework */; };
 		BF9643841C34FBBB00B0BBDF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9643831C34FBBB00B0BBDF /* AudioToolbox.framework */; };
 		BF9643861C34FBC100B0BBDF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9643851C34FBC100B0BBDF /* CoreGraphics.framework */; };
@@ -212,6 +213,8 @@
 		821D8ABD506944B4BDBB069B /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		B30EF2301DC0ED7C00690F45 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
+		B3A9D0231E0481E10009343D /* POSIX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = POSIX.h; path = app/POSIX.h; sourceTree = "<group>"; };
+		B3A9D0241E0481E10009343D /* POSIX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = POSIX.m; path = app/POSIX.m; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* jitsi-meet-react.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "jitsi-meet-react.entitlements"; sourceTree = "<group>"; };
 		B96AF9B6FBC0453798399985 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		BF9643811C34FBB300B0BBDF /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -331,6 +334,8 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				B3A9D0231E0481E10009343D /* POSIX.h */,
+				B3A9D0241E0481E10009343D /* POSIX.m */,
 			);
 			name = app;
 			sourceTree = "<group>";
@@ -755,6 +760,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A9D0251E0481E10009343D /* POSIX.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);

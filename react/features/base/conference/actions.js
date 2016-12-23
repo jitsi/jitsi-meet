@@ -13,6 +13,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
+    LOCK_STATE_CHANGED,
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
@@ -45,6 +46,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             (...args) => dispatch(dominantSpeakerChanged(...args)));
+
+    conference.on(
+            JitsiConferenceEvents.LOCK_STATE_CHANGED,
+            (...args) => dispatch(_lockStateChanged(conference, ...args)));
 
     conference.on(
             JitsiConferenceEvents.TRACK_ADDED,
@@ -186,6 +191,27 @@ export function createConference() {
 }
 
 /**
+ * Signals that the lock state of a specific JitsiConference changed.
+ *
+ * @param {JitsiConference} conference - The JitsiConference which had its lock
+ * state changed.
+ * @param {boolean} locked - If the specified conference became locked, true;
+ * otherwise, false.
+ * @returns {{
+ *     type: LOCK_STATE_CHANGED,
+ *     conference: JitsiConference,
+ *     locked: boolean
+ * }}
+ */
+function _lockStateChanged(conference, locked) {
+    return {
+        type: LOCK_STATE_CHANGED,
+        conference,
+        locked
+    };
+}
+
+/**
  * Sets the password to join or lock a specific JitsiConference.
  *
  * @param {JitsiConference} conference - The JitsiConference which requires a
@@ -194,19 +220,57 @@ export function createConference() {
  * such as join or lock.
  * @param {string} password - The password with which the specified conference
  * is to be joined or locked.
- * @returns {{
- *     type: SET_PASSWORD,
- *     conference: JitsiConference,
- *     method: Function,
- *     password: string
- * }}
+ * @returns {Function}
  */
 export function setPassword(conference, method, password) {
-    return {
-        type: SET_PASSWORD,
-        conference,
-        method,
-        password
+    return (dispatch, getState) => {
+        switch (method) {
+        case conference.join: {
+            let state = getState()['features/base/conference'];
+
+            // Make sure that the action will set a password for a conference
+            // that the application wants joined.
+            if (state.passwordRequired === conference) {
+                dispatch({
+                    type: SET_PASSWORD,
+                    conference,
+                    method,
+                    password
+                });
+
+                // Join the conference with the newly-set password.
+
+                // Make sure that the action did set the password.
+                state = getState()['features/base/conference'];
+                if (state.password === password
+                        && !state.passwordRequired
+
+                        // Make sure that the application still wants the
+                        // conference joined.
+                        && !state.conference) {
+                    method.call(conference, password);
+                }
+            }
+            break;
+        }
+
+        case conference.lock: {
+            const state = getState()['features/base/conference'];
+
+            if (state.conference === conference) {
+                return (
+                    method.call(conference, password)
+                        .then(() => dispatch({
+                            type: SET_PASSWORD,
+                            conference,
+                            method,
+                            password
+                        })));
+            }
+
+            return Promise.reject();
+        }
+        }
     };
 }
 

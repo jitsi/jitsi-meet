@@ -8,7 +8,6 @@ import "jquery-contextmenu";
 import "jquery-ui";
 import "strophe";
 import "strophe-disco";
-import "strophe-caps";
 import "jQuery-Impromptu";
 import "autosize";
 
@@ -24,7 +23,9 @@ const LogCollector = Logger.LogCollector;
 import JitsiMeetLogStorage from "./modules/util/JitsiMeetLogStorage";
 
 import URLProcessor from "./modules/config/URLProcessor";
-import { generateRoomWithoutSeparator } from './modules/util/RoomnameGenerator';
+import {
+    generateRoomWithoutSeparator
+} from './react/features/base/util/roomnameGenerator';
 
 import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";

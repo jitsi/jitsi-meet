@@ -22,14 +22,18 @@ export const styles = createStyleSheet(platformIndependentStyles, {
     /**
      * Audio muted indicator style.
      */
-    audioMutedIndicator: indicator,
+    thumbnailIndicator: indicator,
+
+    dominantSpeakerIndicator: {
+        fontSize: 12
+    },
 
     /**
      * Dominant speaker indicator background style.
      */
     dominantSpeakerIndicatorBackground: {
-        borderRadius: 15,
-        padding: 5
+        borderRadius: 16,
+        padding: 4
     },
 
     /**
@@ -43,10 +47,5 @@ export const styles = createStyleSheet(platformIndependentStyles, {
     thumbnail: {
         height: 80,
         width: 80
-    },
-
-   /**
-     * Video muted indicator style.
-     */
-    videoMutedIndicator: indicator
+    }
 });

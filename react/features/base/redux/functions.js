@@ -38,7 +38,7 @@ export function setStateProperties(target, source) {
  * <tt>property</tt> to the specified <tt>value</tt>.
  */
 export function setStateProperty(state, property, value) {
-    return _setStateProperty(state, property, value, /* copyOnWrite */ false);
+    return _setStateProperty(state, property, value, /* copyOnWrite */ true);
 }
 
 /* eslint-disable max-params */

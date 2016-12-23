@@ -5,17 +5,6 @@ import { BoxModel, ColorPalette } from '../../base/styles';
  */
 export const styles = {
     /**
-     * Audio muted indicator style.
-     */
-    audioMutedIndicator: {
-        backgroundColor: 'transparent',
-        color: ColorPalette.white,
-        left: 20,
-        position: 'absolute',
-        top: 1
-    },
-
-    /**
      * Dominant speaker indicator style.
      */
     dominantSpeakerIndicator: {
@@ -29,10 +18,10 @@ export const styles = {
     dominantSpeakerIndicatorBackground: {
         backgroundColor: ColorPalette.blue,
         borderRadius: 15,
-        bottom: 2,
-        left: 1,
+        left: 4,
         padding: 5,
-        position: 'absolute'
+        position: 'absolute',
+        top: 4
     },
 
     /**
@@ -63,10 +52,10 @@ export const styles = {
      */
     moderatorIndicator: {
         backgroundColor: 'transparent',
+        bottom: 4,
         color: ColorPalette.white,
-        left: 1,
         position: 'absolute',
-        top: 1
+        right: 4
     },
 
     /**
@@ -76,12 +65,38 @@ export const styles = {
         alignItems: 'stretch',
         backgroundColor: ColorPalette.appBackground,
         borderColor: '#424242',
+        borderRadius: 3,
         borderStyle: 'solid',
         borderWidth: 1,
         flex: 1,
         justifyContent: 'center',
+        marginLeft: 2,
+        marginRight: 2,
         overflow: 'hidden',
         position: 'relative'
+    },
+
+    /**
+     * The thumbnail audio and video muted indicator style.
+     */
+    thumbnailIndicator: {
+        backgroundColor: 'transparent',
+        color: ColorPalette.white,
+        paddingLeft: 1,
+        paddingRight: 1,
+        position: 'relative'
+    },
+
+    /**
+     * The thumbnails indicator container.
+     */
+    thumbnailIndicatorContainer: {
+        alignSelf: 'stretch',
+        bottom: 4,
+        flex: 1,
+        flexDirection: 'row',
+        left: 4,
+        position: 'absolute'
     },
 
     /**
@@ -95,16 +110,5 @@ export const styles = {
             width: 5
         },
         shadowRadius: 5
-    },
-
-    /**
-     * Video muted indicator style.
-     */
-    videoMutedIndicator: {
-        backgroundColor: 'transparent',
-        color: ColorPalette.white,
-        left: 35,
-        position: 'absolute',
-        top: 1
     }
 };
