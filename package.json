@@ -83,7 +83,7 @@
     "validate": "npm ls"
   },
   "pre-commit": [
-    "lint"
+    "jshint"
   ],
   "browser": {
     "aui": "@atlassian/aui/lib/js/aui.js",
