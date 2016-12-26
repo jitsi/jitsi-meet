@@ -71,8 +71,8 @@ class Landing extends Component {
                         className = 'landing__logo'
                         src = '/images/logo-blue.svg' />
                     <p className = 'landing__text'>
-                       You need <strong>Meet Jitsi</strong>
-                       to join a conversation on your mobile
+                       You need <strong>Meet Jitsi</strong> to
+                       join a conversation on your mobile
                     </p>
                     <a href = { links[platform] }>
                         <button
