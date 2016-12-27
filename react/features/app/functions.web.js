@@ -7,9 +7,44 @@ import settings from '../../../modules/settings/Settings';
 import getTokenData from '../../../modules/tokendata/TokenData';
 import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
+import { detectIOS, detectAndroid } from '../base/util';
+
+// XXX We should import landing feature here in order to update router registry.
+import { Landing } from '../landing';
+import { Conference } from '../conference';
+import { WelcomePage } from '../welcome';
+
 const Logger = require('jitsi-meet-logger');
 
 export * from './functions.native';
+
+/**
+ * Determines which route is to be rendered in order to depict a specific Redux
+ * store.
+ *
+ * @param {(Object|Function)} stateOrGetState - Redux state or Regux getState()
+ * method.
+ * @returns {Route}
+ */
+export function _getRouteToRender(stateOrGetState) {
+    const state
+        = typeof stateOrGetState === 'function'
+            ? stateOrGetState()
+            : stateOrGetState;
+
+    const { platform } = state['features/app'];
+    const { room } = state['features/base/conference'];
+    const { landingIsShown } = state['features/landing'];
+
+    let component = isRoomValid(room) ? Conference : WelcomePage;
+
+    // If landing was shown there is no need to show it again.
+    if (platform && !landingIsShown) {
+        component = detectAndroid() || detectIOS() ? Landing : component;
+    }
+
+    return RouteRegistry.getRouteByComponent(component);
+}
 
 /**
  * Temporary solution. Later we'll get rid of global APP and set its properties

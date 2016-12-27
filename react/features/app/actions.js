@@ -1,8 +1,16 @@
 import { setRoom } from '../base/conference';
 import { getDomain, setDomain } from '../base/connection';
 import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
+import {
+    detectAndroid,
+    detectIOS
+} from '../base/util';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+import {
+    APP_WILL_MOUNT,
+    APP_WILL_UNMOUNT,
+    APP_SET_PLATFORM
+} from './actionTypes';
 import {
     _getRoomAndDomainFromUrlString,
     _getRouteToRender,
@@ -31,7 +39,8 @@ export function appInit() {
  */
 export function appNavigate(urlOrRoom) {
     return (dispatch, getState) => {
-        const oldDomain = getDomain(getState());
+        const state = getState();
+        const oldDomain = getDomain(state);
 
         const { domain, room } = _getRoomAndDomainFromUrlString(urlOrRoom);
 
@@ -40,7 +49,9 @@ export function appNavigate(urlOrRoom) {
         // current conference and start a new one with the new room name or
         // domain.
 
-        if (typeof domain === 'undefined' || oldDomain === domain) {
+        if (room === 'mobile-app') {
+            return;
+        } else if (typeof domain === 'undefined' || oldDomain === domain) {
             // If both domain and room vars became undefined, that means we're
             // actually dealing with just room name and not with URL.
             dispatch(
@@ -87,7 +98,6 @@ export function appNavigate(urlOrRoom) {
             // start to not make app re-render conference page for two times.
             dispatch(setRoom(room));
             dispatch(setConfig(config));
-            _navigate(getState());
         }
     };
 }
@@ -105,6 +115,37 @@ export function appWillMount(app) {
     return {
         type: APP_WILL_MOUNT,
         app
+    };
+}
+
+/**
+ * Detects the platform of user agent and
+ * signals that platform detected.
+ *
+ * @returns {Function}
+ */
+export function detectPlatform() {
+    return dispatch => {
+        if (detectAndroid()) {
+            dispatch(_setPlatform('android'));
+        } else if (detectIOS()) {
+            dispatch(_setPlatform('ios'));
+        }
+    };
+}
+
+/**
+ * Signals that user agent platform is mobile and it has
+ * been already detected.
+ *
+ * @param {string} platform - Mobile user agent platform.
+ * @returns {{type, platform: string}}
+ * @private
+ */
+export function _setPlatform(platform) {
+    return {
+        type: APP_SET_PLATFORM,
+        platform
     };
 }
 
@@ -152,9 +193,13 @@ function _setRoomAndNavigate(newRoom) {
         dispatch(setRoom(newRoom));
 
         const state = getState();
-        const room = state['features/base/conference'].room;
+        const { platform } = state['features/app'];
+        const { room } = state['features/base/conference'];
+        const { landingIsShown } = state['features/landing'];
 
-        if (room !== oldRoom) {
+        // If user agent is mobile browser and landing wasn't shown we
+        // should recheck which component to render.
+        if ((platform && !landingIsShown) || room !== oldRoom) {
             _navigate(state);
         }
     };

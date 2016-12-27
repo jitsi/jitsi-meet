@@ -21,3 +21,14 @@ export const APP_WILL_MOUNT = Symbol('APP_WILL_MOUNT');
  * }
  */
 export const APP_WILL_UNMOUNT = Symbol('APP_WILL_UNMOUNT');
+
+/**
+ * The type of this action sets the platform of user agent
+ * in order to decide to show the landing or not.
+ *
+ * {
+ *      type: APP_SET_PLATFORM,
+ *      platform: String
+ * }
+ */
+export const APP_SET_PLATFORM = Symbol('APP_SET_PLATFORM');
