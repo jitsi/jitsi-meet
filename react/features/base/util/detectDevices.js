@@ -21,23 +21,3 @@ export function detectIOS() {
 
     return false;
 }
-
-/**
- * Transforms hash map with parameters to query string.
- *
- * @param {Object} params - Hash map to be processed into query string.
- * @returns {string}
- */
-export function serializeQuery(params) {
-    return Object.keys(params).reduce((str, key, index) => {
-        const encodedKey = encodeURIComponent(key);
-        const encodedValue = encodeURIComponent(params[key]);
-        let separator = '&';
-
-        if (index === 0) {
-            separator = '?';
-        }
-
-        return `${str}${separator}${encodedKey}=${encodedValue}`;
-    }, '');
-}

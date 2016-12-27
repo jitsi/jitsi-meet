@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { landingIsShown } from '../actions';
 
 const links = {
@@ -14,6 +14,7 @@ const links = {
  * @class Landing
  */
 class Landing extends Component {
+
     /**
      * React lifecycle method triggered after
      * component is mount.
@@ -26,7 +27,8 @@ class Landing extends Component {
 
     static propTypes = {
         dispatch: React.PropTypes.func,
-        location: React.PropTypes.object
+        platform: React.PropTypes.string,
+        room: React.PropTypes.string
     };
 
     /**
@@ -36,22 +38,20 @@ class Landing extends Component {
      * @returns {void}
      */
     componentWillMount() {
-        const { query } = this.props.location;
-        const { conferenceName, platform } = query;
+        const { room } = this.props;
         let btnText;
         let link = '/';
 
-        if (conferenceName) {
+        if (room) {
             btnText = 'Join the conversation';
-            link += conferenceName;
+            link += room;
         } else {
             btnText = 'Start a conference';
         }
 
         this.setState({
             btnText,
-            link,
-            platform
+            link
         });
     }
 
@@ -61,7 +61,8 @@ class Landing extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { btnText, link, platform } = this.state;
+        const { platform } = this.props;
+        const { btnText, link } = this.state;
         const primaryButtonClasses = 'landing__button landing__button_primary';
 
         return (
@@ -94,4 +95,11 @@ class Landing extends Component {
     }
 }
 
-export default connect()(Landing);
+const mapStateToProps = state => {
+    return {
+        platform: state['features/app'].platform,
+        room: state['features/base/conference'].room
+    };
+};
+
+export default connect(mapStateToProps)(Landing);

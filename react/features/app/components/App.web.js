@@ -13,7 +13,7 @@ import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
 
 import { AbstractApp } from './AbstractApp';
-import { appInit } from '../actions';
+import { appInit, detectPlatform } from '../actions';
 
 
 /**
@@ -59,6 +59,8 @@ export class App extends AbstractApp {
      */
     componentWillMount(...args) {
         super.componentWillMount(...args);
+
+        this.props.store.dispatch(detectPlatform());
         this.props.store.dispatch(appInit());
     }
 
@@ -123,7 +125,7 @@ export class App extends AbstractApp {
      */
     _getRoute(route) {
         const onEnter = route.onEnter || $.noop;
-        const handler = compose(this._onRouteEnter, onEnter(this.props.store));
+        const handler = compose(this._onRouteEnter, onEnter);
 
         return (
             <Route
@@ -142,7 +144,6 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     _onRouteEnter() {
-
         // XXX The following is mandatory. Otherwise, moving back & forward
         // through the browser's history could leave this App on the Conference
         // page without a room name.

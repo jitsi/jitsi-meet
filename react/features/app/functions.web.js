@@ -1,14 +1,14 @@
 /* global APP, JitsiMeetJS, loggingConfig */
 import { isRoomValid } from '../base/conference';
 import { RouteRegistry } from '../base/navigator';
-import { Conference } from '../conference';
-import { WelcomePage } from '../welcome';
 
 import getTokenData from '../../../modules/tokendata/TokenData';
 import settings from '../../../modules/settings/Settings';
 
 import URLProcessor from '../../../modules/config/URLProcessor';
 import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
+
+import { detectIOS, detectAndroid } from '../base/util';
 
 // eslint-disable-next-line max-len
 import KeyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
@@ -18,7 +18,9 @@ const LogCollector = Logger.LogCollector;
 
 // XXX We should import landing feature here in order to
 // update router registry.
-import '../landing';
+import { Landing } from '../landing';
+import { Conference } from '../conference';
+import { WelcomePage } from '../welcome';
 
 /**
  * Gets room name and domain from URL object.
@@ -104,8 +106,17 @@ export function _getRouteToRender(stateOrGetState) {
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
-    const room = state['features/base/conference'].room;
-    const component = isRoomValid(room) ? Conference : WelcomePage;
+
+    const { platform } = state['features/app'];
+    const { room } = state['features/base/conference'];
+    const { landingIsShown } = state['features/landing'];
+
+    let component = isRoomValid(room) ? Conference : WelcomePage;
+
+    // If landing was shown there is no need to show it again.
+    if (platform && !landingIsShown) {
+        component = detectAndroid() || detectIOS() ? Landing : component;
+    }
 
     return RouteRegistry.getRouteByComponent(component);
 }
