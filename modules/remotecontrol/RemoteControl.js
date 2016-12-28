@@ -1,6 +1,8 @@
 /* global APP, config */
 import Controller from "./Controller";
 import Receiver from "./Receiver";
+import {EVENT_TYPES}
+    from "../../service/remotecontrol/Constants";
 
 /**
  * Implements the remote control functionality.
@@ -33,13 +35,27 @@ class RemoteControl {
     }
 
     /**
+     * Handles remote control events from the API module.
+     * @param {object} event the remote control event
+     */
+    onRemoteControlAPIEvent(event) {
+        switch(event.type) {
+            case EVENT_TYPES.supported:
+                this._onRemoteControlSupported();
+                break;
+            case EVENT_TYPES.permissions:
+                this.receiver._onRemoteControlPermissionsEvent(
+                    event.userId, event.action);
+                break;
+        }
+    }
+
+    /**
      * Handles API event for support for executing remote control events into
      * the wrapper application.
-     * @param {boolean} isSupported true if the receiver side is supported by
-     * the wrapper application.
      */
-    onRemoteControlSupported(isSupported) {
-        if(isSupported && !config.disableRemoteControl) {
+    _onRemoteControlSupported() {
+        if(!config.disableRemoteControl) {
             this.enabled = true;
             if(this.initialized) {
                 this.receiver.enable(true);

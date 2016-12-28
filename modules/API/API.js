@@ -56,8 +56,8 @@ function initCommands() {
         "video-hangup": () => APP.conference.hangup(),
         "email": APP.conference.changeLocalEmail,
         "avatar-url": APP.conference.changeLocalAvatarUrl,
-        "remote-control-supported": isSupported =>
-            APP.remoteControl.onRemoteControlSupported(isSupported)
+        "remote-control-event": event =>
+            APP.remoteControl.onRemoteControlAPIEvent(event)
     };
     Object.keys(commands).forEach(function (key) {
         postis.listen(key, args => commands[key](...args));
