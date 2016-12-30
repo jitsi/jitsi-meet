@@ -53,6 +53,8 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * Whether to only show the filmstrip (and hide the toolbar).
      */
     filmStripOnly: false,
+    //A html text to be shown to guests on the close page, false disables it
+    CLOSE_PAGE_GUEST_HINT: false,
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,
