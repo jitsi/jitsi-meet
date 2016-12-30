@@ -196,9 +196,11 @@ function maybeRedirectToWelcomePage(options) {
     // if close page is enabled redirect to it, without further action
     if (config.enableClosePage) {
         if (options.feedbackSubmitted)
-            window.location.pathname = "close.html";
+            window.location.pathname = "close.html?guest="
+                + APP.tokenData.isGuest;
         else
-            window.location.pathname = "close2.html";
+            window.location.pathname = "close2.html?guest="
+                + APP.tokenData.isGuest;
         return;
     }
 
