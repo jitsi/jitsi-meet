@@ -15,7 +15,7 @@ import mediaDeviceHelper from '../../../../modules/devices/mediaDeviceHelper';
 import { reportError } from '../../../../modules/util/helpers';
 
 import UIEvents from '../../../../service/UI/UIEvents';
-import UIUtil from '../../../../modules/UI/util/UIUtil';
+import UIUtil from './UIUtil';
 import ConferenceConnector from './ConferenceConnector';
 
 import analytics from '../../../../modules/analytics/analytics';

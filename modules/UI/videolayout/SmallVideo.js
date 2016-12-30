@@ -2,7 +2,7 @@
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
-import UIUtil from "../util/UIUtil";
+import { UIUtil } from "../../../react/features/base/util";
 import UIEvents from "../../../service/UI/UIEvents";
 import AudioLevels from "../audio_levels/AudioLevels";
 

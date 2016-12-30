@@ -4,7 +4,7 @@
 import FilmStrip from './FilmStrip';
 import LargeContainer from './LargeContainer';
 import UIEvents from "../../../service/UI/UIEvents";
-import UIUtil from "../util/UIUtil";
+import { UIUtil } from "../../../react/features/base/util";
 
 // FIXME should be 'video'
 export const VIDEO_CONTAINER_TYPE = "camera";

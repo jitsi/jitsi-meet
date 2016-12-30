@@ -4,7 +4,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 import ConnectionIndicator from './ConnectionIndicator';
 
 import SmallVideo from "./SmallVideo";
-import UIUtils from "../util/UIUtil";
+import { UIUtils } from "../../../react/features/base/util";
 import UIEvents from '../../../service/UI/UIEvents';
 import JitsiPopover from "../util/JitsiPopover";
 

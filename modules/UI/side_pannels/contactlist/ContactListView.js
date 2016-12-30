@@ -3,7 +3,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
-import UIUtil from '../../util/UIUtil';
+import { UIUtil } from '../../../../react/features/base/util';
 
 let numberOfContacts = 0;
 const sidePanelsContainerId = 'sideToolbarContainer';

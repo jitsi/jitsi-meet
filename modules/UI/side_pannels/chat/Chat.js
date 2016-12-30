@@ -5,7 +5,7 @@ import CommandsProcessor from './Commands';
 import ToolbarToggler from '../../toolbars/ToolbarToggler';
 import VideoLayout from "../../videolayout/VideoLayout";
 
-import UIUtil from '../../util/UIUtil';
+import { UIUtil } from '../../../../react/features/base/util';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';

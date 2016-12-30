@@ -3,7 +3,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import FilmStrip from "./FilmStrip";
 import UIEvents from "../../../service/UI/UIEvents";
-import UIUtil from "../util/UIUtil";
+import { UIUtil } from "../../../react/features/base/util";
 
 import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager  from "./LargeVideoManager";

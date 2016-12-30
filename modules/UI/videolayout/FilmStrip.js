@@ -1,7 +1,7 @@
 /* global $, APP, JitsiMeetJS, interfaceConfig */
 
 import UIEvents from "../../../service/UI/UIEvents";
-import UIUtil from "../util/UIUtil";
+import { UIUtil } from "../../../react/features/base/util";
 
 const FilmStrip = {
     /**

@@ -9,7 +9,7 @@ import Toolbar from "./toolbars/Toolbar";
 import ToolbarToggler from "./toolbars/ToolbarToggler";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
-import UIUtil from "./util/UIUtil";
+import { UIUtil } from "../../react/features/base/util";
 import UIEvents from "../../service/UI/UIEvents";
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';

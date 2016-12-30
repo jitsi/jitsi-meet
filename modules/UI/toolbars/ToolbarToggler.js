@@ -1,6 +1,6 @@
 /* global APP, config, $, interfaceConfig */
 
-import UIUtil from '../util/UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 import Toolbar from './Toolbar';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 

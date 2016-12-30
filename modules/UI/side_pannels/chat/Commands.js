@@ -1,4 +1,4 @@
-import UIUtil from '../../util/UIUtil';
+import { UIUtil } from '../../../../react/features/base/util';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 /**

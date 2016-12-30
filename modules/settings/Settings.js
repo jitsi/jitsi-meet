@@ -1,7 +1,7 @@
 /* global JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import UIUtil from '../UI/util/UIUtil';
+import { UIUtil } from '../../react/features/base/util';
 import jitsiLocalStorage from '../util/JitsiLocalStorage';
 
 function generateUniqueId() {

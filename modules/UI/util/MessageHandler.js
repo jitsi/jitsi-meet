@@ -1,7 +1,7 @@
 /* global $, APP, toastr */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import UIUtil from './UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 /**

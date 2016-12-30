@@ -2,7 +2,7 @@
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import LoginDialog from './LoginDialog';
-import UIUtil from '../util/UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 import {openConnection} from '../../../connection';
 
 const ConnectionErrors = JitsiMeetJS.errors.connection;

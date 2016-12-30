@@ -2,7 +2,7 @@
 JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import UIUtil from '../util/UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import VideoLayout from "../videolayout/VideoLayout";

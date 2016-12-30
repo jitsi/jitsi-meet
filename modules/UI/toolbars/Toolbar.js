@@ -1,5 +1,5 @@
 /* global APP, $, config, interfaceConfig, JitsiMeetJS */
-import UIUtil from '../util/UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 

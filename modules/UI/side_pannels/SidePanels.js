@@ -2,7 +2,7 @@ import Chat from './chat/Chat';
 import SettingsMenu from './settings/SettingsMenu';
 import Profile from './profile/Profile';
 import ContactListView from './contactlist/ContactListView';
-import UIUtil from '../util/UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 
 const SidePanels = {
     init (eventEmitter) {

@@ -2,7 +2,7 @@
 /* jshint -W101 */
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
-import UIUtil from "../util/UIUtil";
+import { UIUtil } from "../../../react/features/base/util";
 
 /**
  * Maps a connection quality value (in percent) to the width of the "full" icon.

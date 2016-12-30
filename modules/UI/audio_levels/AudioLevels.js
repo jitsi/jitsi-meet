@@ -1,6 +1,6 @@
 /* global interfaceConfig */
 
-import UIUtil from "../util/UIUtil";
+import { UIUtil } from "../../../react/features/base/util";
 
 /**
  * Responsible for drawing audio levels.

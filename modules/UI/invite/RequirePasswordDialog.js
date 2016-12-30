@@ -1,6 +1,6 @@
 /* global APP */
 
-import UIUtil from '../util/UIUtil';
+import { UIUtil } from '../../../react/features/base/util';
 
 /**
  * Show dialog which asks for required conference password.
