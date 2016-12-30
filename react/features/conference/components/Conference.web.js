@@ -180,7 +180,7 @@ export default class Conference extends Component {
      * @private
      */
     _renderJitsiWatermark() {
-        if (this.state.jitsiWatermarkLink) {
+        if (this.state.showJitsiWatermark) {
             return (
                 <a
                     href = { this.state.jitsiWatermarkLink }
