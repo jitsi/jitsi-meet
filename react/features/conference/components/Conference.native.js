@@ -73,7 +73,7 @@ class Conference extends Component {
     /**
      * Inits the toolbar timeout after the component is initially rendered.
      *
-     * @inheritDoc
+     * @inheritdoc
      * returns {void}
      */
     componentDidMount() {
@@ -212,7 +212,7 @@ class Conference extends Component {
      * Triggers the default toolbar timeout.
      *
      * @param {boolean} toolbarVisible - Indicates if the toolbar is currently
-     * visible
+     * visible.
      * @private
      * @returns {void}
      */
