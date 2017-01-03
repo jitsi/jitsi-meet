@@ -102,6 +102,8 @@ class Conference extends Component {
     render() {
         const toolbarVisible = this.state.toolbarVisible;
 
+        this._setToolbarTimeout(toolbarVisible);
+
         return (
             <Container
                 onClick = { this._onClick }
@@ -145,11 +147,7 @@ class Conference extends Component {
 
         this.setState({ toolbarVisible });
 
-        this._clearToolbarTimeout();
-        if (toolbarVisible) {
-            this._toolbarTimeout
-                = setTimeout(this._onClick, TOOLBAR_TIMEOUT_MS);
-        }
+        this._setToolbarTimeout(toolbarVisible);
     }
 
     /**
@@ -200,6 +198,21 @@ class Conference extends Component {
         }
 
         return null;
+    }
+
+    /**
+     * Triggers the default toolbar timeout.
+     *
+     * @param {boolean} toolbarVisible - indicates if the toolbar is currently
+     * visible
+     * @private
+     */
+    _setToolbarTimeout(toolbarVisible) {
+        this._clearToolbarTimeout();
+        if (toolbarVisible) {
+            this._toolbarTimeout
+                = setTimeout(this._onClick, TOOLBAR_TIMEOUT_MS);
+        }
     }
 }
 
