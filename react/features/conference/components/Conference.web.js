@@ -6,7 +6,6 @@ import {
     connect,
     disconnect
 } from '../../base/connection';
-import { obtainConfigAndInit } from '../actions';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -28,7 +27,6 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentDidMount() {
-        this.props.dispatch(obtainConfigAndInit());
         APP.UI.start();
 
         // XXX Temporary solution until we add React translation.
