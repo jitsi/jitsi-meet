@@ -53,8 +53,8 @@ RCT_EXPORT_METHOD(getaddrinfo:(NSString *)hostname
     if (0 != err) {
         NSError *error
             = [NSError errorWithDomain:NSPOSIXErrorDomain
-                  code:err
-                  userInfo:nil];
+                                  code:err
+                              userInfo:nil];
 
         reject(rejectCode, error.localizedDescription, error);
     }
