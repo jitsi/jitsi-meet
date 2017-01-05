@@ -162,7 +162,7 @@
         "grantedToUnknown": "¡Derechos de moderador otorgados a $t(somebody)!",
         "muted": "Has iniciado la conversación silenciado.",
         "mutedTitle": "¡Estás silenciado!",
-        "raisedHand": ""
+        "raisedHand": "Mano Levantada"
     },
     "dialog": {
         "kickMessage": "¡Auch! ¡Haz sido expulsado de la reunión!",
@@ -274,7 +274,7 @@
             "Ey allí, quiero invitarte a una  a conferencia __appName__  que acabo de crear.",
             "",
             "",
-            "Por favor pica en la liga siguiente para unirte a la conferencia.",
+            "Por favor pica en el enlace siguiente para unirte a la conferencia.",
             "",
             "",
             "__roomUrl__",
@@ -284,7 +284,7 @@
             "Nota que __appName__ es soportada solo por  __supportedBrowsers__, por lo que debes usar uno de esos navegadores.",
             "",
             "",
-            "Talk to you in a sec!"
+            "¡Hablare contigo en un segundo!"
         ],
         "and": "y"
     },
