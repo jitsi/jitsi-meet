@@ -167,6 +167,7 @@ export default class Controller extends RemoteControlParticipant {
     _start() {
         if(!this.enabled)
             return;
+        APP.keyboardshortcut.enable(false);
         APP.conference.addConferenceListener(
             ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             this._stopListener);
@@ -207,6 +208,7 @@ export default class Controller extends RemoteControlParticipant {
         if(!this.controlledParticipant) {
             return;
         }
+        APP.keyboardshortcut.enable(true);
         APP.conference.removeConferenceListener(
             ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             this._stopListener);

@@ -66,6 +66,12 @@ function showKeyboardShortcutsPanel(show) {
 let _shortcuts = {};
 
 /**
+ * True if the keyboard shortcuts are enabled and false if not.
+ * @type {boolean}
+ */
+let enabled = true;
+
+/**
  * Maps keycode to character, id of popover for given function and function.
  */
 var KeyboardShortcut = {
@@ -74,6 +80,9 @@ var KeyboardShortcut = {
 
         var self = this;
         window.onkeyup = function(e) {
+            if(!enabled) {
+                return;
+            }
             var key = self._getKeyboardKey(e).toUpperCase();
             var num = parseInt(key, 10);
             if(!($(":focus").is("input[type=text]") ||
@@ -93,6 +102,9 @@ var KeyboardShortcut = {
         };
 
         window.onkeydown = function(e) {
+            if(!enabled) {
+                return;
+            }
             if(!($(":focus").is("input[type=text]") ||
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
@@ -103,6 +115,14 @@ var KeyboardShortcut = {
                 }
             }
         };
+    },
+
+    /**
+     * Enables/Disables the keyboard shortcuts.
+     * @param {boolean} value - the new value.
+     */
+    enable: function (value) {
+        enabled = value;
     },
 
     /**
