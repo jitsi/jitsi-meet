@@ -29,6 +29,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.videoSpanId = `participant_${this.id}`;
     SmallVideo.call(this, VideoLayout);
     this.hasRemoteVideoMenu = false;
+    this._supportsRemoteControl = false;
     this.addRemoteVideoContainer();
     this.connectionIndicator = new ConnectionIndicator(this, this.id);
     this.setDisplayName();
@@ -64,7 +65,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 
     this.initBrowserSpecificProperties();
 
-    if (APP.conference.isModerator) {
+    if (APP.conference.isModerator || this._supportsRemoteControl) {
         this.addRemoteVideoMenu();
     }
 
@@ -106,14 +107,6 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
         // call the original show, passing its actual this
         origShowFunc.call(this.popover);
     }.bind(this);
-
-    // override popover hide method so we can cleanup click handlers
-    let origHideFunc = this.popover.forceHide;
-    this.popover.forceHide = function () {
-        $(document).off("click", '#mutelink_' + this.id);
-        $(document).off("click", '#ejectlink_' + this.id);
-        origHideFunc.call(this.popover);
-    }.bind(this);
 };
 
 /**
@@ -139,38 +132,68 @@ RemoteVideo.prototype._generatePopupContent = function () {
     let popupmenuElement = document.createElement('ul');
     popupmenuElement.className = 'popupmenu';
     popupmenuElement.id = `remote_popupmenu_${this.id}`;
+    let menuItems = [];
 
-    let muteTranslationKey;
-    let muteClassName;
-    if (this.isAudioMuted) {
-        muteTranslationKey = 'videothumbnail.muted';
-        muteClassName = 'mutelink disabled';
-    } else {
-        muteTranslationKey = 'videothumbnail.domute';
-        muteClassName = 'mutelink';
+    if(APP.conference.isModerator) {
+        let muteTranslationKey;
+        let muteClassName;
+        if (this.isAudioMuted) {
+            muteTranslationKey = 'videothumbnail.muted';
+            muteClassName = 'mutelink disabled';
+        } else {
+            muteTranslationKey = 'videothumbnail.domute';
+            muteClassName = 'mutelink';
+        }
+
+        let muteHandler = this._muteHandler.bind(this);
+        let kickHandler = this._kickHandler.bind(this);
+
+        menuItems = [
+            {
+                id: 'mutelink_' + this.id,
+                handler: muteHandler,
+                icon: 'icon-mic-disabled',
+                className: muteClassName,
+                data: {
+                    i18n: muteTranslationKey
+                }
+            }, {
+                id: 'ejectlink_' + this.id,
+                handler: kickHandler,
+                icon: 'icon-kick',
+                data: {
+                    i18n: 'videothumbnail.kick'
+                }
+            }
+        ];
     }
 
-    let muteHandler = this._muteHandler.bind(this);
-    let kickHandler = this._kickHandler.bind(this);
-
-    let menuItems = [
-        {
-            id: 'mutelink_' + this.id,
-            handler: muteHandler,
-            icon: 'icon-mic-disabled',
-            className: muteClassName,
-            data: {
-                i18n: muteTranslationKey
-            }
-        }, {
-            id: 'ejectlink_' + this.id,
-            handler: kickHandler,
-            icon: 'icon-kick',
-            data: {
-                i18n: 'videothumbnail.kick'
-            }
+    if(this._supportsRemoteControl) {
+        let icon, handler, className;
+        if(APP.remoteControl.controller.getRequestedParticipant()
+            === this.id) {
+            handler = () => {};
+            className = "requestRemoteControlLink disabled";
+            icon = "remote-control-spinner fa fa-spinner fa-spin";
+        } else if(!APP.remoteControl.controller.isStarted()) {
+            handler = this._requestRemoteControlPermissions.bind(this);
+            icon = "fa fa-play";
+            className = "requestRemoteControlLink";
+        } else {
+            handler = this._stopRemoteControl.bind(this);
+            icon = "fa fa-stop";
+            className = "requestRemoteControlLink";
         }
-    ];
+        menuItems.push({
+            id: 'remoteControl_' + this.id,
+            handler,
+            icon,
+            className,
+            data: {
+                i18n: 'videothumbnail.remoteControl'
+            }
+        });
+    }
 
     menuItems.forEach(el => {
         let menuItem = this._generatePopupMenuItem(el);
@@ -180,6 +203,68 @@ RemoteVideo.prototype._generatePopupContent = function () {
     APP.translation.translateElement($(popupmenuElement));
 
     return popupmenuElement;
+};
+
+/**
+ * Sets the remote control supported value and initializes or updates the menu
+ * depending on the remote control is supported or not.
+ * @param {boolean} isSupported
+ */
+RemoteVideo.prototype.setRemoteControlSupport = function(isSupported = false) {
+    if(this._supportsRemoteControl === isSupported) {
+        return;
+    }
+    this._supportsRemoteControl = isSupported;
+    if(!isSupported) {
+        return;
+    }
+
+    if(!this.hasRemoteVideoMenu) {
+        //create menu
+        this.addRemoteVideoMenu();
+    } else {
+        //update the content
+        this.updateRemoteVideoMenu(this.isAudioMuted, true);
+    }
+
+};
+
+/**
+ * Requests permissions for remote control session.
+ */
+RemoteVideo.prototype._requestRemoteControlPermissions = function () {
+    APP.remoteControl.controller.requestPermissions(this.id).then(result => {
+        if(result === null) {
+            return;
+        }
+        this.updateRemoteVideoMenu(this.isAudioMuted, true);
+        APP.UI.messageHandler.openMessageDialog(
+            "dialog.remoteControlTitle",
+            (result === false) ? "dialog.remoteControlDeniedMessage"
+                : "dialog.remoteControlAllowedMessage",
+            {user: this.user.getDisplayName()
+                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME}
+        );
+    }, error => {
+        logger.error(error);
+        this.updateRemoteVideoMenu(this.isAudioMuted, true);
+        APP.UI.messageHandler.openMessageDialog(
+            "dialog.remoteControlTitle",
+            "dialog.remoteControlErrorMessage",
+            {user: this.user.getDisplayName()
+                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME}
+        );
+    });
+    this.updateRemoteVideoMenu(this.isAudioMuted, true);
+};
+
+/**
+ * Stops remote control session.
+ */
+RemoteVideo.prototype._stopRemoteControl = function () {
+    // send message about stopping
+    APP.remoteControl.controller.stop();
+    this.updateRemoteVideoMenu(this.isAudioMuted, true);
 };
 
 RemoteVideo.prototype._muteHandler = function () {
@@ -244,8 +329,7 @@ RemoteVideo.prototype._generatePopupMenuItem = function (opts = {}) {
     linkItem.appendChild(textContent);
     linkItem.id = id;
 
-    // Delegate event to the document.
-    $(document).on("click", `#${id}`, handler);
+    linkItem.onclick = handler;
     menuItem.appendChild(linkItem);
 
     return menuItem;

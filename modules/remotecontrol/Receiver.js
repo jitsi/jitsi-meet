@@ -1,4 +1,4 @@
-/* global APP, JitsiMeetJS */
+/* global APP, JitsiMeetJS, interfaceConfig */
 import {DISCO_REMOTE_CONTROL_FEATURE, REMOTE_CONTROL_EVENT_TYPE, EVENT_TYPES,
     PERMISSIONS_ACTIONS} from "../../service/remotecontrol/Constants";
 import RemoteControlParticipant from "./RemoteControlParticipant";
@@ -21,6 +21,7 @@ export default class Receiver extends RemoteControlParticipant {
         this.controller = null;
         this._remoteControlEventsListener
             = this._onRemoteControlEvent.bind(this);
+        this._userLeftListener = this._onUserLeft.bind(this);
     }
 
     /**
@@ -28,11 +29,19 @@ export default class Receiver extends RemoteControlParticipant {
      * @param {boolean} enabled the new state.
      */
     enable(enabled) {
-        if(this.enabled !== enabled && enabled === true) {
+        if(this.enabled !== enabled) {
             this.enabled = enabled;
+        }
+        if(enabled === true) {
             // Announce remote control support.
             APP.connection.addFeature(DISCO_REMOTE_CONTROL_FEATURE, true);
             APP.conference.addConferenceListener(
+                ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                this._remoteControlEventsListener);
+        } else {
+            this._stop(true);
+            APP.connection.removeFeature(DISCO_REMOTE_CONTROL_FEATURE);
+            APP.conference.removeConferenceListener(
                 ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 this._remoteControlEventsListener);
         }
@@ -40,18 +49,40 @@ export default class Receiver extends RemoteControlParticipant {
 
     /**
      * Removes the listener for ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED
-     * events.
+     * events. Sends stop message to the wrapper application. Optionally
+     * displays dialog for informing the user that remote control session
+     * ended.
+     * @param {boolean} dontShowDialog - if true the dialog won't be displayed.
+     */
+    _stop(dontShowDialog = false) {
+        if(!this.controller) {
+            return;
+        }
+        this.controller = null;
+        APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
+            this._userLeftListener);
+        APP.API.sendRemoteControlEvent({
+            type: EVENT_TYPES.stop
+        });
+        if(!dontShowDialog) {
+            APP.UI.messageHandler.openMessageDialog(
+                "dialog.remoteControlTitle",
+                "dialog.remoteControlStopMessage"
+            );
+        }
+    }
+
+    /**
+     * Calls this._stop() and sends stop message to the controller participant
      */
     stop() {
-        APP.conference.removeConferenceListener(
-            ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            this._remoteControlEventsListener);
-        const event = {
+        if(!this.controller) {
+            return;
+        }
+        this._sendRemoteControlEvent(this.controller, {
             type: EVENT_TYPES.stop
-        };
-        this._sendRemoteControlEvent(this.controller, event);
-        this.controller = null;
-        APP.API.sendRemoteControlEvent(event);
+        });
+        this._stop();
     }
 
     /**
@@ -67,8 +98,14 @@ export default class Receiver extends RemoteControlParticipant {
                 && remoteControlEvent.action === PERMISSIONS_ACTIONS.request) {
                 remoteControlEvent.userId = participant.getId();
                 remoteControlEvent.userJID = participant.getJid();
-                remoteControlEvent.displayName = participant.getDisplayName();
+                remoteControlEvent.displayName = participant.getDisplayName()
+                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+                remoteControlEvent.screenSharing
+                    = APP.conference.isSharingScreen;
             } else if(this.controller !== participant.getId()) {
+                return;
+            } else if(remoteControlEvent.type === EVENT_TYPES.stop) {
+                this._stop();
                 return;
             }
             APP.API.sendRemoteControlEvent(remoteControlEvent);
@@ -83,11 +120,45 @@ export default class Receiver extends RemoteControlParticipant {
      */
     _onRemoteControlPermissionsEvent(userId, action) {
         if(action === PERMISSIONS_ACTIONS.grant) {
+            APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+                this._userLeftListener);
             this.controller = userId;
+            if(!APP.conference.isSharingScreen) {
+                APP.conference.toggleScreenSharing();
+                APP.conference.screenSharingPromise.then(() => {
+                    if(APP.conference.isSharingScreen) {
+                        this._sendRemoteControlEvent(userId, {
+                            type: EVENT_TYPES.permissions,
+                            action: action
+                        });
+                    } else {
+                        this._sendRemoteControlEvent(userId, {
+                            type: EVENT_TYPES.permissions,
+                            action: PERMISSIONS_ACTIONS.error
+                        });
+                    }
+                }).catch(() => {
+                    this._sendRemoteControlEvent(userId, {
+                        type: EVENT_TYPES.permissions,
+                        action: PERMISSIONS_ACTIONS.error
+                    });
+                });
+                return;
+            }
         }
         this._sendRemoteControlEvent(userId, {
             type: EVENT_TYPES.permissions,
             action: action
         });
+    }
+
+    /**
+     * Calls the stop method if the other side have left.
+     * @param {string} id - the user id for the participant that have left
+     */
+    _onUserLeft(id) {
+        if(this.controller === id) {
+            this._stop();
+        }
     }
 }

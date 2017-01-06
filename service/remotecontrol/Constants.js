@@ -26,7 +26,8 @@ export const EVENT_TYPES = {
 export const PERMISSIONS_ACTIONS = {
     request: "request",
     grant: "grant",
-    deny: "deny"
+    deny: "deny",
+    error: "error"
 };
 
 /**

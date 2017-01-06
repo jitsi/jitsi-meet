@@ -55,20 +55,34 @@ export default class Controller extends RemoteControlParticipant {
         super();
         this.controlledParticipant = null;
         this.requestedParticipant = null;
-        this.stopListener = this._handleRemoteControlStoppedEvent.bind(this);
+        this._stopListener = this._handleRemoteControlStoppedEvent.bind(this);
+        this._userLeftListener = this._onUserLeft.bind(this);
     }
 
     /**
      * Requests permissions from the remote control receiver side.
      * @param {string} userId the user id of the participant that will be
      * requested.
+     * @returns {Promise<boolean>} - resolve values:
+     * true - accept
+     * false - deny
+     * null - the participant has left.
      */
     requestPermissions(userId) {
         if(!this.enabled) {
             return Promise.reject(new Error("Remote control is disabled!"));
         }
         return new Promise((resolve, reject) => {
-            let permissionsReplyListener = (participant, event) => {
+            const clearRequest = () => {
+                this.requestedParticipant = null;
+                APP.conference.removeConferenceListener(
+                    ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                    permissionsReplyListener);
+                APP.conference.removeConferenceListener(
+                    ConferenceEvents.USER_LEFT,
+                    onUserLeft);
+            };
+            const permissionsReplyListener = (participant, event) => {
                 let result = null;
                 try {
                     result = this._handleReply(participant, event);
@@ -76,25 +90,27 @@ export default class Controller extends RemoteControlParticipant {
                     reject(e);
                 }
                 if(result !== null) {
-                    this.requestedParticipant = null;
-                    APP.conference.removeConferenceListener(
-                        ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-                        permissionsReplyListener);
+                    clearRequest();
                     resolve(result);
+                }
+            };
+            const onUserLeft = (id) => {
+                if(id === this.requestedParticipant) {
+                    clearRequest();
+                    resolve(null);
                 }
             };
             APP.conference.addConferenceListener(
                 ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 permissionsReplyListener);
+            APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+                onUserLeft);
             this.requestedParticipant = userId;
             this._sendRemoteControlEvent(userId, {
                 type: EVENT_TYPES.permissions,
                 action: PERMISSIONS_ACTIONS.request
             }, e => {
-                APP.conference.removeConferenceListener(
-                    ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-                    permissionsReplyListener);
-                this.requestedParticipant = null;
+                clearRequest();
                 reject(e);
             });
         });
@@ -112,14 +128,18 @@ export default class Controller extends RemoteControlParticipant {
         if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
             && remoteControlEvent.type === EVENT_TYPES.permissions
             && userId === this.requestedParticipant) {
-            if(remoteControlEvent.action === PERMISSIONS_ACTIONS.grant) {
-                this.controlledParticipant = userId;
-                this._start();
-                return true;
-            } else if(remoteControlEvent.action === PERMISSIONS_ACTIONS.deny) {
-                return false;
-            } else {
-                throw new Error("Unknown reply received!");
+            switch(remoteControlEvent.action) {
+                case PERMISSIONS_ACTIONS.grant: {
+                    this.controlledParticipant = userId;
+                    this._start();
+                    return true;
+                }
+                case PERMISSIONS_ACTIONS.deny:
+                    return false;
+                case PERMISSIONS_ACTIONS.error:
+                    throw new Error("Error occurred on receiver side");
+                default:
+                    throw new Error("Unknown reply received!");
             }
         } else {
             //different message type or another user -> ignoring the message
@@ -149,7 +169,9 @@ export default class Controller extends RemoteControlParticipant {
             return;
         APP.conference.addConferenceListener(
             ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            this.stopListener);
+            this._stopListener);
+        APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+            this._userLeftListener);
         this.area = $("#largeVideoWrapper");
         this.area.mousemove(event => {
             const position = this.area.position();
@@ -179,12 +201,17 @@ export default class Controller extends RemoteControlParticipant {
     }
 
     /**
-     * Stops processing the mouse and keyboard events.
+     * Stops processing the mouse and keyboard events. Removes added listeners.
      */
     _stop() {
+        if(!this.controlledParticipant) {
+            return;
+        }
         APP.conference.removeConferenceListener(
             ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            this.stopListener);
+            this._stopListener);
+        APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
+            this._userLeftListener);
         this.controlledParticipant = null;
         this.area.off( "mousemove" );
         this.area.off( "mousedown" );
@@ -194,6 +221,23 @@ export default class Controller extends RemoteControlParticipant {
         $(window).off( "keydown");
         $(window).off( "keyup");
         this.area[0].onmousewheel = undefined;
+        APP.UI.messageHandler.openMessageDialog(
+            "dialog.remoteControlTitle",
+            "dialog.remoteControlStopMessage"
+        );
+    }
+
+    /**
+     * Calls this._stop() and sends stop message to the controlled participant.
+     */
+    stop() {
+        if(!this.controlledParticipant) {
+            return;
+        }
+        this._sendRemoteControlEvent(this.controlledParticipant, {
+            type: EVENT_TYPES.stop
+        });
+        this._stop();
     }
 
     /**
@@ -209,6 +253,22 @@ export default class Controller extends RemoteControlParticipant {
     }
 
     /**
+     * Returns true if the remote control session is started.
+     * @returns {boolean}
+     */
+    isStarted() {
+        return this.controlledParticipant !== null;
+    }
+
+    /**
+     * Returns the id of the requested participant
+     * @returns {string} this.requestedParticipant
+     */
+    getRequestedParticipant() {
+        return this.requestedParticipant;
+    }
+
+    /**
      * Handler for key press events.
      * @param {String} type the type of event ("keydown"/"keyup")
      * @param {Event} event the key event.
@@ -219,5 +279,15 @@ export default class Controller extends RemoteControlParticipant {
             key: getKey(event),
             modifiers: getModifiers(event),
         });
+    }
+
+    /**
+     * Calls the stop method if the other side have left.
+     * @param {string} id - the user id for the participant that have left
+     */
+    _onUserLeft(id) {
+        if(this.controlledParticipant === id) {
+            this._stop();
+        }
     }
 }

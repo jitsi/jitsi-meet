@@ -1,7 +1,7 @@
 /* global APP, config */
 import Controller from "./Controller";
 import Receiver from "./Receiver";
-import {EVENT_TYPES}
+import {EVENT_TYPES, DISCO_REMOTE_CONTROL_FEATURE}
     from "../../service/remotecontrol/Constants";
 
 /**
@@ -24,7 +24,8 @@ class RemoteControl {
      * enabled or not, initializes the API module.
      */
     init() {
-        if(config.disableRemoteControl || this.initialized) {
+        if(config.disableRemoteControl || this.initialized
+            || !APP.conference.isDesktopSharingEnabled) {
             return;
         }
         this.initialized = true;
@@ -32,6 +33,9 @@ class RemoteControl {
             forceEnable: true,
         });
         this.controller.enable(true);
+        if(this.enabled) { // supported message came before init.
+            this._onRemoteControlSupported();
+        }
     }
 
     /**
@@ -61,6 +65,18 @@ class RemoteControl {
                 this.receiver.enable(true);
             }
         }
+    }
+
+    /**
+     * Checks whether the passed user supports remote control or not
+     * @param {JitsiParticipant} user the user to be tested
+     * @returns {Promise<boolean>} the promise will be resolved with true if
+     * the user supports remote control and with false if not.
+     */
+    checkUserRemoteControlSupport(user) {
+        return user.getFeatures().then(features =>
+            features.has(DISCO_REMOTE_CONTROL_FEATURE), () => false
+        );
     }
 }
 
