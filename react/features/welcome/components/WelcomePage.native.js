@@ -102,7 +102,7 @@ class WelcomePage extends AbstractWelcomePage {
                         autoCapitalize = 'none'
                         autoComplete = { false }
                         autoCorrect = { false }
-                        autoFocus = { true }
+                        autoFocus = { false }
                         onChangeText = { this._onRoomChange }
                         placeholder = 'room name'
                         style = { styles.textInput }
