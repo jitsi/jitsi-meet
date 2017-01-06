@@ -1067,7 +1067,7 @@ export default {
                         }
                     }
                 );
-                return this.useVideoStream(stream);
+                return this.useVideoStreamNew(stream);
             }).then(() => {
                 this.videoSwitchInProgress = false;
                 JitsiMeetJS.analytics.sendEvent(
@@ -1116,7 +1116,7 @@ export default {
             });
         } else {
             createLocalTracks({ devices: ['video'] }).then(
-                ([stream]) => this.useVideoStream(stream)
+                ([stream]) => this.useVideoStreamNew(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
                 JitsiMeetJS.analytics.sendEvent(
