@@ -1,4 +1,4 @@
-/* global interfaceConfig, getConfigParamsFromUrl */
+/* global interfaceConfig */
 //list of tips
 var hints = [
     "You can pin participants by clicking on their thumbnails.",// jshint ignore:line
@@ -45,8 +45,7 @@ function onLoad() {
 
     // If there is a setting show a special message only for the guests
     if (interfaceConfig.CLOSE_PAGE_GUEST_HINT) {
-        let params = getConfigParamsFromUrl('search');
-        if ( params.guest ) {
+        if ( window.sessionStorage.getItem('guest') === 'true' ) {
             var element = document.getElementById('hintQuestion');
             element.classList.add('hide');
             insertTextMsg('hintMessage', interfaceConfig.CLOSE_PAGE_GUEST_HINT);

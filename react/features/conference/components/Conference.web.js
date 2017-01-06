@@ -1,4 +1,4 @@
-/* global interfaceConfig */
+/* global interfaceConfig, APP */
 import React, { Component } from 'react';
 
 /**
@@ -25,15 +25,19 @@ export default class Conference extends Component {
 
         const showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
         const showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
+        const showJitsiWatermarkForGuest
+            = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
 
         this.state = {
             ...this.state,
             showBrandWatermark,
             showJitsiWatermark,
+            showJitsiWatermarkForGuest,
             brandWatermarkLink:
                 showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
             jitsiWatermarkLink:
-                showJitsiWatermark ? interfaceConfig.JITSI_WATERMARK_LINK : '',
+                showJitsiWatermark || showJitsiWatermarkForGuest
+                    ? interfaceConfig.JITSI_WATERMARK_LINK : '',
             showPoweredBy: interfaceConfig.SHOW_POWERED_BY
         };
     }
@@ -180,7 +184,9 @@ export default class Conference extends Component {
      * @private
      */
     _renderJitsiWatermark() {
-        if (this.state.showJitsiWatermark) {
+        if (this.state.showJitsiWatermark
+            || (APP.tokenData.isGuest
+                    && this.state.showJitsiWatermarkForGuest)) {
             return (
                 <a
                     href = { this.state.jitsiWatermarkLink }

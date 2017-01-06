@@ -311,7 +311,7 @@
         "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
         "micNotSendingData": "We are unable to access your microphone. Please select another device from the settings menu or try to restart the application.",
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to restart the application.",
-        "ffFullscreenShareQuestionTitle": "Share the whole screen, or a single window?",
+        "ffFullscreenShareQuestionTitle": "Share fullscreen, or a single window?",
         "ffFullscreenShareQuestion": "In firefox you should choose what to share.",
         "ffFullscreenShareQuestionYes": "Share Full screen",
         "ffFullscreenShareQuestionNo": "Pick a single window",
