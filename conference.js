@@ -917,7 +917,7 @@ export default {
 
     useVideoStream (newStream) {
         if (localVideo) {
-            localVideo.disposeNew();
+            localVideo.dispose();
         }
         room.replaceStream(localVideo, newStream)
             .then(() => {
@@ -950,6 +950,7 @@ export default {
         if (localAudio) {
             // this calls room.removeTrack internally
             // so we don't need to remove it manually
+            //promise = localAudio.dispose();
             promise = localAudio.dispose();
         }
         localAudio = stream;
@@ -1292,11 +1293,13 @@ export default {
                     this.deviceChangeListener);
 
             // stop local video
-            if (localVideo)
+            if (localVideo) {
                 localVideo.dispose();
+            }
             // stop local audio
-            if (localAudio)
+            if (localAudio) {
                 localAudio.dispose();
+            }
 
             // show overlay
             APP.UI.showSuspendedOverlay();
