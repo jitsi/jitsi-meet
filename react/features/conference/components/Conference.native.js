@@ -71,6 +71,16 @@ class Conference extends Component {
     }
 
     /**
+     * Inits the toolbar timeout after the component is initially rendered.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentDidMount() {
+        this._setToolbarTimeout(this.state.toolbarVisible);
+    }
+
+    /**
      * Inits new connection and conference when conference screen is entered.
      *
      * @inheritdoc
@@ -145,11 +155,7 @@ class Conference extends Component {
 
         this.setState({ toolbarVisible });
 
-        this._clearToolbarTimeout();
-        if (toolbarVisible) {
-            this._toolbarTimeout
-                = setTimeout(this._onClick, TOOLBAR_TIMEOUT_MS);
-        }
+        this._setToolbarTimeout(toolbarVisible);
     }
 
     /**
@@ -200,6 +206,22 @@ class Conference extends Component {
         }
 
         return null;
+    }
+
+    /**
+     * Triggers the default toolbar timeout.
+     *
+     * @param {boolean} toolbarVisible - Indicates if the toolbar is currently
+     * visible.
+     * @private
+     * @returns {void}
+     */
+    _setToolbarTimeout(toolbarVisible) {
+        this._clearToolbarTimeout();
+        if (toolbarVisible) {
+            this._toolbarTimeout
+                = setTimeout(this._onClick, TOOLBAR_TIMEOUT_MS);
+        }
     }
 }
 

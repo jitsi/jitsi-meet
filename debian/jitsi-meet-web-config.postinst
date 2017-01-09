@@ -127,6 +127,7 @@ case "$1" in
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.resourceBase=/usr/share/jitsi-meet" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG

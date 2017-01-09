@@ -32,7 +32,7 @@ function insertTextMsg(id, msg){
     var el = document.getElementById(id);
 
     if (el)
-        el.innerText = msg;
+        el.innerHTML = msg;
 }
 
 /**
@@ -42,6 +42,17 @@ function onLoad() {
     //Works only for close2.html because close.html doesn't have this element.
     insertTextMsg('thanksMessage',
         'Thank you for using ' + interfaceConfig.APP_NAME);
+
+    // If there is a setting show a special message only for the guests
+    if (interfaceConfig.CLOSE_PAGE_GUEST_HINT) {
+        if ( window.sessionStorage.getItem('guest') === 'true' ) {
+            var element = document.getElementById('hintQuestion');
+            element.classList.add('hide');
+            insertTextMsg('hintMessage', interfaceConfig.CLOSE_PAGE_GUEST_HINT);
+            return;
+        }
+    }
+
     insertTextMsg('hintMessage', getHint());
 }
 

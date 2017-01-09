@@ -11,6 +11,8 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     DEFAULT_LOCAL_DISPLAY_NAME: "me",
     SHOW_JITSI_WATERMARK: true,
     JITSI_WATERMARK_LINK: "https://jitsi.org",
+    // if watermark is disabled by default, it can be shown only for guests
+    SHOW_WATERMARK_FOR_GUESTS: true,
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: "",
     SHOW_POWERED_BY: false,
@@ -53,6 +55,8 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * Whether to only show the filmstrip (and hide the toolbar).
      */
     filmStripOnly: false,
+    //A html text to be shown to guests on the close page, false disables it
+    CLOSE_PAGE_GUEST_HINT: false,
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,

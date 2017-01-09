@@ -195,6 +195,9 @@ function muteLocalVideo (muted) {
 function maybeRedirectToWelcomePage(options) {
     // if close page is enabled redirect to it, without further action
     if (config.enableClosePage) {
+        // save whether current user is guest or not, before navigating
+        // to close page
+        window.sessionStorage.setItem('guest', APP.tokenData.isGuest);
         if (options.feedbackSubmitted)
             window.location.pathname = "close.html";
         else

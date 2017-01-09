@@ -311,7 +311,7 @@ if (!interfaceConfig.filmStripOnly) {
         this.container.appendChild(spanElement);
 
         var menuElement = document.createElement('i');
-        menuElement.className = 'icon-menu';
+        menuElement.className = 'icon-menu-up';
         menuElement.title = 'Remote user controls';
         spanElement.appendChild(menuElement);
 
