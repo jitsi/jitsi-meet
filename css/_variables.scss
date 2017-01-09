@@ -14,9 +14,9 @@ $defaultToolbarSize: 50px;
 
 // Video layout.
 $thumbnailToolbarHeight: 22px;
-$thumbnailIndicatorBorder: 0;
-$thumbnailIndicatorSize: 3em;
-$thumbnailVideoMargin: 2px;
+$thumbnailIndicatorBorder: 2px;
+$thumbnailIndicatorSize: $thumbnailToolbarHeight;
+$thumbnailVideoMargin: 5px;
 $thumbnailsBorder: 2px;
 $thumbnailVideoBorder: 2px;
 $hideFilmstripButtonWidth: 17px;
@@ -95,7 +95,7 @@ $notificationWidth: 215px;
 /**
  * Misc.
  */
-$borderRadius: 3px;
+$borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
 $sidebarWidth: 220px;
 $popoverMenuPadding: 13px;
