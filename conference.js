@@ -915,7 +915,7 @@ export default {
         return options;
     },
 
-    useVideoStreamNew (newStream) {
+    useVideoStream (newStream) {
         if (localVideo) {
             localVideo.disposeNew();
         }
@@ -937,45 +937,6 @@ export default {
                 APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
                 APP.UI.updateDesktopSharingButtons();
             });
-    },
-
-    /**
-     * Start using provided video stream.
-     * Stops previous video stream.
-     * @param {JitsiLocalTrack} [stream] new stream to use or null
-     * @returns {Promise}
-     */
-    useVideoStream (stream) {
-        let promise = Promise.resolve();
-        if (localVideo) {
-            // this calls room.removeTrack internally
-            // so we don't need to remove it manually
-            promise = localVideo.dispose();
-        }
-        localVideo = stream;
-
-        return promise.then(function () {
-            if (stream) {
-                return room.addTrack(stream);
-            }
-        }).then(() => {
-            if (stream) {
-                this.videoMuted = stream.isMuted();
-                this.isSharingScreen = stream.videoType === 'desktop';
-
-                APP.UI.addLocalStream(stream);
-
-                stream.videoType === 'camera'
-                    && APP.UI.setCameraButtonEnabled(true);
-            } else {
-                this.videoMuted = false;
-                this.isSharingScreen = false;
-            }
-
-            APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
-
-            APP.UI.updateDesktopSharingButtons();
-        });
     },
 
     /**
@@ -1067,7 +1028,7 @@ export default {
                         }
                     }
                 );
-                return this.useVideoStreamNew(stream);
+                return this.useVideoStream(stream);
             }).then(() => {
                 this.videoSwitchInProgress = false;
                 JitsiMeetJS.analytics.sendEvent(
@@ -1116,7 +1077,7 @@ export default {
             });
         } else {
             createLocalTracks({ devices: ['video'] }).then(
-                ([stream]) => this.useVideoStreamNew(stream)
+                ([stream]) => this.useVideoStream(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
                 JitsiMeetJS.analytics.sendEvent(
@@ -1542,8 +1503,7 @@ export default {
                     micDeviceId: null
                 })
                 .then(([stream]) => {
-                    //this.useVideoStream(stream);
-                    this.useVideoStreamNew(stream);
+                    this.useVideoStream(stream);
                     logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
