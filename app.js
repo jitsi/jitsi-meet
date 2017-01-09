@@ -22,7 +22,7 @@ import conference from './conference';
 import API from './modules/API/API';
 
 import translation from "./modules/translation/translation";
-import remoteControl from "./modules/remotecontrol/remotecontrol";
+import remoteControl from "./modules/remotecontrol/RemoteControl";
 
 const APP = {
     // Used by do_external_connect.js if we receive the attach data after
