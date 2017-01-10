@@ -230,7 +230,8 @@ function maybeRedirectToWelcomePage(options) {
  *      undefined - one from settings will be used
  * @param {boolean} (checkForPermissionPrompt) - if lib-jitsi-meet should check
  *      for gUM permission prompt
- * @param {string|null} [ffShareMode] - Firefox screen share mode {window(default)|screen}
+ * @param {string|null} [ffShareMode] -
+ *          Firefox screen share mode {window(default)|screen}
  * @returns {Promise<JitsiLocalTrack[]>}
  */
 function createLocalTracks (options, checkForPermissionPrompt, ffShareMode) {
@@ -316,7 +317,8 @@ function askFirefoxScreensharingMode (that) {
     var buttonNoTxt = APP.translation.generateTranslationHTML(
         "dialog.ffFullscreenShareQuestionNo"
     );
-    var buttons = [{title: buttonYesTxt, value: "yes"},{title: buttonNoTxt, value: "no"}];
+    var buttons = [{title: buttonYesTxt, value: "yes"},
+                    {title: buttonNoTxt, value: "no"}];
 
     APP.UI.messageHandler.openDialog(
         title,
@@ -342,10 +344,12 @@ function askFirefoxScreensharingMode (that) {
  * do the screen share
  * moved from this, to be able to handle confirmation
  *
- * @param {string|null} [ffShareMode] - Firefox screen share mode {window(default)|screen}
+ * @param {string|null} [ffShareMode] -
+ *       Firefox screen share mode {window(default)|screen}
  * @param this
  */
-function doScreenShare(ffShareMode, that) {
+function doScreenShare(ffShareMode) {
+    let externalInstallation = false;
     createLocalTracks({
         devices: ['desktop'],
         desktopSharingExtensionExternalInstallation: {
@@ -1137,11 +1141,10 @@ export default {
         }
 
         this.videoSwitchInProgress = true;
-        let externalInstallation = false;
-
         if (shareScreen) {
             var ffShareMode = 'window';
-            if ( arguments.length == 0 && JitsiMeetJS.util.RTCBrowserType.isFirefox() ) {
+            if ( arguments.length === 0 &&
+                        JitsiMeetJS.util.RTCBrowserType.isFirefox() ) {
                 askFirefoxScreensharingMode(this);
             } else {
                 doScreenShare(ffShareMode, this);
