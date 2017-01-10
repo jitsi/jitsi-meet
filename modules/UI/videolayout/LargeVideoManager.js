@@ -3,6 +3,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
+import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 
@@ -19,6 +20,7 @@ export default class LargeVideoManager {
          * @type {Object.<string, LargeContainer>}
          */
         this.containers = {};
+        this.eventEmitter = emitter;
 
         this.state = VIDEO_CONTAINER_TYPE;
         this.videoContainer = new VideoContainer(
@@ -164,6 +166,7 @@ export default class LargeVideoManager {
             // after everything is done check again if there are any pending
             // new streams.
             this.updateInProcess = false;
+            this.eventEmitter.emit(UIEvents.LARGE_VIDEO_ID_CHANGED, this.id);
             this.scheduleLargeVideoUpdate();
         });
     }

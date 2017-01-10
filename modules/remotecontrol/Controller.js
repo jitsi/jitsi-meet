@@ -3,6 +3,7 @@ import * as KeyCodes from "../keycode/keycode";
 import {EVENT_TYPES, REMOTE_CONTROL_EVENT_TYPE, PERMISSIONS_ACTIONS}
     from "../../service/remotecontrol/Constants";
 import RemoteControlParticipant from "./RemoteControlParticipant";
+import UIEvents from "../../service/UI/UIEvents";
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
@@ -53,10 +54,13 @@ export default class Controller extends RemoteControlParticipant {
      */
     constructor() {
         super();
+        this.isCollectingEvents = false;
         this.controlledParticipant = null;
         this.requestedParticipant = null;
         this._stopListener = this._handleRemoteControlStoppedEvent.bind(this);
         this._userLeftListener = this._onUserLeft.bind(this);
+        this._largeVideoChangedListener
+            = this._onLargeVideoIdChanged.bind(this);
     }
 
     /**
@@ -162,17 +166,36 @@ export default class Controller extends RemoteControlParticipant {
     }
 
     /**
-     * Starts processing the mouse and keyboard events.
+     * Starts processing the mouse and keyboard events. Sets conference
+     * listeners. Disables keyboard events.
      */
     _start() {
-        if(!this.enabled)
+        if(!this.enabled) {
             return;
-        APP.keyboardshortcut.enable(false);
+        }
+        APP.UI.addListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
+            this._largeVideoChangedListener);
         APP.conference.addConferenceListener(
             ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             this._stopListener);
         APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
             this._userLeftListener);
+        this.resume();
+    }
+
+    /**
+     * Disables the keyboatd shortcuts. Starts collecting remote control
+     * events.
+     *
+     * It can be used to resume an active remote control session wchich was
+     * paused with this.pause().
+     */
+    resume() {
+        if(!this.enabled || this.isCollectingEvents) {
+            return;
+        }
+        this.isCollectingEvents = true;
+        APP.keyboardshortcut.enable(false);
         this.area = $("#largeVideoWrapper");
         this.area.mousemove(event => {
             const position = this.area.position();
@@ -203,26 +226,22 @@ export default class Controller extends RemoteControlParticipant {
 
     /**
      * Stops processing the mouse and keyboard events. Removes added listeners.
+     * Enables the keyboard shortcuts. Displays dialog to notify the user that
+     * remote control session has ended.
      */
     _stop() {
         if(!this.controlledParticipant) {
             return;
         }
-        APP.keyboardshortcut.enable(true);
+        APP.UI.removeListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
+            this._largeVideoChangedListener);
         APP.conference.removeConferenceListener(
             ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             this._stopListener);
         APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
             this._userLeftListener);
         this.controlledParticipant = null;
-        this.area.off( "mousemove" );
-        this.area.off( "mousedown" );
-        this.area.off( "mouseup" );
-        this.area.off( "contextmenu" );
-        this.area.off( "dblclick" );
-        $(window).off( "keydown");
-        $(window).off( "keyup");
-        this.area[0].onmousewheel = undefined;
+        this.pause();
         APP.UI.messageHandler.openMessageDialog(
             "dialog.remoteControlTitle",
             "dialog.remoteControlStopMessage"
@@ -230,7 +249,13 @@ export default class Controller extends RemoteControlParticipant {
     }
 
     /**
-     * Calls this._stop() and sends stop message to the controlled participant.
+     * Executes this._stop() mehtod:
+     * Stops processing the mouse and keyboard events. Removes added listeners.
+     * Enables the keyboard shortcuts. Displays dialog to notify the user that
+     * remote control session has ended.
+     *
+     * In addition:
+     * Sends stop message to the controlled participant.
      */
     stop() {
         if(!this.controlledParticipant) {
@@ -240,6 +265,30 @@ export default class Controller extends RemoteControlParticipant {
             type: EVENT_TYPES.stop
         });
         this._stop();
+    }
+
+    /**
+     * Pauses the collecting of events and enables the keyboard shortcus. But
+     * it doesn't removes any other listeners. Basically the remote control
+     * session will be still active after this.pause(), but no events from the
+     * controller side will be captured and sent.
+     *
+     * You can resume the collecting of the events with this.resume().
+     */
+    pause() {
+        if(!this.controlledParticipant) {
+            return;
+        }
+        this.isCollectingEvents = false;
+        APP.keyboardshortcut.enable(true);
+        this.area.off( "mousemove" );
+        this.area.off( "mousedown" );
+        this.area.off( "mouseup" );
+        this.area.off( "contextmenu" );
+        this.area.off( "dblclick" );
+        $(window).off( "keydown");
+        $(window).off( "keyup");
+        this.area[0].onmousewheel = undefined;
     }
 
     /**
@@ -290,6 +339,21 @@ export default class Controller extends RemoteControlParticipant {
     _onUserLeft(id) {
         if(this.controlledParticipant === id) {
             this._stop();
+        }
+    }
+
+    /**
+     * Handles changes of the participant displayed on the large video.
+     * @param {string} id - the user id for the participant that is displayed.
+     */
+    _onLargeVideoIdChanged(id) {
+        if (!this.controlledParticipant) {
+            return;
+        }
+        if(this.controlledParticipant == id) {
+            this.resume();
+        } else {
+            this.pause();
         }
     }
 }

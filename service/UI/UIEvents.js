@@ -121,6 +121,11 @@ export default {
     LARGE_VIDEO_AVATAR_VISIBLE: "UI.large_video_avatar_visible",
 
     /**
+     * Notifies that the displayed particpant id on the largeVideo is changed.
+     */
+    LARGE_VIDEO_ID_CHANGED: "UI.large_video_id_changed",
+
+    /**
      * Toggling room lock
      */
     TOGGLE_ROOM_LOCK: "UI.toggle_room_lock",
