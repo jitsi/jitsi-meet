@@ -224,10 +224,12 @@ function maybeRedirectToWelcomePage(options) {
         // save whether current user is guest or not, before navigating
         // to close page
         window.sessionStorage.setItem('guest', APP.tokenData.isGuest);
-        if (options.feedbackSubmitted)
-            window.location.pathname = "close.html";
-        else
-            window.location.pathname = "close2.html";
+        if (options.feedbackSubmitted) {
+            window.location.pathname = 'close.html';
+        } else {
+            window.location.pathname = 'close2.html';
+        }
+
         return;
     }
 

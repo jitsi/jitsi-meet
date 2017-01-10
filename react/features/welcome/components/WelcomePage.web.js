@@ -341,16 +341,6 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-    * Handles updating roomname.
-    *
-    * @private
-    * @returns {void}
-    */
-    _onUpdateRoomname() {
-        this._updateRoomname();
-    }
-
-    /**
      * Renders the main part of this WelcomePage.
      *
      * @private
