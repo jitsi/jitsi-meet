@@ -42,7 +42,7 @@ export class AbstractApp extends Component {
          * The URL, if any, with which the app was launched.
          */
         url: React.PropTypes.string
-    };
+    }
 
     /**
      * Init lib-jitsi-meet and create local participant when component is going

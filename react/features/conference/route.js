@@ -8,10 +8,10 @@ import { obtainConfigAndInit } from './functions';
  */
 RouteRegistry.register({
     component: Conference,
-    path: '/:room',
     onEnter: () => {
         // XXX: If config or jwt are set by hash or query parameters
         // Getting raw URL before stripping it.
         obtainConfigAndInit();
-    }
+    },
+    path: '/:room'
 });

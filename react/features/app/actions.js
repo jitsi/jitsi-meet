@@ -19,6 +19,16 @@ import {
 } from './functions';
 import './reducer';
 
+/**
+ * Temporary solution. Should dispatch actions related to
+ * initial settings of the app like setting log levels,
+ * reading the config parameters from query string etc.
+ *
+ * @returns {Function}
+ */
+export function appInit() {
+    return () => init();
+}
 
 /**
  * Triggers an in-app navigation to a different route. Allows navigation to be
@@ -88,19 +98,6 @@ export function appNavigate(urlOrRoom) {
             dispatch(setConfig(config));
             _navigate(getState());
         }
-    };
-}
-
-/**
- * Temporary solution. Should dispatch actions related to
- * initial settings of the app like setting log levels,
- * reading the config parameters from query string etc.
- *
- * @returns {Function}
- */
-export function appInit() {
-    return () => {
-        init();
     };
 }
 

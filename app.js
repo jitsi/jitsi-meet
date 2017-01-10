@@ -63,11 +63,11 @@ const APP = {
 };
 
 // TODO The execution of the mobile app starts from react/index.native.js.
-// Similarly, the execution of the Web app should start from
-// react/index.web.js for the sake of consistency and ease of understanding.
-// Temporarily though because we are at the beginning of introducing React
-// into the Web app, allow the execution of the Web app to start from app.js
-// in order to reduce the complexity of the beginning step.
+// Similarly, the execution of the Web app should start from react/index.web.js
+// for the sake of consistency and ease of understanding. Temporarily though
+// because we are at the beginning of introducing React into the Web app, allow
+// the execution of the Web app to start from app.js in order to reduce the
+// complexity of the beginning step.
 require('./react');
 
 module.exports = APP;

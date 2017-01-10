@@ -26,6 +26,6 @@ function onEnter(nextState, replace) {
  */
 RouteRegistry.register({
     component: WelcomePage,
-    path: '/',
-    onEnter
+    onEnter,
+    path: '/'
 });

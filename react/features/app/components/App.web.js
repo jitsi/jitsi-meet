@@ -1,20 +1,19 @@
 /* global $ */
 import React from 'react';
 import { Provider } from 'react-redux';
-import { compose } from 'redux';
 import {
     browserHistory,
     Route,
     Router
 } from 'react-router';
 import { push, syncHistoryWithStore } from 'react-router-redux';
+import { compose } from 'redux';
 
 import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
 
-import { AbstractApp } from './AbstractApp';
 import { appInit } from '../actions';
-
+import { AbstractApp } from './AbstractApp';
 
 /**
  * Root application component.
@@ -27,7 +26,7 @@ export class App extends AbstractApp {
      *
      * @static
      */
-    static propTypes = AbstractApp.propTypes;
+    static propTypes = AbstractApp.propTypes
 
     /**
      * Initializes a new App instance.
@@ -46,10 +45,10 @@ export class App extends AbstractApp {
         this.history = syncHistoryWithStore(browserHistory, props.store);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onRouteEnter = this._onRouteEnter.bind(this);
-        this._routerCreateElement = this._routerCreateElement.bind(this);
         this._getRoute = this._getRoute.bind(this);
         this._getRoutes = this._getRoutes.bind(this);
+        this._onRouteEnter = this._onRouteEnter.bind(this);
+        this._routerCreateElement = this._routerCreateElement.bind(this);
     }
 
     /**
@@ -59,6 +58,7 @@ export class App extends AbstractApp {
      */
     componentWillMount(...args) {
         super.componentWillMount(...args);
+
         this.props.store.dispatch(appInit());
     }
 
@@ -69,7 +69,6 @@ export class App extends AbstractApp {
      * @returns {ReactElement}
      */
     render() {
-
         return (
             <Provider store = { this.props.store }>
                 <Router
@@ -79,6 +78,38 @@ export class App extends AbstractApp {
                 </Router>
             </Provider>
         );
+    }
+
+    /**
+     * Method returns route for React Router.
+     *
+     * @param {Object} route - Object that describes route.
+     * @returns {ReactElement}
+     * @private
+     */
+    _getRoute(route) {
+        const onEnter = route.onEnter || $.noop;
+        const handler = compose(this._onRouteEnter, onEnter);
+
+        return (
+            <Route
+                component = { route.component }
+                key = { route.component }
+                onEnter = { handler }
+                path = { route.path } />
+        );
+    }
+
+    /**
+     * Returns routes for application.
+     *
+     * @returns {Array}
+     * @private
+     */
+    _getRoutes() {
+        const routes = RouteRegistry.getRoutes();
+
+        return routes.map(this._getRoute);
     }
 
     /**
@@ -103,38 +134,6 @@ export class App extends AbstractApp {
     }
 
     /**
-     * Returns routes for application.
-     *
-     * @returns {Array}
-     * @private
-     */
-    _getRoutes() {
-        const routes = RouteRegistry.getRoutes();
-
-        return routes.map(this._getRoute);
-    }
-
-    /**
-     * Method returns route for React Router.
-     *
-     * @param {Object} route - Object that describes route.
-     * @returns {ReactElement}
-     * @private
-     */
-    _getRoute(route) {
-        const onEnter = route.onEnter || $.noop;
-        const handler = compose(this._onRouteEnter, onEnter);
-
-        return (
-            <Route
-                component = { route.component }
-                key = { route.component }
-                onEnter = { handler }
-                path = { route.path } />
-        );
-    }
-
-    /**
      * Invoked by react-router to notify this App that a Route is about to be
      * rendered.
      *
@@ -142,7 +141,6 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     _onRouteEnter() {
-
         // XXX The following is mandatory. Otherwise, moving back & forward
         // through the browser's history could leave this App on the Conference
         // page without a room name.

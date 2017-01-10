@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig */
+/* global $, APP, interfaceConfig */
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
