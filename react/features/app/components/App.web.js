@@ -1,13 +1,7 @@
-/* global $ */
 import React from 'react';
 import { Provider } from 'react-redux';
-import {
-    browserHistory,
-    Route,
-    Router
-} from 'react-router';
+import { browserHistory, Route, Router } from 'react-router';
 import { push, syncHistoryWithStore } from 'react-router-redux';
-import { compose } from 'redux';
 
 import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
@@ -45,9 +39,6 @@ export class App extends AbstractApp {
         this.history = syncHistoryWithStore(browserHistory, props.store);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._getRoute = this._getRoute.bind(this);
-        this._getRoutes = this._getRoutes.bind(this);
-        this._onRouteEnter = this._onRouteEnter.bind(this);
         this._routerCreateElement = this._routerCreateElement.bind(this);
     }
 
@@ -74,42 +65,12 @@ export class App extends AbstractApp {
                 <Router
                     createElement = { this._routerCreateElement }
                     history = { this.history }>
-                    { this._getRoutes() }
+                    {
+                        this._renderRoutes()
+                    }
                 </Router>
             </Provider>
         );
-    }
-
-    /**
-     * Method returns route for React Router.
-     *
-     * @param {Object} route - Object that describes route.
-     * @returns {ReactElement}
-     * @private
-     */
-    _getRoute(route) {
-        const onEnter = route.onEnter || $.noop;
-        const handler = compose(this._onRouteEnter, onEnter);
-
-        return (
-            <Route
-                component = { route.component }
-                key = { route.component }
-                onEnter = { handler }
-                path = { route.path } />
-        );
-    }
-
-    /**
-     * Returns routes for application.
-     *
-     * @returns {Array}
-     * @private
-     */
-    _getRoutes() {
-        const routes = RouteRegistry.getRoutes();
-
-        return routes.map(this._getRoute);
     }
 
     /**
@@ -137,10 +98,18 @@ export class App extends AbstractApp {
      * Invoked by react-router to notify this App that a Route is about to be
      * rendered.
      *
+     * @param {Route} route - The Route that is about to be rendered.
      * @private
      * @returns {void}
      */
-    _onRouteEnter() {
+    _onRouteEnter(route, ...args) {
+        // Notify the route that it is about to be entered.
+        const onEnter = route.onEnter;
+
+        if (typeof onEnter === 'function') {
+            onEnter(...args);
+        }
+
         // XXX The following is mandatory. Otherwise, moving back & forward
         // through the browser's history could leave this App on the Conference
         // page without a room name.
@@ -157,6 +126,37 @@ export class App extends AbstractApp {
                 .toString();
 
         this._openURL(url);
+    }
+
+    /**
+     * Renders a specific Route (for the purposes of the Router of this App).
+     *
+     * @param {Object} route - The Route to render.
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderRoute(route) {
+        const onEnter = (...args) => {
+            this._onRouteEnter(route, ...args);
+        };
+
+        return (
+            <Route
+                component = { route.component }
+                key = { route.component }
+                onEnter = { onEnter }
+                path = { route.path } />
+        );
+    }
+
+    /**
+     * Renders the Routes of the Router of this App.
+     *
+     * @returns {Array.<ReactElement>}
+     * @private
+     */
+    _renderRoutes() {
+        return RouteRegistry.getRoutes().map(this._renderRoute, this);
     }
 
     /**

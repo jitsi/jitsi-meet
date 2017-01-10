@@ -1,5 +1,3 @@
-import React from 'react';
-
 import JitsiMeetJS from './';
 import {
     LIB_DISPOSED,
@@ -42,9 +40,9 @@ export function initLib() {
             throw new Error('Cannot initialize lib-jitsi-meet without config');
         }
 
-        if (!React.View) {
-            // XXX Temporarily until conference.js is moved to the React app we
-            // shouldn't use JitsiMeetJS from the React app.
+        // XXX Temporarily until conference.js is moved to the React app we
+        // shouldn't use JitsiMeetJS from the React app.
+        if (typeof APP !== 'undefined') {
             return Promise.resolve();
         }
 

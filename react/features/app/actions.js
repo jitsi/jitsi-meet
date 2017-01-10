@@ -1,17 +1,8 @@
 import { setRoom } from '../base/conference';
-import {
-    getDomain,
-    setDomain
-} from '../base/connection';
-import {
-    loadConfig,
-    setConfig
-} from '../base/lib-jitsi-meet';
+import { getDomain, setDomain } from '../base/connection';
+import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
 
-import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
     _getRoomAndDomainFromUrlString,
     _getRouteToRender,
@@ -20,9 +11,9 @@ import {
 import './reducer';
 
 /**
- * Temporary solution. Should dispatch actions related to
- * initial settings of the app like setting log levels,
- * reading the config parameters from query string etc.
+ * Temporary solution. Should dispatch actions related to initial settings of
+ * the app like setting log levels, reading the config parameters from query
+ * string etc.
  *
  * @returns {Function}
  */

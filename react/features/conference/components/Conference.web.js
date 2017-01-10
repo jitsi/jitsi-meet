@@ -1,11 +1,9 @@
 /* global $, APP, interfaceConfig */
+
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
-import {
-    connect,
-    disconnect
-} from '../../base/connection';
+import { connect, disconnect } from '../../base/connection';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -19,6 +17,16 @@ const DISPLAY_NONE_STYLE = {
  * Implements a React Component which renders initial conference layout
  */
 class Conference extends Component {
+
+    /**
+     * Conference component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        dispatch: React.PropTypes.func
+    }
+
     /**
      * Until we don't rewrite UI using react components
      * we use UI.start from old app. Also method translates
@@ -44,15 +52,6 @@ class Conference extends Component {
     componentWillUnmount() {
         this.props.dispatch(disconnect());
     }
-
-    /**
-     * Conference component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        dispatch: React.PropTypes.func
-    };
 
     /**
      * Initializes Conference component instance.

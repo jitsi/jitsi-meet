@@ -1,4 +1,5 @@
 /* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
