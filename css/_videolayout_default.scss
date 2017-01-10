@@ -18,9 +18,10 @@
 
     &__background {
         @include topLeft();
+        background-color: black;
+        border-radius: $borderRadius - 1;
         width: 100%;
         height: 100%;
-        background-color: black;
     }
 
     /**
@@ -106,11 +107,12 @@
     }
 
     &__hoverOverlay {
+        background: rgba(0,0,0,.6);
+        border-radius: $borderRadius;
         position: relative;
         width: 100%;
         height: 100%;
         visibility: hidden;
-        background: rgba(0,0,0,.6);
         z-index: 2;
     }
 }
@@ -128,8 +130,8 @@
 
 #localVideoWrapper>video,
 #localVideoWrapper>object {
+    border-radius: $borderRadius !important;
     cursor: hand;
-    border-radius:1px !important;
     object-fit: cover;
 }
 
@@ -211,6 +213,7 @@
 
 .videocontainer .displayname {
     pointer-events: none;
+    padding: 0 3px 0 3px;
 }
 
 .videocontainer .editdisplayname {
