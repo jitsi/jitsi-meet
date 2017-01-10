@@ -950,7 +950,6 @@ export default {
         if (localAudio) {
             // this calls room.removeTrack internally
             // so we don't need to remove it manually
-            //promise = localAudio.dispose();
             promise = localAudio.dispose();
         }
         localAudio = stream;
