@@ -916,11 +916,16 @@ export default {
     },
 
     useVideoStream (newStream) {
-        if (localVideo) {
-            localVideo.dispose();
-        }
         room.replaceStream(localVideo, newStream)
             .then(() => {
+                // We call dispose after doing the replace because
+                //  dispose will try and do a new o/a after the
+                //  track removes itself.  Doing it after means
+                //  the JitsiLocalTrack::conference member is already
+                //  cleared, so it won't try and do the o/a
+                if (localVideo) {
+                    localVideo.dispose();
+                }
                 localVideo = newStream;
                 if (newStream) {
                     this.videoMuted = newStream.isMuted();
