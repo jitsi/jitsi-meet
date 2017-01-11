@@ -3,9 +3,9 @@ import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import {
-    audioMutedChanged,
-    cameraFacingModeChanged,
-    videoMutedChanged
+    setAudioMuted,
+    setCameraFacingMode,
+    setVideoMuted
 } from './actions';
 import { CAMERA_FACING_MODE } from './constants';
 
@@ -42,10 +42,10 @@ function resetInitialMediaState(store) {
     const { dispatch, getState } = store;
     const state = getState()['features/base/media'];
 
-    state.audio.muted && dispatch(audioMutedChanged(false));
+    state.audio.muted && dispatch(setAudioMuted(false));
     (state.video.facingMode !== CAMERA_FACING_MODE.USER)
-        && dispatch(cameraFacingModeChanged(CAMERA_FACING_MODE.USER));
-    state.video.muted && dispatch(videoMutedChanged(false));
+        && dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+    state.video.muted && dispatch(setVideoMuted(false));
 }
 
 /**
