@@ -7,6 +7,8 @@ import { Provider } from 'react-redux';
 import { _getRouteToRender } from '../functions';
 import { AbstractApp } from './AbstractApp';
 
+import '../../wake-lock';
+
 /**
  * Root application component.
  *
