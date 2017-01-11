@@ -915,6 +915,13 @@ export default {
         return options;
     },
 
+
+  /**
+   * Start using provided video stream.
+   * Stops previous video stream.
+   * @param {JitsiLocalTrack} [stream] new stream to use or null
+   * @returns {Promise}
+   */
     useVideoStream (newStream) {
         room.replaceStream(localVideo, newStream)
             .then(() => {
