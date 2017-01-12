@@ -1,15 +1,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import {
-    browserHistory,
-    Route,
-    Router
-} from 'react-router';
+import { browserHistory, Route, Router } from 'react-router';
 import { push, syncHistoryWithStore } from 'react-router-redux';
 
 import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
 
+import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
 
 /**
@@ -42,30 +39,18 @@ export class App extends AbstractApp {
         this.history = syncHistoryWithStore(browserHistory, props.store);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onRouteEnter = this._onRouteEnter.bind(this);
         this._routerCreateElement = this._routerCreateElement.bind(this);
     }
 
     /**
-     * Temporarily, prevents the super from dispatching Redux actions until they
-     * are integrated into the Web App.
+     * Inits the app before component will mount.
      *
-     * @returns {void}
+     * @inheritdoc
      */
-    componentWillMount() {
-        // FIXME Do not override the super once the dispatching of Redux actions
-        // is integrated into the Web App.
-    }
+    componentWillMount(...args) {
+        super.componentWillMount(...args);
 
-    /**
-     * Temporarily, prevents the super from dispatching Redux actions until they
-     * are integrated into the Web App.
-     *
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        // FIXME Do not override the super once the dispatching of Redux actions
-        // is integrated into the Web App.
+        this.props.store.dispatch(appInit());
     }
 
     /**
@@ -75,19 +60,14 @@ export class App extends AbstractApp {
      * @returns {ReactElement}
      */
     render() {
-        const routes = RouteRegistry.getRoutes();
-
         return (
             <Provider store = { this.props.store }>
                 <Router
                     createElement = { this._routerCreateElement }
                     history = { this.history }>
-                    { routes.map(r =>
-                        <Route
-                            component = { r.component }
-                            key = { r.component }
-                            path = { r.path } />
-                    ) }
+                    {
+                        this._renderRoutes()
+                    }
                 </Router>
             </Provider>
         );
@@ -118,10 +98,18 @@ export class App extends AbstractApp {
      * Invoked by react-router to notify this App that a Route is about to be
      * rendered.
      *
+     * @param {Route} route - The Route that is about to be rendered.
      * @private
      * @returns {void}
      */
-    _onRouteEnter() {
+    _onRouteEnter(route, ...args) {
+        // Notify the route that it is about to be entered.
+        const onEnter = route.onEnter;
+
+        if (typeof onEnter === 'function') {
+            onEnter(...args);
+        }
+
         // XXX The following is mandatory. Otherwise, moving back & forward
         // through the browser's history could leave this App on the Conference
         // page without a room name.
@@ -138,6 +126,37 @@ export class App extends AbstractApp {
                 .toString();
 
         this._openURL(url);
+    }
+
+    /**
+     * Renders a specific Route (for the purposes of the Router of this App).
+     *
+     * @param {Object} route - The Route to render.
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderRoute(route) {
+        const onEnter = (...args) => {
+            this._onRouteEnter(route, ...args);
+        };
+
+        return (
+            <Route
+                component = { route.component }
+                key = { route.component }
+                onEnter = { onEnter }
+                path = { route.path } />
+        );
+    }
+
+    /**
+     * Renders the Routes of the Router of this App.
+     *
+     * @returns {Array.<ReactElement>}
+     * @private
+     */
+    _renderRoutes() {
+        return RouteRegistry.getRoutes().map(this._renderRoute, this);
     }
 
     /**

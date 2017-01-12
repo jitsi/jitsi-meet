@@ -64,8 +64,8 @@ export function _getRoomAndDomainFromUrlString(url) {
 
             url
                 = match[1] /* URL protocol */
-                   + '://enso.hipchat.me/'
-                   + url.substring(regex.lastIndex);
+                    + '://enso.hipchat.me/'
+                    + url.substring(regex.lastIndex);
 
             /* eslint-enable no-param-reassign, prefer-template */
         }

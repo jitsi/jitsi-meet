@@ -1,5 +1,9 @@
-/* global interfaceConfig, APP */
+/* global $, APP, interfaceConfig */
+
 import React, { Component } from 'react';
+import { connect as reactReduxConnect } from 'react-redux';
+
+import { connect, disconnect } from '../../base/connection';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -12,7 +16,42 @@ const DISPLAY_NONE_STYLE = {
 /**
  * Implements a React Component which renders initial conference layout
  */
-export default class Conference extends Component {
+class Conference extends Component {
+
+    /**
+     * Conference component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        dispatch: React.PropTypes.func
+    }
+
+    /**
+     * Until we don't rewrite UI using react components
+     * we use UI.start from old app. Also method translates
+     * component right after it has been mounted.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        APP.UI.start();
+
+        // XXX Temporary solution until we add React translation.
+        APP.translation.translateElement($('#videoconference_page'));
+
+        this.props.dispatch(connect());
+    }
+
+    /**
+     * Disconnect from the conference when component will be
+     * unmounted.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this.props.dispatch(disconnect());
+    }
 
     /**
      * Initializes Conference component instance.
@@ -220,3 +259,5 @@ export default class Conference extends Component {
         return null;
     }
 }
+
+export default reactReduxConnect()(Conference);

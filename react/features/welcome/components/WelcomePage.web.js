@@ -1,9 +1,7 @@
-/* global APP, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 import React from 'react';
 import { connect } from 'react-redux';
-
-import { Conference } from '../../conference';
 
 import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
 
@@ -52,6 +50,9 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
+
+        // XXX Temporary solution until we add React translation.
+        APP.translation.translateElement($('#welcome_page'));
     }
 
     /**
@@ -61,12 +62,6 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        // FIXME The rendering of Conference bellow is a very quick and dirty
-        // temporary fix for the following issue: when the WelcomePage is
-        // disabled, app.js expects Conference to be rendered already and only
-        // then it builds a room name but the App component expects the room
-        // name to be built already (by looking at the window's location) in
-        // order to choose between WelcomePage and Conference.
         return (
             <div>
                 <div id = 'welcome_page'>
@@ -77,7 +72,6 @@ class WelcomePage extends AbstractWelcomePage {
                         this._renderMain()
                     }
                 </div>
-                <Conference />
             </div>
         );
     }
@@ -130,19 +124,6 @@ class WelcomePage extends AbstractWelcomePage {
         }, () => {
             APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
         });
-    }
-
-    /**
-     * Overrides the super in order to prevent the dispatching of the Redux
-     * action SET_ROOM.
-     *
-     * @override
-     * @protected
-     * @returns {null}
-     */
-    _onJoin() {
-        // Don't call the super implementation and thus prevent the dispatching
-        // of the Redux action SET_ROOM.
     }
 
     /**

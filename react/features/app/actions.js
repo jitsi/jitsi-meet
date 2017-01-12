@@ -1,22 +1,25 @@
 import { setRoom } from '../base/conference';
-import {
-    getDomain,
-    setDomain
-} from '../base/connection';
-import {
-    loadConfig,
-    setConfig
-} from '../base/lib-jitsi-meet';
+import { getDomain, setDomain } from '../base/connection';
+import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
 
-import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
     _getRoomAndDomainFromUrlString,
-    _getRouteToRender
+    _getRouteToRender,
+    init
 } from './functions';
 import './reducer';
+
+/**
+ * Temporary solution. Should dispatch actions related to initial settings of
+ * the app like setting log levels, reading the config parameters from query
+ * string etc.
+ *
+ * @returns {Function}
+ */
+export function appInit() {
+    return () => init();
+}
 
 /**
  * Triggers an in-app navigation to a different route. Allows navigation to be
