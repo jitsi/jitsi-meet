@@ -397,7 +397,8 @@ UI.getSharedVideoManager = function () {
 UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
     var setupWelcomePage = null;
-    if(config.enableWelcomePage && window.location.pathname == "/" &&
+    var regex = /\/([a-zA-Z0-9=\?]+)$/g;
+    if(config.enableWelcomePage && !regex.exec(window.location.pathname) &&
        Settings.isWelcomePageEnabled()) {
         $("#videoconference_page").hide();
         if (!setupWelcomePage)
