@@ -1,14 +1,12 @@
 /* global APP, JitsiMeetJS */
 
-import {
-    SET_DOMAIN
-} from './actionTypes';
-import './reducer';
 import UIEvents from '../../../../service/UI/UIEvents';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-const ConferenceEvents = JitsiMeetJS.events.conference;
+import { SET_DOMAIN } from './actionTypes';
+import './reducer';
 
+const JitsiConferenceEvents = JitsiMeetJS.events.conference;
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Opens new connection.
@@ -42,7 +40,7 @@ export function connect() {
                 // room. It will then restart the media session when someone
                 // eventually join the room which will start the stats again.
                 APP.conference.addConferenceListener(
-                    ConferenceEvents.BEFORE_STATISTICS_DISPOSED,
+                    JitsiConferenceEvents.BEFORE_STATISTICS_DISPOSED,
                     () => {
                         if (APP.logCollector) {
                             APP.logCollector.flush();
@@ -74,8 +72,8 @@ export function connect() {
  * @returns {Function}
  */
 export function disconnect() {
-    // XXX For web based version we use conference
-    // hanging up logic from the old app.
+    // XXX For web based version we use conference hanging up logic from the old
+    // app.
     return () => APP.conference.hangup();
 }
 

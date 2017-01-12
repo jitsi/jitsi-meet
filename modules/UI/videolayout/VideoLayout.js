@@ -636,7 +636,7 @@ var VideoLayout = {
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
         // FIXME: there is no "videoactive.jingle" event.
-        if (!pinnedId
+        if (!interfaceConfig.filmStripOnly && !pinnedId
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);

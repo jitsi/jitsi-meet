@@ -1,6 +1,5 @@
 import { isRoomValid } from '../base/conference';
 import { RouteRegistry } from '../base/navigator';
-
 import { Conference } from '../conference';
 import { WelcomePage } from '../welcome';
 
@@ -65,8 +64,8 @@ export function _getRoomAndDomainFromUrlString(url) {
 
             url
                 = match[1] /* URL protocol */
-                + '://enso.hipchat.me/'
-                + url.substring(regex.lastIndex);
+                    + '://enso.hipchat.me/'
+                    + url.substring(regex.lastIndex);
 
             /* eslint-enable no-param-reassign, prefer-template */
         }
@@ -86,8 +85,8 @@ export function _getRoomAndDomainFromUrlString(url) {
 export function _getRouteToRender(stateOrGetState) {
     const state
         = typeof stateOrGetState === 'function'
-        ? stateOrGetState()
-        : stateOrGetState;
+            ? stateOrGetState()
+            : stateOrGetState;
     const room = state['features/base/conference'].room;
     const component = isRoomValid(room) ? Conference : WelcomePage;
 

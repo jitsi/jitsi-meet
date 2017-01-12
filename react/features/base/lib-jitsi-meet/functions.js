@@ -8,6 +8,13 @@ import { loadScript } from '../../base/util';
  * @returns {Promise<Object>}
  */
 export function loadConfig(host, path = '/config.js') {
+    // Returns config.js file from global scope. We can't use the version that's
+    // being used for the React Native app because the old/current Web app uses
+    // config from the global scope.
+    if (typeof APP !== 'undefined') {
+        return Promise.resolve(window.config);
+    }
+
     return loadScript(new URL(path, host).toString())
         .then(() => {
             const config = window.config;

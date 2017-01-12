@@ -1,4 +1,4 @@
-/* global interfaceConfig, APP, $  */
+/* global $, APP, interfaceConfig */
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -338,16 +338,6 @@ class WelcomePage extends AbstractWelcomePage {
         }
 
         return null;
-    }
-
-    /**
-    * Handles updating roomname.
-    *
-    * @private
-    * @returns {void}
-    */
-    _onUpdateRoomname() {
-        this._updateRoomname();
     }
 
     /**

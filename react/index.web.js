@@ -1,20 +1,15 @@
 /* global APP */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
-import {
-    routerMiddleware,
-    routerReducer
-} from 'react-router-redux';
+import { routerMiddleware, routerReducer } from 'react-router-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
 import config from './config';
 import { App } from './features/app';
-import {
-    MiddlewareRegistry,
-    ReducerRegistry
-} from './features/base/redux';
+import { MiddlewareRegistry, ReducerRegistry } from './features/base/redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -49,7 +44,7 @@ if (typeof window === 'object'
 const store = createStore(reducer, middleware);
 
 /**
- * Render the app when DOM tree has been loaded.
+ * Renders the app when the DOM tree has been loaded.
  */
 document.addEventListener('DOMContentLoaded', () => {
     const now = window.performance.now();
@@ -67,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Stop collecting the logs and disposing the API when
- * user closes the page.
+ * Stops collecting the logs and disposing the API when the user closes the
+ * page.
  */
 window.addEventListener('beforeunload', () => {
     // Stop the LogCollector

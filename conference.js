@@ -506,8 +506,10 @@ export default {
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
 
-                if (UIUtil.isButtonEnabled('contacts'))
+                if (UIUtil.isButtonEnabled('contacts')
+                    && !interfaceConfig.filmStripOnly) {
                     APP.UI.ContactList = new ContactList(room);
+                }
 
                 // if user didn't give access to mic or camera or doesn't have
                 // them at all, we disable corresponding toolbar buttons

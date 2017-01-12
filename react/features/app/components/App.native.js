@@ -1,5 +1,7 @@
+/* global __DEV__ */
+
 import React from 'react';
-import { Linking, Navigator } from 'react-native';
+import { Linking, Navigator, Platform } from 'react-native';
 import { Provider } from 'react-redux';
 
 import { _getRouteToRender } from '../functions';
@@ -30,6 +32,12 @@ export class App extends AbstractApp {
         // Bind event handlers so they are only bound once for every instance.
         this._navigatorRenderScene = this._navigatorRenderScene.bind(this);
         this._onLinkingURL = this._onLinkingURL.bind(this);
+
+        // In the Release configuration, React Native will (intentionally) throw
+        // an unhandled JavascriptException for an unhandled JavaScript error.
+        // This will effectively kill the application. In accord with the Web,
+        // do not kill the application.
+        this._maybeDisableExceptionsManager();
     }
 
     /**
@@ -102,6 +110,44 @@ export class App extends AbstractApp {
     }
 
     /**
+     * Attempts to disable the use of React Native
+     * {@link ExceptionsManager#handleException} on platforms and in
+     * configurations on/in which the use of the method in questions has been
+     * determined to be undesirable. For example, React Native will
+     * (intentionally) throw an unhandled JavascriptException for an
+     * unhandled JavaScript error in the Release configuration. This will
+     * effectively kill the application. In accord with the Web, do not kill the
+     * application.
+     *
+     * @private
+     * @returns {void}
+     */
+    _maybeDisableExceptionsManager() {
+        if (__DEV__) {
+            // As mentioned above, only the Release configuration was observed
+            // to suffer.
+            return;
+        }
+        if (Platform.OS !== 'android') {
+            // A solution based on RTCSetFatalHandler was implemented on iOS and
+            // it is preferred because it is at a later step of the
+            // error/exception handling and it is specific to fatal
+            // errors/exceptions which were observed to kill the application.
+            // The solution implemented bellow was tested on Android only so it
+            // is considered safest to use it there only.
+            return;
+        }
+
+        const oldHandler = global.ErrorUtils.getGlobalHandler();
+        const newHandler = _handleException;
+
+        if (!oldHandler || oldHandler !== newHandler) {
+            newHandler.next = oldHandler;
+            global.ErrorUtils.setGlobalHandler(newHandler);
+        }
+    }
+
+    /**
      * Renders the scene identified by a specific route in the Navigator of this
      * instance.
      *
@@ -131,5 +177,31 @@ export class App extends AbstractApp {
      */
     _onLinkingURL(event) {
         this._openURL(event.url);
+    }
+}
+
+/**
+ * Handles a (possibly unhandled) JavaScript error by preventing React Native
+ * from converting a fatal error into an unhandled native exception which will
+ * kill the application.
+ *
+ * @param {Error} error - The (possibly unhandled) JavaScript error to handle.
+ * @param {boolean} fatal - True if the specified error is fatal; otherwise,
+ * false.
+ * @private
+ * @returns {void}
+ */
+function _handleException(error, fatal) {
+    if (fatal) {
+        // In the Release configuration, React Native will (intentionally) throw
+        // an unhandled JavascriptException for an unhandled JavaScript error.
+        // This will effectively kill the application. In accord with the Web,
+        // do not kill the application.
+        console.error(error);
+    } else {
+        // Forward to the next globalHandler of ErrorUtils.
+        const next = _handleException.next;
+
+        typeof next === 'function' && next(error, fatal);
     }
 }
