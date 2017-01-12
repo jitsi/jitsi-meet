@@ -66,7 +66,7 @@ api.executeCommand('toggleVideo', [])
 ```
 * **toggleFilmStrip** - hides / shows the film strip. No arguments are required.
 ```
-api.executeCommand('filmStrip', [])
+api.executeCommand('toggleFilmStrip', [])
 ```
 * **toggleChat** - hides / shows the chat. No arguments are required.
 ```
