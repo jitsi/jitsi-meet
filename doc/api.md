@@ -43,11 +43,9 @@ You can control the embedded Jitsi Meet conference using the JitsiMeetExternalAP
 
 You can send command to Jitsi Meet conference using ```executeCommand```.
 ```
-api.executeCommand(command, arguments)
+api.executeCommand(command, ...arguments)
 ```
 The ```command``` parameter is String object with the name of the command.
-The ```arguments``` parameter is array with the arguments required by the command.
-If no arguments are required by the command this parameter can be omitted or you can pass empty array.
 Currently we support the following commands:
 
 
@@ -58,33 +56,43 @@ api.executeCommand('displayName', 'New Nickname');
 ```
 * **toggleAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
 ```
-api.executeCommand('toggleAudio', [])
+api.executeCommand('toggleAudio')
 ```
 * **toggleVideo** - mutes / unmutes the video for the local participant. No arguments are required.
 ```
-api.executeCommand('toggleVideo', [])
+api.executeCommand('toggleVideo')
 ```
 * **toggleFilmStrip** - hides / shows the film strip. No arguments are required.
 ```
-api.executeCommand('filmStrip', [])
+api.executeCommand('filmStrip')
 ```
 * **toggleChat** - hides / shows the chat. No arguments are required.
 ```
-api.executeCommand('toggleChat', [])
+api.executeCommand('toggleChat')
 ```
 * **toggleContactList** - hides / shows the contact list. No arguments are required.
 ```
-api.executeCommand('toggleContactList', [])
+api.executeCommand('toggleContactList')
 ```
 
 * **toggleShareScreen** - starts / stops the screen sharing. No arguments are required.
 ```
-api.executeCommand('toggleShareScreen', [])
+api.executeCommand('toggleShareScreen')
 ```
 
 * **hangup** - Hangups the call. No arguments are required.
 ```
-api.executeCommand('hangup', [])
+api.executeCommand('hangup')
+```
+
+* **email** - Hangups the call. No arguments are required.
+```
+api.executeCommand('email', 'example@example.com')
+```
+
+* **avatarUrl** - Hangups the call. No arguments are required.
+```
+api.executeCommand('avatarUrl', 'avatarUrl')
 ```
 
 You can also execute multiple commands using the method ```executeCommands```.

@@ -263,22 +263,6 @@ function createLocalTracks (options, checkForPermissionPrompt) {
                 'failed to create local tracks', options.devices, err);
             return Promise.reject(err);
         });
-    }
-
-/**
- * Changes the email for the local user
- * @param email {string} the new email
- */
-function changeLocalEmail(email = '') {
-    email = email.trim();
-
-    if (email === APP.settings.getEmail()) {
-        return;
-    }
-
-    APP.settings.setEmail(email);
-    APP.UI.setUserEmail(room.myUserId(), email);
-    sendData(commands.EMAIL, email);
 }
 
 /**
@@ -1403,7 +1387,7 @@ export default {
             APP.UI.initEtherpad(value);
         });
 
-        APP.UI.addListener(UIEvents.EMAIL_CHANGED, changeLocalEmail);
+        APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.UI.setUserEmail(from, data.value);
         });
@@ -1802,5 +1786,37 @@ export default {
             APP.API.notifyReadyToClose();
             maybeRedirectToWelcomePage(values[0]);
         });
+    },
+
+    /**
+     * Changes the email for the local user
+     * @param email {string} the new email
+     */
+    changeLocalEmail(email = '') {
+        email = email.trim();
+
+        if (email === APP.settings.getEmail()) {
+            return;
+        }
+
+        APP.settings.setEmail(email);
+        APP.UI.setUserEmail(room.myUserId(), email);
+        sendData(commands.EMAIL, email);
+    },
+
+    /**
+     * Changes the avatar url for the local user
+     * @param url {string} the new url
+     */
+    changeLocalAvatarUrl(url = '') {
+        url = url.trim();
+
+        if (url === APP.settings.getAvatarUrl()) {
+            return;
+        }
+
+        APP.settings.setAvatarUrl(url);
+        APP.UI.setUserAvatarUrl(room.myUserId(), url);
+        sendData(commands.AVATAR_URL, url);
     }
 };
