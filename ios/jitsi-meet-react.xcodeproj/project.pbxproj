@@ -814,6 +814,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeet.ios;
 				PRODUCT_NAME = "jitsi-meet-react";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -849,6 +850,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeet.ios;
 				PRODUCT_NAME = "jitsi-meet-react";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
