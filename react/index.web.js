@@ -1,3 +1,5 @@
+/* global process */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
@@ -14,6 +16,7 @@ import {
     MiddlewareRegistry,
     ReducerRegistry
 } from './features/base/redux';
+import createLogger from 'redux-logger';
 
 // Create combined reducer from all reducers in registry + routerReducer from
 // 'react-router-redux' module (stores location updates from history).
@@ -22,6 +25,17 @@ const reducer = ReducerRegistry.combineReducers({
     routing: routerReducer
 });
 
+const additionalMiddlewares = [
+    Thunk,
+    routerMiddleware(browserHistory)
+];
+
+// Enable logger for development environment
+if (process.env.NODE_ENV !== 'production') {
+    additionalMiddlewares.push(createLogger());
+}
+
+
 // Apply all registered middleware from the MiddlewareRegistry + additional
 // 3rd party middleware:
 // - Thunk - allows us to dispatch async actions easily. For more info
@@ -29,9 +43,7 @@ const reducer = ReducerRegistry.combineReducers({
 // - routerMiddleware - middleware from 'react-router-redux' module to track
 // changes in browser history inside Redux state. For more information
 // @see https://github.com/reactjs/react-router-redux.
-let middleware = MiddlewareRegistry.applyMiddleware(
-    Thunk,
-    routerMiddleware(browserHistory));
+let middleware = MiddlewareRegistry.applyMiddleware(...additionalMiddlewares);
 
 // Try to enable Redux DevTools Chrome extension in order to make it available
 // for the purposes of facilitating development.

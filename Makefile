@@ -22,6 +22,9 @@ update-deps:
 compile:
 	$(WEBPACK) -p
 
+compile-dev:
+	$(WEBPACK)
+
 clean:
 	rm -fr $(BUILD_DIR)
 
