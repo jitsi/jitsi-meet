@@ -54,10 +54,12 @@ function initCommands() {
         "toggle-contact-list": APP.UI.toggleContactList,
         "toggle-share-screen":
             APP.conference.toggleScreenSharing.bind(APP.conference),
-        "video-hangup": () => APP.conference.hangup()
+        "video-hangup": () => APP.conference.hangup(),
+        "email": APP.conference.changeLocalEmail,
+        "avatar-url": APP.conference.changeLocalAvatarUrl
     };
     Object.keys(commands).forEach(function (key) {
-        postis.listen(key, commands[key]);
+        postis.listen(key, args => commands[key](...args));
     });
 }
 
