@@ -302,26 +302,23 @@ RemoteVideo.prototype._figureOutMutedWhileDisconnected
  * @param id the id indicating the video for which we're adding a menu.
  * @param parentElement the parent element where this menu will be added
  */
-if (!interfaceConfig.filmStripOnly) {
-    RemoteVideo.prototype.addRemoteVideoMenu = function () {
+RemoteVideo.prototype.addRemoteVideoMenu = function () {
+    if (interfaceConfig.filmStripOnly) {
+        return;
+    }
+    var spanElement = document.createElement('span');
+    spanElement.className = 'remotevideomenu';
 
-        var spanElement = document.createElement('span');
-        spanElement.className = 'remotevideomenu';
+    this.container.appendChild(spanElement);
 
-        this.container.appendChild(spanElement);
+    var menuElement = document.createElement('i');
+    menuElement.className = 'icon-menu-up';
+    menuElement.title = 'Remote user controls';
+    spanElement.appendChild(menuElement);
 
-        var menuElement = document.createElement('i');
-        menuElement.className = 'icon-menu-up';
-        menuElement.title = 'Remote user controls';
-        spanElement.appendChild(menuElement);
-
-        this._initPopupMenu(this._generatePopupContent());
-        this.hasRemoteVideoMenu = true;
-    };
-
-} else {
-    RemoteVideo.prototype.addRemoteVideoMenu = function() {};
-}
+    this._initPopupMenu(this._generatePopupContent());
+    this.hasRemoteVideoMenu = true;
+};
 
 /**
  * Removes the remote stream element corresponding to the given stream and

@@ -1260,6 +1260,57 @@ export default {
                 APP.API.notifyReceivedChatMessage(id, nick, text, ts);
                 APP.UI.addMessage(id, nick, text, ts);
             });
+            APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
+                APP.API.notifySendingChatMessage(message);
+                room.sendTextMessage(message);
+            });
+
+            APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
+                try {
+                    // do not try to select participant if there is none (we
+                    // are alone in the room), otherwise an error will be
+                    // thrown cause reporting mechanism is not available
+                    // (datachannels currently)
+                    if (room.getParticipants().length === 0)
+                        return;
+
+                    room.selectParticipant(id);
+                } catch (e) {
+                    JitsiMeetJS.analytics.sendEvent(
+                        'selectParticipant.failed');
+                    reportError(e);
+                }
+            });
+
+            APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
+            (smallVideo, isPinned) => {
+                let smallVideoId = smallVideo.getId();
+                let isLocal = APP.conference.isLocalId(smallVideoId);
+
+                let eventName
+                    = (isPinned ? "pinned" : "unpinned") + "." +
+                            (isLocal ? "local" : "remote");
+                let participantCount = room.getParticipantCount();
+                JitsiMeetJS.analytics.sendEvent(
+                        eventName,
+                        { value: participantCount });
+
+                // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
+                // the participant is on the large video ?
+                if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
+                    && !isLocal) {
+
+                    // When the library starts supporting multiple pins we
+                    // would pass the isPinned parameter together with the
+                    // identifier, but currently we send null to indicate that
+                    // we unpin the last pinned.
+                    try {
+                        room.pinParticipant(isPinned ? smallVideoId : null);
+                    } catch (e) {
+                        reportError(e);
+                    }
+                }
+            });
         }
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
@@ -1336,13 +1387,6 @@ export default {
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muteLocalVideo);
-
-        if (!interfaceConfig.filmStripOnly) {
-            APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
-                APP.API.notifySendingChatMessage(message);
-                room.sendTextMessage(message);
-            });
-        }
 
         room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
             (stats) => {
@@ -1464,50 +1508,6 @@ export default {
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);
-        });
-
-        APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
-            try {
-                // do not try to select participant if there is none (we are
-                // alone in the room), otherwise an error will be thrown cause
-                // reporting mechanism is not available (datachannels currently)
-                if (room.getParticipants().length === 0)
-                    return;
-
-                room.selectParticipant(id);
-            } catch (e) {
-                JitsiMeetJS.analytics.sendEvent('selectParticipant.failed');
-                reportError(e);
-            }
-        });
-
-        APP.UI.addListener(UIEvents.PINNED_ENDPOINT, (smallVideo, isPinned) => {
-            let smallVideoId = smallVideo.getId();
-            let isLocal = APP.conference.isLocalId(smallVideoId);
-
-            let eventName
-                = (isPinned ? "pinned" : "unpinned") + "." +
-                        (isLocal ? "local" : "remote");
-            let participantCount = room.getParticipantCount();
-            JitsiMeetJS.analytics.sendEvent(
-                    eventName,
-                    { value: participantCount });
-
-            // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
-            // the participant is on the large video ?
-            if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
-                && !isLocal) {
-
-                // When the library starts supporting multiple pins we would
-                // pass the isPinned parameter together with the identifier,
-                // but currently we send null to indicate that we unpin the
-                // last pinned.
-                try {
-                    room.pinParticipant(isPinned ? smallVideoId : null);
-                } catch (e) {
-                    reportError(e);
-                }
-            }
         });
 
         APP.UI.addListener(

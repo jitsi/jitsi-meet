@@ -42,13 +42,14 @@ const FilmStrip = {
         let container = document.createElement('div');
         let isVisible = this.isFilmStripVisible();
         container.className = 'filmstrip__toolbar';
-
-        container.innerHTML = `
-            <button id="hideVideoToolbar">
-                <i class="icon-menu-${isVisible ? 'down' : 'up'}">
-                </i>
-            </button>
-        `;
+        if(!interfaceConfig.filmStripOnly) {
+            container.innerHTML = `
+                <button id="hideVideoToolbar">
+                    <i class="icon-menu-${isVisible ? 'down' : 'up'}">
+                    </i>
+                </button>
+            `;
+        }
 
         return container;
     },
@@ -94,8 +95,10 @@ const FilmStrip = {
      */
     showMenuDownIcon() {
         let icon = this.toggleFilmStripIcon;
-        icon.classList.add(this.iconMenuDownClassName);
-        icon.classList.remove(this.iconMenuUpClassName);
+        if(icon) {
+            icon.classList.add(this.iconMenuDownClassName);
+            icon.classList.remove(this.iconMenuUpClassName);
+        }
     },
 
     /**
@@ -103,8 +106,10 @@ const FilmStrip = {
      */
     showMenuUpIcon() {
         let icon = this.toggleFilmStripIcon;
-        icon.classList.add(this.iconMenuUpClassName);
-        icon.classList.remove(this.iconMenuDownClassName);
+        if(icon) {
+            icon.classList.add(this.iconMenuUpClassName);
+            icon.classList.remove(this.iconMenuDownClassName);
+        }
     },
 
     /**
