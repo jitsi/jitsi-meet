@@ -61,9 +61,7 @@ class Root extends Component {
 
                 // XXX Start with an empty URL if getting the initial URL fails;
                 // otherwise, nothing will be rendered.
-                if (this.state.url !== null) {
-                    this.setState({ url: null });
-                }
+                this.setState({ url: null });
             });
     }
 
