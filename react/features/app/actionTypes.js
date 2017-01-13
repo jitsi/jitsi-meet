@@ -1,6 +1,17 @@
 import { Symbol } from '../base/react';
 
 /**
+ * The type of this action sets the platform of user agent in order to decide to
+ * show the landing or not.
+ *
+ * {
+ *      type: APP_SET_PLATFORM,
+ *      platform: string
+ * }
+ */
+export const APP_SET_PLATFORM = Symbol('APP_SET_PLATFORM');
+
+/**
  * The type of the actions which signals that a specific App will mount (in the
  * terms of React).
  *
@@ -21,14 +32,3 @@ export const APP_WILL_MOUNT = Symbol('APP_WILL_MOUNT');
  * }
  */
 export const APP_WILL_UNMOUNT = Symbol('APP_WILL_UNMOUNT');
-
-/**
- * The type of this action sets the platform of user agent
- * in order to decide to show the landing or not.
- *
- * {
- *      type: APP_SET_PLATFORM,
- *      platform: String
- * }
- */
-export const APP_SET_PLATFORM = Symbol('APP_SET_PLATFORM');

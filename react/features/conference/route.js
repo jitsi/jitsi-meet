@@ -5,6 +5,7 @@ import HttpConfigFetch from '../../../modules/config/HttpConfigFetch';
 import ConferenceUrl from '../../../modules/URL/ConferenceUrl';
 
 import { RouteRegistry } from '../base/navigator';
+
 import { Conference } from './components';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);

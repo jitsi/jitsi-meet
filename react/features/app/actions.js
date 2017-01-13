@@ -119,37 +119,6 @@ export function appWillMount(app) {
 }
 
 /**
- * Detects the platform of user agent and
- * signals that platform detected.
- *
- * @returns {Function}
- */
-export function detectPlatform() {
-    return dispatch => {
-        if (detectAndroid()) {
-            dispatch(_setPlatform('android'));
-        } else if (detectIOS()) {
-            dispatch(_setPlatform('ios'));
-        }
-    };
-}
-
-/**
- * Signals that user agent platform is mobile and it has
- * been already detected.
- *
- * @param {string} platform - Mobile user agent platform.
- * @returns {{type, platform: string}}
- * @private
- */
-export function _setPlatform(platform) {
-    return {
-        type: APP_SET_PLATFORM,
-        platform
-    };
-}
-
-/**
  * Signals that a specific App will unmount (in the terms of React).
  *
  * @param {App} app - The App which will unmount.
@@ -166,6 +135,21 @@ export function appWillUnmount(app) {
 }
 
 /**
+ * Detects the platform of user agent and signals that platform detected.
+ *
+ * @returns {Function}
+ */
+export function detectPlatform() {
+    return dispatch => {
+        if (detectAndroid()) {
+            dispatch(_setPlatform('android'));
+        } else if (detectIOS()) {
+            dispatch(_setPlatform('ios'));
+        }
+    };
+}
+
+/**
  * Navigates to route corresponding to current room name.
  *
  * @param {Object} state - Redux state.
@@ -177,6 +161,23 @@ function _navigate(state) {
     const routeToRender = _getRouteToRender(state);
 
     app._navigate(routeToRender);
+}
+
+/**
+ * Signals that user agent platform is mobile and it has been already detected.
+ *
+ * @param {string} platform - Mobile user agent platform.
+ * @returns {{
+ *     type: APP_SET_PLATFORM,
+ *     platform: string
+ * }}
+ * @private
+ */
+function _setPlatform(platform) {
+    return {
+        type: APP_SET_PLATFORM,
+        platform
+    };
 }
 
 /**
