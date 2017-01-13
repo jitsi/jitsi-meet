@@ -13,11 +13,5 @@ export function detectAndroid() {
  * @returns {boolean}
  */
 export function detectIOS() {
-    if (navigator.userAgent.match(/iPhone/i)
-        || navigator.userAgent.match(/iPad/i)
-        || navigator.userAgent.match(/iPod/i)) {
-        return true;
-    }
-
-    return false;
+    return Boolean(navigator.userAgent.match(/iP(ad|hone|od)/i));
 }

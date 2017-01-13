@@ -9,9 +9,9 @@ ReducerRegistry.register('features/landing', (state = {}, action) => {
             ...state,
 
             /**
-             * Flag that shows that mobile landing shown shown.
+             * Flag that shows that mobile landing is shown.
              *
-             * @type {App}
+             * @type {boolean}
              */
             landingIsShown: true
         };

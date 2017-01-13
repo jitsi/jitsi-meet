@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+
 import { landingIsShown } from '../actions';
 
-const links = {
+const LINKS = {
     'android': 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
-    'ios': ''
+    'ios': 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905'
 };
 
 /**
@@ -14,10 +15,14 @@ const links = {
  * @class Landing
  */
 class Landing extends Component {
+    static propTypes = {
+        dispatch: React.PropTypes.func,
+        platform: React.PropTypes.string,
+        room: React.PropTypes.string
+    }
 
     /**
-     * React lifecycle method triggered after
-     * component is mount.
+     * React lifecycle method triggered after component is mounted.
      *
      * @returns {void}
      */
@@ -25,15 +30,8 @@ class Landing extends Component {
         this.props.dispatch(landingIsShown());
     }
 
-    static propTypes = {
-        dispatch: React.PropTypes.func,
-        platform: React.PropTypes.string,
-        room: React.PropTypes.string
-    };
-
     /**
-     * React lifecycle method triggered before
-     * component will mount.
+     * React lifecycle method triggered before component will mount.
      *
      * @returns {void}
      */
@@ -72,10 +70,10 @@ class Landing extends Component {
                         className = 'landing__logo'
                         src = '/images/logo-blue.svg' />
                     <p className = 'landing__text'>
-                       You need <strong>Meet Jitsi</strong> to
-                       join a conversation on your mobile
+                       You need <strong>Jitsi Meet</strong> to join a
+                       conversation on your mobile
                     </p>
-                    <a href = { links[platform] }>
+                    <a href = { LINKS[platform] }>
                         <button
                             className = { primaryButtonClasses }>
                             Download the App
@@ -95,11 +93,20 @@ class Landing extends Component {
     }
 }
 
-const mapStateToProps = state => {
+/**
+ * Maps (parts of) the Redux state to the associated Landing's props.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {{
+ *     platform: string,
+ *     room: string
+ * }}
+ */
+function mapStateToProps(state) {
     return {
         platform: state['features/app'].platform,
         room: state['features/base/conference'].room
     };
-};
+}
 
 export default connect(mapStateToProps)(Landing);
