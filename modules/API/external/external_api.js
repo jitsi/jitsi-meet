@@ -36,7 +36,9 @@ var commands = {
     "toggleChat": "toggle-chat",
     "toggleContactList": "toggle-contact-list",
     "toggleShareScreen": "toggle-share-screen",
-    "hangup": "video-hangup"
+    "hangup": "video-hangup",
+    "email": "email",
+    "avatarUrl": "avatar-url"
 };
 
 /**
@@ -174,15 +176,13 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
  * @param name the name of the command
  * @param arguments array of arguments
  */
-JitsiMeetExternalAPI.prototype.executeCommand = function(name, argumentsList) {
+JitsiMeetExternalAPI.prototype.executeCommand
+= function(name, ...argumentsList) {
     if(!(name in commands)) {
         logger.error("Not supported command name.");
         return;
     }
-    var argumentsArray = argumentsList;
-    if (!argumentsArray)
-        argumentsArray = [];
-    sendMessage(this.postis, {method: commands[name], params: argumentsArray});
+    sendMessage(this.postis, {method: commands[name], params: argumentsList});
 };
 
 /**

@@ -37,7 +37,8 @@ export default class LargeVideoManager {
             display: 'inline-block'
         });
 
-        if (interfaceConfig.SHOW_JITSI_WATERMARK) {
+        if (interfaceConfig.SHOW_JITSI_WATERMARK
+            && !interfaceConfig.filmStripOnly) {
             let leftWatermarkDiv
                 = this.$container.find("div.watermark.leftwatermark");
 
@@ -48,7 +49,8 @@ export default class LargeVideoManager {
                 interfaceConfig.JITSI_WATERMARK_LINK);
         }
 
-        if (interfaceConfig.SHOW_BRAND_WATERMARK) {
+        if (interfaceConfig.SHOW_BRAND_WATERMARK
+            && !interfaceConfig.filmStripOnly) {
             let rightWatermarkDiv
                 = this.$container.find("div.watermark.rightwatermark");
 
