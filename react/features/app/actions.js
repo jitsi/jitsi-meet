@@ -1,6 +1,7 @@
 import { setRoom } from '../base/conference';
 import { getDomain, setDomain } from '../base/connection';
 import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
+import { Platform } from '../base/react';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
@@ -31,7 +32,8 @@ export function appInit() {
  */
 export function appNavigate(urlOrRoom) {
     return (dispatch, getState) => {
-        const oldDomain = getDomain(getState());
+        const state = getState();
+        const oldDomain = getDomain(state);
 
         const { domain, room } = _getRoomAndDomainFromUrlString(urlOrRoom);
 
@@ -40,7 +42,9 @@ export function appNavigate(urlOrRoom) {
         // current conference and start a new one with the new room name or
         // domain.
 
-        if (typeof domain === 'undefined' || oldDomain === domain) {
+        if (room === 'mobile-app') {
+            return;
+        } else if (typeof domain === 'undefined' || oldDomain === domain) {
             // If both domain and room vars became undefined, that means we're
             // actually dealing with just room name and not with URL.
             dispatch(
@@ -87,7 +91,6 @@ export function appNavigate(urlOrRoom) {
             // start to not make app re-render conference page for two times.
             dispatch(setRoom(room));
             dispatch(setConfig(config));
-            _navigate(getState());
         }
     };
 }
@@ -152,9 +155,15 @@ function _setRoomAndNavigate(newRoom) {
         dispatch(setRoom(newRoom));
 
         const state = getState();
-        const room = state['features/base/conference'].room;
+        const { room } = state['features/base/conference'];
+        const { landingIsShown } = state['features/unsupported-browser'];
 
-        if (room !== oldRoom) {
+        // If the user agent is a mobile browser and landing hasn't been shown
+        // yet, we should recheck which component to render.
+        const OS = Platform.OS;
+
+        if (((OS === 'android' || OS === 'ios') && !landingIsShown)
+                || room !== oldRoom) {
             _navigate(state);
         }
     };

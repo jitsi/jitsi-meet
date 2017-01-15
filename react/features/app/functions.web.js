@@ -1,5 +1,12 @@
 /* global APP, JitsiMeetJS, loggingConfig */
 
+import { isRoomValid } from '../base/conference';
+import { RouteRegistry } from '../base/navigator';
+import { Platform } from '../base/react';
+import { Conference } from '../conference';
+import { Landing } from '../unsupported-browser';
+import { WelcomePage } from '../welcome';
+
 import URLProcessor from '../../../modules/config/URLProcessor';
 import KeyboardShortcut
     from '../../../modules/keyboardshortcut/keyboardshortcut';
@@ -9,7 +16,37 @@ import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
 const Logger = require('jitsi-meet-logger');
 
-export * from './functions.native';
+export { _getRoomAndDomainFromUrlString } from './functions.native';
+
+/**
+ * Determines which route is to be rendered in order to depict a specific Redux
+ * store.
+ *
+ * @param {(Object|Function)} stateOrGetState - Redux state or Regux getState()
+ * method.
+ * @returns {Route}
+ */
+export function _getRouteToRender(stateOrGetState) {
+    const OS = Platform.OS;
+    const state
+        = typeof stateOrGetState === 'function'
+            ? stateOrGetState()
+            : stateOrGetState;
+
+    // If landing was shown, there is no need to show it again.
+    const { landingIsShown } = state['features/unsupported-browser'];
+    let component;
+
+    if ((OS === 'android' || OS === 'ios') && !landingIsShown) {
+        component = Landing;
+    } else {
+        const { room } = state['features/base/conference'];
+
+        component = isRoomValid(room) ? Conference : WelcomePage;
+    }
+
+    return RouteRegistry.getRouteByComponent(component);
+}
 
 /**
  * Temporary solution. Later we'll get rid of global APP and set its properties

@@ -1,8 +1,10 @@
 /* global __DEV__ */
 
 import React from 'react';
-import { Linking, Navigator, Platform } from 'react-native';
+import { Linking, Navigator } from 'react-native';
 import { Provider } from 'react-redux';
+
+import { Platform } from '../../base/react';
 
 import { _getRouteToRender } from '../functions';
 import { AbstractApp } from './AbstractApp';

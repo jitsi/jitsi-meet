@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { browserHistory, Route, Router } from 'react-router';
 import { push, syncHistoryWithStore } from 'react-router-redux';
 
-import { getDomain } from '../../base/connection';
 import { RouteRegistry } from '../../base/navigator';
 
 import { appInit } from '../actions';
@@ -117,15 +116,7 @@ export class App extends AbstractApp {
         // Our Router configuration (at the time of this writing) is such that
         // each Route corresponds to a single URL. Hence, entering into a Route
         // is like opening a URL.
-
-        // XXX In order to unify work with URLs in web and native environments,
-        // we will construct URL here with correct domain from config.
-        const currentDomain = getDomain(this.props.store.getState);
-        const url
-            = new URL(window.location.pathname, `https://${currentDomain}`)
-                .toString();
-
-        this._openURL(url);
+        this._openURL(window.location.toString());
     }
 
     /**
