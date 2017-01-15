@@ -2,11 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
+import { Platform } from '../../base/react';
+
 import { landingIsShown } from '../actions';
 
-const LINKS = {
-    'android': 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
-    'ios': 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905'
+/**
+ * The map of platforms to URLs at which the mobile app for the associated
+ * platform is available for download.
+ */
+const URLS = {
+    android: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    ios: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905'
 };
 
 /**
@@ -15,9 +21,13 @@ const LINKS = {
  * @class Landing
  */
 class Landing extends Component {
+    /**
+     * Landing component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         dispatch: React.PropTypes.func,
-        platform: React.PropTypes.string,
         room: React.PropTypes.string
     }
 
@@ -59,7 +69,6 @@ class Landing extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { platform } = this.props;
         const { btnText, link } = this.state;
         const primaryButtonClasses = 'landing__button landing__button_primary';
 
@@ -70,22 +79,23 @@ class Landing extends Component {
                         className = 'landing__logo'
                         src = '/images/logo-blue.svg' />
                     <p className = 'landing__text'>
-                       You need <strong>Jitsi Meet</strong> to join a
-                       conversation on your mobile
+                        You need <strong>Jitsi Meet</strong> to join a
+                        conversation on your mobile
                     </p>
-                    <a href = { LINKS[platform] }>
-                        <button
-                            className = { primaryButtonClasses }>
+                    <a href = { URLS[Platform.OS] }>
+                        <button className = { primaryButtonClasses }>
                             Download the App
                         </button>
                     </a>
                     <p className = 'landing__text landing__text_small'>
-                       or if you already have it
-                       <br /><strong>then</strong>
+                        or if you already have it
+                        <br />
+                        <strong>then</strong>
                     </p>
                     <Link to = { link }>
-                        <button
-                            className = 'landing__button'>{ btnText }</button>
+                        <button className = 'landing__button'>
+                            { btnText }
+                        </button>
                     </Link>
                 </div>
             </div>
@@ -98,13 +108,11 @@ class Landing extends Component {
  *
  * @param {Object} state - Redux state.
  * @returns {{
- *     platform: string,
  *     room: string
  * }}
  */
 function mapStateToProps(state) {
     return {
-        platform: state['features/app'].platform,
         room: state['features/base/conference'].room
     };
 }

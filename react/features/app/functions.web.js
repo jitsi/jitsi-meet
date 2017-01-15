@@ -1,18 +1,18 @@
 /* global APP, JitsiMeetJS, loggingConfig */
 
+import { isRoomValid } from '../base/conference';
+import { RouteRegistry } from '../base/navigator';
+import { Platform } from '../base/react';
+import { Conference } from '../conference';
+import { Landing } from '../unsupported-browser';
+import { WelcomePage } from '../welcome';
+
 import URLProcessor from '../../../modules/config/URLProcessor';
 import KeyboardShortcut
     from '../../../modules/keyboardshortcut/keyboardshortcut';
 import settings from '../../../modules/settings/Settings';
 import getTokenData from '../../../modules/tokendata/TokenData';
 import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
-
-import { detectIOS, detectAndroid } from '../base/util';
-
-// XXX We should import landing feature here in order to update router registry.
-import { Landing } from '../landing';
-import { Conference } from '../conference';
-import { WelcomePage } from '../welcome';
 
 const Logger = require('jitsi-meet-logger');
 
@@ -27,20 +27,22 @@ export { _getRoomAndDomainFromUrlString } from './functions.native';
  * @returns {Route}
  */
 export function _getRouteToRender(stateOrGetState) {
+    const OS = Platform.OS;
     const state
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
 
-    const { platform } = state['features/app'];
-    const { room } = state['features/base/conference'];
-    const { landingIsShown } = state['features/landing'];
+    // If landing was shown, there is no need to show it again.
+    const { landingIsShown } = state['features/unsupported-browser'];
+    let component;
 
-    let component = isRoomValid(room) ? Conference : WelcomePage;
+    if ((OS === 'android' || OS === 'ios') && !landingIsShown) {
+        component = Landing;
+    } else {
+        const { room } = state['features/base/conference'];
 
-    // If landing was shown there is no need to show it again.
-    if (platform && !landingIsShown) {
-        component = detectAndroid() || detectIOS() ? Landing : component;
+        component = isRoomValid(room) ? Conference : WelcomePage;
     }
 
     return RouteRegistry.getRouteByComponent(component);

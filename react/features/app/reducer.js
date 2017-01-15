@@ -1,10 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT,
-    APP_SET_PLATFORM
-} from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 
 ReducerRegistry.register('features/app', (state = {}, action) => {
     switch (action.type) {
@@ -32,13 +28,6 @@ ReducerRegistry.register('features/app', (state = {}, action) => {
             };
         }
         break;
-
-    case APP_SET_PLATFORM:
-        return {
-            ...state,
-            platform: action.platform
-        };
-
     }
 
     return state;

@@ -1,4 +1,4 @@
-import { appInit, detectPlatform } from '../actions';
+import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
 
 /**
@@ -22,7 +22,6 @@ export class App extends AbstractApp {
     componentWillMount(...args) {
         super.componentWillMount(...args);
 
-        this.props.store.dispatch(detectPlatform());
         this.props.store.dispatch(appInit());
     }
 

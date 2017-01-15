@@ -1,16 +1,9 @@
 import { setRoom } from '../base/conference';
 import { getDomain, setDomain } from '../base/connection';
 import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
-import {
-    detectAndroid,
-    detectIOS
-} from '../base/util';
+import { Platform } from '../base/react';
 
-import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT,
-    APP_SET_PLATFORM
-} from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
     _getRoomAndDomainFromUrlString,
     _getRouteToRender,
@@ -135,21 +128,6 @@ export function appWillUnmount(app) {
 }
 
 /**
- * Detects the platform of user agent and signals that platform detected.
- *
- * @returns {Function}
- */
-export function detectPlatform() {
-    return dispatch => {
-        if (detectAndroid()) {
-            dispatch(_setPlatform('android'));
-        } else if (detectIOS()) {
-            dispatch(_setPlatform('ios'));
-        }
-    };
-}
-
-/**
  * Navigates to route corresponding to current room name.
  *
  * @param {Object} state - Redux state.
@@ -161,23 +139,6 @@ function _navigate(state) {
     const routeToRender = _getRouteToRender(state);
 
     app._navigate(routeToRender);
-}
-
-/**
- * Signals that user agent platform is mobile and it has been already detected.
- *
- * @param {string} platform - Mobile user agent platform.
- * @returns {{
- *     type: APP_SET_PLATFORM,
- *     platform: string
- * }}
- * @private
- */
-function _setPlatform(platform) {
-    return {
-        type: APP_SET_PLATFORM,
-        platform
-    };
 }
 
 /**
@@ -194,13 +155,15 @@ function _setRoomAndNavigate(newRoom) {
         dispatch(setRoom(newRoom));
 
         const state = getState();
-        const { platform } = state['features/app'];
         const { room } = state['features/base/conference'];
-        const { landingIsShown } = state['features/landing'];
+        const { landingIsShown } = state['features/unsupported-browser'];
 
-        // If user agent is mobile browser and landing wasn't shown we
-        // should recheck which component to render.
-        if ((platform && !landingIsShown) || room !== oldRoom) {
+        // If the user agent is a mobile browser and landing hasn't been shown
+        // yet, we should recheck which component to render.
+        const OS = Platform.OS;
+
+        if (((OS === 'android' || OS === 'ios') && !landingIsShown)
+                || room !== oldRoom) {
             _navigate(state);
         }
     };
