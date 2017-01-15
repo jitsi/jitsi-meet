@@ -56,8 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <App
             config = { config }
-            store = { store }
-            url = { window.location.toString() } />,
+            store = { store } />,
         document.getElementById('react'));
 });
 

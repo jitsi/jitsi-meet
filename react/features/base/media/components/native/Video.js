@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { RTCView } from 'react-native-webrtc';
+
+import { Platform } from '../../../react';
 
 import { styles } from './styles';
 
