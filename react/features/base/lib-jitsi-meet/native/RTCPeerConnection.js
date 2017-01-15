@@ -1,9 +1,6 @@
-import { Platform } from 'react-native';
-import {
-    RTCPeerConnection,
-    RTCSessionDescription
-} from 'react-native-webrtc';
+import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
+import { Platform } from '../../react';
 import { POSIX } from '../../react-native';
 
 // XXX At the time of this writing extending RTCPeerConnection using ES6 'class'
