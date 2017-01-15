@@ -12,18 +12,6 @@ import {
 } from '../actions';
 
 /**
- * Default config.
- *
- * @type {Object}
- */
-const DEFAULT_CONFIG = {
-    configLocation: './config.js',
-    hosts: {
-        domain: 'meet.jit.si'
-    }
-};
-
-/**
  * Base (abstract) class for main App component.
  *
  * @abstract
@@ -57,12 +45,7 @@ export class AbstractApp extends Component {
 
         dispatch(localParticipantJoined());
 
-        const config
-            = typeof this.props.config === 'object'
-                ? this.props.config
-                : DEFAULT_CONFIG;
-
-        this._openURL(this.props.url || `https://${config.hosts.domain}`);
+        this._openURL(this._getDefaultURL());
     }
 
     /**
@@ -114,6 +97,68 @@ export class AbstractApp extends Component {
 
         // eslint-disable-next-line object-property-newline
         return React.createElement(component, { ...thisProps, ...props });
+    }
+
+    /**
+     * Gets the default URL to be opened when this App mounts.
+     *
+     * @private
+     * @returns {string} The default URL to be opened when this App mounts.
+     */
+    _getDefaultURL() {
+        // If the URL was explicitly specified to the React Component, then open
+        // it.
+        let url = this.props.url;
+
+        if (url) {
+            return url;
+        }
+
+        // If the execution environment provides a Location abstraction, then
+        // this App at already at that location but it must be made aware of the
+        // fact.
+        const windowLocation = this._getWindowLocation();
+
+        if (windowLocation) {
+            url = windowLocation.toString();
+            if (url) {
+                return url;
+            }
+        }
+
+        // By default, open the domain configured in the configuration file
+        // which may be the domain at which the whole server infrastructure is
+        // deployed.
+        const config = this.props.config;
+
+        if (typeof config === 'object') {
+            const hosts = config.hosts;
+
+            if (typeof hosts === 'object') {
+                const domain = hosts.domain;
+
+                if (domain) {
+                    return `https://${domain}`;
+                }
+            }
+        }
+
+        return 'https://meet.jit.si';
+    }
+
+    /**
+     * Gets a Location object from the window with information about the current
+     * location of the document. Explicitly defined to allow extenders to
+     * override because React Native does not usually have a location property
+     * on its window unless debugging remotely in which case the browser that is
+     * the remote debugger will provide a location property on the window.
+     *
+     * @protected
+     * @returns {Location} A Location object with information about the current
+     * location of the document.
+     */
+    _getWindowLocation() {
+        return undefined;
     }
 
     /**

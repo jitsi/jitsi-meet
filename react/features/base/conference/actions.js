@@ -182,7 +182,11 @@ export function createConference() {
 
         // TODO Take options from config.
         const conference
-            = connection.initJitsiConference(room, { openSctp: true });
+            = connection.initJitsiConference(
+
+                    // XXX Lib-jitsi-meet does not accept uppercase letters.
+                    room.toLowerCase(),
+                    { openSctp: true });
 
         _addConferenceListeners(conference, dispatch);
 

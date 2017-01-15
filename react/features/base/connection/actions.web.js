@@ -16,7 +16,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 export function connect() {
     return (dispatch, getState) => {
         const state = getState();
-        const room = state['features/base/conference'].room;
+
+        // XXX Lib-jitsi-meet does not accept uppercase letters.
+        const room = state['features/base/conference'].room.toLowerCase();
 
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
