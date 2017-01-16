@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Provider } from 'react-redux';
 
 import {
     localParticipantJoined,
@@ -33,6 +34,25 @@ export class AbstractApp extends Component {
     }
 
     /**
+     * Initializes a new App instance.
+     *
+     * @param {Object} props - The read-only React Component props with which
+     * the new instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            /**
+             * The Route rendered by this App.
+             *
+             * @type {Route}
+             */
+            route: undefined
+        };
+    }
+
+    /**
      * Init lib-jitsi-meet and create local participant when component is going
      * to be mounted.
      *
@@ -60,6 +80,28 @@ export class AbstractApp extends Component {
         dispatch(localParticipantLeft());
 
         dispatch(appWillUnmount(this));
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        const route = this.state.route;
+
+        if (route) {
+            return (
+                <Provider store = { this.props.store }>
+                    {
+                        this._createElement(route.component)
+                    }
+                </Provider>
+            );
+        }
+
+        return null;
     }
 
     /**
@@ -159,6 +201,58 @@ export class AbstractApp extends Component {
      */
     _getWindowLocation() {
         return undefined;
+    }
+
+    /**
+     * Navigates to a specific Route.
+     *
+     * @param {Route} route - The Route to which to navigate.
+     * @returns {void}
+     */
+    _navigate(route) {
+        let nextState = {
+            ...this.state,
+            route
+        };
+
+        // The Web App was using react-router so it utilized react-router's
+        // onEnter. During the removal of react-router, modifications were
+        // minimized by preserving the onEnter interface:
+        // (1) Router would provide its nextState to the Route's onEnter. As the
+        // role of Router is now this AbstractApp, provide its nextState.
+        // (2) A replace function would be provided to the Route in case it
+        // chose to redirect to another path.
+        this._onRouteEnter(route, nextState, pathname => {
+            // FIXME In order to minimize the modifications related to the
+            // removal of react-router, the Web implementation is provided
+            // bellow because the replace function is used on Web only at the
+            // time of this writing. Provide a platform-agnostic implementation.
+            // It should likely find the best Route matching the specified
+            // pathname and navigate to it.
+            window.location.pathname = pathname;
+
+            // Do not proceed with the route because it chose to redirect to
+            // another path.
+            nextState = undefined;
+        });
+
+        nextState && this.setState(nextState);
+    }
+
+    /**
+     * Notifies this App that a specific Route is about to be rendered.
+     *
+     * @param {Route} route - The Route that is about to be rendered.
+     * @private
+     * @returns {void}
+     */
+    _onRouteEnter(route, ...args) {
+        // Notify the route that it is about to be entered.
+        const onEnter = route.onEnter;
+
+        if (typeof onEnter === 'function') {
+            onEnter(...args);
+        }
     }
 
     /**

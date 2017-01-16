@@ -107,8 +107,8 @@ function _urlStringToObject(url) {
         try {
             urlObj = new URL(url);
         } catch (ex) {
-            // The return value will signal the failure & the logged
-            // exception will provide the details to the developers.
+            // The return value will signal the failure & the logged exception
+            // will provide the details to the developers.
             console.log(`${url} seems to be not a valid URL, but it's OK`, ex);
         }
     }

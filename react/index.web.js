@@ -2,8 +2,6 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { browserHistory } from 'react-router';
-import { routerMiddleware, routerReducer } from 'react-router-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
@@ -13,23 +11,14 @@ import { MiddlewareRegistry, ReducerRegistry } from './features/base/redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-// Create combined reducer from all reducers in registry + routerReducer from
-// 'react-router-redux' module (stores location updates from history).
-// @see https://github.com/reactjs/react-router-redux#routerreducer.
-const reducer = ReducerRegistry.combineReducers({
-    routing: routerReducer
-});
+// Create combined reducer from all reducers in registry.
+const reducer = ReducerRegistry.combineReducers();
 
 // Apply all registered middleware from the MiddlewareRegistry + additional
 // 3rd party middleware:
 // - Thunk - allows us to dispatch async actions easily. For more info
 // @see https://github.com/gaearon/redux-thunk.
-// - routerMiddleware - middleware from 'react-router-redux' module to track
-// changes in browser history inside Redux state. For more information
-// @see https://github.com/reactjs/react-router-redux.
-let middleware = MiddlewareRegistry.applyMiddleware(
-    Thunk,
-    routerMiddleware(browserHistory));
+let middleware = MiddlewareRegistry.applyMiddleware(Thunk);
 
 // Try to enable Redux DevTools Chrome extension in order to make it available
 // for the purposes of facilitating development.
