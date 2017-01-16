@@ -46,13 +46,28 @@ export class App extends AbstractApp {
         let path = route.path;
         const store = this._getStore();
 
-        // The syntax :room bellow is defined by react-router. It "matches a URL
+        // The syntax :room below is defined by react-router. It "matches a URL
         // segment up to the next /, ?, or #. The matched string is called a
         // param."
         path
             = path.replace(
                 /:room/g,
                 store.getState()['features/base/conference'].room);
+
+        const config = this.props.config;
+        if (typeof config === 'object') {
+            const hosts = config.hosts;
+            if (typeof hosts === 'object') {
+                let urlContext = hosts.context;
+                if (urlContext) {
+                    // Last character of the context should be a slash.
+                    if (urlContext.slice(-1) !== '/') {
+                        urlContext += '/';
+                    }
+                    path = urlContext + path.substr(1);
+                }
+            }
+        }
 
         // Navigate to the specified Route.
         const windowLocation = this._getWindowLocation();

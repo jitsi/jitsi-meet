@@ -13,13 +13,22 @@ import { WelcomePage } from '../welcome';
  *      room: (string|undefined)
  *  }}
  */
-function _getRoomAndDomainFromUrlObject(url) {
+function _getRoomAndDomainFromUrlObject(state, url) {
     let domain;
     let room;
+    let urlContext;
+
+    // TODO get this from state.
+    urlContext = '/ofmeet/jitsi-meet/' || '/';
+
+    // Last character of the context should be a slash.
+    if (urlContext.slice(-1) !== '/') {
+        urlContext += '/';
+    }
 
     if (url) {
         domain = url.hostname;
-        room = url.pathname.substr(1);
+        room = url.pathname.substr( urlContext.length );
 
         // Convert empty string to undefined to simplify checks.
         if (room === '') {
@@ -45,7 +54,7 @@ function _getRoomAndDomainFromUrlObject(url) {
  *      room: (string|undefined)
  *  }}
  */
-export function _getRoomAndDomainFromUrlString(url) {
+export function _getRoomAndDomainFromUrlString(state, url) {
     // Rewrite the specified URL in order to handle special cases such as
     // hipchat.com and enso.me which do not follow the common pattern of most
     // Jitsi Meet deployments.
@@ -71,7 +80,7 @@ export function _getRoomAndDomainFromUrlString(url) {
         }
     }
 
-    return _getRoomAndDomainFromUrlObject(_urlStringToObject(url));
+    return _getRoomAndDomainFromUrlObject(state, _urlStringToObject(url));
 }
 
 /**

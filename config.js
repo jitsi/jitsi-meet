@@ -12,6 +12,7 @@ var config = { // eslint-disable-line no-unused-vars
         //focus: 'focus.jitsi-meet.example.com', // defaults to 'focus.jitsi-meet.example.com'
     },
 //  getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
+//  context: "/",
 //  useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server
 //  useIPv6: true, // ipv6 support. use at your own risk
     useNicks: false,
