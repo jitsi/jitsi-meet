@@ -6,6 +6,8 @@ import { Platform } from '../../base/react';
 
 import { AbstractApp } from './AbstractApp';
 
+import '../../wake-lock';
+
 /**
  * Root application component.
  *

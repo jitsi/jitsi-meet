@@ -24,6 +24,8 @@
 		2602576C1D0A7703001E3363 /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2602576B1D0A7703001E3363 /* jitsi.ttf */; };
 		3847F11906B4479A9162628F /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821D8ABD506944B4BDBB069B /* libRNVectorIcons.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		901FE90FA5744B5B94DCDC41 /* libKCKeepAwake.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA8C046B2BF46279796F07D /* libKCKeepAwake.a */; };
+		B1138C4F92719B358DC44AAE /* libPods-jitsi-meet-react.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8EC375C540DAB0AB764977D /* libPods-jitsi-meet-react.a */; };
 		B30EF2311DC0ED7C00690F45 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30EF2301DC0ED7C00690F45 /* WebRTC.framework */; };
 		B30EF2331DC0EEA500690F45 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30EF2301DC0ED7C00690F45 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A9D0251E0481E10009343D /* POSIX.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A9D0241E0481E10009343D /* POSIX.m */; };
@@ -75,6 +77,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 832C81801AAF6DEF007FA2F7;
 			remoteInfo = RCTVibration;
+		};
+		0B8752851E26E54A004C5CAB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = KCKeepAwake;
 		};
 		139105C01AF99BAD00B5F7CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -197,6 +206,7 @@
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
+		0EA8C046B2BF46279796F07D /* libKCKeepAwake.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libKCKeepAwake.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* jitsi-meet-react.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "jitsi-meet-react.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -209,6 +219,9 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		22418656B14845609F953A42 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		2602576B1D0A7703001E3363 /* jitsi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = jitsi.ttf; path = ../android/app/src/main/assets/fonts/jitsi.ttf; sourceTree = "<group>"; };
+		2FAD2789EB99096787782C61 /* Pods-jitsi-meet-react.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet-react.debug.xcconfig"; path = "Pods/Target Support Files/Pods-jitsi-meet-react/Pods-jitsi-meet-react.debug.xcconfig"; sourceTree = "<group>"; };
+		5A2D3331F1BCE36E718EC6BC /* Pods-jitsi-meet-react.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet-react.release.xcconfig"; path = "Pods/Target Support Files/Pods-jitsi-meet-react/Pods-jitsi-meet-react.release.xcconfig"; sourceTree = "<group>"; };
+		5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = KCKeepAwake.xcodeproj; path = "../node_modules/react-native-keep-awake/ios/KCKeepAwake.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		821D8ABD506944B4BDBB069B /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -228,6 +241,7 @@
 		BF9643911C34FBF100B0BBDF /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		BF9643931C34FBF900B0BBDF /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		BFC7450D1CB829A700673F38 /* RCTWebRTC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebRTC.xcodeproj; path = "../node_modules/react-native-webrtc/ios/RCTWebRTC.xcodeproj"; sourceTree = "<group>"; };
+		C8EC375C540DAB0AB764977D /* libPods-jitsi-meet-react.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jitsi-meet-react.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +272,8 @@
 				BFC745141CB829B300673F38 /* libRCTWebRTC.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				3847F11906B4479A9162628F /* libRNVectorIcons.a in Frameworks */,
+				B1138C4F92719B358DC44AAE /* libPods-jitsi-meet-react.a in Frameworks */,
+				901FE90FA5744B5B94DCDC41 /* libKCKeepAwake.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +318,14 @@
 			isa = PBXGroup;
 			children = (
 				00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0B8752821E26E54A004C5CAB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0B8752861E26E54A004C5CAB /* libKCKeepAwake.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -357,6 +381,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		47BCCD33B51C75878F8A766B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2FAD2789EB99096787782C61 /* Pods-jitsi-meet-react.debug.xcconfig */,
+				5A2D3331F1BCE36E718EC6BC /* Pods-jitsi-meet-react.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		6956B374CC3C453DB7B8E82D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -393,6 +426,7 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				22418656B14845609F953A42 /* RNVectorIcons.xcodeproj */,
+				5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -415,6 +449,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				6956B374CC3C453DB7B8E82D /* Resources */,
+				47BCCD33B51C75878F8A766B /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -439,6 +474,7 @@
 				BF9643871C34FBC800B0BBDF /* GLKit.framework */,
 				BF96438D1C34FBE100B0BBDF /* VideoToolbox.framework */,
 				B30EF2301DC0ED7C00690F45 /* WebRTC.framework */,
+				C8EC375C540DAB0AB764977D /* libPods-jitsi-meet-react.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -458,6 +494,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "jitsi-meet-react" */;
 			buildPhases = (
+				B9BD035646522018C795E350 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -465,6 +502,8 @@
 				B30EF2341DC0EEA500690F45 /* Embed Frameworks */,
 				B3DBBAC41DC6A3BE001DA4DD /* ShellScript */,
 				B35383AD1DDA0083008F406A /* ShellScript */,
+				9E570D652DE2AC850607132F /* [CP] Embed Pods Frameworks */,
+				976FFBA0B87F834D705098E3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -481,7 +520,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 800;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
@@ -506,6 +545,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 0B8752821E26E54A004C5CAB /* Products */;
+					ProjectRef = 5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */;
+				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
@@ -596,6 +639,13 @@
 			fileType = archive.ar;
 			path = libRCTVibration.a;
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8752861E26E54A004C5CAB /* libKCKeepAwake.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libKCKeepAwake.a;
+			remoteRef = 0B8752851E26E54A004C5CAB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		139105C11AF99BAD00B5F7CC /* libRCTSettings.a */ = {
@@ -727,6 +777,36 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
 		};
+		976FFBA0B87F834D705098E3 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-jitsi-meet-react/Pods-jitsi-meet-react-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9E570D652DE2AC850607132F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-jitsi-meet-react/Pods-jitsi-meet-react-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		B35383AD1DDA0083008F406A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -752,6 +832,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\" a8ae24a58302ba79da1d312138e941f6b86e3242 256ed316263eb534e26a1ad5dcc42ca9c179af5937dd864c3e44cfefa2e8b54c";
+		};
+		B9BD035646522018C795E350 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -783,6 +878,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2FAD2789EB99096787782C61 /* Pods-jitsi-meet-react.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "jitsi-meet-react.entitlements";
@@ -799,6 +895,7 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -806,6 +903,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/**",
+					"\"$(SRCROOT)/jitsi-meet-react\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -819,6 +917,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A2D3331F1BCE36E718EC6BC /* Pods-jitsi-meet-react.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "jitsi-meet-react.entitlements";
@@ -834,6 +933,7 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -841,6 +941,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/**",
+					"\"$(SRCROOT)/jitsi-meet-react\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -891,6 +992,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -932,6 +1034,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

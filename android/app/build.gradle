@@ -153,6 +153,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 dependencies {
+    compile project(':react-native-keep-awake')
     compile project(':react-native-vector-icons')
     compile project(':react-native-webrtc')
     compile fileTree(dir: 'libs', include: ['*.jar'])
