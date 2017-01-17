@@ -1,7 +1,7 @@
 import { Symbol } from '../react';
 
 /**
- * Action to change the muted state of the local audio.
+ * Action to set the muted state of the local audio.
  *
  * {
  *      type: SET_AUDIO_MUTED,
@@ -11,7 +11,7 @@ import { Symbol } from '../react';
 export const SET_AUDIO_MUTED = Symbol('SET_AUDIO_MUTED');
 
 /**
- * Action to change the facing mode of the local video camera.
+ * Action to set the facing mode of the local video camera.
  *
  * {
  *      type: SET_CAMERA_FACING_MODE,
@@ -21,7 +21,7 @@ export const SET_AUDIO_MUTED = Symbol('SET_AUDIO_MUTED');
 export const SET_CAMERA_FACING_MODE = Symbol('SET_CAMERA_FACING_MODE');
 
 /**
- * Action to change the muted state of the local video.
+ * Action to set the muted state of the local video.
  *
  * {
  *      type: SET_VIDEO_MUTED,

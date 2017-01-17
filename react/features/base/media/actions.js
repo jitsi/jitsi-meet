@@ -8,9 +8,10 @@ import './middleware';
 import './reducer';
 
 /**
- * Action to change the local audio muted state.
+ * Action to set the muted state of the local audio.
  *
- * @param {boolean} muted - If local audio is muted.
+ * @param {boolean} muted - True if the local audio is to be muted or false if
+ * the local audio is to be unmuted.
  * @returns {{
  *      type: SET_AUDIO_MUTED,
  *      muted: boolean
@@ -24,9 +25,9 @@ export function setAudioMuted(muted) {
 }
 
 /**
- * Action to change the facing mode of the local video camera.
+ * Action to set the facing mode of the local camera.
  *
- * @param {CAMERA_FACING_MODE} cameraFacingMode - Camera facing mode.
+ * @param {CAMERA_FACING_MODE} cameraFacingMode - The camera facing mode to set.
  * @returns {{
  *      type: SET_CAMERA_FACING_MODE,
  *      cameraFacingMode: CAMERA_FACING_MODE
@@ -36,6 +37,23 @@ export function setCameraFacingMode(cameraFacingMode) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
+    };
+}
+
+/**
+ * Action to set the muted state of the local video.
+ *
+ * @param {boolean} muted - True if the local video is to be muted or false if
+ * the local video is to be unmuted.
+ * @returns {{
+ *      type: SET_VIDEO_MUTED,
+ *      muted: boolean
+ *  }}
+ */
+export function setVideoMuted(muted) {
+    return {
+        type: SET_VIDEO_MUTED,
+        muted
     };
 }
 
@@ -81,21 +99,5 @@ export function toggleVideoMuted() {
         const muted = getState()['features/base/media'].video.muted;
 
         return dispatch(setVideoMuted(!muted));
-    };
-}
-
-/**
- * Action to change the local video muted state.
- *
- * @param {boolean} muted - If local video is muted.
- * @returns {{
- *      type: SET_VIDEO_MUTED,
- *      muted: boolean
- *  }}
- */
-export function setVideoMuted(muted) {
-    return {
-        type: SET_VIDEO_MUTED,
-        muted
     };
 }

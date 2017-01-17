@@ -1,8 +1,5 @@
 import { _handleParticipantError } from '../base/conference';
-import {
-    MEDIA_TYPE,
-    VIDEO_TYPE
-} from '../base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media';
 import {
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant
@@ -48,7 +45,7 @@ export function selectParticipant() {
 /**
  * Action to select the participant to be displayed in LargeVideo based on a
  * variety of factors: if there is a dominant or pinned speaker, or if there are
- * remote tracks etc.
+ * remote tracks, etc.
  *
  * @returns {Function}
  */

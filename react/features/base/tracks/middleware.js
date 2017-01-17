@@ -1,7 +1,4 @@
-import {
-    LIB_DISPOSED,
-    LIB_INITIALIZED
-} from '../lib-jitsi-meet';
+import { LIB_DISPOSED, LIB_INITIALIZED } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
     SET_AUDIO_MUTED,
@@ -12,15 +9,9 @@ import {
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import {
-    createLocalTracks,
-    destroyLocalTracks
-} from './actions';
+import { createLocalTracks, destroyLocalTracks } from './actions';
 import { TRACK_UPDATED } from './actionTypes';
-import {
-    getLocalTrack,
-    setTrackMuted
-} from './functions';
+import { getLocalTrack, setTrackMuted } from './functions';
 
 /**
  * Middleware that captures LIB_INITIALIZED and LIB_DISPOSED actions
@@ -32,6 +23,14 @@ import {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case LIB_INITIALIZED:
+        store.dispatch(createLocalTracks());
+        break;
+
+    case LIB_DISPOSED:
+        store.dispatch(destroyLocalTracks());
+        break;
+
     case SET_AUDIO_MUTED:
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
@@ -45,20 +44,12 @@ MiddlewareRegistry.register(store => next => action => {
         );
         break;
 
-    case LIB_INITIALIZED:
-        store.dispatch(createLocalTracks());
-        break;
-
-    case LIB_DISPOSED:
-        store.dispatch(destroyLocalTracks());
+    case SET_VIDEO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.VIDEO);
         break;
 
     case TRACK_UPDATED:
         return _trackUpdated(store, next, action);
-
-    case SET_VIDEO_MUTED:
-        _setMuted(store, action, MEDIA_TYPE.VIDEO);
-        break;
     }
 
     return next(action);
