@@ -28,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
+                new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.oblador.vectoricons.VectorIconsPackage(),
                 new com.oney.WebRTCModule.WebRTCModulePackage()

@@ -35,6 +35,7 @@
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "react-native": "0.39.2",
+    "react-native-keep-awake": "^1.0.7",
     "react-native-prompt": "^1.0.0",
     "react-native-vector-icons": "^3.0.0",
     "react-native-webrtc": "jitsi/react-native-webrtc",

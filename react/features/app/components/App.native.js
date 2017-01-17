@@ -3,6 +3,7 @@
 import { Linking } from 'react-native';
 
 import { Platform } from '../../base/react';
+import '../../wake-lock';
 
 import { AbstractApp } from './AbstractApp';
 
