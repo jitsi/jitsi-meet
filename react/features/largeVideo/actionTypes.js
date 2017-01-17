@@ -1,12 +1,12 @@
 import { Symbol } from '../base/react';
 
 /**
- * Action to change the participant to be displayed in LargeVideo.
+ * Action to select the participant to be displayed in LargeVideo.
  *
  * {
- *     type: LARGE_VIDEO_PARTICIPANT_CHANGED,
+ *     type: SELECT_LARGE_VIDEO_PARTICIPANT,
  *     participantId: (string|undefined)
  * }
  */
-export const LARGE_VIDEO_PARTICIPANT_CHANGED
-    = Symbol('LARGE_VIDEO_PARTICIPANT_CHANGED');
+export const SELECT_LARGE_VIDEO_PARTICIPANT
+    = Symbol('SELECT_LARGE_VIDEO_PARTICIPANT');

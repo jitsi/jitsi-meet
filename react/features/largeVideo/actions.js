@@ -8,7 +8,7 @@ import {
     getTrackByMediaTypeAndParticipant
 } from '../base/tracks';
 
-import { LARGE_VIDEO_PARTICIPANT_CHANGED } from './actionTypes';
+import { SELECT_LARGE_VIDEO_PARTICIPANT } from './actionTypes';
 import './middleware';
 import './reducer';
 
@@ -60,7 +60,7 @@ export function selectParticipantInLargeVideo() {
 
         if (participantId !== largeVideo.participantId) {
             dispatch({
-                type: LARGE_VIDEO_PARTICIPANT_CHANGED,
+                type: SELECT_LARGE_VIDEO_PARTICIPANT,
                 participantId
             });
 

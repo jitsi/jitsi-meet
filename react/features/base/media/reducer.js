@@ -3,9 +3,9 @@ import { combineReducers } from 'redux';
 import { ReducerRegistry } from '../redux';
 
 import {
-    AUDIO_MUTED_CHANGED,
-    CAMERA_FACING_MODE_CHANGED,
-    VIDEO_MUTED_CHANGED
+    SET_AUDIO_MUTED,
+    SET_CAMERA_FACING_MODE,
+    SET_VIDEO_MUTED
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
 
@@ -35,7 +35,7 @@ const AUDIO_INITIAL_MEDIA_STATE = {
  */
 function audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
-    case AUDIO_MUTED_CHANGED:
+    case SET_AUDIO_MUTED:
         return {
             ...state,
             muted: action.muted
@@ -74,13 +74,13 @@ const VIDEO_INITIAL_MEDIA_STATE = {
  */
 function video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
-    case CAMERA_FACING_MODE_CHANGED:
+    case SET_CAMERA_FACING_MODE:
         return {
             ...state,
             facingMode: action.cameraFacingMode
         };
 
-    case VIDEO_MUTED_CHANGED:
+    case SET_VIDEO_MUTED:
         return {
             ...state,
             muted: action.muted

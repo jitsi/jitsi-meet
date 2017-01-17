@@ -3,12 +3,12 @@ import {
     LIB_INITIALIZED
 } from '../lib-jitsi-meet';
 import {
-    AUDIO_MUTED_CHANGED,
-    audioMutedChanged,
-    CAMERA_FACING_MODE_CHANGED,
     MEDIA_TYPE,
-    VIDEO_MUTED_CHANGED,
-    videoMutedChanged
+    SET_AUDIO_MUTED,
+    SET_CAMERA_FACING_MODE,
+    SET_VIDEO_MUTED,
+    setAudioMuted,
+    setVideoMuted
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
@@ -32,11 +32,11 @@ import {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case AUDIO_MUTED_CHANGED:
-        _mutedChanged(store, action, MEDIA_TYPE.AUDIO);
+    case SET_AUDIO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
 
-    case CAMERA_FACING_MODE_CHANGED:
+    case SET_CAMERA_FACING_MODE:
         store.dispatch(
             createLocalTracks({
                 devices: [ MEDIA_TYPE.VIDEO ],
@@ -56,8 +56,8 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_UPDATED:
         return _trackUpdated(store, next, action);
 
-    case VIDEO_MUTED_CHANGED:
-        _mutedChanged(store, action, MEDIA_TYPE.VIDEO);
+    case SET_VIDEO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.VIDEO);
         break;
     }
 
@@ -91,7 +91,7 @@ function _getLocalTrack(store, mediaType) {
  * @private
  * @returns {void}
  */
-function _mutedChanged(store, action, mediaType) {
+function _setMuted(store, action, mediaType) {
     const localTrack = _getLocalTrack(store, mediaType);
 
     localTrack && setTrackMuted(localTrack.jitsiTrack, action.muted);
@@ -145,10 +145,10 @@ function _trackUpdated(store, next, action) {
             if (oldMuted !== newMuted) {
                 switch (mediaType) {
                 case MEDIA_TYPE.AUDIO:
-                    store.dispatch(audioMutedChanged(newMuted));
+                    store.dispatch(setAudioMuted(newMuted));
                     break;
                 case MEDIA_TYPE.VIDEO:
-                    store.dispatch(videoMutedChanged(newMuted));
+                    store.dispatch(setVideoMuted(newMuted));
                     break;
                 }
             }
