@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    Audio,
-    MEDIA_TYPE
-} from '../../base/media';
-import {
-    PARTICIPANT_ROLE,
-    pinParticipant
-} from '../../base/participants';
+import { Audio, MEDIA_TYPE } from '../../base/media';
+import { PARTICIPANT_ROLE, pinParticipant } from '../../base/participants';
 import { Container } from '../../base/react';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
 import { ParticipantView } from '../../conference';
@@ -148,10 +142,10 @@ class Thumbnail extends Component {
  *  }}
  */
 function mapStateToProps(state, ownProps) {
-    // We need read-only access to the state of features/largeVideo so that the
+    // We need read-only access to the state of features/large-video so that the
     // film strip doesn't render the video of the participant who is rendered on
     // the stage i.e. as a large video.
-    const largeVideo = state['features/largeVideo'];
+    const largeVideo = state['features/large-video'];
     const tracks = state['features/base/tracks'];
     const id = ownProps.participant.id;
     const audioTrack

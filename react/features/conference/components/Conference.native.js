@@ -3,8 +3,8 @@ import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
 import { Container } from '../../base/react';
-import { FilmStrip } from '../../filmStrip';
-import { LargeVideo } from '../../largeVideo';
+import { FilmStrip } from '../../film-strip';
+import { LargeVideo } from '../../large-video';
 import { RoomLockPrompt } from '../../room-lock';
 import { Toolbar } from '../../toolbar';
 

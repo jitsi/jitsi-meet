@@ -20,7 +20,7 @@ export function selectParticipant() {
         const conference = state['features/base/conference'].conference;
 
         if (conference) {
-            const largeVideo = state['features/largeVideo'];
+            const largeVideo = state['features/large-video'];
             const tracks = state['features/base/tracks'];
 
             const id = largeVideo.participantId;
@@ -53,7 +53,7 @@ export function selectParticipantInLargeVideo() {
     return (dispatch, getState) => {
         const state = getState();
         const participantId = _electParticipantInLargeVideo(state);
-        const largeVideo = state['features/largeVideo'];
+        const largeVideo = state['features/large-video'];
 
         if (participantId !== largeVideo.participantId) {
             dispatch({

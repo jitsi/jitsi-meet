@@ -47,7 +47,7 @@ MiddlewareRegistry.register(store => next => action => {
                 = getTrackByJitsiTrack(
                     state['features/base/tracks'],
                     action.track.jitsiTrack);
-            const participantId = state['features/largeVideo'].participantId;
+            const participantId = state['features/large-video'].participantId;
 
             (track.participantId === participantId)
                 && store.dispatch(selectParticipant());

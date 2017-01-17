@@ -52,7 +52,7 @@ class LargeVideo extends Component {
  */
 function mapStateToProps(state) {
     return {
-        _participantId: state['features/largeVideo'].participantId
+        _participantId: state['features/large-video'].participantId
     };
 }
 

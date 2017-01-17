@@ -3,7 +3,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from './actionTypes';
 
-ReducerRegistry.register('features/largeVideo', (state = {}, action) => {
+ReducerRegistry.register('features/large-video', (state = {}, action) => {
     switch (action.type) {
 
     // When conference is joined, we update ID of local participant from default

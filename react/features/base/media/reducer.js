@@ -10,21 +10,6 @@ import {
 import { CAMERA_FACING_MODE } from './constants';
 
 /**
- * Listen for various actions related to media devices.
- *
- * @param {Object} state - State of media devices.
- * @param {Object} action - Action object.
- * @param {string} action.type - Type of action.
- * @param {Object} action.media - Information about media devices to be
- * modified.
- * @returns {Object}
- */
-ReducerRegistry.register('features/base/media', combineReducers({
-    audio,
-    video
-}));
-
-/**
  * Media state object for local audio.
  *
  * @typedef {Object} AudioMediaState
@@ -105,3 +90,18 @@ function video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
         return state;
     }
 }
+
+/**
+ * Listen for various actions related to media devices.
+ *
+ * @param {Object} state - State of media devices.
+ * @param {Object} action - Action object.
+ * @param {string} action.type - Type of action.
+ * @param {Object} action.media - Information about media devices to be
+ * modified.
+ * @returns {Object}
+ */
+ReducerRegistry.register('features/base/media', combineReducers({
+    audio,
+    video
+}));
