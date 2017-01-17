@@ -833,7 +833,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 				);
 				INFOPLIST_FILE = app/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -846,6 +846,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeet.ios;
 				PRODUCT_NAME = "jitsi-meet-react";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -869,7 +870,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 				);
 				INFOPLIST_FILE = app/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -882,6 +883,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeet.ios;
 				PRODUCT_NAME = "jitsi-meet-react";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
