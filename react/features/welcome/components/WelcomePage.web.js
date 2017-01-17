@@ -95,7 +95,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onDisableWelcomeChange(event) {
         this.setState({
-            enableWelcomePage: !event.target.value
+            enableWelcomePage: !event.target.checked
         }, () => {
             APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
         });
