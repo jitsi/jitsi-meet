@@ -1,9 +1,10 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP */
 
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
+import { Watermarks } from '../../base/react';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -54,34 +55,6 @@ class Conference extends Component {
     }
 
     /**
-     * Initializes Conference component instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        const showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
-        const showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
-        const showJitsiWatermarkForGuest
-            = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
-
-        this.state = {
-            ...this.state,
-            showBrandWatermark,
-            showJitsiWatermark,
-            showJitsiWatermarkForGuest,
-            brandWatermarkLink:
-                showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
-            jitsiWatermarkLink:
-                showJitsiWatermark || showJitsiWatermarkForGuest
-                    ? interfaceConfig.JITSI_WATERMARK_LINK : '',
-            showPoweredBy: interfaceConfig.SHOW_POWERED_BY
-        };
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -123,15 +96,9 @@ class Conference extends Component {
                             <div id = 'sharedVideoIFrame' />
                         </div>
                         <div id = 'etherpad' />
-                        {
-                            this._renderJitsiWatermark()
-                        }
-                        {
-                            this._renderBrandWatermark()
-                        }
-                        {
-                            this._renderPoweredBy()
-                        }
+
+                        <Watermarks />
+
                         <div id = 'dominantSpeaker'>
                             <div className = 'dynamic-shadow' />
                             <img
@@ -194,69 +161,6 @@ class Conference extends Component {
                 </div>
             </div>
         );
-    }
-
-    /**
-     * Method that returns brand watermark element if it is enabled.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderBrandWatermark() {
-        if (this.state.showBrandWatermark) {
-            return (
-                <a
-                    href = { this.state.brandWatermarkLink }
-                    target = '_new'>
-                    <div className = 'watermark rightwatermark' />
-                </a>
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Method that returns jitsi watermark element if it is enabled.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderJitsiWatermark() {
-        if (this.state.showJitsiWatermark
-            || (APP.tokenData.isGuest
-                    && this.state.showJitsiWatermarkForGuest)) {
-            return (
-                <a
-                    href = { this.state.jitsiWatermarkLink }
-                    target = '_new'>
-                    <div className = 'watermark leftwatermark' />
-                </a>
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Renders powered by block if it is enabled.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderPoweredBy() {
-        if (this.state.showPoweredBy) {
-            return (
-                <a
-                    className = 'poweredby hide'
-                    href = 'http://jitsi.org'
-                    target = '_new'>
-                    <span data-i18n = 'poweredby' /> jitsi.org
-                </a>
-            );
-        }
-
-        return null;
     }
 }
 

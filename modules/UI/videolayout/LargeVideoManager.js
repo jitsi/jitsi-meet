@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
@@ -36,37 +36,6 @@ export default class LargeVideoManager {
         this.$container.css({
             display: 'inline-block'
         });
-
-        if (interfaceConfig.SHOW_JITSI_WATERMARK
-            && !interfaceConfig.filmStripOnly) {
-            let leftWatermarkDiv
-                = this.$container.find("div.watermark.leftwatermark");
-
-            leftWatermarkDiv.css({display: 'block'});
-
-            UIUtil.setLinkHref(
-                leftWatermarkDiv.parent(),
-                interfaceConfig.JITSI_WATERMARK_LINK);
-        }
-
-        if (interfaceConfig.SHOW_BRAND_WATERMARK
-            && !interfaceConfig.filmStripOnly) {
-            let rightWatermarkDiv
-                = this.$container.find("div.watermark.rightwatermark");
-
-            rightWatermarkDiv.css({
-                display: 'block',
-                backgroundImage: 'url(images/rightwatermark.png)'
-            });
-
-            UIUtil.setLinkHref(
-                rightWatermarkDiv.parent(),
-                interfaceConfig.BRAND_WATERMARK_LINK);
-        }
-
-        if (interfaceConfig.SHOW_POWERED_BY) {
-            this.$container.children("a.poweredby").css({display: 'block'});
-        }
 
         this.$container.hover(
             e => this.onHoverIn(e),
