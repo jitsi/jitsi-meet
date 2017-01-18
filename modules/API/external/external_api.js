@@ -173,6 +173,9 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
 
     this.eventHandlers = {};
 
+    // Map<{string} event_name, {boolean} postis_listener_added>
+    this.postisListeners = {};
+
     this.numberOfParticipants = 1;
     this._setupListeners();
 
@@ -328,12 +331,14 @@ JitsiMeetExternalAPI.prototype.addEventListener = function(event, listener) {
     }
     // We cannot remove listeners from postis that's why we are handling the
     // callback that way.
-    if(!(event in this.eventHandlers))
+    if(!this.postisListeners[event]) {
         this.postis.listen(events[event], function(data) {
             if((event in this.eventHandlers) &&
                 typeof this.eventHandlers[event] === "function")
                 this.eventHandlers[event].call(null, data);
         }.bind(this));
+        this.postisListeners[event] = true;
+    }
     this.eventHandlers[event] = listener;
     changeEventStatus(this.postis, event, true);
 };
