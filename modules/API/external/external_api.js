@@ -86,6 +86,18 @@ function changeEventStatus(postis, event, status) {
 }
 
 /**
+ * Adds given number to the numberOfParticipants property of given APIInstance.
+ * @param {JitsiMeetExternalAPI} APIInstance the instance of the
+ * JitsiMeetExternalAPI
+ * @param {int} number - the number of participants to be added to
+ * numberOfParticipants property (this parameter can be negative number if the
+ * numberOfParticipants should be decreased).
+ */
+function changeParticipantNumber(APIInstance, number) {
+    APIInstance.numberOfParticipants += number;
+}
+
+/**
  * Constructs new API instance. Creates iframe element that loads
  * Jitsi Meet.
  * @param domain the domain name of the server that hosts the conference
@@ -160,6 +172,9 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
     });
 
     this.eventHandlers = {};
+
+    this.numberOfParticipants = 1;
+    this._setupListeners();
 
     id++;
 }
@@ -344,6 +359,25 @@ JitsiMeetExternalAPI.prototype.removeEventListener = function(event) {
 JitsiMeetExternalAPI.prototype.removeEventListeners = function(events) {
     for(var i = 0; i < events.length; i++)
         this.removeEventListener(events[i]);
+};
+
+/**
+ * Returns the number of participants in the conference.
+ * NOTE: the local participant is included.
+ * @returns {int} the number of participants in the conference.
+ */
+JitsiMeetExternalAPI.prototype.getNumberOfParticipant = function() {
+    return this.numberOfParticipants;
+};
+
+/**
+ * Setups listeners that are used internally for JitsiMeetExternalAPI.
+ */
+JitsiMeetExternalAPI.prototype._setupListeners = function() {
+    this.postis.listen("participant-joined",
+        changeParticipantNumber.bind(null, this, 1));
+    this.postis.listen("participant-left",
+        changeParticipantNumber.bind(null, this, -1));
 };
 
 /**
