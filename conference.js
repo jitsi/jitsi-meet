@@ -923,7 +923,7 @@ export default {
    * @returns {Promise}
    */
     useVideoStream (newStream) {
-        room.replaceStream(localVideo, newStream)
+        room.replaceTrack(localVideo, newStream)
             .then(() => {
                 // We call dispose after doing the replace because
                 //  dispose will try and do a new o/a after the
@@ -958,7 +958,7 @@ export default {
      * @returns {Promise}
      */
     useAudioStream (newStream) {
-        room.replaceStream(localAudio, newStream)
+        room.replaceTrack(localAudio, newStream)
             .then(() => {
                 // We call dispose after doing the replace because
                 //  dispose will try and do a new o/a after the
