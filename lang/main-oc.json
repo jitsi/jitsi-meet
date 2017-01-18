@@ -1,9 +1,13 @@
 {
-    "contactlist": "Al telefòn",
+    "contactlist": "Participants (__pcount__)",
+    "addParticipants": "Partejatz lo ligam",
+    "roomLocked": "Los qu'apèlan devon picar un senhal",
+    "roomUnlocked": "Qual que siá amb lo ligam pòt participar",
+    "passwordSetRemotely": "causit per qualqu'un mai",
     "connectionsettings": "Paramètres de connexion",
     "poweredby": "Produit per",
     "feedback": "Donatz-nos vòstre vejaire",
-    "roomUrlDefaultMsg": "Vòstra conferéncia es en cors de creacion...",
+    "inviteUrlDefaultMsg": "Vòstra conferéncia es en cors de creacion...",
     "me": "ieu",
     "speaker": "Nautparlaire",
     "raisedHand": "Volriatz charrar",
@@ -22,16 +26,17 @@
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Acorchis de clavièr",
-        "raiseHand": "Demandar a parlar.",
+        "raiseHand": "Demandar o pas la paraula",
         "pushToTalk": "Butar per parlar",
         "toggleScreensharing": "Caplevar entre camerà e partatge d'ecran",
         "toggleFilmstrip": "Mostrar o escondre la vidèo",
         "toggleShortcuts": "Afichar o amagar aiceste menú d'ajuda",
-        "focusLocal": "Focus sus la vidèo locala.",
-        "focusRemote": "Focus sus una de las vidèas aluènhadas.",
-        "toggleChat": "Dubrir o tampar lo panèl de conversacion.",
-        "mute": "Activar o desactivar lo microfòn.",
-        "videoMute": "Arrestar o lançar la vidèo locala."
+        "focusLocal": "Centrar sus vòstra vidèo",
+        "focusRemote": "Centrar sus la vidèo de qualqu'un mai",
+        "toggleChat": "Dubrir o tampar lo panèl de conversacion",
+        "mute": "Activar o desactivar lo microfòn",
+        "fullScreen": "Activar / Desactivar l'ecran complet",
+        "videoMute": "Aviar o arrestar vòstra camerà"
     },
     "welcomepage": {
         "go": "Crear",
@@ -70,35 +75,45 @@
             "content": "Aprenètz mai a prepaus de vòstres utilizaires amb una integracion aisida de Piwik, Google Analytics e d'autres sistèmas d'estatisticas e supervision d'utilizacion."
         }
     },
+    "startupoverlay": {
+        "policyText": "&nbsp;",
+        "title": "__app__ a besonh d'utilizar vòstre microfòn e camerà."
+    },
+    "suspendedoverlay": {
+        "title": "Vòstra conferéncia vidèo es estada arrestada perque vòstre ordinador se botèt en velha.",
+        "rejoinKeyTitle": "Tornar participar"
+    },
     "toolbar": {
         "mute": "Mut / Actiu",
-        "videomute": "Aviar / Arrestar la camèra",
+        "videomute": "Aviar / Arrestar la camerà",
         "authenticate": "Autentificatz-vos",
         "lock": "Verrolhar / desverrolhar la sala",
-        "invite": "Convidar de participants",
-        "chat": "Dobrir / tampar lo chat",
-        "etherpad": "Document partejat",
+        "invite": "Partejatz lo ligam",
+        "chat": "Dobrir / tampar la conversacion",
+        "etherpad": "Dobrir / Tampar los documents partejats",
         "sharedvideo": "Partejar una vidèo Youtube",
-        "sharescreen": "Partejar mon ecran",
-        "fullscreen": "Activar / Désactivar l'ecran complet",
+        "sharescreen": "Aviar / Arrestar lo partatge d'ecran",
+        "fullscreen": "Activar / Desactivar l'ecran complet",
         "sip": "Sonar un numèro SIP",
         "Settings": "Paramètres",
-        "hangup": "Tornar penjar",
+        "hangup": "Quitar",
         "login": "Connexion",
         "logout": "Desconnexion",
-        "dialpad": "Afichar lo clavièr de numerotacion",
+        "dialpad": "Dubrir / Tampar lo clavièr",
         "sharedVideoMutedPopup": "Vòstra vidèo es estada mesa en mut<br/>per que poscatz parlar als autres participants.",
         "micMutedPopup": "Vòstre microfòn es estat desactivat per fin que <br/>poscatz profeitar plenament de vòstra vidèo partejada.",
+        "talkWhileMutedPopup": "Ensajatz de parlar ? Vòstre microfòn es copat.",
         "unableToUnmutePopup": "Podètz pas reactivar vòstre microfòn pendent que la vidèo partejada es activada.",
         "cameraDisabled": "La camerà es pas disponibla",
         "micDisabled": "Lo microfòn es pas disponible",
-        "filmstrip": "",
-        "raiseHand": "Demandar la paraula"
+        "filmstrip": "Mostrar / escondre vidèos",
+        "profile": "Modificar vòstre perfil",
+        "raiseHand": "Demandar / Demandar pas mai la paraula"
     },
     "bottomtoolbar": {
         "chat": "Dobrir / tampar lo chat",
         "filmstrip": "Mostrar / escondre vidèos",
-        "contactlist": "Dobrir / tampar ma lista de contactes"
+        "contactlist": "Veire e convidar de participants"
     },
     "chat": {
         "nickname": {
@@ -126,9 +141,10 @@
         "setPasswordLabel": "Verrolhar vòstra sala amb un senhal"
     },
     "profile": {
-        "title": "PERFIL",
+        "title": "Perfil",
         "setDisplayNameLabel": "Causissètz vòstra nom",
-        "setEmailLabel": "Definir vòstre corrièl per gravatar"
+        "setEmailLabel": "Definir vòstre corrièl per gravatar",
+        "setEmailInput": "Picatz lo corrièl"
     },
     "videothumbnail": {
         "editnickname": "Clicatz per modificar<br/>vòstre nom",
@@ -141,6 +157,7 @@
         "flip": "Revirar"
     },
     "connectionindicator": {
+        "header": "Donadas de connexion",
         "bitrate": "Debit :",
         "packetloss": "Pèrda de paquets :",
         "resolution": "Resolucion :",
@@ -174,20 +191,30 @@
         "raisedHand": "Volriá parlar."
     },
     "dialog": {
+        "add": "Apondre",
         "kickMessage": "Ops! Sètz estat bandit de la reünion !",
         "popupError": "Vòstre navigador blòca las fenèstras popup d'aqueste site. Mercé d'activar las popups dins los paramètres de seguretat de vòstre navigador e d'ensajar tornamai.",
+        "passwordErrorTitle": "Error de senhal",
         "passwordError": "Aquesta conversacion es actualament protegida per un senhal. Sol lo proprietari de la conferéncia pòt definir un senhal.",
         "passwordError2": "Actualament, aquesta conversacion es pas protegida per un senhal. Sol lo proprietari de la conferéncia pòt definir un senhal.",
         "connectError": "Ops! Quicòm a trucat e la connexion a la conferéncia es impossibla.",
         "connectErrorWithMsg": "Ops! Quicòm a trucat e la connexion a la conferéncia es impossibla: __msg__",
+        "incorrectPassword": "Lo senhal es incorrècte",
         "connecting": "Connexion en cors",
         "copy": "Copiar",
         "error": "Error",
+        "roomLocked": "Aquesta conversacion es verrolhada. Lo nòu-venguts devon aver lo ligam e lo senhal per participar.",
+        "addPassword": "Apondre un senhal",
+        "createPassword": "Crear un senhal",
         "detectext": "Una error s'es produita pendent la deteccion de l'extension de partiment d'ecran.",
         "failtoinstall": "Fracàs de l'installacion de l'extension de partiment d'ecran",
         "failedpermissions": "Fracàs d'obtencion de las permissions per utilizar lo micro e/o la camèra.",
-        "bridgeUnavailable": "Lo pont de visioconferéncia Jitsi es indisponible pel moment. Ensajatz tornamai pus tard !",
-        "jicofoUnavailable": "Lo pont de visioconferéncia Jitsi es indisponible pel moment. Ensajatz tornamai pus tard !",
+        "conferenceReloadTitle": "Malurosament, quicòm truquèt",
+        "conferenceReloadMsg": "Sèm a trobar una solucion per aquò",
+        "conferenceDisconnectTitle": "Sètz estat desconnectat. Vos cal benlèu verificar vòstra connexion.",
+        "conferenceDisconnectMsg": "Se tòrna connectar dins...",
+        "reconnectNow": "Es a se tornar connectar ara",
+        "conferenceReloadTimeLeft": "__seconds__ segondas.",
         "maxUsersLimitReached": "Lo limit pel nombre maximum de participants a la conferéncia es estat atent. La conferéncia es plena. Ensajatz tornamai pus tard !",
         "lockTitle": "Fracàs del verrolhatge",
         "lockMessage": "Impossible de verrolhar la conferéncia.",
@@ -199,10 +226,14 @@
         "SLDFailure": "Ops! Quicòm a trucat e lo micro es pas estat copat! (Fracàs SLD)",
         "SRDFailure": "Ops! Quicòm a trucat e la camèra es pas estada copada! (Fracàs SRD)",
         "oops": "Ops !",
+        "currentPassword": "L'actual senhal es",
+        "passwordLabel": "Senhal",
         "defaultError": "Una error s'es produita",
         "passwordRequired": "Senhal requesit",
         "Ok": "D'acòrdi",
+        "done": "Acabat",
         "Remove": "Suprimir",
+        "removePassword": "Levar lo senhal",
         "shareVideoTitle": "Partejar una vidèo",
         "shareVideoLinkError": "Se vos plai, provesissètz un ligam Youtube foncional.",
         "removeSharedVideoTitle": "Suprimir la vidèo partejada",
@@ -212,6 +243,7 @@
         "WaitForHostMsg": "La conferéncia <b> __ room__ </b> es pas encara començat. Se sètz l'òste, mercé de vos autentificar. Siquenon, mercé d'esperar que l'òste arribe.",
         "IamHost": "Soi l’òste",
         "Cancel": "Anullar",
+        "Submit": "Validar",
         "retry": "Ensajar tornamai",
         "logoutTitle": "Desconnexion",
         "logoutQuestion": "Sètz segur que vos volètz desconnectar e arrestar la conferéncia ?",
@@ -226,7 +258,7 @@
         "sipMsg": "Sasissètz un numèro SIP",
         "passwordCheck": "Sètz segur que volètz suprimir vòstre senhal ?",
         "passwordMsg": "Sasissètz un senhal per verrolhar la conferéncia",
-        "shareLink": "Copiatz e partejatz aqueste ligam",
+        "shareLink": "Partejatz lo ligam de la conversacion",
         "settings1": "Configuratz vòstra conferéncia",
         "settings2": "Los participants rejonhon la conferéncia en essent muts",
         "settings3": "Escaisses requesits<br/><br/>Sasissètz un senhal per verrolhar la conferéncia :",
@@ -242,7 +274,8 @@
         "token": "geton",
         "tokenAuthFailedTitle": "Fracàs de l'autentificacion",
         "tokenAuthFailed": "O planhèm, sètz pas autorizat a rejónher l'apèl.",
-        "displayNameRequired": "Sasissètz vòstre nom",
+        "displayNameRequired": "Un nom d'afichatge es necessari",
+        "enterDisplayName": "Sasissètz vòstre nom",
         "extensionRequired": "Extension requesida :",
         "firefoxExtensionPrompt": "Vos cal installar una extension Firefox per utilizar lo partiment d'ecran. Mercé ensajar tornamai aprèp l'installacion <a href='__url__'>dempuèi aqueste ligam</a> !",
         "rateExperience": "Mercés de donar una nota à vòstra experiéncia.",
@@ -258,6 +291,7 @@
         "stopLiveStreaming": "Arrestar lo dirècte",
         "stopRecording": "Arrestar l'enregistrament",
         "doNotShowWarningAgain": "Afichar pas mai aqueste avertiment",
+        "doNotShowMessageAgain": "Afichar pas mai aqueste messatge",
         "permissionDenied": "Permission Refusada",
         "screenSharingPermissionDeniedError": "Vos cal autorizar lo partatge de vòstre ecran.",
         "micErrorPresent": "I a agut una error pendent la connexion al microfòn.",
@@ -273,9 +307,12 @@
         "micConstraintFailedError": "Vòstre microfòn satisfà pas totas las constrentas necessàrias.",
         "micNotSendingData": "Podèm pas aver l'accès a vòstre microfòn. Mercés de ne causir un autre dins lo menú de paramètres o ensajatz de tornar dubrir l'aplicacion.",
         "cameraNotSendingData": "Podèm pas aver l'accès a vòstra camèra. Mercés de verificar se una autra aplicacion es pas a l'utilizar, causissètz una autra camèra dins lo menú de paramètres o ensajatz de tornar dubrir l'aplicacion.",
-        "goToStore": "Anatz sul webstore",
+        "goToStore": "Anar sul webstore",
         "externalInstallationTitle": "Extension requesida :",
-        "externalInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran."
+        "externalInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran.",
+        "muteParticipantTitle": "Copar lo micro als participants ?",
+        "muteParticipantBody": "Poiretz pas lo tornar activar lo microfòn, mai eles pòdon o far quand vòlon.",
+        "muteParticipantButton": "Copar lo son"
     },
     "email": {
         "sharedKey": [
