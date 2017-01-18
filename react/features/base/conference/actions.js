@@ -12,6 +12,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     SET_PASSWORD,
@@ -124,6 +125,26 @@ function _conferenceJoined(conference) {
 }
 
 /**
+ * Signals the intention of the application to have the local participant leave
+ * a specific conference. Similar in fashion to CONFERENCE_LEFT. Contrary to it
+ * though, it's not guaranteed because CONFERENCE_LEFT may be triggered by
+ * lib-jitsi-meet and not the application.
+ *
+ * @param {string} room - The JitsiConference instance which will
+ * be left by the local participant.
+ * @returns {{
+ *      type: CONFERENCE_WILL_JOIN,
+ *      room: string
+ *  }}
+ */
+function _conferenceWillJoin(room) {
+    return {
+        type: CONFERENCE_WILL_JOIN,
+        room
+    };
+}
+
+/**
  * Signals that a specific conference has been left.
  *
  * @param {JitsiConference} conference - The JitsiConference instance which was
@@ -180,12 +201,15 @@ export function createConference() {
             throw new Error('Cannot join conference without room name');
         }
 
+        // XXX Lib-jitsi-meet does not accept uppercase letters.
+        const _room = room.toLowerCase();
+
+        dispatch(_conferenceWillJoin(_room));
+
         // TODO Take options from config.
         const conference
             = connection.initJitsiConference(
-
-                    // XXX Lib-jitsi-meet does not accept uppercase letters.
-                    room.toLowerCase(),
+                    _room,
                     { openSctp: true });
 
         _addConferenceListeners(conference, dispatch);
