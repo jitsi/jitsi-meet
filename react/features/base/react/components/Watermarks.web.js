@@ -23,14 +23,20 @@ export class Watermarks extends Component {
     constructor(props) {
         super(props);
 
-        const showBrandWatermark
-            = interfaceConfig.SHOW_BRAND_WATERMARK
-                && !interfaceConfig.filmStripOnly;
-        const showJitsiWatermark
-            = interfaceConfig.SHOW_JITSI_WATERMARK
-                && !interfaceConfig.filmStripOnly;
-        const showJitsiWatermarkForGuests
-            = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
+        let showBrandWatermark;
+        let showJitsiWatermark;
+        let showJitsiWatermarkForGuests;
+
+        if (interfaceConfig.filmStripOnly) {
+            showBrandWatermark = false;
+            showJitsiWatermark = false;
+            showJitsiWatermarkForGuests = false;
+        } else {
+            showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
+            showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
+            showJitsiWatermarkForGuests
+                = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
+        }
 
         this.state = {
             brandWatermarkLink:
