@@ -204,7 +204,7 @@ api.removeEventListeners(["incomingMessage", "outgoingMessageListener"]);
 
 You can get the number of participants in the conference with the following code:
 ```
-var numberOfParticipants = api.getNumberOfParticipant();
+var numberOfParticipants = api.getNumberOfParticipants();
 ```
 
 You can remove the embedded Jitsi Meet Conference with the following code:

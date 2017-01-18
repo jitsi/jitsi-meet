@@ -352,7 +352,7 @@ JitsiMeetExternalAPI.prototype.removeEventListeners = function(events) {
  * NOTE: the local participant is included.
  * @returns {int} the number of participants in the conference.
  */
-JitsiMeetExternalAPI.prototype.getNumberOfParticipant = function() {
+JitsiMeetExternalAPI.prototype.getNumberOfParticipants = function() {
     return this.numberOfParticipants;
 };
 
