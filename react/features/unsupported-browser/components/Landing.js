@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 
 import { Platform } from '../../base/react';
 
+import { appNavigate } from '../../app';
 import { landingIsShown } from '../actions';
 
 /**
@@ -21,6 +21,20 @@ const URLS = {
  * @class Landing
  */
 class Landing extends Component {
+
+    /**
+     * Constructor of Landing component.
+     *
+     * @param {Object} props - The read-only React Component props with which
+     * the new instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind methods
+        this._onClickJoin = this._onClickJoin.bind(this);
+    }
+
     /**
      * Landing component's property types.
      *
@@ -48,7 +62,7 @@ class Landing extends Component {
     componentWillMount() {
         const { room } = this.props;
         let btnText;
-        let link = '/';
+        let link = '';
 
         if (room) {
             btnText = 'Join the conversation';
@@ -64,12 +78,24 @@ class Landing extends Component {
     }
 
     /**
+     * Navigates to the next state of the app.
+     *
+     * @returns {void}
+     * @private
+     */
+    _onClickJoin() {
+        const { link } = this.state;
+
+        this.props.dispatch(appNavigate(link));
+    }
+
+    /**
      * Renders landing component.
      *
      * @returns {ReactElement}
      */
     render() {
-        const { btnText, link } = this.state;
+        const { btnText } = this.state;
         const primaryButtonClasses = 'landing__button landing__button_primary';
 
         return (
@@ -92,11 +118,11 @@ class Landing extends Component {
                         <br />
                         <strong>then</strong>
                     </p>
-                    <Link to = { link }>
-                        <button className = 'landing__button'>
-                            { btnText }
-                        </button>
-                    </Link>
+                    <button
+                        className = 'landing__button'
+                        onClick = { this._onClickJoin }>
+                        { btnText }
+                    </button>
                 </div>
             </div>
         );

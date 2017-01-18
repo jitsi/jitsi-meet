@@ -1,15 +1,23 @@
 import { setRoom } from '../base/conference';
 import { getDomain, setDomain } from '../base/connection';
 import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
-import { Platform } from '../base/react';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
     _getRoomAndDomainFromUrlString,
     _getRouteToRender,
+    areRoutesEqual,
     init
 } from './functions';
 import './reducer';
+
+/**
+ * Variable saving current route of the app. Later it will be extracted as
+ * a property of the class with Router specific logic.
+ *
+ * @type {Object}
+ */
+let currentRoute = {};
 
 /**
  * Temporary solution. Should dispatch actions related to initial settings of
@@ -42,9 +50,7 @@ export function appNavigate(urlOrRoom) {
         // current conference and start a new one with the new room name or
         // domain.
 
-        if (room === 'mobile-app') {
-            return;
-        } else if (typeof domain === 'undefined' || oldDomain === domain) {
+        if (typeof domain === 'undefined' || oldDomain === domain) {
             // If both domain and room vars became undefined, that means we're
             // actually dealing with just room name and not with URL.
             dispatch(
@@ -63,7 +69,15 @@ export function appNavigate(urlOrRoom) {
             loadConfig(`https://${domain}`)
                 .then(
                     config => configLoaded(/* err */ undefined, config),
-                    err => configLoaded(err, /* config */ undefined));
+                    err => configLoaded(err, /* config */ undefined))
+                .then(() => {
+                    const link = typeof room === 'undefined'
+                    && typeof domain === 'undefined'
+                        ? urlOrRoom
+                        : room;
+
+                    dispatch(_setRoomAndNavigate(link));
+                });
         }
 
         /**
@@ -87,9 +101,6 @@ export function appNavigate(urlOrRoom) {
                 return;
             }
 
-            // We set room name only here to prevent race conditions on app
-            // start to not make app re-render conference page for two times.
-            dispatch(setRoom(room));
             dispatch(setConfig(config));
         }
     };
@@ -128,20 +139,6 @@ export function appWillUnmount(app) {
 }
 
 /**
- * Navigates to route corresponding to current room name.
- *
- * @param {Object} state - Redux state.
- * @private
- * @returns {void}
- */
-function _navigate(state) {
-    const app = state['features/app'].app;
-    const routeToRender = _getRouteToRender(state);
-
-    app._navigate(routeToRender);
-}
-
-/**
  * Sets room and navigates to new route if needed.
  *
  * @param {string} newRoom - New room name.
@@ -150,21 +147,15 @@ function _navigate(state) {
  */
 function _setRoomAndNavigate(newRoom) {
     return (dispatch, getState) => {
-        const oldRoom = getState()['features/base/conference'].room;
-
         dispatch(setRoom(newRoom));
 
         const state = getState();
-        const { room } = state['features/base/conference'];
-        const { landingIsShown } = state['features/unsupported-browser'];
+        const { app } = state['features/app'];
+        const newRoute = _getRouteToRender(state);
 
-        // If the user agent is a mobile browser and landing hasn't been shown
-        // yet, we should recheck which component to render.
-        const OS = Platform.OS;
-
-        if (((OS === 'android' || OS === 'ios') && !landingIsShown)
-                || room !== oldRoom) {
-            _navigate(state);
+        if (!areRoutesEqual(newRoute, currentRoute)) {
+            currentRoute = newRoute;
+            app._navigate(newRoute);
         }
     };
 }

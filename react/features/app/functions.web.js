@@ -35,17 +35,33 @@ export function _getRouteToRender(stateOrGetState) {
 
     // If landing was shown, there is no need to show it again.
     const { landingIsShown } = state['features/unsupported-browser'];
-    let component;
+    const { room } = state['features/base/conference'];
+    const component = isRoomValid(room) ? Conference : WelcomePage;
+
+    // We're using spread operator here to create copy of the route registered
+    // in registry. If we overwrite some of its properties (like 'component')
+    // they will stay unchanged in the registry.
+    const route = { ...RouteRegistry.getRouteByComponent(component) };
 
     if ((OS === 'android' || OS === 'ios') && !landingIsShown) {
-        component = Landing;
-    } else {
-        const { room } = state['features/base/conference'];
-
-        component = isRoomValid(room) ? Conference : WelcomePage;
+        route.component = Landing;
     }
 
-    return RouteRegistry.getRouteByComponent(component);
+    return route;
+}
+
+/**
+ * Method checking whether route objects are equal by value. Returns true if
+ * and only if key values of the first object are equal to key values of
+ * the second one.
+ *
+ * @param {Object} newRoute - New route object to be compared.
+ * @param {Object} oldRoute - Old route object to be compared.
+ * @returns {boolean}
+ */
+export function areRoutesEqual(newRoute, oldRoute) {
+    return Object.keys(newRoute)
+        .every(key => newRoute[key] === oldRoute[key]);
 }
 
 /**
