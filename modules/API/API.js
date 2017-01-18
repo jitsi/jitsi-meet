@@ -1,5 +1,4 @@
 /* global APP, getConfigParamsFromUrl */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 /**
  * Implements API class that communicates with external api class
@@ -63,31 +62,6 @@ function initCommands() {
     });
 }
 
-
-/**
- * Maps the supported events and their status
- * (true it the event is enabled and false if it is disabled)
- * @type {{
- *              incoming-message: boolean,
- *              outgoing-message: boolean,
- *              display-name-change: boolean,
- *              participant-left: boolean,
- *              participant-joined: boolean,
- *              video-conference-left: boolean,
- *              video-conference-joined: boolean
- *      }}
- */
-const events = {
-    "incoming-message": false,
-    "outgoing-message":false,
-    "display-name-change": false,
-    "participant-joined": false,
-    "participant-left": false,
-    "video-conference-joined": false,
-    "video-conference-left": false,
-    "video-ready-to-close": false
-};
-
 /**
  * Sends message to the external application.
  * @param message {object}
@@ -95,25 +69,17 @@ const events = {
  * @param params {object} the object that will be sent as JSON string
  */
 function sendMessage(message) {
-    if(enabled)
+    if(enabled) {
         postis.send(message);
+    }
 }
 
 /**
  * Check whether the API should be enabled or not.
  * @returns {boolean}
  */
-function isEnabled () {
+function shouldBeEnabled () {
     return (typeof jitsi_meet_external_api_id === "number");
-}
-
-/**
- * Checks whether the event is enabled ot not.
- * @param name the name of the event.
- * @returns {*}
- */
-function isEventEnabled (name) {
-    return events[name];
 }
 
 /**
@@ -123,25 +89,8 @@ function isEventEnabled (name) {
  * @param object data associated with the event
  */
 function triggerEvent (name, object) {
-    if(isEventEnabled(name))
+    if(enabled) {
         sendMessage({method: name, params: object});
-}
-
-/**
- * Handles system messages. (for example: enable/disable events)
- * @param message {object} the message
- */
-function onSystemMessage(message) {
-    switch (message.type) {
-        case "eventStatus":
-            if(!message.name || !message.value) {
-                logger.warn("Unknown system message format", message);
-                break;
-            }
-            events[message.name] = message.value;
-            break;
-        default:
-            logger.warn("Unknown system message type", message);
     }
 }
 
@@ -153,17 +102,12 @@ export default {
      * is initialized.
      * @param options {object}
      * @param forceEnable {boolean} if true the module will be enabled.
-     * @param enabledEvents {array} array of events that should be enabled.
      */
     init (options = {}) {
-        if(!isEnabled() && !options.forceEnable)
+        if(!shouldBeEnabled() && !options.forceEnable)
             return;
 
         enabled = true;
-        if(options.enabledEvents)
-            options.enabledEvents.forEach(function (eventName) {
-                events[eventName] = true;
-            });
         let postisOptions = {
             window: target
         };
@@ -171,7 +115,6 @@ export default {
             postisOptions.scope
                 = "jitsi_meet_external_api_" + jitsi_meet_external_api_id;
         postis = postisInit(postisOptions);
-        postis.listen("jitsiSystemMessage", onSystemMessage);
         initCommands();
     },
 
