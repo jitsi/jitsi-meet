@@ -1838,9 +1838,9 @@ export default {
 
     /**
      * Sends a message via the data channel.
-     * @param to {string} the id of the endpoint that should receive the
-     * message. If "" the message will be sent to all participants.
-     * @param payload {object} the payload of the message.
+     * @param {string} to the id of the endpoint that should receive the
+     * message. If "" - the message will be sent to all participants.
+     * @param {object} payload the payload of the message.
      * @throws NetworkError or InvalidStateError or Error if the operation
      * fails.
      */

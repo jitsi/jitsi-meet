@@ -170,9 +170,6 @@ export default class Controller extends RemoteControlParticipant {
      * listeners. Disables keyboard events.
      */
     _start() {
-        if(!this.enabled) {
-            return;
-        }
         APP.UI.addListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.addConferenceListener(

@@ -39,8 +39,16 @@ class RemoteControl {
     }
 
     /**
-     * Handles remote control events from the API module.
-     * @param {object} event the remote control event
+     * Handles remote control events from the API module. Currently only events
+     * with type = EVENT_TYPES.supported or EVENT_TYPES.permissions
+     * @param {object} event the remote control event. The remote control event
+     * has one mandatory property - type which is string from EVENT_TYPES enum
+     * defined in /service/remotecontrol/constants. If the event type is
+     * "supported" it won't have any other properties. If the event type is
+     * "permissions" the method will expect also the following properties:
+     * {string} userId - the user id of the participant that made the request
+     * for permissions
+     * {PERMISSIONS_ACTIONS} action the action related to the event.
      */
     onRemoteControlAPIEvent(event) {
         switch(event.type) {

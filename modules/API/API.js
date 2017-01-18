@@ -218,7 +218,18 @@ class API {
 
     /**
      * Sends remote control event.
-     * @param {object} event the event.
+     * @param {object} event the remote control event. The remote control event
+     * has one mandatory property - type which is string from EVENT_TYPES enum
+     * defined in /service/remotecontrol/constants. Depending on the event type
+     * the event can have other properties or not.
+     * mousemove - will also have {int} properties x and y
+     * mousedown, mouseup and mousedblclick - will have {int} property button
+     * with values - 1(left), 2(middle) or 3 (right)
+     * mousescroll - will have {int} property y
+     * keydown and keyup - will have {string} property key and array of strings
+     * property modifiers.
+     * stop - won't have any other properties
+     * permissions - will have {PERMISSIONS_ACTIONS} property action.
      */
     sendRemoteControlEvent(event) {
         sendMessage({method: "remote-control-event", params: event});
