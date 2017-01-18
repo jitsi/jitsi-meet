@@ -1,15 +1,4 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
-
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 
 import com.android.build.OutputFile
 
@@ -149,9 +138,6 @@ if (project.hasProperty('JITSI_SIGNING')
     apply from: project.property('JITSI_SIGNING');
 }
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
 dependencies {
     compile project(':react-native-keep-awake')
     compile project(':react-native-vector-icons')
@@ -159,9 +145,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.facebook.react:react-native:+'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
-        transitive = true
-    }
 }
 
 apply from: '../../node_modules/react-native-vector-icons/fonts.gradle'

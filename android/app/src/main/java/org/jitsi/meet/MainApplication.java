@@ -2,12 +2,9 @@ package org.jitsi.meet;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-
-import io.fabric.sdk.android.Fabric;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +52,7 @@ public class MainApplication extends Application implements ReactApplication {
                 .getReactInstanceManager()
                     .getDevSupportManager()
                         .getDevSupportEnabled()) {
-            Fabric.with(this, new Crashlytics());
+            // TODO Auto-generated method stub
         }
     }
 }
