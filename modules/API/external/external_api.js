@@ -69,23 +69,6 @@ function sendMessage(postis, object) {
 }
 
 /**
- * Sends message for event enable/disable status change.
- * @param postis {Postis object} the postis instance that is going to be used.
- * @param event {string} the name of the event
- * @param status {boolean} true - enabled; false - disabled;
- */
-function changeEventStatus(postis, event, status) {
-    if(!(event in events)) {
-        logger.error("Not supported event name.");
-        return;
-    }
-    sendMessage(postis, {
-        method: "jitsiSystemMessage",
-        params: {type: "eventStatus", name: events[event], value: status}
-    });
-}
-
-/**
  * Adds given number to the numberOfParticipants property of given APIInstance.
  * @param {JitsiMeetExternalAPI} APIInstance the instance of the
  * JitsiMeetExternalAPI
@@ -340,7 +323,6 @@ JitsiMeetExternalAPI.prototype.addEventListener = function(event, listener) {
         this.postisListeners[event] = true;
     }
     this.eventHandlers[event] = listener;
-    changeEventStatus(this.postis, event, true);
 };
 
 /**
@@ -354,7 +336,6 @@ JitsiMeetExternalAPI.prototype.removeEventListener = function(event) {
         return;
     }
     delete this.eventHandlers[event];
-    changeEventStatus(this.postis, event, false);
 };
 
 /**
