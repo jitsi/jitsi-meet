@@ -12,6 +12,20 @@
  */
 class RouteRegistry {
     /**
+     * Method checking whether route objects are equal by value. Returns true if
+     * and only if key values of the first object are equal to key values of
+     * the second one.
+     *
+     * @param {Object} newRoute - New route object to be compared.
+     * @param {Object} oldRoute - Old route object to be compared.
+     * @returns {boolean}
+     */
+    areRoutesEqual(newRoute, oldRoute) {
+        return Object.keys(newRoute)
+            .every(key => newRoute[key] === oldRoute[key]);
+    }
+
+    /**
      * Initializes a new RouteRegistry instance.
      */
     constructor() {

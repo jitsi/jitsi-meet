@@ -1,21 +1,21 @@
 import { ReducerRegistry } from '../base/redux';
 
-import { LANDING_IS_SHOWN } from './actionTypes';
+import { MOBILE_BROWSER_PAGE_IS_SHOWN } from './actionTypes';
 
 ReducerRegistry.register(
         'features/unsupported-browser',
         (state = {}, action) => {
             switch (action.type) {
-            case LANDING_IS_SHOWN:
+            case MOBILE_BROWSER_PAGE_IS_SHOWN:
                 return {
                     ...state,
 
                     /**
-                     * Flag that shows that mobile landing is shown.
+                     * Flag that shows that mobile browser page is shown.
                      *
                      * @type {boolean}
                      */
-                    landingIsShown: true
+                    mobileBrowserPageIsShown: true
                 };
             }
 

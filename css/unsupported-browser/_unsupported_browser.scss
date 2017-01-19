@@ -1,0 +1,132 @@
+.browser {
+    display: inline-block;
+    margin: 1em 7px;
+    width: 138px;
+    vertical-align: middle;
+    color: #929391;
+    font-size: 20px;
+
+    &__button {
+        background-color: #62c82a;
+        border: 1px solid #3c8117;
+        border-radius: 10px;
+        color: #FFFFFF;
+        font-size: 12px;
+        text-align: center;
+        width: 115px;
+        height: 26px;
+        padding-top: 13px;
+        margin: 15px auto 0px auto;
+    }
+
+    &__link {
+        color: #087dba;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        &:active {
+            text-decoration: none;
+        }
+
+        &:focus {
+            text-decoration: none;
+        }
+    }
+
+    &-list
+    {
+        margin: 0 auto;
+    }
+
+    &__logo {
+        margin: 20px auto 0px auto;
+
+        &_chrome {
+            width: 78px;
+            height: 78px;
+            background-image: url('../../images/chrome.png');
+        }
+
+        &_chromium {
+            width: 77px;
+            height: 78px;
+            background-image: url('../../images/chromium.png');
+        }
+
+        &_firefox {
+            width: 86px;
+            height: 80px;
+            background-image: url('../../images/firefox.png');
+        }
+
+        &_opera {
+            width: 73px;
+            height: 78px;
+            background-image: url('../../images/opera.png');
+        }
+
+        &_ie {
+            width: 80px;
+            height: 78px;
+            background-image: url('../../images/ie.png');
+        }
+
+        &_safari {
+            width: 78px;
+            height: 79px;
+            background-image: url('../../images/safari.png');
+        }
+    }
+
+    &__text
+    {
+        line-height: 1.2em;
+
+        &_small {
+            font-size: small;
+        }
+    }
+
+    &__tile {
+        width: 138px;
+        height: 163px;
+        margin-top: 5px;
+        background-color: #e8e8e8;
+        border: 1px solid #cfcfcf;
+        border-radius: 10px;
+    }
+}
+
+.unsupported-browser {
+    display: block;
+    position: absolute;
+    width:500px;
+    height: 565px;
+    overflow:hidden;
+    text-align: center;
+    margin: auto;
+    top: 0; left: 0; bottom: 0; right: 0;
+
+    &__page {
+        display:inline-block;
+        font-size: 28px;
+        vertical-align:middle;
+        padding-top: 25px;
+    }
+
+    &__title {
+        margin: 0 auto;
+        width: 20em;
+    }
+
+    &-wrapper {
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+    }
+}

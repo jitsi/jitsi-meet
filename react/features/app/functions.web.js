@@ -4,7 +4,7 @@ import { isRoomValid } from '../base/conference';
 import { RouteRegistry } from '../base/navigator';
 import { Platform } from '../base/react';
 import { Conference } from '../conference';
-import { Landing } from '../unsupported-browser';
+import { MobileBrowserPage } from '../unsupported-browser';
 import { WelcomePage } from '../welcome';
 
 import URLProcessor from '../../../modules/config/URLProcessor';
@@ -33,35 +33,17 @@ export function _getRouteToRender(stateOrGetState) {
             ? stateOrGetState()
             : stateOrGetState;
 
-    // If landing was shown, there is no need to show it again.
-    const { landingIsShown } = state['features/unsupported-browser'];
+    // If mobile browser page was shown, there is no need to show it again.
+    const { mobileBrowserPageIsShown } = state['features/unsupported-browser'];
     const { room } = state['features/base/conference'];
     const component = isRoomValid(room) ? Conference : WelcomePage;
+    const route = RouteRegistry.getRouteByComponent(component);
 
-    // We're using spread operator here to create copy of the route registered
-    // in registry. If we overwrite some of its properties (like 'component')
-    // they will stay unchanged in the registry.
-    const route = { ...RouteRegistry.getRouteByComponent(component) };
-
-    if ((OS === 'android' || OS === 'ios') && !landingIsShown) {
-        route.component = Landing;
+    if ((OS === 'android' || OS === 'ios') && !mobileBrowserPageIsShown) {
+        route.component = MobileBrowserPage;
     }
 
     return route;
-}
-
-/**
- * Method checking whether route objects are equal by value. Returns true if
- * and only if key values of the first object are equal to key values of
- * the second one.
- *
- * @param {Object} newRoute - New route object to be compared.
- * @param {Object} oldRoute - Old route object to be compared.
- * @returns {boolean}
- */
-export function areRoutesEqual(newRoute, oldRoute) {
-    return Object.keys(newRoute)
-        .every(key => newRoute[key] === oldRoute[key]);
 }
 
 /**

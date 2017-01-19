@@ -6,18 +6,9 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
     _getRoomAndDomainFromUrlString,
     _getRouteToRender,
-    areRoutesEqual,
     init
 } from './functions';
 import './reducer';
-
-/**
- * Variable saving current route of the app. Later it will be extracted as
- * a property of the class with Router specific logic.
- *
- * @type {Object}
- */
-let currentRoute = {};
 
 /**
  * Temporary solution. Should dispatch actions related to initial settings of
@@ -73,8 +64,8 @@ export function appNavigate(urlOrRoom) {
                 .then(() => {
                     const link = typeof room === 'undefined'
                     && typeof domain === 'undefined'
-                        ? urlOrRoom
-                        : room;
+                    ? urlOrRoom
+                    : room;
 
                     dispatch(_setRoomAndNavigate(link));
                 });
@@ -153,9 +144,6 @@ function _setRoomAndNavigate(newRoom) {
         const { app } = state['features/app'];
         const newRoute = _getRouteToRender(state);
 
-        if (!areRoutesEqual(newRoute, currentRoute)) {
-            currentRoute = newRoute;
-            app._navigate(newRoute);
-        }
+        app._navigate(newRoute);
     };
 }

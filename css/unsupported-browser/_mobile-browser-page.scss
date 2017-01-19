@@ -1,11 +1,11 @@
-.landing {
+.mobile-browser-page {
     background-color: #fff;
     height: 100vh;
     padding: 35px 0;
     width: 100vw;
 
     &__body {
-        color: $landingTextColor;
+        color: $unsupportedBrowserTextColor;
         margin: auto;
         max-width: 40em;
         text-align: center;
@@ -44,25 +44,25 @@
         max-width: 300px;
         width: 98%;
         @include border-radius(8px);
-        background-color: $landingButtonBgColor;
+        background-color: $unsupportedBrowserButtonBgColor;
         font-size: 1.5em;
         font-weight: 300;
         letter-spacing: 0.5px;
-        text-shadow: 0px 1px 2px $landingTextColor;
+        text-shadow: 0px 1px 2px $unsupportedBrowserTextColor;
 
         // Disable standard button effects.
         box-shadow: none;
         outline: none;
 
         &:active {
-            background-color: $landingButtonBgColor;
+            background-color: $unsupportedBrowserButtonBgColor;
         }
 
         &_primary {
-            background-color: $primaryLandingButtonBgColor;
+            background-color: $primaryUnsupportedBrowserButtonBgColor;
 
             &:active {
-                background-color: $primaryLandingButtonBgColor;
+                background-color: $primaryUnsupportedBrowserButtonBgColor;
             }
         }
     }

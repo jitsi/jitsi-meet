@@ -5,6 +5,7 @@ import {
     localParticipantJoined,
     localParticipantLeft
 } from '../../base/participants';
+import { RouteRegistry } from '../../base/navigator';
 
 import {
     appNavigate,
@@ -31,7 +32,7 @@ export class AbstractApp extends Component {
          * The URL, if any, with which the app was launched.
          */
         url: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new App instance.
@@ -210,33 +211,38 @@ export class AbstractApp extends Component {
      * @returns {void}
      */
     _navigate(route) {
-        let nextState = {
-            ...this.state,
-            route
-        };
+        const currentRoute = this.state.route || {};
 
-        // The Web App was using react-router so it utilized react-router's
-        // onEnter. During the removal of react-router, modifications were
-        // minimized by preserving the onEnter interface:
-        // (1) Router would provide its nextState to the Route's onEnter. As the
-        // role of Router is now this AbstractApp, provide its nextState.
-        // (2) A replace function would be provided to the Route in case it
-        // chose to redirect to another path.
-        this._onRouteEnter(route, nextState, pathname => {
-            // FIXME In order to minimize the modifications related to the
-            // removal of react-router, the Web implementation is provided
-            // bellow because the replace function is used on Web only at the
-            // time of this writing. Provide a platform-agnostic implementation.
-            // It should likely find the best Route matching the specified
-            // pathname and navigate to it.
-            window.location.pathname = pathname;
+        if (!RouteRegistry.areRoutesEqual(route, currentRoute)) {
+            let nextState = {
+                ...this.state,
+                route
+            };
 
-            // Do not proceed with the route because it chose to redirect to
-            // another path.
-            nextState = undefined;
-        });
+            // The Web App was using react-router so it utilized react-router's
+            // onEnter. During the removal of react-router, modifications were
+            // minimized by preserving the onEnter interface:
+            // (1) Router would provide its nextState to the Route's onEnter.
+            // As the role of Router is now this AbstractApp, provide its
+            // nextState.
+            // (2) A replace function would be provided to the Route in case it
+            // chose to redirect to another path.
+            this._onRouteEnter(route, nextState, pathname => {
+                // FIXME In order to minimize the modifications related to the
+                // removal of react-router, the Web implementation is provided
+                // bellow because the replace function is used on Web only at
+                // the time of this writing. Provide a platform-agnostic
+                // implementation. It should likely find the best Route matching
+                // the specified pathname and navigate to it.
+                window.location.pathname = pathname;
 
-        nextState && this.setState(nextState);
+                // Do not proceed with the route because it chose to redirect to
+                // another path.
+                nextState = undefined;
+            });
+
+            nextState && this.setState(nextState);
+        }
     }
 
     /**

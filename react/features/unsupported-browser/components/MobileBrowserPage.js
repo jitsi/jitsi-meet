@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Platform } from '../../base/react';
 
 import { appNavigate } from '../../app';
-import { landingIsShown } from '../actions';
+import { mobileBrowserPageIsShown } from '../actions';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
@@ -16,14 +16,14 @@ const URLS = {
 };
 
 /**
- * React component representing mobile landing page.
+ * React component representing mobile browser page.
  *
- * @class Landing
+ * @class MobileBrowserPage
  */
-class Landing extends Component {
+class MobileBrowserPage extends Component {
 
     /**
-     * Constructor of Landing component.
+     * Constructor of MobileBrowserPage component.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -36,14 +36,14 @@ class Landing extends Component {
     }
 
     /**
-     * Landing component's property types.
+     * Mobile browser page component's property types.
      *
      * @static
      */
     static propTypes = {
         dispatch: React.PropTypes.func,
         room: React.PropTypes.string
-    }
+    };
 
     /**
      * React lifecycle method triggered after component is mounted.
@@ -51,7 +51,7 @@ class Landing extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        this.props.dispatch(landingIsShown());
+        this.props.dispatch(mobileBrowserPageIsShown());
     }
 
     /**
@@ -90,21 +90,25 @@ class Landing extends Component {
     }
 
     /**
-     * Renders landing component.
+     * Renders component.
      *
      * @returns {ReactElement}
      */
     render() {
         const { btnText } = this.state;
-        const primaryButtonClasses = 'landing__button landing__button_primary';
+        const blockPrefix = 'mobile-browser-page';
+        const textClasses = `${blockPrefix}__text ${blockPrefix}__text_small`;
+        let primaryButtonClasses = `${blockPrefix}__button`;
+
+        primaryButtonClasses += `${blockPrefix}__button_primary`;
 
         return (
-            <div className = 'landing'>
-                <div className = 'landing__body'>
+            <div className = { blockPrefix }>
+                <div className = { `${blockPrefix}__body` }>
                     <img
-                        className = 'landing__logo'
+                        className = { `${blockPrefix}__logo` }
                         src = '/images/logo-blue.svg' />
-                    <p className = 'landing__text'>
+                    <p className = { `${blockPrefix}__text` }>
                         You need <strong>Jitsi Meet</strong> to join a
                         conversation on your mobile
                     </p>
@@ -113,13 +117,13 @@ class Landing extends Component {
                             Download the App
                         </button>
                     </a>
-                    <p className = 'landing__text landing__text_small'>
+                    <p className = { textClasses }>
                         or if you already have it
                         <br />
                         <strong>then</strong>
                     </p>
                     <button
-                        className = 'landing__button'
+                        className = 'mobile-browser-page__button'
                         onClick = { this._onClickJoin }>
                         { btnText }
                     </button>
@@ -130,7 +134,7 @@ class Landing extends Component {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated Landing's props.
+ * Maps (parts of) the Redux state to the associated MobileBrowserPage's props.
  *
  * @param {Object} state - Redux state.
  * @returns {{
@@ -143,4 +147,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(Landing);
+export default connect(mapStateToProps)(MobileBrowserPage);
