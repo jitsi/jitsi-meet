@@ -21,7 +21,7 @@ export default class RemoteControlParticipant {
 
     /**
      * Sends remote control event to other participant trough data channel.
-     * @param {Object} event the remote control event.
+     * @param {RemoteControlEvent} event the remote control event.
      * @param {Function} onDataChannelFail handler for data channel failure.
      */
     _sendRemoteControlEvent(to, event, onDataChannelFail = () => {}) {

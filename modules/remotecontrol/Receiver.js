@@ -94,10 +94,10 @@ export default class Receiver extends RemoteControlParticipant {
      * type remote control. Sends "remote-control-event" events to the API
      * module.
      * @param {JitsiParticipant} participant the controller participant
-     * @param {Object} event EndpointMessage event from the data channels. It
-     * has {string} type property. The function process only events of type
-     * REMOTE_CONTROL_EVENT_TYPE which will have event property(the remote
-     * control event)
+     * @param {Object} event EndpointMessage event from the data channels.
+     * @property {string} type property. The function process only events of
+     * type REMOTE_CONTROL_EVENT_TYPE
+     * @property {RemoteControlEvent} event - the remote control event.
      */
     _onRemoteControlEvent(participant, event) {
         if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE) {

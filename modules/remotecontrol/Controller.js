@@ -126,7 +126,7 @@ export default class Controller extends RemoteControlParticipant {
      * Handles the reply of the permissions request.
      * @param {JitsiParticipant} participant the participant that has sent the
      * reply
-     * @param {object} event the remote control event.
+     * @param {RemoteControlEvent} event the remote control event.
      */
     _handleReply(participant, event) {
         const remoteControlEvent = event.event;
@@ -159,7 +159,10 @@ export default class Controller extends RemoteControlParticipant {
      * Handles remote control stopped.
      * @param {JitsiParticipant} participant the participant that has sent the
      * event
-     * @param {object} event the the remote control event.
+     * @param {Object} event EndpointMessage event from the data channels.
+     * @property {string} type property. The function process only events of
+     * type REMOTE_CONTROL_EVENT_TYPE
+     * @property {RemoteControlEvent} event - the remote control event.
      */
     _handleRemoteControlStoppedEvent(participant, event) {
         if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
