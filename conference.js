@@ -901,43 +901,40 @@ export default {
         return options;
     },
 
-    /**
-     * Start using provided video stream.
-     * Stops previous video stream.
-     * @param {JitsiLocalTrack} [stream] new stream to use or null
-     * @returns {Promise}
-     */
-    useVideoStream (stream) {
-        let promise = Promise.resolve();
-        if (localVideo) {
-            // this calls room.removeTrack internally
-            // so we don't need to remove it manually
-            promise = localVideo.dispose();
-        }
-        localVideo = stream;
 
-        return promise.then(function () {
-            if (stream) {
-                return room.addTrack(stream);
-            }
-        }).then(() => {
-            if (stream) {
-                this.videoMuted = stream.isMuted();
-                this.isSharingScreen = stream.videoType === 'desktop';
+  /**
+   * Start using provided video stream.
+   * Stops previous video stream.
+   * @param {JitsiLocalTrack} [stream] new stream to use or null
+   * @returns {Promise}
+   */
+    useVideoStream (newStream) {
+        return room.replaceTrack(localVideo, newStream)
+            .then(() => {
+                // We call dispose after doing the replace because
+                //  dispose will try and do a new o/a after the
+                //  track removes itself.  Doing it after means
+                //  the JitsiLocalTrack::conference member is already
+                //  cleared, so it won't try and do the o/a
+                if (localVideo) {
+                    localVideo.dispose();
+                }
+                localVideo = newStream;
+                if (newStream) {
+                    this.videoMuted = newStream.isMuted();
+                    this.isSharingScreen = newStream.videoType === 'desktop';
 
-                APP.UI.addLocalStream(stream);
+                    APP.UI.addLocalStream(newStream);
 
-                stream.videoType === 'camera'
-                    && APP.UI.setCameraButtonEnabled(true);
-            } else {
-                this.videoMuted = false;
-                this.isSharingScreen = false;
-            }
-
-            APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
-
-            APP.UI.updateDesktopSharingButtons();
-        });
+                    newStream.videoType === 'camera'
+                        && APP.UI.setCameraButtonEnabled(true);
+                } else {
+                    this.videoMuted = false;
+                    this.isSharingScreen = false;
+                }
+                APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                APP.UI.updateDesktopSharingButtons();
+            });
     },
 
     /**
@@ -946,31 +943,27 @@ export default {
      * @param {JitsiLocalTrack} [stream] new stream to use or null
      * @returns {Promise}
      */
-    useAudioStream (stream) {
-        let promise = Promise.resolve();
-        if (localAudio) {
-            // this calls room.removeTrack internally
-            // so we don't need to remove it manually
-            promise = localAudio.dispose();
-        }
-        localAudio = stream;
-
-        return promise.then(function () {
-            if (stream) {
-                return room.addTrack(stream);
-            }
-        }).then(() => {
-            if (stream) {
-                this.audioMuted = stream.isMuted();
-
-                APP.UI.addLocalStream(stream);
-            } else {
-                this.audioMuted = false;
-            }
-
-            APP.UI.setMicrophoneButtonEnabled(true);
-            APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
-        });
+    useAudioStream (newStream) {
+        return room.replaceTrack(localAudio, newStream)
+            .then(() => {
+                // We call dispose after doing the replace because
+                //  dispose will try and do a new o/a after the
+                //  track removes itself.  Doing it after means
+                //  the JitsiLocalTrack::conference member is already
+                //  cleared, so it won't try and do the o/a
+                if (localAudio) {
+                    localAudio.dispose();
+                }
+                localAudio = newStream;
+                if (newStream) {
+                    this.audioMuted = newStream.isMuted();
+                    APP.UI.addLocalStream(newStream);
+                } else {
+                    this.audioMuted = false;
+                }
+                APP.UI.setMicrophoneButtonEnabled(true);
+                APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
+            });
     },
 
     videoSwitchInProgress: false,
@@ -1344,11 +1337,13 @@ export default {
                     this.deviceChangeListener);
 
             // stop local video
-            if (localVideo)
+            if (localVideo) {
                 localVideo.dispose();
+            }
             // stop local audio
-            if (localAudio)
+            if (localAudio) {
                 localAudio.dispose();
+            }
 
             // show overlay
             APP.UI.showSuspendedOverlay();
