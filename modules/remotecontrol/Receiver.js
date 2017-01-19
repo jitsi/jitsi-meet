@@ -1,4 +1,5 @@
 /* global APP, JitsiMeetJS, interfaceConfig */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 import {DISCO_REMOTE_CONTROL_FEATURE, REMOTE_CONTROL_EVENT_TYPE, EVENT_TYPES,
     PERMISSIONS_ACTIONS} from "../../service/remotecontrol/Constants";
 import RemoteControlParticipant from "./RemoteControlParticipant";
@@ -33,12 +34,14 @@ export default class Receiver extends RemoteControlParticipant {
             this.enabled = enabled;
         }
         if(enabled === true) {
+            logger.log("Remote control receiver enabled.");
             // Announce remote control support.
             APP.connection.addFeature(DISCO_REMOTE_CONTROL_FEATURE, true);
             APP.conference.addConferenceListener(
                 ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 this._remoteControlEventsListener);
         } else {
+            logger.log("Remote control receiver disabled.");
             this._stop(true);
             APP.connection.removeFeature(DISCO_REMOTE_CONTROL_FEATURE);
             APP.conference.removeConferenceListener(
@@ -58,6 +61,7 @@ export default class Receiver extends RemoteControlParticipant {
         if(!this.controller) {
             return;
         }
+        logger.log("Remote control receiver stop.");
         this.controller = null;
         APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
             this._userLeftListener);
@@ -114,6 +118,9 @@ export default class Receiver extends RemoteControlParticipant {
                 return;
             }
             APP.API.sendRemoteControlEvent(remoteControlEvent);
+        } else if(event.type === REMOTE_CONTROL_EVENT_TYPE) {
+            logger.debug("Remote control event is ignored because remote "
+                + "control is disabled", event);
         }
     }
 
@@ -128,6 +135,7 @@ export default class Receiver extends RemoteControlParticipant {
             APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
                 this._userLeftListener);
             this.controller = userId;
+            logger.debug("Remote control permissions granted to: " + userId);
             if(!APP.conference.isSharingScreen) {
                 APP.conference.toggleScreenSharing();
                 APP.conference.screenSharingPromise.then(() => {

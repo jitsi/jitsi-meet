@@ -1,4 +1,5 @@
 /* global APP, config */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 import Controller from "./Controller";
 import Receiver from "./Receiver";
 import {EVENT_TYPES, DISCO_REMOTE_CONTROL_FEATURE}
@@ -28,6 +29,7 @@ class RemoteControl {
             || !APP.conference.isDesktopSharingEnabled) {
             return;
         }
+        logger.log("Initializing remote control.");
         this.initialized = true;
         APP.API.init({
             forceEnable: true,
@@ -67,11 +69,14 @@ class RemoteControl {
      * the wrapper application.
      */
     _onRemoteControlSupported() {
+        logger.log("Remote Control supported.");
         if(!config.disableRemoteControl) {
             this.enabled = true;
             if(this.initialized) {
                 this.receiver.enable(true);
             }
+        } else {
+            logger.log("Remote Control disabled.");
         }
     }
 

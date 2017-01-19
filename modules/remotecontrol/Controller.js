@@ -1,4 +1,5 @@
 /* global $, JitsiMeetJS, APP */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 import * as KeyCodes from "../keycode/keycode";
 import {EVENT_TYPES, REMOTE_CONTROL_EVENT_TYPE, PERMISSIONS_ACTIONS}
     from "../../service/remotecontrol/Constants";
@@ -76,6 +77,7 @@ export default class Controller extends RemoteControlParticipant {
         if(!this.enabled) {
             return Promise.reject(new Error("Remote control is disabled!"));
         }
+        logger.debug("Requsting remote control permissions from: " + userId);
         return new Promise((resolve, reject) => {
             const clearRequest = () => {
                 this.requestedParticipant = null;
@@ -135,6 +137,8 @@ export default class Controller extends RemoteControlParticipant {
             switch(remoteControlEvent.action) {
                 case PERMISSIONS_ACTIONS.grant: {
                     this.controlledParticipant = userId;
+                    logger.debug("Remote control permissions granted to: "
+                        + userId);
                     this._start();
                     return true;
                 }
@@ -170,6 +174,7 @@ export default class Controller extends RemoteControlParticipant {
      * listeners. Disables keyboard events.
      */
     _start() {
+        logger.log("Starting remote control controller.");
         APP.UI.addListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.addConferenceListener(
@@ -191,6 +196,7 @@ export default class Controller extends RemoteControlParticipant {
         if(!this.enabled || this.isCollectingEvents) {
             return;
         }
+        logger.log("Resuming remote control controller.");
         this.isCollectingEvents = true;
         APP.keyboardshortcut.enable(false);
         this.area = $("#largeVideoWrapper");
@@ -230,6 +236,7 @@ export default class Controller extends RemoteControlParticipant {
         if(!this.controlledParticipant) {
             return;
         }
+        logger.log("Stopping remote control controller.");
         APP.UI.removeListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.removeConferenceListener(
@@ -276,6 +283,7 @@ export default class Controller extends RemoteControlParticipant {
         if(!this.controlledParticipant) {
             return;
         }
+        logger.log("Pausing remote control controller.");
         this.isCollectingEvents = false;
         APP.keyboardshortcut.enable(true);
         this.area.off( "mousemove" );
