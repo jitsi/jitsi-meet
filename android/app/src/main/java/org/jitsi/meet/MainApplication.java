@@ -30,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.oblador.vectoricons.VectorIconsPackage(),
                 new com.oney.WebRTCModule.WebRTCModulePackage(),
+                new com.rnimmersive.RNImmersivePackage(),
                 new org.jitsi.meet.audiomode.AudioModePackage()
             );
         }
