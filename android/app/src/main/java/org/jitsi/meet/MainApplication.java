@@ -29,7 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.oblador.vectoricons.VectorIconsPackage(),
-                new com.oney.WebRTCModule.WebRTCModulePackage()
+                new com.oney.WebRTCModule.WebRTCModulePackage(),
+                new org.jitsi.meet.audiomode.AudioModePackage()
             );
         }
     };
