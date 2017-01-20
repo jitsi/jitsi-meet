@@ -1,8 +1,7 @@
 import { Platform } from '../react';
 
 import {
-    MobileBrowserPage,
-    UnsupportedBrowserPage
+    MobileBrowserPage
 } from '../../unsupported-browser';
 
 /**
@@ -32,19 +31,6 @@ const RULES = [
 
         if ((OS === 'android' || OS === 'ios') && !mobileBrowserPageIsShown) {
             return MobileBrowserPage;
-        }
-    },
-
-    /**
-     * This rule describes case when user opens application using web browser
-     * that doesn't support WebRTC or Temasys plugin should be installed.
-     *
-     * @returns {UnsupportedBrowserPage|void} If the rule is satisfied
-     * then we should intercept existing component by UnsupportedBrowserPage.
-     */
-    () => {
-        if (true) {
-            return UnsupportedBrowserPage;
         }
     }
 ];
