@@ -246,9 +246,12 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
             {user: this.user.getDisplayName()
                 || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME}
         );
-        let pinnedId = this.VideoLayout.getPinnedId();
-        if(pinnedId !== this.id) {
-            this.VideoLayout.handleVideoThumbClicked(this.id);
+        if(result === true) {//the remote control permissions has been granted
+            // pin the controlled participant
+            let pinnedId = this.VideoLayout.getPinnedId();
+            if(pinnedId !== this.id) {
+                this.VideoLayout.handleVideoThumbClicked(this.id);
+            }
         }
     }, error => {
         logger.error(error);
