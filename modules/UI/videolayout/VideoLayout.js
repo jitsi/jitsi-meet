@@ -1188,6 +1188,14 @@ var VideoLayout = {
     _setRemoteControlProperties (user, remoteVideo) {
         APP.remoteControl.checkUserRemoteControlSupport(user).then(result =>
             remoteVideo.setRemoteControlSupport(result));
+    },
+
+    /**
+     * Returns the wrapper jquery selector for the largeVideo
+     * @returns {JQuerySelector} the wrapper jquery selector for the largeVideo
+     */
+    getLargeVideoWrapper() {
+        return this.getCurrentlyOnLargeContainer().$wrapper;
     }
 };
 

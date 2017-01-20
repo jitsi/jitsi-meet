@@ -68,15 +68,18 @@ export default class Controller extends RemoteControlParticipant {
      * Requests permissions from the remote control receiver side.
      * @param {string} userId the user id of the participant that will be
      * requested.
+     * @param {JQuerySelector} eventCaptureArea the area that is going to be
+     * used mouse and keyboard event capture.
      * @returns {Promise<boolean>} - resolve values:
      * true - accept
      * false - deny
      * null - the participant has left.
      */
-    requestPermissions(userId) {
+    requestPermissions(userId, eventCaptureArea) {
         if(!this.enabled) {
             return Promise.reject(new Error("Remote control is disabled!"));
         }
+        this.area = eventCaptureArea;// $("#largeVideoWrapper")
         logger.debug("Requsting remote control permissions from: " + userId);
         return new Promise((resolve, reject) => {
             const clearRequest = () => {
@@ -134,6 +137,9 @@ export default class Controller extends RemoteControlParticipant {
         if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
             && remoteControlEvent.type === EVENT_TYPES.permissions
             && userId === this.requestedParticipant) {
+            if(remoteControlEvent.action !== PERMISSIONS_ACTIONS.grant) {
+                this.area = null;
+            }
             switch(remoteControlEvent.action) {
                 case PERMISSIONS_ACTIONS.grant: {
                     this.controlledParticipant = userId;
@@ -202,7 +208,6 @@ export default class Controller extends RemoteControlParticipant {
         logger.log("Resuming remote control controller.");
         this.isCollectingEvents = true;
         APP.keyboardshortcut.enable(false);
-        this.area = $("#largeVideoWrapper");
         this.area.mousemove(event => {
             const position = this.area.position();
             this._sendRemoteControlEvent(this.controlledParticipant, {
@@ -249,6 +254,7 @@ export default class Controller extends RemoteControlParticipant {
             this._userLeftListener);
         this.controlledParticipant = null;
         this.pause();
+        this.area = null;
         APP.UI.messageHandler.openMessageDialog(
             "dialog.remoteControlTitle",
             "dialog.remoteControlStopMessage"

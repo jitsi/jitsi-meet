@@ -233,7 +233,8 @@ RemoteVideo.prototype.setRemoteControlSupport = function(isSupported = false) {
  * Requests permissions for remote control session.
  */
 RemoteVideo.prototype._requestRemoteControlPermissions = function () {
-    APP.remoteControl.controller.requestPermissions(this.id).then(result => {
+    APP.remoteControl.controller.requestPermissions(
+        this.id, this.VideoLayout.getLargeVideoWrapper()).then(result => {
         if(result === null) {
             return;
         }
