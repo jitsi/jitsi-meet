@@ -116,6 +116,10 @@ class API {
             return;
 
         enabled = true;
+
+        if(!postis) {
+            this._initPostis();
+        }
     }
 
     /**
@@ -218,7 +222,7 @@ class API {
 
     /**
      * Sends remote control event.
-     * @param {RemoteControlEvent} event the remote control event. 
+     * @param {RemoteControlEvent} event the remote control event.
      */
     sendRemoteControlEvent(event) {
         sendMessage({method: "remote-control-event", params: event});
