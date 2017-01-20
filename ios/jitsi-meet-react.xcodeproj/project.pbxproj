@@ -206,7 +206,6 @@
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
-		0B42DFAC1E2FD90700111B12 /* AudioMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioMode.h; path = app/AudioMode.h; sourceTree = "<group>"; };
 		0B42DFAD1E2FD90700111B12 /* AudioMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioMode.m; path = app/AudioMode.m; sourceTree = "<group>"; };
 		0EA8C046B2BF46279796F07D /* libKCKeepAwake.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libKCKeepAwake.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
@@ -226,7 +225,6 @@
 		821D8ABD506944B4BDBB069B /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		B30EF2301DC0ED7C00690F45 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
-		B3A9D0231E0481E10009343D /* POSIX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = POSIX.h; path = app/POSIX.h; sourceTree = "<group>"; };
 		B3A9D0241E0481E10009343D /* POSIX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = POSIX.m; path = app/POSIX.m; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* jitsi-meet-react.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "jitsi-meet-react.entitlements"; sourceTree = "<group>"; };
 		B96AF9B6FBC0453798399985 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -351,14 +349,12 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				0B42DFAC1E2FD90700111B12 /* AudioMode.h */,
 				0B42DFAD1E2FD90700111B12 /* AudioMode.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				B3A9D0231E0481E10009343D /* POSIX.h */,
 				B3A9D0241E0481E10009343D /* POSIX.m */,
 			);
 			name = app;
@@ -402,6 +398,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */,
 				BF96438F1C34FBEB00B0BBDF /* libc.tbd */,
 				BF9643911C34FBF100B0BBDF /* libsqlite3.tbd */,
 				BF9643931C34FBF900B0BBDF /* libstdc++.tbd */,
@@ -417,7 +414,6 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				22418656B14845609F953A42 /* RNVectorIcons.xcodeproj */,
-				5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";

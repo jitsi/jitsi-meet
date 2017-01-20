@@ -1,8 +1,15 @@
-#import "AudioMode.h"
+#import "RCTBridgeModule.h"
 #import "RCTLog.h"
 
+#import <AVFoundation/AVFoundation.h>
 
-@implementation AudioMode
+@interface AudioMode : NSObject<RCTBridgeModule>
+@end
+
+@implementation AudioMode {
+    NSString *_category;
+    NSString *_mode;
+}
 
 RCT_EXPORT_MODULE();
 
@@ -12,20 +19,24 @@ typedef enum {
     kAudioModeVideoCall
 } JitsiMeetAudioMode;
 
-- (instancetype)init
-{
+- (NSDictionary *)constantsToExport {
+    return @{
+        @"AUDIO_CALL" : [NSNumber numberWithInt: kAudioModeAudioCall],
+        @"DEFAULT"    : [NSNumber numberWithInt: kAudioModeDefault],
+        @"VIDEO_CALL" : [NSNumber numberWithInt: kAudioModeVideoCall]
+    };
+};
+
+- (instancetype)init {
     self = [super init];
     if (self) {
-        _initialized = NO;
         _category = nil;
         _mode = nil;
-        _session = [AVAudioSession sharedInstance];
     }
     return self;
 }
 
-- (dispatch_queue_t)methodQueue
-{
+- (dispatch_queue_t)methodQueue {
     // Make sure all our methods run in the main thread.  The route change
     // notification runs there so this will make sure it will only be fired
     // after our changes have been applied (when we cause them, that is).
@@ -33,96 +44,89 @@ typedef enum {
 }
 
 - (void)routeChanged:(NSNotification*)notification {
-    NSDictionary *dict = notification.userInfo;
-    NSInteger reason = [[dict valueForKey:AVAudioSessionRouteChangeReasonKey]
-                        integerValue];
+    NSInteger reason
+        = [[notification.userInfo
+                valueForKey:AVAudioSessionRouteChangeReasonKey]
+            integerValue];
+
     switch (reason) {
-    case AVAudioSessionRouteChangeReasonCategoryChange: {
-        // The category has changed, check if it's the one we want and adjust
-        // as needed.
-        BOOL success;
-        NSError *error;
+    case AVAudioSessionRouteChangeReasonCategoryChange:
+        // The category has changed. Check if it's the one we want and adjust as
+        // needed.
+        [self setCategory:_category mode:_mode error:nil];
+        break;
 
-        if (_session.category != _category) {
-            success = [_session setCategory: _category error: &error];
-            if (!success || error) {
-                RCTLogInfo(@"Error overriding the desired session category");
-            }
-        }
-
-        if (_session.mode != _mode) {
-            success = [_session setMode: _mode error: &error];
-            if (!success || error) {
-                RCTLogInfo(@"Error overriding the desired session mode");
-            }
-        }
-    }
     default:
-        // Do nothing
+        // Do nothing.
         break;
     }
 }
 
-- (NSDictionary *)constantsToExport
-{
-    return @{ @"AUDIO_CALL" : [NSNumber numberWithInt: kAudioModeAudioCall],
-              @"VIDEO_CALL" : [NSNumber numberWithInt: kAudioModeVideoCall],
-              @"DEFAULT"    : [NSNumber numberWithInt: kAudioModeDefault]
-    };
-};
+- (BOOL)setCategory:(NSString *)category
+               mode:(NSString *)mode
+              error:(NSError * _Nullable *)outError {
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    if (session.category != category
+            && ![session setCategory:category error:outError]) {
+        RCTLogError(@"Failed to (re)apply specified AVAudioSession category!");
+        return NO;
+    }
+
+    if (session.mode != mode && ![session setMode:mode error:outError]) {
+        RCTLogError(@"Failed to (re)apply specified AVAudioSession mode!");
+        return NO;
+    }
+
+    return YES;
+}
 
 RCT_EXPORT_METHOD(setMode:(int)mode
                   resolve:(RCTPromiseResolveBlock)resolve
                    reject:(RCTPromiseRejectBlock)reject) {
-    NSError *error;
-    BOOL success;
     NSString *avCategory;
     NSString *avMode;
+    NSError *error;
 
     switch (mode) {
     case kAudioModeAudioCall:
         avCategory = AVAudioSessionCategoryPlayAndRecord;
         avMode = AVAudioSessionModeVoiceChat;
         break;
-    case kAudioModeVideoCall:
-        avCategory = AVAudioSessionCategoryPlayAndRecord;
-        avMode = AVAudioSessionModeVideoChat;
-        break;
     case kAudioModeDefault:
         avCategory = AVAudioSessionCategorySoloAmbient;
         avMode = AVAudioSessionModeDefault;
+        break;
+    case kAudioModeVideoCall:
+        avCategory = AVAudioSessionCategoryPlayAndRecord;
+        avMode = AVAudioSessionModeVideoChat;
         break;
     default:
         reject(@"setMode", @"Invalid mode", nil);
         return;
     }
 
-    // Configure AVAudioSession category
-    success = [_session setCategory: avCategory error: &error];
-    if (!success || error) {
+    if (![self setCategory:avCategory mode:avMode error:&error] || error) {
         reject(@"setMode", error.localizedDescription, error);
         return;
     }
 
-    // Configure AVAudioSession mode
-    success = [_session setMode: avMode error: &error];
-    if (!success || error) {
-        reject(@"setMode", error.localizedDescription, error);
-        return;
+    // Even though the specified category and mode were successfully set, the
+    // AVAudioSession is a singleton and other parts of the application such as
+    // WebRTC may undo the settings. Make sure that the settings are reapplied
+    // upon undoes.
+    if (!_category || !_mode) {
+        [[NSNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(routeChanged:)
+                   name:AVAudioSessionRouteChangeNotification
+                 object:nil];
     }
 
-    // Save the desired mode and category
+    // Save the desired/specified category and mode so that they may be
+    // reapplied (upon undoes as described above).
     _category = avCategory;
     _mode = avMode;
-
-    // Initialize audio route changes observer if needed
-    if (!_initialized) {
-        [[NSNotificationCenter defaultCenter] addObserver: self
-            selector: @selector(routeChanged:)
-            name: AVAudioSessionRouteChangeNotification
-            object: nil];
-        _initialized = YES;
-    }
 
     resolve(nil);
 }

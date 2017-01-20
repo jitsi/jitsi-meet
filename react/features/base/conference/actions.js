@@ -125,26 +125,6 @@ function _conferenceJoined(conference) {
 }
 
 /**
- * Signals the intention of the application to have the local participant leave
- * a specific conference. Similar in fashion to CONFERENCE_LEFT. Contrary to it
- * though, it's not guaranteed because CONFERENCE_LEFT may be triggered by
- * lib-jitsi-meet and not the application.
- *
- * @param {string} room - The JitsiConference instance which will
- * be left by the local participant.
- * @returns {{
- *      type: CONFERENCE_WILL_JOIN,
- *      room: string
- *  }}
- */
-function _conferenceWillJoin(room) {
-    return {
-        type: CONFERENCE_WILL_JOIN,
-        room
-    };
-}
-
-/**
  * Signals that a specific conference has been left.
  *
  * @param {JitsiConference} conference - The JitsiConference instance which was
@@ -158,6 +138,25 @@ function _conferenceLeft(conference) {
     return {
         type: CONFERENCE_LEFT,
         conference
+    };
+}
+
+/**
+ * Signals the intention of the application to have the local participant join a
+ * conference with a specific room (name). Similar in fashion
+ * to CONFERENCE_JOINED.
+ *
+ * @param {string} room - The room (name) which identifies the conference the
+ * local participant will (try to) join.
+ * @returns {{
+ *      type: CONFERENCE_WILL_JOIN,
+ *      room: string
+ *  }}
+ */
+function _conferenceWillJoin(room) {
+    return {
+        type: CONFERENCE_WILL_JOIN,
+        room
     };
 }
 
@@ -201,15 +200,14 @@ export function createConference() {
             throw new Error('Cannot join conference without room name');
         }
 
-        // XXX Lib-jitsi-meet does not accept uppercase letters.
-        const _room = room.toLowerCase();
-
-        dispatch(_conferenceWillJoin(_room));
+        dispatch(_conferenceWillJoin(room));
 
         // TODO Take options from config.
         const conference
             = connection.initJitsiConference(
-                    _room,
+
+                    // XXX Lib-jitsi-meet does not accept uppercase letters.
+                    room.toLowerCase(),
                     { openSctp: true });
 
         _addConferenceListeners(conference, dispatch);

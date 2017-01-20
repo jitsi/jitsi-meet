@@ -1,9 +1,12 @@
-#import "POSIX.h"
+#import "RCTBridgeModule.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
+@interface POSIX : NSObject<RCTBridgeModule>
+@end
 
 @implementation POSIX
 
