@@ -100,7 +100,7 @@ class MobileBrowserPage extends Component {
         const textClasses = `${blockPrefix}__text ${blockPrefix}__text_small`;
         let primaryButtonClasses = `${blockPrefix}__button`;
 
-        primaryButtonClasses += `${blockPrefix}__button_primary`;
+        primaryButtonClasses += ` ${blockPrefix}__button_primary`;
 
         return (
             <div className = { blockPrefix }>

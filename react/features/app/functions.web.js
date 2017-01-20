@@ -2,10 +2,9 @@
 
 import { isRoomValid } from '../base/conference';
 import { RouteRegistry } from '../base/navigator';
-import { Platform } from '../base/react';
 import { Conference } from '../conference';
-import { MobileBrowserPage } from '../unsupported-browser';
 import { WelcomePage } from '../welcome';
+import { interceptComponent } from '../base/util';
 
 import URLProcessor from '../../../modules/config/URLProcessor';
 import KeyboardShortcut
@@ -27,21 +26,19 @@ export { _getRoomAndDomainFromUrlString } from './functions.native';
  * @returns {Route}
  */
 export function _getRouteToRender(stateOrGetState) {
-    const OS = Platform.OS;
     const state
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
 
     // If mobile browser page was shown, there is no need to show it again.
-    const { mobileBrowserPageIsShown } = state['features/unsupported-browser'];
     const { room } = state['features/base/conference'];
     const component = isRoomValid(room) ? Conference : WelcomePage;
     const route = RouteRegistry.getRouteByComponent(component);
 
-    if ((OS === 'android' || OS === 'ios') && !mobileBrowserPageIsShown) {
-        route.component = MobileBrowserPage;
-    }
+    // Intercepts route components if any of component interceptor rules
+    // is satisfied.
+    route.component = interceptComponent(state, component);
 
     return route;
 }

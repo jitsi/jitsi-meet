@@ -98,7 +98,9 @@ export default class UnsupportedBrowserPage extends Component {
         }
 
         return (
-            <div className = 'browser'>
+            <div
+                className = 'browser'
+                key = { browser.name }>
                 <div className = 'browser__text'>
                     { browser.title }
                     { pluginHtml }
