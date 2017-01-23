@@ -43,11 +43,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>Participate in conferences with video.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string></string>
+	<string>Participante in conferences with audio.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>jitsi.ttf</string>
