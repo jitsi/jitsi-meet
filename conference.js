@@ -14,11 +14,11 @@ import {reportError} from './modules/util/helpers';
 
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
+import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import analytics from './modules/analytics/analytics';
 
-// For remote control testing:
-// import remoteControlReceiver from './modules/remotecontrol/Receiver';
+import EventEmitter from "events";
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -30,6 +30,8 @@ const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
 const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
+
+const eventEmitter = new EventEmitter();
 
 let room, connection, localAudio, localVideo;
 
@@ -1783,8 +1785,8 @@ export default {
      * requested
      */
     hangup (requestFeedback = false) {
+        eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
         APP.UI.hideRingOverLay();
-        APP.remoteControl.receiver.enable(false);
         let requestFeedbackPromise = requestFeedback
                 ? APP.UI.requestFeedbackOnHangup()
                 // false - because the thank you dialog shouldn't be displayed
@@ -1846,5 +1848,24 @@ export default {
      */
     sendEndpointMessage (to, payload) {
         room.sendEndpointMessage(to, payload);
+    },
+
+    /**
+     * Adds new listener.
+     * @param {String} eventName the name of the event
+     * @param {Function} listener the listener.
+     */
+    addListener (eventName, listener) {
+        eventEmitter.addListener(eventName, listener);
+    },
+
+    /**
+     * Removes listener.
+     * @param {String} eventName the name of the event that triggers the
+     * listener
+     * @param {Function} listener the listener.
+     */
+    removeListener (eventName, listener) {
+        eventEmitter.removeListener(eventName, listener);
     }
 };

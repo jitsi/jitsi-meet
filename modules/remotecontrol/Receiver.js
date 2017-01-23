@@ -3,6 +3,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 import {DISCO_REMOTE_CONTROL_FEATURE, REMOTE_CONTROL_EVENT_TYPE, EVENT_TYPES,
     PERMISSIONS_ACTIONS} from "../../service/remotecontrol/Constants";
 import RemoteControlParticipant from "./RemoteControlParticipant";
+import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 
@@ -23,6 +24,7 @@ export default class Receiver extends RemoteControlParticipant {
         this._remoteControlEventsListener
             = this._onRemoteControlEvent.bind(this);
         this._userLeftListener = this._onUserLeft.bind(this);
+        this._hangupListener = this._onHangup.bind(this);
     }
 
     /**
@@ -40,6 +42,8 @@ export default class Receiver extends RemoteControlParticipant {
             APP.conference.addConferenceListener(
                 ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 this._remoteControlEventsListener);
+            APP.conference.addListener(JitsiMeetConferenceEvents.BEFORE_HANGUP,
+                this._hangupListener);
         } else {
             logger.log("Remote control receiver disabled.");
             this._stop(true);
@@ -47,6 +51,9 @@ export default class Receiver extends RemoteControlParticipant {
             APP.conference.removeConferenceListener(
                 ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 this._remoteControlEventsListener);
+            APP.conference.removeListener(
+                JitsiMeetConferenceEvents.BEFORE_HANGUP,
+                this._hangupListener);
         }
     }
 
@@ -173,5 +180,12 @@ export default class Receiver extends RemoteControlParticipant {
         if(this.controller === id) {
             this._stop();
         }
+    }
+
+    /**
+     * Handles hangup events. Disables the receiver.
+     */
+    _onHangup() {
+        this.enable(false);
     }
 }
