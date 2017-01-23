@@ -327,7 +327,8 @@ export default class Controller extends RemoteControlParticipant {
 
     /**
      * Returns the id of the requested participant
-     * @returns {string} this.requestedParticipant
+     * @returns {string} this.requestedParticipant.
+     * NOTE: This id should be the result of JitsiParticipant.getId() call.
      */
     getRequestedParticipant() {
         return this.requestedParticipant;
