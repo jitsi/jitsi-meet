@@ -13,8 +13,8 @@
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="22" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="23" />
 
     <application
       android:allowBackup="true"
