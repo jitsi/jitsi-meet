@@ -126,7 +126,7 @@ export default class Receiver extends RemoteControlParticipant {
             }
             APP.API.sendRemoteControlEvent(remoteControlEvent);
         } else if(event.type === REMOTE_CONTROL_EVENT_TYPE) {
-            logger.debug("Remote control event is ignored because remote "
+            logger.log("Remote control event is ignored because remote "
                 + "control is disabled", event);
         }
     }
@@ -142,7 +142,7 @@ export default class Receiver extends RemoteControlParticipant {
             APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
                 this._userLeftListener);
             this.controller = userId;
-            logger.debug("Remote control permissions granted to: " + userId);
+            logger.log("Remote control permissions granted to: " + userId);
             if(!APP.conference.isSharingScreen) {
                 APP.conference.toggleScreenSharing();
                 APP.conference.screenSharingPromise.then(() => {

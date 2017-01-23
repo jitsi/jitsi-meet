@@ -80,7 +80,7 @@ export default class Controller extends RemoteControlParticipant {
             return Promise.reject(new Error("Remote control is disabled!"));
         }
         this.area = eventCaptureArea;// $("#largeVideoWrapper")
-        logger.debug("Requsting remote control permissions from: " + userId);
+        logger.log("Requsting remote control permissions from: " + userId);
         return new Promise((resolve, reject) => {
             const clearRequest = () => {
                 this.requestedParticipant = null;
@@ -143,7 +143,7 @@ export default class Controller extends RemoteControlParticipant {
             switch(remoteControlEvent.action) {
                 case PERMISSIONS_ACTIONS.grant: {
                     this.controlledParticipant = userId;
-                    logger.debug("Remote control permissions granted to: "
+                    logger.log("Remote control permissions granted to: "
                         + userId);
                     this._start();
                     return true;
