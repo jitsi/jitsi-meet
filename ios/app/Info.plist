@@ -47,7 +47,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Participante in conferences with audio.</string>
+	<string>Participate in conferences with audio.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>jitsi.ttf</string>
