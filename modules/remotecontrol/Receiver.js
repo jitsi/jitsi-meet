@@ -32,9 +32,10 @@ export default class Receiver extends RemoteControlParticipant {
      * @param {boolean} enabled the new state.
      */
     enable(enabled) {
-        if(this.enabled !== enabled) {
-            this.enabled = enabled;
+        if(this.enabled === enabled) {
+            return;
         }
+        this.enabled = enabled;
         if(enabled === true) {
             logger.log("Remote control receiver enabled.");
             // Announce remote control support.
