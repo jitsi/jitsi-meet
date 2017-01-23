@@ -73,10 +73,6 @@ class TokenData{
 
         this.jwt = jwt;
 
-        //External API settings
-        this.externalAPISettings = {
-            forceEnable: true
-        };
         this._decode();
         // Use JWT param as token if there is not other token set and if the
         // iss field is not anonymous. If you want to pass data with JWT token

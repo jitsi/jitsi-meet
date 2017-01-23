@@ -156,8 +156,8 @@
         "kick": "Kick out",
         "muted": "Muted",
         "domute": "Mute",
-        "flip": "Flip"
-
+        "flip": "Flip",
+        "remoteControl": "Remote control"
     },
     "connectionindicator":
     {
@@ -316,7 +316,12 @@
         "externalInstallationMsg": "You need to install our desktop sharing extension.",
         "muteParticipantTitle": "Mute this participant?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
-        "muteParticipantButton": "Mute"
+        "muteParticipantButton": "Mute",
+        "remoteControlTitle": "Remote Control",
+        "remoteControlDeniedMessage": "__user__ rejected your remote control request!",
+        "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
+        "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
+        "remoteControlStopMessage": "The remote control session ended!"
     },
     "email":
     {

@@ -23,7 +23,11 @@ export function init() {
 
     APP.keyboardshortcut = KeyboardShortcut;
     APP.tokenData = getTokenData();
-    APP.API.init(APP.tokenData.externalAPISettings);
+
+    // Force enable the API if jwt token is passed because most probably
+    // jitsi meet is displayed inside of wrapper that will need to communicate
+    // with jitsi meet.
+    APP.API.init(APP.tokenData.jwt ? { forceEnable: true } : undefined);
 
     APP.translation.init(settings.getLanguage());
 }

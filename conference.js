@@ -14,8 +14,11 @@ import {reportError} from './modules/util/helpers';
 
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
+import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import analytics from './modules/analytics/analytics';
+
+import EventEmitter from "events";
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -27,6 +30,8 @@ const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
 const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
+
+const eventEmitter = new EventEmitter();
 
 let room, connection, localAudio, localVideo;
 
@@ -485,10 +490,11 @@ export default {
             }).then(([tracks, con]) => {
                 logger.log('initialized with %s local tracks', tracks.length);
                 APP.connection = connection = con;
-                this._bindConnectionFailedHandler(con);
-                this._createRoom(tracks);
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
+                APP.remoteControl.init();
+                this._bindConnectionFailedHandler(con);
+                this._createRoom(tracks);
 
                 if (UIUtil.isButtonEnabled('contacts')
                     && !interfaceConfig.filmStripOnly) {
@@ -981,7 +987,7 @@ export default {
         let externalInstallation = false;
 
         if (shareScreen) {
-            createLocalTracks({
+            this.screenSharingPromise = createLocalTracks({
                 devices: ['desktop'],
                 desktopSharingExtensionExternalInstallation: {
                     interval: 500,
@@ -1070,7 +1076,10 @@ export default {
                     dialogTitleKey, dialogTxt, false);
             });
         } else {
-            createLocalTracks({ devices: ['video'] }).then(
+            APP.remoteControl.receiver.stop();
+            this.screenSharingPromise = createLocalTracks(
+                { devices: ['video'] })
+            .then(
                 ([stream]) => this.useVideoStream(stream)
             ).then(() => {
                 this.videoSwitchInProgress = false;
@@ -1102,6 +1111,8 @@ export default {
             }
         );
 
+        room.on(ConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
+            user => APP.UI.onUserFeaturesChanged(user));
         room.on(ConferenceEvents.USER_JOINED, (id, user) => {
             if (user.isHidden())
                 return;
@@ -1600,12 +1611,23 @@ export default {
     },
     /**
     * Adds any room listener.
-    * @param eventName one of the ConferenceEvents
-    * @param callBack the function to be called when the event occurs
+    * @param {string} eventName one of the ConferenceEvents
+    * @param {Function} listener the function to be called when the event
+    * occurs
     */
-    addConferenceListener(eventName, callBack) {
-        room.on(eventName, callBack);
+    addConferenceListener(eventName, listener) {
+        room.on(eventName, listener);
     },
+
+    /**
+    * Removes any room listener.
+    * @param {string} eventName one of the ConferenceEvents
+    * @param {Function} listener the listener to be removed.
+    */
+    removeConferenceListener(eventName, listener) {
+        room.off(eventName, listener);
+    },
+
     /**
      * Inits list of current devices and event listener for device change.
      * @private
@@ -1763,6 +1785,7 @@ export default {
      * requested
      */
     hangup (requestFeedback = false) {
+        eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
         APP.UI.hideRingOverLay();
         let requestFeedbackPromise = requestFeedback
                 ? APP.UI.requestFeedbackOnHangup()
@@ -1813,5 +1836,36 @@ export default {
         APP.settings.setAvatarUrl(url);
         APP.UI.setUserAvatarUrl(room.myUserId(), url);
         sendData(commands.AVATAR_URL, url);
+    },
+
+    /**
+     * Sends a message via the data channel.
+     * @param {string} to the id of the endpoint that should receive the
+     * message. If "" - the message will be sent to all participants.
+     * @param {object} payload the payload of the message.
+     * @throws NetworkError or InvalidStateError or Error if the operation
+     * fails.
+     */
+    sendEndpointMessage (to, payload) {
+        room.sendEndpointMessage(to, payload);
+    },
+
+    /**
+     * Adds new listener.
+     * @param {String} eventName the name of the event
+     * @param {Function} listener the listener.
+     */
+    addListener (eventName, listener) {
+        eventEmitter.addListener(eventName, listener);
+    },
+
+    /**
+     * Removes listener.
+     * @param {String} eventName the name of the event that triggers the
+     * listener
+     * @param {Function} listener the listener.
+     */
+    removeListener (eventName, listener) {
+        eventEmitter.removeListener(eventName, listener);
     }
 };

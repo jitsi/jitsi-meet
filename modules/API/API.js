@@ -55,7 +55,9 @@ function initCommands() {
             APP.conference.toggleScreenSharing.bind(APP.conference),
         "video-hangup": () => APP.conference.hangup(),
         "email": APP.conference.changeLocalEmail,
-        "avatar-url": APP.conference.changeLocalAvatarUrl
+        "avatar-url": APP.conference.changeLocalAvatarUrl,
+        "remote-control-event": event =>
+            APP.remoteControl.onRemoteControlAPIEvent(event)
     };
     Object.keys(commands).forEach(function (key) {
         postis.listen(key, args => commands[key](...args));
@@ -94,7 +96,13 @@ function triggerEvent (name, object) {
     }
 }
 
-export default {
+class API {
+    /**
+     * Constructs new instance
+     * @constructor
+     */
+    constructor() { }
+
     /**
      * Initializes the APIConnector. Setups message event listeners that will
      * receive information from external applications that embed Jitsi Meet.
@@ -108,6 +116,17 @@ export default {
             return;
 
         enabled = true;
+
+        if(!postis) {
+            this._initPostis();
+        }
+    }
+
+    /**
+     * initializes postis library.
+     * @private
+     */
+    _initPostis() {
         let postisOptions = {
             window: target
         };
@@ -116,7 +135,7 @@ export default {
                 = "jitsi_meet_external_api_" + jitsi_meet_external_api_id;
         postis = postisInit(postisOptions);
         initCommands();
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that message was sent.
@@ -124,7 +143,7 @@ export default {
      */
     notifySendingChatMessage (body) {
         triggerEvent("outgoing-message", {"message": body});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -143,7 +162,7 @@ export default {
             "incoming-message",
             {"from": id, "nick": nick, "message": body, "stamp": ts}
         );
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -152,7 +171,7 @@ export default {
      */
     notifyUserJoined (id) {
         triggerEvent("participant-joined", {id});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -161,7 +180,7 @@ export default {
      */
     notifyUserLeft (id) {
         triggerEvent("participant-left", {id});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -171,7 +190,7 @@ export default {
      */
     notifyDisplayNameChanged (id, displayName) {
         triggerEvent("display-name-change", {id, displayname: displayName});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -181,7 +200,7 @@ export default {
      */
     notifyConferenceJoined (room) {
         triggerEvent("video-conference-joined", {roomName: room});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -191,7 +210,7 @@ export default {
      */
     notifyConferenceLeft (room) {
         triggerEvent("video-conference-left", {roomName: room});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -199,13 +218,23 @@ export default {
      */
     notifyReadyToClose () {
         triggerEvent("video-ready-to-close", {});
-    },
+    }
+
+    /**
+     * Sends remote control event.
+     * @param {RemoteControlEvent} event the remote control event.
+     */
+    sendRemoteControlEvent(event) {
+        sendMessage({method: "remote-control-event", params: event});
+    }
 
     /**
      * Removes the listeners.
      */
-    dispose: function () {
+    dispose () {
         if(enabled)
             postis.destroy();
     }
-};
+}
+
+export default new API();
