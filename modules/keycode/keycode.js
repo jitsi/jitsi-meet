@@ -1,6 +1,6 @@
 /**
  * Enumerates the supported keys.
- * NOTE: The maps represents actual keys on the keyboard not chars.
+ * NOTE: The maps represents physical keys on the keyboard, not chars.
  * @readonly
  * @enum {string}
  */
