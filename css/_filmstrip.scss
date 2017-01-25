@@ -70,7 +70,7 @@
             display: none;
             position: relative;
             background-size: contain;
-            border: $thumbnailVideoBorder solid $thumbnailBorderColor;
+            border: $thumbnailVideoBorder solid transparent;
             border-radius: $borderRadius;
             margin: 0 $thumbnailVideoMargin;
 
