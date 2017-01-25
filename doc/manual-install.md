@@ -161,7 +161,6 @@ Checkout and configure Jitsi Meet:
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
 mv jitsi-meet/ jitsi.example.com
-npm install -g browserify
 npm install
 make
 ```
