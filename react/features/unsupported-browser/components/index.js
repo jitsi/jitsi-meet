@@ -1,2 +1,4 @@
-export { default as MobileBrowserPage } from './MobileBrowserPage';
-export { default as UnsupportedBrowserPage } from './UnsupportedBrowserPage';
+export { default as UnsupportedDesktopBrowser }
+    from './UnsupportedDesktopBrowser';
+export { default as UnsupportedMobileBrowser }
+    from './UnsupportedMobileBrowser';

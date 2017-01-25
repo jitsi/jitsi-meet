@@ -1,10 +1,10 @@
-.browser {
-    display: inline-block;
-    margin: 1em 7px;
-    width: 138px;
-    vertical-align: middle;
+.supported-browser {
     color: #929391;
+    display: inline-block;
     font-size: 20px;
+    margin: 1em 7px;
+    vertical-align: middle;
+    width: 138px;
 
     &__button {
         background-color: #62c82a;
@@ -12,11 +12,11 @@
         border-radius: 10px;
         color: #FFFFFF;
         font-size: 12px;
+        height: 26px;
+        margin: 15px auto 0px auto;
+        padding-top: 13px;
         text-align: center;
         width: 115px;
-        height: 26px;
-        padding-top: 13px;
-        margin: 15px auto 0px auto;
     }
 
     &__link {
@@ -45,39 +45,39 @@
         margin: 20px auto 0px auto;
 
         &_chrome {
-            width: 78px;
-            height: 78px;
             background-image: url('../../images/chrome.png');
+            height: 78px;
+            width: 78px;
         }
 
         &_chromium {
-            width: 77px;
-            height: 78px;
             background-image: url('../../images/chromium.png');
+            height: 78px;
+            width: 77px;
         }
 
         &_firefox {
-            width: 86px;
-            height: 80px;
             background-image: url('../../images/firefox.png');
+            height: 80px;
+            width: 86px;
         }
 
         &_opera {
-            width: 73px;
-            height: 78px;
             background-image: url('../../images/opera.png');
+            height: 78px;
+            width: 73px;
         }
 
         &_ie {
-            width: 80px;
-            height: 78px;
             background-image: url('../../images/ie.png');
+            height: 78px;
+            width: 80px;
         }
 
         &_safari {
-            width: 78px;
-            height: 79px;
             background-image: url('../../images/safari.png');
+            height: 79px;
+            width: 78px;
         }
     }
 
@@ -91,30 +91,30 @@
     }
 
     &__tile {
-        width: 138px;
-        height: 163px;
-        margin-top: 5px;
         background-color: #e8e8e8;
         border: 1px solid #cfcfcf;
         border-radius: 10px;
+        height: 163px;
+        margin-top: 5px;
+        width: 138px;
     }
 }
 
-.unsupported-browser {
+.unsupported-desktop-browser {
     display: block;
-    position: absolute;
-    width:500px;
     height: 565px;
-    overflow:hidden;
-    text-align: center;
     margin: auto;
+    overflow:hidden;
+    position: absolute;
+    text-align: center;
     top: 0; left: 0; bottom: 0; right: 0;
+    width:500px;
 
     &__page {
         display:inline-block;
         font-size: 28px;
-        vertical-align:middle;
         padding-top: 25px;
+        vertical-align:middle;
     }
 
     &__title {
@@ -123,10 +123,10 @@
     }
 
     &-wrapper {
+        background: #fff;
         display: block;
+        height: 100%;
         position: absolute;
         width: 100%;
-        height: 100%;
-        background: #fff;
     }
 }

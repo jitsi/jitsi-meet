@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { appNavigate } from '../../app';
 import { Platform } from '../../base/react';
 
-import { appNavigate } from '../../app';
 import { mobileBrowserPageIsShown } from '../actions';
 
 /**
@@ -18,12 +18,21 @@ const URLS = {
 /**
  * React component representing mobile browser page.
  *
- * @class MobileBrowserPage
+ * @class UnsupportedMobileBrowser
  */
-class MobileBrowserPage extends Component {
+class UnsupportedMobileBrowser extends Component {
+    /**
+     * Mobile browser page component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        dispatch: React.PropTypes.func,
+        room: React.PropTypes.string
+    }
 
     /**
-     * Constructor of MobileBrowserPage component.
+     * Constructor of UnsupportedMobileBrowser component.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -34,16 +43,6 @@ class MobileBrowserPage extends Component {
         // Bind methods
         this._onClickJoin = this._onClickJoin.bind(this);
     }
-
-    /**
-     * Mobile browser page component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        dispatch: React.PropTypes.func,
-        room: React.PropTypes.string
-    };
 
     /**
      * React lifecycle method triggered after component is mounted.
@@ -62,13 +61,14 @@ class MobileBrowserPage extends Component {
     componentWillMount() {
         const { room } = this.props;
         let btnText;
-        let link = '';
+        let link;
 
         if (room) {
             btnText = 'Join the conversation';
-            link += room;
+            link = room;
         } else {
             btnText = 'Start a conference';
+            link = '';
         }
 
         this.setState({
@@ -78,37 +78,22 @@ class MobileBrowserPage extends Component {
     }
 
     /**
-     * Navigates to the next state of the app.
-     *
-     * @returns {void}
-     * @private
-     */
-    _onClickJoin() {
-        const { link } = this.state;
-
-        this.props.dispatch(appNavigate(link));
-    }
-
-    /**
      * Renders component.
      *
      * @returns {ReactElement}
      */
     render() {
-        const { btnText } = this.state;
-        const blockPrefix = 'mobile-browser-page';
-        const textClasses = `${blockPrefix}__text ${blockPrefix}__text_small`;
-        let primaryButtonClasses = `${blockPrefix}__button`;
-
-        primaryButtonClasses += ` ${blockPrefix}__button_primary`;
+        const ns = 'unsupported-mobile-browser';
+        const primaryButtonClasses
+            = `${ns}__button ${ns}__button_primary`;
 
         return (
-            <div className = { blockPrefix }>
-                <div className = { `${blockPrefix}__body` }>
+            <div className = { ns }>
+                <div className = { `${ns}__body` }>
                     <img
-                        className = { `${blockPrefix}__logo` }
+                        className = { `${ns}__logo` }
                         src = '/images/logo-blue.svg' />
-                    <p className = { `${blockPrefix}__text` }>
+                    <p className = { `${ns}__text` }>
                         You need <strong>Jitsi Meet</strong> to join a
                         conversation on your mobile
                     </p>
@@ -117,24 +102,37 @@ class MobileBrowserPage extends Component {
                             Download the App
                         </button>
                     </a>
-                    <p className = { textClasses }>
+                    <p className = { `${ns}__text ${ns}__text_small` }>
                         or if you already have it
                         <br />
                         <strong>then</strong>
                     </p>
                     <button
-                        className = 'mobile-browser-page__button'
+                        className = { `${ns}__button` }
                         onClick = { this._onClickJoin }>
-                        { btnText }
+                        {
+                            this.state.btnText
+                        }
                     </button>
                 </div>
             </div>
         );
     }
+
+    /**
+     * Navigates to the next state of the app.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClickJoin() {
+        this.props.dispatch(appNavigate(this.state.link));
+    }
 }
 
 /**
- * Maps (parts of) the Redux state to the associated MobileBrowserPage's props.
+ * Maps (parts of) the Redux state to the associated UnsupportedMobileBrowser's
+ * props.
  *
  * @param {Object} state - Redux state.
  * @returns {{
@@ -147,4 +145,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(MobileBrowserPage);
+export default connect(mapStateToProps)(UnsupportedMobileBrowser);

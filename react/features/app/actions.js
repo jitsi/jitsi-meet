@@ -42,13 +42,7 @@ export function appNavigate(urlOrRoom) {
         // domain.
 
         if (typeof domain === 'undefined' || oldDomain === domain) {
-            // If both domain and room vars became undefined, that means we're
-            // actually dealing with just room name and not with URL.
-            dispatch(
-                _setRoomAndNavigate(
-                    typeof room === 'undefined' && typeof domain === 'undefined'
-                        ? urlOrRoom
-                        : room));
+            dispatchSetRoomAndNavigate();
         } else if (oldDomain !== domain) {
             // Update domain without waiting for config to be loaded to prevent
             // race conditions when we will start to load config multiple times.
@@ -61,14 +55,7 @@ export function appNavigate(urlOrRoom) {
                 .then(
                     config => configLoaded(/* err */ undefined, config),
                     err => configLoaded(err, /* config */ undefined))
-                .then(() => {
-                    const link = typeof room === 'undefined'
-                    && typeof domain === 'undefined'
-                    ? urlOrRoom
-                    : room;
-
-                    dispatch(_setRoomAndNavigate(link));
-                });
+                .then(dispatchSetRoomAndNavigate);
         }
 
         /**
@@ -93,6 +80,21 @@ export function appNavigate(urlOrRoom) {
             }
 
             dispatch(setConfig(config));
+        }
+
+        /**
+         * Dispatches _setRoomAndNavigate in the Redux store.
+         *
+         * @returns {void}
+         */
+        function dispatchSetRoomAndNavigate() {
+            // If both domain and room vars became undefined, that means we're
+            // actually dealing with just room name and not with URL.
+            dispatch(
+                _setRoomAndNavigate(
+                    typeof room === 'undefined' && typeof domain === 'undefined'
+                        ? urlOrRoom
+                        : room));
         }
     };
 }
@@ -130,6 +132,21 @@ export function appWillUnmount(app) {
 }
 
 /**
+ * Navigates to a route in accord with a specific Redux state.
+ *
+ * @param {Object} state - The Redux state which determines/identifies the route
+ * to navigate to.
+ * @private
+ * @returns {void}
+ */
+function _navigate(state) {
+    const app = state['features/app'].app;
+    const routeToRender = _getRouteToRender(state);
+
+    app._navigate(routeToRender);
+}
+
+/**
  * Sets room and navigates to new route if needed.
  *
  * @param {string} newRoom - New room name.
@@ -139,11 +156,6 @@ export function appWillUnmount(app) {
 function _setRoomAndNavigate(newRoom) {
     return (dispatch, getState) => {
         dispatch(setRoom(newRoom));
-
-        const state = getState();
-        const { app } = state['features/app'];
-        const newRoute = _getRouteToRender(state);
-
-        app._navigate(newRoute);
+        _navigate(getState());
     };
 }

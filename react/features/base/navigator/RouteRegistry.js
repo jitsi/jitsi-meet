@@ -12,20 +12,6 @@
  */
 class RouteRegistry {
     /**
-     * Method checking whether route objects are equal by value. Returns true if
-     * and only if key values of the first object are equal to key values of
-     * the second one.
-     *
-     * @param {Object} newRoute - New route object to be compared.
-     * @param {Object} oldRoute - Old route object to be compared.
-     * @returns {boolean}
-     */
-    areRoutesEqual(newRoute, oldRoute) {
-        return Object.keys(newRoute)
-            .every(key => newRoute[key] === oldRoute[key]);
-    }
-
-    /**
      * Initializes a new RouteRegistry instance.
      */
     constructor() {
@@ -35,6 +21,31 @@ class RouteRegistry {
          * @private
          */
         this._routeRegistry = new Set();
+    }
+
+    /**
+     * Determines whether two specific Routes are equal i.e. they describe one
+     * and the same abstract route.
+     *
+     * @param {Object} a - The Route to compare to b.
+     * @param {Object} b - The Route to compare to a.
+     * @returns {boolean} True if the specified a and b describe one and the
+     * same abstract route; otherwise, false.
+     */
+    areRoutesEqual(a, b) {
+        if (a === b) { // reflexive
+            return true;
+        }
+        if (!a) {
+            return !b;
+        }
+        if (!b) {
+            return !a;
+        }
+
+        return (
+            Object.keys(a).every(key => a[key] === b[key])
+                && /* symmetric */ this.areRoutesEqual(b, a));
     }
 
     /**

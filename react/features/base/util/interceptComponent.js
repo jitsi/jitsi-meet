@@ -1,8 +1,5 @@
 import { Platform } from '../react';
-
-import {
-    MobileBrowserPage
-} from '../../unsupported-browser';
+import { UnsupportedMobileBrowser } from '../../unsupported-browser';
 
 /**
  * Array of rules defining whether we should intercept component to render
@@ -21,16 +18,16 @@ const RULES = [
      * WebRTC support on Android).
      *
      * @param {Object} state - Object containing Redux state.
-     * @returns {MobileBrowserPage|void} If the rule is satisfied then
-     * we should intercept existing component by MobileBrowserPage.
+     * @returns {UnsupportedMobileBrowser|void} If the rule is satisfied then
+     * we should intercept existing component by UnsupportedMobileBrowser.
      */
     state => {
         const OS = Platform.OS;
         const { mobileBrowserPageIsShown }
-        = state['features/unsupported-browser'];
+            = state['features/unsupported-browser'];
 
         if ((OS === 'android' || OS === 'ios') && !mobileBrowserPageIsShown) {
-            return MobileBrowserPage;
+            return UnsupportedMobileBrowser;
         }
     }
 ];
@@ -49,12 +46,11 @@ export function interceptComponent(stateOrGetState, currentComponent) {
     let result;
     const state
         = typeof stateOrGetState === 'function'
-        ? stateOrGetState()
-        : stateOrGetState;
+            ? stateOrGetState()
+            : stateOrGetState;
 
     for (const rule of RULES) {
         result = rule(state);
-
         if (result) {
             break;
         }

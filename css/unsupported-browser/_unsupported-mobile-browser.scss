@@ -1,4 +1,4 @@
-.mobile-browser-page {
+.unsupported-mobile-browser {
     background-color: #fff;
     height: 100vh;
     padding: 35px 0;
@@ -22,9 +22,9 @@
         margin-bottom: 0.65em;
 
         &_small {
+            font-size: 1.5em;
             margin-bottom: 1em;
             margin-top: em(21, 18);
-            font-size: 1.5em;
 
             strong {
                 font-size: em(21, 18);
