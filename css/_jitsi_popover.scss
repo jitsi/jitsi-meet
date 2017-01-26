@@ -10,7 +10,7 @@
     color: $popoverFontColor;
     background-color: $popoverBg;
     background-clip: padding-box;
-    border-radius: 3px;
+    border-radius: $borderRadius;
     /*-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
     /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);*/
     white-space: normal;
