@@ -4,7 +4,6 @@
 *.ico					/usr/share/jitsi-meet/
 libs					/usr/share/jitsi-meet/
 css/all.css 			/usr/share/jitsi-meet/css/
-css/unsupported_browser.css		/usr/share/jitsi-meet/css/
 sounds					/usr/share/jitsi-meet/
 fonts					/usr/share/jitsi-meet/
 images					/usr/share/jitsi-meet/
