@@ -1,3 +1,5 @@
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 /**
  * Implements API class that embeds Jitsi Meet in external applications.
  */
@@ -34,7 +36,9 @@ var commands = {
     "toggleChat": "toggle-chat",
     "toggleContactList": "toggle-contact-list",
     "toggleShareScreen": "toggle-share-screen",
-    "hangup": "video-hangup"
+    "hangup": "video-hangup",
+    "email": "email",
+    "avatarUrl": "avatar-url"
 };
 
 /**
@@ -65,20 +69,15 @@ function sendMessage(postis, object) {
 }
 
 /**
- * Sends message for event enable/disable status change.
- * @param postis {Postis object} the postis instance that is going to be used.
- * @param event {string} the name of the event
- * @param status {boolean} true - enabled; false - disabled;
+ * Adds given number to the numberOfParticipants property of given APIInstance.
+ * @param {JitsiMeetExternalAPI} APIInstance the instance of the
+ * JitsiMeetExternalAPI
+ * @param {int} number - the number of participants to be added to
+ * numberOfParticipants property (this parameter can be negative number if the
+ * numberOfParticipants should be decreased).
  */
-function changeEventStatus(postis, event, status) {
-    if(!(event in events)) {
-        console.error("Not supported event name.");
-        return;
-    }
-    sendMessage(postis, {
-        method: "jitsiSystemMessage",
-        params: {type: "eventStatus", name: events[event], value: status}
-    });
+function changeParticipantNumber(APIInstance, number) {
+    APIInstance.numberOfParticipants += number;
 }
 
 /**
@@ -157,6 +156,12 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
 
     this.eventHandlers = {};
 
+    // Map<{string} event_name, {boolean} postis_listener_added>
+    this.postisListeners = {};
+
+    this.numberOfParticipants = 1;
+    this._setupListeners();
+
     id++;
 }
 
@@ -172,15 +177,13 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
  * @param name the name of the command
  * @param arguments array of arguments
  */
-JitsiMeetExternalAPI.prototype.executeCommand = function(name, argumentsList) {
+JitsiMeetExternalAPI.prototype.executeCommand
+= function(name, ...argumentsList) {
     if(!(name in commands)) {
-        console.error("Not supported command name.");
+        logger.error("Not supported command name.");
         return;
     }
-    var argumentsArray = argumentsList;
-    if (!argumentsArray)
-        argumentsArray = [];
-    sendMessage(this.postis, {method: commands[name], params: argumentsArray});
+    sendMessage(this.postis, {method: commands[name], params: argumentsList});
 };
 
 /**
@@ -306,19 +309,20 @@ JitsiMeetExternalAPI.prototype.addEventListeners = function(object) {
  */
 JitsiMeetExternalAPI.prototype.addEventListener = function(event, listener) {
     if(!(event in events)) {
-        console.error("Not supported event name.");
+        logger.error("Not supported event name.");
         return;
     }
     // We cannot remove listeners from postis that's why we are handling the
     // callback that way.
-    if(!(event in this.eventHandlers))
+    if(!this.postisListeners[event]) {
         this.postis.listen(events[event], function(data) {
             if((event in this.eventHandlers) &&
                 typeof this.eventHandlers[event] === "function")
                 this.eventHandlers[event].call(null, data);
         }.bind(this));
+        this.postisListeners[event] = true;
+    }
     this.eventHandlers[event] = listener;
-    changeEventStatus(this.postis, event, true);
 };
 
 /**
@@ -328,11 +332,10 @@ JitsiMeetExternalAPI.prototype.addEventListener = function(event, listener) {
 JitsiMeetExternalAPI.prototype.removeEventListener = function(event) {
     if(!(event in this.eventHandlers))
     {
-        console.error("The event " + event + " is not registered.");
+        logger.error("The event " + event + " is not registered.");
         return;
     }
     delete this.eventHandlers[event];
-    changeEventStatus(this.postis, event, false);
 };
 
 /**
@@ -342,6 +345,25 @@ JitsiMeetExternalAPI.prototype.removeEventListener = function(event) {
 JitsiMeetExternalAPI.prototype.removeEventListeners = function(events) {
     for(var i = 0; i < events.length; i++)
         this.removeEventListener(events[i]);
+};
+
+/**
+ * Returns the number of participants in the conference.
+ * NOTE: the local participant is included.
+ * @returns {int} the number of participants in the conference.
+ */
+JitsiMeetExternalAPI.prototype.getNumberOfParticipants = function() {
+    return this.numberOfParticipants;
+};
+
+/**
+ * Setups listeners that are used internally for JitsiMeetExternalAPI.
+ */
+JitsiMeetExternalAPI.prototype._setupListeners = function() {
+    this.postis.listen("participant-joined",
+        changeParticipantNumber.bind(null, this, 1));
+    this.postis.listen("participant-left",
+        changeParticipantNumber.bind(null, this, -1));
 };
 
 /**

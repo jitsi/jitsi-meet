@@ -1,5 +1,8 @@
 /* global APP, JitsiMeetJS, config */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import AuthHandler from './modules/UI/authentication/AuthHandler';
+import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -83,7 +86,7 @@ function connect(id, password, roomName) {
 
         function handleConnectionFailed(err) {
             unsubscribe();
-            console.error("CONNECTION FAILED:", err);
+            logger.error("CONNECTION FAILED:", err);
             reject(err);
         }
 
@@ -107,9 +110,9 @@ function connect(id, password, roomName) {
 export function openConnection({id, password, retry, roomName}) {
 
     let usernameOverride
-        = window.localStorage.getItem("xmpp_username_override");
+        = jitsiLocalStorage.getItem("xmpp_username_override");
     let passwordOverride
-        = window.localStorage.getItem("xmpp_password_override");
+        = jitsiLocalStorage.getItem("xmpp_password_override");
 
     if (usernameOverride && usernameOverride.length > 0) {
         id = usernameOverride;

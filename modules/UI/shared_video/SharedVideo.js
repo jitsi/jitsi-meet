@@ -1,5 +1,6 @@
 /* global $, APP, YT, onPlayerReady, onPlayerStateChange, onPlayerError,
 JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -75,7 +76,7 @@ export default class SharedVideoManager {
                         JitsiMeetJS.analytics.sendEvent('sharedvideo.started');
                     },
                     err => {
-                        console.log('SHARED VIDEO CANCELED', err);
+                        logger.log('SHARED VIDEO CANCELED', err);
                         JitsiMeetJS.analytics.sendEvent('sharedvideo.canceled');
                     }
             );
@@ -84,6 +85,14 @@ export default class SharedVideoManager {
 
         if(APP.conference.isLocalId(this.from)) {
             showStopVideoPropmpt().then(() => {
+                    // make sure we stop updates for playing before we send stop
+                    // if we stop it after receiving self presence, we can end
+                    // up sending stop playing, and on the other end it will not
+                    // stop
+                    if(this.intervalId) {
+                         clearInterval(this.intervalId);
+                         this.intervalId = null;
+                    }
                     this.emitter.emit(
                         UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
                     JitsiMeetJS.analytics.sendEvent('sharedvideo.stoped');
@@ -93,7 +102,7 @@ export default class SharedVideoManager {
             dialog = APP.UI.messageHandler.openMessageDialog(
                 "dialog.shareVideoTitle",
                 "dialog.alreadySharedVideoMsg",
-                null, null,
+                null,
                 function () {
                     dialog = null;
                 }
@@ -269,7 +278,7 @@ export default class SharedVideoManager {
         };
 
         window.onPlayerError = function(event) {
-            console.error("Error in the player:", event.data);
+            logger.error("Error in the player:", event.data);
             // store the error player, so we can remove it
             self.errorInPlayer = event.target;
         };
@@ -305,7 +314,7 @@ export default class SharedVideoManager {
                 && player.getVolume() != attributes.volume) {
 
                 player.setVolume(attributes.volume);
-                console.info("Player change of volume:" + attributes.volume);
+                logger.info("Player change of volume:" + attributes.volume);
                 this.showSharedVideoMutedPopup(false);
             }
 
@@ -329,7 +338,7 @@ export default class SharedVideoManager {
     processTime (player, attributes, forceSeek)
     {
         if(forceSeek) {
-            console.info("Player seekTo:", attributes.time);
+            logger.info("Player seekTo:", attributes.time);
             player.seekTo(attributes.time);
             return;
         }
@@ -341,7 +350,7 @@ export default class SharedVideoManager {
         // if we drift more than the interval for checking
         // sync, the interval is in milliseconds
         if(diff > updateInterval/1000) {
-            console.info("Player seekTo:", attributes.time,
+            logger.info("Player seekTo:", attributes.time,
                 " current time is:", currentPosition, " diff:", diff);
             player.seekTo(attributes.time);
         }
@@ -421,11 +430,6 @@ export default class SharedVideoManager {
                 this.initialAttributes = attributes;
                 return;
             }
-        }
-
-        if(this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
         }
 
         this.emitter.removeListener(UIEvents.AUDIO_MUTED,
@@ -625,7 +629,7 @@ function SharedVideoThumb (url)
     this.videoSpanId = "sharedVideoContainer";
     this.container = this.createContainer(this.videoSpanId);
     this.container.onclick = this.videoClick.bind(this);
-
+    this.bindHoverHandler();
     SmallVideo.call(this, VideoLayout);
     this.isVideoMuted = true;
 }
@@ -666,7 +670,7 @@ SharedVideoThumb.prototype.videoClick = function () {
  * Removes RemoteVideo from the page.
  */
 SharedVideoThumb.prototype.remove = function () {
-    console.log("Remove shared video thumb", this.id);
+    logger.log("Remove shared video thumb", this.id);
 
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
@@ -683,7 +687,7 @@ SharedVideoThumb.prototype.remove = function () {
  */
 SharedVideoThumb.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        console.warn( "Unable to set displayName - " + this.videoSpanId +
+        logger.warn( "Unable to set displayName - " + this.videoSpanId +
             " does not exist");
         return;
     }
@@ -722,26 +726,25 @@ function getYoutubeLink(url) {
  */
 function showStopVideoPropmpt() {
     return new Promise(function (resolve, reject) {
-        dialog = APP.UI.messageHandler.openTwoButtonDialog(
-            "dialog.removeSharedVideoTitle",
-            null,
-            "dialog.removeSharedVideoMsg",
-            null,
-            false,
-            "dialog.Remove",
-            function(e,v) {
-                if (v) {
-                    resolve();
-                } else {
-                    reject();
-                }
-            },
-            null,
-            function () {
-                dialog = null;
+        let submitFunction = function(e,v) {
+            if (v) {
+                resolve();
+            } else {
+                reject();
             }
-        );
+        };
 
+        let closeFunction = function () {
+            dialog = null;
+        };
+
+        dialog = APP.UI.messageHandler.openTwoButtonDialog({
+            titleKey: "dialog.removeSharedVideoTitle",
+            msgKey: "dialog.removeSharedVideoMsg",
+            leftButtonKey: "dialog.Remove",
+            submitFunction,
+            closeFunction
+        });
     });
 }
 
@@ -751,24 +754,20 @@ function showStopVideoPropmpt() {
  */
 function requestVideoLink() {
     let i18n = APP.translation;
-    const title = i18n.generateTranslationHTML("dialog.shareVideoTitle");
     const cancelButton = i18n.generateTranslationHTML("dialog.Cancel");
     const shareButton = i18n.generateTranslationHTML("dialog.Share");
     const backButton = i18n.generateTranslationHTML("dialog.Back");
     const linkError
         = i18n.generateTranslationHTML("dialog.shareVideoLinkError");
-    const i18nOptions = {url: defaultSharedVideoLink};
-    const defaultUrl = i18n.translateString("defaultLink", i18nOptions);
 
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
+                titleKey: "dialog.shareVideoTitle",
                 html:  `
-                    <h2>${title}</h2>
                     <input name="sharedVideoUrl" type="text"
+                           class="input-control"
                            data-i18n="[placeholder]defaultLink"
-                           data-i18n-options="${JSON.stringify(i18nOptions)}"
-                           placeholder="${defaultUrl}"
                            autofocus>`,
                 persistent: false,
                 buttons: [
@@ -803,7 +802,8 @@ function requestVideoLink() {
             },
 
             state1: {
-                html: `<h2>${title}</h2> ${linkError}`,
+                titleKey: "dialog.shareVideoTitle",
+                html: linkError,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},
@@ -825,7 +825,8 @@ function requestVideoLink() {
             close: function () {
                 dialog = null;
             }
+        }, {
+            url: defaultSharedVideoLink
         });
-
     });
 }

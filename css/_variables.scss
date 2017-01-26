@@ -1,3 +1,5 @@
+@import "themes/light";
+
 /**
  * Style variables
  */
@@ -11,57 +13,124 @@ $hangupFontSize: 2em;
 $defaultToolbarSize: 50px;
 
 // Video layout.
-$thumbnailIndicatorSize: 23px;
-$thumbnailIndicatorBorder: 0px;
-$thumbnailVideoMargin: 2px;
-$thumbnailToolbarHeight: 25px;
+$thumbnailToolbarHeight: 22px;
+$thumbnailIndicatorBorder: 2px;
+$thumbnailIndicatorSize: $thumbnailToolbarHeight;
+$thumbnailVideoMargin: 5px;
+$thumbnailsBorder: 2px;
+$thumbnailVideoBorder: 2px;
+$hideFilmstripButtonWidth: 17px;
+
 
 /**
  * Color variables.
  */
 $defaultColor: #F1F1F1;
 $defaultSideBarFontColor: #44A5FF;
-$defaultDarkColor: #4F4F4F;
-$defaultBackground: #474747;
+$defaultSemiDarkColor: #ACACAC;
+$defaultDarkColor: #2b3d5c;
 $tooltipBg: rgba(0,0,0, 0.7);
 
-// Toolbar
+/**
+ * Toolbar
+ */
+$toolbarTitleColor: #FFFFFF;
+$toolbarTitleFontSize: 19px;
+$toolbarBackground: rgba(0, 0, 0, 0.5);
 $toolbarSelectBackground: rgba(0, 0, 0, .6);
-
 $toolbarBadgeBackground: #165ECC;
 $toolbarBadgeColor: #FFFFFF;
-$toolbarToggleBackground: #165ECC;
+$toolbarToggleBackground: #12499C;
+$splitterToolbarButtonMargin: 18px;
 
-// Main controls
-$inputBackground: rgba(132, 132, 132, .5);
+/**
+ * Main controls
+ * TODO: looks like we don't use it
+ */
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
-$inputBorderColor: #EBEBEB;
-$buttonBackground: #44A5FF;
 
-// Video layout.
-$videoThumbnailHovered: #BFEBFF;
+/**
+ * Video layout
+ */
+$videoThumbnailHovered: rgba(22, 94, 204, .4);
 $videoThumbnailSelected: #165ECC;
 $participantNameColor: #fff;
 $thumbnailPictogramColor: #fff;
 $dominantSpeakerBg: #165ecc;
 $raiseHandBg: #D6D61E;
 $audioLevelBg: #44A5FF;
+$connectionIndicatorBg: #165ecc;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
+$videoStateIndicatorColor: $defaultColor;
+$videoStateIndicatorBackground: $toolbarBackground;
 
+/**
+ * Feedback Modal
+ */
+$feedbackContentBg: #fff;
+$feedbackInputBg: #fff;
+$feedbackTextColor: #000;
+$feedbackInputTextColor: #333;
+$feedbackInputPlaceholderColor: #777;
+$rateStarLabelColor: #333;
 $rateStarDefault: #ccc;
 $rateStarActivity: #165ecc;
-$rateStarLabelColor: #333;
+$rateStarSize: 34px;
+
+/**
+ * Notifications
+ */
+$notificationFontSize: 13px;
+$notificationColor: #FFFFFF;
+$notificationBackground: $tooltipBg;
+$notificationTitleColor: $notificationColor;
+$notificationMessageColor: $notificationColor;
+$notificationLinkColor: $notificationColor;
+$notificationOpacity: 0.9;
+$notificationPadding: 15px 20px;
+$notificationBorderRadius: 4px;
+$notificationWidth: 215px;
 
 /**
  * Misc.
  */
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
+$sidebarWidth: 220px;
+$popoverMenuPadding: 13px;
+$happySoftwareBackground: transparent;
 
 /**
  * Z-indexes. TODO: Replace this by a function.
  */
 $tooltipsZ: 901;
 $toolbarZ: 900;
-$overlayZ: 800;
+$overlayZ: 902;
+$notificationZ: 1012;
+$ringingZ: 800;
+$dropdownZ: 901;
+$dropdownMaskZ: 900;
+
+/**
+ * Font Colors
+ */
+$defaultFontColor: #777;
+$defaultLightFontColor: #F1F1F1;
+$defaultDarkFontColor: #000;
+
+/**
+ * Forms
+ */
+//inputs
+$inputControlEmColor: #f29424;
+//buttons
+$linkFontColor: #489afe;
+$linkHoverFontColor: #287ade;
+
+/**
+ * Landing
+ */
+$primaryUnsupportedBrowserButtonBgColor: #17a0db;
+$unsupportedBrowserButtonBgColor: #ff9a00;
+$unsupportedBrowserTextColor: #4a4a4a;

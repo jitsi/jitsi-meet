@@ -1,4 +1,5 @@
 /* global APP, getConfigParamsFromUrl */
+
 /**
  * Implements API class that communicates with external api class
  * and provides interface to access Jitsi Meet features by external
@@ -45,43 +46,23 @@ let enabled = false;
 function initCommands() {
     commands = {
         "display-name": APP.UI.inputDisplayNameHandler,
-        "toggle-audio": APP.conference.toggleAudioMuted,
-        "toggle-video": APP.conference.toggleVideoMuted,
+        "toggle-audio": APP.conference.toggleAudioMuted.bind(APP.conference),
+        "toggle-video": APP.conference.toggleVideoMuted.bind(APP.conference),
         "toggle-film-strip": APP.UI.toggleFilmStrip,
         "toggle-chat": APP.UI.toggleChat,
         "toggle-contact-list": APP.UI.toggleContactList,
-        "toggle-share-screen": APP.conference.toggleScreenSharing,
-        "video-hangup": () => APP.conference.hangup()
+        "toggle-share-screen":
+            APP.conference.toggleScreenSharing.bind(APP.conference),
+        "video-hangup": () => APP.conference.hangup(),
+        "email": APP.conference.changeLocalEmail,
+        "avatar-url": APP.conference.changeLocalAvatarUrl,
+        "remote-control-event": event =>
+            APP.remoteControl.onRemoteControlAPIEvent(event)
     };
     Object.keys(commands).forEach(function (key) {
-        postis.listen(key, commands[key]);
+        postis.listen(key, args => commands[key](...args));
     });
 }
-
-
-/**
- * Maps the supported events and their status
- * (true it the event is enabled and false if it is disabled)
- * @type {{
- *              incoming-message: boolean,
- *              outgoing-message: boolean,
- *              display-name-change: boolean,
- *              participant-left: boolean,
- *              participant-joined: boolean,
- *              video-conference-left: boolean,
- *              video-conference-joined: boolean
- *      }}
- */
-const events = {
-    "incoming-message": false,
-    "outgoing-message":false,
-    "display-name-change": false,
-    "participant-joined": false,
-    "participant-left": false,
-    "video-conference-joined": false,
-    "video-conference-left": false,
-    "video-ready-to-close": false
-};
 
 /**
  * Sends message to the external application.
@@ -90,25 +71,17 @@ const events = {
  * @param params {object} the object that will be sent as JSON string
  */
 function sendMessage(message) {
-    if(enabled)
+    if(enabled) {
         postis.send(message);
+    }
 }
 
 /**
  * Check whether the API should be enabled or not.
  * @returns {boolean}
  */
-function isEnabled () {
+function shouldBeEnabled () {
     return (typeof jitsi_meet_external_api_id === "number");
-}
-
-/**
- * Checks whether the event is enabled ot not.
- * @param name the name of the event.
- * @returns {*}
- */
-function isEventEnabled (name) {
-    return events[name];
 }
 
 /**
@@ -118,29 +91,18 @@ function isEventEnabled (name) {
  * @param object data associated with the event
  */
 function triggerEvent (name, object) {
-    if(isEventEnabled(name))
+    if(enabled) {
         sendMessage({method: name, params: object});
-}
-
-/**
- * Handles system messages. (for example: enable/disable events)
- * @param message {object} the message
- */
-function onSystemMessage(message) {
-    switch (message.type) {
-        case "eventStatus":
-            if(!message.name || !message.value) {
-                console.warn("Unknown system message format", message);
-                break;
-            }
-            events[message.name] = message.value;
-            break;
-        default:
-            console.warn("Unknown system message type", message);
     }
 }
 
-export default {
+class API {
+    /**
+     * Constructs new instance
+     * @constructor
+     */
+    constructor() { }
+
     /**
      * Initializes the APIConnector. Setups message event listeners that will
      * receive information from external applications that embed Jitsi Meet.
@@ -148,17 +110,23 @@ export default {
      * is initialized.
      * @param options {object}
      * @param forceEnable {boolean} if true the module will be enabled.
-     * @param enabledEvents {array} array of events that should be enabled.
      */
     init (options = {}) {
-        if(!isEnabled() && !options.forceEnable)
+        if(!shouldBeEnabled() && !options.forceEnable)
             return;
 
         enabled = true;
-        if(options.enabledEvents)
-            options.enabledEvents.forEach(function (eventName) {
-                events[eventName] = true;
-            });
+
+        if(!postis) {
+            this._initPostis();
+        }
+    }
+
+    /**
+     * initializes postis library.
+     * @private
+     */
+    _initPostis() {
         let postisOptions = {
             window: target
         };
@@ -166,9 +134,8 @@ export default {
             postisOptions.scope
                 = "jitsi_meet_external_api_" + jitsi_meet_external_api_id;
         postis = postisInit(postisOptions);
-        postis.listen("jitsiSystemMessage", onSystemMessage);
         initCommands();
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that message was sent.
@@ -176,7 +143,7 @@ export default {
      */
     notifySendingChatMessage (body) {
         triggerEvent("outgoing-message", {"message": body});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -195,7 +162,7 @@ export default {
             "incoming-message",
             {"from": id, "nick": nick, "message": body, "stamp": ts}
         );
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -204,7 +171,7 @@ export default {
      */
     notifyUserJoined (id) {
         triggerEvent("participant-joined", {id});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -213,7 +180,7 @@ export default {
      */
     notifyUserLeft (id) {
         triggerEvent("participant-left", {id});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -223,7 +190,7 @@ export default {
      */
     notifyDisplayNameChanged (id, displayName) {
         triggerEvent("display-name-change", {id, displayname: displayName});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -233,7 +200,7 @@ export default {
      */
     notifyConferenceJoined (room) {
         triggerEvent("video-conference-joined", {roomName: room});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -243,7 +210,7 @@ export default {
      */
     notifyConferenceLeft (room) {
         triggerEvent("video-conference-left", {roomName: room});
-    },
+    }
 
     /**
      * Notify external application (if API is enabled) that
@@ -251,13 +218,23 @@ export default {
      */
     notifyReadyToClose () {
         triggerEvent("video-ready-to-close", {});
-    },
+    }
+
+    /**
+     * Sends remote control event.
+     * @param {RemoteControlEvent} event the remote control event.
+     */
+    sendRemoteControlEvent(event) {
+        sendMessage({method: "remote-control-event", params: event});
+    }
 
     /**
      * Removes the listeners.
      */
-    dispose: function () {
+    dispose () {
         if(enabled)
             postis.destroy();
     }
-};
+}
+
+export default new API();

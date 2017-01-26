@@ -15,11 +15,12 @@ server {
 
     add_header Strict-Transport-Security "max-age=31536000";
 
-    ssl_certificate /var/lib/prosody/jitsi-meet.example.com.crt;
-    ssl_certificate_key /var/lib/prosody/jitsi-meet.example.com.key;
+    ssl_certificate /etc/jitsi/meet/jitsi-meet.example.com.crt;
+    ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
 
     root /usr/share/jitsi-meet;
     index index.html index.htm;
+    error_page 404 /404.html;
 
     location /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;

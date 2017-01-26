@@ -4,27 +4,33 @@
     > ul#contacts {
         font-size: 12px;
         bottom: 0px;
-        margin: 0px;
+        margin: 0;
+        margin-top: 12px;
         padding: 0px;
         width: 100%;
-        overflow: auto;
     }
 
     .clickable {
         cursor: pointer;
+    }
+
+    .icon-security,
+    .icon-security-locked {
+        font-size: 16px;
     }
 }
 
 #contacts {
 
     >li {
-        color: $defaultSideBarFontColor;
+        display: block;
         list-style-type: none;
         text-align: left;
         white-space: nowrap;
-        color: #FFF;
-        font-size: 10pt;
-        padding: 6px 10%;
+        color: $baseLight;
+        font-size: 16px;
+        padding: 0 10%;
+        height: 27px;
 
         &:hover,
         &:active {
@@ -35,6 +41,10 @@
             display: inline-block;
             vertical-align: middle;
             margin: 0px;
+            width: 100%;
+            line-height: 1.5em;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
     }
 }

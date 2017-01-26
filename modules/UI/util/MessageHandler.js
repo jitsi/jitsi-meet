@@ -1,6 +1,8 @@
-/* global $, APP, toastr, Impromptu */
+/* global $, APP, toastr */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from './UIUtil';
+import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 /**
  * Flag for enable/disable of the notifications.
@@ -20,6 +22,91 @@ let popupEnabled = true;
  */
 let twoButtonDialog = null;
 
+/**
+ * Generates html for dont show again checkbox.
+ * @param {object} options options
+ * @param {string} options.id the id of the checkbox.
+ * @param {string} options.textKey the key for the text displayed next to
+ * checkbox
+ * @param {boolean} options.checked if true the checkbox is foing to be checked
+ * by default.
+ * @returns {string}
+ */
+function generateDontShowCheckbox(options) {
+    if(!isDontShowAgainEnabled(options)) {
+        return "";
+    }
+
+    let checked
+        = (options.checked === true) ? "checked" : "";
+    return `<br />
+        <label>
+            <input type='checkbox' ${checked} id='${options.id}' />
+            <span data-i18n='${options.textKey}'></span>
+        </label>`;
+}
+
+/**
+ * Checks whether the dont show again checkbox was checked before.
+ * @param {object} options - options for dont show again checkbox.
+ * @param {string} options.id the id of the checkbox.
+ * @param {string} options.localStorageKey the key for the local storage. if
+ * not provided options.id will be used.
+ * @returns {boolean} true if the dialog mustn't be displayed and
+ * false otherwise.
+ */
+function dontShowTheDialog(options) {
+    if(isDontShowAgainEnabled(options)) {
+        if(jitsiLocalStorage.getItem(options.localStorageKey || options.id)
+            === "true") {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Wraps the submit function to process the dont show again status and store
+ * it.
+ * @param {object} options - options for dont show again checkbox.
+ * @param {string} options.id the id of the checkbox.
+ * @param {Array} options.buttonValues The button values that will trigger
+ * storing he checkbox value
+ * @param {string} options.localStorageKey the key for the local storage. if
+ * not provided options.id will be used.
+ * @param {Function} submitFunction the submit function to be wrapped
+ * @returns {Function} wrapped function
+ */
+function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
+    if(isDontShowAgainEnabled(options)) {
+        return (...args) => {
+            logger.debug(args, options.buttonValues);
+            //args[1] is the value associated with the pressed button
+            if(!options.buttonValues || options.buttonValues.length === 0
+                || options.buttonValues.indexOf(args[1]) !== -1 ) {
+                let checkbox = $(`#${options.id}`);
+                if (checkbox.length) {
+                    jitsiLocalStorage.setItem(
+                        options.localStorageKey || options.id,
+                        checkbox.prop("checked"));
+                }
+            }
+            submitFunction(...args);
+        };
+    } else {
+        return submitFunction;
+    }
+}
+
+/**
+ * Check whether dont show again checkbox is enabled or not.
+ * @param {object} options - options for dont show again checkbox.
+ * @returns {boolean} true if enabled and false if not.
+ */
+function isDontShowAgainEnabled(options) {
+    return typeof options === "object";
+}
+
 var messageHandler = {
     OK: "dialog.OK",
     CANCEL: "dialog.Cancel",
@@ -29,42 +116,38 @@ var messageHandler = {
      *
      * @param titleKey the key used to find the translation of the title of the
      * message, if a message title is not provided.
-     * @param messageKey the key used to find the translation of the message,
-     * if a message is not provided.
-     * @param title the title of the message. If a falsy value is provided,
-     * titleKey will be used to get a title via the translation API.
-     * @param message the message to show. If a falsy value is provided,
-     * messageKey will be used to get a message via the translation API.
+     * @param messageKey the key used to find the translation of the message
+     * @param i18nOptions the i18n options (optional)
      * @param closeFunction function to be called after
      * the prompt is closed (optional)
      * @return the prompt that was created, or null
      */
-    openMessageDialog: function(titleKey, messageKey, title, message,
-                                closeFunction) {
+    openMessageDialog:
+        function(titleKey, messageKey, i18nOptions, closeFunction) {
         if (!popupEnabled)
             return null;
 
-        if (!title) {
-            title = APP.translation.generateTranslationHTML(titleKey);
-        }
-        if (!message) {
-            message = APP.translation.generateTranslationHTML(messageKey);
-        }
-
-        return $.prompt(message, {
-            title: title,
+        let dialog = $.prompt(
+            APP.translation.generateTranslationHTML(messageKey, i18nOptions),
+            {
+            title: this._getFormattedTitleString(titleKey),
             persistent: false,
+            promptspeed: 0,
+            classes: this._getDialogClasses(),
             close: function (e, v, m, f) {
                 if(closeFunction)
                     closeFunction(e, v, m, f);
             }
         });
+        APP.translation.translateElement(dialog, i18nOptions);
+        return $.prompt.getApi();
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
      *
-     * @param titleString the title of the message
+     * @param titleKey the key for the title of the message
+     * @param msgKey the key for the message
      * @param msgString the text of the message
      * @param persistent boolean value which determines whether the message is
      *        persistent or not
@@ -77,57 +160,98 @@ var messageHandler = {
      *        the dialog is opened
      * @param defaultButton index of default button which will be activated when
      *        the user press 'enter'. Indexed from 0.
+     * @param {object} dontShowAgain - options for dont show again checkbox.
+     * @param {string} dontShowAgain.id the id of the checkbox.
+     * @param {string} dontShowAgain.textKey the key for the text displayed
+     * next to checkbox
+     * @param {boolean} dontShowAgain.checked if true the checkbox is foing to
+     * be checked
+     * @param {Array} dontShowAgain.buttonValues The button values that will
+     * trigger storing the checkbox value
+     * @param {string} dontShowAgain.localStorageKey the key for the local
+     * storage. if not provided dontShowAgain.id will be used.
      * @return the prompt that was created, or null
      */
-    openTwoButtonDialog: function(titleKey, titleString, msgKey, msgString,
-        persistent, leftButtonKey, submitFunction, loadedFunction,
-        closeFunction, focus, defaultButton) {
+    openTwoButtonDialog: function(options) {
+        let {
+            titleKey,
+            msgKey,
+            msgString,
+            leftButtonKey,
+            submitFunction,
+            loadedFunction,
+            closeFunction,
+            focus,
+            size,
+            defaultButton,
+            wrapperClass,
+            classes,
+            dontShowAgain
+        } = options;
 
         if (!popupEnabled || twoButtonDialog)
             return null;
 
+        if(dontShowTheDialog(dontShowAgain)) {
+            // Maybe we should pass some parameters here? I'm not sure
+            // and currently we don't need any parameters.
+            submitFunction();
+            return null;
+        }
+
         var buttons = [];
 
-        var leftButton = APP.translation.generateTranslationHTML(leftButtonKey);
+        var leftButton = leftButtonKey ?
+            APP.translation.generateTranslationHTML(leftButtonKey) :
+            APP.translation.generateTranslationHTML('dialog.Submit');
         buttons.push({ title: leftButton, value: true});
 
         var cancelButton
             = APP.translation.generateTranslationHTML("dialog.Cancel");
         buttons.push({title: cancelButton, value: false});
 
-        var message = msgString, title = titleString;
-        if (titleKey) {
-            title = APP.translation.generateTranslationHTML(titleKey);
-        }
+        var message = msgString;
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
+        message += generateDontShowCheckbox(dontShowAgain);
+        classes = classes || this._getDialogClasses(size);
+        if (wrapperClass) {
+            classes.prompt += ` ${wrapperClass}`;
+        }
+
         twoButtonDialog = $.prompt(message, {
-            title: title,
+            title: this._getFormattedTitleString(titleKey),
             persistent: false,
             buttons: buttons,
             defaultButton: defaultButton,
             focus: focus,
             loaded: loadedFunction,
-            submit: function (e, v, m, f) {
-                twoButtonDialog = null;
-                if (submitFunction)
-                    submitFunction(e, v, m, f);
-            },
+            promptspeed: 0,
+            classes,
+            submit: dontShowAgainSubmitFunctionWrapper(dontShowAgain,
+                function (e, v, m, f) {
+                    twoButtonDialog = null;
+                    if (v && submitFunction) {
+                        submitFunction(e, v, m, f);
+                    }
+                }),
             close: function (e, v, m, f) {
                 twoButtonDialog = null;
-                if (closeFunction)
+                if (closeFunction) {
                     closeFunction(e, v, m, f);
+                }
             }
         });
-        return twoButtonDialog;
+        APP.translation.translateElement(twoButtonDialog);
+        return $.prompt.getApi();
     },
 
     /**
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
      *
-     * @param titleString the title of the message
+     * @param titleKey the key for the title of the message
      * @param msgString the text of the message
      * @param persistent boolean value which determines whether the message is
      *        persistent or not
@@ -138,46 +262,117 @@ var messageHandler = {
      * @param loadedFunction function to be called after the prompt is fully
      *        loaded
      * @param closeFunction function to be called on dialog close
+     * @param {object} dontShowAgain - options for dont show again checkbox.
+     * @param {string} dontShowAgain.id the id of the checkbox.
+     * @param {string} dontShowAgain.textKey the key for the text displayed
+     * next to checkbox
+     * @param {boolean} dontShowAgain.checked if true the checkbox is foing to
+     * be checked
+     * @param {Array} dontShowAgain.buttonValues The button values that will
+     * trigger storing the checkbox value
+     * @param {string} dontShowAgain.localStorageKey the key for the local
+     * storage. if not provided dontShowAgain.id will be used.
      */
-    openDialog: function (titleString, msgString, persistent, buttons,
-                              submitFunction, loadedFunction, closeFunction) {
+    openDialog: function (titleKey, msgString, persistent, buttons,
+        submitFunction, loadedFunction, closeFunction, dontShowAgain) {
         if (!popupEnabled)
             return;
 
-        var args = {
-            title: titleString,
+        if(dontShowTheDialog(dontShowAgain)) {
+            // Maybe we should pass some parameters here? I'm not sure
+            // and currently we don't need any parameters.
+            submitFunction();
+            return;
+        }
+
+        let args = {
+            title: this._getFormattedTitleString(titleKey),
             persistent: persistent,
             buttons: buttons,
             defaultButton: 1,
-            loaded: loadedFunction,
-            submit: submitFunction,
-            close: closeFunction
+            promptspeed: 0,
+            loaded: function() {
+                if (loadedFunction) {
+                    loadedFunction.apply(this, arguments);
+                }
+                // Hide the close button
+                if (persistent) {
+                    $(".jqiclose", this).hide();
+                }
+            },
+            submit: dontShowAgainSubmitFunctionWrapper(
+                dontShowAgain, submitFunction),
+            close: closeFunction,
+            classes: this._getDialogClasses()
         };
 
         if (persistent) {
             args.closeText = '';
         }
 
-        return new Impromptu(msgString, args);
+        let dialog = $.prompt(
+            msgString + generateDontShowCheckbox(dontShowAgain), args);
+        APP.translation.translateElement(dialog);
+        return $.prompt.getApi();
     },
 
     /**
-     * Closes currently opened dialog.
+     * Returns the formatted title string.
+     *
+     * @return the title string formatted as a div.
      */
-    closeDialog: function () {
-        $.prompt.close();
+    _getFormattedTitleString(titleKey) {
+        let $titleString = $('<h2>');
+        $titleString.addClass('aui-dialog2-header-main');
+        $titleString.attr('data-i18n',titleKey);
+        return $('<div>').append($titleString).html();
+    },
+
+    /**
+     * Returns the dialog css classes.
+     *
+     * @return the dialog css classes
+     */
+    _getDialogClasses(size = 'small') {
+        return {
+            box: '',
+            form: '',
+            prompt: `dialog aui-layer aui-dialog2 aui-dialog2-${size}`,
+            close: 'aui-icon aui-icon-small aui-iconfont-close-dialog',
+            fade: 'aui-blanket',
+            button: 'button-control',
+            message: 'aui-dialog2-content',
+            buttons: 'aui-dialog2-footer',
+            defaultButton: 'button-control_primary',
+            title: 'aui-dialog2-header'
+        };
     },
 
     /**
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
+     * @param options impromptu options
+     * @param translateOptions options passed to translation
      */
-    openDialogWithStates: function (statesObject, options) {
+    openDialogWithStates: function (statesObject, options, translateOptions) {
         if (!popupEnabled)
             return;
+        let { classes, size } = options;
+        let defaultClasses = this._getDialogClasses(size);
+        options.classes = Object.assign({}, defaultClasses, classes);
+        options.promptspeed = options.promptspeed || 0;
 
-        return new Impromptu(statesObject, options);
+        for (let state in statesObject) {
+            let currentState = statesObject[state];
+            if(currentState.titleKey) {
+                currentState.title
+                    = this._getFormattedTitleString(currentState.titleKey);
+            }
+        }
+        let dialog = $.prompt(statesObject, options);
+        APP.translation.translateElement(dialog, translateOptions);
+        return $.prompt.getApi();
     },
 
     /**
@@ -210,6 +405,7 @@ var messageHandler = {
                 }
             }, 200);
         }
+
         return popup;
     },
 
@@ -222,7 +418,7 @@ var messageHandler = {
      */
     openReportDialog: function(titleKey, msgKey, error) {
         this.openMessageDialog(titleKey, msgKey);
-        console.log(error);
+        logger.log(error);
         //FIXME send the error to the server
     },
 
@@ -252,33 +448,31 @@ var messageHandler = {
      * @param messageKey the key from the language file for the text of the
      * message.
      * @param messageArguments object with the arguments for the message.
-     * @param options object with language options.
+     * @param options passed to toastr (e.g. timeOut)
      */
     notify: function(displayName, displayNameKey, cls, messageKey,
                      messageArguments, options) {
 
         // If we're in ringing state we skip all toaster notifications.
-        if(!notificationsEnabled || APP.UI.isRingOverlayVisible())
+        if(!notificationsEnabled || APP.UI.isOverlayVisible())
             return;
 
         var displayNameSpan = '<span class="nickname" ';
         if (displayName) {
             displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
         } else {
-            displayNameSpan += "data-i18n='" + displayNameKey +
-                "'>" + APP.translation.translateString(displayNameKey);
+            displayNameSpan += "data-i18n='" + displayNameKey + "'>";
         }
         displayNameSpan += "</span>";
-        return toastr.info(
+        let element = toastr.info(
             displayNameSpan + '<br>' +
             '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
                 (messageArguments?
-                    " data-i18n-options='" + JSON.stringify(messageArguments)
-                        + "'"
-                    : "") + ">" +
-            APP.translation.translateString(messageKey,
-                messageArguments) +
-            '</span>', null, options);
+                    " data-i18n-options='"
+                        + JSON.stringify(messageArguments) + "'"
+                    : "") + "></span>", null, options);
+        APP.translation.translateElement(element);
+        return element;
     },
 
     /**
@@ -298,6 +492,15 @@ var messageHandler = {
 
     enablePopups: function (enable) {
         popupEnabled = enable;
+    },
+
+    /**
+     * Returns true if dialog is opened
+     * false otherwise
+     * @returns {boolean} isOpened
+     */
+    isDialogOpened: function () {
+        return !!$.prompt.getCurrentStateName();
     }
 };
 

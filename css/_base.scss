@@ -13,6 +13,10 @@ html, body{
     overflow: hidden;
 }
 
+p {
+    margin: 0;
+}
+
 html, body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
 }
@@ -25,40 +29,11 @@ html, body, input, textarea, keygen, select, button {
     color: #636363;
 }
 
-input[type='text'], input[type='password'], textarea {
-    -webkit-user-select: text;
-    user-select: text;
-    display: inline-block;
-    padding: 5px;
-    color: $defaultDarkColor;
-    border-radius: $borderRadius;
-    line-height: 32px;
-    height: 32px;
-    text-align: left;
-    border:1px solid $inputBorderColor;
-    outline: none; /* removes the default outline */
-    resize: none; /* prevents the user-resizing, adjust to taste */
-}
-
-textarea {
-    overflow: hidden;
-    word-wrap: break-word;
-    resize: horizontal;
-}
-
-button.no-icon {
-    padding: 0 1em;
-}
-
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
-    color: $defaultDarkColor;
-    background: $inputLightBackground;
-    font-size: 12px;
-    border: none;
-    box-shadow: none;
-    outline: none;
+    color: $inputColor;
+    font-size: 1em;
 }
 
 button, select, input[type="button"],
@@ -70,19 +45,31 @@ input[type="reset"], input[type="submit"] {
     cursor: pointer;
 }
 
+textarea {
+    overflow: hidden;
+    word-wrap: break-word;
+    resize: none;
+    line-height: 1.5em;
+}
+
+input[type='text'], input[type='password'], textarea {
+    outline: none; /* removes the default outline */
+    resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
 button {
     color: #FFF;
-    background-color: $buttonBackground !important;
+    background-color: $buttonBackground;
     border-radius: $borderRadius;
+
+    &.no-icon {
+        padding: 0 1em;
+    }
 }
 
 button,
 form {
     display: block;
-}
-
-.active {
-    background-color: #00ccff;
 }
 
 .watermark {
@@ -97,7 +84,6 @@ form {
 }
 
 .leftwatermark {
-    display: none;
     left: $defaultToolbarSize;
     margin-left: 10px;
     background-image: url($defaultWatermarkLink);
@@ -105,13 +91,11 @@ form {
 }
 
 .rightwatermark {
-    display: none;
     right: 15;
     background-position: center right;
 }
 
 .poweredby {
-    display: none;
     position: absolute;
     left: 25;
     bottom: 7;
@@ -132,37 +116,8 @@ form {
 }
 
 /**
- * Hides an element.
- */
-.hide {
-    display: none !important;
-}
-
-/**
- * Shows an element.
- */
-.show {
-    display: block !important;
-}
-
-/**
- * Shows an inline element.
- */
-.show-inline {
-    display: inline-block !important;
-}
-
-/**
- * Shows a flex element.
- */
-.show-flex {
-    display: -webkit-box !important;
-    display: -moz-box !important;
-    display: -ms-flexbox !important;
-    display: -webkit-flex !important;
-    display: flex !important;
-}
-
+* Tooltips
+**/
 .tipsy {
     z-index: $tooltipsZ;
     &-inner {
@@ -172,4 +127,16 @@ form {
     &-arrow {
         border-color: $tooltipBg;
     }
+}
+
+/**
+* Dialogs fade
+*/
+.aui-blanket {
+    visibility: visible;
+}
+
+#inviteLinkRef {
+    -webkit-user-select: text;
+    user-select: text;
 }

@@ -2,59 +2,50 @@
  * Toolbar side panel main container element.
  */
 #sideToolbarContainer {
-    display: inline-block;
-    position:absolute;
-    top: 0px;
-    left: $defaultToolbarSize;
-    width: 0%;
-    height: 100%;
-    max-width: 200px;
     background-color: rgba(0,0,0,0.8);
-    z-index: 800;
+    height: 100%;
+    left: $defaultToolbarSize;
+    max-width: $sidebarWidth;
     overflow: hidden;
-    letter-spacing: 1px;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 800;
 
     /**
      * Labels inside the side panel.
      */
     label {
-        color: $defaultColor;
+        color: $baseLight;
     }
 
     /**
      * Form elements and blocks.
      */
-    input, label, select, button, a, .sideToolbarBlock {
-        display: inline-block;
+    input, select, a,
+    .sideToolbarBlock, .form-control, .button-control {
+        display: block;
         margin-top: 15px;
         margin-left: 10%;
         width: 80%;
     }
 
     /**
-     * Specify colors for edit elements.
-     */
-    select, input[type="button"], input[type="text"],
-    input[type="reset"], input[type="submit"] {
-        color: $defaultColor;
-        background: $inputBackground;
-        border: none;
-    }
-
-    /**
      * Specify styling of elements inside a block.
      */
     .sideToolbarBlock {
-        input, label, button, a, select {
-            margin-top: 5px;
+        input, button, a, select {
             margin-left: 0;
+            margin-top: 5px;
             width: 100%;
         }
-
-        .startMutedLabel,
-        .followMeLabel {
+        input[type='checkbox'] {
             display: inline;
-            margin-top: 0;
+            width: auto !important;
+            > label {
+                margin-top: 5px;
+                width: 80%;
+            }
         }
     }
 
@@ -63,42 +54,56 @@
      */
     .sideToolbarContainer__inner {
         display: none;
-        width: 200px;
+        height: 100%;
+        width: $sidebarWidth;
+        position: absolute;
+        box-sizing: border-box;
         color: #FFF;
+
+        .input-control {
+            border: 0;
+        }
 
         /**
          * Titles and subtitles of inner containers.
          */
-        > div.title,
-          div.subTitle {
-            text-align: left;
-            margin: 10px 0px 10px 0px;
+        div.title, div.subTitle {
+            margin: 24px 0 11px;
         }
 
         /**
          * Main title size.
          */
-        > div.title {
-            color: $defaultColor !important;
+        div.title {
+            color: $toolbarTitleColor;
             text-align: center;
-            font-size: 16px;
+            font-size: $toolbarTitleFontSize;
         }
 
         /**
          * Subtitle specific properties.
          */
-        > div.subTitle {
+        div.subTitle {
+            color: $defaultSideBarFontColor !important;
             font-size: 11px;
             font-weight: 500;
-            color: $defaultSideBarFontColor !important;
             margin-left: 10%;
+            text-align: left;
         }
 
         /**
          * First element after a title.
          */
         .first {
-            margin-top: 0px !important;
+            margin-top: 0 !important;
+        }
+
+        /**
+         * Buttons in the side toolbar container.
+         */
+        .button-control {
+            margin: 9px 0;
+            width: 100%;
         }
     }
 }
@@ -108,8 +113,28 @@
     text-align: center;
 }
 
-#startAudioMuted,
-#startVideoMuted,
-#followMeCheckBox {
-    width: 13px !important;
+/**
+ * Profile
+ */
+.auth_container {
+    ul {
+        padding: 0;
+
+        li {
+            list-style-type: none;
+
+            a.authButton {
+                width: 160px;
+                margin: 10px 20px;
+                padding: 3px 29px;
+                box-sizing: border-box;
+                background-color: #06a5df;
+                border-radius: 4px;
+                cursor: pointer;
+                color: $defaultColor;
+                text-decoration: none;
+                text-align: center;
+            }
+        }
+    }
 }

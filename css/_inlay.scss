@@ -1,0 +1,33 @@
+.inlay {
+    margin-top: 14%;
+    @include border-radius(3px);
+    padding: 40px 38px 44px;
+    color: #fff;
+    background: $inlayColorBg;
+    text-align: center;
+
+    &__title {
+        margin: 17px 0;
+        padding-bottom: 17px;
+        color: $popoverFontColor;
+        font-size: 21px;
+        letter-spacing: 0.3px;
+        border-bottom: 1px solid $inlayBorderColor;
+    }
+
+    &__text {
+        color: $popoverFontColor;
+        display: block;
+        margin-top: 22px;
+        font-size: 16px;
+    }
+
+    &__icon {
+        margin: 0 10px;
+        font-size: 50px;
+    }
+
+    &__button {
+        float: none !important;
+    }
+}

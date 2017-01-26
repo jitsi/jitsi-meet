@@ -1,9 +1,13 @@
 {
-    "contactlist": "Im Gespräch",
+    "contactlist": "Teilnehmer (__pcount__)",
+    "addParticipants": "Link teilen",
+    "roomLocked": "Teilnehmer müssen ein Passwort eingeben",
+    "roomUnlocked": "Jeder mit Zugriff auf den Link kann beitreten",
+    "passwordSetRemotely": "von einem anderen Teilnehmer gesetzt",
     "connectionsettings": "Verbindungseinstellungen",
     "poweredby": "Betrieben von",
     "feedback": "Wir freuen uns auf Ihr Feedback!",
-    "roomUrlDefaultMsg": "Die Konferenz wird erstellt...",
+    "inviteUrlDefaultMsg": "Die Konferenz wird erstellt...",
     "me": "ich",
     "speaker": "Sprecher",
     "raisedHand": "Möchte sprechen",
@@ -21,17 +25,18 @@
         "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen"
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "Tastaturkürzel:",
-        "raiseHand": "Heben Sie Ihre Hand.",
-        "pushToTalk": "Drücken um zu sprechen.",
-        "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln.",
-        "toggleFilmstrip": "Videos anzeigen oder verbergen.",
-        "toggleShortcuts": "Hilfe-Menu anzeigen oder verdecken.",
-        "focusLocal": "Lokales Video fokussieren.",
-        "focusRemote": "Andere Videos fokussieren.",
-        "toggleChat": "Chat öffnen oder schliessen.",
-        "mute": "Stummschaltung aktivieren oder deaktivieren.",
-        "videoMute": "Eigenes Video starten oder stoppen."
+        "keyboardShortcuts": "Tastenkürzel",
+        "raiseHand": "Hand erheben",
+        "pushToTalk": "Drücken um zu sprechen",
+        "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
+        "toggleFilmstrip": "Videos anzeigen oder verbergen",
+        "toggleShortcuts": "Hilfe-Menu anzeigen oder verdecken",
+        "focusLocal": "Lokales Video fokussieren",
+        "focusRemote": "Auf das Video eines anderen Teilnehmers fokussieren",
+        "toggleChat": "Chat öffnen oder schliessen",
+        "mute": "Stummschaltung aktivieren oder deaktivieren",
+        "fullScreen": "Vollbildmodus aktivieren / deaktivieren",
+        "videoMute": "Kamera starten oder stoppen"
     },
     "welcomepage": {
         "go": "Los",
@@ -70,35 +75,45 @@
             "content": "Die Verwendung kann durch die Integration mit Piwik, Google Analytics und anderen Überwachungs- und Statistikprogrammen protokolliert werden."
         }
     },
+    "startupoverlay": {
+        "policyText": "&nbsp;",
+        "title": "__app__ benötigt Kamera und Mikrofon."
+    },
+    "suspendedoverlay": {
+        "title": "Die Konferenz wurde unterbrochen weil der Computer den Standbymodus aktivierte.",
+        "rejoinKeyTitle": "Erneut teilnehmen"
+    },
     "toolbar": {
         "mute": "Stummschaltung aktivieren / deaktivieren",
         "videomute": "Kamera starten / stoppen",
         "authenticate": "Anmelden",
         "lock": "Konferenz schützen / Schutz aufheben",
-        "invite": "Andere einladen",
+        "invite": "Link teilen",
         "chat": "Chat öffnen / schliessen",
-        "etherpad": "Dokument teilen",
+        "etherpad": "Geteiltes Dokument öffnen / schliessen",
         "sharedvideo": "YouTube-Video teilen",
-        "sharescreen": "Bildschirm freigeben",
+        "sharescreen": "Bildschirmfreigabe starten / stoppen",
         "fullscreen": "Vollbildmodus aktivieren / deaktivieren",
         "sip": "SIP Nummer anrufen",
         "Settings": "Einstellungen",
-        "hangup": "Konferenz verlassen",
+        "hangup": "Verlassen",
         "login": "Anmelden",
         "logout": "Abmelden",
-        "dialpad": "Tastenblock anzeigen",
+        "dialpad": "Wähltastatur öffnen / schliessen",
         "sharedVideoMutedPopup": "Das geteilte Video wurde stumm geschaltet damit mit <br/>den anderen Teilnehmern gesprochen werden kann.",
         "micMutedPopup": "Ihr Mikrofon wurde stumm geschaltet damit das<br/>geteilte Video genossen werden kann.",
+        "talkWhileMutedPopup": "Versuchen sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "unableToUnmutePopup": "Die Stummschaltung kann nicht aufgehoben werden während das geteilte Video abgespielt wird.",
         "cameraDisabled": "Keine Kamera verfügbar",
         "micDisabled": "Kein Mikrofon verfügbar",
         "filmstrip": "Videos anzeigen / verbergen",
-        "raiseHand": "Hand erheben um zu sprechen"
+        "profile": "Profil bearbeiten",
+        "raiseHand": "Hand erheben"
     },
     "bottomtoolbar": {
         "chat": "Chat öffnen / schliessen",
         "filmstrip": "Videos anzeigen / verbergen",
-        "contactlist": "Kontaktliste öffnen / schliessen"
+        "contactlist": "Teilnehmer anzeigen und einladen"
     },
     "chat": {
         "nickname": {
@@ -126,9 +141,10 @@
         "setPasswordLabel": "Konferenz mit einem Passwort schützen."
     },
     "profile": {
-        "title": "PROFIL",
+        "title": "Profil",
         "setDisplayNameLabel": "Anzeigename festlegen",
-        "setEmailLabel": "E-Mail Adresse für Gravatar"
+        "setEmailLabel": "E-Mail Adresse für Gravatar",
+        "setEmailInput": "E-Mail eingeben"
     },
     "videothumbnail": {
         "editnickname": "Klicken, um den Anzeigenamen zu bearbeiten",
@@ -141,6 +157,7 @@
         "flip": "Spiegeln"
     },
     "connectionindicator": {
+        "header": "Verbindungsdaten",
         "bitrate": "Bitrate:",
         "packetloss": "Paketverlust:",
         "resolution": "Auflösung:",
@@ -174,20 +191,30 @@
         "raisedHand": "Möchte sprechen."
     },
     "dialog": {
+        "add": "Hinzufügen",
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
         "popupError": "Ihr Browser blockiert Popup-Fenster von dieser Webseite. Bitte erlauben Sie dieser Seite Popups in den Sicherheitseinstellungen Ihres Browsers und versuchen Sie es erneut.",
+        "passwordErrorTitle": "Passwort-Fehler",
         "passwordError": "Diese Konferenz ist mit einem Paswort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",
         "passwordError2": "Diese Konferenzt ist nicht mit einem Passwort geschützt. Nur der Besitzer der Konferenz kann ein Passwort vergeben.",
         "connectError": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden.",
         "connectErrorWithMsg": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden: __msg__",
+        "incorrectPassword": "Das Passwort ist ungültig",
         "connecting": "Verbindung wird hergestellt",
         "copy": "Kopieren",
         "error": "Fehler",
+        "roomLocked": "Diese Konferenz ist gesperrt. Neue Teilnehmer müssen über den Link beitreten das Passwort eingeben",
+        "addPassword": "Passwort hinzufügen",
+        "createPassword": "Passwort erstellen",
         "detectext": "Fehler bei der Erkennung der Bildschirmfreigabeerweiterung.",
         "failtoinstall": "Die Bildschirmfreigabeerweiterung konnte nicht installiert werden.",
         "failedpermissions": "Die Zugriffsberechtigungen auf das Mikrofon und/oder die Kamera konnten nicht eingeholt werden.",
-        "bridgeUnavailable": "Die Jitsi Videobridge ist momentan nicht erreichbar. Bitte versuchen Sie es später noch einmal.",
-        "jicofoUnavailable": "Jicofo ist momentan nicht erreichbar. Bitte versuchen Sie es später noch einmal.",
+        "conferenceReloadTitle": "Leider ist etwas schiefgegangen",
+        "conferenceReloadMsg": "Wir versuchen das zu beheben",
+        "conferenceDisconnectTitle": "Sie wurden getrennt. Prüfen Sie Ihre Netzwerkverbindung.",
+        "conferenceDisconnectMsg": "Verbinde erneut in...",
+        "reconnectNow": "Jetzt erneut verbinden",
+        "conferenceReloadTimeLeft": "__seconds__ sek.",
         "maxUsersLimitReached": "Die maximale Teilnehmerzahl dieser Konferenz ist erreicht. Die Konferenz ist voll. Bitte versuchen Sie es später noch einmal.",
         "lockTitle": "Sperren fehlgeschlagen",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
@@ -199,10 +226,14 @@
         "SLDFailure": "Oh! Die Stummschaltung konnte nicht aktiviert werden. (SLD Fehler)",
         "SRDFailure": "Oh! Das Video konnte nicht gestoppt werden. (SRD Fehler)",
         "oops": "Oh!",
+        "currentPassword": "Das aktuelle Passwort ist",
+        "passwordLabel": "Passwort",
         "defaultError": "Es ist ein Fehler aufgetreten",
         "passwordRequired": "Passwort erforderlich",
         "Ok": "OK",
+        "done": "Fertig",
         "Remove": "Entfernen",
+        "removePassword": "Passwort entfernen",
         "shareVideoTitle": "Video teilen",
         "shareVideoLinkError": "Bitte einen gültigen YouTube-Link angeben.",
         "removeSharedVideoTitle": "Freigegebenes Video entfernen",
@@ -212,6 +243,7 @@
         "WaitForHostMsg": "Die Konferenz <b>__room__</b> hat noch nicht begonnen. Wenn Sie der Organisator sind, melden Sie sich bitte an. Anderenfalls warten Sie bitte, bis der Organisator beigetreten ist.",
         "IamHost": "Ich bin der Organisator",
         "Cancel": "Abbrechen",
+        "Submit": "OK",
         "retry": "Wiederholen",
         "logoutTitle": "Abmelden",
         "logoutQuestion": "Sind Sie sicher, dass Sie sich abmelden und die Konferenz verlassen möchten?",
@@ -226,7 +258,7 @@
         "sipMsg": "Geben Sie eine SIP Nummer ein",
         "passwordCheck": "Sind Sie sicher, dass Sie das Passwort entfernen möchten?",
         "passwordMsg": "Passwort setzen um die Konferenz zu schützen",
-        "shareLink": "Diesen Link kopieren und teilen",
+        "shareLink": "Link zu dieser Konferenz teilen",
         "settings1": "Konferenz einrichten",
         "settings2": "Teilnehmer treten stummgeschaltet bei",
         "settings3": "Name erforderlich<br/><br/>Setzen Sie ein Passwort, um die Konferenz zu schützen:",
@@ -242,7 +274,8 @@
         "token": "Token",
         "tokenAuthFailedTitle": "Authentifizierungsfehler",
         "tokenAuthFailed": "Sie sind nicht berechtigt dieser Konferenz beizutreten.",
-        "displayNameRequired": "Geben Sie Ihren Anzeigenamen ein",
+        "displayNameRequired": "Anzeigename ist erforderlich",
+        "enterDisplayName": "Geben Sie Ihren Anzeigenamen ein",
         "extensionRequired": "Erweiterung erforderlich:",
         "firefoxExtensionPrompt": "Um die Bildschirmfreigabe nutzen zu können, muss eine Firefox-Erweiterung installiert werden. Bitte versuchen Sie es erneut nachdem die <a href='__url__'>Erweiterung installiert</a> wurde.",
         "rateExperience": "Bitte bewerten Sie diese Konferenz.",
@@ -258,6 +291,7 @@
         "stopLiveStreaming": "Live-Streaming stoppen",
         "stopRecording": "Aufnahme stoppen",
         "doNotShowWarningAgain": "Diesen Hinweis nicht mehr anzeigen",
+        "doNotShowMessageAgain": "Diesen Hinweis nicht mehr anzeigen",
         "permissionDenied": "Zugriff verweigert",
         "screenSharingPermissionDeniedError": "Sie haben die Berechtigung für die Bildschirmfreigabe nicht erteilt.",
         "micErrorPresent": "Fehler beim Verbinden zum Mikrofon.",
@@ -275,7 +309,10 @@
         "cameraNotSendingData": "Die Kamera kann nicht verwendet werden. Bitte wählen Sie eine andere Kamera in den Einstellungen oder laden Sie die Konferenz neu.",
         "goToStore": "Zum Store",
         "externalInstallationTitle": "Erweiterung erforderlich",
-        "externalInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden."
+        "externalInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden.",
+        "muteParticipantTitle": "Teilnehmer stummschalten?",
+        "muteParticipantBody": "Sie können die Stummschaltung anderer Teilnehmer nicht aufheben, aber ein Teilnehmer kann seine eigene Stummschaltung jederzeit beenden.",
+        "muteParticipantButton": "Stummschalten"
     },
     "\u0005dialog": {},
     "email": {

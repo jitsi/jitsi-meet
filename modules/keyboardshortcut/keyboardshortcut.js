@@ -1,6 +1,11 @@
 /* global APP, $, JitsiMeetJS */
 
 /**
+ * The reference to the shortcut dialogs when opened.
+ */
+let keyboardShortcutDialog = null;
+
+/**
  * Initialise global shortcuts.
  * Global shortcuts are shortcuts for features that don't have a button or
  * link associated with the action. In other words they represent actions
@@ -9,12 +14,12 @@
 function initGlobalShortcuts() {
 
     KeyboardShortcut.registerShortcut("ESCAPE", null, function() {
-        APP.UI.showKeyboardShortcutsPanel(false);
+        showKeyboardShortcutsPanel(false);
     });
 
     KeyboardShortcut.registerShortcut("?", null, function() {
         JitsiMeetJS.analytics.sendEvent("shortcut.shortcut.help");
-        APP.UI.toggleKeyboardShortcutsPanel();
+        showKeyboardShortcutsPanel(true);
     }, "keyboardShortcuts.toggleShortcuts");
 
     // register SPACE shortcut in two steps to insure visibility of help message
@@ -33,10 +38,38 @@ function initGlobalShortcuts() {
 }
 
 /**
+ * Shows or hides the keyboard shortcuts dialog.
+ * @param {boolean} show whether to show or hide the dialog
+ */
+function showKeyboardShortcutsPanel(show) {
+    if (show
+        && !APP.UI.messageHandler.isDialogOpened()
+        && keyboardShortcutDialog === null) {
+
+        let msg = $('#keyboard-shortcuts').html();
+        let buttons = { Close: true };
+
+        keyboardShortcutDialog = APP.UI.messageHandler.openDialog(
+            'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
+    } else {
+        if (keyboardShortcutDialog !== null) {
+            keyboardShortcutDialog.close();
+            keyboardShortcutDialog = null;
+        }
+    }
+}
+
+/**
  * Map of shortcuts. When a shortcut is registered it enters the mapping.
  * @type {{}}
  */
 let _shortcuts = {};
+
+/**
+ * True if the keyboard shortcuts are enabled and false if not.
+ * @type {boolean}
+ */
+let enabled = true;
 
 /**
  * Maps keycode to character, id of popover for given function and function.
@@ -47,6 +80,9 @@ var KeyboardShortcut = {
 
         var self = this;
         window.onkeyup = function(e) {
+            if(!enabled) {
+                return;
+            }
             var key = self._getKeyboardKey(e).toUpperCase();
             var num = parseInt(key, 10);
             if(!($(":focus").is("input[type=text]") ||
@@ -56,7 +92,7 @@ var KeyboardShortcut = {
                     _shortcuts[key].function(e);
                 }
                 else if (!isNaN(num) && num >= 0 && num <= 9) {
-                    APP.UI.clickOnVideo(num + 1);
+                    APP.UI.clickOnVideo(num);
                 }
             //esc while the smileys are visible hides them
             } else if (key === "ESCAPE" &&
@@ -66,6 +102,9 @@ var KeyboardShortcut = {
         };
 
         window.onkeydown = function(e) {
+            if(!enabled) {
+                return;
+            }
             if(!($(":focus").is("input[type=text]") ||
                 $(":focus").is("input[type=password]") ||
                 $(":focus").is("textarea"))) {
@@ -76,6 +115,14 @@ var KeyboardShortcut = {
                 }
             }
         };
+    },
+
+    /**
+     * Enables/Disables the keyboard shortcuts.
+     * @param {boolean} value - the new value.
+     */
+    enable: function (value) {
+        enabled = value;
     },
 
     /**
@@ -172,27 +219,30 @@ var KeyboardShortcut = {
      */
     _addShortcutToHelp: function (shortcutChar, shortcutDescriptionKey) {
 
-        var listElement = document.createElement("li");
+        let listElement = document.createElement("li");
+        let itemClass = 'shortcuts-list__item';
+        listElement.className = itemClass;
         listElement.id = shortcutChar;
 
-        var spanElement = document.createElement("span");
+        let spanElement = document.createElement("span");
         spanElement.className = "item-action";
 
-        var kbdElement = document.createElement("kbd");
-        kbdElement.className = "regular-key";
+        let kbdElement = document.createElement("kbd");
+        let classes = 'aui-label regular-key';
+        kbdElement.className = classes;
         kbdElement.innerHTML = shortcutChar;
         spanElement.appendChild(kbdElement);
 
-        var descriptionElement = document.createElement("span");
-        descriptionElement.className = "item-description";
+        let descriptionElement = document.createElement("span");
+        let descriptionClass = "shortcuts-list__description";
+        descriptionElement.className = descriptionClass;
         descriptionElement.setAttribute("data-i18n", shortcutDescriptionKey);
-        descriptionElement.innerHTML
-            = APP.translation.translateString(shortcutDescriptionKey);
+        APP.translation.translateElement($(descriptionElement));
 
         listElement.appendChild(spanElement);
         listElement.appendChild(descriptionElement);
 
-        var parentListElement
+        let parentListElement
             = document.getElementById("keyboard-shortcuts-list");
 
         if (parentListElement)

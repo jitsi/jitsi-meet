@@ -10,7 +10,35 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
 
-var unreadMessages = 0;
+let unreadMessages = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="chat_container" class="sideToolbarContainer__inner">
+        <div id="nickname">
+            <span data-i18n="chat.nickname.title"></span>
+            <form>
+                <input type='text'
+                       class="input-control" id="nickinput" autofocus
+                    data-i18n="[placeholder]chat.nickname.popover">
+            </form>
+        </div>
+
+        <div id="chatconversation"></div>
+        <audio id="chatNotification" src="sounds/incomingMessage.wav" 
+            preload="auto"></audio>
+        <textarea id="usermsg" autofocus 
+            data-i18n="[placeholder]chat.messagebox"></textarea>
+        <div id="smileysarea">
+            <div id="smileys" id="toggle_smileys">
+                <img src="images/smile.svg"/>
+            </div>
+        </div>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
  * The container id, which is and the element id.
@@ -130,6 +158,17 @@ function resizeChatConversation() {
 }
 
 /**
+ * Focus input after 400 ms
+ * Found input by id
+ *
+ * @param id {string} input id
+ */
+function deferredFocus(id){
+    setTimeout(function (){
+        $(`#${id}`).focus();
+    }, 400);
+}
+/**
  * Chat related user interface.
  */
 var Chat = {
@@ -137,9 +176,14 @@ var Chat = {
      * Initializes chat related interface.
      */
     init (eventEmitter) {
+        initHTML();
         if (APP.settings.getDisplayName()) {
             Chat.setChatConversationMode(true);
         }
+
+        $("#toggle_smileys").click(function() {
+            Chat.toggleSmileys();
+        });
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
@@ -147,6 +191,7 @@ var Chat = {
                 let val = this.value;
                 this.value = '';
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
+                deferredFocus('usermsg');
             }
         });
 
@@ -190,9 +235,9 @@ var Chat = {
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
                 if (APP.settings.getDisplayName())
-                    $('#usermsg').focus();
+                    deferredFocus('usermsg');
                 else
-                    $('#nickinput').focus();
+                    deferredFocus('nickinput');
             });
 
         addSmileys();
@@ -264,12 +309,11 @@ var Chat = {
         if (subject) {
             subject = subject.trim();
         }
-        $('#subject').html(linkify(UIUtil.escapeHtml(subject)));
-        if (subject) {
-            $("#subject").css({display: "block"});
-        } else {
-            $("#subject").css({display: "none"});
-        }
+
+        let subjectId = 'subject';
+        let html = linkify(UIUtil.escapeHtml(subject));
+        $(`#${subjectId}`).html(html);
+        UIUtil.setVisible(subjectId, subject && subject.length > 0);
     },
 
     /**
@@ -282,13 +326,6 @@ var Chat = {
     setChatConversationMode (isConversationMode) {
         $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
-
-        // this is needed when we transition from no conversation mode to
-        // conversation mode. When user enters his nickname and hits enter,
-        // to focus on the write area.
-        if (isConversationMode) {
-            $('#usermsg').focus();
-        }
     },
 
     /**

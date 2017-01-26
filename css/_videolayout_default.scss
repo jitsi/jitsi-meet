@@ -12,108 +12,113 @@
     overflow: hidden;
 }
 
-#remoteVideos {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    flex-direction: row-reverse;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-
-    position:absolute;
-    text-align:right;
-    height:196px;
-    padding: 10px 10px 10px 5px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width:auto;
-    border: 2px solid transparent;
-    z-index: 5;
-    transition: bottom 2s;
-    overflow: visible !important;
-    font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
-}
-
-#remotevideos.hidden {
-    bottom: -196px;
-}
-
 .videocontainer {
     position: relative;
     text-align: center;
-}
 
-#remoteVideos .videocontainer {
-    display: none;
-    position: relative;
-    background-color: black;
-    background-size: contain;
-    border-radius:1px;
-    margin: 0 $thumbnailVideoMargin;
-}
+    &__background {
+        @include topLeft();
+        background-color: black;
+        border-radius: $borderRadius - 1;
+        width: 100%;
+        height: 100%;
+    }
 
-/**
- * The toolbar of the video thumbnail.
- */
-.videocontainer__toolbar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    width: 100%;
-    box-sizing: border-box; // Includes the padding in the 100% width.
-    height: $thumbnailToolbarHeight;
-    max-height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 0 5px 0 5px;
-}
+    /**
+     * The toolbar of the video thumbnail.
+     */
+    &__toolbar,
+    &__toptoolbar {
+        position: absolute;
+        left: 0;
+        z-index: 3;
+        width: 100%;
+        box-sizing: border-box; // Includes the padding in the 100% width.
+    }
 
-#remoteVideos .videocontainer.videoContainerFocused,
-#remoteVideos .videocontainer:hover {
-    cursor: hand;
-    margin-right: $thumbnailVideoMargin - 2;
-    margin-left: $thumbnailVideoMargin - 2;
-    margin-top: -2px;
-}
-/**
- * Focused video thumbnail.
- */
-#remoteVideos .videocontainer.videoContainerFocused {
-    transition-duration: 0.5s;
-    -webkit-transition-duration: 0.5s;
-    -webkit-animation-name: greyPulse;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-iteration-count: 1;
-    border: 2px solid $videoThumbnailSelected !important;
-    box-shadow: inset 0 0 3px $videoThumbnailSelected,
-                0 0 3px $videoThumbnailSelected !important;
-}
+    &__toolbar {
+        bottom: 0;
+        padding: 0 5px 0 5px;
+        height: $thumbnailToolbarHeight;
+    }
 
-/**
- * Hovered video thumbnail.
- */
-#remoteVideos .videocontainer:hover {
-    cursor: hand;
-    border: 2px solid $videoThumbnailHovered;
-    box-shadow: inset 0 0 3px $videoThumbnailHovered,
-              0 0 3px $videoThumbnailHovered;
+    &__toptoolbar {
+        $toolbarPadding: 5px;
+        top: 0;
+        padding: $toolbarPadding;
+        padding-bottom: 0;
+
+        span.indicator {
+            position: relative;
+            font-size: 8px;
+            text-align: center;
+            line-height: $thumbnailIndicatorSize;
+            display: none;
+            padding: 0;
+            margin-right: em(5, 8);
+            float: left;
+            @include circle($thumbnailIndicatorSize);
+            box-sizing: border-box;
+            z-index: 3;
+            background: $dominantSpeakerBg;
+            color: $thumbnailPictogramColor;
+            border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            .indicatoricon {
+                @include absoluteAligning();
+            }
+
+            .connection {
+                position: relative;
+                display: inline-block;
+                margin: 0 auto;
+                left: 0;
+                @include transform(translate(0, -50%));
+
+                &_empty
+                {
+                    color: #8B8B8B;/*#FFFFFF*/
+                    overflow: hidden;
+                }
+
+                &_lost
+                {
+                    color: #8B8B8B;
+                    overflow: visible;
+                }
+
+                &_full
+                {
+                    @include topLeft();
+                    color: #FFFFFF;/*#15A1ED*/
+                    overflow: hidden;
+                }
+            }
+
+            .icon-connection,
+            .icon-connection-lost {
+                font-size: 1em;
+            }
+        }
+    }
+
+    &__hoverOverlay {
+        background: rgba(0,0,0,.6);
+        border-radius: $borderRadius;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        visibility: hidden;
+        z-index: 2;
+    }
 }
 
 #localVideoWrapper {
     display:inline-block;
-}
-
-/* With TemasysWebRTC plugin <object/> element is used
-   instead of <video/> */
-#remoteVideos .videocontainer>video,
-#remoteVideos .videocontainer>object {
-    cursor: hand;
-    border-radius:1px;
-    object-fit: cover;
-    overflow: hidden;
 }
 
 .flipVideoX {
@@ -125,8 +130,8 @@
 
 #localVideoWrapper>video,
 #localVideoWrapper>object {
+    border-radius: $borderRadius !important;
     cursor: hand;
-    border-radius:1px !important;
     object-fit: cover;
 }
 
@@ -176,14 +181,15 @@
 .videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    left: 30%;
-    width: 40%;
+    left: 10%;
+    width: 80%;
+    top: 50%;
+    @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: center;
     text-overflow: ellipsis;
     font-size: 12px;
     font-weight: 100;
-    letter-spacing: 1px;
     overflow: hidden;
     white-space: nowrap;
     line-height: $thumbnailToolbarHeight;
@@ -201,92 +207,13 @@
     padding: 0;
 }
 
-.videocontainer>span.status {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    background: rgba(0,0,0,.7);
-    text-align: center;
-    text-overflow: ellipsis;
-    width: 70%;
-    height: 15%;
-    left: 15%;
-    bottom: 2%;
-    padding: 5px;
-    font-size: 10pt;
-    overflow: hidden;
-    white-space: nowrap;
-    z-index: 2;
-    border-radius:3px;
-}
-
-.connectionindicator
-{
-    display: inline-block;
-    position: absolute;
-    top: 7px;
-    right: 0;
-    padding: 0px 5px;
-    z-index: 3;
-    width: 18px;
-    height: 13px;
-}
-
-.connection.connection_empty
-{
-    color: #8B8B8B;/*#FFFFFF*/
-    overflow: hidden;
-}
-
-.connection.connection_lost
-{
-    color: #8B8B8B;
-    overflow: visible;
-}
-
-.connection.connection_full
-{
-    color: #FFFFFF;/*#15A1ED*/
-    overflow: hidden;
-}
-
-.connection
-{
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    font-size: 8pt;
-    border: 0px;
-    width: 18px;
-    height: 13px;
-}
-
-.connection_info
-{
-    float: left;
-    padding-bottom: 5px;
-}
-
-.connection_info > table
-{
-    white-space: nowrap;
-}
-
-.connection_info, .connection_info > table
-{
-    text-align: left;
-    font-size: 11px;
-    color: #ffffff;
-}
-
-#localVideoContainer>span.status:hover,
 #localVideoContainer .displayname:hover {
     cursor: text;
 }
 
-.videocontainer>span.status,
 .videocontainer .displayname {
     pointer-events: none;
+    padding: 0 3px 0 3px;
 }
 
 .videocontainer .editdisplayname {
@@ -297,7 +224,6 @@
     pointer-events: auto !important;
 }
 
-.videocontainer>a.status,
 .videocontainer>a.displayname {
     display: inline-block;
     position: absolute;
@@ -342,25 +268,26 @@
   margin: 0px 0px 0px 5px;
 }
 
-.videocontainer>span.indicator {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    @include circle($thumbnailIndicatorSize);
-    box-sizing: border-box;
-    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    z-index: 3;
-    text-align: center;
-    background: $dominantSpeakerBg;
-    margin: 7px;
-    display: inline-block;
-    color: $thumbnailPictogramColor;
-    font-size: 8pt;
-    border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+#raisehandindicator {
+  background: $raiseHandBg;
 }
 
-.videocontainer>#raisehandindicator {
-    background: $raiseHandBg;
+#connectionindicator {
+  background: $connectionIndicatorBg;
+}
+
+.remotevideomenu
+{
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    margin: 7px;
+    z-index: 3;
+    width: 18px;
+    height: 13px;
+    color: #FFF;
+    font-size: 8pt;
 }
 
 /**
@@ -401,12 +328,6 @@
         filter: blur(0.5px);
         background: $audioLevelBg;
     }
-}
-
-#indicatoricon {
-    width: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
-    line-height: $thumbnailIndicatorSize - 2*$thumbnailIndicatorBorder;
 }
 
 #reloadPresentation {
@@ -457,7 +378,6 @@
     margin: auto;
     position: relative;
     border-radius: 100px;
-    z-index: 3;
     visibility: inherit;
     background-color: #000000;
 }
@@ -472,8 +392,11 @@
 }
 
 .userAvatar {
-    @include circle(60px);
-    @include absoluteAligning(60px, 60px);
+    @include maxSize(60px);
+    @include absoluteAligning();
+    border-radius: 50%;
+    height: 50%;
+    width: auto;
 }
 
 .sharedVideoAvatar {
@@ -530,7 +453,7 @@
     display: none;
     position: absolute;
     width: auto;
-    z-index: 1011;
+    z-index: 2;
     font-weight: 600;
     font-size: 14px;
     text-align: center;
@@ -553,7 +476,7 @@
     position: absolute;
     width: 100%;
     top:50%;
-    z-index: 1011;
+    z-index: 2;
     font-weight: 600;
     font-size: 14px;
     text-align: center;
@@ -565,47 +488,43 @@
                     0px 0px 1px rgba(0,0,0,0.3);
 }
 
-#videoResolutionLabel {
-    display: none;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(0,0,0,.5);
-    padding: 10px;
-    color: rgba(255,255,255,.5);
-    z-index: 1011;
+.video-state-indicator {
+    background: $videoStateIndicatorBackground;
+    color: $videoStateIndicatorColor;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 10px 5px;
     border-radius: 50%;
+    position: absolute;
+    box-sizing: border-box;
+}
+
+#videoResolutionLabel,
+.centeredVideoLabel {
+    display: none;
+    z-index: 1011;
 }
 
 .centeredVideoLabel {
-    display: none;
-    position: absolute;
     bottom: 45%;
-    top: auto;
-    right: auto;
-    left: auto;
-    line-height: 28px;
-    height: 28px;
-    width: auto;
-    padding: 5px;
-    margin-right: auto;
-    margin-left: auto;
-    background: rgba(0,0,0,.5);
-    color: #FFF;
-    z-index: 1011;
     border-radius: 2px;
     -webkit-transition: all 2s 2s linear;
     transition: all 2s 2s linear;
+
+    &.moveToCorner {
+        bottom: auto;
+    }
 }
 
 .moveToCorner {
-    top: 5px;
-    right: 50px; /*leave free space for the HD label*/
-    margin-right: 0px;
-    margin-left: auto;
-    background: rgba(0,0,0,.3);
-    color: rgba(255,255,255,.5);
+    position: absolute;
+    top: 30px;
+    right: 30px;
 }
 
-.hidden {
+.moveToCorner + .moveToCorner {
+    right: 80px;
 }

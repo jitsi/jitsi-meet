@@ -19,6 +19,34 @@ const TOOLTIP_POSITIONS = {
 };
 
 /**
+ * Associates the default display type with corresponding CSS class
+ */
+const SHOW_CLASSES = {
+    'block': 'show',
+    'inline': 'show-inline',
+    'list-item': 'show-list-item'
+};
+
+/**
+ * Contains sizes of thumbnails
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const ThumbnailSizes = {
+    SMALL: 60,
+    MEDIUM: 80
+};
+
+/**
+ * Contains font sizes for thumbnail indicators
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const IndicatorFontSizes = {
+    SMALL: 5,
+    MEDIUM: 6,
+    NORMAL: 8
+};
+
+/**
  * Created by hristo on 12/22/14.
  */
  var UIUtil = {
@@ -27,9 +55,7 @@ const TOOLTIP_POSITIONS = {
      * Returns the available video width.
      */
     getAvailableVideoWidth: function () {
-        let rightPanelWidth = 0;
-
-        return window.innerWidth - rightPanelWidth;
+        return window.innerWidth;
     },
 
     /**
@@ -131,10 +157,12 @@ const TOOLTIP_POSITIONS = {
      * @param position the position of the tooltip in relation to the element
      */
     setTooltip: function (element, key, position) {
-        element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
-        element.setAttribute('data-i18n', '[content]' + key);
+        if (element !== null) {
+            element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
+            element.setAttribute('data-i18n', '[content]' + key);
 
-        APP.translation.translateElement($(element));
+            APP.translation.translateElement($(element));
+        }
     },
 
     /**
@@ -203,27 +231,76 @@ const TOOLTIP_POSITIONS = {
     },
 
     /**
-     * Shows the element given by id.
+     * Indicates if Authentication Section should be shown
      *
-     * @param {String} the identifier of the element to show
+     * @returns {boolean}
      */
-    showElement(id) {
-        if ($("#"+id).hasClass("hide"))
-            $("#"+id).removeClass("hide");
-
-        $("#"+id).addClass("show");
+    isAuthenticationEnabled: function() {
+        return interfaceConfig.AUTHENTICATION_ENABLE;
     },
 
     /**
-     * Hides the element given by id.
+     * Shows / hides the element given by id.
      *
-     * @param {String} the identifier of the element to hide
+     * @param {string|HTMLElement} idOrElement the identifier or the element
+     *        to show/hide
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
      */
-    hideElement(id) {
-        if ($("#"+id).hasClass("show"))
-            $("#"+id).removeClass("show");
+    setVisible(id, visible) {
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
-        $("#"+id).addClass("hide");
+        if (!element) {
+            return;
+        }
+
+        if (!visible)
+            element.classList.add('hide');
+        else if (element.classList.contains('hide')) {
+            element.classList.remove('hide');
+        }
+
+        let type = this._getElementDefaultDisplay(element.tagName);
+        let className = SHOW_CLASSES[type];
+
+        if (visible) {
+            element.classList.add(className);
+        }
+        else if (element.classList.contains(className))
+            element.classList.remove(className);
+    },
+
+    /**
+     * Returns default display style for the tag
+     * @param tag
+     * @returns {*}
+     * @private
+     */
+    _getElementDefaultDisplay(tag) {
+        let tempElement = document.createElement(tag);
+
+        document.body.appendChild(tempElement);
+        let style = window.getComputedStyle(tempElement).display;
+        document.body.removeChild(tempElement);
+
+        return style;
+    },
+
+    /**
+     * Shows / hides the element with the given jQuery selector.
+     *
+     * @param {jQuery} jquerySelector the jQuery selector of the element to
+     * show / shide
+     * @param {boolean} isVisible
+     */
+    setVisibleBySelector(jquerySelector, isVisible) {
+        if (jquerySelector && jquerySelector.length > 0) {
+            jquerySelector.css("visibility", isVisible ? "visible" : "hidden");
+        }
     },
 
     hideDisabledButtons: function (mappings) {
@@ -240,13 +317,53 @@ const TOOLTIP_POSITIONS = {
          window.location.href = url;
     },
 
-     isFullScreen () {
-         return document.fullScreen
-             || document.mozFullScreen
-             || document.webkitIsFullScreen;
-     },
+    /**
+     * Indicates if we're currently in full screen mode.
+     *
+     * @return {boolean} {true} to indicate that we're currently in full screen
+     * mode, {false} otherwise
+     */
+    isFullScreen() {
+        return document.fullscreenElement
+            || document.mozFullScreenElement
+            || document.webkitFullscreenElement
+            || document.msFullscreenElement;
+    },
 
-     /**
+    /**
+     * Exits full screen mode.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
+     */
+    exitFullScreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    },
+
+    /**
+     * Enter full screen mode.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
+     */
+    enterFullScreen() {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement
+                .webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+    },
+
+    /**
       * Create html attributes string out of object properties.
       * @param {Object} attrs object with properties
       * @returns {String} string of html element attributes
@@ -325,6 +442,83 @@ const TOOLTIP_POSITIONS = {
                 "cursor": "default"
             });
         }
+    },
+
+    /**
+     * Gets an "indicator" span for a video thumbnail.
+     * If element doesn't exist then creates it and appends
+     * video span container.
+     *
+     * @param {object} opts
+     * @param opts.indicatorId {String} - identificator of indicator
+     * @param opts.videoSpanId {String} - identificator of video span
+     * @param opts.content {String} HTML content of indicator
+     * @param opts.tooltip {String} - tooltip key for translation
+     *
+     * @returns {HTMLSpanElement} indicatorSpan
+     */
+    getVideoThumbnailIndicatorSpan(opts = {}) {
+        let indicatorId = opts.indicatorId;
+        let videoSpanId = opts.videoSpanId;
+        let indicators = $(`#${videoSpanId} [id="${indicatorId}"]`);
+        let indicatorSpan;
+
+        if (indicators.length <= 0) {
+            indicatorSpan = document.createElement('span');
+
+            indicatorSpan.className = 'indicator';
+            indicatorSpan.id = indicatorId;
+
+            if(opts.content) {
+                indicatorSpan.innerHTML = opts.content;
+            }
+
+            if (opts.tooltip) {
+                this.setTooltip(indicatorSpan, opts.tooltip, "top");
+                APP.translation.translateElement($(indicatorSpan));
+            }
+
+            this._resizeIndicator(indicatorSpan);
+
+            document.getElementById(videoSpanId)
+                .querySelector('.videocontainer__toptoolbar')
+                .appendChild(indicatorSpan);
+        } else {
+            indicatorSpan = indicators[0];
+        }
+
+        return indicatorSpan;
+    },
+
+    /**
+     * Resizing indicator element passing via argument
+     * according to the current thumbnail size
+     * @param {HTMLElement} indicator - indicator element
+     * @private
+     */
+    _resizeIndicator(indicator) {
+        let height = $('#localVideoContainer').height();
+        let fontSize = this.getIndicatorFontSize(height);
+        $(indicator).css('font-size', fontSize);
+    },
+
+    /**
+     * Returns font size for indicators according to current
+     * height of thumbnail
+     * @param {Number} - height - current height of thumbnail
+     * @returns {Number} - font size for current height
+     */
+    getIndicatorFontSize(height) {
+        const { SMALL, MEDIUM } = ThumbnailSizes;
+        let fontSize = IndicatorFontSizes.NORMAL;
+
+        if (height <= SMALL) {
+            fontSize = IndicatorFontSizes.SMALL;
+        } else if (height > SMALL && height <= MEDIUM) {
+            fontSize = IndicatorFontSizes.MEDIUM;
+        }
+
+        return fontSize;
     }
 };
 

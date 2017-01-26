@@ -1,3 +1,5 @@
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 var ConfigUtil = {
     /**
      * Method overrides JSON properties in <tt>config</tt> and
@@ -5,6 +7,8 @@ var ConfigUtil = {
      * @param config the config object for which we'll be overriding properties
      * @param interfaceConfig the interfaceConfig object for which we'll be
      *                        overriding properties.
+     * @param loggingConfig the logging config object for which we'll be
+     *        overriding properties.
      * @param newConfig object containing configuration properties. Destination
      *        object is selected based on root property name:
      *        {
@@ -12,11 +16,15 @@ var ConfigUtil = {
      *             // config.js properties to be
      *          },
      *          interfaceConfig: {
-     *             // interfaceConfig.js properties here
+     *             // interface_config.js properties here
+     *          },
+     *          loggingConfig: {
+     *             // logging_config.js properties here
      *          }
      *        }
      */
-    overrideConfigJSON: function (config, interfaceConfig, newConfig) {
+    overrideConfigJSON: function (config,
+                                  interfaceConfig, loggingConfig, newConfig) {
         var configRoot, key, value, confObj;
         for (configRoot in newConfig) {
             confObj = null;
@@ -24,6 +32,8 @@ var ConfigUtil = {
                 confObj = config;
             } else if (configRoot == "interfaceConfig") {
                 confObj = interfaceConfig;
+            } else if (configRoot == "loggingConfig") {
+                confObj = loggingConfig;
             } else {
                 continue;
             }
@@ -31,10 +41,10 @@ var ConfigUtil = {
             for (key in newConfig[configRoot]) {
                 value = newConfig[configRoot][key];
                 if (confObj[key] && typeof confObj[key] !== typeof value) {
-                    console.log("Overriding a " + configRoot +
+                    logger.log("Overriding a " + configRoot +
                         " property with a property of different type.");
                 }
-                console.info("Overriding " + key + " with: " + value);
+                logger.info("Overriding " + key + " with: " + value);
                 confObj[key] = value;
             }
         }

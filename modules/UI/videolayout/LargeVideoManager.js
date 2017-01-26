@@ -1,7 +1,9 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
+import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 
@@ -18,13 +20,14 @@ export default class LargeVideoManager {
          * @type {Object.<string, LargeContainer>}
          */
         this.containers = {};
+        this.eventEmitter = emitter;
 
         this.state = VIDEO_CONTAINER_TYPE;
         this.videoContainer = new VideoContainer(
             () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
-        // use the same video container to handle and desktop tracks
+        // use the same video container to handle desktop tracks
         this.addContainer("desktop", this.videoContainer);
 
         this.width = 0;
@@ -35,35 +38,6 @@ export default class LargeVideoManager {
         this.$container.css({
             display: 'inline-block'
         });
-
-        if (interfaceConfig.SHOW_JITSI_WATERMARK) {
-            let leftWatermarkDiv
-                = this.$container.find("div.watermark.leftwatermark");
-
-            leftWatermarkDiv.css({display: 'block'});
-
-            UIUtil.setLinkHref(
-                leftWatermarkDiv.parent(),
-                interfaceConfig.JITSI_WATERMARK_LINK);
-        }
-
-        if (interfaceConfig.SHOW_BRAND_WATERMARK) {
-            let rightWatermarkDiv
-                = this.$container.find("div.watermark.rightwatermark");
-
-            rightWatermarkDiv.css({
-                display: 'block',
-                backgroundImage: 'url(images/rightwatermark.png)'
-            });
-
-            UIUtil.setLinkHref(
-                rightWatermarkDiv.parent(),
-                interfaceConfig.BRAND_WATERMARK_LINK);
-        }
-
-        if (interfaceConfig.SHOW_POWERED_BY) {
-            this.$container.children("a.poweredby").css({display: 'block'});
-        }
 
         this.$container.hover(
             e => this.onHoverIn(e),
@@ -117,24 +91,18 @@ export default class LargeVideoManager {
 
         this.updateInProcess = true;
 
-        let container = this.getContainer(this.state);
-
         // Include hide()/fadeOut only if we're switching between users
-        let preUpdate;
-        let isUserSwitch = this.newStreamData.id != this.id;
-        if (isUserSwitch) {
-            preUpdate = container.hide();
-        } else {
-            preUpdate = Promise.resolve();
-        }
+        const isUserSwitch = this.newStreamData.id != this.id;
+        const container = this.getContainer(this.state);
+        const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
-            let {id, stream, videoType, resolve} = this.newStreamData;
+            const { id, stream, videoType, resolve } = this.newStreamData;
             this.newStreamData = null;
 
-            console.info("hover in %s", id);
+            logger.info("hover in %s", id);
             this.state = videoType;
-            let container = this.getContainer(this.state);
+            const container = this.getContainer(this.state);
             container.setStream(stream, videoType);
 
             // change the avatar url on large
@@ -147,18 +115,18 @@ export default class LargeVideoManager {
             // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
             // its stream whether exist and is muted to set isVideoMuted
             // in rest of the cases it is false
-            let showAvatar = false;
-            if (videoType == VIDEO_CONTAINER_TYPE)
-                showAvatar = stream ? stream.isMuted() : true;
+            let showAvatar
+                = (videoType === VIDEO_CONTAINER_TYPE)
+                    && (!stream || stream.isMuted());
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
             // there was a user switch(image is lost on stream detach) or if
             // the video was not rendered, before the connection has failed.
-            let isHavingConnectivityIssues
+            const isHavingConnectivityIssues
                 = APP.conference.isParticipantConnectionActive(id) === false;
             if (isHavingConnectivityIssues
-                    && (isUserSwitch | !container.wasVideoRendered)) {
+                    && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
             }
 
@@ -178,14 +146,17 @@ export default class LargeVideoManager {
             // show the avatar on large if needed
             container.showAvatar(showAvatar);
 
-            // Make sure no notification about remote failure is shown as
-            // it's UI conflicts with the one for local connection interrupted.
-            if (APP.conference.isConnectionInterrupted()) {
-                this.updateParticipantConnStatusIndication(id, true);
-            } else {
-                this.updateParticipantConnStatusIndication(
-                    id, !isHavingConnectivityIssues);
+            // Clean up audio level after previous speaker.
+            if (showAvatar) {
+                this.updateLargeVideoAudioLevel(0);
             }
+
+            // Make sure no notification about remote failure is shown as
+            // its UI conflicts with the one for local connection interrupted.
+            this.updateParticipantConnStatusIndication(
+                    id,
+                    APP.conference.isConnectionInterrupted()
+                        || !isHavingConnectivityIssues);
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
@@ -195,6 +166,7 @@ export default class LargeVideoManager {
             // after everything is done check again if there are any pending
             // new streams.
             this.updateInProcess = false;
+            this.eventEmitter.emit(UIEvents.LARGE_VIDEO_ID_CHANGED, this.id);
             this.scheduleLargeVideoUpdate();
         });
     }
@@ -335,13 +307,14 @@ export default class LargeVideoManager {
             show = APP.conference.isConnectionInterrupted();
         }
 
+        let id = 'localConnectionMessage';
+
+        UIUtil.setVisible(id, show);
+
         if (show) {
-            $('#localConnectionMessage').css({display: "block"});
             // Avatar message conflicts with 'videoConnectionMessage',
             // so it must be hidden
             this.showRemoteConnectionMessage(false);
-        } else {
-            $('#localConnectionMessage').css({display: "none"});
         }
     }
 
@@ -382,9 +355,11 @@ export default class LargeVideoManager {
      */
     _setRemoteConnectionMessage (msgKey, msgOptions) {
         if (msgKey) {
-            let text = APP.translation.translateString(msgKey, msgOptions);
             $('#remoteConnectionMessage')
-                .attr("data-i18n", msgKey).text(text);
+                .attr("data-i18n", msgKey)
+                .attr("data-i18n-options", JSON.stringify(msgOptions));
+            APP.translation.translateElement(
+                $('#remoteConnectionMessage'), msgOptions);
         }
 
         this.videoContainer.positionRemoteConnectionMessage();
@@ -396,14 +371,13 @@ export default class LargeVideoManager {
      *
      * @param {string} msgKey the translation key which will be used to get
      * the message text to be displayed on the large video.
-     * @param {object} msgOptions translation options object
      *
      * @private
      */
-    _setLocalConnectionMessage (msgKey, msgOptions) {
+    _setLocalConnectionMessage (msgKey) {
         $('#localConnectionMessage')
-            .attr("data-i18n", msgKey)
-            .text(APP.translation.translateString(msgKey, msgOptions));
+            .attr("data-i18n", msgKey);
+        APP.translation.translateElement($('#localConnectionMessage'));
     }
 
     /**

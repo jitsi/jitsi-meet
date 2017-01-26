@@ -1,0 +1,132 @@
+.supported-browser {
+    color: #929391;
+    display: inline-block;
+    font-size: 20px;
+    margin: 1em 7px;
+    vertical-align: middle;
+    width: 138px;
+
+    &__button {
+        background-color: #62c82a;
+        border: 1px solid #3c8117;
+        border-radius: 10px;
+        color: #FFFFFF;
+        font-size: 12px;
+        height: 26px;
+        margin: 15px auto 0px auto;
+        padding-top: 13px;
+        text-align: center;
+        width: 115px;
+    }
+
+    &__link {
+        color: #087dba;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        &:active {
+            text-decoration: none;
+        }
+
+        &:focus {
+            text-decoration: none;
+        }
+    }
+
+    &-list
+    {
+        margin: 0 auto;
+    }
+
+    &__logo {
+        margin: 20px auto 0px auto;
+
+        &_chrome {
+            background-image: url('../../images/chrome.png');
+            height: 78px;
+            width: 78px;
+        }
+
+        &_chromium {
+            background-image: url('../../images/chromium.png');
+            height: 78px;
+            width: 77px;
+        }
+
+        &_firefox {
+            background-image: url('../../images/firefox.png');
+            height: 80px;
+            width: 86px;
+        }
+
+        &_opera {
+            background-image: url('../../images/opera.png');
+            height: 78px;
+            width: 73px;
+        }
+
+        &_ie {
+            background-image: url('../../images/ie.png');
+            height: 78px;
+            width: 80px;
+        }
+
+        &_safari {
+            background-image: url('../../images/safari.png');
+            height: 79px;
+            width: 78px;
+        }
+    }
+
+    &__text
+    {
+        line-height: 1.2em;
+
+        &_small {
+            font-size: small;
+        }
+    }
+
+    &__tile {
+        background-color: #e8e8e8;
+        border: 1px solid #cfcfcf;
+        border-radius: 10px;
+        height: 163px;
+        margin-top: 5px;
+        width: 138px;
+    }
+}
+
+.unsupported-desktop-browser {
+    display: block;
+    height: 565px;
+    margin: auto;
+    overflow:hidden;
+    position: absolute;
+    text-align: center;
+    top: 0; left: 0; bottom: 0; right: 0;
+    width:500px;
+
+    &__page {
+        display:inline-block;
+        font-size: 28px;
+        padding-top: 25px;
+        vertical-align:middle;
+    }
+
+    &__title {
+        margin: 0 auto;
+        width: 20em;
+    }
+
+    &-wrapper {
+        background: #fff;
+        display: block;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+    }
+}

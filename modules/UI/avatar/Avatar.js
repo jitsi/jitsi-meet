@@ -1,4 +1,28 @@
-/* global MD5, config, interfaceConfig */
+/*
+ * Adorable Avatars service used at the end of this file is released under the
+ * terms of the MIT License.
+ *
+ * Copyright (c) 2014 Adorable IO LLC
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/* global MD5, config, interfaceConfig, APP */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 let users = {};
 
@@ -10,6 +34,12 @@ export default {
      * @param val {string} value to be set
      */
     _setUserProp: function (id, prop, val) {
+        // FIXME: Fixes the issue with not be able to return avatar for the
+        // local user when the conference has been left. Maybe there is beter
+        // way to solve it.
+        if(APP.conference.isLocalId(id)) {
+            id = "local";
+        }
         if(!val || (users[id] && users[id][prop] === val))
             return;
         if(!users[id])
@@ -56,9 +86,8 @@ export default {
             return 'images/avatar2.png';
         }
 
-        if (!userId) {
-            console.error("Get avatar - id is undefined");
-            return null;
+        if (!userId || APP.conference.isLocalId(userId)) {
+            userId = "local";
         }
 
         let avatarId = null;
@@ -82,7 +111,7 @@ export default {
         let random = !avatarId || avatarId.indexOf('@') < 0;
 
         if (!avatarId) {
-            console.warn(
+            logger.warn(
                 `No avatar stored yet for ${userId} - using ID as avatar ID`);
             avatarId = userId;
         }
@@ -100,8 +129,8 @@ export default {
             urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
         }
         else {
-            urlPref = 'https://robohash.org/';
-            urlSuf = ".png?size=200x200";
+            urlPref = 'https://api.adorable.io/avatars/200/';
+            urlSuf = ".png";
         }
 
         return urlPref + avatarId + urlSuf;

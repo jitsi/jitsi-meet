@@ -1,0 +1,7 @@
+/*
+ * Sets the default cursor the remove password link. The link doesn't use
+ * the href attribute, so we need to set the  cursor manually.
+ */
+#inviteDialogRemovePassword {
+    cursor: hand;
+}

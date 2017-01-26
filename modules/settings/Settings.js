@@ -1,26 +1,8 @@
 /* global JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from '../UI/util/UIUtil';
-
-let email = '';
-let avatarId = '';
-let displayName = '';
-let language = null;
-let cameraDeviceId = '';
-let micDeviceId = '';
-let welcomePageDisabled = false;
-let localFlipX = null;
-let avatarUrl = '';
-
-function supportsLocalStorage() {
-    try {
-        return 'localStorage' in window && window.localStorage !== null;
-    } catch (e) {
-        console.log("localstorage is not supported");
-        return false;
-    }
-}
-
+import jitsiLocalStorage from '../util/JitsiLocalStorage';
 
 function generateUniqueId() {
     function _p8() {
@@ -29,45 +11,38 @@ function generateUniqueId() {
     return _p8() + _p8() + _p8() + _p8();
 }
 
-if (supportsLocalStorage()) {
-    if (!window.localStorage.jitsiMeetId) {
-        window.localStorage.jitsiMeetId = generateUniqueId();
-        console.log("generated id", window.localStorage.jitsiMeetId);
-    }
+let avatarUrl = '';
 
-    email = UIUtil.unescapeHtml(window.localStorage.email || '');
-    avatarId = UIUtil.unescapeHtml(window.localStorage.avatarId || '');
-    if (!avatarId) {
-        // if there is no avatar id, we generate a unique one and use it forever
-        avatarId = generateUniqueId();
-        window.localStorage.avatarId = avatarId;
-    }
+let email = UIUtil.unescapeHtml(jitsiLocalStorage.getItem("email") || '');
+let avatarId = UIUtil.unescapeHtml(jitsiLocalStorage.getItem("avatarId") || '');
+if (!avatarId) {
+    // if there is no avatar id, we generate a unique one and use it forever
+    avatarId = generateUniqueId();
+    jitsiLocalStorage.setItem("avatarId", avatarId);
+}
 
-    localFlipX = JSON.parse(window.localStorage.localFlipX || true);
-    displayName = UIUtil.unescapeHtml(window.localStorage.displayname || '');
-    language = window.localStorage.language;
-    cameraDeviceId = window.localStorage.cameraDeviceId || '';
-    micDeviceId = window.localStorage.micDeviceId || '';
-    welcomePageDisabled = JSON.parse(
-        window.localStorage.welcomePageDisabled || false
-    );
+let localFlipX = JSON.parse(jitsiLocalStorage.getItem("localFlipX") || true);
+let displayName = UIUtil.unescapeHtml(
+    jitsiLocalStorage.getItem("displayname") || '');
+let language = jitsiLocalStorage.getItem("language");
+let cameraDeviceId = jitsiLocalStorage.getItem("cameraDeviceId") || '';
+let micDeviceId = jitsiLocalStorage.getItem("micDeviceId") || '';
+let welcomePageDisabled = JSON.parse(
+    jitsiLocalStorage.getItem("welcomePageDisabled") || false);
 
-    // Currently audio output device change is supported only in Chrome and
-    // default output always has 'default' device ID
-    var audioOutputDeviceId = window.localStorage.audioOutputDeviceId
-        || 'default';
+// Currently audio output device change is supported only in Chrome and
+// default output always has 'default' device ID
+let audioOutputDeviceId = jitsiLocalStorage.getItem("audioOutputDeviceId")
+    || 'default';
 
-    if (audioOutputDeviceId !==
-        JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
-        JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
-            .catch((ex) => {
-                console.warn('Failed to set audio output device from local ' +
-                    'storage. Default audio output device will be used' +
-                    'instead.', ex);
-            });
-    }
-} else {
-    console.log("local storage is not supported");
+if (audioOutputDeviceId !==
+    JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
+    JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
+        .catch((ex) => {
+            logger.warn('Failed to set audio output device from local ' +
+                'storage. Default audio output device will be used' +
+                'instead.', ex);
+        });
 }
 
 export default {
@@ -82,7 +57,8 @@ export default {
         displayName = newDisplayName;
 
         if (!disableLocalStore)
-            window.localStorage.displayname = UIUtil.escapeHtml(displayName);
+            jitsiLocalStorage.setItem("displayname",
+                UIUtil.escapeHtml(displayName));
     },
 
     /**
@@ -102,7 +78,7 @@ export default {
         email = newEmail;
 
         if (!disableLocalStore)
-            window.localStorage.email = UIUtil.escapeHtml(newEmail);
+            jitsiLocalStorage.setItem("email", UIUtil.escapeHtml(newEmail));
     },
 
     /**
@@ -142,7 +118,7 @@ export default {
     },
     setLanguage: function (lang) {
         language = lang;
-        window.localStorage.language = lang;
+        jitsiLocalStorage.setItem("language", lang);
     },
 
     /**
@@ -151,7 +127,7 @@ export default {
      */
     setLocalFlipX: function (val) {
         localFlipX = val;
-        window.localStorage.localFlipX = val;
+        jitsiLocalStorage.setItem("localFlipX", val);
     },
 
     /**
@@ -179,7 +155,7 @@ export default {
     setCameraDeviceId: function (newId, store) {
         cameraDeviceId = newId;
         if (store)
-            window.localStorage.cameraDeviceId = newId;
+            jitsiLocalStorage.setItem("cameraDeviceId", newId);
     },
 
     /**
@@ -199,7 +175,7 @@ export default {
     setMicDeviceId: function (newId, store) {
         micDeviceId = newId;
         if (store)
-            window.localStorage.micDeviceId = newId;
+            jitsiLocalStorage.setItem("micDeviceId", newId);
     },
 
     /**
@@ -218,7 +194,8 @@ export default {
      */
     setAudioOutputDeviceId: function (newId = 'default') {
         return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
-            .then(() => window.localStorage.audioOutputDeviceId = newId);
+            .then(() =>
+                jitsiLocalStorage.setItem("audioOutputDeviceId", newId));
     },
 
     /**
@@ -235,6 +212,6 @@ export default {
      */
     setWelcomePageEnabled (enabled) {
         welcomePageDisabled = !enabled;
-        window.localStorage.welcomePageDisabled = welcomePageDisabled;
+        jitsiLocalStorage.setItem("welcomePageDisabled", welcomePageDisabled);
     }
 };

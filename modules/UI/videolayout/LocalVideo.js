@@ -1,4 +1,6 @@
 /* global $, config, interfaceConfig, APP, JitsiMeetJS */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
+
 import ConnectionIndicator from "./ConnectionIndicator";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -11,6 +13,8 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
+    this.createConnectionIndicator();
+    this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
     this.isLocal = true;
@@ -27,7 +31,6 @@ function LocalVideo(VideoLayout, emitter) {
     // Set default display name.
     this.setDisplayName();
 
-    this.createConnectionIndicator();
     this.addAudioLevelIndicator();
 }
 
@@ -39,7 +42,7 @@ LocalVideo.prototype.constructor = LocalVideo;
  */
 LocalVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        console.warn(
+        logger.warn(
                 "Unable to set displayName - " + this.videoSpanId +
                 " does not exist");
         return;
@@ -70,7 +73,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         nameSpan = document.createElement('span');
         nameSpan.className = 'displayname';
         document.getElementById(this.videoSpanId)
-            .querySelector('.videocontainer__toolbar')
             .appendChild(nameSpan);
 
 
@@ -96,28 +98,31 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
             editableText.value = displayName;
         }
 
-        var defaultNickname = APP.translation.translateString(
-            "defaultNickname", {name: "Jane Pink"});
         editableText.setAttribute('style', 'display:none;');
-        editableText.setAttribute('data-18n',
+        editableText.setAttribute('data-i18n',
             '[placeholder]defaultNickname');
         editableText.setAttribute("data-i18n-options",
             JSON.stringify({name: "Jane Pink"}));
-        editableText.setAttribute("placeholder", defaultNickname);
+        APP.translation.translateElement($(editableText));
 
         this.container
-            .querySelector('.videocontainer__toolbar')
             .appendChild(editableText);
 
         var self = this;
         $('#localVideoContainer .displayname')
             .bind("click", function (e) {
                 let $editDisplayName = $('#editDisplayName');
-                let $localDisplayName = $('#localDisplayName');
 
                 e.preventDefault();
                 e.stopPropagation();
-                $localDisplayName.hide();
+                // we set display to be hidden
+                self.hideDisplayName = true;
+                // update the small video vide to hide the display name
+                self.updateView();
+                // disables further updates in the thumbnail to stay in the
+                // edit mode
+                self.disableUpdateView = true;
+
                 $editDisplayName.show();
                 $editDisplayName.focus();
                 $editDisplayName.select();
@@ -125,7 +130,11 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
                 $editDisplayName.one("focusout", function () {
                     self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
                     $editDisplayName.hide();
-                    $localDisplayName.show();
+                    // stop editing, display displayName and resume updating
+                    // the thumbnail
+                    self.hideDisplayName = false;
+                    self.disableUpdateView = false;
+                    self.updateView();
                 });
 
                 $editDisplayName.on('keydown', function (e) {
@@ -253,7 +262,8 @@ LocalVideo.prototype._buildContextMenu = function () {
         events: {
             show : function(options){
                 options.items.flip.name =
-                    APP.translation.translateString("videothumbnail.flip");
+                    APP.translation.generateTranslationHTML(
+                        "videothumbnail.flip");
             }
         }
     });

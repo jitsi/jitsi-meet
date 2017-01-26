@@ -1,9 +1,13 @@
 {
-    "contactlist": "On Call",
+    "contactlist": "Participants (__pcount__)",
+    "addParticipants": "Share the link",
+    "roomLocked": "Callers must enter a password",
+    "roomUnlocked": "Anyone with the link can join",
+    "passwordSetRemotely": "set by another participant",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "feedback": "Give us your feedback",
-    "roomUrlDefaultMsg": "Your conference is currently being created...",
+    "inviteUrlDefaultMsg": "Your conference is currently being created...",
     "me": "me",
     "speaker": "Speaker",
     "raisedHand": "Would like to speak",
@@ -21,18 +25,18 @@
       "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "Keyboard shortcuts:",
-        "raiseHand": "Raise your hand.",
-        "pushToTalk": "Push to talk.",
-        "toggleScreensharing": "Switch between camera and screensharing.",
-        "toggleFilmstrip": "Show or hide the videos.",
-        "toggleShortcuts": "Show or hide this help menu.",
-        "focusLocal": "Focus on the local video.",
-        "focusRemote": "Focus on one of the remote videos.",
-        "toggleChat": "Open or close the chat panel.",
-        "mute": "Mute or unmute the microphone.",
-        "fullScreen": "Enter or exit full screen mode.",
-        "videoMute": "Stop or start the local video."
+        "keyboardShortcuts": "Keyboard shortcuts",
+        "raiseHand": "Raise or lower your hand",
+        "pushToTalk": "Push to talk",
+        "toggleScreensharing": "Switch between camera and screen sharing",
+        "toggleFilmstrip": "Show or hide the videos",
+        "toggleShortcuts": "Show or hide this help menu",
+        "focusLocal": "Focus on your video",
+        "focusRemote": "Focus on another caller's video",
+        "toggleChat": "Open or close the chat",
+        "mute": "Mute or unmute your microphone",
+        "fullScreen": "Enter or exit full screen",
+        "videoMute": "Start or stop your camera"
     },
     "welcomepage":{
         "go": "GO",
@@ -71,36 +75,45 @@
             "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems."
         }
     },
+    "startupoverlay": {
+        "policyText": "&nbsp;",
+        "title": "__app__ needs to use your microphone and camera."
+    },
+    "suspendedoverlay": {
+        "title": "Your video call was interrupted, because this computer went to sleep.",
+        "rejoinKeyTitle": "Rejoin"
+    },
     "toolbar": {
         "mute": "Mute / Unmute",
-        "videomute": "Start / stop camera",
+        "videomute": "Start / Stop camera",
         "authenticate": "Authenticate",
-        "lock": "Lock / unlock room",
-        "invite": "Invite others",
-        "chat": "Open / close chat",
-        "etherpad": "Shared document",
+        "lock": "Lock / Unlock room",
+        "invite": "Share the link",
+        "chat": "Open / Close chat",
+        "etherpad": "Open / Close shared document",
         "sharedvideo": "Share a YouTube video",
-        "sharescreen": "Share screen",
-        "fullscreen": "Enter / Exit Full Screen",
+        "sharescreen": "Start / Stop screen sharing",
+        "fullscreen": "View / Exit full screen",
         "sip": "Call SIP number",
         "Settings": "Settings",
-        "hangup": "Hang Up",
+        "hangup": "Leave",
         "login": "Login",
         "logout": "Logout",
-        "dialpad": "Show dialpad",
+        "dialpad": "Open / Close dialpad",
         "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
-        "filmstrip": "Show / hide videos",
-        "raiseHand": "Raise hand to speak"
+        "filmstrip": "Show / Hide videos",
+        "profile": "Edit your profile",
+        "raiseHand": "Raise / Lower your hand"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
         "filmstrip": "Show / hide videos",
-        "contactlist": "Open / close contact list"
+        "contactlist": "View and invite participants"
     },
     "chat":{
         "nickname": {
@@ -129,9 +142,10 @@
         "setPasswordLabel": "Lock your room with a password."
     },
     "profile": {
-        "title": "PROFILE",
+        "title": "Profile",
         "setDisplayNameLabel": "Set your display name",
-        "setEmailLabel": "Set your gravatar email"
+        "setEmailLabel": "Set your gravatar email",
+        "setEmailInput": "Enter e-mail"
     },
     "videothumbnail":
     {
@@ -142,11 +156,12 @@
         "kick": "Kick out",
         "muted": "Muted",
         "domute": "Mute",
-        "flip": "Flip"
-
+        "flip": "Flip",
+        "remoteControl": "Remote control"
     },
     "connectionindicator":
     {
+        "header": "Connection data",
         "bitrate": "Bitrate:",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",
@@ -180,20 +195,30 @@
         "raisedHand": "Would like to speak."
     },
     "dialog": {
+        "add": "Add",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
         "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser's security settings and try again.",
+        "passwordErrorTitle": "Password Error",
         "passwordError": "This conversation is currently protected by a password. Only the owner of the conference can set a password.",
         "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference can set a password.",
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
         "connectErrorWithMsg": "Oops! Something went wrong and we couldn't connect to the conference: __msg__",
+        "incorrectPassword": "Password is incorrect",
         "connecting": "Connecting",
         "copy": "Copy",
         "error": "Error",
+        "roomLocked": "This call is locked. New callers must have the link and enter the password to join",
+        "addPassword": "Add a password",
+        "createPassword": "Create password",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
-        "bridgeUnavailable": "Jitsi Videobridge is currently unavailable. Please try again later!",
-        "jicofoUnavailable": "Jicofo is currently unavailable. Please try again later!",
+        "conferenceReloadTitle": "Unfortunately, something went wrong",
+        "conferenceReloadMsg": "We're trying to fix this",
+        "conferenceDisconnectTitle": "You have been disconnected. You may want to check your network connection.",
+        "conferenceDisconnectMsg": "Reconnecting in...",
+        "reconnectNow": "Reconnect now",
+        "conferenceReloadTimeLeft": "__seconds__ sec.",
         "maxUsersLimitReached": "The limit for maximum number of participants in the conference has been reached. The conference is full. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
@@ -205,10 +230,14 @@
         "SLDFailure": "Oops! Something went wrong and we failed to mute! (SLD Failure)",
         "SRDFailure": "Oops! Something went wrong and we failed to stop video! (SRD Failure)",
         "oops": "Oops!",
+        "currentPassword": "The current password is",
+        "passwordLabel": "Password",
         "defaultError": "There was some kind of error",
         "passwordRequired": "Password required",
         "Ok": "Ok",
+        "done": "Done",
         "Remove": "Remove",
+        "removePassword": "Remove password",
         "shareVideoTitle": "Share a video",
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "removeSharedVideoTitle": "Remove shared video",
@@ -218,6 +247,7 @@
         "WaitForHostMsg": "The conference <b>__room__ </b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "IamHost": "I am the host",
         "Cancel": "Cancel",
+        "Submit": "Submit",
         "retry": "Retry",
         "logoutTitle" : "Logout",
         "logoutQuestion" : "Are you sure you want to logout and stop the conference?",
@@ -231,9 +261,8 @@
         "Dial": "Dial",
         "sipMsg": "Enter SIP number",
         "passwordCheck": "Are you sure you would like to remove your password?",
-        "Remove": "Remove",
         "passwordMsg": "Set a password to lock your room",
-        "shareLink": "Copy and share this link",
+        "shareLink": "Share the link to the call",
         "settings1": "Configure your conference",
         "settings2": "Participants join muted",
         "settings3": "Require nicknames<br/><br/>Set a password to lock your room:",
@@ -249,7 +278,8 @@
         "token": "token",
         "tokenAuthFailedTitle": "Authentication problem",
         "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
-        "displayNameRequired": "Please enter your display name",
+        "displayNameRequired": "Display name is required",
+        "enterDisplayName": "Please enter your display name",
         "extensionRequired": "Extension required:",
         "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
         "rateExperience": "Please rate your meeting experience.",
@@ -265,6 +295,7 @@
         "stopLiveStreaming": "Stop live streaming",
         "stopRecording": "Stop recording",
         "doNotShowWarningAgain": "Don't show this warning again",
+        "doNotShowMessageAgain": "Don't show this message again",
         "permissionDenied": "Permission Denied",
         "screenSharingPermissionDeniedError": "You have not granted permission to share your screen.",
         "micErrorPresent": "There was an error connecting to your microphone.",
@@ -282,7 +313,15 @@
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to restart the application.",
         "goToStore": "Go to the webstore",
         "externalInstallationTitle": "Extension required",
-        "externalInstallationMsg": "You need to install our desktop sharing extension."
+        "externalInstallationMsg": "You need to install our desktop sharing extension.",
+        "muteParticipantTitle": "Mute this participant?",
+        "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
+        "muteParticipantButton": "Mute",
+        "remoteControlTitle": "Remote Control",
+        "remoteControlDeniedMessage": "__user__ rejected your remote control request!",
+        "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
+        "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
+        "remoteControlStopMessage": "The remote control session ended!"
     },
     "email":
     {
@@ -326,7 +365,7 @@
         "ATTACHED": "Attached",
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
-        "GET_SESSION_ID_ERROR": "Get session-id error: ",
+        "GET_SESSION_ID_ERROR": "Get session-id error: __code__",
         "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues..."
     },
     "recording":
@@ -335,7 +374,7 @@
         "on": "Recording",
         "off": "Recording stopped",
         "failedToStart": "Recording failed to start",
-        "buttonTooltip": "Start / stop recording",
+        "buttonTooltip": "Start / Stop recording",
         "error": "Recording failed. Please try again.",
         "unavailable": "The recording service is currently unavailable. Please try again later."
     },
@@ -346,7 +385,7 @@
         "off": "Live Streaming Stopped",
         "unavailable": "The live streaming service is currently unavailable. Please try again later.",
         "failedToStart": "Live streaming failed to start",
-        "buttonTooltip": "Start / stop live stream",
+        "buttonTooltip": "Start / Stop live stream",
         "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
         "error": "Live streaming failed. Please try again.",
         "busy": "All recorders are currently busy. Please try again later."

@@ -1,265 +1,145 @@
 <html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--#include virtual="base.html" -->
     <script>
         window.indexLoadedTime = window.performance.now();
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+        // XXX the code below listeners for errors and displays an error message
+        // in the document body when any of the required files fails to load.
+        // The intention is to prevent from displaying broken page.
+        var criticalFiles = [
+            "config.js",
+            "utils.js",
+            "do_external_connect.js",
+            "interface_config.js",
+            "logging_config.js",
+            "lib-jitsi-meet.min.js",
+            "app.bundle.min.js",
+            "all.css"
+        ];
+        var loadErrHandler = function(e) {
+            var target = e.target;
+            // Error on <script> and <link>(CSS)
+            // <script> will have .src and <link> .href
+            var fileRef = (target.src ? target.src : target.href);
+            if (("SCRIPT" === target.tagName || "LINK" === target.tagName)
+                && criticalFiles.some(
+                    function(file) { return fileRef.indexOf(file) !== -1 })) {
+                window.onload = function() {
+                    // The whole complex part below implements page reloads with
+                    // "exponential backoff". The retry attempt is passes as
+                    // "rCounter" query parameter
+                    var href = window.location.href;
+
+                    var retryMatch = href.match(/.+(\?|&)rCounter=(\d+)/);
+                    var retryCountStr = retryMatch ? retryMatch[2] : "0";
+                    var retryCount = Number.parseInt(retryCountStr);
+
+                    if (retryMatch == null) {
+                        var separator = href.indexOf("?") === -1 ? "?" : "&";
+                        var hashIdx = href.indexOf("#");
+
+                        if (hashIdx === -1) {
+                            href += separator + "rCounter=1";
+                        } else {
+                            var hashPart = href.substr(hashIdx);
+
+                            href = href.substr(0, hashIdx)
+                                + separator + "rCounter=1" + hashPart;
+                        }
+                    } else {
+                        var separator = retryMatch[1];
+
+                        href = href.replace(
+                            /(\?|&)rCounter=(\d+)/,
+                            separator + "rCounter=" + (retryCount + 1));
+                    }
+
+                    var delay = Math.pow(2, retryCount) * 2000;
+                    if (isNaN(delay) || delay < 2000 || delay > 60000)
+                        delay = 10000;
+
+                    var showMoreText = "show more";
+                    var showLessText = "show less";
+
+                    document.body.innerHTML
+                        = "<div style='"
+                        + "position: absolute;top: 50%;left: 50%;"
+                        + "text-align: center;"
+                        + "font-size: medium;"
+                        + "font-weight: 400;"
+                        + "transform: translate(-50%, -50%)'>"
+                        + "Uh oh! We couldn't fully download everything we needed :(" // jshint ignore:line
+                        + "<br/> "
+                        + "We will try again shortly. In the mean time, check for problems with your Internet connection!" // jshint ignore:line
+                        + "<br/><br/> "
+                        + "<div id='moreInfo' style='"
+                        + "display: none;'>" + "Missing " + fileRef
+                        + "<br/><br/></div>"
+                        + "<a id='showMore' style='"
+                        + "text-decoration: underline;"
+                        + "font-size:small;"
+                        + "cursor: pointer'>" + showMoreText + "</a>"
+                        + "&nbsp;&nbsp;&nbsp;"
+                        + "<a href='" + href + "' style='"
+                        + "text-decoration: underline;"
+                        + "font-size:small;"
+                        + "'>reload now</a>"
+                        + "</div>";
+
+                    var showMoreElem = document.getElementById("showMore");
+                    showMoreElem.addEventListener('click', function () {
+                            var moreInfoElem
+                                    = document.getElementById("moreInfo");
+
+                            if (showMoreElem.innerHTML === showMoreText) {
+                                moreInfoElem.setAttribute(
+                                    "style",
+                                    "display: block;"
+                                    + "color:#FF991F;"
+                                    + "font-size:small;"
+                                    + "user-select:text;");
+                                showMoreElem.innerHTML = showLessText;
+                            }
+                            else {
+                                moreInfoElem.setAttribute(
+                                    "style", "display: none;");
+                                showMoreElem.innerHTML = showMoreText;
+                            }
+                        });
+
+                    window.setTimeout(
+                        function () { window.location.replace(href); }, delay);
+                };
+                window.removeEventListener(
+                    'error', loadErrHandler, true /* capture phase */);
+            }
+        };
+        window.addEventListener(
+            'error', loadErrHandler, true /* capture phase type of listener */);
     </script>
     <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="utils.js?v=1"></script>
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
     <script src="connection_optimization/do_external_connect.js?v=1"></script>
     <script><!--#include virtual="/interface_config.js" --></script>
+    <script><!--#include virtual="/logging_config.js" --></script>
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->
-    <link rel="stylesheet" href="css/all.css"/>
+    <link rel="stylesheet" href="css/all.css">
     <!--#include virtual="plugin.head.html" -->
   </head>
   <body>
-    <div id="welcome_page">
-        <div id="welcome_page_header">
-            <a target="_new">
-                <div class="watermark leftwatermark"></div>
-            </a>
-            <a target="_new">
-                <div class="watermark rightwatermark"></div>
-            </a>
-            <a class="poweredby" href="http://jitsi.org" target="_new" ><span data-i18n="poweredby"></span> jitsi.org</a>
-
-            <div id="enter_room_container">
-                    <div id="enter_room_form" >
-                        <div id="domain_name"></div>
-                        <div id="enter_room">
-                            <input id="enter_room_field" type="text" autofocus/>
-                            <div class="icon-reload" id="reload_roomname"></div>
-                            <input id="enter_room_button" type="button" data-i18n="[value]welcomepage.go" value="GO" />
-
-                        </div>
-                    </div>
-            </div>
-            <div id="brand_header"></div>
-            <input type='checkbox' name='checkbox' id="disable_welcome"/>
-            <label for="disable_welcome" class="disable_welcome_position" data-i18n="welcomepage.disable"></label>
-            <div id="header_text">
-                <!--#include virtual="plugin.header.text.html" -->
-            </div>
-        </div>
-        <div id="welcome_page_main">
-            <div id="features">
-                <div class="feature_row">
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature1.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature1.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                        </div>
-                    </div>
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature2.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature2.content">
-                        </div>
-                    </div>
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature3.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature3.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                        </div>
-                    </div>
-                    <div class="feature_holder">
-                        <div class="feature_icon" data-i18n="welcomepage.feature4.title" ></div>
-                        <div class="feature_description" data-i18n="welcomepage.feature4.content">
-                        </div>
-                    </div>
-                </div>
-                <div class="feature_row">
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature5.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature5.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                            </div>
-                    </div>
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature6.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature6.content" data-i18n-options='{ "postProcess": "resolveAppName" }'>
-                            </div>
-                    </div>
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature7.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature7.content" data-i18n-options='{ "postProcess": "resolveAppName" }'></div>
-                    </div>
-                    <div class="feature_holder">
-                            <div class="feature_icon" data-i18n="welcomepage.feature8.title" ></div>
-                            <div class="feature_description" data-i18n="welcomepage.feature8.content"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--#include virtual="plugin.welcomepage.footer.html" -->
-    </div>
-    <div id="videoconference_page">
-        <div id="mainToolbarContainer">
-                <div id="notice" class="notice" style="display: none">
-                    <span id="noticeText" class="noticeText"></span>
-                </div>
-                <span id="mainToolbar" class="toolbar"></span>
-        </div>
-        <div id="subject" class="hide"></div>
-        <div id="extendedToolbar" class="toolbar">
-            <a class="button" id="toolbar_button_profile" data-container="body" data-placement="right" data-i18n="[content]toolbar.profile" content="Edit your profile">
-                <img id="avatar" src="images/avatar2.png"/>
-            </a>
-            <span id="authentication" class="authentication" style="display: none">
-                <a class="button icon-avatar" id="toolbar_button_authentication" data-i18n="[content]toolbar.authenticate"></a>
-                <ul class="loginmenu extendedToolbarPopup">
-                    <span class="loginmenuPadding"></span>
-                    <li id="toolbar_auth_identity"></li>
-                    <li id="toolbar_button_login">
-                        <a class="authButton" data-i18n="toolbar.login"></a>
-                    </li>
-                    <li id="toolbar_button_logout">
-                        <a class="authButton" data-i18n="toolbar.logout"></a>
-                    </li>
-                </ul>
-            </span>
-            <a class="button icon-contactList" id="toolbar_contact_list" shortcut="contactlistpopover">
-                <span class="badge-round">
-                    <span id="numberOfParticipants"></span>
-                </span>
-            </a>
-            <!--a class="button icon-link" id="toolbar_button_link"></a-->
-            <a class="button icon-chat" id="toolbar_button_chat" shortcut="toggleChatPopover">
-                <span class="badge-round">
-                    <span id="unreadMessages"></span>
-                </span>
-            </a>
-            <a class="button" id="toolbar_button_record" style="display: none"></a>
-            <a class="button icon-security" id="toolbar_button_security"></a>
-            <a class="button icon-share-doc" id="toolbar_button_etherpad"></a>
-            <a class="button icon-shared-video" id="toolbar_button_sharedvideo" style="display: none">
-                <ul id="sharedVideoMutedPopup" class="loginmenu extendedToolbarPopup">
-                    <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
-                </ul>
-            </a>
-            <a class="button icon-telephone" id="toolbar_button_sip" style="display: none"></a>
-            <a class="button icon-dialpad" id="toolbar_button_dialpad" style="display: none"></a>
-            <a class="button icon-settings" id="toolbar_button_settings"></a>
-            <a class="button icon-raised-hand" id="toolbar_button_raisehand" shortcut="raiseHandPopover"></a>
-            <a class="button icon-full-screen" id="toolbar_button_fullScreen" shortcut="toggleFullscreenPopover"></a>
-            <a class="button icon-toggle-filmstrip" id="toolbar_film_strip" data-container="body" shortcut="filmstripPopover"></a>
-            <a class="button icon-feedback" id="feedbackButton"></a>
-            <div id="sideToolbarContainer">
-                <div id="profile_container" class="sideToolbarContainer__inner">
-                    <div class="title" data-i18n="profile.title"></div>
-                    <div class="sideToolbarBlock first">
-                        <label class="first" data-i18n="profile.setDisplayNameLabel"></label>
-                        <input type="text" id="setDisplayName" data-i18n="[placeholder]settings.name" placeholder="Name">
-                    </div>
-                    <div class="sideToolbarBlock">
-                        <label data-i18n="profile.setEmailLabel"></label>
-                        <input type="text" id="setEmail" placeholder="Enter e-mail">
-                    </div>
-                </div>
-                <div id="chat_container" class="sideToolbarContainer__inner">
-                    <div id="nickname">
-                        <span data-i18n="chat.nickname.title"></span>
-                        <form>
-                            <input type='text' id="nickinput" data-i18n="[placeholder]chat.nickname.popover" autofocus>
-                        </form>
-                    </div>
-
-                    <div id="chatconversation"></div>
-                    <audio id="chatNotification" src="sounds/incomingMessage.wav" preload="auto"></audio>
-                    <textarea id="usermsg" data-i18n="[placeholder]chat.messagebox" autofocus></textarea>
-                    <div id="smileysarea">
-                        <div id="smileys" id="toggle_smileys">
-                            <img src="images/smile.svg"/>
-                        </div>
-                    </div>
-                </div>
-                <div id="contacts_container" class="sideToolbarContainer__inner">
-                    <div class="title" data-i18n="contactlist"></div>
-                    <ul id="contacts"></ul>
-                </div>
-                <div id="settings_container" class="sideToolbarContainer__inner">
-                    <div class="title" data-i18n="settings.title"></div>
-                    <select id="languages_selectbox" class="first hide"></select>
-                    <div id="deviceOptionsTitle" class="subTitle hide" data-i18n="settings.audioVideo"></div>
-                    <div id="devicesOptions" class="hide">
-                        <div class="sideToolbarBlock first">
-                            <label class="first" data-i18n="settings.selectCamera"></label>
-                            <select id="selectCamera"></select>
-                        </div>
-                        <div class="sideToolbarBlock">
-                            <label data-i18n="settings.selectMic"></label>
-                            <select  id="selectMic"></select>
-                        </div>
-                        <div class="sideToolbarBlock">
-                            <label data-i18n="settings.selectAudioOutput"></label>
-                            <select  id="selectAudioOutput"></select>
-                        </div>
-                    </div>
-                    <div id="moderatorOptionsTitle" class="subTitle hide" data-i18n="settings.moderator"></div>
-                    <div id = "startMutedOptions" class="hide">
-                        <div class="sideToolbarBlock first">
-                            <input type="checkbox" id="startAudioMuted">
-                            <label class="startMutedLabel" for="startAudioMuted" data-i18n="settings.startAudioMuted"></label>
-                        </div>
-                        <div class="sideToolbarBlock">
-                            <input type="checkbox" id="startVideoMuted">
-                            <label class="startMutedLabel" for="startVideoMuted" data-i18n="settings.startVideoMuted"></label>
-                        </div>
-                    </div>
-                    <div id="followMeOptions" class="sideToolbarBlock hide">
-                        <input type="checkbox" id="followMeCheckBox">
-                        <label class="followMeLabel" for="followMeCheckBox" data-i18n="settings.followMe"></label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="videospace">
-            <div id="largeVideoContainer" class="videocontainer">
-                <div id="sharedVideo"><div id="sharedVideoIFrame"></div></div>
-                <div id="etherpad"></div>
-                <a target="_new"><div class="watermark leftwatermark"></div></a>
-                <a target="_new"><div class="watermark rightwatermark"></div></a>
-                <a class="poweredby" href="http://jitsi.org" target="_new">
-                    <span data-i18n="poweredby"></span> jitsi.org
-                </a>
-                <div id="dominantSpeaker">
-                    <div class="dynamic-shadow"></div>
-                    <img id="dominantSpeakerAvatar" src=""/>
-                </div>
-                <span id="remoteConnectionMessage"></span>
-                <div id="largeVideoWrapper">
-                    <video id="largeVideo" muted="true" autoplay></video>
-                </div>
-                <span id="localConnectionMessage"></span>
-                <span id="videoResolutionLabel">HD</span>
-                <span id="recordingLabel" class="centeredVideoLabel">
-                    <span id="recordingLabelText"></span>
-                    <img id="recordingSpinner" class="recordingSpinner" src="images/spin.svg"></img>
-                </span>
-            </div>
-
-            <div id="remoteVideos">
-                <span id="localVideoContainer" class="videocontainer videocontainer_small">
-                    <span id="localVideoWrapper">
-                        <!--<video id="localVideo" autoplay muted></video> - is now per stream generated -->
-                    </span>
-                    <audio id="localAudio" autoplay muted></audio>
-                    <div class="videocontainer__toolbar"></div>
-                </span>
-                <audio id="userJoined" src="sounds/joined.wav" preload="auto"></audio>
-                <audio id="userLeft" src="sounds/left.wav" preload="auto"></audio>
-            </div>
-        </div>
-    </div>
+    <div id="react"></div>
     <div id="keyboard-shortcuts" class="keyboard-shortcuts" style="display:none;">
-        <div class="header"><h3 data-i18n="keyboardShortcuts.keyboardShortcuts"></h3></div>
         <div class="content">
-            <ul id="keyboard-shortcuts-list" class="item">
+            <ul id="keyboard-shortcuts-list" class="shortcuts-list">
             </ul>
         </div>
     </div>
-    <div id="aui-feedback-dialog" class="dialog feedback aui-layer aui-dialog2 aui-dialog2-medium" style="display: none;"></div>
   </body>
 </html>

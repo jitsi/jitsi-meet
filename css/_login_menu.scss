@@ -31,24 +31,6 @@ ul.loginmenu:after {
     left: 18px;
 }
 
-li a.authButton{
-    background-color: #06a5df;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-left: 29px;
-    padding-right: 29px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-span.authentication:hover ul.loginmenu, ul.loginmenu:hover {
-    display:block !important;
-}
-
-span.authentication {
-    position: relative;
-}
-
 a.disabled {
     color: gray !important;
     pointer-events: none;

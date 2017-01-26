@@ -1,3 +1,9 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
 /* Variables BEGIN */
 
 @import 'variables';
@@ -10,6 +16,12 @@
 
 /* Mixins END */
 
+/* Animations BEGIN */
+
+@import "animations";
+
+/* Animations END */
+
 /* Fonts BEGIN */
 
 @import 'font';
@@ -21,12 +33,13 @@
 
 @import 'toastr';
 @import 'base';
+@import 'utils';
 @import 'overlay/overlay';
+@import 'inlay';
+@import 'reload_overlay/reload_overlay';
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
 @import 'videolayout_default';
-@import 'jquery-impromptu';
-@import 'modaldialog';
 @import 'notice';
 @import 'popup_menu';
 @import 'recording';
@@ -43,6 +56,18 @@
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';
-
+@import 'components/form-control';
+@import 'components/link';
+@import 'shortcuts/main';
+@import 'components/button-control';
+@import 'components/_input-control.scss';
+@import "modals/invite/invite";
+@import "connection-info";
+@import 'aui-components/dropdown';
+@import '404';
+@import 'policy';
+@import 'filmstrip';
+@import 'unsupported-browser/unsupported-desktop-browser';
+@import 'unsupported-browser/unsupported-mobile-browser';
 
 /* Modules END */

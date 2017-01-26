@@ -1,8 +1,66 @@
-/* global APP, $, JitsiMeetJS */
+/* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
+
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import languages from "../../../../service/translation/languages";
 import Settings from '../../../settings/Settings';
+
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="settings_container" class="sideToolbarContainer__inner">
+        <div class="title" data-i18n="settings.title"></div>
+        <form class="aui">
+            <div id="languagesSelectWrapper" 
+                class="sideToolbarBlock first hide">
+                <select id="languagesSelect"></select>
+            </div>
+            <div id="deviceOptionsWrapper" class="hide">
+                <div id="deviceOptionsTitle" class="subTitle hide" 
+                    data-i18n="settings.audioVideo"></div>
+                <div class="sideToolbarBlock first">
+                    <label class="first" data-i18n="settings.selectCamera">
+                    </label>
+                    <select id="selectCamera"></select>
+                </div>
+                <div class="sideToolbarBlock">
+                    <label data-i18n="settings.selectMic"></label>
+                    <select id="selectMic"></select>
+                </div>
+                <div class="sideToolbarBlock">
+                    <label data-i18n="settings.selectAudioOutput"></label>
+                    <select id="selectAudioOutput"></select>
+                </div>
+            </div>
+            <div id="moderatorOptionsWrapper" class="hide">
+                <div id="moderatorOptionsTitle" class="subTitle hide" 
+                    data-i18n="settings.moderator"></div>
+                <div id="startMutedOptions" class="hide">
+                    <div class="sideToolbarBlock first">
+                        <input type="checkbox" id="startAudioMuted">
+                        <label class="startMutedLabel" for="startAudioMuted" 
+                            data-i18n="settings.startAudioMuted"></label>
+                    </div>
+                    <div class="sideToolbarBlock">
+                        <input type="checkbox" id="startVideoMuted">
+                        <label class="startMutedLabel" for="startVideoMuted" 
+                            data-i18n="settings.startVideoMuted"></label>
+                    </div>
+                </div>
+                <div id="followMeOptions" class="hide">
+                    <div class="sideToolbarBlock">
+                        <input type="checkbox" id="followMeCheckBox">
+                        <label class="followMeLabel" for="followMeCheckBox" 
+                            data-i18n="settings.followMe"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
  * Generate html select options for available languages.
@@ -24,7 +82,7 @@ function generateLanguagesOptions(items, currentLang) {
 
         let attrsStr = UIUtil.attrsToString(attrs);
         return `<option ${attrsStr}></option>`;
-    }).join('\n');
+    }).join('');
 }
 
 /**
@@ -61,11 +119,59 @@ function generateDevicesOptions(items, selectedId, permissionGranted) {
     return options.join('');
 }
 
+/**
+ * Replace html select element to select2 custom dropdown
+ *
+ * @param {jQueryElement} $el native select element
+ * @param {function} onSelectedCb fired if item is selected
+ */
+function initSelect2($el, onSelectedCb) {
+    $el.auiSelect2({
+        minimumResultsForSearch: Infinity
+    });
+    if (typeof onSelectedCb === 'function') {
+        $el.change(onSelectedCb);
+    }
+}
 
 export default {
     init (emitter) {
+        initHTML();
+        //LANGUAGES BOX
+        if (UIUtil.isSettingEnabled('language')) {
+            const wrapperId = 'languagesSelectWrapper';
+            const selectId = 'languagesSelect';
+            const selectEl = AJS.$(`#${selectId}`);
+            let selectInput;
+
+            selectEl.html(generateLanguagesOptions(
+                languages.getLanguages(),
+                APP.translation.getCurrentLanguage()
+            ));
+            initSelect2(selectEl, () => {
+                const val = selectEl.val();
+
+                selectInput[0].dataset.i18n = `languages:${val}`;
+                APP.translation.translateElement(selectInput);
+                emitter.emit(UIEvents.LANG_CHANGED, val);
+            });
+            //find new selectInput element
+            selectInput = $(`#s2id_${selectId} .select2-chosen`);
+            //first select fix for languages options
+            selectInput[0].dataset.i18n =
+                `languages:${APP.translation.getCurrentLanguage()}`;
+
+            APP.translation.translateElement(selectEl);
+
+            APP.translation.addLanguageChangedListener(
+                lng => selectInput[0].dataset.i18n = `languages:${lng}`);
+
+            UIUtil.setVisible(wrapperId, true);
+        }
+        // DEVICES LIST
         if (UIUtil.isSettingEnabled('devices')) {
-            // DEVICES LIST
+            const wrapperId = 'deviceOptionsWrapper';
+
             JitsiMeetJS.mediaDevices.isDeviceListAvailable()
                 .then((isDeviceListAvailable) => {
                     if (isDeviceListAvailable &&
@@ -73,31 +179,21 @@ export default {
                         this._initializeDeviceSelectionSettings(emitter);
                     }
                 });
+            // Only show the subtitle if this isn't the only setting section.
+            if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
+                UIUtil.setVisible("deviceOptionsTitle", true);
 
-            UIUtil.showElement("deviceOptionsTitle");
-            UIUtil.showElement("devicesOptions");
+            UIUtil.setVisible(wrapperId, true);
         }
-
-        if (UIUtil.isSettingEnabled('language')) {
-            //LANGUAGES BOX
-            let languagesBox = $("#languages_selectbox");
-            languagesBox.html(generateLanguagesOptions(
-                languages.getLanguages(),
-                APP.translation.getCurrentLanguage()
-            ));
-            APP.translation.translateElement(languagesBox);
-            languagesBox.change(function () {
-                emitter.emit(UIEvents.LANG_CHANGED, languagesBox.val());
-            });
-
-            UIUtil.showElement("languages_selectbox");
-        }
-
+        // MODERATOR
         if (UIUtil.isSettingEnabled('moderator')) {
+            const wrapperId = 'moderatorOptionsWrapper';
+
             // START MUTED
             $("#startMutedOptions").change(function () {
                 let startAudioMuted = $("#startAudioMuted").is(":checked");
                 let startVideoMuted = $("#startVideoMuted").is(":checked");
+
                 emitter.emit(
                     UIEvents.START_MUTED_CHANGED,
                     startAudioMuted,
@@ -106,13 +202,13 @@ export default {
             });
 
             // FOLLOW ME
-            $("#followMeOptions").change(function () {
-                let isFollowMeEnabled = $("#followMeCheckBox").is(":checked");
-                emitter.emit(
-                    UIEvents.FOLLOW_ME_ENABLED,
-                    isFollowMeEnabled
-                );
+            const followMeToggle = document.getElementById('followMeCheckBox');
+            followMeToggle.addEventListener('change', () => {
+                const isFollowMeEnabled = followMeToggle.checked;
+                emitter.emit(UIEvents.FOLLOW_ME_ENABLED, isFollowMeEnabled);
             });
+
+            UIUtil.setVisible(wrapperId, true);
         }
     },
 
@@ -147,16 +243,17 @@ export default {
     showStartMutedOptions (show) {
         if (show && UIUtil.isSettingEnabled('moderator')) {
             // Only show the subtitle if this isn't the only setting section.
-            if (!$("#moderatorOptionsTitle").is(":visible"))
-                UIUtil.showElement("moderatorOptionsTitle");
+            if (!$("#moderatorOptionsTitle").is(":visible")
+                    && interfaceConfig.SETTINGS_SECTIONS.length > 1)
+                UIUtil.setVisible("moderatorOptionsTitle", true);
 
-            UIUtil.showElement("startMutedOptions");
+            UIUtil.setVisible("startMutedOptions", true);
         } else {
             // Only show the subtitle if this isn't the only setting section.
             if ($("#moderatorOptionsTitle").is(":visible"))
-                UIUtil.hideElement("moderatorOptionsTitle");
+                UIUtil.setVisible("moderatorOptionsTitle", false);
 
-            UIUtil.hideElement("startMutedOptions");
+            UIUtil.setVisible("startMutedOptions", false);
         }
     },
 
@@ -171,11 +268,9 @@ export default {
      * @param {boolean} show {true} to show those options, {false} to hide them
      */
     showFollowMeOptions (show) {
-        if (show && UIUtil.isSettingEnabled('moderator')) {
-            UIUtil.showElement("followMeOptions");
-        } else {
-            UIUtil.hideElement("followMeOptions");
-        }
+        UIUtil.setVisible(
+            "followMeOptions",
+            show && UIUtil.isSettingEnabled('moderator'));
     },
 
     /**
@@ -214,9 +309,9 @@ export default {
      * @param {{ deviceId, label, kind }[]} devices list of available devices
      */
     changeDevicesList (devices) {
-        let $selectCamera= $('#selectCamera'),
-            $selectMic = $('#selectMic'),
-            $selectAudioOutput = $('#selectAudioOutput'),
+        let $selectCamera= AJS.$('#selectCamera'),
+            $selectMic = AJS.$('#selectMic'),
+            $selectAudioOutput = AJS.$('#selectAudioOutput'),
             $selectAudioOutputParent = $selectAudioOutput.parent();
 
         let audio = devices.filter(device => device.kind === 'audioinput'),
@@ -241,12 +336,16 @@ export default {
                 videoPermissionGranted))
             .prop('disabled', !video.length || !videoPermissionGranted);
 
+        initSelect2($selectCamera);
+
         $selectMic
             .html(generateDevicesOptions(
                 audio,
                 selectedAudioDevice ? selectedAudioDevice.deviceId : '',
                 audioPermissionGranted))
             .prop('disabled', !audio.length || !audioPermissionGranted);
+
+        initSelect2($selectMic);
 
         if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
             $selectAudioOutput
@@ -258,13 +357,12 @@ export default {
                     videoPermissionGranted || audioPermissionGranted))
                 .prop('disabled', !audioOutput.length ||
                     (!videoPermissionGranted && !audioPermissionGranted));
+            initSelect2($selectAudioOutput);
 
             $selectAudioOutputParent.show();
         } else {
             $selectAudioOutputParent.hide();
         }
-
-        $('#devicesOptions').show();
 
         APP.translation.translateElement($('#settings_container option'));
     }

@@ -1,9 +1,13 @@
 {
-    "contactlist": "Na chamada",
+    "contactlist": "Participantes (__pcount__)",
+    "addParticipants": "Compartilhar o link",
+    "roomLocked": "Visitantes precisam digitar uma senha",
+    "roomUnlocked": "Qualquer um com o link pode entrar",
+    "passwordSetRemotely": "Definido por outro participante",
     "connectionsettings": "Configurações de conexão",
     "poweredby": "distribuído por",
     "feedback": "Dê seus comentários",
-    "roomUrlDefaultMsg": "Sua conferência está sendo criado...",
+    "inviteUrlDefaultMsg": "Sua conferência está sendo criado...",
     "me": "eu",
     "speaker": "Orador",
     "raisedHand": "Gostaria de falar",
@@ -21,17 +25,18 @@
         "nwjsGrantPermissions": "Dê as permissões para usar sua câmera e microfone"
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "Atalhos de teclado:",
-        "raiseHand": "Erguer sua mão.",
-        "pushToTalk": "Pressione para falar.",
-        "toggleScreensharing": "Trocar entre câmera e compartilhamento de tela.",
-        "toggleFilmstrip": "Mostrar ou ocultar os vídeos.",
-        "toggleShortcuts": "Mostrar ou ocultar este menu de ajuda.",
-        "focusLocal": "Foco no vídeo local.",
-        "focusRemote": "Foco em um dos vídeos remotos.",
-        "toggleChat": "Abrir ou fechar o painel de bate-papo.",
-        "mute": "Deixar mudo ou não o microfone.",
-        "videoMute": "Parar ou iniciar o vídeo local."
+        "keyboardShortcuts": "Atalhos de teclado",
+        "raiseHand": "Erga ou baixe sua mão",
+        "pushToTalk": "Pressione para falar",
+        "toggleScreensharing": "Trocar entre câmera e compartilhamento de tela",
+        "toggleFilmstrip": "Mostrar ou ocultar a barra lateral",
+        "toggleShortcuts": "Mostrar ou ocultar este menu de ajuda",
+        "focusLocal": "Foco em seu vídeo",
+        "focusRemote": "Foco no vídeo de outro visitante",
+        "toggleChat": "Abrir ou fechar o painel de bate-papo",
+        "mute": "Deixar mudo ou não o microfone",
+        "fullScreen": "Entrar ou sair da tela cheia",
+        "videoMute": "Iniciar ou parar sua câmera"
     },
     "welcomepage": {
         "go": "IR",
@@ -70,35 +75,45 @@
             "content": "Aprenda sobre seus usuários através de integração fácil com o Piwik, Google Analytics, e outros sistemas de monitoramento e estatísticas."
         }
     },
+    "startupoverlay": {
+        "policyText": "&nbsp;",
+        "title": "O __app__ precisa usar seu microfone e câmera."
+    },
+    "suspendedoverlay": {
+        "title": "Sua chamada de vídeo foi interrompida, porque seu computador foi dormir.",
+        "rejoinKeyTitle": "Reentrar"
+    },
     "toolbar": {
         "mute": "Mudo / Não mudo",
-        "videomute": "Iniciar / parar a câmera",
+        "videomute": "Iniciar ou parar a câmera",
         "authenticate": "Autenticar",
-        "lock": "Travar / destravar a sala",
-        "invite": "Convidar outros",
-        "chat": "Abrir / fechar bate-papo",
-        "etherpad": "Documento compartilhado",
+        "lock": "Travar ou destravar a sala",
+        "invite": "Compartilhar o link",
+        "chat": "Abrir ou fechar o bate-papo",
+        "etherpad": "Abrir ou fechar o documento compartilhado",
         "sharedvideo": "Compartilhar um vídeo do YouTube",
-        "sharescreen": "Compartilhar tela",
-        "fullscreen": "Entrar / Sair de Tela Cheia",
+        "sharescreen": "Iniciar ou parar o compartilhamento de tela",
+        "fullscreen": "Entrar ou sair da tela cheia",
         "sip": "Chamar número SIP",
         "Settings": "Configurações",
-        "hangup": "Desligar",
+        "hangup": "Sair",
         "login": "Iniciar sessão",
         "logout": "Encerrar sessão",
-        "dialpad": "Mostrar teclas de discagem",
+        "dialpad": "Abrir ou fechar teclado de discagem",
         "sharedVideoMutedPopup": "Seu vídeo compartilhado está mudo assim<br/>você pode falar com os outros participantes.",
         "micMutedPopup": "Seu microfone está mudo assim que você<br/>pode curtir plenamente seu vídeo compartilhado.",
+        "talkWhileMutedPopup": "Tentando falar? Você está em mudo.",
         "unableToUnmutePopup": "Você não pode sair do mudo enquanto seu vídeo compartilhado está ativo.",
         "cameraDisabled": "A câmera não está disponível",
         "micDisabled": "O microfone não está disponível",
-        "filmstrip": "",
-        "raiseHand": "Levantar a mão para falar"
+        "filmstrip": "Mostrar / ocultar vídeos",
+        "profile": "Editar seu perfil",
+        "raiseHand": "Erguer o baixar sua mão"
     },
     "bottomtoolbar": {
         "chat": "Abrir / fechar bate-papo",
         "filmstrip": "Mostrar/ocultar vídeos",
-        "contactlist": "Abrir / fechar a lista de contatos"
+        "contactlist": "Ver e convidar participantes"
     },
     "chat": {
         "nickname": {
@@ -126,9 +141,10 @@
         "setPasswordLabel": "Trancar sua sala com uma senha."
     },
     "profile": {
-        "title": "PERFIL",
+        "title": "Perfil",
         "setDisplayNameLabel": "Definir seu nome de exibição",
-        "setEmailLabel": "Definir seu email de gravatar"
+        "setEmailLabel": "Definir seu email de gravatar",
+        "setEmailInput": "Digite e-mail"
     },
     "videothumbnail": {
         "editnickname": "Clique para editar o seu <br/>nome de exibição",
@@ -141,6 +157,7 @@
         "flip": "Inverter"
     },
     "connectionindicator": {
+        "header": "Dados da conexão",
         "bitrate": "Taxa de bits:",
         "packetloss": "Perda de pacote:",
         "resolution": "Resolução:",
@@ -174,20 +191,30 @@
         "raisedHand": "Gostaria de falar."
     },
     "dialog": {
+        "add": "Adicionar",
         "kickMessage": "Ouch! Você o chutou para fora da reunião!",
         "popupError": "Seu navegador está bloqueando janelas popup deste site. Por favor, habilite popups nas configurações de segurança do seu navegador e tente novamente.",
+        "passwordErrorTitle": "Erro na senha",
         "passwordError": "Esta conversa está protegida atualmente por uma senha. Somente o dono da conferência pode definir a senha.",
         "passwordError2": "Esta reunião não está protegida por senha atualmente. Somente o dono da conferência pode definir a senha.",
         "connectError": "Oops! Alguma coisa está errada e nós não pudemos conectar à conferência.",
         "connectErrorWithMsg": "Oops! Alguma coisa está errada e não podemos conectar à conferência: __msg__",
+        "incorrectPassword": "A senha está incorreta",
         "connecting": "Conectando",
         "copy": "Copiar",
         "error": "Erro",
+        "roomLocked": "Esta chamada está fechada. Novos visitantes precisam ter o link e digitar a senha para entrar",
+        "addPassword": "Adicionar uma senha",
+        "createPassword": "Criar uma senha",
         "detectext": "Erro enquanto tenta detectar a extensão de compartilhamento de tela.",
         "failtoinstall": "Falhou a instalação da extensão de compartilhamento de tela",
         "failedpermissions": "Falha ao obter permissões para usar o microfone e/ou câmera local.",
-        "bridgeUnavailable": "Jitsi Videobridge está atualmente indisponível. Por favor, tente mais tarde!",
-        "jicofoUnavailable": "Jicofo está atualmente indisponível. Por favor, tente mais tarde!",
+        "conferenceReloadTitle": "Infelizmente, algo deu errado",
+        "conferenceReloadMsg": "Estamos tentando concertar isso",
+        "conferenceDisconnectTitle": "Você foi desconectado. Verifique sua conexão de rede.",
+        "conferenceDisconnectMsg": "Reconectando em...",
+        "reconnectNow": "Reconecte agora",
+        "conferenceReloadTimeLeft": "__seconds__ s.",
         "maxUsersLimitReached": "O limite para o número máximo de participantes na conferência foi atingida. A conferência está cheia. Por favor, tente mais tarde!",
         "lockTitle": "Bloqueio falhou",
         "lockMessage": "Falha ao travar a conferência.",
@@ -199,10 +226,14 @@
         "SLDFailure": "Oops! Alguma coisa está errada e nós falhamos em silenciar! (Falha do SLD)",
         "SRDFailure": "Oops! Alguma coisa está errada e nós falhamos em parar o vídeo! (Falha do SRD)",
         "oops": "Oops!",
+        "currentPassword": "A senha atual é",
+        "passwordLabel": "Senha",
         "defaultError": "Aqui teve algum tipo de erro",
         "passwordRequired": "Senha requerida",
         "Ok": "Ok",
+        "done": "Feito",
         "Remove": "Remover",
+        "removePassword": "Remover senha",
         "shareVideoTitle": "Compartilhar um vídeo",
         "shareVideoLinkError": "Por favor, forneça um link do youtube correto.",
         "removeSharedVideoTitle": "Remover vídeo compartilhado",
@@ -212,12 +243,13 @@
         "WaitForHostMsg": "A conferência <b>__room__</b> não foi iniciada. Se você é o hospedeiro, então autentique-se. Caso contrário, aguarde o hospedeiro chegar.",
         "IamHost": "Eu sou o hospedeiro",
         "Cancel": "Cancelar",
+        "Submit": "Enviar",
         "retry": "Tentar novamente",
         "logoutTitle": "Encerrar sessão",
         "logoutQuestion": "Está certo em encerrar a sessão e terminar a conferência?",
         "sessTerminated": "Sessão Terminada",
         "hungUp": "Você desconectou",
-        "joinAgain": "Conectar novamente",
+        "joinAgain": "Entrar novamente",
         "Share": "Compartilhar",
         "Save": "Salvar",
         "recording": "Gravando",
@@ -226,7 +258,7 @@
         "sipMsg": "Digite o número SIP",
         "passwordCheck": "Você tem certeza que deseja remover sua senha?",
         "passwordMsg": "Definir uma senha para trancar sua sala",
-        "shareLink": "Copiar e compartilhar este link",
+        "shareLink": "Compartilhar o link para a chamada",
         "settings1": "Configure sua conferência",
         "settings2": "Participantes entram mudos",
         "settings3": "Requer apelidos<br/><br/>Defina uma senha para trancar sua sala:",
@@ -242,7 +274,8 @@
         "token": "token",
         "tokenAuthFailedTitle": "Problema na autenticação",
         "tokenAuthFailed": "Desculpe, você não está autorizado a entrar nesta chamada.",
-        "displayNameRequired": "Digite seu nome de exibição",
+        "displayNameRequired": "Mostrar o nome é requerido",
+        "enterDisplayName": "Digite seu nome de exibição",
         "extensionRequired": "Extensão requerida:",
         "firefoxExtensionPrompt": "Você precisa instalar uma extensão do Firefox para compartilhar a tela. Tente novamente depois que você <a href='__url__'>pegá-lo aqui</a>!",
         "rateExperience": "Por favor, avalie sua experiência na reunião.",
@@ -258,6 +291,7 @@
         "stopLiveStreaming": "Parar o live streaming",
         "stopRecording": "Parar a gravação",
         "doNotShowWarningAgain": "Não exibir este aviso novamente",
+        "doNotShowMessageAgain": "Não mostre esta mensagem novamente",
         "permissionDenied": "Permissão Negada",
         "screenSharingPermissionDeniedError": "Você não tem permissão concedida para compartilhar sua tela.",
         "micErrorPresent": "Ocorreu um erro conectando seu microfone.",
@@ -275,7 +309,10 @@
         "cameraNotSendingData": "Sua câmera está inacessível. Verifique se outra aplicação está usando este dispositivo, selecione outro dispositivo do menu de configurações ou tente reiniciar a aplicação.",
         "goToStore": "Vá para a loja virtual",
         "externalInstallationTitle": "Extensão requerida",
-        "externalInstallationMsg": "Você precisa instalar nossa extensão de compartilhamento de tela."
+        "externalInstallationMsg": "Você precisa instalar nossa extensão de compartilhamento de tela.",
+        "muteParticipantTitle": "Deixar mudo este participante?",
+        "muteParticipantBody": "Você não está habilitado para tirar o mudo deles, mas eles podem tirar o mudo deles mesmos a qualquer tempo.",
+        "muteParticipantButton": "Mudo"
     },
     "email": {
         "sharedKey": [
@@ -290,14 +327,18 @@
         "body": [
             "Olá, gostaria de convidá-lo para uma conferência do __appName__ na qual eu estou participando.",
             "",
-            "Por favor clique no endereço a seguir para participar:",
+            "",
+            "Por favor clique no link a seguir para entrar na conferência.",
+            "",
             "",
             "__roomUrl__",
             "",
-            "__sharedKeyText__",
-            " Note que o __appName__ atualmente só funciona nos navegadores __supportedBrowsers__, assim é preciso abrir o link com um deles para poder participar.",
             "",
-            "Aguardo sua presença!"
+            "__sharedKeyText__",
+            " Note que o __appName__ atualmente só funciona nos navegadores __supportedBrowsers__, assim é necessário usar um destes navegadores.",
+            "",
+            "",
+            "Falo com com você em um segundo!"
         ],
         "and": "e"
     },

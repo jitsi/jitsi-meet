@@ -1,0 +1,98 @@
+/**
+ * Base
+ */
+$baseLight: #FFFFFF;
+
+/**
+* Controls
+*/
+$controlBackground: $baseLight;
+$controlColor: #333333;
+
+/**
+* Buttons
+*/
+$buttonBackground: #f5f5f5;
+$buttonHoverBackground: #e9e9e9;
+$buttonBorder: #ccc;
+$buttonHoverBorder: #999;
+$buttonColor: #333;
+
+$buttonLightBackground: #f5f5f5;
+$buttonLightHoverBackground: #e9e9e9;
+$buttonLightBorder: #ccc;
+$buttonLightHoverBorder: #999;
+
+$buttonLinkBackground: transparent;
+$buttonLinkColor: #0090e8;
+
+$primaryButtonBackground: #3572b0;
+$primaryButtonHoverBackground: #2a67a5;
+$primaryButtonColor: $baseLight;
+$primaryButtonFontWeight: 400;
+
+$buttonShadowColor: #192d4f;
+
+/**
+* Color variables
+**/
+$defaultBackground: #474747;
+
+/**
+* Connection indicator
+**/
+$downloadConnectionIconColor: #4abd04;
+$uploadConnectionIconColor: #ffa800;
+
+/**
+ * Dialog colors
+ **/
+$auiDialogColor: #333;
+$auiDialogBg: #f5f5f5;
+$auiDialogContentBg: $baseLight;
+$auiBorderColor: #ccc;
+$dialogTitleFontWeight: 400;
+
+/**
+* Inlay colors
+**/
+$inlayColorBg: lighten($defaultBackground, 20%);
+$inlayBorderColor: lighten($auiDialogContentBg, 10%);
+
+// Main controls
+$inputBackground: $controlBackground;
+$inputBorderColor: #ccc;
+$inputColor: $controlColor;
+$placeHolderColor: #a7a7a7;
+$readOnlyInputColor: #a7a7a7;
+$defaultDarkSelectionColor: #ccc;
+$buttonFontWeight: 400;
+$labelFontWeight: 400;
+$hintFontSize: em(13, 14);
+$linkFontColor: #3572b0;
+$linkHoverFontColor: darken(#3572b0, 10%);
+$dropdownColor: #333;
+$errorColor: #c61600;
+
+// Feedback colors
+$feedbackCancelFontColor: #333;
+
+// Popover colors
+$popoverBg: #000;
+$popoverFontColor: #ffffff;
+$popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
+
+// Toolbar
+$splitterColor: #ccc;
+
+// Thumbnail
+$thumbnailBorderColor: rgba(71, 71, 71, .7);
+
+/**
+ * Forms
+ */
+//dropdown
+$selectFontColor: $controlColor;
+$selectBg: $controlBackground;
+$selectActiveBg: darken($controlBackground, 5%);
+$selectActiveItemBg: darken($controlBackground, 20%);

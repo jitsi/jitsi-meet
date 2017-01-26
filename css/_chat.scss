@@ -107,6 +107,10 @@
     float: left;
     padding-left: 5px;
     font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 95%;
+    overflow: hidden;
 }
 
 #chat_container .timestamp {
@@ -129,7 +133,7 @@
 .chatmessage {
     background: #3a3a3a;
     width: 93%;
-    margin-left: 5%;
+    margin-left: 9px;
     margin-right: auto;
     border-radius: 5px;
     border-top-left-radius: 0px;
