@@ -10,19 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Implements {@link ReactPackage} for {@link AudioModeModule}.
+ */
 public class AudioModePackage implements ReactPackage {
-    /**
-     * {@inheritDoc}
-     * @return List of native modules to be exposed by React Native.
-     */
-    @Override
-    public List<NativeModule> createNativeModules(
-                                ReactApplicationContext reactContext) {
-        List<NativeModule> modules = new ArrayList<>();
-        modules.add(new AudioModeModule(reactContext));
-        return modules;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -33,9 +24,25 @@ public class AudioModePackage implements ReactPackage {
 
     /**
      * {@inheritDoc}
+     *
+     * @return List of native modules to be exposed by React Native.
      */
     @Override
-    public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
+    public List<NativeModule> createNativeModules(
+            ReactApplicationContext reactContext) {
+        List<NativeModule> modules = new ArrayList<>();
+
+        modules.add(new AudioModeModule(reactContext));
+
+        return modules;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ViewManager> createViewManagers(
+            ReactApplicationContext reactContext) {
         return Collections.emptyList();
     }
 }

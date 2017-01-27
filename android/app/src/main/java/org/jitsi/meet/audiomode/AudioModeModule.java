@@ -22,32 +22,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * Module implementing a simple API to select the appropriate audio device for a conference call.
+ * Module implementing a simple API to select the appropriate audio device for a
+ * conference call.
  *
- * Audio calls should use <tt>AudioModeModule.AUDIO_CALL</tt>, which uses the builtin earpiece,
- * wired headset or bluetooth headset. The builtin earpiece is the default audio device.
+ * Audio calls should use <tt>AudioModeModule.AUDIO_CALL</tt>, which uses the
+ * builtin earpiece, wired headset or bluetooth headset. The builtin earpiece is
+ * the default audio device.
  *
- * Video calls should should use <tt>AudioModeModule.VIDEO_CALL</tt>, which uses the builtin
- * speaker, earpiece, wired headset or bluetooth headset. The builtin speaker is the default
- * audio device.
+ * Video calls should should use <tt>AudioModeModule.VIDEO_CALL</tt>, which uses
+ * the builtin speaker, earpiece, wired headset or bluetooth headset. The
+ * builtin speaker is the default audio device.
  *
- * Before a call has started and after it has ended the <tt>AudioModeModule.DEFAULT</tt> mode
- * should be used.
+ * Before a call has started and after it has ended the
+ * <tt>AudioModeModule.DEFAULT</tt> mode should be used.
  */
 public class AudioModeModule extends ReactContextBaseJavaModule {
     /**
      * Constants representing the audio mode.
-     * - DEFAULT: Used before and after every call.  It represents the default audio routing scheme.
-     * - AUDIO_CALL: Used for audio only calls.  It will use the earpiece by default, unless a
-     *   wired or Bluetooth headset is connected.
-     * - VIDEO_CALL: Used for video calls.  It will use the speaker by default, unless a wired or
-     *   Bluetooth headset is connected.
+     * - DEFAULT: Used before and after every call. It represents the default
+     *   audio routing scheme.
+     * - AUDIO_CALL: Used for audio only calls. It will use the earpiece by
+     *   default, unless a wired or Bluetooth headset is connected.
+     * - VIDEO_CALL: Used for video calls. It will use the speaker by default,
+     *   unless a wired or Bluetooth headset is connected.
      */
     private static final int DEFAULT    = 0;
     private static final int AUDIO_CALL = 1;
     private static final int VIDEO_CALL = 2;
+
+    /**
+     *
+     */
+    private static final String ACTION_HEADSET_PLUG
+        = (android.os.Build.VERSION.SDK_INT >= 21)
+            ? AudioManager.ACTION_HEADSET_PLUG
+            : Intent.ACTION_HEADSET_PLUG;
 
     /**
      * React Native module name.
@@ -60,14 +70,16 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
     static final String TAG = MODULE_NAME;
 
     /**
-     * Audio mode currently in use.
-     */
-    private int mode = -1;
-
-    /**
-     * {@link AudioManager} instance used to interact with the Android audio subsystem.
+     * {@link AudioManager} instance used to interact with the Android audio
+     * subsystem.
      */
     private final AudioManager audioManager;
+
+    /**
+     * {@link BluetoothHeadsetMonitor} for detecting Bluetooth device changes in
+     * old (< M) Android versions.
+     */
+    private BluetoothHeadsetMonitor bluetoothHeadsetMonitor;
 
     /**
      * {@link Handler} for running all operations on the main thread.
@@ -80,27 +92,23 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
     private final Runnable mainThreadRunner;
 
     /**
-     * {@link BluetoothHeadsetMonitor} for detecting Bluetooth device changes in old (< M)
-     * Android versions.
+     * Audio mode currently in use.
      */
-    private BluetoothHeadsetMonitor bluetoothHeadsetMonitor;
+    private int mode = -1;
 
     /**
+     * Initializes a new module instance. There shall be a single instance of
+     * this module throughout the lifetime of the application.
      *
-     */
-    private static final String ACTION_HEADSET_PLUG = (android.os.Build.VERSION.SDK_INT >= 21) ?
-            AudioManager.ACTION_HEADSET_PLUG : Intent.ACTION_HEADSET_PLUG;
-
-    /**
-     * Initializes a new module instance. There shall be a single instance of this module throughout
-     * the lifetime of the application.
-     *
-     * @param reactContext the {@link ReactApplicationContext} where this module is created.
+     * @param reactContext the {@link ReactApplicationContext} where this module
+     * is created.
      */
     public AudioModeModule(ReactApplicationContext reactContext) {
         super(reactContext);
 
-        audioManager = ((AudioManager) reactContext.getSystemService(Context.AUDIO_SERVICE));
+        audioManager
+            = (AudioManager)
+                reactContext.getSystemService(Context.AUDIO_SERVICE);
         mainThreadHandler = new Handler(Looper.getMainLooper());
         mainThreadRunner = new Runnable() {
             @Override
@@ -111,8 +119,25 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
             }
         };
 
-        // Setup runtime device change detection
+        // Setup runtime device change detection.
         setupAudioRouteChangeDetection();
+    }
+
+    /**
+     * Gets a mapping with the constants this module is exporting.
+     *
+     * @return a {@link Map} mapping the constants to be exported with their
+     * values.
+     */
+    @Override
+    public Map<String, Object> getConstants() {
+        Map<String, Object> constants = new HashMap<>();
+
+        constants.put("AUDIO_CALL", AUDIO_CALL);
+        constants.put("DEFAULT", DEFAULT);
+        constants.put("VIDEO_CALL", VIDEO_CALL);
+
+        return constants;
     }
 
     /**
@@ -126,24 +151,126 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * Gets a mapping with the constants this module is exporting.
-     *
-     * @return a {@link Map} mapping the constants to be exported with their values.
+     * Helper method to trigger an audio route update when devices change. It
+     * makes sure the operation is performed on the main thread.
      */
-    @Override
-    public Map<String, Object> getConstants() {
-        Map<String, Object> constants = new HashMap<>();
-        constants.put("DEFAULT", DEFAULT);
-        constants.put("AUDIO_CALL", AUDIO_CALL);
-        constants.put("VIDEO_CALL", VIDEO_CALL);
-        return constants;
+    void onAudioDeviceChange() {
+        mainThreadHandler.post(mainThreadRunner);
+    }
+
+    /**
+     * Helper method to set the output route to a Bluetooth device.
+     *
+     * @param enabled true if Bluetooth should use used, false otherwise.
+     */
+    private void setBluetoothAudioRoute(boolean enabled) {
+        if (enabled) {
+            audioManager.startBluetoothSco();
+            audioManager.setBluetoothScoOn(true);
+        } else {
+            audioManager.setBluetoothScoOn(false);
+            audioManager.stopBluetoothSco();
+        }
+    }
+
+    /**
+     * Public method to set the current audio mode.
+     *
+     * @param mode the desired audio mode.
+     * @param promise a {@link Promise} which will be resolved if the audio mode
+     * could be updated successfully, and it will be rejected otherwise.
+     */
+    @ReactMethod
+    public void setMode(final int mode, final Promise promise) {
+        if (mode != DEFAULT && mode != AUDIO_CALL && mode != VIDEO_CALL) {
+            promise.reject("setMode", "Invalid audio mode " + mode);
+            return;
+        }
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                if (updateAudioRoute(mode)) {
+                    AudioModeModule.this.mode = mode;
+                    promise.resolve(null);
+                } else {
+                    promise.reject(
+                            "setMode",
+                            "Failed to set the requested audio mode");
+                }
+            }
+        };
+        mainThreadHandler.post(r);
+    }
+
+    /**
+     * Setup the audio route change detection mechanism. We use the
+     * {@link android.media.AudioDeviceCallback} API on Android >= 23 only.
+     */
+    private void setupAudioRouteChangeDetection() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setupAudioRouteChangeDetectionM();
+        } else {
+            setupAudioRouteChangeDetectionPreM();
+        }
+    }
+
+    /**
+     * Audio route change detection mechanism for Android API >= 23.
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    private void setupAudioRouteChangeDetectionM() {
+        android.media.AudioDeviceCallback audioDeviceCallback =
+                new android.media.AudioDeviceCallback() {
+                    @Override
+                    public void onAudioDevicesAdded(
+                            AudioDeviceInfo[] addedDevices) {
+                        Log.d(TAG, "Audio devices added");
+                        onAudioDeviceChange();
+                    }
+
+                    @Override
+                    public void onAudioDevicesRemoved(
+                            AudioDeviceInfo[] removedDevices) {
+                        Log.d(TAG, "Audio devices removed");
+                        onAudioDeviceChange();
+                    }
+                };
+
+        audioManager.registerAudioDeviceCallback(audioDeviceCallback, null);
+    }
+
+    /**
+     * Audio route change detection mechanism for Android API < 23.
+     */
+    private void setupAudioRouteChangeDetectionPreM() {
+        ReactContext reactContext = getReactApplicationContext();
+
+        // Detect changes in wired headset connections.
+        IntentFilter wiredHeadSetFilter = new IntentFilter(ACTION_HEADSET_PLUG);
+        BroadcastReceiver wiredHeadsetReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Wired headset added / removed");
+                onAudioDeviceChange();
+            }
+        };
+        reactContext.registerReceiver(wiredHeadsetReceiver, wiredHeadSetFilter);
+
+        // Detect Bluetooth device changes.
+        bluetoothHeadsetMonitor
+            = new BluetoothHeadsetMonitor(
+                    this,
+                    getReactApplicationContext());
+        bluetoothHeadsetMonitor.start();
     }
 
     /**
      * Updates the audio route for the given mode.
      *
      * @param mode the audio mode to be used when computing the audio route.
-     * @return true if the audio route was updated successfully, false otherwise.
+     * @return true if the audio route was updated successfully, false
+     * otherwise.
      */
     private boolean updateAudioRoute(int mode) {
         Log.d(TAG, "Update audio route for mode: " + mode);
@@ -173,133 +300,29 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
         boolean useSpeaker = (mode == VIDEO_CALL);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // On Android >= M we use the AudioDeviceCallback API, so turn on Bluetooth SCO
-            // from the start.
+            // On Android >= M we use the AudioDeviceCallback API, so turn on
+            // Bluetooth SCO from the start.
             if (audioManager.isBluetoothScoAvailableOffCall()) {
                 audioManager.startBluetoothSco();
             }
         } else {
-            // On older Android versions we must set the Bluetooth route manually. Also disable
-            // the speaker in that case.
-            setBluetoothAudioRoute(bluetoothHeadsetMonitor.isHeadsetAvailable());
+            // On older Android versions we must set the Bluetooth route
+            // manually. Also disable the speaker in that case.
+            setBluetoothAudioRoute(
+                    bluetoothHeadsetMonitor.isHeadsetAvailable());
             if (bluetoothHeadsetMonitor.isHeadsetAvailable()) {
                 useSpeaker = false;
             }
         }
 
-        // XXX: isWiredHeadsetOn is not deprecated when used just for knowing if there is a wired
-        // headset connected, regardless of audio being routed to it.
-        audioManager.setSpeakerphoneOn(useSpeaker &&
-                !(audioManager.isWiredHeadsetOn() || audioManager.isBluetoothScoOn()));
+        // XXX: isWiredHeadsetOn is not deprecated when used just for knowing if
+        // there is a wired headset connected, regardless of audio being routed
+        // to it.
+        audioManager.setSpeakerphoneOn(
+                useSpeaker
+                    && !(audioManager.isWiredHeadsetOn()
+                        || audioManager.isBluetoothScoOn()));
 
         return true;
-    }
-
-    /**
-     * Public method to set the current audio mode.
-     *
-     * @param mode the desired audio mode.
-     * @param promise a {@link Promise} which will be resolved if the audio mode could be updated
-     *                successfully, and it will be rejected otherwise.
-     */
-    @ReactMethod
-    public void setMode(final int mode, final Promise promise) {
-        if (mode != DEFAULT && mode != AUDIO_CALL && mode != VIDEO_CALL) {
-            promise.reject("setMode", "Invalid audio mode " + mode);
-            return;
-        }
-
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                if (updateAudioRoute(mode)) {
-                    AudioModeModule.this.mode = mode;
-                    promise.resolve(null);
-                } else {
-                    promise.reject("setMode", "Failed to set the requested audio mode");
-                }
-            }
-        };
-        mainThreadHandler.post(r);
-    }
-
-    /**
-     * Setup the audio route change detection mechanism. We use the
-     * {@link android.media.AudioDeviceCallback} API on Android >= 23 only.
-     */
-    private void setupAudioRouteChangeDetection() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setupAudioRouteChangeDetectionM();
-        } else {
-            setupAudioRouteChangeDetectionOld();
-        }
-    }
-
-    /**
-     * Audio route change detection mechanism for Android API >= 23.
-     */
-    @TargetApi(Build.VERSION_CODES.M)
-    private void setupAudioRouteChangeDetectionM() {
-        android.media.AudioDeviceCallback audioDeviceCallback =
-                new android.media.AudioDeviceCallback() {
-                    @Override
-                    public void onAudioDevicesAdded(AudioDeviceInfo[] addedDevices) {
-                        Log.d(TAG, "Audio devices added");
-                        onAudioDeviceChange();
-                    }
-
-                    @Override
-                    public void onAudioDevicesRemoved(AudioDeviceInfo[] removedDevices) {
-                        Log.d(TAG, "Audio devices removed");
-                        onAudioDeviceChange();
-                    }
-                };
-
-        audioManager.registerAudioDeviceCallback(audioDeviceCallback, null);
-    }
-
-    /**
-     * Audio route change detection mechanism for Android API < 23.
-     */
-    private void setupAudioRouteChangeDetectionOld() {
-        ReactContext reactContext = getReactApplicationContext();
-
-        // Detect changes in wired headset connections
-        IntentFilter wiredHeadSetFilter = new IntentFilter(ACTION_HEADSET_PLUG);
-        BroadcastReceiver wiredHeadsetReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "Wired headset added / removed");
-                onAudioDeviceChange();
-            }
-        };
-        reactContext.registerReceiver(wiredHeadsetReceiver, wiredHeadSetFilter);
-
-        // Detect Bluetooth device changes
-        bluetoothHeadsetMonitor =
-                new BluetoothHeadsetMonitor(this, this.getReactApplicationContext());
-        bluetoothHeadsetMonitor.start();
-    }
-
-    /**
-     * Helper method to set the output route to a Bluetooth device.
-     * @param enabled true if Bluetooth should use used, false otherwise.
-     */
-    private void setBluetoothAudioRoute(boolean enabled) {
-        if (enabled) {
-            audioManager.startBluetoothSco();
-            audioManager.setBluetoothScoOn(true);
-        } else {
-            audioManager.setBluetoothScoOn(false);
-            audioManager.stopBluetoothSco();
-        }
-    }
-
-    /**
-     * Helper method to trigger an audio route update when devices change.  It makes sure the
-     * operation is performed on the main thread.
-     */
-    void onAudioDeviceChange() {
-        mainThreadHandler.post(mainThreadRunner);
     }
 }

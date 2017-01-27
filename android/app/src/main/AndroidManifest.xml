@@ -3,7 +3,7 @@
     android:versionCode="1"
     android:versionName="1.0">
 
-    <!-- XXX: ACCESS_NETWORK_STATE is needed by react-native-webrtc -->
+    <!-- XXX: ACCESS_NETWORK_STATE is required by WebRTC. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CAMERA" />
