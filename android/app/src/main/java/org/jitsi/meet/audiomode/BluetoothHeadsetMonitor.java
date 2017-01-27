@@ -13,8 +13,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.facebook.react.bridge.ReactContext;
-
 /**
  * Helper class to detect and handle Bluetooth device changes.  It monitors
  * Bluetooth headsets being connected / disconnected and notifies the module
@@ -22,37 +20,19 @@ import com.facebook.react.bridge.ReactContext;
  */
 public class BluetoothHeadsetMonitor {
     /**
-     * {@link AudioManager} instance used to interact with the Android audio
-     * subsystem.
-     */
-    private final AudioManager audioManager;
-
-    /**
      * {@link AudioModeModule} where this monitor reports.
      */
     private final AudioModeModule audioModeModule;
 
     /**
-     * Reference to the Bluetooth adapter, needed for managing
-     * <tt>BluetoothProfile.HEADSET</tt> devices.
+     * The {@link Context} in which {@link #audioModeModule} executes.
      */
-    private BluetoothAdapter bluetoothAdapter;
+    private final Context context;
 
     /**
      * Reference to a proxy object which allows us to query connected devices.
      */
-    private BluetoothHeadset bluetoothHeadset;
-
-    /**
-     * Listener for Bluetooth service profiles, allows us to get the proxy
-     * object to {@link BluetoothHeadset}.
-     */
-    private BluetoothProfile.ServiceListener bluetoothProfileListener;
-
-    /**
-     * Helper for running Bluetooth operations on the main thread.
-     */
-    private Runnable bluetoothRunnable;
+    private BluetoothHeadset headset;
 
     /**
      * Flag indicating if there are any Bluetooth headset devices currently
@@ -63,23 +43,80 @@ public class BluetoothHeadsetMonitor {
     /**
      * {@link Handler} for running all operations on the main thread.
      */
-    private final Handler mainThreadHandler;
+    private final Handler mainThreadHandler
+        = new Handler(Looper.getMainLooper());
 
     /**
-     * {@link ReactContext} instance where the main module runs.
+     * Helper for running Bluetooth operations on the main thread.
      */
-    private final ReactContext reactContext;
+    private final Runnable updateDevicesRunnable
+        = new Runnable() {
+            @Override
+            public void run() {
+                headsetAvailable
+                    = (headset != null)
+                        && !headset.getConnectedDevices().isEmpty();
+                audioModeModule.onAudioDeviceChange();
+            }
+        };
 
     public BluetoothHeadsetMonitor(
             AudioModeModule audioModeModule,
-            ReactContext reactContext) {
+            Context context) {
         this.audioModeModule = audioModeModule;
-        this.reactContext = reactContext;
+        this.context = context;
 
-        audioManager
-            = (AudioManager)
-                reactContext.getSystemService(Context.AUDIO_SERVICE);
-        mainThreadHandler = new Handler(Looper.getMainLooper());
+        AudioManager audioManager
+            = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if (!audioManager.isBluetoothScoAvailableOffCall()) {
+            Log.w(AudioModeModule.TAG, "Bluetooth SCO is not available");
+            return;
+        }
+
+        if (getBluetoothHeadsetProfileProxy()) {
+            registerBluetoothReceiver();
+
+            // Initial detection.
+            updateDevices();
+        }
+    }
+
+    private boolean getBluetoothHeadsetProfileProxy() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (adapter == null) {
+            Log.w(AudioModeModule.TAG, "Device doesn't support Bluetooth");
+            return false;
+        }
+
+        // XXX: The profile listener listens for system services of the given
+        // type being available to the application. That is, if our Bluetooth
+        // adapter has the "headset" profile.
+        BluetoothProfile.ServiceListener listener
+            = new BluetoothProfile.ServiceListener() {
+                @Override
+                public void onServiceConnected(
+                        int profile,
+                        BluetoothProfile proxy) {
+                    if (profile == BluetoothProfile.HEADSET) {
+                        headset = (BluetoothHeadset) proxy;
+                        updateDevices();
+                    }
+                }
+
+                @Override
+                public void onServiceDisconnected(int profile) {
+                    // The logic is the same as the logic of onServiceConnected.
+                    onServiceConnected(profile, /* proxy */ null);
+                }
+            };
+
+        return
+            adapter.getProfileProxy(
+                    context,
+                    listener,
+                    BluetoothProfile.HEADSET);
     }
 
     /**
@@ -91,115 +128,55 @@ public class BluetoothHeadsetMonitor {
         return headsetAvailable;
     }
 
-    /**
-     * Start monitoring Bluetooth device activity.
-     */
-    public void start() {
-        bluetoothRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (bluetoothHeadset == null) {
-                    headsetAvailable = false;
-                } else {
-                    headsetAvailable
-                        = !bluetoothHeadset.getConnectedDevices().isEmpty();
-                }
-                audioModeModule.onAudioDeviceChange();
-            }
-        };
+    private void onBluetoothReceiverReceive(Context context, Intent intent) {
+        final String action = intent.getAction();
 
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Log.w(AudioModeModule.TAG, "Device doesn't support Bluetooth");
-            return;
+        if (action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
+            // XXX: This action will be fired when a Bluetooth headset is
+            // connected or disconnected to the system. This is not related to
+            // audio routing.
+            int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, -99);
+
+            switch (state) {
+            case BluetoothHeadset.STATE_CONNECTED:
+            case BluetoothHeadset.STATE_DISCONNECTED:
+                Log.d(
+                        AudioModeModule.TAG,
+                        "BT headset connection state changed: " + state);
+                updateDevices();
+                break;
+            }
+        } else if (action.equals(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)) {
+            // XXX: This action will be fired when the connection established
+            // with a Bluetooth headset (called a SCO connection) changes state.
+            // When the SCO connection is active we route audio to it.
+            int state
+                = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -99);
+
+            switch (state) {
+            case AudioManager.SCO_AUDIO_STATE_CONNECTED:
+            case AudioManager.SCO_AUDIO_STATE_DISCONNECTED:
+                Log.d(
+                        AudioModeModule.TAG,
+                        "BT SCO connection state changed: " + state);
+                updateDevices();
+                break;
+            }
         }
+    }
 
-        if (!audioManager.isBluetoothScoAvailableOffCall()) {
-            Log.w(AudioModeModule.TAG, "Bluetooth SCO is not available");
-            return;
-        }
-
-        // XXX: The profile listener listens for system services of the given
-        // type being available to the application. That is, if our Bluetooth
-        // adapter has the "headset" profile.
-        bluetoothProfileListener = new BluetoothProfile.ServiceListener() {
-            @Override
-            public void onServiceConnected(
-                    int profile,
-                    BluetoothProfile proxy) {
-                if (profile == BluetoothProfile.HEADSET) {
-                    bluetoothHeadset = (BluetoothHeadset) proxy;
-                    updateDevices();
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(int profile) {
-                if (profile == BluetoothProfile.HEADSET) {
-                    bluetoothHeadset = null;
-                    updateDevices();
-                }
-            }
-        };
-
-        bluetoothAdapter.getProfileProxy(reactContext,
-                bluetoothProfileListener, BluetoothProfile.HEADSET);
-
-        IntentFilter bluetoothFilter = new IntentFilter();
-        bluetoothFilter.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
-        bluetoothFilter.addAction(
-                BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
-        BroadcastReceiver bluetoothReceiver = new BroadcastReceiver() {
+    private void registerBluetoothReceiver() {
+        BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                final String action = intent.getAction();
-                if (action.equals(
-                        BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
-                    // XXX: This action will be fired when a Bluetooth headset
-                    // is connected or disconnected to the system. This is not
-                    // related to audio routing.
-                    final int state
-                        = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, -99);
-                    switch (state) {
-                    case BluetoothHeadset.STATE_CONNECTED:
-                    case BluetoothHeadset.STATE_DISCONNECTED:
-                        Log.d(
-                                AudioModeModule.TAG,
-                                "BT headset connection state changed: "
-                                    + state);
-                        updateDevices();
-                        break;
-                    default:
-                        break;
-                    }
-                } else if (action.equals(
-                        AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)) {
-                    // XXX: This action will be fired when the connection
-                    // established with a Bluetooth headset (called a SCO
-                    // connection) changes state.  When the SCO connection is
-                    // active we route audio to it.
-                    final int state
-                        = intent.getIntExtra(
-                                AudioManager.EXTRA_SCO_AUDIO_STATE,
-                                -99);
-                    switch (state) {
-                    case AudioManager.SCO_AUDIO_STATE_CONNECTED:
-                    case AudioManager.SCO_AUDIO_STATE_DISCONNECTED:
-                        Log.d(
-                                AudioModeModule.TAG,
-                                "BT SCO connection state changed: " + state);
-                        updateDevices();
-                        break;
-                    default:
-                        break;
-                    }
-                }
+                onBluetoothReceiverReceive(context, intent);
             }
         };
-        reactContext.registerReceiver(bluetoothReceiver, bluetoothFilter);
+        IntentFilter filter = new IntentFilter();
 
-        // Initial detection.
-        updateDevices();
+        filter.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
+        filter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+        context.registerReceiver(receiver, filter);
     }
 
     /**
@@ -207,6 +184,6 @@ public class BluetoothHeadsetMonitor {
      * {@link AudioModeModule#onAudioDeviceChange()} callback.
      */
     private void updateDevices() {
-        mainThreadHandler.post(bluetoothRunnable);
+        mainThreadHandler.post(updateDevicesRunnable);
     }
 }

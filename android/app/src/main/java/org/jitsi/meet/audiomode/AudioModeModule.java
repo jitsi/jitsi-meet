@@ -14,7 +14,6 @@ import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
@@ -83,12 +82,21 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
     /**
      * {@link Handler} for running all operations on the main thread.
      */
-    private final Handler mainThreadHandler;
+    private final Handler mainThreadHandler
+        = new Handler(Looper.getMainLooper());
 
     /**
      * {@link Runnable} for running update operation on the main thread.
      */
-    private final Runnable mainThreadRunner;
+    private final Runnable mainThreadRunner
+        = new Runnable() {
+            @Override
+            public void run() {
+                if (mode != -1) {
+                    updateAudioRoute(mode);
+                }
+            }
+        };
 
     /**
      * Audio mode currently in use.
@@ -108,15 +116,6 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
         audioManager
             = (AudioManager)
                 reactContext.getSystemService(Context.AUDIO_SERVICE);
-        mainThreadHandler = new Handler(Looper.getMainLooper());
-        mainThreadRunner = new Runnable() {
-            @Override
-            public void run() {
-                if (mode != -1) {
-                    updateAudioRoute(mode);
-                }
-            }
-        };
 
         // Setup runtime device change detection.
         setupAudioRouteChangeDetection();
@@ -243,7 +242,7 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
      * Audio route change detection mechanism for Android API < 23.
      */
     private void setupAudioRouteChangeDetectionPreM() {
-        ReactContext reactContext = getReactApplicationContext();
+        Context context = getReactApplicationContext();
 
         // Detect changes in wired headset connections.
         IntentFilter wiredHeadSetFilter = new IntentFilter(ACTION_HEADSET_PLUG);
@@ -254,14 +253,10 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
                 onAudioDeviceChange();
             }
         };
-        reactContext.registerReceiver(wiredHeadsetReceiver, wiredHeadSetFilter);
+        context.registerReceiver(wiredHeadsetReceiver, wiredHeadSetFilter);
 
         // Detect Bluetooth device changes.
-        bluetoothHeadsetMonitor
-            = new BluetoothHeadsetMonitor(
-                    this,
-                    getReactApplicationContext());
-        bluetoothHeadsetMonitor.start();
+        bluetoothHeadsetMonitor = new BluetoothHeadsetMonitor(this, context);
     }
 
     /**
