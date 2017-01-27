@@ -22,7 +22,7 @@ export class App extends AbstractApp {
     componentWillMount(...args) {
         super.componentWillMount(...args);
 
-        this.props.store.dispatch(appInit());
+        this._getStore().dispatch(appInit());
     }
 
     /**
@@ -44,7 +44,7 @@ export class App extends AbstractApp {
      */
     _navigate(route) {
         let path = route.path;
-        const store = this.props.store;
+        const store = this._getStore();
 
         // The syntax :room bellow is defined by react-router. It "matches a URL
         // segment up to the next /, ?, or #. The matched string is called a
