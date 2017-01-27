@@ -15,8 +15,6 @@ import android.util.Log;
 
 import com.facebook.react.bridge.ReactContext;
 
-import java.util.List;
-
 /**
  * Helper class to detect and handle Bluetooth device changes.  It monitors
  * Bluetooth headsets being connected / disconnected and notifies the module
@@ -81,9 +79,6 @@ public class BluetoothHeadsetMonitor {
         audioManager
             = (AudioManager)
                 reactContext.getSystemService(Context.AUDIO_SERVICE);
-        bluetoothAdapter = null;
-        bluetoothHeadset = null;
-        bluetoothProfileListener = null;
         mainThreadHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -106,9 +101,8 @@ public class BluetoothHeadsetMonitor {
                 if (bluetoothHeadset == null) {
                     headsetAvailable = false;
                 } else {
-                    List<BluetoothDevice> devices
-                        = bluetoothHeadset.getConnectedDevices();
-                    headsetAvailable = !devices.isEmpty();
+                    headsetAvailable
+                        = !bluetoothHeadset.getConnectedDevices().isEmpty();
                 }
                 audioModeModule.onAudioDeviceChange();
             }

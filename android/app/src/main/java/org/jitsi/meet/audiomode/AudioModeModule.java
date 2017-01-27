@@ -19,7 +19,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,7 +54,7 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
      *
      */
     private static final String ACTION_HEADSET_PLUG
-        = (android.os.Build.VERSION.SDK_INT >= 21)
+        = (Build.VERSION.SDK_INT >= 21)
             ? AudioManager.ACTION_HEADSET_PLUG
             : Intent.ACTION_HEADSET_PLUG;
 
