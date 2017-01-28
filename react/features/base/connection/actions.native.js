@@ -28,7 +28,14 @@ export function connect() {
                 connectionOptions.token,
                 {
                     ...connectionOptions,
-                    bosh: connectionOptions.bosh + (room ? `?room=${room}` : '')
+                    bosh:
+                        connectionOptions.bosh
+
+                            // XXX The Jitsi Meet deployments require the room
+                            // argument to be in lower case at the time of this
+                            // writing but, unfortunately, they do not ignore
+                            // case themselves.
+                            + (room ? `?room=${room.toLowerCase()}` : '')
                 });
 
         connection.addEventListener(
