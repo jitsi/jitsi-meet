@@ -22,19 +22,19 @@ MiddlewareRegistry.register(store => next => action => {
     // The react-native module AudioMode is implemented on iOS at the time of
     // this writing.
     if (AudioMode) {
-        let audioMode;
+        let mode;
 
         switch (action.type) {
         case APP_WILL_MOUNT:
         case CONFERENCE_FAILED:
         case CONFERENCE_LEFT:
-            audioMode = AudioMode.DEFAULT;
+            mode = AudioMode.DEFAULT;
             break;
 
         case CONFERENCE_WILL_JOIN: {
             const conference = store.getState()['features/base/conference'];
 
-            audioMode
+            mode
                 = conference.audioOnly
                     ? AudioMode.AUDIO_CALL
                     : AudioMode.VIDEO_CALL;
@@ -42,14 +42,14 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         default:
-            audioMode = null;
+            mode = null;
             break;
         }
 
-        if (audioMode !== null) {
-            AudioMode.setMode(audioMode).catch(err => {
-                console.error(`Failed to set audio mode ${audioMode}: ${err}`);
-            });
+        if (mode !== null) {
+            AudioMode.setMode(mode)
+                .catch(err =>
+                    console.error(`Failed to set audio mode ${mode}: ${err}`));
         }
     }
 

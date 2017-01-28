@@ -106,6 +106,7 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(
 /**
  * Logs at error level.
  *
+ * @private
  * @returns {void}
  */
 function _LOGE(...args) {
@@ -119,6 +120,8 @@ function _LOGE(...args) {
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * which specifies the configuration of the remote end of the connection.
+ * @private
+ * @private
  * @returns {Promise}
  */
 function _setRemoteDescription(sessionDescription) {
@@ -160,6 +163,7 @@ function _setRemoteDescription(sessionDescription) {
  *
  * @param {RTCSessionDescription} sdp - The RTCSessionDescription which
  * specifies the configuration of the remote end of the connection.
+ * @private
  * @returns {Promise}
  */
 function _synthesizeIPv6Addresses(sdp) {
@@ -184,6 +188,7 @@ function _synthesizeIPv6Addresses(sdp) {
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses will be synthesized.
+ * @private
  * @returns {{
  *     ips: Map,
  *     lines: Array
@@ -278,6 +283,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
  * @param {Map} ips - A Map of IPv4 addresses found in the specified
  * sessionDescription to synthesized IPv6 addresses.
  * @param {Array} lines - The lines of the specified sessionDescription.
+ * @private
  * @returns {RTCSessionDescription} A RTCSessionDescription that represents the
  * result of the synthesis of IPv6 addresses.
  */

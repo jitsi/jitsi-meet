@@ -31,9 +31,10 @@ const AUDIO_INITIAL_MEDIA_STATE = {
  * @param {AudioMediaState} state - Media state of local audio.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
+ * @private
  * @returns {AudioMediaState}
  */
-function audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
+function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
     case SET_AUDIO_MUTED:
         return {
@@ -70,9 +71,10 @@ const VIDEO_INITIAL_MEDIA_STATE = {
  * @param {VideoMediaState} state - Media state of local video.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
+ * @private
  * @returns {VideoMediaState}
  */
-function video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
+function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
     case SET_CAMERA_FACING_MODE:
         return {
@@ -102,6 +104,6 @@ function video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
  * @returns {Object}
  */
 ReducerRegistry.register('features/base/media', combineReducers({
-    audio,
-    video
+    audio: _audio,
+    video: _video
 }));

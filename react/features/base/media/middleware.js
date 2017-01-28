@@ -21,11 +21,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_LEFT:
-        resetInitialMediaState(store);
+        _resetInitialMediaState(store);
         break;
 
     case TRACK_ADDED:
-        action.track.local && syncTrackMutedState(store, action.track);
+        action.track.local && _syncTrackMutedState(store, action.track);
         break;
     }
 
@@ -36,9 +36,10 @@ MiddlewareRegistry.register(store => next => action => {
  * Resets initial media state.
  *
  * @param {Store} store - Redux store.
+ * @private
  * @returns {void}
  */
-function resetInitialMediaState(store) {
+function _resetInitialMediaState(store) {
     const { dispatch, getState } = store;
     const state = getState()['features/base/media'];
 
@@ -53,9 +54,10 @@ function resetInitialMediaState(store) {
  *
  * @param {Store} store - Redux store.
  * @param {Track} track - Local media track.
+ * @private
  * @returns {void}
  */
-function syncTrackMutedState(store, track) {
+function _syncTrackMutedState(store, track) {
     const state = store.getState()['features/base/media'];
     const muted = state[track.mediaType].muted;
 

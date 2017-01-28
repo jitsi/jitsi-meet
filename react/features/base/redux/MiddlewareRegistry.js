@@ -12,7 +12,7 @@ class MiddlewareRegistry {
         /**
          * The set of registered middleware.
          */
-        this.middlewareRegistry = new Set();
+        this._elements = new Set();
     }
 
     /**
@@ -25,7 +25,7 @@ class MiddlewareRegistry {
      */
     applyMiddleware(...additional) {
         return applyMiddleware(
-            ...this.middlewareRegistry,
+            ...this._elements,
             ...additional
         );
     }
@@ -39,7 +39,7 @@ class MiddlewareRegistry {
      * @returns {void}
      */
     register(middleware) {
-        this.middlewareRegistry.add(middleware);
+        this._elements.add(middleware);
     }
 }
 

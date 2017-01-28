@@ -22,14 +22,14 @@ MiddlewareRegistry.register(store => next => action => {
 
         // TODO(saghul): Implement audio-only mode.
         if (!state.audioOnly) {
-            setWakeLock(true);
+            _setWakeLock(true);
         }
         break;
     }
 
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
-        setWakeLock(false);
+        _setWakeLock(false);
         break;
     }
 
@@ -42,9 +42,10 @@ MiddlewareRegistry.register(store => next => action => {
  *
  * @param {boolean} wakeLock - True to active the wake lock or false to
  * deactivate it.
+ * @private
  * @returns {void}
  */
-function setWakeLock(wakeLock) {
+function _setWakeLock(wakeLock) {
     if (wakeLock) {
         KeepAwake.activate();
     } else {

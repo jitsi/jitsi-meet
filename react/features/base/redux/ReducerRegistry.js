@@ -13,7 +13,7 @@ class ReducerRegistry {
          * The set of registered reducers, keyed based on the field each reducer
          * will manage.
          */
-        this.reducerRegistry = {};
+        this._elements = {};
     }
 
     /**
@@ -25,7 +25,7 @@ class ReducerRegistry {
      */
     combineReducers(additional = {}) {
         return combineReducers({
-            ...this.reducerRegistry,
+            ...this._elements,
             ...additional
         });
     }
@@ -41,7 +41,7 @@ class ReducerRegistry {
      * @returns {void}
      */
     register(name, reducer) {
-        this.reducerRegistry[name] = reducer;
+        this._elements[name] = reducer;
     }
 }
 

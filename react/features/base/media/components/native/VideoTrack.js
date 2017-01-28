@@ -140,9 +140,10 @@ class VideoTrack extends AbstractVideoTrack {
 
     // eslint-disable-next-line valid-jsdoc
     /**
-     * @inheritdoc
-     *
      * Animate the setting of the video track to be rendered by this instance.
+     *
+     * @inheritdoc
+     * @protected
      */
     _setVideoTrack(videoTrack) {
         // If JitsiTrack instance didn't change, that means some other track's

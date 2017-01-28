@@ -46,18 +46,6 @@ class Thumbnail extends Component {
     }
 
     /**
-     * Handles click/tap event on the thumbnail.
-     *
-     * @returns {void}
-     */
-    _onClick() {
-        const { dispatch, participant } = this.props;
-
-        // TODO The following currently ignores interfaceConfig.filmStripOnly.
-        dispatch(pinParticipant(participant.pinned ? null : participant.id));
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -125,6 +113,18 @@ class Thumbnail extends Component {
 
             </Container>
         );
+    }
+
+    /**
+     * Handles click/tap event on the thumbnail.
+     *
+     * @returns {void}
+     */
+    _onClick() {
+        const { dispatch, participant } = this.props;
+
+        // TODO The following currently ignores interfaceConfig.filmStripOnly.
+        dispatch(pinParticipant(participant.pinned ? null : participant.id));
     }
 }
 

@@ -20,7 +20,7 @@ class RouteRegistry {
          *
          * @private
          */
-        this._routeRegistry = new Set();
+        this._elements = new Set();
     }
 
     /**
@@ -57,7 +57,7 @@ class RouteRegistry {
         // We use the destructuring operator to 'clone' the route object to
         // prevent modifications from outside (e.g. React Native's Navigator
         // extends it with additional properties).
-        return [ ...this._routeRegistry ].map(r => {
+        return [ ...this._elements ].map(r => {
             return { ...r };
         });
     }
@@ -71,7 +71,7 @@ class RouteRegistry {
      */
     getRouteByComponent(component) {
         const route
-            = [ ...this._routeRegistry ].find(r => r.component === component);
+            = [ ...this._elements ].find(r => r.component === component);
 
         // We use destructuring operator to 'clone' route object to prevent
         // modifications from outside (e.g. React Native's Navigator extends
@@ -86,11 +86,11 @@ class RouteRegistry {
      * @returns {void}
      */
     register(route) {
-        if (this._routeRegistry.has(route)) {
+        if (this._elements.has(route)) {
             throw new Error(`Route ${route.component} is registered already!`);
         }
 
-        this._routeRegistry.add(route);
+        this._elements.add(route);
     }
 }
 
