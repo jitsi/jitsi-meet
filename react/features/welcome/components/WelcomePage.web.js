@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { Watermarks } from '../../base/react';
 
-import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
+import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
 /* eslint-disable require-jsdoc */
 
@@ -267,4 +267,4 @@ class WelcomePage extends AbstractWelcomePage {
     }
 }
 
-export default connect(mapStateToProps)(WelcomePage);
+export default connect(_mapStateToProps)(WelcomePage);

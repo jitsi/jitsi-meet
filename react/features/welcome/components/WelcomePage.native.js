@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 
-import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
+import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import { styles } from './styles';
 
 /**
@@ -125,4 +125,4 @@ class WelcomePage extends AbstractWelcomePage {
     }
 }
 
-export default connect(mapStateToProps)(WelcomePage);
+export default connect(_mapStateToProps)(WelcomePage);

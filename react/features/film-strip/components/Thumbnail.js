@@ -133,13 +133,14 @@ class Thumbnail extends Component {
  *
  * @param {Object} state - Redux state.
  * @param {Object} ownProps - Properties of component.
+ * @private
  * @returns {{
  *      _audioTrack: Track,
  *      _largeVideo: Object,
  *      _videoTrack: Track
  *  }}
  */
-function mapStateToProps(state, ownProps) {
+function _mapStateToProps(state, ownProps) {
     // We need read-only access to the state of features/large-video so that the
     // film strip doesn't render the video of the participant who is rendered on
     // the stage i.e. as a large video.
@@ -158,4 +159,4 @@ function mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(mapStateToProps)(Thumbnail);
+export default connect(_mapStateToProps)(Thumbnail);

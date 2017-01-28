@@ -138,13 +138,14 @@ export class AbstractToolbar extends Component {
  * Maps parts of media state to component props.
  *
  * @param {Object} state - Redux state.
+ * @protected
  * @returns {{
  *     _audioMuted: boolean,
  *     _locked: boolean,
  *     _videoMuted: boolean
  * }}
  */
-export function mapStateToProps(state) {
+export function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const media = state['features/base/media'];
 

@@ -229,11 +229,12 @@ class Conference extends Component {
  * Maps (parts of) the Redux state to the associated Conference's props.
  *
  * @param {Object} state - The Redux state.
+ * @private
  * @returns {{
  *     _passwordRequired: boolean
  * }}
  */
-function mapStateToProps(state) {
+function _mapStateToProps(state) {
     return {
         /**
          * The indicator which determines whether a password is required to join
@@ -255,4 +256,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default reactReduxConnect(mapStateToProps)(Conference);
+export default reactReduxConnect(_mapStateToProps)(Conference);

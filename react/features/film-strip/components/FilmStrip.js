@@ -99,11 +99,12 @@ class FilmStrip extends Component {
  * Function that maps parts of Redux state tree into component props.
  *
  * @param {Object} state - Redux state.
+ * @private
  * @returns {{
  *      _participants: Participant[],
  *  }}
  */
-function mapStateToProps(state) {
+function _mapStateToProps(state) {
     return {
         /**
          * The participants in the conference.
@@ -115,4 +116,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(FilmStrip);
+export default connect(_mapStateToProps)(FilmStrip);

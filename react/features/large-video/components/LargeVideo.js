@@ -46,14 +46,15 @@ class LargeVideo extends Component {
  * Maps (parts of) the Redux state to the associated LargeVideo's props.
  *
  * @param {Object} state - Redux state.
+ * @private
  * @returns {{
  *     _participantId: string
  * }}
  */
-function mapStateToProps(state) {
+function _mapStateToProps(state) {
     return {
         _participantId: state['features/large-video'].participantId
     };
 }
 
-export default connect(mapStateToProps)(LargeVideo);
+export default connect(_mapStateToProps)(LargeVideo);

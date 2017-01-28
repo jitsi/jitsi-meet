@@ -124,11 +124,12 @@ class UnsupportedMobileBrowser extends Component {
  * props.
  *
  * @param {Object} state - Redux state.
+ * @private
  * @returns {{
  *     _room: string
  * }}
  */
-function mapStateToProps(state) {
+function _mapStateToProps(state) {
     return {
         /**
          * The name of the conference room to be joined upon clicking the
@@ -141,4 +142,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(UnsupportedMobileBrowser);
+export default connect(_mapStateToProps)(UnsupportedMobileBrowser);

@@ -201,12 +201,13 @@ export class AbstractWelcomePage extends Component {
  * to be used in child classes for 'connect'.
  *
  * @param {Object} state - Redux state.
+ * @protected
  * @returns {{
  *     _localVideoTrack: (Track|undefined),
  *     _room: string
  * }}
  */
-export function mapStateToProps(state) {
+export function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const tracks = state['features/base/tracks'];
 
