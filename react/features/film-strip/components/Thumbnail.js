@@ -26,11 +26,11 @@ class Thumbnail extends Component {
      * @static
      */
     static propTypes = {
-        audioTrack: React.PropTypes.object,
+        _audioTrack: React.PropTypes.object,
+        _largeVideo: React.PropTypes.object,
+        _videoTrack: React.PropTypes.object,
         dispatch: React.PropTypes.func,
-        largeVideo: React.PropTypes.object,
-        participant: React.PropTypes.object,
-        videoTrack: React.PropTypes.object
+        participant: React.PropTypes.object
     }
 
     /**
@@ -64,12 +64,10 @@ class Thumbnail extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            audioTrack,
-            largeVideo,
-            participant,
-            videoTrack
-        } = this.props;
+        const audioTrack = this.props._audioTrack;
+        const largeVideo = this.props._largeVideo;
+        const participant = this.props.participant;
+        const videoTrack = this.props._videoTrack;
 
         let style = styles.thumbnail;
 
@@ -136,9 +134,9 @@ class Thumbnail extends Component {
  * @param {Object} state - Redux state.
  * @param {Object} ownProps - Properties of component.
  * @returns {{
- *      audioTrack: Track,
- *      largeVideo: Object,
- *      videoTrack: Track
+ *      _audioTrack: Track,
+ *      _largeVideo: Object,
+ *      _videoTrack: Track
  *  }}
  */
 function mapStateToProps(state, ownProps) {
@@ -154,9 +152,9 @@ function mapStateToProps(state, ownProps) {
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
 
     return {
-        audioTrack,
-        largeVideo,
-        videoTrack
+        _audioTrack: audioTrack,
+        _largeVideo: largeVideo,
+        _videoTrack: videoTrack
     };
 }
 

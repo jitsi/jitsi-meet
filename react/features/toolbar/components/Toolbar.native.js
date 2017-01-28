@@ -123,7 +123,7 @@ class Toolbar extends AbstractToolbar {
                     underlayColor = { underlayColor } />
                 <ToolbarButton
                     iconName = {
-                        this.props.locked ? 'security-locked' : 'security'
+                        this.props._locked ? 'security-locked' : 'security'
                     }
                     iconStyle = { iconStyle }
                     onClick = { this._onRoomLock }

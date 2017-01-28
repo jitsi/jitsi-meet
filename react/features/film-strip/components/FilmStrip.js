@@ -19,7 +19,13 @@ class FilmStrip extends Component {
      * @static
      */
     static propTypes = {
-        participants: React.PropTypes.array,
+        /**
+         * The participants in the conference.
+         *
+         * @private
+         * @type {Participant[]}
+         */
+        _participants: React.PropTypes.array,
         visible: React.PropTypes.bool.isRequired
     }
 
@@ -43,7 +49,7 @@ class FilmStrip extends Component {
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }>
                     {
-                        this._sort(this.props.participants)
+                        this._sort(this.props._participants)
                             .map(p =>
                                 <Thumbnail
                                     key = { p.id }
@@ -94,12 +100,18 @@ class FilmStrip extends Component {
  *
  * @param {Object} state - Redux state.
  * @returns {{
- *      participants: Participant[],
+ *      _participants: Participant[],
  *  }}
  */
 function mapStateToProps(state) {
     return {
-        participants: state['features/base/participants']
+        /**
+         * The participants in the conference.
+         *
+         * @private
+         * @type {Participant[]}
+         */
+        _participants: state['features/base/participants']
     };
 }
 

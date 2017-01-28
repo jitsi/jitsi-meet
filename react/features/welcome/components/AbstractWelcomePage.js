@@ -18,9 +18,9 @@ export class AbstractWelcomePage extends Component {
      * @static
      */
     static propTypes = {
-        dispatch: React.PropTypes.func,
-        localVideoTrack: React.PropTypes.object,
-        room: React.PropTypes.string
+        _localVideoTrack: React.PropTypes.object,
+        _room: React.PropTypes.string,
+        dispatch: React.PropTypes.func
     }
 
     /**
@@ -69,7 +69,7 @@ export class AbstractWelcomePage extends Component {
      * @param {Object} nextProps - New props component will receive.
      */
     componentWillReceiveProps(nextProps) {
-        this.setState({ room: nextProps.room });
+        this.setState({ room: nextProps._room });
     }
 
     /**
@@ -167,7 +167,7 @@ export class AbstractWelcomePage extends Component {
      */
     _renderLocalVideo() {
         return (
-            <VideoTrack videoTrack = { this.props.localVideoTrack } />
+            <VideoTrack videoTrack = { this.props._localVideoTrack } />
         );
     }
 
@@ -202,8 +202,8 @@ export class AbstractWelcomePage extends Component {
  *
  * @param {Object} state - Redux state.
  * @returns {{
- *      localVideoTrack: (Track|undefined),
- *      room: string
+ *     _localVideoTrack: (Track|undefined),
+ *     _room: string
  * }}
  */
 export function mapStateToProps(state) {
@@ -211,7 +211,7 @@ export function mapStateToProps(state) {
     const tracks = state['features/base/tracks'];
 
     return {
-        localVideoTrack: getLocalVideoTrack(tracks),
-        room: conference.room
+        _localVideoTrack: getLocalVideoTrack(tracks),
+        _room: conference.room
     };
 }
