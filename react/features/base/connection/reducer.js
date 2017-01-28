@@ -62,6 +62,7 @@ function _connectionEstablished(state, action) {
  *
  * @param {string} domain - The domain with which the returned options are to be
  * populated.
+ * @private
  * @returns {Object}
  */
 function _constructConnectionOptions(domain) {
