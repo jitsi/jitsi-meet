@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { appNavigate } from '../../app';
 import { Platform } from '../../base/react';
-
-import { mobileBrowserPageIsShown } from '../actions';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
@@ -27,8 +24,14 @@ class UnsupportedMobileBrowser extends Component {
      * @static
      */
     static propTypes = {
-        dispatch: React.PropTypes.func,
-        room: React.PropTypes.string
+        /**
+         * The name of the conference room to be joined upon clicking the
+         * respective button.
+         *
+         * @private
+         * @type {string}
+         */
+        _room: React.PropTypes.string
     }
 
     /**
@@ -41,16 +44,7 @@ class UnsupportedMobileBrowser extends Component {
         super(props);
 
         // Bind methods
-        this._onClickJoin = this._onClickJoin.bind(this);
-    }
-
-    /**
-     * React lifecycle method triggered after component is mounted.
-     *
-     * @returns {void}
-     */
-    componentDidMount() {
-        this.props.dispatch(mobileBrowserPageIsShown());
+        this._onJoinClick = this._onJoinClick.bind(this);
     }
 
     /**
@@ -59,21 +53,11 @@ class UnsupportedMobileBrowser extends Component {
      * @returns {void}
      */
     componentWillMount() {
-        const { room } = this.props;
-        let btnText;
-        let link;
-
-        if (room) {
-            btnText = 'Join the conversation';
-            link = room;
-        } else {
-            btnText = 'Start a conference';
-            link = '';
-        }
+        const joinButtonText
+            = this.props._room ? 'Join the conversation' : 'Start a conference';
 
         this.setState({
-            btnText,
-            link
+            joinButtonText
         });
     }
 
@@ -84,8 +68,7 @@ class UnsupportedMobileBrowser extends Component {
      */
     render() {
         const ns = 'unsupported-mobile-browser';
-        const primaryButtonClasses
-            = `${ns}__button ${ns}__button_primary`;
+        const downloadButtonClassName = `${ns}__button ${ns}__button_primary`;
 
         return (
             <div className = { ns }>
@@ -98,7 +81,7 @@ class UnsupportedMobileBrowser extends Component {
                         conversation on your mobile
                     </p>
                     <a href = { URLS[Platform.OS] }>
-                        <button className = { primaryButtonClasses }>
+                        <button className = { downloadButtonClassName }>
                             Download the App
                         </button>
                     </a>
@@ -109,9 +92,9 @@ class UnsupportedMobileBrowser extends Component {
                     </p>
                     <button
                         className = { `${ns}__button` }
-                        onClick = { this._onClickJoin }>
+                        onClick = { this._onJoinClick }>
                         {
-                            this.state.btnText
+                            this.state.joinButtonText
                         }
                     </button>
                 </div>
@@ -120,13 +103,19 @@ class UnsupportedMobileBrowser extends Component {
     }
 
     /**
-     * Navigates to the next state of the app.
+     * Handles clicks on the button that joins the local participant in a
+     * conference.
      *
      * @private
      * @returns {void}
      */
-    _onClickJoin() {
-        this.props.dispatch(appNavigate(this.state.link));
+    _onJoinClick() {
+        // If the user installed the app while this Component was displayed
+        // (e.g. the user clicked the Download the App button), then we would
+        // like to open the current URL in the mobile app.
+
+        // TODO The only way to do it appears to be a link with an app-specific
+        // scheme, not a Universal Link.
     }
 }
 
@@ -136,12 +125,19 @@ class UnsupportedMobileBrowser extends Component {
  *
  * @param {Object} state - Redux state.
  * @returns {{
- *     room: string
+ *     _room: string
  * }}
  */
 function mapStateToProps(state) {
     return {
-        room: state['features/base/conference'].room
+        /**
+         * The name of the conference room to be joined upon clicking the
+         * respective button.
+         *
+         * @private
+         * @type {string}
+         */
+        _room: state['features/base/conference'].room
     };
 }
 

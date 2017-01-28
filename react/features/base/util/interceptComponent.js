@@ -17,16 +17,13 @@ const RULES = [
      * app even if the browser supports the app (e.g. Google Chrome with
      * WebRTC support on Android).
      *
-     * @param {Object} state - Object containing Redux state.
      * @returns {UnsupportedMobileBrowser|void} If the rule is satisfied then
      * we should intercept existing component by UnsupportedMobileBrowser.
      */
-    state => {
+    () => {
         const OS = Platform.OS;
-        const { mobileBrowserPageIsShown }
-            = state['features/unsupported-browser'];
 
-        if ((OS === 'android' || OS === 'ios') && !mobileBrowserPageIsShown) {
+        if (OS === 'android' || OS === 'ios') {
             return UnsupportedMobileBrowser;
         }
     }
