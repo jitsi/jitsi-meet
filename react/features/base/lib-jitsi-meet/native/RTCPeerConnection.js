@@ -1,7 +1,5 @@
+import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
-
-import { Platform } from '../../react';
-import { POSIX } from '../../react-native';
 
 // XXX At the time of this writing extending RTCPeerConnection using ES6 'class'
 // and 'extends' causes a runtime error related to the attempt to define the
@@ -169,7 +167,7 @@ function _setRemoteDescription(sessionDescription) {
 function _synthesizeIPv6Addresses(sdp) {
     // The synthesis of IPv6 addresses is implemented on iOS only at the time of
     // this writing.
-    if (Platform.OS !== 'ios') {
+    if (!NativeModules.POSIX) {
         return Promise.resolve(sdp);
     }
 
@@ -199,6 +197,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
     let start = 0;
     const lines = [];
     const ips = new Map();
+    const getaddrinfo = NativeModules.POSIX.getaddrinfo;
 
     do {
         const end = sdp.indexOf('\r\n', start);
@@ -237,7 +236,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
                                 if (v && typeof v === 'string') {
                                     resolve(v);
                                 } else {
-                                    POSIX.getaddrinfo(ip).then(
+                                    getaddrinfo(ip).then(
                                         value => {
                                             if (value.indexOf(':') === -1
                                                     || value === ips.get(ip)) {
