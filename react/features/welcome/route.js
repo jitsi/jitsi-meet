@@ -1,6 +1,6 @@
 /* global APP */
 
-import { RouteRegistry } from '../base/navigator';
+import { RouteRegistry } from '../base/react';
 import { generateRoomWithoutSeparator } from '../base/util';
 
 import { WelcomePage } from './components';

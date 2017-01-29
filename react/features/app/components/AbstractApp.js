@@ -3,11 +3,11 @@ import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
-import { RouteRegistry } from '../../base/navigator';
 import {
     localParticipantJoined,
     localParticipantLeft
 } from '../../base/participants';
+import { RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 
 import {

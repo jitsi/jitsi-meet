@@ -4,7 +4,7 @@ import BoshAddressChoice from '../../../modules/config/BoshAddressChoice';
 import HttpConfigFetch from '../../../modules/config/HttpConfigFetch';
 import ConferenceUrl from '../../../modules/URL/ConferenceUrl';
 
-import { RouteRegistry } from '../base/navigator';
+import { RouteRegistry } from '../base/react';
 
 import { Conference } from './components';
 

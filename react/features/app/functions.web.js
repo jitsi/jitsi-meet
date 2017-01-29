@@ -1,10 +1,10 @@
 /* global APP, JitsiMeetJS, loggingConfig */
 
 import { isRoomValid } from '../base/conference';
-import { RouteRegistry } from '../base/navigator';
+import { RouteRegistry } from '../base/react';
+import { interceptComponent } from '../base/util';
 import { Conference } from '../conference';
 import { WelcomePage } from '../welcome';
-import { interceptComponent } from '../base/util';
 
 import URLProcessor from '../../../modules/config/URLProcessor';
 import KeyboardShortcut

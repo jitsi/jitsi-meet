@@ -1,5 +1,5 @@
 import { isRoomValid } from '../base/conference';
-import { RouteRegistry } from '../base/navigator';
+import { RouteRegistry } from '../base/react';
 import { Conference } from '../conference';
 import { WelcomePage } from '../welcome';
 
