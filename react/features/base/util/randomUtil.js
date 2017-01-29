@@ -69,6 +69,7 @@ export function randomInt(min, max) {
  * @param {number} length - The length of the string to return.
  * @param {string} characters - The characters from which the returned string is
  * to be constructed.
+ * @private
  * @returns {string} A string of random characters with the specified length.
  */
 function _randomString(length, characters) {

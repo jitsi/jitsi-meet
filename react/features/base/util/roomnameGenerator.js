@@ -210,7 +210,7 @@ export function generateRoomWithoutSeparator() {
     // that names from patterns with more options).
     let name = randomElement(PATTERNS);
 
-    while (hasTemplate(name)) {
+    while (_hasTemplate(name)) {
         for (const template in CATEGORIES) { // eslint-disable-line guard-for-in
             const word = randomElement(CATEGORIES[template]);
 
@@ -226,10 +226,11 @@ export function generateRoomWithoutSeparator() {
  * templates/categories.
  *
  * @param {string} s - String containing categories.
+ * @private
  * @returns {boolean} True if the specified string contains at least one of the
  * templates/categories; otherwise, false.
  */
-function hasTemplate(s) {
+function _hasTemplate(s) {
     for (const template in CATEGORIES) {
         if (s.indexOf(template) >= 0) {
             return true;
