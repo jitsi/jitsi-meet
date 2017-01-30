@@ -1,4 +1,5 @@
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
+
 Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the session #482 of the VoIP Users Conference.
 
 You can also try it out yourself at https://meet.jit.si .
@@ -34,7 +35,7 @@ To build the Jitsi Meet application, just type
 make
 ```
 
-## Working with the library sources(lib-jitsi-meet).
+## Working with the library sources (lib-jitsi-meet)
 
 By default the library is build from its git repository sources. The default dependency path in package.json is :
 ```json
@@ -80,6 +81,10 @@ cd jitsi-meet
 npm unlink lib-jitsi-meet
 npm install
 ```
+
+## Embedding in external applications
+
+Jitsi Meet provides a very flexible way of embedding it in external applications by using the [Jitsi Meet API](doc/api.md).
 
 ## Mobile app
 Jitsi Meet is also available as a React Native application for Android and iOS.
