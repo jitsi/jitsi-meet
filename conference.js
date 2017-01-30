@@ -337,6 +337,11 @@ export default {
             .then((...args) => this.setupConference(...args));
     },
 
+    /**
+     * Sets global error handler.
+     *
+     * @returns {void}
+     */
     setGlobalErrorHandler() {
         const oldOnErrorHandler = window.onerror;
         const newOnErrorHandler = (message, source, lineno, colno, error) => {
@@ -362,6 +367,13 @@ export default {
         window.onunhandledrejection = newOnUnhandledRejection;
     },
 
+    /**
+     * Sets up conference after its initialization.
+     *
+     * @param {Array} tracks - Array containing list of media tracks.
+     * @param {Object} con - Connection object.
+     * @returns {Promise}
+     */
     setupConference([tracks, con]) {
         logger.log('initialized with %s local tracks', tracks.length);
         APP.connection = connection = con;
