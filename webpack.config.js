@@ -1,6 +1,5 @@
 /* global __dirname */
 
-const HasteResolverPlugin = require('haste-resolver-webpack-plugin');
 const process = require('process');
 const webpack = require('webpack');
 
@@ -18,7 +17,10 @@ const minimize
         || process.argv.indexOf('--optimize-minimize') !== -1;
 const node_modules = __dirname + '/node_modules/';
 const plugins = [
-    new HasteResolverPlugin()
+    new webpack.LoaderOptionsPlugin({
+        debug: !minimize,
+        minimize: minimize
+    })
 ];
 const strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
 
@@ -43,6 +45,7 @@ if (minimize) {
             // webpack 2.
             warnings: true
         },
+        extractComments: true,
 
         // Use the source map to map error message locations to modules. The
         // default is false in webpack 2.
@@ -66,22 +69,28 @@ const config = {
     },
     devtool: 'source-map',
     module: {
-        loaders: [ {
+        rules: [ {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
 
             exclude: node_modules,
             loader: 'babel-loader',
-            query: {
+            options: {
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
                 // jitsi-meet. The require.resolve, of course, mandates the use
                 // of the prefix babel-preset- in the preset names.
                 presets: [
-                    'babel-preset-es2015',
-                    'babel-preset-react',
-                    'babel-preset-stage-1'
-                ].map(require.resolve)
+                    [
+                        require.resolve('babel-preset-es2015'),
+
+                        // Tell babel to avoid compiling imports into CommonJS
+                        // so that webpack may do tree shaking.
+                        { modules: false }
+                    ],
+                    require.resolve('babel-preset-react'),
+                    require.resolve('babel-preset-stage-1')
+                ]
             },
             test: /\.jsx?$/
         }, {
@@ -105,28 +114,22 @@ const config = {
         }, {
             // Allow CSS to be imported into JavaScript.
 
-            loaders: [
+            test: /\.css$/,
+            use: [
                 'style-loader',
                 'css-loader'
-            ],
-            test: /\.css$/
+            ]
         }, {
             // Emit the static assets of AUI such as images that are referenced
             // by CSS into the output path.
 
             include: aui_css,
             loader: 'file-loader',
-            query: {
+            options: {
                 context: aui_css,
                 name: '[path][name].[ext]'
             },
             test: /\.(gif|png|svg)$/
-        }, {
-            // Enable the import of JSON files.
-
-            loader: 'json-loader',
-            exclude: node_modules,
-            test: /\.json$/
         } ],
         noParse: [
 
@@ -154,7 +157,20 @@ const config = {
         alias: {
             jquery: 'jquery/dist/jquery' + (minimize ? '.min' : '') + '.js'
         },
-        packageAlias: 'browser'
+        aliasFields: [
+            'browser'
+        ],
+        extensions: [
+            // Webpack 2 broke haste-resolver-webpack-plugin and I could not fix
+            // it. But given that there is resolve.extensions and the only
+            // non-default extension we have is .web.js, drop
+            // haste-resolver-webpack-plugin and go with resolve.extensions.
+            '.web.js',
+
+            // Webpack defaults:
+            '.js',
+            '.json'
+        ]
     }
 };
 
@@ -164,7 +180,7 @@ const configs = [
     Object.assign({}, config, {
         entry: {
             'app.bundle': [
-                // XXX Requried by at least IE11 at the time of this writing.
+                // XXX Required by at least IE11 at the time of this writing.
                 'babel-polyfill',
                 './app.js'
             ]
@@ -172,6 +188,15 @@ const configs = [
         output: Object.assign({}, config.output, {
             library: 'APP'
         })
+    }),
+
+    // The Webpack configuration to bundle device_selection_popup_bundle.js
+    // (i.e. js file for the device selection popup dialog).
+    Object.assign({}, config, {
+        entry: {
+            'device_selection_popup_bundle':
+                './react/features/device-selection/popup.js'
+        }
     }),
 
     // The Webpack configuration to bundle do_external_connect.js (which
@@ -193,16 +218,6 @@ const configs = [
         output: Object.assign({}, config.output, {
             library: 'JitsiMeetExternalAPI'
         })
-    }),
-
-    // The Webpack configuration to bundle popup_bundle.js (js file for the
-    // device selection popup dialog).
-    Object.assign({}, config, {
-        entry: {
-            'device_selection_popup_bundle':
-                './react/features/device-selection/popup.js'
-        },
-        output: config.output
     })
 ];
 
