@@ -78,5 +78,6 @@ var config = { // eslint-disable-line no-unused-vars
     // edit their profile.
     enableUserRolesBasedOnToken: false,
     // Suspending video might cause problems with audio playback. Disabling until these are fixed.
-    disableSuspendVideo: true
+    disableSuspendVideo: true,
+    disableRtx: true
 };
