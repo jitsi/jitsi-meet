@@ -88,8 +88,10 @@ function changeParticipantNumber(APIInstance, number) {
  * @param width width of the iframe
  * @param height height of the iframe
  * @param parent_node the node that will contain the iframe
- * @param filmStripOnly if the value is true only the small videos will be
- * visible.
+ * @param configOverwrite object containing configuration options defined in
+ * config.js to be overridden.
+ * @param interfaceConfigOverwrite object containing configuration options
+ * defined in interface_config.js to be overridden.
  * @param noSsl if the value is true https won't be used
  * @constructor
  */
