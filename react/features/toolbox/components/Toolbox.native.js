@@ -7,6 +7,7 @@ import { MEDIA_TYPE, toggleCameraFacingMode } from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 import { beginRoomLockRequest } from '../../room-lock';
+import { beginShareRoom } from '../../share-room';
 
 import {
     abstractMapDispatchToProps,
@@ -44,6 +45,11 @@ class Toolbox extends Component {
          * Sets the lock i.e. password protection of the conference/room.
          */
         _onRoomLock: React.PropTypes.func,
+
+        /**
+         * Begins the UI procedure to share the conference/room URL.
+         */
+        _onShareRoom: React.PropTypes.func,
 
         /**
          * Handler for toggle audio.
@@ -211,6 +217,12 @@ class Toolbox extends Component {
                     onClick = { this.props._onToggleAudioOnly }
                     style = { style }
                     underlayColor = { underlayColor } />
+                <ToolbarButton
+                    iconName = 'link'
+                    iconStyle = { iconStyle }
+                    onClick = { this.props._onShareRoom }
+                    style = { style }
+                    underlayColor = { underlayColor } />
             </View>
         );
 
@@ -255,6 +267,17 @@ function _mapDispatchToProps(dispatch) {
          */
         _onRoomLock() {
             return dispatch(beginRoomLockRequest());
+        },
+
+        /**
+         * Begins the UI procedure to share the conference/room URL.
+         *
+         * @private
+         * @returns {void} Dispatched action.
+         * @type {Function}
+         */
+        _onShareRoom() {
+            return dispatch(beginShareRoom());
         },
 
         /**
