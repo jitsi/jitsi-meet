@@ -12,6 +12,11 @@ declare var JitsiMeetJS: Object;
 const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+export {
+    connectionEstablished,
+    connectionFailed
+} from './actions.native.js';
+
 /**
  * Opens new connection.
  *

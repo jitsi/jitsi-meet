@@ -4,6 +4,11 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
 
+import {
+    connectionEstablished,
+    connectionFailed
+} from './react/features/base/connection';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -67,6 +72,23 @@ function connect(id, password, roomName) {
         connection.addEventListener(
             ConnectionEvents.CONNECTION_FAILED, handleConnectionFailed
         );
+        connection.addEventListener(
+            ConnectionEvents.CONNECTION_FAILED, connectionFailedHandler);
+
+        function connectionFailedHandler (error, errMsg) {
+            APP.store.dispatch(connectionFailed(connection, error, errMsg));
+
+            switch (error) {
+            case ConnectionErrors.CONNECTION_DROPPED_ERROR:
+            case ConnectionErrors.OTHER_ERROR:
+            case ConnectionErrors.SERVER_ERROR: {
+                connection.removeEventListener(
+                    ConnectionEvents.CONNECTION_FAILED,
+                    connectionFailedHandler);
+                break;
+            }
+            }
+        }
 
         function unsubscribe() {
             connection.removeEventListener(
@@ -80,6 +102,7 @@ function connect(id, password, roomName) {
         }
 
         function handleConnectionEstablished() {
+            APP.store.dispatch(connectionEstablished(connection));
             unsubscribe();
             resolve(connection);
         }

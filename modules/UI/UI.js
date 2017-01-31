@@ -15,18 +15,13 @@ import UIEvents from "../../service/UI/UIEvents";
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
 import Recording from "./recording/Recording";
-import GumPermissionsOverlay
-    from './gum_overlay/UserMediaPermissionsGuidanceOverlay';
 
-import * as PageReloadOverlay from './reload_overlay/PageReloadOverlay';
-import SuspendedOverlay from './suspended_overlay/SuspendedOverlay';
 import VideoLayout from "./videolayout/VideoLayout";
 import FilmStrip from "./videolayout/FilmStrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
-import { randomInt } from "../../react/features/base/util/randomUtil";
 import UIErrors from './UIErrors';
 import { debounce } from "../util/helpers";
 
@@ -39,6 +34,17 @@ import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
+
+/**
+ * Whether an overlay is visible or not.
+ *
+ * FIXME: This is temporary solution. Don't use this variable!
+ * Should be removed when all the code is move to react.
+ *
+ * @type {boolean}
+ * @public
+ */
+UI.overlayVisible = false;
 
 let etherpadManager;
 let sharedVideoManager;
@@ -1088,20 +1094,6 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
 };
 
 /**
- * Notify the user that the video conferencing service is badly broken and
- * the page should be reloaded.
- *
- * @param {boolean} isNetworkFailure <tt>true</tt> indicates that it's caused by
- * network related failure or <tt>false</tt> when it's the infrastructure.
- * @param {string} a label string identifying the reason for the page reload
- * which will be included in details of the log event.
- */
-UI.showPageReloadOverlay = function (isNetworkFailure, reason) {
-    // Reload the page after 10 - 30 seconds
-    PageReloadOverlay.show(10 + randomInt(0, 20), isNetworkFailure, reason);
-};
-
-/**
  * Updates auth info on the UI.
  * @param {boolean} isAuthEnabled if authentication is enabled
  * @param {string} [login] current login
@@ -1414,10 +1406,7 @@ UI.hideRingOverLay = function () {
  * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
  */
 UI.isOverlayVisible = function () {
-    return RingOverlay.isVisible()
-        || SuspendedOverlay.isVisible()
-        || PageReloadOverlay.isVisible()
-        || GumPermissionsOverlay.isVisible();
+    return RingOverlay.isVisible() || this.overlayVisible;
 };
 
 /**
@@ -1427,29 +1416,6 @@ UI.isOverlayVisible = function () {
  */
 UI.isRingOverlayVisible = function () {
     return RingOverlay.isVisible();
-};
-
-/**
- * Shows browser-specific overlay with guidance how to proceed with gUM prompt.
- * @param {string} browser - name of browser for which to show the guidance
- *      overlay.
- */
-UI.showUserMediaPermissionsGuidanceOverlay = function (browser) {
-    GumPermissionsOverlay.show(browser);
-};
-
-/**
- * Shows suspended overlay with a button to rejoin conference.
- */
-UI.showSuspendedOverlay = function () {
-    SuspendedOverlay.show();
-};
-
-/**
- * Hides browser-specific overlay with guidance how to proceed with gUM prompt.
- */
-UI.hideUserMediaPermissionsGuidanceOverlay = function () {
-    GumPermissionsOverlay.hide();
 };
 
 /**

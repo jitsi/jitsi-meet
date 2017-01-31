@@ -20,6 +20,12 @@ import analytics from './modules/analytics/analytics';
 
 import EventEmitter from "events";
 
+import { conferenceFailed } from './react/features/base/conference';
+import {
+    mediaPermissionPromptVisibilityChanged,
+    suspendDetected
+} from './react/features/overlay';
+
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -91,7 +97,10 @@ function createInitialLocalTracksAndConnect(roomName) {
 
     JitsiMeetJS.mediaDevices.addEventListener(
         JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
-        browser => APP.UI.showUserMediaPermissionsGuidanceOverlay(browser));
+        browser =>
+            APP.store.dispatch(
+                mediaPermissionPromptVisibilityChanged(true, browser))
+    );
 
     // First try to retrieve both audio and video.
     let tryCreateLocalTracks = createLocalTracks(
@@ -109,8 +118,7 @@ function createInitialLocalTracksAndConnect(roomName) {
 
     return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
         .then(([tracks, con]) => {
-            APP.UI.hideUserMediaPermissionsGuidanceOverlay();
-
+            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
             if (audioAndVideoError) {
                 if (audioOnlyError) {
                     // If both requests for 'audio' + 'video' and 'audio' only
@@ -334,6 +342,7 @@ class ConferenceConnector {
         this._reject(err);
     }
     _onConferenceFailed(err, ...params) {
+        APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
         APP.UI.hideRingOverLay();
         switch (err) {
@@ -408,8 +417,6 @@ class ConferenceConnector {
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
-            APP.UI.showPageReloadOverlay(
-                false /* not a network type of failure */, err);
             break;
 
         case ConferenceErrors.CONFERENCE_MAX_USERS:
@@ -466,6 +473,26 @@ function disconnect() {
     return Promise.resolve();
 }
 
+/**
+ * Handles CONNECTION_FAILED events from lib-jitsi-meet.
+ * @param {JitsiMeetJS.connection.error} error the error reported.
+ * @returns {void}
+ * @private
+ */
+function _connectionFailedHandler (error) {
+    switch (error) {
+    case ConnectionErrors.CONNECTION_DROPPED_ERROR:
+    case ConnectionErrors.OTHER_ERROR:
+    case ConnectionErrors.SERVER_ERROR: {
+        APP.connection.removeEventListener( ConnectionEvents.CONNECTION_FAILED,
+            _connectionFailedHandler);
+        if (room)
+            room.leave();
+        break;
+    }
+    }
+}
+
 export default {
     isModerator: false,
     audioMuted: false,
@@ -518,11 +545,13 @@ export default {
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
                 logger.log('initialized with %s local tracks', tracks.length);
+                con.addEventListener(
+                    ConnectionEvents.CONNECTION_FAILED,
+                    _connectionFailedHandler);
                 APP.connection = connection = con;
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
                 APP.remoteControl.init();
-                this._bindConnectionFailedHandler(con);
                 this._createRoom(tracks);
 
                 if (UIUtil.isButtonEnabled('contacts')
@@ -560,47 +589,6 @@ export default {
      */
     isLocalId (id) {
         return this.getMyUserId() === id;
-    },
-    /**
-     * Binds a handler that will handle the case when the connection is dropped
-     * in the middle of the conference.
-     * @param {JitsiConnection} connection the connection to which the handler
-     * will be bound to.
-     * @private
-     */
-    _bindConnectionFailedHandler (connection) {
-        const handler = function (error, errMsg) {
-            /* eslint-disable no-case-declarations */
-            switch (error) {
-                case ConnectionErrors.CONNECTION_DROPPED_ERROR:
-                case ConnectionErrors.OTHER_ERROR:
-                case ConnectionErrors.SERVER_ERROR:
-
-                    logger.error("XMPP connection error: " + errMsg);
-
-                    // From all of the cases above only CONNECTION_DROPPED_ERROR
-                    // is considered a network type of failure
-                    const isNetworkFailure
-                        = error === ConnectionErrors.CONNECTION_DROPPED_ERROR;
-
-                    APP.UI.showPageReloadOverlay(
-                        isNetworkFailure,
-                        "xmpp-conn-dropped:" + errMsg);
-
-                    connection.removeEventListener(
-                        ConnectionEvents.CONNECTION_FAILED, handler);
-
-                    // FIXME it feels like the conference should be stopped
-                    // by lib-jitsi-meet
-                    if (room)
-                        room.leave();
-
-                    break;
-            }
-            /* eslint-enable no-case-declarations */
-        };
-        connection.addEventListener(
-            ConnectionEvents.CONNECTION_FAILED, handler);
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
@@ -1365,6 +1353,7 @@ export default {
         });
 
         room.on(ConferenceEvents.SUSPEND_DETECTED, () => {
+            APP.store.dispatch(suspendDetected());
             // After wake up, we will be in a state where conference is left
             // there will be dialog shown to user.
             // We do not want video/audio as we show an overlay and after it
@@ -1385,9 +1374,6 @@ export default {
             if (localAudio) {
                 localAudio.dispose();
             }
-
-            // show overlay
-            APP.UI.showSuspendedOverlay();
         });
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
