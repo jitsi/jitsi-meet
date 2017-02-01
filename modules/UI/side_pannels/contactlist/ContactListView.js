@@ -125,8 +125,8 @@ var ContactListView = {
 
         return (
             `<div class="sideToolbarBlock first">
-                <button id="addParticipantsBtn" 
-                         data-i18n="${key}" 
+                <button id="addParticipantsBtn"
+                         data-i18n="${key}"
                          class="${classes}"></button>
                 <div>
                     ${lockedHtml}
@@ -257,7 +257,7 @@ var ContactListView = {
         let contactName = $(`#contacts #${id}>p`);
 
         if (contactName.text() !== name) {
-            contactName.text(name);
+            contactName.text(UIUtil.unescapeHtml(name));
         }
     },
 
