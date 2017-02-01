@@ -15,7 +15,7 @@ import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
 const Logger = require('jitsi-meet-logger');
 
-export { _getRoomAndDomainFromUrlString } from './functions.native';
+export { _parseURIString } from './functions.native';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

@@ -82,7 +82,9 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {string} Domain name.
      */
     _getDomain() {
-        return `${window.location.protocol}//${window.location.host}/`;
+        const windowLocation = window.location;
+
+        return `${windowLocation.protocol}//${windowLocation.host}/`;
     }
 
     /**

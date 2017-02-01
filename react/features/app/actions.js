@@ -4,8 +4,8 @@ import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
-    _getRoomAndDomainFromUrlString,
     _getRouteToRender,
+    _parseURIString,
     init
 } from './functions';
 import './reducer';
@@ -34,7 +34,7 @@ export function appNavigate(urlOrRoom) {
         const state = getState();
         const oldDomain = getDomain(state);
 
-        const { domain, room } = _getRoomAndDomainFromUrlString(urlOrRoom);
+        const { domain, room } = _parseURIString(urlOrRoom);
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
         // currently in a conference and ask her if she wants to close the
