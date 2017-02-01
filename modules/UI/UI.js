@@ -233,8 +233,9 @@ UI.showLocalConnectionInterrupted = function (isInterrupted) {
 UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
     VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
     if (raisedHandStatus) {
-        messageHandler.notify(participant.getDisplayName(), 'notify.somebody',
-                          'connected', 'notify.raisedHand');
+        messageHandler.notify(
+            UIUtil.unescapeHtml(participant.getDisplayName()),
+            'notify.somebody', 'connected', 'notify.raisedHand');
     }
 };
 
@@ -556,7 +557,8 @@ UI.addUser = function (user) {
         UI.ContactList.addContact(id);
 
     messageHandler.notify(
-        displayName,'notify.somebody', 'connected', 'notify.connected'
+        UIUtil.unescapeHtml(displayName),'notify.somebody',
+        'connected', 'notify.connected'
     );
 
     if (!config.startAudioMuted ||
@@ -584,7 +586,8 @@ UI.removeUser = function (id, displayName) {
         UI.ContactList.removeContact(id);
 
     messageHandler.notify(
-        displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
+        UIUtil.unescapeHtml(displayName), 'notify.somebody', 'disconnected',
+        'notify.disconnected'
     );
 
     if (!config.startAudioMuted
@@ -643,10 +646,8 @@ UI.updateUserRole = function (user) {
     var displayName = user.getDisplayName();
     if (displayName) {
         messageHandler.notify(
-            displayName, 'notify.somebody',
-            'connected', 'notify.grantedTo', {
-                to: UIUtil.escapeHtml(displayName)
-            }
+            UIUtil.unescapeHtml(displayName), 'notify.somebody',
+            'connected', 'notify.grantedTo', { to: displayName }
         );
     } else {
         messageHandler.notify(
@@ -1008,7 +1009,8 @@ UI.markVideoInterrupted = function (interrupted) {
  * @param {number} stamp timestamp when message was created
  */
 UI.addMessage = function (from, displayName, message, stamp) {
-    Chat.updateChatConversation(from, displayName, message, stamp);
+    Chat.updateChatConversation(from, UIUtil.unescapeHtml(displayName),
+        message,stamp);
 };
 
 // eslint-disable-next-line no-unused-vars
