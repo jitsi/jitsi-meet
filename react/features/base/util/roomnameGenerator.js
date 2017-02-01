@@ -1,3 +1,5 @@
+/* @flow */
+
 import { randomElement } from './randomUtil';
 
 /*

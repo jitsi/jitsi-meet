@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  * Alphanumeric characters.
  * @const
@@ -18,7 +20,7 @@ const HEX_DIGITS = '0123456789abcdef';
  * @returns {string} A string of random alphanumeric characters with the
  * specified length.
  */
-export function randomAlphanumString(length) {
+export function randomAlphanumString(length: number) {
     return _randomString(length, ALPHANUM);
 }
 
@@ -28,7 +30,7 @@ export function randomAlphanumString(length) {
  * @param {Array|string} arr - Source.
  * @returns {Array|string} Array element or string character.
  */
-export function randomElement(arr) {
+export function randomElement(arr: Array<any> | string) {
     return arr[randomInt(0, arr.length - 1)];
 }
 
@@ -48,7 +50,7 @@ export function randomHexDigit() {
  * @returns {string} A string of random hexadecimal digits with the specified
  * length.
  */
-export function randomHexString(length) {
+export function randomHexString(length: number) {
     return _randomString(length, HEX_DIGITS);
 }
 
@@ -59,7 +61,7 @@ export function randomHexString(length) {
  * @param {number} max - The maximum value for the generated number.
  * @returns {number} Random int number.
  */
-export function randomInt(min, max) {
+export function randomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
