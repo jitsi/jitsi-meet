@@ -4,7 +4,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 import ConnectionIndicator from './ConnectionIndicator';
 
 import SmallVideo from "./SmallVideo";
-import UIUtils from "../util/UIUtil";
+import UIUtil from "../util/UIUtil";
 import UIEvents from '../../../service/UI/UIEvents';
 import JitsiPopover from "../util/JitsiPopover";
 
@@ -596,7 +596,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     let streamElement = SmallVideo.createStreamElement(stream);
 
     // Put new stream element always in front
-    UIUtils.prependChild(this.container, streamElement);
+    UIUtil.prependChild(this.container, streamElement);
 
     // If we hide element when Temasys plugin is used then
     // we'll never receive 'onplay' event and other logic won't work as expected
@@ -688,7 +688,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
         if (displayName && displayName.length > 0) {
             var displaynameSpan = $('#' + this.videoSpanId + '_name');
             if (displaynameSpan.text() !== displayName)
-                displaynameSpan.text(displayName);
+                displaynameSpan.text(UIUtil.unescapeHtml(displayName));
         }
         else
             $('#' + this.videoSpanId + '_name').text(
@@ -700,7 +700,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
             .appendChild(nameSpan);
 
         if (displayName && displayName.length > 0) {
-            $(nameSpan).text(displayName);
+            $(nameSpan).text(UIUtil.unescapeHtml(displayName));
         } else {
             nameSpan.innerHTML = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
         }
