@@ -43,9 +43,12 @@ class RouteRegistry {
             return !a;
         }
 
+        const aKeys = Object.keys(a);
+        const bKeys = Object.keys(b);
+
         return (
-            Object.keys(a).every(key => a[key] === b[key])
-                && /* symmetric */ this.areRoutesEqual(b, a));
+            aKeys.length === bKeys.length /* symmetric */
+                && aKeys.every(key => a[key] === b[key]));
     }
 
     /**
