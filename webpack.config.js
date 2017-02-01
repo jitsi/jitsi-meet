@@ -58,6 +58,10 @@ var config = {
             exclude: node_modules,
             loader: 'babel',
             query: {
+                plugins: [
+                    'transform-flow-strip-types'
+                ],
+
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
                 // jitsi-meet. The require.resolve, of course, mandates the use
