@@ -102,11 +102,18 @@ const IndicatorFontSizes = {
     /**
      * Unescapes the given text.
      *
-     * @param {string} safe string which contains escaped html
+     * @param {string} unsafe string
      * @returns {string} unescaped html string.
      */
-    unescapeHtml: function (safe) {
-        return $('<div />').html(safe).text();
+    unescapeHtml: function (unsafe) {
+        // If string contains < or >, it is already unescaped and unsafe to
+        // unescape again. Other unescaped characters like &, ', ", and / can
+        // be handled by else statement;
+        if (/[<>]/.test(unsafe))
+            return unsafe;
+        // It is safe to use .html()
+        else
+            return $('<div />').html(unsafe).text();
     },
 
     imageToGrayScale: function (canvas) {
