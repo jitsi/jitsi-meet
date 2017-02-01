@@ -40,7 +40,8 @@ function _initConference() {
  * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
  * to React app it's better to use load config instead.
  *
- * @param {string} location - URL of the domain.
+ * @param {string} location - URL of the domain from which the config is to be
+ * obtained.
  * @param {string} room - Room name.
  * @private
  * @returns {Promise}

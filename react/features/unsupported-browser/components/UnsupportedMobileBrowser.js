@@ -6,8 +6,10 @@ import { Platform } from '../../base/react';
 /**
  * The map of platforms to URLs at which the mobile app for the associated
  * platform is available for download.
+ *
+ * @private
  */
-const URLS = {
+const _URLS = {
     android: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
     ios: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905'
 };
@@ -19,7 +21,7 @@ const URLS = {
  */
 class UnsupportedMobileBrowser extends Component {
     /**
-     * Mobile browser page component's property types.
+     * UnsupportedMobileBrowser component's property types.
      *
      * @static
      */
@@ -35,35 +37,32 @@ class UnsupportedMobileBrowser extends Component {
     }
 
     /**
-     * Constructor of UnsupportedMobileBrowser component.
+     * Initializes the text and URL of the `Start a conference` / `Join the
+     * conversation` button which takes the user to the mobile app.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        // Bind methods
-        this._onJoinClick = this._onJoinClick.bind(this);
-    }
-
-    /**
-     * React lifecycle method triggered before component will mount.
-     *
-     * @returns {void}
+     * @inheritdoc
      */
     componentWillMount() {
-        const joinButtonText
+        const joinText
             = this.props._room ? 'Join the conversation' : 'Start a conference';
 
+        // If the user installed the app while this Component was displayed
+        // (e.g. the user clicked the Download the App button), then we would
+        // like to open the current URL in the mobile app. The only way to do it
+        // appears to be a link with an app-specific scheme, not a Universal
+        // Link.
+        const joinURL = `org.jitsi.meet:${window.location.href}`;
+
         this.setState({
-            joinButtonText
+            joinText,
+            joinURL
         });
     }
 
     /**
-     * Renders component.
+     * Implements React's {@link Component#render()}.
      *
+     * @inheritdoc
      * @returns {ReactElement}
      */
     render() {
@@ -80,7 +79,7 @@ class UnsupportedMobileBrowser extends Component {
                         You need <strong>Jitsi Meet</strong> to join a
                         conversation on your mobile
                     </p>
-                    <a href = { URLS[Platform.OS] }>
+                    <a href = { _URLS[Platform.OS] }>
                         <button className = { downloadButtonClassName }>
                             Download the App
                         </button>
@@ -90,32 +89,16 @@ class UnsupportedMobileBrowser extends Component {
                         <br />
                         <strong>then</strong>
                     </p>
-                    <button
-                        className = { `${ns}__button` }
-                        onClick = { this._onJoinClick }>
-                        {
-                            this.state.joinButtonText
-                        }
-                    </button>
+                    <a href = { this.state.joinURL }>
+                        <button className = { `${ns}__button` }>
+                            {
+                                this.state.joinText
+                            }
+                        </button>
+                    </a>
                 </div>
             </div>
         );
-    }
-
-    /**
-     * Handles clicks on the button that joins the local participant in a
-     * conference.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onJoinClick() {
-        // If the user installed the app while this Component was displayed
-        // (e.g. the user clicked the Download the App button), then we would
-        // like to open the current URL in the mobile app.
-
-        // TODO The only way to do it appears to be a link with an app-specific
-        // scheme, not a Universal Link.
     }
 }
 
