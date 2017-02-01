@@ -12,6 +12,7 @@
 function getRoomName () { // eslint-disable-line no-unused-vars
     var path = window.location.pathname;
     var roomName;
+    var context;
 
     // determinde the room node from the url
     // TODO: just the roomnode or the whole bare jid?
@@ -19,16 +20,21 @@ function getRoomName () { // eslint-disable-line no-unused-vars
         // custom function might be responsible for doing the pushstate
         roomName = config.getroomnode(path);
     } else {
-        /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-         location ~ ^/([a-zA-Z0-9]+)$ {
-         rewrite ^/(.*)$ / break;
-         }
-        */
-        if (path.length > 1) {
-            roomName = path.substr(1).toLowerCase();
+        // Fall back to default strategy, which locates the roomname
+        // on the URL (anything after the context on which the application
+        // is exposed, e.g. http://example.org/mycontext/myroom )
+        if (config.context) {
+            context = config.context;
+            // Ensure that the context ends with a slash.
+            if (context.slice(-1) != "/") {
+                context += "/";
+            }
+        } else {
+            context = "/";
+        }
+        if (path.lastIndexOf(context, 0) === 0
+                && path.length > context.length) {
+            roomName = path.substr(context.length).toLowerCase();
         }
     }
 

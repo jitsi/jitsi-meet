@@ -245,9 +245,14 @@ export class AbstractApp extends Component {
 
             if (typeof hosts === 'object') {
                 const domain = hosts.domain;
+                const context = hosts.context;
 
                 if (domain) {
-                    return `https://${domain}`;
+                    if (context) {
+                        return `https://${domain}${context}`
+                    } else {
+                        return `https://${domain}`;
+                    }
                 }
             }
         }

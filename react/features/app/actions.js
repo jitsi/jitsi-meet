@@ -34,7 +34,7 @@ export function appNavigate(urlOrRoom) {
         const state = getState();
         const oldDomain = getDomain(state);
 
-        const { domain, room } = _getRoomAndDomainFromUrlString(urlOrRoom);
+        const { domain, room } = _getRoomAndDomainFromUrlString(state, urlOrRoom);
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
         // currently in a conference and ask her if she wants to close the

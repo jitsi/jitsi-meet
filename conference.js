@@ -198,6 +198,7 @@ function muteLocalVideo (muted) {
  * @param {boolean} options.feedbackSubmitted - whether feedback was submitted
  */
 function maybeRedirectToWelcomePage(options) {
+    var context;
     // if close page is enabled redirect to it, without further action
     if (config.enableClosePage) {
         // save whether current user is guest or not, before navigating
@@ -219,7 +220,16 @@ function maybeRedirectToWelcomePage(options) {
     if (config.enableWelcomePage) {
         setTimeout(() => {
             APP.settings.setWelcomePageEnabled(true);
-            window.location.pathname = "/";
+            if (config.context) {
+                context = config.context;
+                // Ensure that the context ends with a slash.
+                if (context.slice(-1) != "/") {
+                    context += "/";
+                }
+            } else {
+                context = "/";
+            }
+            window.location.pathname = context;
         }, 3000);
     }
 }
