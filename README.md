@@ -16,6 +16,7 @@ For other systems, or if you wish to install all components manually, see the [d
 
 You can download Debian/Ubuntu binaries:
 * [stable](https://download.jitsi.org/stable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianStableRepository))
+* [testing](https://download.jitsi.org/testing/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianTestingRepository))
 * [nightly](https://download.jitsi.org/unstable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianNightlyRepository))
 
 ## Building the sources
