@@ -30,7 +30,7 @@ export function randomAlphanumString(length: number) {
  * @param {Array|string} arr - Source.
  * @returns {Array|string} Array element or string character.
  */
-export function randomElement(arr: Array<any> | string) {
+export function randomElement(arr: [any] | string) {
     return arr[randomInt(0, arr.length - 1)];
 }
 

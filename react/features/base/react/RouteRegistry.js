@@ -1,3 +1,7 @@
+/* @flow */
+
+import { Component } from 'react';
+
 /**
  * Object describing application route.
  *
@@ -5,12 +9,18 @@
  * @property {Component} component - React Component constructor.
  * @property {string} path - URL route, required for web routing.
  */
+type Route = {
+    component: Class<Component<*>>, // eslint-disable-line no-undef
+    path: string
+};
 
 /**
  * A registry for Navigator routes, allowing features to register themselves
  * without needing to create additional inter-feature dependencies.
  */
 class RouteRegistry {
+    _elements: Route[];
+
     /**
      * Initializes a new RouteRegistry instance.
      */
@@ -19,8 +29,9 @@ class RouteRegistry {
          * The set of registered routes.
          *
          * @private
+         * @type {Route[]}
          */
-        this._elements = new Set();
+        this._elements = [];
     }
 
     /**
@@ -32,7 +43,7 @@ class RouteRegistry {
      * @returns {boolean} True if the specified a and b describe one and the
      * same abstract route; otherwise, false.
      */
-    areRoutesEqual(a, b) {
+    areRoutesEqual(a: Route, b: Route) {
         if (a === b) { // reflexive
             return true;
         }
@@ -60,21 +71,25 @@ class RouteRegistry {
         // We use the destructuring operator to 'clone' the route object to
         // prevent modifications from outside (e.g. React Native's Navigator
         // extends it with additional properties).
-        return [ ...this._elements ].map(r => {
+        return this._elements.map(r => {
             return { ...r };
         });
     }
 
+/* eslint-disable no-undef */
+
     /**
      * Returns registered route by name if any.
      *
-     * @param {Object} component - The React Component (class) of the route to
-     * retrieve.
+     * @param {Component} component - The React Component (class) of the route
+     * to retrieve.
      * @returns {Route|null}
      */
-    getRouteByComponent(component) {
-        const route
-            = [ ...this._elements ].find(r => r.component === component);
+    getRouteByComponent(component: Class<Component<*>>) {
+
+/* eslint-enable no-undef */
+
+        const route = this._elements.find(r => r.component === component);
 
         // We use destructuring operator to 'clone' route object to prevent
         // modifications from outside (e.g. React Native's Navigator extends
@@ -88,12 +103,13 @@ class RouteRegistry {
      * @param {Route} route - Route definition object.
      * @returns {void}
      */
-    register(route) {
-        if (this._elements.has(route)) {
-            throw new Error(`Route ${route.component} is registered already!`);
+    register(route: Route) {
+        if (this._elements.includes(route)) {
+            throw new Error(
+                    `Route ${String(route.component)} is registered already!`);
         }
 
-        this._elements.add(route);
+        this._elements.push(route);
     }
 }
 

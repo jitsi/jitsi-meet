@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  * Prevents further propagation of the events to be handler by a specific event
  * handler/listener in the capturing and bubbling phases.
@@ -7,8 +9,9 @@
  * @returns {Function} An event handler/listener to be used in place of the
  * specified eventHandler in order to stop the events from propagating.
  */
-export function stopEventPropagation(eventHandler) {
-    return ev => {
+export function stopEventPropagation<T>(eventHandler: (ev: Event) => T)
+        : (ev: Event) => T {
+    return (ev: Event) => {
         const r = eventHandler(ev);
 
         // React Native does not propagate the press event so, for the sake of
