@@ -580,6 +580,11 @@ export default {
                     (new ConferenceConnector(
                         resolve, reject, this.invite)).connect();
                 });
+            }).catch((error) => {
+                logger.error(error.message);
+                APP.unsupportedBrowser = {
+                  isOldBrowser: error.isOldBrowser
+                };
         });
     },
     /**
