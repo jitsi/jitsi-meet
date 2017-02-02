@@ -8,6 +8,8 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
 
+import { appNavigate } from '../../app';
+
 declare var APP: Object;
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -32,6 +34,13 @@ export function connect() {
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
         return APP.conference.init({ roomName: room }).then(() => {
+            // If during the conference initialization was defined that browser
+            // doesn't support WebRTC then we should define which route
+            // to render.
+            if (APP.unsupportedBrowser) {
+                dispatch(appNavigate(room));
+            }
+
             if (APP.logCollector) {
                 // Start the LogCollector's periodic "store logs" task
                 APP.logCollector.start();

@@ -1,5 +1,11 @@
+/* global APP */
+
 import { Platform } from '../react';
-import { UnsupportedMobileBrowser } from '../../unsupported-browser';
+import {
+    UnsupportedDesktopBrowser,
+    PluginRequiredBrowser,
+    UnsupportedMobileBrowser
+} from '../../unsupported-browser';
 
 /**
  * Array of rules defining whether we should intercept component to render
@@ -25,6 +31,17 @@ const _RULES = [
 
         if (OS === 'android' || OS === 'ios') {
             return UnsupportedMobileBrowser;
+        }
+    },
+    () => {
+        if (APP.unsupportedBrowser) {
+            const { isOldBrowser } = APP.unsupportedBrowser;
+
+            if (isOldBrowser) {
+                return UnsupportedDesktopBrowser;
+            }
+
+            return PluginRequiredBrowser;
         }
     }
 ];

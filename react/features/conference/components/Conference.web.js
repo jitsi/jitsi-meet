@@ -57,7 +57,7 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        this.props.dispatch(disconnect());
+        APP.conference.isJoined() && this.props.dispatch(disconnect());
     }
 
     /**
