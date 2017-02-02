@@ -203,7 +203,7 @@ export function _parseURIString(uri) {
         regex = new RegExp(`^${_URI_AUTHORITY_PATTERN}`, 'gi');
         match = regex.exec(str);
         if (match) {
-            let authority = match[1];
+            let authority = match[1].substring(/* // */ 2);
 
             str = str.substring(regex.lastIndex);
 
