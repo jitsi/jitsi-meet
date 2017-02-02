@@ -5,11 +5,11 @@ import { UnsupportedMobileBrowser } from '../../unsupported-browser';
  * Array of rules defining whether we should intercept component to render
  * or not.
  *
- * @type {Array<Function>}
- * @param {Object} state - Redux state object.
+ * @private
  * @returns {ReactElement|void}
+ * @type {Function[]}
  */
-const RULES = [
+const _RULES = [
 
     /**
      * This rule describes case when user opens application using mobile
@@ -46,7 +46,7 @@ export function interceptComponent(stateOrGetState, currentComponent) {
             ? stateOrGetState()
             : stateOrGetState;
 
-    for (const rule of RULES) {
+    for (const rule of _RULES) {
         result = rule(state);
         if (result) {
             break;
