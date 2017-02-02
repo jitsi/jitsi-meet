@@ -9,14 +9,18 @@ import { FeedbackButton } from '../../feedback';
 
 /**
  * For legacy reasons, inline style for display none.
- * @type {{display: string}}
+ *
+ * @private
+ * @type {{
+ *     display: string
+ * }}
  */
-const DISPLAY_NONE_STYLE = {
+const _DISPLAY_NONE_STYLE = {
     display: 'none'
 };
 
 /**
- * Implements a React Component which renders initial conference layout
+ * The conference page of the Web application.
  */
 class Conference extends Component {
 
@@ -68,7 +72,7 @@ class Conference extends Component {
                     <div
                         className = 'notice'
                         id = 'notice'
-                        style = { DISPLAY_NONE_STYLE }>
+                        style = { _DISPLAY_NONE_STYLE }>
                         <span
                             className = 'noticeText'
                             id = 'noticeText' />
@@ -135,16 +139,14 @@ class Conference extends Component {
                             <span
                                 className = 'videocontainer'
                                 id = 'localVideoContainer'>
-                                <div
-                                    className = 'videocontainer__background' />
+                                <div className = 'videocontainer__background' />
                                 <span id = 'localVideoWrapper' />
                                 <audio
                                     autoPlay = { true }
                                     id = 'localAudio'
                                     muted = { true } />
                                 <div className = 'videocontainer__toolbar' />
-                                <div
-                                    className = 'videocontainer__toptoolbar' />
+                                <div className = 'videocontainer__toptoolbar' />
                                 <div
                                     className
                                         = 'videocontainer__hoverOverlay' />

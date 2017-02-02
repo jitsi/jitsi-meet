@@ -1,10 +1,30 @@
-/* global config */
+/* @flow */
+
 import React, { Component } from 'react';
 
+declare var config: Object;
+
 /**
- * A Web Component which renders feedback button.
+ * Implements a Web/React Component which renders a feedback button.
  */
 export class FeedbackButton extends Component {
+    state = {
+        callStatsID: String
+    };
+
+    /**
+     * Initializes a new FeedbackButton instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Object) {
+        super(props);
+
+        this.state = {
+            callStatsID: config.callStatsID
+        };
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -13,9 +33,8 @@ export class FeedbackButton extends Component {
      * @returns {ReactElement}
      */
     render() {
-
-        // if there is no callstats configured skip rendering
-        if (!config.callStatsID) {
+        // If callstats.io-support is not configured, skip rendering.
+        if (!this.state.callStatsID) {
             return null;
         }
 

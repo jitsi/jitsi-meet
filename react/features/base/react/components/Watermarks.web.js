@@ -1,11 +1,16 @@
-/* global APP, interfaceConfig */
+/* @flow */
 
 import React, { Component } from 'react';
 
+declare var APP: Object;
+declare var interfaceConfig: Object;
+
 /**
  * The CSS style of the element with CSS class <tt>rightwatermark</tt>.
+ *
+ * @private
  */
-const RIGHT_WATERMARK_STYLE = {
+const _RIGHT_WATERMARK_STYLE = {
     backgroundImage: 'url(images/rightwatermark.png)'
 };
 
@@ -14,13 +19,22 @@ const RIGHT_WATERMARK_STYLE = {
  * etc.
  */
 export class Watermarks extends Component {
+    state = {
+        brandWatermarkLink: String,
+        jitsiWatermarkLink: String,
+        showBrandWatermark: Boolean,
+        showJitsiWatermark: Boolean,
+        showJitsiWatermarkForGuests: Boolean,
+        showPoweredBy: Boolean
+    };
+
     /**
      * Initializes a new Watermarks instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Object) {
         super(props);
 
         let showBrandWatermark;
@@ -87,7 +101,7 @@ export class Watermarks extends Component {
                     target = '_new'>
                     <div
                         className = 'watermark rightwatermark'
-                        style = { RIGHT_WATERMARK_STYLE } />
+                        style = { _RIGHT_WATERMARK_STYLE } />
                 </a>
             );
         }
