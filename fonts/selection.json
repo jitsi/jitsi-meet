@@ -4,6 +4,35 @@
     {
       "icon": {
         "paths": [
+          "M756.704 395.862l267.296-202.213v635.075l-267.296-202.213v191.923c0 12.085-11.296 21.863-25.216 21.863h-706.272c-13.92 0-25.216-9.777-25.216-21.863v-612.25c0-12.085 11.296-21.863 25.216-21.863h706.272c13.92 0 25.216 9.777 25.216 21.863v189.679zM371.338 647.772c47.817 0 86.529-40.232 86.529-89.811v-184.835c0-49.651-38.713-89.883-86.529-89.883-47.788 0-86.515 40.232-86.515 89.883v184.835c0 49.579 38.756 89.811 86.515 89.811v0zM356.754 709.93v32.78h33.718v-33.412c73.858-9.606 131.235-73.73 131.235-151.351v-88.232h-30.636v88.232c0 67.57-53.696 122.534-119.734 122.534-66.024 0-119.691-54.964-119.691-122.534v-88.232h-30.636v88.232c0 79.215 59.674 144.502 135.744 151.969v0.014z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": [
+          "Combined Shape"
+        ]
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 109,
+        "id": 0,
+        "name": "mic-camera-combined",
+        "prevSize": 32,
+        "code": 59651
+      },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
           "M42.667 896h170.667v-512h-170.667v512zM981.333 426.667c0-46.933-38.4-85.333-85.333-85.333h-269.227l40.533-194.987 1.28-13.653c0-17.493-7.253-33.707-18.773-45.227l-45.227-44.8-280.747 281.173c-15.787 15.36-25.173 36.693-25.173 60.16v426.667c0 46.933 38.4 85.333 85.333 85.333h384c35.413 0 65.707-21.333 78.507-52.053l128.853-300.8c3.84-9.813 5.973-20.053 5.973-31.147v-81.493l-0.427-0.427 0.427-3.413z"
         ],
         "attrs": [
@@ -26,8 +55,8 @@
         "prevSize": 32,
         "code": 59677
       },
-      "setIdx": 0,
-      "setId": 2,
+      "setIdx": 1,
+      "setId": 1,
       "iconIdx": 0
     },
     {
@@ -55,8 +84,8 @@
         "prevSize": 32,
         "code": 59676
       },
-      "setIdx": 0,
-      "setId": 2,
+      "setIdx": 1,
+      "setId": 1,
       "iconIdx": 1
     },
     {
@@ -81,9 +110,9 @@
         "code": 59649,
         "name": "avatar"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 12
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 2
     },
     {
       "icon": {
@@ -107,9 +136,9 @@
         "code": 59653,
         "name": "hangup"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 123
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 3
     },
     {
       "icon": {
@@ -133,9 +162,9 @@
         "code": 59654,
         "name": "chat"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 149
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 4
     },
     {
       "icon": {
@@ -159,9 +188,9 @@
         "code": 59650,
         "name": "download"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 165
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 5
     },
     {
       "icon": {
@@ -185,9 +214,9 @@
         "code": 59655,
         "name": "edit"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 186
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 6
     },
     {
       "icon": {
@@ -211,9 +240,9 @@
         "code": 59656,
         "name": "share-doc"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 207
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 7
     },
     {
       "icon": {
@@ -237,9 +266,9 @@
         "code": 59657,
         "name": "telephone"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 216
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 8
     },
     {
       "icon": {
@@ -263,9 +292,9 @@
         "code": 59652,
         "name": "kick"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 243
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 9
     },
     {
       "icon": {
@@ -289,9 +318,9 @@
         "code": 59679,
         "name": "menu-up"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 257
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 10
     },
     {
       "icon": {
@@ -315,9 +344,9 @@
         "code": 59680,
         "name": "menu-down"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 258
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 11
     },
     {
       "icon": {
@@ -341,9 +370,9 @@
         "code": 59659,
         "name": "full-screen"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 351
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 12
     },
     {
       "icon": {
@@ -367,9 +396,9 @@
         "code": 59660,
         "name": "exit-full-screen"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 352
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 13
     },
     {
       "icon": {
@@ -393,9 +422,9 @@
         "code": 59658,
         "name": "star-full"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 364
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 14
     },
     {
       "icon": {
@@ -419,9 +448,9 @@
         "code": 59661,
         "name": "security"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 474
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 15
     },
     {
       "icon": {
@@ -445,9 +474,9 @@
         "code": 59662,
         "name": "security-locked"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 475
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 16
     },
     {
       "icon": {
@@ -471,9 +500,9 @@
         "code": 59663,
         "name": "reload"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 483
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 17
     },
     {
       "icon": {
@@ -497,9 +526,9 @@
         "code": 59664,
         "name": "microphone"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 493
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 18
     },
     {
       "icon": {
@@ -523,9 +552,9 @@
         "code": 59665,
         "name": "mic-empty"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 494
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 19
     },
     {
       "icon": {
@@ -549,9 +578,9 @@
         "code": 59666,
         "name": "mic-disabled"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 495
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 20
     },
     {
       "icon": {
@@ -575,9 +604,9 @@
         "code": 59678,
         "name": "raised-hand"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 540
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 21
     },
     {
       "icon": {
@@ -601,9 +630,9 @@
         "code": 59675,
         "name": "contactList"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 550
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 22
     },
     {
       "icon": {
@@ -627,9 +656,9 @@
         "code": 59667,
         "name": "link"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 560
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 23
     },
     {
       "icon": {
@@ -653,9 +682,9 @@
         "code": 59668,
         "name": "shared-video"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 591
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 24
     },
     {
       "icon": {
@@ -679,9 +708,9 @@
         "code": 59669,
         "name": "settings"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 666
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 25
     },
     {
       "icon": {
@@ -705,9 +734,9 @@
         "code": 59670,
         "name": "star"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 718
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 26
     },
     {
       "icon": {
@@ -731,9 +760,9 @@
         "code": 59681,
         "name": "switch-camera"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 742
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 27
     },
     {
       "icon": {
@@ -757,9 +786,9 @@
         "code": 59671,
         "name": "share-desktop"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 784
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 28
     },
     {
       "icon": {
@@ -783,9 +812,9 @@
         "code": 59672,
         "name": "camera"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 799
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 29
     },
     {
       "icon": {
@@ -809,9 +838,9 @@
         "code": 59673,
         "name": "camera-disabled"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 800
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 30
     },
     {
       "icon": {
@@ -835,9 +864,9 @@
         "code": 59674,
         "name": "volume"
       },
-      "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 822
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 31
     },
     {
       "icon": {
@@ -885,7 +914,7 @@
       },
       "setIdx": 1,
       "setId": 1,
-      "iconIdx": 0
+      "iconIdx": 32
     },
     {
       "icon": {
@@ -956,7 +985,7 @@
       },
       "setIdx": 1,
       "setId": 1,
-      "iconIdx": 4
+      "iconIdx": 33
     },
     {
       "icon": {
@@ -983,7 +1012,7 @@
       },
       "setIdx": 1,
       "setId": 1,
-      "iconIdx": 12
+      "iconIdx": 34
     },
     {
       "icon": {
@@ -1011,7 +1040,7 @@
       },
       "setIdx": 1,
       "setId": 1,
-      "iconIdx": 13
+      "iconIdx": 35
     },
     {
       "icon": {
@@ -1039,7 +1068,7 @@
       },
       "setIdx": 1,
       "setId": 1,
-      "iconIdx": 22
+      "iconIdx": 36
     }
   ],
   "height": 1024,
