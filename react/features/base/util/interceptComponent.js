@@ -1,9 +1,10 @@
-/* global APP */
+/* global APP, interfaceConfig */
 
 import { Platform } from '../react';
 import {
-    UnsupportedDesktopBrowser,
+    NoMobileApp,
     PluginRequiredBrowser,
+    UnsupportedDesktopBrowser,
     UnsupportedMobileBrowser
 } from '../../unsupported-browser';
 
@@ -30,7 +31,10 @@ const _RULES = [
         const OS = Platform.OS;
 
         if (OS === 'android' || OS === 'ios') {
-            return UnsupportedMobileBrowser;
+            return (
+                interfaceConfig.MOBILE_APP_ENABLED
+                    ? UnsupportedMobileBrowser
+                    : NoMobileApp);
         }
     },
     () => {

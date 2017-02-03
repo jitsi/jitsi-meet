@@ -1,0 +1,21 @@
+.no-mobile-app {
+    margin: 30% auto 0;
+    width: auto;
+    max-width: 25em;
+    text-align: center;
+
+    &__title {
+        padding-bottom: em(17, 24);
+        border-bottom: 1px solid $auiBorderColor;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        color: #fff;
+    }
+
+    &__description {
+        margin-top: 1em;
+        font-size: 17px;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+}
