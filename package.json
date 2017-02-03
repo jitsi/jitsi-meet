@@ -81,7 +81,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "jshint . && eslint .",
+    "lint": "jshint . && eslint . && flow",
     "validate": "npm ls"
   },
   "pre-commit": [
