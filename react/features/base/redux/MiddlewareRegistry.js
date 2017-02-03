@@ -1,15 +1,14 @@
 /* @flow */
 
 import { applyMiddleware } from 'redux';
-
-type Middleware = Function;
+import type { Middleware } from 'redux';
 
 /**
  * A registry for Redux middleware, allowing features to register their
  * middleware without needing to create additional inter-feature dependencies.
  */
 class MiddlewareRegistry {
-    _elements: Middleware[];
+    _elements: Array<Middleware<*, *>>;
 
     /**
      * Creates a MiddlewareRegistry instance.
@@ -19,7 +18,7 @@ class MiddlewareRegistry {
          * The set of registered middleware.
          *
          * @private
-         * @type {Route[]}
+         * @type {Middleware[]}
          */
         this._elements = [];
     }
@@ -32,11 +31,15 @@ class MiddlewareRegistry {
      * be included (such as middleware from third-party modules).
      * @returns {Middleware}
      */
-    applyMiddleware(...additional: Middleware[]) {
-        return applyMiddleware(
+    applyMiddleware(...additional: Array<Middleware<*, *>>) {
+        // XXX The explicit definition of the local variable middlewares is to
+        // satisfy flow.
+        const middlewares = [
             ...this._elements,
             ...additional
-        );
+        ];
+
+        return applyMiddleware(...middlewares);
     }
 
     /**
@@ -47,7 +50,7 @@ class MiddlewareRegistry {
      * @param {Middleware} middleware - A Redux middleware.
      * @returns {void}
      */
-    register(middleware: Middleware) {
+    register(middleware: Middleware<*, *>) {
         this._elements.push(middleware);
     }
 }
