@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  * Returns current domain.
  *
@@ -5,7 +7,7 @@
  * state.
  * @returns {(string|undefined)}
  */
-export function getDomain(stateOrGetState) {
+export function getDomain(stateOrGetState: Function | Object) {
     const state
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()

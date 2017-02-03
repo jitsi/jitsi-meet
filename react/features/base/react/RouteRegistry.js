@@ -19,7 +19,7 @@ type Route = {
  * without needing to create additional inter-feature dependencies.
  */
 class RouteRegistry {
-    _elements: Route[];
+    _elements: Array<Route>;
 
     /**
      * Initializes a new RouteRegistry instance.
