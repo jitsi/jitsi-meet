@@ -1,3 +1,7 @@
+/* @flow */
+
+import type { Dispatch } from 'redux';
+
 import { conferenceWillLeave } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';
 
@@ -14,10 +18,10 @@ const JitsiConnectionEvents = JitsiMeetJS.events.connection;
 /**
  * Opens new connection.
  *
- * @returns {Promise<JitsiConnection>}
+ * @returns {Function}
  */
 export function connect() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const connectionOptions
             = state['features/base/connection'].connectionOptions;
@@ -57,7 +61,7 @@ export function connect() {
          * @param {string} message - Disconnect reason.
          * @returns {void}
          */
-        function connectionDisconnected(message) {
+        function connectionDisconnected(message: string) {
             connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_DISCONNECTED,
                     connectionDisconnected);
@@ -110,7 +114,7 @@ export function connect() {
  * @returns {Function}
  */
 export function disconnect() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const conference = state['features/base/conference'].conference;
         const connection = state['features/base/connection'].connection;
@@ -148,7 +152,7 @@ export function disconnect() {
  *      domain: string
  *  }}
  */
-export function setDomain(domain) {
+export function setDomain(domain: string) {
     return {
         type: SET_DOMAIN,
         domain
@@ -167,7 +171,7 @@ export function setDomain(domain) {
  *     message: string
  * }}
  */
-function _connectionDisconnected(connection, message) {
+function _connectionDisconnected(connection, message: string) {
     return {
         type: CONNECTION_DISCONNECTED,
         connection,
@@ -205,7 +209,7 @@ function _connectionEstablished(connection) {
  *     error: string
  * }}
  */
-function _connectionFailed(connection, error) {
+function _connectionFailed(connection, error: string) {
     return {
         type: CONNECTION_FAILED,
         connection,

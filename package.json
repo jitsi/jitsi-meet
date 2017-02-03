@@ -60,6 +60,7 @@
     "clean-css": "^3.0.0",
     "css-loader": "*",
     "eslint": "^3.14.1",
+    "eslint-plugin-flowtype": "^2.30.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsdoc": "*",
     "eslint-plugin-react": "*",
