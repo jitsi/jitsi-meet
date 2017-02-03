@@ -12,6 +12,7 @@ module.exports = {
         // files.
         '__filename': false
     },
+    'parser': 'babel-eslint',
     'parserOptions': {
         'ecmaFeatures': {
             'experimentalObjectRestSpread': true
