@@ -72,5 +72,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     LOCAL_THUMBNAIL_RATIO: 16/9, //16:9
     REMOTE_THUMBNAIL_RATIO: 1, //1:1
     // Documentation reference for the live streaming feature.
-    LIVE_STREAMING_HELP_LINK: "https://jitsi.org/live"
+    LIVE_STREAMING_HELP_LINK: "https://jitsi.org/live",
+    MOBILE_APP_ENABLED: true
 };
