@@ -1,5 +1,7 @@
 /* @flow */
 
+/* eslint-disable flowtype/space-before-type-colon */
+
 /**
  * Prevents further propagation of the events to be handler by a specific event
  * handler/listener in the capturing and bubbling phases.
@@ -11,7 +13,10 @@
  */
 export function stopEventPropagation<T>(eventHandler: (ev: Event) => T)
         : (ev: Event) => T {
-    return (ev: Event) => {
+
+/* eslint-enable flowtype/space-before-type-colon */
+
+    return (ev: Event): T => {
         const r = eventHandler(ev);
 
         // React Native does not propagate the press event so, for the sake of
