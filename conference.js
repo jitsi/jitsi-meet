@@ -10,7 +10,7 @@ import Recorder from './modules/recorder/Recorder';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
-import {reportError} from './modules/util/helpers';
+import { reload, reportError } from './modules/util/helpers';
 
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
@@ -417,7 +417,7 @@ class ConferenceConnector {
             APP.UI.notifyMaxUsersLimitReached();
             break;
         case ConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
-            window.location.reload();
+            reload();
             break;
         default:
             this._handleConferenceFailed(err, ...params);
@@ -1474,7 +1474,7 @@ export default {
         APP.UI.addListener(UIEvents.LOGOUT, () => {
             AuthHandler.logout(room).then(url => {
                 if (url) {
-                    window.location.href = url;
+                    UIUtil.redirect(url);
                 } else {
                     this.hangup(true);
                 }
