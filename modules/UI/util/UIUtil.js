@@ -54,7 +54,7 @@ const IndicatorFontSizes = {
     /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function () {
+    getAvailableVideoWidth() {
         return window.innerWidth;
     },
 
@@ -70,7 +70,7 @@ const IndicatorFontSizes = {
      *
      * @param el the element
      */
-    getTextWidth: function (el) {
+    getTextWidth(el) {
         return (el.clientWidth + 1);
     },
 
@@ -79,7 +79,7 @@ const IndicatorFontSizes = {
      *
      * @param el the element
      */
-    getTextHeight: function (el) {
+    getTextHeight(el) {
         return (el.clientHeight + 1);
     },
 
@@ -88,14 +88,14 @@ const IndicatorFontSizes = {
      *
      * @param id the identifier of the audio element.
      */
-    playSoundNotification: function (id) {
+    playSoundNotification(id) {
         document.getElementById(id).play();
     },
 
     /**
      * Escapes the given text.
      */
-    escapeHtml: function (unsafeText) {
+    escapeHtml(unsafeText) {
         return $('<div/>').text(unsafeText).html();
     },
 
@@ -105,11 +105,11 @@ const IndicatorFontSizes = {
      * @param {string} safe string which contains escaped html
      * @returns {string} unescaped html string.
      */
-    unescapeHtml: function (safe) {
+    unescapeHtml(safe) {
         return $('<div />').html(safe).text();
     },
 
-    imageToGrayScale: function (canvas) {
+    imageToGrayScale(canvas) {
         var context = canvas.getContext('2d');
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
         var pixels  = imgData.data;
@@ -156,7 +156,7 @@ const IndicatorFontSizes = {
      * @param key the tooltip data-i18n key
      * @param position the position of the tooltip in relation to the element
      */
-    setTooltip: function (element, key, position) {
+    setTooltip(element, key, position) {
         if (element !== null) {
             element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
             element.setAttribute('data-i18n', '[content]' + key);
@@ -170,7 +170,7 @@ const IndicatorFontSizes = {
      *
      * @param element the element to remove the tooltip from
      */
-    removeTooltip: function (element) {
+    removeTooltip(element) {
         element.removeAttribute('data-tooltip', '');
         element.removeAttribute('data-i18n','');
         element.removeAttribute('content','');
@@ -183,7 +183,7 @@ const IndicatorFontSizes = {
      * @returns {string|*}
      * @private
      */
-    _getTooltipText: function (element) {
+    _getTooltipText(element) {
         let title = element.getAttribute('content');
         let shortcut = element.getAttribute('shortcut');
         if(shortcut) {
@@ -198,7 +198,7 @@ const IndicatorFontSizes = {
      * @param container the container to which new child element will be added
      * @param newChild the new element that will be inserted into the container
      */
-    prependChild: function (container, newChild) {
+    prependChild(container, newChild) {
         var firstChild = container.childNodes[0];
         if (firstChild) {
             container.insertBefore(newChild, firstChild);
@@ -214,7 +214,7 @@ const IndicatorFontSizes = {
      * @returns {boolean} {true} to indicate that the given toolbar button
      * is enabled, {false} - otherwise
      */
-    isButtonEnabled: function (name) {
+    isButtonEnabled(name) {
         return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
                 || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
     },
@@ -226,7 +226,7 @@ const IndicatorFontSizes = {
      * @returns {boolean} {true} to indicate that the given setting section
      * is enabled, {false} - otherwise
      */
-    isSettingEnabled: function (name) {
+    isSettingEnabled(name) {
         return interfaceConfig.SETTINGS_SECTIONS.indexOf(name) !== -1;
     },
 
@@ -235,7 +235,7 @@ const IndicatorFontSizes = {
      *
      * @returns {boolean}
      */
-    isAuthenticationEnabled: function() {
+    isAuthenticationEnabled() {
         return interfaceConfig.AUTHENTICATION_ENABLE;
     },
 
@@ -303,7 +303,7 @@ const IndicatorFontSizes = {
         }
     },
 
-    hideDisabledButtons: function (mappings) {
+    hideDisabledButtons(mappings) {
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
                 return UIUtil.isButtonEnabled(buttonName)
@@ -313,7 +313,7 @@ const IndicatorFontSizes = {
         $(selector).hide();
     },
 
-    redirect (url) {
+    redirect(url) {
          window.location.href = url;
     },
 
@@ -368,7 +368,7 @@ const IndicatorFontSizes = {
       * @param {Object} attrs object with properties
       * @returns {String} string of html element attributes
       */
-     attrsToString: function (attrs) {
+     attrsToString(attrs) {
          return Object.keys(attrs).map(
              key => ` ${key}="${attrs[key]}"`
          ).join(' ');
