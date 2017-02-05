@@ -1,6 +1,6 @@
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import { redirect } from '../util/helpers';
+import { replace } from '../util/helpers';
 
 /**
  * The modules stores information about the URL used to start the conference and
@@ -68,6 +68,6 @@ export default class ConferenceUrl {
      */
     reload() {
         logger.info("Reloading the conference using URL: " + this.originalURL);
-        redirect(this.originalURL);
+        replace(this.originalURL);
     }
 }
