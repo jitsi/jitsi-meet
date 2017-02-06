@@ -1,3 +1,5 @@
+/* @flow */
+
 import { NativeModules } from 'react-native';
 
 import { APP_WILL_MOUNT } from '../app';
@@ -49,7 +51,9 @@ MiddlewareRegistry.register(store => next => action => {
         if (mode !== null) {
             AudioMode.setMode(mode)
                 .catch(err =>
-                    console.error(`Failed to set audio mode ${mode}: ${err}`));
+                    console.error(
+                            `Failed to set audio mode ${String(mode)}: `
+                                + `${err}`));
         }
     }
 

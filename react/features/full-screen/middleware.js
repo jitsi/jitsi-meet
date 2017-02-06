@@ -1,3 +1,5 @@
+/* @flow */
+
 import { StatusBar } from 'react-native';
 import { Immersive } from 'react-native-immersive';
 
@@ -11,7 +13,7 @@ import { MiddlewareRegistry } from '../base/redux';
 
 /**
  * Middleware that captures conference actions and activates or deactivates the
- * full screen mode.  On iOS it hides the status bar, and on Android it uses the
+ * full screen mode. On iOS it hides the status bar, and on Android it uses the
  * immersive mode:
  * https://developer.android.com/training/system-ui/immersive.html
  * In immersive mode the status and navigation bars are hidden and thus the
@@ -21,31 +23,30 @@ import { MiddlewareRegistry } from '../base/redux';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    let useFullScreen;
+    let fullScreen;
 
     switch (action.type) {
     case CONFERENCE_WILL_JOIN: {
-        const state = store.getState()['features/base/conference'];
+        const conference = store.getState()['features/base/conference'];
 
-        useFullScreen = !state.audioOnly;
+        fullScreen = !conference.audioOnly;
         break;
     }
 
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
-        useFullScreen = false;
+        fullScreen = false;
         break;
 
     default:
-        useFullScreen = null;
+        fullScreen = null;
         break;
     }
 
-    if (useFullScreen !== null) {
-        setFullScreen(useFullScreen)
-            .catch(err => {
-                console.warn(`Error setting full screen mode: ${err}`);
-            });
+    if (fullScreen !== null) {
+        _setFullScreen(fullScreen)
+            .catch(err =>
+                console.warn(`Failed to set full screen mode: ${err}`));
     }
 
     return next(action);
@@ -53,24 +54,23 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Activates/deactivates the full screen mode. On iOS it will hide the status
- * bar and On Android this will turn on immersive mode.
+ * bar, and on Android it will turn immersive mode on.
  *
- * @param {boolean} enabled - True to set full screen mode, false to
+ * @param {boolean} fullScreen - True to set full screen mode, false to
  * deactivate it.
+ * @private
  * @returns {Promise}
  */
-function setFullScreen(enabled) {
-    // XXX The Immersive module is only implemented on Android and throws on
-    // other platforms.
+function _setFullScreen(fullScreen: boolean) {
+    // XXX The React Native module Immersive is only implemented on Android and
+    // throws on other platforms.
     if (Platform.OS === 'android') {
-        if (enabled) {
-            return Immersive.on();
-        }
-
-        return Immersive.off();
+        return fullScreen ? Immersive.on() : Immersive.off();
     }
 
-    StatusBar.setHidden(enabled, 'slide');
+    // On platforms other than Android go with whatever React Native itself
+    // supports.
+    StatusBar.setHidden(fullScreen, 'slide');
 
     return Promise.resolve();
 }
