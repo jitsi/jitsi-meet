@@ -59,7 +59,7 @@
     "babel-preset-stage-1": "^6.16.0",
     "clean-css": "^3.0.0",
     "css-loader": "*",
-    "eslint": "^3.14.1",
+    "eslint": "^3.15.0",
     "eslint-plugin-flowtype": "^2.30.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsdoc": "*",
