@@ -100,6 +100,11 @@ var config = {
             loader: 'imports-loader?define=>false&this=>window',
             test: strophe
         }, {
+            // Set scope to window for URL polyfill.
+
+            loader: 'imports-loader?this=>window',
+            test: /\/node_modules\/url-polyfill\/.*\.js$/
+        }, {
             // Allow CSS to be imported into JavaScript.
 
             loaders: [

@@ -664,7 +664,7 @@ export default {
      * false.
      */
     isCallstatsEnabled () {
-        return room.isCallstatsEnabled();
+        return room && room.isCallstatsEnabled();
     },
     /**
      * Sends the given feedback through CallStats if enabled.
