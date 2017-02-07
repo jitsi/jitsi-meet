@@ -406,6 +406,7 @@ var VideoLayout = {
             remoteVideo = smallVideo;
         else
             remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
+        this._setRemoteControlProperties(user, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
     },
 
@@ -636,7 +637,7 @@ var VideoLayout = {
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
         // FIXME: there is no "videoactive.jingle" event.
-        if (!pinnedId
+        if (!interfaceConfig.filmStripOnly && !pinnedId
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
@@ -1158,12 +1159,44 @@ var VideoLayout = {
      * Sets the flipX state of the local video.
      * @param {boolean} true for flipped otherwise false;
      */
-    setLocalFlipX: function (val) {
+    setLocalFlipX (val) {
         this.localFlipX = val;
-
     },
 
-    getEventEmitter: () => {return eventEmitter;}
+    getEventEmitter() {return eventEmitter;},
+
+    /**
+     * Handles user's features changes.
+     */
+    onUserFeaturesChanged (user) {
+        let video = this.getSmallVideo(user.getId());
+
+        if (!video) {
+            return;
+        }
+        this._setRemoteControlProperties(user, video);
+    },
+
+    /**
+     * Sets the remote control properties (checks whether remote control
+     * is supported and executes remoteVideo.setRemoteControlSupport).
+     * @param {JitsiParticipant} user the user that will be checked for remote
+     * control support.
+     * @param {RemoteVideo} remoteVideo the remoteVideo on which the properties
+     * will be set.
+     */
+    _setRemoteControlProperties (user, remoteVideo) {
+        APP.remoteControl.checkUserRemoteControlSupport(user).then(result =>
+            remoteVideo.setRemoteControlSupport(result));
+    },
+
+    /**
+     * Returns the wrapper jquery selector for the largeVideo
+     * @returns {JQuerySelector} the wrapper jquery selector for the largeVideo
+     */
+    getLargeVideoWrapper() {
+        return this.getCurrentlyOnLargeContainer().$wrapper;
+    }
 };
 
 export default VideoLayout;

@@ -64,7 +64,7 @@ ConnectionIndicator.getStringFromArray = function (array) {
 ConnectionIndicator.prototype.generateText = function () {
     var downloadBitrate, uploadBitrate, packetLoss, i;
 
-    if(this.bitrate === null) {
+    if(!this.bitrate) {
         downloadBitrate = "N/A";
         uploadBitrate = "N/A";
     }
@@ -75,7 +75,7 @@ ConnectionIndicator.prototype.generateText = function () {
             this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
     }
 
-    if(this.packetLoss === null) {
+    if(!this.packetLoss) {
         packetLoss = "N/A";
     } else {
 
@@ -132,7 +132,7 @@ ConnectionIndicator.prototype.generateText = function () {
 
     if (this.showMoreValue) {
         var downloadBandwidth, uploadBandwidth, transport;
-        if (this.bandwidth === null) {
+        if (!this.bandwidth) {
             downloadBandwidth = "N/A";
             uploadBandwidth = "N/A";
         } else {
@@ -341,7 +341,7 @@ ConnectionIndicator.prototype.updateConnectionStatusIndicator
  */
 ConnectionIndicator.prototype.updateConnectionQuality =
     function (percent, object) {
-    if (percent === null) {
+    if (!percent) {
         this.connectionIndicatorContainer.style.display = "none";
         this.popover.forceHide();
         return;

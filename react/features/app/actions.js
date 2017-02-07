@@ -1,22 +1,25 @@
 import { setRoom } from '../base/conference';
-import {
-    getDomain,
-    setDomain
-} from '../base/connection';
-import {
-    loadConfig,
-    setConfig
-} from '../base/lib-jitsi-meet';
+import { getDomain, setDomain } from '../base/connection';
+import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from './actionTypes';
-import {
-    _getRoomAndDomainFromUrlString,
-    _getRouteToRender
+    _getRouteToRender,
+    _parseURIString,
+    init
 } from './functions';
 import './reducer';
+
+/**
+ * Temporary solution. Should dispatch actions related to initial settings of
+ * the app like setting log levels, reading the config parameters from query
+ * string etc.
+ *
+ * @returns {Function}
+ */
+export function appInit() {
+    return () => init();
+}
 
 /**
  * Triggers an in-app navigation to a different route. Allows navigation to be
@@ -28,9 +31,10 @@ import './reducer';
  */
 export function appNavigate(urlOrRoom) {
     return (dispatch, getState) => {
-        const oldDomain = getDomain(getState());
+        const state = getState();
+        const oldDomain = getDomain(state);
 
-        const { domain, room } = _getRoomAndDomainFromUrlString(urlOrRoom);
+        const { domain, room } = _parseURIString(urlOrRoom);
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
         // currently in a conference and ask her if she wants to close the
@@ -38,13 +42,7 @@ export function appNavigate(urlOrRoom) {
         // domain.
 
         if (typeof domain === 'undefined' || oldDomain === domain) {
-            // If both domain and room vars became undefined, that means we're
-            // actually dealing with just room name and not with URL.
-            dispatch(
-                _setRoomAndNavigate(
-                    typeof room === 'undefined' && typeof domain === 'undefined'
-                        ? urlOrRoom
-                        : room));
+            dispatchSetRoomAndNavigate();
         } else if (oldDomain !== domain) {
             // Update domain without waiting for config to be loaded to prevent
             // race conditions when we will start to load config multiple times.
@@ -56,7 +54,8 @@ export function appNavigate(urlOrRoom) {
             loadConfig(`https://${domain}`)
                 .then(
                     config => configLoaded(/* err */ undefined, config),
-                    err => configLoaded(err, /* config */ undefined));
+                    err => configLoaded(err, /* config */ undefined))
+                .then(dispatchSetRoomAndNavigate);
         }
 
         /**
@@ -80,11 +79,22 @@ export function appNavigate(urlOrRoom) {
                 return;
             }
 
-            // We set room name only here to prevent race conditions on app
-            // start to not make app re-render conference page for two times.
-            dispatch(setRoom(room));
             dispatch(setConfig(config));
-            _navigate(getState());
+        }
+
+        /**
+         * Dispatches _setRoomAndNavigate in the Redux store.
+         *
+         * @returns {void}
+         */
+        function dispatchSetRoomAndNavigate() {
+            // If both domain and room vars became undefined, that means we're
+            // actually dealing with just room name and not with URL.
+            dispatch(
+                _setRoomAndNavigate(
+                    typeof room === 'undefined' && typeof domain === 'undefined'
+                        ? urlOrRoom
+                        : room));
         }
     };
 }
@@ -122,9 +132,10 @@ export function appWillUnmount(app) {
 }
 
 /**
- * Navigates to route corresponding to current room name.
+ * Navigates to a route in accord with a specific Redux state.
  *
- * @param {Object} state - Redux state.
+ * @param {Object} state - The Redux state which determines/identifies the route
+ * to navigate to.
  * @private
  * @returns {void}
  */
@@ -144,15 +155,7 @@ function _navigate(state) {
  */
 function _setRoomAndNavigate(newRoom) {
     return (dispatch, getState) => {
-        const oldRoom = getState()['features/base/conference'].room;
-
         dispatch(setRoom(newRoom));
-
-        const state = getState();
-        const room = state['features/base/conference'].room;
-
-        if (room !== oldRoom) {
-            _navigate(state);
-        }
+        _navigate(getState());
     };
 }

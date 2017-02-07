@@ -1,10 +1,5 @@
-import { Platform } from 'react-native';
-import {
-    RTCPeerConnection,
-    RTCSessionDescription
-} from 'react-native-webrtc';
-
-import { POSIX } from '../../react-native';
+import { NativeModules } from 'react-native';
+import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
 // XXX At the time of this writing extending RTCPeerConnection using ES6 'class'
 // and 'extends' causes a runtime error related to the attempt to define the
@@ -109,6 +104,7 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(
 /**
  * Logs at error level.
  *
+ * @private
  * @returns {void}
  */
 function _LOGE(...args) {
@@ -122,6 +118,8 @@ function _LOGE(...args) {
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * which specifies the configuration of the remote end of the connection.
+ * @private
+ * @private
  * @returns {Promise}
  */
 function _setRemoteDescription(sessionDescription) {
@@ -163,12 +161,13 @@ function _setRemoteDescription(sessionDescription) {
  *
  * @param {RTCSessionDescription} sdp - The RTCSessionDescription which
  * specifies the configuration of the remote end of the connection.
+ * @private
  * @returns {Promise}
  */
 function _synthesizeIPv6Addresses(sdp) {
     // The synthesis of IPv6 addresses is implemented on iOS only at the time of
     // this writing.
-    if (Platform.OS !== 'ios') {
+    if (!NativeModules.POSIX) {
         return Promise.resolve(sdp);
     }
 
@@ -187,6 +186,7 @@ function _synthesizeIPv6Addresses(sdp) {
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses will be synthesized.
+ * @private
  * @returns {{
  *     ips: Map,
  *     lines: Array
@@ -197,6 +197,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
     let start = 0;
     const lines = [];
     const ips = new Map();
+    const getaddrinfo = NativeModules.POSIX.getaddrinfo;
 
     do {
         const end = sdp.indexOf('\r\n', start);
@@ -235,7 +236,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
                                 if (v && typeof v === 'string') {
                                     resolve(v);
                                 } else {
-                                    POSIX.getaddrinfo(ip).then(
+                                    getaddrinfo(ip).then(
                                         value => {
                                             if (value.indexOf(':') === -1
                                                     || value === ips.get(ip)) {
@@ -281,6 +282,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
  * @param {Map} ips - A Map of IPv4 addresses found in the specified
  * sessionDescription to synthesized IPv6 addresses.
  * @param {Array} lines - The lines of the specified sessionDescription.
+ * @private
  * @returns {RTCSessionDescription} A RTCSessionDescription that represents the
  * result of the synthesis of IPv6 addresses.
  */

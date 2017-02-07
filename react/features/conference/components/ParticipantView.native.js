@@ -155,12 +155,13 @@ function _toBoolean(value, undefinedValue) {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The React Component props passed to the associated
  * (instance of) ParticipantView.
+ * @private
  * @returns {{
  *     _avatar: string,
  *     _videoTrack: Track
  * }}
  */
-function mapStateToProps(state, ownProps) {
+function _mapStateToProps(state, ownProps) {
     const participantId = ownProps.participantId;
     const participant
         = getParticipantById(
@@ -177,4 +178,4 @@ function mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(mapStateToProps)(ParticipantView);
+export default connect(_mapStateToProps)(ParticipantView);

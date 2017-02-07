@@ -6,7 +6,6 @@
     padding: 0;
     margin: 2px 0;
     bottom: 0;
-    width: 100px;
     height: auto;
 
     &:first-child {
@@ -66,4 +65,9 @@
 
 span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
     display:block !important;
+}
+
+.remote-control-spinner {
+    top: 6px;
+    left: 2px;
 }

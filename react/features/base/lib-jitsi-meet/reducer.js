@@ -11,8 +11,8 @@ import {
  * Initial state of 'features/base/lib-jitsi-meet'.
  *
  * @type {{
- *      initializationError: null,
- *      initialized: boolean
+ *     initializationError: null,
+ *     initialized: boolean
  * }}
  */
 const INITIAL_STATE = {

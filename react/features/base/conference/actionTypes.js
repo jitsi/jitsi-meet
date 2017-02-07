@@ -36,6 +36,17 @@ export const CONFERENCE_LEFT = Symbol('CONFERENCE_LEFT');
 
 /**
  * The type of the Redux action which signals that a specific conference will be
+ * joined.
+ *
+ * {
+ *     type: CONFERENCE_WILL_JOIN,
+ *     room: string
+ * }
+ */
+export const CONFERENCE_WILL_JOIN = Symbol('CONFERENCE_WILL_JOIN');
+
+/**
+ * The type of the Redux action which signals that a specific conference will be
  * left.
  *
  * {

@@ -1,6 +1,6 @@
 {
     "contactlist": "Participantes (__pcount__)",
-    "addParticipants": "",
+    "addParticipants": "Compartilhar o link",
     "roomLocked": "Visitantes precisam digitar uma senha",
     "roomUnlocked": "Qualquer um com o link pode entrar",
     "passwordSetRemotely": "Definido por outro participante",

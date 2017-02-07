@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableHighlight } from 'react-native';
 
-import { Icon } from '../../base/fontIcons';
+import { Icon } from '../../base/font-icons';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
 

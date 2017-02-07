@@ -20,10 +20,10 @@ var config = { // eslint-disable-line no-unused-vars
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
 
-    // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
-    desktopSharingChromeMethod: 'ext',
     // The ID of the jidesha extension for Chrome.
-    desktopSharingChromeExtId: 'diibjkoicjeejcmhdnailmkgecihlobk',
+    desktopSharingChromeExtId: null,
+    // Whether desktop sharing should be disabled on Chrome.
+    desktopSharingChromeDisabled: true,
     // The media sources to use when using screen sharing with the Chrome
     // extension.
     desktopSharingChromeSources: ['screen', 'window', 'tab'],
@@ -78,5 +78,7 @@ var config = { // eslint-disable-line no-unused-vars
     // edit their profile.
     enableUserRolesBasedOnToken: false,
     // Suspending video might cause problems with audio playback. Disabling until these are fixed.
-    disableSuspendVideo: true
+    disableSuspendVideo: true,
+    // disables or enables RTX (RFC 4588).
+    disableRtx: true
 };

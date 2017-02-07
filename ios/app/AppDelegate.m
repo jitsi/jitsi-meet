@@ -8,12 +8,11 @@
  */
 
 #import "AppDelegate.h"
-#import <Crashlytics/Crashlytics.h>
-#import <Fabric/Fabric.h>
-#import "RCTAssert.h"
-#import "RCTBundleURLProvider.h"
-#import "RCTLinkingManager.h"
-#import "RCTRootView.h"
+
+#import <React/RCTAssert.h>
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTLinkingManager.h>
+#import <React/RCTRootView.h>
 
 /**
  * A <tt>RCTFatalHandler</tt> implementation which swallows JavaScript errors.
@@ -55,8 +54,6 @@ continueUserActivity:(NSUserActivity *)userActivity
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 #if !DEBUG
-  [Fabric with:@[[Crashlytics class]]];
-
   // In the Release configuration, React Native will (intentionally) raise an
   // unhandled NSException for an unhandled JavaScript error. This will
   // effectively kill the application. In accord with the Web, do not kill the

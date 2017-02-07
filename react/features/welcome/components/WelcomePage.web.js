@@ -1,18 +1,11 @@
-/* global APP, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Conference } from '../../conference';
+import { Watermarks } from '../../base/react';
 
-import { AbstractWelcomePage, mapStateToProps } from './AbstractWelcomePage';
-
-/**
- * The CSS style of the element with CSS class <tt>rightwatermark</tt>.
- */
-const RIGHT_WATERMARK_STYLE = {
-    backgroundImage: 'url(images/rightwatermark.png)'
-};
+import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
 /* eslint-disable require-jsdoc */
 
@@ -34,7 +27,13 @@ class WelcomePage extends AbstractWelcomePage {
     constructor(props) {
         super(props);
 
-        this._initState();
+        this.state = {
+            ...this.state,
+
+            enableWelcomePage: true,
+            generateRoomnames:
+                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
+        };
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDisableWelcomeChange = this._onDisableWelcomeChange.bind(this);
@@ -52,6 +51,9 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
+
+        // XXX Temporary solution until we add React translation.
+        APP.translation.translateElement($('#welcome_page'));
     }
 
     /**
@@ -61,23 +63,14 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        // FIXME The rendering of Conference bellow is a very quick and dirty
-        // temporary fix for the following issue: when the WelcomePage is
-        // disabled, app.js expects Conference to be rendered already and only
-        // then it builds a room name but the App component expects the room
-        // name to be built already (by looking at the window's location) in
-        // order to choose between WelcomePage and Conference.
         return (
-            <div>
-                <div id = 'welcome_page'>
-                    {
-                        this._renderHeader()
-                    }
-                    {
-                        this._renderMain()
-                    }
-                </div>
-                <Conference />
+            <div id = 'welcome_page'>
+                {
+                    this._renderHeader()
+                }
+                {
+                    this._renderMain()
+                }
             </div>
         );
     }
@@ -89,31 +82,9 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {string} Domain name.
      */
     _getDomain() {
-        return `${window.location.protocol}//${window.location.host}/`;
-    }
+        const windowLocation = window.location;
 
-    /**
-     * Method that initializes state of the component.
-     *
-     * @returns {void}
-     */
-    _initState() {
-        const showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
-        const showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
-
-        this.state = {
-            ...this.state,
-            brandWatermarkLink:
-                showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
-            enableWelcomePage: true,
-            generateRoomnames:
-                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
-            jitsiWatermarkLink:
-                showJitsiWatermark ? interfaceConfig.JITSI_WATERMARK_LINK : '',
-            showBrandWatermark,
-            showJitsiWatermark,
-            showPoweredBy: interfaceConfig.SHOW_POWERED_BY
-        };
+        return `${windowLocation.protocol}//${windowLocation.host}/`;
     }
 
     /**
@@ -126,23 +97,10 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onDisableWelcomeChange(event) {
         this.setState({
-            enableWelcomePage: !event.target.value
+            enableWelcomePage: !event.target.checked
         }, () => {
             APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
         });
-    }
-
-    /**
-     * Overrides the super in order to prevent the dispatching of the Redux
-     * action SET_ROOM.
-     *
-     * @override
-     * @protected
-     * @returns {null}
-     */
-    _onJoin() {
-        // Don't call the super implementation and thus prevent the dispatching
-        // of the Redux action SET_ROOM.
     }
 
     /**
@@ -171,28 +129,6 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onRoomChange(event) {
         super._onRoomChange(event.target.value);
-    }
-
-    /**
-     * Method that returns brand watermark element if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null} Watermark element or null.
-     */
-    _renderBrandWatermark() {
-        if (this.state.showBrandWatermark) {
-            return (
-                <a
-                    href = { this.state.brandWatermarkLink }
-                    target = '_new'>
-                    <div
-                        className = 'watermark rightwatermark'
-                        style = { RIGHT_WATERMARK_STYLE } />
-                </a>
-            );
-        }
-
-        return null;
     }
 
     /**
@@ -258,15 +194,8 @@ class WelcomePage extends AbstractWelcomePage {
 
         return (
             <div id = 'welcome_page_header'>
-                {
-                    this._renderJitsiWatermark()
-                }
-                {
-                    this._renderBrandWatermark()
-                }
-                {
-                    this._renderPoweredBy()
-                }
+                <Watermarks />
+
                 <div id = 'enter_room_container'>
                     <div id = 'enter_room_form'>
                         <div className = 'domain-name'>
@@ -319,47 +248,6 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Method that returns jitsi watermark element if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null} Watermark element or null.
-     */
-    _renderJitsiWatermark() {
-        if (this.state.showJitsiWatermark) {
-            return (
-                <a
-                    href = { this.state.jitsiWatermarkLink }
-                    target = '_new'>
-                    <div className = 'watermark leftwatermark' />
-                </a>
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Renders powered by block if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null}
-     */
-    _renderPoweredBy() {
-        if (this.state.showPoweredBy) {
-            return (
-                <a
-                    className = 'poweredby'
-                    href = 'http://jitsi.org'
-                    target = '_new'>
-                    <span data-i18n = 'poweredby' /> jitsi.org
-                </a>
-            );
-        }
-
-        return null;
-    }
-
-    /**
      * Renders the main part of this WelcomePage.
      *
      * @private
@@ -381,4 +269,4 @@ class WelcomePage extends AbstractWelcomePage {
     }
 }
 
-export default connect(mapStateToProps)(WelcomePage);
+export default connect(_mapStateToProps)(WelcomePage);

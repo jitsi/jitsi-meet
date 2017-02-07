@@ -19,15 +19,18 @@ export class AbstractToolbar extends Component {
      * @static
      */
     static propTypes = {
-        audioMuted: React.PropTypes.bool,
-        dispatch: React.PropTypes.func,
+        _audioMuted: React.PropTypes.bool,
 
         /**
          * The indicator which determines whether the conference is
          * locked/password-protected.
+         *
+         * @protected
+         * @type {boolean}
          */
-        locked: React.PropTypes.bool,
-        videoMuted: React.PropTypes.bool,
+        _locked: React.PropTypes.bool,
+        _videoMuted: React.PropTypes.bool,
+        dispatch: React.PropTypes.func,
         visible: React.PropTypes.bool.isRequired
     }
 
@@ -65,7 +68,7 @@ export class AbstractToolbar extends Component {
         let iconStyle;
         let style = styles.primaryToolbarButton;
 
-        if (this.props[`${mediaType}Muted`]) {
+        if (this.props[`_${mediaType}Muted`]) {
             iconName = this[`${mediaType}MutedIcon`];
             iconStyle = styles.whiteIcon;
             style = {
@@ -135,22 +138,28 @@ export class AbstractToolbar extends Component {
  * Maps parts of media state to component props.
  *
  * @param {Object} state - Redux state.
- * @returns {{ audioMuted: boolean, videoMuted: boolean }}
+ * @protected
+ * @returns {{
+ *     _audioMuted: boolean,
+ *     _locked: boolean,
+ *     _videoMuted: boolean
+ * }}
  */
-export function mapStateToProps(state) {
+export function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const media = state['features/base/media'];
 
     return {
-        audioMuted: media.audio.muted,
+        _audioMuted: media.audio.muted,
 
         /**
          * The indicator which determines whether the conference is
          * locked/password-protected.
          *
+         * @protected
          * @type {boolean}
          */
-        locked: conference.locked,
-        videoMuted: media.video.muted
+        _locked: conference.locked,
+        _videoMuted: media.video.muted
     };
 }

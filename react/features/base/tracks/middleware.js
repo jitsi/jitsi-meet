@@ -1,26 +1,19 @@
+/* @flow */
+
+import { LIB_DISPOSED, LIB_INITIALIZED } from '../lib-jitsi-meet';
 import {
-    LIB_DISPOSED,
-    LIB_INITIALIZED
-} from '../lib-jitsi-meet';
-import {
-    AUDIO_MUTED_CHANGED,
-    audioMutedChanged,
-    CAMERA_FACING_MODE_CHANGED,
     MEDIA_TYPE,
-    VIDEO_MUTED_CHANGED,
-    videoMutedChanged
+    SET_AUDIO_MUTED,
+    SET_CAMERA_FACING_MODE,
+    SET_VIDEO_MUTED,
+    setAudioMuted,
+    setVideoMuted
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import {
-    createLocalTracks,
-    destroyLocalTracks
-} from './actions';
+import { createLocalTracks, destroyLocalTracks } from './actions';
 import { TRACK_UPDATED } from './actionTypes';
-import {
-    getLocalTrack,
-    setTrackMuted
-} from './functions';
+import { getLocalTrack, setTrackMuted } from './functions';
 
 /**
  * Middleware that captures LIB_INITIALIZED and LIB_DISPOSED actions
@@ -32,19 +25,6 @@ import {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case AUDIO_MUTED_CHANGED:
-        _mutedChanged(store, action, MEDIA_TYPE.AUDIO);
-        break;
-
-    case CAMERA_FACING_MODE_CHANGED:
-        store.dispatch(
-            createLocalTracks({
-                devices: [ MEDIA_TYPE.VIDEO ],
-                facingMode: action.cameraFacingMode
-            })
-        );
-        break;
-
     case LIB_INITIALIZED:
         store.dispatch(createLocalTracks());
         break;
@@ -53,12 +33,25 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(destroyLocalTracks());
         break;
 
+    case SET_AUDIO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.AUDIO);
+        break;
+
+    case SET_CAMERA_FACING_MODE:
+        store.dispatch(
+            createLocalTracks({
+                devices: [ MEDIA_TYPE.VIDEO ],
+                facingMode: action.cameraFacingMode
+            })
+        );
+        break;
+
+    case SET_VIDEO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.VIDEO);
+        break;
+
     case TRACK_UPDATED:
         return _trackUpdated(store, next, action);
-
-    case VIDEO_MUTED_CHANGED:
-        _mutedChanged(store, action, MEDIA_TYPE.VIDEO);
-        break;
     }
 
     return next(action);
@@ -76,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Track} The local <tt>Track</tt> associated with the specified
  * <tt>mediaType</tt> in the specified <tt>store</tt>.
  */
-function _getLocalTrack(store, mediaType) {
+function _getLocalTrack(store, mediaType: MEDIA_TYPE) {
     return getLocalTrack(store.getState()['features/base/tracks'], mediaType);
 }
 
@@ -91,7 +84,7 @@ function _getLocalTrack(store, mediaType) {
  * @private
  * @returns {void}
  */
-function _mutedChanged(store, action, mediaType) {
+function _setMuted(store, action, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
     localTrack && setTrackMuted(localTrack.jitsiTrack, action.muted);
@@ -145,10 +138,10 @@ function _trackUpdated(store, next, action) {
             if (oldMuted !== newMuted) {
                 switch (mediaType) {
                 case MEDIA_TYPE.AUDIO:
-                    store.dispatch(audioMutedChanged(newMuted));
+                    store.dispatch(setAudioMuted(newMuted));
                     break;
                 case MEDIA_TYPE.VIDEO:
-                    store.dispatch(videoMutedChanged(newMuted));
+                    store.dispatch(setVideoMuted(newMuted));
                     break;
                 }
             }

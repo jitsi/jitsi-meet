@@ -6,7 +6,7 @@ import { MEDIA_TYPE, toggleCameraFacingMode } from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 
-import { AbstractToolbar, mapStateToProps } from './AbstractToolbar';
+import { AbstractToolbar, _mapStateToProps } from './AbstractToolbar';
 import { styles } from './styles';
 import ToolbarButton from './ToolbarButton';
 
@@ -123,7 +123,7 @@ class Toolbar extends AbstractToolbar {
                     underlayColor = { underlayColor } />
                 <ToolbarButton
                     iconName = {
-                        this.props.locked ? 'security-locked' : 'security'
+                        this.props._locked ? 'security-locked' : 'security'
                     }
                     iconStyle = { iconStyle }
                     onClick = { this._onRoomLock }
@@ -160,4 +160,4 @@ Object.assign(Toolbar.prototype, {
     videoMutedIcon: 'camera-disabled'
 });
 
-export default connect(mapStateToProps)(Toolbar);
+export default connect(_mapStateToProps)(Toolbar);

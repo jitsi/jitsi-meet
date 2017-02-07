@@ -14,9 +14,9 @@ $defaultToolbarSize: 50px;
 
 // Video layout.
 $thumbnailToolbarHeight: 22px;
-$thumbnailIndicatorBorder: 0;
-$thumbnailIndicatorSize: 3em;
-$thumbnailVideoMargin: 2px;
+$thumbnailIndicatorBorder: 2px;
+$thumbnailIndicatorSize: $thumbnailToolbarHeight;
+$thumbnailVideoMargin: 5px;
 $thumbnailsBorder: 2px;
 $thumbnailVideoBorder: 2px;
 $hideFilmstripButtonWidth: 17px;
@@ -43,14 +43,14 @@ $toolbarBadgeColor: #FFFFFF;
 $toolbarToggleBackground: #12499C;
 $splitterToolbarButtonMargin: 18px;
 
-/*
+/**
  * Main controls
  * TODO: looks like we don't use it
  */
 $inputSemiBackground: rgba(132, 132, 132, .8);
 $inputLightBackground: #EBEBEB;
 
-/*
+/**
  * Video layout
  */
 $videoThumbnailHovered: rgba(22, 94, 204, .4);
@@ -95,7 +95,7 @@ $notificationWidth: 215px;
 /**
  * Misc.
  */
-$borderRadius: 3px;
+$borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
 $sidebarWidth: 220px;
 $popoverMenuPadding: 13px;
@@ -127,3 +127,10 @@ $inputControlEmColor: #f29424;
 //buttons
 $linkFontColor: #489afe;
 $linkHoverFontColor: #287ade;
+
+/**
+ * Landing
+ */
+$primaryUnsupportedBrowserButtonBgColor: #17a0db;
+$unsupportedBrowserButtonBgColor: #ff9a00;
+$unsupportedBrowserTextColor: #4a4a4a;

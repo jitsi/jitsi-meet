@@ -50,14 +50,17 @@
         position:relative;
         height:196px;
         padding: 0;
-        padding-left: 17px;
+        /*The filmstrip should not be covered by the left toolbar*/
+        padding-left: $defaultToolbarSize + 5;
         bottom: 0;
         width:auto;
         border: $thumbnailsBorder solid transparent;
         z-index: 5;
         transition: bottom 2s;
         overflow: visible !important;
-        font-size: 0pt; /*!!!Removes the gap between the local video container and the remote videos.*/
+        /*!!!Removes the gap between the local video container and the remote
+        videos.*/
+        font-size: 0pt;
 
         &.hidden {
             bottom: -196px;
@@ -68,7 +71,7 @@
             position: relative;
             background-size: contain;
             border: $thumbnailVideoBorder solid transparent;
-            border-radius:1px;
+            border-radius: $borderRadius;
             margin: 0 $thumbnailVideoMargin;
 
             &.videoContainerFocused, &:hover {
@@ -89,7 +92,7 @@
                 0 0 3px $videoThumbnailSelected !important;
             }
 
-            .remotevideomenu {
+            .remotevideomenu > .icon-menu {
                 display: none;
             }
 
@@ -102,7 +105,7 @@
                 box-shadow: inset 0 0 3px $videoThumbnailHovered,
                 0 0 3px $videoThumbnailHovered;
 
-                .remotevideomenu {
+                .remotevideomenu > .icon-menu {
                     display: inline-block;
                 }
             }
@@ -112,7 +115,7 @@
             & > video,
             & > object {
                 cursor: hand;
-                border-radius:1px;
+                border-radius: $borderRadius;
                 object-fit: cover;
                 overflow: hidden;
             }

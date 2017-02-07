@@ -1,3 +1,5 @@
+/* @flow */
+
 import { ReducerRegistry, setStateProperty } from '../redux';
 
 import {
@@ -9,20 +11,22 @@ import {
 /**
  * Reduces the Redux actions of the feature base/connection.
  */
-ReducerRegistry.register('features/base/connection', (state = {}, action) => {
-    switch (action.type) {
-    case CONNECTION_DISCONNECTED:
-        return _connectionDisconnected(state, action);
+ReducerRegistry.register(
+    'features/base/connection',
+    (state: Object = {}, action: Object) => {
+        switch (action.type) {
+        case CONNECTION_DISCONNECTED:
+            return _connectionDisconnected(state, action);
 
-    case CONNECTION_ESTABLISHED:
-        return _connectionEstablished(state, action);
+        case CONNECTION_ESTABLISHED:
+            return _connectionEstablished(state, action);
 
-    case SET_DOMAIN:
-        return _setDomain(state, action);
-    }
+        case SET_DOMAIN:
+            return _setDomain(state, action);
+        }
 
-    return state;
-});
+        return state;
+    });
 
 /**
  * Reduces a specific Redux action CONNECTION_DISCONNECTED of the feature
@@ -34,7 +38,7 @@ ReducerRegistry.register('features/base/connection', (state = {}, action) => {
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _connectionDisconnected(state, action) {
+function _connectionDisconnected(state: Object, action: Object) {
     if (state.connection === action.connection) {
         return setStateProperty(state, 'connection', undefined);
     }
@@ -52,7 +56,7 @@ function _connectionDisconnected(state, action) {
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _connectionEstablished(state, action) {
+function _connectionEstablished(state: Object, action: Object) {
     return setStateProperty(state, 'connection', action.connection);
 }
 
@@ -62,9 +66,10 @@ function _connectionEstablished(state, action) {
  *
  * @param {string} domain - The domain with which the returned options are to be
  * populated.
+ * @private
  * @returns {Object}
  */
-function _constructConnectionOptions(domain) {
+function _constructConnectionOptions(domain: string) {
     // FIXME The HTTPS scheme for the BOSH URL works with meet.jit.si on both
     // mobile & Web. It also works with beta.meet.jit.si on Web. Unfortunately,
     // it doesn't work with beta.meet.jit.si on mobile. Temporarily, use the
@@ -88,7 +93,7 @@ function _constructConnectionOptions(domain) {
     boshProtocol || (boshProtocol = 'https:');
 
     return {
-        bosh: `${boshProtocol}//${domain}/http-bind`,
+        bosh: `${String(boshProtocol)}//${domain}/http-bind`,
         hosts: {
             domain,
             focus: `focus.${domain}`,
@@ -106,7 +111,7 @@ function _constructConnectionOptions(domain) {
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _setDomain(state, action) {
+function _setDomain(state: Object, action: Object) {
     return {
         ...state,
         connectionOptions: {

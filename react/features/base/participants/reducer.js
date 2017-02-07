@@ -48,9 +48,10 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
  * @param {Participant} action.participant - Information about participant to be
  * added/modified.
  * @param {JitsiConference} action.conference - Conference instance.
+ * @private
  * @returns {Participant|undefined}
  */
-function participant(state, action) {
+function _participant(state, action) {
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
@@ -146,7 +147,7 @@ function participant(state, action) {
 ReducerRegistry.register('features/base/participants', (state = [], action) => {
     switch (action.type) {
     case PARTICIPANT_JOINED:
-        return [ ...state, participant(undefined, action) ];
+        return [ ...state, _participant(undefined, action) ];
 
     case PARTICIPANT_LEFT:
         return state.filter(p => p.id !== action.participant.id);
@@ -155,7 +156,7 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PARTICIPANT_ID_CHANGED:
     case PARTICIPANT_UPDATED:
     case PIN_PARTICIPANT:
-        return state.map(p => participant(p, action));
+        return state.map(p => _participant(p, action));
 
     default:
         return state;

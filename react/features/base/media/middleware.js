@@ -1,11 +1,13 @@
+/* @flow */
+
 import { CONFERENCE_LEFT } from '../conference';
 import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import {
-    audioMutedChanged,
-    cameraFacingModeChanged,
-    videoMutedChanged
+    setAudioMuted,
+    setCameraFacingMode,
+    setVideoMuted
 } from './actions';
 import { CAMERA_FACING_MODE } from './constants';
 
@@ -21,11 +23,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_LEFT:
-        resetInitialMediaState(store);
+        _resetInitialMediaState(store);
         break;
 
     case TRACK_ADDED:
-        action.track.local && syncTrackMutedState(store, action.track);
+        action.track.local && _syncTrackMutedState(store, action.track);
         break;
     }
 
@@ -36,16 +38,17 @@ MiddlewareRegistry.register(store => next => action => {
  * Resets initial media state.
  *
  * @param {Store} store - Redux store.
+ * @private
  * @returns {void}
  */
-function resetInitialMediaState(store) {
+function _resetInitialMediaState(store) {
     const { dispatch, getState } = store;
     const state = getState()['features/base/media'];
 
-    state.audio.muted && dispatch(audioMutedChanged(false));
+    state.audio.muted && dispatch(setAudioMuted(false));
     (state.video.facingMode !== CAMERA_FACING_MODE.USER)
-        && dispatch(cameraFacingModeChanged(CAMERA_FACING_MODE.USER));
-    state.video.muted && dispatch(videoMutedChanged(false));
+        && dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+    state.video.muted && dispatch(setVideoMuted(false));
 }
 
 /**
@@ -53,9 +56,10 @@ function resetInitialMediaState(store) {
  *
  * @param {Store} store - Redux store.
  * @param {Track} track - Local media track.
+ * @private
  * @returns {void}
  */
-function syncTrackMutedState(store, track) {
+function _syncTrackMutedState(store, track) {
     const state = store.getState()['features/base/media'];
     const muted = state[track.mediaType].muted;
 

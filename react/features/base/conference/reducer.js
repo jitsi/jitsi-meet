@@ -245,10 +245,7 @@ function _setPassword(state, action) {
 function _setRoom(state, action) {
     let room = action.room;
 
-    if (isRoomValid(room)) {
-        // XXX Lib-jitsi-meet does not accept uppercase letters.
-        room = room.toLowerCase();
-    } else {
+    if (!isRoomValid(room)) {
         // Technically, there are multiple values which don't represent valid
         // room names. Practically, each of them is as bad as the rest of them
         // because we can't use any of them to join a conference.

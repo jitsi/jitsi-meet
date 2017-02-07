@@ -1,7 +1,12 @@
+# The following do not need to be checked because they do not represent JS
+# source code.
 build/
 debian/
 libs/
 node_modules/
+
+# The following are checked by ESLint which supersedes JSHint.
+flow-typed/
 react/
+
 analytics.js
-webpack.config.babel.js

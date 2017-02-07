@@ -1,26 +1,8 @@
 import React, { Component } from 'react';
 import { AppRegistry, Linking } from 'react-native';
-import { createStore } from 'redux';
-import Thunk from 'redux-thunk';
 
 import config from './config';
 import { App } from './features/app';
-import {
-    MiddlewareRegistry,
-    ReducerRegistry
-} from './features/base/redux';
-
-// Create combined reducer from all reducers in registry.
-const reducer = ReducerRegistry.combineReducers();
-
-// Apply all registered middleware from the MiddlewareRegistry + additional
-// 3rd party middleware:
-// - Thunk - allows us to dispatch async actions easily. For more info
-// @see https://github.com/gaearon/redux-thunk.
-const middleware = MiddlewareRegistry.applyMiddleware(Thunk);
-
-// Create Redux store with our reducer and middleware.
-const store = createStore(reducer, middleware);
 
 /**
  * React Native doesn't support specifying props to the main/root component (in
@@ -61,7 +43,9 @@ class Root extends Component {
 
                 // XXX Start with an empty URL if getting the initial URL fails;
                 // otherwise, nothing will be rendered.
-                this.setState({ url: null });
+                if (this.state.url !== null) {
+                    this.setState({ url: null });
+                }
             });
     }
 
@@ -81,7 +65,6 @@ class Root extends Component {
         return (
             <App
                 config = { config }
-                store = { store }
                 url = { this.state.url } />
         );
     }
