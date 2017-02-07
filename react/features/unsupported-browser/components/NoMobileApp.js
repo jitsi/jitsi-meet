@@ -1,5 +1,8 @@
-/* global interfaceConfig */
+/* @flow */
+
 import React, { Component } from 'react';
+
+declare var interfaceConfig: Object;
 
 /**
  * React component representing no mobile page.

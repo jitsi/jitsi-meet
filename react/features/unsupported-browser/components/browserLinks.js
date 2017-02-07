@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  * Represents hash map that contains browser download links.
  *

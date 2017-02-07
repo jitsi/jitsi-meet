@@ -1,4 +1,4 @@
-/* global $, APP */
+/* @flow */
 
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
@@ -7,6 +7,9 @@ import { connect, disconnect } from '../../base/connection';
 import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
+
+declare var $: Function;
+declare var APP: Object;
 
 /**
  * For legacy reasons, inline style for display none.
