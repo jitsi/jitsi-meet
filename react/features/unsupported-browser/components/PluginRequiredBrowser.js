@@ -1,3 +1,5 @@
+/*  @flow */
+
 import React, { Component } from 'react';
 
 import { CHROME, CHROMIUM, FIREFOX } from './browserLinks';
@@ -16,6 +18,7 @@ export default class PluginRequiredBrowser extends Component {
      */
     render() {
         const ns = 'unsupported-desktop-browser';
+        const nsLink = `${ns}__link`;
 
         return (
             <div className = { ns }>
@@ -28,13 +31,13 @@ export default class PluginRequiredBrowser extends Component {
                     however, we strongly recommend that you do that using
                     the&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { CHROME }>Chrome</a>,&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { CHROMIUM }>Chromium</a> or&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { FIREFOX }>Firefox</a> browsers.
                 </p>
             </div>

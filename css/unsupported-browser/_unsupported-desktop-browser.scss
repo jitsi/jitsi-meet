@@ -5,22 +5,22 @@
     text-align: center;
 
     &__title {
-        color: #fff;
+        color: $unsupportedBrowserTitleColor;
         font-weight: 300;
-        font-size: 24px;
+        font-size: $unsupportedBrowserTitleFontSize;
         letter-spacing: 1px;
     }
 
     &__description {
-        margin-top: 16px;
-        color: rgba(255, 255, 255, 0.7);
+        color: $unsupportedDesktopBrowserTextColor;
+        font-size: $unsupportedDesktopBrowserTextFontSize;
         font-weight: 300;
-        font-size: 21px;
         letter-spacing: 1px;
+        margin-top: 16px;
 
         &_small {
             @extend .unsupported-desktop-browser__description;
-            font-size: 16px;
+            font-size: $unsupportedBrowserTextSmallFontSize;
         }
     }
 

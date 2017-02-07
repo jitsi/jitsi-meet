@@ -129,8 +129,13 @@ $linkFontColor: #489afe;
 $linkHoverFontColor: #287ade;
 
 /**
- * Landing
+ * Unsupported browser
  */
 $primaryUnsupportedBrowserButtonBgColor: #17a0db;
 $unsupportedBrowserButtonBgColor: #ff9a00;
 $unsupportedBrowserTextColor: #4a4a4a;
+$unsupportedBrowserTextSmallFontSize: 17px;
+$unsupportedBrowserTitleColor: #fff;
+$unsupportedBrowserTitleFontSize: 24px;
+$unsupportedDesktopBrowserTextColor: rgba(255, 255, 255, 0.7);
+$unsupportedDesktopBrowserTextFontSize: 21px;

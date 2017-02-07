@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -20,6 +22,8 @@ const _URLS = {
  * @class UnsupportedMobileBrowser
  */
 class UnsupportedMobileBrowser extends Component {
+    state: Object;
+
     /**
      * UnsupportedMobileBrowser component's property types.
      *

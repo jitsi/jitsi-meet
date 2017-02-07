@@ -1,8 +1,11 @@
-/* global interfaceConfig */
+/* @flow */
+
 import React, { Component } from 'react';
 
+declare var interfaceConfig: Object;
+
 /**
- * React component representing no mobile page.
+ * React component representing no mobile app page.
  *
  * @class NoMobileApp
  */
@@ -22,8 +25,8 @@ export default class NoMobileApp extends Component {
                     Video chat isn't available in the mobile apps
                 </h2>
                 <p className = { `${ns}__description` }>
-                    Please use { interfaceConfig.APP_NAME } on <br />
-                    Desktop top join calls.
+                    Video chat isn't available on mobile
+                    Desktop to join calls.
                 </p>
             </div>
         );

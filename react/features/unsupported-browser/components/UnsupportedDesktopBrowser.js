@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
@@ -8,7 +10,6 @@ import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
  * @class UnsupportedDesktopBrowser
  */
 export default class UnsupportedDesktopBrowser extends Component {
-
     /**
      * Renders the component.
      *
@@ -16,6 +17,7 @@ export default class UnsupportedDesktopBrowser extends Component {
      */
     render() {
         const ns = 'unsupported-desktop-browser';
+        const nsLink = `${ns}__link`;
 
         return (
             <div className = { ns }>
@@ -23,18 +25,18 @@ export default class UnsupportedDesktopBrowser extends Component {
                     It looks like you're using a browser we don't support.
                 </h2>
                 <p className = { `${ns}__description` }>
-                    Please try again with&nbsp;
+                    Please try again with the latest version of&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { CHROME } >Chrome</a>,&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { FIREFOX }>Firefox</a>,&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { SAFARI }>Safari</a> or&nbsp;
                     <a
-                        className = { `${ns}__link` }
+                        className = { nsLink }
                         href = { IE }>IE</a>.
                 </p>
             </div>
