@@ -33,6 +33,23 @@ if (minimize) {
             NODE_ENV: JSON.stringify('production')
         }
     }));
+
+    // While webpack will automatically insert UglifyJsPlugin when minimize is
+    // true, the defaults of UglifyJsPlugin in webpack 1 and webpack 2 are
+    // different. Explicitly state what we want even if we want defaults in
+    // order to prepare for webpack 2.
+    plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            // It is nice to see warnings from UglifyJsPlugin that something is
+            // unused and, consequently, is removed. The default is false in
+            // webpack 2.
+            warnings: true
+        },
+
+        // Use the source map to map error message locations to modules. The
+        // default is false in webpack 2.
+        sourceMap: true
+    }));
 }
 
 // The base Webpack configuration to bundle the JavaScript artifacts of
@@ -56,7 +73,7 @@ var config = {
             // as well.
 
             exclude: node_modules,
-            loader: 'babel',
+            loader: 'babel-loader',
             query: {
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
@@ -74,20 +91,20 @@ var config = {
             // to be available in such a form by multiple jitsi-meet
             // dependencies including AUI, lib-jitsi-meet.
 
-            loader: 'expose?$!expose?jQuery',
+            loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
             // Disable AMD for the Strophe.js library or its imports will fail
             // at runtime.
 
-            loader: 'imports?define=>false&this=>window',
+            loader: 'imports-loader?define=>false&this=>window',
             test: strophe
         }, {
             // Allow CSS to be imported into JavaScript.
 
             loaders: [
-                'style',
-                'css'
+                'style-loader',
+                'css-loader'
             ],
             test: /\.css$/
         }, {
@@ -95,7 +112,7 @@ var config = {
             // by CSS into the output path.
 
             include: aui_css,
-            loader: 'file',
+            loader: 'file-loader',
             query: {
                 context: aui_css,
                 name: '[path][name].[ext]'
@@ -104,7 +121,7 @@ var config = {
         }, {
             // Enable the import of JSON files.
 
-            loader: 'json',
+            loader: 'json-loader',
             exclude: node_modules,
             test: /\.json$/
         } ],
