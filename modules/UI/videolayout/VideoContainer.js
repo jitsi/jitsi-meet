@@ -164,12 +164,20 @@ export class VideoContainer extends LargeContainer {
         return getStreamOwnerId(this.stream);
     }
 
-    constructor (onPlay, emitter) {
+    /**
+     * Creates new VideoContainer instance.
+     * @param resizeContainer {Function} function that takes care of the size
+     * of the video container.
+     * @param emitter {EventEmitter} the event emitter that will be used by
+     * this instance.
+     */
+    constructor (resizeContainer, emitter) {
         super();
         this.stream = null;
         this.videoType = null;
         this.localFlipX = true;
         this.emitter = emitter;
+        this.resizeContainer = resizeContainer;
 
         this.isVisible = false;
 
@@ -199,8 +207,8 @@ export class VideoContainer extends LargeContainer {
         this.avatarHeight = $("#dominantSpeakerAvatar").height();
 
         var onPlayCallback = function (event) {
-            if (typeof onPlay === 'function') {
-                onPlay(event);
+            if (typeof resizeContainer === 'function') {
+                resizeContainer(event);
             }
             this.wasVideoRendered = true;
         }.bind(this);
@@ -336,8 +344,14 @@ export class VideoContainer extends LargeContainer {
      * @param {string} videoType video type
      */
     setStream (stream, videoType) {
-
         if (this.stream === stream) {
+            // Handles the use case for the remote participants when the
+            // videoType is received with delay after turning on/off the
+            // desktop sharing.
+            if(this.videoType !== videoType) {
+                this.videoType = videoType;
+                this.resizeContainer();
+            }
             return;
         } else {
             // The stream has changed, so the image will be lost on detach
