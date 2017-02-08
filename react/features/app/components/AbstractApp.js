@@ -38,7 +38,7 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Initializes a new App instance.
+     * Initializes a new AbstractApp instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -334,13 +334,7 @@ export class AbstractApp extends Component {
         // (2) A replace function would be provided to the Route in case it
         // chose to redirect to another path.
         this._onRouteEnter(route, nextState, pathname => {
-            // FIXME In order to minimize the modifications related to the
-            // removal of react-router, the Web implementation is provided
-            // bellow because the replace function is used on Web only at the
-            // time of this writing. Provide a platform-agnostic implementation.
-            // It should likely find the best Route matching the specified
-            // pathname and navigate to it.
-            window.location.pathname = pathname;
+            this._openURL(pathname);
 
             // Do not proceed with the route because it chose to redirect to
             // another path.

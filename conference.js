@@ -10,7 +10,7 @@ import Recorder from './modules/recorder/Recorder';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
-import {reportError} from './modules/util/helpers';
+import { reload, reportError } from './modules/util/helpers';
 
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
@@ -203,10 +203,8 @@ function maybeRedirectToWelcomePage(options) {
         // save whether current user is guest or not, before navigating
         // to close page
         window.sessionStorage.setItem('guest', APP.tokenData.isGuest);
-        if (options.feedbackSubmitted)
-            window.location.pathname = "close.html";
-        else
-            window.location.pathname = "close2.html";
+        assignWindowLocationPathname(
+                options.feedbackSubmitted ? "close.html" : "close2.html");
         return;
     }
 
@@ -219,9 +217,40 @@ function maybeRedirectToWelcomePage(options) {
     if (config.enableWelcomePage) {
         setTimeout(() => {
             APP.settings.setWelcomePageEnabled(true);
-            window.location.pathname = "/";
+            assignWindowLocationPathname('./');
         }, 3000);
     }
+}
+
+/**
+ * Assigns a specific pathname to window.location.pathname taking into account
+ * the context root of the Web app.
+ *
+ * @param {string} pathname - The pathname to assign to
+ * window.location.pathname. If the specified pathname is relative, the context
+ * root of the Web app will be prepended to the specified pathname before
+ * assigning it to window.location.pathname.
+ * @return {void}
+ */
+function assignWindowLocationPathname(pathname) {
+    const windowLocation = window.location;
+
+    if (!pathname.startsWith('/')) {
+        // XXX To support a deployment in a sub-directory, assume that the room
+        // (name) is the last non-directory component of the path (name).
+        let contextRoot = windowLocation.pathname;
+
+        contextRoot
+            = contextRoot.substring(0, contextRoot.lastIndexOf('/') + 1);
+
+        // A pathname equal to ./ specifies the current directory. It will be
+        // fine but pointless to include it because contextRoot is the current
+        // directory.
+        pathname.startsWith('./') && (pathname = pathname.substring(2));
+        pathname = contextRoot + pathname;
+    }
+
+    windowLocation.pathname = pathname;
 }
 
 /**
@@ -323,7 +352,7 @@ class ConferenceConnector {
         case ConferenceErrors.NOT_ALLOWED_ERROR:
             {
                 // let's show some auth not allowed page
-                window.location.pathname = "authError.html";
+                assignWindowLocationPathname('authError.html');
             }
             break;
 
@@ -388,7 +417,7 @@ class ConferenceConnector {
             APP.UI.notifyMaxUsersLimitReached();
             break;
         case ConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
-            window.location.reload();
+            reload();
             break;
         default:
             this._handleConferenceFailed(err, ...params);
@@ -1445,7 +1474,7 @@ export default {
         APP.UI.addListener(UIEvents.LOGOUT, () => {
             AuthHandler.logout(room).then(url => {
                 if (url) {
-                    window.location.href = url;
+                    UIUtil.redirect(url);
                 } else {
                     this.hangup(true);
                 }

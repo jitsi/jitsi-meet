@@ -23,6 +23,8 @@ export default class LargeVideoManager {
         this.eventEmitter = emitter;
 
         this.state = VIDEO_CONTAINER_TYPE;
+        // FIXME: We are passing resizeContainer as parameter which is calling
+        // Container.resize. Probably there's better way to implement this.
         this.videoContainer = new VideoContainer(
             () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);

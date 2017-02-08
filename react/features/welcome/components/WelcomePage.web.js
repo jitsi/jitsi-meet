@@ -76,15 +76,18 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Returns the domain name.
+     * Returns the URL of this WelcomePage for display purposes. For
+     * historic/legacy reasons, the return value is referred to as domain.
      *
      * @private
-     * @returns {string} Domain name.
+     * @returns {string} The URL of this WelcomePage for display purposes.
      */
     _getDomain() {
-        const windowLocation = window.location;
+        // As the returned URL is for display purposes, do not return the
+        // userinfo, query and fragment URI parts.
+        const wl = window.location;
 
-        return `${windowLocation.protocol}//${windowLocation.host}/`;
+        return `${wl.protocol}//${wl.host}${wl.pathname}`;
     }
 
     /**
