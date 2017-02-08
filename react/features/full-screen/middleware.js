@@ -3,6 +3,7 @@
 import { StatusBar } from 'react-native';
 import { Immersive } from 'react-native-immersive';
 
+import { APP_STATE_CHANGED } from '../background';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
@@ -23,9 +24,20 @@ import { MiddlewareRegistry } from '../base/redux';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    let fullScreen;
+    let fullScreen = null;
 
     switch (action.type) {
+    case APP_STATE_CHANGED: {
+        // Check if we just came back from the background and reenable full
+        // screen mode if necessary.
+        if (action.appState === 'active') {
+            const conference = store.getState()['features/base/conference'];
+
+            fullScreen = conference ? !conference.audioOnly : false;
+        }
+        break;
+    }
+
     case CONFERENCE_WILL_JOIN: {
         const conference = store.getState()['features/base/conference'];
 
@@ -36,10 +48,6 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         fullScreen = false;
-        break;
-
-    default:
-        fullScreen = null;
         break;
     }
 
