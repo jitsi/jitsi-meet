@@ -74,7 +74,7 @@ class UnsupportedMobileBrowser extends Component {
                 <div className = { `${ns}__body` }>
                     <img
                         className = { `${ns}__logo` }
-                        src = '/images/logo-blue.svg' />
+                        src = 'images/logo-blue.svg' />
                     <p className = { `${ns}__text` }>
                         You need <strong>Jitsi Meet</strong> to join a
                         conversation on your mobile
