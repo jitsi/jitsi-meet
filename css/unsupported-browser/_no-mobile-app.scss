@@ -9,12 +9,12 @@
         border-bottom: 1px solid $auiBorderColor;
         font-weight: 400;
         letter-spacing: 0.5px;
-        color: #fff;
+        color: $unsupportedBrowserTitleColor;
     }
 
     &__description {
         margin-top: 1em;
-        font-size: 17px;
+        font-size: $unsupportedBrowserTextSmallFontSize;
         font-weight: 300;
         letter-spacing: 1px;
     }
