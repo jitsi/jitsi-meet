@@ -15,8 +15,10 @@ export default class Root extends Component {
      * @inheritdoc
      */
     render() {
+
+        // Explicitly pass window location.
         return (
-            <App />
+            <App url = { window.location.toString() } />
         );
     }
 }
