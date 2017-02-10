@@ -1,5 +1,6 @@
 /* @flow */
 
+import React from 'react';
 import ReactDOM from 'react-dom';
 
 type functionToElement = () => ReactElement<*>;
@@ -18,7 +19,7 @@ export default {
      * @returns {void}
      */
     registerComponent(name: String, funcToElement: functionToElement) {
-        ReactDOM.render(funcToElement(),
+        ReactDOM.render(React.createElement(funcToElement()),
             document.getElementById('react'));
     }
 };

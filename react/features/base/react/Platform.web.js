@@ -18,5 +18,15 @@ export default {
      *
      * @type {string}
      */
-    OS
+    OS,
+
+    select(options: Object) {
+        const { web } = options;
+
+        if (typeof web === 'function') {
+            return web();
+        }
+
+        return web;
+    }
 };

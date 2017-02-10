@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { AppRegistry, Linking } from 'react-native';
+import { Linking } from 'react-native';
 
-import config from './config';
-import { App } from './features/app';
+import { App } from './App';
 
 /**
  * React Native doesn't support specifying props to the main/root component (in
@@ -11,7 +10,7 @@ import { App } from './features/app';
  *
  * @extends Component
  */
-class Root extends Component {
+export default class Root extends Component {
     /**
      * Initializes a new Root instance.
      *
@@ -63,12 +62,7 @@ class Root extends Component {
         }
 
         return (
-            <App
-                config = { config }
-                url = { this.state.url } />
+            <App url = { this.state.url } />
         );
     }
 }
-
-// Register the main Component.
-AppRegistry.registerComponent('App', () => Root);

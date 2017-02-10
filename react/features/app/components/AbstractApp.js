@@ -3,6 +3,8 @@ import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
+import config from '../../../config';
+
 import {
     localParticipantJoined,
     localParticipantLeft
@@ -28,7 +30,6 @@ export class AbstractApp extends Component {
      * @static
      */
     static propTypes = {
-        config: React.PropTypes.object,
         store: React.PropTypes.object,
 
         /**
@@ -156,10 +157,6 @@ export class AbstractApp extends Component {
     _createElement(component, props) {
         /* eslint-disable no-unused-vars, lines-around-comment */
         const {
-            // Don't propagate the config prop(erty) because the config is
-            // stored inside the Redux state and, thus, is visible to the
-            // children anyway.
-            config,
             // Don't propagate the dispatch and store props because they usually
             // come from react-redux and programmers don't really expect them to
             // be inherited but rather explicitly connected.
@@ -238,8 +235,6 @@ export class AbstractApp extends Component {
         // By default, open the domain configured in the configuration file
         // which may be the domain at which the whole server infrastructure is
         // deployed.
-        const config = this.props.config;
-
         if (typeof config === 'object') {
             const hosts = config.hosts;
 
