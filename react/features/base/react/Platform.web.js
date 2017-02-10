@@ -1,3 +1,5 @@
+/* @flow */
+
 const userAgent = navigator.userAgent;
 let OS;
 

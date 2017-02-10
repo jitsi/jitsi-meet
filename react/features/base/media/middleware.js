@@ -1,3 +1,5 @@
+/* @flow */
+
 import { CONFERENCE_LEFT } from '../conference';
 import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';

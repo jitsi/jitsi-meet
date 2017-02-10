@@ -1,3 +1,5 @@
+/* @flow */
+
 import { randomElement } from './randomUtil';
 
 /*
@@ -150,7 +152,7 @@ const _CONJUNCTION_ = [
  * Maps a string (category name) to the array of words from that category.
  * @const
  */
-const CATEGORIES = {
+const CATEGORIES: { [key: string]: Array<string> } = {
     _ADJECTIVE_,
     _ADVERB_,
     _PLURALNOUN_,

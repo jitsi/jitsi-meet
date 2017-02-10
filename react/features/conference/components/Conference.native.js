@@ -13,11 +13,14 @@ import { styles } from './styles';
 
 /**
  * The timeout in milliseconds after which the toolbar will be hidden.
+ *
+ * @private
+ * @type {number}
  */
-const TOOLBAR_TIMEOUT_MS = 5000;
+const _TOOLBAR_TIMEOUT_MS = 5000;
 
 /**
- * The conference page of the application.
+ * The conference page of the mobile (i.e. React Native) application.
  */
 class Conference extends Component {
     /**
@@ -220,7 +223,7 @@ class Conference extends Component {
         this._clearToolbarTimeout();
         if (toolbarVisible) {
             this._toolbarTimeout
-                = setTimeout(this._onClick, TOOLBAR_TIMEOUT_MS);
+                = setTimeout(this._onClick, _TOOLBAR_TIMEOUT_MS);
         }
     }
 }

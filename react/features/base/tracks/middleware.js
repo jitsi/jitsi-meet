@@ -1,3 +1,5 @@
+/* @flow */
+
 import { LIB_DISPOSED, LIB_INITIALIZED } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
@@ -67,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Track} The local <tt>Track</tt> associated with the specified
  * <tt>mediaType</tt> in the specified <tt>store</tt>.
  */
-function _getLocalTrack(store, mediaType) {
+function _getLocalTrack(store, mediaType: MEDIA_TYPE) {
     return getLocalTrack(store.getState()['features/base/tracks'], mediaType);
 }
 
@@ -82,7 +84,7 @@ function _getLocalTrack(store, mediaType) {
  * @private
  * @returns {void}
  */
-function _setMuted(store, action, mediaType) {
+function _setMuted(store, action, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
     localTrack && setTrackMuted(localTrack.jitsiTrack, action.muted);

@@ -1,9 +1,14 @@
-/* global APP, JitsiMeetJS */
+/* @flow */
+
+import type { Dispatch } from 'redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
 import './reducer';
+
+declare var APP: Object;
+declare var JitsiMeetJS: Object;
 
 const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -14,7 +19,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @returns {Promise<JitsiConnection>}
  */
 export function connect() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
 
         // XXX Lib-jitsi-meet does not accept uppercase letters.
@@ -88,7 +93,7 @@ export function disconnect() {
  *      domain: string
  *  }}
  */
-export function setDomain(domain) {
+export function setDomain(domain: string) {
     return {
         type: SET_DOMAIN,
         domain

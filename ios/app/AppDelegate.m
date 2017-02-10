@@ -8,10 +8,11 @@
  */
 
 #import "AppDelegate.h"
-#import "RCTAssert.h"
-#import "RCTBundleURLProvider.h"
-#import "RCTLinkingManager.h"
-#import "RCTRootView.h"
+
+#import <React/RCTAssert.h>
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTLinkingManager.h>
+#import <React/RCTRootView.h>
 
 /**
  * A <tt>RCTFatalHandler</tt> implementation which swallows JavaScript errors.

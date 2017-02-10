@@ -139,6 +139,7 @@ if (project.hasProperty('JITSI_SIGNING')
 }
 
 dependencies {
+    compile project(':react-native-immersive')
     compile project(':react-native-keep-awake')
     compile project(':react-native-vector-icons')
     compile project(':react-native-webrtc')

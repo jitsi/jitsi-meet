@@ -1,17 +1,17 @@
-Jitsi Meet API
-============
+# Jitsi Meet API
 
-You can use Jitsi Meet API to embed Jitsi Meet in to your application.
+You can use the Jitsi Meet API to embed Jitsi Meet in to your application.
 
-Installation
-==========
+## Installation
 
-To embed Jitsi Meet in your application you need to add Jitsi Meet API library
+To embed Jitsi Meet in your application you need to add the Jitsi Meet API library:
+
 ```javascript
 <script src="https://meet.jit.si/external_api.js"></script>
 ```
 
-The next step for embedding Jitsi Meet is to create the Jitsi Meet API object
+The next step for embedding Jitsi Meet is to create the Jitsi Meet API object:
+
 ```javascript
 <script>
     var domain = "meet.jit.si";
@@ -21,169 +21,174 @@ The next step for embedding Jitsi Meet is to create the Jitsi Meet API object
     var api = new JitsiMeetExternalAPI(domain, room, width, height);
 </script>
 ```
-You can paste that lines in your html code where you want to be placed the Jitsi Meet conference
-or you can specify the parent HTML element for the Jitsi Meet conference in the JitsiMeetExternalAPI
-constructor.
+
+You can use the above lines to indicate where exactly you want the Jitsi Meet conference to be placed in your HTML code,
+or you can specify the parent HTML element for the Jitsi Meet conference in the `JitsiMeetExternalAPI`
+constructor:
+
 ```javascript
-    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement);
+var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement);
 ```
-If you don't specify room the user will enter in new conference with random room name.
 
-You can overwrite options set in config.js and interface_config.js. For example, to enable the film-strip-only interface mode and disable simulcast, you can use:
+If you don't specify the room the user will enter in new conference with a random room name.
+
+You can overwrite options set in [config.js]() and [interface_config.js](). For example, to enable the film-strip-only interface mode and disable simulcast, you can use:
+
 ```javascript
-    var configOverwrite = {enableSimulcast: false};
-    var interfaceConfigOverwrite = {filmStripOnly: true};
-    var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite);
+var configOverwrite = {disableSimulcast: true};
+var interfaceConfigOverwrite = {filmStripOnly: true};
+var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite);
 ```
 
-Controlling embedded Jitsi Meet Conference
-=========
+## Controlling the embedded Jitsi Meet Conference
 
-You can control the embedded Jitsi Meet conference using the JitsiMeetExternalAPI object.
+You can control the embedded Jitsi Meet conference using the `JitsiMeetExternalAPI` object by using `executeCommand`:
 
-You can send command to Jitsi Meet conference using ```executeCommand```.
-```
+```javascript
 api.executeCommand(command, ...arguments)
 ```
-The ```command``` parameter is String object with the name of the command.
-Currently we support the following commands:
 
+The `command` parameter is String object with the name of the command. The following commands are currently supported:
 
-* **displayName** - sets the display name of the local participant. This command requires one argument -
-the new display name to be set
-```
+* **displayName** - Sets the display name of the local participant. This command requires one argument - the new display name to be set.
+```javascript
 api.executeCommand('displayName', 'New Nickname');
 ```
-* **toggleAudio** - mutes / unmutes the audio for the local participant. No arguments are required.
-```
+
+* **toggleAudio** - Mutes / unmutes the audio for the local participant. No arguments are required.
+```javascript
 api.executeCommand('toggleAudio')
 ```
-* **toggleVideo** - mutes / unmutes the video for the local participant. No arguments are required.
-```
+
+* **toggleVideo** - Mutes / unmutes the video for the local participant. No arguments are required.
+```javascript
 api.executeCommand('toggleVideo')
 ```
-* **toggleFilmStrip** - hides / shows the film strip. No arguments are required.
+
+* **toggleFilmStrip** - Hides / shows the film strip. No arguments are required.
+```javascript
+api.executeCommand('toggleFilmStrip')
 ```
-api.executeCommand('filmStrip')
-```
-* **toggleChat** - hides / shows the chat. No arguments are required.
-```
+
+* **toggleChat** - Hides / shows the chat. No arguments are required.
+```javascript
 api.executeCommand('toggleChat')
 ```
-* **toggleContactList** - hides / shows the contact list. No arguments are required.
-```
+
+* **toggleContactList** - Hides / shows the contact list. No arguments are required.
+```javascript
 api.executeCommand('toggleContactList')
 ```
 
-* **toggleShareScreen** - starts / stops the screen sharing. No arguments are required.
-```
+* **toggleShareScreen** - Starts / stops screen sharing. No arguments are required.
+```javascript
 api.executeCommand('toggleShareScreen')
 ```
 
 * **hangup** - Hangups the call. No arguments are required.
-```
+```javascript
 api.executeCommand('hangup')
 ```
 
-* **email** - Hangups the call. No arguments are required.
-```
+* **email** - Changes the local email address. This command requires one argument - the new email address to be set.
+```javascript
 api.executeCommand('email', 'example@example.com')
 ```
 
-* **avatarUrl** - Hangups the call. No arguments are required.
-```
-api.executeCommand('avatarUrl', 'avatarUrl')
+* **avatarUrl** - Changes the local avatar URL. This command requires one argument - the new avatar URL to be set.
+```javascript
+api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/3671647')
 ```
 
-You can also execute multiple commands using the method ```executeCommands```.
-```
+You can also execute multiple commands using the `executeCommands` method:
+```javascript
 api.executeCommands(commands)
 ```
-The ```commands``` parameter is object with keys the names of the commands and values the arguments for the
-commands.
-
-```
+The `commands` parameter is an object with the names of the commands as keys and the arguments for the commands asvalues:
+```javascript
 api.executeCommands({displayName: ['nickname'], toggleAudio: []});
 ```
 
-You can add event listeners to the embedded Jitsi Meet using ```addEventListener``` method.
-```
+You can add event listeners to the embedded Jitsi Meet using the `addEventListener` method.
+```javascript
 api.addEventListener(event, listener)
 ```
-The ```event``` parameter is String object with the name of the event.
-The ```listener``` paramenter is Function object with one argument that will be notified when the event occurs
-with data related to the event.
 
-Currently we support the following events:
+The `event` parameter is a String object with the name of the event.
+The `listener` parameter is a Function object with one argument that will be notified when the event occurs with data related to the event.
 
-* **incomingMessage** - event notifications about incoming
-messages. The listener will receive object with the following structure:
-```
+The following events are currently supported:
+
+* **incomingMessage** - Event notifications about incoming
+messages. The listener will receive an object with the following structure:
+```javascript
 {
-"from": from,//JID of the user that sent the message
-"nick": nick,//the nickname of the user that sent the message
-"message": txt//the text of the message
+"from": from,    // JID of the user that sent the message
+"nick": nick,    // the nickname of the user that sent the message
+"message": txt   // the text of the message
 }
 ```
-* **outgoingMessage** - event notifications about outgoing
-messages. The listener will receive object with the following structure:
-```
+
+* **outgoingMessage** - Event notifications about outgoing
+messages. The listener will receive an object with the following structure:
+```javascript
 {
-"message": txt//the text of the message
+"message": txt   // the text of the message
 }
 ```
+
 * **displayNameChanged** - event notifications about display name
-change. The listener will receive object with the following structure:
-```
+changes. The listener will receive an object with the following structure:
+```javascript
 {
-jid: jid,//the JID of the participant that changed his display name
-displayname: displayName //the new display name
+"jid": jid,                 // the JID of the participant that changed his display name
+"displayname": displayName  // the new display name
 }
 ```
-* **participantJoined** - event notifications about new participant.
-The listener will receive object with the following structure:
-```
+
+* **participantJoined** - event notifications about new participants who join the room. The listener will receive an object with the following structure:
+```javascript
 {
-jid: jid //the jid of the participant
+"jid": jid   // the JID of the participant
 }
 ```
-* **participantLeft** - event notifications about participant that left room.
-The listener will receive object with the following structure:
-```
+
+* **participantLeft** - event notifications about participants that leave the room. The listener will receive an object with the following structure:
+```javascript
 {
-jid: jid //the jid of the participant
+"jid": jid   // the JID of the participant
 }
 ```
-* **videoConferenceJoined** - event notifications fired when the local user has joined the video conference.
-The listener will receive object with the following structure:
-```
+
+* **videoConferenceJoined** - event notifications fired when the local user has joined the video conference. The listener will receive an object with the following structure:
+```javascript
 {
-roomName: room //the room name of the conference
+"roomName": room   // the room name of the conference
 }
 ```
-* **videoConferenceLeft** - event notifications fired when the local user has left the video conference.
-The listener will receive object with the following structure:
-```
+
+* **videoConferenceLeft** - event notifications fired when the local user has left the video conference. The listener will receive an object with the following structure:
+```javascript
 {
-roomName: room //the room name of the conference
+"roomName": room   // the room name of the conference
 }
 ```
 
 * **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
 
-You can also add multiple event listeners by using ```addEventListeners```.
+You can also add multiple event listeners by using `addEventListeners`.
 This method requires one argument of type Object. The object argument must
-have keys with the names of the events and values the listeners of the events.
+have the names of the events as keys and the listeners of the events as values.
 
-```
+```javascript
 function incomingMessageListener(object)
 {
-...
+// ...
 }
 
 function outgoingMessageListener(object)
 {
-...
+// ...
 }
 
 api.addEventListeners({
@@ -191,25 +196,28 @@ api.addEventListeners({
     outgoingMessage: outgoingMessageListener})
 ```
 
-If you want to remove a listener you can use ```removeEventListener``` method with argument the name of the event.
-```
+If you want to remove a listener you can use `removeEventListener` method with argument the name of the event.
+
+```javascript
 api.removeEventListener("incomingMessage");
 ```
 
-If you want to remove more than one event you can use ```removeEventListeners``` method with argument
- array with the names of the events.
-```
+If you want to remove more than one event you can use `removeEventListeners` method with an Array with the names of the events as an argument.
+```javascript
 api.removeEventListeners(["incomingMessage", "outgoingMessageListener"]);
 ```
 
-You can get the number of participants in the conference with the following code:
-```
+You can get the number of participants in the conference with the following API function:
+```javascript
 var numberOfParticipants = api.getNumberOfParticipants();
 ```
 
-You can remove the embedded Jitsi Meet Conference with the following code:
-```
+You can remove the embedded Jitsi Meet Conference with the following API function:
+```javascript
 api.dispose()
 ```
 
-It is a good practice to remove the conference before the page is unloaded.
+NOTE: It's a good practice to remove the conference before the page is unloaded.
+
+[config.js]: https://github.com/jitsi/jitsi-meet/blob/master/config.js
+[interface_config.js]: https://github.com/jitsi/jitsi-meet/blob/master/interface_config.js

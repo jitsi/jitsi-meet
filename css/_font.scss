@@ -25,6 +25,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-mic-camera-combined:before {
+  content: "\e903";
+}
 .icon-feedback:before {
   content: "\e91d";
 }

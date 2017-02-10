@@ -10,26 +10,22 @@
  * Builds and returns the room name.
  */
 function getRoomName () { // eslint-disable-line no-unused-vars
+    var getroomnode = config.getroomnode;
     var path = window.location.pathname;
     var roomName;
 
-    // determinde the room node from the url
-    // TODO: just the roomnode or the whole bare jid?
-    if (config.getroomnode && typeof config.getroomnode === 'function') {
+    // Determine the room node from the URL.
+    if (getroomnode && typeof getroomnode === 'function') {
         // custom function might be responsible for doing the pushstate
-        roomName = config.getroomnode(path);
+        roomName = getroomnode.call(config, path);
     } else {
-        /* fall back to default strategy
-         * this is making assumptions about how the URL->room mapping happens.
-         * It currently assumes deployment at root, with a rewrite like the
-         * following one (for nginx):
-         location ~ ^/([a-zA-Z0-9]+)$ {
-         rewrite ^/(.*)$ / break;
-         }
-        */
-        if (path.length > 1) {
-            roomName = path.substr(1).toLowerCase();
-        }
+        // Fall back to the default strategy of making assumptions about how the
+        // URL maps to the room (name). It currently assumes a deployment in
+        // which the last non-directory component of the path (name) is the
+        // room.
+        roomName
+            = path.substring(path.lastIndexOf('/') + 1).toLowerCase()
+                || undefined;
     }
 
     return roomName;

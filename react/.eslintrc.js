@@ -1,12 +1,16 @@
 module.exports = {
     'extends': '../.eslintrc.js',
-    'parser': 'babel-eslint',
     'parserOptions': {
         'ecmaFeatures': {
             'jsx': true
         }
     },
     'plugins': [
+
+        // ESLint's rule no-duplicate-imports does not understand Flow's import
+        // type. Fortunately, eslint-plugin-import understands Flow's import
+        // type.
+        'import',
         'jsdoc',
         'react',
         'react-native'
@@ -274,7 +278,6 @@ module.exports = {
         'no-confusing-arrow': 2,
         'no-const-assign': 2,
         'no-dupe-class-members': 2,
-        'no-duplicate-imports': 2,
         'no-new-symbol': 2,
         'no-restricted-imports': 0,
         'no-this-before-super': 2,
@@ -298,6 +301,8 @@ module.exports = {
         'sort-imports': 0,
         'template-curly-spacing': 2,
         'yield-star-spacing': 2,
+
+        'import/no-duplicates': 2,
 
         // JsDoc plugin rules group. The following rules are in addition to
         // valid-jsdoc rule.
