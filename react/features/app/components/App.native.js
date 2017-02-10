@@ -2,9 +2,9 @@
 
 import { Linking } from 'react-native';
 
-import { Platform } from '../../base/react';
 import '../../audio-mode';
 import '../../background';
+import { Platform } from '../../base/react';
 import '../../full-screen';
 import '../../wake-lock';
 

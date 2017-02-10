@@ -1,10 +1,10 @@
+import { ReducerRegistry } from '../base/redux';
+
 import {
     _SET_APP_STATE_LISTENER,
     _SET_BACKGROUND_VIDEO_MUTED,
     APP_STATE_CHANGED
 } from './actionTypes';
-import { ReducerRegistry } from '../base/redux';
-
 
 ReducerRegistry.register('features/background', (state = {}, action) => {
     switch (action.type) {

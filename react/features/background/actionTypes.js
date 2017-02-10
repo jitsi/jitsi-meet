@@ -1,38 +1,36 @@
 import { Symbol } from '../base/react';
 
 /**
- * Action to set the AppState API change event listener.
+ * The type of redux action to set the AppState API change event listener.
  *
  * {
  *      type: _SET_APP_STATE_LISTENER,
  *      listener: Function
  * }
  *
- * @private
+ * @protected
  */
 export const _SET_APP_STATE_LISTENER
     = Symbol('_SET_APP_STATE_LISTENER');
 
 /**
- * Action to signal video will be muted because the app is going to the
- * background.
+ * The type of redux action which signals that video will be muted because the
+ * app is going to the background.
  *
  * {
  *      type: _SET_BACKGROUND_VIDEO_MUTED,
  *      muted: boolean
  * }
  *
- * @private
+ * @protected
  */
 export const _SET_BACKGROUND_VIDEO_MUTED
     = Symbol('_SET_BACKGROUND_VIDEO_MUTED');
 
 /**
- * Action which signals that the App state has changed (in terms
- * of execution mode).
- *
- * The application state can be one of 'active', 'inactive' or 'background',
- * see: https://facebook.github.io/react-native/docs/appstate.html
+ * The type of redux action which signals that the app state has changed (in
+ * terms of execution mode). The app state can be one of 'active', 'inactive',
+ * or 'background'.
  *
  * {
  *      type: APP_STATE_CHANGED,
@@ -40,5 +38,6 @@ export const _SET_BACKGROUND_VIDEO_MUTED
  * }
  *
  * @public
+ * @see {@link https://facebook.github.io/react-native/docs/appstate.html}
  */
 export const APP_STATE_CHANGED = Symbol('APP_STATE_CHANGED');

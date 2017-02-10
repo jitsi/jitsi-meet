@@ -4,55 +4,58 @@ import { AppState } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import {
+    APP_WILL_MOUNT,
+    APP_WILL_UNMOUNT
+} from '../app';
+import { MiddlewareRegistry } from '../base/redux';
+
+import {
     _setAppStateListener,
-    appStateChanged,
-    setBackgroundVideoMuted
+    _setBackgroundVideoMuted,
+    appStateChanged
 } from './actions';
 import {
     _SET_APP_STATE_LISTENER,
     APP_STATE_CHANGED
 } from './actionTypes';
 
-import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from '../app';
-import { MiddlewareRegistry } from '../base/redux';
-
-
 /**
  * Middleware that captures App lifetime actions and subscribes to application
  * state changes. When the application state changes it will fire the action
- * requred to mute or unmute the local video in case the application goes to
- * the backgound or comes back from it.
+ * required to mute or unmute the local video in case the application goes to
+ * the background or comes back from it.
  *
- * @see https://facebook.github.io/react-native/docs/appstate.html
  * @param {Store} store - Redux store.
  * @returns {Function}
+ * @see {@link https://facebook.github.io/react-native/docs/appstate.html}
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case _SET_APP_STATE_LISTENER: {
+        // Remove the current/old AppState listener.
         const { appStateListener } = store.getState()['features/background'];
 
         if (appStateListener) {
             AppState.removeEventListener('change', appStateListener);
         }
+
+        // Add the new AppState listener.
         if (action.listener) {
             AppState.addEventListener('change', action.listener);
         }
         break;
     }
-    case APP_STATE_CHANGED:
-        _handleAppStateChange(store.dispatch, action.appState);
-        break;
-    case APP_WILL_MOUNT: {
-        const listener
-            = __onAppStateChanged.bind(undefined, store.dispatch);
 
-        store.dispatch(_setAppStateListener(listener));
+    case APP_STATE_CHANGED:
+        _appStateChanged(store.dispatch, action.appState);
         break;
-    }
+
+    case APP_WILL_MOUNT:
+        store.dispatch(
+                _setAppStateListener(
+                        _onAppStateChange.bind(undefined, store.dispatch)));
+        break;
+
     case APP_WILL_UNMOUNT:
         store.dispatch(_setAppStateListener(null));
         break;
@@ -61,36 +64,46 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
-
 /**
- * Handler for app state changes. If will fire the necessary actions for
- * local video to be muted when the app goes to the background, and to
- * unmute it when it comes back.
+ * Handles app state changes. Dispatches the necessary Redux actions for the
+ * local video to be muted when the app goes to the background, and to be
+ * unmuted when the app comes back.
  *
- * @param  {Dispatch} dispatch - Redux dispatch function.
- * @param  {string} appState - Current app state.
+ * @param {Dispatch} dispatch - Redux dispatch function.
+ * @param {string} appState - The current app state.
  * @private
  * @returns {void}
  */
-function _handleAppStateChange(dispatch: Dispatch<*>, appState: string) {
-    // XXX: we purposely don't handle the 'inactive' state.
-    if (appState === 'background') {
-        dispatch(setBackgroundVideoMuted(true));
-    } else if (appState === 'active') {
-        dispatch(setBackgroundVideoMuted(false));
+function _appStateChanged(dispatch: Dispatch<*>, appState: string) {
+    let muted;
+
+    switch (appState) {
+    case 'active':
+        muted = false;
+        break;
+
+    case 'background':
+        muted = true;
+        break;
+
+    case 'inactive':
+    default:
+        // XXX: We purposely don't handle the 'inactive' app state.
+        return;
     }
+
+    dispatch(_setBackgroundVideoMuted(muted));
 }
 
-
 /**
- * Handler called by React's AppState API indicating that the application state
- * has changed.
+ * Called by React Native's AppState API to notify that the application state
+ * has changed. Dispatches the change within the (associated) Redux store.
  *
- * @param  {Dispatch} dispatch - Redux dispatch function.
- * @param  {string} appState - The current application execution state.
+ * @param {Dispatch} dispatch - Redux dispatch function.
+ * @param {string} appState - The current application execution state.
  * @private
  * @returns {void}
  */
-function __onAppStateChanged(dispatch: Dispatch<*>, appState: string) {
+function _onAppStateChange(dispatch: Dispatch<*>, appState: string) {
     dispatch(appStateChanged(appState));
 }
