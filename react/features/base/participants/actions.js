@@ -7,8 +7,6 @@ import {
     PIN_PARTICIPANT
 } from './actionTypes';
 import { getLocalParticipant } from './functions';
-import './middleware';
-import './reducer';
 
 /**
  * Action to update a participant's email.

@@ -11,7 +11,6 @@ import {
     CONNECTION_FAILED,
     SET_DOMAIN
 } from './actionTypes';
-import './reducer';
 
 const JitsiConnectionEvents = JitsiMeetJS.events.connection;
 

@@ -10,8 +10,6 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
-import './middleware';
-import './reducer';
 
 const JitsiTrackErrors = JitsiMeetJS.errors.track;
 const JitsiTrackEvents = JitsiMeetJS.events.track;

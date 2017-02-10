@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
-import './reducer';
 
 declare var APP: Object;
 declare var JitsiMeetJS: Object;

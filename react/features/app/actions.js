@@ -8,7 +8,6 @@ import {
     _parseURIString,
     init
 } from './functions';
-import './reducer';
 
 /**
  * Temporary solution. Should dispatch actions related to initial settings of

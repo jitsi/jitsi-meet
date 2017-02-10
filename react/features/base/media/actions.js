@@ -8,8 +8,6 @@ import {
     SET_VIDEO_MUTED
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
-import './middleware';
-import './reducer';
 
 /**
  * Action to set the muted state of the local audio.

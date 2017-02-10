@@ -1,7 +1,6 @@
 import { setPassword } from '../base/conference';
 
 import { BEGIN_ROOM_LOCK_REQUEST, END_ROOM_LOCK_REQUEST } from './actionTypes';
-import './reducer';
 
 /**
  * Begins a (user) request to lock a specific conference/room.

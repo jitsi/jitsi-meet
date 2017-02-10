@@ -5,8 +5,6 @@ import {
     _SET_BACKGROUND_VIDEO_MUTED,
     APP_STATE_CHANGED
 } from './actionTypes';
-import './middleware';
-import './reducer';
 
 /**
  * Signals that the App state has changed (in terms of execution state). The

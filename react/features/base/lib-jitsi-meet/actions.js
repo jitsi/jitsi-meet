@@ -5,8 +5,6 @@ import {
     LIB_INITIALIZED,
     SET_CONFIG
 } from './actionTypes';
-import './middleware';
-import './reducer';
 
 /**
  * Disposes lib-jitsi-meet.
