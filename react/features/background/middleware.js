@@ -33,10 +33,10 @@ import { MiddlewareRegistry } from '../base/redux';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case _SET_APP_STATE_LISTENER: {
-        const bgState = store.getState()['features/background'];
+        const { appStateListener } = store.getState()['features/background'];
 
-        if (bgState.appStateListener) {
-            AppState.removeEventListener('change', bgState.listener);
+        if (appStateListener) {
+            AppState.removeEventListener('change', appStateListener);
         }
         if (action.listener) {
             AppState.addEventListener('change', action.listener);
