@@ -20,8 +20,6 @@ import {
 } from './actionTypes';
 import { EMAIL_COMMAND } from './constants';
 import { _addLocalTracksToConference } from './functions';
-import './middleware';
-import './reducer';
 
 /**
  * Adds conference (event) listeners.

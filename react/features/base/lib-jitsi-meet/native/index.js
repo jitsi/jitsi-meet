@@ -1,2 +1,2 @@
-require('./polyfills-browser');
-require('./polyfills-browserify');
+import './polyfills-browser';
+import './polyfills-browserify';

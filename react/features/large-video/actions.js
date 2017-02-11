@@ -6,8 +6,6 @@ import {
 } from '../base/tracks';
 
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from './actionTypes';
-import './middleware';
-import './reducer';
 
 /**
  * Signals conference to select a participant.

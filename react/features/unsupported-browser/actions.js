@@ -1,5 +1,4 @@
 import { DISMISS_MOBILE_APP_PROMO } from './actionTypes';
-import './reducer';
 
 /**
  * Returns a Redux action which signals that the UnsupportedMobileBrowser which
