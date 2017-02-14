@@ -66,7 +66,7 @@
     "eslint-plugin-jsdoc": "*",
     "eslint-plugin-react": "*",
     "eslint-plugin-react-native": "^2.2.1",
-    "expose-loader": "*",
+    "expose-loader": "0.7.1",
     "file-loader": "^0.10.0",
     "flow-bin": "^0.37.0",
     "haste-resolver-webpack-plugin": "^0.2.2",
