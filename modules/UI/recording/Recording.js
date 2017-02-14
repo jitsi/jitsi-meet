@@ -64,7 +64,9 @@ function _requestLiveStreamId() {
                     name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     autofocus><div style="text-align: right">
-                    <a class="link" target="_new" href="https://jitsi.org/live">`+streamIdHelp+`</a></div>`,
+                    <a class="link" target="_new" 
+                    href="https://jitsi.org/live">`+streamIdHelp+
+                    `</a></div>`,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},
