@@ -51,6 +51,9 @@ function _requestLiveStreamId() {
     const streamIdRequired
         = APP.translation.generateTranslationHTML(
             "liveStreaming.streamIdRequired");
+    const streamIdHelp
+        = APP.translation.generateTranslationHTML(
+            "liveStreaming.streamIdHelp");
 
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openDialogWithStates({
@@ -60,7 +63,8 @@ function _requestLiveStreamId() {
                     `<input  class="input-control"
                     name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
-                    autofocus>`,
+                    autofocus><div style="text-align: right">
+                    <a class="link" target="_new" href="https://jitsi.org/live">`+streamIdHelp+`</a></div>`,
                 persistent: false,
                 buttons: [
                     {title: cancelButton, value: false},
