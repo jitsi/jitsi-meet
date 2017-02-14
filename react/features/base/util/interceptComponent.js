@@ -16,6 +16,7 @@ declare var interfaceConfig: Object;
  * or not.
  *
  * @private
+ * @param {Object} state - Object containing current Redux state.
  * @returns {ReactElement|void}
  * @type {Function[]}
  */
@@ -27,6 +28,7 @@ const _RULES = [
      * app even if the browser supports the app (e.g. Google Chrome with
      * WebRTC support on Android).
      *
+     * @param {Object} state - Redux state of the app.
      * @returns {UnsupportedMobileBrowser|void} If the rule is satisfied then
      * we should intercept existing component by UnsupportedMobileBrowser.
      */
@@ -40,14 +42,17 @@ const _RULES = [
                     : NoMobileApp);
         }
     },
-    () => {
-        if (APP.unsupportedBrowser) {
-            const { isOldBrowser } = APP.unsupportedBrowser;
+    state => {
+        const {
+            isOldBrowser,
+            isPluginRequired
+        } = state['features/unsupported-browser'];
 
-            if (isOldBrowser) {
-                return UnsupportedDesktopBrowser;
-            }
+        if (isOldBrowser) {
+            return UnsupportedDesktopBrowser;
+        }
 
+        if (isPluginRequired) {
             return PluginRequiredBrowser;
         }
     }

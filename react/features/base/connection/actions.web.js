@@ -9,6 +9,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { SET_DOMAIN } from './actionTypes';
 
 import { appNavigate } from '../../app';
+import { setUnsupportedBrowser } from '../../unsupported-browser';
 
 declare var APP: Object;
 
@@ -34,13 +35,6 @@ export function connect() {
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
         return APP.conference.init({ roomName: room }).then(() => {
-            // If during the conference initialization was defined that browser
-            // doesn't support WebRTC then we should define which route
-            // to render.
-            if (APP.unsupportedBrowser) {
-                dispatch(appNavigate(room));
-            }
-
             if (APP.logCollector) {
                 // Start the LogCollector's periodic "store logs" task
                 APP.logCollector.start();
@@ -82,6 +76,25 @@ export function connect() {
                 APP.UI.hideRingOverLay();
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
                 logger.error(err);
+
+                dispatch(setUnsupportedBrowser(err));
+
+                // If during the conference initialization was defined that
+                // browser doesn't support WebRTC then we should define
+                // which route to render.
+                dispatch(appNavigate(room));
+
+                // Force reinitialization of the conference if WebRTC is ready.
+                if (err.webRTCReadyPromise) {
+                    err.webRTCReadyPromise.then(() => {
+                        // Setting plugin required flag to false because
+                        // it's already been installed.
+                        dispatch(setUnsupportedBrowser({
+                            isPluginRequired: false
+                        }));
+                        dispatch(appNavigate(room));
+                    });
+                }
             });
     };
 }
