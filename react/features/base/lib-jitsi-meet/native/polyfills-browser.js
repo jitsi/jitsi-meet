@@ -1,3 +1,5 @@
+import BackgroundTimer from 'react-native-background-timer';
+
 /**
  * Gets the first common prototype of two specified Objects (treating the
  * objects themselves as prototypes as well).
@@ -312,5 +314,19 @@ function _visitNode(node, callback) {
             });
         }
     }
+
+    // Timers
+    //
+    // React Native's timers won't run while the app is in the background,
+    // this is a known limitation. Replace them with a background-friendly
+    // alternative.
+    //
+    // Required by:
+    // - lib-jitsi-meet
+    // - Strophe
+    global.setTimeout = window.setTimeout = BackgroundTimer.setTimeout;
+    global.clearTimeout = window.clearTimeout = BackgroundTimer.clearTimeout;
+    global.setInterval = window.setInterval = BackgroundTimer.setInterval;
+    global.clearInterval = window.clearInterval = BackgroundTimer.clearInterval;
 
 })(global || window || this); // eslint-disable-line no-invalid-this
