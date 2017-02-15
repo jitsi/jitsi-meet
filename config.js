@@ -80,5 +80,14 @@ var config = { // eslint-disable-line no-unused-vars
     // disables or enables RTX (RFC 4588) (defaults to false).
     disableRtx: false,
     // Sets the preferred resolution (height) for local video. Defaults to 360.
-    resolution: 720
+    resolution: 720,
+    // Enables peer to peer mode. When enabled system will try to establish
+    // direct connection given that there are exactly 2 participants in
+    // the room. If that succeeds the conference will stop sending data through
+    // the JVB and use the peer to peer connection instead. When 3rd participant
+    // joins the conference will be moved back to the JVB connection.
+    //enableP2P: true
+    // How long we're going to wait, before going back to P2P after
+    // the 3rd participant has left the conference (to filter out page reload)
+    //backToP2PDelay: 5
 };
