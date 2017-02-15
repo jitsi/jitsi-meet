@@ -143,11 +143,49 @@ function _visitNode(node, callback) {
         const elementPrototype
             = Object.getPrototypeOf(document.documentElement);
 
-        if (elementPrototype
-                && typeof elementPrototype.querySelector === 'undefined') {
-            elementPrototype.querySelector = function(selectors) {
-                return _querySelector(this, selectors);
-            };
+        if (elementPrototype) {
+            if (typeof elementPrototype.querySelector === 'undefined') {
+                elementPrototype.querySelector = function(selectors) {
+                    return _querySelector(this, selectors);
+                };
+            }
+
+            // Element.innerHTML
+            //
+            // Required by:
+            // - jQuery's .append method
+            if (!elementPrototype.hasOwnProperty('innerHTML')) {
+                Object.defineProperty(elementPrototype, 'innerHTML', {
+                    get() {
+                        return this.childNodes.toString();
+                    },
+
+                    set(innerHTML) {
+                        // MDN says: removes all of element's children, parses
+                        // the content string and assigns the resulting nodes as
+                        // children of the element.
+
+                        // Remove all of element's children.
+                        this.textContent = '';
+
+                        // Parse the content string.
+                        const d
+                            = new DOMParser().parseFromString(
+                                    `<div>${innerHTML}</div>`,
+                                    'text/xml');
+
+                        // Assign the resulting nodes as children of the
+                        // element.
+                        const documentElement = d.documentElement;
+                        let child;
+
+                        // eslint-disable-next-line no-cond-assign
+                        while (child = documentElement.firstChild) {
+                            this.appendChild(child);
+                        }
+                    }
+                });
+            }
         }
 
         // FIXME There is a weird infinite loop related to console.log and
