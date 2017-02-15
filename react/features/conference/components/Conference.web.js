@@ -47,6 +47,9 @@ class Conference extends Component {
     componentDidMount() {
         APP.UI.start();
 
+        APP.UI.registerListeners();
+        APP.UI.bindEvents();
+
         // XXX Temporary solution until we add React translation.
         APP.translation.translateElement($('#videoconference_page'));
 
@@ -60,6 +63,9 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
+        APP.UI.unregisterListeners();
+        APP.UI.unbindEvents();
+
         APP.conference.isJoined() && this.props.dispatch(disconnect());
     }
 

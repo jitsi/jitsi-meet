@@ -304,9 +304,7 @@ UI.mucJoined = function () {
 /***
  * Handler for toggling filmstrip
  */
-UI.handleToggleFilmStrip = () => {
-    UI.toggleFilmStrip();
-};
+UI.handleToggleFilmStrip = () => UI.toggleFilmStrip();
 
 /**
  * Sets tooltip defaults.
@@ -322,69 +320,6 @@ function _setTooltipDefaults() {
         hideOnClick: true,
         aria: true
     };
-}
-
-/**
- * Setup some UI event listeners.
- */
-function registerListeners() {
-
-    UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
-        if (etherpadManager) {
-            etherpadManager.toggleEtherpad();
-        }
-    });
-
-    UI.addListener(UIEvents.SHARED_VIDEO_CLICKED, function () {
-        if (sharedVideoManager) {
-            sharedVideoManager.toggleSharedVideo();
-        }
-    });
-
-    UI.addListener(UIEvents.TOGGLE_FULLSCREEN, UI.toggleFullScreen);
-
-    UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
-
-    UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
-        UI.toggleSidePanel("settings_container");
-    });
-
-    UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
-
-    UI.addListener( UIEvents.TOGGLE_PROFILE, function() {
-        if(APP.tokenData.isGuest)
-            UI.toggleSidePanel("profile_container");
-    });
-
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
-
-    UI.addListener(UIEvents.FOLLOW_ME_ENABLED, function (isEnabled) {
-        if (followMeHandler)
-            followMeHandler.enableFollowMe(isEnabled);
-    });
-}
-
-/**
- * Setup some DOM event listeners.
- */
-function bindEvents() {
-    function onResize() {
-        SideContainerToggler.resize();
-        VideoLayout.resizeVideoArea();
-    }
-
-    // Resize and reposition videos in full screen mode.
-    $(document).on(
-        'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-        () => {
-            eventEmitter.emit(  UIEvents.FULLSCREEN_TOGGLED,
-                                UIUtil.isFullScreen());
-
-            onResize();
-        }
-    );
-
-    $(window).resize(onResize);
 }
 
 /**
@@ -410,8 +345,6 @@ UI.start = function () {
     // Set the defaults for tooltips.
     _setTooltipDefaults();
 
-    registerListeners();
-
     ToolbarToggler.init();
     SideContainerToggler.init(eventEmitter);
     FilmStrip.init(eventEmitter);
@@ -422,7 +355,6 @@ UI.start = function () {
     }
     VideoLayout.resizeVideoArea(true, true);
 
-    bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         let debouncedShowToolbar = debounce(() => {
@@ -480,17 +412,57 @@ UI.start = function () {
     if(APP.tokenData.callee) {
         UI.showRingOverlay();
     }
+};
 
-    // Return true to indicate that the UI has been fully started and
-    // conference ready.
-    return true;
+/**
+ * Setup some UI event listeners.
+ */
+UI.registerListeners
+    = () => UIListeners.forEach((value, key) => UI.addListener(key, value));
+
+/**
+ * Unregister some UI event listeners.
+ */
+UI.unregisterListeners
+    = () => UIListeners.forEach((value, key) => UI.removeListener(key, value));
+
+/**
+ * Setup some DOM event listeners.
+ */
+UI.bindEvents = () => {
+    function onResize() {
+        SideContainerToggler.resize();
+        VideoLayout.resizeVideoArea();
+    }
+
+    // Resize and reposition videos in full screen mode.
+    $(document).on(
+            'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+            () => {
+                eventEmitter.emit(
+                        UIEvents.FULLSCREEN_TOGGLED,
+                        UIUtil.isFullScreen());
+                onResize();
+            });
+
+    $(window).resize(onResize);
+};
+
+/**
+ * Unbind some DOM event listeners.
+ */
+UI.unbindEvents = () => {
+    $(document).off(
+            'webkitfullscreenchange mozfullscreenchange fullscreenchange');
+
+    $(window).off('resize');
 };
 
 /**
  * Show local stream on UI.
  * @param {JitsiTrack} track stream to show
  */
-UI.addLocalStream = function (track) {
+UI.addLocalStream = track => {
     switch (track.getType()) {
     case 'audio':
         VideoLayout.changeLocalAudio(track);
@@ -509,31 +481,25 @@ UI.addLocalStream = function (track) {
  * Show remote stream on UI.
  * @param {JitsiTrack} track stream to show
  */
-UI.addRemoteStream = function (track) {
-    VideoLayout.onRemoteStreamAdded(track);
-};
+UI.addRemoteStream = track => VideoLayout.onRemoteStreamAdded(track);
 
 /**
  * Removed remote stream from UI.
  * @param {JitsiTrack} track stream to remove
  */
-UI.removeRemoteStream = function (track) {
-    VideoLayout.onRemoteStreamRemoved(track);
-};
+UI.removeRemoteStream = track => VideoLayout.onRemoteStreamRemoved(track);
 
 /**
  * Update chat subject.
  * @param {string} subject new chat subject
  */
-UI.setSubject = function (subject) {
-    Chat.setSubject(subject);
-};
+UI.setSubject = subject => Chat.setSubject(subject);
 
 /**
  * Setup and show Etherpad.
  * @param {string} name etherpad id
  */
-UI.initEtherpad = function (name) {
+UI.initEtherpad = name => {
     if (etherpadManager || !config.etherpad_base || !name) {
         return;
     }
@@ -547,9 +513,7 @@ UI.initEtherpad = function (name) {
  * Returns the shared document manager object.
  * @return {EtherpadManager} the shared document manager object
  */
-UI.getSharedDocumentManager = function () {
-    return etherpadManager;
-};
+UI.getSharedDocumentManager = () => etherpadManager;
 
 /**
  * Show user on UI.
@@ -607,15 +571,14 @@ UI.removeUser = function (id, displayName) {
  * @param {string} id user id
  * @param {string} newVideoType new videotype
  */
-UI.onPeerVideoTypeChanged = (id, newVideoType) => {
-    VideoLayout.onVideoTypeChanged(id, newVideoType);
-};
+UI.onPeerVideoTypeChanged
+    = (id, newVideoType) => VideoLayout.onVideoTypeChanged(id, newVideoType);
 
 /**
  * Update local user role and show notification if user is moderator.
  * @param {boolean} isModerator if local user is moderator or not
  */
-UI.updateLocalRole = function (isModerator) {
+UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
 
     Toolbar.showSipCallButton(isModerator);
@@ -638,7 +601,7 @@ UI.updateLocalRole = function (isModerator) {
  * and notifies user who is the moderator
  * @param user to check for moderator
  */
-UI.updateUserRole = function (user) {
+UI.updateUserRole = user => {
     VideoLayout.showModeratorIndicator();
 
     // We don't need to show moderator notifications when the focus (moderator)
@@ -663,13 +626,10 @@ UI.updateUserRole = function (user) {
     }
 };
 
-
 /**
  * Toggles smileys in the chat.
  */
-UI.toggleSmileys = function () {
-    Chat.toggleSmileys();
-};
+UI.toggleSmileys = () => Chat.toggleSmileys();
 
 /**
  * Toggles film strip.
@@ -684,32 +644,24 @@ UI.toggleFilmStrip = function () {
  * Indicates if the film strip is currently visible or not.
  * @returns {true} if the film strip is currently visible, otherwise
  */
-UI.isFilmStripVisible = function () {
-    return FilmStrip.isFilmStripVisible();
-};
+UI.isFilmStripVisible = () => FilmStrip.isFilmStripVisible();
 
 /**
  * Toggles chat panel.
  */
-UI.toggleChat = function () {
-    UI.toggleSidePanel("chat_container");
-};
+UI.toggleChat = () => UI.toggleSidePanel("chat_container");
 
 /**
  * Toggles contact list panel.
  */
-UI.toggleContactList = function () {
-    UI.toggleSidePanel("contacts_container");
-};
+UI.toggleContactList = () => UI.toggleSidePanel("contacts_container");
 
 /**
  * Toggles the given side panel.
  *
  * @param {String} sidePanelId the identifier of the side panel to toggle
  */
-UI.toggleSidePanel = function (sidePanelId) {
-    SideContainerToggler.toggle(sidePanelId);
-};
+UI.toggleSidePanel = sidePanelId => SideContainerToggler.toggle(sidePanelId);
 
 
 /**
@@ -1374,9 +1326,7 @@ UI.onSharedVideoStop = function (id, attributes) {
  * @param {boolean} enabled indicates if the camera button should be enabled
  * or disabled
  */
-UI.setCameraButtonEnabled = function (enabled) {
-    Toolbar.setVideoIconEnabled(enabled);
-};
+UI.setCameraButtonEnabled = enabled => Toolbar.setVideoIconEnabled(enabled);
 
 /**
  * Enables / disables microphone toolbar button.
@@ -1384,9 +1334,7 @@ UI.setCameraButtonEnabled = function (enabled) {
  * @param {boolean} enabled indicates if the microphone button should be
  * enabled or disabled
  */
-UI.setMicrophoneButtonEnabled = function (enabled) {
-    Toolbar.setAudioIconEnabled(enabled);
-};
+UI.setMicrophoneButtonEnabled = enabled => Toolbar.setAudioIconEnabled(enabled);
 
 UI.showRingOverlay = function () {
     RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);
@@ -1415,15 +1363,42 @@ UI.isOverlayVisible = function () {
  *
  * @returns {*|boolean} {true} if the ring overlay is visible, {false} otherwise
  */
-UI.isRingOverlayVisible = function () {
-    return RingOverlay.isVisible();
-};
+UI.isRingOverlayVisible = () => RingOverlay.isVisible();
 
 /**
  * Handles user's features changes.
  */
-UI.onUserFeaturesChanged = function (user) {
-    VideoLayout.onUserFeaturesChanged(user);
-};
+UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
+
+const UIListeners = new Map([
+    [
+        UIEvents.ETHERPAD_CLICKED,
+        () => etherpadManager && etherpadManager.toggleEtherpad()
+    ], [
+        UIEvents.SHARED_VIDEO_CLICKED,
+        () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
+    ], [
+        UIEvents.TOGGLE_FULLSCREEN,
+        UI.toggleFullScreen
+    ], [
+        UIEvents.TOGGLE_CHAT,
+        UI.toggleChat
+    ], [
+        UIEvents.TOGGLE_SETTINGS,
+        () => UI.toggleSidePanel("settings_container")
+    ], [
+        UIEvents.TOGGLE_CONTACT_LIST,
+        UI.toggleContactList
+    ], [
+        UIEvents.TOGGLE_PROFILE,
+        () => APP.tokenData.isGuest && UI.toggleSidePanel("profile_container")
+    ], [
+        UIEvents.TOGGLE_FILM_STRIP,
+        UI.handleToggleFilmStrip
+    ], [
+        UIEvents.FOLLOW_ME_ENABLED,
+        enabled => (followMeHandler && followMeHandler.enableFollowMe(enabled))
+    ]
+]);
 
 module.exports = UI;
