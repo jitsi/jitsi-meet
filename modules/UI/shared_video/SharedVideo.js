@@ -541,7 +541,7 @@ export default class SharedVideoManager {
         if(show)
             this.showSharedVideoMutedPopup(false);
 
-        UIUtil.animateShowElement($("#micMutedPopup"), show, 5000);
+        APP.UI.showCustomToolbarPopup('#micMutedPopup', show, 5000);
     }
 
     /**
@@ -554,7 +554,7 @@ export default class SharedVideoManager {
         if(show)
             this.showMicMutedPopup(false);
 
-        UIUtil.animateShowElement($("#sharedVideoMutedPopup"), show, 5000);
+        APP.UI.showCustomToolbarPopup('#sharedVideoMutedPopup', show, 5000);
     }
 }
 
