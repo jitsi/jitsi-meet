@@ -713,6 +713,17 @@ UI.inputDisplayNameHandler = function (newDisplayName) {
 };
 
 /**
+ * Show custom popup/tooltip for a specified button.
+ * @param popupSelectorID the selector id of the popup to show
+ * @param show true or false/show or hide the popup
+ * @param timeout the time to show the popup
+ */
+UI.showCustomToolbarPopup = function (popupSelectorID, show, timeout) {
+    eventEmitter.emit(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
+        popupSelectorID, show, timeout);
+};
+
+/**
  * Return the type of the remote video.
  * @param jid the jid for the remote video
  * @returns the video type video or screen.

@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig, JitsiMeetJS */
+/* global AJS, APP, $, config, interfaceConfig, JitsiMeetJS */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
@@ -26,8 +26,8 @@ const buttonHandlers = {
             if (sharedVideoManager
                 && sharedVideoManager.isSharedVideoVolumeOn()
                 && !sharedVideoManager.isSharedVideoOwner()) {
-                UIUtil.animateShowElement(
-                    $("#unableToUnmutePopup"), true, 5000);
+                APP.UI.showCustomToolbarPopup(
+                    '#unableToUnmutePopup', true, 5000);
             }
             else {
                 JitsiMeetJS.analytics.sendEvent('toolbar.audio.unmuted');
@@ -120,19 +120,19 @@ const defaultToolbarButtons = {
         shortcutDescription: "keyboardShortcuts.mute",
         popups: [
             {
-                id: "micMutedPopup",
-                className: "loginmenu",
-                dataAttr: "[html]toolbar.micMutedPopup"
+                id: 'micMutedPopup',
+                className: 'loginmenu',
+                dataAttr: '[title]toolbar.micMutedPopup'
             },
             {
-                id: "unableToUnmutePopup",
-                className: "loginmenu",
-                dataAttr: "[html]toolbar.unableToUnmutePopup"
+                id: 'unableToUnmutePopup',
+                className: 'loginmenu',
+                dataAttr: '[title]toolbar.unableToUnmutePopup'
             },
             {
-                id: "talkWhileMutedPopup",
-                className: "loginmenu",
-                dataAttr: "[html]toolbar.talkWhileMutedPopup"
+                id: 'talkWhileMutedPopup',
+                className: 'loginmenu',
+                dataAttr: '[title]toolbar.talkWhileMutedPopup'
             }
         ],
         content: "Mute / Unmute",
@@ -263,11 +263,14 @@ const defaultToolbarButtons = {
         id: 'toolbar_button_sharedvideo',
         tooltipKey: 'toolbar.sharedvideo',
         className: 'button icon-shared-video',
-        html: `<ul id="sharedVideoMutedPopup" 
-                   class="loginmenu extendedToolbarPopup">
-                   <li data-i18n="[html]toolbar.sharedVideoMutedPopup"></li>
-               </ul>
-`
+        popups: [
+            {
+                id: 'sharedVideoMutedPopup',
+                className: 'loginmenu extendedToolbarPopup',
+                dataAttr: '[title]toolbar.sharedVideoMutedPopup',
+                dataAttrPosition: 'w'
+            }
+        ]
     },
     'sip': {
         id: 'toolbar_button_sip',
@@ -356,6 +359,12 @@ Toolbar = {
         APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED,
             (isFullScreen) => {
                 Toolbar._handleFullScreenToggled(isFullScreen);
+            });
+
+        APP.UI.addListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
+            (toolbarButtonID, popupID, show, timeout) => {
+                Toolbar._showCustomToolbarPopup(
+                    toolbarButtonID, popupID, show, timeout);
             });
 
         if(!APP.tokenData.isGuest) {
@@ -724,17 +733,47 @@ Toolbar = {
 
     _addPopups(buttonElement, popups = []) {
         popups.forEach((popup) => {
-            let popupElement = document.createElement("ul");
+            const popupElement = document.createElement('div');
             popupElement.id = popup.id;
             popupElement.className = popup.className;
-            let liElement = document.createElement("li");
-            liElement.setAttribute("data-i18n", popup.dataAttr);
-            popupElement.appendChild(liElement);
+            popupElement.setAttribute('data-i18n', popup.dataAttr);
+
+            let gravity = 'n';
+            if (popup.dataAttrPosition)
+                gravity = popup.dataAttrPosition;
+            popupElement.setAttribute('data-tooltip', gravity);
+
             buttonElement.appendChild(popupElement);
         });
     },
 
     /**
+     * Show custom popup/tooltip for a specified button.
+     * @param popupSelectorID the selector id of the popup to show
+     * @param show true or false/show or hide the popup
+     * @param timeout the time to show the popup
+     */
+    _showCustomToolbarPopup(popupSelectorID, show, timeout) {
+
+        const gravity = $(popupSelectorID).attr('data-tooltip');
+        AJS.$(popupSelectorID)
+            .tooltip({
+                trigger: 'manual',
+                html: true,
+                gravity: gravity,
+                title: 'title'});
+        if (show) {
+            AJS.$(popupSelectorID).tooltip('show');
+            setTimeout(function () {
+                // hide the tooltip
+                AJS.$(popupSelectorID).tooltip('hide');
+            }, timeout);
+        } else {
+            AJS.$(popupSelectorID).tooltip('hide');
+        }
+    },
+
+/**
      * Sets the toggled state of the given element depending on the isToggled
      * parameter.
      *
