@@ -81,5 +81,9 @@ var config = { // eslint-disable-line no-unused-vars
     // disables or enables RTX (RFC 4588).
     disableRtx: true,
     // Sets the preferred resolution (height) for local video. Defaults to 360.
-    resolution: 720
+    resolution: 720,
+    // Enables peer to peer
+    enableP2P: false,
+    // Disables automatic switching between P2P and JVB (for tests only)
+    //disableAutoP2P: true
 };
