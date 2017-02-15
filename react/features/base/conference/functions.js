@@ -19,8 +19,8 @@ export function _addLocalTracksToConference(conference, localTracks) {
         // XXX The library lib-jitsi-meet may be draconian, for example, when
         // adding one and the same video track multiple times.
         if (conferenceLocalTracks.indexOf(track) === -1) {
-            promises.push(conference.addTrack(track)
-                .catch(err => {
+            promises.push(
+                conference.addTrack(track).catch(err => {
                     _reportError(
                         'Failed to add local track to conference',
                         err);

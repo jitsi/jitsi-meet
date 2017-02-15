@@ -1,4 +1,5 @@
 import BackgroundTimer from 'react-native-background-timer';
+import 'url-polyfill'; // Polyfill for URL constructor
 
 /**
  * Gets the first common prototype of two specified Objects (treating the
@@ -86,10 +87,6 @@ function _visitNode(node, callback) {
 }
 
 (global => {
-
-    // Polyfill for URL constructor
-    require('url-polyfill');
-
     const DOMParser = require('xmldom').DOMParser;
 
     // addEventListener
@@ -110,8 +107,8 @@ function _visitNode(node, callback) {
     if (typeof global.document === 'undefined') {
         const document
             = new DOMParser().parseFromString(
-            /* source */ '<html><head></head><body></body></html>',
-            /* mineType */ 'text/xml');
+                    '<html><head></head><body></body></html>',
+                    'text/xml');
 
         // document.addEventListener
         //
@@ -334,17 +331,17 @@ function _visitNode(node, callback) {
         //
         // Required by:
         // - Strophe
-        if (prototype && typeof prototype.responseXML === 'undefined') {
+        if (prototype && !prototype.hasOwnProperty('responseXML')) {
             Object.defineProperty(prototype, 'responseXML', {
-                configurable: true,
-                enumerable: true,
                 get() {
                     const responseText = this.responseText;
                     let responseXML;
 
                     if (responseText) {
-                        responseXML = new DOMParser()
-                            .parseFromString(responseText);
+                        responseXML
+                            = new DOMParser().parseFromString(
+                                    responseText,
+                                    'text/xml');
                     }
 
                     return responseXML;
@@ -355,16 +352,16 @@ function _visitNode(node, callback) {
 
     // Timers
     //
-    // React Native's timers won't run while the app is in the background,
-    // this is a known limitation. Replace them with a background-friendly
+    // React Native's timers won't run while the app is in the background, this
+    // is a known limitation. Replace them with a background-friendly
     // alternative.
     //
     // Required by:
     // - lib-jitsi-meet
     // - Strophe
-    global.setTimeout = window.setTimeout = BackgroundTimer.setTimeout;
     global.clearTimeout = window.clearTimeout = BackgroundTimer.clearTimeout;
-    global.setInterval = window.setInterval = BackgroundTimer.setInterval;
     global.clearInterval = window.clearInterval = BackgroundTimer.clearInterval;
+    global.setInterval = window.setInterval = BackgroundTimer.setInterval;
+    global.setTimeout = window.setTimeout = BackgroundTimer.setTimeout;
 
 })(global || window || this); // eslint-disable-line no-invalid-this
