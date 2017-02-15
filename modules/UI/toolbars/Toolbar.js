@@ -328,6 +328,39 @@ function getToolbarButtonPlace (btn) {
         'extended';
 }
 
+/**
+ * Event handler for side toolbar container toggled event.
+ *
+ * @param {string} containerId - ID of the container.
+ * @param {boolean} isVisible - Flag showing whether container
+ * is visible.
+ * @returns {void}
+ */
+function onSideToolbarContainerToggled(containerId, isVisible) {
+    Toolbar._handleSideToolbarContainerToggled(containerId, isVisible);
+}
+
+/**
+ * Event handler for local raise hand changed event.
+ *
+ * @param {boolean} isRaisedHand - Flag showing whether hand is raised.
+ * @returns {void}
+ */
+function onLocalRaiseHandChanged(isRaisedHand) {
+    Toolbar._setToggledState("toolbar_button_raisehand", isRaisedHand);
+}
+
+/**
+ * Event handler for full screen toggled event.
+ *
+ * @param {boolean} isFullScreen - Flag showing whether app in full
+ * screen mode.
+ * @returns {void}
+ */
+function onFullScreenToggled(isFullScreen) {
+    Toolbar._handleFullScreenToggled(isFullScreen);
+}
+
 Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
@@ -335,6 +368,9 @@ Toolbar = {
         this.enabled = true;
         this.toolbarSelector = $("#mainToolbarContainer");
         this.extendedToolbarSelector = $("#extendedToolbar");
+
+        // Unregister listeners in case of reinitialization.
+        this.unregisterListeners();
 
         // Initialise the toolbar buttons.
         // The main toolbar will only take into account
@@ -345,21 +381,7 @@ Toolbar = {
 
         this._setButtonHandlers();
 
-        APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
-            (containerId, isVisible) => {
-                Toolbar._handleSideToolbarContainerToggled( containerId,
-                                                            isVisible);
-            });
-
-        APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-            (isRaisedHand) => {
-                this._setToggledState("toolbar_button_raisehand", isRaisedHand);
-            });
-
-        APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED,
-            (isFullScreen) => {
-                Toolbar._handleFullScreenToggled(isFullScreen);
-            });
+        this.registerListeners();
 
         APP.UI.addListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
             (popupID, show, timeout) => {
@@ -371,6 +393,35 @@ Toolbar = {
             UIUtil.removeTooltip(
                 document.getElementById('toolbar_button_profile'));
         }
+    },
+    /**
+     *  Register listeners for UI events of toolbar component.
+     *
+     *  @returns {void}
+     */
+    registerListeners() {
+        APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            onSideToolbarContainerToggled);
+
+        APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
+            onLocalRaiseHandChanged);
+
+        APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED, onFullScreenToggled);
+    },
+    /**
+     *  Unregisters handlers for UI events of Toolbar component.
+     *
+     *  @returns {void}
+     */
+    unregisterListeners() {
+        APP.UI.removeListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            onSideToolbarContainerToggled);
+
+        APP.UI.removeListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
+            onLocalRaiseHandChanged);
+
+        APP.UI.removeListener(UIEvents.FULLSCREEN_TOGGLED,
+            onFullScreenToggled);
     },
     /**
      * Enables / disables the toolbar.
