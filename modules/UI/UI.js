@@ -84,57 +84,6 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
     = "dialog.micNotSendingData";
 
 /**
- * Prompt user for nickname.
- */
-function promptDisplayName() {
-    let labelKey = 'dialog.enterDisplayName';
-    let message = (
-        `<div class="form-control">
-            <label data-i18n="${labelKey}" class="form-control__label"></label>
-            <input name="displayName" type="text"
-               data-i18n="[placeholder]defaultNickname"
-               class="input-control" autofocus>
-         </div>`
-    );
-
-    // Don't use a translation string, because we're too early in the call and
-    // the translation may not be initialised.
-    let buttons = {Ok:true};
-
-    let dialog = messageHandler.openDialog(
-        'dialog.displayNameRequired',
-        message,
-        true,
-        buttons,
-        function (e, v, m, f) {
-            e.preventDefault();
-            if (v) {
-                let displayName = f.displayName;
-                if (displayName) {
-                    UI.inputDisplayNameHandler(displayName);
-                    dialog.close();
-                    return;
-                }
-            }
-        },
-        function () {
-            let form  = $.prompt.getPrompt();
-            let input = form.find("input[name='displayName']");
-            input.focus();
-            let button = form.find("button");
-            button.attr("disabled", "disabled");
-            input.keyup(function () {
-                if (input.val()) {
-                    button.removeAttr("disabled");
-                } else {
-                    button.attr("disabled", "disabled");
-                }
-            });
-        }
-    );
-}
-
-/**
  * Initialize toolbars with side panels.
  */
 function setupToolbars() {
@@ -381,12 +330,6 @@ UI.start = function () {
     }
 
     document.title = interfaceConfig.APP_NAME;
-
-    if(config.requireDisplayName) {
-        if (!APP.settings.getDisplayName()) {
-            promptDisplayName();
-        }
-    }
 
     if (!interfaceConfig.filmStripOnly) {
         toastr.options = {
@@ -914,6 +857,59 @@ UI.handleLastNEndpoints = function (ids, enteringIds) {
  */
 UI.participantConnectionStatusChanged = function (id, isActive) {
     VideoLayout.onParticipantConnectionStatusChanged(id, isActive);
+};
+
+/**
+ * Prompt user for nickname.
+ */
+UI.promptDisplayName = () => {
+    const labelKey = 'dialog.enterDisplayName';
+    const message = (
+        `<div class="form-control">
+            <label data-i18n="${labelKey}" class="form-control__label"></label>
+            <input name="displayName" type="text"
+               data-i18n="[placeholder]defaultNickname"
+               class="input-control" autofocus>
+         </div>`
+    );
+
+    // Don't use a translation string, because we're too early in the call and
+    // the translation may not be initialised.
+    const buttons = { Ok: true };
+
+    const dialog = messageHandler.openDialog(
+        'dialog.displayNameRequired',
+        message,
+        true,
+        buttons,
+        (e, v, m, f) => {
+            e.preventDefault();
+            if (v) {
+                const displayName = f.displayName;
+
+                if (displayName) {
+                    UI.inputDisplayNameHandler(displayName);
+                    dialog.close();
+                    return;
+                }
+            }
+        },
+        () => {
+            const form  = $.prompt.getPrompt();
+            const input = form.find("input[name='displayName']");
+            const button = form.find("button");
+
+            input.focus();
+            button.attr("disabled", "disabled");
+            input.keyup(() => {
+                if (input.val()) {
+                    button.removeAttr("disabled");
+                } else {
+                    button.attr("disabled", "disabled");
+                }
+            });
+        }
+    );
 };
 
 /**
