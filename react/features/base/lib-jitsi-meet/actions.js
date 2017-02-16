@@ -49,7 +49,7 @@ export function initLib() {
             .catch(error => {
                 dispatch({
                     type: LIB_INIT_ERROR,
-                    lib: { error }
+                    error
                 });
 
                 // TODO Handle LIB_INIT_ERROR error somewhere instead.

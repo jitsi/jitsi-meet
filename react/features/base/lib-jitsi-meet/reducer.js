@@ -55,7 +55,7 @@ ReducerRegistry.register(
         case LIB_INIT_ERROR:
             return {
                 ...state,
-                initializationError: action.lib.error,
+                initializationError: action.error,
                 initialized: false
             };
 
