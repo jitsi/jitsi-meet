@@ -2,7 +2,16 @@
 
 import React, { Component } from 'react';
 
+import { Platform } from '../../base/react';
+
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
+
+/**
+ * Describes styles namespace for this component.
+ *
+ * @type {string}
+ */
+const NS = 'unsupported-desktop-browser';
 
 /**
  * React component representing unsupported browser page.
@@ -16,31 +25,60 @@ export default class UnsupportedDesktopBrowser extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const ns = 'unsupported-desktop-browser';
-        const nsLink = `${ns}__link`;
-
         return (
-            <div className = { ns }>
-                <h2 className = { `${ns}__title` }>
+            <div className = { NS }>
+                <h2 className = { `${NS}__title` }>
                     It looks like you're using a browser we don't support.
                 </h2>
-                <p className = { `${ns}__description` }>
+                <p className = { `${NS}__description` }>
                     Please try again with the latest version of&nbsp;
                     <a
-                        className = { nsLink }
+                        className = { `${NS}__link` }
                         href = { CHROME } >Chrome</a>,&nbsp;
                     <a
-                        className = { nsLink }
-                        href = { FIREFOX }>Firefox</a>,&nbsp;
-                    <a
-                        className = { nsLink }
-                        href = { SAFARI }>Safari</a> or&nbsp;
-                    <a
-                        className = { nsLink }
-                        href = { IE }>IE</a>.
+                        className = { `${NS}__link` }
+                        href = { FIREFOX }>Firefox</a> or&nbsp;
+                    { this._showSafariLinkIfRequired() }
+                    { this._showIELinkIfRequired() }.
                 </p>
             </div>
         );
+    }
+
+    /**
+     * Depending on the platform returns the link to IE browser.
+     *
+     * @returns {ReactElement|null}
+     * @private
+     */
+    _showIELinkIfRequired() {
+        if (Platform.OS === 'windows') {
+            return (
+                <a
+                    className = { `${NS}__link` }
+                    href = { IE }>IE</a>
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * Depending on the platform returns the link to Safari browser.
+     *
+     * @returns {ReactElement|null}
+     * @private
+     */
+    _showSafariLinkIfRequired() {
+        if (Platform.OS === 'mac') {
+            return (
+                <a
+                    className = { `${NS}__link` }
+                    href = { SAFARI }>Safari</a>
+            );
+        }
+
+        return null;
     }
 }
 
