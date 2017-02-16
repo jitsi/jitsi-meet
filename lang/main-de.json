@@ -154,7 +154,8 @@
         "kick": "Hinauswerfen",
         "muted": "Stummgeschaltet",
         "domute": "Stummschalten",
-        "flip": "Spiegeln"
+        "flip": "Spiegeln",
+        "remoteControl": "Fernsteuerung"
     },
     "connectionindicator": {
         "header": "Verbindungsdaten",
@@ -312,7 +313,12 @@
         "externalInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden.",
         "muteParticipantTitle": "Teilnehmer stummschalten?",
         "muteParticipantBody": "Sie können die Stummschaltung anderer Teilnehmer nicht aufheben, aber ein Teilnehmer kann seine eigene Stummschaltung jederzeit beenden.",
-        "muteParticipantButton": "Stummschalten"
+        "muteParticipantButton": "Stummschalten",
+        "remoteControlTitle": "Fernsteuerung",
+        "remoteControlDeniedMessage": "__user__ hat die Anfrage zur Fernsteuerung verweigert.",
+        "remoteControlAllowedMessage": "__user__ hat die Anfrage zur Fernsteuerung angenommen.",
+        "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von __user__ ist ein Fehler aufgetreten.",
+        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet."
     },
     "\u0005dialog": {},
     "email": {
@@ -375,6 +381,7 @@
         "failedToStart": "Live-Streaming konnte nicht gestartet werden",
         "buttonTooltip": "Live-Stream starten / stoppen",
         "streamIdRequired": "Bitte Stream-ID eingeben um das Live-Streaming zu starten.",
+        "streamIdHelp": "Wo ist die Stream-ID zu finden?",
         "error": "Das Live-Streaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "busy": "All Aufnahmegeräte sind momentan ausgelastet. Bitte versuchen Sie es später noch einmal."
     }
