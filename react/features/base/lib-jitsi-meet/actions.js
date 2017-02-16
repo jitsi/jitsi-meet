@@ -1,3 +1,7 @@
+/* @flow */
+
+import type { Dispatch } from 'redux';
+
 import JitsiMeetJS from './';
 import {
     LIB_DISPOSED,
@@ -5,6 +9,8 @@ import {
     LIB_INITIALIZED,
     SET_CONFIG
 } from './actionTypes';
+
+declare var APP: Object;
 
 /**
  * Disposes lib-jitsi-meet.
@@ -18,7 +24,7 @@ export function disposeLib() {
     // there is a big chance it will be async.
     // TODO Currently, lib-jitsi-meet doesn't have any functionality to
     // dispose itself.
-    return dispatch => {
+    return (dispatch: Dispatch<*>) => {
         dispatch({ type: LIB_DISPOSED });
 
         return Promise.resolve();
@@ -31,7 +37,7 @@ export function disposeLib() {
  * @returns {Function}
  */
 export function initLib() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const config = getState()['features/base/lib-jitsi-meet'].config;
 
         if (!config) {
@@ -65,11 +71,11 @@ export function initLib() {
  * @param {Object} config - Config object accepted by JitsiMeetJS#init()
  * method.
  * @returns {{
- *      type: SET_CONFIG,
- *      config: Object
- *  }}
+ *     type: SET_CONFIG,
+ *     config: Object
+ * }}
  */
-export function setConfig(config) {
+export function setConfig(config: Object) {
     return {
         type: SET_CONFIG,
         config
