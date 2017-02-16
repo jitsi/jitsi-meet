@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import UnsupportedMobileBrowserStyle from './UnsupportedMobileBrowserStyle';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -22,12 +24,13 @@ export default class NoMobileApp extends Component {
         return (
             <div className = { ns }>
                 <h2 className = { `${ns}__title` }>
-                    Video chat isn't available in the mobile apps
+                    Video chat isn't available on mobile
                 </h2>
                 <p className = { `${ns}__description` }>
-                    Video chat isn't available on mobile
+                    Please use {interfaceConfig.APP_NAME} on
                     Desktop to join calls.
                 </p>
+                <UnsupportedMobileBrowserStyle />
             </div>
         );
     }
