@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
-import { Watermarks } from '../../base/react';
-import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
+import { Watermarks } from '../../base/react';
+import { Toolbar, ExtendedToolbar } from '../../toolbar';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
@@ -85,22 +85,12 @@ class Conference extends Component {
                             className = 'noticeText'
                             id = 'noticeText' />
                     </div>
-                    <div
-                        className = 'toolbar'
-                        id = 'mainToolbar' />
+                    <Toolbar />
                 </div>
                 <div
                     className = 'hide'
                     id = 'subject' />
-                <div
-                    className = 'toolbar'
-                    id = 'extendedToolbar'>
-                    <div id = 'extendedToolbarButtons' />
-
-                    <FeedbackButton />
-
-                    <div id = 'sideToolbarContainer' />
-                </div>
+                <ExtendedToolbar />
                 <div id = 'videospace'>
                     <div
                         className = 'videocontainer'
