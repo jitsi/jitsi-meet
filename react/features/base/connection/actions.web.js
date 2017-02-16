@@ -11,6 +11,7 @@ import { setUnsupportedBrowser } from '../../unsupported-browser';
 
 declare var APP: Object;
 declare var JitsiMeetJS: Object;
+declare var config: Object;
 
 const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -71,6 +72,12 @@ export function connect() {
             });
 
             APP.keyboardshortcut.init();
+
+            if (config.requireDisplayName) {
+                if (!APP.settings.getDisplayName()) {
+                    APP.UI.promptDisplayName();
+                }
+            }
         })
             .catch(err => {
                 APP.UI.hideRingOverLay();
