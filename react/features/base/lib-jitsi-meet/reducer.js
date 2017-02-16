@@ -8,7 +8,7 @@ import {
 } from './actionTypes';
 
 /**
- * Initial state of 'features/base/lib-jitsi-meet'.
+ * The initial state of 'features/base/lib-jitsi-meet'.
  *
  * @type {{
  *     initializationError: null,
@@ -16,6 +16,14 @@ import {
  * }}
  */
 const INITIAL_STATE = {
+    /**
+     * The mandatory configuration to be passed to JitsiMeetJS#init(). The app
+     * will download config.js from the Jitsi Meet deployment and taks its
+     * values into account but the values bellow will be enforced (because they
+     * are essential to the correct execution of the application).
+     *
+     * @type {Object}
+     */
     config: {
         // FIXME The support for audio levels in lib-jitsi-meet polls the
         // statistics of WebRTC at a short interval multiple times a second.
@@ -80,10 +88,12 @@ function _setConfig(state, action) {
     return {
         ...state,
         config: {
-            // The final config is the result of augmenting the default config
-            // with whatever the deployment has chosen to override/overwrite.
-            ...INITIAL_STATE.config,
-            ...action.config
+            ...action.config,
+
+            // The config of INITIAL_STATE is meant to override the config
+            // downloaded from the Jitsi Meet deployment because the former
+            // contains values that are mandatory.
+            ...INITIAL_STATE.config
         }
     };
 }
