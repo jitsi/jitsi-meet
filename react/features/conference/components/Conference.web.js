@@ -6,9 +6,8 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Watermarks } from '../../base/react';
-import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
-import { Notice } from '../../toolbar';
+import { Toolbar } from '../../toolbar';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
@@ -66,25 +65,8 @@ class Conference extends Component {
     render() {
         return (
             <div id = 'videoconference_page'>
-                <div id = 'mainToolbarContainer'>
-                    <Notice />
+                <Toolbar />
 
-                    <div
-                        className = 'toolbar'
-                        id = 'mainToolbar' />
-                </div>
-                <div
-                    className = 'hide'
-                    id = 'subject' />
-                <div
-                    className = 'toolbar'
-                    id = 'extendedToolbar'>
-                    <div id = 'extendedToolbarButtons' />
-
-                    <FeedbackButton />
-
-                    <div id = 'sideToolbarContainer' />
-                </div>
                 <div id = 'videospace'>
                     <div
                         className = 'videocontainer'
@@ -154,6 +136,7 @@ class Conference extends Component {
                         </div>
                     </div>
                 </div>
+
                 <DialogContainer />
                 <OverlayContainer />
                 <HideNotificationBarStyle />

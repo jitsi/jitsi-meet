@@ -6,8 +6,6 @@ var UI = {};
 
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
-import Toolbar from "./toolbars/Toolbar";
-import ToolbarToggler from "./toolbars/ToolbarToggler";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import UIUtil from "./util/UIUtil";
@@ -24,6 +22,23 @@ import Settings from "./../settings/Settings";
 import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
 import { debounce } from "../util/helpers";
+
+import {
+    setAudioMuted,
+    setVideoMuted
+} from '../../react/features/base/media';
+import {
+    checkAutoEnableDesktopSharing,
+    dockToolbar,
+    setAudioIconEnabled,
+    setToolbarButton,
+    setVideoIconEnabled,
+    showDialPadButton,
+    showEtherpadButton,
+    showSharedVideoButton,
+    showSIPCallButton,
+    showToolbar
+} from '../../react/features/toolbar';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -82,16 +97,6 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.CONSTRAINT_FAILED]
     = "dialog.micConstraintFailedError";
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
     = "dialog.micNotSendingData";
-
-/**
- * Initialize toolbars with side panels.
- */
-function setupToolbars() {
-    // Initialize toolbar buttons
-    Toolbar.init(eventEmitter);
-    // Initialize side panels
-    SidePanels.init(eventEmitter);
-}
 
 /**
  * Toggles the application in and out of full screen mode
@@ -231,7 +236,7 @@ UI.initConference = function () {
         UI.setUserAvatarID(id, Settings.getAvatarId());
     }
 
-    Toolbar.checkAutoEnableDesktopSharing();
+    APP.store.dispatch(checkAutoEnableDesktopSharing());
 
     if(!interfaceConfig.filmStripOnly) {
         Feedback.init(eventEmitter);
@@ -294,7 +299,6 @@ UI.start = function () {
     // Set the defaults for tooltips.
     _setTooltipDefaults();
 
-    ToolbarToggler.init();
     SideContainerToggler.init(eventEmitter);
     FilmStrip.init(eventEmitter);
 
@@ -313,11 +317,9 @@ UI.start = function () {
                     { leading: true, trailing: false });
 
         $("#videoconference_page").mousemove(debouncedShowToolbar);
-        setupToolbars();
 
-        // Initialise the recording module.
-        if (config.enableRecording)
-            Recording.init(eventEmitter, config.recordingType);
+        // Initialize side panels
+        SidePanels.init(eventEmitter);
     } else {
         $("body").addClass("filmstrip-only");
         UIUtil.setVisible('mainToolbarContainer', false);
@@ -446,7 +448,8 @@ UI.initEtherpad = name => {
     logger.log('Etherpad is enabled');
     etherpadManager
         = new EtherpadManager(config.etherpad_base, name, eventEmitter);
-    Toolbar.showEtherpadButton();
+
+    APP.store.dispatch(showEtherpadButton());
 };
 
 /**
@@ -521,8 +524,9 @@ UI.onPeerVideoTypeChanged
 UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
 
-    Toolbar.showSipCallButton(isModerator);
-    Toolbar.showSharedVideoButton(isModerator);
+    APP.store.dispatch(showSIPCallButton(isModerator));
+    APP.store.dispatch(showSharedVideoButton());
+
     Recording.showRecordingButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
     SettingsMenu.showFollowMeOptions(isModerator);
@@ -676,7 +680,10 @@ UI.askForNickname = function () {
 UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        Toolbar.toggleAudioIcon(muted);
+        APP.store.dispatch(setAudioMuted(muted));
+        APP.store.dispatch(setToolbarButton('microphone', {
+            toggled: muted
+        }));
     }
 };
 
@@ -686,7 +693,10 @@ UI.setAudioMuted = function (id, muted) {
 UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        Toolbar.toggleVideoIcon(muted);
+        APP.store.dispatch(setVideoMuted(muted));
+        APP.store.dispatch(setToolbarButton('camera', {
+            toggled: muted
+        }));
     }
 };
 
@@ -716,7 +726,7 @@ UI.removeListener = function (type, listener) {
  * @param type the type of the event we're emitting
  * @param options the parameters for the event
  */
-UI.emitEvent = (type, options) => eventEmitter.emit(type, options);
+UI.emitEvent = (type, ...options) => eventEmitter.emit(type, ...options);
 
 UI.clickOnVideo = function (videoNumber) {
     let videos = $("#remoteVideos .videocontainer:not(#mixedstream)");
@@ -731,12 +741,12 @@ UI.clickOnVideo = function (videoNumber) {
 
 //Used by torture
 UI.showToolbar = function (timeout) {
-    return ToolbarToggler.showToolbar(timeout);
+    APP.store.dispatch(showToolbar(timeout));
 };
 
 //Used by torture
 UI.dockToolbar = function (isDock) {
-    ToolbarToggler.dockToolbar(isDock);
+    APP.store.dispatch(dockToolbar(isDock));
 };
 
 /**
@@ -916,10 +926,14 @@ UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
 
 /**
  * Update state of desktop sharing buttons.
+ *
+ * @returns {void}
  */
-UI.updateDesktopSharingButtons = function () {
-    Toolbar.updateDesktopSharingButtonState();
-};
+UI.updateDesktopSharingButtons
+    = () =>
+        APP.store.dispatch(setToolbarButton('desktop', {
+            toggled: APP.conference.isSharingScreen
+        }));
 
 /**
  * Hide connection quality statistics from UI.
@@ -970,11 +984,8 @@ UI.addMessage = function (from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
 };
 
-// eslint-disable-next-line no-unused-vars
-UI.updateDTMFSupport = function (isDTMFSupported) {
-    //TODO: enable when the UI is ready
-    //Toolbar.showDialPadButton(isDTMFSupported);
-};
+UI.updateDTMFSupport
+    = isDTMFSupported => APP.store.dispatch(showDialPadButton(isDTMFSupported));
 
 /**
  * Show user feedback dialog if its required and enabled after pressing the
@@ -1315,7 +1326,8 @@ UI.onSharedVideoStop = function (id, attributes) {
  * @param {boolean} enabled indicates if the camera button should be enabled
  * or disabled
  */
-UI.setCameraButtonEnabled = enabled => Toolbar.setVideoIconEnabled(enabled);
+UI.setCameraButtonEnabled
+    = enabled => APP.store.dispatch(setVideoIconEnabled(enabled));
 
 /**
  * Enables / disables microphone toolbar button.
@@ -1323,7 +1335,8 @@ UI.setCameraButtonEnabled = enabled => Toolbar.setVideoIconEnabled(enabled);
  * @param {boolean} enabled indicates if the microphone button should be
  * enabled or disabled
  */
-UI.setMicrophoneButtonEnabled = enabled => Toolbar.setAudioIconEnabled(enabled);
+UI.setMicrophoneButtonEnabled
+    = enabled => APP.store.dispatch(setAudioIconEnabled(enabled));
 
 UI.showRingOverlay = function () {
     RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);

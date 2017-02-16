@@ -1,0 +1,200 @@
+/* @flow */
+
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+import {
+    setToolbarHovered
+} from '../actions';
+import ToolbarButton from './ToolbarButton';
+
+declare var APP: Object;
+declare var config: Object;
+declare var interfaceConfig: Object;
+
+/**
+ * Class implementing Primary Toolbar React component.
+ *
+ * @class PrimaryToolbar
+ * @extends Component
+ */
+class BaseToolbar extends Component {
+
+    _renderToolbarButton: Function;
+
+    /**
+     * Base toolbar component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+
+        /**
+         *  Handler for mouse out event.
+         */
+        _onMouseOut: React.PropTypes.func,
+
+        /**
+         * Handler for mouse over event.
+         */
+        _onMouseOver: React.PropTypes.func,
+
+        /**
+         * Contains button handlers.
+         */
+        buttonHandlers: React.PropTypes.object,
+
+        /**
+         * Children of current React component.
+         */
+        children: React.PropTypes.element,
+
+        /**
+         * Toolbar's class name.
+         */
+        className: React.PropTypes.string,
+
+        /**
+         * If the toolbar requires splitter this property defines splitter
+         * index.
+         */
+        splitterIndex: React.PropTypes.number,
+
+        /**
+         * Map with toolbar buttons.
+         */
+        toolbarButtons: React.PropTypes.instanceOf(Map)
+    };
+
+    /**
+     * Constructor of Primary toolbar class.
+     *
+     * @param {Object} props - Object containing React component properties.
+     */
+    constructor(props) {
+        super(props);
+
+        this._setButtonHandlers();
+
+        // Bind methods to save the context
+        this._renderToolbarButton = this._renderToolbarButton.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render(): ReactElement<*> {
+        const { className } = this.props;
+
+        return (
+            <div
+                className = { `toolbar ${className}` }
+                onMouseOut = { this.props._onMouseOut }
+                onMouseOver = { this.props._onMouseOver }>
+                {
+                    [ ...this.props.toolbarButtons.entries() ]
+                        .reduce(this._renderToolbarButton, [])
+                }
+                {
+                    this.props.children
+                }
+            </div>
+        );
+    }
+
+    /**
+     * Renders toolbar button. Method is passed to reduce function.
+     *
+     * @param {Array} acc - Toolbar buttons array.
+     * @param {Array} keyValuePair - Key value pair containing button and its
+     * key.
+     * @param {number} index - Index of the key value pair in the array.
+     * @returns {Array} Array of toolbar buttons and splitter if it's on.
+     * @private
+     */
+    _renderToolbarButton(acc: Array<*>, keyValuePair: Array<*>,
+                         index: number): Array<ReactElement<*>> {
+        const [ key, button ] = keyValuePair;
+        const { splitterIndex } = this.props;
+
+        if (splitterIndex && index === splitterIndex) {
+            const splitter = <span className = 'toolbar__splitter' />;
+
+            acc.push(splitter);
+        }
+
+        const { onClick, onMount, onUnmount } = button;
+
+        acc.push(
+            <ToolbarButton
+                button = { button }
+                key = { key }
+                onClick = { onClick }
+                onMount = { onMount }
+                onUnmount = { onUnmount } />
+        );
+
+        return acc;
+    }
+
+    /**
+     * Sets handlers for some of the buttons.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setButtonHandlers(): void {
+        const {
+            buttonHandlers,
+            toolbarButtons
+        } = this.props;
+
+        Object.keys(buttonHandlers).forEach(key => {
+            let button = toolbarButtons.get(key);
+
+            if (button) {
+                button = {
+                    ...button,
+                    ...buttonHandlers[key]
+                };
+                toolbarButtons.set(key, button);
+            }
+        });
+    }
+}
+
+/**
+ * Maps part of Redux actions to component's props.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @returns {Object}
+ * @private
+ */
+function _mapDispatchToProps(dispatch: Function): Object {
+    return {
+        /**
+         * Dispatches an action signalling that toolbar is no being hovered.
+         *
+         * @protected
+         * @returns {Object} Dispatched action.
+         */
+        _onMouseOut() {
+            return dispatch(setToolbarHovered(false));
+        },
+
+        /**
+         * Dispatches an action signalling that toolbar is now being hovered.
+         *
+         * @protected
+         * @returns {Object} Dispatched action.
+         */
+        _onMouseOver() {
+            return dispatch(setToolbarHovered(true));
+        }
+    };
+}
+
+export default connect(null, _mapDispatchToProps)(BaseToolbar);

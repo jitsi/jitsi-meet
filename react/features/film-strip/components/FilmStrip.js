@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Container } from '../../base/react';
 
@@ -33,7 +33,7 @@ class FilmStrip extends Component {
          * @private
          * @type {boolean}
          */
-        visible: React.PropTypes.bool.isRequired
+        _visible: React.PropTypes.bool.isRequired
     }
 
     /**
@@ -45,7 +45,7 @@ class FilmStrip extends Component {
         return (
             <Container
                 style = { styles.filmStrip }
-                visible = { this.props.visible }>
+                visible = { this.props._visible }>
                 <ScrollView
 
                     // eslint-disable-next-line react/jsx-curly-spacing
@@ -109,6 +109,7 @@ class FilmStrip extends Component {
  * @private
  * @returns {{
  *     _participants: Participant[],
+ *     _visible: boolean
  *  }}
  */
 function _mapStateToProps(state) {
@@ -119,7 +120,19 @@ function _mapStateToProps(state) {
          * @private
          * @type {Participant[]}
          */
-        _participants: state['features/base/participants']
+        _participants: state['features/base/participants'],
+
+        /**
+         * The indicator which determines whether the film strip is visible.
+         *
+         * XXX The React Component FilmStrip is used on mobile only at the time
+         * of this writing and on mobile the film strip is visible when the
+         * toolbar is not.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _visible: !state['features/toolbar'].visible
     };
 }
 

@@ -1,41 +1,74 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MEDIA_TYPE, toggleCameraFacingMode } from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
+import { beginRoomLockRequest } from '../../room-lock';
 
-import { AbstractToolbar, _mapStateToProps } from './AbstractToolbar';
+import {
+    abstractMapDispatchToProps,
+    abstractMapStateToProps
+} from '../functions';
 import { styles } from './styles';
 import ToolbarButton from './ToolbarButton';
 
 /**
  * Implements the conference toolbar on React Native.
- *
- * @extends AbstractToolbar
  */
-class Toolbar extends AbstractToolbar {
+class Toolbar extends Component {
     /**
      * Toolbar component's property types.
      *
      * @static
      */
-    static propTypes = AbstractToolbar.propTypes
+    static propTypes = {
+        /**
+         * Flag showing that audio is muted.
+         */
+        _audioMuted: React.PropTypes.bool,
 
-    /**
-     * Initializes a new Toolbar instance.
-     *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
+        /**
+         * Flag showing whether room is locked.
+         */
+        _locked: React.PropTypes.bool,
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._toggleCameraFacingMode
-            = this._toggleCameraFacingMode.bind(this);
-    }
+        /**
+         * Handler for hangup.
+         */
+        _onHangup: React.PropTypes.func,
+
+        /**
+         * Handler for room locking.
+         */
+        _onRoomLock: React.PropTypes.func,
+
+        /**
+         * Handler for toggle audio.
+         */
+        _onToggleAudio: React.PropTypes.func,
+
+        /**
+         * Handler for toggling camera facing mode.
+         */
+        _onToggleCameraFacingMode: React.PropTypes.func,
+
+        /**
+         * Handler for toggling video.
+         */
+        _onToggleVideo: React.PropTypes.func,
+
+        /**
+         * Flag showing whether video is muted.
+         */
+        _videoMuted: React.PropTypes.bool,
+
+        /**
+         * Flag showing whether toolbar is visible.
+         */
+        _visible: React.PropTypes.bool
+    };
 
     /**
      * Implements React's {@link Component#render()}.
@@ -47,7 +80,7 @@ class Toolbar extends AbstractToolbar {
         return (
             <Container
                 style = { styles.toolbarContainer }
-                visible = { this.props.visible }>
+                visible = { this.props._visible }>
                 {
                     this._renderPrimaryToolbar()
                 }
@@ -56,6 +89,43 @@ class Toolbar extends AbstractToolbar {
                 }
             </Container>
         );
+    }
+
+    /**
+     * Gets the styles for a button that toggles the mute state of a specific
+     * media type.
+     *
+     * @param {string} mediaType - The {@link MEDIA_TYPE} associated with the
+     * button to get styles for.
+     * @protected
+     * @returns {{
+     *     iconName: string,
+     *     iconStyle: Object,
+     *     style: Object
+     * }}
+     */
+    _getMuteButtonStyles(mediaType) {
+        let iconName;
+        let iconStyle;
+        let style = styles.primaryToolbarButton;
+
+        if (this.props[`_${mediaType}Muted`]) {
+            iconName = this[`${mediaType}MutedIcon`];
+            iconStyle = styles.whiteIcon;
+            style = {
+                ...style,
+                backgroundColor: ColorPalette.buttonUnderlay
+            };
+        } else {
+            iconName = this[`${mediaType}Icon`];
+            iconStyle = styles.icon;
+        }
+
+        return {
+            iconName,
+            iconStyle,
+            style
+        };
     }
 
     /**
@@ -76,12 +146,12 @@ class Toolbar extends AbstractToolbar {
                 <ToolbarButton
                     iconName = { audioButtonStyles.iconName }
                     iconStyle = { audioButtonStyles.iconStyle }
-                    onClick = { this._toggleAudio }
+                    onClick = { this.props._onToggleAudio }
                     style = { audioButtonStyles.style } />
                 <ToolbarButton
                     iconName = 'hangup'
                     iconStyle = { styles.whiteIcon }
-                    onClick = { this._onHangup }
+                    onClick = { this.props._onHangup }
                     style = {{
                         ...styles.primaryToolbarButton,
                         backgroundColor: ColorPalette.red
@@ -90,7 +160,7 @@ class Toolbar extends AbstractToolbar {
                 <ToolbarButton
                     iconName = { videoButtonStyles.iconName }
                     iconStyle = { videoButtonStyles.iconStyle }
-                    onClick = { this._toggleVideo }
+                    onClick = { this.props._onToggleVideo }
                     style = { videoButtonStyles.style } />
             </View>
         );
@@ -125,7 +195,7 @@ class Toolbar extends AbstractToolbar {
                 <ToolbarButton
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
-                    onClick = { this._toggleCameraFacingMode }
+                    onClick = { this.props._onToggleCameraFacingMode }
                     style = { style }
                     underlayColor = { underlayColor } />
                   */}
@@ -134,24 +204,13 @@ class Toolbar extends AbstractToolbar {
                         this.props._locked ? 'security-locked' : 'security'
                     }
                     iconStyle = { iconStyle }
-                    onClick = { this._onRoomLock }
+                    onClick = { this.props._onRoomLock }
                     style = { style }
                     underlayColor = { underlayColor } />
             </View>
         );
 
         /* eslint-enable react/jsx-curly-spacing,react/jsx-handler-names */
-    }
-
-    /**
-     * Switches between the front/user-facing and rear/environment-facing
-     * cameras.
-     *
-     * @private
-     * @returns {void}
-     */
-    _toggleCameraFacingMode() {
-        this.props.dispatch(toggleCameraFacingMode());
     }
 }
 
@@ -168,4 +227,70 @@ Object.assign(Toolbar.prototype, {
     videoMutedIcon: 'camera-disabled'
 });
 
-export default connect(_mapStateToProps)(Toolbar);
+/**
+ * Maps actions to React component props.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @returns {{
+ *     _onRoomLock: Function,
+ *     _onToggleCameraFacingMode: Function,
+ * }}
+ * @private
+ */
+function _mapDispatchToProps(dispatch) {
+    return {
+        ...abstractMapDispatchToProps(dispatch),
+
+        /**
+         * Dispatches an action to set the lock i.e. password protection of the
+         * conference/room.
+         *
+         * @private
+         * @returns {Object} - Dispatched action.
+         * @type {Function}
+         */
+        _onRoomLock() {
+            return dispatch(beginRoomLockRequest());
+        },
+
+        /**
+         * Switches between the front/user-facing and rear/environment-facing
+         * cameras.
+         *
+         * @private
+         * @returns {Object} - Dispatched action.
+         * @type {Function}
+         */
+        _onToggleCameraFacingMode() {
+            return dispatch(toggleCameraFacingMode());
+        }
+    };
+}
+
+/**
+ * Maps part of Redux store to React component props.
+ *
+ * @param {Object} state - Redux store.
+ * @returns {{
+ *     _locked: boolean
+ * }}
+ * @private
+ */
+function _mapStateToProps(state) {
+    const conference = state['features/base/conference'];
+
+    return {
+        ...abstractMapStateToProps(state),
+
+        /**
+         * The indicator which determines whether the conference is
+         * locked/password-protected.
+         *
+         * @protected
+         * @type {boolean}
+         */
+        _locked: conference.locked
+    };
+}
+
+export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbar);

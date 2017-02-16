@@ -2,13 +2,14 @@
 
 import {processReplacements, linkify} from './Replacement';
 import CommandsProcessor from './Commands';
-import ToolbarToggler from '../../toolbars/ToolbarToggler';
 import VideoLayout from "../../videolayout/VideoLayout";
 
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
+
+import { dockToolbar, setSubject } from '../../../../react/features/toolbar';
 
 let unreadMessages = 0;
 const sidePanelsContainerId = 'sideToolbarContainer';
@@ -59,7 +60,7 @@ function updateVisualNotification() {
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
 
-        ToolbarToggler.dockToolbar(true);
+        APP.store.dispatch(dockToolbar(true));
 
         const chatButtonElement
             = document.getElementById('toolbar_button_chat');
@@ -238,7 +239,7 @@ var Chat = {
                 // Undock the toolbar when the chat is shown and if we're in a
                 // video mode.
                 if (VideoLayout.isLargeVideoVisible()) {
-                    ToolbarToggler.dockToolbar(false);
+                    APP.store.dispatch(dockToolbar(false));
                 }
 
                 // if we are in conversation mode focus on the text input
@@ -319,10 +320,9 @@ var Chat = {
             subject = subject.trim();
         }
 
-        let subjectId = 'subject';
         const html = linkify(UIUtil.escapeHtml(subject));
-        $(`#${subjectId}`).html(html);
-        UIUtil.setVisible(subjectId, subject && subject.length > 0);
+
+        APP.store.dispatch(setSubject(html));
     },
 
     /**

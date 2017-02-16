@@ -20,7 +20,8 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
 import Feedback from '../feedback/Feedback.js';
-import Toolbar from '../toolbars/Toolbar';
+
+import { hideToolbar } from '../../../react/features/toolbar';
 
 /**
  * The dialog for user input.
@@ -263,7 +264,7 @@ var Recording = {
                 APP.conference.getMyUserId(), false);
             VideoLayout.setLocalVideoVisible(false);
             Feedback.enableFeedback(false);
-            Toolbar.enable(false);
+            APP.store.dispatch(hideToolbar());
             APP.UI.messageHandler.enableNotifications(false);
             APP.UI.messageHandler.enablePopups(false);
         }

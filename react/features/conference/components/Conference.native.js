@@ -6,7 +6,7 @@ import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../film-strip';
 import { LargeVideo } from '../../large-video';
-import { Toolbar } from '../../toolbar';
+import { setToolbarVisible, Toolbar } from '../../toolbar';
 
 import { styles } from './styles';
 
@@ -28,8 +28,39 @@ class Conference extends Component {
      * @static
      */
     static propTypes = {
-        dispatch: React.PropTypes.func
-    }
+        /**
+         * The handler which dispatches the (redux) action connect.
+         *
+         * @private
+         * @type {Function}
+         */
+        _onConnect: React.PropTypes.func,
+
+        /**
+         * The handler which dispatches the (redux) action disconnect.
+         *
+         * @private
+         * @type {Function}
+         */
+        _onDisconnect: React.PropTypes.func,
+
+        /**
+         * The handler which dispatches the (redux) action setTooblarVisible to
+         * show/hide the toolbar.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _setToolbarVisible: React.PropTypes.func,
+
+        /**
+         * The indicator which determines whether toolbar is visible.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _toolbarVisible: React.PropTypes.bool
+    };
 
     /**
      * Initializes a new Conference instance.
@@ -39,8 +70,6 @@ class Conference extends Component {
      */
     constructor(props) {
         super(props);
-
-        this.state = { toolbarVisible: true };
 
         /**
          * The numerical ID of the timeout in milliseconds after which the
@@ -62,7 +91,7 @@ class Conference extends Component {
      * returns {void}
      */
     componentDidMount() {
-        this._setToolbarTimeout(this.state.toolbarVisible);
+        this._setToolbarTimeout(this.props._toolbarVisible);
     }
 
     /**
@@ -72,7 +101,7 @@ class Conference extends Component {
      * @returns {void}
      */
     componentWillMount() {
-        this.props.dispatch(connect());
+        this.props._onConnect();
     }
 
     /**
@@ -85,7 +114,7 @@ class Conference extends Component {
     componentWillUnmount() {
         this._clearToolbarTimeout();
 
-        this.props.dispatch(disconnect());
+        this.props._onDisconnect();
     }
 
     /**
@@ -95,8 +124,6 @@ class Conference extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const toolbarVisible = this.state.toolbarVisible;
-
         return (
             <Container
                 onClick = { this._onClick }
@@ -104,11 +131,11 @@ class Conference extends Component {
                 touchFeedback = { false }>
 
                 <LargeVideo />
-                <Toolbar visible = { toolbarVisible } />
-                <FilmStrip visible = { !toolbarVisible } />
+
+                <Toolbar />
+                <FilmStrip />
 
                 <DialogContainer />
-
             </Container>
         );
     }
@@ -135,10 +162,9 @@ class Conference extends Component {
      * @returns {void}
      */
     _onClick() {
-        const toolbarVisible = !this.state.toolbarVisible;
+        const toolbarVisible = !this.props._toolbarVisible;
 
-        this.setState({ toolbarVisible });
-
+        this.props._setToolbarVisible(toolbarVisible);
         this._setToolbarTimeout(toolbarVisible);
     }
 
@@ -159,4 +185,73 @@ class Conference extends Component {
     }
 }
 
-export default reactReduxConnect()(Conference);
+/**
+ * Maps dispatching of some action to React component props.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @private
+ * @returns {{
+ *     _onConnect: Function,
+ *     _onDisconnect: Function,
+ *     _setToolbarVisible: Function
+ * }}
+ */
+function _mapDispatchToProps(dispatch) {
+    return {
+        /**
+         * Dispatched an action connecting to the conference.
+         *
+         * @returns {Object} Dispatched action.
+         * @private
+         */
+        _onConnect() {
+            return dispatch(connect());
+        },
+
+        /**
+         * Dispatches an action disconnecting from the conference.
+         *
+         * @returns {Object} Dispatched action.
+         * @private
+         */
+        _onDisconnect() {
+            return dispatch(disconnect());
+        },
+
+        /**
+         * Dispatched an action changing visiblity of the toolbar.
+         *
+         * @param {boolean} isVisible - Flag showing whether toolbar is
+         * visible.
+         * @returns {Object} Dispatched action.
+         * @private
+         */
+        _setToolbarVisible(isVisible: boolean) {
+            return dispatch(setToolbarVisible(isVisible));
+        }
+    };
+}
+
+/**
+ * Maps (parts of) the Redux state to the associated Conference's props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _toolbarVisible: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        /**
+         * The indicator which determines whether toolbar is visible.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _toolbarVisible: state['features/toolbar'].visible
+    };
+}
+
+export default reactReduxConnect(_mapStateToProps, _mapDispatchToProps)(
+        Conference);

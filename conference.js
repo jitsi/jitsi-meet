@@ -20,6 +20,8 @@ import analytics from './modules/analytics/analytics';
 
 import EventEmitter from "events";
 
+import { showDesktopSharingButton } from './react/features/toolbar';
+
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
@@ -583,6 +585,9 @@ export default {
                 APP.connection = connection = con;
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
+
+                APP.store.dispatch(showDesktopSharingButton());
+
                 APP.remoteControl.init();
                 this._createRoom(tracks);
 
