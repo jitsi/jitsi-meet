@@ -28,6 +28,21 @@ export const _SET_BACKGROUND_VIDEO_MUTED
     = Symbol('_SET_BACKGROUND_VIDEO_MUTED');
 
 /**
+ * The type of redux action which signals that the video channel's lastN value
+ * must be changed.
+ *
+ * {
+ *      type: _SET_LASTN,
+ *      lastN: boolean
+ * }
+ *
+ * @protected
+ */
+export const _SET_LASTN
+    = Symbol('_SET_LASTN');
+
+
+/**
  * The type of redux action which signals that the app state has changed (in
  * terms of execution mode). The app state can be one of 'active', 'inactive',
  * or 'background'.

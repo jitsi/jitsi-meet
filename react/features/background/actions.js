@@ -3,6 +3,7 @@ import { setVideoMuted } from '../base/media';
 import {
     _SET_APP_STATE_LISTENER,
     _SET_BACKGROUND_VIDEO_MUTED,
+    _SET_LASTN,
     APP_STATE_CHANGED
 } from './actionTypes';
 
@@ -54,6 +55,23 @@ export function _setAppStateListener(listener: ?Function) {
  */
 export function _setBackgroundVideoMuted(muted: boolean) {
     return (dispatch, getState) => {
+        // Disable remote video when we mute by setting lastN to 0.
+        // Skip it if the conference is in audio only mode, as it's
+        // already configured to have no video.
+        const { audioOnly } = getState()['features/base/conference'];
+
+        if (!audioOnly) {
+            const { config } = getState()['features/base/lib-jitsi-meet'];
+            const defaultLastN
+                = typeof config.channelLastN === 'undefined'
+                ? -1 : config.channelLastN;
+
+            dispatch({
+                type: _SET_LASTN,
+                lastN: muted ? 0 : defaultLastN
+            });
+        }
+
         if (muted) {
             const mediaState = getState()['features/base/media'];
 
@@ -62,16 +80,16 @@ export function _setBackgroundVideoMuted(muted: boolean) {
                 return;
             }
         } else {
-            const bgState = getState()['features/background'];
+            const { videoMuted } = getState()['features/background'];
 
-            if (!bgState.videoMuted) {
+            if (!videoMuted) {
                 // We didn't mute video, do nothing.
                 return;
             }
         }
 
-        // Remember that video was muted due to the app going to the background
-        // vs user's choice.
+        // Remember that local video was muted due to the app going to the
+        // background vs user's choice.
         dispatch({
             type: _SET_BACKGROUND_VIDEO_MUTED,
             muted
