@@ -362,9 +362,8 @@ Toolbar = {
             });
 
         APP.UI.addListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-            (toolbarButtonID, popupID, show, timeout) => {
-                Toolbar._showCustomToolbarPopup(
-                    toolbarButtonID, popupID, show, timeout);
+            (popupID, show, timeout) => {
+                Toolbar._showCustomToolbarPopup(popupID, show, timeout);
             });
 
         if(!APP.tokenData.isGuest) {
@@ -741,7 +740,12 @@ Toolbar = {
             let gravity = 'n';
             if (popup.dataAttrPosition)
                 gravity = popup.dataAttrPosition;
-            popupElement.setAttribute('data-tooltip', gravity);
+            // use custom attribute to save gravity option
+            // we use 'data-tooltip' in UIUtil to activate all tooltips
+            // but we want these to be manually triggered
+            popupElement.setAttribute('tooltip-gravity', gravity);
+
+            APP.translation.translateElement($(popupElement));
 
             buttonElement.appendChild(popupElement);
         });
@@ -755,7 +759,7 @@ Toolbar = {
      */
     _showCustomToolbarPopup(popupSelectorID, show, timeout) {
 
-        const gravity = $(popupSelectorID).attr('data-tooltip');
+        const gravity = $(popupSelectorID).attr('tooltip-gravity');
         AJS.$(popupSelectorID)
             .tooltip({
                 trigger: 'manual',
