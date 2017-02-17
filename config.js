@@ -53,7 +53,6 @@ var config = { // eslint-disable-line no-unused-vars
     disableStats: false,
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.
-    adaptiveLastN: false,
     //disableAdaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
