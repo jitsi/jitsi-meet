@@ -714,6 +714,18 @@ export default {
     sendFeedback (overallFeedback, detailedFeedback) {
         return room.sendFeedback (overallFeedback, detailedFeedback);
     },
+
+    /**
+     * Get speaker stats that track total dominant speaker time.
+     *
+     * @returns {object} A hash with keys being user ids and values being the
+     * library's SpeakerStats model used for calculating time as dominant
+     * speaker.
+     */
+    getSpeakerStats() {
+        return room.getSpeakerStats();
+    },
+
     /**
      * Returns the connection times stored in the library.
      */
