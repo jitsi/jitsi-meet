@@ -36,7 +36,8 @@
         "toggleChat": "Open or close the chat",
         "mute": "Mute or unmute your microphone",
         "fullScreen": "Enter or exit full screen",
-        "videoMute": "Start or stop your camera"
+        "videoMute": "Start or stop your camera",
+        "showSpeakerStats": "Show speaker stats"
     },
     "welcomepage":{
         "disable": "Don't show this page again",
@@ -335,7 +336,8 @@
         "remoteControlDeniedMessage": "__user__ rejected your remote control request!",
         "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
         "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
-        "remoteControlStopMessage": "The remote control session ended!"
+        "remoteControlStopMessage": "The remote control session ended!",
+        "close": "Close"
     },
     "email":
     {
@@ -404,5 +406,14 @@
         "streamIdHelp": "Where do I find this?",
         "error": "Live streaming failed. Please try again.",
         "busy": "All recorders are currently busy. Please try again later."
+    },
+    "speakerStats":
+    {
+        "hours": "__count__h",
+        "minutes": "__count__m",
+        "name": "Name",
+        "seconds": "__count__s",
+        "speakerStats": "Speaker Stats",
+        "speakerTime": "Speaker Time"
     }
 }

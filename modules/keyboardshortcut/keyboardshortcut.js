@@ -1,5 +1,10 @@
 /* global APP, $, JitsiMeetJS */
 
+import {
+    toggleDialog
+} from '../../react/features/base/dialog';
+import { SpeakerStats } from '../../react/features/speaker-stats';
+
 /**
  * The reference to the shortcut dialogs when opened.
  */
@@ -28,6 +33,12 @@ function initGlobalShortcuts() {
         APP.conference.muteAudio(true);
     });
     KeyboardShortcut._addShortcutToHelp("SPACE","keyboardShortcuts.pushToTalk");
+
+    KeyboardShortcut.registerShortcut("T", null, () => {
+        APP.store.dispatch(toggleDialog(SpeakerStats, {
+            conference: APP.conference
+        }));
+    }, "keyboardShortcuts.showSpeakerStats");
 
     /**
      * FIXME: Currently focus keys are directly implemented below in onkeyup.
