@@ -53,15 +53,6 @@ let followMeHandler;
 
 let deviceErrorDialog;
 
-/**
- * Object representing name of some UI events and their handlers.
- *
- * @type {{
- *      event: Function
- * }}
- */
-let UIListeners;
-
 const TrackErrors = JitsiMeetJS.errors.track;
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
@@ -371,8 +362,8 @@ UI.start = function () {
  * Setup some UI event listeners.
  */
 UI.registerListeners = () => {
-    Object.keys(UIListeners).map((key) => {
-        UI.addListener(key, UIListeners[key]);
+    UIListeners.forEach((value, key) => {
+        UI.addListener(key, value);
     });
 };
 
@@ -380,8 +371,8 @@ UI.registerListeners = () => {
  * Unregister some UI event listeners.
  */
 UI.unregisterListeners = () => {
-    Object.keys(UIListeners).map((key) => {
-        UI.removeListener(key, UIListeners[key]);
+    UIListeners.forEach((value, key) => {
+        UI.removeListener(key, value);
     });
 };
 
@@ -1411,40 +1402,44 @@ UI.onUserFeaturesChanged = function (user) {
     VideoLayout.onUserFeaturesChanged(user);
 };
 
-UIListeners = {
-    [UIEvents.ETHERPAD_CLICKED]: () => {
-        if (etherpadManager) {
-            etherpadManager.toggleEtherpad();
+const UIListeners = new Map([
+    [
+        UIEvents.ETHERPAD_CLICKED, () => {
+            if (etherpadManager) {
+                etherpadManager.toggleEtherpad();
+            }
         }
-    },
-    [UIEvents.SHARED_VIDEO_CLICKED]: () => {
-        if (sharedVideoManager) {
-            sharedVideoManager.toggleSharedVideo();
+    ], [
+        UIEvents.SHARED_VIDEO_CLICKED, () => {
+            if (sharedVideoManager) {
+                sharedVideoManager.toggleSharedVideo();
+            }
         }
-    },
-    [UIEvents.TOGGLE_FULLSCREEN]: UI.toggleFullScreen,
-
-    [UIEvents.TOGGLE_CHAT]: UI.toggleChat,
-
-    [UIEvents.TOGGLE_SETTINGS]: () => {
-        UI.toggleSidePanel("settings_container");
-    },
-
-    [UIEvents.TOGGLE_CONTACT_LIST]: UI.toggleContactList,
-
-    [UIEvents.TOGGLE_PROFILE]: () => {
-        if(APP.tokenData.isGuest) {
-            UI.toggleSidePanel("profile_container");
+    ], [
+        UIEvents.TOGGLE_FULLSCREEN,  UI.toggleFullScreen
+    ], [
+        UIEvents.TOGGLE_CHAT, UI.toggleChat
+    ], [
+        UIEvents.TOGGLE_SETTINGS, () => {
+            UI.toggleSidePanel("settings_container");
         }
-    },
-
-    [UIEvents.TOGGLE_FILM_STRIP]: UI.handleToggleFilmStrip,
-
-    [UIEvents.FOLLOW_ME_ENABLED]: (isEnabled) => {
-        if (followMeHandler) {
-            followMeHandler.enableFollowMe(isEnabled);
+    ], [
+        UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList
+    ], [
+        UIEvents.TOGGLE_PROFILE, () => {
+            if(APP.tokenData.isGuest) {
+                UI.toggleSidePanel("profile_container");
+            }
         }
-    }
-};
+    ], [
+        UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip
+    ], [
+        UIEvents.FOLLOW_ME_ENABLED, (isEnabled) => {
+            if (followMeHandler) {
+                followMeHandler.enableFollowMe(isEnabled);
+            }
+        }
+    ]
+]);
 
 module.exports = UI;

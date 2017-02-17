@@ -37,9 +37,7 @@ const _RULES = [
         const OS = Platform.OS;
 
         if (OS === 'android' || OS === 'ios') {
-            const mobileAppEnabled = interfaceConfig.MOBILE_APP_ENABLED;
-
-            if (mobileAppEnabled) {
+            if (interfaceConfig.MOBILE_APP_ENABLED) {
                 return UnsupportedMobileBrowser;
             }
 
