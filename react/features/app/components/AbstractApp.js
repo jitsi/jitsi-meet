@@ -76,7 +76,9 @@ export class AbstractApp extends Component {
 
         dispatch(localParticipantJoined());
 
-        this._openURL(this._getDefaultURL());
+        // If a URL was explicitly specified to this React Component, then open
+        // it; otherwise, use a default.
+        this._openURL(this.props.url || this._getDefaultURL());
     }
 
     /**
@@ -211,27 +213,20 @@ export class AbstractApp extends Component {
     /**
      * Gets the default URL to be opened when this App mounts.
      *
-     * @private
+     * @protected
      * @returns {string} The default URL to be opened when this App mounts.
      */
     _getDefaultURL() {
-        // If the URL was explicitly specified to the React Component, then open
-        // it.
-        let url = this.props.url;
-
-        if (url) {
-            return url;
-        }
-
         // If the execution environment provides a Location abstraction, then
         // this App at already at that location but it must be made aware of the
         // fact.
         const windowLocation = this._getWindowLocation();
 
         if (windowLocation) {
-            url = windowLocation.toString();
-            if (url) {
-                return url;
+            const href = windowLocation.toString();
+
+            if (href) {
+                return href;
             }
         }
 
