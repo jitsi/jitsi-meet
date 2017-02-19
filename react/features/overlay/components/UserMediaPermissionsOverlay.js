@@ -18,6 +18,7 @@ export default class UserMediaPermissionsOverlay extends AbstractOverlay {
         /**
          * The browser which is used currently. The text is different for every
          * browser.
+         *
          * @public
          * @type {string}
          */
@@ -37,6 +38,7 @@ export default class UserMediaPermissionsOverlay extends AbstractOverlay {
         this.state = {
             /**
              * The src value of the image for the policy logo.
+             *
              * @type {string}
              */
             policyLogoSrc: interfaceConfig.POLICY_LOGO
@@ -72,7 +74,9 @@ export default class UserMediaPermissionsOverlay extends AbstractOverlay {
                     <p
                         className = 'policy__text'
                         data-i18n = '[html]startupoverlay.policyText' />
-                    { this._renderPolicyLogo() }
+                    {
+                        this._renderPolicyLogo()
+                    }
                 </div>
             </div>
         );
@@ -85,10 +89,12 @@ export default class UserMediaPermissionsOverlay extends AbstractOverlay {
      * @private
      */
     _renderPolicyLogo() {
-        if (this.state.policyLogoSrc) {
+        const { policyLogoSrc } = this.state;
+
+        if (policyLogoSrc) {
             return (
                 <div className = 'policy__logo'>
-                    <img src = { this.state.policyLogoSrc } />
+                    <img src = { policyLogoSrc } />
                 </div>
             );
         }

@@ -8,6 +8,9 @@ import {
     connectionEstablished,
     connectionFailed
 } from './react/features/base/connection';
+import {
+    isFatalJitsiConnectionError
+} from './react/features/base/lib-jitsi-meet';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -75,18 +78,13 @@ function connect(id, password, roomName) {
         connection.addEventListener(
             ConnectionEvents.CONNECTION_FAILED, connectionFailedHandler);
 
-        function connectionFailedHandler (error, errMsg) {
+        function connectionFailedHandler(error, errMsg) {
             APP.store.dispatch(connectionFailed(connection, error, errMsg));
 
-            switch (error) {
-            case ConnectionErrors.CONNECTION_DROPPED_ERROR:
-            case ConnectionErrors.OTHER_ERROR:
-            case ConnectionErrors.SERVER_ERROR: {
+            if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(
                     ConnectionEvents.CONNECTION_FAILED,
                     connectionFailedHandler);
-                break;
-            }
             }
         }
 

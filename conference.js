@@ -22,6 +22,9 @@ import EventEmitter from "events";
 
 import { conferenceFailed } from './react/features/base/conference';
 import {
+    isFatalJitsiConnectionError
+} from './react/features/base/lib-jitsi-meet';
+import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
@@ -475,21 +478,18 @@ function disconnect() {
 
 /**
  * Handles CONNECTION_FAILED events from lib-jitsi-meet.
- * @param {JitsiMeetJS.connection.error} error the error reported.
+ *
+ * @param {JitsiMeetJS.connection.error} error - The reported error.
  * @returns {void}
  * @private
  */
-function _connectionFailedHandler (error) {
-    switch (error) {
-    case ConnectionErrors.CONNECTION_DROPPED_ERROR:
-    case ConnectionErrors.OTHER_ERROR:
-    case ConnectionErrors.SERVER_ERROR: {
-        APP.connection.removeEventListener( ConnectionEvents.CONNECTION_FAILED,
+function _connectionFailedHandler(error) {
+    if (isFatalJitsiConnectionError(error)) {
+        APP.connection.removeEventListener(
+            ConnectionEvents.CONNECTION_FAILED,
             _connectionFailedHandler);
         if (room)
             room.leave();
-        break;
-    }
     }
 }
 

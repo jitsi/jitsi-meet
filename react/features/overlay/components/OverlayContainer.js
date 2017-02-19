@@ -20,16 +20,20 @@ class OverlayContainer extends Component {
     static propTypes = {
         /**
          * The browser which is used currently.
+         *
          * NOTE: Used by UserMediaPermissionsOverlay only.
+         *
          * @private
          * @type {string}
          */
         _browser: React.PropTypes.string,
 
         /**
-         * The indicator which determines whether the status of
+         * The indicator which determines whether the status of the
          * JitsiConnection object has been "established" or not.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {boolean}
          */
@@ -38,7 +42,9 @@ class OverlayContainer extends Component {
         /**
          * The indicator which determines whether a critical error for reload
          * has been received.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {boolean}
          */
@@ -47,16 +53,20 @@ class OverlayContainer extends Component {
         /**
          * The indicator which determines whether the reload was caused by
          * network failure.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {boolean}
          */
         _isNetworkFailure: React.PropTypes.bool,
 
         /**
-         * The indicator which determines whether the GUM permissions prompt
-         * is displayed or not.
+         * The indicator which determines whether the GUM permissions prompt is
+         * displayed or not.
+         *
          * NOTE: Used by UserMediaPermissionsOverlay only.
+         *
          * @private
          * @type {boolean}
          */
@@ -64,16 +74,20 @@ class OverlayContainer extends Component {
 
         /**
          * The reason for the error that will cause the reload.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {string}
          */
         _reason: React.PropTypes.string,
 
         /**
-         * The indicator which determines whether the GUM permissions prompt
-         * is displayed or not.
+         * The indicator which determines whether the GUM permissions prompt is
+         * displayed or not.
+         *
          * NOTE: Used by SuspendedOverlay only.
+         *
          * @private
          * @type {string}
          */
@@ -91,8 +105,8 @@ class OverlayContainer extends Component {
         // FIXME: Temporary workaround until everything is moved to react.
         APP.UI.overlayVisible
             = (this.props._connectionEstablished && this.props._haveToReload)
-            || this.props._suspendDetected
-            || this.props._mediaPermissionPromptVisible;
+                || this.props._suspendDetected
+                || this.props._mediaPermissionPromptVisible;
     }
 
     /**
@@ -133,80 +147,95 @@ class OverlayContainer extends Component {
  *
  * @param {Object} state - The Redux state.
  * @returns {{
- *      _browser: string,
- *      _connectionEstablished: bool,
- *      _haveToReload: bool,
- *      _isNetworkFailure: bool,
- *      _mediaPermissionPromptVisible: bool,
- *      _reason: string,
- *      _suspendDetected: bool
+ *     _browser: string,
+ *     _connectionEstablished: bool,
+ *     _haveToReload: bool,
+ *     _isNetworkFailure: bool,
+ *     _mediaPermissionPromptVisible: bool,
+ *     _reason: string,
+ *     _suspendDetected: bool
  * }}
  * @private
  */
 function _mapStateToProps(state) {
+    const stateFeaturesOverlay = state['features/overlay'];
+
     return {
         /**
          * The browser which is used currently.
+         *
          * NOTE: Used by UserMediaPermissionsOverlay only.
+         *
          * @private
          * @type {string}
          */
-        _browser: state['features/overlay'].browser,
+        _browser: stateFeaturesOverlay.browser,
 
         /**
-         * The indicator which determines whether the status of
+         * The indicator which determines whether the status of the
          * JitsiConnection object has been "established" or not.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {boolean}
          */
-        _connectionEstablished:
-            state['features/overlay'].connectionEstablished,
+        _connectionEstablished: stateFeaturesOverlay.connectionEstablished,
 
         /**
          * The indicator which determines whether a critical error for reload
          * has been received.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {boolean}
          */
-        _haveToReload: state['features/overlay'].haveToReload,
+        _haveToReload: stateFeaturesOverlay.haveToReload,
 
         /**
          * The indicator which determines whether the reload was caused by
          * network failure.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {boolean}
          */
-        _isNetworkFailure: state['features/overlay'].isNetworkFailure,
+        _isNetworkFailure: stateFeaturesOverlay.isNetworkFailure,
 
         /**
-         * The indicator which determines whether the GUM permissions prompt
-         * is displayed or not.
+         * The indicator which determines whether the GUM permissions prompt is
+         * displayed or not.
+         *
          * NOTE: Used by UserMediaPermissionsOverlay only.
+         *
          * @private
          * @type {boolean}
          */
         _mediaPermissionPromptVisible:
-            state['features/overlay'].mediaPermissionPromptVisible,
+            stateFeaturesOverlay.mediaPermissionPromptVisible,
 
         /**
          * The reason for the error that will cause the reload.
+         *
          * NOTE: Used by PageReloadOverlay only.
+         *
          * @private
          * @type {string}
          */
-        _reason: state['features/overlay'].reason,
+        _reason: stateFeaturesOverlay.reason,
 
         /**
-         * The indicator which determines whether the GUM permissions prompt
-         * is displayed or not.
+         * The indicator which determines whether the GUM permissions prompt is
+         * displayed or not.
+         *
          * NOTE: Used by SuspendedOverlay only.
+         *
          * @private
          * @type {string}
          */
-        _suspendDetected: state['features/overlay'].suspendDetected
+        _suspendDetected: stateFeaturesOverlay.suspendDetected
     };
 }
 

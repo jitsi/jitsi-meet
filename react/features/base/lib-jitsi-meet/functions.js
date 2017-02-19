@@ -1,5 +1,31 @@
 import { loadScript } from '../../base/util';
 
+import JitsiMeetJS from './_';
+
+declare var APP: Object;
+
+const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
+
+/**
+ * Determines whether a specific JitsiConnectionErrors instance indicates a
+ * fatal JitsiConnection error.
+ *
+ * FIXME Figure out the category of errors defined by the fucntion and describe
+ * that category. I've currently named the category fatal because it appears to
+ * be used in the cases of unrecoverable errors that necessitate a reload.
+ *
+ * @param {string} error - The JitsiConnectionErrors instance to
+ * categorize/classify.
+ * @returns {boolean} True if the specified JitsiConnectionErrors instance
+ * indicates a fatal JitsiConnection error; otherwise, false.
+ */
+export function isFatalJitsiConnectionError(error: string) {
+    return (
+        error === JitsiConnectionErrors.CONNECTION_DROPPED_ERROR
+            || error === JitsiConnectionErrors.OTHER_ERROR
+            || error === JitsiConnectionErrors.SERVER_ERROR);
+}
+
 /**
  * Loads config.js file from remote server.
  *
@@ -7,7 +33,7 @@ import { loadScript } from '../../base/util';
  * @param {string} path='/config.js' - Relative pah to config.js file.
  * @returns {Promise<Object>}
  */
-export function loadConfig(host, path = '/config.js') {
+export function loadConfig(host: string, path: string = '/config.js') {
     // Returns config.js file from global scope. We can't use the version that's
     // being used for the React Native app because the old/current Web app uses
     // config from the global scope.

@@ -3,8 +3,8 @@ import React from 'react';
 import AbstractOverlay from './AbstractOverlay';
 
 /**
- * Implements a React Component for suspended overlay. Shown when suspended
- * is detected.
+ * Implements a React Component for suspended overlay. Shown when a suspend is
+ * detected.
  */
 export default class SuspendedOverlay extends AbstractOverlay {
     /**
@@ -33,5 +33,7 @@ export default class SuspendedOverlay extends AbstractOverlay {
                     onClick = { this._reconnectNow } />
             </div>
         );
+
+        /* eslint-enable react/jsx-handler-names */
     }
 }
