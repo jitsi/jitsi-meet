@@ -1,3 +1,4 @@
+/* global APP */
 import { CONNECTION_ESTABLISHED } from '../connection';
 import {
     getLocalParticipant,
@@ -53,7 +54,11 @@ MiddlewareRegistry.register(store => next => action => {
 function _connectionEstablished(store, next, action) {
     const result = next(action);
 
-    store.dispatch(createConference());
+    // FIXME: workaround for the web version. Currently the creation of the
+    // conference is handled by /conference.js
+    if (!APP) {
+        store.dispatch(createConference());
+    }
 
     return result;
 }

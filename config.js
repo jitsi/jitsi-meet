@@ -53,7 +53,6 @@ var config = { // eslint-disable-line no-unused-vars
     disableStats: false,
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.
-    adaptiveLastN: false,
     //disableAdaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
@@ -80,5 +79,7 @@ var config = { // eslint-disable-line no-unused-vars
     // Suspending video might cause problems with audio playback. Disabling until these are fixed.
     disableSuspendVideo: true,
     // disables or enables RTX (RFC 4588).
-    disableRtx: true
+    disableRtx: true,
+    // Sets the preferred resolution (height) for local video. Defaults to 360.
+    resolution: 720
 };

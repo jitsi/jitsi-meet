@@ -24,16 +24,27 @@ export function appInit() {
  * Triggers an in-app navigation to a different route. Allows navigation to be
  * abstracted between the mobile and web versions.
  *
- * @param {(string|undefined)} urlOrRoom - The URL or room name to which to
- * navigate.
+ * @param {(string|undefined)} uri - The URI to which to navigate. It may be a
+ * full URL with an http(s) scheme, a full or partial URI with the app-specific
+ * sheme, or a mere room name.
  * @returns {Function}
  */
-export function appNavigate(urlOrRoom) {
+export function appNavigate(uri) {
     return (dispatch, getState) => {
         const state = getState();
         const oldDomain = getDomain(state);
 
-        const { domain, room } = _parseURIString(urlOrRoom);
+        // eslint-disable-next-line prefer-const
+        let { domain, room } = _parseURIString(uri);
+
+        // If the specified URI does not identify a domain, use the app's
+        // default.
+        if (typeof domain === 'undefined') {
+            domain
+                = _parseURIString(state['features/app'].app._getDefaultURL())
+                    .domain;
+
+        }
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
         // currently in a conference and ask her if she wants to close the
@@ -48,7 +59,7 @@ export function appNavigate(urlOrRoom) {
             dispatch(setDomain(domain));
 
             // If domain has changed, we need to load the config of the new
-            // domain and set it, and only after that we can navigate to
+            // domain and set it, and only after that we can navigate to a
             // different route.
             loadConfig(`https://${domain}`)
                 .then(
@@ -92,7 +103,7 @@ export function appNavigate(urlOrRoom) {
             dispatch(
                 _setRoomAndNavigate(
                     typeof room === 'undefined' && typeof domain === 'undefined'
-                        ? urlOrRoom
+                        ? uri
                         : room));
         }
     };

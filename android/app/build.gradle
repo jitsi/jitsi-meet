@@ -91,7 +91,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 22
         versionCode Integer.parseInt("${version}")
-        versionName "1.2.${version}"
+        versionName "1.3.${version}"
         ndk {
             abiFilters 'armeabi-v7a', 'x86'
         }
@@ -139,6 +139,7 @@ if (project.hasProperty('JITSI_SIGNING')
 }
 
 dependencies {
+    compile project(':react-native-background-timer')
     compile project(':react-native-immersive')
     compile project(':react-native-keep-awake')
     compile project(':react-native-vector-icons')

@@ -9,3 +9,12 @@
         @include transition(color .1s ease-in);
     }
 }
+
+/**
+ * Helper links are links that are meant to open a documentation page or more
+ * detailed info.
+ */
+.helper-link {
+    @extend .link;
+    font-size: 12px;
+}

@@ -1,4 +1,9 @@
-import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
+import {
+    BoxModel,
+    ColorPalette,
+    createStyleSheet,
+    fixAndroidViewClipping
+} from '../../base/styles';
 
 /**
  * The default color of text on the WelcomePage.
@@ -35,11 +40,11 @@ export const styles = createStyleSheet({
     /**
      * The style of the top-level container of WelcomePage.
      */
-    container: {
+    container: fixAndroidViewClipping({
         alignSelf: 'stretch',
         backgroundColor: ColorPalette.blue,
         flex: 1
-    },
+    }),
 
     /**
      * The style of the legal-related content such as (hyper)links to Privacy

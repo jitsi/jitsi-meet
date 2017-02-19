@@ -6,6 +6,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { connect, disconnect } from '../../base/connection';
 import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
+import { OverlayContainer } from '../../overlay';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -162,6 +163,8 @@ class Conference extends Component {
                         </div>
                     </div>
                 </div>
+
+                <OverlayContainer />
             </div>
         );
     }

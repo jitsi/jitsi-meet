@@ -387,6 +387,7 @@
         "failedToStart": "Live streaming failed to start",
         "buttonTooltip": "Start / Stop live stream",
         "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
+        "streamIdHelp": "Where do I find this?",
         "error": "Live streaming failed. Please try again.",
         "busy": "All recorders are currently busy. Please try again later."
     }

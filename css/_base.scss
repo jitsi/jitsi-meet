@@ -122,6 +122,7 @@ form {
     z-index: $tooltipsZ;
     &-inner {
         background-color: $tooltipBg;
+        max-width: 350px;
     }
 
     &-arrow {

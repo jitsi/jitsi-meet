@@ -1,6 +1,7 @@
-/* global APP, JitsiMeetJS, loggingConfig */
+/* global APP, loggingConfig */
 
 import { isRoomValid } from '../base/conference';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { RouteRegistry } from '../base/react';
 import { interceptComponent } from '../base/util';
 import { Conference } from '../conference';

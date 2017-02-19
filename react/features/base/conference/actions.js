@@ -34,7 +34,7 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.on(
             JitsiConferenceEvents.CONFERENCE_FAILED,
-            (...args) => dispatch(_conferenceFailed(conference, ...args)));
+            (...args) => dispatch(conferenceFailed(conference, ...args)));
     conference.on(
             JitsiConferenceEvents.CONFERENCE_JOINED,
             (...args) => dispatch(_conferenceJoined(conference, ...args)));
@@ -87,8 +87,9 @@ function _addConferenceListeners(conference, dispatch) {
  *     conference: JitsiConference,
  *     error: string
  * }}
+ * @public
  */
-function _conferenceFailed(conference, error) {
+export function conferenceFailed(conference, error) {
     return {
         type: CONFERENCE_FAILED,
         conference,
