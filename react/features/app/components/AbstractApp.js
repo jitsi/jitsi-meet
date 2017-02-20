@@ -307,7 +307,9 @@ export class AbstractApp extends Component {
             // non-reactified parts of the code (conference.js for example).
             // Don't use in the react code!!!
             // FIXME: remove when the reactification is finished!
-            APP.store = store;
+            if (typeof APP !== 'undefined') {
+                APP.store = store;
+            }
         }
 
         return store;
