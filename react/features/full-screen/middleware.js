@@ -31,17 +31,18 @@ MiddlewareRegistry.register(store => next => action => {
         // Check if we just came back from the background and reenable full
         // screen mode if necessary.
         if (action.appState === 'active') {
-            const conference = store.getState()['features/base/conference'];
+            const { conference, audioOnly }
+                = store.getState()['features/base/conference'];
 
-            fullScreen = conference ? !conference.audioOnly : false;
+            fullScreen = conference ? !audioOnly : false;
         }
         break;
     }
 
     case CONFERENCE_WILL_JOIN: {
-        const conference = store.getState()['features/base/conference'];
+        const { audioOnly } = store.getState()['features/base/conference'];
 
-        fullScreen = !conference.audioOnly;
+        fullScreen = !audioOnly;
         break;
     }
 
