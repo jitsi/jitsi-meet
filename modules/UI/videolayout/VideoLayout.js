@@ -859,6 +859,8 @@ var VideoLayout = {
     updateLocalConnectionStats (percent, object) {
         const { framerate, resolution } = object;
 
+        // FIXME overwrites 'lib-jitsi-meet' internal object
+        // Why library internal objects are passed as event's args ?
         object.resolution = resolution[APP.conference.getMyUserId()];
         object.framerate = framerate[APP.conference.getMyUserId()];
         localVideoThumbnail.updateStatsIndicator(percent, object);
