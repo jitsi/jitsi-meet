@@ -115,12 +115,16 @@ class Toolbar extends AbstractToolbar {
         // TODO Use an appropriate icon for toggle camera facing mode.
         return (
             <View style = { styles.secondaryToolbar }>
+                {/*
+                  * XXX Temporarily disabled until issues are fixed in
+                  * react-native-webrtc.
                 <ToolbarButton
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this._toggleCameraFacingMode }
                     style = { style }
                     underlayColor = { underlayColor } />
+                */}
                 <ToolbarButton
                     iconName = {
                         this.props._locked ? 'security-locked' : 'security'
