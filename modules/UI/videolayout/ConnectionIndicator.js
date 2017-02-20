@@ -175,6 +175,8 @@ ConnectionIndicator.prototype.generateText = function () {
                 }
             }
 
+            const isP2P = this.transport.length ? this.transport[0].p2p : false;
+
             var local_address_key = "connectionindicator.localaddress";
             var remote_address_key = "connectionindicator.remoteaddress";
             var localTransport =
@@ -217,7 +219,13 @@ ConnectionIndicator.prototype.generateText = function () {
             transport +="<tr>" +
                 "<td><span data-i18n='connectionindicator.transport'>" +
                     "</span></td>" +
-                "<td>" + this.transport[0].type + "</td></tr>";
+                "<td>" + this.transport[0].type;
+            // Append (direct) to indicate the P2P type of transport
+            if (isP2P) {
+                transport += "<span data-i18n='connectionindicator.direct'>";
+            }
+            // Close "type" column and end table row
+            transport += "</td></tr>";
 
         }
 

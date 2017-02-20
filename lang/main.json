@@ -178,7 +178,8 @@
         "remoteaddress_plural": "Remote addresses:",
         "transport": "Transport:",
         "bandwidth": "Estimated bandwidth:",
-        "na": "Come back here for connection information once the conference starts"
+        "na": "Come back here for connection information once the conference starts",
+        "direct": " (direct)"
     },
     "notify": {
         "disconnected": "disconnected",
