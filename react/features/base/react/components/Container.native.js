@@ -18,7 +18,7 @@ export class Container extends AbstractContainer {
      *
      * @static
      */
-    static propTypes = AbstractContainer.propTypes;
+    static propTypes = AbstractContainer.propTypes
 
     /**
      * Implements React's {@link Component#render()}.
