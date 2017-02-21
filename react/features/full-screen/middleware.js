@@ -31,7 +31,7 @@ MiddlewareRegistry.register(store => next => action => {
         // Check if we just came back from the background and reenable full
         // screen mode if necessary.
         if (action.appState === 'active') {
-            const { conference, audioOnly }
+            const { audioOnly, conference }
                 = store.getState()['features/base/conference'];
 
             fullScreen = conference ? !audioOnly : false;
