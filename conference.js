@@ -585,14 +585,12 @@ export default {
             })
             .catch((err) => {
                 const {
-                    isOldBrowser,
-                    isPluginRequired,
+                    status,
                     message,
                     webRTCReadyPromise
                 } = err;
                 const rejectValue = {
-                    isOldBrowser,
-                    isPluginRequired,
+                    status,
                     // Browser could require Temasys plugin to be installed
                     // and conference initialization was rejected but it could
                     // be reinitialized after installation of the plugin.

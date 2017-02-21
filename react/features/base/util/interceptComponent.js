@@ -10,6 +10,9 @@ import {
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
+declare var JitsiMeetJS: Object;
+
+const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 /**
  * Array of rules defining whether we should intercept component to render
@@ -45,16 +48,13 @@ const _RULES = [
         }
     },
     state => {
-        const {
-            isOldBrowser,
-            isPluginRequired
-        } = state['features/unsupported-browser'];
+        const { status } = state['features/unsupported-browser'];
 
-        if (isOldBrowser) {
+        switch (status) {
+        case ConferenceErrors.WEBRTC_IS_NOT_SUPPORTED:
             return UnsupportedDesktopBrowser;
-        }
 
-        if (isPluginRequired) {
+        case ConferenceErrors.PLUGIN_REQUIRED:
             return PluginRequiredBrowser;
         }
     }

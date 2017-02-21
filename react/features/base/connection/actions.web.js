@@ -97,7 +97,7 @@ export function connect() {
                         // Setting plugin required flag to false because
                         // it's already been installed.
                         dispatch(setUnsupportedBrowser({
-                            isPluginRequired: false
+                            status: 'OK'
                         }));
                         dispatch(appNavigate(room));
                     });

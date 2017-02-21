@@ -7,7 +7,7 @@ import React, { Component } from 'react';
  * @private
  * @returns {ReactElement}
  */
-export default class UnsupportedMobileBrowserStyle extends Component {
+export default class HideNotificationBarStyles extends Component {
 
     /**
      * Implements React's {@link Component#render()}.

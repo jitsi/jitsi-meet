@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import UnsupportedMobileBrowserStyle from './UnsupportedMobileBrowserStyle';
+import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 declare var interfaceConfig: Object;
 
@@ -30,7 +30,7 @@ export default class NoMobileApp extends Component {
                     Please use {interfaceConfig.APP_NAME} on
                     Desktop to join calls.
                 </p>
-                <UnsupportedMobileBrowserStyle />
+                <HideNotificationBarStyle />
             </div>
         );
     }

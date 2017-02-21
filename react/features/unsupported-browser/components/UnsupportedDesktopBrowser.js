@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import { Platform } from '../../base/react';
 
+import HideNotificationBarStyle from './HideNotificationBarStyle';
+
 import BROWSER_LINKS from './browserLinks';
 
 /**
@@ -42,6 +44,7 @@ export default class UnsupportedDesktopBrowser extends Component {
                     { this._showSafariLinkIfRequired() }
                     { this._showIELinkIfRequired() }.
                 </p>
+                <HideNotificationBarStyle />
             </div>
         );
     }

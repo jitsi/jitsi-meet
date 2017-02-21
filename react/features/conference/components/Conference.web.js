@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
-import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
+import { HideNotificationBarStyle } from '../../unsupported-browser';
 import { OverlayContainer } from '../../overlay';
+import { Watermarks } from '../../base/react';
 
 declare var $: Function;
 declare var APP: Object;
@@ -176,6 +177,7 @@ class Conference extends Component {
                 </div>
 
                 <OverlayContainer />
+                <HideNotificationBarStyle />
             </div>
         );
     }
