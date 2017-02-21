@@ -1,6 +1,9 @@
 /* @flow */
 
+declare var AJS: Object;
 declare var APP: Object;
+declare var interfaceConfig: Object;
+declare var $: Object;
 
 import React from 'react';
 
@@ -75,9 +78,9 @@ export default class Toolbar extends AbstractToolbar {
 
     /**
      * Get place for toolbar button.
-     * Now it can be in main toolbar or in extended (left) toolbar
+     * Now it can be in main toolbar or in extended (left) toolbar.
      *
-     * @param btn {string}
+     * @param {string} btn - Button name.
      * @returns {string}
      */
     _getToolbarButtonPlace(btn) {
@@ -96,38 +99,45 @@ export default class Toolbar extends AbstractToolbar {
     _renderToolbarButton(button, isSplitter) {
         const toolbarId = this._getToolbarButtonId(button);
 
-        const buttonElement = <a />
+        const buttonElement = <a />;
 
         if (button.className) {
             buttonElement.className = button.className;
         }
 
         if (isSplitter) {
-            const splitter = <span className="toolbar__splitter" />;
+            const splitter = <span className = 'toolbar__splitter' />;
 
             document.getElementById(toolbarId).appendChild(splitter);
         }
 
         buttonElement.id = button.id;
 
-        if (button.html)
+        if (button.html) {
             buttonElement.innerHTML = button.html;
+        }
 
-        //TODO: remove it after UI.updateDTMFSupport fix
-        if (button.hidden)
+
+        // TODO: remove it after UI.updateDTMFSupport fix
+        if (button.hidden) {
             buttonElement.style.display = 'none';
+        }
 
-        if (button.shortcutAttr)
-            buttonElement.setAttribute("shortcut", button.shortcutAttr);
+        if (button.shortcutAttr) {
+            buttonElement.setAttribute('shortcut', button.shortcutAttr);
+        }
 
-        if (button.content)
-            buttonElement.setAttribute("content", button.content);
+        if (button.content) {
+            buttonElement.setAttribute('content', button.content);
+        }
 
-        if (button.i18n)
-            buttonElement.setAttribute("data-i18n", button.i18n);
 
-        buttonElement.setAttribute("data-container", "body");
-        buttonElement.setAttribute("data-placement", "bottom");
+        if (button.i18n) {
+            buttonElement.setAttribute('data-i18n', button.i18n);
+        }
+
+        buttonElement.setAttribute('data-container', 'body');
+        buttonElement.setAttribute('data-placement', 'bottom');
         this._addPopups(buttonElement, button.popups);
 
         document.getElementById(toolbarId)
@@ -165,7 +175,7 @@ export default class Toolbar extends AbstractToolbar {
      * @returns {void}
      */
     _onLocalRaiseHandChanged(isRaisedHand) {
-        APP.UI.Toolbar._setToggledState("toolbar_button_raisehand", isRaisedHand);
+        APP.UI.Toolbar._setToggledState('toolbar_button_raisehand', isRaisedHand);
     }
 
     /**
@@ -182,8 +192,8 @@ export default class Toolbar extends AbstractToolbar {
             .tooltip({
                 trigger: 'manual',
                 html: true,
-                gravity: gravity,
-                title: 'title'});
+                gravity,
+                title: 'title' });
         if (show) {
             AJS.$(popupSelectorID).tooltip('show');
             setTimeout(() => {
@@ -205,15 +215,13 @@ export default class Toolbar extends AbstractToolbar {
                     className = 'notice'
                     id = 'notice'
                     style = { _DISPLAY_NONE_STYLE }>
-                            <span
-                                className = 'noticeText'
-                                id = 'noticeText' />
+                    <span
+                        className = 'noticeText'
+                        id = 'noticeText' />
                 </div>
                 <div
                     className = 'toolbar'
-                    id = 'mainToolbar' >
-
-                </div>
+                    id = 'mainToolbar' />
             </div>
         );
     }

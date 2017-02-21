@@ -1,4 +1,4 @@
-/* global AJS, APP, $, config, interfaceConfig, JitsiMeetJS */
+/* global APP, $, config, interfaceConfig */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
@@ -22,10 +22,6 @@ let Toolbar;
  */
 const buttonHandlers = Object.assign({}, primaryToolbarHandlers,
     secondaryToolbarHandlers);
-
-function dialpadButtonClicked() {
-    //TODO show the dialpad box
-}
 
 function showSipNumberInput () {
     let defaultNumber = config.defaultSipNumber
@@ -61,7 +57,6 @@ Toolbar = {
         // Initialise the toolbar buttons.
         // The main toolbar will only take into account
         // it's own configuration from interface_config.
-        this._initToolbarButtons();
 
         this._setShortcutsAndTooltips();
 
@@ -358,25 +353,6 @@ Toolbar = {
                 .replace("icon-exit-full-screen", "icon-full-screen");
 
         Toolbar._setToggledState("toolbar_button_fullScreen", isFullScreen);
-    },
-
-    /**
-     * Initialise toolbar buttons.
-     */
-    _initToolbarButtons() {
-        interfaceConfig.TOOLBAR_BUTTONS.forEach((value, index) => {
-            let place = getToolbarButtonPlace(value);
-
-            if (value && value in defaultToolbarButtons) {
-                let button = defaultToolbarButtons[value];
-                this._addToolbarButton(
-                    button,
-                    place,
-                    (interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX !== undefined
-                        && index
-                            === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX));
-            }
-        });
     },
 
     /**

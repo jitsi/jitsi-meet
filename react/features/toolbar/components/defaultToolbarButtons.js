@@ -12,14 +12,14 @@ const defaultToolbarButtons = {
     'microphone': {
         id: 'toolbar_button_mute',
         tooltipKey: 'toolbar.mute',
-        className: "button icon-microphone",
+        className: 'button icon-microphone',
         shortcut: 'M',
         shortcutAttr: 'mutePopover',
-        shortcutFunc: function() {
+        shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
             APP.conference.toggleAudioMuted();
         },
-        shortcutDescription: "keyboardShortcuts.mute",
+        shortcutDescription: 'keyboardShortcuts.mute',
         popups: [
             {
                 id: 'micMutedPopup',
@@ -37,22 +37,22 @@ const defaultToolbarButtons = {
                 dataAttr: '[title]toolbar.talkWhileMutedPopup'
             }
         ],
-        content: "Mute / Unmute",
-        i18n: "[content]toolbar.mute"
+        content: 'Mute / Unmute',
+        i18n: '[content]toolbar.mute'
     },
     'camera': {
         id: 'toolbar_button_camera',
         tooltipKey: 'toolbar.videomute',
-        className: "button icon-camera",
+        className: 'button icon-camera',
         shortcut: 'V',
         shortcutAttr: 'toggleVideoPopover',
-        shortcutFunc: function() {
+        shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
             APP.conference.toggleVideoMuted();
         },
-        shortcutDescription: "keyboardShortcuts.videoMute",
-        content: "Start / stop camera",
-        i18n: "[content]toolbar.videomute"
+        shortcutDescription: 'keyboardShortcuts.videoMute',
+        content: 'Start / stop camera',
+        i18n: '[content]toolbar.videomute'
     },
     'desktop': {
         id: 'toolbar_button_desktopsharing',
@@ -60,7 +60,7 @@ const defaultToolbarButtons = {
         className: 'button icon-share-desktop',
         shortcut: 'D',
         shortcutAttr: 'toggleDesktopSharingPopover',
-        shortcutFunc: function() {
+        shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
             APP.conference.toggleScreenSharing();
         },
@@ -81,15 +81,15 @@ const defaultToolbarButtons = {
         className: 'button icon-chat',
         shortcut: 'C',
         shortcutAttr: 'toggleChatPopover',
-        shortcutFunc: function() {
+        shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
             APP.UI.toggleChat();
         },
         shortcutDescription: 'keyboardShortcuts.toggleChat',
         sideContainerId: 'chat_container',
         html: <span className = 'badge-round'>
-                   <span id = 'unreadMessages' />
-              </span>
+            <span id = 'unreadMessages' />
+        </span>
     },
     'contacts': {
         id: 'toolbar_contact_list',
@@ -97,15 +97,17 @@ const defaultToolbarButtons = {
         className: 'button icon-contactList',
         sideContainerId: 'contacts_container',
         html: <span className = 'badge-round'>
-                   <span id = 'numberOfParticipants' />
-              </span>
+            <span id = 'numberOfParticipants' />
+        </span>
     },
     'profile': {
         id: 'toolbar_button_profile',
         tooltipKey: 'profile.setDisplayNameLabel',
         className: 'button',
         sideContainerId: 'profile_container',
-        html: <img id = 'avatar' src='images/avatar2.png' />
+        html: <img
+            id = 'avatar'
+            src = 'images/avatar2.png' />
     },
     'etherpad': {
         id: 'toolbar_button_etherpad',
@@ -115,45 +117,46 @@ const defaultToolbarButtons = {
     'fullscreen': {
         id: 'toolbar_button_fullScreen',
         tooltipKey: 'toolbar.fullscreen',
-        className: "button icon-full-screen",
+        className: 'button icon-full-screen',
         shortcut: 'S',
         shortcutAttr: 'toggleFullscreenPopover',
-        shortcutFunc: function() {
+        shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.fullscreen.toggled');
             APP.UI.toggleFullScreen();
         },
-        shortcutDescription: "keyboardShortcuts.fullScreen",
-        content: "Enter / Exit Full Screen",
-        i18n: "[content]toolbar.fullscreen"
+        shortcutDescription: 'keyboardShortcuts.fullScreen',
+        content: 'Enter / Exit Full Screen',
+        i18n: '[content]toolbar.fullscreen'
     },
     'settings': {
         id: 'toolbar_button_settings',
         tooltipKey: 'toolbar.Settings',
         className: 'button icon-settings',
-        sideContainerId: "settings_container"
+        sideContainerId: 'settings_container'
     },
     'hangup': {
         id: 'toolbar_button_hangup',
         tooltipKey: 'toolbar.hangup',
-        className: "button icon-hangup",
-        content: "Hang Up",
-        i18n: "[content]toolbar.hangup"
+        className: 'button icon-hangup',
+        content: 'Hang Up',
+        i18n: '[content]toolbar.hangup'
     },
     'raisehand': {
-        id: "toolbar_button_raisehand",
+        id: 'toolbar_button_raisehand',
         tooltipKey: 'toolbar.raiseHand',
-        className: "button icon-raised-hand",
-        shortcut: "R",
-        shortcutAttr: "raiseHandPopover",
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent("shortcut.raisehand.clicked");
+        className: 'button icon-raised-hand',
+        shortcut: 'R',
+        shortcutAttr: 'raiseHandPopover',
+        shortcutFunc() {
+            JitsiMeetJS.analytics.sendEvent('shortcut.raisehand.clicked');
             APP.conference.maybeToggleRaisedHand();
         },
-        shortcutDescription: "keyboardShortcuts.raiseHand",
-        content: "Raise Hand",
-        i18n: "[content]toolbar.raiseHand"
+        shortcutDescription: 'keyboardShortcuts.raiseHand',
+        content: 'Raise Hand',
+        i18n: '[content]toolbar.raiseHand'
     },
-    //init and btn handler: Recording.initRecordingButton (Recording.js)
+
+    // init and btn handler: Recording.initRecordingButton (Recording.js)
     'recording': {
         id: 'toolbar_button_record',
         tooltipKey: 'liveStreaming.buttonTooltip',
@@ -185,7 +188,8 @@ const defaultToolbarButtons = {
         id: 'toolbar_button_dialpad',
         tooltipKey: 'toolbar.dialpad',
         className: 'button icon-dialpad',
-        //TODO: remove it after UI.updateDTMFSupport fix
+
+        // TODO: remove it after UI.updateDTMFSupport fix
         hidden: true
     }
 };

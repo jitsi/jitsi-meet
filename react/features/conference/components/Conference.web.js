@@ -6,7 +6,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { connect, disconnect } from '../../base/connection';
 import { OverlayContainer } from '../../overlay';
 import { Watermarks } from '../../base/react';
-import { Toolbar, ExtendedToolbar } from '../../toolbar';
+import { Toolbar } from '../../toolbar';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
@@ -67,7 +67,7 @@ class Conference extends Component {
                 <div
                     className = 'hide'
                     id = 'subject' />
-                <Toolbar visible = { true }/>
+                <Toolbar visible = { true } />
                 <div id = 'videospace'>
                     <div
                         className = 'videocontainer'

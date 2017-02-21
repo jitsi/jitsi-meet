@@ -1,5 +1,12 @@
+/* @flow */
+
+import UIEvents from '../../../../service/UI/UIEvents';
+
+declare var APP: Object;
+declare var JitsiMeetJS: Object;
+
 const primaryToolbarHandlers = {
-    "toolbar_button_mute": function () {
+    'toolbar_button_mute': function() {
         const sharedVideoManager = APP.UI.getSharedVideoManager();
 
         if (APP.conference.audioMuted) {
@@ -21,7 +28,7 @@ const primaryToolbarHandlers = {
             emitter.emit(UIEvents.AUDIO_MUTED, true, true);
         }
     },
-    "toolbar_button_camera": () => {
+    'toolbar_button_camera': () => {
         if (APP.conference.videoMuted) {
             JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
             emitter.emit(UIEvents.VIDEO_MUTED, false);
@@ -30,19 +37,19 @@ const primaryToolbarHandlers = {
             emitter.emit(UIEvents.VIDEO_MUTED, true);
         }
     },
-    "toolbar_button_link": () => {
+    'toolbar_button_link': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
         emitter.emit(UIEvents.INVITE_CLICKED);
     },
-    "toolbar_button_fullScreen": () => {
+    'toolbar_button_fullScreen': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
 
         emitter.emit(UIEvents.TOGGLE_FULLSCREEN);
     },
-    "toolbar_button_hangup": () => {
+    'toolbar_button_hangup': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
         emitter.emit(UIEvents.HANGUP);
-    },
+    }
 };
 
 export default primaryToolbarHandlers;
