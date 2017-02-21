@@ -3,274 +3,25 @@ import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
+const defaultToolbarButtons =
+  require('../../../react/features/toolbar/components/defaultToolbarButtons');
+
+const primaryToolbarHandlers =
+  require('../../../react/features/toolbar/components/primaryToolbarHandlers');
+
+const secondaryToolbarHandlers =
+require('../../../react/features/toolbar/components/secondaryToolbarHandlers');
+
 let emitter = null;
 let Toolbar;
-
-const mainToolbarHandlers = {
-    "toolbar_button_camera": () => {
-        if (APP.conference.videoMuted) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
-            emitter.emit(UIEvents.VIDEO_MUTED, false);
-        } else {
-            JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
-            emitter.emit(UIEvents.VIDEO_MUTED, true);
-        }
-    },
-    "toolbar_button_link": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-        emitter.emit(UIEvents.INVITE_CLICKED);
-    },
-    "toolbar_button_fullScreen": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
-
-        emitter.emit(UIEvents.TOGGLE_FULLSCREEN);
-    },
-    "toolbar_button_hangup": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
-        emitter.emit(UIEvents.HANGUP);
-    },
-};
-
-const extendedToolbarHandlers = {
-    "toolbar_button_profile": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
-        emitter.emit(UIEvents.TOGGLE_PROFILE);
-    },
-    "toolbar_button_chat": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
-        emitter.emit(UIEvents.TOGGLE_CHAT);
-    },
-    "toolbar_contact_list": () => {
-        JitsiMeetJS.analytics.sendEvent(
-            'toolbar.contacts.toggled');
-        emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
-    },
-    "toolbar_button_etherpad": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
-        emitter.emit(UIEvents.ETHERPAD_CLICKED);
-    },
-    "toolbar_button_sharedvideo": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.sharedvideo.clicked');
-        emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
-    },
-    "toolbar_button_desktopsharing": () => {
-        if (APP.conference.isSharingScreen) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.screen.disabled');
-        } else {
-            JitsiMeetJS.analytics.sendEvent('toolbar.screen.enabled');
-        }
-        emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
-    },
-    "toolbar_button_sip": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
-        showSipNumberInput();
-    },
-    "toolbar_button_dialpad": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.sip.dialpad.clicked');
-        dialpadButtonClicked();
-    },
-    "toolbar_button_settings": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.settings.toggled');
-        emitter.emit(UIEvents.TOGGLE_SETTINGS);
-    },
-    "toolbar_button_raisehand": () => {
-        JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
-        APP.conference.maybeToggleRaisedHand();
-    }
-};
 
 /**
  * Handlers for toolbar buttons.
  *
  * buttonId {string}: handler {function}
  */
-const buttonHandlers = Object.assign({}, mainToolbarHandlers,
-    extendedToolbarHandlers);
-
-/**
- * All toolbars buttons description
- */
-const defaultToolbarButtons = {
-    'microphone': {
-        id: 'toolbar_button_mute',
-        tooltipKey: 'toolbar.mute',
-        className: "button icon-microphone",
-        shortcut: 'M',
-        shortcutAttr: 'mutePopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
-            APP.conference.toggleAudioMuted();
-        },
-        shortcutDescription: "keyboardShortcuts.mute",
-        popups: [
-            {
-                id: 'micMutedPopup',
-                className: 'loginmenu',
-                dataAttr: '[title]toolbar.micMutedPopup'
-            },
-            {
-                id: 'unableToUnmutePopup',
-                className: 'loginmenu',
-                dataAttr: '[title]toolbar.unableToUnmutePopup'
-            },
-            {
-                id: 'talkWhileMutedPopup',
-                className: 'loginmenu',
-                dataAttr: '[title]toolbar.talkWhileMutedPopup'
-            }
-        ],
-        content: "Mute / Unmute",
-        i18n: "[content]toolbar.mute"
-    },
-    'camera': {
-        id: 'toolbar_button_camera',
-        tooltipKey: 'toolbar.videomute',
-        className: "button icon-camera",
-        shortcut: 'V',
-        shortcutAttr: 'toggleVideoPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
-            APP.conference.toggleVideoMuted();
-        },
-        shortcutDescription: "keyboardShortcuts.videoMute",
-        content: "Start / stop camera",
-        i18n: "[content]toolbar.videomute"
-    },
-    'desktop': {
-        id: 'toolbar_button_desktopsharing',
-        tooltipKey: 'toolbar.sharescreen',
-        className: 'button icon-share-desktop',
-        shortcut: 'D',
-        shortcutAttr: 'toggleDesktopSharingPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
-            APP.conference.toggleScreenSharing();
-        },
-        shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
-        content: 'Share screen',
-        i18n: '[content]toolbar.sharescreen'
-    },
-    'invite': {
-        id: 'toolbar_button_link',
-        tooltipKey: 'toolbar.invite',
-        className: 'button icon-link',
-        content: 'Invite others',
-        i18n: '[content]toolbar.invite'
-    },
-    'chat': {
-        id: 'toolbar_button_chat',
-        tooltipKey: 'toolbar.chat',
-        className: 'button icon-chat',
-        shortcut: 'C',
-        shortcutAttr: 'toggleChatPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
-            APP.UI.toggleChat();
-        },
-        shortcutDescription: 'keyboardShortcuts.toggleChat',
-        sideContainerId: 'chat_container',
-        html: `<span class="badge-round">
-                   <span id="unreadMessages"></span>
-               </span>`
-    },
-    'contacts': {
-        id: 'toolbar_contact_list',
-        tooltipKey: 'bottomtoolbar.contactlist',
-        className: 'button icon-contactList',
-        sideContainerId: 'contacts_container',
-        html: `<span class="badge-round">
-                   <span id="numberOfParticipants"></span>
-               </span>`
-    },
-    'profile': {
-        id: 'toolbar_button_profile',
-        tooltipKey: 'profile.setDisplayNameLabel',
-        className: 'button',
-        sideContainerId: 'profile_container',
-        html: `<img id="avatar" src="images/avatar2.png"/>`
-    },
-    'etherpad': {
-        id: 'toolbar_button_etherpad',
-        tooltipKey: 'toolbar.etherpad',
-        className: 'button icon-share-doc'
-    },
-    'fullscreen': {
-        id: 'toolbar_button_fullScreen',
-        tooltipKey: 'toolbar.fullscreen',
-        className: "button icon-full-screen",
-        shortcut: 'S',
-        shortcutAttr: 'toggleFullscreenPopover',
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent('shortcut.fullscreen.toggled');
-            APP.UI.toggleFullScreen();
-        },
-        shortcutDescription: "keyboardShortcuts.fullScreen",
-        content: "Enter / Exit Full Screen",
-        i18n: "[content]toolbar.fullscreen"
-    },
-    'settings': {
-        id: 'toolbar_button_settings',
-        tooltipKey: 'toolbar.Settings',
-        className: 'button icon-settings',
-        sideContainerId: "settings_container"
-    },
-    'hangup': {
-        id: 'toolbar_button_hangup',
-        tooltipKey: 'toolbar.hangup',
-        className: "button icon-hangup",
-        content: "Hang Up",
-        i18n: "[content]toolbar.hangup"
-    },
-    'raisehand': {
-        id: "toolbar_button_raisehand",
-        tooltipKey: 'toolbar.raiseHand',
-        className: "button icon-raised-hand",
-        shortcut: "R",
-        shortcutAttr: "raiseHandPopover",
-        shortcutFunc: function() {
-            JitsiMeetJS.analytics.sendEvent("shortcut.raisehand.clicked");
-            APP.conference.maybeToggleRaisedHand();
-        },
-        shortcutDescription: "keyboardShortcuts.raiseHand",
-        content: "Raise Hand",
-        i18n: "[content]toolbar.raiseHand"
-    },
-    //init and btn handler: Recording.initRecordingButton (Recording.js)
-    'recording': {
-        id: 'toolbar_button_record',
-        tooltipKey: 'liveStreaming.buttonTooltip',
-        className: 'button',
-        hidden: true // will be displayed once
-                     // the recording functionality is detected
-    },
-    'sharedvideo': {
-        id: 'toolbar_button_sharedvideo',
-        tooltipKey: 'toolbar.sharedvideo',
-        className: 'button icon-shared-video',
-        popups: [
-            {
-                id: 'sharedVideoMutedPopup',
-                className: 'loginmenu extendedToolbarPopup',
-                dataAttr: '[title]toolbar.sharedVideoMutedPopup',
-                dataAttrPosition: 'w'
-            }
-        ]
-    },
-    'sip': {
-        id: 'toolbar_button_sip',
-        tooltipKey: 'toolbar.sip',
-        className: 'button icon-telephone',
-        hidden: true // will be displayed once
-                     // the SIP calls functionality is detected
-    },
-    'dialpad': {
-        id: 'toolbar_button_dialpad',
-        tooltipKey: 'toolbar.dialpad',
-        className: 'button icon-dialpad',
-        //TODO: remove it after UI.updateDTMFSupport fix
-        hidden: true
-    }
-};
+const buttonHandlers = Object.assign({}, primaryToolbarHandlers,
+    secondaryToolbarHandlers);
 
 function dialpadButtonClicked() {
     //TODO show the dialpad box
@@ -299,52 +50,6 @@ function showSipNumberInput () {
     });
 }
 
-/**
- * Get place for toolbar button.
- * Now it can be in main toolbar or in extended (left) toolbar
- *
- * @param btn {string}
- * @returns {string}
- */
-function getToolbarButtonPlace (btn) {
-    return interfaceConfig.MAIN_TOOLBAR_BUTTONS.includes(btn) ?
-        'main' :
-        'extended';
-}
-
-/**
- * Event handler for side toolbar container toggled event.
- *
- * @param {string} containerId - ID of the container.
- * @param {boolean} isVisible - Flag showing whether container
- * is visible.
- * @returns {void}
- */
-function onSideToolbarContainerToggled(containerId, isVisible) {
-    Toolbar._handleSideToolbarContainerToggled(containerId, isVisible);
-}
-
-/**
- * Event handler for local raise hand changed event.
- *
- * @param {boolean} isRaisedHand - Flag showing whether hand is raised.
- * @returns {void}
- */
-function onLocalRaiseHandChanged(isRaisedHand) {
-    Toolbar._setToggledState("toolbar_button_raisehand", isRaisedHand);
-}
-
-/**
- * Event handler for full screen toggled event.
- *
- * @param {boolean} isFullScreen - Flag showing whether app in full
- * screen mode.
- * @returns {void}
- */
-function onFullScreenToggled(isFullScreen) {
-    Toolbar._handleFullScreenToggled(isFullScreen);
-}
-
 Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
@@ -352,9 +57,6 @@ Toolbar = {
         this.enabled = true;
         this.toolbarSelector = $("#mainToolbarContainer");
         this.extendedToolbarSelector = $("#extendedToolbar");
-
-        // Unregister listeners in case of reinitialization.
-        this.unregisterListeners();
 
         // Initialise the toolbar buttons.
         // The main toolbar will only take into account
@@ -367,45 +69,11 @@ Toolbar = {
 
         this.registerListeners();
 
-        APP.UI.addListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-            (popupID, show, timeout) => {
-                Toolbar._showCustomToolbarPopup(popupID, show, timeout);
-            });
-
         if(!APP.tokenData.isGuest) {
             $("#toolbar_button_profile").addClass("unclickable");
             UIUtil.removeTooltip(
                 document.getElementById('toolbar_button_profile'));
         }
-    },
-    /**
-     *  Register listeners for UI events of toolbar component.
-     *
-     *  @returns {void}
-     */
-    registerListeners() {
-        APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
-            onSideToolbarContainerToggled);
-
-        APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-            onLocalRaiseHandChanged);
-
-        APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED, onFullScreenToggled);
-    },
-    /**
-     *  Unregisters handlers for UI events of Toolbar component.
-     *
-     *  @returns {void}
-     */
-    unregisterListeners() {
-        APP.UI.removeListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
-            onSideToolbarContainerToggled);
-
-        APP.UI.removeListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-            onLocalRaiseHandChanged);
-
-        APP.UI.removeListener(UIEvents.FULLSCREEN_TOGGLED,
-            onFullScreenToggled);
     },
     /**
      * Enables / disables the toolbar.
@@ -787,32 +455,6 @@ Toolbar = {
     },
 
     /**
-     * Show custom popup/tooltip for a specified button.
-     * @param popupSelectorID the selector id of the popup to show
-     * @param show true or false/show or hide the popup
-     * @param timeout the time to show the popup
-     */
-    _showCustomToolbarPopup(popupSelectorID, show, timeout) {
-
-        const gravity = $(popupSelectorID).attr('tooltip-gravity');
-        AJS.$(popupSelectorID)
-            .tooltip({
-                trigger: 'manual',
-                html: true,
-                gravity: gravity,
-                title: 'title'});
-        if (show) {
-            AJS.$(popupSelectorID).tooltip('show');
-            setTimeout(function () {
-                // hide the tooltip
-                AJS.$(popupSelectorID).tooltip('hide');
-            }, timeout);
-        } else {
-            AJS.$(popupSelectorID).tooltip('hide');
-        }
-    },
-
-    /**
      * Sets the toggled state of the given element depending on the isToggled
      * parameter.
      *
@@ -863,10 +505,13 @@ Toolbar = {
      */
     _setButtonHandlers() {
         Object.keys(buttonHandlers).forEach(
-            buttonId => $(`#${buttonId}`).click(function(event) {
-                !$(this).prop('disabled') && buttonHandlers[buttonId](event);
-            })
-        );
+            buttonId => {
+                $(`#${buttonId}`).click((event) => {
+                    const handler = buttonHandlers[buttonId];
+
+                    !$(this).prop('disabled') && handler[buttonId](event);
+                });
+            });
     }
 };
 

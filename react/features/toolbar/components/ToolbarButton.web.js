@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 
-export default class ToolbarButton extends Component {
+import AbstractToolbarButton from './AbstractToolbarButton';
+
+export default class ToolbarButton extends AbstractToolbarButton {
     render() {
-        return null;
+        return (
+            <a className="button" />
+        );
     }
 }

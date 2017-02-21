@@ -13,18 +13,6 @@ declare var $: Function;
 declare var APP: Object;
 
 /**
- * For legacy reasons, inline style for display none.
- *
- * @private
- * @type {{
- *     display: string
- * }}
- */
-const _DISPLAY_NONE_STYLE = {
-    display: 'none'
-};
-
-/**
  * The conference page of the Web application.
  */
 class Conference extends Component {
@@ -76,21 +64,10 @@ class Conference extends Component {
     render() {
         return (
             <div id = 'videoconference_page'>
-                <div id = 'mainToolbarContainer'>
-                    <div
-                        className = 'notice'
-                        id = 'notice'
-                        style = { _DISPLAY_NONE_STYLE }>
-                        <span
-                            className = 'noticeText'
-                            id = 'noticeText' />
-                    </div>
-                    <Toolbar />
-                </div>
                 <div
                     className = 'hide'
                     id = 'subject' />
-                <ExtendedToolbar />
+                <Toolbar visible = { true }/>
                 <div id = 'videospace'>
                     <div
                         className = 'videocontainer'
