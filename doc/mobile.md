@@ -1,9 +1,9 @@
 # Jitsi Meet mobile apps
 
 Jitsi Meet can also be built as a standalone mobile application for
-iOS and Android.  It uses the [React Native]() framework.
+iOS and Android.  It uses the [React Native] framework.
 
-First make sure the [React Native dependencies]() are installed.
+First make sure the [React Native dependencies] are installed.
 
 **NOTE**:  This document assumes the app is being built on a macOS system.
 
@@ -62,8 +62,8 @@ work properly with the native plugins we require.
 
 ## Android
 
-The [React Native dependencies]() page has very detailed information on how to
-setup [Android Studio]() and the required components for getting the necessary
+The [React Native dependencies] page has very detailed information on how to
+setup [Android Studio] and the required components for getting the necessary
 build environment.  Make sure you follow it closely.
 
 1. Building the app
@@ -79,7 +79,7 @@ build environment.  Make sure you follow it closely.
 
 ## Debugging
 
-The official documentation on [debugging]() is quite extensive, it is the
+The official documentation on [debugging] is quite extensive, it is the
 preferred method for debugging.
 
 **NOTE**: When using Chrome Developer Tools for debugging the JavaScript code
