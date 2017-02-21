@@ -7,6 +7,7 @@ import { connect, disconnect } from '../../base/connection';
 import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
+import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
 declare var APP: Object;
@@ -174,6 +175,7 @@ class Conference extends Component {
                 </div>
 
                 <OverlayContainer />
+                <HideNotificationBarStyle />
             </div>
         );
     }

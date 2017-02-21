@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { Platform } from '../../base/react';
 
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
+import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 /**
  * Describes styles namespace for this component.
@@ -41,6 +42,8 @@ export default class UnsupportedDesktopBrowser extends Component {
                     { this._showSafariLinkIfRequired() }
                     { this._showIELinkIfRequired() }.
                 </p>
+
+                <HideNotificationBarStyle />
             </div>
         );
     }

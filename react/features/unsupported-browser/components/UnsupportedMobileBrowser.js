@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { Platform } from '../../base/react';
 
-import UnsupportedMobileBrowserStyle from './UnsupportedMobileBrowserStyle';
+import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
@@ -103,7 +103,8 @@ class UnsupportedMobileBrowser extends Component {
                         </button>
                     </a>
                 </div>
-                <UnsupportedMobileBrowserStyle />
+
+                <HideNotificationBarStyle />
             </div>
         );
     }
