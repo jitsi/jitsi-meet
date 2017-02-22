@@ -127,7 +127,7 @@ function _connectionFailed(state, action) {
 function _mediaPermissionPromptVisibilityChanged(state, action) {
     return setStateProperties(state, {
         browser: action.browser,
-        mediaPermissionPromptVisible: action.isVisible
+        isMediaPermissionPromptVisible: action.isVisible
     });
 }
 
