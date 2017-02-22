@@ -20,6 +20,13 @@ var config = { // eslint-disable-line no-unused-vars
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
 
+    // The STUN servers that will used in the peer to peer connections
+    p2pStunServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" }
+    ],
+
     // The ID of the jidesha extension for Chrome.
     desktopSharingChromeExtId: null,
     // Whether desktop sharing should be disabled on Chrome.
