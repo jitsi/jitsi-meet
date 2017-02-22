@@ -5,6 +5,9 @@ import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
+import { I18nextProvider } from 'react-i18next';
+import { i18n } from '../../base/translation';
+
 import {
     localParticipantJoined,
     localParticipantLeft
@@ -134,11 +137,13 @@ export class AbstractApp extends Component {
 
         if (route) {
             return (
-                <Provider store = { this._getStore() }>
-                    {
-                        this._createElement(route.component)
-                    }
-                </Provider>
+                <I18nextProvider i18n = { i18n }>
+                    <Provider store = { this._getStore() }>
+                        {
+                            this._createElement(route.component)
+                        }
+                    </Provider>
+                </I18nextProvider>
             );
         }
 
