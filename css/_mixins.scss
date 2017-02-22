@@ -90,14 +90,48 @@
 }
 
 /**
-* Mixin styling placeholder
-**/
+ * Mixin styling a placeholder.
+ **/
 @mixin placeholder() {
   $selectors: (
           "::-webkit-input-placeholder",
           "::-moz-placeholder",
           ":-moz-placeholder",
           ":-ms-input-placeholder"
+  );
+
+  @each $selector in $selectors {
+    #{$selector} {
+      @content;
+    }
+  }
+}
+
+/**
+ * Mixin styling a slider track for different browsers.
+ **/
+@mixin slider() {
+  $selectors: (
+          "input[type=range]::-webkit-slider-runnable-track",
+          "input[type=range]::-moz-range-track",
+          "input[type=range]::-ms-track"
+  );
+
+  @each $selector in $selectors {
+    #{$selector} {
+      @content;
+    }
+  }
+}
+
+/**
+ * Mixin styling a slider thumb for different browsers.
+ **/
+@mixin slider-thumb() {
+  $selectors: (
+          "input[type=range]::-webkit-slider-thumb",
+          "input[type=range]::-moz-range-thumb",
+          "input[type=range]::-ms-thumb"
   );
 
   @each $selector in $selectors {
