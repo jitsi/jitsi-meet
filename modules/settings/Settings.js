@@ -118,7 +118,6 @@ export default {
     },
     setLanguage: function (lang) {
         language = lang;
-        jitsiLocalStorage.setItem("language", lang);
     },
 
     /**
