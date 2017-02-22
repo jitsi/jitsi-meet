@@ -179,10 +179,10 @@ function _addTracks(tracks) {
  * Disposes passed tracks and signals them to be removed.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} tracks - List of tracks.
- * @private
+ * @protected
  * @returns {Function}
  */
-function _disposeAndRemoveTracks(tracks) {
+export function _disposeAndRemoveTracks(tracks) {
     return dispatch =>
         Promise.all(
             tracks.map(t =>

@@ -184,21 +184,12 @@ class Toolbox extends Component {
 
         return (
             <View style = { styles.secondaryToolbar }>
-                {/* FIXME There are multiple issues with the toggling of the
-                  * camera facing more. For example, switching from the user
-                  * facing camera to the environment facing camera on iOS may be
-                  * very slow or may not work at all. On Android the toggling
-                  * either works or does not. The causes of the various problems
-                  * have been identified to lie within either
-                  * react-native-webrtc or Google's native WebRTC API.
-                  *
                 <ToolbarButton
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleCameraFacingMode }
                     style = { style }
                     underlayColor = { underlayColor } />
-                  */}
                 <ToolbarButton
                     iconName = {
                         this.props._locked ? 'security-locked' : 'security'

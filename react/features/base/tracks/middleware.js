@@ -11,7 +11,11 @@ import {
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import { createLocalTracks, destroyLocalTracks } from './actions';
+import {
+    _disposeAndRemoveTracks,
+    createLocalTracks,
+    destroyLocalTracks
+} from './actions';
 import { TRACK_UPDATED } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
@@ -37,7 +41,16 @@ MiddlewareRegistry.register(store => next => action => {
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
 
-    case SET_CAMERA_FACING_MODE:
+    case SET_CAMERA_FACING_MODE: {
+        // XXX Destroy the local video track before creating a new one or
+        // react-native-webrtc may be slow or get stuck when opening a (video)
+        // capturer twice.
+        const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
+
+        if (localTrack) {
+            store.dispatch(_disposeAndRemoveTracks([ localTrack.jitsiTrack ]));
+        }
+
         store.dispatch(
             createLocalTracks({
                 devices: [ MEDIA_TYPE.VIDEO ],
@@ -45,6 +58,7 @@ MiddlewareRegistry.register(store => next => action => {
             })
         );
         break;
+    }
 
     case SET_VIDEO_MUTED:
         _setMuted(store, action, MEDIA_TYPE.VIDEO);
