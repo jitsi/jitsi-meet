@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { translate } from '../../base/translation';
+
 declare var AJS: Object;
 
 /**
@@ -8,7 +10,7 @@ declare var AJS: Object;
  * seconds until the current value reaches props.end. Also displays progress
  * bar.
  */
-export default class ReloadTimer extends Component {
+class ReloadTimer extends Component {
     /**
      * ReloadTimer component's property types.
      *
@@ -52,7 +54,15 @@ export default class ReloadTimer extends Component {
          * @public
          * @type {number}
          */
-        step: React.PropTypes.number
+        step: React.PropTypes.number,
+
+        /**
+         * The function used to translate strings.
+         *
+         * @public
+         * @type {func}
+         */
+        t: React.PropTypes.func
     }
 
     /**
@@ -132,6 +142,8 @@ export default class ReloadTimer extends Component {
      * @public
      */
     render() {
+        const { t } = this.props;
+
         return (
             <div>
                 <div
@@ -143,9 +155,13 @@ export default class ReloadTimer extends Component {
                     {
                         this.state.current
                     }
-                    <span data-i18n = 'dialog.conferenceReloadTimeLeft' />
+                    <span>
+                        { t('dialog.conferenceReloadTimeLeft') }
+                    </span>
                 </span>
             </div>
         );
     }
 }
+
+export default translate(ReloadTimer);

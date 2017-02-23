@@ -51,9 +51,6 @@ class Conference extends Component {
         APP.UI.registerListeners();
         APP.UI.bindEvents();
 
-        // XXX Temporary solution until we add React translation.
-        APP.translation.translateElement($('#videoconference_page'));
-
         this.props.dispatch(connect());
     }
 

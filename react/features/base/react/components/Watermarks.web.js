@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { translate } from '../../translation';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -18,7 +19,7 @@ const _RIGHT_WATERMARK_STYLE = {
  * A Web Component which renders watermarks such as Jits, brand, powered by,
  * etc.
  */
-export class Watermarks extends Component {
+class WatermarksComponent extends Component {
     state = {
         brandWatermarkLink: String,
         jitsiWatermarkLink: String,
@@ -139,12 +140,14 @@ export class Watermarks extends Component {
      */
     _renderPoweredBy() {
         if (this.state.showPoweredBy) {
+            const { t } = this.props;
+
             return (
                 <a
                     className = 'poweredby'
                     href = 'http://jitsi.org'
                     target = '_new'>
-                    <span data-i18n = 'poweredby' /> jitsi.org
+                    <span>{t('poweredby')} jitsi.org</span>
                 </a>
             );
         }
@@ -152,3 +155,5 @@ export class Watermarks extends Component {
         return null;
     }
 }
+
+export const Watermarks = translate(WatermarksComponent);

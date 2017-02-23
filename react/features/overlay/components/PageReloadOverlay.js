@@ -5,6 +5,8 @@ import { randomInt } from '../../base/util';
 import AbstractOverlay from './AbstractOverlay';
 import ReloadTimer from './ReloadTimer';
 
+import { translate } from '../../base/translation';
+
 declare var APP: Object;
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -14,7 +16,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * conference is reloaded. Shows a warning message and counts down towards the
  * reload.
  */
-export default class PageReloadOverlay extends AbstractOverlay {
+class PageReloadOverlay extends AbstractOverlay {
     /**
      * PageReloadOverlay component's property types.
      *
@@ -134,15 +136,17 @@ export default class PageReloadOverlay extends AbstractOverlay {
         if (this.props.isNetworkFailure) {
             const className
                 = 'button-control button-control_primary button-control_center';
+            const { t } = this.props;
 
             /* eslint-disable react/jsx-handler-names */
 
             return (
                 <button
                     className = { className }
-                    data-i18n = 'dialog.reconnectNow'
                     id = 'reconnectNow'
-                    onClick = { this._reconnectNow } />
+                    onClick = { this._reconnectNow }>
+                    { t('dialog.reconnectNow') }
+                </button>
             );
 
 
@@ -161,17 +165,20 @@ export default class PageReloadOverlay extends AbstractOverlay {
      * @protected
      */
     _renderOverlayContent() {
+        const { t } = this.props;
 
         /* eslint-disable react/jsx-handler-names */
 
         return (
             <div className = 'inlay'>
                 <span
-                    className = 'reload_overlay_title'
-                    data-i18n = { this.state.title } />
+                    className = 'reload_overlay_title'>
+                    { t(this.state.title) }
+                </span>
                 <span
-                    className = 'reload_overlay_text'
-                    data-i18n = { this.state.message } />
+                    className = 'reload_overlay_text'>
+                    { t(this.state.message) }
+                </span>
                 <ReloadTimer
                     end = { 0 }
                     interval = { 1 }
@@ -185,3 +192,5 @@ export default class PageReloadOverlay extends AbstractOverlay {
         /* eslint-enable react/jsx-handler-names */
     }
 }
+
+export default translate(PageReloadOverlay);

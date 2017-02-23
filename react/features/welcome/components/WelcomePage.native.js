@@ -8,6 +8,8 @@ import { ColorPalette } from '../../base/styles';
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import { styles } from './styles';
 
+import { translate } from '../../base/translation';
+
 /**
  * The URL at which the privacy policy is available to the user.
  */
@@ -62,22 +64,24 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderLegalese() {
+        const { t } = this.props;
+
         return (
             <View style = { styles.legaleseContainer }>
                 <Link
                     style = { styles.legaleseItem }
                     url = { TERMS_URL }>
-                    Terms
+                    { t('welcomepage.terms') }
                 </Link>
                 <Link
                     style = { styles.legaleseItem }
                     url = { PRIVACY_URL }>
-                    Privacy
+                    { t('welcomepage.privacy') }
                 </Link>
                 <Link
                     style = { styles.legaleseItem }
                     url = { SEND_FEEDBACK_URL }>
-                    Send feedback
+                    { t('welcomepage.sendFeedback') }
                 </Link>
             </View>
         );
@@ -93,10 +97,14 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderLocalVideoOverlay() {
+        const { t } = this.props;
+
         return (
             <View style = { styles.localVideoOverlay }>
                 <View style = { styles.roomContainer }>
-                    <Text style = { styles.title }>Enter room name</Text>
+                    <Text style = { styles.title }>
+                        { t('welcomepage.roomname') }
+                    </Text>
                     <TextInput
                         accessibilityLabel = { 'Input room name.' }
                         autoCapitalize = 'none'
@@ -104,7 +112,7 @@ class WelcomePage extends AbstractWelcomePage {
                         autoCorrect = { false }
                         autoFocus = { false }
                         onChangeText = { this._onRoomChange }
-                        placeholder = 'room name'
+                        placeholder = { t('welcomepage.roomnamePlaceHolder') }
                         style = { styles.textInput }
                         underlineColorAndroid = 'transparent'
                         value = { this.state.room } />
@@ -114,7 +122,9 @@ class WelcomePage extends AbstractWelcomePage {
                         onPress = { this._onJoin }
                         style = { styles.button }
                         underlayColor = { ColorPalette.white }>
-                        <Text style = { styles.buttonText }>JOIN</Text>
+                        <Text style = { styles.buttonText }>
+                            { t('welcomepage.join') }
+                        </Text>
                     </TouchableHighlight>
                 </View>
                 {
@@ -125,4 +135,4 @@ class WelcomePage extends AbstractWelcomePage {
     }
 }
 
-export default connect(_mapStateToProps)(WelcomePage);
+export default translate(connect(_mapStateToProps)(WelcomePage));

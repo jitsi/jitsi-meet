@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { Platform } from '../../base/react';
+import { translate } from '../../base/translation';
 
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
 import HideNotificationBarStyle from './HideNotificationBarStyle';
@@ -20,7 +21,16 @@ const _NS = 'unsupported-desktop-browser';
  *
  * @class UnsupportedDesktopBrowser
  */
-export default class UnsupportedDesktopBrowser extends Component {
+class UnsupportedDesktopBrowser extends Component {
+    /**
+     * UnsupportedDesktopBrowser component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        t: React.PropTypes.func
+    }
+
     /**
      * Renders the component.
      *
@@ -87,3 +97,4 @@ export default class UnsupportedDesktopBrowser extends Component {
     }
 }
 
+export default translate(UnsupportedDesktopBrowser);

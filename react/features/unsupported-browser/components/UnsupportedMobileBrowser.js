@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { Platform } from '../../base/react';
+import { translate, translateToHTML } from '../../base/translation';
 
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
@@ -39,7 +40,8 @@ class UnsupportedMobileBrowser extends Component {
          * @private
          * @type {string}
          */
-        _room: React.PropTypes.string
+        _room: React.PropTypes.string,
+        t: React.PropTypes.func
     }
 
     /**
@@ -50,7 +52,8 @@ class UnsupportedMobileBrowser extends Component {
      */
     componentWillMount() {
         const joinText
-            = this.props._room ? 'Join the conversation' : 'Start a conference';
+            = this.props._room ? 'unsupportedPage.joinConversation'
+                : 'unsupportedPage.startConference';
 
         // If the user installed the app while this Component was displayed
         // (e.g. the user clicked the Download the App button), then we would
@@ -74,6 +77,7 @@ class UnsupportedMobileBrowser extends Component {
     render() {
         const ns = 'unsupported-mobile-browser';
         const downloadButtonClassName = `${ns}__button ${ns}__button_primary`;
+        const { t } = this.props;
 
         return (
             <div className = { ns }>
@@ -82,24 +86,21 @@ class UnsupportedMobileBrowser extends Component {
                         className = { `${ns}__logo` }
                         src = 'images/logo-blue.svg' />
                     <p className = { `${ns}__text` }>
-                        You need <strong>Jitsi Meet</strong> to join a
-                        conversation on mobile
+                        { translateToHTML(t,
+                            'unsupportedPage.joinConversationMobile',
+                            { postProcess: 'resolveAppName' }) }
                     </p>
                     <a href = { _URLS[Platform.OS] }>
                         <button className = { downloadButtonClassName }>
-                            Download the App
+                            { t('unsupportedPage.downloadApp') }
                         </button>
                     </a>
                     <p className = { `${ns}__text ${ns}__text_small` }>
-                        or if you already have it
-                        <br />
-                        <strong>then</strong>
+                        { translateToHTML(t, 'unsupportedPage.availableApp') }
                     </p>
                     <a href = { this.state.joinURL }>
                         <button className = { `${ns}__button` }>
-                            {
-                                this.state.joinText
-                            }
+                            { t(this.state.joinText) }
                         </button>
                     </a>
                 </div>
@@ -133,4 +134,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(UnsupportedMobileBrowser);
+export default translate(connect(_mapStateToProps)(UnsupportedMobileBrowser));

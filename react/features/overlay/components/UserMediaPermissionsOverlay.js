@@ -4,11 +4,13 @@ import React from 'react';
 
 import AbstractOverlay from './AbstractOverlay';
 
+import { translate, translateToHTML } from '../../base/translation';
+
 /**
  * Implements a React Component for overlay with guidance how to proceed with
  * gUM prompt.
  */
-export default class UserMediaPermissionsOverlay extends AbstractOverlay {
+class UserMediaPermissionsOverlay extends AbstractOverlay {
     /**
      * UserMediaPermissionsOverlay component's property types.
      *
@@ -54,26 +56,26 @@ export default class UserMediaPermissionsOverlay extends AbstractOverlay {
      * @protected
      */
     _renderOverlayContent() {
-        const textKey = `userMedia.${this.props.browser}GrantPermissions`;
+        const { t } = this.props;
 
         return (
             <div>
                 <div className = 'inlay'>
                     <span className = 'inlay__icon icon-microphone' />
                     <span className = 'inlay__icon icon-camera' />
-                    <h3
-                        className = 'inlay__title'
-                        data-i18n = 'startupoverlay.title'
-                        data-i18n-options
-                            = '{"postProcess": "resolveAppName"}' />
-                    <span
-                        className = 'inlay__text'
-                        data-i18n = { `[html]${textKey}` } />
+                    <h3 className = 'inlay__title'>
+                        { t('startupoverlay.title',
+                            { postProcess: 'resolveAppName' }) }
+                    </h3>
+                    <span className = 'inlay__text'>
+                        { translateToHTML(t,
+                            `userMedia.${this.props.browser}GrantPermissions`)}
+                    </span>
                 </div>
                 <div className = 'policy overlay__policy'>
-                    <p
-                        className = 'policy__text'
-                        data-i18n = '[html]startupoverlay.policyText' />
+                    <p className = 'policy__text'>
+                        { t('startupoverlay.policyText') }
+                    </p>
                     {
                         this._renderPolicyLogo()
                     }
@@ -102,3 +104,5 @@ export default class UserMediaPermissionsOverlay extends AbstractOverlay {
         return null;
     }
 }
+
+export default translate(UserMediaPermissionsOverlay);

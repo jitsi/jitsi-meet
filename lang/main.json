@@ -40,7 +40,9 @@
     },
     "welcomepage":{
         "go": "GO",
+        "join": "JOIN",
         "roomname": "Enter room name",
+        "roomnamePlaceHolder": "room name",
         "disable": "Don't show this page again",
         "feature1": {
             "title": "Simple to use",
@@ -73,7 +75,10 @@
         "feature8": {
             "title": "Usage statistics",
             "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems."
-        }
+        },
+        "privacy": "Privacy",
+        "sendFeedback": "Send feedback",
+        "terms": "Terms"
     },
     "startupoverlay": {
         "policyText": "&nbsp;",
@@ -109,6 +114,15 @@
         "filmstrip": "Show / Hide videos",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand"
+    },
+    "unsupportedPage": {
+        "onlySupportedBy": "This application is currently only supported by",
+        "download": "DOWNLOAD",
+        "joinConversation": "Join the conversation",
+        "startConference": "Start a conference",
+        "joinConversationMobile": "You need <strong>__app__</strong> to join a conversation on your mobile",
+        "downloadApp": "Download the App",
+        "availableApp": "or if you already have it<br /><strong>then</strong>"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",

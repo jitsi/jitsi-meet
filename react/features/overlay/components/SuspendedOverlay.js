@@ -2,11 +2,13 @@ import React from 'react';
 
 import AbstractOverlay from './AbstractOverlay';
 
+import { translate } from '../../base/translation';
+
 /**
  * Implements a React Component for suspended overlay. Shown when a suspend is
  * detected.
  */
-export default class SuspendedOverlay extends AbstractOverlay {
+class SuspendedOverlay extends AbstractOverlay {
     /**
      * Constructs overlay body with the message and a button to rejoin.
      *
@@ -16,6 +18,7 @@ export default class SuspendedOverlay extends AbstractOverlay {
      */
     _renderOverlayContent() {
         const btnClass = 'inlay__button button-control button-control_primary';
+        const { t } = this.props;
 
         /* eslint-disable react/jsx-handler-names */
 
@@ -24,15 +27,19 @@ export default class SuspendedOverlay extends AbstractOverlay {
                 <span className = 'inlay__icon icon-microphone' />
                 <span className = 'inlay__icon icon-camera' />
                 <h3
-                    className = 'inlay__title'
-                    data-i18n = 'suspendedoverlay.title' />
+                    className = 'inlay__title'>
+                    { t('suspendedoverlay.title') }
+                </h3>
                 <button
                     className = { btnClass }
-                    data-i18n = 'suspendedoverlay.rejoinKeyTitle'
-                    onClick = { this._reconnectNow } />
+                    onClick = { this._reconnectNow }>
+                    { t('suspendedoverlay.rejoinKeyTitle') }
+                </button>
             </div>
         );
 
         /* eslint-enable react/jsx-handler-names */
     }
 }
+
+export default translate(SuspendedOverlay);

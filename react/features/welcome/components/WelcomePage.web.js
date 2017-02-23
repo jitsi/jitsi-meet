@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { Watermarks } from '../../base/react';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
+
+import { translate } from '../../base/translation';
 
 /* eslint-disable require-jsdoc */
 
@@ -51,9 +53,6 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
-
-        // XXX Temporary solution until we add React translation.
-        APP.translation.translateElement($('#welcome_page'));
     }
 
     /**
@@ -142,19 +141,21 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderFeature(index) {
+        const { t } = this.props;
+
         return (
             <div
                 className = 'feature_holder'
                 key = { index } >
                 <div
-                    className = 'feature_icon'
-                    data-i18n = { `welcomepage.feature${index}.title` } />
+                    className = 'feature_icon'>
+                    { t(`welcomepage.feature${index}.title`) }
+                </div>
                 <div
-                    className = 'feature_description'
-                    data-i18n = { `welcomepage.feature${index}.content` }
-                    data-i18n-options = { JSON.stringify({
-                        postProcess: 'resolveAppName'
-                    }) } />
+                    className = 'feature_description'>
+                    { t(`welcomepage.feature${index}.content`,
+                        { postProcess: 'resolveAppName' }) }
+                </div>
             </div>
         );
     }
@@ -196,6 +197,7 @@ class WelcomePage extends AbstractWelcomePage {
     _renderHeader() {
 
 /* eslint-enable require-jsdoc */
+        const { t } = this.props;
 
         return (
             <div id = 'welcome_page_header'>
@@ -229,10 +231,11 @@ class WelcomePage extends AbstractWelcomePage {
 
                             <button
                                 className = 'enter-room__button'
-                                data-i18n = 'welcomepage.go'
                                 id = 'enter_room_button'
                                 onClick = { this._onJoin }
-                                type = 'button' />
+                                type = 'button'>
+                                { t('welcomepage.go') }
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -245,8 +248,9 @@ class WelcomePage extends AbstractWelcomePage {
                     type = 'checkbox' />
                 <label
                     className = 'disable_welcome_position'
-                    data-i18n = 'welcomepage.disable'
-                    htmlFor = 'disable_welcome' />
+                    htmlFor = 'disable_welcome'>
+                    { t('welcomepage.disable') }
+                </label>
                 <div id = 'header_text' />
             </div>
         );
@@ -274,4 +278,4 @@ class WelcomePage extends AbstractWelcomePage {
     }
 }
 
-export default connect(_mapStateToProps)(WelcomePage);
+export default translate(connect(_mapStateToProps)(WelcomePage));

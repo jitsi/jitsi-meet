@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import { endRoomLockRequest } from '../actions';
 
+import { translate } from '../../base/translation';
+
 /**
  * Implements a React Component which prompts the user for a password to lock  a
  * conference/room.
@@ -21,7 +23,8 @@ class RoomLockPrompt extends Component {
          * @type {JitsiConference}
          */
         conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func
+        dispatch: React.PropTypes.func,
+        t: React.PropTypes.func
     }
 
     /**
@@ -45,12 +48,14 @@ class RoomLockPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { t } = this.props;
+
         return (
             <Prompt
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                placeholder = 'Password'
-                title = 'Lock / Unlock room'
+                placeholder = { t('dialog.passwordLabel') }
+                title = { t('toolbar.lock') }
                 visible = { true } />
         );
     }
@@ -80,4 +85,4 @@ class RoomLockPrompt extends Component {
     }
 }
 
-export default connect()(RoomLockPrompt);
+export default translate(connect()(RoomLockPrompt));

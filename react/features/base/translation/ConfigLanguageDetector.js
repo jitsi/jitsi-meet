@@ -12,7 +12,7 @@ export default {
     /**
      * The actual lookup.
      *
-     * @returns {string} the default language if any.
+     * @returns {string} The default language if any.
      */
     lookup() {
         return config.defaultLanguage;
