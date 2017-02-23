@@ -537,10 +537,12 @@ export default {
             };
         }
 
-        return JitsiMeetJS.init(
-            Object.assign(
-                {enableAnalyticsLogging: analytics.isEnabled()}, config)
-            ).then(() => {
+        const jitsiMeetConferenceConfig = Object.assign({
+            enableAnalyticsLogging: analytics.isEnabled()
+        }, config);
+
+        return JitsiMeetJS.init(jitsiMeetConferenceConfig)
+            .then(() => {
                 analytics.init();
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
@@ -580,7 +582,25 @@ export default {
                     (new ConferenceConnector(
                         resolve, reject, this.invite)).connect();
                 });
-        });
+            })
+            .catch((err) => {
+                const {
+                    status,
+                    message,
+                    webRTCReadyPromise
+                } = err;
+                const rejectValue = {
+                    status,
+                    // Browser could require Temasys plugin to be installed
+                    // and conference initialization was rejected but it could
+                    // be reinitialized after installation of the plugin.
+                    webRTCReadyPromise
+                };
+
+                logger.error(message);
+
+                return Promise.reject(rejectValue);
+            });
     },
     /**
      * Check if id is id of the local user.
@@ -664,7 +684,7 @@ export default {
      * false.
      */
     isCallstatsEnabled () {
-        return room.isCallstatsEnabled();
+        return room && room.isCallstatsEnabled();
     },
     /**
      * Sends the given feedback through CallStats if enabled.

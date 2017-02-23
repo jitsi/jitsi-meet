@@ -84,57 +84,6 @@ JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
     = "dialog.micNotSendingData";
 
 /**
- * Prompt user for nickname.
- */
-function promptDisplayName() {
-    let labelKey = 'dialog.enterDisplayName';
-    let message = (
-        `<div class="form-control">
-            <label data-i18n="${labelKey}" class="form-control__label"></label>
-            <input name="displayName" type="text"
-               data-i18n="[placeholder]defaultNickname"
-               class="input-control" autofocus>
-         </div>`
-    );
-
-    // Don't use a translation string, because we're too early in the call and
-    // the translation may not be initialised.
-    let buttons = {Ok:true};
-
-    let dialog = messageHandler.openDialog(
-        'dialog.displayNameRequired',
-        message,
-        true,
-        buttons,
-        function (e, v, m, f) {
-            e.preventDefault();
-            if (v) {
-                let displayName = f.displayName;
-                if (displayName) {
-                    UI.inputDisplayNameHandler(displayName);
-                    dialog.close();
-                    return;
-                }
-            }
-        },
-        function () {
-            let form  = $.prompt.getPrompt();
-            let input = form.find("input[name='displayName']");
-            input.focus();
-            let button = form.find("button");
-            button.attr("disabled", "disabled");
-            input.keyup(function () {
-                if (input.val()) {
-                    button.removeAttr("disabled");
-                } else {
-                    button.attr("disabled", "disabled");
-                }
-            });
-        }
-    );
-}
-
-/**
  * Initialize toolbars with side panels.
  */
 function setupToolbars() {
@@ -325,69 +274,6 @@ function _setTooltipDefaults() {
 }
 
 /**
- * Setup some UI event listeners.
- */
-function registerListeners() {
-
-    UI.addListener(UIEvents.ETHERPAD_CLICKED, function () {
-        if (etherpadManager) {
-            etherpadManager.toggleEtherpad();
-        }
-    });
-
-    UI.addListener(UIEvents.SHARED_VIDEO_CLICKED, function () {
-        if (sharedVideoManager) {
-            sharedVideoManager.toggleSharedVideo();
-        }
-    });
-
-    UI.addListener(UIEvents.TOGGLE_FULLSCREEN, UI.toggleFullScreen);
-
-    UI.addListener(UIEvents.TOGGLE_CHAT, UI.toggleChat);
-
-    UI.addListener(UIEvents.TOGGLE_SETTINGS, function () {
-        UI.toggleSidePanel("settings_container");
-    });
-
-    UI.addListener(UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList);
-
-    UI.addListener( UIEvents.TOGGLE_PROFILE, function() {
-        if(APP.tokenData.isGuest)
-            UI.toggleSidePanel("profile_container");
-    });
-
-    UI.addListener(UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip);
-
-    UI.addListener(UIEvents.FOLLOW_ME_ENABLED, function (isEnabled) {
-        if (followMeHandler)
-            followMeHandler.enableFollowMe(isEnabled);
-    });
-}
-
-/**
- * Setup some DOM event listeners.
- */
-function bindEvents() {
-    function onResize() {
-        SideContainerToggler.resize();
-        VideoLayout.resizeVideoArea();
-    }
-
-    // Resize and reposition videos in full screen mode.
-    $(document).on(
-        'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-        () => {
-            eventEmitter.emit(  UIEvents.FULLSCREEN_TOGGLED,
-                                UIUtil.isFullScreen());
-
-            onResize();
-        }
-    );
-
-    $(window).resize(onResize);
-}
-
-/**
  * Returns the shared document manager object.
  * @return {EtherpadManager} the shared document manager object
  */
@@ -410,8 +296,6 @@ UI.start = function () {
     // Set the defaults for tooltips.
     _setTooltipDefaults();
 
-    registerListeners();
-
     ToolbarToggler.init();
     SideContainerToggler.init(eventEmitter);
     FilmStrip.init(eventEmitter);
@@ -422,7 +306,6 @@ UI.start = function () {
     }
     VideoLayout.resizeVideoArea(true, true);
 
-    bindEvents();
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         let debouncedShowToolbar = debounce(() => {
@@ -449,12 +332,6 @@ UI.start = function () {
 
     document.title = interfaceConfig.APP_NAME;
 
-    if(config.requireDisplayName) {
-        if (!APP.settings.getDisplayName()) {
-            promptDisplayName();
-        }
-    }
-
     if (!interfaceConfig.filmStripOnly) {
         toastr.options = {
             "closeButton": true,
@@ -479,10 +356,57 @@ UI.start = function () {
     if(APP.tokenData.callee) {
         UI.showRingOverlay();
     }
+};
 
-    // Return true to indicate that the UI has been fully started and
-    // conference ready.
-    return true;
+/**
+ * Setup some UI event listeners.
+ */
+UI.registerListeners = () => {
+    UIListeners.forEach((value, key) => {
+        UI.addListener(key, value);
+    });
+};
+
+/**
+ * Unregister some UI event listeners.
+ */
+UI.unregisterListeners = () => {
+    UIListeners.forEach((value, key) => {
+        UI.removeListener(key, value);
+    });
+};
+
+/**
+ * Setup some DOM event listeners.
+ */
+UI.bindEvents = () => {
+    function onResize() {
+        SideContainerToggler.resize();
+        VideoLayout.resizeVideoArea();
+    }
+
+    // Resize and reposition videos in full screen mode.
+    $(document).on(
+        'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+        () => {
+            eventEmitter.emit(UIEvents.FULLSCREEN_TOGGLED,
+                UIUtil.isFullScreen());
+
+            onResize();
+        }
+    );
+
+    $(window).resize(onResize);
+};
+
+/**
+ * Unbind some DOM event listeners.
+ */
+UI.unbindEvents = () => {
+    $(document)
+        .off('webkitfullscreenchange mozfullscreenchange fullscreenchange');
+
+    $(window).off('resize');
 };
 
 /**
@@ -964,6 +888,59 @@ UI.participantConnectionStatusChanged = function (id, isActive) {
 };
 
 /**
+ * Prompt user for nickname.
+ */
+UI.promptDisplayName = () => {
+    const labelKey = 'dialog.enterDisplayName';
+    const message = (
+        `<div class="form-control">
+            <label data-i18n="${labelKey}" class="form-control__label"></label>
+            <input name="displayName" type="text"
+               data-i18n="[placeholder]defaultNickname"
+               class="input-control" autofocus>
+         </div>`
+    );
+
+    // Don't use a translation string, because we're too early in the call and
+    // the translation may not be initialised.
+    const buttons = { Ok: true };
+
+    const dialog = messageHandler.openDialog(
+        'dialog.displayNameRequired',
+        message,
+        true,
+        buttons,
+        (e, v, m, f) => {
+            e.preventDefault();
+            if (v) {
+                const displayName = f.displayName;
+
+                if (displayName) {
+                    UI.inputDisplayNameHandler(displayName);
+                    dialog.close();
+                    return;
+                }
+            }
+        },
+        () => {
+            const form  = $.prompt.getPrompt();
+            const input = form.find("input[name='displayName']");
+            const button = form.find("button");
+
+            input.focus();
+            button.attr("disabled", "disabled");
+            input.keyup(() => {
+                if (input.val()) {
+                    button.removeAttr("disabled");
+                } else {
+                    button.attr("disabled", "disabled");
+                }
+            });
+        }
+    );
+};
+
+/**
  * Update audio level visualization for specified user.
  * @param {string} id user id
  * @param {number} lvl audio level
@@ -1424,5 +1401,45 @@ UI.isRingOverlayVisible = function () {
 UI.onUserFeaturesChanged = function (user) {
     VideoLayout.onUserFeaturesChanged(user);
 };
+
+const UIListeners = new Map([
+    [
+        UIEvents.ETHERPAD_CLICKED, () => {
+            if (etherpadManager) {
+                etherpadManager.toggleEtherpad();
+            }
+        }
+    ], [
+        UIEvents.SHARED_VIDEO_CLICKED, () => {
+            if (sharedVideoManager) {
+                sharedVideoManager.toggleSharedVideo();
+            }
+        }
+    ], [
+        UIEvents.TOGGLE_FULLSCREEN,  UI.toggleFullScreen
+    ], [
+        UIEvents.TOGGLE_CHAT, UI.toggleChat
+    ], [
+        UIEvents.TOGGLE_SETTINGS, () => {
+            UI.toggleSidePanel("settings_container");
+        }
+    ], [
+        UIEvents.TOGGLE_CONTACT_LIST, UI.toggleContactList
+    ], [
+        UIEvents.TOGGLE_PROFILE, () => {
+            if(APP.tokenData.isGuest) {
+                UI.toggleSidePanel("profile_container");
+            }
+        }
+    ], [
+        UIEvents.TOGGLE_FILM_STRIP, UI.handleToggleFilmStrip
+    ], [
+        UIEvents.FOLLOW_ME_ENABLED, (isEnabled) => {
+            if (followMeHandler) {
+                followMeHandler.enableFollowMe(isEnabled);
+            }
+        }
+    ]
+]);
 
 module.exports = UI;

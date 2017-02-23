@@ -1,12 +1,16 @@
-/* global $, APP */
+/* @flow */
 
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
-import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
+import { HideNotificationBarStyle } from '../../unsupported-browser';
 import { OverlayContainer } from '../../overlay';
+import { Watermarks } from '../../base/react';
+
+declare var $: Function;
+declare var APP: Object;
 
 /**
  * For legacy reasons, inline style for display none.
@@ -44,6 +48,9 @@ class Conference extends Component {
     componentDidMount() {
         APP.UI.start();
 
+        APP.UI.registerListeners();
+        APP.UI.bindEvents();
+
         // XXX Temporary solution until we add React translation.
         APP.translation.translateElement($('#videoconference_page'));
 
@@ -57,7 +64,12 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        this.props.dispatch(disconnect());
+        APP.UI.unregisterListeners();
+        APP.UI.unbindEvents();
+
+        if (APP.conference.isJoined()) {
+            this.props.dispatch(disconnect());
+        }
     }
 
     /**
@@ -165,6 +177,7 @@ class Conference extends Component {
                 </div>
 
                 <OverlayContainer />
+                <HideNotificationBarStyle />
             </div>
         );
     }

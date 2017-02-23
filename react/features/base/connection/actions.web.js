@@ -6,8 +6,12 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
 
+import { appNavigate } from '../../app';
+import { setUnsupportedBrowser } from '../../unsupported-browser';
+
 declare var APP: Object;
 declare var JitsiMeetJS: Object;
+declare var config: Object;
 
 const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -68,11 +72,36 @@ export function connect() {
             });
 
             APP.keyboardshortcut.init();
+
+            if (config.requireDisplayName) {
+                if (!APP.settings.getDisplayName()) {
+                    APP.UI.promptDisplayName();
+                }
+            }
         })
             .catch(err => {
                 APP.UI.hideRingOverLay();
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
                 logger.error(err);
+
+                dispatch(setUnsupportedBrowser(err));
+
+                // If during the conference initialization was defined that
+                // browser doesn't support WebRTC then we should define
+                // which route to render.
+                dispatch(appNavigate(room));
+
+                // Force reinitialization of the conference if WebRTC is ready.
+                if (err.webRTCReadyPromise) {
+                    err.webRTCReadyPromise.then(() => {
+                        // Setting plugin required flag to false because
+                        // it's already been installed.
+                        dispatch(setUnsupportedBrowser({
+                            status: 'OK'
+                        }));
+                        dispatch(appNavigate(room));
+                    });
+                }
             });
     };
 }

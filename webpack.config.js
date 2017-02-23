@@ -23,6 +23,7 @@ var plugins = [
     new HasteResolverPlugin()
 ];
 var strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
+var urlPolyfill = /\/node_modules\/url-polyfill\/.*\.js$/;
 
 if (minimize) {
     // XXX Webpack's command line argument -p is not enough. Further
@@ -99,6 +100,11 @@ var config = {
 
             loader: 'imports-loader?define=>false&this=>window',
             test: strophe
+        }, {
+            // Set scope to the window for URL polyfill.
+
+            loader: 'imports?this=>window',
+            test: urlPolyfill
         }, {
             // Allow CSS to be imported into JavaScript.
 

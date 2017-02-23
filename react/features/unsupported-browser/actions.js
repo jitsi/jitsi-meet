@@ -1,4 +1,7 @@
-import { DISMISS_MOBILE_APP_PROMO } from './actionTypes';
+import {
+    DISMISS_MOBILE_APP_PROMO,
+    SET_UNSUPPORTED_BROWSER
+} from './actionTypes';
 
 /**
  * Returns a Redux action which signals that the UnsupportedMobileBrowser which
@@ -17,5 +20,22 @@ import { DISMISS_MOBILE_APP_PROMO } from './actionTypes';
 export function dismissMobileAppPromo() {
     return {
         type: DISMISS_MOBILE_APP_PROMO
+    };
+}
+
+/**
+ * Sets unsupported browser object.
+ *
+ * @param {Object} unsupportedBrowser - Object describing the unsupported
+ * browser.
+ * @returns {{
+ *      type: SET_UNSUPPORTED_BROWSER,
+ *      unsupportedBrowser: Object
+ *  }}
+ */
+export function setUnsupportedBrowser(unsupportedBrowser) {
+    return {
+        type: SET_UNSUPPORTED_BROWSER,
+        unsupportedBrowser
     };
 }

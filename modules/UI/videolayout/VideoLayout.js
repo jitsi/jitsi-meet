@@ -68,6 +68,17 @@ function onContactClicked (id) {
 }
 
 /**
+ * Handler for local flip X changed event.
+ * @param {Object} val
+ */
+function onLocalFlipXChanged (val) {
+    localFlipX = val;
+    if(largeVideo) {
+        largeVideo.onLocalFlipXChange(val);
+    }
+}
+
+/**
  * Returns the corresponding resource id to the given peer container
  * DOM element.
  *
@@ -91,11 +102,10 @@ let largeVideo;
 var VideoLayout = {
     init (emitter) {
         eventEmitter = emitter;
-        eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED, function (val) {
-                localFlipX = val;
-                if(largeVideo)
-                    largeVideo.onLocalFlipXChange(val);
-            });
+
+        // Unregister listeners in case of reinitialization
+        this.unregisterListeners();
+
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
         // sets default video type of local video
         // FIXME container type is totally different thing from the video type
@@ -104,8 +114,29 @@ var VideoLayout = {
         // the local video thumb maybe one pixel
         this.resizeThumbnails(false, true);
 
-        emitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
         this.lastNCount = config.channelLastN;
+
+        this.registerListeners();
+    },
+
+    /**
+     * Registering listeners for UI events in Video layout component.
+     *
+     * @returns {void}
+     */
+    registerListeners() {
+        eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED,
+            onLocalFlipXChanged);
+        eventEmitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
+    },
+
+    /**
+     * Unregistering listeners for UI events in Video layout component.
+     *
+     * @returns {void}
+     */
+    unregisterListeners() {
+        eventEmitter.removeListener(UIEvents.CONTACT_CLICKED, onContactClicked);
     },
 
     initLargeVideo () {

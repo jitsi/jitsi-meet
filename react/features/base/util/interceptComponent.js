@@ -1,11 +1,25 @@
+/* @flow */
+
 import { Platform } from '../react';
-import { UnsupportedMobileBrowser } from '../../unsupported-browser';
+import {
+    NoMobileApp,
+    PluginRequiredBrowser,
+    UnsupportedDesktopBrowser,
+    UnsupportedMobileBrowser
+} from '../../unsupported-browser';
+
+declare var APP: Object;
+declare var interfaceConfig: Object;
+declare var JitsiMeetJS: Object;
+
+const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 /**
  * Array of rules defining whether we should intercept component to render
  * or not.
  *
  * @private
+ * @param {Object} state - Object containing current Redux state.
  * @returns {ReactElement|void}
  * @type {Function[]}
  */
@@ -17,6 +31,8 @@ const _RULES = [
      * app even if the browser supports the app (e.g. Google Chrome with
      * WebRTC support on Android).
      *
+     * @param {Object} state - Redux state of the app.
+     *
      * @returns {UnsupportedMobileBrowser|void} If the rule is satisfied then
      * we should intercept existing component by UnsupportedMobileBrowser.
      */
@@ -24,7 +40,22 @@ const _RULES = [
         const OS = Platform.OS;
 
         if (OS === 'android' || OS === 'ios') {
-            return UnsupportedMobileBrowser;
+            if (interfaceConfig.MOBILE_APP_ENABLED) {
+                return UnsupportedMobileBrowser;
+            }
+
+            return NoMobileApp;
+        }
+    },
+    state => {
+        const { status } = state['features/unsupported-browser'];
+
+        switch (status) {
+        case ConferenceErrors.WEBRTC_IS_NOT_SUPPORTED:
+            return UnsupportedDesktopBrowser;
+
+        case ConferenceErrors.PLUGIN_REQUIRED:
+            return PluginRequiredBrowser;
         }
     }
 ];
@@ -35,11 +66,12 @@ const _RULES = [
  *
  * @param {Object|Function} stateOrGetState - Either Redux state object or
  * getState() function.
- * @param {ReactElement} currentComponent - Current route component to render.
+ * @param {ReactElement} component - Current route component to render.
  * @returns {ReactElement} If any of rules is satisfied returns intercepted
  * component.
  */
-export function interceptComponent(stateOrGetState, currentComponent) {
+export function interceptComponent(stateOrGetState: Object,
+                                   component: ReactElement<*>) {
     let result;
     const state
         = typeof stateOrGetState === 'function'
@@ -53,5 +85,5 @@ export function interceptComponent(stateOrGetState, currentComponent) {
         }
     }
 
-    return result || currentComponent;
+    return result || component;
 }
