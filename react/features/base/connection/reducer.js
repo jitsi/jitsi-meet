@@ -69,7 +69,7 @@ function _connectionEstablished(state: Object, action: Object) {
  * @private
  * @returns {Object}
  */
-function _constructConnectionOptions(domain: string) {
+function _constructOptions(domain: string) {
     // FIXME The HTTPS scheme for the BOSH URL works with meet.jit.si on both
     // mobile & Web. It also works with beta.meet.jit.si on Web. Unfortunately,
     // it doesn't work with beta.meet.jit.si on mobile. Temporarily, use the
@@ -96,7 +96,9 @@ function _constructConnectionOptions(domain: string) {
         bosh: `${String(boshProtocol)}//${domain}/http-bind`,
         hosts: {
             domain,
-            focus: `focus.${domain}`,
+
+            // Required by:
+            // - lib-jitsi-meet/modules/xmpp/xmpp.js
             muc: `conference.${domain}`
         }
     };
@@ -114,9 +116,9 @@ function _constructConnectionOptions(domain: string) {
 function _setDomain(state: Object, action: Object) {
     return {
         ...state,
-        connectionOptions: {
-            ...state.connectionOptions,
-            ..._constructConnectionOptions(action.domain)
+        options: {
+            ...state.options,
+            ..._constructOptions(action.domain)
         }
     };
 }

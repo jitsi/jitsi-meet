@@ -22,17 +22,16 @@ const JitsiConnectionEvents = JitsiMeetJS.events.connection;
 export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        const connectionOptions
-            = state['features/base/connection'].connectionOptions;
-        const room = state['features/base/conference'].room;
+        const { options } = state['features/base/connection'];
+        const { room } = state['features/base/conference'];
         const connection
             = new JitsiMeetJS.JitsiConnection(
-                connectionOptions.appId,
-                connectionOptions.token,
+                options.appId,
+                options.token,
                 {
-                    ...connectionOptions,
+                    ...options,
                     bosh:
-                        connectionOptions.bosh
+                        options.bosh
 
                             // XXX The Jitsi Meet deployments require the room
                             // argument to be in lower case at the time of this
