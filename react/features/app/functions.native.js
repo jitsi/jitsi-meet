@@ -126,7 +126,7 @@ function _getRoomAndDomainFromURLObject(url) {
     let room;
 
     if (url) {
-        domain = url.hostname;
+        domain = url.host;
 
         // The room (name) is the last component of pathname.
         room = url.pathname;
