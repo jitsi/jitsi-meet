@@ -28,6 +28,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.emitter = emitter;
     this.videoSpanId = `participant_${this.id}`;
     SmallVideo.call(this, VideoLayout);
+    this._audioStreamElement = null;
     this.hasRemoteVideoMenu = false;
     this._supportsRemoteControl = false;
     this.addRemoteVideoContainer();
@@ -200,6 +201,18 @@ RemoteVideo.prototype._generatePopupContent = function () {
         popupmenuElement.appendChild(menuItem);
     });
 
+    // feature check for volume setting as temasys objects cannot adjust volume
+    if (this._canSetAudioVolume()) {
+        const volumeScale = 100;
+        const volumeSlider = this._generatePopupMenuSliderItem({
+            handler: this._setAudioVolume.bind(this, volumeScale),
+            icon: 'icon-volume',
+            initialValue: this._getAudioElement().volume * volumeScale,
+            maxValue: volumeScale
+        });
+        popupmenuElement.appendChild(volumeSlider);
+    }
+
     APP.translation.translateElement($(popupmenuElement));
 
     return popupmenuElement;
@@ -341,6 +354,74 @@ RemoteVideo.prototype._generatePopupMenuItem = function (opts = {}) {
     menuItem.appendChild(linkItem);
 
     return menuItem;
+};
+
+/**
+ * Create a div element with a slider.
+ *
+ * @param {object} options - Configuration for the div's display and slider.
+ * @param {string} options.icon - The classname for the icon to display.
+ * @param {int} options.maxValue - The maximum value on the slider. The default
+ * value is 100.
+ * @param {int} options.initialValue - The value the slider should start at.
+ * The default value is 0.
+ * @param {function} options.handler - The callback for slider value changes.
+ * @returns {Element} A div element with a slider.
+ */
+RemoteVideo.prototype._generatePopupMenuSliderItem = function (options) {
+    const template = `<div class='popupmenu__contents'>
+        <span class='popupmenu__icon'>
+            <i class=${options.icon}></i>
+        </span>
+        <input class='popupmenu__slider'
+            type='range'
+            min='0'
+            max=${options.maxValue || 100}
+            value=${options.initialValue || 0}>
+        </input>
+    </div>`;
+
+    const menuItem = document.createElement('li');
+    menuItem.className = 'popupmenu__item';
+    menuItem.innerHTML = template;
+
+    const slider = menuItem.getElementsByClassName('popupmenu__slider')[0];
+    slider.oninput = function () {
+        options.handler(Number(slider.value));
+    };
+
+    return menuItem;
+};
+
+/**
+ * Get the remote participant's audio element.
+ *
+ * @returns {Element} audio element
+ */
+RemoteVideo.prototype._getAudioElement = function () {
+    return this._audioStreamElement;
+};
+
+/**
+ * Check if the remote participant's audio can have its volume adjusted.
+ *
+ * @returns {boolean} true if the volume can be adjusted.
+ */
+RemoteVideo.prototype._canSetAudioVolume = function () {
+    const audioElement = this._getAudioElement();
+    return audioElement && audioElement.volume !== undefined;
+};
+
+/**
+ * Change the remote participant's volume level.
+ *
+ * @param {int} scale - The maximum value the slider can go to.
+ * @param {int} newVal - The value to set the slider to.
+ */
+RemoteVideo.prototype._setAudioVolume = function (scale, newVal) {
+    if (this._canSetAudioVolume()) {
+        this._getAudioElement().volume = newVal / scale;
+    }
 };
 
 /**
@@ -613,6 +694,10 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     }
 
     $(streamElement).click(onClickHandler);
+
+    if (!isVideo) {
+        this._audioStreamElement = streamElement;
+    }
 };
 
 /**

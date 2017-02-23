@@ -23,7 +23,8 @@
     }
 
     // Link Appearance
-    &__link {
+    &__link,
+    &__contents {
         display: block;
         box-sizing: border-box;
         text-decoration: none;
@@ -40,9 +41,14 @@
         }
     }
 
-    &__text {
+    &__text,
+    &__slider {
         display: inline-block;
         vertical-align: middle;
+    }
+
+    &__slider {
+        width: 50px;
     }
 
     &__icon {

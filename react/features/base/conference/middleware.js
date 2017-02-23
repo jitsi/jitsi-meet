@@ -56,7 +56,7 @@ function _connectionEstablished(store, next, action) {
 
     // FIXME: workaround for the web version. Currently the creation of the
     // conference is handled by /conference.js
-    if (!APP) {
+    if (typeof APP === 'undefined') {
         store.dispatch(createConference());
     }
 

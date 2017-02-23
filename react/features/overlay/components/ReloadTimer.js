@@ -66,7 +66,19 @@ export default class ReloadTimer extends Component {
         super(props);
 
         this.state = {
+            /**
+             * Current value(time) of the timer.
+             *
+             * @type {number}
+             */
             current: this.props.start,
+
+            /**
+             * The absolute value of the time from the start of the timer until
+             * the end of the timer.
+             *
+             * @type {number}
+             */
             time: Math.abs(this.props.end - this.props.start)
         };
     }
@@ -127,9 +139,7 @@ export default class ReloadTimer extends Component {
                     id = 'reloadProgressBar'>
                     <span className = 'aui-progress-indicator-value' />
                 </div>
-                <span
-                    className = 'reload_overlay_text'
-                    id = 'reloadSeconds'>
+                <span className = 'reload_overlay_text'>
                     {
                         this.state.current
                     }

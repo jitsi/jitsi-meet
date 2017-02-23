@@ -143,7 +143,9 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _renderFeature(index) {
         return (
-            <div className = 'feature_holder'>
+            <div
+                className = 'feature_holder'
+                key = { index } >
                 <div
                     className = 'feature_icon'
                     data-i18n = { `welcomepage.feature${index}.title` } />

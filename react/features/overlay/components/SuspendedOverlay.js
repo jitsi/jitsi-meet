@@ -29,7 +29,6 @@ export default class SuspendedOverlay extends AbstractOverlay {
                 <button
                     className = { btnClass }
                     data-i18n = 'suspendedoverlay.rejoinKeyTitle'
-                    id = 'rejoin'
                     onClick = { this._reconnectNow } />
             </div>
         );

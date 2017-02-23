@@ -51,6 +51,17 @@ class OverlayContainer extends Component {
         _haveToReload: React.PropTypes.bool,
 
         /**
+         * The indicator which determines whether the GUM permissions prompt is
+         * displayed or not.
+         *
+         * NOTE: Used by UserMediaPermissionsOverlay only.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _isMediaPermissionPromptVisible: React.PropTypes.bool,
+
+        /**
          * The indicator which determines whether the reload was caused by
          * network failure.
          *
@@ -60,17 +71,6 @@ class OverlayContainer extends Component {
          * @type {boolean}
          */
         _isNetworkFailure: React.PropTypes.bool,
-
-        /**
-         * The indicator which determines whether the GUM permissions prompt is
-         * displayed or not.
-         *
-         * NOTE: Used by UserMediaPermissionsOverlay only.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _mediaPermissionPromptVisible: React.PropTypes.bool,
 
         /**
          * The reason for the error that will cause the reload.
@@ -106,7 +106,7 @@ class OverlayContainer extends Component {
         APP.UI.overlayVisible
             = (this.props._connectionEstablished && this.props._haveToReload)
                 || this.props._suspendDetected
-                || this.props._mediaPermissionPromptVisible;
+                || this.props._isMediaPermissionPromptVisible;
     }
 
     /**
@@ -131,7 +131,7 @@ class OverlayContainer extends Component {
             );
         }
 
-        if (this.props._mediaPermissionPromptVisible) {
+        if (this.props._isMediaPermissionPromptVisible) {
             return (
                 <UserMediaPermissionsOverlay
                     browser = { this.props._browser } />
@@ -151,7 +151,7 @@ class OverlayContainer extends Component {
  *     _connectionEstablished: bool,
  *     _haveToReload: bool,
  *     _isNetworkFailure: bool,
- *     _mediaPermissionPromptVisible: bool,
+ *     _isMediaPermissionPromptVisible: bool,
  *     _reason: string,
  *     _suspendDetected: bool
  * }}
@@ -194,6 +194,18 @@ function _mapStateToProps(state) {
         _haveToReload: stateFeaturesOverlay.haveToReload,
 
         /**
+         * The indicator which determines whether the GUM permissions prompt is
+         * displayed or not.
+         *
+         * NOTE: Used by UserMediaPermissionsOverlay only.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _isMediaPermissionPromptVisible:
+            stateFeaturesOverlay.isMediaPermissionPromptVisible,
+
+        /**
          * The indicator which determines whether the reload was caused by
          * network failure.
          *
@@ -203,18 +215,6 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _isNetworkFailure: stateFeaturesOverlay.isNetworkFailure,
-
-        /**
-         * The indicator which determines whether the GUM permissions prompt is
-         * displayed or not.
-         *
-         * NOTE: Used by UserMediaPermissionsOverlay only.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _mediaPermissionPromptVisible:
-            stateFeaturesOverlay.mediaPermissionPromptVisible,
 
         /**
          * The reason for the error that will cause the reload.
