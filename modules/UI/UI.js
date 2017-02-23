@@ -441,6 +441,7 @@ UI.start = function () {
             UIUtil.setVisible('notice', true);
         }
     } else {
+        $("body").addClass("filmstrip-only");
         UIUtil.setVisible('mainToolbarContainer', false);
         FilmStrip.setupFilmStripOnly();
         messageHandler.enableNotifications(false);

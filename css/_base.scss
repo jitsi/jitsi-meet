@@ -3,21 +3,25 @@
     user-select: none;
 }
 
-html, body{
-    margin:0px;
-    height:100%;
-    color: $defaultColor;
+body {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
     font-size: 12px;
     font-weight: 400;
-    background: #000000;
     overflow: hidden;
+    color: $defaultColor;
+    background: $defaultBackground;
+    &.filmstrip-only {
+        background: transparent;
+    }
 }
 
 p {
     margin: 0;
 }
 
-html, body, input, textarea, keygen, select, button {
+body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
 }
 
