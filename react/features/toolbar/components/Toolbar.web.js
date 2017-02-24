@@ -2,19 +2,22 @@
 
 declare var AJS: Object;
 declare var APP: Object;
+declare var config: Object;
 declare var interfaceConfig: Object;
-declare var $: Object;
+declare var $: Function;
 
 import { connect } from 'react-redux';
 import React from 'react';
+
+import Recording from '../../../../modules/UI/recording/Recording';
+import OldToolbar from '../../../../modules/UI/toolbars/Toolbar';
+import UIEvents from '../../../../service/UI/UIEvents';
+import UIUtil from '../../../../modules/UI/util/UIUtil';
 
 import { AbstractToolbar, _mapStateToProps } from './AbstractToolbar';
 import DEFAULT_TOOLBAR_BUTTONS from './defaultToolbarButtons';
 import { FeedbackButton } from '../../feedback';
 import ToolbarButton from './ToolbarButton';
-
-import UIEvents from '../../../../service/UI/UIEvents';
-import UIUtil from '../../../../modules/UI/util/UIUtil';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -52,12 +55,13 @@ class Toolbar extends AbstractToolbar {
         const {
             primaryToolbar,
             secondaryToolbar
-        } = interfaceConfig.TOOLBAR_BUTTONS.reduce((acc, value) => {
-            const button = DEFAULT_TOOLBAR_BUTTONS[value];
+        } = interfaceConfig.TOOLBAR_BUTTONS.reduce((acc, buttonName) => {
+            const button = DEFAULT_TOOLBAR_BUTTONS[buttonName];
 
             if (button) {
-                const place = this._getToolbarButtonPlace(value);
+                const place = this._getToolbarButtonPlace(buttonName);
 
+                button.buttonName = buttonName;
                 acc[place].push(button);
             }
 
@@ -94,6 +98,19 @@ class Toolbar extends AbstractToolbar {
      */
     componentDidMount() {
         this._registerListeners();
+
+        // Initialise the recording module.
+        if (config.enableRecording) {
+            const eventEmitter = APP.UI.eventEmitter;
+
+            Recording.init(eventEmitter, config.recordingType);
+        }
+
+        // Display notice message at the top of the toolbar
+        if (config.noticeMessage) {
+            $('#noticeText').text(config.noticeMessage);
+            UIUtil.setVisible('notice', true);
+        }
     }
 
     /**
@@ -152,7 +169,7 @@ class Toolbar extends AbstractToolbar {
     _onLocalRaiseHandChanged(isRaisedHand) {
         const buttonId = 'toolbar_button_raisehand';
 
-        APP.UI.Toolbar._setToggledState(buttonId, isRaisedHand);
+        OldToolbar._setToggledState(buttonId, isRaisedHand);
     }
 
     /**
@@ -174,7 +191,7 @@ class Toolbar extends AbstractToolbar {
 
         const buttonId = 'toolbar_button_fullScreen';
 
-        APP.UI.Toolbar._setToggledState(buttonId, isFullScreen);
+        OldToolbar._setToggledState(buttonId, isFullScreen);
     }
 
     /**

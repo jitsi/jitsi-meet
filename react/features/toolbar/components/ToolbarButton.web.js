@@ -10,7 +10,7 @@ import UIUtil from '../../../../modules/UI/util/UIUtil';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
-declare var $: Object;
+declare var $: Function;
 
 /**
  * Handlers for toolbar buttons.
@@ -34,18 +34,23 @@ export default class ToolbarButton extends AbstractToolbarButton {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Object) {
         super(props);
 
         this.popups = [];
         this.onClick = event => {
             const handler = buttonHandlers[props.id];
 
-            !$(event.target).prop('disabled') && handler(event);
+            if (!$(event.target).prop('disabled') && handler) {
+                handler(event);
+            }
         };
 
         // Bind methods to save the context
-        this._pushPopup = this._pushPopup.bind(this);
+        const self: any = this;
+
+        self._pushPopup = this._pushPopup.bind(this);
+
     }
 
     /**
@@ -70,14 +75,12 @@ export default class ToolbarButton extends AbstractToolbarButton {
      * @returns {ReactElement}
      */
     render() {
-        if (this.props.hidden) {
-            return null;
-        }
+        type MapOfProps = { [key: string]: * };
 
         const popups = this.props.popups || [];
         const className = this.props.className;
         const id = this.props.id;
-        const props = {
+        const props: MapOfProps = {
             className,
             id
         };
@@ -87,16 +90,17 @@ export default class ToolbarButton extends AbstractToolbarButton {
 
         props.onClick = this.onClick;
 
-        if (this.props.shortcutAttr) {
-            props.shortcut = this.props.shortcutAttr;
-        }
-
         if (this.props.content) {
             props.content = this.props.content;
         }
 
         if (this.props.i18n) {
             props['data-i18n'] = this.props.i18n;
+        }
+
+        // TODO: remove it after UI.updateDTMFSupport fix
+        if (this.props.hidden) {
+            props.style = { display: 'none' };
         }
 
         return (
@@ -129,7 +133,7 @@ export default class ToolbarButton extends AbstractToolbarButton {
      * @returns {Array}
      * @private
      */
-    _renderPopups(popups = []) {
+    _renderPopups(popups: Array<*> = []) {
         return popups.map(popup => {
             let gravity = 'n';
 
@@ -168,8 +172,9 @@ export default class ToolbarButton extends AbstractToolbarButton {
      */
     _setShortcutAndTooltip() {
         const id = this.props.id;
+        const name = this.props.buttonName;
 
-        if (UIUtil.isButtonEnabled()) {
+        if (UIUtil.isButtonEnabled(name)) {
             const buttonElement = document.getElementById(id);
 
             if (!buttonElement) {
@@ -177,7 +182,7 @@ export default class ToolbarButton extends AbstractToolbarButton {
             }
 
             const tooltipPosition
-                = interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(id) > -1
+                = interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) > -1
                 ? 'bottom' : 'right';
 
             UIUtil.setTooltip(buttonElement,
