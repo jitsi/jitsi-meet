@@ -1,68 +1,17 @@
-/* global APP, $, config, interfaceConfig */
+/* global APP, $, config */
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 import SideContainerToggler from "../side_pannels/SideContainerToggler";
 
-const defaultToolbarButtons =
-  require('../../../react/features/toolbar/components/defaultToolbarButtons');
-
-const primaryToolbarHandlers =
-  require('../../../react/features/toolbar/components/primaryToolbarHandlers');
-
-const secondaryToolbarHandlers =
-require('../../../react/features/toolbar/components/secondaryToolbarHandlers');
-
 let emitter = null;
-let Toolbar;
 
-/**
- * Handlers for toolbar buttons.
- *
- * buttonId {string}: handler {function}
- */
-const buttonHandlers = Object.assign({}, primaryToolbarHandlers,
-    secondaryToolbarHandlers);
-
-function showSipNumberInput () {
-    let defaultNumber = config.defaultSipNumber
-        ? config.defaultSipNumber
-        : '';
-    let titleKey = "dialog.sipMsg";
-    let msgString = (`
-            <input class="input-control"
-                   name="sipNumber" type="text"
-                   value="${defaultNumber}" autofocus>`);
-
-    APP.UI.messageHandler.openTwoButtonDialog({
-        titleKey,
-        msgString,
-        leftButtonKey: "dialog.Dial",
-        submitFunction: function (e, v, m, f) {
-            if (v && f.sipNumber) {
-                emitter.emit(UIEvents.SIP_DIAL, f.sipNumber);
-            }
-        },
-        focus: ':input:first'
-    });
-}
-
-Toolbar = {
+const Toolbar = {
     init (eventEmitter) {
         emitter = eventEmitter;
         // The toolbar is enabled by default.
         this.enabled = true;
         this.toolbarSelector = $("#mainToolbarContainer");
         this.extendedToolbarSelector = $("#extendedToolbar");
-
-        // Initialise the toolbar buttons.
-        // The main toolbar will only take into account
-        // it's own configuration from interface_config.
-
-        this._setShortcutsAndTooltips();
-
-        this._setButtonHandlers();
-
-        this.registerListeners();
 
         if(!APP.tokenData.isGuest) {
             $("#toolbar_button_profile").addClass("unclickable");
@@ -315,122 +264,6 @@ Toolbar = {
     },
 
     /**
-     * Handles the side toolbar toggle.
-     *
-     * @param {string} containerId the identifier of the container element
-     */
-    _handleSideToolbarContainerToggled(containerId) {
-        Object.keys(defaultToolbarButtons).forEach(
-            id => {
-                if (!UIUtil.isButtonEnabled(id))
-                    return;
-
-                var button = defaultToolbarButtons[id];
-
-                if (button.sideContainerId
-                    && button.sideContainerId === containerId) {
-                    UIUtil.buttonClick(button.id, "selected");
-                    return;
-                }
-            }
-        );
-    },
-
-    /**
-     * Handles full screen toggled.
-     *
-     * @param {boolean} isFullScreen indicates if we're currently in full
-     * screen mode
-     */
-    _handleFullScreenToggled(isFullScreen) {
-        let element
-            = document.getElementById("toolbar_button_fullScreen");
-
-        element.className = isFullScreen
-            ? element.className
-                .replace("icon-full-screen", "icon-exit-full-screen")
-            : element.className
-                .replace("icon-exit-full-screen", "icon-full-screen");
-
-        Toolbar._setToggledState("toolbar_button_fullScreen", isFullScreen);
-    },
-
-    /**
-     * Adds the given button to the main (top) or extended (left) toolbar.
-     *
-     * @param {Object} the button to add.
-     * @param {boolean} isFirst indicates if this is the first button in the
-     * toolbar
-     * @param {boolean} isLast indicates if this is the last button in the
-     * toolbar
-     * @param {boolean} isSplitter if this button is a splitter button for
-     * the dialog, which means that a special splitter style will be applied
-     */
-    _addToolbarButton(button, place, isSplitter) {
-        const places = {
-            main: 'mainToolbar',
-            extended: 'extendedToolbarButtons'
-        };
-        let id = places[place];
-        let buttonElement = document.createElement("a");
-        if (button.className) {
-            buttonElement.className = button.className;
-        }
-
-        if (isSplitter) {
-            let splitter = document.createElement('span');
-            splitter.className = 'toolbar__splitter';
-            document.getElementById(id).appendChild(splitter);
-        }
-
-        buttonElement.id = button.id;
-
-        if (button.html)
-            buttonElement.innerHTML = button.html;
-
-        //TODO: remove it after UI.updateDTMFSupport fix
-        if (button.hidden)
-            buttonElement.style.display = 'none';
-
-        if (button.shortcutAttr)
-            buttonElement.setAttribute("shortcut", button.shortcutAttr);
-
-        if (button.content)
-            buttonElement.setAttribute("content", button.content);
-
-        if (button.i18n)
-            buttonElement.setAttribute("data-i18n", button.i18n);
-
-        buttonElement.setAttribute("data-container", "body");
-        buttonElement.setAttribute("data-placement", "bottom");
-        this._addPopups(buttonElement, button.popups);
-
-        document.getElementById(id)
-            .appendChild(buttonElement);
-    },
-
-    _addPopups(buttonElement, popups = []) {
-        popups.forEach((popup) => {
-            const popupElement = document.createElement('div');
-            popupElement.id = popup.id;
-            popupElement.className = popup.className;
-            popupElement.setAttribute('data-i18n', popup.dataAttr);
-
-            let gravity = 'n';
-            if (popup.dataAttrPosition)
-                gravity = popup.dataAttrPosition;
-            // use custom attribute to save gravity option
-            // we use 'data-tooltip' in UIUtil to activate all tooltips
-            // but we want these to be manually triggered
-            popupElement.setAttribute('tooltip-gravity', gravity);
-
-            APP.translation.translateElement($(popupElement));
-
-            buttonElement.appendChild(popupElement);
-        });
-    },
-
-    /**
      * Sets the toggled state of the given element depending on the isToggled
      * parameter.
      *
@@ -439,55 +272,6 @@ Toolbar = {
      */
      _setToggledState(elementId, isToggled) {
         $("#" + elementId).toggleClass("toggled", isToggled);
-    },
-
-    /**
-     * Sets Shortcuts and Tooltips for all toolbar buttons
-     *
-     * @private
-     */
-    _setShortcutsAndTooltips() {
-        Object.keys(defaultToolbarButtons).forEach(
-            id => {
-                if (UIUtil.isButtonEnabled(id)) {
-                    let button = defaultToolbarButtons[id];
-                    let buttonElement = document.getElementById(button.id);
-                    if (!buttonElement) return false;
-                    let tooltipPosition
-                        = (interfaceConfig.MAIN_TOOLBAR_BUTTONS
-                        .indexOf(id) > -1)
-                        ? "bottom" : "right";
-
-                    UIUtil.setTooltip(  buttonElement,
-                        button.tooltipKey,
-                        tooltipPosition);
-
-                    if (button.shortcut)
-                        APP.keyboardshortcut.registerShortcut(
-                            button.shortcut,
-                            button.shortcutAttr,
-                            button.shortcutFunc,
-                            button.shortcutDescription
-                        );
-                }
-            }
-        );
-    },
-
-    /**
-     * Sets Handlers for all toolbar buttons
-     *
-     * @private
-     */
-    _setButtonHandlers() {
-        Object.keys(buttonHandlers).forEach(
-            buttonId => {
-                $(`#${buttonId}`).click((event) => {
-                    const handler = buttonHandlers[buttonId];
-
-                    !$(this).prop('disabled') && handler[buttonId](event);
-                });
-            });
     }
 };
 

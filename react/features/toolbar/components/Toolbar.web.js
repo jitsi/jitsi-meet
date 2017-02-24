@@ -5,13 +5,16 @@ declare var APP: Object;
 declare var interfaceConfig: Object;
 declare var $: Object;
 
+import { connect } from 'react-redux';
 import React from 'react';
 
-import AbstractToolbar from './AbstractToolbar';
+import { AbstractToolbar, _mapStateToProps } from './AbstractToolbar';
 import DEFAULT_TOOLBAR_BUTTONS from './defaultToolbarButtons';
 import { FeedbackButton } from '../../feedback';
+import ToolbarButton from './ToolbarButton';
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import UIUtil from '../../../../modules/UI/util/UIUtil';
 
 /**
  * For legacy reasons, inline style for display none.
@@ -25,29 +28,81 @@ const _DISPLAY_NONE_STYLE = {
     display: 'none'
 };
 
-export default class Toolbar extends AbstractToolbar {
+/**
+ * Implements the conference toolbar on React.
+ *
+ * @extends AbstractToolbar
+ */
+class Toolbar extends AbstractToolbar {
 
+    /**
+     * Toolbar component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractToolbar.propTypes;
+
+    /**
+     * Defines buttons to render in primary and secondary toolbars.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
     componentWillMount() {
-        const [
-            primaryToolbarButtons,
-            secondaryToolbarButtons
-        ] = interfaceConfig.TOOLBAR_BUTTONS.reduce((acc, value) => {
+        const {
+            primaryToolbar,
+            secondaryToolbar
+        } = interfaceConfig.TOOLBAR_BUTTONS.reduce((acc, value) => {
             const button = DEFAULT_TOOLBAR_BUTTONS[value];
 
             if (button) {
-                const place = this._getToolbarButtonPlace(button);
+                const place = this._getToolbarButtonPlace(value);
 
                 acc[place].push(button);
             }
+
+            return acc;
         }, {
             primaryToolbar: [],
             secondaryToolbar: []
         });
 
-        this.setState({ primaryToolbarButtons, secondaryToolbarButtons });
+        this.setState({
+            primaryToolbar,
+            secondaryToolbar
+        });
     }
 
+    /**
+    * Get place for toolbar button.
+    * Now it can be in main toolbar or in extended (left) toolbar.
+    *
+    * @param {string} btn - Button name.
+    * @returns {string}
+    */
+    _getToolbarButtonPlace(btn) {
+        return interfaceConfig.MAIN_TOOLBAR_BUTTONS.includes(btn)
+            ? 'primaryToolbar'
+            : 'secondaryToolbar';
+    }
+
+    /**
+     * Registers listeners after mounting the component.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
     componentDidMount() {
+        this._registerListeners();
+    }
+
+    /**
+     * Register listeners for some of UI events.
+     *
+     * @private
+     * @returns {void}
+     */
+    _registerListeners() {
         APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             this._onSideToolbarContainerToggled);
 
@@ -60,88 +115,44 @@ export default class Toolbar extends AbstractToolbar {
         APP.UI.addListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
             this._onShowCustomToolbarPopup);
 
-    }
 
-    componentWillUnmount() {
-        APP.UI.removeListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
-            this._onSideToolbarContainerToggled);
-
-        APP.UI.removeListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-            this._onLocalRaiseHandChanged);
-
-        APP.UI.removeListener(UIEvents.FULLSCREEN_TOGGLED,
-            this._onFullScreenToggled);
-
-        APP.UI.removeListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-            this._onShowCustomToolbarPopup);
     }
 
     /**
-     * Get place for toolbar button.
-     * Now it can be in main toolbar or in extended (left) toolbar.
+     * Event handler for side toolbar container toggled event.
      *
-     * @param {string} btn - Button name.
-     * @returns {string}
+     * @param {string} containerId - ID of the container.
+     * @returns {void}
      */
-    _getToolbarButtonPlace(btn) {
-        return interfaceConfig.MAIN_TOOLBAR_BUTTONS.includes(btn) ?
-            'mainToolbar' :
-            'secondaryToolbar';
+    _onSideToolbarContainerToggled(containerId) {
+        Object.keys(DEFAULT_TOOLBAR_BUTTONS).forEach(
+            id => {
+                if (!UIUtil.isButtonEnabled(id)) {
+                    return;
+                }
+
+                const button = DEFAULT_TOOLBAR_BUTTONS[id];
+
+                if (button.sideContainerId
+                    && button.sideContainerId === containerId) {
+                    UIUtil.buttonClick(button.id, 'selected');
+
+                    return;
+                }
+            }
+        );
     }
 
     /**
-     * Adds the given button to the main (top) or extended (left) toolbar.
+     * Event handler for local raise hand changed event.
      *
-     * @param {Object} button - The button to add.
-     * @param {boolean} isSplitter - If this button is a splitter button for
-     * the dialog, which means that a special splitter style will be applied.
+     * @param {boolean} isRaisedHand - Flag showing whether hand is raised.
+     * @returns {void}
      */
-    _renderToolbarButton(button, isSplitter) {
-        const toolbarId = this._getToolbarButtonId(button);
+    _onLocalRaiseHandChanged(isRaisedHand) {
+        const buttonId = 'toolbar_button_raisehand';
 
-        const buttonElement = <a />;
-
-        if (button.className) {
-            buttonElement.className = button.className;
-        }
-
-        if (isSplitter) {
-            const splitter = <span className = 'toolbar__splitter' />;
-
-            document.getElementById(toolbarId).appendChild(splitter);
-        }
-
-        buttonElement.id = button.id;
-
-        if (button.html) {
-            buttonElement.innerHTML = button.html;
-        }
-
-
-        // TODO: remove it after UI.updateDTMFSupport fix
-        if (button.hidden) {
-            buttonElement.style.display = 'none';
-        }
-
-        if (button.shortcutAttr) {
-            buttonElement.setAttribute('shortcut', button.shortcutAttr);
-        }
-
-        if (button.content) {
-            buttonElement.setAttribute('content', button.content);
-        }
-
-
-        if (button.i18n) {
-            buttonElement.setAttribute('data-i18n', button.i18n);
-        }
-
-        buttonElement.setAttribute('data-container', 'body');
-        buttonElement.setAttribute('data-placement', 'bottom');
-        this._addPopups(buttonElement, button.popups);
-
-        document.getElementById(toolbarId)
-            .appendChild(buttonElement);
+        APP.UI.Toolbar._setToggledState(buttonId, isRaisedHand);
     }
 
     /**
@@ -152,30 +163,18 @@ export default class Toolbar extends AbstractToolbar {
      * @returns {void}
      */
     _onFullScreenToggled(isFullScreen) {
-        APP.UI.Toolbar._handleFullScreenToggled(isFullScreen);
-    }
+        const element
+            = document.getElementById('toolbar_button_fullScreen');
 
+        element.className = isFullScreen
+            ? element.className
+            .replace('icon-full-screen', 'icon-exit-full-screen')
+            : element.className
+            .replace('icon-exit-full-screen', 'icon-full-screen');
 
-    /**
-     * Event handler for side toolbar container toggled event.
-     *
-     * @param {string} containerId - ID of the container.
-     * @param {boolean} isVisible - Flag showing whether container
-     * is visible.
-     * @returns {void}
-     */
-    _onSideToolbarContainerToggled(containerId, isVisible) {
-        APP.UI.Toolbar._handleSideToolbarContainerToggled(containerId, isVisible);
-    }
+        const buttonId = 'toolbar_button_fullScreen';
 
-    /**
-     * Event handler for local raise hand changed event.
-     *
-     * @param {boolean} isRaisedHand - Flag showing whether hand is raised.
-     * @returns {void}
-     */
-    _onLocalRaiseHandChanged(isRaisedHand) {
-        APP.UI.Toolbar._setToggledState('toolbar_button_raisehand', isRaisedHand);
+        APP.UI.Toolbar._setToggledState(buttonId, isFullScreen);
     }
 
     /**
@@ -188,6 +187,7 @@ export default class Toolbar extends AbstractToolbar {
      */
     _onShowCustomToolbarPopup(popupSelectorID, show, timeout) {
         const gravity = $(popupSelectorID).attr('tooltip-gravity');
+
         AJS.$(popupSelectorID)
             .tooltip({
                 trigger: 'manual',
@@ -205,41 +205,42 @@ export default class Toolbar extends AbstractToolbar {
         }
     }
 
-    _renderPrimaryToolbar() {
-        const isSplitter = interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX !== undefined
-            && index === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX;
-
-        return (
-            <div id = 'mainToolbarContainer'>
-                <div
-                    className = 'notice'
-                    id = 'notice'
-                    style = { _DISPLAY_NONE_STYLE }>
-                    <span
-                        className = 'noticeText'
-                        id = 'noticeText' />
-                </div>
-                <div
-                    className = 'toolbar'
-                    id = 'mainToolbar' />
-            </div>
-        );
+    /**
+     * Unregisters listeners before unmounting the component.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        this._unregisterListeners();
     }
 
-    _renderSecondaryToolbar() {
-        return (
-            <div
-                className = 'toolbar'
-                id = 'extendedToolbar'>
-                <div id = 'extendedToolbarButtons' />
+    /**
+     * Unregisters listeners of some UI events.
+     *
+     * @private
+     * @returns {void}
+     */
+    _unregisterListeners() {
+        APP.UI.removeListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+            this._onSideToolbarContainerToggled);
 
-                <FeedbackButton />
+        APP.UI.removeListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
+            this._onLocalRaiseHandChanged);
 
-                <div id = 'sideToolbarContainer' />
-            </div>
-        );
+        APP.UI.removeListener(UIEvents.FULLSCREEN_TOGGLED,
+            this._onFullScreenToggled);
+
+        APP.UI.removeListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
+            this._onShowCustomToolbarPopup);
     }
 
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
     render() {
         return (
             <div>
@@ -252,4 +253,94 @@ export default class Toolbar extends AbstractToolbar {
             </div>
         );
     }
+
+    /**
+     * Renders primary toolbar.
+     *
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderPrimaryToolbar() {
+        return (
+            <div id = 'mainToolbarContainer'>
+                <div
+                    className = 'notice'
+                    id = 'notice'
+                    style = { _DISPLAY_NONE_STYLE }>
+                    <span
+                        className = 'noticeText'
+                        id = 'noticeText' />
+                </div>
+                <div
+                    className = 'toolbar'
+                    id = 'mainToolbar'>
+                    {
+                        this.state.primaryToolbar
+                            .reduce(this._renderPrimaryToolbarButton, [])
+                    }
+                </div>
+            </div>
+        );
+    }
+
+    /**
+     * Method applied to all elements in primary toolbar buttons array.
+     *
+     * @param {Array} acc - Accumulator object.
+     * @param {Object} button - Object representing the button.
+     * @param {number} index - Current index of the element in array.
+     * @returns {Array}
+     * @private
+     */
+    _renderPrimaryToolbarButton(acc, button, index) {
+        const isSplitter = interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX
+            && index === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX;
+
+        if (isSplitter) {
+            const splitter = <span className = 'toolbar__splitter' />;
+
+            acc.push(splitter);
+        }
+
+        // eslint-disable-next-line no-extra-parens
+        const toolbarButton = (
+            <ToolbarButton
+                { ...button }
+                key = { button.id } />
+        );
+
+        acc.push(toolbarButton);
+
+        return acc;
+    }
+
+    /**
+     * Renders secondary toolbar.
+     *
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderSecondaryToolbar() {
+        return (
+            <div
+                className = 'toolbar'
+                id = 'extendedToolbar'>
+                <div id = 'extendedToolbarButtons' />
+
+                {
+                    this.state.secondaryToolbar.map(button =>
+                        <ToolbarButton
+                            { ...button }
+                            key = { button.id } />
+                    )
+                }
+
+                <FeedbackButton />
+
+                <div id = 'sideToolbarContainer' />
+            </div>
+        );
+    }
 }
+
+export default connect(_mapStateToProps)(Toolbar);

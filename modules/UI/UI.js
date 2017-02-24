@@ -720,8 +720,8 @@ UI.removeListener = function (type, listener) {
  * @param type the type of the event we're emitting
  * @param options the parameters for the event
  */
-UI.emitEvent = function (type, options) {
-    eventEmitter.emit(type, options);
+UI.emitEvent = function (type, ...options) {
+    eventEmitter.emit(type, ...options);
 };
 
 UI.clickOnVideo = function (videoNumber) {

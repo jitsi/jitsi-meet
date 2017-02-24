@@ -4,28 +4,59 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;
 declare var JitsiMeetJS: Object;
+declare var config: Object;
+
+/**
+ * Shows SIP number dialog.
+ *
+ * @returns {void}
+ */
+function showSipNumberInput() {
+    const defaultNumber = config.defaultSipNumber
+        ? config.defaultSipNumber
+        : '';
+    const titleKey = 'dialog.sipMsg';
+    const msgString = `
+            <input class="input-control"
+                   name="sipNumber" type="text"
+                   value="${defaultNumber}" autofocus>`;
+
+    APP.UI.messageHandler.openTwoButtonDialog({
+        titleKey,
+        msgString,
+        leftButtonKey: 'dialog.Dial',
+
+        // eslint-disable-next-line max-params
+        submitFunction: (e, v, m, f) => {
+            if (v && f.sipNumber) {
+                APP.UI.emitEvent(UIEvents.SIP_DIAL, f.sipNumber);
+            }
+        },
+        focus: ':input:first'
+    });
+}
 
 const secondaryToolbarHandlers = {
     'toolbar_button_profile': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
-        emitter.emit(UIEvents.TOGGLE_PROFILE);
+        APP.UI.emitEvent(UIEvents.TOGGLE_PROFILE);
     },
     'toolbar_button_chat': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
-        emitter.emit(UIEvents.TOGGLE_CHAT);
+        APP.UI.emitEvent(UIEvents.TOGGLE_CHAT);
     },
     'toolbar_contact_list': () => {
         JitsiMeetJS.analytics.sendEvent(
             'toolbar.contacts.toggled');
-        emitter.emit(UIEvents.TOGGLE_CONTACT_LIST);
+        APP.UI.emitEvent(UIEvents.TOGGLE_CONTACT_LIST);
     },
     'toolbar_button_etherpad': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
-        emitter.emit(UIEvents.ETHERPAD_CLICKED);
+        APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
     },
     'toolbar_button_sharedvideo': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.sharedvideo.clicked');
-        emitter.emit(UIEvents.SHARED_VIDEO_CLICKED);
+        APP.UI.emitEvent(UIEvents.SHARED_VIDEO_CLICKED);
     },
     'toolbar_button_desktopsharing': () => {
         if (APP.conference.isSharingScreen) {
@@ -33,7 +64,7 @@ const secondaryToolbarHandlers = {
         } else {
             JitsiMeetJS.analytics.sendEvent('toolbar.screen.enabled');
         }
-        emitter.emit(UIEvents.TOGGLE_SCREENSHARING);
+        APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
     },
     'toolbar_button_sip': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
@@ -41,11 +72,10 @@ const secondaryToolbarHandlers = {
     },
     'toolbar_button_dialpad': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.sip.dialpad.clicked');
-        dialpadButtonClicked();
     },
     'toolbar_button_settings': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.settings.toggled');
-        emitter.emit(UIEvents.TOGGLE_SETTINGS);
+        APP.UI.emitEvent(UIEvents.TOGGLE_SETTINGS);
     },
     'toolbar_button_raisehand': () => {
         JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
