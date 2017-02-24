@@ -38,10 +38,10 @@ export function disposeLib() {
  */
 export function initLib() {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const config = getState()['features/base/lib-jitsi-meet'].config;
+        const { config } = getState()['features/base/lib-jitsi-meet'];
 
         if (!config) {
-            throw new Error('Cannot initialize lib-jitsi-meet without config');
+            throw new Error('Cannot init lib-jitsi-meet without config');
         }
 
         // XXX Temporarily until conference.js is moved to the React app we
@@ -53,23 +53,36 @@ export function initLib() {
         return JitsiMeetJS.init(config)
             .then(() => dispatch({ type: LIB_INITIALIZED }))
             .catch(error => {
-                dispatch({
-                    type: LIB_INIT_ERROR,
-                    error
-                });
+                dispatch(libInitError(error));
 
                 // TODO Handle LIB_INIT_ERROR error somewhere instead.
-                console.error('lib-jitsi-meet failed to init due to ', error);
+                console.error('lib-jitsi-meet failed to init:', error);
                 throw error;
             });
     };
 }
 
 /**
+ * Notifies about a specific error raised by {@link JitsiMeetJS.init()}.
+ *
+ * @param {Error} error - The Error raised by JitsiMeetJS.init().
+ * @returns {{
+ *     type: LIB_INIT_ERROR,
+ *     error: Error
+ * }}
+ */
+export function libInitError(error: Error) {
+    return {
+        type: LIB_INIT_ERROR,
+        error
+    };
+}
+
+/**
  * Sets config.
  *
- * @param {Object} config - Config object accepted by JitsiMeetJS#init()
- * method.
+ * @param {Object} config - The config(uration) object in the format accepted by
+ * the JitsiMeetJS.init() method.
  * @returns {{
  *     type: SET_CONFIG,
  *     config: Object
