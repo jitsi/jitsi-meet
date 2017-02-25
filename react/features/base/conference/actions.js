@@ -205,9 +205,17 @@ export function createConference() {
         const conference
             = connection.initJitsiConference(
 
-                    // XXX Lib-jitsi-meet does not accept uppercase letters.
-                    room.toLowerCase(),
-                    { openSctp: true });
+                // XXX Lib-jitsi-meet does not accept uppercase letters.
+                room.toLowerCase(),
+                {
+                    openSctp: true
+
+                    // FIXME I tested H.264 from iPhone 6S during a morning
+                    // standup but, unfortunately, the other participants who
+                    // happened to be running the Web app saw only black.
+                    //
+                    // preferH264: true
+                });
 
         _addConferenceListeners(conference, dispatch);
 

@@ -39,8 +39,7 @@ const INITIAL_STATE = {
         // place). Fortunately, these pieces of JavaScript currently involve
         // third parties and we can temporarily disable them (until we implement
         // an alternative to async script elements on React Native).
-        disableThirdPartyRequests: true,
-        preferH264: true
+        disableThirdPartyRequests: true
     },
     initializationError: null,
     initialized: false
