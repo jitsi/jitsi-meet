@@ -11,8 +11,7 @@ import {
  * The initial state of 'features/base/lib-jitsi-meet'.
  *
  * @type {{
- *     initializationError: null,
- *     initialized: boolean
+ *     config: Object
  * }}
  */
 const INITIAL_STATE = {
@@ -40,9 +39,7 @@ const INITIAL_STATE = {
         // third parties and we can temporarily disable them (until we implement
         // an alternative to async script elements on React Native).
         disableThirdPartyRequests: true
-    },
-    initializationError: null,
-    initialized: false
+    }
 };
 
 ReducerRegistry.register(
@@ -55,14 +52,14 @@ ReducerRegistry.register(
         case LIB_INIT_ERROR:
             return {
                 ...state,
-                initializationError: action.error,
+                initError: action.error,
                 initialized: false
             };
 
         case LIB_INITIALIZED:
             return {
                 ...state,
-                initializationError: null,
+                initError: undefined,
                 initialized: true
             };
 
