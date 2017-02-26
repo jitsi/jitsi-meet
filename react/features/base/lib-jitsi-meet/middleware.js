@@ -52,14 +52,14 @@ function _setConfig(store, next, action) {
     // disposed of first.
     // TODO Currently, disposeLib actually does not dispose of lib-jitsi-meet
     // because lib-jitsi-meet does not implement such functionality.
-    const disposeLIbPromise
+    const disposeLibPromise
         = initialized ? dispatch(disposeLib()) : Promise.resolve();
 
     // Let the new config into the Redux store (because initLib will read it
     // from there).
     const nextState = next(action);
 
-    disposeLIbPromise.then(dispatch(initLib()));
+    disposeLibPromise.then(dispatch(initLib()));
 
     return nextState;
 }
