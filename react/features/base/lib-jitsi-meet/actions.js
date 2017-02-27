@@ -4,35 +4,40 @@ import type { Dispatch } from 'redux';
 
 import JitsiMeetJS from './';
 import {
-    LIB_DISPOSED,
+    LIB_DID_DISPOSE,
+    LIB_DID_INIT,
     LIB_INIT_ERROR,
-    LIB_INITIALIZED,
+    LIB_WILL_DISPOSE,
+    LIB_WILL_INIT,
     SET_CONFIG
 } from './actionTypes';
 
 declare var APP: Object;
 
 /**
- * Disposes lib-jitsi-meet.
+ * Disposes (of) lib-jitsi-meet.
  *
  * @returns {Function}
  */
 export function disposeLib() {
-    // XXX We're wrapping it with Promise, because:
-    // a) to be better aligned with initLib() method, which is async.
-    // b) as currently there is no implementation for it in lib-jitsi-meet, and
-    // there is a big chance it will be async.
-    // TODO Currently, lib-jitsi-meet doesn't have any functionality to
-    // dispose itself.
     return (dispatch: Dispatch<*>) => {
-        dispatch({ type: LIB_DISPOSED });
+        dispatch({ type: LIB_WILL_DISPOSE });
 
-        return Promise.resolve();
+        // XXX We're wrapping it with Promise because:
+        // a) to be better aligned with initLib() method which is async;
+        // b) as currently there is no implementation for it in lib-jitsi-meet
+        //    and there is a big chance it will be async.
+        // TODO Currently, lib-jitsi-meet doesn't have the functionality to
+        // dispose itself.
+        return (
+            Promise.resolve()
+                .then(() => dispatch({ type: LIB_DID_DISPOSE })));
     };
 }
 
 /**
- * Initializes lib-jitsi-meet with passed configuration.
+ * Initializes lib-jitsi-meet (i.e. {@link invokes JitsiMeetJS.init()}) with the
+ * current config(uration).
  *
  * @returns {Function}
  */
@@ -50,15 +55,18 @@ export function initLib() {
             return Promise.resolve();
         }
 
-        return JitsiMeetJS.init(config)
-            .then(() => dispatch({ type: LIB_INITIALIZED }))
-            .catch(error => {
-                dispatch(libInitError(error));
+        dispatch({ type: LIB_WILL_INIT });
 
-                // TODO Handle LIB_INIT_ERROR error somewhere instead.
-                console.error('lib-jitsi-meet failed to init:', error);
-                throw error;
-            });
+        return (
+            JitsiMeetJS.init(config)
+                .then(() => dispatch({ type: LIB_DID_INIT }))
+                .catch(error => {
+                    dispatch(libInitError(error));
+
+                    // TODO Handle LIB_INIT_ERROR error somewhere instead.
+                    console.error('lib-jitsi-meet failed to init:', error);
+                    throw error;
+                }));
     };
 }
 

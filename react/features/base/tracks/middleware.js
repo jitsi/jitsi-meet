@@ -1,6 +1,6 @@
 /* @flow */
 
-import { LIB_DISPOSED, LIB_INITIALIZED } from '../lib-jitsi-meet';
+import { LIB_DID_DISPOSE, LIB_DID_INIT } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
     SET_AUDIO_MUTED,
@@ -16,21 +16,21 @@ import { TRACK_UPDATED } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
 /**
- * Middleware that captures LIB_INITIALIZED and LIB_DISPOSED actions
- * and respectively creates/destroys local media tracks. Also listens to media-
- * related actions and performs corresponding operations with tracks.
+ * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
+ * respectively, creates/destroys local media tracks. Also listens to
+ * media-related actions and performs corresponding operations with tracks.
  *
  * @param {Store} store - Redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_INITIALIZED:
-        store.dispatch(createLocalTracks());
+    case LIB_DID_DISPOSE:
+        store.dispatch(destroyLocalTracks());
         break;
 
-    case LIB_DISPOSED:
-        store.dispatch(destroyLocalTracks());
+    case LIB_DID_INIT:
+        store.dispatch(createLocalTracks());
         break;
 
     case SET_AUDIO_MUTED:

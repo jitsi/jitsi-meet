@@ -1,9 +1,9 @@
 import { ReducerRegistry } from '../redux';
 
 import {
-    LIB_DISPOSED,
+    LIB_DID_DISPOSE,
+    LIB_DID_INIT,
     LIB_INIT_ERROR,
-    LIB_INITIALIZED,
     SET_CONFIG
 } from './actionTypes';
 
@@ -46,21 +46,21 @@ ReducerRegistry.register(
     'features/base/lib-jitsi-meet',
     (state = INITIAL_STATE, action) => {
         switch (action.type) {
-        case LIB_DISPOSED:
+        case LIB_DID_DISPOSE:
             return INITIAL_STATE;
+
+        case LIB_DID_INIT:
+            return {
+                ...state,
+                initError: undefined,
+                initialized: true
+            };
 
         case LIB_INIT_ERROR:
             return {
                 ...state,
                 initError: action.error,
                 initialized: false
-            };
-
-        case LIB_INITIALIZED:
-            return {
-                ...state,
-                initError: undefined,
-                initialized: true
             };
 
         case SET_CONFIG:

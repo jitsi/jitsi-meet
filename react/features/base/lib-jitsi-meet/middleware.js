@@ -1,10 +1,7 @@
 import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
-import {
-    disposeLib,
-    initLib
-} from './actions';
+import { disposeLib, initLib } from './actions';
 import { SET_CONFIG } from './actionTypes';
 
 /**
@@ -15,6 +12,7 @@ import { SET_CONFIG } from './actionTypes';
  *
  * @param {Store} store - Redux store.
  * @returns {Function}
+ * @private
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -39,9 +37,9 @@ MiddlewareRegistry.register(store => next => action => {
  * specified action to the specified store.
  * @param {Action} action - The Redux action SET_CONFIG which is being
  * dispatched in the specified store.
- * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
+ * @private
  */
 function _setConfig(store, next, action) {
     const { dispatch, getState } = store;
