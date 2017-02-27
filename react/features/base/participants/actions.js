@@ -9,6 +9,52 @@ import {
 import { getLocalParticipant } from './functions';
 
 /**
+ * Action to update a participant's avatar id.
+ *
+ * @param {string} id - Participant's id.
+ * @param {string} avatarId - Participant's avatar id.
+ * @returns {{
+ *      type: PARTICIPANT_UPDATED,
+ *      participant: {
+ *          id: string,
+ *          avatarId: string,
+ *      }
+ * }}
+ */
+export function changeParticipantAvatarID(id, avatarId) {
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: {
+            id,
+            avatarId
+        }
+    };
+}
+
+/**
+ * Action to update a participant's avatar URL.
+ *
+ * @param {string} id - Participant's id.
+ * @param {string} url - Participant's avatar url.
+ * @returns {{
+ *      type: PARTICIPANT_UPDATED,
+ *      participant: {
+ *          id: string,
+ *          url: string,
+ *      }
+ * }}
+ */
+export function changeParticipantAvatarURL(id, url) {
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: {
+            id,
+            url
+        }
+    };
+}
+
+/**
  * Action to update a participant's email.
  *
  * @param {string} id - Participant's id.
@@ -17,7 +63,6 @@ import { getLocalParticipant } from './functions';
  *      type: PARTICIPANT_UPDATED,
  *      participant: {
  *          id: string,
- *          avatar: string,
  *          email: string
  *      }
  * }}

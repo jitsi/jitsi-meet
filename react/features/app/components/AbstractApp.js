@@ -78,7 +78,11 @@ export class AbstractApp extends Component {
 
         dispatch(appWillMount(this));
 
-        dispatch(localParticipantJoined());
+        dispatch(localParticipantJoined({
+            avatarId: APP.settings.getAvatarId(),
+            avatarUrl: APP.settings.getAvatarUrl(),
+            email: APP.settings.getEmail()
+        }));
 
         // If a URL was explicitly specified to this React Component, then open
         // it; otherwise, use a default.

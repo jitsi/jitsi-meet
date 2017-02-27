@@ -1,5 +1,3 @@
-/* global MD5 */
-
 import { ReducerRegistry, setStateProperty } from '../redux';
 
 import {
@@ -14,6 +12,7 @@ import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_ROLE
 } from './constants';
+import { getAvatarURL } from './functions';
 
 /**
  * Participant object.
@@ -64,11 +63,16 @@ function _participant(state, action) {
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
             const id = action.newValue;
+            const { avatarId, avatarUrl, email } = state;
 
             return {
                 ...state,
                 id,
-                avatar: state.avatar || _getAvatarURL(id, state.email)
+                avatar: state.avatar || getAvatarURL(id, {
+                    avatarId,
+                    avatarUrl,
+                    email
+                })
             };
         }
         break;
@@ -81,8 +85,14 @@ function _participant(state, action) {
         const id
             = participant.id
                 || (participant.local && LOCAL_PARTICIPANT_DEFAULT_ID);
+        const { avatarId, avatarUrl, email } = participant;
         const avatar
-            = participant.avatar || _getAvatarURL(id, participant.email);
+            = participant.avatar
+                || getAvatarURL(id, {
+                    avatarId,
+                    avatarUrl,
+                    email
+                });
 
         // TODO Get these names from config/localized.
         const name
@@ -90,7 +100,7 @@ function _participant(state, action) {
 
         return {
             avatar,
-            email: participant.email,
+            email,
             id,
             local: participant.local || false,
             name,
@@ -113,8 +123,13 @@ function _participant(state, action) {
             }
 
             if (!newState.avatar) {
-                newState.avatar
-                    = _getAvatarURL(action.participant.id, newState.email);
+                const { avatarId, avatarUrl, email } = newState;
+
+                newState.avatar = getAvatarURL(action.participant.id, {
+                    avatarId,
+                    avatarUrl,
+                    email
+                });
             }
 
             return newState;
@@ -162,43 +177,3 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
         return state;
     }
 });
-
-/**
- * Returns the URL of the image for the avatar of a particular participant
- * identified by their id and/or e-mail address.
- *
- * @param {string} participantId - Participant's id.
- * @param {string} [email] - Participant's email.
- * @returns {string} The URL of the image for the avatar of the participant
- * identified by the specified participantId and/or email.
- */
-function _getAvatarURL(participantId, email) {
-    // TODO: Use disableThirdPartyRequests config.
-
-    let avatarId = email || participantId;
-
-    // If the ID looks like an email, we'll use gravatar. Otherwise, it's a
-    // random avatar and we'll use the configured URL.
-    const random = !avatarId || avatarId.indexOf('@') < 0;
-
-    if (!avatarId) {
-        avatarId = participantId;
-    }
-
-    // MD5 is provided by Strophe
-    avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());
-
-    let urlPref = null;
-    let urlSuf = null;
-
-    if (random) {
-        // TODO: Use RANDOM_AVATAR_URL_PREFIX from interface config.
-        urlPref = 'https://robohash.org/';
-        urlSuf = '.png?size=200x200';
-    } else {
-        urlPref = 'https://www.gravatar.com/avatar/';
-        urlSuf = '?d=wavatar&size=200';
-    }
-
-    return urlPref + avatarId + urlSuf;
-}

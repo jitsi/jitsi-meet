@@ -21,8 +21,9 @@
  * SOFTWARE.
  */
 
-/* global MD5, config, interfaceConfig, APP */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+/* global APP */
+
+import { getAvatarURL } from '../../../react/features/base/participants';
 
 let users = {};
 
@@ -64,7 +65,7 @@ export default {
      * @param url the url for the avatar
      */
     setUserAvatarUrl: function (id, url) {
-        this._setUserProp(id, "url", url);
+        this._setUserProp(id, "avatarUrl", url);
     },
 
     /**
@@ -82,57 +83,14 @@ export default {
      * @param {string} userId user id
      */
     getAvatarUrl: function (userId) {
-        if (config.disableThirdPartyRequests) {
-            return 'images/avatar2.png';
-        }
-
+        let user;
         if (!userId || APP.conference.isLocalId(userId)) {
-            userId = "local";
+            user = users.local;
+            userId = APP.conference.getMyUserId();
+        } else {
+            user = users[userId];
         }
 
-        let avatarId = null;
-        const user = users[userId];
-
-        // The priority is url, email and lowest is avatarId
-        if(user) {
-            if(user.url)
-                return user.url;
-
-            if (user.email)
-                avatarId = user.email;
-            else {
-                avatarId = user.avatarId;
-            }
-        }
-
-        // If the ID looks like an email, we'll use gravatar.
-        // Otherwise, it's a random avatar, and we'll use the configured
-        // URL.
-        let random = !avatarId || avatarId.indexOf('@') < 0;
-
-        if (!avatarId) {
-            logger.warn(
-                `No avatar stored yet for ${userId} - using ID as avatar ID`);
-            avatarId = userId;
-        }
-        avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());
-
-
-        let urlPref = null;
-        let urlSuf = null;
-        if (!random) {
-            urlPref = 'https://www.gravatar.com/avatar/';
-            urlSuf = "?d=wavatar&size=200";
-        }
-        else if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
-            urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
-            urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
-        }
-        else {
-            urlPref = 'https://api.adorable.io/avatars/200/';
-            urlSuf = ".png";
-        }
-
-        return urlPref + avatarId + urlSuf;
+        return getAvatarURL(userId, user);
     }
 };

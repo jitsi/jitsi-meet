@@ -38,7 +38,7 @@ function _addConferenceListeners(conference, dispatch) {
             (...args) => dispatch(_conferenceJoined(conference, ...args)));
     conference.on(
             JitsiConferenceEvents.CONFERENCE_LEFT,
-            (...args) => dispatch(_conferenceLeft(conference, ...args)));
+            (...args) => dispatch(conferenceLeft(conference, ...args)));
 
     conference.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
@@ -131,7 +131,7 @@ function _conferenceJoined(conference) {
  *      conference: JitsiConference
  *  }}
  */
-function _conferenceLeft(conference) {
+export function conferenceLeft(conference) {
     return {
         type: CONFERENCE_LEFT,
         conference
