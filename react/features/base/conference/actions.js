@@ -1,7 +1,10 @@
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import {
+    changeParticipantAvatarID,
+    changeParticipantAvatarURL,
     changeParticipantEmail,
     dominantSpeakerChanged,
+    getLocalParticipant,
     participantJoined,
     participantLeft,
     participantRoleChanged
@@ -18,7 +21,11 @@ import {
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
-import { EMAIL_COMMAND } from './constants';
+import {
+    AVATAR_ID_COMMAND,
+    AVATAR_URL_COMMAND,
+    EMAIL_COMMAND
+} from './constants';
 import { _addLocalTracksToConference } from './functions';
 
 /**
@@ -70,8 +77,31 @@ function _addConferenceListeners(conference, dispatch) {
             (...args) => dispatch(participantRoleChanged(...args)));
 
     conference.addCommandListener(
+            AVATAR_ID_COMMAND,
+            (data, id) => dispatch(changeParticipantAvatarID(id, data.value)));
+    conference.addCommandListener(
+            AVATAR_URL_COMMAND,
+            (data, id) => dispatch(changeParticipantAvatarURL(id, data.value)));
+    conference.addCommandListener(
             EMAIL_COMMAND,
             (data, id) => dispatch(changeParticipantEmail(id, data.value)));
+}
+
+/**
+ * Sets the data for the local participant to the conference.
+ *
+ * @param {JitsiConference} conference - The JitsiConference instance.
+ * @param {Object} state - The Redux state.
+ * @returns {void}
+ */
+function _setLocalParticipantData(conference, state) {
+    const localParticipant
+        = getLocalParticipant(state['features/base/participants']);
+
+    conference.removeCommand(AVATAR_ID_COMMAND);
+    conference.sendCommand(AVATAR_ID_COMMAND, {
+        value: localParticipant.avatarID
+    });
 }
 
 /**
@@ -216,6 +246,8 @@ export function createConference() {
                 });
 
         _addConferenceListeners(conference, dispatch);
+
+        _setLocalParticipantData(conference, state);
 
         conference.join(password);
     };

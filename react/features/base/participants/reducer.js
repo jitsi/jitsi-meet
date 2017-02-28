@@ -1,4 +1,5 @@
 import { ReducerRegistry, setStateProperty } from '../redux';
+import { randomHexString } from '../util';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -12,7 +13,6 @@ import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_ROLE
 } from './constants';
-import { getAvatarURL } from './functions';
 
 /**
  * Participant object.
@@ -62,25 +62,25 @@ function _participant(state, action) {
 
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
-            const id = action.newValue;
-            const newState = {
+            return {
                 ...state,
-                id
+                id: action.newValue
             };
-
-            if (!newState.avatar) {
-                newState.avatar = getAvatarURL(newState);
-            }
-
-            return newState;
         }
         break;
 
     case PARTICIPANT_JOINED: {
         const participant = action.participant; // eslint-disable-line no-shadow
-        const { avatar, dominantSpeaker, email, local, pinned, role }
+        const { avatarURL, dominantSpeaker, email, local, pinned, role }
             = participant;
-        let { id, name } = participant;
+        let { avatarID, id, name } = participant;
+
+        // avatarID
+        //
+        // TODO Get the avatarID of the local participant from localStorage.
+        if (!avatarID && local) {
+            avatarID = randomHexString(32);
+        }
 
         // id
         //
@@ -97,8 +97,9 @@ function _participant(state, action) {
             name = local ? 'me' : 'Fellow Jitster';
         }
 
-        const newState = {
-            avatar,
+        return {
+            avatarID,
+            avatarURL,
             dominantSpeaker: dominantSpeaker || false,
             email,
             id,
@@ -107,12 +108,6 @@ function _participant(state, action) {
             pinned: pinned || false,
             role: role || PARTICIPANT_ROLE.NONE
         };
-
-        if (!newState.avatar) {
-            newState.avatar = getAvatarURL(newState);
-        }
-
-        return newState;
     }
 
     case PARTICIPANT_UPDATED: {
@@ -128,10 +123,6 @@ function _participant(state, action) {
                             === -1) {
                     newState[key] = participant[key];
                 }
-            }
-
-            if (!newState.avatar) {
-                newState.avatar = getAvatarURL(newState);
             }
 
             return newState;

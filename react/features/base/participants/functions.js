@@ -44,6 +44,9 @@ export function getAvatarURL(participant) {
         // from a configured avatar service).
         if (!key) {
             key = id;
+            if (!key) {
+                return undefined;
+            }
         }
 
         // The deployment is allowed to choose the avatar service which is to

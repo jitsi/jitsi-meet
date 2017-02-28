@@ -10,7 +10,7 @@ import { Container } from '../../react';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
 import Avatar from './Avatar';
-import { getParticipantById } from '../functions';
+import { getAvatarURL, getParticipantById } from '../functions';
 import { styles } from './styles';
 
 /**
@@ -162,14 +162,14 @@ function _toBoolean(value, undefinedValue) {
  * }}
  */
 function _mapStateToProps(state, ownProps) {
-    const participantId = ownProps.participantId;
-    const participant
-        = getParticipantById(
-            state['features/base/participants'],
-            participantId);
+    const { participantId } = ownProps;
 
     return {
-        _avatar: participant ? participant.avatar : undefined,
+        _avatar:
+            getAvatarURL(
+                getParticipantById(
+                    state['features/base/participants'],
+                    participantId)),
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

@@ -21,9 +21,12 @@ import analytics from './modules/analytics/analytics';
 import EventEmitter from "events";
 
 import {
-    conferenceJoined,
+    AVATAR_ID_COMMAND,
+    AVATAR_URL_COMMAND,
     conferenceFailed,
-    conferenceLeft
+    conferenceJoined,
+    conferenceLeft,
+    EMAIL_COMMAND
 } from './react/features/base/conference';
 import {
     isFatalJitsiConnectionError
@@ -67,12 +70,12 @@ import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
  * Known custom conference commands.
  */
 const commands = {
-    EMAIL: "email",
-    AVATAR_URL: "avatar-url",
-    AVATAR_ID: "avatar-id",
+    AVATAR_ID: AVATAR_ID_COMMAND,
+    AVATAR_URL: AVATAR_URL_COMMAND,
+    CUSTOM_ROLE: "custom-role",
+    EMAIL: EMAIL_COMMAND,
     ETHERPAD: "etherpad",
-    SHARED_VIDEO: "shared-video",
-    CUSTOM_ROLE: "custom-role"
+    SHARED_VIDEO: "shared-video"
 };
 
 /**
