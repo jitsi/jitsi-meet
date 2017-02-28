@@ -16,14 +16,3 @@ import { Symbol } from '../base/react';
  * }
  */
 export const DISMISS_MOBILE_APP_PROMO = Symbol('DISMISS_MOBILE_APP_PROMO');
-
-/**
- * The type of Redux action which signals to change information about
- * unsupported browser in Redux store.
- *
- * {
- *      type: SET_UNSUPPORTED_BROWSER,
- *      unsupportedBrowser: Object
- * }
- */
-export const SET_UNSUPPORTED_BROWSER = Symbol('SET_UNSUPPORTED_BROWSER');

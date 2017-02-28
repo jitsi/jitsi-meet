@@ -39,8 +39,9 @@ export default class UnsupportedDesktopBrowser extends Component {
                     <a
                         className = { `${NS}__link` }
                         href = { FIREFOX }>Firefox</a> or&nbsp;
-                    { this._showSafariLinkIfRequired() }
-                    { this._showIELinkIfRequired() }.
+                    {
+                        this._renderOSSpecificBrowserDownloadLink()
+                    }
                 </p>
 
                 <HideNotificationBarStyle />
@@ -49,35 +50,35 @@ export default class UnsupportedDesktopBrowser extends Component {
     }
 
     /**
-     * Depending on the platform returns the link to IE browser.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _showIELinkIfRequired() {
-        if (Platform.OS === 'windows') {
-            return (
-                <a
-                    className = { `${NS}__link` }
-                    href = { IE }>IE</a>
-            );
-        }
-
-        return null;
-    }
-
-    /**
      * Depending on the platform returns the link to Safari browser.
      *
      * @returns {ReactElement|null}
      * @private
      */
-    _showSafariLinkIfRequired() {
-        if (Platform.OS === 'mac') {
+    _renderOSSpecificBrowserDownloadLink() {
+        let link;
+        let text;
+
+        switch (Platform.OS) {
+        case 'macos':
+            link = SAFARI;
+            text = 'Safari';
+            break;
+
+        case 'windows':
+            link = IE;
+            text = 'Internet Explorer';
+            break;
+        }
+        if (typeof link !== 'undefined') {
             return (
                 <a
                     className = { `${NS}__link` }
-                    href = { SAFARI }>Safari</a>
+                    href = { link }>
+                    {
+                        text
+                    }
+                </a>
             );
         }
 

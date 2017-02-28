@@ -44,12 +44,22 @@ const _RULES = [
         }
     },
     state => {
-        switch (state['features/unsupported-browser'].name) {
-        case 'WEBRTC_NOT_READY':
-            return PluginRequiredBrowser;
+        const { webRTCReady } = state['features/base/lib-jitsi-meet'];
 
-        case 'WEBRTC_NOT_SUPPORTED':
-            return UnsupportedDesktopBrowser;
+        switch (typeof webRTCReady) {
+        case 'boolean':
+            if (webRTCReady === false) {
+                return UnsupportedDesktopBrowser;
+            }
+            break;
+
+        case 'undefined':
+            // If webRTCReady is not set, then we cannot use it to take a
+            // decision.
+            break;
+
+        default:
+            return PluginRequiredBrowser;
         }
     }
 ];

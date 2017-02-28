@@ -1,9 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    DISMISS_MOBILE_APP_PROMO,
-    SET_UNSUPPORTED_BROWSER
-} from './actionTypes';
+import { DISMISS_MOBILE_APP_PROMO } from './actionTypes';
 
 ReducerRegistry.register(
         'features/unsupported-browser',
@@ -23,11 +20,6 @@ ReducerRegistry.register(
                      * @type {boolean}
                      */
                     mobileAppPromoDismissed: true
-                };
-            case SET_UNSUPPORTED_BROWSER:
-                return {
-                    ...state,
-                    ...action.unsupportedBrowser
                 };
             }
 

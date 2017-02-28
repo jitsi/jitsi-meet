@@ -7,7 +7,8 @@ import {
     LIB_INIT_ERROR,
     LIB_WILL_DISPOSE,
     LIB_WILL_INIT,
-    SET_CONFIG
+    SET_CONFIG,
+    SET_WEBRTC_READY
 } from './actionTypes';
 
 declare var APP: Object;
@@ -98,5 +99,56 @@ export function setConfig(config: Object) {
     return {
         type: SET_CONFIG,
         config
+    };
+}
+
+/**
+ * Sets the indicator which determines whether WebRTC is ready. In execution
+ * environments in which WebRTC is supported via a known plugin such
+ * as Temasys WebRTC may start not ready and then become ready. Of course, there
+ * are execution enviroments such as old Mozilla Firefox versions or
+ * certains Microsoft Edge versions in which WebRTC is not supported at all.
+ *
+ * @param {boolean|Promise} webRTCReady - The indicator which determines
+ * whether WebRTC is ready. If a Promise is specified, its resolution will be
+ * awaited.
+ * @returns {Function}
+ */
+export function setWebRTCReady(webRTCReady: boolean | Promise<*>) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        if (getState()['features/base/lib-jitsi-meet'].webRTCReady
+                !== webRTCReady) {
+            dispatch({
+                type: SET_WEBRTC_READY,
+                webRTCReady
+            });
+
+            // If the specified webRTCReady is a thenable (i.e. a Promise), then
+            // await its resolution.
+            switch (typeof webRTCReady) {
+            case 'function':
+            case 'object': {
+                const { then } = webRTCReady;
+
+                if (typeof then === 'function') {
+                    const onFulfilled = value => {
+                        // Is the app still interested in the specified
+                        // webRTCReady?
+                        if (getState()['features/base/lib-jitsi-meet']
+                                    .webRTCReady
+                                === webRTCReady) {
+                            dispatch(setWebRTCReady(value));
+                        }
+                    };
+
+                    then.call(
+                             webRTCReady,
+                             /* onFulfilled */ () => onFulfilled(true),
+                             /* onRejected*/ () => onFulfilled(false));
+                }
+                break;
+            }
+            }
+        }
     };
 }

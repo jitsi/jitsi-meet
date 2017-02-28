@@ -4,7 +4,8 @@ import {
     LIB_DID_DISPOSE,
     LIB_DID_INIT,
     LIB_INIT_ERROR,
-    SET_CONFIG
+    SET_CONFIG,
+    SET_WEBRTC_READY
 } from './actionTypes';
 
 /**
@@ -65,6 +66,12 @@ ReducerRegistry.register(
 
         case SET_CONFIG:
             return _setConfig(state, action);
+
+        case SET_WEBRTC_READY:
+            return {
+                ...state,
+                webRTCReady: action.webRTCReady
+            };
 
         default:
             return state;

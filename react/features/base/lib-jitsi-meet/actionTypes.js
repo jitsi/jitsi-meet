@@ -58,3 +58,13 @@ export const LIB_WILL_INIT = Symbol('LIB_WILL_INIT');
  * }
  */
 export const SET_CONFIG = Symbol('SET_CONFIG');
+
+/**
+ * The type of Redux action which indicates whether WebRTC is ready.
+ *
+ * {
+ *     type: SET_WEBRTC_READY,
+ *     webRTCReady: boolean | Promise
+ * }
+ */
+export const SET_WEBRTC_READY = Symbol('SET_WEBRTC_READY');

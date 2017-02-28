@@ -2,14 +2,16 @@
 
 import type { Dispatch } from 'redux';
 
-import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import {
+    JitsiConferenceEvents,
+    libInitError,
+    WEBRTC_NOT_READY,
+    WEBRTC_NOT_SUPPORTED
+} from '../lib-jitsi-meet';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
-
-import { appNavigate } from '../../app';
-import { setUnsupportedBrowser } from '../../unsupported-browser';
 
 declare var APP: Object;
 declare var config: Object;
@@ -77,28 +79,19 @@ export function connect() {
                 APP.UI.promptDisplayName();
             }
         })
-            .catch(err => {
+            .catch(error => {
                 APP.UI.hideRingOverLay();
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
-                logger.error(err);
+                logger.error(error);
 
-                dispatch(setUnsupportedBrowser(err));
-
-                // If during the conference initialization was defined that
-                // browser doesn't support WebRTC then we should define
-                // which route to render.
-                dispatch(appNavigate(room));
-
-                // Force reinitialization of the conference if WebRTC is ready.
-                if (err.webRTCReadyPromise) {
-                    err.webRTCReadyPromise.then(() => {
-                        // Setting plugin required flag to false because
-                        // it's already been installed.
-                        dispatch(setUnsupportedBrowser({
-                            name: 'OK'
-                        }));
-                        dispatch(appNavigate(room));
-                    });
+                // TODO The following are in fact Errors raised by
+                // JitsiMeetJS.init() which should be taken care of in
+                // features/base/lib-jitsi-meet but we are not there yet on the
+                // Web at the time of this writing.
+                switch (error.name) {
+                case WEBRTC_NOT_READY:
+                case WEBRTC_NOT_SUPPORTED:
+                    dispatch(libInitError(error));
                 }
             });
     };

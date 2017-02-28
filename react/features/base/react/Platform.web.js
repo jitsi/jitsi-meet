@@ -7,10 +7,10 @@ if (userAgent.match(/Android/i)) {
     OS = 'android';
 } else if (userAgent.match(/iP(ad|hone|od)/i)) {
     OS = 'ios';
-} else if (userAgent.match(/windows/i)) {
+} else if (userAgent.match(/Mac(intosh| OS X)/i)) {
+    OS = 'macos';
+} else if (userAgent.match(/Windows/i)) {
     OS = 'windows';
-} else if (userAgent.match(/mac/i)) {
-    OS = 'mac';
 }
 
 /**
