@@ -2,14 +2,14 @@
 
 import type { Dispatch } from 'redux';
 
+import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
 
 declare var APP: Object;
-declare var JitsiMeetJS: Object;
 
-const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 export {

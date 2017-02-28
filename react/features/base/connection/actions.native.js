@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { conferenceWillLeave } from '../conference';
-import JitsiMeetJS from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -11,8 +11,6 @@ import {
     CONNECTION_FAILED,
     SET_DOMAIN
 } from './actionTypes';
-
-const JitsiConnectionEvents = JitsiMeetJS.events.connection;
 
 /**
  * Opens new connection.

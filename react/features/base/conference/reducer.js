@@ -1,4 +1,4 @@
-import JitsiMeetJS from '../lib-jitsi-meet';
+import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import {
     ReducerRegistry,
     setStateProperties,
@@ -64,7 +64,6 @@ function _conferenceFailed(state, action) {
         return state;
     }
 
-    const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
     const passwordRequired
         = JitsiConferenceErrors.PASSWORD_REQUIRED === action.error
             ? conference

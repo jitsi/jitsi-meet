@@ -1,6 +1,4 @@
-import JitsiMeetJS from '../lib-jitsi-meet';
-
-const JitsiTrackErrors = JitsiMeetJS.errors.track;
+import { JitsiTrackErrors } from '../lib-jitsi-meet';
 
 /**
  * Attach a set of local tracks to a conference.

@@ -1,8 +1,6 @@
-/* @flow */
-
 import type { Dispatch } from 'redux';
 
-import JitsiMeetJS from './';
+import JitsiMeetJS from './_';
 import {
     LIB_DID_DISPOSE,
     LIB_DID_INIT,
