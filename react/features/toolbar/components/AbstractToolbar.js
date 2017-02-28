@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { appNavigate } from '../../app';
+import { disconnect } from '../../base/connection';
 import { toggleAudioMuted, toggleVideoMuted } from '../../base/media';
 import { ColorPalette } from '../../base/styles';
 import { beginRoomLockRequest } from '../../room-lock';
@@ -94,12 +94,7 @@ export class AbstractToolbar extends Component {
      * @returns {void}
      */
     _onHangup() {
-        // XXX We don't know here which value is effectively/internally used
-        // when there's no valid room name to join. It isn't our business to
-        // know that anyway. The undefined value is our expression of (1) the
-        // lack of knowledge & (2) the desire to no longer have a valid room
-        // name to join.
-        this.props.dispatch(appNavigate(undefined));
+        this.props.dispatch(disconnect());
     }
 
     /**

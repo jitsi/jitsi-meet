@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
-import { connect, disconnect } from '../../base/connection';
+import { connect } from '../../base/connection';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../film-strip';
 import { LargeVideo } from '../../large-video';
@@ -94,16 +94,13 @@ class Conference extends Component {
     }
 
     /**
-     * Destroys connection, conference and local tracks when conference screen
-     * is left. Clears {@link #_toolbarTimeout} before the component unmounts.
+     * Clears {@link #_toolbarTimeout} before the component unmounts.
      *
      * @inheritdoc
      * @returns {void}
      */
     componentWillUnmount() {
         this._clearToolbarTimeout();
-
-        this.props.dispatch(disconnect());
     }
 
     /**
