@@ -310,6 +310,12 @@ export class VideoContainer extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight, animate = false) {
+        // XXX Prevent TypeError: undefined is not an object when the Web
+        // browser does not support WebRTC (yet).
+        if (this.$video.length === 0) {
+            return;
+        }
+
         let [width, height]
             = this.getVideoSize(containerWidth, containerHeight);
         let { horizontalIndent, verticalIndent }
