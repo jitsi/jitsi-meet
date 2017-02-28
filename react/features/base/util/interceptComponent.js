@@ -37,8 +37,12 @@ const _RULES = [
         const OS = Platform.OS;
 
         if (OS === 'android' || OS === 'ios') {
+            const mobileAppPromo
+                = typeof interfaceConfig === 'object'
+                    && interfaceConfig.MOBILE_APP_PROMO;
+
             return (
-                interfaceConfig.MOBILE_APP_ENABLED
+                typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
                     ? UnsupportedMobileBrowser
                     : NoMobileApp);
         }
