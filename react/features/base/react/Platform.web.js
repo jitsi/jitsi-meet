@@ -22,5 +22,22 @@ export default {
      *
      * @type {string}
      */
-    OS
+    OS,
+
+    /**
+     * Provides equivalent of react-native's select method.
+     * Runs platform (web) specific code.
+     *
+     * @param {Object} options - Object map with platform specific code.
+     * @returns {*}
+     */
+    select(options: Object) {
+        const { web } = options;
+
+        if (typeof web === 'function') {
+            return web();
+        }
+
+        return web;
+    }
 };
