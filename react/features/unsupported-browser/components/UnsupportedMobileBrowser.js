@@ -83,7 +83,7 @@ class UnsupportedMobileBrowser extends Component {
                         src = 'images/logo-blue.svg' />
                     <p className = { `${ns}__text` }>
                         You need <strong>Jitsi Meet</strong> to join a
-                        conversation on your mobile
+                        conversation on mobile
                     </p>
                     <a href = { _URLS[Platform.OS] }>
                         <button className = { downloadButtonClassName }>

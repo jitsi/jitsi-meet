@@ -26,8 +26,8 @@ export default class PluginRequiredBrowser extends Component {
                     Your browser requires a plugin for this conversation.
                 </h2>
                 <p className = { `${ns}__description_small` }>
-                    Once you install the plugin, it will be possible for you
-                    to have your conversation here. For best experience,
+                    Once you install the plugin, it will be possible for you to
+                    have your conversation here. For the best experience,
                     however, we strongly recommend that you do that using
                     the&nbsp;
                     <a

@@ -12,7 +12,6 @@ declare var interfaceConfig: Object;
  * @class NoMobileApp
  */
 export default class NoMobileApp extends Component {
-
     /**
      * Renders the component.
      *
@@ -24,12 +23,13 @@ export default class NoMobileApp extends Component {
         return (
             <div className = { ns }>
                 <h2 className = { `${ns}__title` }>
-                    Video chat isn't available on mobile
+                    Video chat isn't available on mobile.
                 </h2>
                 <p className = { `${ns}__description` }>
-                    Please use {interfaceConfig.APP_NAME} on
-                    Desktop to join calls.
+                    Please use { interfaceConfig.APP_NAME } on desktop to join
+                    calls.
                 </p>
+
                 <HideNotificationBarStyle />
             </div>
         );
