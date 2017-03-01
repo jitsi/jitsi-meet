@@ -1,46 +1,56 @@
-/* global $ */
-import { i18n, DEFAULT_LANG } from '../../react/features/base/translation';
+/* @flow */
+
 import jqueryI18next from 'jquery-i18next';
 
-function initCompleted() {
-    $("[data-i18n]").localize();
+import { DEFAULT_LANGUAGE, i18next } from '../../react/features/base/i18n';
+
+declare var $: Function;
+
+/**
+ * Notifies that the {@link i18next} instance has finished its initialization.
+ *
+ * @returns {void}
+ * @private
+ */
+function _onI18nInitialized() {
+    $('[data-i18n]').localize();
 }
 
 class Translation {
-    init () {
-        if (i18n.isInitialized)
-            initCompleted();
-        else
-            i18n.on('initialized', initCompleted);
-
-        jqueryI18next.init(i18n, $, {useOptionsAttr: true});
+    addLanguageChangedListener(listener: Function) {
+        i18next.on('languageChanged', listener);
     }
 
-    setLanguage (lang) {
-        if(!lang)
-            lang = DEFAULT_LANG;
-        i18n.setLng(lang, {}, initCompleted);
-    }
+    generateTranslationHTML(key: string, options: Object) {
+        const optAttr
+            = options ? ` data-i18n-options='${JSON.stringify(options)}'` : '';
 
-    getCurrentLanguage () {
-        return i18n.lng();
-    }
+        // XXX i18next expects undefined if options are missing.
+        const text = i18next.t(key, options ? options : undefined);
 
-    translateElement (selector, options) {
-        // i18next expects undefined if options are missing, check if its null
-        selector.localize(
-            options === null ? undefined : options);
-    }
-
-    generateTranslationHTML (key, options) {
-        let optAttr = options
-            ? ` data-i18n-options='${JSON.stringify(options)}'` : "";
-        let text = i18n.t(key, options === null ? undefined : options);
         return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
     }
 
-    addLanguageChangedListener(listener) {
-        i18n.on('languageChanged', listener);
+    getCurrentLanguage() {
+        return i18next.lng();
+    }
+
+    init() {
+        if (i18next.isInitialized)
+            _onI18nInitialized();
+        else
+            i18next.on('initialized', _onI18nInitialized);
+
+        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+    }
+
+    setLanguage(language: string = DEFAULT_LANGUAGE) {
+        i18next.setLng(language, {}, _onI18nInitialized);
+    }
+
+    translateElement(selector: Object, options: Object) {
+        // XXX i18next expects undefined if options are missing.
+        selector.localize(options ? options : undefined);
     }
 }
 

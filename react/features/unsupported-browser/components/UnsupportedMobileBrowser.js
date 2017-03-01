@@ -3,16 +3,33 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
-import { translate, translateToHTML } from '../../base/translation';
 
 import HideNotificationBarStyle from './HideNotificationBarStyle';
+
+/**
+ * The namespace of the CSS styles of UnsupportedMobileBrowser.
+ *
+ * @private
+ * @type {string}
+ */
+const _SNS = 'unsupported-mobile-browser';
+
+/**
+ * The namespace of the i18n/translation keys of UnsupportedMobileBrowser.
+ *
+ * @private
+ * @type {string}
+ */
+const _TNS = 'unsupportedBrowser';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
  * platform is available for download.
  *
  * @private
+ * @type {Array<string>}
  */
 const _URLS = {
     android: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
@@ -41,6 +58,13 @@ class UnsupportedMobileBrowser extends Component {
          * @type {string}
          */
         _room: React.PropTypes.string,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
         t: React.PropTypes.func
     }
 
@@ -52,8 +76,7 @@ class UnsupportedMobileBrowser extends Component {
      */
     componentWillMount() {
         const joinText
-            = this.props._room ? 'unsupportedPage.joinConversation'
-                : 'unsupportedPage.startConference';
+            = this.props._room ? 'joinConversation' : 'startConference';
 
         // If the user installed the app while this Component was displayed
         // (e.g. the user clicked the Download the App button), then we would
@@ -75,32 +98,36 @@ class UnsupportedMobileBrowser extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const ns = 'unsupported-mobile-browser';
-        const downloadButtonClassName = `${ns}__button ${ns}__button_primary`;
         const { t } = this.props;
 
+        const downloadButtonClassName
+            = `${_SNS}__button ${_SNS}__button_primary`;
+
         return (
-            <div className = { ns }>
-                <div className = { `${ns}__body` }>
+            <div className = { _SNS }>
+                <div className = { `${_SNS}__body` }>
                     <img
-                        className = { `${ns}__logo` }
+                        className = { `${_SNS}__logo` }
                         src = 'images/logo-blue.svg' />
-                    <p className = { `${ns}__text` }>
-                        { translateToHTML(t,
-                            'unsupportedPage.joinConversationMobile',
-                            { postProcess: 'resolveAppName' }) }
+                    <p className = { `${_SNS}__text` }>
+                        {
+                            translateToHTML(
+                                t,
+                                `${_TNS}.appNotInstalled`,
+                                { postProcess: 'resolveAppName' })
+                        }
                     </p>
                     <a href = { _URLS[Platform.OS] }>
                         <button className = { downloadButtonClassName }>
-                            { t('unsupportedPage.downloadApp') }
+                            { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
-                    <p className = { `${ns}__text ${ns}__text_small` }>
-                        { translateToHTML(t, 'unsupportedPage.availableApp') }
+                    <p className = { `${_SNS}__text ${_SNS}__text_small` }>
+                        { translateToHTML(t, `${_TNS}.appInstalled`) }
                     </p>
                     <a href = { this.state.joinURL }>
-                        <button className = { `${ns}__button` }>
-                            { t(this.state.joinText) }
+                        <button className = { `${_SNS}__button` }>
+                            { t(`${_TNS}.${this.state.joinText}`) }
                         </button>
                     </a>
                 </div>

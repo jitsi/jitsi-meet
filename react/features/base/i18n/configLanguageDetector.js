@@ -1,16 +1,20 @@
-/* global config */
+/* @flow */
+
+declare var config: Object;
 
 /**
  * Custom language detection, just returns the config property if any.
  */
 export default {
     /**
-     * Name of the language detector.
+     * Does not support caching.
+     *
+     * @returns {void}
      */
-    name: 'configLanguageDetector',
+    cacheUserLanguage: Function.prototype,
 
     /**
-     * The actual lookup.
+     * Looks the language up in the config.
      *
      * @returns {string} The default language if any.
      */
@@ -19,7 +23,7 @@ export default {
     },
 
     /**
-     * Doesn't support caching.
+     * Name of the language detector.
      */
-    cacheUserLanguage: Function.prototype
+    name: 'configLanguageDetector'
 };

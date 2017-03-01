@@ -1,11 +1,10 @@
 import React from 'react';
 
+import { translate } from '../../base/i18n';
 import { randomInt } from '../../base/util';
 
 import AbstractOverlay from './AbstractOverlay';
 import ReloadTimer from './ReloadTimer';
-
-import { translate } from '../../base/translation';
 
 declare var APP: Object;
 

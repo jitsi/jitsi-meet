@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { translate } from '../../base/translation';
+import { translate } from '../../base/i18n';
 
 declare var AJS: Object;
 
@@ -57,10 +57,10 @@ class ReloadTimer extends Component {
         step: React.PropTypes.number,
 
         /**
-         * The function used to translate strings.
+         * The function to translate human-readable text.
          *
          * @public
-         * @type {func}
+         * @type {Function}
          */
         t: React.PropTypes.func
     }

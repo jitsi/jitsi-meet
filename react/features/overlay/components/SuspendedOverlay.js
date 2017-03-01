@@ -1,8 +1,8 @@
 import React from 'react';
 
-import AbstractOverlay from './AbstractOverlay';
+import { translate } from '../../base/i18n';
 
-import { translate } from '../../base/translation';
+import AbstractOverlay from './AbstractOverlay';
 
 /**
  * Implements a React Component for suspended overlay. Shown when a suspend is

@@ -39,44 +39,44 @@
         "videoMute": "Start or stop your camera"
     },
     "welcomepage":{
-        "go": "GO",
-        "join": "JOIN",
-        "roomname": "Enter room name",
-        "roomnamePlaceHolder": "room name",
         "disable": "Don't show this page again",
         "feature1": {
-            "title": "Simple to use",
-            "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started."
+            "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started.",
+            "title": "Simple to use"
         },
         "feature2": {
-            "title": "Low bandwidth",
-            "content": "Multi-party video conferences work with as little as 128Kbps. Screen-sharing and audio-only conferences are possible with far less."
+            "content": "Multi-party video conferences work with as little as 128Kbps. Screen-sharing and audio-only conferences are possible with far less.",
+            "title": "Low bandwidth"
         },
         "feature3": {
-            "title": "Open source",
-            "content": "__app__ is licensed under the Apache License. You are free to download, use, modify, and share it as per this license."
+            "content": "__app__ is licensed under the Apache License. You are free to download, use, modify, and share it as per this license.",
+            "title": "Open source"
         },
         "feature4": {
-            "title": "Unlimited users",
-            "content": "There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors."
+            "content": "There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors.",
+            "title": "Unlimited users"
         },
         "feature5": {
-            "title": "Screen sharing",
-            "content": "It's easy to share your screen with others. __app__ is ideal for on-line presentations, lectures, and tech support sessions."
+            "content": "It's easy to share your screen with others. __app__ is ideal for on-line presentations, lectures, and tech support sessions.",
+            "title": "Screen sharing"
         },
         "feature6": {
-            "title": "Secure rooms",
-            "content": "Need some privacy? __app__ conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions."
+            "content": "Need some privacy? __app__ conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions.",
+            "title": "Secure rooms"
         },
         "feature7": {
-            "title": "Shared notes",
-            "content": "__app__ features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more."
+            "content": "__app__ features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more.",
+            "title": "Shared notes"
         },
         "feature8": {
-            "title": "Usage statistics",
-            "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems."
+            "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems.",
+            "title": "Usage statistics"
         },
+        "go": "GO",
+        "join": "JOIN",
         "privacy": "Privacy",
+        "roomname": "Enter room name",
+        "roomnamePlaceHolder": "room name",
         "sendFeedback": "Send feedback",
         "terms": "Terms"
     },
@@ -115,14 +115,12 @@
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand"
     },
-    "unsupportedPage": {
-        "onlySupportedBy": "This application is currently only supported by",
-        "download": "DOWNLOAD",
-        "joinConversation": "Join the conversation",
-        "startConference": "Start a conference",
-        "joinConversationMobile": "You need <strong>__app__</strong> to join a conversation on your mobile",
+    "unsupportedBrowser": {
+        "appInstalled": "or if you already have it<br /><strong>then</strong>",
+        "appNotInstalled": "You need <strong>__app__</strong> to join a conversation on your mobile",
         "downloadApp": "Download the App",
-        "availableApp": "or if you already have it<br /><strong>then</strong>"
+        "joinConversation": "Join the conversation",
+        "startConference": "Start a conference"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",

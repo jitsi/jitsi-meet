@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-import AbstractOverlay from './AbstractOverlay';
+import { translate, translateToHTML } from '../../base/i18n';
 
-import { translate, translateToHTML } from '../../base/translation';
+import AbstractOverlay from './AbstractOverlay';
 
 /**
  * Implements a React Component for overlay with guidance how to proceed with
@@ -56,7 +56,7 @@ class UserMediaPermissionsOverlay extends AbstractOverlay {
      * @protected
      */
     _renderOverlayContent() {
-        const { t } = this.props;
+        const { browser, t } = this.props;
 
         return (
             <div>
@@ -64,12 +64,18 @@ class UserMediaPermissionsOverlay extends AbstractOverlay {
                     <span className = 'inlay__icon icon-microphone' />
                     <span className = 'inlay__icon icon-camera' />
                     <h3 className = 'inlay__title'>
-                        { t('startupoverlay.title',
-                            { postProcess: 'resolveAppName' }) }
+                        {
+                            t(
+                                'startupoverlay.title',
+                                { postProcess: 'resolveAppName' })
+                        }
                     </h3>
                     <span className = 'inlay__text'>
-                        { translateToHTML(t,
-                            `userMedia.${this.props.browser}GrantPermissions`)}
+                        {
+                            translateToHTML(
+                                t,
+                                `userMedia.${browser}GrantPermissions`)
+                        }
                     </span>
                 </div>
                 <div className = 'policy overlay__policy'>

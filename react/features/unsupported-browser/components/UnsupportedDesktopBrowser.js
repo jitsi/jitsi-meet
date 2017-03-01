@@ -2,19 +2,19 @@
 
 import React, { Component } from 'react';
 
+import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
-import { translate } from '../../base/translation';
 
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 /**
- * The CSS style namespace of UnsupportedDesktopBrowser.
+ * The namespace of the CSS styles of UnsupportedDesktopBrowser.
  *
  * @private
  * @type {string}
  */
-const _NS = 'unsupported-desktop-browser';
+const _SNS = 'unsupported-desktop-browser';
 
 /**
  * React component representing unsupported browser page.
@@ -28,6 +28,12 @@ class UnsupportedDesktopBrowser extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
         t: React.PropTypes.func
     }
 
@@ -38,17 +44,17 @@ class UnsupportedDesktopBrowser extends Component {
      */
     render() {
         return (
-            <div className = { _NS }>
-                <h2 className = { `${_NS}__title` }>
+            <div className = { _SNS }>
+                <h2 className = { `${_SNS}__title` }>
                     It looks like you're using a browser we don't support.
                 </h2>
-                <p className = { `${_NS}__description` }>
+                <p className = { `${_SNS}__description` }>
                     Please try again with the latest version of&nbsp;
                     <a
-                        className = { `${_NS}__link` }
+                        className = { `${_SNS}__link` }
                         href = { CHROME } >Chrome</a>,&nbsp;
                     <a
-                        className = { `${_NS}__link` }
+                        className = { `${_SNS}__link` }
                         href = { FIREFOX }>Firefox</a> or&nbsp;
                     {
                         this._renderOSSpecificBrowserDownloadLink()
@@ -84,7 +90,7 @@ class UnsupportedDesktopBrowser extends Component {
         if (typeof link !== 'undefined') {
             return (
                 <a
-                    className = { `${_NS}__link` }
+                    className = { `${_SNS}__link` }
                     href = { link }>
                     {
                         text

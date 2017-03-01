@@ -3,8 +3,7 @@ import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
 import { setPassword } from '../../base/conference';
-
-import { translate } from '../../base/translation';
+import { translate } from '../../base/i18n';
 
 /**
  * Implements a React Component which prompts the user when a password is
@@ -24,6 +23,13 @@ class PasswordRequiredPrompt extends Component {
          */
         conference: React.PropTypes.object,
         dispatch: React.PropTypes.func,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
         t: React.PropTypes.func
     }
 

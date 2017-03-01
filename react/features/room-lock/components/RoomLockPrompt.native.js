@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
-import { endRoomLockRequest } from '../actions';
+import { translate } from '../../base/i18n';
 
-import { translate } from '../../base/translation';
+import { endRoomLockRequest } from '../actions';
 
 /**
  * Implements a React Component which prompts the user for a password to lock  a
@@ -24,6 +24,13 @@ class RoomLockPrompt extends Component {
          */
         conference: React.PropTypes.object,
         dispatch: React.PropTypes.func,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
         t: React.PropTypes.func
     }
 

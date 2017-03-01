@@ -1,3 +1,3 @@
 export * from './Container';
 export * from './Link';
-export * from './Watermarks';
+export { default as Watermarks } from './Watermarks';

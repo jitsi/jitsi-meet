@@ -40,7 +40,7 @@
     "react-native-background-timer": "1.0.0",
     "react-native-immersive": "0.0.4",
     "react-native-keep-awake": "^2.0.2",
-    "react-native-locale-detector": "1.0.1 ",
+    "react-native-locale-detector": "1.0.1",
     "react-native-prompt": "^1.0.0",
     "react-native-vector-icons": "^4.0.0",
     "react-native-webrtc": "jitsi/react-native-webrtc",

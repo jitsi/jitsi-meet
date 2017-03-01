@@ -2,13 +2,12 @@ import React from 'react';
 import { Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { translate } from '../../base/i18n';
 import { Link } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import { styles } from './styles';
-
-import { translate } from '../../base/translation';
 
 /**
  * The URL at which the privacy policy is available to the user.

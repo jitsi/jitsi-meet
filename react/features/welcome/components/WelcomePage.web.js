@@ -3,11 +3,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
-
-import { translate } from '../../base/translation';
 
 /* eslint-disable require-jsdoc */
 
@@ -142,19 +141,17 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _renderFeature(index) {
         const { t } = this.props;
+        const tns = `welcomepage.feature${index}`;
 
         return (
             <div
                 className = 'feature_holder'
                 key = { index } >
-                <div
-                    className = 'feature_icon'>
-                    { t(`welcomepage.feature${index}.title`) }
+                <div className = 'feature_icon'>
+                    { t(`${tns}.title`) }
                 </div>
-                <div
-                    className = 'feature_description'>
-                    { t(`welcomepage.feature${index}.content`,
-                        { postProcess: 'resolveAppName' }) }
+                <div className = 'feature_description'>
+                    { t(`${tns}.content`, { postProcess: 'resolveAppName' }) }
                 </div>
             </div>
         );
