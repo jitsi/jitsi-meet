@@ -10,7 +10,6 @@ import { WelcomePage } from '../welcome';
 import URLProcessor from '../../../modules/config/URLProcessor';
 import KeyboardShortcut
     from '../../../modules/keyboardshortcut/keyboardshortcut';
-import settings from '../../../modules/settings/Settings';
 import getTokenData from '../../../modules/tokendata/TokenData';
 import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
@@ -62,7 +61,7 @@ export function init() {
     // with jitsi meet.
     APP.API.init(APP.tokenData.jwt ? { forceEnable: true } : undefined);
 
-    APP.translation.init(settings.getLanguage());
+    APP.translation.init();
 }
 
 /**

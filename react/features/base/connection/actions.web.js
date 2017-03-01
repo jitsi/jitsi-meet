@@ -68,10 +68,9 @@ export function connect() {
 
             APP.UI.initConference();
 
-            APP.UI.addListener(UIEvents.LANG_CHANGED, language => {
-                APP.translation.setLanguage(language);
-                APP.settings.setLanguage(language);
-            });
+            APP.UI.addListener(
+                    UIEvents.LANG_CHANGED,
+                    language => APP.translation.setLanguage(language));
 
             APP.keyboardshortcut.init();
 

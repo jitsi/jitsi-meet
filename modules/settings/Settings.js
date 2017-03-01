@@ -24,7 +24,6 @@ if (!avatarId) {
 let localFlipX = JSON.parse(jitsiLocalStorage.getItem("localFlipX") || true);
 let displayName = UIUtil.unescapeHtml(
     jitsiLocalStorage.getItem("displayname") || '');
-let language = jitsiLocalStorage.getItem("language");
 let cameraDeviceId = jitsiLocalStorage.getItem("cameraDeviceId") || '';
 let micDeviceId = jitsiLocalStorage.getItem("micDeviceId") || '';
 let welcomePageDisabled = JSON.parse(
@@ -111,13 +110,6 @@ export default {
      */
     getAvatarUrl: function () {
         return avatarUrl;
-    },
-
-    getLanguage () {
-        return language;
-    },
-    setLanguage: function (lang) {
-        language = lang;
     },
 
     /**
