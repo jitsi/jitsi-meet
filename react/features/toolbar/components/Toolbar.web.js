@@ -9,15 +9,24 @@ declare var $: Function;
 import { connect } from 'react-redux';
 import React from 'react';
 
+import { FeedbackButton } from '../../feedback';
 import Recording from '../../../../modules/UI/recording/Recording';
-import OldToolbar from '../../../../modules/UI/toolbars/Toolbar';
-import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../../../modules/UI/util/UIUtil';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 import { AbstractToolbar, _mapStateToProps } from './AbstractToolbar';
 import DEFAULT_TOOLBAR_BUTTONS from './defaultToolbarButtons';
-import { FeedbackButton } from '../../feedback';
+import primaryToolbarHandlers from './primaryToolbarHandlers';
+import secondaryToolbarHandlers from './secondaryToolbarHandlers';
 import ToolbarButton from './ToolbarButton';
+
+/**
+ * Handlers for toolbar buttons.
+ *
+ * buttonId {string}: handler {function}
+ */
+const BUTTON_HANDLERS = Object.assign({}, primaryToolbarHandlers,
+    secondaryToolbarHandlers);
 
 /**
  * For legacy reasons, inline style for display none.
@@ -37,6 +46,23 @@ const _DISPLAY_NONE_STYLE = {
  * @extends AbstractToolbar
  */
 class Toolbar extends AbstractToolbar {
+
+    /**
+     * Constructor of Toolbar component.
+     *
+     * @param {Object} props - The read-only React Component props with which
+     * the new instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind methods to save the context
+        const self: any = this;
+
+        self._onLocalRaiseHandChanged
+            = this._onLocalRaiseHandChanged.bind(this);
+        self._onFullScreenToggled = this._onFullScreenToggled.bind(this);
+    }
 
     /**
      * Toolbar component's property types.
@@ -62,13 +88,13 @@ class Toolbar extends AbstractToolbar {
                 const place = this._getToolbarButtonPlace(buttonName);
 
                 button.buttonName = buttonName;
-                acc[place].push(button);
+                acc[place].set(button.id, button);
             }
 
             return acc;
         }, {
-            primaryToolbar: [],
-            secondaryToolbar: []
+            primaryToolbar: new Map(),
+            secondaryToolbar: new Map()
         });
 
         this.setState({
@@ -168,8 +194,17 @@ class Toolbar extends AbstractToolbar {
      */
     _onLocalRaiseHandChanged(isRaisedHand) {
         const buttonId = 'toolbar_button_raisehand';
+        const button = this.state.secondaryToolbar.get(buttonId);
 
-        OldToolbar._setToggledState(buttonId, isRaisedHand);
+        if (isRaisedHand) {
+            button.toggled = true;
+        } else {
+            button.toggled = false;
+        }
+
+        this.setState(prevState =>
+            prevState.secondaryToolbar.set(buttonId, button)
+        );
     }
 
     /**
@@ -180,18 +215,22 @@ class Toolbar extends AbstractToolbar {
      * @returns {void}
      */
     _onFullScreenToggled(isFullScreen) {
-        const element
-            = document.getElementById('toolbar_button_fullScreen');
-
-        element.className = isFullScreen
-            ? element.className
-            .replace('icon-full-screen', 'icon-exit-full-screen')
-            : element.className
-            .replace('icon-exit-full-screen', 'icon-full-screen');
-
         const buttonId = 'toolbar_button_fullScreen';
+        const button = this.state.primaryToolbar.get(buttonId);
 
-        OldToolbar._setToggledState(buttonId, isFullScreen);
+        if (isFullScreen) {
+            button.toggled = true;
+            button.className = button.className
+                .replace('icon-full-screen', 'icon-exit-full-screen');
+        } else {
+            button.toggled = false;
+            button.className = button.className
+                .replace('icon-exit-full-screen', 'icon-full-screen');
+        }
+
+        this.setState(prevState =>
+            prevState.primaryToolbar.set(buttonId, button)
+        );
     }
 
     /**
@@ -278,6 +317,23 @@ class Toolbar extends AbstractToolbar {
      * @private
      */
     _renderPrimaryToolbar() {
+        const renderPrimaryToolbarButton = (acc, button, index) => {
+            const isSplitter = interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX
+                && index === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX;
+
+            if (isSplitter) {
+                const splitter = <span className = 'toolbar__splitter' />;
+
+                acc.push(splitter);
+            }
+
+            const toolbarButton = this._renderToolbarButton(button);
+
+            acc.push(toolbarButton);
+
+            return acc;
+        };
+
         return (
             <div id = 'mainToolbarContainer'>
                 <div
@@ -292,8 +348,8 @@ class Toolbar extends AbstractToolbar {
                     className = 'toolbar'
                     id = 'mainToolbar'>
                     {
-                        this.state.primaryToolbar
-                            .reduce(this._renderPrimaryToolbarButton, [])
+                        [ ...this.state.primaryToolbar.values() ]
+                            .reduce(renderPrimaryToolbarButton, [])
                     }
                 </div>
             </div>
@@ -301,34 +357,27 @@ class Toolbar extends AbstractToolbar {
     }
 
     /**
-     * Method applied to all elements in primary toolbar buttons array.
+     * Renders toolbar button.
      *
-     * @param {Array} acc - Accumulator object.
      * @param {Object} button - Object representing the button.
-     * @param {number} index - Current index of the element in array.
-     * @returns {Array}
+     * @returns {ReactElement}
      * @private
      */
-    _renderPrimaryToolbarButton(acc, button, index) {
-        const isSplitter = interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX
-            && index === interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX;
+    _renderToolbarButton(button) {
+        const onClick = event => {
+            const handler = BUTTON_HANDLERS[button.id];
 
-        if (isSplitter) {
-            const splitter = <span className = 'toolbar__splitter' />;
+            if (!$(event.target).prop('disabled') && handler) {
+                handler(event);
+            }
+        };
 
-            acc.push(splitter);
-        }
-
-        // eslint-disable-next-line no-extra-parens
-        const toolbarButton = (
+        return (
             <ToolbarButton
                 { ...button }
-                key = { button.id } />
+                key = { button.id }
+                onClick = { onClick } />
         );
-
-        acc.push(toolbarButton);
-
-        return acc;
     }
 
     /**
@@ -345,11 +394,8 @@ class Toolbar extends AbstractToolbar {
                 <div id = 'extendedToolbarButtons' />
 
                 {
-                    this.state.secondaryToolbar.map(button =>
-                        <ToolbarButton
-                            { ...button }
-                            key = { button.id } />
-                    )
+                    [ ...this.state.secondaryToolbar.values() ]
+                        .map(this._renderToolbarButton)
                 }
 
                 <FeedbackButton />

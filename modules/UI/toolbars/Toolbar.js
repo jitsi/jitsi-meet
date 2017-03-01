@@ -87,7 +87,7 @@ const Toolbar = {
      * streaming is active.
      */
     updateDesktopSharingButtonState () {
-        this._setToggledState(  "toolbar_button_desktopsharing",
+        this._setToggledState("toolbar_button_desktopsharing",
                                 APP.conference.isSharingScreen);
     },
 

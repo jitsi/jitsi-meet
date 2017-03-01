@@ -3,22 +3,12 @@
 import React from 'react';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
-import primaryToolbarHandlers from './primaryToolbarHandlers';
-import secondaryToolbarHandlers from './secondaryToolbarHandlers';
 
 import UIUtil from '../../../../modules/UI/util/UIUtil';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
 declare var $: Function;
-
-/**
- * Handlers for toolbar buttons.
- *
- * buttonId {string}: handler {function}
- */
-const buttonHandlers = Object.assign({}, primaryToolbarHandlers,
-    secondaryToolbarHandlers);
 
 /**
  * Represents a button in Toolbar on React.
@@ -38,13 +28,6 @@ export default class ToolbarButton extends AbstractToolbarButton {
         super(props);
 
         this.popups = [];
-        this.onClick = event => {
-            const handler = buttonHandlers[props.id];
-
-            if (!$(event.target).prop('disabled') && handler) {
-                handler(event);
-            }
-        };
 
         // Bind methods to save the context
         const self: any = this;
@@ -77,8 +60,13 @@ export default class ToolbarButton extends AbstractToolbarButton {
     render() {
         type MapOfProps = { [key: string]: * };
 
+        let className = this.props.className;
+
+        if (this.props.toggled) {
+            className += ' toggled';
+        }
+
         const popups = this.props.popups || [];
-        const className = this.props.className;
         const id = this.props.id;
         const props: MapOfProps = {
             className,
@@ -88,7 +76,7 @@ export default class ToolbarButton extends AbstractToolbarButton {
         props['data-container'] = 'body';
         props['data-placement'] = 'bottom';
 
-        props.onClick = this.onClick;
+        props.onClick = this.props.onClick;
 
         if (this.props.content) {
             props.content = this.props.content;
