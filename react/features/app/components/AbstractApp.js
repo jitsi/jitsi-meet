@@ -126,6 +126,21 @@ export class AbstractApp extends Component {
     }
 
     /**
+     * Gets a Location object from the window with information about the current
+     * location of the document. Explicitly defined to allow extenders to
+     * override because React Native does not usually have a location property
+     * on its window unless debugging remotely in which case the browser that is
+     * the remote debugger will provide a location property on the window.
+     *
+     * @public
+     * @returns {Location} A Location object with information about the current
+     * location of the document.
+     */
+    getWindowLocation() {
+        return undefined;
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -226,7 +241,7 @@ export class AbstractApp extends Component {
         // If the execution environment provides a Location abstraction, then
         // this App at already at that location but it must be made aware of the
         // fact.
-        const windowLocation = this._getWindowLocation();
+        const windowLocation = this.getWindowLocation();
 
         if (windowLocation) {
             const href = windowLocation.toString();
@@ -270,21 +285,6 @@ export class AbstractApp extends Component {
         }
 
         return store;
-    }
-
-    /**
-     * Gets a Location object from the window with information about the current
-     * location of the document. Explicitly defined to allow extenders to
-     * override because React Native does not usually have a location property
-     * on its window unless debugging remotely in which case the browser that is
-     * the remote debugger will provide a location property on the window.
-     *
-     * @protected
-     * @returns {Location} A Location object with information about the current
-     * location of the document.
-     */
-    _getWindowLocation() {
-        return undefined;
     }
 
     /**

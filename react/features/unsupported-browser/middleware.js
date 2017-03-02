@@ -40,7 +40,8 @@ function _setWebRTCReady(store, next, action) {
     // execution enviroment has changed. The current location is not necessarily
     // available through window.location (e.g. on mobile) but the following
     // works at the time of this writing.
-    const windowLocation = window.location;
+    const windowLocation
+        = store.getState()['features/app'].app.getWindowLocation();
 
     if (windowLocation) {
         const href = windowLocation.href;
