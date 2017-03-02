@@ -1,3 +1,4 @@
+import Iterator from 'es6-iterator';
 import BackgroundTimer from 'react-native-background-timer';
 import 'url-polyfill'; // Polyfill for URL constructor
 
@@ -96,6 +97,18 @@ function _visitNode(node, callback) {
     if (typeof global.addEventListener === 'undefined') {
         // eslint-disable-next-line no-empty-function
         global.addEventListener = () => {};
+    }
+
+    // Array.prototype[@@iterator]
+    //
+    // Required by:
+    // - for...of statement use(s) in lib-jitsi-meet
+    const arrayPrototype = Array.prototype;
+
+    if (typeof arrayPrototype['@@iterator'] === 'undefined') {
+        arrayPrototype['@@iterator'] = function() {
+            return new Iterator(this);
+        };
     }
 
     // document

@@ -20,6 +20,7 @@
     "async": "0.9.0",
     "autosize": "^1.18.13",
     "bootstrap": "3.1.1",
+    "es6-iterator": "2.0.0",
     "i18next": "7.0.0",
     "i18next-browser-languagedetector": "1.0.1",
     "i18next-xhr-backend": "1.3.0",
