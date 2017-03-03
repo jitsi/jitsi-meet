@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { Audio, MEDIA_TYPE } from '../../base/media';
-import { PARTICIPANT_ROLE, pinParticipant } from '../../base/participants';
+import {
+    PARTICIPANT_ROLE,
+    ParticipantView,
+    pinParticipant
+} from '../../base/participants';
 import { Container } from '../../base/react';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
-import { ParticipantView } from '../../conference';
 
 import {
     AudioMutedIndicator,

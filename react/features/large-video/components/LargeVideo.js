@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ParticipantView } from '../../conference';
+import { ParticipantView } from '../../base/participants';
 
 import { styles } from './styles';
 
