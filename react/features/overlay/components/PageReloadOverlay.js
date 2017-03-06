@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { randomInt } from '../../base/util';
 
-import AbstractOverlay from './AbstractOverlay';
+import OverlayFrame from './OverlayFrame';
+import { reconnectNow } from '../functions';
 import ReloadTimer from './ReloadTimer';
 
 declare var APP: Object;
@@ -15,7 +16,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * conference is reloaded. Shows a warning message and counts down towards the
  * reload.
  */
-class PageReloadOverlay extends AbstractOverlay {
+class PageReloadOverlay extends Component {
     /**
      * PageReloadOverlay component's property types.
      *
@@ -32,11 +33,18 @@ class PageReloadOverlay extends AbstractOverlay {
 
         /**
          * The reason for the error that will cause the reload.
-         * NOTE: Used by PageReloadOverlay only.
          * @public
          * @type {string}
          */
-        reason: React.PropTypes.string
+        reason: React.PropTypes.string,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
+        t: React.PropTypes.func
     }
 
     /**
@@ -69,8 +77,6 @@ class PageReloadOverlay extends AbstractOverlay {
         }
 
         this.state = {
-            ...this.state,
-
             /**
              * Indicates the css style of the overlay. If true, then lighter;
              * darker, otherwise.
@@ -110,8 +116,6 @@ class PageReloadOverlay extends AbstractOverlay {
      * @returns {void}
      */
     componentDidMount() {
-        super.componentDidMount();
-
         // FIXME (CallStats - issue) This event will not make it to CallStats
         // because the log queue is not flushed before "fabric terminated" is
         // sent to the backed.
@@ -143,7 +147,7 @@ class PageReloadOverlay extends AbstractOverlay {
                 <button
                     className = { className }
                     id = 'reconnectNow'
-                    onClick = { this._reconnectNow }>
+                    onClick = { reconnectNow }>
                     { t('dialog.reconnectNow') }
                 </button>
             );
@@ -156,36 +160,36 @@ class PageReloadOverlay extends AbstractOverlay {
     }
 
     /**
-     * Constructs overlay body with the warning message and count down towards
-     * the conference reload.
+     * Implements React's {@link Component#render()}.
      *
+     * @inheritdoc
      * @returns {ReactElement|null}
-     * @override
-     * @protected
      */
-    _renderOverlayContent() {
+    render() {
         const { t } = this.props;
 
         /* eslint-disable react/jsx-handler-names */
 
         return (
-            <div className = 'inlay'>
-                <span
-                    className = 'reload_overlay_title'>
-                    { t(this.state.title) }
-                </span>
-                <span
-                    className = 'reload_overlay_text'>
-                    { t(this.state.message) }
-                </span>
-                <ReloadTimer
-                    end = { 0 }
-                    interval = { 1 }
-                    onFinish = { this._reconnectNow }
-                    start = { this.state.timeoutSeconds }
-                    step = { -1 } />
-                { this._renderButton() }
-            </div>
+            <OverlayFrame isLightOverlay = { this.state.isLightOverlay }>
+                <div className = 'inlay'>
+                    <span
+                        className = 'reload_overlay_title'>
+                        { t(this.state.title) }
+                    </span>
+                    <span
+                        className = 'reload_overlay_text'>
+                        { t(this.state.message) }
+                    </span>
+                    <ReloadTimer
+                        end = { 0 }
+                        interval = { 1 }
+                        onFinish = { reconnectNow }
+                        start = { this.state.timeoutSeconds }
+                        step = { -1 } />
+                    { this._renderButton() }
+                </div>
+            </OverlayFrame>
         );
 
         /* eslint-enable react/jsx-handler-names */
