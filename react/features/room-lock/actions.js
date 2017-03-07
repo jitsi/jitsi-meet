@@ -1,8 +1,6 @@
 import { setPassword } from '../base/conference';
-import { openDialog } from '../base/dialog';
-import { PasswordRequiredPrompt } from './components';
-
-import { BEGIN_ROOM_LOCK_REQUEST, END_ROOM_LOCK_REQUEST } from './actionTypes';
+import { hideDialog, openDialog } from '../base/dialog';
+import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
 
 /**
  * Begins a (user) request to lock a specific conference/room.
@@ -21,10 +19,7 @@ export function beginRoomLockRequest(conference) {
         }
 
         if (conference) {
-            dispatch({
-                type: BEGIN_ROOM_LOCK_REQUEST,
-                conference
-            });
+            dispatch(openDialog(RoomLockPrompt, { conference }));
         }
     };
 }
@@ -45,11 +40,7 @@ export function endRoomLockRequest(conference, password) {
                 ? dispatch(setPassword(conference, conference.lock, password))
                 : Promise.resolve();
         const endRoomLockRequest_ = () => {
-            dispatch({
-                type: END_ROOM_LOCK_REQUEST,
-                conference,
-                password
-            });
+            dispatch(hideDialog());
         };
 
         setPassword_.then(endRoomLockRequest_, endRoomLockRequest_);
@@ -63,7 +54,7 @@ export function endRoomLockRequest(conference, password) {
  * requesting password.
  * @protected
  * @returns {{
- *     type: BEGIN_DIALOG_REQUEST,
+ *     type: OPEN_DIALOG,
  *     component: Component,
  *     props: React.PropTypes
  * }}

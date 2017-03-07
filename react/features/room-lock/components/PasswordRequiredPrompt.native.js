@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
+import { Dialog } from '../../base/dialog';
 
 import { setPassword } from '../../base/conference';
-import { translate } from '../../base/i18n';
 
 /**
  * Implements a React Component which prompts the user when a password is
@@ -22,15 +21,7 @@ class PasswordRequiredPrompt extends Component {
          * @type {JitsiConference}
          */
         conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: React.PropTypes.func
+        dispatch: React.PropTypes.func
     }
 
     /**
@@ -54,15 +45,13 @@ class PasswordRequiredPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
 
         return (
-            <Prompt
+            <Dialog
+                bodyKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                placeholder = { t('dialog.passwordLabel') }
-                title = { t('dialog.passwordRequired') }
-                visible = { true } />
+                titleKey = 'dialog.passwordRequired' />
         );
     }
 
@@ -70,14 +59,14 @@ class PasswordRequiredPrompt extends Component {
      * Notifies this prompt that it has been dismissed by cancel.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean} whether to hide dialog.
      */
     _onCancel() {
         // XXX The user has canceled this prompt for a password so we are to
         // attempt joining the conference without a password. If the conference
         // still requires a password to join, the user will be prompted again
         // later.
-        this._onSubmit(undefined);
+        return this._onSubmit(undefined);
     }
 
     /**
@@ -86,13 +75,15 @@ class PasswordRequiredPrompt extends Component {
      *
      * @param {string} value - The submitted value.
      * @private
-     * @returns {void}
+     * @returns {boolean} whether to hide dialog.
      */
     _onSubmit(value) {
         const conference = this.props.conference;
 
         this.props.dispatch(setPassword(conference, conference.join, value));
+
+        return true;
     }
 }
 
-export default translate(connect()(PasswordRequiredPrompt));
+export default connect()(PasswordRequiredPrompt);
