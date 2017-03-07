@@ -1,8 +1,6 @@
 /* global APP, JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import RequirePasswordDialog from './RequirePasswordDialog';
-
 /**
  * Show notification that user cannot set password for the conference
  * because server doesn't support that.
@@ -33,7 +31,6 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
  */
 export default function createRoomLocker (room) {
     let password;
-    let requirePasswordDialog = new RequirePasswordDialog();
     /**
      * If the room was locked from someone other than us, we indicate it with
      * this property in order to have correct roomLocker state of isLocked.
@@ -102,31 +99,5 @@ export default function createRoomLocker (room) {
             password = null;
         },
 
-        /**
-         * Asks user for required conference password.
-         */
-        requirePassword () {
-            return requirePasswordDialog.askForPassword().then(
-                newPass => { password = newPass; }
-            ).catch(
-                reason => {
-                    // user canceled, no pass was entered.
-                    // clear, as if we use the same instance several times
-                    // pass stays between attempts
-                    password = null;
-                    if (reason !== APP.UI.messageHandler.CANCEL)
-                        logger.error(reason);
-                }
-            );
-        },
-
-        /**
-         * Hides require password dialog
-         */
-        hideRequirePasswordDialog() {
-            if (requirePasswordDialog.isOpened) {
-                requirePasswordDialog.close();
-            }
-        }
     };
 }

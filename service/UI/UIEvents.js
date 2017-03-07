@@ -151,11 +151,6 @@ export default {
     DISPLAY_NAME_CHANGED: "UI.display_name_changed",
 
     /**
-     * Indicates that a password is required for the call.
-     */
-    PASSWORD_REQUIRED: "UI.password_required",
-
-    /**
      * Show custom popup/tooltip for a specified button.
      */
     SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP: "UI.show_custom_toolbar_button_popup"

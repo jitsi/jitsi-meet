@@ -1,4 +1,6 @@
 import { setPassword } from '../base/conference';
+import { openDialog } from '../base/dialog';
+import { PasswordRequiredPrompt } from './components';
 
 import { BEGIN_ROOM_LOCK_REQUEST, END_ROOM_LOCK_REQUEST } from './actionTypes';
 
@@ -52,4 +54,20 @@ export function endRoomLockRequest(conference, password) {
 
         setPassword_.then(endRoomLockRequest_, endRoomLockRequest_);
     };
+}
+
+/**
+ * Begins a request to enter password for a specific conference/room.
+ *
+ * @param {JitsiConference} conference - The JitsiConference
+ * requesting password.
+ * @protected
+ * @returns {{
+ *     type: BEGIN_DIALOG_REQUEST,
+ *     component: Component,
+ *     props: React.PropTypes
+ * }}
+ */
+export function _showPasswordDialog(conference) {
+    return openDialog(PasswordRequiredPrompt, { conference });
 }
