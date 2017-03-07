@@ -1,13 +1,35 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
+
+import HideNotificationBarStyle from './HideNotificationBarStyle';
+
+/**
+ * The namespace of the CSS styles of UnsupportedMobileBrowser.
+ *
+ * @private
+ * @type {string}
+ */
+const _SNS = 'unsupported-mobile-browser';
+
+/**
+ * The namespace of the i18n/translation keys of UnsupportedMobileBrowser.
+ *
+ * @private
+ * @type {string}
+ */
+const _TNS = 'unsupportedBrowser';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
  * platform is available for download.
  *
  * @private
+ * @type {Array<string>}
  */
 const _URLS = {
     android: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
@@ -20,6 +42,8 @@ const _URLS = {
  * @class UnsupportedMobileBrowser
  */
 class UnsupportedMobileBrowser extends Component {
+    state: Object;
+
     /**
      * UnsupportedMobileBrowser component's property types.
      *
@@ -33,7 +57,15 @@ class UnsupportedMobileBrowser extends Component {
          * @private
          * @type {string}
          */
-        _room: React.PropTypes.string
+        _room: React.PropTypes.string,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
+        t: React.PropTypes.func
     }
 
     /**
@@ -44,7 +76,7 @@ class UnsupportedMobileBrowser extends Component {
      */
     componentWillMount() {
         const joinText
-            = this.props._room ? 'Join the conversation' : 'Start a conference';
+            = this.props._room ? 'joinConversation' : 'startConference';
 
         // If the user installed the app while this Component was displayed
         // (e.g. the user clicked the Download the App button), then we would
@@ -66,69 +98,42 @@ class UnsupportedMobileBrowser extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const ns = 'unsupported-mobile-browser';
-        const downloadButtonClassName = `${ns}__button ${ns}__button_primary`;
+        const { t } = this.props;
+
+        const downloadButtonClassName
+            = `${_SNS}__button ${_SNS}__button_primary`;
 
         return (
-            <div className = { ns }>
-                <div className = { `${ns}__body` }>
+            <div className = { _SNS }>
+                <div className = { `${_SNS}__body` }>
                     <img
-                        className = { `${ns}__logo` }
+                        className = { `${_SNS}__logo` }
                         src = 'images/logo-blue.svg' />
-                    <p className = { `${ns}__text` }>
-                        You need <strong>Jitsi Meet</strong> to join a
-                        conversation on your mobile
+                    <p className = { `${_SNS}__text` }>
+                        {
+                            translateToHTML(
+                                t,
+                                `${_TNS}.appNotInstalled`,
+                                { postProcess: 'resolveAppName' })
+                        }
                     </p>
                     <a href = { _URLS[Platform.OS] }>
                         <button className = { downloadButtonClassName }>
-                            Download the App
+                            { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
-                    <p className = { `${ns}__text ${ns}__text_small` }>
-                        or if you already have it
-                        <br />
-                        <strong>then</strong>
+                    <p className = { `${_SNS}__text ${_SNS}__text_small` }>
+                        { translateToHTML(t, `${_TNS}.appInstalled`) }
                     </p>
                     <a href = { this.state.joinURL }>
-                        <button className = { `${ns}__button` }>
-                            {
-                                this.state.joinText
-                            }
+                        <button className = { `${_SNS}__button` }>
+                            { t(`${_TNS}.${this.state.joinText}`) }
                         </button>
                     </a>
                 </div>
 
-                {
-                    this._renderStyle()
-                }
+                <HideNotificationBarStyle />
             </div>
-        );
-    }
-
-    /**
-     * Renders an HTML style element with CSS specific to
-     * this UnsupportedMobileBrowser.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderStyle() {
-        // Temasys provide lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-        // which detects whether the browser supports WebRTC. If the browser
-        // does not support WebRTC, it displays an alert in the form of a yellow
-        // bar at the top of the page. The alert notifies the user that the
-        // browser does not support WebRTC and, if Temasys provide a plugin for
-        // the browser, the alert contains a button to initiate installing the
-        // browser. When Temasys do not provide a plugin for the browser, we do
-        // not want the alert on the unsupported-browser page because the
-        // notification about the lack of WebRTC support is the whole point of
-        // the unsupported-browser page.
-        return (
-            <style type = 'text/css'>
-                {
-                    'iframe[name="adapterjs-alert"] { display: none; }'
-                }
-            </style>
         );
     }
 }
@@ -156,4 +161,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(UnsupportedMobileBrowser);
+export default translate(connect(_mapStateToProps)(UnsupportedMobileBrowser));

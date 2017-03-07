@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
+import { translate } from '../../base/i18n';
+
 import { endRoomLockRequest } from '../actions';
 
 /**
@@ -21,7 +23,15 @@ class RoomLockPrompt extends Component {
          * @type {JitsiConference}
          */
         conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func
+        dispatch: React.PropTypes.func,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
+        t: React.PropTypes.func
     }
 
     /**
@@ -45,12 +55,14 @@ class RoomLockPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { t } = this.props;
+
         return (
             <Prompt
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                placeholder = 'Password'
-                title = 'Lock / Unlock room'
+                placeholder = { t('dialog.passwordLabel') }
+                title = { t('toolbar.lock') }
                 visible = { true } />
         );
     }
@@ -80,4 +92,4 @@ class RoomLockPrompt extends Component {
     }
 }
 
-export default connect()(RoomLockPrompt);
+export default translate(connect()(RoomLockPrompt));

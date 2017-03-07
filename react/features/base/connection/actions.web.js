@@ -2,14 +2,20 @@
 
 import type { Dispatch } from 'redux';
 
+import {
+    JitsiConferenceEvents,
+    libInitError,
+    WEBRTC_NOT_READY,
+    WEBRTC_NOT_SUPPORTED
+} from '../lib-jitsi-meet';
+
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
 
 declare var APP: Object;
-declare var JitsiMeetJS: Object;
+declare var config: Object;
 
-const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 export {
@@ -62,17 +68,30 @@ export function connect() {
 
             APP.UI.initConference();
 
-            APP.UI.addListener(UIEvents.LANG_CHANGED, language => {
-                APP.translation.setLanguage(language);
-                APP.settings.setLanguage(language);
-            });
+            APP.UI.addListener(
+                    UIEvents.LANG_CHANGED,
+                    language => APP.translation.setLanguage(language));
 
             APP.keyboardshortcut.init();
+
+            if (config.requireDisplayName && !APP.settings.getDisplayName()) {
+                APP.UI.promptDisplayName();
+            }
         })
-            .catch(err => {
+            .catch(error => {
                 APP.UI.hideRingOverLay();
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
-                logger.error(err);
+                logger.error(error);
+
+                // TODO The following are in fact Errors raised by
+                // JitsiMeetJS.init() which should be taken care of in
+                // features/base/lib-jitsi-meet but we are not there yet on the
+                // Web at the time of this writing.
+                switch (error.name) {
+                case WEBRTC_NOT_READY:
+                case WEBRTC_NOT_SUPPORTED:
+                    dispatch(libInitError(error));
+                }
             });
     };
 }

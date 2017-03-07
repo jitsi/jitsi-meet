@@ -3,8 +3,10 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED
 } from '../base/connection';
-import JitsiMeetJS, {
-    isFatalJitsiConnectionError
+import {
+    isFatalJitsiConnectionError,
+    JitsiConferenceErrors,
+    JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
 import {
     ReducerRegistry,
@@ -17,8 +19,6 @@ import {
     SUSPEND_DETECTED
 } from './actionTypes';
 
-const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
-const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**

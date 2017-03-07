@@ -40,7 +40,7 @@ var config = { // eslint-disable-line no-unused-vars
     // up to and including 41. On Firefox 42 and higher, we will run without the
     // extension.
     // If set to -1, an extension will be required for all versions of Firefox.
-    desktopSharingFirefoxMaxVersionExtRequired: -1,
+    desktopSharingFirefoxMaxVersionExtRequired: 51,
     // The URL to the Firefox extension for desktop sharing.
     desktopSharingFirefoxExtensionURL: null,
 
@@ -77,8 +77,8 @@ var config = { // eslint-disable-line no-unused-vars
     enableUserRolesBasedOnToken: false,
     // Suspending video might cause problems with audio playback. Disabling until these are fixed.
     disableSuspendVideo: true,
-    // disables or enables RTX (RFC 4588).
-    disableRtx: true,
+    // disables or enables RTX (RFC 4588) (defaults to false).
+    disableRtx: false,
     // Sets the preferred resolution (height) for local video. Defaults to 360.
     resolution: 720
 };

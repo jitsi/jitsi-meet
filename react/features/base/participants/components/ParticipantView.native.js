@@ -5,12 +5,12 @@ import {
     MEDIA_TYPE,
     shouldRenderVideoTrack,
     VideoTrack
-} from '../../base/media';
-import { getParticipantById } from '../../base/participants';
-import { Container } from '../../base/react';
-import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
+} from '../../media';
+import { Container } from '../../react';
+import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
 import Avatar from './Avatar';
+import { getParticipantById } from '../functions';
 import { styles } from './styles';
 
 /**

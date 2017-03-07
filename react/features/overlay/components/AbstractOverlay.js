@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global APP */
 
 import React, { Component } from 'react';
 
@@ -28,17 +28,6 @@ export default class AbstractOverlay extends Component {
              */
             isLightOverlay: false
         };
-    }
-
-    /**
-     * This method is executed when comonent is mounted.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        // XXX Temporary solution until we add React translation.
-        APP.translation.translateElement($('#overlay'));
     }
 
     /**

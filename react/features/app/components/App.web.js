@@ -52,7 +52,7 @@ export class App extends AbstractApp {
      *
      * @inheritdoc
      */
-    _getWindowLocation() {
+    getWindowLocation() {
         return window.location;
     }
 
@@ -63,7 +63,7 @@ export class App extends AbstractApp {
      * @returns {string} The context root of window.location i.e. this Web App.
      */
     _getWindowLocationContextRoot() {
-        const pathname = this._getWindowLocation().pathname;
+        const pathname = this.getWindowLocation().pathname;
         const contextRootEndIndex = pathname.lastIndexOf('/');
 
         return (
@@ -93,7 +93,7 @@ export class App extends AbstractApp {
         path = this._routePath2WindowLocationPathname(path);
 
         // Navigate to the specified Route.
-        const windowLocation = this._getWindowLocation();
+        const windowLocation = this.getWindowLocation();
 
         if (windowLocation.pathname === path) {
             // The browser is at the specified path already and what remains is

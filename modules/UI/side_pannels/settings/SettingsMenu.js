@@ -1,8 +1,9 @@
 /* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
 
+import { LANGUAGES } from "../../../../react/features/base/i18n";
+
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
-import languages from "../../../../service/translation/languages";
 import Settings from '../../../settings/Settings';
 
 const sidePanelsContainerId = 'sideToolbarContainer';
@@ -145,7 +146,7 @@ export default {
             let selectInput;
 
             selectEl.html(generateLanguagesOptions(
-                languages.getLanguages(),
+                LANGUAGES,
                 APP.translation.getCurrentLanguage()
             ));
             initSelect2(selectEl, () => {

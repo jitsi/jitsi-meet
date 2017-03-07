@@ -5,8 +5,14 @@ debian/
 libs/
 node_modules/
 
-# The following are checked by ESLint which supersedes JSHint.
+# The following are checked by ESLint with the maximum configuration which
+# supersedes JSHint.
 flow-typed/
 react/
+
+# The following are checked by ESLint with the minimum configuration which does
+# not supersede JSHint but take advantage of advanced language features such as
+# Facebook Flow which are not supported by JSHint.
+modules/translation/translation.js
 
 analytics.js

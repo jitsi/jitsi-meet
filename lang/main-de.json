@@ -39,41 +39,46 @@
         "videoMute": "Kamera starten oder stoppen"
     },
     "welcomepage": {
-        "go": "Los",
-        "roomname": "Konferenzname eingeben",
         "disable": "Diesen Hinweis nicht mehr anzeigen",
         "feature1": {
-            "title": "Einfach zu benutzen",
-            "content": "Kein Download nötig. __app__ läuft direkt im Browser. Einfach die Konferenzadresse teilen und los geht's."
+            "content": "Kein Download nötig. __app__ läuft direkt im Browser. Einfach die Konferenzadresse teilen und los geht's.",
+            "title": "Einfach zu benutzen"
         },
         "feature2": {
-            "title": "Niedrige Bandbreite",
-            "content": "Videokonferenzen mit mehreren Teilnehmen mit weniger als 128Kpbs. Bildschirmfreigaben und Telefonkonferenzen kommen sogar mit noch weniger Bandbreite aus."
+            "content": "Videokonferenzen mit mehreren Teilnehmen mit weniger als 128Kpbs. Bildschirmfreigaben und Telefonkonferenzen kommen sogar mit noch weniger Bandbreite aus.",
+            "title": "Niedrige Bandbreite"
         },
         "feature3": {
-            "title": "Open Source",
-            "content": "__app__ steht unter der Apache Lizenz. Es steht ihnen frei __app__ gemäss dieser Lizenz herunterzuladen, zu verändern oder zu verbreiten."
+            "content": "__app__ steht unter der Apache Lizenz. Es steht ihnen frei __app__ gemäss dieser Lizenz herunterzuladen, zu verändern oder zu verbreiten.",
+            "title": "Open Source"
         },
         "feature4": {
-            "title": "Unbegrenzte Anzahl Benutzer",
-            "content": "Es gibt keine künstliche Beschränkung der Anzahl der Benutzer oder Konferenzteilnehmer. Die Leistung des Servers und die Bandbreite sind die einzigen limitierenden Faktoren."
+            "content": "Es gibt keine künstliche Beschränkung der Anzahl der Benutzer oder Konferenzteilnehmer. Die Leistung des Servers und die Bandbreite sind die einzigen limitierenden Faktoren.",
+            "title": "Unbegrenzte Anzahl Benutzer"
         },
         "feature5": {
-            "title": "Bildschirmfreigabe",
-            "content": "Es ist ganz einfach den Bildschirm zu teilen. __app__ ist ideal für Online-Präsentationen, Vorlesungen und Fernwartungsanfragen."
+            "content": "Es ist ganz einfach den Bildschirm zu teilen. __app__ ist ideal für Online-Präsentationen, Vorlesungen und Fernwartungsanfragen.",
+            "title": "Bildschirmfreigabe"
         },
         "feature6": {
-            "title": "Sichere Konferenzen",
-            "content": "Privatsphäre gewünscht? __app__ Konferenzen können mit einem Passwort geschützt werden um ungebetene Gäste fernzuhalten und Unterbrechungen zu vermeiden."
+            "content": "Privatsphäre gewünscht? __app__ Konferenzen können mit einem Passwort geschützt werden um ungebetene Gäste fernzuhalten und Unterbrechungen zu vermeiden.",
+            "title": "Sichere Konferenzen"
         },
         "feature7": {
-            "title": "Freigegebene Notizen",
-            "content": "__app__ verwendet Etherpad, ein Editor zur kollaborativen Bearbeitung von Texten."
+            "content": "__app__ verwendet Etherpad, ein Editor zur kollaborativen Bearbeitung von Texten.",
+            "title": "Freigegebene Notizen"
         },
         "feature8": {
-            "title": "Benutzungsstatistiken",
-            "content": "Die Verwendung kann durch die Integration mit Piwik, Google Analytics und anderen Überwachungs- und Statistikprogrammen protokolliert werden."
-        }
+            "content": "Die Verwendung kann durch die Integration mit Piwik, Google Analytics und anderen Überwachungs- und Statistikprogrammen protokolliert werden.",
+            "title": "Benutzungsstatistiken"
+        },
+        "go": "Los",
+        "join": "Beitreten",
+        "privacy": "Privatsphäre",
+        "roomname": "Konferenzname eingeben",
+        "roomnamePlaceHolder": "Konferenzname",
+        "sendFeedback": "Senden Sie uns Ihr Feedback",
+        "terms": "Bedingungen"
     },
     "startupoverlay": {
         "policyText": "&nbsp;",
@@ -109,6 +114,13 @@
         "filmstrip": "Videos anzeigen / verbergen",
         "profile": "Profil bearbeiten",
         "raiseHand": "Hand erheben"
+    },
+    "unsupportedBrowser": {
+        "appInstalled": "oder wenn die App bereits installiert ist<br/>, <strong>dann</strong>",
+        "appNotInstalled": "Sie benötigen <strong>__app__</strong> um der Konferenz mit dem Mobilgerät beizutreten",
+        "downloadApp": "App herunterladen",
+        "joinConversation": "Der Konferenz beitreten",
+        "startConference": "Konferenz starten"
     },
     "bottomtoolbar": {
         "chat": "Chat öffnen / schliessen",

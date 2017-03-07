@@ -3,6 +3,7 @@ import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
 import { setPassword } from '../../base/conference';
+import { translate } from '../../base/i18n';
 
 /**
  * Implements a React Component which prompts the user when a password is
@@ -21,7 +22,15 @@ class PasswordRequiredPrompt extends Component {
          * @type {JitsiConference}
          */
         conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func
+        dispatch: React.PropTypes.func,
+
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
+        t: React.PropTypes.func
     }
 
     /**
@@ -45,12 +54,14 @@ class PasswordRequiredPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { t } = this.props;
+
         return (
             <Prompt
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                placeholder = 'Password'
-                title = 'Password required'
+                placeholder = { t('dialog.passwordLabel') }
+                title = { t('dialog.passwordRequired') }
                 visible = { true } />
         );
     }
@@ -84,4 +95,4 @@ class PasswordRequiredPrompt extends Component {
     }
 }
 
-export default connect()(PasswordRequiredPrompt);
+export default translate(connect()(PasswordRequiredPrompt));

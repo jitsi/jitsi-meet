@@ -1,125 +1,106 @@
+/* @flow */
+
 import React, { Component } from 'react';
 
+import { translate } from '../../base/i18n';
+import { Platform } from '../../base/react';
+
+import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
+import HideNotificationBarStyle from './HideNotificationBarStyle';
+
 /**
- * The list of all browsers supported by the application.
+ * The namespace of the CSS styles of UnsupportedDesktopBrowser.
+ *
+ * @private
+ * @type {string}
  */
-const SUPPORTED_BROWSERS = [
-    {
-        link: 'http://google.com/chrome',
-        name: 'chrome',
-        title: 'Chrome 44+'
-    }, {
-        link: 'http://www.chromium.org/',
-        name: 'chromium',
-        title: 'Chromium 44+'
-    }, {
-        link: 'http://www.getfirefox.com/',
-        name: 'firefox',
-        title: 'Firefox and Iceweasel 40+'
-    }, {
-        link: 'http://www.opera.com',
-        name: 'opera',
-        title: 'Opera 32+'
-    }, {
-        link: 'https://temasys.atlassian.net/wiki/display/TWPP/WebRTC+Plugins',
-        name: 'ie',
-        plugin: 'Temasys 0.8.854+',
-        title: 'IE'
-    }, {
-        link: 'https://temasys.atlassian.net/wiki/display/TWPP/WebRTC+Plugins',
-        name: 'safari',
-        plugin: 'Temasys 0.8.854+',
-        title: 'Safari'
-    }
-];
+const _SNS = 'unsupported-desktop-browser';
 
 /**
  * React component representing unsupported browser page.
  *
  * @class UnsupportedDesktopBrowser
  */
-export default class UnsupportedDesktopBrowser extends Component {
+class UnsupportedDesktopBrowser extends Component {
+    /**
+     * UnsupportedDesktopBrowser component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        /**
+         * The function to translate human-readable text.
+         *
+         * @public
+         * @type {Function}
+         */
+        t: React.PropTypes.func
+    }
+
     /**
      * Renders the component.
      *
      * @returns {ReactElement}
      */
     render() {
-        const ns = 'unsupported-desktop-browser';
-
         return (
-            <div className = { `${ns}-wrapper` }>
-                <div className = { ns }>
-                    <div className = { `${ns}__content` }>
-                        <h2 className = { `${ns}__title` }>
-                            This application is currently only supported by
-                        </h2>
-                        {
-                            this._renderSupportedBrowsers()
-                        }
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    /**
-     * Renders a specific browser supported by the application.
-     *
-     * @param {Object} browser - The (information about the) browser supported
-     * by the application to render.
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderSupportedBrowser(browser) {
-        const { link, name, plugin, title } = browser;
-        const ns = 'supported-browser';
-
-        // Browsers which do not support WebRTC could support the application
-        // with the Temasys plugin.
-        const pluginElement
-            = plugin
-                ? <p className = { `${ns}__text_small` }>{ plugin }</p>
-                : null;
-
-        return (
-            <div
-                className = { ns }
-                key = { name }>
-                <div className = { `${ns}__text` }>
-                    {
-                        title
-                    }
-                    {
-                        pluginElement
-                    }
-                </div>
-                <div className = { `${ns}__tile` }>
-                    <div
-                        className = { `${ns}__logo ${ns}__logo_${name}` } />
+            <div className = { _SNS }>
+                <h2 className = { `${_SNS}__title` }>
+                    It looks like you're using a browser we don't support.
+                </h2>
+                <p className = { `${_SNS}__description` }>
+                    Please try again with the latest version of&nbsp;
                     <a
-                        className = { `${ns}__link` }
-                        href = { link }>
-                        <div className = { `${ns}__button` }>DOWNLOAD</div>
-                    </a>
-                </div>
+                        className = { `${_SNS}__link` }
+                        href = { CHROME } >Chrome</a>,&nbsp;
+                    <a
+                        className = { `${_SNS}__link` }
+                        href = { FIREFOX }>Firefox</a> or&nbsp;
+                    {
+                        this._renderOSSpecificBrowserDownloadLink()
+                    }
+                </p>
+
+                <HideNotificationBarStyle />
             </div>
         );
     }
 
     /**
-     * Renders the list of browsers supported by the application.
+     * Depending on the platform returns the link to Safari browser.
      *
+     * @returns {ReactElement|null}
      * @private
-     * @returns {ReactElement}
      */
-    _renderSupportedBrowsers() {
-        return (
-            <div className = 'supported-browser-list'>
-                {
-                    SUPPORTED_BROWSERS.map(this._renderSupportedBrowser)
-                }
-            </div>
-        );
+    _renderOSSpecificBrowserDownloadLink() {
+        let link;
+        let text;
+
+        switch (Platform.OS) {
+        case 'macos':
+            link = SAFARI;
+            text = 'Safari';
+            break;
+
+        case 'windows':
+            link = IE;
+            text = 'Internet Explorer';
+            break;
+        }
+        if (typeof link !== 'undefined') {
+            return (
+                <a
+                    className = { `${_SNS}__link` }
+                    href = { link }>
+                    {
+                        text
+                    }
+                </a>
+            );
+        }
+
+        return null;
     }
 }
+
+export default translate(UnsupportedDesktopBrowser);

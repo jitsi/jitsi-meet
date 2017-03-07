@@ -1,4 +1,4 @@
-import JitsiMeetJS from '../lib-jitsi-meet';
+import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import {
     changeParticipantEmail,
     dominantSpeakerChanged,
@@ -30,8 +30,6 @@ import { _addLocalTracksToConference } from './functions';
  * @returns {void}
  */
 function _addConferenceListeners(conference, dispatch) {
-    const JitsiConferenceEvents = JitsiMeetJS.events.conference;
-
     conference.on(
             JitsiConferenceEvents.CONFERENCE_FAILED,
             (...args) => dispatch(conferenceFailed(conference, ...args)));

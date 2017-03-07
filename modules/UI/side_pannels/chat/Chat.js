@@ -164,9 +164,7 @@ function resizeChatConversation() {
  * @param id {string} input id
  */
 function deferredFocus(id){
-    setTimeout(function (){
-        $(`#${id}`).focus();
-    }, 400);
+    setTimeout(() => $(`#${id}`).focus(), 400);
 }
 /**
  * Chat related user interface.
@@ -353,10 +351,17 @@ var Chat = {
      * Scrolls chat to the bottom.
      */
     scrollChatToBottom () {
-        setTimeout(function () {
-            $('#chatconversation').scrollTop(
-                $('#chatconversation')[0].scrollHeight);
-        }, 5);
+        setTimeout(
+            () => {
+                const chatconversation = $('#chatconversation');
+
+                // XXX Prevent TypeError: undefined is not an object when the
+                // Web browser does not support WebRTC (yet).
+                chatconversation.length > 0
+                    && chatconversation.scrollTop(
+                            chatconversation[0].scrollHeight);
+            },
+            5);
     }
 };
 

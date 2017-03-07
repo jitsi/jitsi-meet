@@ -43,7 +43,6 @@ export function appNavigate(uri) {
             domain
                 = _parseURIString(state['features/app'].app._getDefaultURL())
                     .domain;
-
         }
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
