@@ -2,8 +2,10 @@
 
 import { Linking } from 'react-native';
 
+import { appNavigate } from '../actions';
 import '../../audio-mode';
 import '../../background';
+import { disconnect } from '../../base/connection';
 import { Platform } from '../../base/react';
 import '../../full-screen';
 import '../../wake-lock';
@@ -119,7 +121,14 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     _onLinkingURL(event) {
-        this._openURL(event.url);
+        const dispatch = this._getStore().dispatch;
+
+        dispatch(disconnect()).then(() => {
+            // TODO(saghul) We should try to get rid of this.
+            dispatch(appNavigate(undefined));
+
+            this._openURL(event.url);
+        });
     }
 }
 
