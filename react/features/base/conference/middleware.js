@@ -1,9 +1,5 @@
 /* global APP */
-import {
-    CONNECTION_DISCONNECTED,
-    CONNECTION_ESTABLISHED,
-    CONNECTION_FAILED
-} from '../connection';
+import { CONNECTION_ESTABLISHED } from '../connection';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -11,7 +7,6 @@ import {
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
-import { appNavigate } from '../../app';
 
 import { createConference } from './actions';
 import {
@@ -30,11 +25,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
-
-    case CONNECTION_DISCONNECTED:
-    case CONNECTION_FAILED:
-        store.dispatch(appNavigate(undefined));
-        break;
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);

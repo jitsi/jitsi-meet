@@ -146,7 +146,7 @@ export function disconnect() {
 
         // Disconnect the connection.
         if (_connection) {
-            promise = promise.then(() => _connection.disconnect());
+            promise = promise.then(() => _disconnectConnection(_connection));
         }
 
         return promise;
@@ -204,6 +204,37 @@ function _connectionWillConnect(connection) {
         type: CONNECTION_WILL_CONNECT,
         connection
     };
+}
+
+/**
+ * Disconnects the given connection and waits for it to finish. The returned
+ * promise will be resolved once the connection is fully disconnected.
+ *
+ * @param {JitsiConnection} connection - The JitsiConnection which will be
+ * disconnected.
+ * @private
+ * @returns {Promise}
+ */
+function _disconnectConnection(connection) {
+    return new Promise(resolve => {
+        const listener = () => {
+            connection.removeEventListener(
+                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                listener);
+            connection.removeEventListener(
+                JitsiConnectionEvents.CONNECTION_FAILED,
+                listener);
+            resolve();
+        };
+
+        connection.addEventListener(
+            JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+            listener);
+        connection.addEventListener(
+            JitsiConnectionEvents.CONNECTION_FAILED,
+            listener);
+        connection.disconnect();
+    });
 }
 
 /**

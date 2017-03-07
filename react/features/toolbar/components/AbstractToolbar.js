@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { appNavigate } from '../../app';
 import { disconnect } from '../../base/connection';
 import { toggleAudioMuted, toggleVideoMuted } from '../../base/media';
 import { ColorPalette } from '../../base/styles';
@@ -94,7 +95,9 @@ export class AbstractToolbar extends Component {
      * @returns {void}
      */
     _onHangup() {
-        this.props.dispatch(disconnect());
+        this.props.dispatch(disconnect()).then(() => {
+            this.props.dispatch(appNavigate(undefined));
+        });
     }
 
     /**
