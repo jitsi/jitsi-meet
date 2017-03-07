@@ -113,6 +113,11 @@
 
                     window.setTimeout(
                         function () { window.location.replace(href); }, delay);
+
+                    // Call extra handler if defined.
+                    if (typeof postLoadErrorHandler === "function") {
+                        postLoadErrorHandler();
+                    }
                 };
                 window.removeEventListener(
                     'error', loadErrHandler, true /* capture phase */);
