@@ -10,45 +10,56 @@ To embed Jitsi Meet in your application you need to add the Jitsi Meet API libra
 <script src="https://meet.jit.si/external_api.js"></script>
 ```
 
-The next step for embedding Jitsi Meet is to create the Jitsi Meet API object:
+## API
+
+### `api = new JitsiMeetExternalAPI(domain, room, [width], [height], [htmlElement], [configOverwite], [interfaceConfigOverwrite], [noSsl], [jwt])`
+
+The next step for embedding Jitsi Meet is to create the Jitsi Meet API object.
+Its constructor gets a number of options:
+
+* **domain**: domain used to build the conference URL, "meet.jit.si" for
+  example.
+* **room**: name of the room to join.
+* **width**: (optional) width for the iframe which will be created.
+* **height**: (optional) height for the iframe which will be created.
+* **htmlElement**: (optional) HTL DOM Element where the iframe will be added as
+  a child.
+* **configOverwite**: (optional) JS object with overrides for options defined in
+  [config.js].
+* **interfaceConfigOverwrite**: (optional) JS object with overrides for options
+  defined in [interface_config.js].
+* **noSsl**: (optional, defaults to true) Boolean indicating if the server
+  should be contacted using HTTP or HTTPS.
+* **jwt**: (optional) [JWT](https://jwt.io/) token.
+
+Example:
 
 ```javascript
-<script>
-    var domain = "meet.jit.si";
-    var room = "JitsiMeetAPIExample";
-    var width = 700;
-    var height = 700;
-    var api = new JitsiMeetExternalAPI(domain, room, width, height);
-</script>
-```
-
-You can use the above lines to indicate where exactly you want the Jitsi Meet conference to be placed in your HTML code,
-or you can specify the parent HTML element for the Jitsi Meet conference in the `JitsiMeetExternalAPI`
-constructor:
-
-```javascript
+var domain = "meet.jit.si";
+var room = "JitsiMeetAPIExample";
+var width = 700;
+var height = 700;
+var htmlElement = document.querySelector('#meet');
 var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement);
 ```
 
-If you don't specify the room the user will enter in new conference with a random room name.
-
-You can overwrite options set in [config.js]() and [interface_config.js](). For example, to enable the film-strip-only interface mode and disable simulcast, you can use:
+You can overwrite options set in [config.js] and [interface_config.js].
+For example, to enable the film-strip-only interface mode, you can use:
 
 ```javascript
-var configOverwrite = {disableSimulcast: true};
 var interfaceConfigOverwrite = {filmStripOnly: true};
-var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite);
+var api = new JitsiMeetExternalAPI(domain, room, width, height, undefined, undefined, interfaceConfigOverwrite);
 ```
 
-You can also pass jwt token to Jitsi Meet:
+You can also pass a jwt token to Jitsi Meet:
 
  ```javascript
- var jwt = "<jwt_token>";
- var noSsl = false;
- var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite, noSsl, jwt);
+var jwt = "<jwt_token>";
+var noSsl = false;
+var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite, noSsl, jwt);
  ```
 
-## Controlling the embedded Jitsi Meet Conference
+### Controlling the embedded Jitsi Meet Conference
 
 You can control the embedded Jitsi Meet conference using the `JitsiMeetExternalAPI` object by using `executeCommand`:
 
