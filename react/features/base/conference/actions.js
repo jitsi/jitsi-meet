@@ -145,15 +145,19 @@ function _conferenceLeft(conference) {
  *
  * @param {string} room - The room (name) which identifies the conference the
  * local participant will (try to) join.
+ * @param {JitsiConference} conference - The JitsiConference instance the
+ * local participant will (try to) join.
  * @returns {{
  *      type: CONFERENCE_WILL_JOIN,
- *      room: string
+ *      room: string,
+ *      conference: JitsiConference
  *  }}
  */
-function _conferenceWillJoin(room) {
+function _conferenceWillJoin(room, conference) {
     return {
         type: CONFERENCE_WILL_JOIN,
-        room
+        room,
+        conference
     };
 }
 
@@ -197,8 +201,6 @@ export function createConference() {
             throw new Error('Cannot join conference without room name');
         }
 
-        dispatch(_conferenceWillJoin(room));
-
         // TODO Take options from config.
         const conference
             = connection.initJitsiConference(
@@ -214,6 +216,8 @@ export function createConference() {
                     //
                     // preferH264: true
                 });
+
+        dispatch(_conferenceWillJoin(room, conference));
 
         _addConferenceListeners(conference, dispatch);
 
