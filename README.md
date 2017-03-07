@@ -19,6 +19,10 @@ You can download Debian/Ubuntu binaries:
 * [testing](https://download.jitsi.org/testing/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianTestingRepository))
 * [nightly](https://download.jitsi.org/unstable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianNightlyRepository))
 
+You can get our mobile versoins from here:
+* [Android](https://play.google.com/store/apps/details?id=org.jitsi.meet)
+* [iOS](https://itunes.apple.com/us/app/jitsi-meet/id1165103905)
+
 ## Building the sources
 
 Jitsi Meet uses [Browserify](http://browserify.org). If you want to make changes in the code you need to [install Browserify](http://browserify.org/#install). Browserify requires [nodejs](http://nodejs.org).
