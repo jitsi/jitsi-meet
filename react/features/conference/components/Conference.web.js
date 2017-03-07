@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
+import { DialogContainer } from '../../base/dialog';
 import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
@@ -170,7 +171,7 @@ class Conference extends Component {
                         </div>
                     </div>
                 </div>
-
+                <DialogContainer />
                 <OverlayContainer />
                 <HideNotificationBarStyle />
             </div>

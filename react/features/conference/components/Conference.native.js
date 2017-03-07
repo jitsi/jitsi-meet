@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
+import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../film-strip';
 import { LargeVideo } from '../../large-video';
@@ -124,6 +125,8 @@ class Conference extends Component {
                 <LargeVideo />
                 <Toolbar visible = { toolbarVisible } />
                 <FilmStrip visible = { !toolbarVisible } />
+
+                <DialogContainer />
 
                 {
                     this._renderPrompt()
