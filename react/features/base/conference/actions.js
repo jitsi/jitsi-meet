@@ -35,7 +35,7 @@ function _addConferenceListeners(conference, dispatch) {
             (...args) => dispatch(conferenceFailed(conference, ...args)));
     conference.on(
             JitsiConferenceEvents.CONFERENCE_JOINED,
-            (...args) => dispatch(_conferenceJoined(conference, ...args)));
+            (...args) => dispatch(conferenceJoined(conference, ...args)));
     conference.on(
             JitsiConferenceEvents.CONFERENCE_LEFT,
             (...args) => dispatch(conferenceLeft(conference, ...args)));
@@ -103,7 +103,7 @@ export function conferenceFailed(conference, error) {
  * joined by the local participant.
  * @returns {Function}
  */
-function _conferenceJoined(conference) {
+export function conferenceJoined(conference) {
     return (dispatch, getState) => {
         const localTracks
             = getState()['features/base/tracks']

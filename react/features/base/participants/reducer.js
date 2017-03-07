@@ -63,78 +63,81 @@ function _participant(state, action) {
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
             const id = action.newValue;
-            const { avatarId, avatarUrl, email } = state;
-
-            return {
+            const newState = {
                 ...state,
-                id,
-                avatar: state.avatar || getAvatarURL(id, {
-                    avatarId,
-                    avatarUrl,
-                    email
-                })
+                id
             };
-        }
-        break;
-
-    case PARTICIPANT_JOINED: {
-        const participant = action.participant; // eslint-disable-line no-shadow
-        // XXX The situation of not having an ID for a remote participant should
-        // not happen. Maybe we should raise an error in this case or generate a
-        // random ID.
-        const id
-            = participant.id
-                || (participant.local && LOCAL_PARTICIPANT_DEFAULT_ID);
-        const { avatarId, avatarUrl, email } = participant;
-        const avatar
-            = participant.avatar
-                || getAvatarURL(id, {
-                    avatarId,
-                    avatarUrl,
-                    email
-                });
-
-        // TODO Get these names from config/localized.
-        const name
-            = participant.name || (participant.local ? 'me' : 'Fellow Jitster');
-
-        return {
-            avatar,
-            email,
-            id,
-            local: participant.local || false,
-            name,
-            pinned: participant.pinned || false,
-            role: participant.role || PARTICIPANT_ROLE.NONE,
-            dominantSpeaker: participant.dominantSpeaker || false
-        };
-    }
-
-    case PARTICIPANT_UPDATED:
-        if (state.id === action.participant.id) {
-            const newState = { ...state };
-
-            for (const key in action.participant) {
-                if (action.participant.hasOwnProperty(key)
-                        && PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key)
-                            === -1) {
-                    newState[key] = action.participant[key];
-                }
-            }
 
             if (!newState.avatar) {
-                const { avatarId, avatarUrl, email } = newState;
-
-                newState.avatar = getAvatarURL(action.participant.id, {
-                    avatarId,
-                    avatarUrl,
-                    email
-                });
+                newState.avatar = getAvatarURL(newState);
             }
 
             return newState;
         }
         break;
+
+    case PARTICIPANT_JOINED: {
+        const participant = action.participant; // eslint-disable-line no-shadow
+        const { avatar, dominantSpeaker, email, local, pinned, role }
+            = participant;
+        let { id, name } = participant;
+
+        // id
+        //
+        // XXX The situation of not having an ID for a remote participant should
+        // not happen. Maybe we should raise an error in this case or generate a
+        // random ID.
+        if (!id && local) {
+            id = LOCAL_PARTICIPANT_DEFAULT_ID;
+        }
+
+        // name
+        if (!name) {
+            // TODO Get the from config and/or localized.
+            name = local ? 'me' : 'Fellow Jitster';
+        }
+
+        const newState = {
+            avatar,
+            dominantSpeaker: dominantSpeaker || false,
+            email,
+            id,
+            local: local || false,
+            name,
+            pinned: pinned || false,
+            role: role || PARTICIPANT_ROLE.NONE
+        };
+
+        if (!newState.avatar) {
+            newState.avatar = getAvatarURL(newState);
+        }
+
+        return newState;
+    }
+
+    case PARTICIPANT_UPDATED: {
+        const participant = action.participant; // eslint-disable-line no-shadow
+        const { id } = participant;
+
+        if (state.id === id) {
+            const newState = { ...state };
+
+            for (const key in participant) {
+                if (participant.hasOwnProperty(key)
+                        && PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key)
+                            === -1) {
+                    newState[key] = participant[key];
+                }
+            }
+
+            if (!newState.avatar) {
+                newState.avatar = getAvatarURL(newState);
+            }
+
+            return newState;
+        }
+        break;
+    }
 
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.

@@ -1,7 +1,67 @@
-/* global MD5 */
-
 declare var config: Object;
 declare var interfaceConfig: Object;
+declare var MD5: Object;
+
+/**
+ * Returns the URL of the image for the avatar of a specific participant.
+ *
+ * @param {Participant} [participant] - The participant to return the avatar URL
+ * of.
+ * @param {string} [participant.avatarID] - Participant's avatar ID.
+ * @param {string} [participant.avatarURL] - Participant's avatar URL.
+ * @param {string} [participant.email] - Participant's e-mail address.
+ * @param {string} [participant.id] - Participant's ID.
+ * @returns {string} The URL of the image for the avatar of the specified
+ * participant.
+ *
+ * @public
+ */
+export function getAvatarURL(participant) {
+    // If disableThirdPartyRequests disables third-party avatar services, we are
+    // restricted to a stock image of ours.
+    if (typeof config === 'object' && config.disableThirdPartyRequests) {
+        return 'images/avatar2.png';
+    }
+
+    const { avatarID, avatarURL, email, id } = participant;
+
+    // If an avatarURL is specified, then obviously there's nothing to generate.
+    if (avatarURL) {
+        return avatarURL;
+    }
+
+    let key = email || avatarID;
+    let urlPrefix;
+    let urlSuffix;
+
+    // If the ID looks like an e-mail address, we'll use Gravatar because it
+    // supports e-mail addresses.
+    if (key && key.indexOf('@') > 0) {
+        urlPrefix = 'https://www.gravatar.com/avatar/';
+        urlSuffix = '?d=wavatar&size=200';
+    } else {
+        // Otherwise, we do not have much a choice but a random avatar (fetched
+        // from a configured avatar service).
+        if (!key) {
+            key = id;
+        }
+
+        // The deployment is allowed to choose the avatar service which is to
+        // generate the random avatars.
+        urlPrefix
+            = typeof interfaceConfig === 'object'
+                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
+        if (urlPrefix) {
+            urlSuffix = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
+        } else {
+            // Otherwise, use a default (of course).
+            urlPrefix = 'https://api.adorable.io/avatars/200/';
+            urlSuffix = '.png';
+        }
+    }
+
+    return urlPrefix + MD5.hexdigest(key.trim().toLowerCase()) + urlSuffix;
+}
 
 /**
  * Returns local participant from Redux state.
@@ -49,71 +109,4 @@ function _getParticipants(participantsOrGetState) {
             : participantsOrGetState;
 
     return participants || [];
-}
-
-/**
- * Returns the URL of the image for the avatar of a particular participant
- * identified by their id and/or e-mail address.
- *
- * @param {string} [participantId] - Participant's id.
- * @param {Object} [options] - The optional arguments.
- * @param {string} [options.avatarId] - Participant's avatar id.
- * @param {string} [options.avatarUrl] - Participant's avatar url.
- * @param {string} [options.email] - Participant's email.
- * @returns {string} The URL of the image for the avatar of the participant
- * identified by the specified participantId and/or email.
- *
- * @public
- */
-export function getAvatarURL(participantId, options = {}) {
-    // If disableThirdPartyRequests is enabled we shouldn't use third party
-    // avatar services, we are returning one of our images.
-    if (typeof config === 'object' && config.disableThirdPartyRequests) {
-        return 'images/avatar2.png';
-    }
-
-    const { avatarId, avatarUrl, email } = options;
-
-    // If we have avatarUrl we don't need to generate new one.
-    if (avatarUrl) {
-        return avatarUrl;
-    }
-
-    let avatarKey = null;
-
-    if (email) {
-        avatarKey = email;
-    } else {
-        avatarKey = avatarId;
-    }
-
-    // If the ID looks like an email, we'll use gravatar.
-    // Otherwise, it's a random avatar, and we'll use the configured
-    // URL.
-    const isEmail = avatarKey && avatarKey.indexOf('@') > 0;
-
-    if (!avatarKey) {
-        avatarKey = participantId;
-    }
-
-    avatarKey = MD5.hexdigest(avatarKey.trim().toLowerCase());
-
-    let urlPref = null;
-    let urlSuf = null;
-
-    // gravatar doesn't support random avatars that's why we need to use other
-    // services for the use case when the email is undefined.
-    if (isEmail) {
-        urlPref = 'https://www.gravatar.com/avatar/';
-        urlSuf = '?d=wavatar&size=200';
-    } else if (typeof interfaceConfig === 'object'
-        && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) { // custom avatar service
-        urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
-        urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
-    } else { // default avatar service
-        urlPref = 'https://api.adorable.io/avatars/200/';
-        urlSuf = '.png';
-    }
-
-    return urlPref + avatarKey + urlSuf;
 }

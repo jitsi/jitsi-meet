@@ -24,9 +24,6 @@ export default class Avatar extends Component {
      * @inheritdoc
      */
     render() {
-        return (
-            <img
-                src = { this.props.uri } />
-        );
+        return <img src = { this.props.uri } />;
     }
 }

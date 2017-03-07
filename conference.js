@@ -21,18 +21,13 @@ import analytics from './modules/analytics/analytics';
 import EventEmitter from "events";
 
 import {
-    CONFERENCE_JOINED,
+    conferenceJoined,
     conferenceFailed,
     conferenceLeft
 } from './react/features/base/conference';
 import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
-import {
-    mediaPermissionPromptVisibilityChanged,
-    suspendDetected
-} from './react/features/overlay';
-
 import {
     changeParticipantAvatarID,
     changeParticipantAvatarURL,
@@ -41,6 +36,10 @@ import {
     participantLeft,
     participantRoleChanged
 } from './react/features/base/participants';
+import {
+    mediaPermissionPromptVisibilityChanged,
+    suspendDetected
+} from './react/features/overlay';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -164,8 +163,8 @@ function sendData (command, value) {
 }
 
 /**
- * Setups initially the properties for the local participant - email, avatarId,
- * avatarUrl, displayName, etc.
+ * Sets up initially the properties of the local participant - email, avatarID,
+ * avatarURL, displayName, etc.
  */
 function _setupLocalParticipantProperties() {
     const email = APP.settings.getEmail();
@@ -174,7 +173,7 @@ function _setupLocalParticipantProperties() {
     const avatarUrl = APP.settings.getAvatarUrl();
     avatarUrl && sendData(commands.AVATAR_URL, avatarUrl);
 
-    if(!email && !avatarUrl) {
+    if (!email && !avatarUrl) {
         sendData(commands.AVATAR_ID, APP.settings.getAvatarId());
     }
 
@@ -1138,16 +1137,15 @@ export default {
     _setupListeners () {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
-            APP.store.dispatch({
-                type: CONFERENCE_JOINED,
-                conference: room
-            });
+            APP.store.dispatch(conferenceJoined(room));
+
             APP.UI.mucJoined();
             APP.API.notifyConferenceJoined(APP.conference.roomName);
             APP.UI.markVideoInterrupted(false);
         });
 
-        room.on(ConferenceEvents.CONFERENCE_LEFT,
+        room.on(
+            ConferenceEvents.CONFERENCE_LEFT,
             (...args) => APP.store.dispatch(conferenceLeft(room, ...args)));
 
         room.on(

@@ -91,6 +91,11 @@ export default {
             user = users[userId];
         }
 
-        return getAvatarURL(userId, user);
+        return getAvatarURL({
+            avatarID: user ? user.avatarId : undefined,
+            avatarURL: user ? user.avatarUrl : undefined,
+            email: user ? user.email : undefined,
+            id: userId
+        });
     }
 };

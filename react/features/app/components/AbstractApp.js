@@ -1,5 +1,3 @@
-/* global APP */
-
 import React, { Component } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
@@ -19,6 +17,8 @@ import {
     appWillMount,
     appWillUnmount
 } from '../actions';
+
+declare var APP: Object;
 
 /**
  * Base (abstract) class for main App component.
@@ -78,11 +78,20 @@ export class AbstractApp extends Component {
 
         dispatch(appWillMount(this));
 
-        dispatch(localParticipantJoined({
-            avatarId: APP.settings.getAvatarId(),
-            avatarUrl: APP.settings.getAvatarUrl(),
-            email: APP.settings.getEmail()
-        }));
+        // FIXME I believe it makes more sense for a middleware to dispatch
+        // localParticipantJoined on APP_WILL_MOUNT because the order of actions
+        // is important, not the call site. Moreover, we've got localParticipant
+        // business logic in the React Component (i.e. UI) AbstractApp now.
+        let localParticipant;
+
+        if (typeof APP !== 'undefined') {
+            localParticipant = {
+                avatarID: APP.settings.getAvatarId(),
+                avatarURL: APP.settings.getAvatarUrl(),
+                email: APP.settings.getEmail()
+            };
+        }
+        dispatch(localParticipantJoined(localParticipant));
 
         // If a URL was explicitly specified to this React Component, then open
         // it; otherwise, use a default.
