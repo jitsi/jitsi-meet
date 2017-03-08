@@ -10,13 +10,7 @@ STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 WEBPACK = ./node_modules/.bin/webpack
 
-all: update-deps compile deploy clean
-
-# FIXME: there is a problem with node-sass not correctly installed (compiled)
-# a quick fix to make sure it is installed on every update
-# the problem appears on linux and not on macosx
-update-deps:
-	$(NPM) update && $(NPM) install node-sass
+all: compile deploy clean
 
 compile:
 	$(WEBPACK) -p
