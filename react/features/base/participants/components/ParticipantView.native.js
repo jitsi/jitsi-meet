@@ -163,13 +163,13 @@ function _toBoolean(value, undefinedValue) {
  */
 function _mapStateToProps(state, ownProps) {
     const { participantId } = ownProps;
+    const participant
+        = getParticipantById(
+            state['features/base/participants'],
+            participantId);
 
     return {
-        _avatar:
-            getAvatarURL(
-                getParticipantById(
-                    state['features/base/participants'],
-                    participantId)),
+        _avatar: participant && getAvatarURL(participant),
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],
