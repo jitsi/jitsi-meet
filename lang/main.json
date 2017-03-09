@@ -382,7 +382,9 @@
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
         "GET_SESSION_ID_ERROR": "Get session-id error: __code__",
-        "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues..."
+        "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues...",
+        "LOW_BANDWIDTH": "Video for __displayName__ has been turned off to save bandwidth"
+
     },
     "recording":
     {

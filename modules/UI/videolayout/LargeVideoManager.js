@@ -127,7 +127,9 @@ export default class LargeVideoManager {
             // the video was not rendered, before the connection has failed.
             const isHavingConnectivityIssues
                 = APP.conference.isParticipantConnectionActive(id) === false;
-            if (isHavingConnectivityIssues
+            const isInLastN
+                = APP.conference.isLocalId(id) || APP.conference.isInLastN(id);
+            if ( (isHavingConnectivityIssues || !isInLastN)
                     && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
             }
@@ -155,10 +157,15 @@ export default class LargeVideoManager {
 
             // Make sure no notification about remote failure is shown as
             // its UI conflicts with the one for local connection interrupted.
+            let isConnected = APP.conference.isConnectionInterrupted()
+                                || (!isHavingConnectivityIssues && isInLastN);
+
             this.updateParticipantConnStatusIndication(
                     id,
-                    APP.conference.isConnectionInterrupted()
-                        || !isHavingConnectivityIssues);
+                    isConnected,
+                    (isHavingConnectivityIssues)
+                        ? "connection.USER_CONNECTION_INTERRUPTED"
+                        : "connection.LOW_BANDWIDTH");
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
@@ -180,10 +187,11 @@ export default class LargeVideoManager {
      * @param {string} id the id of remote participant(MUC nickname)
      * @param {boolean} isConnected true if the connection is active or false
      * when the user is having connectivity issues.
+     * @param {string} message key
      *
      * @private
      */
-    updateParticipantConnStatusIndication (id, isConnected) {
+    updateParticipantConnStatusIndication (id, isConnected, messageKey) {
 
         // Apply grey filter on the large video
         this.videoContainer.showRemoteConnectionProblemIndicator(!isConnected);
@@ -196,7 +204,7 @@ export default class LargeVideoManager {
             let displayName
                 = APP.conference.getParticipantDisplayName(id);
             this._setRemoteConnectionMessage(
-                "connection.USER_CONNECTION_INTERRUPTED",
+                messageKey,
                 { displayName: displayName });
 
             // Show it now only if the VideoContainer is on top

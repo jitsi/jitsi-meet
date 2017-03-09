@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJS, interfaceConfig */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
@@ -446,7 +446,7 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function () {
 SmallVideo.prototype.isVideoPlayable = function() {
     return this.videoStream // Is there anything to display ?
         && !this.isVideoMuted && !this.videoStream.isMuted() // Muted ?
-        && (this.isLocal || this.VideoLayout.isInLastN(this.id));
+        && (this.isLocal || APP.conference.isInLastN(this.id));
 };
 
 /**
