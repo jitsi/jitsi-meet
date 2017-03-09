@@ -20,10 +20,25 @@ import analytics from './modules/analytics/analytics';
 
 import EventEmitter from "events";
 
-import { conferenceFailed } from './react/features/base/conference';
+import {
+    AVATAR_ID_COMMAND,
+    AVATAR_URL_COMMAND,
+    conferenceFailed,
+    conferenceJoined,
+    conferenceLeft,
+    EMAIL_COMMAND
+} from './react/features/base/conference';
 import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
+import {
+    changeParticipantAvatarID,
+    changeParticipantAvatarURL,
+    changeParticipantEmail,
+    participantJoined,
+    participantLeft,
+    participantRoleChanged
+} from './react/features/base/participants';
 import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
@@ -55,12 +70,12 @@ import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
  * Known custom conference commands.
  */
 const commands = {
-    EMAIL: "email",
-    AVATAR_URL: "avatar-url",
-    AVATAR_ID: "avatar-id",
+    AVATAR_ID: AVATAR_ID_COMMAND,
+    AVATAR_URL: AVATAR_URL_COMMAND,
+    CUSTOM_ROLE: "custom-role",
+    EMAIL: EMAIL_COMMAND,
     ETHERPAD: "etherpad",
-    SHARED_VIDEO: "shared-video",
-    CUSTOM_ROLE: "custom-role"
+    SHARED_VIDEO: "shared-video"
 };
 
 /**
@@ -148,6 +163,29 @@ function createInitialLocalTracksAndConnect(roomName) {
 function sendData (command, value) {
     room.removeCommand(command);
     room.sendCommand(command, {value: value});
+}
+
+/**
+ * Sets up initially the properties of the local participant - email, avatarID,
+ * avatarURL, displayName, etc.
+ */
+function _setupLocalParticipantProperties() {
+    const email = APP.settings.getEmail();
+    email && sendData(commands.EMAIL, email);
+
+    const avatarUrl = APP.settings.getAvatarUrl();
+    avatarUrl && sendData(commands.AVATAR_URL, avatarUrl);
+
+    if (!email && !avatarUrl) {
+        sendData(commands.AVATAR_ID, APP.settings.getAvatarId());
+    }
+
+    let nick = APP.settings.getDisplayName();
+    if (config.useNicks && !nick) {
+        nick = APP.UI.askForNickname();
+        APP.settings.setDisplayName(nick);
+    }
+    nick && room.setDisplayName(nick);
 }
 
 /**
@@ -875,21 +913,7 @@ export default {
         this.invite = new Invite(room);
         this._room = room; // FIXME do not use this
 
-        let email = APP.settings.getEmail();
-        email && sendData(this.commands.defaults.EMAIL, email);
-
-        let avatarUrl = APP.settings.getAvatarUrl();
-        avatarUrl && sendData(this.commands.defaults.AVATAR_URL,
-            avatarUrl);
-        !email && sendData(
-             this.commands.defaults.AVATAR_ID, APP.settings.getAvatarId());
-
-        let nick = APP.settings.getDisplayName();
-        if (config.useNicks && !nick) {
-            nick = APP.UI.askForNickname();
-            APP.settings.setDisplayName(nick);
-        }
-        nick && room.setDisplayName(nick);
+        _setupLocalParticipantProperties();
 
         this._setupListeners();
     },
@@ -1116,10 +1140,16 @@ export default {
     _setupListeners () {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
+            APP.store.dispatch(conferenceJoined(room));
+
             APP.UI.mucJoined();
             APP.API.notifyConferenceJoined(APP.conference.roomName);
             APP.UI.markVideoInterrupted(false);
         });
+
+        room.on(
+            ConferenceEvents.CONFERENCE_LEFT,
+            (...args) => APP.store.dispatch(conferenceLeft(room, ...args)));
 
         room.on(
             ConferenceEvents.AUTH_STATUS_CHANGED,
@@ -1134,6 +1164,12 @@ export default {
             if (user.isHidden())
                 return;
 
+            APP.store.dispatch(participantJoined({
+                id,
+                name: user.getDisplayName(),
+                role: user.getRole()
+            }));
+
             logger.log('USER %s connnected', id, user);
             APP.API.notifyUserJoined(id);
             APP.UI.addUser(user);
@@ -1142,6 +1178,7 @@ export default {
             APP.UI.updateUserRole(user);
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
+            APP.store.dispatch(participantLeft(id, user));
             logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
@@ -1150,6 +1187,7 @@ export default {
 
 
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
+            APP.store.dispatch(participantRoleChanged(id, role));
             if (this.isLocalId(id)) {
                 logger.info(`My role changed, new role: ${role}`);
                 if (this.isModerator !== room.isModerator()) {
@@ -1411,17 +1449,22 @@ export default {
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
+            APP.store.dispatch(changeParticipantEmail(from, data.value));
             APP.UI.setUserEmail(from, data.value);
         });
 
         room.addCommandListener(
             this.commands.defaults.AVATAR_URL,
             (data, from) => {
+                APP.store.dispatch(
+                    changeParticipantAvatarURL(from, data.value));
                 APP.UI.setUserAvatarUrl(from, data.value);
         });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
             (data, from) => {
+                APP.store.dispatch(
+                    changeParticipantAvatarID(from, data.value));
                 APP.UI.setUserAvatarID(from, data.value);
             });
 
@@ -1832,6 +1875,7 @@ export default {
         if (email === APP.settings.getEmail()) {
             return;
         }
+        APP.store.dispatch(changeParticipantEmail(room.myUserId(), email));
 
         APP.settings.setEmail(email);
         APP.UI.setUserEmail(room.myUserId(), email);
@@ -1848,6 +1892,7 @@ export default {
         if (url === APP.settings.getAvatarUrl()) {
             return;
         }
+        APP.store.dispatch(changeParticipantAvatarURL(room.myUserId(), url));
 
         APP.settings.setAvatarUrl(url);
         APP.UI.setUserAvatarUrl(room.myUserId(), url);

@@ -36,12 +36,12 @@ class Translation {
     }
 
     init() {
+        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+
         if (i18next.isInitialized)
             _onI18nInitialized();
         else
             i18next.on('initialized', _onI18nInitialized);
-
-        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
     }
 
     setLanguage(language: string = DEFAULT_LANGUAGE) {
