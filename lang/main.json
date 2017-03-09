@@ -15,13 +15,13 @@
     "defaultLink": "e.g. __url__",
     "callingName": "__name__",
     "userMedia": {
-      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Share Selected Device</i></b> button",
-      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
-      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
+      "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "firefoxGrantPermissions": "Select <b><i>Share Selected Device</i></b> when your browser asks for permissions.",
+      "operaGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "iexplorerGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
+      "safariGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
       "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
     },
     "keyboardShortcuts": {
@@ -87,6 +87,7 @@
     },
     "suspendedoverlay": {
         "title": "Your video call was interrupted, because this computer went to sleep.",
+        "text": "Press <i>Rejoin</i> button to connect back to your conversation.",
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
@@ -229,12 +230,11 @@
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
-        "conferenceReloadTitle": "Unfortunately, something went wrong",
-        "conferenceReloadMsg": "We're trying to fix this",
-        "conferenceDisconnectTitle": "You have been disconnected. You may want to check your network connection.",
-        "conferenceDisconnectMsg": "Reconnecting in...",
-        "reconnectNow": "Reconnect now",
-        "conferenceReloadTimeLeft": "__seconds__ sec.",
+        "conferenceReloadTitle": "Unfortunately, something went wrong.",
+        "conferenceReloadMsg": "We're trying to fix this. Reconnecting in __seconds__ sec...",
+        "conferenceDisconnectTitle": "You have been disconnected.",
+        "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in __seconds__ sec...",
+        "rejoinNow": "Rejoin now",
         "maxUsersLimitReached": "The limit for maximum number of participants in the conference has been reached. The conference is full. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",

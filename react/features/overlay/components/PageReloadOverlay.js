@@ -1,42 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import { translate } from '../../base/i18n';
-import { randomInt } from '../../base/util';
 
+import AbstractPageReloadOverlay from './AbstractPageReloadOverlay';
 import OverlayFrame from './OverlayFrame';
-import { reconnectNow } from '../functions';
-import ReloadTimer from './ReloadTimer';
-
-declare var APP: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Implements a React Component for page reload overlay. Shown before the
  * conference is reloaded. Shows a warning message and counts down towards the
  * reload.
  */
-class PageReloadOverlay extends Component {
+class PageReloadOverlay extends AbstractPageReloadOverlay {
     /**
      * PageReloadOverlay component's property types.
      *
      * @static
      */
     static propTypes = {
-        /**
-         * The indicator which determines whether the reload was caused by
-         * network failure.
-         * @public
-         * @type {boolean}
-         */
-        isNetworkFailure: React.PropTypes.bool,
-
-        /**
-         * The reason for the error that will cause the reload.
-         * @public
-         * @type {string}
-         */
-        reason: React.PropTypes.string,
+        ...AbstractPageReloadOverlay.propTypes,
 
         /**
          * The function to translate human-readable text.
@@ -48,151 +29,30 @@ class PageReloadOverlay extends Component {
     }
 
     /**
-     * Initializes a new PageReloadOverlay instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     * @public
-     */
-    constructor(props) {
-        super(props);
-
-        /**
-         * How long the overlay dialog will be displayed, before the conference
-         * will be reloaded.
-         * @type {number}
-         */
-        const timeoutSeconds = 10 + randomInt(0, 20);
-
-        let isLightOverlay, message, title;
-
-        if (this.props.isNetworkFailure) {
-            title = 'dialog.conferenceDisconnectTitle';
-            message = 'dialog.conferenceDisconnectMsg';
-            isLightOverlay = true;
-        } else {
-            title = 'dialog.conferenceReloadTitle';
-            message = 'dialog.conferenceReloadMsg';
-            isLightOverlay = false;
-        }
-
-        this.state = {
-            /**
-             * Indicates the css style of the overlay. If true, then lighter;
-             * darker, otherwise.
-             *
-             * @type {boolean}
-             */
-            isLightOverlay,
-
-            /**
-             * The translation key for the title of the overlay.
-             *
-             * @type {string}
-             */
-            message,
-
-            /**
-             * How long the overlay dialog will be displayed before the
-             * conference will be reloaded.
-             *
-             * @type {number}
-             */
-            timeoutSeconds,
-
-            /**
-             * The translation key for the title of the overlay.
-             *
-             * @type {string}
-             */
-            title
-        };
-    }
-
-    /**
-     * This method is executed when comonent is mounted.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        // FIXME (CallStats - issue) This event will not make it to CallStats
-        // because the log queue is not flushed before "fabric terminated" is
-        // sent to the backed.
-        // FIXME: We should dispatch action for this.
-        APP.conference.logEvent(
-                'page.reload',
-                /* value */ undefined,
-                /* label */ this.props.reason);
-        logger.info(
-                'The conference will be reloaded after '
-                    + `${this.state.timeoutSeconds} seconds.`);
-    }
-
-    /**
-     * Renders the button for relaod the page if necessary.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderButton() {
-        if (this.props.isNetworkFailure) {
-            const className
-                = 'button-control button-control_primary button-control_center';
-            const { t } = this.props;
-
-            /* eslint-disable react/jsx-handler-names */
-
-            return (
-                <button
-                    className = { className }
-                    id = 'reconnectNow'
-                    onClick = { reconnectNow }>
-                    { t('dialog.reconnectNow') }
-                </button>
-            );
-
-
-            /* eslint-enable react/jsx-handler-names */
-        }
-
-        return null;
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement|null}
      */
     render() {
-        const { t } = this.props;
-
-        /* eslint-disable react/jsx-handler-names */
+        const { isNetworkFailure, t } = this.props;
+        const { message, timeLeft, title } = this.state;
 
         return (
-            <OverlayFrame isLightOverlay = { this.state.isLightOverlay }>
+            <OverlayFrame isLightOverlay = { isNetworkFailure }>
                 <div className = 'inlay'>
                     <span
                         className = 'reload_overlay_title'>
-                        { t(this.state.title) }
+                        { t(title) }
                     </span>
-                    <span
-                        className = 'reload_overlay_text'>
-                        { t(this.state.message) }
+                    <span className = 'reload_overlay_text'>
+                        { t(message, { seconds: timeLeft }) }
                     </span>
-                    <ReloadTimer
-                        end = { 0 }
-                        interval = { 1 }
-                        onFinish = { reconnectNow }
-                        start = { this.state.timeoutSeconds }
-                        step = { -1 } />
+                    { this._renderProgressBar() }
                     { this._renderButton() }
                 </div>
             </OverlayFrame>
         );
-
-        /* eslint-enable react/jsx-handler-names */
     }
 }
 

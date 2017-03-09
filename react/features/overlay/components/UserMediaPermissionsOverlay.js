@@ -71,15 +71,13 @@ class UserMediaPermissionsOverlay extends Component {
                     <span className = 'inlay__icon icon-camera' />
                     <h3 className = 'inlay__title'>
                         {
-                            t(
-                                'startupoverlay.title',
+                            t('startupoverlay.title',
                                 { postProcess: 'resolveAppName' })
                         }
                     </h3>
                     <span className = 'inlay__text'>
                         {
-                            translateToHTML(
-                                t,
+                            translateToHTML(t,
                                 `userMedia.${browser}GrantPermissions`)
                         }
                     </span>

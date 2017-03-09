@@ -1,11 +1,16 @@
-/* global APP */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import PageReloadFilmStripOnlyOverlay from './PageReloadFilmStripOnlyOverlay';
 import PageReloadOverlay from './PageReloadOverlay';
+import SuspendedFilmStripOnlyOverlay from './SuspendedFilmStripOnlyOverlay';
 import SuspendedOverlay from './SuspendedOverlay';
+import UserMediaPermissionsFilmStripOnlyOverlay
+    from './UserMediaPermissionsFilmStripOnlyOverlay';
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
+
+declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Implements a React Component that will display the correct overlay when
@@ -95,6 +100,25 @@ class OverlayContainer extends Component {
     }
 
     /**
+     * Initializes a new ReloadTimer instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     * @public
+     */
+    constructor(props) {
+        super(props);
+        this.state = {
+            /**
+             * Indicates whether the film strip only mode is enabled or not.
+             *
+             * @type {boolean}
+             */
+            filmStripOnly: interfaceConfig.filmStripOnly
+        };
+    }
+
+    /**
      * React Component method that executes once component is updated.
      *
      * @inheritdoc
@@ -117,25 +141,28 @@ class OverlayContainer extends Component {
      * @public
      */
     render() {
+        const filmStripOnlyMode = this.state.filmStripOnly;
+        let overlayComponent, props;
+
         if (this.props._connectionEstablished && this.props._haveToReload) {
-            return (
-                <PageReloadOverlay
-                    isNetworkFailure = { this.props._isNetworkFailure }
-                    reason = { this.props._reason } />
-            );
+            overlayComponent = filmStripOnlyMode
+                ? PageReloadFilmStripOnlyOverlay : PageReloadOverlay;
+            props = {
+                isNetworkFailure: this.props._isNetworkFailure,
+                reason: this.props._reason
+            };
+        } else if (this.props._suspendDetected) {
+            overlayComponent = filmStripOnlyMode
+                ? SuspendedFilmStripOnlyOverlay : SuspendedOverlay;
+        } else if (this.props._isMediaPermissionPromptVisible) {
+            overlayComponent = filmStripOnlyMode
+                ? UserMediaPermissionsFilmStripOnlyOverlay
+                    : UserMediaPermissionsOverlay;
+            props = { browser: this.props._browser };
         }
 
-        if (this.props._suspendDetected) {
-            return (
-                <SuspendedOverlay />
-            );
-        }
-
-        if (this.props._isMediaPermissionPromptVisible) {
-            return (
-                <UserMediaPermissionsOverlay
-                    browser = { this.props._browser } />
-            );
+        if (overlayComponent) {
+            return React.createElement(overlayComponent, props);
         }
 
         return null;
