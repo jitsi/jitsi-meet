@@ -150,7 +150,12 @@ ConnectionIndicator.prototype.generateText = function () {
                 "data-i18n='connectionindicator.address'></span></td>" +
                 "<td> N/A</td></tr>";
         } else {
-            var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
+            var data = {
+                remoteIP: [],
+                localIP:[],
+                remotePort:[],
+                localPort:[],
+                transportType:[]};
             for(i = 0; i < this.transport.length; i++) {
                 var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
                 var port = ConnectionIndicator.getPort(this.transport[i].ip);
@@ -172,6 +177,10 @@ ConnectionIndicator.prototype.generateText = function () {
 
                 if(data.localPort.indexOf(localPort) == -1) {
                     data.localPort.push(localPort);
+                }
+
+                if(data.transportType.indexOf(this.transport[i].type) == -1) {
+                    data.transportType.push(this.transport[i].type);
                 }
             }
 
@@ -215,9 +224,13 @@ ConnectionIndicator.prototype.generateText = function () {
             transport += "</td></tr>";
             transport += localTransport + "</td></tr>";
             transport +="<tr>" +
-                "<td><span data-i18n='connectionindicator.transport'>" +
-                    "</span></td>" +
-                "<td>" + this.transport[0].type + "</td></tr>";
+                "<td><span data-i18n='connectionindicator.transport' "
+                    + " data-i18n-options='" +
+                    JSON.stringify({count: data.transportType.length})
+                + "'></span></td>" +
+                "<td>"
+                    + ConnectionIndicator.getStringFromArray(data.transportType)
+                + "</td></tr>";
 
         }
 

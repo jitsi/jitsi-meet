@@ -189,6 +189,7 @@
         "remoteaddress": "Remote address:",
         "remoteaddress_plural": "Remote addresses:",
         "transport": "Transport:",
+        "transport_plural": "Transports:",
         "bandwidth": "Estimated bandwidth:",
         "na": "Come back here for connection information once the conference starts"
     },
