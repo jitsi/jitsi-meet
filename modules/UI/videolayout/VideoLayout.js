@@ -857,9 +857,10 @@ var VideoLayout = {
      * @param object
      */
     updateLocalConnectionStats (percent, object) {
-        let resolutions = object.resolution;
+        const { framerates, resolutions } = object;
 
         object.resolution = resolutions[APP.conference.getMyUserId()];
+        object.framerate = framerates[APP.conference.getMyUserId()];
         localVideoThumbnail.updateStatsIndicator(percent, object);
 
         Object.keys(resolutions).forEach(function (id) {
