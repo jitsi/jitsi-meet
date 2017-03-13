@@ -177,6 +177,7 @@
         "bitrate": "Bitrate:",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",
+        "framerate": "Frame rate:",
         "less": "Show less",
         "more": "Show more",
         "address": "Address:",

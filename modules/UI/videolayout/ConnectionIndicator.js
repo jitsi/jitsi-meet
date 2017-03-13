@@ -36,6 +36,7 @@ function ConnectionIndicator(videoContainer, videoId) {
     this.resolution = null;
     this.isResolutionHD = null;
     this.transport = [];
+    this.framerate = null;
     this.popover = null;
     this.id = videoId;
     this.create();
@@ -88,11 +89,16 @@ ConnectionIndicator.prototype.generateText = function () {
     }
 
     // GENERATE RESOLUTIONS STRING
-    let resolutions = this.resolution || {};
-    let resolutionStr = Object.keys(resolutions).map(function (ssrc) {
+    const resolutions = this.resolution || {};
+    const resolutionStr = Object.keys(resolutions).map(ssrc => {
         let {width, height} = resolutions[ssrc];
         return `${width}x${height}`;
     }).join(', ') || 'N/A';
+
+    const framerates = this.framerate || {};
+    const frameRateStr = Object.keys(framerates).map(ssrc =>
+        framerates[ssrc]
+    ).join(', ') || 'N/A';
 
     let result = (
         `<table class="connection-info__container" style='width:100%'>
@@ -117,6 +123,14 @@ ConnectionIndicator.prototype.generateText = function () {
                 </td>
                 <td>
                     ${resolutionStr}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.framerate'></span>
+                </td>
+                <td>
+                    ${frameRateStr}
                 </td>
             </tr>
         </table>`);
@@ -371,6 +385,8 @@ ConnectionIndicator.prototype.updateConnectionQuality =
         if (object.resolution) {
             this.resolution = object.resolution;
         }
+        if (object.framerate)
+            this.framerate = object.framerate;
     }
 
     let width = qualityToWidth.find(x => percent >= x.percent);
