@@ -34,6 +34,11 @@ module.system=haste
 
 experimental.strict_type_args=true
 
+module.file_ext=.web.js
+module.file_ext=.native.js
+module.file_ext=.js
+module.file_ext=.jsx
+
 munge_underscores=true
 
 module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'

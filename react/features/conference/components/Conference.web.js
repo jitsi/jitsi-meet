@@ -4,25 +4,13 @@ import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
-import { Watermarks } from '../../base/react';
-import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
+import { Watermarks } from '../../base/react';
+import { Toolbar } from '../../toolbar';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
 declare var APP: Object;
-
-/**
- * For legacy reasons, inline style for display none.
- *
- * @private
- * @type {{
- *     display: string
- * }}
- */
-const _DISPLAY_NONE_STYLE = {
-    display: 'none'
-};
 
 /**
  * The conference page of the Web application.
@@ -76,31 +64,10 @@ class Conference extends Component {
     render() {
         return (
             <div id = 'videoconference_page'>
-                <div id = 'mainToolbarContainer'>
-                    <div
-                        className = 'notice'
-                        id = 'notice'
-                        style = { _DISPLAY_NONE_STYLE }>
-                        <span
-                            className = 'noticeText'
-                            id = 'noticeText' />
-                    </div>
-                    <div
-                        className = 'toolbar'
-                        id = 'mainToolbar' />
-                </div>
                 <div
                     className = 'hide'
                     id = 'subject' />
-                <div
-                    className = 'toolbar'
-                    id = 'extendedToolbar'>
-                    <div id = 'extendedToolbarButtons' />
-
-                    <FeedbackButton />
-
-                    <div id = 'sideToolbarContainer' />
-                </div>
+                <Toolbar visible = { true } />
                 <div id = 'videospace'>
                     <div
                         className = 'videocontainer'
