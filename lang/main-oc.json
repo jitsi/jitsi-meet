@@ -5,12 +5,12 @@
     "roomUnlocked": "Qual que siá amb lo ligam pòt participar",
     "passwordSetRemotely": "causit per qualqu'un mai",
     "connectionsettings": "Paramètres de connexion",
-    "poweredby": "Produit per",
-    "feedback": "Donatz-nos vòstre vejaire",
+    "poweredby": "produit per",
+    "feedback": "Donatz-nos lo vòstre vejaire",
     "inviteUrlDefaultMsg": "Vòstra conferéncia es en cors de creacion...",
     "me": "ieu",
     "speaker": "Nautparlaire",
-    "raisedHand": "Volriatz charrar",
+    "raisedHand": "Volriá charrar",
     "defaultNickname": "ex. Joan Delpuèch",
     "defaultLink": "ex. __url__",
     "callingName": "__name__",
@@ -39,41 +39,46 @@
         "videoMute": "Aviar o arrestar vòstra camerà"
     },
     "welcomepage": {
-        "go": "Crear",
-        "roomname": "Sasissètz un nom de sala",
         "disable": "Afichar pas mai aquesta pagina",
         "feature1": {
-            "title": "De bon utilizar",
-            "content": "Cap de telecargament pas requesit. __app__ s'utiliza dirèctament dempuèi vòstre navigador. Partejar simplament l'URL de vòstra conferéncia amb los autres per començar."
+            "content": "Cap de telecargament pas requesit. __app__ s'utiliza dirèctament dempuèi vòstre navigador. Partejar simplament l'URL de vòstra conferéncia amb los autres per començar.",
+            "title": "De bon utilizar"
         },
         "feature2": {
-            "title": "Benda passanta febla",
-            "content": "Las videoconferéncias de mantun participant necessitan mens de 128 kbps. Lo partiment d'ecran e las conferéncias amb solament d'àudio son possiblas amb plan mens de debit."
+            "content": "Las videoconferéncias de mantun participant necessitan mens de 128 kbps. Lo partiment d'ecran e las conferéncias amb solament d'àudio son possiblas amb plan mens de debit.",
+            "title": "Benda passanta febla"
         },
         "feature3": {
-            "title": "Open source",
-            "content": "__app__ es jos licéncia Apache. Sètz liure de telecargar, d'utilizar, de modificar e de partejar __app__ segon aquesta licéncia liura."
+            "content": "__app__ es jos licéncia Apache. Sètz liure de telecargar, d'utilizar, de modificar e de partejar __app__ segon aquesta licéncia liura.",
+            "title": "Open source"
         },
         "feature4": {
-            "title": "Nombre d'utilizaires illimitat",
-            "content": "I a pas de restriccions artificialas a prepaus del nombre d'utilizaires o de participants a una conferéncia. La poténcia del servidor e la benda passanta son los sols factors limitants."
+            "content": "I a pas de restriccions artificialas a prepaus del nombre d'utilizaires o de participants a una conferéncia. La poténcia del servidor e la benda passanta son los sols factors limitants.",
+            "title": "Nombre d'utilizaires illimitat"
         },
         "feature5": {
-            "title": "Partiment d'ecran",
-            "content": "Es aisit de partejar vòstre ecran amb d'autras personas. __app__ es ideal per las presentacions en linha, los corses, e las sessions de supòrt tecnic."
+            "content": "Es aisit de partejar vòstre ecran amb d'autras personas. __app__ es ideal per las presentacions en linha, los corses, e las sessions de supòrt tecnic.",
+            "title": "Partiment d'ecran"
         },
         "feature6": {
-            "title": "Salas securizadas",
-            "content": "Besonh de confidencialitat ? Las salas de conferéncia __app__ pòdon èsser securizadas per un senhal per exclure los convidats pas desirats, e prevenir de las interrupcions."
+            "content": "Besonh de confidencialitat ? Las salas de conferéncia __app__ pòdon èsser securizadas per un senhal per exclure los convidats pas desirats, e prevenir de las interrupcions.",
+            "title": "Salas securizadas"
         },
         "feature7": {
-            "title": "Nòtas partejadas",
-            "content": "__app__ prepausa Etherpad, un editor de tèxte collaboratiu en temps real qu'es parfèit pels procèsses verbals, l'edicion d'articles e plan mai encara."
+            "content": "__app__ prepausa Etherpad, un editor de tèxte collaboratiu en temps real qu'es parfèit pels procèsses verbals, l'edicion d'articles e plan mai encara.",
+            "title": "Nòtas partejadas"
         },
         "feature8": {
-            "title": "Estatisticas d'utilizacion",
-            "content": "Aprenètz mai a prepaus de vòstres utilizaires amb una integracion aisida de Piwik, Google Analytics e d'autres sistèmas d'estatisticas e supervision d'utilizacion."
-        }
+            "content": "Aprenètz mai a prepaus de vòstres utilizaires amb una integracion aisida de Piwik, Google Analytics e d'autres sistèmas d'estatisticas e supervision d'utilizacion.",
+            "title": "Estatisticas d'utilizacion"
+        },
+        "go": "Crear",
+        "join": "PARTICIPATZ",
+        "privacy": "Vida privada",
+        "roomname": "Sasissètz un nom de sala",
+        "roomnamePlaceHolder": "nom de la sala",
+        "sendFeedback": "Mandar vòstra opinion",
+        "terms": "Tèrmes"
     },
     "startupoverlay": {
         "policyText": "&nbsp;",
@@ -108,7 +113,14 @@
         "micDisabled": "Lo microfòn es pas disponible",
         "filmstrip": "Mostrar / escondre vidèos",
         "profile": "Modificar vòstre perfil",
-        "raiseHand": "Demandar / Demandar pas mai la paraula"
+        "raiseHand": "o se l'avètz ja<br /><strong>alara</strong>"
+    },
+    "unsupportedBrowser": {
+        "appInstalled": "o se ja l'avètz<br /><strong>alara</strong>",
+        "appNotInstalled": "Vos cal <strong>__app__</strong> per participar a la conversacion a partir de vòstre mobil",
+        "downloadApp": "Telecargar l'aplicacion",
+        "joinConversation": "Participar a la conversacion",
+        "startConference": "Començar una conferéncia"
     },
     "bottomtoolbar": {
         "chat": "Dobrir / tampar lo chat",
@@ -126,15 +138,15 @@
         "title": "Paramètres",
         "update": "Mesa a jorn",
         "name": "Nom",
-        "startAudioMuted": "Tot lo mond comença sens son",
-        "startVideoMuted": "Tot lo mond comença escondut",
-        "selectCamera": "Camèra",
+        "startAudioMuted": "Començan totes sens son",
+        "startVideoMuted": "Començan totes sens vidèo",
+        "selectCamera": "Camerà",
         "selectMic": "Microfòn",
         "selectAudioOutput": "Sortida àudio",
         "followMe": "Tot lo mond me sèc",
         "noDevice": "Pas cap",
         "noPermission": "La permission d'utilizar l'aparelh es pas estada donada",
-        "cameraAndMic": "Camèra e microfòn",
+        "cameraAndMic": "Camerà e microfòn",
         "moderator": "MODERATOR",
         "password": "DEFINIR UN SENHAL",
         "audioVideo": "ÀUDIO E VIDÈO",
@@ -149,12 +161,13 @@
     "videothumbnail": {
         "editnickname": "Clicatz per modificar<br/>vòstre nom",
         "moderator": "Lo proprietari de<br/>aquesta conferéncia",
-        "videomute": "Un participant a<br/>arrestat sa camèra.",
+        "videomute": "Un participant a<br/>arrestat sa camerà.",
         "mute": "Un participant a copat son micro",
         "kick": "Exclure",
         "muted": "Mut",
         "domute": "Copar lo son",
-        "flip": "Revirar"
+        "flip": "Revirar",
+        "remoteControl": "Contraròtle alonhat"
     },
     "connectionindicator": {
         "header": "Donadas de connexion",
@@ -162,7 +175,7 @@
         "packetloss": "Pèrda de paquets :",
         "resolution": "Resolucion :",
         "less": "Amagar lo detalh",
-        "more": "Mostrar lo deta1h",
+        "more": "Ne veire mai",
         "address": "Adreça :",
         "remoteport": "Pòrt distant :",
         "remoteport_plural": "Pòrts distants :",
@@ -208,7 +221,7 @@
         "createPassword": "Crear un senhal",
         "detectext": "Una error s'es produita pendent la deteccion de l'extension de partiment d'ecran.",
         "failtoinstall": "Fracàs de l'installacion de l'extension de partiment d'ecran",
-        "failedpermissions": "Fracàs d'obtencion de las permissions per utilizar lo micro e/o la camèra.",
+        "failedpermissions": "Fracàs d'obtencion de las permissions per utilizar lo micro e/o la camerà.",
         "conferenceReloadTitle": "Malurosament, quicòm truquèt",
         "conferenceReloadMsg": "Sèm a trobar una solucion per aquò",
         "conferenceDisconnectTitle": "Sètz estat desconnectat. Vos cal benlèu verificar vòstra connexion.",
@@ -224,7 +237,7 @@
         "internalError": "Ops ! Quicòm a pas fonccionat. L'error seguenta s'es produsida : [setRemoteDescription]",
         "unableToSwitch": "Impossible de cambiar lo flux vidèo.",
         "SLDFailure": "Ops! Quicòm a trucat e lo micro es pas estat copat! (Fracàs SLD)",
-        "SRDFailure": "Ops! Quicòm a trucat e la camèra es pas estada copada! (Fracàs SRD)",
+        "SRDFailure": "Ops ! Quicòm a trucat e la camerà es pas estada arrestada ! (Fracàs SRD)",
         "oops": "Ops !",
         "currentPassword": "L'actual senhal es",
         "passwordLabel": "Senhal",
@@ -298,21 +311,26 @@
         "cameraErrorPresent": "I a agut una error pendent la connexion a la camerà.",
         "cameraUnsupportedResolutionError": "Vòstra camerà pren pas en carga la resolucion vidèo que cal.",
         "cameraUnknownError": "Impossible d'emplegar la camerà per una rason desconeguda.",
-        "cameraPermissionDeniedError": "La camèra es pas estada trobada.",
-        "cameraNotFoundError": "La camèra es pas estada trobada.",
+        "cameraPermissionDeniedError": "La camerà es pas estada trobada.",
+        "cameraNotFoundError": "La camerà es pas estada trobada.",
         "cameraConstraintFailedError": "Vòstra camerà satisfà pas totas las constrentas necessàrias.",
         "micUnknownError": "Impossible d'utilizar lo microfòn per una rason desconeguda.",
         "micPermissionDeniedError": "Avètz pas donat l'autorizacion d'utilizar vòstre microfòn. Podètz encara participar a la conferéncia mai los demai vos ausiràn pas. Utilizatz lo boton del microfòn dins la barra d'adreça per resòlvre aquò.",
         "micNotFoundError": "Lo microfòn es pas estat trobat.",
         "micConstraintFailedError": "Vòstre microfòn satisfà pas totas las constrentas necessàrias.",
         "micNotSendingData": "Podèm pas aver l'accès a vòstre microfòn. Mercés de ne causir un autre dins lo menú de paramètres o ensajatz de tornar dubrir l'aplicacion.",
-        "cameraNotSendingData": "Podèm pas aver l'accès a vòstra camèra. Mercés de verificar se una autra aplicacion es pas a l'utilizar, causissètz una autra camèra dins lo menú de paramètres o ensajatz de tornar dubrir l'aplicacion.",
+        "cameraNotSendingData": "Podèm pas aver l'accès a vòstra camerà. Mercés de verificar se una autra aplicacion es pas a l'utilizar, causissètz una autra camerà dins lo menú de paramètres o ensajatz de tornar dubrir l'aplicacion.",
         "goToStore": "Anar sul webstore",
         "externalInstallationTitle": "Extension requesida :",
         "externalInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran.",
         "muteParticipantTitle": "Copar lo micro als participants ?",
         "muteParticipantBody": "Poiretz pas lo tornar activar lo microfòn, mai eles pòdon o far quand vòlon.",
-        "muteParticipantButton": "Copar lo son"
+        "muteParticipantButton": "Copar lo son",
+        "remoteControlTitle": "Contraròtle alonhat",
+        "remoteControlDeniedMessage": "__user__ a refusat vòstra demanda de contraròtle alonhat !",
+        "remoteControlAllowedMessage": "__user__ a acceptat vòstra demanda de contraròtle alonhat !",
+        "remoteControlErrorMessage": "Error al moment de demandar lo contraròtle alonhat a __user__ !",
+        "remoteControlStopMessage": "La session de contraròtle alonhat es acabada !"
     },
     "email": {
         "sharedKey": [
@@ -371,6 +389,7 @@
         "failedToStart": "Lo dirècte a pas capitat de s'aviar",
         "buttonTooltip": "Aviar / arrestar lo dirècte",
         "streamIdRequired": "Mercé de completar lo stream id per aviar lo dirècte.",
+        "streamIdHelp": "Ont tròbi aquò ?",
         "error": "Fracàs de la transmission en dirècte. Mercés de tornar ensajar.",
         "busy": "Tots los enresgistraires son ocupats. Mercés de tornar ensajar mai tard."
     }
