@@ -730,6 +730,35 @@ export default {
             && this._room.getConnectionState();
     },
     /**
+     * Obtains current P2P ICE connection state.
+     * @return {string|null} ICE connection state or <tt>null</tt> if there's no
+     * P2P connection
+     */
+    getP2PConnectionState () {
+        return this._room
+            && this._room.getP2PConnectionState
+            && this._room.getP2PConnectionState();
+    },
+    /**
+     * Starts P2P (for tests only)
+     */
+    startP2P () {
+        try {
+            this._room && this._room.startPeer2PeerSession();
+        } catch (error) {
+            logger.error("Start P2P failed", error);
+            throw error;
+        }
+
+    },
+    /**
+     * Stops P2P (for tests only)
+     */
+    stopP2P () {
+        this._room && this._room.stopPeer2PeerSession();
+    },
+
+    /**
      * Checks whether or not our connection is currently in interrupted and
      * reconnect attempts are in progress.
      *

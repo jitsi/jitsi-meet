@@ -20,6 +20,13 @@ var config = { // eslint-disable-line no-unused-vars
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
 
+    // The STUN servers that will used in the peer to peer connections
+    p2pStunServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" }
+    ],
+
     // The ID of the jidesha extension for Chrome.
     desktopSharingChromeExtId: null,
     // Whether desktop sharing should be disabled on Chrome.
@@ -80,5 +87,12 @@ var config = { // eslint-disable-line no-unused-vars
     // disables or enables RTX (RFC 4588) (defaults to false).
     disableRtx: false,
     // Sets the preferred resolution (height) for local video. Defaults to 360.
-    resolution: 720
+    resolution: 720,
+    // Enables peer to peer
+    enableP2P: false,
+    // Disables automatic switching between P2P and JVB (for tests only)
+    //disableAutoP2P: true
+    // How long we're going to wait, before going back to P2P after
+    // the 3rd participant has left the conference (to filter out page reload)
+    //backToP2PDelay: 5
 };
