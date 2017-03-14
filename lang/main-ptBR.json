@@ -39,41 +39,46 @@
         "videoMute": "Iniciar ou parar sua câmera"
     },
     "welcomepage": {
-        "go": "IR",
-        "roomname": "Digite o nome da sala",
         "disable": "Não mostre esta página novamente",
         "feature1": {
-            "title": "Simples para usar",
-            "content": "Não precisa baixar nada. __app__ trabalha diretamente no seu navegador. Simplesmente compartilhe sua URL da conferência com outros para começar."
+            "content": "Não precisa baixar nada. __app__ trabalha diretamente no seu navegador. Simplesmente compartilhe sua URL da conferência com outros para começar.",
+            "title": "Simples para usar"
         },
         "feature2": {
-            "title": "Largura de banda baixa",
-            "content": "Conferências de vídeo de multipartes trabalha com tão pouco quanto 128 kbps. Compartilhamento de tela e conferências de áudio somente são possíveis com muito menos."
+            "content": "Conferências de vídeo de multipartes trabalha com tão pouco quanto 128 kbps. Compartilhamento de tela e conferências de áudio somente são possíveis com muito menos.",
+            "title": "Largura de banda baixa"
         },
         "feature3": {
-            "title": "Código aberto",
-            "content": "__app__ é licenciado sob a Licença Apache. Você é livre para baixar, usar, modificar e compartilhar ela com a mesma licença."
+            "content": "__app__ é licenciado sob a Licença Apache. Você é livre para baixar, usar, modificar e compartilhar ela com a mesma licença.",
+            "title": "Código aberto"
         },
         "feature4": {
-            "title": "Usuários ilimitados",
-            "content": "Aqui não há restrições artificiais no número de usuários ou participantes da conferência. A potência do servidor e largura de banda são os únicos fatores limitantes."
+            "content": "Aqui não há restrições artificiais no número de usuários ou participantes da conferência. A potência do servidor e largura de banda são os únicos fatores limitantes.",
+            "title": "Usuários ilimitados"
         },
         "feature5": {
-            "title": "Compartilhamento de tela",
-            "content": "É fácil compartilhar sua tela com outros. __app__ é ideal para apresentações online, leituras, e sessões de suporte técnico."
+            "content": "É fácil compartilhar sua tela com outros. __app__ é ideal para apresentações online, leituras, e sessões de suporte técnico.",
+            "title": "Compartilhamento de tela"
         },
         "feature6": {
-            "title": "Salas seguras",
-            "content": "Precisa alguma privacidade? Salas de conferência do __app__ podem ser seguras com uma senha para excluir visitantes indesejados e prevenir interrupções."
+            "content": "Precisa alguma privacidade? Salas de conferência do __app__ podem ser seguras com uma senha para excluir visitantes indesejados e prevenir interrupções.",
+            "title": "Salas seguras"
         },
         "feature7": {
-            "title": "Notas compartilhadas",
-            "content": "__app_ disponibiliza o Etherpad, um editor de texto colaborativo em tempo real, que é ótimo para reuniões rápidas, escrevendo artigos, e mais."
+            "content": "__app_ disponibiliza o Etherpad, um editor de texto colaborativo em tempo real, que é ótimo para reuniões rápidas, escrevendo artigos, e mais.",
+            "title": "Notas compartilhadas"
         },
         "feature8": {
-            "title": "Estatísticas de uso",
-            "content": "Aprenda sobre seus usuários através de integração fácil com o Piwik, Google Analytics, e outros sistemas de monitoramento e estatísticas."
-        }
+            "content": "Aprenda sobre seus usuários através de integração fácil com o Piwik, Google Analytics, e outros sistemas de monitoramento e estatísticas.",
+            "title": "Estatísticas de uso"
+        },
+        "go": "IR",
+        "join": "Entrar",
+        "privacy": "Política de Privacidade",
+        "roomname": "Digite o nome da sala",
+        "roomnamePlaceHolder": "Nome da sala",
+        "sendFeedback": "Enviar comentários",
+        "terms": "Termos"
     },
     "startupoverlay": {
         "policyText": "&nbsp;",
@@ -109,6 +114,13 @@
         "filmstrip": "Mostrar / ocultar vídeos",
         "profile": "Editar seu perfil",
         "raiseHand": "Erguer o baixar sua mão"
+    },
+    "unsupportedBrowser": {
+        "appInstalled": "ou se você já tenha isso<br /> <strong>então</strong>",
+        "appNotInstalled": "Você precisa do <strong>__app__</strong> para começar um bate-papo no seu celular",
+        "downloadApp": "Baixe o Aplicativo",
+        "joinConversation": "Entre no bate-papo",
+        "startConference": "Comece uma conferência"
     },
     "bottomtoolbar": {
         "chat": "Abrir / fechar bate-papo",
@@ -154,7 +166,8 @@
         "kick": "Chutar fora",
         "muted": "Mudo",
         "domute": "Mudo",
-        "flip": "Inverter"
+        "flip": "Inverter",
+        "remoteControl": "Controle remoto"
     },
     "connectionindicator": {
         "header": "Dados da conexão",
@@ -312,7 +325,12 @@
         "externalInstallationMsg": "Você precisa instalar nossa extensão de compartilhamento de tela.",
         "muteParticipantTitle": "Deixar mudo este participante?",
         "muteParticipantBody": "Você não está habilitado para tirar o mudo deles, mas eles podem tirar o mudo deles mesmos a qualquer tempo.",
-        "muteParticipantButton": "Mudo"
+        "muteParticipantButton": "Mudo",
+        "remoteControlTitle": "Controle remoto",
+        "remoteControlDeniedMessage": "__user__ rejeitou sua requisição de controle remoto!",
+        "remoteControlAllowedMessage": "__user__ aceitou sua requisição de controle remoto!",
+        "remoteControlErrorMessage": "Um erro ocorreu enquanto tentava requerer a permissão de controle remoto de __user__!",
+        "remoteControlStopMessage": "A sessão de controle remoto terminou!"
     },
     "email": {
         "sharedKey": [
@@ -371,6 +389,7 @@
         "failedToStart": "Falha ao iniciar a transmissão ao vivo",
         "buttonTooltip": "Iniciar / parar live stream",
         "streamIdRequired": "Por favor digite o id da transmissão ao vivo para começar a transmitir.",
+        "streamIdHelp": "Aonde eu encontro isto?",
         "error": "Falha na transmissão ao vivo. Tente novamente",
         "busy": "Todos os gravadores estão ocupados no momento. Por favor, tente mais tarde."
     }
