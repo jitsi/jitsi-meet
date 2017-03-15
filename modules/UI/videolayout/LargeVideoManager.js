@@ -163,7 +163,7 @@ export default class LargeVideoManager {
             this.updateParticipantConnStatusIndication(
                     id,
                     isConnected,
-                    (isHavingConnectivityIssues)
+                    (isInLastN && isHavingConnectivityIssues)
                         ? "connection.USER_CONNECTION_INTERRUPTED"
                         : "connection.LOW_BANDWIDTH");
 
