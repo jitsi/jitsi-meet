@@ -9,6 +9,7 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
+    CONNECTION_WILL_CONNECT,
     SET_DOMAIN
 } from './actionTypes';
 
@@ -37,6 +38,8 @@ export function connect() {
                             // case themselves.
                             + (room ? `?room=${room.toLowerCase()}` : '')
                 });
+
+        dispatch(_connectionWillConnect(connection));
 
         connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_DISCONNECTED,
@@ -115,27 +118,35 @@ export function connect() {
 export function disconnect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        const conference = state['features/base/conference'].conference;
-        const connection = state['features/base/connection'].connection;
+        const { conference, joining } = state['features/base/conference'];
+        const { connection, connecting } = state['features/base/connection'];
 
+        // The conference we are joining or have already joined.
+        const _conference = joining || conference;
+
+        // The connection we are connecting or have already connected.
+        const _connection = connecting || connection;
+
+        // Promise which completes when the conference has been left and the
+        // connection has been disconnected.
         let promise;
 
         // Leave the conference.
-        if (conference) {
+        if (_conference) {
             // In a fashion similar to JitsiConference's CONFERENCE_LEFT event
             // (and the respective Redux action) which is fired after the
             // conference has been left, notify the application about the
             // intention to leave the conference.
-            dispatch(conferenceWillLeave(conference));
+            dispatch(conferenceWillLeave(_conference));
 
-            promise = conference.leave();
+            promise = _conference.leave();
         } else {
             promise = Promise.resolve();
         }
 
         // Disconnect the connection.
-        if (connection) {
-            promise = promise.then(() => connection.disconnect());
+        if (_connection) {
+            promise = promise.then(() => _disconnectConnection(_connection));
         }
 
         return promise;
@@ -176,6 +187,54 @@ function _connectionDisconnected(connection, message: string) {
         connection,
         message
     };
+}
+
+/**
+ * Create an action for when a connection will connect.
+ *
+ * @param {JitsiConnection} connection - The JitsiConnection which will connect.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_WILL_CONNECT,
+ *     connection: JitsiConnection
+ * }}
+ */
+function _connectionWillConnect(connection) {
+    return {
+        type: CONNECTION_WILL_CONNECT,
+        connection
+    };
+}
+
+/**
+ * Disconnects the given connection and waits for it to finish. The returned
+ * promise will be resolved once the connection is fully disconnected.
+ *
+ * @param {JitsiConnection} connection - The JitsiConnection which will be
+ * disconnected.
+ * @private
+ * @returns {Promise}
+ */
+function _disconnectConnection(connection) {
+    return new Promise(resolve => {
+        const listener = () => {
+            connection.removeEventListener(
+                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                listener);
+            connection.removeEventListener(
+                JitsiConnectionEvents.CONNECTION_FAILED,
+                listener);
+            resolve();
+        };
+
+        connection.addEventListener(
+            JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+            listener);
+        connection.addEventListener(
+            JitsiConnectionEvents.CONNECTION_FAILED,
+            listener);
+        connection.disconnect();
+    });
 }
 
 /**

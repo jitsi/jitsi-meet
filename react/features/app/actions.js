@@ -45,11 +45,6 @@ export function appNavigate(uri) {
                     .domain;
         }
 
-        // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
-        // currently in a conference and ask her if she wants to close the
-        // current conference and start a new one with the new room name or
-        // domain.
-
         if (typeof domain === 'undefined' || oldDomain === domain) {
             dispatchSetRoomAndNavigate();
         } else if (oldDomain !== domain) {

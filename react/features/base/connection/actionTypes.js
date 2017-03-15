@@ -16,6 +16,11 @@ export const CONNECTION_ESTABLISHED = Symbol('CONNECTION_ESTABLISHED');
 export const CONNECTION_FAILED = Symbol('CONNECTION_FAILED');
 
 /**
+ * Action type to signal a connection will connect.
+ */
+export const CONNECTION_WILL_CONNECT = Symbol('CONNECTION_WILL_CONNECT');
+
+/**
  * Action to signal to change connection domain.
  *
  * {
