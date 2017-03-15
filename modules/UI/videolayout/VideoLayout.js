@@ -857,22 +857,22 @@ var VideoLayout = {
      * @param object
      */
     updateLocalConnectionStats (percent, object) {
-        const { framerates, resolutions } = object;
+        const { framerate, resolution } = object;
 
-        object.resolution = resolutions[APP.conference.getMyUserId()];
-        object.framerate = framerates[APP.conference.getMyUserId()];
+        object.resolution = resolution[APP.conference.getMyUserId()];
+        object.framerate = framerate[APP.conference.getMyUserId()];
         localVideoThumbnail.updateStatsIndicator(percent, object);
 
-        Object.keys(resolutions).forEach(function (id) {
+        Object.keys(resolution).forEach(function (id) {
             if (APP.conference.isLocalId(id)) {
                 return;
             }
 
-            let resolution = resolutions[id];
+            let resolutionValue = resolution[id];
             let remoteVideo = remoteVideos[id];
 
-            if (resolution && remoteVideo) {
-                remoteVideo.updateResolution(resolution);
+            if (resolutionValue && remoteVideo) {
+                remoteVideo.updateResolution(resolutionValue);
             }
         });
     },
