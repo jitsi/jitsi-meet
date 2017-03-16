@@ -1,4 +1,5 @@
-/* global $, APP, config */
+/* global $, APP, config, JitsiMeetJS */
+const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 /**
  * Build html for "password required" dialog.
@@ -127,14 +128,30 @@ function LoginDialog(successCallback, cancelCallback) {
     /**
      * Displays error message in 'finished' state which allows either to cancel
      * or retry.
-     * @param messageKey the key to the message to be displayed.
+     * @param error the key to the error to be displayed.
      * @param options the options to the error message (optional)
      */
-    this.displayError = function (messageKey, options) {
+    this.displayError = function (error, options) {
 
         let finishedState = connDialog.getState('finished');
 
         let errorMessageElem = finishedState.find('#errorMessage');
+
+        let messageKey;
+        if (error === ConnectionErrors.PASSWORD_REQUIRED) {
+            // this is a password required error, as login window was already
+            // open once, this means username or password is wrong
+            messageKey = 'dialog.incorrectPassword';
+        }
+        else {
+            messageKey = 'dialog.connectErrorWithMsg';
+
+            if (!options)
+                options = {};
+
+            options.msg = error;
+        }
+
         errorMessageElem.attr("data-i18n", messageKey);
 
         APP.translation.translateElement($(errorMessageElem), options);
