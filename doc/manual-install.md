@@ -6,6 +6,34 @@ change references to that to match your host, and generate some passwords for
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
+## Network description
+
+This how the network look like:
+```
+                   +                           +
+                   |                           |
+                   |                           |
+                   v                           |
+                  443                          |
+               +-------+                       |
+               |       |                       |
+               | NginX |                       |
+               |       |                       |
+               +--+-+--+                       |
+                  | |                          |
++------------+    | |    +--------------+      |
+|            |    | |    |              |      |
+| jitsi-meet +<---+ +--->+ prosody/xmpp |      |
+|            |files 5280 |              |      |
++------------+           +--------------+      v
+                     5222,5347^    ^5347      4443
+                +--------+    |    |    +-------------+
+                |        |    |    |    |             |
+                | jicofo +----^    ^----+ videobridge |
+                |        |              |             |
+                +--------+              +-------------+
+```
+
 ## Install prosody
 ```sh
 apt-get install prosody
@@ -76,7 +104,9 @@ Add a new file `jitsi.example.com` in `/etc/nginx/sites-available` (see also the
 server_names_hash_bucket_size 64;
 
 server {
-    listen 80;
+    listen 443;
+    # tls configuration that is not covered in this guide
+    # we recommend the use of https://certbot.eff.org/
     server_name jitsi.example.com;
     # set the root
     root /srv/jitsi.example.com;
