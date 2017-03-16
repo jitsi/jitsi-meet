@@ -81,7 +81,7 @@
         "terms": "Terms"
     },
     "startupoverlay": {
-        "policyText": "&nbsp;",
+        "policyText": " ",
         "title": "__app__ needs to use your microphone and camera."
     },
     "suspendedoverlay": {
