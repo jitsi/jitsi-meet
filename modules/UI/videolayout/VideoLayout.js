@@ -875,6 +875,19 @@ var VideoLayout = {
                 remoteVideo.updateResolution(resolutionValue);
             }
         });
+
+        Object.keys(framerate).forEach(function (id) {
+            if (APP.conference.isLocalId(id)) {
+                return;
+            }
+
+            const framerateValue = framerate[id];
+            const remoteVideo = remoteVideos[id];
+
+            if (framerateValue && remoteVideo) {
+                remoteVideo.updateFramerate(framerateValue);
+            }
+        });
     },
 
     /**
