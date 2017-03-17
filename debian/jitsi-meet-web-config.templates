@@ -1,9 +1,10 @@
 Template: jitsi-meet/cert-choice
 Type: select
-__Choices: Self-signed certificate will be generated, A certificate is available and the files are uploaded on the server
+__Choices: Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate), I want to use my own certificate
 _Description: SSL certificate for the Jitsi Meet instance
  Jitsi Meet is best to be set up with an SSL certificate.
  Having no certificate, a self-signed one will be generated.
+ By choosing self-signed you will later have a chance to install Let’s Encrypt certificates.
  Having a certificate signed by a recognised CA, it can be uploaded on the server
  and point its location. The default filenames will be /etc/ssl/--domain.name--.key
  for the key and /etc/ssl/--domain.name--.crt for the certificate.

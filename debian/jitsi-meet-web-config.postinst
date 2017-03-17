@@ -65,7 +65,7 @@ case "$1" in
             # SSL for nginx
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
-            UPLOADED_CERT_CHOICE="A certificate is available and the files are uploaded on the server"
+            UPLOADED_CERT_CHOICE="I want to use my own certificate"
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
                 db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
@@ -222,6 +222,13 @@ case "$1" in
 
             invoke-rc.d apache2 reload
         fi
+
+        echo "----------------"
+        echo ""
+        echo "You can now switch to a Let’s Encrypt certificate. To do so, execute:"
+        echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh"
+        echo ""
+        echo "----------------"
 
         # and we're done with debconf
         db_stop

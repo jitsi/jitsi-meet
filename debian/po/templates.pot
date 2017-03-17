@@ -20,13 +20,13 @@ msgstr ""
 #. Type: select
 #. Choices
 #: ../jitsi-meet-web-config.templates:1001
-msgid "Self-signed certificate will be generated"
+msgid "Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)"
 msgstr ""
 
 #. Type: select
 #. Choices
 #: ../jitsi-meet-web-config.templates:1001
-msgid "A certificate is available and the files are uploaded on the server"
+msgid "I want to use my own certificate"
 msgstr ""
 
 #. Type: select
