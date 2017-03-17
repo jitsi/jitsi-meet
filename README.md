@@ -86,6 +86,11 @@ npm unlink lib-jitsi-meet
 npm install
 ```
 
+## Contributing
+
+If you are looking to contribute to Jitsi Meet, first of all, thank you! Please
+see our [guidelines for contributing](CONTRIBUTING.md).
+
 ## Embedding in external applications
 
 Jitsi Meet provides a very flexible way of embedding it in external applications by using the [Jitsi Meet API](doc/api.md).
