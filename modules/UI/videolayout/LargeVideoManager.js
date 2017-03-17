@@ -129,7 +129,8 @@ export default class LargeVideoManager {
                 = APP.conference.isParticipantConnectionActive(id) === false;
             const isInLastN
                 = APP.conference.isLocalId(id) || APP.conference.isInLastN(id);
-            if ( (isHavingConnectivityIssues || !isInLastN)
+            if ( videoType === VIDEO_CONTAINER_TYPE
+                    && (isHavingConnectivityIssues || !isInLastN)
                     && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
             }
