@@ -410,6 +410,15 @@ ConnectionIndicator.prototype.updateResolution = function (resolution) {
 };
 
 /**
+ * Updates the framerate
+ * @param framerate the new resolution
+ */
+ConnectionIndicator.prototype.updateFramerate = function (framerate) {
+    this.framerate = framerate;
+    this.updatePopoverData();
+};
+
+/**
  * Updates the content of the popover if its visible
  * @param force to work even if popover is not visible
  */

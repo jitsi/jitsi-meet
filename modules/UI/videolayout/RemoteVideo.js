@@ -744,6 +744,16 @@ RemoteVideo.prototype.updateResolution = function (resolution) {
     }
 };
 
+/**
+ * Updates this video framerate indication.
+ * @param framerate the value to update
+ */
+RemoteVideo.prototype.updateFramerate = function (framerate) {
+    if (this.connectionIndicator) {
+        this.connectionIndicator.updateFramerate(framerate);
+    }
+};
+
 RemoteVideo.prototype.removeConnectionIndicator = function () {
     if (this.connectionIndicator)
         this.connectionIndicator.remove();
