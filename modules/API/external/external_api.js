@@ -93,10 +93,12 @@ function changeParticipantNumber(APIInstance, number) {
  * @param interfaceConfigOverwrite object containing configuration options
  * defined in interface_config.js to be overridden.
  * @param noSsl if the value is true https won't be used
+ * @param {string} [jwt] the JWT token if needed by jitsi-meet for
+ * authentication.
  * @constructor
  */
 function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
-    configOverwrite, interfaceConfigOverwrite, noSsl) {
+    configOverwrite, interfaceConfigOverwrite, noSsl, jwt) {
     if (!width || width < MIN_WIDTH)
         width = MIN_WIDTH;
     if (!height || height < MIN_HEIGHT)
@@ -121,6 +123,11 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
     this.url = (noSsl) ? "http" : "https" +"://" + domain + "/";
     if(room_name)
         this.url += room_name;
+
+    if (jwt) {
+        this.url += '?jwt=' + jwt;
+    }
+
     this.url += "#jitsi_meet_external_api_id=" + id;
 
     var key;
