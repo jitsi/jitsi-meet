@@ -566,8 +566,7 @@ RemoteVideo.prototype.updateView = function () {
  */
 RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
 
-    let isActive = this.isConnectionActive()
-        || APP.conference.isInLastN(this.id);
+    let isActive = this.isConnectionActive();
 
     if (isActive === null) {
         // Cancel processing at this point - no update
