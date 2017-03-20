@@ -252,8 +252,8 @@ function maybeRedirectToWelcomePage(options) {
         // save whether current user is guest or not, before navigating
         // to close page
         window.sessionStorage.setItem('guest', APP.tokenData.isGuest);
-        assignWindowLocationPathname(
-                options.feedbackSubmitted ? "close.html" : "close2.html");
+        assignWindowLocationPathname('static/'
+                + (options.feedbackSubmitted ? "close.html" : "close2.html"));
         return;
     }
 
@@ -402,7 +402,7 @@ class ConferenceConnector {
         case ConferenceErrors.NOT_ALLOWED_ERROR:
             {
                 // let's show some auth not allowed page
-                assignWindowLocationPathname('authError.html');
+                assignWindowLocationPathname('static/authError.html');
             }
             break;
 

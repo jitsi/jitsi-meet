@@ -29,6 +29,8 @@
     Allow from all
   </Directory>
 
+  ErrorDocument 404 /static/404.html
+
   Alias "/config.js" "/etc/jitsi/meet/jitsi-meet.example.com-config.js"
   <Location /config.js>
     Require all granted
