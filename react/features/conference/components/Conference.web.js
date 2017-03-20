@@ -8,22 +8,11 @@ import { DialogContainer } from '../../base/dialog';
 import { Watermarks } from '../../base/react';
 import { FeedbackButton } from '../../feedback';
 import { OverlayContainer } from '../../overlay';
+import { Notice } from '../../toolbar';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
 declare var APP: Object;
-
-/**
- * For legacy reasons, inline style for display none.
- *
- * @private
- * @type {{
- *     display: string
- * }}
- */
-const _DISPLAY_NONE_STYLE = {
-    display: 'none'
-};
 
 /**
  * The conference page of the Web application.
@@ -78,14 +67,8 @@ class Conference extends Component {
         return (
             <div id = 'videoconference_page'>
                 <div id = 'mainToolbarContainer'>
-                    <div
-                        className = 'notice'
-                        id = 'notice'
-                        style = { _DISPLAY_NONE_STYLE }>
-                        <span
-                            className = 'noticeText'
-                            id = 'noticeText' />
-                    </div>
+                    <Notice />
+
                     <div
                         className = 'toolbar'
                         id = 'mainToolbar' />

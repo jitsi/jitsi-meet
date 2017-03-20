@@ -315,12 +315,6 @@ UI.start = function () {
         // Initialise the recording module.
         if (config.enableRecording)
             Recording.init(eventEmitter, config.recordingType);
-
-        // Display notice message at the top of the toolbar
-        if (config.noticeMessage) {
-            $('#noticeText').text(config.noticeMessage);
-            UIUtil.setVisible('notice', true);
-        }
     } else {
         $("body").addClass("filmstrip-only");
         UIUtil.setVisible('mainToolbarContainer', false);
