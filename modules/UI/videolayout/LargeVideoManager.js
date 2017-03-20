@@ -127,10 +127,9 @@ export default class LargeVideoManager {
             // the video was not rendered, before the connection has failed.
             const isHavingConnectivityIssues
                 = APP.conference.isParticipantConnectionActive(id) === false;
-            const isInLastN
-                = APP.conference.isLocalId(id) || APP.conference.isInLastN(id);
+
             if ( videoType === VIDEO_CONTAINER_TYPE
-                    && (isHavingConnectivityIssues || !isInLastN)
+                    && isHavingConnectivityIssues
                     && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
             }
@@ -159,12 +158,12 @@ export default class LargeVideoManager {
             // Make sure no notification about remote failure is shown as
             // its UI conflicts with the one for local connection interrupted.
             let isConnected = APP.conference.isConnectionInterrupted()
-                                || (!isHavingConnectivityIssues && isInLastN);
+                                || !isHavingConnectivityIssues;
 
             this.updateParticipantConnStatusIndication(
                     id,
                     isConnected,
-                    (isInLastN && isHavingConnectivityIssues)
+                    (isHavingConnectivityIssues)
                         ? "connection.USER_CONNECTION_INTERRUPTED"
                         : "connection.LOW_BANDWIDTH");
 
@@ -341,7 +340,7 @@ export default class LargeVideoManager {
      */
     showRemoteConnectionMessage (show) {
         if (typeof show !== 'boolean') {
-            show = APP.conference.isParticipantConnectionActive(this.id);
+            show = !APP.conference.isParticipantConnectionActive(this.id);
         }
 
         if (show) {
@@ -467,7 +466,7 @@ export default class LargeVideoManager {
                 // "avatar" and "video connection" can not be displayed both
                 // at the same time, but the latter is of higher priority and it
                 // will hide the avatar one if will be displayed.
-                this.showRemoteConnectionMessage(/* fet the current state */);
+                this.showRemoteConnectionMessage(/* fetch the current state */);
                 this.showLocalConnectionMessage(/* fetch the current state */);
             }
         });
