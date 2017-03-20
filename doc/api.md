@@ -40,6 +40,14 @@ var interfaceConfigOverwrite = {filmStripOnly: true};
 var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite);
 ```
 
+You can also pass jwt token to Jitsi Meet:
+
+ ```javascript
+ var jwt = "<jwt_token>";
+ var noSsl = false;
+ var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite, noSsl, jwt);
+ ```
+
 ## Controlling the embedded Jitsi Meet Conference
 
 You can control the embedded Jitsi Meet conference using the `JitsiMeetExternalAPI` object by using `executeCommand`:
