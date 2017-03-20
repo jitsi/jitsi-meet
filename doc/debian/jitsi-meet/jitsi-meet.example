@@ -20,7 +20,7 @@ server {
 
     root /usr/share/jitsi-meet;
     index index.html index.htm;
-    error_page 404 /404.html;
+    error_page 404 /static/404.html;
 
     location /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
