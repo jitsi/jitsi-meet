@@ -564,8 +564,7 @@ UI.updateUserRole = user => {
     } else {
         messageHandler.notify(
             '', 'notify.somebody',
-            'connected', 'notify.grantedToUnknown', {}
-        );
+            'connected', 'notify.grantedToUnknown');
     }
 };
 
