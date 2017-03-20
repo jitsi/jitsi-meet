@@ -187,7 +187,7 @@ export default class LargeVideoManager {
      * @param {string} id the id of remote participant(MUC nickname)
      * @param {boolean} isConnected true if the connection is active or false
      * when the user is having connectivity issues.
-     * @param {string} message key
+     * @param {string} messageKey the i18n key of the message
      *
      * @private
      */
