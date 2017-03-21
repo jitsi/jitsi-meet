@@ -460,12 +460,12 @@ RemoteVideo.prototype.setMutedView = function(isMuted) {
  * @private
  */
 RemoteVideo.prototype._figureOutMutedWhileDisconnected
-= function(isDisconnected) {
-    if (isDisconnected && this.isVideoMuted) {
-        this.mutedWhileDisconnected = true;
-    } else if (!isDisconnected && !this.isVideoMuted) {
-        this.mutedWhileDisconnected = false;
-    }
+    = function(isDisconnected) {
+        if (isDisconnected && this.isVideoMuted) {
+            this.mutedWhileDisconnected = true;
+        } else if (!isDisconnected && !this.isVideoMuted) {
+            this.mutedWhileDisconnected = false;
+        }
 };
 
 /**
@@ -554,8 +554,7 @@ RemoteVideo.prototype.isVideoPlayable = function () {
  */
 RemoteVideo.prototype.updateView = function () {
 
-    this.updateConnectionStatusIndicator(
-        null /* will obtain the status from 'conference' */);
+    this.updateConnectionStatusIndicator();
 
     // This must be called after 'updateConnectionStatusIndicator' because it
     // affects the display mode by modifying 'mutedWhileDisconnected' flag
@@ -564,19 +563,13 @@ RemoteVideo.prototype.updateView = function () {
 
 /**
  * Updates the UI to reflect user's connectivity status.
- * @param isActive {boolean|null} 'true' if user's connection is active or
- * 'false' when the use is having some connectivity issues and a warning
- * should be displayed. When 'null' is passed then the current value will be
- * obtained from the conference instance.
  */
-RemoteVideo.prototype.updateConnectionStatusIndicator = function (isActive) {
-    // Check for initial value if 'isActive' is not defined
-    if (typeof isActive !== "boolean") {
-        isActive = this.isConnectionActive();
-        if (isActive === null) {
-            // Cancel processing at this point - no update
-            return;
-        }
+RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
+    const isActive = this.isConnectionActive();
+
+    if (isActive === null) {
+        // Cancel processing at this point - no update
+        return;
     }
 
     logger.debug(this.id + " thumbnail is connection active ? " + isActive);
@@ -698,44 +691,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     if (!isVideo) {
         this._audioStreamElement = streamElement;
     }
-};
-
-/**
- * Show/hide peer container for the given id.
- */
-RemoteVideo.prototype.showPeerContainer = function (state) {
-    if (!this.container)
-        return;
-
-    var isHide = state === 'hide';
-    var resizeThumbnails = false;
-
-    if (!isHide) {
-        if (!$(this.container).is(':visible')) {
-            resizeThumbnails = true;
-            $(this.container).show();
-        }
-        // Call updateView, so that we'll figure out if avatar
-        // should be displayed based on video muted status and whether or not
-        // it's in the lastN set
-        this.updateView();
-    }
-    else if ($(this.container).is(':visible') && isHide)
-    {
-        resizeThumbnails = true;
-        $(this.container).hide();
-        if(this.connectionIndicator)
-            this.connectionIndicator.hide();
-    }
-
-    if (resizeThumbnails) {
-        this.VideoLayout.resizeThumbnails();
-    }
-
-    // We want to be able to pin a participant from the contact list, even
-    // if he's not in the lastN set!
-    // ContactList.setClickable(id, !isHide);
-
 };
 
 RemoteVideo.prototype.updateResolution = function (resolution) {

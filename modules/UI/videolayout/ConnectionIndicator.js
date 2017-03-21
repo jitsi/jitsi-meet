@@ -348,17 +348,17 @@ ConnectionIndicator.prototype.remove = function() {
  * the user is having connectivity issues.
  */
 ConnectionIndicator.prototype.updateConnectionStatusIndicator
-= function (isActive) {
-    this.isConnectionActive = isActive;
-    if (this.isConnectionActive) {
-        $(this.interruptedIndicator).hide();
-        $(this.emptyIcon).show();
-        $(this.fullIcon).show();
-    } else {
-        $(this.interruptedIndicator).show();
-        $(this.emptyIcon).hide();
-        $(this.fullIcon).hide();
-    }
+    = function (isActive) {
+        this.isConnectionActive = isActive;
+        if (this.isConnectionActive) {
+            $(this.interruptedIndicator).hide();
+            $(this.emptyIcon).show();
+            $(this.fullIcon).show();
+        } else {
+            $(this.interruptedIndicator).show();
+            $(this.emptyIcon).hide();
+            $(this.fullIcon).hide();
+        }
 };
 
 /**

@@ -1,4 +1,4 @@
-/* global config, APP, $, interfaceConfig */
+/* global APP, $, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import FilmStrip from "./FilmStrip";
@@ -14,10 +14,6 @@ var remoteVideos = {};
 var localVideoThumbnail = null;
 
 var currentDominantSpeaker = null;
-var localLastNCount = config.channelLastN;
-var localLastNSet = [];
-var lastNEndpointsCache = [];
-var lastNPickupId = null;
 
 var eventEmitter = null;
 
@@ -60,8 +56,6 @@ function onContactClicked (id) {
             // let the bridge adjust its lastN set for myjid and store
             // the pinned user in the lastNPickupId variable to be
             // picked up later by the lastN changed event handler.
-
-            lastNPickupId = id;
             eventEmitter.emit(UIEvents.PINNED_ENDPOINT, remoteVideo, true);
         }
     }
@@ -114,8 +108,6 @@ var VideoLayout = {
         // the local video thumb maybe one pixel
         this.resizeThumbnails(false, true);
 
-        this.lastNCount = config.channelLastN;
-
         this.registerListeners();
     },
 
@@ -160,14 +152,6 @@ var VideoLayout = {
 
         if (largeVideo && id === largeVideo.id)
             largeVideo.updateLargeVideoAudioLevel(lvl);
-    },
-
-    isInLastN (resource) {
-        return this.lastNCount < 0 || // lastN is disabled
-             // lastNEndpoints cache not built yet
-            (this.lastNCount > 0 && !lastNEndpointsCache.length) ||
-            (lastNEndpointsCache &&
-                lastNEndpointsCache.indexOf(resource) !== -1);
     },
 
     changeLocalAudio (stream) {
@@ -457,13 +441,8 @@ var VideoLayout = {
             remoteVideo.setVideoType(VIDEO_CONTAINER_TYPE);
         }
 
-        // In case this is not currently in the last n we don't show it.
-        if (localLastNCount && localLastNCount > 0 &&
-            FilmStrip.getThumbs().remoteThumbs.length >= localLastNCount + 2) {
-            remoteVideo.showPeerContainer('hide');
-        } else {
-            VideoLayout.resizeThumbnails(false, true);
-        }
+        VideoLayout.resizeThumbnails(false, true);
+
         // Initialize the view
         remoteVideo.updateView();
     },
@@ -713,142 +692,22 @@ var VideoLayout = {
      * endpoints
      */
     onLastNEndpointsChanged (lastNEndpoints, endpointsEnteringLastN) {
-        if (this.lastNCount !== lastNEndpoints.length)
-            this.lastNCount = lastNEndpoints.length;
 
-        lastNEndpointsCache = lastNEndpoints;
+        Object.keys(remoteVideos).forEach(
+            id => {
+                if (lastNEndpoints.length > 0
+                    && lastNEndpoints.indexOf(id) < 0
+                    || endpointsEnteringLastN.length > 0
+                        && endpointsEnteringLastN.indexOf(id) > 0) {
 
-        // Say A, B, C, D, E, and F are in a conference and LastN = 3.
-        //
-        // If LastN drops to, say, 2, because of adaptivity, then E should see
-        // thumbnails for A, B and C. A and B are in E's server side LastN set,
-        // so E sees them. C is only in E's local LastN set.
-        //
-        // If F starts talking and LastN = 3, then E should see thumbnails for
-        // F, A, B. B gets "ejected" from E's server side LastN set, but it
-        // enters E's local LastN ejecting C.
-
-        // Increase the local LastN set size, if necessary.
-        if (this.lastNCount > localLastNCount) {
-            localLastNCount = this.lastNCount;
-        }
-
-        // Update the local LastN set preserving the order in which the
-        // endpoints appeared in the LastN/local LastN set.
-        var nextLocalLastNSet = lastNEndpoints.slice(0);
-        for (var i = 0; i < localLastNSet.length; i++) {
-            if (nextLocalLastNSet.length >= localLastNCount) {
-                break;
-            }
-
-            var resourceJid = localLastNSet[i];
-            if (nextLocalLastNSet.indexOf(resourceJid) === -1) {
-                nextLocalLastNSet.push(resourceJid);
-            }
-        }
-
-        localLastNSet = nextLocalLastNSet;
-        var updateLargeVideo = false;
-
-        // Handle LastN/local LastN changes.
-        FilmStrip.getThumbs().remoteThumbs.each(( index, element ) => {
-            var resourceJid = getPeerContainerResourceId(element);
-            var smallVideo = remoteVideos[resourceJid];
-
-            // We do not want to process any logic for our own(local) video
-            // because the local participant is never in the lastN set.
-            // The code of this function might detect that the local participant
-            // has been dropped out of the lastN set and will update the large
-            // video
-            // Detected from avatar tests, where lastN event override
-            // local video pinning
-            if(APP.conference.isLocalId(resourceJid))
-                return;
-
-            var isReceived = true;
-            if (resourceJid &&
-                lastNEndpoints.indexOf(resourceJid) < 0 &&
-                localLastNSet.indexOf(resourceJid) < 0) {
-                logger.log("Remove from last N", resourceJid);
-                if (smallVideo)
-                    smallVideo.showPeerContainer('hide');
-                else if (!APP.conference.isLocalId(resourceJid))
-                    logger.error("No remote video for: " + resourceJid);
-                isReceived = false;
-            } else if (resourceJid &&
-                //TOFIX: smallVideo may be undefined
-                smallVideo.isVisible() &&
-                lastNEndpoints.indexOf(resourceJid) < 0 &&
-                localLastNSet.indexOf(resourceJid) >= 0) {
-
-                // TOFIX: if we're here we already know that the smallVideo
-                // exists. Look at the previous FIX above.
-                if (smallVideo)
-                    smallVideo.showPeerContainer('avatar');
-                else if (!APP.conference.isLocalId(resourceJid))
-                    logger.error("No remote video for: " + resourceJid);
-                isReceived = false;
-            }
-
-            if (!isReceived) {
-                // resourceJid has dropped out of the server side lastN set, so
-                // it is no longer being received. If resourceJid was being
-                // displayed in the large video we have to switch to another
-                // user.
-                if (!updateLargeVideo &&
-                    this.isCurrentlyOnLarge(resourceJid)) {
-                    updateLargeVideo = true;
-                }
-            }
-        });
-
-        if (!endpointsEnteringLastN || endpointsEnteringLastN.length < 0)
-            endpointsEnteringLastN = lastNEndpoints;
-
-        if (endpointsEnteringLastN && endpointsEnteringLastN.length > 0) {
-            endpointsEnteringLastN.forEach(function (resourceJid) {
-
-                var remoteVideo = remoteVideos[resourceJid];
-                if (remoteVideo)
-                    remoteVideo.showPeerContainer('show');
-
-                if (!remoteVideo.isVisible()) {
-                    logger.log("Add to last N", resourceJid);
-
-                    remoteVideo.addRemoteStreamElement(remoteVideo.videoStream);
-
-                    if (lastNPickupId == resourceJid) {
-                        // Clean up the lastN pickup id.
-                        lastNPickupId = null;
-
-                        VideoLayout.handleVideoThumbClicked(resourceJid);
-
-                        updateLargeVideo = false;
+                    let remoteVideo = (id) ? remoteVideos[id] : null;
+                    if (remoteVideo) {
+                        remoteVideo.updateView();
+                        if (remoteVideo.isCurrentlyOnLargeVideo())
+                            this.updateLargeVideo(id);
                     }
-                    remoteVideo.waitForPlayback(
-                        remoteVideo.selectVideoElement()[0],
-                        remoteVideo.videoStream);
                 }
             });
-        }
-
-        // The endpoint that was being shown in the large video has dropped out
-        // of the lastN set and there was no lastN pickup jid. We need to update
-        // the large video now.
-
-        if (updateLargeVideo) {
-            var resource;
-            // Find out which endpoint to show in the large video.
-            for (i = 0; i < lastNEndpoints.length; i++) {
-                resource = lastNEndpoints[i];
-                if (!resource || APP.conference.isLocalId(resource))
-                    continue;
-
-                // videoSrcToSsrc needs to be update for this call to succeed.
-                this.updateLargeVideo(resource);
-                break;
-            }
-        }
     },
 
     /**
