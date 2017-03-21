@@ -687,27 +687,34 @@ var VideoLayout = {
     /**
      * On last N change event.
      *
-     * @param lastNEndpoints the list of last N endpoints
+     * @param endpointsLeavingLastN the list currently leaving last N
+     * endpoints
      * @param endpointsEnteringLastN the list currently entering last N
      * endpoints
      */
-    onLastNEndpointsChanged (lastNEndpoints, endpointsEnteringLastN) {
+    onLastNEndpointsChanged (endpointsLeavingLastN, endpointsEnteringLastN) {
+        if (endpointsLeavingLastN) {
+            endpointsLeavingLastN.forEach(this._updateRemoteVideo, this);
+        }
 
-        Object.keys(remoteVideos).forEach(
-            id => {
-                if (lastNEndpoints.length > 0
-                    && lastNEndpoints.indexOf(id) < 0
-                    || endpointsEnteringLastN.length > 0
-                        && endpointsEnteringLastN.indexOf(id) > 0) {
+        if (endpointsEnteringLastN) {
+            endpointsEnteringLastN.forEach(this._updateRemoteVideo, this);
+        }
+    },
 
-                    let remoteVideo = (id) ? remoteVideos[id] : null;
-                    if (remoteVideo) {
-                        remoteVideo.updateView();
-                        if (remoteVideo.isCurrentlyOnLargeVideo())
-                            this.updateLargeVideo(id);
-                    }
-                }
-            });
+    /**
+     * Updates remote video by id if it exists.
+     * @param {string} id of the remote video
+     * @private
+     */
+    _updateRemoteVideo(id) {
+        const remoteVideo = remoteVideos[id];
+        if (remoteVideo) {
+            remoteVideo.updateView();
+            if (remoteVideo.isCurrentlyOnLargeVideo()) {
+                this.updateLargeVideo(id);
+            }
+        }
     },
 
     /**
