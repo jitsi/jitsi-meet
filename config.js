@@ -3,10 +3,10 @@
 var config = { // eslint-disable-line no-unused-vars
 //    configLocation: './config.json', // see ./modules/HttpConfigFetch.js
     hosts: {
-        domain: 'jitsi-meet.example.com',
+        domain: window.location.hostname,
         //anonymousdomain: 'guest.example.com',
         //authdomain: 'jitsi-meet.example.com',  // defaults to <domain>
-        muc: 'conference.jitsi-meet.example.com', // FIXME: use XEP-0030
+        muc: 'conference.' + window.location.hostname, // FIXME: use XEP-0030
         //jirecon: 'jirecon.jitsi-meet.example.com',
         //call_control: 'callcontrol.jitsi-meet.example.com',
         //focus: 'focus.jitsi-meet.example.com', // defaults to 'focus.jitsi-meet.example.com'
@@ -15,7 +15,7 @@ var config = { // eslint-disable-line no-unused-vars
 //  useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server
 //  useIPv6: true, // ipv6 support. use at your own risk
     useNicks: false,
-    bosh: '//jitsi-meet.example.com/http-bind', // FIXME: use xep-0156 for that
+    bosh: '//' + window.location.hostname + '/http-bind', // FIXME: use xep-0156 for that
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number

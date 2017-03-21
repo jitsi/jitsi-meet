@@ -79,7 +79,7 @@ server {
     listen 80;
     server_name jitsi.example.com;
     # set the root
-    root /srv/jitsi.example.com;
+    root /srv/jitsi;
     index index.html;
     location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
@@ -160,25 +160,9 @@ Checkout and configure Jitsi Meet:
 ```sh
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
-mv jitsi-meet/ jitsi.example.com
+mv jitsi-meet/ jitsi
 npm install
 make
-```
-
-Edit host names in `/srv/jitsi.example.com/config.js` (see also the example config file):
-```
-var config = {
-    hosts: {
-        domain: 'jitsi.example.com',
-        muc: 'conference.jitsi.example.com',
-        bridge: 'jitsi-videobridge.jitsi.example.com',
-        focus: 'focus.jitsi.example.com'
-    },
-    useNicks: false,
-    bosh: '//jitsi.example.com/http-bind', // FIXME: use xep-0156 for that
-    //chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
-    //minChromeExtVersion: '0.1' // Required version of Chrome extension
-};
 ```
 
 Restart nginx to get the new configuration:
