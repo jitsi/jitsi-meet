@@ -1305,8 +1305,9 @@ export default {
         });
 
         room.on(
-            ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids, enteringIds) => {
-                APP.UI.handleLastNEndpoints(ids, enteringIds);
+            ConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
+            (leavingIds, enteringIds) => {
+                APP.UI.handleLastNEndpoints(leavingIds, enteringIds);
         });
 
         room.on(

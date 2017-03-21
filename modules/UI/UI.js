@@ -837,8 +837,8 @@ UI.markDominantSpeaker = function (id) {
     VideoLayout.onDominantSpeakerChanged(id);
 };
 
-UI.handleLastNEndpoints = function (ids, enteringIds) {
-    VideoLayout.onLastNEndpointsChanged(ids, enteringIds);
+UI.handleLastNEndpoints = function (leavingIds, enteringIds) {
+    VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };
 
 /**
