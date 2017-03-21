@@ -1304,16 +1304,6 @@ export default {
             APP.UI.showCustomToolbarPopup('#talkWhileMutedPopup', true, 5000);
         });
 
-/*
-        room.on(ConferenceEvents.IN_LAST_N_CHANGED, (inLastN) => {
-            //FIXME
-            if (config.muteLocalVideoIfNotInLastN) {
-                // TODO mute or unmute if required
-                // mark video on UI
-                // APP.UI.markVideoMuted(true/false);
-            }
-        });
-*/
         room.on(
             ConferenceEvents.LAST_N_ENDPOINTS_CHANGED, (ids, enteringIds) => {
                 APP.UI.handleLastNEndpoints(ids, enteringIds);
