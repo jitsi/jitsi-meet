@@ -173,7 +173,7 @@ invoke-rc.d nginx restart
 ## Running behind NAT
 Jitsi-Videobridge can run behind a NAT, provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000-20000).
 
-The following extra lines need to be added the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
+The following extra lines need to be added to the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
 ```
 org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
@@ -188,7 +188,6 @@ org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 
 # Hold your first conference
 You are now all set and ready to have your first meet by going to http://jitsi.example.com
-
 
 ## Enabling recording
 Currently recording is only supported for linux-64 and macos. To enable it, add
