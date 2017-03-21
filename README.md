@@ -39,6 +39,13 @@ To build the Jitsi Meet application, just type
 make
 ```
 
+## Docker image
+
+Once you followed the previous instructions, just run the following:
+```
+docker build -t jitsi-meet .
+```
+
 ## Working with the library sources (lib-jitsi-meet)
 
 By default the library is build from its git repository sources. The default dependency path in package.json is :
