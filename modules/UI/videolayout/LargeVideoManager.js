@@ -128,7 +128,7 @@ export default class LargeVideoManager {
             const isHavingConnectivityIssues
                 = APP.conference.isParticipantConnectionActive(id) === false;
 
-            if ( videoType === VIDEO_CONTAINER_TYPE
+            if (videoType === VIDEO_CONTAINER_TYPE
                     && isHavingConnectivityIssues
                     && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
@@ -157,7 +157,7 @@ export default class LargeVideoManager {
 
             // Make sure no notification about remote failure is shown as
             // its UI conflicts with the one for local connection interrupted.
-            let isConnected = APP.conference.isConnectionInterrupted()
+            const isConnected = APP.conference.isConnectionInterrupted()
                                 || !isHavingConnectivityIssues;
 
             this.updateParticipantConnStatusIndication(

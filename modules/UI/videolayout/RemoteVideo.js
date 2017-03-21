@@ -565,8 +565,7 @@ RemoteVideo.prototype.updateView = function () {
  * Updates the UI to reflect user's connectivity status.
  */
 RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
-
-    let isActive = this.isConnectionActive();
+    const isActive = this.isConnectionActive();
 
     if (isActive === null) {
         // Cancel processing at this point - no update
