@@ -198,6 +198,9 @@ ConnectionIndicator.prototype.generateText = function () {
                 }
             }
 
+            // All of the transports should be either P2P or JVB
+            const isP2P = this.transport.length ? this.transport[0].p2p : false;
+
             var local_address_key = "connectionindicator.localaddress";
             var remote_address_key = "connectionindicator.remoteaddress";
             var localTransport =
@@ -243,8 +246,13 @@ ConnectionIndicator.prototype.generateText = function () {
                     JSON.stringify({count: data.transportType.length})
                 + "'></span></td>" +
                 "<td>"
-                    + ConnectionIndicator.getStringFromArray(data.transportType)
-                + "</td></tr>";
+                    + ConnectionIndicator.getStringFromArray(data.transportType);
+            // Append (direct) to indicate the P2P type of transport
+            if (isP2P) {
+                transport += "<span data-i18n='connectionindicator.direct'>";
+            }
+            // Close "type" column and end table row
+            transport += "</td></tr>";
 
         }
 
