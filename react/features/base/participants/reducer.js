@@ -112,7 +112,12 @@ function _participant(state, action) {
 
     case PARTICIPANT_UPDATED: {
         const participant = action.participant; // eslint-disable-line no-shadow
-        const { id } = participant;
+        const { local } = participant;
+        let { id } = participant;
+
+        if (!id && local) {
+            id = LOCAL_PARTICIPANT_DEFAULT_ID;
+        }
 
         if (state.id === id) {
             const newState = { ...state };

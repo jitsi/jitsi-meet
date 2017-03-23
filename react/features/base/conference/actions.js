@@ -1,13 +1,11 @@
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import {
-    changeParticipantAvatarID,
-    changeParticipantAvatarURL,
-    changeParticipantEmail,
     dominantSpeakerChanged,
     getLocalParticipant,
     participantJoined,
     participantLeft,
-    participantRoleChanged
+    participantRoleChanged,
+    participantUpdated
 } from '../participants';
 import { trackAdded, trackRemoved } from '../tracks';
 
@@ -78,13 +76,22 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.addCommandListener(
             AVATAR_ID_COMMAND,
-            (data, id) => dispatch(changeParticipantAvatarID(id, data.value)));
+            (data, id) => dispatch(participantUpdated({
+                id,
+                avatarID: data.value
+            })));
     conference.addCommandListener(
             AVATAR_URL_COMMAND,
-            (data, id) => dispatch(changeParticipantAvatarURL(id, data.value)));
+            (data, id) => dispatch(participantUpdated({
+                id,
+                avatarURL: data.value
+            })));
     conference.addCommandListener(
             EMAIL_COMMAND,
-            (data, id) => dispatch(changeParticipantEmail(id, data.value)));
+            (data, id) => dispatch(participantUpdated({
+                id,
+                email: data.value
+            })));
 }
 
 /**

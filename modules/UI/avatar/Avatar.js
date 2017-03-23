@@ -30,7 +30,7 @@ let users = {};
 export default {
     /**
      * Sets prop in users object.
-     * @param id {string} user id
+     * @param id {string} user id or undefined for the local user.
      * @param prop {string} name of the prop
      * @param val {string} value to be set
      */
@@ -38,7 +38,7 @@ export default {
         // FIXME: Fixes the issue with not be able to return avatar for the
         // local user when the conference has been left. Maybe there is beter
         // way to solve it.
-        if(APP.conference.isLocalId(id)) {
+        if(!id || APP.conference.isLocalId(id)) {
             id = "local";
         }
         if(!val || (users[id] && users[id][prop] === val))

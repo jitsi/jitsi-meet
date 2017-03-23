@@ -762,6 +762,9 @@ UI.setUserEmail = function (id, email) {
     Avatar.setUserEmail(id, email);
 
     changeAvatar(id, Avatar.getAvatarUrl(id));
+    if (APP.conference.isLocalId(id)) {
+        Profile.changeEmail(email);
+    }
 };
 
 /**

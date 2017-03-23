@@ -32,12 +32,10 @@ import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
-    changeParticipantAvatarID,
-    changeParticipantAvatarURL,
-    changeParticipantEmail,
     participantJoined,
     participantLeft,
-    participantRoleChanged
+    participantRoleChanged,
+    participantUpdated
 } from './react/features/base/participants';
 import {
     mediaPermissionPromptVisibilityChanged,
@@ -161,6 +159,10 @@ function createInitialLocalTracksAndConnect(roomName) {
  * @param {string} value new value
  */
 function sendData (command, value) {
+    if(!room) {
+        return;
+    }
+
     room.removeCommand(command);
     room.sendCommand(command, {value: value});
 }
@@ -1469,7 +1471,10 @@ export default {
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
-            APP.store.dispatch(changeParticipantEmail(from, data.value));
+            APP.store.dispatch(participantUpdated({
+                id: from,
+                email: data.value
+            }));
             APP.UI.setUserEmail(from, data.value);
         });
 
@@ -1477,14 +1482,20 @@ export default {
             this.commands.defaults.AVATAR_URL,
             (data, from) => {
                 APP.store.dispatch(
-                    changeParticipantAvatarURL(from, data.value));
+                    participantUpdated({
+                        id: from,
+                        avatarURL: data.value
+                    }));
                 APP.UI.setUserAvatarUrl(from, data.value);
         });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
             (data, from) => {
                 APP.store.dispatch(
-                    changeParticipantAvatarID(from, data.value));
+                    participantUpdated({
+                        id: from,
+                        avatarID: data.value
+                    }));
                 APP.UI.setUserAvatarID(from, data.value);
             });
 
@@ -1896,10 +1907,17 @@ export default {
         if (email === APP.settings.getEmail()) {
             return;
         }
-        APP.store.dispatch(changeParticipantEmail(room.myUserId(), email));
+
+        const localId = room ? room.myUserId() : undefined;
+
+        APP.store.dispatch(participantUpdated({
+            id: localId,
+            local: true,
+            email
+        }));
 
         APP.settings.setEmail(email);
-        APP.UI.setUserEmail(room.myUserId(), email);
+        APP.UI.setUserEmail(localId, email);
         sendData(commands.EMAIL, email);
     },
 
@@ -1913,10 +1931,17 @@ export default {
         if (url === APP.settings.getAvatarUrl()) {
             return;
         }
-        APP.store.dispatch(changeParticipantAvatarURL(room.myUserId(), url));
+
+        const localId = room ? room.myUserId() : undefined;
+
+        APP.store.dispatch(participantUpdated({
+            id: localId,
+            local: true,
+            avatarURL: url
+        }));
 
         APP.settings.setAvatarUrl(url);
-        APP.UI.setUserAvatarUrl(room.myUserId(), url);
+        APP.UI.setUserAvatarUrl(localId, url);
         sendData(commands.AVATAR_URL, url);
     },
 
