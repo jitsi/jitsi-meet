@@ -45,7 +45,8 @@ let enabled = false;
 
 function initCommands() {
     commands = {
-        "display-name": APP.UI.inputDisplayNameHandler,
+        "display-name":
+            APP.conference.changeLocalDisplayName.bind(APP.conference),
         "toggle-audio": APP.conference.toggleAudioMuted.bind(APP.conference),
         "toggle-video": APP.conference.toggleVideoMuted.bind(APP.conference),
         "toggle-film-strip": APP.UI.toggleFilmStrip,

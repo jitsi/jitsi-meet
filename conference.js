@@ -348,23 +348,6 @@ function createLocalTracks (options, checkForPermissionPrompt) {
         });
 }
 
-/**
- * Changes the display name for the local user
- * @param nickname {string} the new display name
- */
-function changeLocalDisplayName(nickname = '') {
-    const formattedNickname
-        = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
-
-    if (formattedNickname === APP.settings.getDisplayName()) {
-        return;
-    }
-
-    APP.settings.setDisplayName(formattedNickname);
-    room.setDisplayName(formattedNickname);
-    APP.UI.changeDisplayName(APP.conference.getMyUserId(), formattedNickname);
-}
-
 class ConferenceConnector {
     constructor(resolve, reject, invite) {
         this._resolve = resolve;
@@ -1505,7 +1488,8 @@ export default {
                 APP.UI.setUserAvatarID(from, data.value);
             });
 
-        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, changeLocalDisplayName);
+        APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
+            this.changeLocalDisplayName.bind(this));
 
         APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
             (startAudioMuted, startVideoMuted) => {
@@ -1978,5 +1962,22 @@ export default {
      */
     isInLastN (participantId) {
         return room.isInLastN(participantId);
+    },
+    /**
+     * Changes the display name for the local user
+     * @param nickname {string} the new display name
+     */
+    changeLocalDisplayName(nickname = '') {
+        const formattedNickname
+            = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
+
+        if (formattedNickname === APP.settings.getDisplayName()) {
+            return;
+        }
+
+        APP.settings.setDisplayName(formattedNickname);
+        room.setDisplayName(formattedNickname);
+        APP.UI.changeDisplayName(this.getMyUserId(),
+            formattedNickname);
     }
 };
