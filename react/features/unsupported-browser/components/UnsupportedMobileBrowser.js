@@ -41,7 +41,7 @@ const _URLS = {
  *
  * @class UnsupportedMobileBrowser
  */
-class UnsupportedMobileBrowser extends Component {
+export class UnsupportedMobileBrowser extends Component {
     state: Object;
 
     /**
