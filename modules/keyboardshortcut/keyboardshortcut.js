@@ -35,6 +35,7 @@ function initGlobalShortcuts() {
     KeyboardShortcut._addShortcutToHelp("SPACE","keyboardShortcuts.pushToTalk");
 
     KeyboardShortcut.registerShortcut("T", null, () => {
+        JitsiMeetJS.analytics.sendEvent("shortcut.speakerStats.clicked");
         APP.store.dispatch(toggleDialog(SpeakerStats, {
             conference: APP.conference
         }));
