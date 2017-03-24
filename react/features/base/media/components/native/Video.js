@@ -65,9 +65,9 @@ export class Video extends Component {
     componentDidMount() {
         // RTCView currently does not support media events, so just fire
         // onPlaying callback when <RTCView> is rendered.
-        if (this.props.onPlaying) {
-            this.props.onPlaying();
-        }
+        const { onPlaying } = this.props;
+
+        onPlaying && onPlaying();
     }
 
     /**
@@ -77,7 +77,7 @@ export class Video extends Component {
      * @returns {ReactElement|null}
      */
     render() {
-        const stream = this.props.stream;
+        const { stream } = this.props;
 
         if (stream) {
             const streamURL = stream.toURL();
@@ -91,7 +91,7 @@ export class Video extends Component {
             const style = styles.video;
             const objectFit = (style && style.objectFit) || 'cover';
 
-            const mirror = this.props.mirror;
+            const { mirror } = this.props;
 
             // XXX RTCView may not support support mirroring, even when
             // providing a transform style property (e.g. iOS) . As a
