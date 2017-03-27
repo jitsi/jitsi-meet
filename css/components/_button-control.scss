@@ -57,6 +57,18 @@
         }
     }
 
+    &_overlay {
+        color: $primaryButtonColor;
+        background-color: $overlayButtonBg;
+        border-radius: 2px;
+        border: none;
+
+        &:hover {
+            background-color: $primaryButtonBackground;
+            border: none;
+        }
+    }
+
     &_primary {
         background-color: $primaryButtonBackground;
         border: 1px solid $primaryButtonBackground;

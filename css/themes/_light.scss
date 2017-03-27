@@ -35,10 +35,14 @@ $primaryButtonFontWeight: 400;
 
 $buttonShadowColor: #192d4f;
 
+$overlayButtonBg: #0074E0;
+
 /**
 * Color variables
 **/
 $defaultBackground: #474747;
+$filmStripOnlyOverlayBg: #000;
+$reloadProgressBarBg: #0074E0;
 
 /**
 * Connection indicator
@@ -60,6 +64,10 @@ $dialogTitleFontWeight: 400;
 **/
 $inlayColorBg: lighten($defaultBackground, 20%);
 $inlayBorderColor: lighten($auiDialogContentBg, 10%);
+$inlayIconBg: #000;
+$inlayIconColor: #fff;
+$inlayFilmstripOnlyColor: #474747;
+$inlayFilmstripOnlyBg: #fff;
 
 // Main controls
 $inputBackground: $controlBackground;

@@ -13,4 +13,7 @@
 #reloadProgressBar {
     width: 180px;
     margin: 5px auto;
+    > .aui-progress-indicator-value {
+        background: $reloadProgressBarBg;
+    }
 }
