@@ -6,8 +6,8 @@ import type { Dispatch } from 'redux';
 import {
     APP_WILL_MOUNT,
     APP_WILL_UNMOUNT
-} from '../app';
-import { MiddlewareRegistry } from '../base/redux';
+} from '../../app';
+import { MiddlewareRegistry } from '../../base/redux';
 
 import {
     _setAppStateListener,

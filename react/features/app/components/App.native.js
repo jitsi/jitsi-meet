@@ -2,11 +2,11 @@
 
 import { Linking } from 'react-native';
 
-import '../../audio-mode';
-import '../../background';
 import { Platform } from '../../base/react';
-import '../../full-screen';
-import '../../wake-lock';
+import '../../mobile/audio-mode';
+import '../../mobile/background';
+import '../../mobile/full-screen';
+import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
 

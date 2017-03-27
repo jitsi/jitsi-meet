@@ -1,4 +1,4 @@
-import { Symbol } from '../base/react';
+import { Symbol } from '../../base/react';
 
 /**
  * The type of redux action to set the AppState API change event listener.

@@ -8,9 +8,9 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
-} from '../base/conference';
-import { Platform } from '../base/react';
-import { MiddlewareRegistry } from '../base/redux';
+} from '../../base/conference';
+import { Platform } from '../../base/react';
+import { MiddlewareRegistry } from '../../base/redux';
 
 /**
  * Middleware that captures conference actions and activates or deactivates the

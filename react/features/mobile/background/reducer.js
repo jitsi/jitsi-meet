@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../base/redux';
+import { ReducerRegistry } from '../../base/redux';
 
 import {
     _SET_APP_STATE_LISTENER,

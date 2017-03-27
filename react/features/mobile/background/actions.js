@@ -1,4 +1,4 @@
-import { setVideoMuted } from '../base/media';
+import { setVideoMuted } from '../../base/media';
 
 import {
     _SET_APP_STATE_LISTENER,

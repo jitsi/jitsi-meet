@@ -4,8 +4,8 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
-} from '../base/conference';
-import { MiddlewareRegistry } from '../base/redux';
+} from '../../base/conference';
+import { MiddlewareRegistry } from '../../base/redux';
 
 /**
  * Middleware that captures conference actions and activates or deactivates the

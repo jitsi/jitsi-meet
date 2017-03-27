@@ -2,13 +2,13 @@
 
 import { NativeModules } from 'react-native';
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
-} from '../base/conference';
-import { MiddlewareRegistry } from '../base/redux';
+} from '../../base/conference';
+import { MiddlewareRegistry } from '../../base/redux';
 
 /**
  * Middleware that captures conference actions and sets the correct audio mode
