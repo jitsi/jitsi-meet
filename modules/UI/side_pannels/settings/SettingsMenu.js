@@ -61,6 +61,9 @@ const htmlStr = `
 function initHTML() {
     $(`#${sidePanelsContainerId}`)
         .append(htmlStr);
+    // make sure we translate the panel, as adding it can be after i18n
+    // library had initialized and translated already present html
+    APP.translation.translateElement($(`#${sidePanelsContainerId}`));
 }
 
 /**
@@ -162,6 +165,9 @@ export default {
             selectInput[0].dataset.i18n =
                 `languages:${APP.translation.getCurrentLanguage()}`;
 
+            // translate selectInput, which is the currently selected language
+            // otherwise there will be no selected option
+            APP.translation.translateElement(selectInput);
             APP.translation.translateElement(selectEl);
 
             APP.translation.addLanguageChangedListener(
