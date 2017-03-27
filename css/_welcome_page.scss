@@ -22,7 +22,7 @@
     font-weight: 500;
     font-size: 16px;
     color: #acacac;
-    z-index: 2;
+    z-index: $zindex2;
 }
 
 #disable_welcome:checked + label
@@ -35,7 +35,7 @@
     font-weight: 500;
     font-size: 16px;
     color: #acacac;
-    z-index: 2;
+    z-index: $zindex2;
 }
 
 #enter_room_form {
@@ -74,7 +74,7 @@
         float: left;
         background-color: #FFFFFF;
         position: relative;
-        z-index: 2;
+        z-index: $zindex2;
     }
 
     &__reload {
@@ -83,7 +83,7 @@
         color: #acacac;
         font-size: 1.9em;
         line-height: 55px;
-        z-index: 3;
+        z-index: $zindex3;
         float:  left;
         cursor: pointer;
         text-align: center;
@@ -104,7 +104,7 @@
         outline: none;
         float:left;
         position: relative;
-        z-index: 2;
+        z-index: $zindex2;
     }
 }
 

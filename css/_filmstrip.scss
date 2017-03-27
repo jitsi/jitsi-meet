@@ -17,7 +17,7 @@
         flex-direction: column-reverse;
         flex-wrap: nowrap;
         position: relative;
-        z-index: 1;                     // Set z-index to make element visible
+        z-index: $zindex1;              // Set z-index to make element visible
         width: $hideFilmstripButtonWidth;
 
         button {
@@ -55,7 +55,7 @@
         bottom: 0;
         width:auto;
         border: $thumbnailsBorder solid transparent;
-        z-index: 5;
+        z-index: $filmstripVideosZ;
         transition: bottom 2s;
         overflow: visible !important;
         /*!!!Removes the gap between the local video container and the remote

@@ -104,13 +104,26 @@ $happySoftwareBackground: transparent;
 /**
  * Z-indexes. TODO: Replace this by a function.
  */
-$tooltipsZ: 901;
-$toolbarZ: 900;
-$overlayZ: 902;
-$notificationZ: 1012;
-$ringingZ: 800;
-$dropdownZ: 901;
+$zindex0: 0;
+$zindex1: 1;
+$zindex2: 2;
+$zindex3: 3;
+$filmstripVideosZ: 5;
+$zindex10: 10;
+$reloadZ: 20;
+$poweredByZ: 100;
+$ringingZ: 300;
+$sideToolbarContainerZ: 300;
+$toolbarZ: 400;
+$tooltipsZ: 401;
 $dropdownMaskZ: 900;
+$dropdownZ: 901;
+$overlayZ: 902;
+$jitsipopoverZ: 1010;
+$centeredVideoLabelZ: 1011;
+$notificationZ: 1012;
+$popoverZ: 1015;
+
 
 /**
  * Font Colors

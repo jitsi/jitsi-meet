@@ -33,7 +33,7 @@
 
 #subject {
     position: relative;
-    z-index: 3;
+    z-index: $zindex3;
     width: auto;
     padding: 5px;
     margin-left: 40%;
@@ -106,7 +106,7 @@
     height: 50px;
     cursor: pointer;
     text-align: center;
-    z-index: 1;
+    z-index: $zindex1;
     font-size: $toolbarFontSize !important;
     line-height: 50px !important;
     vertical-align: middle;

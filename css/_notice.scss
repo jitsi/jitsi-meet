@@ -1,6 +1,6 @@
 .notice {
     position: relative;
-    z-index: 3;
+    z-index: $zindex3;
     margin-top: 6px;
 
     &__message {
