@@ -47,8 +47,8 @@ export class App extends AbstractApp {
      * by this app.
      *
      * @inheritdoc
-     * @see https://facebook.github.io/react-native/docs/linking.html
      * @returns {void}
+     * @see https://facebook.github.io/react-native/docs/linking.html
      */
     componentWillMount() {
         super.componentWillMount();
@@ -61,8 +61,8 @@ export class App extends AbstractApp {
      * handled by this app.
      *
      * @inheritdoc
-     * @see https://facebook.github.io/react-native/docs/linking.html
      * @returns {void}
+     * @see https://facebook.github.io/react-native/docs/linking.html
      */
     componentWillUnmount() {
         Linking.removeEventListener('url', this._onLinkingURL);
