@@ -8,25 +8,6 @@ import {
 } from './actionTypes';
 
 /**
- * Signals that the App state has changed (in terms of execution state). The
- * application can be in 3 states: 'active', 'inactive' and 'background'.
- *
- * @param {string} appState - The new App state.
- * @public
- * @returns {{
- *      type: APP_STATE_CHANGED,
- *      appState: string
- * }}
- * @see {@link https://facebook.github.io/react-native/docs/appstate.html}
- */
-export function appStateChanged(appState: string) {
-    return {
-        type: APP_STATE_CHANGED,
-        appState
-    };
-}
-
-/**
  * Sets the listener to be used with React Native's AppState API.
  *
  * @param {Function} listener - Function to be set as the change event listener.
@@ -61,21 +42,29 @@ export function _setBackgroundVideoMuted(muted: boolean) {
         const { audioOnly } = getState()['features/base/conference'];
 
         if (!audioOnly) {
-            const { config } = getState()['features/base/lib-jitsi-meet'];
-            const defaultLastN
-                = typeof config.channelLastN === 'undefined'
-                ? -1 : config.channelLastN;
+            let lastN;
+
+            if (muted) {
+                lastN = 0;
+            } else {
+                const { config } = getState()['features/base/lib-jitsi-meet'];
+
+                lastN = config.channelLastN;
+                if (typeof lastN === 'undefined') {
+                    lastN = -1;
+                }
+            }
 
             dispatch({
                 type: _SET_LASTN,
-                lastN: muted ? 0 : defaultLastN
+                lastN
             });
         }
 
         if (muted) {
-            const mediaState = getState()['features/base/media'];
+            const { video } = getState()['features/base/media'];
 
-            if (mediaState.video.muted) {
+            if (video.muted) {
                 // Video is already muted, do nothing.
                 return;
             }
@@ -95,5 +84,24 @@ export function _setBackgroundVideoMuted(muted: boolean) {
             muted
         });
         dispatch(setVideoMuted(muted));
+    };
+}
+
+/**
+ * Signals that the App state has changed (in terms of execution state). The
+ * application can be in 3 states: 'active', 'inactive' and 'background'.
+ *
+ * @param {string} appState - The new App state.
+ * @public
+ * @returns {{
+ *     type: APP_STATE_CHANGED,
+ *     appState: string
+ * }}
+ * @see {@link https://facebook.github.io/react-native/docs/appstate.html}
+ */
+export function appStateChanged(appState: string) {
+    return {
+        type: APP_STATE_CHANGED,
+        appState
     };
 }

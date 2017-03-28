@@ -54,7 +54,7 @@ MiddlewareRegistry.register(store => next => action => {
             try {
                 conference.setLastN(action.lastN);
             } catch (err) {
-                console.warn(`Error setting lastN: ${err}`);
+                console.warn(`Failed to set lastN: ${err}`);
             }
         }
 
