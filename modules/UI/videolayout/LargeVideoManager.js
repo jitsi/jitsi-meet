@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
@@ -8,6 +8,9 @@ import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 
 import AudioLevels from "../audio_levels/AudioLevels";
+
+const ParticipantConnectionStatus
+    = JitsiMeetJS.constants.participantConnectionStatus;
 
 /**
  * Manager for all Large containers.
@@ -114,7 +117,7 @@ export default class LargeVideoManager {
             // (camera or desktop) is a completely different thing than
             // the video container type (Etherpad, SharedVideo, VideoContainer).
             // ----------------------------------------------------------------
-            // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
+            // If we the container is VIDEO_CONTAINER_TYPE, we need to check
             // its stream whether exist and is muted to set isVideoMuted
             // in rest of the cases it is false
             let showAvatar
@@ -160,10 +163,17 @@ export default class LargeVideoManager {
             const isConnected = APP.conference.isConnectionInterrupted()
                                 || !isHavingConnectivityIssues;
 
+            // when isHavingConnectivityIssues, state can be inactive,
+            // interrupted or restoring. We show different message for
+            // interrupted and the rest.
+            const isConnectionInterrupted =
+                APP.conference.getParticipantConnectionStatus(id)
+                    === ParticipantConnectionStatus.INTERRUPTED;
+
             this.updateParticipantConnStatusIndication(
                     id,
                     isConnected,
-                    (isHavingConnectivityIssues)
+                    (isConnectionInterrupted)
                         ? "connection.USER_CONNECTION_INTERRUPTED"
                         : "connection.LOW_BANDWIDTH");
 
