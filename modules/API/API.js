@@ -166,7 +166,7 @@ class API {
 
     /**
      * Notify external application (if API is enabled) that
-     * user joined the conference.
+     * a participant joined the conference.
      * @param {string} id user id
      */
     notifyUserJoined (id) {
@@ -175,7 +175,7 @@ class API {
 
     /**
      * Notify external application (if API is enabled) that
-     * user left the conference.
+     * a participant left the conference.
      * @param {string} id user id
      */
     notifyUserLeft (id) {
@@ -184,7 +184,7 @@ class API {
 
     /**
      * Notify external application (if API is enabled) that
-     * user changed their nickname.
+     * a participant changed their nickname.
      * @param {string} id user id
      * @param {string} displayName user nickname
      */
@@ -194,9 +194,8 @@ class API {
 
     /**
      * Notify external application (if API is enabled) that
-     * user changed their nickname.
-     * @param {string} id user id
-     * @param {string} displayName user nickname
+     * user joined the room.
+     * @param {string} room room name
      */
     notifyConferenceJoined (room) {
         triggerEvent("video-conference-joined", {roomName: room});
@@ -204,9 +203,8 @@ class API {
 
     /**
      * Notify external application (if API is enabled) that
-     * user changed their nickname.
-     * @param {string} id user id
-     * @param {string} displayName user nickname
+     * user left the room.
+     * @param {string} room room name
      */
     notifyConferenceLeft (room) {
         triggerEvent("video-conference-left", {roomName: room});
