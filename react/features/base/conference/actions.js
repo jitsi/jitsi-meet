@@ -18,6 +18,7 @@ import {
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
+    SET_LASTN,
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
@@ -27,6 +28,8 @@ import {
     EMAIL_COMMAND
 } from './constants';
 import { _addLocalTracksToConference } from './functions';
+
+import type { Dispatch } from 'redux';
 
 /**
  * Adds conference (event) listeners.
@@ -271,6 +274,35 @@ function _lockStateChanged(conference, locked) {
         type: LOCK_STATE_CHANGED,
         conference,
         locked
+    };
+}
+
+/**
+ * Sets the video channel's last N (value) of the current conference. A value of
+ * undefined shall be used to reset it to the default value.
+ *
+ * @param {(number|undefined)} lastN - The last N value to be set.
+ * @returns {Function}
+ */
+export function setLastN(lastN: ?number) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        if (typeof lastN === 'undefined') {
+            const { config } = getState()['features/base/lib-jitsi-meet'];
+
+            /* eslint-disable no-param-reassign */
+
+            lastN = config.channelLastN;
+            if (typeof lastN === 'undefined') {
+                lastN = -1;
+            }
+
+            /* eslint-enable no-param-reassign */
+        }
+
+        dispatch({
+            type: SET_LASTN,
+            lastN
+        });
     };
 }
 

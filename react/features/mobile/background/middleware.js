@@ -16,7 +16,6 @@ import {
 } from './actions';
 import {
     _SET_APP_STATE_LISTENER,
-    _SET_LASTN,
     APP_STATE_CHANGED
 } from './actionTypes';
 
@@ -44,20 +43,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.listener) {
             AppState.addEventListener('change', action.listener);
         }
-        break;
-    }
-
-    case _SET_LASTN: {
-        const { conference } = store.getState()['features/base/conference'];
-
-        if (conference) {
-            try {
-                conference.setLastN(action.lastN);
-            } catch (err) {
-                console.warn(`Failed to set lastN: ${err}`);
-            }
-        }
-
         break;
     }
 

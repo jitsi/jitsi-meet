@@ -9,6 +9,7 @@ import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import { createConference } from './actions';
+import { SET_LASTN } from './actionTypes';
 import {
     _addLocalTracksToConference,
     _handleParticipantError,
@@ -28,6 +29,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
+
+    case SET_LASTN:
+        return _setLastN(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -106,6 +110,33 @@ function _pinParticipant(store, next, action) {
             conference.pinParticipant(id);
         } catch (err) {
             _handleParticipantError(err);
+        }
+    }
+
+    return next(action);
+}
+
+/**
+ * Sets the last N (value) of the video channel in the conference.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action SET_LASTN which is being dispatched
+ * in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _setLastN(store, next, action) {
+    const { conference } = store.getState()['features/base/conference'];
+
+    if (conference) {
+        try {
+            conference.setLastN(action.lastN);
+        } catch (err) {
+            console.error(`Failed to set lastN: ${err}`);
         }
     }
 

@@ -69,6 +69,17 @@ export const CONFERENCE_WILL_LEAVE = Symbol('CONFERENCE_WILL_LEAVE');
 export const LOCK_STATE_CHANGED = Symbol('LOCK_STATE_CHANGED');
 
 /**
+ * The type of redux action which sets the video channel's lastN (value).
+ *
+ * {
+ *     type: SET_LASTN,
+ *     lastN: number
+ * }
+ *
+ */
+export const SET_LASTN = Symbol('SET_LASTN');
+
+/**
  * The type of the Redux action which sets the password to join or lock a
  * specific JitsiConference.
  *
