@@ -1643,7 +1643,6 @@ export default {
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(null, err);
-                    APP.UI.setSelectedCameraFromSettings();
                 });
             }
         );
@@ -1665,7 +1664,6 @@ export default {
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(err, null);
-                    APP.UI.setSelectedMicFromSettings();
                 });
             }
         );
@@ -1681,7 +1679,6 @@ export default {
                         logger.warn('Failed to change audio output device. ' +
                             'Default or previously set audio output device ' +
                             'will be used instead.', err);
-                        APP.UI.setSelectedAudioOutputFromSettings();
                     });
             }
         );
