@@ -9,6 +9,30 @@ import {
 import { getLocalParticipant } from './functions';
 
 /**
+ * Action to update a participant's lastN status.
+ *
+ * @param {string} id - Participant's ID.
+ * @param {boolean} isInLastN - True if the participant is in the lastN
+ * endpoints set, false otherwise.
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         isInLastN: boolean
+ *     }
+ * }}
+ */
+export function changeParticipantLastNStatus(id, isInLastN) {
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: {
+            id,
+            isInLastN
+        }
+    };
+}
+
+/**
  * Create an action for when dominant speaker changes.
  *
  * @param {string} id - Participant's ID.

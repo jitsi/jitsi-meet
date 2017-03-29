@@ -71,8 +71,15 @@ function _participant(state, action) {
 
     case PARTICIPANT_JOINED: {
         const participant = action.participant; // eslint-disable-line no-shadow
-        const { avatarURL, dominantSpeaker, email, local, pinned, role }
-            = participant;
+        const {
+            avatarURL,
+            dominantSpeaker,
+            email,
+            isInLastN,
+            local,
+            pinned,
+            role
+        } = participant;
         let { avatarID, id, name } = participant;
 
         // avatarID
@@ -103,6 +110,7 @@ function _participant(state, action) {
             dominantSpeaker: dominantSpeaker || false,
             email,
             id,
+            isInLastN,
             local: local || false,
             name,
             pinned: pinned || false,

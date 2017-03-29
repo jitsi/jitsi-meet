@@ -1,5 +1,6 @@
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import {
+    changeParticipantLastNStatus,
     dominantSpeakerChanged,
     getLocalParticipant,
     participantJoined,
@@ -51,6 +52,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             (...args) => dispatch(dominantSpeakerChanged(...args)));
+
+    conference.on(
+        JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
+        (...args) => _lastNEndpointsChanged(dispatch, ...args));
 
     conference.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -261,6 +266,30 @@ export function createConference() {
 
         conference.join(password);
     };
+}
+
+/**
+ * Handles the lastN status changes for participants in the current conference.
+ * Signals that a participant's lastN status has changed, for each participant
+ * who entered or left the last N set.
+ *
+ * @param {Dispatch} dispatch - Redux dispatch function.
+ * @param {Array} leavingIds - Ids of participants who are leaving the last N
+ * set.
+ * @param {Array} enteringIds - Ids of participants who are entering the last N
+ * set.
+ * @returns {void}
+ *
+ * @private
+ */
+function _lastNEndpointsChanged(dispatch, leavingIds = [], enteringIds = []) {
+    for (const id of leavingIds) {
+        dispatch(changeParticipantLastNStatus(id, false));
+    }
+
+    for (const id of enteringIds) {
+        dispatch(changeParticipantLastNStatus(id, true));
+    }
 }
 
 /**

@@ -35,6 +35,13 @@ class ParticipantView extends Component {
         _avatar: React.PropTypes.string,
 
         /**
+         * True if the participant is in the last N endpoints set, false if he
+         * isn't. If undefined, we have no indication, so the same course of
+         * action as true is taken.
+         */
+        _isInLastN: React.PropTypes.bool,
+
+        /**
          * The video Track of the participant with {@link #participantId}.
          */
         _videoTrack: React.PropTypes.object,
@@ -85,20 +92,23 @@ class ParticipantView extends Component {
      * @returns {ReactElement}
      */
     render() {
-        // Is the video to be rendered?
-        const videoTrack = this.props._videoTrack;
+        const {
+            _avatar: avatar,
+            _isInLastN: isInLastN,
+            _videoTrack: videoTrack
+        } = this.props;
 
+        // Is the video to be rendered?
         // FIXME It's currently impossible to have true as the value of
         // waitForVideoStarted because videoTrack's state videoStarted will be
         // updated only after videoTrack is rendered.
         const waitForVideoStarted = false;
         const renderVideo
-            = shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
+            = shouldRenderVideoTrack(videoTrack, waitForVideoStarted)
+                && (typeof isInLastN === 'undefined' || isInLastN);
 
         // Is the avatar to be rendered?
-        const avatar = this.props._avatar;
-        const renderAvatar
-            = !renderVideo && typeof avatar !== 'undefined' && avatar !== '';
+        const renderAvatar = Boolean(!renderVideo && avatar);
 
         return (
             <Container
@@ -158,6 +168,7 @@ function _toBoolean(value, undefinedValue) {
  * @private
  * @returns {{
  *     _avatar: string,
+ *     _isInLastN: boolean,
  *     _videoTrack: Track
  * }}
  */
@@ -170,6 +181,7 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _avatar: participant && getAvatarURL(participant),
+        _isInLastN: participant && participant.isInLastN,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],
