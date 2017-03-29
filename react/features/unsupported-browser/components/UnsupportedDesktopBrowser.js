@@ -21,7 +21,7 @@ const _SNS = 'unsupported-desktop-browser';
  *
  * @class UnsupportedDesktopBrowser
  */
-class UnsupportedDesktopBrowser extends Component {
+export class UnsupportedDesktopBrowser extends Component {
     /**
      * UnsupportedDesktopBrowser component's property types.
      *
