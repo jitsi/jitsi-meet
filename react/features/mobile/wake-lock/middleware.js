@@ -3,7 +3,8 @@ import KeepAwake from 'react-native-keep-awake';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT
+    CONFERENCE_LEFT,
+    SET_AUDIO_ONLY
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 
@@ -18,18 +19,19 @@ import { MiddlewareRegistry } from '../../base/redux';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        const state = store.getState()['features/base/conference'];
+        const { audioOnly } = store.getState()['features/base/conference'];
 
-        // TODO(saghul): Implement audio-only mode.
-        if (!state.audioOnly) {
-            _setWakeLock(true);
-        }
+        _setWakeLock(!audioOnly);
         break;
     }
 
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         _setWakeLock(false);
+        break;
+
+    case SET_AUDIO_ONLY:
+        _setWakeLock(!action.audioOnly);
         break;
     }
 

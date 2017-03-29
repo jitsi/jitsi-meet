@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { toggleAudioOnly } from '../../base/conference';
 import { MEDIA_TYPE, toggleCameraFacingMode } from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
@@ -40,7 +41,7 @@ class Toolbox extends Component {
         _onHangup: React.PropTypes.func,
 
         /**
-         * Handler for room locking.
+         * Sets the lock i.e. password protection of the conference/room.
          */
         _onRoomLock: React.PropTypes.func,
 
@@ -50,7 +51,13 @@ class Toolbox extends Component {
         _onToggleAudio: React.PropTypes.func,
 
         /**
-         * Handler for toggling camera facing mode.
+         * Toggles the audio-only flag of the conference.
+         */
+        _onToggleAudioOnly: React.PropTypes.func,
+
+        /**
+         * Switches between the front/user-facing and back/environment-facing
+         * cameras.
          */
         _onToggleCameraFacingMode: React.PropTypes.func,
 
@@ -198,6 +205,12 @@ class Toolbox extends Component {
                     onClick = { this.props._onRoomLock }
                     style = { style }
                     underlayColor = { underlayColor } />
+                <ToolbarButton
+                    iconName = 'star'
+                    iconStyle = { iconStyle }
+                    onClick = { this.props._onToggleAudioOnly }
+                    style = { style }
+                    underlayColor = { underlayColor } />
             </View>
         );
 
@@ -224,6 +237,7 @@ Object.assign(Toolbox.prototype, {
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
  *     _onRoomLock: Function,
+ *     _onToggleAudioOnly: Function,
  *     _onToggleCameraFacingMode: Function,
  * }}
  * @private
@@ -233,11 +247,10 @@ function _mapDispatchToProps(dispatch) {
         ...abstractMapDispatchToProps(dispatch),
 
         /**
-         * Dispatches an action to set the lock i.e. password protection of the
-         * conference/room.
+         * Sets the lock i.e. password protection of the conference/room.
          *
          * @private
-         * @returns {Object} - Dispatched action.
+         * @returns {Object} Dispatched action.
          * @type {Function}
          */
         _onRoomLock() {
@@ -245,11 +258,22 @@ function _mapDispatchToProps(dispatch) {
         },
 
         /**
-         * Switches between the front/user-facing and rear/environment-facing
+         * Toggles the audio-only flag of the conference.
+         *
+         * @private
+         * @returns {Object} Dispatched action.
+         * @type {Function}
+         */
+        _onToggleAudioOnly() {
+            return dispatch(toggleAudioOnly());
+        },
+
+        /**
+         * Switches between the front/user-facing and back/environment-facing
          * cameras.
          *
          * @private
-         * @returns {Object} - Dispatched action.
+         * @returns {Object} Dispatched action.
          * @type {Function}
          */
         _onToggleCameraFacingMode() {

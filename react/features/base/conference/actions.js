@@ -1,4 +1,5 @@
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import { setVideoMuted } from '../media';
 import {
     dominantSpeakerChanged,
     getLocalParticipant,
@@ -17,6 +18,8 @@ import {
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
+    SET_AUDIO_ONLY,
+    _SET_AUDIO_ONLY_VIDEO_MUTED,
     SET_LASTN,
     SET_PASSWORD,
     SET_ROOM
@@ -296,6 +299,63 @@ function _lockStateChanged(conference, locked) {
 }
 
 /**
+ * Sets the audio-only flag for the current JitsiConference.
+ *
+ * @param {boolean} audioOnly - True if the conference should be audio only;
+ * false, otherwise.
+ * @private
+ * @returns {{
+ *     type: SET_AUDIO_ONLY,
+ *     audioOnly: boolean
+ * }}
+ */
+function _setAudioOnly(audioOnly) {
+    return {
+        type: SET_AUDIO_ONLY,
+        audioOnly
+    };
+}
+
+/**
+ * Signals that the app should mute video because it's now in audio-only mode,
+ * or unmute it because it no longer is. If video was already muted, nothing
+ * will happen; otherwise, it will be muted. When audio-only mode is disabled,
+ * the previous state will be restored.
+ *
+ * @param {boolean} muted - True if video should be muted; false, otherwise.
+ * @protected
+ * @returns {Function}
+ */
+export function _setAudioOnlyVideoMuted(muted: boolean) {
+    return (dispatch, getState) => {
+        if (muted) {
+            const { video } = getState()['features/base/media'];
+
+            if (video.muted) {
+                // Video is already muted, do nothing.
+                return;
+            }
+        } else {
+            const { audioOnlyVideoMuted }
+                = getState()['features/base/conference'];
+
+            if (!audioOnlyVideoMuted) {
+                // We didn't mute video, do nothing.
+                return;
+            }
+        }
+
+        // Remember that local video was muted due to the audio-only mode
+        // vs user's choice.
+        dispatch({
+            type: _SET_AUDIO_ONLY_VIDEO_MUTED,
+            muted
+        });
+        dispatch(setVideoMuted(muted));
+    };
+}
+
+/**
  * Sets the video channel's last N (value) of the current conference. A value of
  * undefined shall be used to reset it to the default value.
  *
@@ -401,5 +461,18 @@ export function setRoom(room) {
     return {
         type: SET_ROOM,
         room
+    };
+}
+
+/**
+ * Toggles the audio-only flag for the current JitsiConference.
+ *
+ * @returns {Function}
+ */
+export function toggleAudioOnly() {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        const { audioOnly } = getState()['features/base/conference'];
+
+        return dispatch(_setAudioOnly(!audioOnly));
     };
 }

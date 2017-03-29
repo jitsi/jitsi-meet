@@ -42,9 +42,11 @@ export function _setBackgroundVideoMuted(muted: boolean) {
         // for last N will be chosen automatically.
         const { audioOnly } = getState()['features/base/conference'];
 
-        if (!audioOnly) {
-            dispatch(setLastN(muted ? 0 : undefined));
+        if (audioOnly) {
+            return;
         }
+
+        dispatch(setLastN(muted ? 0 : undefined));
 
         if (muted) {
             const { video } = getState()['features/base/media'];

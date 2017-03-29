@@ -6,7 +6,8 @@ import { APP_WILL_MOUNT } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN
+    CONFERENCE_WILL_JOIN,
+    SET_AUDIO_ONLY
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 
@@ -21,8 +22,6 @@ import { MiddlewareRegistry } from '../../base/redux';
 MiddlewareRegistry.register(store => next => action => {
     const AudioMode = NativeModules.AudioMode;
 
-    // The react-native module AudioMode is implemented on iOS at the time of
-    // this writing.
     if (AudioMode) {
         let mode;
 
@@ -34,14 +33,18 @@ MiddlewareRegistry.register(store => next => action => {
             break;
 
         case CONFERENCE_WILL_JOIN: {
-            const conference = store.getState()['features/base/conference'];
+            const { audioOnly } = store.getState()['features/base/conference'];
 
+            mode = audioOnly ? AudioMode.AUDIO_CALL : AudioMode.VIDEO_CALL;
+            break;
+        }
+
+        case SET_AUDIO_ONLY:
             mode
-                = conference.audioOnly
+                = action.audioOnly
                     ? AudioMode.AUDIO_CALL
                     : AudioMode.VIDEO_CALL;
             break;
-        }
 
         default:
             mode = null;

@@ -11,6 +11,8 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
+    SET_AUDIO_ONLY,
+    _SET_AUDIO_ONLY_VIDEO_MUTED,
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
@@ -36,6 +38,12 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case LOCK_STATE_CHANGED:
         return _lockStateChanged(state, action);
+
+    case SET_AUDIO_ONLY:
+        return _setAudioOnly(state, action);
+
+    case _SET_AUDIO_ONLY_VIDEO_MUTED:
+        return _setAudioOnlyVideoMuted(state, action);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
@@ -71,6 +79,8 @@ function _conferenceFailed(state, action) {
 
     return (
         setStateProperties(state, {
+            audioOnly: undefined,
+            audioOnlyVideoMuted: undefined,
             conference: undefined,
             leaving: undefined,
             locked: undefined,
@@ -144,6 +154,8 @@ function _conferenceLeft(state, action) {
 
     return (
         setStateProperties(state, {
+            audioOnly: undefined,
+            audioOnlyVideoMuted: undefined,
             conference: undefined,
             leaving: undefined,
             locked: undefined,
@@ -198,6 +210,35 @@ function _lockStateChanged(state, action) {
     }
 
     return setStateProperty(state, 'locked', action.locked || undefined);
+}
+
+/**
+ * Reduces a specific Redux action SET_AUDIO_ONLY of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_AUDIO_ONLY to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setAudioOnly(state, action) {
+    return setStateProperty(state, 'audioOnly', action.audioOnly);
+}
+
+/**
+ * Reduces a specific Redux action _SET_AUDIO_ONLY_VIDEO_MUTED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_AUDIO_ONLY_VIDEO_MUTED to
+ * reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setAudioOnlyVideoMuted(state, action) {
+    return setStateProperty(state, 'audioOnlyVideoMuted', action.muted);
 }
 
 /**

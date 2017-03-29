@@ -7,7 +7,8 @@ import { APP_STATE_CHANGED } from '../background';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN
+    CONFERENCE_WILL_JOIN,
+    SET_AUDIO_ONLY
 } from '../../base/conference';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -49,6 +50,10 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         fullScreen = false;
+        break;
+
+    case SET_AUDIO_ONLY:
+        fullScreen = !action.audioOnly;
         break;
     }
 
