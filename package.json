@@ -21,6 +21,7 @@
     "@atlaskit/button-group": "1.0.0",
     "@atlaskit/field-text": "2.0.3",
     "@atlaskit/modal-dialog": "1.2.4",
+    "@atlaskit/single-select": "1.6.1",
     "@atlaskit/tabs": "1.2.5",
     "async": "0.9.0",
     "autosize": "1.18.13",

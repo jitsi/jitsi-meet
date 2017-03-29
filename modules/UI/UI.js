@@ -4,6 +4,10 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
 
+import {
+    updateDeviceList
+} from '../../react/features/base/devices';
+
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
@@ -1081,6 +1085,7 @@ UI.onLocalRaiseHandChanged = function (isRaisedHand) {
  */
 UI.onAvailableDevicesChanged = function (devices) {
     SettingsMenu.changeDevicesList(devices);
+    APP.store.dispatch(updateDeviceList(devices));
 };
 
 /**
