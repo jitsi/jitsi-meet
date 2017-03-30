@@ -40,6 +40,9 @@ import {
     participantRoleChanged
 } from './react/features/base/participants';
 import {
+    showDesktopPicker
+} from  './react/features/desktop-picker';
+import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
@@ -65,6 +68,16 @@ let room, connection, localAudio, localVideo;
 let DSExternalInstallationInProgress = false;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
+
+/*
+ * Logic to open a desktop picker put on the window global for
+ * lib-jitsi-meet to detect and invoke
+ */
+window.JitsiMeetScreenObtainer = {
+    openDesktopPicker(onSourceChoose) {
+        APP.store.dispatch(showDesktopPicker(onSourceChoose));
+    }
+};
 
 /**
  * Known custom conference commands.

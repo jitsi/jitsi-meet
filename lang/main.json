@@ -339,7 +339,10 @@
         "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
         "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
         "remoteControlStopMessage": "The remote control session ended!",
-        "close": "Close"
+        "close": "Close",
+        "shareYourScreen": "Share your screen",
+        "yourEntireScreen": "Your entire screen",
+        "applicationWindow": "Application window"
     },
     "email":
     {
