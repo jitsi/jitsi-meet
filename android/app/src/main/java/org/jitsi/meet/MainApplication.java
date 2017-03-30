@@ -32,7 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
                 new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.oney.WebRTCModule.WebRTCModulePackage(),
                 new com.rnimmersive.RNImmersivePackage(),
-                new org.jitsi.meet.audiomode.AudioModePackage()
+                new org.jitsi.meet.audiomode.AudioModePackage(),
+                new org.jitsi.meet.proximity.ProximityPackage()
             );
         }
     };

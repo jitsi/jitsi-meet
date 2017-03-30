@@ -6,6 +6,7 @@ import { Platform } from '../../base/react';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/full-screen';
+import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
