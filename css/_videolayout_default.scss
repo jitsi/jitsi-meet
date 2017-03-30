@@ -31,7 +31,7 @@
     &__toptoolbar {
         position: absolute;
         left: 0;
-        z-index: 3;
+        z-index: $zindex3;
         width: 100%;
         box-sizing: border-box; // Includes the padding in the 100% width.
     }
@@ -59,7 +59,7 @@
             float: left;
             @include circle($thumbnailIndicatorSize);
             box-sizing: border-box;
-            z-index: 3;
+            z-index: $zindex3;
             background: $dominantSpeakerBg;
             color: $thumbnailPictogramColor;
             border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
@@ -113,7 +113,7 @@
         width: 100%;
         height: 100%;
         visibility: hidden;
-        z-index: 2;
+        z-index: $zindex2;
     }
 }
 
@@ -161,7 +161,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 1;
+    z-index: $zindex1;
     width: 100%;
     height: 100%;
 }
@@ -171,7 +171,7 @@
 }
 
 #etherpad {
-    z-index: 0;
+    z-index: $zindex0;
 }
 
 /**
@@ -193,7 +193,7 @@
     overflow: hidden;
     white-space: nowrap;
     line-height: $thumbnailToolbarHeight;
-    z-index: 2;
+    z-index: $zindex2;
 }
 
 /**
@@ -233,7 +233,7 @@
     padding: 3px 5px;
     font-size: 9pt;
     cursor: pointer;
-    z-index: 2;
+    z-index: $zindex2;
 }
 
 /**
@@ -283,7 +283,7 @@
     top: 0px;
     right: 0;
     margin: 7px;
-    z-index: 3;
+    z-index: $zindex3;
     width: 18px;
     height: 13px;
     color: #FFF;
@@ -301,7 +301,7 @@
     margin-top: -17px;
     width: 6px;
     height: 35px;
-    z-index: 2;
+    z-index: $zindex2;
     border: none;
 
     .audiodot-top,
@@ -344,13 +344,13 @@
     background-clip: padding-box;
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
-    z-index: 20; /*The reload button should appear on top of the header!*/
+    z-index: $reloadZ; /*The reload button should appear on top of the header!*/
 }
 
 .audiolevel {
     display: inline-block;
     position: absolute;
-    z-index: 0;
+    z-index: $zindex0;
     border-radius:1px;
     pointer-events: none;
 }
@@ -408,7 +408,7 @@
 .noMic {
     position: absolute;
     border-radius: 8px;
-    z-index: 1;
+    z-index: $zindex1;
     width: 100%;
     height: 100%;
     background-image: url("../images/noMic.png");
@@ -420,7 +420,7 @@
 .noVideo {
     position: absolute;
     border-radius: 8px;
-    z-index: 1;
+    z-index: $zindex1;
     width: 100%;
     height: 100%;
     background-image: url("../images/noVideo.png");
@@ -453,7 +453,7 @@
     display: none;
     position: absolute;
     width: auto;
-    z-index: 2;
+    z-index: $zindex2;
     font-weight: 600;
     font-size: 14px;
     text-align: center;
@@ -477,7 +477,7 @@
     left: 0;
     width: 100%;
     top:50%;
-    z-index: 2;
+    z-index: $zindex2;
     font-weight: 600;
     font-size: 14px;
     text-align: center;
@@ -506,7 +506,7 @@
 #videoResolutionLabel,
 .centeredVideoLabel {
     display: none;
-    z-index: 1011;
+    z-index: $centeredVideoLabelZ;
 }
 
 .centeredVideoLabel {

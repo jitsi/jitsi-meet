@@ -10,7 +10,7 @@
     position: absolute;
     top: 0;
     width: 0;
-    z-index: 800;
+    z-index: $sideToolbarContainerZ;
 
     /**
      * Labels inside the side panel.
