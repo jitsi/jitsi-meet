@@ -1,5 +1,6 @@
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 import postisInit from "postis";
+import EventEmitter from "events";
 
 /**
  * The minimum width for the Jitsi Meet frame
@@ -99,7 +100,7 @@ function configToURLParamsArray(config) {
 /**
  * The IFrame API interface class.
  */
-class JitsiMeetExternalAPI {
+class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Constructs new API instance. Creates iframe element that loads
      * Jitsi Meet.
@@ -119,6 +120,8 @@ class JitsiMeetExternalAPI {
      */
     constructor(domain, room_name, width, height, parentNode,
         configOverwrite, interfaceConfigOverwrite, noSsl, jwt) {
+        super();
+
         if (!width || width < MIN_WIDTH) {
             width = MIN_WIDTH;
         }
@@ -283,6 +286,8 @@ class JitsiMeetExternalAPI {
      * readyToClose - all hangup operations are completed and Jitsi Meet is
      * ready to be disposed.
      * @param object
+     *
+     * NOTE: This method is not removed for backward comatability purposes.
      */
     addEventListeners(object) {
         for (var i in object) {
@@ -336,41 +341,26 @@ class JitsiMeetExternalAPI {
      * }}
      * @param event the name of the event
      * @param listener the listener
+     *
+     * NOTE: This method is not removed for backward comatability purposes.
      */
     addEventListener(event, listener) {
-        if (!(event in events)) {
-            logger.error("Not supported event name.");
-            return;
-        }
-        // We cannot remove listeners from postis that's why we are handling the
-        // callback that way.
-        if (!this.postisListeners[event]) {
-            this.postis.listen(events[event], data => {
-                if((event in this.eventHandlers) &&
-                    typeof this.eventHandlers[event] === "function")
-                    this.eventHandlers[event].call(null, data);
-            });
-            this.postisListeners[event] = true;
-        }
-        this.eventHandlers[event] = listener;
+        this.on(event, listener);
     }
 
     /**
      * Removes event listener.
      * @param event the name of the event.
+     * NOTE: This method is not removed for backward comatability purposes.
      */
     removeEventListener(event) {
-        if(!(event in this.eventHandlers))
-        {
-            logger.error("The event " + event + " is not registered.");
-            return;
-        }
-        delete this.eventHandlers[event];
+        this.removeListeners(event);
     }
 
     /**
      * Removes event listeners.
      * @param events array with the names of the events.
+     * NOTE: This method is not removed for backward comatability purposes.
      */
     removeEventListeners(events) {
         for(var i = 0; i < events.length; i++) {
@@ -395,6 +385,12 @@ class JitsiMeetExternalAPI {
             changeParticipantNumber.bind(null, this, 1));
         this.postis.listen("participant-left",
             changeParticipantNumber.bind(null, this, -1));
+
+        for (const eventName in events) {
+            const postisMethod = events[eventName];
+            this.postis.listen(postisMethod,
+                (...args) => this.emit(eventName, ...args));
+        }
     }
 
     /**
