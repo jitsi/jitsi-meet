@@ -24,6 +24,11 @@ export default class Notice extends Component {
         const { noticeMessage } = config;
 
         this.state = {
+            /**
+             * Message to be shown in notice component.
+             *
+             * @type {string}
+             */
             noticeMessage
         };
     }

@@ -49,30 +49,41 @@ var CHAT_CONTAINER_ID = "chat_container";
  *  Updates visual notification, indicating that a message has arrived.
  */
 function updateVisualNotification() {
-    var unreadMsgElement = document.getElementById('unreadMessages');
+    // XXX The rewrite of the toolbar in React delayed the availability of the
+    // element unreadMessages. In order to work around the delay, I introduced
+    // and utilized unreadMsgSelector in addition to unreadMsgElement.
+    const unreadMsgSelector = $('#unreadMessages');
+    const unreadMsgElement
+        = unreadMsgSelector.length > 0 ? unreadMsgSelector[0] : undefined;
 
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
 
         ToolbarToggler.dockToolbar(true);
 
-        var chatButtonElement
+        const chatButtonElement
             = document.getElementById('toolbar_button_chat');
-        var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
-            UIUtil.getTextWidth(unreadMsgElement)) / 2;
-        var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
-            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 5;
+        const leftIndent
+            = (UIUtil.getTextWidth(chatButtonElement)
+                    - UIUtil.getTextWidth(unreadMsgElement))
+                / 2;
+        const topIndent
+            = (UIUtil.getTextHeight(chatButtonElement)
+                        - UIUtil.getTextHeight(unreadMsgElement))
+                    / 2
+                - 5;
 
         unreadMsgElement.setAttribute(
-            'style',
-                'top:' + topIndent +
-                '; left:' + leftIndent + ';');
+                'style',
+                'top:' + topIndent + '; left:' + leftIndent + ';');
     }
     else {
-        unreadMsgElement.innerHTML = '';
+        unreadMsgSelector.html('');
     }
 
-    $(unreadMsgElement).parent()[unreadMessages > 0 ? 'show' : 'hide']();
+    if (unreadMsgElement) {
+        unreadMsgSelector.parent()[unreadMessages > 0 ? 'show' : 'hide']();
+    }
 }
 
 
@@ -309,7 +320,7 @@ var Chat = {
         }
 
         let subjectId = 'subject';
-        let html = linkify(UIUtil.escapeHtml(subject));
+        const html = linkify(UIUtil.escapeHtml(subject));
         $(`#${subjectId}`).html(html);
         UIUtil.setVisible(subjectId, subject && subject.length > 0);
     },

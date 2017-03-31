@@ -196,11 +196,11 @@ UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
 /**
  * Sets the local "raised hand" status.
  */
-UI.setLocalRaisedHandStatus = (raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(
+UI.setLocalRaisedHandStatus
+    = raisedHandStatus => 
+        VideoLayout.setRaisedHandStatus(
             APP.conference.getMyUserId(),
             raisedHandStatus);
-};
 
 /**
  * Initialize conference UI.
@@ -306,9 +306,12 @@ UI.start = function () {
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        let debouncedShowToolbar = debounce(() => {
-            UI.showToolbar();
-        }, 100, { leading: true, trailing: false });
+        let debouncedShowToolbar
+            = debounce(
+                    () => UI.showToolbar(),
+                    100,
+                    { leading: true, trailing: false });
+
         $("#videoconference_page").mousemove(debouncedShowToolbar);
         setupToolbars();
 
@@ -713,9 +716,7 @@ UI.removeListener = function (type, listener) {
  * @param type the type of the event we're emitting
  * @param options the parameters for the event
  */
-UI.emitEvent = function (type, options) {
-    eventEmitter.emit(type, options);
-};
+UI.emitEvent = (type, options) => eventEmitter.emit(type, options);
 
 UI.clickOnVideo = function (videoNumber) {
     let videos = $("#remoteVideos .videocontainer:not(#mixedstream)");
@@ -913,9 +914,7 @@ UI.promptDisplayName = () => {
  * @param {string} id user id
  * @param {number} lvl audio level
  */
-UI.setAudioLevel = function (id, lvl) {
-    VideoLayout.setAudioLevel(id, lvl);
-};
+UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
 
 /**
  * Update state of desktop sharing buttons.

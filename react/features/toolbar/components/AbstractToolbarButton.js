@@ -21,12 +21,24 @@ export default class AbstractToolbarButton extends Component {
          * The style of the Icon of this AbstractToolbarButton.
          */
         iconStyle: React.PropTypes.object,
+
+        /**
+         * On click handler.
+         */
         onClick: React.PropTypes.func,
+
+        /**
+         * Toolbar button styles.
+         */
         style:
             React.PropTypes.oneOfType([
                 React.PropTypes.array,
                 React.PropTypes.object
             ]),
+
+        /**
+         * The color underlaying the button.
+         */
         underlayColor: React.PropTypes.any
     }
 

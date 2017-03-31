@@ -26,6 +26,13 @@ class FilmStrip extends Component {
          * @type {Participant[]}
          */
         _participants: React.PropTypes.array,
+
+        /**
+         * The indicator which determines whether the film strip is visible.
+         *
+         * @private
+         * @type {boolean}
+         */
         visible: React.PropTypes.bool.isRequired
     }
 
@@ -101,7 +108,7 @@ class FilmStrip extends Component {
  * @param {Object} state - Redux state.
  * @private
  * @returns {{
- *      _participants: Participant[],
+ *     _participants: Participant[],
  *  }}
  */
 function _mapStateToProps(state) {

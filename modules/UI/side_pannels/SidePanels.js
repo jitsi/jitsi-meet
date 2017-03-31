@@ -6,18 +6,25 @@ import UIUtil from '../util/UIUtil';
 
 const SidePanels = {
     init (eventEmitter) {
-        //Initialize chat
-        if (UIUtil.isButtonEnabled('chat'))
+        // Initialize chat
+        if (UIUtil.isButtonEnabled('chat')) {
             Chat.init(eventEmitter);
-        //Initialize settings
-        if (UIUtil.isButtonEnabled('settings'))
+        }
+
+        // Initialize settings
+        if (UIUtil.isButtonEnabled('settings')) {
             SettingsMenu.init(eventEmitter);
-        //Initialize profile
-        if (UIUtil.isButtonEnabled('profile'))
+        }
+
+        // Initialize profile
+        if (UIUtil.isButtonEnabled('profile')) {
             Profile.init(eventEmitter);
-        //Initialize contact list view
-        if (UIUtil.isButtonEnabled('contacts'))
+        }
+
+        // Initialize contact list view
+        if (UIUtil.isButtonEnabled('contacts')) {
             ContactListView.init();
+        }
     }
 };
 
