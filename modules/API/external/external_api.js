@@ -81,6 +81,27 @@ function changeParticipantNumber(APIInstance, number) {
 }
 
 /**
+ * Generates array with URL params based on the passed config object that will
+ * be used for the Jitsi Meet URL generation.
+ *
+ * @param config {object} the config object.
+ * @returns {Array<string>} the array with URL param strings.
+ */
+function configToURLParamsArray(config) {
+    const params = [];
+
+    for (const key in config) {
+        try {
+            params.push(key + '='
+                + encodeURIComponent(JSON.stringify(config[key])));
+        } catch (e) {
+            console.warn(`Error encoding ${key}: ${e}`);
+        }
+    }
+    return params;
+}
+
+/**
  * Constructs new API instance. Creates iframe element that loads
  * Jitsi Meet.
  * @param domain the domain name of the server that hosts the conference
@@ -130,24 +151,16 @@ function JitsiMeetExternalAPI(domain, room_name, width, height, parentNode,
 
     this.url += "#jitsi_meet_external_api_id=" + id;
 
-    var key;
-    if (configOverwrite) {
-        for (key in configOverwrite) {
-            if (!configOverwrite.hasOwnProperty(key) ||
-                typeof key !== 'string')
-                continue;
-            this.url += "&config." + key + "=" + configOverwrite[key];
-        }
+    const configURLParams = configToURLParamsArray(configOverwrite);
+    if (configURLParams.length) {
+        this.url += '&config.' + configURLParams.join('&config.');
     }
 
-    if (interfaceConfigOverwrite) {
-        for (key in interfaceConfigOverwrite) {
-            if (!interfaceConfigOverwrite.hasOwnProperty(key) ||
-                typeof key !== 'string')
-                continue;
-            this.url += "&interfaceConfig." + key + "=" +
-                interfaceConfigOverwrite[key];
-        }
+    const interfaceConfigURLParams
+        = configToURLParamsArray(interfaceConfigOverwrite);
+    if (interfaceConfigURLParams.length) {
+        this.url += '&interfaceConfig.'
+            + interfaceConfigURLParams.join('&interfaceConfig.');
     }
 
     this.frame = document.createElement("iframe");
