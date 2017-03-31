@@ -49,5 +49,17 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 
 unsafe.enable_getters_and_setters=true
 
+; We (i.e. the jitsi-meet project) are using the haste module system on Web as
+; well, not only on React Native. Unfortunately, Flow does not support .web.js
+; by default. Override Flow's defaults to include .web.js as well. Technically,
+; we have .native.js as well so the choice of .web.js may lead to errors.
+; Practically though, it is a potential future problem that we do not have at
+; the time of this writing.
+module.file_ext=.web.js
+; Flow's defaults:
+module.file_ext=.js
+module.file_ext=.jsx
+module.file_ext=.json
+
 [version]
 ^0.38.0
