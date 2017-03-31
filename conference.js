@@ -50,9 +50,6 @@ const ConnectionErrors = JitsiMeetJS.errors.connection;
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const ConferenceErrors = JitsiMeetJS.errors.conference;
 
-const ParticipantConnectionStatus
-    = JitsiMeetJS.constants.participantConnectionStatus;
-
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
 
@@ -797,21 +794,6 @@ export default {
      */
     getParticipantById (id) {
         return room ? room.getParticipantById(id) : null;
-    },
-    /**
-     * Checks whether the user identified by given id is currently connected.
-     *
-     * @param {string} id participant's identifier(MUC nickname)
-     *
-     * @returns {boolean|null} true if participant's connection is ok or false
-     * if the user is having connectivity issues. Returns null if there is no
-     * such participant.
-     */
-    isParticipantConnectionActive (id) {
-        let participant = this.getParticipantById(id);
-        return participant
-            ? participant.getConnectionStatus()
-                === ParticipantConnectionStatus.ACTIVE : null;
     },
     /**
      * Get participant connection status for the participant.
