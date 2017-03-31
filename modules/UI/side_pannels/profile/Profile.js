@@ -15,10 +15,10 @@ const htmlStr = `
         </div>
         <div class="sideToolbarBlock">
             <label data-i18n="profile.setEmailLabel"></label>
-            <input id="setEmail" type="text" class="input-control" 
+            <input id="setEmail" type="text" class="input-control"
                 data-i18n="[placeholder]profile.setEmailInput">
         </div>
-        <div id="profile_auth_container" 
+        <div id="profile_auth_container"
              class="sideToolbarBlock auth_container">
             <p data-i18n="toolbar.authenticate"></p>
             <ul>
@@ -120,6 +120,14 @@ export default {
      */
     changeAvatar (avatarUrl) {
         $('#avatar').attr('src', avatarUrl);
+    },
+
+    /**
+     * Change the value of the field for the user email.
+     * @param {string} email the new value that will be displayed in the field.
+     */
+    changeEmail (email) {
+        $('#setEmail').val(email);
     },
 
     /**

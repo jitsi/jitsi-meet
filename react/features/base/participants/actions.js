@@ -9,75 +9,6 @@ import {
 import { getLocalParticipant } from './functions';
 
 /**
- * Action to update a participant's avatar ID.
- *
- * @param {string} id - Participant's ID.
- * @param {string} avatarID - Participant's avatar ID.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         avatarID: string,
- *     }
- * }}
- */
-export function changeParticipantAvatarID(id, avatarID) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            avatarID
-        }
-    };
-}
-
-/**
- * Action to update a participant's avatar URL.
- *
- * @param {string} id - Participant's ID.
- * @param {string} avatarURL - Participant's avatar URL.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         avatarURL: string,
- *     }
- * }}
- */
-export function changeParticipantAvatarURL(id, avatarURL) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            avatarURL
-        }
-    };
-}
-
-/**
- * Action to update a participant's email.
- *
- * @param {string} id - Participant's ID.
- * @param {string} email - Participant's email.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         email: string
- *     }
- * }}
- */
-export function changeParticipantEmail(id, email) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            email
-        }
-    };
-}
-
-/**
  * Create an action for when dominant speaker changes.
  *
  * @param {string} id - Participant's ID.
@@ -203,12 +134,28 @@ export function participantLeft(id) {
  * }}
  */
 export function participantRoleChanged(id, role) {
+    return participantUpdated({
+        id,
+        role
+    });
+}
+
+/**
+ * Action to signal that some of participant properties has been changed.
+ *
+ * @param {Participant} participant={} - Information about participant. To
+ * identify the participant the object should contain either property id with
+ * value the id of the participant or property local with value true (if the
+ * local participant hasn't joined the conference yet).
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: Participant
+ * }}
+ */
+export function participantUpdated(participant = {}) {
     return {
         type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            role
-        }
+        participant
     };
 }
 

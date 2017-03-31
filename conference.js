@@ -32,12 +32,10 @@ import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
-    changeParticipantAvatarID,
-    changeParticipantAvatarURL,
-    changeParticipantEmail,
     participantJoined,
     participantLeft,
-    participantRoleChanged
+    participantRoleChanged,
+    participantUpdated
 } from './react/features/base/participants';
 import {
     showDesktopPicker
@@ -174,6 +172,10 @@ function createInitialLocalTracksAndConnect(roomName) {
  * @param {string} value new value
  */
 function sendData (command, value) {
+    if(!room) {
+        return;
+    }
+
     room.removeCommand(command);
     room.sendCommand(command, {value: value});
 }
@@ -359,23 +361,6 @@ function createLocalTracks (options, checkForPermissionPrompt) {
                 'failed to create local tracks', options.devices, err);
             return Promise.reject(err);
         });
-}
-
-/**
- * Changes the display name for the local user
- * @param nickname {string} the new display name
- */
-function changeLocalDisplayName(nickname = '') {
-    const formattedNickname
-        = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
-
-    if (formattedNickname === APP.settings.getDisplayName()) {
-        return;
-    }
-
-    APP.settings.setDisplayName(formattedNickname);
-    room.setDisplayName(formattedNickname);
-    APP.UI.changeDisplayName(APP.conference.getMyUserId(), formattedNickname);
 }
 
 class ConferenceConnector {
@@ -1499,7 +1484,10 @@ export default {
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
-            APP.store.dispatch(changeParticipantEmail(from, data.value));
+            APP.store.dispatch(participantUpdated({
+                id: from,
+                email: data.value
+            }));
             APP.UI.setUserEmail(from, data.value);
         });
 
@@ -1507,18 +1495,25 @@ export default {
             this.commands.defaults.AVATAR_URL,
             (data, from) => {
                 APP.store.dispatch(
-                    changeParticipantAvatarURL(from, data.value));
+                    participantUpdated({
+                        id: from,
+                        avatarURL: data.value
+                    }));
                 APP.UI.setUserAvatarUrl(from, data.value);
         });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
             (data, from) => {
                 APP.store.dispatch(
-                    changeParticipantAvatarID(from, data.value));
+                    participantUpdated({
+                        id: from,
+                        avatarID: data.value
+                    }));
                 APP.UI.setUserAvatarID(from, data.value);
             });
 
-        APP.UI.addListener(UIEvents.NICKNAME_CHANGED, changeLocalDisplayName);
+        APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
+            this.changeLocalDisplayName.bind(this));
 
         APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
             (startAudioMuted, startVideoMuted) => {
@@ -1925,10 +1920,17 @@ export default {
         if (email === APP.settings.getEmail()) {
             return;
         }
-        APP.store.dispatch(changeParticipantEmail(room.myUserId(), email));
+
+        const localId = room ? room.myUserId() : undefined;
+
+        APP.store.dispatch(participantUpdated({
+            id: localId,
+            local: true,
+            email
+        }));
 
         APP.settings.setEmail(email);
-        APP.UI.setUserEmail(room.myUserId(), email);
+        APP.UI.setUserEmail(localId, email);
         sendData(commands.EMAIL, email);
     },
 
@@ -1942,10 +1944,17 @@ export default {
         if (url === APP.settings.getAvatarUrl()) {
             return;
         }
-        APP.store.dispatch(changeParticipantAvatarURL(room.myUserId(), url));
+
+        const localId = room ? room.myUserId() : undefined;
+
+        APP.store.dispatch(participantUpdated({
+            id: localId,
+            local: true,
+            avatarURL: url
+        }));
 
         APP.settings.setAvatarUrl(url);
-        APP.UI.setUserAvatarUrl(room.myUserId(), url);
+        APP.UI.setUserAvatarUrl(localId, url);
         sendData(commands.AVATAR_URL, url);
     },
 
@@ -1991,5 +2000,22 @@ export default {
      */
     isInLastN (participantId) {
         return room.isInLastN(participantId);
+    },
+    /**
+     * Changes the display name for the local user
+     * @param nickname {string} the new display name
+     */
+    changeLocalDisplayName(nickname = '') {
+        const formattedNickname
+            = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
+
+        if (formattedNickname === APP.settings.getDisplayName()) {
+            return;
+        }
+
+        APP.settings.setDisplayName(formattedNickname);
+        room.setDisplayName(formattedNickname);
+        APP.UI.changeDisplayName(this.getMyUserId(),
+            formattedNickname);
     }
 };
