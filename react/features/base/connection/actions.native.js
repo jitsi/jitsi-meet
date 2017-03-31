@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { Dispatch } from 'redux';
-
 import { conferenceWillLeave } from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 

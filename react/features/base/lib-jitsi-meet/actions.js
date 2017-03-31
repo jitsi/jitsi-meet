@@ -1,5 +1,3 @@
-import type { Dispatch } from 'redux';
-
 import JitsiMeetJS from './_';
 import {
     LIB_DID_DISPOSE,
@@ -10,8 +8,6 @@ import {
     SET_CONFIG,
     SET_WEBRTC_READY
 } from './actionTypes';
-
-declare var APP: Object;
 
 /**
  * Disposes (of) lib-jitsi-meet.

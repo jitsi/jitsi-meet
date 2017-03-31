@@ -1,7 +1,6 @@
 /* @flow */
 
 import { AppState } from 'react-native';
-import type { Dispatch } from 'redux';
 
 import {
     APP_WILL_MOUNT,

@@ -8,10 +8,6 @@ import {
     UnsupportedMobileBrowser
 } from '../../unsupported-browser';
 
-declare var APP: Object;
-declare var interfaceConfig: Object;
-declare var JitsiMeetJS: Object;
-
 /**
  * Array of rules defining whether we should intercept component to render
  * or not.

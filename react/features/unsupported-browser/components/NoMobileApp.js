@@ -4,8 +4,6 @@ import React, { Component } from 'react';
 
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
-declare var interfaceConfig: Object;
-
 /**
  * React component representing no mobile app page.
  *

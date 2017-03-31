@@ -4,8 +4,6 @@ import BrowserLanguageDetector from 'i18next-browser-languagedetector';
 
 import configLanguageDetector from './configLanguageDetector';
 
-declare var interfaceConfig: Object;
-
 /**
  * The ordered list (by name) of language detectors to be utilized as backends
  * by the singleton language detector for Web.

@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { Dispatch } from 'redux';
-
 import {
     JitsiConferenceEvents,
     libInitError,
@@ -12,9 +10,6 @@ import {
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { SET_DOMAIN } from './actionTypes';
-
-declare var APP: Object;
-declare var config: Object;
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -122,3 +117,4 @@ export function setDomain(domain: string) {
         domain
     };
 }
+

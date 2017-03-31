@@ -7,8 +7,6 @@ import MAIN_RESOURCES from '../../../../lang/main.json';
 import { DEFAULT_LANGUAGE, LANGUAGES } from './constants';
 import languageDetector from './languageDetector';
 
-declare var interfaceConfig: Object;
-
 /**
  * The options to initialize i18next with.
  *

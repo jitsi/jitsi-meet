@@ -2,8 +2,6 @@ import { loadScript } from '../../base/util';
 
 import JitsiMeetJS from './_';
 
-declare var APP: Object;
-
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 
 /**

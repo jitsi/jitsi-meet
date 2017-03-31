@@ -11,9 +11,6 @@ import { OverlayContainer } from '../../overlay';
 import { Notice } from '../../toolbar';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
-declare var $: Function;
-declare var APP: Object;
-
 /**
  * The conference page of the Web application.
  */
