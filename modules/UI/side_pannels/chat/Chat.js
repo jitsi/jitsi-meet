@@ -9,7 +9,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
 
-import { dockToolbar, setSubject } from '../../../../react/features/toolbar';
+import { dockToolbox, setSubject } from '../../../../react/features/toolbox';
 
 let unreadMessages = 0;
 const sidePanelsContainerId = 'sideToolbarContainer';
@@ -25,9 +25,9 @@ const htmlStr = `
         </div>
 
         <div id="chatconversation"></div>
-        <audio id="chatNotification" src="sounds/incomingMessage.wav" 
+        <audio id="chatNotification" src="sounds/incomingMessage.wav"
             preload="auto"></audio>
-        <textarea id="usermsg" autofocus 
+        <textarea id="usermsg" autofocus
             data-i18n="[placeholder]chat.messagebox"></textarea>
         <div id="smileysarea">
             <div id="smileys" id="toggle_smileys">
@@ -60,7 +60,7 @@ function updateVisualNotification() {
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
 
-        APP.store.dispatch(dockToolbar(true));
+        APP.store.dispatch(dockToolbox(true));
 
         const chatButtonElement
             = document.getElementById('toolbar_button_chat');
@@ -239,7 +239,7 @@ var Chat = {
                 // Undock the toolbar when the chat is shown and if we're in a
                 // video mode.
                 if (VideoLayout.isLargeVideoVisible()) {
-                    APP.store.dispatch(dockToolbar(false));
+                    APP.store.dispatch(dockToolbox(false));
                 }
 
                 // if we are in conversation mode focus on the text input

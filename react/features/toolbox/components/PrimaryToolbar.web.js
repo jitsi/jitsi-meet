@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { showDesktopSharingButton, toggleFullScreen } from '../actions';
-import BaseToolbar from './BaseToolbar';
+import Toolbar from './Toolbar';
 import { getToolbarClassNames } from '../functions';
 
 declare var APP: Object;
@@ -19,7 +19,6 @@ declare var interfaceConfig: Object;
  * @extends Component
  */
 class PrimaryToolbar extends Component {
-
     state: Object;
 
     static propTypes = {
@@ -39,7 +38,7 @@ class PrimaryToolbar extends Component {
         _primaryToolbarButtons: React.PropTypes.instanceOf(Map),
 
         /**
-         * Shows whether toolbar is visible.
+         * Shows whether toolbox is visible.
          */
         _visible: React.PropTypes.bool
     };
@@ -108,7 +107,7 @@ class PrimaryToolbar extends Component {
         const { primaryToolbarClassName } = getToolbarClassNames(this.props);
 
         return (
-            <BaseToolbar
+            <Toolbar
                 buttonHandlers = { buttonHandlers }
                 className = { primaryToolbarClassName }
                 splitterIndex = { splitterIndex }
@@ -164,7 +163,7 @@ function _mapStateToProps(state: Object): Object {
     const {
         primaryToolbarButtons,
         visible
-    } = state['features/toolbar'];
+    } = state['features/toolbox'];
 
     return {
         /**
@@ -176,7 +175,7 @@ function _mapStateToProps(state: Object): Object {
         _primaryToolbarButtons: primaryToolbarButtons,
 
         /**
-         * Shows whether toolbar is visible.
+         * Shows whether toolbox is visible.
          *
          * @protected
          * @type {boolean}
@@ -186,4 +185,3 @@ function _mapStateToProps(state: Object): Object {
 }
 
 export default connect(_mapStateToProps, _mapDispatchToProps)(PrimaryToolbar);
-

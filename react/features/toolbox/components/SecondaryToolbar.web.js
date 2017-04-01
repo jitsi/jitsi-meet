@@ -12,7 +12,7 @@ import {
     showRecordingButton,
     toggleSideToolbarContainer
 } from '../actions';
-import BaseToolbar from './BaseToolbar';
+import Toolbar from './Toolbar';
 import { getToolbarClassNames } from '../functions';
 
 declare var APP: Object;
@@ -25,7 +25,6 @@ declare var config: Object;
  * @extends Component
  */
 class SecondaryToolbar extends Component {
-
     state: Object;
 
     /**
@@ -60,7 +59,7 @@ class SecondaryToolbar extends Component {
         _secondaryToolbarButtons: React.PropTypes.instanceOf(Map),
 
         /**
-         * Shows whether toolbar is visible.
+         * Shows whether toolbox is visible.
          */
         _visible: React.PropTypes.bool
     };
@@ -157,12 +156,12 @@ class SecondaryToolbar extends Component {
         const { secondaryToolbarClassName } = getToolbarClassNames(this.props);
 
         return (
-            <BaseToolbar
+            <Toolbar
                 buttonHandlers = { buttonHandlers }
                 className = { secondaryToolbarClassName }
                 toolbarButtons = { _secondaryToolbarButtons }>
                 <FeedbackButton />
-            </BaseToolbar>
+            </Toolbar>
         );
     }
 }
@@ -239,7 +238,7 @@ function _mapStateToProps(state: Object): Object {
     const {
         secondaryToolbarButtons,
         visible
-    } = state['features/toolbar'];
+    } = state['features/toolbox'];
 
     return {
         /**

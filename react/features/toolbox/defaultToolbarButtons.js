@@ -37,11 +37,11 @@ function _showSIPNumberInput() {
 }
 
 /**
- * All toolbar buttons' descriptions.
+ * All toolbar buttons' descriptors.
  */
 export default {
     /**
-     * Object representing camera button.
+     * The descriptor of the camera toolbar button.
      */
     camera: {
         classNames: [ 'button', 'icon-camera' ],
@@ -67,7 +67,7 @@ export default {
     },
 
     /**
-     * The Object representing chat button.
+     * The descriptor of the chat toolbar button.
      */
     chat: {
         classNames: [ 'button', 'icon-chat' ],
@@ -92,16 +92,16 @@ export default {
     },
 
     /**
-     * The object representing contact list button.
+     * The descriptor of the contact list toolbar button.
      */
     contacts: {
         classNames: [ 'button', 'icon-contactList' ],
         enabled: true,
 
-        // XXX: Hotfix to solve race condition between toolbar rendering and
+        // XXX: Hotfix to solve race condition between toolbox rendering and
         // contact list view that updates the number of active participants
         // via jQuery. There is case when contact list view updates number of
-        // participants but toolbar has not been rendered yet. Since this issue
+        // participants but toolbox has not been rendered yet. Since this issue
         // is reproducible only for conferences with the only participant let's
         // use 1 participant as a default value for this badge. Later after
         // reactification of contact list let's use the value of active
@@ -120,7 +120,7 @@ export default {
     },
 
     /**
-     * The object representing desktop sharing button.
+     * The descriptor of the desktop sharing toolbar button.
      */
     desktop: {
         classNames: [ 'button', 'icon-share-desktop' ],
@@ -145,7 +145,7 @@ export default {
     },
 
     /**
-     * The object representing dialpad button.
+     * The descriptor of the dialpad toolbar button.
      */
     dialpad: {
         classNames: [ 'button', 'icon-dialpad' ],
@@ -161,7 +161,7 @@ export default {
     },
 
     /**
-     * The object representing etherpad button.
+     * The descriptor of the etherpad toolbar button.
      */
     etherpad: {
         classNames: [ 'button', 'icon-share-doc' ],
@@ -176,7 +176,7 @@ export default {
     },
 
     /**
-     * The object representing button toggling full screen mode.
+     * The descriptor of the toolbar button which toggles full-screen mode.
      */
     fullscreen: {
         classNames: [ 'button', 'icon-full-screen' ],
@@ -198,7 +198,7 @@ export default {
     },
 
     /**
-     * The object representing hanging the call up button.
+     * The descriptor of the toolbar button which hangs up the call/conference.
      */
     hangup: {
         classNames: [ 'button', 'icon-hangup', 'button_hangup' ],
@@ -212,7 +212,7 @@ export default {
     },
 
     /**
-     * The object representing button showing invite user dialog.
+     * The descriptor of the toolbar button which shows the invite user dialog.
      */
     invite: {
         classNames: [ 'button', 'icon-link' ],
@@ -226,7 +226,7 @@ export default {
     },
 
     /**
-     * The object representing microphone button.
+     * The descriptor of the microphone toolbar button.
      */
     microphone: {
         classNames: [ 'button', 'icon-microphone' ],
@@ -281,7 +281,7 @@ export default {
     },
 
     /**
-     * The object representing profile button.
+     * The descriptor of the profile toolbar button.
      */
     profile: {
         classNames: [ 'button' ],
@@ -299,7 +299,7 @@ export default {
     },
 
     /**
-     * The object representing "Raise hand" button.
+     * The descriptor of the "Raise hand" toolbar button.
      */
     raisehand: {
         classNames: [ 'button', 'icon-raised-hand' ],
@@ -320,8 +320,8 @@ export default {
     },
 
     /**
-     * The object representing recording button. Requires additional
-     * initialization in Recording module.
+     * The descriptor of the recording toolbar button. Requires additional
+     * initialization in the recording module.
      */
     recording: {
         classNames: [ 'button' ],
@@ -334,7 +334,7 @@ export default {
     },
 
     /**
-     * The objecr representing settings button.
+     * The descriptor of the settings toolbar button.
      */
     settings: {
         classNames: [ 'button', 'icon-settings' ],
@@ -349,7 +349,7 @@ export default {
     },
 
     /**
-     * The object representing sharing Youtube video button.
+     * The descriptor of the "Share YouTube video" toolbar button.
      */
     sharedvideo: {
         classNames: [ 'button', 'icon-shared-video' ],
@@ -371,7 +371,7 @@ export default {
     },
 
     /**
-     * The object representing SIP call.
+     * The descriptor of the SIP call toolbar button.
      */
     sip: {
         classNames: [ 'button', 'icon-telephone' ],

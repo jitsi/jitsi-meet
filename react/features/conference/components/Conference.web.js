@@ -7,7 +7,7 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Watermarks } from '../../base/react';
 import { OverlayContainer } from '../../overlay';
-import { Toolbar } from '../../toolbar';
+import { Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
@@ -65,7 +65,7 @@ class Conference extends Component {
     render() {
         return (
             <div id = 'videoconference_page'>
-                <Toolbar />
+                <Toolbox />
 
                 <div id = 'videospace'>
                     <div

@@ -20,7 +20,7 @@ import analytics from './modules/analytics/analytics';
 
 import EventEmitter from "events";
 
-import { showDesktopSharingButton } from './react/features/toolbar';
+import { showDesktopSharingButton } from './react/features/toolbox';
 
 import {
     AVATAR_ID_COMMAND,

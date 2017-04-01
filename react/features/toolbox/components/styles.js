@@ -64,7 +64,7 @@ const toolbar = {
 };
 
 /**
- * The (conference) toolbar related styles.
+ * The (conference) Toolbox/Toolbar related styles.
  */
 export const styles = createStyleSheet({
     /**
@@ -116,7 +116,8 @@ export const styles = createStyleSheet({
     },
 
     /**
-     * The style of the root/top-level Container of Toolbar.
+     * The style of the root/top-level Container of Toolbar that contains
+     * toolbars.
      */
     toolbarContainer: {
         bottom: 0,

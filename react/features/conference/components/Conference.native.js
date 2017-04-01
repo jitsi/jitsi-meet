@@ -6,17 +6,17 @@ import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../film-strip';
 import { LargeVideo } from '../../large-video';
-import { setToolbarVisible, Toolbar } from '../../toolbar';
+import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import { styles } from './styles';
 
 /**
- * The timeout in milliseconds after which the toolbar will be hidden.
+ * The timeout in milliseconds after which the Toolbox will be hidden.
  *
  * @private
  * @type {number}
  */
-const _TOOLBAR_TIMEOUT_MS = 5000;
+const _TOOLBOX_TIMEOUT_MS = 5000;
 
 /**
  * The conference page of the mobile (i.e. React Native) application.
@@ -45,21 +45,21 @@ class Conference extends Component {
         _onDisconnect: React.PropTypes.func,
 
         /**
-         * The handler which dispatches the (redux) action setTooblarVisible to
-         * show/hide the toolbar.
+         * The handler which dispatches the (redux) action setToolboxVisible to
+         * show/hide the Toolbox.
          *
          * @private
          * @type {boolean}
          */
-        _setToolbarVisible: React.PropTypes.func,
+        _setToolboxVisible: React.PropTypes.func,
 
         /**
-         * The indicator which determines whether toolbar is visible.
+         * The indicator which determines whether the Toolbox is visible.
          *
          * @private
          * @type {boolean}
          */
-        _toolbarVisible: React.PropTypes.bool
+        _toolboxVisible: React.PropTypes.bool
     };
 
     /**
@@ -73,25 +73,25 @@ class Conference extends Component {
 
         /**
          * The numerical ID of the timeout in milliseconds after which the
-         * toolbar will be hidden. To be used with
+         * Toolbox will be hidden. To be used with
          * {@link WindowTimers#clearTimeout()}.
          *
          * @private
          */
-        this._toolbarTimeout = undefined;
+        this._toolboxTimeout = undefined;
 
         // Bind event handlers so they are only bound once for every instance.
         this._onClick = this._onClick.bind(this);
     }
 
     /**
-     * Inits the toolbar timeout after the component is initially rendered.
+     * Inits the Toolbox timeout after the component is initially rendered.
      *
      * @inheritdoc
      * returns {void}
      */
     componentDidMount() {
-        this._setToolbarTimeout(this.props._toolbarVisible);
+        this._setToolboxTimeout(this.props._toolboxVisible);
     }
 
     /**
@@ -106,13 +106,13 @@ class Conference extends Component {
 
     /**
      * Destroys connection, conference and local tracks when conference screen
-     * is left. Clears {@link #_toolbarTimeout} before the component unmounts.
+     * is left. Clears {@link #_toolboxTimeout} before the component unmounts.
      *
      * @inheritdoc
      * @returns {void}
      */
     componentWillUnmount() {
-        this._clearToolbarTimeout();
+        this._clearToolboxTimeout();
 
         this.props._onDisconnect();
     }
@@ -132,7 +132,7 @@ class Conference extends Component {
 
                 <LargeVideo />
 
-                <Toolbar />
+                <Toolbox />
                 <FilmStrip />
 
                 <DialogContainer />
@@ -141,46 +141,45 @@ class Conference extends Component {
     }
 
     /**
-     * Clears {@link #_toolbarTimeout} if any.
+     * Clears {@link #_toolboxTimeout} if any.
      *
      * @private
      * @returns {void}
      */
-    _clearToolbarTimeout() {
-        if (this._toolbarTimeout) {
-            clearTimeout(this._toolbarTimeout);
-            this._toolbarTimeout = undefined;
+    _clearToolboxTimeout() {
+        if (this._toolboxTimeout) {
+            clearTimeout(this._toolboxTimeout);
+            this._toolboxTimeout = undefined;
         }
     }
 
     /**
-     * Changes the value of the toolbarVisible state, thus allowing us to
-     * 'switch' between toolbar and filmstrip views and change the visibility of
-     * the above.
+     * Changes the value of the toolboxVisible state, thus allowing us to switch
+     * between Toolbox and FilmStrip and change their visibility.
      *
      * @private
      * @returns {void}
      */
     _onClick() {
-        const toolbarVisible = !this.props._toolbarVisible;
+        const toolboxVisible = !this.props._toolboxVisible;
 
-        this.props._setToolbarVisible(toolbarVisible);
-        this._setToolbarTimeout(toolbarVisible);
+        this.props._setToolboxVisible(toolboxVisible);
+        this._setToolboxTimeout(toolboxVisible);
     }
 
     /**
-     * Triggers the default toolbar timeout.
+     * Triggers the default Toolbox timeout.
      *
-     * @param {boolean} toolbarVisible - Indicates if the toolbar is currently
-     * visible.
+     * @param {boolean} toolboxVisible - Indicates whether the Toolbox is
+     * currently visible.
      * @private
      * @returns {void}
      */
-    _setToolbarTimeout(toolbarVisible) {
-        this._clearToolbarTimeout();
-        if (toolbarVisible) {
-            this._toolbarTimeout
-                = setTimeout(this._onClick, _TOOLBAR_TIMEOUT_MS);
+    _setToolboxTimeout(toolboxVisible) {
+        this._clearToolboxTimeout();
+        if (toolboxVisible) {
+            this._toolboxTimeout
+                = setTimeout(this._onClick, _TOOLBOX_TIMEOUT_MS);
         }
     }
 }
@@ -193,7 +192,7 @@ class Conference extends Component {
  * @returns {{
  *     _onConnect: Function,
  *     _onDisconnect: Function,
- *     _setToolbarVisible: Function
+ *     _setToolboxVisible: Function
  * }}
  */
 function _mapDispatchToProps(dispatch) {
@@ -219,15 +218,15 @@ function _mapDispatchToProps(dispatch) {
         },
 
         /**
-         * Dispatched an action changing visiblity of the toolbar.
+         * Dispatches an action changing the visiblity of the Toolbox.
          *
-         * @param {boolean} isVisible - Flag showing whether toolbar is
-         * visible.
+         * @param {boolean} visible - True to show the Toolbox or false to hide
+         * it.
          * @returns {Object} Dispatched action.
          * @private
          */
-        _setToolbarVisible(isVisible: boolean) {
-            return dispatch(setToolbarVisible(isVisible));
+        _setToolboxVisible(visible: boolean) {
+            return dispatch(setToolboxVisible(visible));
         }
     };
 }
@@ -238,18 +237,18 @@ function _mapDispatchToProps(dispatch) {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _toolbarVisible: boolean
+ *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
         /**
-         * The indicator which determines whether toolbar is visible.
+         * The indicator which determines whether the Toolbox is visible.
          *
          * @private
          * @type {boolean}
          */
-        _toolbarVisible: state['features/toolbar'].visible
+        _toolboxVisible: state['features/toolbox'].visible
     };
 }
 

@@ -13,13 +13,14 @@ declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
- * Class implementing Primary Toolbar React component.
+ * Implements a toolbar in React/Web. It is a strip that contains a set of
+ * toolbar items such as buttons. Toolbar is commonly placed inside of a
+ * Toolbox.
  *
- * @class PrimaryToolbar
+ * @class Toolbar
  * @extends Component
  */
-class BaseToolbar extends Component {
-
+class Toolbar extends Component {
     _renderToolbarButton: Function;
 
     /**
@@ -197,4 +198,4 @@ function _mapDispatchToProps(dispatch: Function): Object {
     };
 }
 
-export default connect(null, _mapDispatchToProps)(BaseToolbar);
+export default connect(null, _mapDispatchToProps)(Toolbar);

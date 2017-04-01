@@ -21,7 +21,7 @@ import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
 import Feedback from '../feedback/Feedback.js';
 
-import { hideToolbar } from '../../../react/features/toolbar';
+import { hideToolbox } from '../../../react/features/toolbox';
 
 /**
  * The dialog for user input.
@@ -65,7 +65,7 @@ function _requestLiveStreamId() {
                     name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     autofocus><div style="text-align: right">
-                    <a class="helper-link" target="_new" 
+                    <a class="helper-link" target="_new"
                     href="${interfaceConfig.LIVE_STREAMING_HELP_LINK}">`
                         + streamIdHelp
                         + `</a></div>`,
@@ -264,7 +264,7 @@ var Recording = {
                 APP.conference.getMyUserId(), false);
             VideoLayout.setLocalVideoVisible(false);
             Feedback.enableFeedback(false);
-            APP.store.dispatch(hideToolbar());
+            APP.store.dispatch(hideToolbox());
             APP.UI.messageHandler.enableNotifications(false);
             APP.UI.messageHandler.enablePopups(false);
         }

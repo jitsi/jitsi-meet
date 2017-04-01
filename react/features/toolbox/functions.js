@@ -8,16 +8,16 @@ import { toggleAudioMuted, toggleVideoMuted } from '../base/media';
 
 import defaultToolbarButtons from './defaultToolbarButtons';
 
-declare var $: Function;
-declare var AJS: Object;
-declare var interfaceConfig: Object;
-
 import type { Dispatch } from 'redux-thunk';
 
 type MapOfAttributes = { [key: string]: * };
 
+declare var $: Function;
+declare var AJS: Object;
+declare var interfaceConfig: Object;
+
 /**
- * Maps actions to React component props.
+ * Maps (redux) actions to React component props.
  *
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
@@ -83,7 +83,7 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
  */
 export function abstractMapStateToProps(state: Object): Object {
     const media = state['features/base/media'];
-    const { visible } = state['features/toolbar'];
+    const { visible } = state['features/toolbox'];
 
     return {
         /**
@@ -103,7 +103,7 @@ export function abstractMapStateToProps(state: Object): Object {
         _videoMuted: media.video.muted,
 
         /**
-         * Flag showing whether toolbar is visible.
+         * Flag showing whether toolbox is visible.
          *
          * @protected
          * @type {boolean}
@@ -116,7 +116,7 @@ export function abstractMapStateToProps(state: Object): Object {
  * Takes toolbar button props and maps them to HTML attributes to set.
  *
  * @param {Object} props - Props set to the React component.
- * @returns {Object}
+ * @returns {MapOfAttributes}
  */
 export function getButtonAttributesByProps(props: Object): MapOfAttributes {
     const classNames = [ ...props.classNames ];
@@ -156,27 +156,29 @@ export function getDefaultToolbarButtons(): Object {
 
     if (typeof interfaceConfig !== 'undefined'
             && interfaceConfig.TOOLBAR_BUTTONS) {
-        toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS.reduce(
-            (acc, buttonName) => {
-                const button = defaultToolbarButtons[buttonName];
+        toolbarButtons
+            = interfaceConfig.TOOLBAR_BUTTONS.reduce(
+                (acc, buttonName) => {
+                    const button = defaultToolbarButtons[buttonName];
 
-                if (button) {
-                    const place = _getToolbarButtonPlace(buttonName);
+                    if (button) {
+                        const place = _getToolbarButtonPlace(buttonName);
 
-                    button.buttonName = buttonName;
-                    acc[place].set(buttonName, button);
-                }
+                        button.buttonName = buttonName;
+                        acc[place].set(buttonName, button);
+                    }
 
-                return acc;
-            }, toolbarButtons);
+                    return acc;
+                },
+                toolbarButtons);
     }
 
     return toolbarButtons;
 }
 
 /**
- * Get place for toolbar button.
- * Now it can be in main toolbar or in extended (left) toolbar.
+ * Get place for toolbar button. Now it can be in the primary Toolbar or in the
+ * secondary Toolbar.
  *
  * @param {string} btn - Button name.
  * @private

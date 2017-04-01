@@ -7,13 +7,12 @@ import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../../../modules/UI/util/UIUtil';
 
 import {
-    clearToolbarTimeout,
-    setAlwaysVisibleToolbar,
+    clearToolboxTimeout,
     setSubjectSlideIn,
     setToolbarButton,
-    setToolbarTimeout,
-    setToolbarTimeoutNumber,
-    setToolbarVisible,
+    setToolboxTimeout,
+    setToolboxTimeoutMS,
+    setToolboxVisible,
     toggleToolbarButton
 } from './actions.native';
 
@@ -43,83 +42,70 @@ export function checkAutoEnableDesktopSharing(): Function {
 }
 
 /**
- * Docks/undocks toolbar based on its parameter.
+ * Docks/undocks the Toolbox.
  *
  * @param {boolean} dock - True if dock, false otherwise.
  * @returns {Function}
  */
-export function dockToolbar(dock: boolean): Function {
+export function dockToolbox(dock: boolean): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
         if (interfaceConfig.filmStripOnly) {
             return;
         }
 
         const state = getState();
-        const { toolbarTimeout, visible } = state['features/toolbar'];
+        const { timeoutMS, visible } = state['features/toolbox'];
 
         if (dock) {
-            // First make sure the toolbar is shown.
-            visible || dispatch(showToolbar());
+            // First make sure the toolbox is shown.
+            visible || dispatch(showToolbox());
 
-            dispatch(clearToolbarTimeout());
+            dispatch(clearToolboxTimeout());
         } else if (visible) {
             dispatch(
-                setToolbarTimeout(
-                    () => dispatch(hideToolbar()),
-                    toolbarTimeout));
+                setToolboxTimeout(
+                    () => dispatch(hideToolbox()),
+                    timeoutMS));
         } else {
-            dispatch(showToolbar());
+            dispatch(showToolbox());
         }
     };
 }
 
 /**
- * Hides the toolbar.
+ * Hides the toolbox.
  *
- * @param {boolean} force - True to force the hiding of the toolbar without
+ * @param {boolean} force - True to force the hiding of the toolbox without
  * caring about the extended toolbar side panels.
  * @returns {Function}
  */
-export function hideToolbar(force: boolean = false): Function {
+export function hideToolbox(force: boolean = false): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const {
             alwaysVisible,
             hovered,
-            toolbarTimeout
-        } = state['features/toolbar'];
+            timeoutMS
+        } = state['features/toolbox'];
 
         if (alwaysVisible) {
             return;
         }
 
-        dispatch(clearToolbarTimeout());
+        dispatch(clearToolboxTimeout());
 
         if (!force
                 && (hovered
                     || APP.UI.isRingOverlayVisible()
                     || SideContainerToggler.isVisible())) {
             dispatch(
-                setToolbarTimeout(
-                    () => dispatch(hideToolbar()),
-                    toolbarTimeout));
+                setToolboxTimeout(
+                    () => dispatch(hideToolbox()),
+                    timeoutMS));
         } else {
-            dispatch(setToolbarVisible(false));
+            dispatch(setToolboxVisible(false));
             dispatch(setSubjectSlideIn(false));
         }
-    };
-}
-
-/**
- * Action that reset always visible toolbar to default state.
- *
- * @returns {Function}
- */
-export function resetAlwaysVisibleToolbar(): Function {
-    return (dispatch: Dispatch<*>) => {
-        const alwaysVisible = config.alwaysVisibleToolbar === true;
-
-        dispatch(setAlwaysVisibleToolbar(alwaysVisible));
     };
 }
 
@@ -240,27 +226,28 @@ export function showSIPCallButton(show: boolean): Function {
 }
 
 /**
- * Shows the toolbar for specified timeout.
+ * Shows the toolbox for specified timeout.
  *
- * @param {number} timeout - Timeout for showing the toolbar.
+ * @param {number} timeout - Timeout for showing the toolbox.
  * @returns {Function}
  */
-export function showToolbar(timeout: number = 0): Object {
+export function showToolbox(timeout: number = 0): Object {
     return (dispatch: Dispatch<*>, getState: Function) => {
         if (interfaceConfig.filmStripOnly) {
             return;
         }
 
         const state = getState();
-        const { toolbarTimeout, visible } = state['features/toolbar'];
-        const finalTimeout = timeout || toolbarTimeout;
+        const { timeoutMS, visible } = state['features/toolbox'];
 
         if (!visible) {
-            dispatch(setToolbarVisible(true));
+            dispatch(setToolboxVisible(true));
             dispatch(setSubjectSlideIn(true));
             dispatch(
-                setToolbarTimeout(() => dispatch(hideToolbar()), finalTimeout));
-            dispatch(setToolbarTimeoutNumber(interfaceConfig.TOOLBAR_TIMEOUT));
+                setToolboxTimeout(
+                    () => dispatch(hideToolbox()),
+                    timeout || timeoutMS));
+            dispatch(setToolboxTimeoutMS(interfaceConfig.TOOLBAR_TIMEOUT));
         }
     };
 }
@@ -269,12 +256,12 @@ export function showToolbar(timeout: number = 0): Object {
  * Event handler for side toolbar container toggled event.
  *
  * @param {string} containerId - ID of the container.
- * @returns {void}
+ * @returns {Function}
  */
 export function toggleSideToolbarContainer(containerId: string): Function {
     return (dispatch: Dispatch, getState: Function) => {
         const state = getState();
-        const { secondaryToolbarButtons } = state['features/toolbar'];
+        const { secondaryToolbarButtons } = state['features/toolbox'];
 
         for (const key of secondaryToolbarButtons.keys()) {
             const isButtonEnabled = UIUtil.isButtonEnabled(key);

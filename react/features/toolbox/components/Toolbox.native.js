@@ -15,11 +15,11 @@ import { styles } from './styles';
 import ToolbarButton from './ToolbarButton';
 
 /**
- * Implements the conference toolbar on React Native.
+ * Implements the conference toolbox on React Native.
  */
-class Toolbar extends Component {
+class Toolbox extends Component {
     /**
-     * Toolbar component's property types.
+     * Toolbox component's property types.
      *
      * @static
      */
@@ -220,7 +220,7 @@ class Toolbar extends Component {
  * TODO As soon as we have common font sets for web and native, this will no
  * longer be required.
  */
-Object.assign(Toolbar.prototype, {
+Object.assign(Toolbox.prototype, {
     audioIcon: 'microphone',
     audioMutedIcon: 'mic-disabled',
     videoIcon: 'camera',
@@ -293,4 +293,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbar);
+export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbox);

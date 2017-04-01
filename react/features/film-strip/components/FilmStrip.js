@@ -110,7 +110,7 @@ class FilmStrip extends Component {
  * @returns {{
  *     _participants: Participant[],
  *     _visible: boolean
- *  }}
+ * }}
  */
 function _mapStateToProps(state) {
     return {
@@ -132,7 +132,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _visible: !state['features/toolbar'].visible
+        _visible: !state['features/toolbox'].visible
     };
 }
 

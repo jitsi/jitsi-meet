@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
-import { resetAlwaysVisibleToolbar } from '../actions';
+import { setToolboxAlwaysVisible } from '../actions';
 import {
     abstractMapStateToProps,
     showCustomToolbarPopup
@@ -19,10 +19,9 @@ declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
- * Implements the conference toolbar on React.
+ * Implements the conference toolbox on React/Web.
  */
-class Toolbar extends Component {
-
+class Toolbox extends Component {
     /**
      * App component's property types.
      *
@@ -30,9 +29,9 @@ class Toolbar extends Component {
      */
     static propTypes = {
         /**
-         * Handler dispatching reset always visible toolbar action.
+         * Handler dispatching reset always visible toolbox action.
          */
-        _onResetAlwaysVisibleToolbar: React.PropTypes.func,
+        _setToolboxAlwaysVisible: React.PropTypes.func,
 
         /**
          * Represents conference subject.
@@ -45,21 +44,22 @@ class Toolbar extends Component {
         _subjectSlideIn: React.PropTypes.bool,
 
         /**
-         * Property containing toolbar timeout id.
+         * Property containing toolbox timeout id.
          */
-        _timeoutId: React.PropTypes.number
+        _timeoutID: React.PropTypes.number
     };
 
     /**
-     * Invokes reset always visible toolbar after mounting the component and
+     * Invokes reset always visible toolbox after mounting the component and
      * registers legacy UI listeners.
      *
      * @returns {void}
      */
     componentDidMount(): void {
-        this.props._onResetAlwaysVisibleToolbar();
+        this.props._setToolboxAlwaysVisible();
 
-        APP.UI.addListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
+        APP.UI.addListener(
+            UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
             showCustomToolbarPopup);
     }
 
@@ -69,7 +69,8 @@ class Toolbar extends Component {
      *  @returns {void}
      */
     componentWillUnmount(): void {
-        APP.UI.removeListener(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
+        APP.UI.removeListener(
+            UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
             showCustomToolbarPopup);
     }
 
@@ -94,7 +95,7 @@ class Toolbar extends Component {
     }
 
     /**
-     * Returns React element representing toolbar subject.
+     * Returns React element representing toolbox subject.
      *
      * @returns {ReactElement}
      * @private
@@ -137,9 +138,8 @@ class Toolbar extends Component {
      * @private
      */
     _renderToolbars(): ReactElement<*> | null {
-        // We should not show the toolbars till timeout object will be
-        // initialized.
-        if (this.props._timeoutId === null) {
+        // The toolbars should not be shown until timeoutID is initialized.
+        if (this.props._timeoutID === null) {
             return null;
         }
 
@@ -158,7 +158,7 @@ class Toolbar extends Component {
  *
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
- *      _onResetAlwaysVisibleToolbar: Function
+ *     _setToolboxAlwaysVisible: Function
  * }}
  * @private
  */
@@ -166,18 +166,19 @@ function _mapDispatchToProps(dispatch: Function): Object {
     return {
 
         /**
-         * Dispatches an action resetting always visible toolbar.
+         * Dispatches an action resetting always visible toolbox.
          *
          * @returns {Object} Dispatched action.
          */
-        _onResetAlwaysVisibleToolbar() {
-            dispatch(resetAlwaysVisibleToolbar());
+        _setToolboxAlwaysVisible() {
+            dispatch(
+                setToolboxAlwaysVisible(config.alwaysVisibleToolbar === true));
         }
     };
 }
 
 /**
- * Maps parts of toolbar state to component props.
+ * Maps parts of toolbox state to component props.
  *
  * @param {Object} state - Redux state.
  * @private
@@ -192,8 +193,8 @@ function _mapStateToProps(state: Object): Object {
     const {
         subject,
         subjectSlideIn,
-        timeoutId
-    } = state['features/toolbar'];
+        timeoutID
+    } = state['features/toolbox'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -215,13 +216,13 @@ function _mapStateToProps(state: Object): Object {
         _subjectSlideIn: subjectSlideIn,
 
         /**
-         * Property containing toolbar timeout id.
+         * Property containing toolbox timeout id.
          *
          * @protected
          * @type {number}
          */
-        _timeoutId: timeoutId
+        _timeoutID: timeoutID
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbar);
+export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbox);

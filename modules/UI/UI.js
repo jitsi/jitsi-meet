@@ -29,7 +29,7 @@ import {
 } from '../../react/features/base/media';
 import {
     checkAutoEnableDesktopSharing,
-    dockToolbar,
+    dockToolbox,
     setAudioIconEnabled,
     setToolbarButton,
     setVideoIconEnabled,
@@ -37,8 +37,8 @@ import {
     showEtherpadButton,
     showSharedVideoButton,
     showSIPCallButton,
-    showToolbar
-} from '../../react/features/toolbar';
+    showToolbox
+} from '../../react/features/toolbox';
 
 var EventEmitter = require("events");
 UI.messageHandler = require("./util/MessageHandler");
@@ -202,7 +202,7 @@ UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
  * Sets the local "raised hand" status.
  */
 UI.setLocalRaisedHandStatus
-    = raisedHandStatus => 
+    = raisedHandStatus =>
         VideoLayout.setRaisedHandStatus(
             APP.conference.getMyUserId(),
             raisedHandStatus);
@@ -739,15 +739,11 @@ UI.clickOnVideo = function (videoNumber) {
     videos[videoIndex].click();
 };
 
-//Used by torture
-UI.showToolbar = function (timeout) {
-    APP.store.dispatch(showToolbar(timeout));
-};
+// Used by torture.
+UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
 
-//Used by torture
-UI.dockToolbar = function (isDock) {
-    APP.store.dispatch(dockToolbar(isDock));
-};
+// Used by torture.
+UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
 
 /**
  * Updates the avatar for participant.

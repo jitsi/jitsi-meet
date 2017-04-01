@@ -3,90 +3,96 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    CLEAR_TOOLBAR_TIMEOUT,
-    SET_ALWAYS_VISIBLE_TOOLBAR,
+    CLEAR_TOOLBOX_TIMEOUT,
+    SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_SUBJECT,
     SET_SUBJECT_SLIDE_IN,
     SET_TOOLBAR_BUTTON,
     SET_TOOLBAR_HOVERED,
-    SET_TOOLBAR_TIMEOUT,
-    SET_TOOLBAR_TIMEOUT_NUMBER,
-    SET_TOOLBAR_VISIBLE
+    SET_TOOLBOX_TIMEOUT,
+    SET_TOOLBOX_TIMEOUT_MS,
+    SET_TOOLBOX_VISIBLE
 } from './actionTypes';
 import { getDefaultToolbarButtons } from './functions';
 
 declare var interfaceConfig: Object;
 
 /**
- * Returns initial state for toolbar's part of Redux store.
+ * Returns initial state for toolbox's part of Redux store.
  *
- * @returns {{
- *     primaryToolbarButtons: Map,
- *     secondaryToolbarButtons: Map
- * }}
  * @private
+ * @returns {{
+ *     alwaysVisible: boolean,
+ *     hovered: boolean,
+ *     primaryToolbarButtons: Map,
+ *     secondaryToolbarButtons: Map,
+ *     subject: string,
+ *     subjectSlideIn: boolean,
+ *     timeoutID: number,
+ *     timeoutMS: number,
+ *     visible: boolean
+ * }}
  */
 function _getInitialState() {
-    // Default toolbar timeout for mobile app.
-    let toolbarTimeout = 5000;
+    // Default toolbox timeout for mobile app.
+    let timeoutMS = 5000;
 
     if (typeof interfaceConfig !== 'undefined'
             && interfaceConfig.INITIAL_TOOLBAR_TIMEOUT) {
-        toolbarTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+        timeoutMS = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
     }
 
     return {
-        /**
-         * Contains default toolbar buttons for primary and secondary toolbars.
-         *
-         * @type {Map}
-         */
         ...getDefaultToolbarButtons(),
 
         /**
-         * Shows whether toolbar is always visible.
+         * The indicator which determines whether the Toolbox should always be
+         * visible.
          *
          * @type {boolean}
          */
         alwaysVisible: false,
 
         /**
-         * Shows whether toolbar is hovered.
+         * The indicator which determines whether a Toolbar in the Toolbox is
+         * hovered.
          *
          * @type {boolean}
          */
         hovered: false,
 
         /**
-         * Contains text of conference subject.
+         * The text of the conference subject.
          *
          * @type {string}
          */
         subject: '',
 
         /**
-         * Shows whether subject is sliding in.
+         * The indicator which determines whether the subject is sliding in.
          *
          * @type {boolean}
          */
         subjectSlideIn: false,
 
         /**
-         * Contains toolbar timeout id.
+         * A number, non-zero value which identifies the timer created by a call
+         * to setTimeout() with timeoutMS.
          *
          * @type {number|null}
          */
-        timeoutId: null,
+        timeoutID: null,
 
         /**
-         * Contains delay of toolbar timeout.
+         * The delay in milliseconds before timeoutID executes (after its
+         * initialization).
          *
          * @type {number}
          */
-        toolbarTimeout,
+        timeoutMS,
 
         /**
-         * Shows whether toolbar is visible.
+         * The indicator which determines whether the Toolbox is visible.
          *
          * @type {boolean}
          */
@@ -95,16 +101,16 @@ function _getInitialState() {
 }
 
 ReducerRegistry.register(
-    'features/toolbar',
+    'features/toolbox',
     (state: Object = _getInitialState(), action: Object) => {
         switch (action.type) {
-        case CLEAR_TOOLBAR_TIMEOUT:
+        case CLEAR_TOOLBOX_TIMEOUT:
             return {
                 ...state,
-                timeoutId: undefined
+                timeoutID: undefined
             };
 
-        case SET_ALWAYS_VISIBLE_TOOLBAR:
+        case SET_TOOLBOX_ALWAYS_VISIBLE:
             return {
                 ...state,
                 alwaysVisible: action.alwaysVisible
@@ -131,20 +137,20 @@ ReducerRegistry.register(
                 hovered: action.hovered
             };
 
-        case SET_TOOLBAR_TIMEOUT:
+        case SET_TOOLBOX_TIMEOUT:
             return {
                 ...state,
-                toolbarTimeout: action.toolbarTimeout,
-                timeoutId: action.timeoutId
+                timeoutID: action.timeoutID,
+                timeoutMS: action.timeoutMS
             };
 
-        case SET_TOOLBAR_TIMEOUT_NUMBER:
+        case SET_TOOLBOX_TIMEOUT_MS:
             return {
                 ...state,
-                toolbarTimeout: action.toolbarTimeout
+                timeoutMS: action.timeoutMS
             };
 
-        case SET_TOOLBAR_VISIBLE:
+        case SET_TOOLBOX_VISIBLE:
             return {
                 ...state,
                 visible: action.visible
@@ -161,8 +167,8 @@ ReducerRegistry.register(
  * @param {Object} action - Dispatched action.
  * @param {Object} action.button - Object describing toolbar button.
  * @param {Object} action.buttonName - The name of the button.
- * @returns {Object}
  * @private
+ * @returns {Object}
  */
 function _setButton(state, { buttonName, button }): Object {
     const {

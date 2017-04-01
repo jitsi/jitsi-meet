@@ -10,7 +10,7 @@ import LargeContainer from '../videolayout/LargeContainer';
 import SmallVideo from '../videolayout/SmallVideo';
 import FilmStrip from '../videolayout/FilmStrip';
 
-import { dockToolbar, showToolbar } from '../../../react/features/toolbar';
+import { dockToolbox, showToolbox } from '../../../react/features/toolbox';
 
 export const SHARED_VIDEO_CONTAINER_TYPE = "sharedvideo";
 
@@ -579,7 +579,7 @@ class SharedVideoContainer extends LargeContainer {
                 self.bodyBackground = document.body.style.background;
                 document.body.style.background = 'black';
                 this.$iframe.css({opacity: 1});
-                APP.store.dispatch(dockToolbar(true));
+                APP.store.dispatch(dockToolbox(true));
                 resolve();
             });
         });
@@ -587,7 +587,7 @@ class SharedVideoContainer extends LargeContainer {
 
     hide () {
         let self = this;
-        APP.store.dispatch(dockToolbar(false));
+        APP.store.dispatch(dockToolbox(false));
         return new Promise(resolve => {
             this.$iframe.fadeOut(300, () => {
                 document.body.style.background = self.bodyBackground;
@@ -598,7 +598,7 @@ class SharedVideoContainer extends LargeContainer {
     }
 
     onHoverIn () {
-        APP.store.dispatch(showToolbar());
+        APP.store.dispatch(showToolbox());
     }
 
     get id () {
