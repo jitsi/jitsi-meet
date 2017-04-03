@@ -1,6 +1,5 @@
 /* application specific logic */
 
-import "babel-polyfill";
 import "jquery";
 import "jquery-contextmenu";
 import "jquery-ui";
