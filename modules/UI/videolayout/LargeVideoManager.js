@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
@@ -8,6 +8,9 @@ import UIUtil from "../util/UIUtil";
 import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 
 import AudioLevels from "../audio_levels/AudioLevels";
+
+const ParticipantConnectionStatus
+    = JitsiMeetJS.constants.participantConnectionStatus;
 
 /**
  * Manager for all Large containers.
@@ -114,7 +117,7 @@ export default class LargeVideoManager {
             // (camera or desktop) is a completely different thing than
             // the video container type (Etherpad, SharedVideo, VideoContainer).
             // ----------------------------------------------------------------
-            // If we the continer is VIDEO_CONTAINER_TYPE, we need to check
+            // If the container is VIDEO_CONTAINER_TYPE, we need to check
             // its stream whether exist and is muted to set isVideoMuted
             // in rest of the cases it is false
             let showAvatar
@@ -125,11 +128,10 @@ export default class LargeVideoManager {
             // displayed in case we have no video image cached. That is if
             // there was a user switch(image is lost on stream detach) or if
             // the video was not rendered, before the connection has failed.
-            const isHavingConnectivityIssues
-                = APP.conference.isParticipantConnectionActive(id) === false;
+            const isConnectionActive = this._isConnectionActive(id);
 
             if (videoType === VIDEO_CONTAINER_TYPE
-                    && isHavingConnectivityIssues
+                    && !isConnectionActive
                     && (isUserSwitch || !container.wasVideoRendered)) {
                 showAvatar = true;
             }
@@ -158,12 +160,19 @@ export default class LargeVideoManager {
             // Make sure no notification about remote failure is shown as
             // its UI conflicts with the one for local connection interrupted.
             const isConnected = APP.conference.isConnectionInterrupted()
-                                || !isHavingConnectivityIssues;
+                                || isConnectionActive;
+
+            // when isHavingConnectivityIssues, state can be inactive,
+            // interrupted or restoring. We show different message for
+            // interrupted and the rest.
+            const isConnectionInterrupted =
+                APP.conference.getParticipantConnectionStatus(id)
+                    === ParticipantConnectionStatus.INTERRUPTED;
 
             this.updateParticipantConnStatusIndication(
                     id,
                     isConnected,
-                    (isHavingConnectivityIssues)
+                    (isConnectionInterrupted)
                         ? "connection.USER_CONNECTION_INTERRUPTED"
                         : "connection.LOW_BANDWIDTH");
 
@@ -178,6 +187,22 @@ export default class LargeVideoManager {
             this.eventEmitter.emit(UIEvents.LARGE_VIDEO_ID_CHANGED, this.id);
             this.scheduleLargeVideoUpdate();
         });
+    }
+
+    /**
+     * Checks whether a participant's peer connection status is active.
+     * There is no JitsiParticipant for local id we skip checking local
+     * participant and report it as having no connectivity issues.
+     *
+     * @param {string} id the id of participant(MUC nickname)
+     * @returns {boolean} <tt>true</tt> when participant connection status is
+     * {@link ParticipantConnectionStatus.ACTIVE} and <tt>false</tt> otherwise.
+     * @private
+     */
+    _isConnectionActive(id) {
+        return APP.conference.isLocalId(id)
+                || APP.conference.getParticipantConnectionStatus(this.id)
+                    === ParticipantConnectionStatus.ACTIVE;
     }
 
     /**
@@ -340,7 +365,7 @@ export default class LargeVideoManager {
      */
     showRemoteConnectionMessage (show) {
         if (typeof show !== 'boolean') {
-            show = !APP.conference.isParticipantConnectionActive(this.id);
+            show = !this._isConnectionActive(this.id);
         }
 
         if (show) {

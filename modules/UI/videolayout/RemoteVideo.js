@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP, interfaceConfig, JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import ConnectionIndicator from './ConnectionIndicator';
@@ -12,6 +12,8 @@ const MUTED_DIALOG_BUTTON_VALUES = {
     cancel: 0,
     muted: 1
 };
+const ParticipantConnectionStatus
+    = JitsiMeetJS.constants.participantConnectionStatus;
 
 /**
  * Creates new instance of the <tt>RemoteVideo</tt>.
@@ -447,7 +449,7 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
 RemoteVideo.prototype.setMutedView = function(isMuted) {
     SmallVideo.prototype.setMutedView.call(this, isMuted);
     // Update 'mutedWhileDisconnected' flag
-    this._figureOutMutedWhileDisconnected(this.isConnectionActive() === false);
+    this._figureOutMutedWhileDisconnected(this.isConnectionInterrupted());
 };
 
 /**
@@ -534,7 +536,8 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
  * <tt>false</tt> otherwise.
  */
 RemoteVideo.prototype.isConnectionActive = function() {
-    return this.user.isConnectionActive();
+    return this.user.getConnectionStatus()
+        === ParticipantConnectionStatus.ACTIVE;
 };
 
 /**
