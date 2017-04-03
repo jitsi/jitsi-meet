@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
-
-import { translate } from '../../base/i18n';
+import { Dialog } from '../../base/dialog';
 
 import { endRoomLockRequest } from '../actions';
 
@@ -23,15 +21,7 @@ class RoomLockPrompt extends Component {
          * @type {JitsiConference}
          */
         conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: React.PropTypes.func
+        dispatch: React.PropTypes.func
     }
 
     /**
@@ -55,15 +45,13 @@ class RoomLockPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
 
         return (
-            <Prompt
+            <Dialog
+                bodyKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                placeholder = { t('dialog.passwordLabel') }
-                title = { t('toolbar.lock') }
-                visible = { true } />
+                titleKey = 'toolbar.lock' />
         );
     }
 
@@ -71,12 +59,12 @@ class RoomLockPrompt extends Component {
      * Notifies this prompt that it has been dismissed by cancel.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean} whether to hide the dialog
      */
     _onCancel() {
         // An undefined password is understood to cancel the request to lock the
         // conference/room.
-        this._onSubmit(undefined);
+        return this._onSubmit(undefined);
     }
 
     /**
@@ -85,11 +73,16 @@ class RoomLockPrompt extends Component {
      *
      * @param {string} value - The submitted value.
      * @private
-     * @returns {void}
+     * @returns {boolean} returns false, we do not want to hide dialog as this
+     * will be handled inside endRoomLockRequest after setting password is
+     * resolved.
      */
     _onSubmit(value) {
         this.props.dispatch(endRoomLockRequest(this.props.conference, value));
+
+        // do not hide
+        return false;
     }
 }
 
-export default translate(connect()(RoomLockPrompt));
+export default connect()(RoomLockPrompt);

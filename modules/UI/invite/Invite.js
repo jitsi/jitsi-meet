@@ -47,31 +47,8 @@ class Invite {
             }
         });
 
-        this.conference.on(ConferenceEvents.CONFERENCE_JOINED, () => {
-            let roomLocker = this.getRoomLocker();
-            roomLocker.hideRequirePasswordDialog();
-        });
-
         APP.UI.addListener( UIEvents.INVITE_CLICKED,
                             () => { this.openLinkDialog(); });
-
-        APP.UI.addListener( UIEvents.PASSWORD_REQUIRED,
-            () => {
-                let roomLocker = this.getRoomLocker();
-                this.setLockedFromElsewhere(true);
-                roomLocker.requirePassword().then(() => {
-                    let pass = roomLocker.password;
-                    // we received that password is required, but user is trying
-                    // anyway to login without a password, mark room as not
-                    // locked in case he succeeds (maybe someone removed the
-                    // password meanwhile), if it is still locked another
-                    // password required will be received and the room again
-                    // will be marked as locked.
-                    if (!pass)
-                        this.setLockedFromElsewhere(false);
-                    this.conference.join(pass);
-                });
-            });
     }
 
     /**

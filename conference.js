@@ -385,10 +385,6 @@ class ConferenceConnector {
         logger.error('CONFERENCE FAILED:', err, ...params);
         APP.UI.hideRingOverLay();
         switch (err) {
-            // room is locked by the password
-        case ConferenceErrors.PASSWORD_REQUIRED:
-            APP.UI.emitEvent(UIEvents.PASSWORD_REQUIRED);
-            break;
 
         case ConferenceErrors.CONNECTION_ERROR:
             {

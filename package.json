@@ -19,6 +19,7 @@
     "@atlassian/aui": "6.0.6",
     "@atlaskit/button": "1.0.3",
     "@atlaskit/button-group": "1.0.0",
+    "@atlaskit/field-text": "2.0.3",
     "@atlaskit/modal-dialog": "1.2.4",
     "@atlaskit/tabs": "1.2.5",
     "async": "0.9.0",

@@ -6,10 +6,8 @@ import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
 import { FilmStrip } from '../../film-strip';
 import { LargeVideo } from '../../large-video';
-import { RoomLockPrompt } from '../../room-lock';
 import { Toolbar } from '../../toolbar';
 
-import PasswordRequiredPrompt from './PasswordRequiredPrompt';
 import { styles } from './styles';
 
 /**
@@ -30,23 +28,6 @@ class Conference extends Component {
      * @static
      */
     static propTypes = {
-        /**
-         * The indicator which determines whether a password is required to join
-         * the conference and has not been provided yet.
-         *
-         * @private
-         * @type {JitsiConference}
-         */
-        _passwordRequired: React.PropTypes.object,
-
-        /**
-         * The indicator which determines whether the user has requested to lock
-         * the conference/room.
-         *
-         * @private
-         * @type {JitsiConference}
-         */
-        _roomLockRequested: React.PropTypes.object,
         dispatch: React.PropTypes.func
     }
 
@@ -128,9 +109,6 @@ class Conference extends Component {
 
                 <DialogContainer />
 
-                {
-                    this._renderPrompt()
-                }
             </Container>
         );
     }
@@ -165,56 +143,6 @@ class Conference extends Component {
     }
 
     /**
-     * Renders a prompt if a password is required to join the conference.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPasswordRequiredPrompt() {
-        const required = this.props._passwordRequired;
-
-        if (required) {
-            return (
-                <PasswordRequiredPrompt conference = { required } />
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Renders a prompt if necessary such as when a password is required to join
-     * the conference or the user has requested to lock the conference/room.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPrompt() {
-        return (
-            this._renderPasswordRequiredPrompt()
-                || this._renderRoomLockPrompt()
-        );
-    }
-
-    /**
-     * Renders a prompt if the user has requested to lock the conference/room.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderRoomLockPrompt() {
-        const requested = this.props._roomLockRequested;
-
-        if (requested) {
-            return (
-                <RoomLockPrompt conference = { requested } />
-            );
-        }
-
-        return null;
-    }
-
-    /**
      * Triggers the default toolbar timeout.
      *
      * @param {boolean} toolbarVisible - Indicates if the toolbar is currently
@@ -231,35 +159,4 @@ class Conference extends Component {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated Conference's props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _passwordRequired: boolean
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        /**
-         * The indicator which determines whether a password is required to join
-         * the conference and has not been provided yet.
-         *
-         * @private
-         * @type {JitsiConference}
-         */
-        _passwordRequired: state['features/base/conference'].passwordRequired,
-
-        /**
-         * The indicator which determines whether the user has requested to lock
-         * the conference/room.
-         *
-         * @private
-         * @type {JitsiConference}
-         */
-        _roomLockRequested: state['features/room-lock'].requested
-    };
-}
-
-export default reactReduxConnect(_mapStateToProps)(Conference);
+export default reactReduxConnect()(Conference);
