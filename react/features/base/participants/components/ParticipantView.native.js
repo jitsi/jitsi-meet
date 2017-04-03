@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
     shouldRenderVideoTrack,
@@ -35,11 +36,12 @@ class ParticipantView extends Component {
         _avatar: React.PropTypes.string,
 
         /**
-         * True if the participant is in the last N endpoints set, false if he
-         * isn't. If undefined, we have no indication, so the same course of
-         * action as true is taken.
+         * The connection status for the participant. Its video will only be
+         * rendered if the connection status is 'active', otherwise the avatar
+         * will be rendered. If undefined, we have no indication, so the same
+         * course of action as 'active' is taken.
          */
-        _isInLastN: React.PropTypes.bool,
+        _connectionStatus: React.PropTypes.string,
 
         /**
          * The video Track of the participant with {@link #participantId}.
@@ -94,7 +96,7 @@ class ParticipantView extends Component {
     render() {
         const {
             _avatar: avatar,
-            _isInLastN: isInLastN,
+            _connectionStatus: connectionStatus,
             _videoTrack: videoTrack
         } = this.props;
 
@@ -105,7 +107,9 @@ class ParticipantView extends Component {
         const waitForVideoStarted = false;
         const renderVideo
             = shouldRenderVideoTrack(videoTrack, waitForVideoStarted)
-                && (typeof isInLastN === 'undefined' || isInLastN);
+                && (typeof connectionStatus === 'undefined'
+                    || connectionStatus
+                        === JitsiParticipantConnectionStatus.ACTIVE);
 
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
@@ -168,7 +172,7 @@ function _toBoolean(value, undefinedValue) {
  * @private
  * @returns {{
  *     _avatar: string,
- *     _isInLastN: boolean,
+ *     _connectionStatus: string,
  *     _videoTrack: Track
  * }}
  */
@@ -181,7 +185,7 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _avatar: participant && getAvatarURL(participant),
-        _isInLastN: participant && participant.isInLastN,
+        _connectionStatus: participant && participant.connectionStatus,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

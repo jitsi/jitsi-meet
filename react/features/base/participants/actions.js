@@ -9,25 +9,25 @@ import {
 import { getLocalParticipant } from './functions';
 
 /**
- * Action to update a participant's lastN status.
+ * Action to update a participant's connection status.
  *
  * @param {string} id - Participant's ID.
- * @param {boolean} isInLastN - True if the participant is in the lastN
- * endpoints set, false otherwise.
+ * @param {string} connectionStatus - The new connection status for the
+ * participant.
  * @returns {{
  *     type: PARTICIPANT_UPDATED,
  *     participant: {
  *         id: string,
- *         isInLastN: boolean
+ *         connectionStatus: string
  *     }
  * }}
  */
-export function changeParticipantLastNStatus(id, isInLastN) {
+export function changeParticipantConnectionStatus(id, connectionStatus) {
     return {
         type: PARTICIPANT_UPDATED,
         participant: {
             id,
-            isInLastN
+            connectionStatus
         }
     };
 }

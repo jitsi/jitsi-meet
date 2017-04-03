@@ -75,7 +75,7 @@ function _participant(state, action) {
             avatarURL,
             dominantSpeaker,
             email,
-            isInLastN,
+            connectionStatus,
             local,
             pinned,
             role
@@ -110,7 +110,7 @@ function _participant(state, action) {
             dominantSpeaker: dominantSpeaker || false,
             email,
             id,
-            isInLastN,
+            connectionStatus,
             local: local || false,
             name,
             pinned: pinned || false,
