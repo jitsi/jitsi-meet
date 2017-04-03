@@ -1,10 +1,10 @@
 /* @flow */
 
+import { StyleSheet } from 'react-native';
+
 import { Platform } from '../react';
 
 import { ColorPalette } from './components';
-
-declare type StyleSheet = Object;
 
 /**
  * The list of the well-known style properties which may not be numbers on Web
@@ -25,12 +25,16 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * (often platform-independent) styles.
  * @returns {StyleSheet}
  */
-export function createStyleSheet(styles: StyleSheet, overrides: StyleSheet = {})
-        : StyleSheet {
+export function createStyleSheet(
+    styles: StyleSheet.Styles, overrides?: StyleSheet.Style)
+        : StyleSheet.Styles {
 
 /* eslint-enable flowtype/space-before-type-colon */
 
     const combinedStyles = {};
+
+    // eslint-disable-next-line no-param-reassign
+    overrides = Object.assign({}, overrides);
 
     for (const k of Object.keys(styles)) {
         combinedStyles[k]

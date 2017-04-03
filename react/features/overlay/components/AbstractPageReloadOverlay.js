@@ -5,9 +5,6 @@ import { randomInt } from '../../base/util';
 import { reconnectNow } from '../functions';
 import ReloadButton from './ReloadButton';
 
-declare var AJS: Object;
-declare var APP: Object;
-
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**

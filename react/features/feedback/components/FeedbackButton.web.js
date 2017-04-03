@@ -2,8 +2,6 @@
 
 import React, { Component } from 'react';
 
-declare var config: Object;
-
 /**
  * Implements a Web/React Component which renders a feedback button.
  */

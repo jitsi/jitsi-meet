@@ -2,8 +2,6 @@
 
 import React, { Component } from 'react';
 
-declare var config: Object;
-
 /**
  * Notice react component.
  *

@@ -9,9 +9,6 @@ import UserMediaPermissionsFilmStripOnlyOverlay
     from './UserMediaPermissionsFilmStripOnlyOverlay';
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
 
-declare var APP: Object;
-declare var interfaceConfig: Object;
-
 /**
  * Implements a React Component that will display the correct overlay when
  * needed.

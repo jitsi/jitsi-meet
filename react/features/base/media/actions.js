@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { Dispatch } from 'redux';
-
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,

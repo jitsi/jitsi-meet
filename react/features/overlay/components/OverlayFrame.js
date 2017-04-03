@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-declare var interfaceConfig: Object;
-
 /**
  * Implements a React Component for the frame of the overlays.
  */

@@ -4,9 +4,6 @@ import React, { Component } from 'react';
 
 import { translate } from '../../i18n';
 
-declare var APP: Object;
-declare var interfaceConfig: Object;
-
 /**
  * The CSS style of the element with CSS class <tt>rightwatermark</tt>.
  *

@@ -13,7 +13,13 @@ module.exports = {
         // files, (2) are certainly defined, and (3) we would like to use
         // without explicitly specifying them (using a comment) inside of our
         // files.
-        '__filename': false
+        '__filename': false,
+        '$': false,
+        'AJS': false,
+        'APP': false,
+        'config': false,
+        'interfaceConfig': false,
+        'MD5': false
     },
     'parser': 'babel-eslint',
     'parserOptions': {
@@ -26,6 +32,10 @@ module.exports = {
         'flowtype'
     ],
     'rules': {
+        // Declare flow types
+        'flowtype/define-flow-type': 1,
+        'flowtype/use-flow-type': 1,
+
         'new-cap': [
             'error',
             {

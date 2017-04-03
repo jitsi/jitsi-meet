@@ -1,7 +1,5 @@
 /* @flow */
 
-declare var config: Object;
-
 /**
  * Custom language detection, just returns the config property if any.
  */

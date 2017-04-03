@@ -1,7 +1,3 @@
-declare var config: Object;
-declare var interfaceConfig: Object;
-declare var MD5: Object;
-
 /**
  * Returns the URL of the image for the avatar of a specific participant.
  *

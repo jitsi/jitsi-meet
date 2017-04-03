@@ -27,8 +27,6 @@ import {
 } from './constants';
 import { _addLocalTracksToConference } from './functions';
 
-import type { Dispatch } from 'redux';
-
 /**
  * Adds conference (event) listeners.
  *
