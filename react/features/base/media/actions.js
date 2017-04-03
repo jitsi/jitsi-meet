@@ -5,7 +5,8 @@ import type { Dispatch } from 'redux';
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
-    SET_VIDEO_MUTED
+    SET_VIDEO_MUTED,
+    TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
 
@@ -73,21 +74,19 @@ export function toggleAudioMuted() {
 }
 
 /**
- * Toggles the camera between front and rear (user and environment).
+ * Toggles the camera facing mode. Most commonly, for example, mobile devices
+ * such as phones have a front/user-facing and a back/environment-facing
+ * cameras. In contrast to setCameraFacingMode, allows the toggling to be
+ * optimally and/or natively implemented without the overhead of separate reads
+ * and writes of the current/effective camera facing mode.
  *
- * @returns {Function}
+ * @returns {{
+ *     type: TOGGLE_CAMERA_FACING_MODE
+ * }}
  */
 export function toggleCameraFacingMode() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        let cameraFacingMode
-            = getState()['features/base/media'].video.facingMode;
-
-        cameraFacingMode
-            = cameraFacingMode === CAMERA_FACING_MODE.USER
-                ? CAMERA_FACING_MODE.ENVIRONMENT
-                : CAMERA_FACING_MODE.USER;
-
-        return dispatch(setCameraFacingMode(cameraFacingMode));
+    return {
+        type: TOGGLE_CAMERA_FACING_MODE
     };
 }
 

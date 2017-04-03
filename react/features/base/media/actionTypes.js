@@ -30,3 +30,15 @@ export const SET_CAMERA_FACING_MODE = Symbol('SET_CAMERA_FACING_MODE');
  * }
  */
 export const SET_VIDEO_MUTED = Symbol('SET_VIDEO_MUTED');
+
+/**
+ * The type of (redux) action to toggle the local video camera facing mode. In
+ * contrast to SET_CAMERA_FACING_MODE, allows the toggling to be optimally
+ * and/or natively implemented without the overhead of separate reads and writes
+ * of the current/effective camera facing mode.
+ *
+ * {
+ *     type: TOGGLE_CAMERA_FACING_MODE
+ * }
+ */
+export const TOGGLE_CAMERA_FACING_MODE = Symbol('TOGGLE_CAMERA_FACING_MODE');

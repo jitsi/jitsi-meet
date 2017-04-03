@@ -5,7 +5,8 @@ import { ReducerRegistry } from '../redux';
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
-    SET_VIDEO_MUTED
+    SET_VIDEO_MUTED,
+    TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
 
@@ -87,6 +88,20 @@ function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
             ...state,
             muted: action.muted
         };
+
+    case TOGGLE_CAMERA_FACING_MODE: {
+        let cameraFacingMode = state.facingMode;
+
+        cameraFacingMode
+            = cameraFacingMode === CAMERA_FACING_MODE.USER
+                ? CAMERA_FACING_MODE.ENVIRONMENT
+                : CAMERA_FACING_MODE.USER;
+
+        return {
+            ...state,
+            facingMode: cameraFacingMode
+        };
+    }
 
     default:
         return state;
