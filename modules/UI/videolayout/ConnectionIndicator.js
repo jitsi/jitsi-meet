@@ -215,8 +215,14 @@ ConnectionIndicator.prototype.generateText = function () {
                 remote_address_key + "' data-i18n-options='" +
                     JSON.stringify({count: data.remoteIP.length})
                         + "'></span></td><td> " +
-                ConnectionIndicator.getStringFromArray(data.remoteIP) +
-                "</td></tr>";
+                ConnectionIndicator.getStringFromArray(data.remoteIP);
+
+            // Append (p2p) to indicate the P2P type of transport
+            if (isP2P) {
+                transport
+                    += "<span data-i18n='connectionindicator.peer_to_peer'>";
+            }
+            transport += "</td></tr>";
 
             var key_remote = "connectionindicator.remoteport",
                 key_local = "connectionindicator.localport";
@@ -247,12 +253,7 @@ ConnectionIndicator.prototype.generateText = function () {
                 + "'></span></td>" +
                 "<td>"
                     + ConnectionIndicator.getStringFromArray(data.transportType);
-            // Append (direct) to indicate the P2P type of transport
-            if (isP2P) {
-                transport += "<span data-i18n='connectionindicator.direct'>";
-            }
-            // Close "type" column and end table row
-            transport += "</td></tr>";
+                + "</td></tr>";
 
         }
 

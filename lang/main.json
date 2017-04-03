@@ -196,7 +196,7 @@
         "transport_plural": "Transports:",
         "bandwidth": "Estimated bandwidth:",
         "na": "Come back here for connection information once the conference starts",
-        "direct": " (direct)"
+        "peer_to_peer": " (p2p)"
     },
     "notify": {
         "disconnected": "disconnected",
