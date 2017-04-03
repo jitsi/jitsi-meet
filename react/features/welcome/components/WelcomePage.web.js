@@ -183,8 +183,6 @@ class WelcomePage extends AbstractWelcomePage {
         );
     }
 
-/* eslint-disable require-jsdoc */
-
     /**
      * Renders the header part of this WelcomePage.
      *
@@ -192,8 +190,6 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     _renderHeader() {
-
-/* eslint-enable require-jsdoc */
         const { t } = this.props;
 
         return (
