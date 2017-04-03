@@ -129,7 +129,7 @@ api.executeCommands({displayName: ['nickname'], toggleAudio: []});
 ```
 
 You can add event listeners to the embedded Jitsi Meet using the `addEventListener` method.
-*NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods (`addListener` or `on`).*
+**NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods (`addListener` or `on`).**
 ```javascript
 api.addEventListener(event, listener)
 ```
@@ -199,7 +199,7 @@ changes. The listener will receive an object with the following structure:
 You can also add multiple event listeners by using `addEventListeners`.
 This method requires one argument of type Object. The object argument must
 have the names of the events as keys and the listeners of the events as values.
-*NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods.*
+**NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods.**
 
 ```javascript
 function incomingMessageListener(object)
@@ -218,13 +218,13 @@ api.addEventListeners({
 ```
 
 If you want to remove a listener you can use `removeEventListener` method with argument the name of the event.
-*NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods( `removeListener`).*
+**NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods( `removeListener`).**
 ```javascript
 api.removeEventListener("incomingMessage");
 ```
 
 If you want to remove more than one event you can use `removeEventListeners` method with an Array with the names of the events as an argument.
-*NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods.*
+**NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods.**
 ```javascript
 api.removeEventListeners(["incomingMessage", "outgoingMessageListener"]);
 ```
