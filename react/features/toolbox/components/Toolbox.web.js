@@ -5,7 +5,10 @@ import { connect } from 'react-redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
-import { setToolboxAlwaysVisible } from '../actions';
+import {
+    setDefaultToolboxButtons,
+    setToolboxAlwaysVisible
+} from '../actions';
 import {
     abstractMapStateToProps,
     showCustomToolbarPopup
@@ -28,6 +31,11 @@ class Toolbox extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * Handler dispatching setting default buttons action.
+         */
+        _setDefaultToolboxButtons: React.PropTypes.func,
+
         /**
          * Handler dispatching reset always visible toolbox action.
          */
@@ -61,6 +69,19 @@ class Toolbox extends Component {
         APP.UI.addListener(
             UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
             showCustomToolbarPopup);
+
+        // FIXME The redux action SET_DEFAULT_TOOLBOX_BUTTONS and related source
+        // code such as the redux action creator setDefaultToolboxButtons and
+        // _setDefaultToolboxButtons were introduced to solve the following bug
+        // in the implementation of features/toolbar at the time of this
+        // writing: getDefaultToolboxButtons uses interfaceConfig which is not
+        // in the redux store at the time of this writing yet interfaceConfig is
+        // modified after getDefaultToolboxButtons is called.
+        // SET_DEFAULT_TOOLBOX_BUTTONS represents/implements an explicit delay
+        // of the invocation of getDefaultToolboxButtons until, heuristically,
+        // all existing changes to interfaceConfig have been applied already in
+        // our known execution paths.
+        this.props._setDefaultToolboxButtons();
     }
 
     /**
@@ -158,15 +179,25 @@ class Toolbox extends Component {
  *
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
+ *     _setDefaultToolboxButtons: Function,
  *     _setToolboxAlwaysVisible: Function
  * }}
  * @private
  */
 function _mapDispatchToProps(dispatch: Function): Object {
     return {
+        /**
+         * Dispatches a (redux) action to set the default toolbar buttons.
+         *
+         * @returns {Object} Dispatched action.
+         */
+        _setDefaultToolboxButtons() {
+            dispatch(setDefaultToolboxButtons());
+        },
 
         /**
-         * Dispatches an action resetting always visible toolbox.
+         * Dispatches a (redux) action to reset the permanent visibility of
+         * the Toolbox.
          *
          * @returns {Object} Dispatched action.
          */

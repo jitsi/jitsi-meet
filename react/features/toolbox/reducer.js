@@ -4,6 +4,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
+    SET_DEFAULT_TOOLBOX_BUTTONS,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_SUBJECT,
     SET_SUBJECT_SLIDE_IN,
@@ -13,7 +14,6 @@ import {
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE
 } from './actionTypes';
-import { getDefaultToolbarButtons } from './functions';
 
 declare var interfaceConfig: Object;
 
@@ -43,8 +43,6 @@ function _getInitialState() {
     }
 
     return {
-        ...getDefaultToolbarButtons(),
-
         /**
          * The indicator which determines whether the Toolbox should always be
          * visible.
@@ -60,6 +58,20 @@ function _getInitialState() {
          * @type {boolean}
          */
         hovered: false,
+
+        /**
+         * A Map of the default buttons of the PrimaryToolbar.
+         *
+         * @type {Map}
+         */
+        primaryToolbarButtons: new Map(),
+
+        /**
+         * A Map of the default buttons of the SecondaryToolbar.
+         *
+         * @type {Map}
+         */
+        secondaryToolbarButtons: new Map(),
 
         /**
          * The text of the conference subject.
@@ -109,6 +121,16 @@ ReducerRegistry.register(
                 ...state,
                 timeoutID: undefined
             };
+
+        case SET_DEFAULT_TOOLBOX_BUTTONS: {
+            const { primaryToolbarButtons, secondaryToolbarButtons } = action;
+
+            return {
+                ...state,
+                primaryToolbarButtons,
+                secondaryToolbarButtons
+            };
+        }
 
         case SET_TOOLBOX_ALWAYS_VISIBLE:
             return {
@@ -170,11 +192,8 @@ ReducerRegistry.register(
  * @private
  * @returns {Object}
  */
-function _setButton(state, { buttonName, button }): Object {
-    const {
-        primaryToolbarButtons,
-        secondaryToolbarButtons
-    } = state;
+function _setButton(state, { button, buttonName }): Object {
+    const { primaryToolbarButtons, secondaryToolbarButtons } = state;
     let selectedButton = primaryToolbarButtons.get(buttonName);
     let place = 'primaryToolbarButtons';
 

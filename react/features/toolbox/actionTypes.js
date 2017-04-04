@@ -10,6 +10,18 @@ import { Symbol } from '../base/react';
 export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
 
 /**
+ * The type of the action which sets the default toolbar buttons of the Toolbox.
+ *
+ * {
+ *     type: SET_DEFAULT_TOOLBOX_BUTTONS,
+ *     primaryToolbarButtons: Map,
+ *     secondaryToolbarButtons: Map
+ * }
+ */
+export const SET_DEFAULT_TOOLBOX_BUTTONS
+    = Symbol('SET_DEFAULT_TOOLBOX_BUTTONS');
+
+/**
  * The type of the action which sets the permanent visibility of the Toolbox.
  *
  * {

@@ -112,14 +112,23 @@ export function abstractMapStateToProps(state: Object): Object {
     };
 }
 
+/* eslint-disable flowtype/space-before-type-colon */
+
 /**
  * Takes toolbar button props and maps them to HTML attributes to set.
  *
  * @param {Object} props - Props set to the React component.
  * @returns {MapOfAttributes}
  */
-export function getButtonAttributesByProps(props: Object): MapOfAttributes {
-    const classNames = [ ...props.classNames ];
+export function getButtonAttributesByProps(props: Object = {})
+        : MapOfAttributes {
+    let classNames = props.classNames;
+
+    if (classNames) {
+        // XXX Make sure to not modify props.classNames because that'd be bad
+        // practice.
+        classNames = [ ...classNames ];
+    }
 
     props.toggled && classNames.push('toggled');
     props.unclickable && classNames.push('unclickable');
@@ -142,13 +151,15 @@ export function getButtonAttributesByProps(props: Object): MapOfAttributes {
     return result;
 }
 
+/* eslint-enable flowtype/space-before-type-colon */
+
 /**
- * Returns object containing default buttons for the primary and secondary
- * toolbars.
+ * Returns an object which contains the default buttons for the primary and
+ * secondary toolbars.
  *
  * @returns {Object}
  */
-export function getDefaultToolbarButtons(): Object {
+export function getDefaultToolboxButtons(): Object {
     let toolbarButtons = {
         primaryToolbarButtons: new Map(),
         secondaryToolbarButtons: new Map()
