@@ -163,7 +163,11 @@ const configs = [
     // The Webpack configuration to bundle app.bundle.js (aka APP).
     Object.assign({}, config, {
         entry: {
-            'app.bundle': './app.js'
+            'app.bundle': [
+                // XXX Requried by at least IE11 at the time of this writing.
+                'babel-polyfill',
+                './app.js'
+            ]
         },
         output: Object.assign({}, config.output, {
             library: 'APP'
