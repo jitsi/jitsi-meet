@@ -63,7 +63,8 @@ const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
 
 const eventEmitter = new EventEmitter();
 
-let room, connection, localAudio, localVideo;
+let room, connection, localAudio, localVideo,
+    initialAudioMutedState = false, initialVideoMutedState = false;
 
 /**
  * Indicates whether extension external installation is in progress or not.
@@ -581,6 +582,12 @@ export default {
                 analytics.init();
                 return createInitialLocalTracksAndConnect(options.roomName);
             }).then(([tracks, con]) => {
+                tracks.forEach(track => {
+                    if((track.isAudioTrack() && initialAudioMutedState)
+                        || (track.isVideoTrack() && initialVideoMutedState)) {
+                        track.mute();
+                    }
+                });
                 logger.log('initialized with %s local tracks', tracks.length);
                 con.addEventListener(
                     ConnectionEvents.CONNECTION_FAILED,
@@ -645,9 +652,17 @@ export default {
         return this.audioMuted;
     },
     /**
-     * Simulates toolbar button click for audio mute. Used by shortcuts and API.
+     * Simulates toolbar button click for audio mute. Used by shortcuts
+     * and API.
+     * @param {boolean} force - If the track is not created, the operation
+     * will be executed after the track is created. Otherwise the operation
+     * will be ignored.
      */
-    toggleAudioMuted () {
+    toggleAudioMuted (force = false) {
+        if(!localAudio && force) {
+            initialAudioMutedState = !initialAudioMutedState;
+            return;
+        }
         this.muteAudio(!this.audioMuted);
     },
     /**
@@ -659,8 +674,15 @@ export default {
     },
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
+     * @param {boolean} force - If the track is not created, the operation
+     * will be executed after the track is created. Otherwise the operation
+     * will be ignored.
      */
-    toggleVideoMuted () {
+    toggleVideoMuted (force = false) {
+        if(!localVideo && force) {
+            initialVideoMutedState = !initialVideoMutedState;
+            return;
+        }
         this.muteVideo(!this.videoMuted);
     },
     /**
