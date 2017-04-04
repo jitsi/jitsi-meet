@@ -40,10 +40,12 @@ end
 function handle_get_room_size(event)
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
-	local room = get_room_from_jid(room_name);
+	local domain_name = params["domain"];
+	local room_address = room_name .. "@" .. domain_name;
+	local room = get_room_from_jid(room_address);
 	local participant_count = 0;
 
-	log("debug", "Querying room %s", tostring(room_name));
+	log("debug", "Querying room %s", tostring(room_address));
 
 	if room then
 		local occupants = room._occupants;
@@ -71,11 +73,13 @@ end
 function handle_get_room (event)
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
-	local room = get_room_from_jid(room_name);
+	local domain_name = params["domain"];
+	local room_address = room_name .. "@" .. domain_name;
+	local room = get_room_from_jid(room_address);
 	local participant_count = 0;
 	local occupants_json = array();
 
-	log("debug", "Querying room %s", tostring(room_name));
+	log("debug", "Querying room %s", tostring(room_address));
 
 	if room then
 		local occupants = room._occupants;
