@@ -45,7 +45,6 @@ class PasswordRequiredPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
-
         return (
             <Dialog
                 bodyKey = 'dialog.passwordLabel'
@@ -59,7 +58,7 @@ class PasswordRequiredPrompt extends Component {
      * Notifies this prompt that it has been dismissed by cancel.
      *
      * @private
-     * @returns {boolean} whether to hide dialog.
+     * @returns {boolean} True to hide this dialog/prompt; otherwise, false.
      */
     _onCancel() {
         // XXX The user has canceled this prompt for a password so we are to
@@ -75,7 +74,7 @@ class PasswordRequiredPrompt extends Component {
      *
      * @param {string} value - The submitted value.
      * @private
-     * @returns {boolean} whether to hide dialog.
+     * @returns {boolean} True to hide this dialog/prompt; otherwise, false.
      */
     _onSubmit(value) {
         const conference = this.props.conference;

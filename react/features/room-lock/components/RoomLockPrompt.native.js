@@ -45,7 +45,6 @@ class RoomLockPrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
-
         return (
             <Dialog
                 bodyKey = 'dialog.passwordLabel'
@@ -59,7 +58,7 @@ class RoomLockPrompt extends Component {
      * Notifies this prompt that it has been dismissed by cancel.
      *
      * @private
-     * @returns {boolean} whether to hide the dialog
+     * @returns {boolean} True to hide this dialog/prompt; otherwise, false.
      */
     _onCancel() {
         // An undefined password is understood to cancel the request to lock the
@@ -73,15 +72,14 @@ class RoomLockPrompt extends Component {
      *
      * @param {string} value - The submitted value.
      * @private
-     * @returns {boolean} returns false, we do not want to hide dialog as this
-     * will be handled inside endRoomLockRequest after setting password is
-     * resolved.
+     * @returns {boolean} False because we do not want to hide this
+     * dialog/prompt as the hiding will be handled inside endRoomLockRequest
+     * after setting the password is resolved.
      */
     _onSubmit(value) {
         this.props.dispatch(endRoomLockRequest(this.props.conference, value));
 
-        // do not hide
-        return false;
+        return false; // Do not hide.
     }
 }
 
