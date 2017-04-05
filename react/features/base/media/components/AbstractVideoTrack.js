@@ -100,7 +100,7 @@ export class AbstractVideoTrack extends Component {
 
         return (
             <Video
-                mirror = { videoTrack && videoTrack.mirrorVideo }
+                mirror = { videoTrack && videoTrack.mirror }
                 onPlaying = { this._onVideoPlaying }
                 stream = { stream }
                 zOrder = { this.props.zOrder } />

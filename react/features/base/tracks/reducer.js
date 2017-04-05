@@ -13,7 +13,9 @@ import {
  * instance.
  * @property {boolean} local=false - If track is local.
  * @property {MEDIA_TYPE} mediaType=false - Media type of track.
- * @property {boolean} mirrorVideo=false - If video track should be mirrored.
+ * @property {boolean} mirror=false - The indicator which determines whether the
+ * display/rendering of the track should be mirrored. It only makes sense in the
+ * context of video (at least at the time of this writing).
  * @property {boolean} muted=false - If track is muted.
  * @property {(string|undefined)} participantId - ID of participant whom this
  * track belongs to.

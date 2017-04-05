@@ -68,9 +68,10 @@ export function trackAdded(track) {
             type => dispatch(trackVideoTypeChanged(track, type)));
 
         // participantId
+        const local = track.isLocal();
         let participantId;
 
-        if (track.isLocal()) {
+        if (local) {
             const participant = getLocalParticipant(getState);
 
             if (participant) {
@@ -84,9 +85,9 @@ export function trackAdded(track) {
             type: TRACK_ADDED,
             track: {
                 jitsiTrack: track,
-                local: track.isLocal(),
+                local,
                 mediaType: track.getType(),
-                mirrorVideo: _shouldMirror(track),
+                mirror: _shouldMirror(track),
                 muted: track.isMuted(),
                 participantId,
                 videoStarted: false,
