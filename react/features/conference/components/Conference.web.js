@@ -7,6 +7,7 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Watermarks } from '../../base/react';
 import { OverlayContainer } from '../../overlay';
+import { StatusLabel } from '../../status-label';
 import { Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
@@ -95,6 +96,7 @@ class Conference extends Component {
                         <span
                             className = 'video-state-indicator moveToCorner'
                             id = 'videoResolutionLabel'>HD</span>
+                        <StatusLabel />
                         <span
                             className
                                 = 'video-state-indicator centeredVideoLabel'

@@ -459,7 +459,9 @@ SmallVideo.prototype.selectDisplayMode = function() {
     // Display name is always and only displayed when user is on the stage
     if (this.isCurrentlyOnLargeVideo()) {
         return DISPLAY_BLACKNESS_WITH_NAME;
-    } else if (this.isVideoPlayable() && this.selectVideoElement().length) {
+    } else if (this.isVideoPlayable()
+        && this.selectVideoElement().length
+        && !APP.conference.isAudioOnly()) {
         // check hovering and change state to video with name
         return this._isHovered() ?
             DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;

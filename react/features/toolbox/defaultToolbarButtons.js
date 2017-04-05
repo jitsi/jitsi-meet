@@ -6,6 +6,8 @@ import UIEvents from '../../../service/UI/UIEvents';
 
 import { openInviteDialog } from '../invite';
 
+import { AudioOnlyButton } from './components';
+
 declare var APP: Object;
 declare var config: Object;
 declare var JitsiMeetJS: Object;
@@ -43,6 +45,14 @@ function _showSIPNumberInput() {
  */
 export default {
     /**
+     * The descriptor of the audio only toolbar button. Defers actual
+     * descriptor implementation to the {@code AudioOnlyButton} component.
+     */
+    audioonly: {
+        component: AudioOnlyButton
+    },
+
+    /**
      * The descriptor of the camera toolbar button.
      */
     camera: {
@@ -59,9 +69,23 @@ export default {
                 APP.UI.emitEvent(UIEvents.VIDEO_MUTED, true);
             }
         },
+        popups: [
+            {
+                className: 'loginmenu',
+                dataAttr: 'audioOnly.featureToggleDisabled',
+                dataInterpolate: { feature: 'video mute' },
+                id: 'unmuteWhileAudioOnly'
+            }
+        ],
         shortcut: 'V',
         shortcutAttr: 'toggleVideoPopover',
         shortcutFunc() {
+            if (APP.conference.isAudioOnly()) {
+                APP.UI.emitEvent(UIEvents.VIDEO_UNMUTING_WHILE_AUDIO_ONLY);
+
+                return;
+            }
+
             JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
             APP.conference.toggleVideoMuted();
         },
@@ -137,6 +161,14 @@ export default {
             }
             APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
         },
+        popups: [
+            {
+                className: 'loginmenu',
+                dataAttr: 'audioOnly.featureToggleDisabled',
+                dataInterpolate: { feature: 'screen sharing' },
+                id: 'screenshareWhileAudioOnly'
+            }
+        ],
         shortcut: 'D',
         shortcutAttr: 'toggleDesktopSharingPopover',
         shortcutFunc() {

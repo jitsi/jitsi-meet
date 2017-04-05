@@ -121,6 +121,17 @@ class Toolbar extends Component {
     _renderToolbarButton(acc: Array<*>, keyValuePair: Array<*>,
                          index: number): Array<ReactElement<*>> {
         const [ key, button ] = keyValuePair;
+
+        if (button.component) {
+            acc.push(
+                <button.component
+                    key = { key }
+                    tooltipPosition = { this.props.tooltipPosition } />
+            );
+
+            return acc;
+        }
+
         const { splitterIndex, tooltipPosition } = this.props;
 
         if (splitterIndex && index === splitterIndex) {

@@ -14,6 +14,11 @@
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "callingName": "__name__",
+    "audioOnly": {
+        "audioOnly": "Audio only",
+        "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode",
+        "howToDisable": "Audio only mode is currently enabled. Click the audio only button in the toolbar to disable the feature."
+    },
     "userMedia": {
       "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
       "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
@@ -92,6 +97,7 @@
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",
         "authenticate": "Authenticate",

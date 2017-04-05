@@ -1085,6 +1085,43 @@ export default {
             });
     },
 
+    /**
+     * Triggers a tooltip to display when a feature was attempted to be used
+     * while in audio only mode.
+     *
+     * @param {string} featureName - The name of the feature that attempted to
+     * toggle.
+     * @private
+     * @returns {void}
+     */
+    _displayAudioOnlyTooltip(featureName) {
+        let tooltipElementId = null;
+
+        switch (featureName) {
+        case 'screenShare':
+            tooltipElementId = '#screenshareWhileAudioOnly';
+            break;
+        case 'videoMute':
+            tooltipElementId = '#unmuteWhileAudioOnly';
+            break;
+        }
+
+        if (tooltipElementId) {
+            APP.UI.showToolbar(6000);
+            APP.UI.showCustomToolbarPopup(
+                tooltipElementId, true, 5000);
+        }
+    },
+
+    /**
+     * Returns whether or not the conference is currently in audio only mode.
+     *
+     * @returns {boolean}
+     */
+    isAudioOnly() {
+        return Boolean(
+            APP.store.getState()['features/base/conference'].audioOnly);
+    },
 
     videoSwitchInProgress: false,
     toggleScreenSharing(shareScreen = !this.isSharingScreen) {
@@ -1094,6 +1131,11 @@ export default {
         }
         if (!this.isDesktopSharingEnabled) {
             logger.warn("Cannot toggle screen sharing: not supported.");
+            return;
+        }
+
+        if (this.isAudioOnly()) {
+            this._displayAudioOnlyTooltip('screenShare');
             return;
         }
 
@@ -1400,6 +1442,10 @@ export default {
                 }
             });
 
+            APP.UI.addListener(
+                UIEvents.VIDEO_UNMUTING_WHILE_AUDIO_ONLY,
+                () => this._displayAudioOnlyTooltip('videoMute'));
+
             APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
             (smallVideo, isPinned) => {
                 let smallVideoId = smallVideo.getId();
@@ -1512,7 +1558,14 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
-        APP.UI.addListener(UIEvents.VIDEO_MUTED, muteLocalVideo);
+        APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
+            if (this.isAudioOnly() && !muted) {
+                this._displayAudioOnlyTooltip('videoMute');
+                return;
+            }
+
+            muteLocalVideo(muted);
+        });
 
         room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
             (stats) => {
@@ -1661,6 +1714,14 @@ export default {
                     micDeviceId: null
                 })
                 .then(([stream]) => {
+                    if (this.isAudioOnly()) {
+                        return stream.mute()
+                            .then(() => stream);
+                    }
+
+                    return stream;
+                })
+                .then(stream => {
                     this.useVideoStream(stream);
                     logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
@@ -1706,6 +1767,18 @@ export default {
                     });
             }
         );
+
+        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
+            muteLocalVideo(audioOnly);
+
+            // Immediately update the UI by having remote videos and the large
+            // video update themselves instead of waiting for some other event
+            // to cause the update, usually PARTICIPANT_CONN_STATUS_CHANGED.
+            // There is no guarantee another event will trigger the update
+            // immediately and in all situations, for example because a remote
+            // participant is having connection trouble so no status changes.
+            APP.UI.updateAllVideos();
+        });
 
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)

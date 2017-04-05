@@ -185,7 +185,7 @@ class ToolbarButton extends AbstractToolbarButton {
                 gravity = popup.dataAttrPosition;
             }
 
-            const title = this.props.t(popup.dataAttr);
+            const title = this.props.t(popup.dataAttr, popup.dataInterpolate);
 
             return (
                 <div

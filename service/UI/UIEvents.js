@@ -20,6 +20,7 @@ export default {
     START_MUTED_CHANGED: "UI.start_muted_changed",
     AUDIO_MUTED: "UI.audio_muted",
     VIDEO_MUTED: "UI.video_muted",
+    VIDEO_UNMUTING_WHILE_AUDIO_ONLY: "UI.video_unmuting_while_audio_only",
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     SHARED_VIDEO_CLICKED: "UI.start_shared_video",
     /**
@@ -33,6 +34,10 @@ export default {
     TOGGLE_FULLSCREEN: "UI.toogle_fullscreen",
     FULLSCREEN_TOGGLED: "UI.fullscreen_toggled",
     AUTH_CLICKED: "UI.auth_clicked",
+    /**
+     * Notifies that the audio only mode was toggled.
+     */
+    TOGGLE_AUDIO_ONLY: "UI.toggle_audioonly",
     TOGGLE_CHAT: "UI.toggle_chat",
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",

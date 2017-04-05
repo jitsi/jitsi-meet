@@ -1,4 +1,6 @@
 /* global APP */
+import UIEvents from '../../../../service/UI/UIEvents';
+
 import { CONNECTION_ESTABLISHED } from '../connection';
 import {
     getLocalParticipant,
@@ -148,6 +150,12 @@ function _setAudioOnly(store, next, action) {
 
     // Mute local video
     store.dispatch(_setAudioOnlyVideoMuted(audioOnly));
+
+    if (typeof APP !== 'undefined') {
+        // TODO This should be a temporary solution that lasts only until
+        // video tracks and all ui is moved into react/redux on the web.
+        APP.UI.emitEvent(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly);
+    }
 
     return result;
 }

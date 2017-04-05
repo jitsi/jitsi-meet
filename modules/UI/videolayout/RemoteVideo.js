@@ -556,6 +556,7 @@ RemoteVideo.prototype.isVideoPlayable = function () {
  * @inheritDoc
  */
 RemoteVideo.prototype.updateView = function () {
+    $(this.container).toggleClass('audio-only', APP.conference.isAudioOnly());
 
     this.updateConnectionStatusIndicator();
 

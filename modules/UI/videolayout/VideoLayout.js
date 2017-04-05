@@ -956,6 +956,24 @@ var VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
+    /**
+     * Triggers an update of remote video and large video displays so they may
+     * pick up any state changes that have occurred elsewhere.
+     *
+     * @returns {void}
+     */
+    updateAllVideos() {
+        const displayedUserId = this.getLargeVideoID();
+
+        if (displayedUserId) {
+            this.updateLargeVideo(displayedUserId, true);
+        }
+
+        Object.keys(remoteVideos).forEach(video => {
+            remoteVideos[video].updateView();
+        });
+    },
+
     updateLargeVideo (id, forceUpdate) {
         if (!largeVideo) {
             return;
