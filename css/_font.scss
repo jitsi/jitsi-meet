@@ -25,6 +25,13 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+
+.icon-audioonly:before {
+  content: "\e90a";
+}
+.icon-audioonly-set:before {
+  content: "\e916";
+}
 .icon-mic-camera-combined:before {
   content: "\e903";
 }

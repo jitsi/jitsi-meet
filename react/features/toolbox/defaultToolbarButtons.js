@@ -41,6 +41,24 @@ function _showSIPNumberInput() {
  */
 export default {
     /**
+     * The descriptor of the desktop sharing toolbar button.
+     */
+    audioonly: {
+        classNames: [ 'button', 'icon-audioonly' ],
+        enabled: true,
+        id: 'toolbar_button_audioonly',
+        onClick() {
+            if (APP.conference.isAudioOnly) {
+                JitsiMeetJS.analytics.sendEvent('toolbar.audioonly.disabled');
+            } else {
+                JitsiMeetJS.analytics.sendEvent('toolbar.audioonly.enabled');
+            }
+            APP.UI.emitEvent(UIEvents.TOGGLE_AUDIO_ONLY);
+        },
+        tooltipKey: 'toolbar.audioonly'
+    },
+
+    /**
      * The descriptor of the camera toolbar button.
      */
     camera: {

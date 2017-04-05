@@ -60,6 +60,10 @@
     &.toggled {
         background: $toolbarToggleBackground;
 
+        &.icon-audioonly {
+            @extend .icon-audioonly-set;
+        }
+
         &.icon-camera {
             @extend .icon-camera-disabled;
         }
