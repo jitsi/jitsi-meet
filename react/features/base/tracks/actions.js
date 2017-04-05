@@ -274,15 +274,14 @@ function _shouldMirror(track) {
             && track.isLocal()
             && track.isVideoTrack()
 
-            // XXX Type of the return value of
-            // JitsiLocalTrack#getCameraFacingMode() happens to be named
+            // XXX The type of the return value of
+            // JitsiLocalTrack's getCameraFacingMode happens to be named
             // CAMERA_FACING_MODE as well, it's defined by lib-jitsi-meet. Note
             // though that the type of the value on the right side of the
             // equality check is defined by jitsi-meet-react. The type
             // definitions are surely compatible today but that may not be the
             // case tomorrow.
             && track.getCameraFacingMode() === CAMERA_FACING_MODE.USER
-            && !track.isScreenSharing()
     );
 }
 
