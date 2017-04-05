@@ -2,6 +2,7 @@
 
 import { LIB_DID_DISPOSE, LIB_DID_INIT } from '../lib-jitsi-meet';
 import {
+    CAMERA_FACING_MODE,
     MEDIA_TYPE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
@@ -68,29 +69,23 @@ MiddlewareRegistry.register(store => next => action => {
     case TOGGLE_CAMERA_FACING_MODE: {
         const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
         let jitsiTrack;
-        let mediaStreamTrack;
 
-        if (localTrack
-                && (jitsiTrack = localTrack.jitsiTrack)
-                && (mediaStreamTrack = jitsiTrack.track)) {
-            // XXX MediaStreamTrack._switchCamera a custom function implemented
-            // in react-native-webrtc for video which switches between the
-            // cameras via a native WebRTC library implementation without making
-            // any changes to the track.
-            // FIXME JitsiLocalTrack defines getCameraFacingMode. By calling
-            // _switchCamera on MediaStreamTrack without the knowledge of
-            // lib-jitsi-meet we are likely introducing an inconsistency in
-            // JitsiLocalTrack's state.
-            mediaStreamTrack._switchCamera();
+        if (localTrack && (jitsiTrack = localTrack.jitsiTrack)) {
+            // XXX MediaStreamTrack._switchCamera is a custom function
+            // implemented in react-native-webrtc for video which switches
+            // between the cameras via a native WebRTC library implementation
+            // without making any changes to the track.
+            jitsiTrack._switchCamera();
 
             // Don't mirror the video of the back/environment-facing camera.
-            // FIXME Relies on the fact that we always open the camera in
-            // user-facing mode first.
+            const mirror
+                = jitsiTrack.getCameraFacingMode() === CAMERA_FACING_MODE.USER;
+
             store.dispatch({
                 type: TRACK_UPDATED,
                 track: {
                     jitsiTrack,
-                    mirror: !localTrack.mirror
+                    mirror
                 }
             });
         }
