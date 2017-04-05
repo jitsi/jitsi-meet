@@ -36,10 +36,11 @@ class ParticipantView extends Component {
         _avatar: React.PropTypes.string,
 
         /**
-         * The connection status for the participant. Its video will only be
-         * rendered if the connection status is 'active', otherwise the avatar
-         * will be rendered. If undefined, we have no indication, so the same
-         * course of action as 'active' is taken.
+         * The connection status of the participant. Her video will only be
+         * rendered if the connection status is 'active'; otherwise, the avatar
+         * will be rendered. If undefined, 'active' is presumed.
+         *
+         * @private
          */
         _connectionStatus: React.PropTypes.string,
 
@@ -106,10 +107,8 @@ class ParticipantView extends Component {
         // updated only after videoTrack is rendered.
         const waitForVideoStarted = false;
         const renderVideo
-            = shouldRenderVideoTrack(videoTrack, waitForVideoStarted)
-                && (typeof connectionStatus === 'undefined'
-                    || connectionStatus
-                        === JitsiParticipantConnectionStatus.ACTIVE);
+            = (connectionStatus === JitsiParticipantConnectionStatus.ACTIVE)
+                && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
@@ -182,10 +181,19 @@ function _mapStateToProps(state, ownProps) {
         = getParticipantById(
             state['features/base/participants'],
             participantId);
+    let avatar;
+    let connectionStatus;
+
+    if (participant) {
+        avatar = getAvatarURL(participant);
+        connectionStatus = participant.connectionStatus;
+    }
 
     return {
-        _avatar: participant && getAvatarURL(participant),
-        _connectionStatus: participant && participant.connectionStatus,
+        _avatar: avatar,
+        _connectionStatus:
+            connectionStatus
+                || JitsiParticipantConnectionStatus.ACTIVE,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

@@ -9,30 +9,6 @@ import {
 import { getLocalParticipant } from './functions';
 
 /**
- * Action to update a participant's connection status.
- *
- * @param {string} id - Participant's ID.
- * @param {string} connectionStatus - The new connection status for the
- * participant.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         connectionStatus: string
- *     }
- * }}
- */
-export function changeParticipantConnectionStatus(id, connectionStatus) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            connectionStatus
-        }
-    };
-}
-
-/**
  * Create an action for when dominant speaker changes.
  *
  * @param {string} id - Participant's ID.
@@ -91,6 +67,30 @@ export function localParticipantJoined(participant = {}) {
         ...participant,
         local: true
     });
+}
+
+/**
+ * Action to update a participant's connection status.
+ *
+ * @param {string} id - Participant's ID.
+ * @param {string} connectionStatus - The new connection status of the
+ * participant.
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: {
+ *         connectionStatus: string,
+ *         id: string
+ *     }
+ * }}
+ */
+export function participantConnectionStatusChanged(id, connectionStatus) {
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: {
+            connectionStatus,
+            id
+        }
+    };
 }
 
 /**

@@ -1,8 +1,8 @@
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import {
-    changeParticipantConnectionStatus,
     dominantSpeakerChanged,
     getLocalParticipant,
+    participantConnectionStatusChanged,
     participantJoined,
     participantLeft,
     participantRoleChanged,
@@ -39,6 +39,8 @@ import type { Dispatch } from 'redux';
  * @returns {void}
  */
 function _addConferenceListeners(conference, dispatch) {
+    // Dispatches into features/base/conference follow:
+
     conference.on(
             JitsiConferenceEvents.CONFERENCE_FAILED,
             (...args) => dispatch(conferenceFailed(conference, ...args)));
@@ -50,16 +52,10 @@ function _addConferenceListeners(conference, dispatch) {
             (...args) => dispatch(conferenceLeft(conference, ...args)));
 
     conference.on(
-            JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-            (...args) => dispatch(dominantSpeakerChanged(...args)));
-
-    conference.on(
-        JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
-        (...args) => dispatch(changeParticipantConnectionStatus(...args)));
-
-    conference.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => dispatch(_lockStateChanged(conference, ...args)));
+
+    // Dispatches into features/base/tracks follow:
 
     conference.on(
             JitsiConferenceEvents.TRACK_ADDED,
@@ -67,6 +63,16 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
             JitsiConferenceEvents.TRACK_REMOVED,
             t => t && !t.isLocal() && dispatch(trackRemoved(t)));
+
+    // Dispatches into features/base/participants follow:
+
+    conference.on(
+            JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
+            (...args) => dispatch(dominantSpeakerChanged(...args)));
+
+    conference.on(
+            JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
+            (...args) => dispatch(participantConnectionStatusChanged(...args)));
 
     conference.on(
             JitsiConferenceEvents.USER_JOINED,

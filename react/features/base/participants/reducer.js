@@ -73,9 +73,9 @@ function _participant(state, action) {
         const participant = action.participant; // eslint-disable-line no-shadow
         const {
             avatarURL,
+            connectionStatus,
             dominantSpeaker,
             email,
-            connectionStatus,
             local,
             pinned,
             role
@@ -107,10 +107,10 @@ function _participant(state, action) {
         return {
             avatarID,
             avatarURL,
+            connectionStatus,
             dominantSpeaker: dominantSpeaker || false,
             email,
             id,
-            connectionStatus,
             local: local || false,
             name,
             pinned: pinned || false,
