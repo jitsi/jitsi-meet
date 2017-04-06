@@ -17,8 +17,8 @@
         flex-direction: column-reverse;
         flex-wrap: nowrap;
         position: relative;
-        z-index: $zindex1;              // Set z-index to make element visible
-        width: $hideFilmstripButtonWidth;
+        z-index: $zindex1; // Set z-index to make element visible.
+        width: $filmstripToggleButtonWidth;
 
         button {
             font-size: 14px;
@@ -50,7 +50,7 @@
         position:relative;
         height:196px;
         padding: 0;
-        /*The filmstrip should not be covered by the left toolbar*/
+        /* The filmstrip should not be covered by the left toolbar. */
         padding-left: $defaultToolbarSize + 5;
         bottom: 0;
         width:auto;
@@ -58,8 +58,8 @@
         z-index: $filmstripVideosZ;
         transition: bottom 2s;
         overflow: visible !important;
-        /*!!!Removes the gap between the local video container and the remote
-        videos.*/
+        /*!!! Removes the gap between the local video container and the remote
+        videos. */
         font-size: 0pt;
 
         &.hidden {
@@ -79,8 +79,8 @@
             }
 
             /**
-            * Focused video thumbnail.
-            */
+             * Focused video thumbnail.
+             */
             &.videoContainerFocused {
                 transition-duration: 0.5s;
                 -webkit-transition-duration: 0.5s;
@@ -97,8 +97,8 @@
             }
 
             /**
-            * Hovered video thumbnail.
-            */
+             * Hovered video thumbnail.
+             */
             &:hover {
                 cursor: hand;
                 border: $thumbnailVideoBorder solid $videoThumbnailHovered;
@@ -110,7 +110,7 @@
                 }
             }
 
-            /* With TemasysWebRTC plugin <object/> element is used
+            /* With the TemasysWebRTC plugin <object/> element is used
             instead of <video/> */
             & > video,
             & > object {
@@ -120,5 +120,14 @@
                 overflow: hidden;
             }
         }
+    }
+
+    /**
+     * Style the filmstrip videos in filmstrip-only mode.
+     */
+    &__videos-filmstripOnly {
+        margin-top: auto;
+        margin-bottom: auto;
+        padding-right: $defaultToolbarSize;
     }
 }

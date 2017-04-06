@@ -94,7 +94,7 @@
 #toast-container.notification-bottom-right {
   $videoOffset: 2 * ($thumbnailVideoMargin + $thumbnailsBorder) + $thumbnailVideoBorder;
   bottom: 135px;
-  right: $hideFilmstripButtonWidth + $videoOffset;
+  right: $filmstripToggleButtonWidth + $videoOffset;
 }
 
 #toast-container * {
