@@ -8,6 +8,8 @@
 
 import postisInit from 'postis';
 
+import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
+
 /**
  * List of the available commands.
  * @type {{
@@ -43,6 +45,25 @@ let postis;
  */
 let enabled = false;
 
+/**
+ * The state of screen sharing(started/stopped) before the screen sharing is
+ * enabled and initialized.
+ * NOTE: This flag help us to cache the state and use it if toggle-share-screen
+ * was received before the initialization.
+ */
+let initialScreenSharingState = false;
+
+/**
+ * Executes on toggle-share-screen command.
+ */
+function toggleScreenSharing() {
+    if(!APP.conference.isDesktopSharingEnabled) {
+        initialScreenSharingState = !initialScreenSharingState;
+    } else {
+        APP.conference.toggleScreenSharing();
+    }
+}
+
 function initCommands() {
     commands = {
         "display-name":
@@ -52,8 +73,7 @@ function initCommands() {
         "toggle-film-strip": APP.UI.toggleFilmstrip,
         "toggle-chat": APP.UI.toggleChat,
         "toggle-contact-list": APP.UI.toggleContactList,
-        "toggle-share-screen":
-            APP.conference.toggleScreenSharing.bind(APP.conference),
+        "toggle-share-screen": toggleScreenSharing,
         "video-hangup": () => APP.conference.hangup(),
         "email": APP.conference.changeLocalEmail,
         "avatar-url": APP.conference.changeLocalAvatarUrl,
@@ -97,6 +117,19 @@ function triggerEvent (name, object) {
     }
 }
 
+/**
+ * Listens for screen sharing enabled events and toggles the screen sharing if
+ * needed.
+ *
+ * @param {boolean} enabled - Current screen sharing enabled status.
+ * @returns {void}
+ */
+function onScreenSharingEnable(enabled = false) {
+    if(enabled && initialScreenSharingState) {
+        toggleScreenSharing();
+    }
+}
+
 class API {
     /**
      * Constructs new instance
@@ -116,7 +149,12 @@ class API {
         if(!shouldBeEnabled() && !options.forceEnable)
             return;
 
-        enabled = true;
+        if(!enabled) {
+            APP.conference.addListener(
+                JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
+                onScreenSharingEnable);
+            enabled = true;
+        }
 
         if(!postis) {
             this._initPostis();
@@ -233,8 +271,12 @@ class API {
      * Removes the listeners.
      */
     dispose () {
-        if(enabled)
+        if(enabled) {
             postis.destroy();
+            APP.conference.removeListener(
+                JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
+                onScreenSharingEnable);
+        }
     }
 }
 

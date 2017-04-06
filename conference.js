@@ -588,6 +588,9 @@ export default {
                 APP.connection = connection = con;
                 this.isDesktopSharingEnabled =
                     JitsiMeetJS.isDesktopSharingEnabled();
+                eventEmitter.emit(
+                    JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
+                    this.isDesktopSharingEnabled);
 
                 APP.store.dispatch(showDesktopSharingButton());
 
