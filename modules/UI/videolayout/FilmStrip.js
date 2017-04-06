@@ -20,36 +20,38 @@ const FilmStrip = {
     },
 
     /**
-     * Initializes the filmstrip toolbar
+     * Initializes the filmstrip toolbar.
      */
     _initFilmStripToolbar() {
-        let toolbar = this._generateFilmStripToolbar();
+        // Do not show the toggle button in film strip only mode.
+        if (interfaceConfig.filmStripOnly)
+            return;
+
+        let toolbarContainerHTML = this._generateToolbarHTML();
         let className = this.filmStripContainerClassName;
         let container = document.querySelector(`.${className}`);
 
-        UIUtil.prependChild(container, toolbar);
+        UIUtil.prependChild(container, toolbarContainerHTML);
 
-        let iconSelector = '#hideVideoToolbar i';
+        let iconSelector = '#toggleFilmStripButton i';
         this.toggleFilmStripIcon = document.querySelector(iconSelector);
     },
 
     /**
-     * Generates HTML layout for filmstrip toolbar
+     * Generates HTML layout for filmstrip toggle button and wrapping container.
      * @returns {HTMLElement}
      * @private
      */
-    _generateFilmStripToolbar() {
+    _generateToolbarHTML() {
         let container = document.createElement('div');
         let isVisible = this.isFilmStripVisible();
         container.className = 'filmstrip__toolbar';
-        if(!interfaceConfig.filmStripOnly) {
-            container.innerHTML = `
-                <button id="hideVideoToolbar">
-                    <i class="icon-menu-${isVisible ? 'down' : 'up'}">
-                    </i>
-                </button>
-            `;
-        }
+        container.innerHTML = `
+            <button id="toggleFilmStripButton">
+                <i class="icon-menu-${isVisible ? 'down' : 'up'}">
+                </i>
+            </button>
+        `;
 
         return container;
     },
@@ -62,7 +64,7 @@ const FilmStrip = {
         // Firing the event instead of executing toggleFilmstrip method because
         // it's important to hide the filmstrip by UI.toggleFilmstrip in order
         // to correctly resize the video area.
-        $('#hideVideoToolbar').on('click',
+        $('#toggleFilmStripButton').on('click',
             () => this.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP));
 
         this._registerToggleFilmstripShortcut();
@@ -162,11 +164,11 @@ const FilmStrip = {
         return !this.filmStrip.hasClass('hidden');
     },
 
-    setupFilmStripOnly() {
-        this.filmStrip.css({
-            padding: "0px 0px 18px 0px",
-            right: 0
-        });
+    /**
+     * Adjusts styles for film-strip only mode.
+     */
+    setFilmStripOnly() {
+        this.filmStrip.addClass('filmstrip__videos-filmstripOnly');
     },
 
     /**

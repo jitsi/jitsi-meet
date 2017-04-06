@@ -322,8 +322,8 @@ UI.start = function () {
         SidePanels.init(eventEmitter);
     } else {
         $("body").addClass("filmstrip-only");
-        UIUtil.setVisible('mainToolbarContainer', false);
-        FilmStrip.setupFilmStripOnly();
+        UI.showToolbar();
+        FilmStrip.setFilmStripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
     }
