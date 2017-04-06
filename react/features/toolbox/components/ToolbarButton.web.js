@@ -49,7 +49,13 @@ class ToolbarButton extends AbstractToolbarButton {
         /**
          * Translation helper function.
          */
-        t: React.PropTypes.func
+        t: React.PropTypes.func,
+
+        /**
+         * Indicates the position of the tooltip.
+         */
+        tooltipPosition:
+            React.PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
     };
 
     /**
@@ -199,13 +205,10 @@ class ToolbarButton extends AbstractToolbarButton {
      * @returns {void}
      */
     _setShortcutAndTooltip(): void {
-        const { button } = this.props;
+        const { button, tooltipPosition } = this.props;
         const name = button.buttonName;
 
         if (UIUtil.isButtonEnabled(name)) {
-            const tooltipPosition
-                = interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) > -1
-                ? 'bottom' : 'right';
 
             if (!button.unclickable) {
                 UIUtil.setTooltip(this.button,

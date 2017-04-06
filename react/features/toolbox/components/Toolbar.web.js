@@ -60,7 +60,13 @@ class Toolbar extends Component {
         /**
          * Map with toolbar buttons.
          */
-        toolbarButtons: React.PropTypes.instanceOf(Map)
+        toolbarButtons: React.PropTypes.instanceOf(Map),
+
+        /**
+         * Indicates the position of the tooltip.
+         */
+        tooltipPosition:
+            React.PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
     };
 
     /**
@@ -73,7 +79,7 @@ class Toolbar extends Component {
 
         this._setButtonHandlers();
 
-        // Bind methods to save the context
+        // Bind callbacks to preverse this.
         this._renderToolbarButton = this._renderToolbarButton.bind(this);
     }
 
@@ -115,7 +121,7 @@ class Toolbar extends Component {
     _renderToolbarButton(acc: Array<*>, keyValuePair: Array<*>,
                          index: number): Array<ReactElement<*>> {
         const [ key, button ] = keyValuePair;
-        const { splitterIndex } = this.props;
+        const { splitterIndex, tooltipPosition } = this.props;
 
         if (splitterIndex && index === splitterIndex) {
             const splitter = <span className = 'toolbar__splitter' />;
@@ -131,7 +137,8 @@ class Toolbar extends Component {
                 key = { key }
                 onClick = { onClick }
                 onMount = { onMount }
-                onUnmount = { onUnmount } />
+                onUnmount = { onUnmount }
+                tooltipPosition = { tooltipPosition } />
         );
 
         return acc;
@@ -149,16 +156,11 @@ class Toolbar extends Component {
             toolbarButtons
         } = this.props;
 
-        // Only a few buttons have custom button handlers defined, so this
-        // list may be undefined or empty depending on the buttons we're
-        // rendering.
-        // TODO: merge the buttonHandlers and onClick properties and come up
-        // with a consistent event handling property.
-        if (!buttonHandlers) {
-            return;
-        }
-
-        Object.keys(buttonHandlers).forEach(key => {
+        // Only a few buttons have buttonHandlers defined, so it may be
+        // undefined or empty depending on the buttons rendered.
+        // TODO Merge the buttonHandlers and onClick properties and come up with
+        // a consistent event handling property.
+        buttonHandlers && Object.keys(buttonHandlers).forEach(key => {
             let button = toolbarButtons.get(key);
 
             if (button) {

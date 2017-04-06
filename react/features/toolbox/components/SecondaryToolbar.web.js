@@ -12,8 +12,8 @@ import {
     showRecordingButton,
     toggleSideToolbarContainer
 } from '../actions';
-import Toolbar from './Toolbar';
 import { getToolbarClassNames } from '../functions';
+import Toolbar from './Toolbar';
 
 declare var APP: Object;
 declare var config: Object;
@@ -79,10 +79,9 @@ class SecondaryToolbar extends Component {
              * @type {Object}
              */
             profile: {
-                onMount: () => {
+                onMount: () =>
                     APP.tokenData.isGuest
-                    || this.props._onSetProfileButtonUnclickable(true);
-                }
+                        || this.props._onSetProfileButtonUnclickable(true)
             },
 
             /**
@@ -91,14 +90,14 @@ class SecondaryToolbar extends Component {
              * @type {button}
              */
             raisehand: {
-                onMount: () => {
-                    APP.UI.addListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-                        this.props._onLocalRaiseHandChanged);
-                },
-                onUnmount: () => {
-                    APP.UI.removeListener(UIEvents.LOCAL_RAISE_HAND_CHANGED,
-                        this.props._onLocalRaiseHandChanged);
-                }
+                onMount: () =>
+                    APP.UI.addListener(
+                        UIEvents.LOCAL_RAISE_HAND_CHANGED,
+                        this.props._onLocalRaiseHandChanged),
+                onUnmount: () =>
+                    APP.UI.removeListener(
+                        UIEvents.LOCAL_RAISE_HAND_CHANGED,
+                        this.props._onLocalRaiseHandChanged)
             },
 
             /**
@@ -107,11 +106,9 @@ class SecondaryToolbar extends Component {
              * @type {Object}
              */
             recording: {
-                onMount: () => {
-                    if (config.enableRecording) {
-                        this.props._onShowRecordingButton();
-                    }
-                }
+                onMount: () =>
+                    config.enableRecording
+                        && this.props._onShowRecordingButton()
             }
         };
 
@@ -131,7 +128,8 @@ class SecondaryToolbar extends Component {
      * @returns {void}
      */
     componentDidMount(): void {
-        APP.UI.addListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+        APP.UI.addListener(
+            UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             this.props._onSideToolbarContainerToggled);
     }
 
@@ -141,7 +139,8 @@ class SecondaryToolbar extends Component {
      * @returns {void}
      */
     componentWillUnmount(): void {
-        APP.UI.removeListener(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
+        APP.UI.removeListener(
+            UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             this.props._onSideToolbarContainerToggled);
     }
 
@@ -154,8 +153,8 @@ class SecondaryToolbar extends Component {
         const { _secondaryToolbarButtons } = this.props;
 
         // The number of buttons to show in the toolbar isn't fixed, it depends
-        // on availability of features and configuration parameters, so if we
-        // don't have anything to render we exit here.
+        // on the availability of features and configuration parameters. So
+        // there may be nothing to render.
         if (_secondaryToolbarButtons.size === 0) {
             return null;
         }
@@ -167,7 +166,8 @@ class SecondaryToolbar extends Component {
             <Toolbar
                 buttonHandlers = { buttonHandlers }
                 className = { secondaryToolbarClassName }
-                toolbarButtons = { _secondaryToolbarButtons }>
+                toolbarButtons = { _secondaryToolbarButtons }
+                tooltipPosition = { 'right' }>
                 <FeedbackButton />
             </Toolbar>
         );
@@ -179,10 +179,10 @@ class SecondaryToolbar extends Component {
  *
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
- *      _onLocalRaiseHandChanged: Function,
- *      _onSetProfileButtonUnclickable: Function,
- *      _onShowRecordingButton: Function,
- *      _onSideToolbarContainerToggled
+ *     _onLocalRaiseHandChanged: Function,
+ *     _onSetProfileButtonUnclickable: Function,
+ *     _onShowRecordingButton: Function,
+ *     _onSideToolbarContainerToggled
  * }}
  * @private
  */
@@ -237,8 +237,8 @@ function _mapDispatchToProps(dispatch: Function): Object {
  *
  * @param {Object} state - Snapshot of Redux store.
  * @returns {{
- *      _secondaryToolbarButtons: Map,
- *      _visible: boolean
+ *     _secondaryToolbarButtons: Map,
+ *     _visible: boolean
  * }}
  * @private
  */
@@ -252,7 +252,7 @@ function _mapStateToProps(state: Object): Object {
         /**
          * Default toolbar buttons for secondary toolbar.
          *
-         * @protected
+         * @private
          * @type {Map}
          */
         _secondaryToolbarButtons: secondaryToolbarButtons,
@@ -260,7 +260,7 @@ function _mapStateToProps(state: Object): Object {
         /**
          * Shows whether toolbar is visible.
          *
-         * @protected
+         * @private
          * @type {boolean}
          */
         _visible: visible

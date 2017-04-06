@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { showDesktopSharingButton, toggleFullScreen } from '../actions';
-import Toolbar from './Toolbar';
 import { getToolbarClassNames } from '../functions';
+import Toolbar from './Toolbar';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -19,8 +19,6 @@ declare var interfaceConfig: Object;
  * @extends Component
  */
 class PrimaryToolbar extends Component {
-    state: Object;
-
     static propTypes = {
         /**
          * Handler for toggling fullscreen mode.
@@ -42,6 +40,8 @@ class PrimaryToolbar extends Component {
          */
         _visible: React.PropTypes.bool
     };
+
+    state: Object;
 
     /**
      * Constructs instance of primary toolbar React component.
@@ -68,10 +68,12 @@ class PrimaryToolbar extends Component {
              */
             fullscreen: {
                 onMount: () =>
-                    APP.UI.addListener(UIEvents.FULLSCREEN_TOGGLED,
+                    APP.UI.addListener(
+                        UIEvents.FULLSCREEN_TOGGLED,
                         this.props._onFullScreenToggled),
                 onUnmount: () =>
-                    APP.UI.removeListener(UIEvents.FULLSCREEN_TOGGLED,
+                    APP.UI.removeListener(
+                        UIEvents.FULLSCREEN_TOGGLED,
                         this.props._onFullScreenToggled)
             }
         };
@@ -105,21 +107,24 @@ class PrimaryToolbar extends Component {
         const { _primaryToolbarButtons } = this.props;
 
         // The number of buttons to show in the toolbar isn't fixed, it depends
-        // on availability of features and configuration parameters, so if we
-        // don't have anything to render we exit here.
+        // on the availability of features and configuration parameters. So
+        // there may be nothing to render.
         if (_primaryToolbarButtons.size === 0) {
             return null;
         }
 
         const { buttonHandlers, splitterIndex } = this.state;
         const { primaryToolbarClassName } = getToolbarClassNames(this.props);
+        const tooltipPosition
+            = interfaceConfig.filmStripOnly ? 'left' : 'bottom';
 
         return (
             <Toolbar
                 buttonHandlers = { buttonHandlers }
                 className = { primaryToolbarClassName }
                 splitterIndex = { splitterIndex }
-                toolbarButtons = { _primaryToolbarButtons } />
+                toolbarButtons = { _primaryToolbarButtons }
+                tooltipPosition = { tooltipPosition } />
         );
     }
 }
@@ -129,7 +134,7 @@ class PrimaryToolbar extends Component {
  *
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
- *      _onShowDesktopSharingButton: Function
+ *     _onShowDesktopSharingButton: Function
  * }}
  * @private
  */
@@ -162,8 +167,8 @@ function _mapDispatchToProps(dispatch: Function): Object {
  *
  * @param {Object} state - Snapshot of Redux store.
  * @returns {{
- *      _primaryToolbarButtons: Map,
- *      _visible: boolean
+ *     _primaryToolbarButtons: Map,
+ *     _visible: boolean
  * }}
  * @private
  */
@@ -177,7 +182,7 @@ function _mapStateToProps(state: Object): Object {
         /**
          * Default toolbar buttons for primary toolbar.
          *
-         * @protected
+         * @private
          * @type {Map}
          */
         _primaryToolbarButtons: primaryToolbarButtons,
@@ -185,7 +190,7 @@ function _mapStateToProps(state: Object): Object {
         /**
          * Shows whether toolbox is visible.
          *
-         * @protected
+         * @private
          * @type {boolean}
          */
         _visible: visible
