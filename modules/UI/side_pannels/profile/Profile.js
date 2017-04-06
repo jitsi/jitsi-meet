@@ -36,6 +36,9 @@ const htmlStr = `
 function initHTML() {
     $(`#${sidePanelsContainerId}`)
         .append(htmlStr);
+    // make sure we translate the panel, as adding it can be after i18n
+    // library had initialized and translated already present html
+    APP.translation.translateElement($(`#${sidePanelsContainerId}`));
 }
 
 export default {
