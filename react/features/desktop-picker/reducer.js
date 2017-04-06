@@ -1,10 +1,11 @@
 import { ReducerRegistry } from '../base/redux';
+
 import {
     RESET_DESKTOP_SOURCES,
     UPDATE_DESKTOP_SOURCES
 } from './actionTypes';
 
-const defaultState = {
+const DEFAULT_STATE = {
     screen: [],
     window: []
 };
@@ -19,39 +20,41 @@ const defaultState = {
  * @returns {Object}
  */
 ReducerRegistry.register(
-    'features/desktop-picker/sources',
-    (state = defaultState, action) => {
+    'features/desktop-picker',
+    (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case RESET_DESKTOP_SOURCES:
-            return { ...defaultState };
+            return { ...DEFAULT_STATE };
+
         case UPDATE_DESKTOP_SOURCES:
-            return seperateSourcesByType(action.sources);
+            return _seperateSourcesByType(action.sources);
+
         default:
             return state;
         }
     });
 
 /**
- * Converts an array of DesktopCapturerSources to an object with types
- * for keys and values being an array with sources of the key's type.
+ * Converts an array of DesktopCapturerSources to an object with types for keys
+ * and values being an array with sources of the key's type.
  *
  * @param {Array} sources - DesktopCapturerSources.
- * @returns {Object} An object with the sources split into seperate arrays
- * based on source type.
  * @private
+ * @returns {Object} An object with the sources split into seperate arrays based
+ * on source type.
  */
-function seperateSourcesByType(sources = []) {
+function _seperateSourcesByType(sources = []) {
     const sourcesByType = {
         screen: [],
         window: []
     };
 
     sources.forEach(source => {
-        const sourceIdParts = source.id.split(':');
-        const sourceType = sourceIdParts[0];
+        const idParts = source.id.split(':');
+        const type = idParts[0];
 
-        if (sourcesByType[sourceType]) {
-            sourcesByType[sourceType].push(source);
+        if (sourcesByType[type]) {
+            sourcesByType[type].push(source);
         }
     });
 

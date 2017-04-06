@@ -13,21 +13,23 @@ class DesktopSourcePreview extends Component {
      */
     static propTypes = {
         /**
-         * If true the 'is-selected' class will be added to the component.
-         */
-        isSelected: React.PropTypes.bool,
-
-        /**
-         * The callback to invoke when the component is clicked.
-         * The id of the DesktopCapturerSource will be passed in.
+         * The callback to invoke when the component is clicked. The id of
+         * the DesktopCapturerSource will be passed in.
          */
         onClick: React.PropTypes.func,
 
         /**
-         * The callback to invoke when the component is double clicked.
-         * The id of the DesktopCapturerSource will be passed in.
+         * The callback to invoke when the component is double clicked. The id
+         * of the DesktopCapturerSource will be passed in.
          */
         onDoubleClick: React.PropTypes.func,
+
+        /**
+         * The indicator which determines whether this DesktopSourcePreview is
+         * selected. If true, the 'is-selected' CSS class will be added to the
+         * Component.
+         */
+        selected: React.PropTypes.bool,
 
         /**
          * The DesktopCapturerSource to display.
@@ -55,8 +57,8 @@ class DesktopSourcePreview extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const isSelectedClass = this.props.isSelected ? 'is-selected' : '';
-        const displayClasses = `desktop-picker-source ${isSelectedClass}`;
+        const selectedClass = this.props.selected ? 'is-selected' : '';
+        const displayClasses = `desktop-picker-source ${selectedClass}`;
 
         return (
             <div

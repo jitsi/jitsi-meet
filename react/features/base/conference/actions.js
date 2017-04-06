@@ -453,9 +453,9 @@ export function setPassword(conference, method, password) {
  * @param {(string|undefined)} room - The name of the room of the conference to
  * be joined.
  * @returns {{
- *      type: SET_ROOM,
- *      room: string
- *  }}
+ *     type: SET_ROOM,
+ *     room: string
+ * }}
  */
 export function setRoom(room) {
     return {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import DesktopSourcePreview from './DesktopSourcePreview';
 
 /**
@@ -19,8 +20,8 @@ class DesktopPickerPane extends Component {
         onClick: React.PropTypes.func,
 
         /**
-         * The handler to be invoked when a DesktopSourcePreview is
-         * double clicked.
+         * The handler to be invoked when a DesktopSourcePreview is double
+         * clicked.
          */
         onDoubleClick: React.PropTypes.func,
 
@@ -47,19 +48,28 @@ class DesktopPickerPane extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const previews = this.props.sources.map(source =>
-            <DesktopSourcePreview
-                isSelected = { source.id === this.props.selectedSourceId }
-                key = { source.id }
-                onClick = { this.props.onClick }
-                onDoubleClick = { this.props.onDoubleClick }
-                source = { source } />
-        );
-        const classnames = 'desktop-picker-pane default-scrollbar '
-            + `source-type-${this.props.type}`;
+        const {
+            onClick,
+            onDoubleClick,
+            selectedSourceId,
+            sources,
+            type
+        } = this.props;
+
+        const classNames
+            = `desktop-picker-pane default-scrollbar source-type-${type}`;
+        const previews
+            = sources.map(
+                source =>
+                    <DesktopSourcePreview
+                        key = { source.id }
+                        onClick = { onClick }
+                        onDoubleClick = { onDoubleClick }
+                        selected = { source.id === selectedSourceId }
+                        source = { source } />);
 
         return (
-            <div className = { classnames }>
+            <div className = { classNames }>
                 { previews }
             </div>
         );

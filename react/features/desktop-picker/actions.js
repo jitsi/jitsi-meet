@@ -1,35 +1,21 @@
-import { getLogger } from 'jitsi-meet-logger';
-
 import { openDialog } from '../base/dialog';
+
 import {
     RESET_DESKTOP_SOURCES,
     UPDATE_DESKTOP_SOURCES
 } from './actionTypes';
 import { DesktopPicker } from './components';
 
-const logger = getLogger(__filename);
-
-/**
- * Signals to remove all stored DesktopCapturerSources.
- *
- * @returns {{
- *     type: RESET_DESKTOP_SOURCES
- * }}
- */
-export function resetDesktopSources() {
-    return {
-        type: RESET_DESKTOP_SOURCES
-    };
-}
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Begins a request to get available DesktopCapturerSources.
  *
  * @param {Array} types - An array with DesktopCapturerSource type strings.
- * @param {Object} options - Additional configuration for getting a list
- * of sources.
- * @param {Object} options.thumbnailSize - The desired height and width
- * of the return native image object used for the preview image of the source.
+ * @param {Object} options - Additional configuration for getting a list of
+ * sources.
+ * @param {Object} options.thumbnailSize - The desired height and width of the
+ * return native image object used for the preview image of the source.
  * @returns {Function}
  */
 export function obtainDesktopSources(types, options = {}) {
@@ -42,18 +28,34 @@ export function obtainDesktopSources(types, options = {}) {
     }
 
     return dispatch => {
-        if (window.JitsiMeetElectron
-            && window.JitsiMeetElectron.obtainDesktopStreams) {
-            window.JitsiMeetElectron.obtainDesktopStreams(
+        const { JitsiMeetElectron } = window;
+
+        if (JitsiMeetElectron && JitsiMeetElectron.obtainDesktopStreams) {
+            JitsiMeetElectron.obtainDesktopStreams(
                 sources => dispatch(updateDesktopSources(sources)),
-                error => logger.error(
-                    `Error while obtaining desktop sources: ${error}`),
+                error =>
+                    logger.error(
+                        `Error while obtaining desktop sources: ${error}`),
                 capturerOptions
             );
         } else {
-            logger.error('Called JitsiMeetElectron.obtainDesktopStreams '
-                + 'but it is not defined');
+            logger.error(
+                'Called JitsiMeetElectron.obtainDesktopStreams'
+                    + ' but it is not defined');
         }
+    };
+}
+
+/**
+ * Signals to remove all stored DesktopCapturerSources.
+ *
+ * @returns {{
+ *     type: RESET_DESKTOP_SOURCES
+ * }}
+ */
+export function resetDesktopSources() {
+    return {
+        type: RESET_DESKTOP_SOURCES
     };
 }
 
