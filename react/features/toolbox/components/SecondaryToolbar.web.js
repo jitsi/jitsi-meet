@@ -150,9 +150,17 @@ class SecondaryToolbar extends Component {
      *
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> {
-        const { buttonHandlers } = this.state;
+    render(): ReactElement<*> | null {
         const { _secondaryToolbarButtons } = this.props;
+
+        // The number of buttons to show in the toolbar isn't fixed, it depends
+        // on availability of features and configuration parameters, so if we
+        // don't have anything to render we exit here.
+        if (_secondaryToolbarButtons.size === 0) {
+            return null;
+        }
+
+        const { buttonHandlers } = this.state;
         const { secondaryToolbarClassName } = getToolbarClassNames(this.props);
 
         return (

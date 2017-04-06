@@ -32,6 +32,11 @@ class Toolbox extends Component {
      */
     static propTypes = {
         /**
+         * Indicates if the toolbox should always be visible.
+         */
+        _alwaysVisible: React.PropTypes.bool,
+
+        /**
          * Handler dispatching setting default buttons action.
          */
         _setDefaultToolboxButtons: React.PropTypes.func,
@@ -159,8 +164,9 @@ class Toolbox extends Component {
      * @private
      */
     _renderToolbars(): ReactElement<*> | null {
-        // The toolbars should not be shown until timeoutID is initialized.
-        if (this.props._timeoutID === null) {
+        // In case we're not in alwaysVisible mode the toolbox should not be
+        // shown until timeoutID is initialized.
+        if (!this.props._alwaysVisible && this.props._timeoutID === null) {
             return null;
         }
 
@@ -202,8 +208,9 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _setToolboxAlwaysVisible() {
-            dispatch(
-                setToolboxAlwaysVisible(config.alwaysVisibleToolbar === true));
+            dispatch(setToolboxAlwaysVisible(
+                config.alwaysVisibleToolbar === true
+                    || interfaceConfig.filmStripOnly));
         }
     };
 }
@@ -214,6 +221,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
  * @param {Object} state - Redux state.
  * @private
  * @returns {{
+ *     _alwaysVisible: boolean,
  *     _audioMuted: boolean,
  *     _locked: boolean,
  *     _subjectSlideIn: boolean,
@@ -222,6 +230,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
  */
 function _mapStateToProps(state: Object): Object {
     const {
+        alwaysVisible,
         subject,
         subjectSlideIn,
         timeoutID
@@ -231,9 +240,17 @@ function _mapStateToProps(state: Object): Object {
         ...abstractMapStateToProps(state),
 
         /**
+         * Indicates if the toolbox should always be visible.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _alwaysVisible: alwaysVisible,
+
+        /**
          * Property containing conference subject.
          *
-         * @protected
+         * @private
          * @type {string}
          */
         _subject: subject,
@@ -241,7 +258,7 @@ function _mapStateToProps(state: Object): Object {
         /**
          * Flag showing whether to set subject slide in animation.
          *
-         * @protected
+         * @private
          * @type {boolean}
          */
         _subjectSlideIn: subjectSlideIn,
@@ -249,7 +266,7 @@ function _mapStateToProps(state: Object): Object {
         /**
          * Property containing toolbox timeout id.
          *
-         * @protected
+         * @private
          * @type {number}
          */
         _timeoutID: timeoutID

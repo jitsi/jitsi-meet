@@ -101,9 +101,17 @@ class PrimaryToolbar extends Component {
      *
      * @returns {ReactElement}
      */
-    render() {
-        const { buttonHandlers, splitterIndex } = this.state;
+    render(): ReactElement<*> | null {
         const { _primaryToolbarButtons } = this.props;
+
+        // The number of buttons to show in the toolbar isn't fixed, it depends
+        // on availability of features and configuration parameters, so if we
+        // don't have anything to render we exit here.
+        if (_primaryToolbarButtons.size === 0) {
+            return null;
+        }
+
+        const { buttonHandlers, splitterIndex } = this.state;
         const { primaryToolbarClassName } = getToolbarClassNames(this.props);
 
         return (

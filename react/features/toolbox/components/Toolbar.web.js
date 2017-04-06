@@ -8,10 +8,6 @@ import {
 } from '../actions';
 import ToolbarButton from './ToolbarButton';
 
-declare var APP: Object;
-declare var config: Object;
-declare var interfaceConfig: Object;
-
 /**
  * Implements a toolbar in React/Web. It is a strip that contains a set of
  * toolbar items such as buttons. Toolbar is commonly placed inside of a
@@ -152,6 +148,15 @@ class Toolbar extends Component {
             buttonHandlers,
             toolbarButtons
         } = this.props;
+
+        // Only a few buttons have custom button handlers defined, so this
+        // list may be undefined or empty depending on the buttons we're
+        // rendering.
+        // TODO: merge the buttonHandlers and onClick properties and come up
+        // with a consistent event handling property.
+        if (!buttonHandlers) {
+            return;
+        }
 
         Object.keys(buttonHandlers).forEach(key => {
             let button = toolbarButtons.get(key);

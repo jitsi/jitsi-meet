@@ -46,6 +46,7 @@ export default {
     camera: {
         classNames: [ 'button', 'icon-camera' ],
         enabled: true,
+        filmstripOnlyEnabled: true,
         id: 'toolbar_button_camera',
         onClick() {
             if (APP.conference.videoMuted) {
@@ -203,6 +204,7 @@ export default {
     hangup: {
         classNames: [ 'button', 'icon-hangup', 'button_hangup' ],
         enabled: true,
+        filmstripOnlyEnabled: true,
         id: 'toolbar_button_hangup',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
@@ -231,6 +233,7 @@ export default {
     microphone: {
         classNames: [ 'button', 'icon-microphone' ],
         enabled: true,
+        filmstripOnlyEnabled: true,
         id: 'toolbar_button_mute',
         onClick() {
             const sharedVideoManager = APP.UI.getSharedVideoManager();

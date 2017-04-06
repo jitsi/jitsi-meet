@@ -207,6 +207,18 @@ function _setButton(state, { button, buttonName }): Object {
         ...button
     };
 
+    // In filmstrip-only mode we only show buttons if they're filmstrip-only
+    // enabled, so we don't need to update if this isn't the case.
+    // FIXME A reducer should be a pure function of the current state and the
+    // specified action so it should not use the global variable
+    // interfaceConfig. Anyway, we'll move interfaceConfig into the (redux)
+    // store so we'll surely revisit the source code bellow.
+    if (interfaceConfig.filmStripOnly && !selectedButton.filmstripOnlyEnabled) {
+        return {
+            ...state
+        };
+    }
+
     const updatedToolbar = state[place].set(buttonName, selectedButton);
 
     return {
