@@ -8,8 +8,14 @@ export const styles = createStyleSheet({
      * Avatar style.
      */
     avatar: {
+        alignSelf: 'center',
+
+        // FIXME I don't understand how a 100 border radius of a 50x50 square
+        // results in a circle.
+        borderRadius: 100,
         flex: 1,
-        width: '100%'
+        height: 50,
+        width: 50
     },
 
     /**
