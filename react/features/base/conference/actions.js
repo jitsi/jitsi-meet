@@ -253,13 +253,15 @@ export function createConference() {
 
         dispatch(_conferenceWillJoin(room));
 
-        // TODO Take options from config.
+        const { config } = state['features/base/lib-jitsi-meet'];
         const conference
             = connection.initJitsiConference(
 
                 // XXX Lib-jitsi-meet does not accept uppercase letters.
                 room.toLowerCase(),
                 {
+                    ...config,
+
                     openSctp: true
 
                     // FIXME I tested H.264 from iPhone 6S during a morning
