@@ -95,6 +95,7 @@ class Thumbnail extends Component {
                             = { audioTrack.jitsiTrack.getOriginalStream() } /> }
 
                 <ParticipantView
+                    avatarStyle = { styles.avatar }
                     participantId = { participantId }
                     showAvatar = { participantNotInLargeVideo }
                     showVideo = { participantNotInLargeVideo }

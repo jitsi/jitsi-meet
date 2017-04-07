@@ -5,6 +5,17 @@ import { BoxModel, ColorPalette } from '../../base/styles';
  */
 export const styles = {
     /**
+     * Avatar style.
+     */
+    avatar: {
+        alignSelf: 'center',
+        borderRadius: 25,
+        flex: 0,
+        height: 50,
+        width: 50
+    },
+
+    /**
      * Dominant speaker indicator style.
      */
     dominantSpeakerIndicator: {

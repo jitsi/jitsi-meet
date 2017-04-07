@@ -5,18 +5,11 @@ import { createStyleSheet } from '../../styles';
  */
 export const styles = createStyleSheet({
     /**
-     * Avatar style.
-     */
-    avatar: {
-        flex: 1,
-        width: '100%'
-    },
-
-    /**
      * ParticipantView style.
      */
     participantView: {
         alignItems: 'stretch',
-        flex: 1
+        flex: 1,
+        justifyContent: 'center'
     }
 });

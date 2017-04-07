@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Image } from 'react-native';
 
-import { styles } from './styles';
-
 /**
  * Display a participant avatar.
  */
@@ -33,7 +31,7 @@ export default class Avatar extends Component {
                 // XXX Avatar is expected to display the whole image.
                 resizeMode = 'contain'
                 source = {{ uri: this.props.uri }}
-                style = { [ styles.avatar, this.props.style ] } />
+                style = { this.props.style } />
         );
     }
 }
