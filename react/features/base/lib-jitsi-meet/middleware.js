@@ -99,11 +99,11 @@ function _setConfig(store, next, action) {
     const disposeLibPromise
         = initialized ? dispatch(disposeLib()) : Promise.resolve();
 
-    // Let the new config into the Redux store (because initLib will read it
-    // from there).
-    const nextState = next(action);
+    disposeLibPromise.then(() => {
+        // Let the new config into the Redux store (because initLib will read it
+        // from there).
+        next(action);
 
-    disposeLibPromise.then(dispatch(initLib()));
-
-    return nextState;
+        dispatch(initLib());
+    });
 }
