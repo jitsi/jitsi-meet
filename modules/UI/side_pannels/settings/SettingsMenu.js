@@ -1,7 +1,6 @@
-/* global $, APP, AJS, interfaceConfig, JitsiMeetJS */
-import { openDialog } from '../../../../react/features/base/dialog';
+/* global $, APP, AJS, interfaceConfig */
 import { LANGUAGES } from "../../../../react/features/base/i18n";
-import { DeviceSelectionDialog }
+import { openDeviceSelectionDialog }
     from '../../../../react/features/device-selection';
 
 import UIUtil from "../../util/UIUtil";
@@ -101,34 +100,6 @@ function initSelect2($el, onSelectedCb) {
     }
 }
 
-/**
- * Open DeviceSelectionDialog with a configuration based on the environment's
- * supported abilities.
- *
- * @param {boolean} isDeviceListAvailable - Whether or not device enumeration
- * is possible. This is a value obtained through an async operation whereas all
- * other configurations for the modal are obtained synchronously.
- * @private
- * @returns {void}
- */
-function _openDeviceSelectionModal(isDeviceListAvailable) {
-    APP.store.dispatch(openDialog(DeviceSelectionDialog, {
-        currentAudioOutputId: APP.settings.getAudioOutputDeviceId(),
-        currentAudioTrack: APP.conference.getLocalAudioTrack(),
-        currentVideoTrack: APP.conference.getLocalVideoTrack(),
-        disableAudioInputChange: !JitsiMeetJS.isMultipleAudioInputSupported(),
-        disableDeviceChange: !isDeviceListAvailable
-            || !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
-        hasAudioPermission: JitsiMeetJS.mediaDevices
-            .isDevicePermissionGranted('audio'),
-        hasVideoPermission: JitsiMeetJS.mediaDevices
-            .isDevicePermissionGranted('video'),
-        hideAudioInputPreview: !JitsiMeetJS.isCollectingLocalStats(),
-        hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
-            .isDeviceChangeAvailable('output')
-    }));
-}
-
 export default {
     init (emitter) {
         initHTML();
@@ -170,12 +141,8 @@ export default {
         if (UIUtil.isSettingEnabled('devices')) {
             const wrapperId = 'deviceOptionsWrapper';
 
-            JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-                .then((isDeviceListAvailable) => {
-                    $('#deviceSelection').on('click', () => {
-                        _openDeviceSelectionModal(isDeviceListAvailable);
-                    });
-                });
+            $('#deviceSelection').on('click', () =>
+                APP.store.dispatch(openDeviceSelectionDialog()));
 
             // Only show the subtitle if this isn't the only setting section.
             if (interfaceConfig.SETTINGS_SECTIONS.length > 1)

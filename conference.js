@@ -1059,15 +1059,6 @@ export default {
     },
 
     /**
-     * Returns the current local video track in use.
-     *
-     * @returns {JitsiLocalTrack}
-     */
-    getLocalVideoTrack() {
-        return room.getLocalVideoTrack();
-    },
-
-    /**
      * Start using provided audio stream.
      * Stops previous audio stream.
      * @param {JitsiLocalTrack} [stream] new stream to use or null
@@ -1096,14 +1087,6 @@ export default {
             });
     },
 
-    /**
-     * Returns the current local audio track in use.
-     *
-     * @returns {JitsiLocalTrack}
-     */
-    getLocalAudioTrack() {
-        return room.getLocalAudioTrack();
-    },
 
     videoSwitchInProgress: false,
     toggleScreenSharing(shareScreen = !this.isSharingScreen) {
