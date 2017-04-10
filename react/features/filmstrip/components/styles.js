@@ -1,3 +1,4 @@
+import { Platform } from '../../base/react';
 import { BoxModel, ColorPalette } from '../../base/styles';
 
 /**
@@ -9,7 +10,10 @@ export const styles = {
      */
     avatar: {
         alignSelf: 'center',
-        borderRadius: 25,
+
+        // XXX Workaround for Android: for images < 80 the border radius doesn't
+        // work properly, but applying a radius twice as big does the trick.
+        borderRadius: Platform.OS === 'android' ? 100 : 25,
         flex: 0,
         height: 50,
         width: 50
