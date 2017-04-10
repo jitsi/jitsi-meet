@@ -29,15 +29,12 @@ export function dominantSpeakerChanged(id) {
 }
 
 /**
- * Action to signal that ID of local participant has changed. This happens when
- * local participant joins a new conference or quits one.
+ * Action to signal that the ID of local participant has changed. It happens
+ * when the local participant joins a new conference or leaves an existing
+ * conference.
  *
  * @param {string} id - New ID for local participant.
- * @returns {{
- *     type: PARTICIPANT_ID_CHANGED,
- *     newValue: string,
- *     oldValue: string
- * }}
+ * @returns {Function}
  */
 export function localParticipantIdChanged(id) {
     return (dispatch, getState) => {
@@ -67,6 +64,24 @@ export function localParticipantJoined(participant = {}) {
         ...participant,
         local: true
     });
+}
+
+/**
+ * Action to signal the role of the local participant has changed. It can happen
+ * when the participant has joined a conference, even before a non-default local
+ * id has been set, or after a moderator leaves.
+ *
+ * @param {string} role - The new role of the local participant.
+ * @returns {Function}
+ */
+export function localParticipantRoleChanged(role) {
+    return (dispatch, getState) => {
+        const participant = getLocalParticipant(getState);
+
+        if (participant) {
+            return dispatch(participantRoleChanged(participant.id, role));
+        }
+    };
 }
 
 /**
