@@ -9,14 +9,14 @@
         z-index: $overlayZ;
         background: $defaultBackground;
         &.filmstrip-only {
-            @include transparentBg($filmStripOnlyOverlayBg, 0.8);
+            @include transparentBg($filmstripOnlyOverlayBg, 0.8);
         }
     }
 
     &__container-light {
         @include transparentBg($defaultBackground, 0.7);
         &.filmstrip-only {
-            @include transparentBg($filmStripOnlyOverlayBg, 0.2);
+            @include transparentBg($filmstripOnlyOverlayBg, 0.2);
         }
     }
 

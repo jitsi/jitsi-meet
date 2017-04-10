@@ -337,7 +337,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * passed in the arguments array.
      * toggleAudio - mutes / unmutes audio with no arguments.
      * toggleVideo - mutes / unmutes video with no arguments.
-     * filmStrip - hides / shows the film strip with no arguments.
+     * toggleFilmStrip - hides / shows the filmstrip with no arguments.
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
      *
@@ -362,7 +362,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * passed in the arguments array.
      * toggleAudio - mutes / unmutes audio. no arguments
      * toggleVideo - mutes / unmutes video. no arguments
-     * filmStrip - hides / shows the film strip. no arguments
+     * toggleFilmStrip - hides / shows the filmstrip. no arguments
      * toggleChat - hides / shows chat. no arguments.
      * toggleContactList - hides / shows contact list. no arguments.
      * toggleShareScreen - starts / stops screen sharing. no arguments.

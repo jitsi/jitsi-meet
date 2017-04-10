@@ -8,13 +8,13 @@ import Thumbnail from './Thumbnail';
 import { styles } from './_';
 
 /**
- * React component for film strip.
+ * React component for filmstrip.
  *
  * @extends Component
  */
-class FilmStrip extends Component {
+class Filmstrip extends Component {
     /**
-     * FilmStrip component's property types.
+     * Filmstrip component's property types.
      *
      * @static
      */
@@ -28,7 +28,7 @@ class FilmStrip extends Component {
         _participants: React.PropTypes.array,
 
         /**
-         * The indicator which determines whether the film strip is visible.
+         * The indicator which determines whether the filmstrip is visible.
          *
          * @private
          * @type {boolean}
@@ -44,13 +44,13 @@ class FilmStrip extends Component {
     render() {
         return (
             <Container
-                style = { styles.filmStrip }
+                style = { styles.filmstrip }
                 visible = { this.props._visible }>
                 <ScrollView
 
                     // eslint-disable-next-line react/jsx-curly-spacing
                     contentContainerStyle = {
-                        styles.filmStripScrollViewContentContainer
+                        styles.filmstripScrollViewContentContainer
                     } // eslint-disable-line react/jsx-curly-spacing
                     horizontal = { true }
                     showsHorizontalScrollIndicator = { false }
@@ -123,10 +123,10 @@ function _mapStateToProps(state) {
         _participants: state['features/base/participants'],
 
         /**
-         * The indicator which determines whether the film strip is visible.
+         * The indicator which determines whether the filmstrip is visible.
          *
-         * XXX The React Component FilmStrip is used on mobile only at the time
-         * of this writing and on mobile the film strip is visible when the
+         * XXX The React Component Filmstrip is used on mobile only at the time
+         * of this writing and on mobile the filmstrip is visible when the
          * toolbar is not.
          *
          * @private
@@ -136,4 +136,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(FilmStrip);
+export default connect(_mapStateToProps)(Filmstrip);

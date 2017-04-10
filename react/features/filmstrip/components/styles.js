@@ -1,7 +1,7 @@
 import { BoxModel, ColorPalette } from '../../base/styles';
 
 /**
- * Film strip related styles common to both Web and native.
+ * Filmstrip related styles common to both Web and native.
  */
 export const styles = {
     /**
@@ -25,9 +25,9 @@ export const styles = {
     },
 
     /**
-     * The style of the Container which represents the very film strip.
+     * The style of the Container which represents the very filmstrip.
      */
-    filmStrip: {
+    filmstrip: {
         alignItems: 'flex-end',
         alignSelf: 'stretch',
         bottom: BoxModel.margin,
@@ -40,10 +40,10 @@ export const styles = {
 
     /**
      * The style of the content container of the ScrollView which is placed
-     * inside filmStrip and which contains the participants' thumbnails in order
+     * inside filmstrip and which contains the participants' thumbnails in order
      * to allow scrolling through them if they do not fit within the display.
      */
-    filmStripScrollViewContentContainer: {
+    filmstripScrollViewContentContainer: {
         paddingHorizontal: BoxModel.padding
     },
 

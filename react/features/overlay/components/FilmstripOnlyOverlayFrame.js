@@ -13,9 +13,9 @@ import OverlayFrame from './OverlayFrame';
  * Implements a React Component for the frame of the overlays in filmstrip only
  * mode.
  */
-class FilmStripOnlyOverlayFrame extends Component {
+class FilmstripOnlyOverlayFrame extends Component {
     /**
-     * FilmStripOnlyOverlayFrame component's property types.
+     * FilmstripOnlyOverlayFrame component's property types.
      *
      * @static
      */
@@ -105,7 +105,7 @@ class FilmStripOnlyOverlayFrame extends Component {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated FilmStripOnlyOverlayFrame
+ * Maps (parts of) the Redux state to the associated FilmstripOnlyOverlayFrame
  * props.
  *
  * @param {Object} state - The Redux state.
@@ -130,4 +130,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(FilmStripOnlyOverlayFrame);
+export default connect(_mapStateToProps)(FilmstripOnlyOverlayFrame);

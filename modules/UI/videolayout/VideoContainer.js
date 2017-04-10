@@ -1,7 +1,7 @@
 /* global $, APP, interfaceConfig */
 /* jshint -W101 */
 
-import FilmStrip from './FilmStrip';
+import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -48,7 +48,7 @@ function getDesktopVideoSize(videoWidth,
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    videoSpaceHeight -= FilmStrip.getFilmStripHeight();
+    videoSpaceHeight -= Filmstrip.getFilmstripHeight();
 
     if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;

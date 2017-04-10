@@ -3,7 +3,7 @@
 import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import UIEvents from "../../../service/UI/UIEvents";
-import FilmStrip from '../videolayout/FilmStrip';
+import Filmstrip from '../videolayout/Filmstrip';
 
 /**
  * Etherpad options.
@@ -103,7 +103,7 @@ class Etherpad extends LargeContainer {
 
     // eslint-disable-next-line no-unused-vars
     resize (containerWidth, containerHeight, animate) {
-        let height = containerHeight - FilmStrip.getFilmStripHeight();
+        let height = containerHeight - Filmstrip.getFilmstripHeight();
         let width = containerWidth;
 
         $(this.iframe).width(width).height(height);

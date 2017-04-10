@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 
 import { translate, translateToHTML } from '../../base/i18n';
 
-import FilmStripOnlyOverlayFrame from './FilmStripOnlyOverlayFrame';
+import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
 
 /**
  * Implements a React Component for overlay with guidance how to proceed with
  * gUM prompt. This component will be displayed only for filmstrip only mode.
  */
-class UserMediaPermissionsFilmStripOnlyOverlay extends Component {
+class UserMediaPermissionsFilmstripOnlyOverlay extends Component {
     /**
-     * UserMediaPermissionsFilmStripOnlyOverlay component's property types.
+     * UserMediaPermissionsFilmstripOnlyOverlay component's property types.
      *
      * @static
      */
@@ -44,7 +44,7 @@ class UserMediaPermissionsFilmStripOnlyOverlay extends Component {
         const textKey = `userMedia.${this.props.browser}GrantPermissions`;
 
         return (
-            <FilmStripOnlyOverlayFrame
+            <FilmstripOnlyOverlayFrame
                 icon = 'icon-mic-camera-combined'
                 isLightOverlay = { true }>
                 <div className = 'inlay-filmstrip-only__container'>
@@ -60,9 +60,9 @@ class UserMediaPermissionsFilmStripOnlyOverlay extends Component {
                         }
                     </div>
                 </div>
-            </FilmStripOnlyOverlayFrame>
+            </FilmstripOnlyOverlayFrame>
         );
     }
 }
 
-export default translate(UserMediaPermissionsFilmStripOnlyOverlay);
+export default translate(UserMediaPermissionsFilmstripOnlyOverlay);

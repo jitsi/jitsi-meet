@@ -15,7 +15,7 @@ const indicator = {
 };
 
 /**
- * Native-specific styles for the film strip.
+ * Native-specific styles for the filmstrip.
  */
 export const styles = createStyleSheet(platformIndependentStyles, {
 

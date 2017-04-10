@@ -4,7 +4,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
-import { FilmStrip } from '../../film-strip';
+import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
@@ -133,7 +133,7 @@ class Conference extends Component {
                 <LargeVideo />
 
                 <Toolbox />
-                <FilmStrip />
+                <Filmstrip />
 
                 <DialogContainer />
             </Container>
@@ -155,7 +155,7 @@ class Conference extends Component {
 
     /**
      * Changes the value of the toolboxVisible state, thus allowing us to switch
-     * between Toolbox and FilmStrip and change their visibility.
+     * between Toolbox and Filmstrip and change their visibility.
      *
      * @private
      * @returns {void}

@@ -3,16 +3,16 @@ import React from 'react';
 import { translate } from '../../base/i18n';
 
 import AbstractPageReloadOverlay from './AbstractPageReloadOverlay';
-import FilmStripOnlyOverlayFrame from './FilmStripOnlyOverlayFrame';
+import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
 
 /**
  * Implements a React Component for page reload overlay for filmstrip only
  * mode. Shown before the conference is reloaded. Shows a warning message and
  * counts down towards the reload.
  */
-class PageReloadFilmStripOnlyOverlay extends AbstractPageReloadOverlay {
+class PageReloadFilmstripOnlyOverlay extends AbstractPageReloadOverlay {
     /**
-     * PageReloadFilmStripOnlyOverlay component's property types.
+     * PageReloadFilmstripOnlyOverlay component's property types.
      *
      * @static
      */
@@ -39,7 +39,7 @@ class PageReloadFilmStripOnlyOverlay extends AbstractPageReloadOverlay {
         const { message, timeLeft, title } = this.state;
 
         return (
-            <FilmStripOnlyOverlayFrame>
+            <FilmstripOnlyOverlayFrame>
                 <div className = 'inlay-filmstrip-only__container'>
                     <div className = 'inlay-filmstrip-only__title'>
                         { t(title) }
@@ -54,9 +54,9 @@ class PageReloadFilmStripOnlyOverlay extends AbstractPageReloadOverlay {
                 {
                     this._renderProgressBar()
                 }
-            </FilmStripOnlyOverlayFrame>
+            </FilmstripOnlyOverlayFrame>
         );
     }
 }
 
-export default translate(PageReloadFilmStripOnlyOverlay);
+export default translate(PageReloadFilmstripOnlyOverlay);

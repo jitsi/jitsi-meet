@@ -38,11 +38,11 @@ export default class OverlayFrame extends Component {
 
         this.state = {
             /**
-             * Indicates whether the film strip only mode is enabled or not.
+             * Indicates whether the filmstrip only mode is enabled or not.
              *
              * @type {boolean}
              */
-            filmStripOnly: interfaceConfig.filmStripOnly
+            filmstripOnly: interfaceConfig.filmStripOnly
         };
     }
 
@@ -57,7 +57,7 @@ export default class OverlayFrame extends Component {
             ? 'overlay__container-light' : 'overlay__container';
         let contentClass = 'overlay__content';
 
-        if (this.state.filmStripOnly) {
+        if (this.state.filmstripOnly) {
             containerClass += ' filmstrip-only';
             contentClass += ' filmstrip-only';
         }

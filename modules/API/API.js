@@ -49,7 +49,7 @@ function initCommands() {
             APP.conference.changeLocalDisplayName.bind(APP.conference),
         "toggle-audio": APP.conference.toggleAudioMuted.bind(APP.conference),
         "toggle-video": APP.conference.toggleVideoMuted.bind(APP.conference),
-        "toggle-film-strip": APP.UI.toggleFilmStrip,
+        "toggle-film-strip": APP.UI.toggleFilmstrip,
         "toggle-chat": APP.UI.toggleChat,
         "toggle-contact-list": APP.UI.toggleContactList,
         "toggle-share-screen":

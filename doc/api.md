@@ -44,7 +44,7 @@ var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement);
 ```
 
 You can overwrite options set in [config.js] and [interface_config.js].
-For example, to enable the film-strip-only interface mode, you can use:
+For example, to enable the filmstrip-only interface mode, you can use:
 
 ```javascript
 var interfaceConfigOverwrite = {filmStripOnly: true};
@@ -84,7 +84,7 @@ api.executeCommand('toggleAudio')
 api.executeCommand('toggleVideo')
 ```
 
-* **toggleFilmStrip** - Hides / shows the film strip. No arguments are required.
+* **toggleFilmStrip** - Hides / shows the filmstrip. No arguments are required.
 ```javascript
 api.executeCommand('toggleFilmStrip')
 ```

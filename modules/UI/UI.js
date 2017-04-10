@@ -15,7 +15,7 @@ import SharedVideoManager from './shared_video/SharedVideo';
 import Recording from "./recording/Recording";
 
 import VideoLayout from "./videolayout/VideoLayout";
-import FilmStrip from "./videolayout/FilmStrip";
+import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
@@ -258,7 +258,7 @@ UI.mucJoined = function () {
 /***
  * Handler for toggling filmstrip
  */
-UI.handleToggleFilmStrip = () => UI.toggleFilmStrip();
+UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
 
 /**
  * Sets tooltip defaults.
@@ -300,7 +300,7 @@ UI.start = function () {
     _setTooltipDefaults();
 
     SideContainerToggler.init(eventEmitter);
-    FilmStrip.init(eventEmitter);
+    Filmstrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
@@ -323,7 +323,7 @@ UI.start = function () {
     } else {
         $("body").addClass("filmstrip-only");
         UI.showToolbar();
-        FilmStrip.setFilmStripOnly();
+        Filmstrip.setFilmstripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
     }
@@ -575,19 +575,19 @@ UI.updateUserRole = user => {
 UI.toggleSmileys = () => Chat.toggleSmileys();
 
 /**
- * Toggles film strip.
+ * Toggles filmstrip.
  */
-UI.toggleFilmStrip = function () {
-    var self = FilmStrip;
-    self.toggleFilmStrip.apply(self, arguments);
+UI.toggleFilmstrip = function () {
+    var self = Filmstrip;
+    self.toggleFilmstrip.apply(self, arguments);
     VideoLayout.resizeVideoArea(true, false);
 };
 
 /**
- * Indicates if the film strip is currently visible or not.
- * @returns {true} if the film strip is currently visible, otherwise
+ * Indicates if the filmstrip is currently visible or not.
+ * @returns {true} if the filmstrip is currently visible, otherwise
  */
-UI.isFilmStripVisible = () => FilmStrip.isFilmStripVisible();
+UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
 
 /**
  * Toggles chat panel.
@@ -1336,13 +1336,13 @@ UI.setMicrophoneButtonEnabled
 
 UI.showRingOverlay = function () {
     RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);
-    FilmStrip.toggleFilmStrip(false, false);
+    Filmstrip.toggleFilmstrip(false, false);
 };
 
 UI.hideRingOverLay = function () {
     if (!RingOverlay.hide())
         return;
-    FilmStrip.toggleFilmStrip(true, false);
+    Filmstrip.toggleFilmstrip(true, false);
 };
 
 /**
@@ -1391,8 +1391,8 @@ const UIListeners = new Map([
         UIEvents.TOGGLE_PROFILE,
         () => APP.tokenData.isGuest && UI.toggleSidePanel("profile_container")
     ], [
-        UIEvents.TOGGLE_FILM_STRIP,
-        UI.handleToggleFilmStrip
+        UIEvents.TOGGLE_FILMSTRIP,
+        UI.handleToggleFilmstrip
     ], [
         UIEvents.FOLLOW_ME_ENABLED,
         enabled => (followMeHandler && followMeHandler.enableFollowMe(enabled))

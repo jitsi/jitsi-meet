@@ -45,25 +45,25 @@ export default {
      */
     TOGGLE_PROFILE: "UI.toggle_profile",
     /**
-     * Notifies that a command to toggle the film strip has been issued. The
+     * Notifies that a command to toggle the filmstrip has been issued. The
      * event may optionally specify a {Boolean} (primitive) value to assign to
-     * the visibility of the film strip (i.e. the event may act as a setter).
-     * The very toggling of the film strip may or may not occurred at the time
+     * the visibility of the filmstrip (i.e. the event may act as a setter).
+     * The very toggling of the filmstrip may or may not occurred at the time
      * of the receipt of the event depending on the position of the receiving
      * event listener in relation to the event listener which carries out the
-     * command to toggle the film strip.
+     * command to toggle the filmstrip.
      *
-     * @see {TOGGLED_FILM_STRIP}
+     * @see {TOGGLED_FILMSTRIP}
      */
-    TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
+    TOGGLE_FILMSTRIP: "UI.toggle_filmstrip",
     /**
-     * Notifies that the film strip was (actually) toggled. The event supplies
-     * a {Boolean} (primitive) value indicating the visibility of the film
-     * strip after the toggling (at the time of the event emission).
+     * Notifies that the filmstrip was (actually) toggled. The event supplies a
+     * {Boolean} (primitive) value indicating the visibility of the filmstrip
+     * after the toggling (at the time of the event emission).
      *
-     * @see {TOGGLE_FILM_STRIP}
+     * @see {TOGGLE_FILMSTRIP}
      */
-    TOGGLED_FILM_STRIP: "UI.toggled_film_strip",
+    TOGGLED_FILMSTRIP: "UI.toggled_filmstrip",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
     TOGGLED_SHARED_DOCUMENT: "UI.toggled_shared_document",
     CONTACT_CLICKED: "UI.contact_clicked",

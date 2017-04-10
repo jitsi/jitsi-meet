@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import PageReloadFilmStripOnlyOverlay from './PageReloadFilmStripOnlyOverlay';
+import PageReloadFilmstripOnlyOverlay from './PageReloadFilmstripOnlyOverlay';
 import PageReloadOverlay from './PageReloadOverlay';
-import SuspendedFilmStripOnlyOverlay from './SuspendedFilmStripOnlyOverlay';
+import SuspendedFilmstripOnlyOverlay from './SuspendedFilmstripOnlyOverlay';
 import SuspendedOverlay from './SuspendedOverlay';
-import UserMediaPermissionsFilmStripOnlyOverlay
-    from './UserMediaPermissionsFilmStripOnlyOverlay';
+import UserMediaPermissionsFilmstripOnlyOverlay
+    from './UserMediaPermissionsFilmstripOnlyOverlay';
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
 
 declare var APP: Object;
@@ -108,13 +108,14 @@ class OverlayContainer extends Component {
      */
     constructor(props) {
         super(props);
+
         this.state = {
             /**
-             * Indicates whether the film strip only mode is enabled or not.
+             * Indicates whether the filmstrip only mode is enabled or not.
              *
              * @type {boolean}
              */
-            filmStripOnly: interfaceConfig.filmStripOnly
+            filmstripOnly: interfaceConfig.filmStripOnly
         };
     }
 
@@ -141,31 +142,35 @@ class OverlayContainer extends Component {
      * @public
      */
     render() {
-        const filmStripOnlyMode = this.state.filmStripOnly;
+        const { filmstripOnly } = this.state;
         let overlayComponent, props;
 
         if (this.props._connectionEstablished && this.props._haveToReload) {
-            overlayComponent = filmStripOnlyMode
-                ? PageReloadFilmStripOnlyOverlay : PageReloadOverlay;
+            overlayComponent
+                = filmstripOnly
+                    ? PageReloadFilmstripOnlyOverlay
+                    : PageReloadOverlay;
             props = {
                 isNetworkFailure: this.props._isNetworkFailure,
                 reason: this.props._reason
             };
         } else if (this.props._suspendDetected) {
-            overlayComponent = filmStripOnlyMode
-                ? SuspendedFilmStripOnlyOverlay : SuspendedOverlay;
+            overlayComponent
+                = filmstripOnly
+                    ? SuspendedFilmstripOnlyOverlay
+                    : SuspendedOverlay;
         } else if (this.props._isMediaPermissionPromptVisible) {
-            overlayComponent = filmStripOnlyMode
-                ? UserMediaPermissionsFilmStripOnlyOverlay
+            overlayComponent
+                = filmstripOnly
+                    ? UserMediaPermissionsFilmstripOnlyOverlay
                     : UserMediaPermissionsOverlay;
             props = { browser: this.props._browser };
         }
 
-        if (overlayComponent) {
-            return React.createElement(overlayComponent, props);
-        }
-
-        return null;
+        return (
+            overlayComponent
+                ? React.createElement(overlayComponent, props)
+                : null);
     }
 }
 

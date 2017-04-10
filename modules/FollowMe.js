@@ -54,13 +54,13 @@ class State {
         this._propertyChangeCallback = propertyChangeCallback;
     }
 
-    get filmStripVisible () { return this._filmStripVisible; }
+    get filmstripVisible () { return this._filmstripVisible; }
 
-    set filmStripVisible (b) {
-        var oldValue = this._filmStripVisible;
+    set filmstripVisible (b) {
+        var oldValue = this._filmstripVisible;
         if (oldValue !== b) {
-            this._filmStripVisible = b;
-            this._firePropertyChange('filmStripVisible', oldValue, b);
+            this._filmstripVisible = b;
+            this._firePropertyChange('filmstripVisible', oldValue, b);
         }
     }
 
@@ -102,7 +102,7 @@ class State {
 
 /**
  * Represents the &quot;Follow Me&quot; feature which enables a moderator to
- * (partially) control the user experience/interface (e.g. film strip
+ * (partially) control the user experience/interface (e.g. filmstrip
  * visibility) of (other) non-moderator particiapnts.
  *
  * @author Lyubomir Marinov
@@ -143,7 +143,7 @@ class FollowMe {
      * @private
      */
     _setFollowMeInitialState() {
-        this._filmStripToggled.bind(this, this._UI.isFilmStripVisible());
+        this._filmstripToggled.bind(this, this._UI.isFilmstripVisible());
 
         var pinnedId = VideoLayout.getPinnedId();
         var isPinned = false;
@@ -169,9 +169,9 @@ class FollowMe {
      * @private
      */
     _addFollowMeListeners () {
-        this.filmStripEventHandler = this._filmStripToggled.bind(this);
-        this._UI.addListener(UIEvents.TOGGLED_FILM_STRIP,
-                            this.filmStripEventHandler);
+        this.filmstripEventHandler = this._filmstripToggled.bind(this);
+        this._UI.addListener(UIEvents.TOGGLED_FILMSTRIP,
+                            this.filmstripEventHandler);
 
         var self = this;
         this.pinnedEndpointEventHandler = function (smallVideo, isPinned) {
@@ -190,8 +190,8 @@ class FollowMe {
      * @private
      */
     _removeFollowMeListeners () {
-        this._UI.removeListener(UIEvents.TOGGLED_FILM_STRIP,
-                                this.filmStripEventHandler);
+        this._UI.removeListener(UIEvents.TOGGLED_FILMSTRIP,
+                                this.filmstripEventHandler);
         this._UI.removeListener(UIEvents.TOGGLED_SHARED_DOCUMENT,
                                 this.sharedDocEventHandler);
         this._UI.removeListener(UIEvents.PINNED_ENDPOINT,
@@ -214,14 +214,14 @@ class FollowMe {
     }
 
     /**
-     * Notifies this instance that the (visibility of the) film strip was
+     * Notifies this instance that the (visibility of the) filmstrip was
      * toggled (in the user interface of the local participant).
      *
-     * @param filmStripVisible {Boolean} {true} if the film strip was shown (as
-     * a result of the toggle) or {false} if the film strip was hidden
+     * @param filmstripVisible {Boolean} {true} if the filmstrip was shown (as a
+     * result of the toggle) or {false} if the filmstrip was hidden
      */
-    _filmStripToggled (filmStripVisible) {
-        this._local.filmStripVisible = filmStripVisible;
+    _filmstripToggled (filmstripVisible) {
+        this._local.filmstripVisible = filmstripVisible;
     }
 
     /**
@@ -279,7 +279,7 @@ class FollowMe {
                 _COMMAND,
                 {
                     attributes: {
-                        filmStripVisible: local.filmStripVisible,
+                        filmstripVisible: local.filmstripVisible,
                         nextOnStage: local.nextOnStage,
                         sharedDocumentVisible: local.sharedDocumentVisible
                     }
@@ -316,32 +316,32 @@ class FollowMe {
 
         // Applies the received/remote command to the user experience/interface
         // of the local participant.
-        this._onFilmStripVisible(attributes.filmStripVisible);
+        this._onFilmstripVisible(attributes.filmstripVisible);
         this._onNextOnStage(attributes.nextOnStage);
         this._onSharedDocumentVisible(attributes.sharedDocumentVisible);
     }
 
     /**
-     * Process a film strip open / close event received from FOLLOW-ME
+     * Process a filmstrip open / close event received from FOLLOW-ME
      * command.
-     * @param filmStripVisible indicates if the film strip has been shown or
+     * @param filmstripVisible indicates if the filmstrip has been shown or
      * hidden
      * @private
      */
-    _onFilmStripVisible(filmStripVisible) {
-        if (typeof filmStripVisible !== 'undefined') {
+    _onFilmstripVisible(filmstripVisible) {
+        if (typeof filmstripVisible !== 'undefined') {
             // XXX The Command(s) API doesn't preserve the types (of
             // attributes, at least) at the time of this writing so take into
             // account that what originated as a Boolean may be a String on
             // receipt.
-            filmStripVisible = (filmStripVisible == 'true');
+            filmstripVisible = (filmstripVisible == 'true');
 
             // FIXME The UI (module) very likely doesn't (want to) expose its
             // eventEmitter as a public field. I'm not sure at the time of this
-            // writing whether calling UI.toggleFilmStrip() is acceptable (from
+            // writing whether calling UI.toggleFilmstrip() is acceptable (from
             // a design standpoint) either.
-            if (filmStripVisible !== this._UI.isFilmStripVisible())
-                this._UI.eventEmitter.emit(UIEvents.TOGGLE_FILM_STRIP);
+            if (filmstripVisible !== this._UI.isFilmstripVisible())
+                this._UI.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
         }
     }
 

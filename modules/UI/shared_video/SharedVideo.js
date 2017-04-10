@@ -8,7 +8,7 @@ import UIEvents from '../../../service/UI/UIEvents';
 import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
 import SmallVideo from '../videolayout/SmallVideo';
-import FilmStrip from '../videolayout/FilmStrip';
+import Filmstrip from '../videolayout/Filmstrip';
 
 import { dockToolbox, showToolbox } from '../../../react/features/toolbox';
 
@@ -606,7 +606,7 @@ class SharedVideoContainer extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight) {
-        let height = containerHeight - FilmStrip.getFilmStripHeight();
+        let height = containerHeight - Filmstrip.getFilmstripHeight();
 
         let width = containerWidth;
 

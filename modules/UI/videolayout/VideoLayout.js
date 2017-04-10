@@ -1,7 +1,7 @@
 /* global APP, $, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import FilmStrip from "./FilmStrip";
+import Filmstrip from "./Filmstrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
@@ -270,7 +270,7 @@ var VideoLayout = {
     electLastVisibleVideo () {
         // pick the last visible video in the row
         // if nobody else is left, this picks the local video
-        let remoteThumbs = FilmStrip.getThumbs(true).remoteThumbs;
+        let remoteThumbs = Filmstrip.getThumbs(true).remoteThumbs;
         let thumbs = remoteThumbs.filter('[id!="mixedstream"]');
 
         let lastVisible = thumbs.filter(':visible:last');
@@ -285,7 +285,7 @@ var VideoLayout = {
         }
 
         logger.info("Last visible video no longer exists");
-        thumbs = FilmStrip.getThumbs().remoteThumbs;
+        thumbs = Filmstrip.getThumbs().remoteThumbs;
         if (thumbs.length) {
             let id = getPeerContainerResourceId(thumbs[0]);
             if (remoteVideos[id]) {
@@ -530,9 +530,9 @@ var VideoLayout = {
                         forceUpdate = false,
                         onComplete = null) {
         const { localVideo, remoteVideo }
-            = FilmStrip.calculateThumbnailSize();
+            = Filmstrip.calculateThumbnailSize();
 
-        FilmStrip.resizeThumbnails(localVideo, remoteVideo,
+        Filmstrip.resizeThumbnails(localVideo, remoteVideo,
             animate, forceUpdate)
             .then(function () {
                 if (onComplete && typeof onComplete === "function")

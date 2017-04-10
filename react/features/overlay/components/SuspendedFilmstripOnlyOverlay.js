@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 
 import { translate, translateToHTML } from '../../base/i18n';
 
-import FilmStripOnlyOverlayFrame from './FilmStripOnlyOverlayFrame';
+import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
 import ReloadButton from './ReloadButton';
 
 /**
  * Implements a React Component for suspended overlay for filmstrip only mode.
  * Shown when suspended is detected.
  */
-class SuspendedFilmStripOnlyOverlay extends Component {
+class SuspendedFilmstripOnlyOverlay extends Component {
     /**
-     * SuspendedFilmStripOnlyOverlay component's property types.
+     * SuspendedFilmstripOnlyOverlay component's property types.
      *
      * @static
      */
@@ -35,7 +35,7 @@ class SuspendedFilmStripOnlyOverlay extends Component {
         const { t } = this.props;
 
         return (
-            <FilmStripOnlyOverlayFrame isLightOverlay = { true }>
+            <FilmstripOnlyOverlayFrame isLightOverlay = { true }>
                 <div className = 'inlay-filmstrip-only__container'>
                     <div className = 'inlay-filmstrip-only__title'>
                         { t('suspendedoverlay.title') }
@@ -45,9 +45,9 @@ class SuspendedFilmStripOnlyOverlay extends Component {
                     </div>
                 </div>
                 <ReloadButton textKey = 'suspendedoverlay.rejoinKeyTitle' />
-            </FilmStripOnlyOverlayFrame>
+            </FilmstripOnlyOverlayFrame>
         );
     }
 }
 
-export default translate(SuspendedFilmStripOnlyOverlay);
+export default translate(SuspendedFilmstripOnlyOverlay);

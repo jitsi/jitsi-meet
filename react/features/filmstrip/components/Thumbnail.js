@@ -145,7 +145,7 @@ class Thumbnail extends Component {
  */
 function _mapStateToProps(state, ownProps) {
     // We need read-only access to the state of features/large-video so that the
-    // film strip doesn't render the video of the participant who is rendered on
+    // filmstrip doesn't render the video of the participant who is rendered on
     // the stage i.e. as a large video.
     const largeVideo = state['features/large-video'];
     const tracks = state['features/base/tracks'];
