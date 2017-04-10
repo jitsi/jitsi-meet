@@ -34,6 +34,7 @@ import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
+    localParticipantRoleChanged,
     participantJoined,
     participantLeft,
     participantRoleChanged,
@@ -1232,14 +1233,18 @@ export default {
 
 
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
-            APP.store.dispatch(participantRoleChanged(id, role));
             if (this.isLocalId(id)) {
                 logger.info(`My role changed, new role: ${role}`);
+
+                APP.store.dispatch(localParticipantRoleChanged(role));
+
                 if (this.isModerator !== room.isModerator()) {
                     this.isModerator = room.isModerator();
                     APP.UI.updateLocalRole(room.isModerator());
                 }
             } else {
+                APP.store.dispatch(participantRoleChanged(id, role));
+
                 let user = room.getParticipantById(id);
                 if (user) {
                     APP.UI.updateUserRole(user);
