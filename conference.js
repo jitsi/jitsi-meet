@@ -31,6 +31,9 @@ import {
     EMAIL_COMMAND
 } from './react/features/base/conference';
 import {
+    updateDeviceList
+} from './react/features/base/devices';
+import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
@@ -1030,6 +1033,15 @@ export default {
     },
 
     /**
+     * Returns the current local video track in use.
+     *
+     * @returns {JitsiLocalTrack}
+     */
+    getLocalVideoTrack() {
+        return room.getLocalVideoTrack();
+    },
+
+    /**
      * Start using provided audio stream.
      * Stops previous audio stream.
      * @param {JitsiLocalTrack} [stream] new stream to use or null
@@ -1056,6 +1068,15 @@ export default {
                 APP.UI.setMicrophoneButtonEnabled(true);
                 APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
             });
+    },
+
+    /**
+     * Returns the current local audio track in use.
+     *
+     * @returns {JitsiLocalTrack}
+     */
+    getLocalAudioTrack() {
+        return room.getLocalAudioTrack();
     },
 
     videoSwitchInProgress: false,
@@ -1622,7 +1643,6 @@ export default {
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(null, err);
-                    APP.UI.setSelectedCameraFromSettings();
                 });
             }
         );
@@ -1644,7 +1664,6 @@ export default {
                 })
                 .catch((err) => {
                     APP.UI.showDeviceErrorDialog(err, null);
-                    APP.UI.setSelectedMicFromSettings();
                 });
             }
         );
@@ -1660,7 +1679,6 @@ export default {
                         logger.warn('Failed to change audio output device. ' +
                             'Default or previously set audio output device ' +
                             'will be used instead.', err);
-                        APP.UI.setSelectedAudioOutputFromSettings();
                     });
             }
         );
@@ -1756,8 +1774,8 @@ export default {
                 }
 
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
-
                 APP.UI.onAvailableDevicesChanged(devices);
+                APP.store.dispatch(updateDeviceList(devices));
             });
 
             this.deviceChangeListener = (devices) =>

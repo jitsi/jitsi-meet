@@ -60,3 +60,24 @@ export function loadConfig(host: string, path: string = '/config.js') {
             throw err;
         });
 }
+
+/**
+ * Creates a JitsiLocalTrack model from the given device id.
+ *
+ * @param {string} type - The media type of track being created. Expected values
+ * are "video" or "audio".
+ * @param {string} deviceId - The id of the target media source.
+ * @returns {Promise<JitsiLocalTrack>}
+ */
+export function createLocalTrack(type, deviceId) {
+    return JitsiMeetJS
+        .createLocalTracks({
+            devices: [ type ],
+            micDeviceId: deviceId,
+            cameraDeviceId: deviceId,
+
+            // eslint-disable-next-line camelcase
+            firefox_fake_device: window.config
+                && window.config.firefox_fake_device
+        }).then(([ jitsiLocalTrack ]) => jitsiLocalTrack);
+}

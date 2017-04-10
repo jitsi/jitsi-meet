@@ -422,5 +422,11 @@
         "seconds": "__count__s",
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time"
+    },
+    "deviceSelection": {
+        "deviceSettings": "Device settings",
+        "noOtherDevices": "No other devices available",
+        "selectADevice": "Select a device",
+        "testAudio": "Test sound"
     }
 }

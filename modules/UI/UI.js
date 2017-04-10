@@ -4,6 +4,10 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
 
+import {
+    updateDeviceList
+} from '../../react/features/base/devices';
+
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
@@ -1080,29 +1084,7 @@ UI.onLocalRaiseHandChanged = function (isRaisedHand) {
  * @param {object[]} devices new list of available devices
  */
 UI.onAvailableDevicesChanged = function (devices) {
-    SettingsMenu.changeDevicesList(devices);
-};
-
-/**
- * Sets microphone's <select> element to select microphone ID from settings.
- */
-UI.setSelectedMicFromSettings = function () {
-    SettingsMenu.setSelectedMicFromSettings();
-};
-
-/**
- * Sets camera's <select> element to select camera ID from settings.
- */
-UI.setSelectedCameraFromSettings = function () {
-    SettingsMenu.setSelectedCameraFromSettings();
-};
-
-/**
- * Sets audio outputs's <select> element to select audio output ID from
- * settings.
- */
-UI.setSelectedAudioOutputFromSettings = function () {
-    SettingsMenu.setSelectedAudioOutputFromSettings();
+    APP.store.dispatch(updateDeviceList(devices));
 };
 
 /**
