@@ -63,8 +63,10 @@ const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
 
 const eventEmitter = new EventEmitter();
 
-let room, connection, localAudio, localVideo,
-    initialAudioMutedState = false, initialVideoMutedState = false;
+let room;
+let connection;
+let localAudio, localVideo;
+let initialAudioMutedState = false, initialVideoMutedState = false;
 
 /**
  * Indicates whether extension external installation is in progress or not.
@@ -177,7 +179,7 @@ function createInitialLocalTracksAndConnect(roomName) {
  * @param command the command
  * @param {string} value new value
  */
-function sendData (command, value) {
+function sendData(command, value) {
     if(!room) {
         return;
     }
@@ -214,7 +216,7 @@ function _setupLocalParticipantProperties() {
  * @param {string} id user id
  * @returns {string?} user nickname or undefined if user is unknown.
  */
-function getDisplayName (id) {
+function getDisplayName(id) {
     if (APP.conference.isLocalId(id)) {
         return APP.settings.getDisplayName();
     }
@@ -231,7 +233,7 @@ function getDisplayName (id) {
  * @param {boolean} userInteraction - indicates if this local audio mute was a
  * result of user interaction
  */
-function muteLocalAudio (muted) {
+function muteLocalAudio(muted) {
     muteLocalMedia(localAudio, muted, 'Audio');
 }
 
@@ -251,7 +253,7 @@ function muteLocalMedia(localMedia, muted, localMediaTypeString) {
  * Mute or unmute local video stream if it exists.
  * @param {boolean} muted if video stream should be muted or unmuted.
  */
-function muteLocalVideo (muted) {
+function muteLocalVideo(muted) {
     muteLocalMedia(localVideo, muted, 'Video');
 }
 
@@ -336,7 +338,7 @@ function assignWindowLocationPathname(pathname) {
  *      for gUM permission prompt
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-function createLocalTracks (options, checkForPermissionPrompt) {
+function createLocalTracks(options, checkForPermissionPrompt) {
     options || (options = {});
 
     return JitsiMeetJS
@@ -637,14 +639,14 @@ export default {
      * @param {string} id id to check
      * @returns {boolean}
      */
-    isLocalId (id) {
+    isLocalId(id) {
         return this.getMyUserId() === id;
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
      */
-    muteAudio (mute) {
+    muteAudio(mute) {
         muteLocalAudio(mute);
     },
     /**
@@ -661,7 +663,7 @@ export default {
      * will be executed after the track is created. Otherwise the operation
      * will be ignored.
      */
-    toggleAudioMuted (force = false) {
+    toggleAudioMuted(force = false) {
         if(!localAudio && force) {
             initialAudioMutedState = !initialAudioMutedState;
             return;
@@ -672,7 +674,7 @@ export default {
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
      */
-    muteVideo (mute) {
+    muteVideo(mute) {
         muteLocalVideo(mute);
     },
     /**
@@ -681,7 +683,7 @@ export default {
      * will be executed after the track is created. Otherwise the operation
      * will be ignored.
      */
-    toggleVideoMuted (force = false) {
+    toggleVideoMuted(force = false) {
         if(!localVideo && force) {
             initialVideoMutedState = !initialVideoMutedState;
             return;
@@ -692,14 +694,14 @@ export default {
      * Retrieve list of conference participants (without local user).
      * @returns {JitsiParticipant[]}
      */
-    listMembers () {
+    listMembers() {
         return room.getParticipants();
     },
     /**
      * Retrieve list of ids of conference participants (without local user).
      * @returns {string[]}
      */
-    listMembersIds () {
+    listMembersIds() {
         return room.getParticipants().map(p => p.getId());
     },
     /**
@@ -707,7 +709,7 @@ export default {
      * @id id to search for participant
      * @return {boolean} whether the participant is moderator
      */
-    isParticipantModerator (id) {
+    isParticipantModerator(id) {
         let user = room.getParticipantById(id);
         return user && user.isModerator();
     },
@@ -715,10 +717,10 @@ export default {
      * Check if SIP is supported.
      * @returns {boolean}
      */
-    sipGatewayEnabled () {
+    sipGatewayEnabled() {
         return room.isSIPCallingSupported();
     },
-    get membersCount () {
+    get membersCount() {
         return room.getParticipants().length + 1;
     },
     /**
@@ -728,7 +730,7 @@ export default {
      * @returns true if the callstats integration is enabled, otherwise returns
      * false.
      */
-    isCallstatsEnabled () {
+    isCallstatsEnabled() {
         return room && room.isCallstatsEnabled();
     },
     /**
@@ -738,7 +740,7 @@ export default {
      * user feedback
      * @param detailedFeedback detailed feedback from the user. Not yet used
      */
-    sendFeedback (overallFeedback, detailedFeedback) {
+    sendFeedback(overallFeedback, detailedFeedback) {
         return room.sendFeedback (overallFeedback, detailedFeedback);
     },
 
@@ -756,15 +758,15 @@ export default {
     /**
      * Returns the connection times stored in the library.
      */
-    getConnectionTimes () {
+    getConnectionTimes() {
         return this._room.getConnectionTimes();
     },
     // used by torture currently
-    isJoined () {
+    isJoined() {
         return this._room
             && this._room.isJoined();
     },
-    getConnectionState () {
+    getConnectionState() {
         return this._room
             && this._room.getConnectionState();
     },
@@ -773,7 +775,7 @@ export default {
      * @return {string|null} ICE connection state or <tt>null</tt> if there's no
      * P2P connection
      */
-    getP2PConnectionState () {
+    getP2PConnectionState() {
         return this._room
             && this._room.getP2PConnectionState();
     },
@@ -781,7 +783,7 @@ export default {
      * Starts P2P (for tests only)
      * @private
      */
-    _startP2P () {
+    _startP2P() {
         try {
             this._room && this._room.startP2PSession();
         } catch (error) {
@@ -793,7 +795,7 @@ export default {
      * Stops P2P (for tests only)
      * @private
      */
-    _stopP2P () {
+    _stopP2P() {
         try {
             this._room && this._room.stopP2PSession();
         } catch (error) {
@@ -808,7 +810,7 @@ export default {
      * @returns {boolean} true if the connection is in interrupted state or
      * false otherwise.
      */
-    isConnectionInterrupted () {
+    isConnectionInterrupted() {
         return this._room.isConnectionInterrupted();
     },
     /**
@@ -819,7 +821,7 @@ export default {
      * @returns {JitsiParticipant|null} participant instance for given id or
      * null if not found.
      */
-    getParticipantById (id) {
+    getParticipantById(id) {
         return room ? room.getParticipantById(id) : null;
     },
     /**
@@ -830,10 +832,9 @@ export default {
      * @returns {ParticipantConnectionStatus|null} the status of the participant
      * or null if no such participant is found or participant is the local user.
      */
-    getParticipantConnectionStatus (id) {
+    getParticipantConnectionStatus(id) {
         let participant = this.getParticipantById(id);
-        return participant
-            ? participant.getConnectionStatus() : null;
+        return participant ? participant.getConnectionStatus() : null;
     },
     /**
      * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
@@ -844,7 +845,7 @@ export default {
      * @return {string} the participant's display name or the default string if
      * absent.
      */
-    getParticipantDisplayName (id) {
+    getParticipantDisplayName(id) {
         let displayName = getDisplayName(id);
         if (displayName) {
             return displayName;
@@ -857,7 +858,7 @@ export default {
             }
         }
     },
-    getMyUserId () {
+    getMyUserId() {
         return this._room
             && this._room.myUserId();
     },
@@ -883,7 +884,7 @@ export default {
      * @param id the id for the user audio level to return (the id value is
      *          returned for the participant using getMyUserId() method)
      */
-    getPeerSSRCAudioLevel (id) {
+    getPeerSSRCAudioLevel(id) {
         return this.audioLevelsMap[id];
     },
     /**
@@ -903,7 +904,7 @@ export default {
     },
     // end used by torture
 
-    getLogs () {
+    getLogs() {
         return room.getLogs();
     },
 
@@ -912,7 +913,7 @@ export default {
      * debugging.
      * @param filename (optional) specify target filename
      */
-    saveLogs (filename = 'meetlog.json') {
+    saveLogs(filename = 'meetlog.json') {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
         let logs = APP.conference.getLogs();
@@ -1022,13 +1023,13 @@ export default {
     },
 
 
-  /**
-   * Start using provided video stream.
-   * Stops previous video stream.
-   * @param {JitsiLocalTrack} [stream] new stream to use or null
-   * @returns {Promise}
-   */
-    useVideoStream (newStream) {
+    /**
+     * Start using provided video stream.
+     * Stops previous video stream.
+     * @param {JitsiLocalTrack} [stream] new stream to use or null
+     * @returns {Promise}
+     */
+    useVideoStream(newStream) {
         return room.replaceTrack(localVideo, newStream)
             .then(() => {
                 // We call dispose after doing the replace because
@@ -1072,7 +1073,7 @@ export default {
      * @param {JitsiLocalTrack} [stream] new stream to use or null
      * @returns {Promise}
      */
-    useAudioStream (newStream) {
+    useAudioStream(newStream) {
         return room.replaceTrack(localAudio, newStream)
             .then(() => {
                 // We call dispose after doing the replace because
@@ -1105,7 +1106,7 @@ export default {
     },
 
     videoSwitchInProgress: false,
-    toggleScreenSharing (shareScreen = !this.isSharingScreen) {
+    toggleScreenSharing(shareScreen = !this.isSharingScreen) {
         if (this.videoSwitchInProgress) {
             logger.warn("Switch in progress.");
             return;
@@ -1228,7 +1229,7 @@ export default {
     /**
      * Setup interaction between conference and UI.
      */
-    _setupListeners () {
+    _setupListeners() {
         // add local streams when joined to the conference
         room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
             APP.store.dispatch(conferenceJoined(room));
@@ -1938,7 +1939,7 @@ export default {
      * @param {boolean} [requestFeedback=false] if user feedback should be
      * requested
      */
-    hangup (requestFeedback = false) {
+    hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
         APP.UI.hideRingOverLay();
         let requestFeedbackPromise = requestFeedback
@@ -2016,7 +2017,7 @@ export default {
      * @throws NetworkError or InvalidStateError or Error if the operation
      * fails.
      */
-    sendEndpointMessage (to, payload) {
+    sendEndpointMessage(to, payload) {
         room.sendEndpointMessage(to, payload);
     },
 
@@ -2025,7 +2026,7 @@ export default {
      * @param {String} eventName the name of the event
      * @param {Function} listener the listener.
      */
-    addListener (eventName, listener) {
+    addListener(eventName, listener) {
         eventEmitter.addListener(eventName, listener);
     },
 
@@ -2035,7 +2036,7 @@ export default {
      * listener
      * @param {Function} listener the listener.
      */
-    removeListener (eventName, listener) {
+    removeListener(eventName, listener) {
         eventEmitter.removeListener(eventName, listener);
     },
 
@@ -2048,7 +2049,7 @@ export default {
      * is currently in the last N set or if there's no last N set at this point
      * and {false} otherwise
      */
-    isInLastN (participantId) {
+    isInLastN(participantId) {
         return room.isInLastN(participantId);
     },
     /**
