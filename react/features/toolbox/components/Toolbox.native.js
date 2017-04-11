@@ -212,8 +212,8 @@ class Toolbox extends Component {
                     style = { style }
                     underlayColor = { underlayColor } />
                 <ToolbarButton
-                    iconName = 'star'
-                    iconStyle = { iconStyle }
+                    iconName = 'hangup'
+                    iconStyle = { styles.audioOnlyIcon }
                     onClick = { this.props._onToggleAudioOnly }
                     style = { style }
                     underlayColor = { underlayColor } />

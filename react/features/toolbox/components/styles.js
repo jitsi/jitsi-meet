@@ -68,6 +68,15 @@ const toolbar = {
  */
 export const styles = createStyleSheet({
     /**
+     * The audio only (secondary) toolbar icon style.
+     */
+    audioOnlyIcon: {
+        ...smallIcon,
+        color: ColorPalette.white,
+        transform: [ { rotate: '135deg' } ]
+    },
+
+    /**
      * The toolbar button icon style.
      */
     icon,
@@ -116,6 +125,14 @@ export const styles = createStyleSheet({
     },
 
     /**
+     * The secondary toolbar icon style.
+     */
+    secondaryToolbarIcon: {
+        ...smallIcon,
+        color: ColorPalette.white
+    },
+
+    /**
      * The style of the root/top-level Container of Toolbar that contains
      * toolbars.
      */
@@ -132,14 +149,6 @@ export const styles = createStyleSheet({
      */
     whiteIcon: {
         ...icon,
-        color: ColorPalette.white
-    },
-
-    /**
-     * The secondary toolbar icon style.
-     */
-    secondaryToolbarIcon: {
-        ...smallIcon,
         color: ColorPalette.white
     }
 });
