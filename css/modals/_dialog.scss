@@ -76,3 +76,7 @@
         border-bottom: 1px solid $auiBorderColor;
     }
 }
+
+.modal-dialog-footer {
+    font-size: $modalButtonFontSize;
+}

@@ -93,7 +93,7 @@ class Dialog extends AbstractDialog {
      */
     _renderFooter() {
         return (
-            <footer>
+            <footer className = 'modal-dialog-footer'>
                 <AKButtonGroup>
                     { this._renderCancelButton() }
                     { this._renderOKButton() }
