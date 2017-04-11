@@ -174,6 +174,16 @@ const configs = [
         })
     }),
 
+    // The Webpack configuration to bundle do_external_connect.js (which
+    // attempts to optimize Jitsi Meet's XMPP connection and, consequently, is
+    // also known as HTTP pre-bind).
+    Object.assign({}, config, {
+        entry: {
+            'do_external_connect':
+                './connection_optimization/do_external_connect.js'
+        }
+    }),
+
     // The Webpack configuration to bundle external_api.js (aka
     // JitsiMeetExternalAPI).
     Object.assign({}, config, {
