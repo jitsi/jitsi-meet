@@ -74,7 +74,8 @@ export const styles = {
     },
 
     /**
-     * Video thumbnail style.
+     * The style of a participant's Thumbnail which renders either the video or
+     * the avatar of the associated participant.
      */
     thumbnail: {
         alignItems: 'stretch',
