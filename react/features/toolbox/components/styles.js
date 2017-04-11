@@ -1,66 +1,70 @@
 import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
- * The base style for (toolbar) buttons.
+ * The base style for toolbars.
  *
  * @type {Object}
  */
-const button = {
+const _toolbar = {
+    flex: 1,
+    position: 'absolute'
+};
+
+/**
+ * The base style of toolbar buttons (in primaryToolbar and secondaryToolbar).
+ *
+ * @type {Object}
+ */
+const _toolbarButton = {
+    flex: 0,
+    justifyContent: 'center',
+    opacity: 0.7
+};
+
+/**
+ * The base icon style of toolbar buttons (in primaryToolbar and
+ * secondaryToolbar).
+ *
+ * @type {Object}
+ */
+const _toolbarButtonIcon = {
+    alignSelf: 'center'
+};
+
+/**
+ * The style of toolbar buttons in primaryToolbar.
+ */
+const primaryToolbarButton = {
+    ..._toolbarButton,
+    backgroundColor: ColorPalette.white,
     borderRadius: 30,
     borderWidth: 0,
-    flex: 0,
     flexDirection: 'row',
     height: 60,
-    justifyContent: 'center',
     margin: BoxModel.margin,
     width: 60
 };
 
 /**
- * Small toolbar button.
- *
- * @type {{borderRadius: number, flex: number, flexDirection: string,
- * height: number, justifyContent: string, margin: number, width: number}}
- */
-const smallButton = {
-    borderRadius: 20,
-    flex: 0,
-    flexDirection: 'column',
-    height: 40,
-    justifyContent: 'center',
-    margin: BoxModel.margin / 2,
-    width: 40
-};
-
-/**
- * The base style for icons.
+ * The icon style of the toolbar buttons in primaryToolbar.
  *
  * @type {Object}
  */
-const icon = {
-    alignSelf: 'center',
+const primaryToolbarButtonIcon = {
+    ..._toolbarButtonIcon,
     color: ColorPalette.darkGrey,
     fontSize: 24
 };
 
 /**
- * Small toolbar button icon.
- *
- * @type {{fontSize: number}}
- */
-const smallIcon = {
-    ...icon,
-    fontSize: 18
-};
-
-/**
- * The base style for toolbars.
+ * The icon style of the toolbar buttons in secondaryToolbar.
  *
  * @type {Object}
  */
-const toolbar = {
-    flex: 1,
-    position: 'absolute'
+const secondaryToolbarButtonIcon = {
+    ..._toolbarButtonIcon,
+    color: ColorPalette.white,
+    fontSize: 18
 };
 
 /**
@@ -68,25 +72,20 @@ const toolbar = {
  */
 export const styles = createStyleSheet({
     /**
-     * The audio only (secondary) toolbar icon style.
+     * The style of the toolbar button in {@link #primaryToolbar} which
+     * hangs the current conference up.
      */
-    audioOnlyIcon: {
-        ...smallIcon,
-        color: ColorPalette.white,
-        transform: [ { rotate: '135deg' } ]
+    hangup: {
+        ...primaryToolbarButton,
+        backgroundColor: ColorPalette.red
     },
-
-    /**
-     * The toolbar button icon style.
-     */
-    icon,
 
     /**
      * The style of the toolbar which contains the primary buttons such as
      * hangup, audio and video mute.
      */
     primaryToolbar: {
-        ...toolbar,
+        ..._toolbar,
         bottom: 3 * BoxModel.margin,
         flexDirection: 'row',
         justifyContent: 'center',
@@ -95,20 +94,21 @@ export const styles = createStyleSheet({
     },
 
     /**
-     * The style of button in primaryToolbar.
+     * The style of toolbar buttons in {@link #primaryToolbar}.
      */
-    primaryToolbarButton: {
-        ...button,
-        backgroundColor: ColorPalette.white,
-        opacity: 0.7
-    },
+    primaryToolbarButton,
+
+    /**
+     * The icon style of the toolbar buttons in {@link #primaryToolbar}.
+     */
+    primaryToolbarButtonIcon,
 
     /**
      * The style of the toolbar which contains the secondary buttons such as
      * toggle camera facing mode.
      */
     secondaryToolbar: {
-        ...toolbar,
+        ..._toolbar,
         bottom: 0,
         flexDirection: 'column',
         right: BoxModel.margin,
@@ -116,25 +116,35 @@ export const styles = createStyleSheet({
     },
 
     /**
-     * The style of button in secondaryToolbar.
+     * The style of toolbar buttons in {@link #secondaryToolbar}.
      */
     secondaryToolbarButton: {
-        ...smallButton,
+        ..._toolbarButton,
         backgroundColor: ColorPalette.darkGrey,
-        opacity: 0.7
+        borderRadius: 20,
+        flexDirection: 'column',
+        height: 40,
+        margin: BoxModel.margin / 2,
+        width: 40
     },
 
     /**
-     * The secondary toolbar icon style.
+     * The icon style of the toolbar buttons in {@link #secondaryToolbar}.
      */
-    secondaryToolbarIcon: {
-        ...smallIcon,
-        color: ColorPalette.white
+    secondaryToolbarButtonIcon,
+
+    /**
+     * The icon style of the toolbar button in {@link #secondaryToolbar} which
+     * toggles the audio-only mode of the current conference.
+     */
+    toggleAudioOnlyIcon: {
+        ...secondaryToolbarButtonIcon,
+        transform: [ { rotate: '135deg' } ]
     },
 
     /**
-     * The style of the root/top-level Container of Toolbar that contains
-     * toolbars.
+     * The style of the root/top-level {@link Container} of {@link Toolbox}
+     * which contains {@link Toolbar}s.
      */
     toolbarContainer: {
         bottom: 0,
@@ -145,10 +155,20 @@ export const styles = createStyleSheet({
     },
 
     /**
-     * The toolbar white button icon style.
+     * The style of toolbar buttons in {@link #primaryToolbar} which display
+     * white icons.
      */
-    whiteIcon: {
-        ...icon,
+    whitePrimaryToolbarButton: {
+        ...primaryToolbarButton,
+        backgroundColor: ColorPalette.buttonUnderlay
+    },
+
+    /**
+     * The icon style of toolbar buttons in {@link #primaryToolbar} which
+     * display white icons.
+     */
+    whitePrimaryToolbarButtonIcon: {
+        ...primaryToolbarButtonIcon,
         color: ColorPalette.white
     }
 });

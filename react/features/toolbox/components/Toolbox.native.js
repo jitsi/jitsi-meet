@@ -120,18 +120,16 @@ class Toolbox extends Component {
     _getMuteButtonStyles(mediaType) {
         let iconName;
         let iconStyle;
-        let style = styles.primaryToolbarButton;
+        let style;
 
         if (this.props[`_${mediaType}Muted`]) {
             iconName = this[`${mediaType}MutedIcon`];
-            iconStyle = styles.whiteIcon;
-            style = {
-                ...style,
-                backgroundColor: ColorPalette.buttonUnderlay
-            };
+            iconStyle = styles.whitePrimaryToolbarButtonIcon;
+            style = styles.whitePrimaryToolbarButton;
         } else {
             iconName = this[`${mediaType}Icon`];
-            iconStyle = styles.icon;
+            iconStyle = styles.primaryToolbarButtonIcon;
+            style = styles.primaryToolbarButton;
         }
 
         return {
@@ -163,12 +161,9 @@ class Toolbox extends Component {
                     style = { audioButtonStyles.style } />
                 <ToolbarButton
                     iconName = 'hangup'
-                    iconStyle = { styles.whiteIcon }
+                    iconStyle = { styles.whitePrimaryToolbarButtonIcon }
                     onClick = { this.props._onHangup }
-                    style = {{
-                        ...styles.primaryToolbarButton,
-                        backgroundColor: ColorPalette.red
-                    }}
+                    style = { styles.hangup }
                     underlayColor = { ColorPalette.buttonUnderlay } />
                 <ToolbarButton
                     iconName = { videoButtonStyles.iconName }
@@ -189,7 +184,7 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      */
     _renderSecondaryToolbar() {
-        const iconStyle = styles.secondaryToolbarIcon;
+        const iconStyle = styles.secondaryToolbarButtonIcon;
         const style = styles.secondaryToolbarButton;
         const underlayColor = 'transparent';
 
@@ -213,7 +208,7 @@ class Toolbox extends Component {
                     underlayColor = { underlayColor } />
                 <ToolbarButton
                     iconName = 'hangup'
-                    iconStyle = { styles.audioOnlyIcon }
+                    iconStyle = { styles.toggleAudioOnlyIcon }
                     onClick = { this.props._onToggleAudioOnly }
                     style = { style }
                     underlayColor = { underlayColor } />
