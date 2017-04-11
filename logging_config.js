@@ -5,5 +5,6 @@ var loggingConfig = { // eslint-disable-line no-unused-vars
     // Option to disable LogCollector (which stores the logs on CallStats)
     //disableLogCollector: true,
     // Logging level adjustments for verbose modules:
-    'modules/xmpp/strophe.util.js': 'log'
+    'modules/xmpp/strophe.util.js': 'log',
+    'modules/statistics/CallStats.js': 'info'
 };
