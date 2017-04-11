@@ -1360,10 +1360,15 @@ export default {
             room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
                 APP.UI.markVideoInterrupted(false);
             });
-            room.on(ConferenceEvents.MESSAGE_RECEIVED, (id, text, ts) => {
+            room.on(ConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
                 let nick = getDisplayName(id);
-                APP.API.notifyReceivedChatMessage(id, nick, text, ts);
-                APP.UI.addMessage(id, nick, text, ts);
+                APP.API.notifyReceivedChatMessage({
+                    id,
+                    nick,
+                    body,
+                    ts
+                });
+                APP.UI.addMessage(id, nick, body, ts);
             });
             APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
                 APP.API.notifySendingChatMessage(message);
