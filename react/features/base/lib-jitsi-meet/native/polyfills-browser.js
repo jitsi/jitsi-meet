@@ -313,15 +313,6 @@ function _visitNode(node, callback) {
         })();
     }
 
-    // performance
-    if (typeof global.performance === 'undefined') {
-        global.performance = {
-            now() {
-                return 0;
-            }
-        };
-    }
-
     // sessionStorage
     //
     // Required by:
@@ -339,6 +330,7 @@ function _visitNode(node, callback) {
 
     // WebRTC
     require('./polyfills-webrtc');
+    require('react-native-callstats/csio-polyfill');
 
     // XMLHttpRequest
     if (global.XMLHttpRequest) {
