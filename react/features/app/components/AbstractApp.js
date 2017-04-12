@@ -13,6 +13,7 @@ import { RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 
 import {
+    appInit,
     appNavigate,
     appWillMount,
     appWillUnmount
@@ -96,6 +97,8 @@ export class AbstractApp extends Component {
         // If a URL was explicitly specified to this React Component, then open
         // it; otherwise, use a default.
         this._openURL(this.props.url || this._getDefaultURL());
+
+        dispatch(appInit());
     }
 
     /**
