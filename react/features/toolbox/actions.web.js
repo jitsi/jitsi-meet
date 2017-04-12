@@ -171,14 +171,13 @@ export function showDialPadButton(show: boolean): Function {
  */
 export function showRecordingButton(): Function {
     return (dispatch: Dispatch<*>) => {
-        const eventEmitter = APP.UI.eventEmitter;
         const buttonName = 'recording';
 
         dispatch(setToolbarButton(buttonName, {
             hidden: false
         }));
 
-        Recording.init(eventEmitter, config.recordingType);
+        Recording.initRecordingButton();
     };
 }
 
