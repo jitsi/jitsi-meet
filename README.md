@@ -25,8 +25,6 @@ You can get our mobile versions from here:
 
 ## Building the sources
 
-Jitsi Meet uses [Browserify](http://browserify.org). If you want to make changes in the code you need to [install Browserify](http://browserify.org/#install). Browserify requires [nodejs](http://nodejs.org).
-
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```
 sudo apt-get install npm nodejs-legacy
