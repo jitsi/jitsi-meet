@@ -5,11 +5,12 @@ import { ReducerRegistry } from '../base/redux';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_DEFAULT_TOOLBOX_BUTTONS,
-    SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_SUBJECT,
     SET_SUBJECT_SLIDE_IN,
     SET_TOOLBAR_BUTTON,
     SET_TOOLBAR_HOVERED,
+    SET_TOOLBOX_ALWAYS_VISIBLE,
+    SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE
@@ -50,6 +51,14 @@ function _getInitialState() {
          * @type {boolean}
          */
         alwaysVisible: false,
+
+        /**
+         * The indicator which determines whether the Toolbox is enabled. For
+         * example, modules/UI/recording/Recording.js disables the Toolbox.
+         *
+         * @type {boolean}
+         */
+        enabled: true,
 
         /**
          * The indicator which determines whether a Toolbar in the Toolbox is
@@ -132,12 +141,6 @@ ReducerRegistry.register(
             };
         }
 
-        case SET_TOOLBOX_ALWAYS_VISIBLE:
-            return {
-                ...state,
-                alwaysVisible: action.alwaysVisible
-            };
-
         case SET_SUBJECT:
             return {
                 ...state,
@@ -157,6 +160,18 @@ ReducerRegistry.register(
             return {
                 ...state,
                 hovered: action.hovered
+            };
+
+        case SET_TOOLBOX_ALWAYS_VISIBLE:
+            return {
+                ...state,
+                alwaysVisible: action.alwaysVisible
+            };
+
+        case SET_TOOLBOX_ENABLED:
+            return {
+                ...state,
+                enabled: action.enabled
             };
 
         case SET_TOOLBOX_TIMEOUT:

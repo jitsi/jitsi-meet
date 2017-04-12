@@ -3,8 +3,8 @@
 import Recording from '../../../modules/UI/recording/Recording';
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
-import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../../../modules/UI/util/UIUtil';
+import UIEvents from '../../../service/UI/UIEvents';
 
 import {
     clearToolboxTimeout,
@@ -171,14 +171,11 @@ export function showDialPadButton(show: boolean): Function {
  */
 export function showRecordingButton(): Function {
     return (dispatch: Dispatch<*>) => {
-        const eventEmitter = APP.UI.eventEmitter;
-        const buttonName = 'recording';
-
-        dispatch(setToolbarButton(buttonName, {
+        dispatch(setToolbarButton('recording', {
             hidden: false
         }));
 
-        Recording.init(eventEmitter, config.recordingType);
+        Recording.initRecordingButton();
     };
 }
 
@@ -234,9 +231,14 @@ export function showSIPCallButton(show: boolean): Function {
 export function showToolbox(timeout: number = 0): Object {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        const { alwaysVisible, timeoutMS, visible } = state['features/toolbox'];
+        const {
+            alwaysVisible,
+            enabled,
+            timeoutMS,
+            visible
+        } = state['features/toolbox'];
 
-        if (!visible) {
+        if (enabled && !visible) {
             dispatch(setToolboxVisible(true));
             dispatch(setSubjectSlideIn(true));
 

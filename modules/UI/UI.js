@@ -322,6 +322,10 @@ UI.start = function () {
 
         $("#videoconference_page").mousemove(debouncedShowToolbar);
 
+        // Initialise the recording module.
+        if (config.enableRecording) {
+            Recording.init(eventEmitter, config.recordingType);
+        }
         // Initialize side panels
         SidePanels.init(eventEmitter);
     } else {

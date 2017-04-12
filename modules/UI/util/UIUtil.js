@@ -157,11 +157,13 @@ const IndicatorFontSizes = {
      * @param position the position of the tooltip in relation to the element
      */
     setTooltip(element, key, position) {
-        if (element !== null) {
-            element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
-            element.setAttribute('data-i18n', '[content]' + key);
+        if (element) {
+            const selector = element.jquery ? element : $(element);
 
-            APP.translation.translateElement($(element));
+            selector.attr('data-tooltip', TOOLTIP_POSITIONS[position]);
+            selector.attr('data-i18n', `[content]${key}`);
+
+            APP.translation.translateElement(selector);
         }
     },
 

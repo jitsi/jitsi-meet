@@ -22,16 +22,6 @@ export const SET_DEFAULT_TOOLBOX_BUTTONS
     = Symbol('SET_DEFAULT_TOOLBOX_BUTTONS');
 
 /**
- * The type of the action which sets the permanent visibility of the Toolbox.
- *
- * {
- *     type: SET_TOOLBOX_ALWAYS_VISIBLE,
- *     alwaysVisible: boolean
- * }
- */
-export const SET_TOOLBOX_ALWAYS_VISIBLE = Symbol('SET_TOOLBOX_ALWAYS_VISIBLE');
-
-/**
  * The type of the action which sets the conference subject.
  *
  * {
@@ -72,6 +62,26 @@ export const SET_TOOLBAR_BUTTON = Symbol('SET_TOOLBAR_BUTTON');
  * }
  */
 export const SET_TOOLBAR_HOVERED = Symbol('SET_TOOLBAR_HOVERED');
+
+/**
+ * The type of the action which sets the permanent visibility of the Toolbox.
+ *
+ * {
+ *     type: SET_TOOLBOX_ALWAYS_VISIBLE,
+ *     alwaysVisible: boolean
+ * }
+ */
+export const SET_TOOLBOX_ALWAYS_VISIBLE = Symbol('SET_TOOLBOX_ALWAYS_VISIBLE');
+
+/**
+ * The type of the (redux) action which enables/disables the Toolbox.
+ *
+ * {
+ *     type: SET_TOOLBOX_ENABLED,
+ *     enabled: boolean
+ * }
+ */
+export const SET_TOOLBOX_ENABLED = Symbol('SET_TOOLBOX_ENABLED');
 
 /**
  * The type of the action which sets a new Toolbox visibility timeout and its

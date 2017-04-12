@@ -5,11 +5,12 @@ import type { Dispatch } from 'redux-thunk';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_DEFAULT_TOOLBOX_BUTTONS,
-    SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_SUBJECT,
     SET_SUBJECT_SLIDE_IN,
     SET_TOOLBAR_BUTTON,
     SET_TOOLBAR_HOVERED,
+    SET_TOOLBOX_ALWAYS_VISIBLE,
+    SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE
@@ -167,6 +168,22 @@ export function setToolboxAlwaysVisible(alwaysVisible: boolean): Object {
 }
 
 /* eslint-disable flowtype/space-before-type-colon */
+
+/**
+ * Enables/disables the toolbox.
+ *
+ * @param {boolean} enabled - True to enable the toolbox or false to disable it.
+ * @returns {{
+ *     type: SET_TOOLBOX_ENABLED,
+ *     enabled: boolean
+ * }}
+ */
+export function setToolboxEnabled(enabled: boolean): Object {
+    return {
+        type: SET_TOOLBOX_ENABLED,
+        enabled
+    };
+}
 
 /**
  * Dispatches an action which sets new timeout and clears the previous one.
