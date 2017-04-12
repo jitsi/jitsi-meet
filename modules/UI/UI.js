@@ -324,6 +324,11 @@ UI.start = function () {
 
         // Initialize side panels
         SidePanels.init(eventEmitter);
+
+        // Initialise the recording module.
+        if (config.enableRecording) {
+            Recording.init(eventEmitter, config.recordingType);
+        }
     } else {
         $("body").addClass("filmstrip-only");
         UI.showToolbar();

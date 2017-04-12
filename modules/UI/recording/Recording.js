@@ -252,10 +252,10 @@ var Recording = {
      */
     init (emitter, recordingType) {
         this.eventEmitter = emitter;
+        this.recordingType = recordingType;
 
         this.updateRecordingState(APP.conference.getRecordingState());
-
-        this.initRecordingButton(recordingType);
+        this._registerListeners();
 
         // If I am a recorder then I publish my recorder custom role to notify
         // everyone.
@@ -271,53 +271,24 @@ var Recording = {
     },
 
     /**
-     * Initialise the recording button.
+     * Register listener for record button.
+     *
+     * @private
+     * @returns {void}
      */
-    initRecordingButton(recordingType) {
-        let selector = $('#toolbar_button_record');
-
-        let button = selector.get(0);
-        UIUtil.setTooltip(button, 'liveStreaming.buttonTooltip', 'right');
-
-        if (recordingType === 'jibri') {
-            this.baseClass = "fa fa-play-circle";
-            this.recordingTitle = "dialog.liveStreaming";
-            this.recordingOnKey = "liveStreaming.on";
-            this.recordingOffKey = "liveStreaming.off";
-            this.recordingPendingKey = "liveStreaming.pending";
-            this.failedToStartKey = "liveStreaming.failedToStart";
-            this.recordingErrorKey = "liveStreaming.error";
-            this.recordingButtonTooltip = "liveStreaming.buttonTooltip";
-            this.recordingUnavailable = "liveStreaming.unavailable";
-            this.recordingBusy = "liveStreaming.busy";
-        }
-        else {
-            this.baseClass = "icon-recEnable";
-            this.recordingTitle = "dialog.recording";
-            this.recordingOnKey = "recording.on";
-            this.recordingOffKey = "recording.off";
-            this.recordingPendingKey = "recording.pending";
-            this.failedToStartKey = "recording.failedToStart";
-            this.recordingErrorKey = "recording.error";
-            this.recordingButtonTooltip = "recording.buttonTooltip";
-            this.recordingUnavailable = "recording.unavailable";
-            this.recordingBusy = "liveStreaming.busy";
-        }
-
-        selector.addClass(this.baseClass);
-        selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);
-        APP.translation.translateElement(selector);
-
+    _registerListeners() {
         var self = this;
-        selector.click(function () {
-            if (dialog)
+        $(document).on('click', '#toolbar_button_record', () => {
+            if (dialog) {
                 return;
+            }
+
             JitsiMeetJS.analytics.sendEvent('recording.clicked');
             switch (self.currentState) {
                 case Status.ON:
                 case Status.RETRYING:
                 case Status.PENDING: {
-                    _showStopRecordingPrompt(recordingType).then(
+                    _showStopRecordingPrompt(self.recordingType).then(
                         () => {
                             self.eventEmitter.emit(UIEvents.RECORDING_TOGGLED);
                             JitsiMeetJS.analytics.sendEvent(
@@ -328,7 +299,7 @@ var Recording = {
                 }
                 case Status.AVAILABLE:
                 case Status.OFF: {
-                    if (recordingType === 'jibri')
+                    if (self.recordingType === 'jibri')
                         _requestLiveStreamId().then((streamId) => {
                             self.eventEmitter.emit( UIEvents.RECORDING_TOGGLED,
                                 {streamId: streamId});
@@ -395,6 +366,46 @@ var Recording = {
     },
 
     /**
+     * Initialise the recording button.
+     *
+     * @returns {void}
+     */
+    initRecordingButton() {
+        const $element = $('#toolbar_button_record');
+        const button = $element.get(0);
+
+        UIUtil.setTooltip(button, 'liveStreaming.buttonTooltip', 'right');
+
+        if (this.recordingType === 'jibri') {
+            this.baseClass = 'fa fa-play-circle';
+            this.recordingTitle = 'dialog.liveStreaming';
+            this.recordingOnKey = 'liveStreaming.on';
+            this.recordingOffKey = 'liveStreaming.off';
+            this.recordingPendingKey = 'liveStreaming.pending';
+            this.failedToStartKey = 'liveStreaming.failedToStart';
+            this.recordingErrorKey = 'liveStreaming.error';
+            this.recordingButtonTooltip = 'liveStreaming.buttonTooltip';
+            this.recordingUnavailable = 'liveStreaming.unavailable';
+            this.recordingBusy = 'liveStreaming.busy';
+        } else {
+            this.baseClass = 'icon-recEnable';
+            this.recordingTitle = 'dialog.recording';
+            this.recordingOnKey = 'recording.on';
+            this.recordingOffKey = 'recording.off';
+            this.recordingPendingKey = 'recording.pending';
+            this.failedToStartKey = 'recording.failedToStart';
+            this.recordingErrorKey = 'recording.error';
+            this.recordingButtonTooltip = 'recording.buttonTooltip';
+            this.recordingUnavailable = 'recording.unavailable';
+            this.recordingBusy = 'liveStreaming.busy';
+        }
+
+        $element.addClass(this.baseClass);
+        $element.attr('data-i18n', '[content]' + this.recordingButtonTooltip);
+        APP.translation.translateElement($element);
+    },
+
+    /**
      * Shows or hides the 'recording' button.
      * @param show {true} to show the recording button, {false} to hide it
      */
@@ -426,7 +437,6 @@ var Recording = {
      * @param recordingState gives us the current recording state
      */
     updateRecordingUI (recordingState) {
-
         let oldState = this.currentState;
         this.currentState = recordingState;
 
