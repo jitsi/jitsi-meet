@@ -32,6 +32,9 @@ import {
     setVideoMuted
 } from '../../react/features/base/media';
 import {
+    openDeviceSelectionDialog
+} from '../../react/features/device-selection';
+import {
     checkAutoEnableDesktopSharing,
     dockToolbox,
     setAudioIconEnabled,
@@ -1369,7 +1372,18 @@ const UIListeners = new Map([
         UI.toggleChat
     ], [
         UIEvents.TOGGLE_SETTINGS,
-        () => UI.toggleSidePanel("settings_container")
+        () => {
+            // Opening of device selection is special-cased as it is a dialog
+            // opened through a button in settings and not directly displayed in
+            // settings itself. As it is not useful to only have a settings menu
+            // with a button to open a dialog, open the dialog directly instead.
+            if (interfaceConfig.SETTINGS_SECTIONS.length === 1
+                    && UIUtil.isSettingEnabled('devices')) {
+                APP.store.dispatch(openDeviceSelectionDialog());
+            } else {
+                UI.toggleSidePanel("settings_container");
+            }
+        }
     ], [
         UIEvents.TOGGLE_CONTACT_LIST,
         UI.toggleContactList
