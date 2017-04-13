@@ -1,3 +1,5 @@
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
+
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import {
     ReducerRegistry,
@@ -83,7 +85,7 @@ function _conferenceFailed(state, action) {
             audioOnlyVideoMuted: undefined,
             conference: undefined,
             leaving: undefined,
-            locked: undefined,
+            locked: passwordRequired ? LOCKED_REMOTELY : undefined,
             password: undefined,
 
             /**
@@ -112,7 +114,7 @@ function _conferenceJoined(state, action) {
     // i.e. password-protected is private to lib-jitsi-meet. However, the
     // library does not fire LOCK_STATE_CHANGED upon joining a JitsiConference
     // with a password.
-    const locked = conference.room.locked || undefined;
+    const locked = conference.room.locked ? LOCKED_REMOTELY : undefined;
 
     return (
         setStateProperties(state, {
@@ -209,7 +211,16 @@ function _lockStateChanged(state, action) {
         return state;
     }
 
-    return setStateProperty(state, 'locked', action.locked || undefined);
+    let lockState;
+
+    if (action.locked) {
+        lockState = state.locked || LOCKED_REMOTELY;
+    }
+
+    return setStateProperties(state, {
+        locked: lockState,
+        password: action.locked ? state.password : null
+    });
 }
 
 /**
@@ -254,10 +265,12 @@ function _setPassword(state, action) {
     const conference = action.conference;
 
     switch (action.method) {
-    case conference.join:
+    case conference.join: {
         if (state.passwordRequired === conference) {
             return (
                 setStateProperties(state, {
+                    locked: LOCKED_REMOTELY,
+
                     /**
                      * The password with which the conference is to be joined.
                      *
@@ -267,7 +280,15 @@ function _setPassword(state, action) {
                     passwordRequired: undefined
                 }));
         }
+
         break;
+    }
+    case conference.lock: {
+        return setStateProperties(state, {
+            locked: action.password ? LOCKED_LOCALLY : undefined,
+            password: action.password
+        });
+    }
     }
 
     return state;

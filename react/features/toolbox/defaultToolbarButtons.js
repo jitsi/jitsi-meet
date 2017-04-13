@@ -4,6 +4,8 @@ import React from 'react';
 
 import UIEvents from '../../../service/UI/UIEvents';
 
+import { openInviteDialog } from '../invite';
+
 declare var APP: Object;
 declare var config: Object;
 declare var JitsiMeetJS: Object;
@@ -222,7 +224,7 @@ export default {
         id: 'toolbar_button_link',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-            APP.UI.emitEvent(UIEvents.INVITE_CLICKED);
+            APP.store.dispatch(openInviteDialog());
         },
         tooltipKey: 'toolbar.invite'
     },

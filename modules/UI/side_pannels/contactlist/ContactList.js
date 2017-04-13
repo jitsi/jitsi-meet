@@ -19,14 +19,14 @@ class ContactList {
     }
 
     /**
-     * Is locked flag.
-     * Delegates to Invite module
-     * TO FIX: find a better way to access the IS LOCKED state of the invite.
+     * Returns true if the current conference is locked.
      *
      * @returns {Boolean}
      */
     isLocked() {
-        return APP.conference.invite.isLocked();
+        const conference = APP.store.getState()['features/base/conference'];
+
+        return conference.locked;
     }
 
     /**

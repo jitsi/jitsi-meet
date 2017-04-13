@@ -1,6 +1,8 @@
 /* global $, APP, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
+import { openInviteDialog } from '../../../../react/features/invite';
+
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
@@ -96,7 +98,7 @@ var ContactListView = {
         this.model = model;
         this.addInviteButton();
         this.registerListeners();
-        this.toggleLock();
+        this.setLockDisplay(false);
     },
     /**
      * Adds layout for invite button
@@ -108,8 +110,9 @@ var ContactListView = {
             .insertAdjacentHTML('afterend', this.getInviteButtonLayout());
 
         APP.translation.translateElement($(container));
+
         $(document).on('click', '#addParticipantsBtn', () => {
-            APP.UI.emitEvent(UIEvents.INVITE_CLICKED);
+            APP.store.dispatch(openInviteDialog());
         });
     },
     /**
@@ -125,8 +128,8 @@ var ContactListView = {
 
         return (
             `<div class="sideToolbarBlock first">
-                <button id="addParticipantsBtn" 
-                         data-i18n="${key}" 
+                <button id="addParticipantsBtn"
+                         data-i18n="${key}"
                          class="${classes}"></button>
                 <div>
                     ${lockedHtml}
@@ -158,7 +161,7 @@ var ContactListView = {
         let displayNameChange = this.onDisplayNameChange.bind(this);
 
         APP.UI.addListener( UIEvents.TOGGLE_ROOM_LOCK,
-                            this.toggleLock.bind(this));
+                            this.setLockDisplay.bind(this));
         APP.UI.addListener( UIEvents.CONTACT_ADDED,
                             this.onAddContact.bind(this));
 
@@ -167,16 +170,15 @@ var ContactListView = {
         APP.UI.addListener(UIEvents.DISPLAY_NAME_CHANGED, displayNameChange);
     },
     /**
-     * Updating the view according the model
-     * @param type {String} type of change
-     * @returns {Promise}
+     * Updates the view according to the passed in lock state.
+     *
+     * @param {boolean} isLocked - True if the locked UI state should display.
      */
-    toggleLock() {
-        let isLocked = this.model.isLocked();
-        let showKey = isLocked ? this.lockKey : this.unlockKey;
-        let hideKey = !isLocked ? this.lockKey : this.unlockKey;
-        let showId = `contactList${showKey}`;
-        let hideId = `contactList${hideKey}`;
+    setLockDisplay(isLocked) {
+        const showKey = isLocked ? this.lockKey : this.unlockKey;
+        const hideKey = !isLocked ? this.lockKey : this.unlockKey;
+        const showId = `contactList${showKey}`;
+        const hideId = `contactList${hideKey}`;
 
         $(`#${showId}`).show();
         $(`#${hideId}`).hide();

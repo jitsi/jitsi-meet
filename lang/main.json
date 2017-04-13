@@ -153,8 +153,7 @@
         "cameraAndMic": "Camera and microphone",
         "moderator": "MODERATOR",
         "password": "SET PASSWORD",
-        "audioVideo": "AUDIO AND VIDEO",
-        "setPasswordLabel": "Lock your room with a password."
+        "audioVideo": "AUDIO AND VIDEO"
     },
     "profile": {
         "title": "Profile",
@@ -225,8 +224,6 @@
         "connecting": "Connecting",
         "copy": "Copy",
         "error": "Error",
-        "roomLocked": "This call is locked. New callers must have the link and enter the password to join",
-        "addPassword": "Add a password",
         "createPassword": "Create password",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
@@ -429,5 +426,13 @@
         "noOtherDevices": "No other devices available",
         "selectADevice": "Select a device",
         "testAudio": "Test sound"
+    },
+    "invite": {
+        "addPassword": "Add password",
+        "hidePassword": "Hide password",
+        "inviteTo": "Invite people to __conferenceName__",
+        "locked": "This call is locked. New callers must have the link and enter the password to join.",
+        "showPassword": "Show password",
+        "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     }
 }

@@ -117,6 +117,17 @@ export const SET_LASTN = Symbol('SET_LASTN');
 export const SET_PASSWORD = Symbol('SET_PASSWORD');
 
 /**
+ * The type of Redux action which signals that setting a password on a
+ * JitsiConference encountered an error and failed.
+ *
+ * {
+ *     type: SET_PASSWORD_FAILED,
+ *     error: string
+ * }
+ */
+export const SET_PASSWORD_FAILED = Symbol('SET_PASSWORD_FAILED');
+
+/**
  * The type of the Redux action which sets the name of the room of the
  * conference to be joined.
  *

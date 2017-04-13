@@ -322,7 +322,7 @@ function _mapStateToProps(state) {
          * @protected
          * @type {boolean}
          */
-        _locked: conference.locked
+        _locked: Boolean(conference.locked)
     };
 }
 

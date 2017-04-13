@@ -223,7 +223,6 @@ function _mapDispatchToProps(dispatch: Function): Object {
  * @returns {{
  *     _alwaysVisible: boolean,
  *     _audioMuted: boolean,
- *     _locked: boolean,
  *     _subjectSlideIn: boolean,
  *     _videoMuted: boolean
  * }}

@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AKFieldText from '@atlaskit/field-text';
 
+import UIEvents from '../../../../service/UI/UIEvents';
+
 import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -109,9 +111,9 @@ class PasswordRequiredPrompt extends Component {
         // password required will be received and the room again
         // will be marked as locked.
         if (!this.state.password || this.state.password === '') {
-            // XXX temporary solution till we move the whole invite logic
-            // in react
-            APP.conference.invite.setLockedFromElsewhere(false);
+            // XXX temporary solution while some components are not listening
+            // for lock state updates in redux
+            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK, false);
         }
 
         this.props.dispatch(setPassword(

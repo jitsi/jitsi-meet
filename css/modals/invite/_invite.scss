@@ -5,3 +5,43 @@
 #inviteDialogRemovePassword {
     cursor: hand;
 }
+
+.invite-dialog {
+    .form-control {
+        padding: 0;
+    }
+
+    .inviteLink {
+        color: $readOnlyInputColor;
+    }
+
+    .lock-state {
+        display: flex;
+    }
+
+    .password-overview {
+        .form-control {
+            margin-top: 10px;
+        }
+
+        .password-overview-toggle-edit,
+        .remove-password-link {
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .password-overview-status,
+        .remove-password {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .remove-password {
+            margin-top: 15px;
+        }
+    }
+
+    .remove-password-current {
+        color: $inputControlEmColor;
+    }
+}

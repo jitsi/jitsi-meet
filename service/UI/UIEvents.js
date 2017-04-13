@@ -23,10 +23,6 @@ export default {
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     SHARED_VIDEO_CLICKED: "UI.start_shared_video",
     /**
-     * Indicates that an invite button has been clicked.
-     */
-    INVITE_CLICKED: "UI.invite_clicked",
-    /**
      * Updates shared video with params: url, state, time(optional)
      * Where url is the video link, state is stop/start/pause and time is the
      * current video playing time.

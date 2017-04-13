@@ -2,7 +2,6 @@
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import {openConnection} from './connection';
-import Invite from './modules/UI/invite/Invite';
 import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
@@ -28,7 +27,8 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
-    EMAIL_COMMAND
+    EMAIL_COMMAND,
+    lockStateChanged
 } from './react/features/base/conference';
 import {
     updateDeviceList
@@ -373,10 +373,9 @@ function createLocalTracks(options, checkForPermissionPrompt) {
 }
 
 class ConferenceConnector {
-    constructor(resolve, reject, invite) {
+    constructor(resolve, reject) {
         this._resolve = resolve;
         this._reject = reject;
-        this._invite = invite;
         this.reconnectTimeout = null;
         room.on(ConferenceEvents.CONFERENCE_JOINED,
             this._handleConferenceJoined.bind(this));
@@ -411,14 +410,17 @@ class ConferenceConnector {
 
             // not enough rights to create conference
         case ConferenceErrors.AUTHENTICATION_REQUIRED:
-            // schedule reconnect to check if someone else created the room
-            this.reconnectTimeout = setTimeout(function () {
-                room.join();
-            }, 5000);
+            {
+                // schedule reconnect to check if someone else created the room
+                this.reconnectTimeout = setTimeout(function () {
+                    room.join();
+                }, 5000);
 
-            // notify user that auth is required
-            AuthHandler.requireAuth(
-                room, this._invite.getRoomLocker().password);
+                const { password }
+                    = APP.store.getState()['features/base/conference'];
+
+                AuthHandler.requireAuth(room, password);
+            }
             break;
 
         case ConferenceErrors.RESERVATION_ERROR:
@@ -630,8 +632,7 @@ export default {
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
-                    (new ConferenceConnector(
-                        resolve, reject, this.invite)).connect();
+                    (new ConferenceConnector(resolve, reject)).connect();
                 });
         });
     },
@@ -985,7 +986,6 @@ export default {
         room = connection.initJitsiConference(APP.conference.roomName,
             this._getConferenceOptions());
         this._setLocalAudioVideoStreams(localTracks);
-        this.invite = new Invite(room);
         this._room = room; // FIXME do not use this
 
         _setupLocalParticipantProperties();
@@ -1447,6 +1447,10 @@ export default {
                 = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
             APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
             APP.UI.changeDisplayName(id, formattedDisplayName);
+        });
+
+        room.on(ConferenceEvents.LOCK_STATE_CHANGED, (...args) => {
+            APP.store.dispatch(lockStateChanged(room, ...args));
         });
 
         room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
