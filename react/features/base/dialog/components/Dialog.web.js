@@ -56,6 +56,7 @@ class Dialog extends AbstractDialog {
                 width = { this.props.width || 'medium' }>
                 <div>
                     <form
+                        className = 'modal-dialog-form'
                         id = 'modal-dialog-form'
                         onSubmit = { this._onSubmit }>
                         { this.props.children }
