@@ -114,7 +114,7 @@ class Dialog extends AbstractDialog {
         return (
             <header>
                 <h2>
-                    { t(this.props.titleKey) }
+                    { this.props.titleString || t(this.props.titleKey) }
                 </h2>
             </header>
         );
