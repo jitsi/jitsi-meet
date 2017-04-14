@@ -1,6 +1,6 @@
 /* @flow */
 
-import { randomElement } from './randomUtil';
+import { randomElement } from '../base/util';
 
 /*
 const _NOUN_ = [

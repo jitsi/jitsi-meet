@@ -4,7 +4,8 @@ import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
 import { VideoTrack } from '../../base/media';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { generateRoomWithoutSeparator } from '../../base/util';
+
+import { generateRoomWithoutSeparator } from '../roomnameGenerator';
 
 /**
  * Base (abstract) class for container component rendering the welcome page.
