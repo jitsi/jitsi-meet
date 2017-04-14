@@ -3,11 +3,8 @@ import { getDomain, setDomain } from '../base/connection';
 import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
-import {
-    _getRouteToRender,
-    _parseURIString,
-    init
-} from './functions';
+import { _getRouteToRender, init } from './functions';
+import { _parseURIString } from './functions.common';
 
 /**
  * Temporary solution. Should dispatch actions related to initial settings of
