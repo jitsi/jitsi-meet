@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import {
-    getHoursCount,
-    getMinutesCount,
-    getSecondsCount
-} from '../../base/util/timeUtils';
 
 /**
  * React component for displaying total time elapsed. Converts a total count of
@@ -27,7 +22,7 @@ class TimeElapsed extends Component {
         t: React.PropTypes.func,
 
         /**
-         * The milliseconds to be converted into a humanized format.
+         * The milliseconds to be converted into a human-readable format.
          */
         time: React.PropTypes.number
     }
@@ -39,27 +34,34 @@ class TimeElapsed extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const hours = getHoursCount(this.props.time);
-        const minutes = getMinutesCount(this.props.time);
-        const seconds = getSecondsCount(this.props.time);
+        const { time } = this.props;
+        const hours = _getHoursCount(time);
+        const minutes = _getMinutesCount(time);
+        const seconds = _getSecondsCount(time);
         const timeElapsed = [];
 
         if (hours) {
-            const hourPassed = this._createTimeDisplay(hours,
-                'speakerStats.hours', 'hours');
+            const hourPassed
+                = this._createTimeDisplay(hours, 'speakerStats.hours', 'hours');
 
             timeElapsed.push(hourPassed);
         }
 
         if (hours || minutes) {
-            const minutesPassed = this._createTimeDisplay(minutes,
-                'speakerStats.minutes', 'minutes');
+            const minutesPassed
+                = this._createTimeDisplay(
+                    minutes,
+                    'speakerStats.minutes',
+                    'minutes');
 
             timeElapsed.push(minutesPassed);
         }
 
-        const secondsPassed = this._createTimeDisplay(seconds,
-            'speakerStats.seconds', 'seconds');
+        const secondsPassed
+            = this._createTimeDisplay(
+                seconds,
+                'speakerStats.seconds',
+                'seconds');
 
         timeElapsed.push(secondsPassed);
 
@@ -85,10 +87,44 @@ class TimeElapsed extends Component {
         const { t } = this.props;
 
         return (
-            <span key = { countType } > { t(countNounKey, { count }) } </span>
+            <span key = { countType } >
+                { t(countNounKey, { count }) }
+            </span>
         );
     }
-
 }
 
 export default translate(TimeElapsed);
+
+/**
+ * Counts how many whole hours are included in the given time total.
+ *
+ * @param {number} milliseconds - The millisecond total to get hours from.
+ * @private
+ * @returns {number}
+ */
+function _getHoursCount(milliseconds) {
+    return Math.floor(milliseconds / (60 * 60 * 1000));
+}
+
+/**
+ * Counts how many whole minutes are included in the given time total.
+ *
+ * @param {number} milliseconds - The millisecond total to get minutes from.
+ * @private
+ * @returns {number}
+ */
+function _getMinutesCount(milliseconds) {
+    return Math.floor(milliseconds / (60 * 1000) % 60);
+}
+
+/**
+ * Counts how many whole seconds are included in the given time total.
+ *
+ * @param {number} milliseconds - The millisecond total to get seconds from.
+ * @private
+ * @returns {number}
+ */
+function _getSecondsCount(milliseconds) {
+    return Math.floor(milliseconds / 1000 % 60);
+}
