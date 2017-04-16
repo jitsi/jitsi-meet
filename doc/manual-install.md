@@ -55,6 +55,7 @@ VirtualHost "jitsi.example.com"
         "bosh";
         "pubsub";
     }
+    c2s_require_encryption = false
 ```
 - add domain with authentication for conference focus user:
 ```
