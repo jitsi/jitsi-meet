@@ -70,6 +70,30 @@ export function localParticipantJoined(participant = {}) {
 }
 
 /**
+ * Action to signal the role of the local participant has changed. This can
+ * happen when the participant has joined a conference, even before an id has
+ * been properly set, or after a moderator leaves.
+ *
+ * @param {string} role - New role for local participant.
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         role: PARTICIPANT_ROLE
+ *     }
+ * }}
+ */
+export function localParticipantRoleChanged(role) {
+    return (dispatch, getState) => {
+        const participant = getLocalParticipant(getState);
+
+        if (participant) {
+            return dispatch(participantRoleChanged(participant.id, role));
+        }
+    };
+}
+
+/**
  * Action to update a participant's connection status.
  *
  * @param {string} id - Participant's ID.
