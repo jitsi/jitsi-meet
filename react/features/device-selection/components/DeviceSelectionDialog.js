@@ -170,19 +170,19 @@ class DeviceSelectionDialog extends Component {
                 onSubmit = { this._onSubmit }
                 titleKey = 'deviceSelection.deviceSettings' >
                 <div className = 'device-selection'>
-                    <div className = 'device-selection-column-selectors'>
-                        <div className = 'device-selectors'>
-                            { this._renderSelectors() }
-                        </div>
-                        { this._renderAudioOutputPreview() }
-                    </div>
-                    <div className = 'device-selection-column-video'>
+                    <div className = 'device-selection-column column-video'>
                         <div className = 'device-selection-video-container'>
                             <VideoInputPreview
                                 track = { this.state.previewVideoTrack
                                     || this.props.currentVideoTrack } />
                         </div>
                         { this._renderAudioInputPreview() }
+                    </div>
+                    <div className = 'device-selection-column column-selectors'>
+                        <div className = 'device-selectors'>
+                            { this._renderSelectors() }
+                        </div>
+                        { this._renderAudioOutputPreview() }
                     </div>
                 </div>
             </Dialog>
@@ -543,6 +543,7 @@ class DeviceSelectionDialog extends Component {
             {
                 devices: availableDevices.videoInput,
                 hasPermission: this.props.hasVideoPermission,
+                icon: 'icon-camera',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
                 label: 'settings.selectCamera',
@@ -552,6 +553,7 @@ class DeviceSelectionDialog extends Component {
             {
                 devices: availableDevices.audioInput,
                 hasPermission: this.props.hasAudioPermission,
+                icon: 'icon-microphone',
                 isDisabled: this.props.disableAudioInputChange
                     || this.props.disableDeviceChange,
                 key: 'audioInput',
@@ -566,6 +568,7 @@ class DeviceSelectionDialog extends Component {
                 devices: availableDevices.audioOutput,
                 hasPermission: this.props.hasAudioPermission
                     || this.props.hasVideoPermission,
+                icon: 'icon-volume',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
                 label: 'settings.selectAudioOutput',
