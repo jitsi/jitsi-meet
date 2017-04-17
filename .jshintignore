@@ -9,6 +9,8 @@ node_modules/
 # supersedes JSHint.
 flow-typed/
 react/
+modules/API/
+modules/transport/
 
 # The following are checked by ESLint with the minimum configuration which does
 # not supersede JSHint but take advantage of advanced language features such as

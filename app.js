@@ -18,7 +18,7 @@ window.toastr = require("toastr");
 import UI from "./modules/UI/UI";
 import settings from "./modules/settings/Settings";
 import conference from './conference';
-import API from './modules/API/API';
+import API from './modules/API';
 
 import translation from "./modules/translation/translation";
 import remoteControl from "./modules/remotecontrol/RemoteControl";
