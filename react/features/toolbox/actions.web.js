@@ -209,10 +209,15 @@ export function showSharedVideoButton(): Function {
 export function showSIPCallButton(show: boolean): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'sip';
+
+        // hide the button if there is a config to check for user roles,
+        // based on the token and the the user is guest
         const shouldShow
             = APP.conference.sipGatewayEnabled()
                 && UIUtil.isButtonEnabled(buttonName)
-                && show;
+                && show
+                && (!config.enableUserRolesBasedOnToken
+                        || !APP.tokenData.isGuest);
 
         if (shouldShow) {
             dispatch(setToolbarButton(buttonName, {
