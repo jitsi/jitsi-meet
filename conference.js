@@ -1657,7 +1657,10 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.SIP_DIAL, (sipNumber) => {
-            room.dial(sipNumber);
+            room.dial(sipNumber)
+                .catch((err) => {
+                    logger.error("Error dialing out", err);
+                });
         });
 
         APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
