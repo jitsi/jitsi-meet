@@ -35,9 +35,7 @@ function initCommands() {
         'toggle-share-screen': toggleScreenSharing,
         'video-hangup': () => APP.conference.hangup(),
         'email': APP.conference.changeLocalEmail,
-        'avatar-url': APP.conference.changeLocalAvatarUrl,
-        'remote-control-event':
-            event => APP.remoteControl.onRemoteControlAPIEvent(event)
+        'avatar-url': APP.conference.changeLocalAvatarUrl
     };
     transport.on('event', event => {
         const { name, data } = event;
@@ -235,16 +233,6 @@ class API {
      */
     notifyReadyToClose() {
         this._sendEvent('video-ready-to-close', {});
-    }
-
-    /**
-     * Sends remote control event.
-     *
-     * @param {RemoteControlEvent} event - The remote control event.
-     * @returns {void}
-     */
-    sendRemoteControlEvent(event) {
-        this._sendEvent('remote-control-event', event);
     }
 
     /**
