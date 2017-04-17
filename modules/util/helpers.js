@@ -74,3 +74,18 @@ export function debounce(fn, wait = 0, options = {}) {
         }
     };
 }
+
+/**
+ * Returns the namespace for all global variables, functions, etc that we need.
+ *
+ * @returns {Object} the namespace.
+ *
+ * NOTE: After reactifying everything this should be the only place where
+ * we store everything that needs to be global (for some reason).
+ */
+export function getJitsiMeetGlobalNS() {
+    if(!window.JitsiMeetGlobalNS) {
+        window.JitsiMeetGlobalNS = { };
+    }
+    return window.JitsiMeetGlobalNS;
+}
