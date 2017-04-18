@@ -81,7 +81,7 @@ class VideoInputPreview extends Component {
                     className = 'video-input-preview-display flipVideoX'
                     ref = { this._setVideoElement } />
                 <div className = 'video-input-preview-muted'>
-                    { this.props.t('videothumbnail.muted') }
+                    { this.props.t('deviceSelection.currentlyVideoMuted') }
                 </div>
             </div>
         );
