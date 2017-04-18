@@ -5,12 +5,12 @@ import { translate } from '../../base/i18n';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * A React Component for displaying a value with a copy button that can be
- * clicked to copy the value onto the clipboard.
+ * A React {@code Component} for displaying a value with a copy button to copy
+ * the value into the clipboard.
  */
 class ShareLinkForm extends Component {
     /**
-     * ShareLinkForm component's property types.
+     * {@code ShareLinkForm}'s property types.
      *
      * @static
      */
@@ -20,14 +20,14 @@ class ShareLinkForm extends Component {
          */
         t: React.PropTypes.func,
 
-       /**
-         * The value to be displayed and copied onto the clipboard.
+        /**
+         * The value to be displayed and copied into the clipboard.
          */
         toCopy: React.PropTypes.string
     }
 
     /**
-     * Initializes a new ShareLinkForm instance.
+     * Initializes a new {@code ShareLinkForm} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -35,8 +35,17 @@ class ShareLinkForm extends Component {
     constructor(props) {
         super(props);
 
+        /**
+         * The internal reference to the DOM/HTML element backing the React
+         * {@code Component} input with id {@code inviteLinkRef}. It is
+         * necessary for the implementation of copying to the clipboard.
+         *
+         * @private
+         * @type {HTMLInputElement}
+         */
         this._inputElement = null;
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onClick = this._onClick.bind(this);
         this._setInput = this._setInput.bind(this);
     }
@@ -48,15 +57,15 @@ class ShareLinkForm extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const inputValue = this.props.toCopy
-            || this.props.t('inviteUrlDefaultMsg');
+        const { t } = this.props;
+        const inputValue = this.props.toCopy || t('inviteUrlDefaultMsg');
 
-        // FIXME input is used here instead of atlaskit field-text because
-        // field-text does not currently support readonly
+        // FIXME An input HTML element is used here instead of atlaskit's
+        // field-text because the latter does not currently support readOnly.
         return (
             <div className = 'form-control'>
                 <label className = 'form-control__label'>
-                    { this.props.t('dialog.shareLink') }
+                    { t('dialog.shareLink') }
                 </label>
                 <div className = 'form-control__container'>
                     <input
@@ -71,7 +80,7 @@ class ShareLinkForm extends Component {
                             'button-control button-control_light copyInviteLink'
                         onClick = { this._onClick }
                         type = 'button'>
-                        { this.props.t('dialog.copy') }
+                        { t('dialog.copy') }
                     </button>
                 </div>
             </div>
@@ -95,10 +104,11 @@ class ShareLinkForm extends Component {
     }
 
     /**
-     * Sets the internal reference to the DOM element for the input field so it
-     * may be accessed directly.
+     * Sets the internal reference to the DOM/HTML element backing the React
+     * {@code Component} input with id {@code inviteLinkRef}.
      *
-     * @param {Object} element - DOM element for the component's input.
+     * @param {HTMLInputElement} element - The DOM/HTML element for this
+     * {@code Component}'s input.
      * @private
      * @returns {void}
      */

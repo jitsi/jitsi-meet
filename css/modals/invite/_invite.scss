@@ -24,16 +24,16 @@
             margin-top: 10px;
         }
 
-        .password-overview-toggle-edit,
-        .remove-password-link {
-            cursor: pointer;
-            text-decoration: none;
-        }
-
         .password-overview-status,
         .remove-password {
             display: flex;
             justify-content: space-between;
+        }
+
+        .password-overview-toggle-edit,
+        .remove-password-link {
+            cursor: pointer;
+            text-decoration: none;
         }
 
         .remove-password {

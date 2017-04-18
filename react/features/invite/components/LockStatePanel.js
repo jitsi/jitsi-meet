@@ -7,7 +7,7 @@ import { translate } from '../../base/i18n';
  */
 class LockStatePanel extends Component {
     /**
-     * LockStatePanel component's property types.
+     * {@code LockStatePanel}'s property types.
      *
      * @static
      */
@@ -30,15 +30,25 @@ class LockStatePanel extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const [ lockStateClass, lockIconClass, lockTextKey ] = this.props.locked
-            ? [ 'is-locked', 'icon-security-locked', 'invite.locked' ]
-            : [ 'is-unlocked', 'icon-security', 'invite.unlocked' ];
+        let iconClass;
+        let stateClass;
+        let textKey;
+
+        if (this.props.locked) {
+            iconClass = 'icon-security-locked';
+            stateClass = 'is-locked';
+            textKey = 'invite.locked';
+        } else {
+            iconClass = 'icon-security';
+            stateClass = 'is-unlocked';
+            textKey = 'invite.unlocked';
+        }
 
         return (
-            <div className = { `lock-state ${lockStateClass}` }>
-                <span className = { lockIconClass } />
+            <div className = { `lock-state ${stateClass}` }>
+                <span className = { iconClass } />
                 <span>
-                    { this.props.t(lockTextKey) }
+                    { this.props.t(textKey) }
                 </span>
             </div>
         );

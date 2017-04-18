@@ -1,11 +1,12 @@
 /* global $, APP, interfaceConfig */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import { openInviteDialog } from '../../../../react/features/invite';
 
 import Avatar from '../../avatar/Avatar';
 import UIEvents from '../../../../service/UI/UIEvents';
 import UIUtil from '../../util/UIUtil';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 let numberOfContacts = 0;
 const sidePanelsContainerId = 'sideToolbarContainer';
@@ -169,20 +170,28 @@ var ContactListView = {
         APP.UI.addListener(UIEvents.USER_AVATAR_CHANGED, changeAvatar);
         APP.UI.addListener(UIEvents.DISPLAY_NAME_CHANGED, displayNameChange);
     },
+
     /**
      * Updates the view according to the passed in lock state.
      *
-     * @param {boolean} isLocked - True if the locked UI state should display.
+     * @param {boolean} locked - True to display the locked UI state or false to
+     * display the unlocked UI state.
      */
-    setLockDisplay(isLocked) {
-        const showKey = isLocked ? this.lockKey : this.unlockKey;
-        const hideKey = !isLocked ? this.lockKey : this.unlockKey;
-        const showId = `contactList${showKey}`;
-        const hideId = `contactList${hideKey}`;
+    setLockDisplay(locked) {
+        let hideKey, showKey;
 
-        $(`#${showId}`).show();
-        $(`#${hideId}`).hide();
+        if (locked) {
+            hideKey = this.unlockKey;
+            showKey = this.lockKey;
+        } else {
+            hideKey = this.lockKey;
+            showKey = this.unlockKey;
+        }
+
+        $(`#contactList${hideKey}`).hide();
+        $(`#contactList${showKey}`).show();
     },
+
     /**
      * Indicates if the chat is currently visible.
      *

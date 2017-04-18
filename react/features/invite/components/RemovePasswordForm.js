@@ -5,11 +5,11 @@ import { setPassword } from '../../base/conference';
 import { translate } from '../../base/i18n';
 
 /**
- * A React Component for removing a lock from a JitsiConference.
+ * A React {@code Component} for removing a lock from a JitsiConference.
  */
 class RemovePasswordForm extends Component {
     /**
-     * RemovePasswordForm component's property types.
+     * {@code RemovePasswordForm}'s property types.
      *
      * @static
      */
@@ -43,7 +43,7 @@ class RemovePasswordForm extends Component {
     }
 
     /**
-     * Initializes a new RemovePasswordForm instance.
+     * Initializes a new {@code RemovePasswordForm} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -51,6 +51,7 @@ class RemovePasswordForm extends Component {
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onClick = this._onClick.bind(this);
     }
 
@@ -83,15 +84,15 @@ class RemovePasswordForm extends Component {
      * @returns {ReactElement}
      */
     _getPasswordPreviewText() {
+        const { lockedLocally, password, t } = this.props;
+
         return (
             <span>
                 <span>
-                    { `${this.props.t('dialog.currentPassword')} ` }
+                    { `${t('dialog.currentPassword')} ` }
                 </span>
                 <span className = 'remove-password-current'>
-                    { this.props.lockedLocally
-                        ? this.props.password
-                        : this.props.t('passwordSetRemotely') }
+                    { lockedLocally ? password : t('passwordSetRemotely') }
                 </span>
             </span>
         );
@@ -104,7 +105,7 @@ class RemovePasswordForm extends Component {
      * @returns {void}
      */
     _onClick() {
-        const conference = this.props.conference;
+        const { conference } = this.props;
 
         this.props.dispatch(setPassword(
             conference,

@@ -118,7 +118,7 @@ export const SET_PASSWORD = Symbol('SET_PASSWORD');
 
 /**
  * The type of Redux action which signals that setting a password on a
- * JitsiConference encountered an error and failed.
+ * JitsiConference failed (with an error).
  *
  * {
  *     type: SET_PASSWORD_FAILED,

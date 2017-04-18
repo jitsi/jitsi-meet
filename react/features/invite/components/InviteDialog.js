@@ -13,12 +13,13 @@ import PasswordContainer from './PasswordContainer';
 import ShareLinkForm from './ShareLinkForm';
 
 /**
- * A React Component for displaying other components responsible for copying the
- * current conference url and for setting or removing a conference password.
+ * A React {@code Component} for displaying other components responsible for
+ * copying the current conference url and for setting or removing a conference
+ * password.
  */
 class InviteDialog extends Component {
     /**
-     * InviteDialog component's property types.
+     * {@code InviteDialog} component's property types.
      *
      * @static
      */
@@ -61,19 +62,23 @@ class InviteDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { _conference } = this.props;
+        const titleString
+            = this.props.t(
+                'invite.inviteTo',
+                { conferenceName: _conference.room });
+
         return (
             <Dialog
                 cancelDisabled = { true }
                 okTitleKey = 'dialog.done'
-                titleString = { this.props.t(
-                    'invite.inviteTo',
-                    { conferenceName: this.props._conference.room }) } >
+                titleString = { titleString }>
                 <div className = 'invite-dialog'>
                     <ShareLinkForm toCopy = { this.props.conferenceUrl } />
                     <PasswordContainer
-                        conference = { this.props._conference.conference }
-                        locked = { this.props._conference.locked }
-                        password = { this.props._conference.password }
+                        conference = { _conference.conference }
+                        locked = { _conference.locked }
+                        password = { _conference.password }
                         showPasswordEdit = { this.props._isModerator } />
                 </div>
             </Dialog>
@@ -82,7 +87,8 @@ class InviteDialog extends Component {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated InviteDialog's props.
+ * Maps (parts of) the Redux state to the associated {@code InviteDialog}'s
+ * props.
  *
  * @param {Object} state - The Redux state.
  * @private

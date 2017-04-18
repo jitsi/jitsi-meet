@@ -5,11 +5,11 @@ import { setPassword } from '../../base/conference';
 import { translate } from '../../base/i18n';
 
 /**
- * A React Component for locking a JitsiConference with a password.
+ * A React {@code Component} for locking a JitsiConference with a password.
  */
 class AddPasswordForm extends Component {
     /**
-     * AddPasswordForm component's property types.
+     * {@code AddPasswordForm}'s property types.
      *
      * @static
      */
@@ -33,7 +33,7 @@ class AddPasswordForm extends Component {
     }
 
     /**
-     * Initializes a new AddPasswordForm instance.
+     * Initializes a new {@code AddPasswordForm} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -42,9 +42,17 @@ class AddPasswordForm extends Component {
         super(props);
 
         this.state = {
+            /**
+             * The current value to display in {@code AddPasswordForm}
+             * component's input field. The value is also used as the desired
+             * new password when creating a {@code setPassword} action.
+             *
+             * @type {string}
+             */
             password: ''
         };
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onPasswordChange = this._onPasswordChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -57,6 +65,8 @@ class AddPasswordForm extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { t } = this.props;
+
         return (
             <div
                 className = 'form-control'
@@ -68,8 +78,7 @@ class AddPasswordForm extends Component {
                         id = 'newPasswordInput'
                         onChange = { this._onPasswordChange }
                         onKeyDown = { this._onKeyDown }
-                        placeholder
-                            = { this.props.t('dialog.createPassword') }
+                        placeholder = { t('dialog.createPassword') }
                         type = 'text' />
                     <button
                         className = 'button-control button-control_light'
@@ -77,7 +86,7 @@ class AddPasswordForm extends Component {
                         id = 'addPasswordBtn'
                         onClick = { this._onSubmit }
                         type = 'button'>
-                        { this.props.t('dialog.add') }
+                        { t('dialog.add') }
                     </button>
                 </div>
             </div>
@@ -122,7 +131,7 @@ class AddPasswordForm extends Component {
             return;
         }
 
-        const conference = this.props.conference;
+        const { conference } = this.props;
 
         this.props.dispatch(setPassword(
             conference,

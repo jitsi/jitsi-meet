@@ -10,9 +10,7 @@ import { InviteDialog } from './components';
  * @returns {Function}
  */
 export function openInviteDialog() {
-    return dispatch => {
-        dispatch(openDialog(InviteDialog, {
-            conferenceUrl: encodeURI(APP.ConferenceUrl.getInviteUrl())
-        }));
-    };
+    return openDialog(InviteDialog, {
+        conferenceUrl: encodeURI(APP.ConferenceUrl.getInviteUrl())
+    });
 }

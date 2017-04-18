@@ -85,6 +85,14 @@ function _conferenceFailed(state, action) {
             audioOnlyVideoMuted: undefined,
             conference: undefined,
             leaving: undefined,
+
+            /**
+             * The indicator of how the conference/room is locked. If falsy, the
+             * conference/room is unlocked; otherwise, it's either
+             * {@code LOCKED_LOCALLY| or {@code LOCKED_REMOTELY}.
+             *
+             * @type {string}
+             */
             locked: passwordRequired ? LOCKED_REMOTELY : undefined,
             password: undefined,
 
@@ -211,14 +219,14 @@ function _lockStateChanged(state, action) {
         return state;
     }
 
-    let lockState;
+    let locked;
 
     if (action.locked) {
-        lockState = state.locked || LOCKED_REMOTELY;
+        locked = state.locked || LOCKED_REMOTELY;
     }
 
     return setStateProperties(state, {
-        locked: lockState,
+        locked,
         password: action.locked ? state.password : null
     });
 }
@@ -265,7 +273,7 @@ function _setPassword(state, action) {
     const conference = action.conference;
 
     switch (action.method) {
-    case conference.join: {
+    case conference.join:
         if (state.passwordRequired === conference) {
             return (
                 setStateProperties(state, {
@@ -280,15 +288,13 @@ function _setPassword(state, action) {
                     passwordRequired: undefined
                 }));
         }
-
         break;
-    }
-    case conference.lock: {
+
+    case conference.lock:
         return setStateProperties(state, {
             locked: action.password ? LOCKED_LOCALLY : undefined,
             password: action.password
         });
-    }
     }
 
     return state;

@@ -409,12 +409,9 @@ class ConferenceConnector {
             break;
 
             // not enough rights to create conference
-        case ConferenceErrors.AUTHENTICATION_REQUIRED:
-            {
-                // schedule reconnect to check if someone else created the room
-                this.reconnectTimeout = setTimeout(function () {
-                    room.join();
-                }, 5000);
+        case ConferenceErrors.AUTHENTICATION_REQUIRED: {
+                // Schedule reconnect to check if someone else created the room.
+                this.reconnectTimeout = setTimeout(() => room.join(), 5000);
 
                 const { password }
                     = APP.store.getState()['features/base/conference'];
@@ -1449,9 +1446,9 @@ export default {
             APP.UI.changeDisplayName(id, formattedDisplayName);
         });
 
-        room.on(ConferenceEvents.LOCK_STATE_CHANGED, (...args) => {
-            APP.store.dispatch(lockStateChanged(room, ...args));
-        });
+        room.on(
+            ConferenceEvents.LOCK_STATE_CHANGED,
+            (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
 
         room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, name, oldValue, newValue) => {

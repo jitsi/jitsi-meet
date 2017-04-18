@@ -8,12 +8,12 @@ import LockStatePanel from './LockStatePanel';
 import RemovePasswordForm from './RemovePasswordForm';
 
 /**
- * React component for displaying the current room lock state as well as
+ * React {@code Component} for displaying the current room lock state as well as
  * exposing features to modify the room lock.
  */
 class PasswordContainer extends Component {
     /**
-     * PasswordContainer component's property types.
+     * {@code PasswordContainer}'s property types.
      *
      * @static
      */
@@ -49,7 +49,7 @@ class PasswordContainer extends Component {
     }
 
     /**
-     * Initializes a new PasswordContainer instance.
+     * Initializes a new {@code PasswordContainer} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -58,9 +58,16 @@ class PasswordContainer extends Component {
         super(props);
 
         this.state = {
+            /**
+             * Whether or not the form to edit the password should display. If
+             * true, the form should display.
+             *
+             * @type {boolean}
+             */
             isEditingPassword: false
         };
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onTogglePasswordEdit = this._onTogglePasswordEdit.bind(this);
     }
 
@@ -105,12 +112,14 @@ class PasswordContainer extends Component {
             return null;
         }
 
-        return this.props.locked
-            ? <RemovePasswordForm
-                conference = { this.props.conference }
-                lockedLocally = { this.props.locked === LOCKED_LOCALLY }
-                password = { this.props.password } />
-            : <AddPasswordForm conference = { this.props.conference } />;
+        return (
+            this.props.locked
+                ? <RemovePasswordForm
+                    conference = { this.props.conference }
+                    lockedLocally = { this.props.locked === LOCKED_LOCALLY }
+                    password = { this.props.password } />
+                : <AddPasswordForm conference = { this.props.conference } />
+        );
     }
 
     /**
