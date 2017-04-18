@@ -179,6 +179,8 @@ VirtualHost "jitsi.example.com"
 		certificate = "/var/lib/prosody/jitsi.example.com.crt";
 	}
 
+	c2s_require_encryption = false
+
 ------ Components ------
 -- You can specify components to add hosts that provide special services,
 -- like multi-user conferences, and transports.
