@@ -92,6 +92,7 @@
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "audioonly": "Enable / Disable audio only mode (saves bandwidth).",
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",
         "authenticate": "Authenticate",

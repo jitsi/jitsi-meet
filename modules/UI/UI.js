@@ -712,6 +712,15 @@ UI.setVideoMuted = function (id, muted) {
 };
 
 /**
+ * Sets the audio only mode.
+ */
+UI.setAudioOnly = function (audioOnly) {
+    APP.store.dispatch(setToolbarButton('audioonly', {
+        toggled: audioOnly
+    }));
+};
+
+/**
  * Adds a listener that would be notified on the given type of event.
  *
  * @param type the type of the event we're listening for

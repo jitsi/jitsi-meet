@@ -28,7 +28,8 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
-    EMAIL_COMMAND
+    EMAIL_COMMAND,
+    setLastN
 } from './react/features/base/conference';
 import {
     updateDeviceList
@@ -537,6 +538,7 @@ export default {
     isModerator: false,
     audioMuted: false,
     videoMuted: false,
+    isAudioOnly: false,
     isSharingScreen: false,
     isDesktopSharingEnabled: false,
     /*
@@ -1087,6 +1089,26 @@ export default {
             });
     },
 
+
+    /**
+     * Toggles the "audio only" mode. In such mode local video is muted and
+     * last N is set to 0 (effectively muting remote video). This can be used
+     * as a bandwidth saving mechanism.
+     *
+     * @param {boolean} audioOnly True if audio only mode should be enabled,
+     * false otherwise.
+     * @returns {void}
+     */
+    toggleAudioOnly(audioOnly = !this.isAudioOnly) {
+        this.muteVideo(audioOnly);
+
+        // Setting last N to undefined will set it to the default value
+        APP.store.dispatch(setLastN(audioOnly ? 0 : undefined));
+
+        APP.UI.setAudioOnly(audioOnly);
+
+        this.isAudioOnly = audioOnly;
+    },
 
     videoSwitchInProgress: false,
     toggleScreenSharing(shareScreen = !this.isSharingScreen) {
@@ -1695,6 +1717,10 @@ export default {
                             'will be used instead.', err);
                     });
             }
+        );
+
+        APP.UI.addListener(
+            UIEvents.TOGGLE_AUDIO_ONLY, this.toggleAudioOnly.bind(this)
         );
 
         APP.UI.addListener(

@@ -136,6 +136,11 @@ export default class LargeVideoManager {
                 showAvatar = true;
             }
 
+            // If audio only mode is enabled, always show the avatar.
+            if (APP.conference.isAudioOnly) {
+                showAvatar = true;
+            }
+
             let promise;
 
             // do not show stream if video is muted
@@ -159,7 +164,10 @@ export default class LargeVideoManager {
 
             // Make sure no notification about remote failure is shown as
             // its UI conflicts with the one for local connection interrupted.
-            const isConnected = APP.conference.isConnectionInterrupted()
+            // For the purposes of UI indicators, audio only is considered as
+            // an "active" connection.
+            const isConnected = APP.conference.isAudioOnly
+                                ||APP.conference.isConnectionInterrupted()
                                 || isConnectionActive;
 
             // when isHavingConnectivityIssues, state can be inactive,

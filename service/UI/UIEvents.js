@@ -37,6 +37,10 @@ export default {
     TOGGLE_FULLSCREEN: "UI.toogle_fullscreen",
     FULLSCREEN_TOGGLED: "UI.fullscreen_toggled",
     AUTH_CLICKED: "UI.auth_clicked",
+    /**
+     * Notifies that the audio only mode was toggled.
+     */
+    TOGGLE_AUDIO_ONLY: "UI.toggle_audioonly",
     TOGGLE_CHAT: "UI.toggle_chat",
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
