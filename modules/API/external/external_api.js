@@ -1,5 +1,8 @@
 import EventEmitter from 'events';
-import postisInit from 'postis';
+
+import PostMessageTransportBackend
+    from '../../transport/PostMessageTransportBackend';
+import Transport from '../../transport/Transport';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -25,14 +28,14 @@ const commands = {
  * events expected by jitsi-meet
  */
 const events = {
-    displayNameChange: 'display-name-change',
-    incomingMessage: 'incoming-message',
-    outgoingMessage: 'outgoing-message',
-    participantJoined: 'participant-joined',
-    participantLeft: 'participant-left',
-    readyToClose: 'video-ready-to-close',
-    videoConferenceJoined: 'video-conference-joined',
-    videoConferenceLeft: 'video-conference-left'
+    'display-name-change': 'displayNameChange',
+    'incoming-message': 'incomingMessage',
+    'outgoing-message': 'outgoingMessage',
+    'participant-joined': 'participantJoined',
+    'participant-left': 'participantLeft',
+    'video-ready-to-close': 'readyToClose',
+    'video-conference-joined': 'videoConferenceJoined',
+    'video-conference-left': 'videoConferenceLeft'
 };
 
 /**
@@ -180,9 +183,13 @@ class JitsiMeetExternalAPI extends EventEmitter {
         });
         this._createIFrame(Math.max(height, MIN_HEIGHT),
             Math.max(width, MIN_WIDTH));
-        this.postis = postisInit({
-            scope: `jitsi_meet_external_api_${id}`,
-            window: this.frame.contentWindow
+        this._transport = new Transport({
+            transport: new PostMessageTransportBackend({
+                postisOptions: {
+                    scope: `jitsi_meet_external_api_${id}`,
+                    window: this.frame.contentWindow
+                }
+            })
         });
         this.numberOfParticipants = 1;
         this._setupListeners();
@@ -225,17 +232,28 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * @private
      */
     _setupListeners() {
-        this.postis.listen('participant-joined',
-            changeParticipantNumber.bind(null, this, 1));
-        this.postis.listen('participant-left',
-            changeParticipantNumber.bind(null, this, -1));
 
-        for (const eventName in events) { // eslint-disable-line guard-for-in
-            const postisMethod = events[eventName];
+        this._transport.on('event', event => {
+            const { name, data } = event;
 
-            this.postis.listen(postisMethod,
-                (...args) => this.emit(eventName, ...args));
-        }
+            if (name === 'participant-joined') {
+                changeParticipantNumber(this, 1);
+            }
+
+            if (name === 'participant-left') {
+                changeParticipantNumber(this, -1);
+            }
+
+            const eventName = events[name];
+
+            if (eventName) {
+                this.emit(eventName, data);
+
+                return true;
+            }
+
+            return false;
+        });
     }
 
     /**
@@ -319,10 +337,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     dispose() {
-        if (this.postis) {
-            this.postis.destroy();
-            this.postis = null;
-        }
+        this._transport.dispose();
         this.removeAllListeners();
         if (this.iframeHolder) {
             this.iframeHolder.parentNode.removeChild(this.iframeHolder);
@@ -348,16 +363,9 @@ class JitsiMeetExternalAPI extends EventEmitter {
 
             return;
         }
-
-        if (!this.postis) {
-            logger.error('Cannot execute command using disposed instance.');
-
-            return;
-        }
-
-        this.postis.send({
-            method: commands[name],
-            params: args
+        this._transport.sendEvent({
+            name: commands[name],
+            data: args
         });
     }
 

@@ -50,14 +50,19 @@ export default class PostMessageTransportBackend {
      * transport.
      */
     constructor(options = {}) {
-        const postisOptions = Object.assign({}, defaultPostisOptions, options);
+        const postisOptions = Object.assign({}, defaultPostisOptions,
+            options.postisOptions);
 
         this.postis = Postis(postisOptions);
 
-        // backward compatability
-        legacyIncomingMethods.forEach(method =>
-            this.postis.listen(method,
-                params => this._onPostisDataReceived(method, params)));
+        this._enableLegacyFormat = options.enableLegacyFormat;
+
+        if (!this._enableLegacyFormat) {
+            // backward compatability
+            legacyIncomingMethods.forEach(method =>
+                this.postis.listen(method,
+                    params => this._onPostisDataReceived(method, params)));
+        }
 
         this.postis.listen(POSTIS_METHOD_NAME, data =>
             this._dataReceivedCallBack(data));
@@ -123,10 +128,13 @@ export default class PostMessageTransportBackend {
             params: data
         });
 
-        // For the legacy use case we don't need any new fields defined in
-        // Transport class. That's why we are passing only the original object
-        // passed by the consumer of the Transport class which is data.data.
-        this._sendLegacyData(data.data);
+        if (!this._enableLegacyFormat) {
+            // For the legacy use case we don't need any new fields defined in
+            // Transport class. That's why we are passing only the original
+            // object passed by the consumer of the Transport class which is
+            // data.data.
+            this._sendLegacyData(data.data);
+        }
     }
 
     /**

@@ -9,15 +9,18 @@ import PostMessageTransportBackend from './PostMessageTransportBackend';
  *
  * @type {Object}
  */
-const postMessageOptions = {};
+const postisOptions = {};
 
 if (typeof API_ID === 'number') {
-    postMessageOptions.scope
+    postisOptions.scope
         = `jitsi_meet_external_api_${API_ID}`;
 }
 
 export const transport = new Transport({
-    transport: new PostMessageTransportBackend(postMessageOptions)
+    transport: new PostMessageTransportBackend({
+        enableLegacyFormat: true,
+        postisOptions
+    })
 });
 
 /**
