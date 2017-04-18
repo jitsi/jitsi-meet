@@ -3,6 +3,7 @@
 import Logger from 'jitsi-meet-logger';
 
 import { isRoomValid } from '../base/conference';
+import { JitsiMeetLogStorage } from '../base/logger';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { Platform, RouteRegistry } from '../base/react';
 import { Conference } from '../conference';
@@ -17,7 +18,6 @@ import { WelcomePage } from '../welcome';
 import KeyboardShortcut
     from '../../../modules/keyboardshortcut/keyboardshortcut';
 import getTokenData from '../../../modules/tokendata/TokenData';
-import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -139,7 +139,14 @@ function _initLogging() {
     // cached, before the JitsiMeetLogStorage gets ready (statistics module is
     // initialized).
     if (!APP.logCollector && !loggingConfig.disableLogCollector) {
-        APP.logCollector = new Logger.LogCollector(new JitsiMeetLogStorage());
+        const {
+            conference,
+            logCollectorStarted
+        } = APP;
+        const logCollector
+            = new JitsiMeetLogStorage(logCollectorStarted, conference);
+
+        APP.logCollector = new Logger.LogCollector(logCollector);
         Logger.addGlobalTransport(APP.logCollector);
         JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
     }
