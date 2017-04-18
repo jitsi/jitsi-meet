@@ -22,7 +22,7 @@ export default class PostMessageTransport extends EventEmitter {
      */
     constructor(options = {}) {
         super();
-        const postisOptions = Object.assign({}, options, defaultPostisOptions);
+        const postisOptions = Object.assign({}, defaultPostisOptions, options);
 
         this.postis = Postis(postisOptions);
 

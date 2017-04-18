@@ -38,7 +38,7 @@ function initCommands() {
         'avatar-url': APP.conference.changeLocalAvatarUrl
     };
     Object.keys(commands).forEach(
-        key => transport.on(key, args => commands[key](...args)));
+        key => transport.on(key, data => commands[key](data.value)));
 }
 
 /**
