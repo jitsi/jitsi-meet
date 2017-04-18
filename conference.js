@@ -2048,8 +2048,9 @@ export default {
         }
 
         APP.settings.setDisplayName(formattedNickname);
-        room.setDisplayName(formattedNickname);
-        APP.UI.changeDisplayName(this.getMyUserId(),
-            formattedNickname);
+        if (room) {
+            room.setDisplayName(formattedNickname);
+            APP.UI.changeDisplayName(this.getMyUserId(), formattedNickname);
+        }
     }
 };
