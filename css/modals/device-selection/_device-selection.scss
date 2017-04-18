@@ -4,35 +4,49 @@
     .device-selectors {
         font-size: 14px;
 
+        /* ensure all child components do not exceed parent width */
+        button,
+        div {
+            max-width: 100%;
+        }
+
         > div {
+            display: block;
             margin-bottom: 10px;
         }
 
         > div:last-child {
             margin-bottom: 5px;
         }
+
+        .device-selector-icon {
+            color: inherit;
+            font-size: 20px;
+        }
     }
 
-    .device-selection-column-selectors,
-    .device-selection-column-video {
-        padding: 10px;
+    .device-selection-column {
+        box-sizing: border-box;
         display: inline-block;
         vertical-align: top;
-    }
-    .device-selection-column-selectors {
-        width: 46%;
-    }
-    .device-selection-column-video {
-        width: 49%;
-        padding: 10px 0;
+
+        &.column-selectors {
+            margin-left: 15px;
+            width: 55%;
+        }
+
+        &.column-video {
+            width: 38%;
+        }
     }
 
     .device-selection-video-container {
         background: black;
-        height: 156px;
-        margin: 15px 0 5px;
+        height: 122px;
+        margin-bottom: 5px;
 
         .video-input-preview {
+            margin-top: 2px;
             position: relative;
 
             .video-input-preview-muted {
@@ -58,8 +72,6 @@
     }
 
     .audio-output-preview {
-        text-align: right;
-
         a {
             cursor: pointer;
             text-decoration: none;
