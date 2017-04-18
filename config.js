@@ -65,7 +65,6 @@ var config = { // eslint-disable-line no-unused-vars
     //enableClosePage: false, // enabling the close page will ignore the welcome
                               // page redirection when call is hangup
     disableSimulcast: false,
-    logStats: false, // Enable logging of PeerConnection stats via the focus
 //    requireDisplayName: true, // Forces the participants that doesn't have display name to enter it when they enter the room.
 //    startAudioMuted: 10, // every participant after the Nth will start audio muted
 //    startVideoMuted: 10, // every participant after the Nth will start video muted
