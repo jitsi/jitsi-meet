@@ -1,4 +1,6 @@
-/* global APP, getConfigParamsFromUrl */
+/* global APP */
+
+import { getConfigParamsFromUrl } from '../../react/features/base/config';
 
 import postisInit from 'postis';
 
@@ -8,6 +10,9 @@ import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
  * List of the available commands.
  */
 let commands = {};
+
+// Parsing config params from URL hash.
+const hashParams = getConfigParamsFromUrl(window.location);
 
 /**
  * The state of screen sharing(started/stopped) before the screen sharing is
@@ -20,8 +25,7 @@ let initialScreenSharingState = false;
 /**
  * JitsiMeetExternalAPI id - unique for a webpage.
  */
-const jitsiMeetExternalApiId
-    = getConfigParamsFromUrl().jitsi_meet_external_api_id;
+const jitsiMeetExternalApiId = hashParams.jitsi_meet_external_api_id;
 
 /**
  * Postis instance. Used to communicate with the external application. If

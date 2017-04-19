@@ -1,66 +1,77 @@
-/* global config, interfaceConfig, loggingConfig, getConfigParamsFromUrl */
+/* global config, interfaceConfig, loggingConfig */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-var configUtils = require('./Util');
-var params = {};
+import { getConfigParamsFromUrl } from '../../react/features/base/config';
 
-params = getConfigParamsFromUrl();
+import configUtils from './Util';
 
-var URLProcessor = {
-    setConfigParametersFromUrl: function () {
-        // Convert 'params' to JSON object
-        // We have:
-        // {
-        //   "config.disableAudioLevels": false,
-        //   "config.channelLastN": -1,
-        //   "interfaceConfig.APP_NAME": "Jitsi Meet"
-        // }
-        // We want to have:
-        // {
-        //   "config": {
-        //     "disableAudioLevels": false,
-        //     "channelLastN": -1
-        //   },
-        //   interfaceConfig: {
-        //     APP_NAME: "Jitsi Meet"
-        //   }
-        // }
-        var configJSON = {
+// Parsing config params from URL hash.
+const URL_PARAMS = getConfigParamsFromUrl(window.location);
+
+/**
+ * Convert 'URL_PARAMS' to JSON object
+ * We have:
+ * {
+ *      "config.disableAudioLevels": false,
+ *      "config.channelLastN": -1,
+ *      "interfaceConfig.APP_NAME": "Jitsi Meet"
+ * }
+ * We want to have:
+ * {
+ *      "config": {
+ *          "disableAudioLevels": false,
+ *          "channelLastN": -1
+ *      },
+ *      interfaceConfig: {
+ *          "APP_NAME": "Jitsi Meet"
+ *      }
+ * }
+ */
+export default {
+    setConfigParametersFromUrl() {
+        const configJSON = {
             config: {},
             interfaceConfig: {},
             loggingConfig: {}
         };
-        for (var key in params) {
-            if (typeof key !== "string") {
-                logger.warn("Invalid config key: ", key);
-                continue;
+
+        Object.keys(URL_PARAMS).forEach(key => {
+            if (typeof key !== 'string') {
+                logger.warn('Invalid config key: ', key);
+
+                return;
             }
-            var confObj = null, confKey;
-            if (key.indexOf("config.") === 0) {
+
+            let confObj = null;
+            let confKey;
+
+            if (key.indexOf('config.') === 0) {
                 confObj = configJSON.config;
-                confKey = key.substr("config.".length);
+                confKey = key.substr('config.'.length);
 
                 // prevent passing some parameters which can inject scripts
                 if (confKey === 'analyticsScriptUrls'
-                    || confKey === 'callStatsCustomScriptUrl')
-                    continue;
+                    || confKey === 'callStatsCustomScriptUrl') {
+                    return;
+                }
 
-            } else if (key.indexOf("interfaceConfig.") === 0) {
+            } else if (key.indexOf('interfaceConfig.') === 0) {
                 confObj = configJSON.interfaceConfig;
-                confKey = key.substr("interfaceConfig.".length);
-            } else if (key.indexOf("loggingConfig.") === 0) {
+                confKey = key.substr('interfaceConfig.'.length);
+            } else if (key.indexOf('loggingConfig.') === 0) {
                 confObj = configJSON.loggingConfig;
-                confKey = key.substr("loggingConfig.".length);
+                confKey = key.substr('loggingConfig.'.length);
             }
 
-            if (!confObj)
-                continue;
+            if (!confObj) {
+                return;
+            }
 
-            confObj[confKey] = params[key];
-        }
+            confObj[confKey] = URL_PARAMS[key];
+        });
+
         configUtils.overrideConfigJSON(
             config, interfaceConfig, loggingConfig, configJSON);
     }
 };
-
-module.exports = URLProcessor;
