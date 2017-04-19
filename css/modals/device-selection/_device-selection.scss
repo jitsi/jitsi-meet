@@ -41,11 +41,7 @@
     }
 
     .device-selection-video-container {
-        /* TOFIX: to be removed when we move out from muted preview */
-        background: black;
         border-radius: 3px;
-        /* TOFIX-END */
-        height: 160px;
         margin-bottom: 5px;
 
         .video-input-preview {
@@ -66,12 +62,18 @@
                 top: 50%;
             }
 
-            &.video-muted .video-input-preview-muted {
-                display: block;
+            &.video-muted {
+                /* TOFIX: to be removed when we move out from muted preview */
+                background: black;
+                /* TOFIX-END */
+
+                .video-input-preview-muted {
+                    display: block;
+                }
             }
 
             .video-input-preview-display {
-                height: 100%;
+                height: auto;
                 overflow: hidden;
                 width: 100%;
             }
