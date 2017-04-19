@@ -10,6 +10,31 @@ import configUtils from './Util';
 const URL_PARAMS = getConfigParamsFromUrl(window.location);
 
 /**
+ *  URL params with this prefix should be merged to config.
+ */
+const CONFIG_PREFIX = 'config.';
+
+/**
+ *  URL params with this prefix should be merged to interface config.
+ */
+const INTERFACE_CONFIG_PREFIX = 'interfaceConfig.';
+
+/**
+ *  URL params with this prefix should be merged to logging config.
+ */
+const LOGGING_CONFIG_PREFIX = 'loggingConfig.';
+
+/**
+ * Config keys to be ignored.
+ *
+ * @type Set
+ */
+const KEYS_TO_IGNORE = new Set([
+    'analyticsScriptUrls',
+    'callStatsCustomScriptUrl'
+]);
+
+/**
  * Convert 'URL_PARAMS' to JSON object
  * We have:
  * {
@@ -36,40 +61,33 @@ export default {
             loggingConfig: {}
         };
 
-        Object.keys(URL_PARAMS).forEach(key => {
-            if (typeof key !== 'string') {
-                logger.warn('Invalid config key: ', key);
+        for (const key in URL_PARAMS) {
+            if (typeof key === 'string') {
+                let confObj = null;
+                let confKey;
 
-                return;
-            }
+                if (key.indexOf(CONFIG_PREFIX) === 0) {
+                    confObj = configJSON.config;
+                    confKey = key.substr(CONFIG_PREFIX.length);
 
-            let confObj = null;
-            let confKey;
+                    // prevent passing some parameters which can inject scripts
+                    if (confObj && !KEYS_TO_IGNORE.has(confKey)) {
+                        confObj[confKey] = URL_PARAMS[key];
+                    }
 
-            if (key.indexOf('config.') === 0) {
-                confObj = configJSON.config;
-                confKey = key.substr('config.'.length);
-
-                // prevent passing some parameters which can inject scripts
-                if (confKey === 'analyticsScriptUrls'
-                    || confKey === 'callStatsCustomScriptUrl') {
-                    return;
+                } else if (key.indexOf(INTERFACE_CONFIG_PREFIX) === 0) {
+                    confObj = configJSON.interfaceConfig;
+                    confKey
+                        = key.substr(INTERFACE_CONFIG_PREFIX.length);
+                } else if (key.indexOf(LOGGING_CONFIG_PREFIX) === 0) {
+                    confObj = configJSON.loggingConfig;
+                    confKey = key.substr(LOGGING_CONFIG_PREFIX.length);
                 }
 
-            } else if (key.indexOf('interfaceConfig.') === 0) {
-                confObj = configJSON.interfaceConfig;
-                confKey = key.substr('interfaceConfig.'.length);
-            } else if (key.indexOf('loggingConfig.') === 0) {
-                confObj = configJSON.loggingConfig;
-                confKey = key.substr('loggingConfig.'.length);
+            } else {
+                logger.warn('Invalid config key: ', key);
             }
-
-            if (!confObj) {
-                return;
-            }
-
-            confObj[confKey] = URL_PARAMS[key];
-        });
+        }
 
         configUtils.overrideConfigJSON(
             config, interfaceConfig, loggingConfig, configJSON);
