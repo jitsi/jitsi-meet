@@ -13,7 +13,8 @@ import {
     _SET_AUDIO_ONLY_VIDEO_MUTED,
     SET_LARGE_VIDEO_HD_STATUS,
     SET_PASSWORD,
-    SET_ROOM
+    SET_ROOM,
+    SET_ROOM_URL
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -52,6 +53,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case SET_ROOM:
         return _setRoom(state, action);
+
+    case SET_ROOM_URL:
+        return _setRoomURL(state, action);
     }
 
     return state;
@@ -343,4 +347,24 @@ function _setRoom(state, action) {
      * @type {string}
      */
     return set(state, 'room', room);
+}
+
+/**
+ * Reduces a specific Redux action SET_ROOM_URL of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_ROOM_URL to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setRoomURL(state, action) {
+    const { roomURL } = action;
+
+    /**
+     * Room URL of the conference (to be) joined.
+     *
+     * @type {string}
+     */
+    return set(state, 'roomURL', roomURL);
 }

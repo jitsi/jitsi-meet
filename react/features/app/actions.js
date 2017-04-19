@@ -1,4 +1,4 @@
-import { setRoom } from '../base/conference';
+import { setRoom, setRoomUrl } from '../base/conference';
 import { setConfig } from '../base/config';
 import { getDomain, setDomain } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
@@ -34,6 +34,8 @@ export function appNavigate(uri) {
     return (dispatch, getState) => {
         const state = getState();
         const oldDomain = getDomain(state);
+        const defaultURL = state['features/app'].app._getDefaultURL();
+        let urlObject;
 
         // eslint-disable-next-line prefer-const
         let { domain, room } = _parseURIString(uri);
@@ -42,9 +44,18 @@ export function appNavigate(uri) {
         // default.
         if (typeof domain === 'undefined') {
             domain
-                = _parseURIString(state['features/app'].app._getDefaultURL())
+                = _parseURIString(defaultURL)
                     .domain;
         }
+
+        if (room) {
+            const splitUrl = uri.split(domain);
+            const urlWithoutDomain = splitUrl[splitUrl.length - 1];
+
+            urlObject = new URL(urlWithoutDomain, `https://${domain}`);
+        }
+
+        dispatch(setRoomUrl(urlObject));
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
         // currently in a conference and ask her if she wants to close the

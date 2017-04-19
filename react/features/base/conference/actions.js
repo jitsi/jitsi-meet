@@ -24,7 +24,8 @@ import {
     SET_LASTN,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_ROOM
+    SET_ROOM,
+    SET_ROOM_URL
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -183,9 +184,9 @@ export function conferenceJoined(conference) {
  * @param {JitsiConference} conference - The JitsiConference instance which was
  * left by the local participant.
  * @returns {{
- *      type: CONFERENCE_LEFT,
- *      conference: JitsiConference
- *  }}
+ *     type: CONFERENCE_LEFT,
+ *     conference: JitsiConference
+ * }}
  */
 export function conferenceLeft(conference) {
     return {
@@ -202,9 +203,9 @@ export function conferenceLeft(conference) {
  * @param {string} room - The room (name) which identifies the conference the
  * local participant will (try to) join.
  * @returns {{
- *      type: CONFERENCE_WILL_JOIN,
- *      room: string
- *  }}
+ *     type: CONFERENCE_WILL_JOIN,
+ *     room: string
+ * }}
  */
 function _conferenceWillJoin(room) {
     return {
@@ -222,9 +223,9 @@ function _conferenceWillJoin(room) {
  * @param {JitsiConference} conference - The JitsiConference instance which will
  * be left by the local participant.
  * @returns {{
- *      type: CONFERENCE_LEFT,
- *      conference: JitsiConference
- *  }}
+ *     type: CONFERENCE_LEFT,
+ *     conference: JitsiConference
+ * }}
  */
 export function conferenceWillLeave(conference) {
     return {
@@ -487,6 +488,22 @@ export function setRoom(room) {
     return {
         type: SET_ROOM,
         room
+    };
+}
+
+/**
+ * Sets the room URL.
+ *
+ * @param {string} roomURL - Room url.
+ * @returns {{
+ *     type: SET_ROOM_URL,
+ *     roomURL: URL
+ * }}
+ */
+export function setRoomURL(roomURL) {
+    return {
+        type: SET_ROOM_URL,
+        roomURL
     };
 }
 

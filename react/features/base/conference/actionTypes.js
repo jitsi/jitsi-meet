@@ -148,3 +148,13 @@ export const SET_PASSWORD_FAILED = Symbol('SET_PASSWORD_FAILED');
  * }
  */
 export const SET_ROOM = Symbol('SET_ROOM');
+
+/**
+ * The type of (Redux) action which sets the room URL.
+ *
+ * {
+ *     type: SET_ROOM_URL,
+ *     roomURL: URL
+ * }
+ */
+export const SET_ROOM_URL = Symbol('SET_ROOM_URL');
