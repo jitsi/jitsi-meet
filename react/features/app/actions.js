@@ -1,4 +1,4 @@
-import { setRoom } from '../base/conference';
+import { setRoom, setRoomUrl } from '../base/conference';
 import { getDomain, setDomain } from '../base/connection';
 import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
 
@@ -33,6 +33,10 @@ export function appNavigate(uri) {
     return (dispatch, getState) => {
         const state = getState();
         const oldDomain = getDomain(state);
+        const defaultURL = state['features/app'].app._getDefaultURL();
+        const urlObject = new URL(uri, defaultURL);
+
+        dispatch(setRoomUrl(urlObject));
 
         // eslint-disable-next-line prefer-const
         let { domain, room } = _parseURIString(uri);
@@ -41,7 +45,7 @@ export function appNavigate(uri) {
         // default.
         if (typeof domain === 'undefined') {
             domain
-                = _parseURIString(state['features/app'].app._getDefaultURL())
+                = _parseURIString(defaultURL)
                     .domain;
         }
 
