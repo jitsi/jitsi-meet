@@ -81,6 +81,13 @@
 			remoteGlobalIDString = 832C81801AAF6DEF007FA2F7;
 			remoteInfo = RCTVibration;
 		};
+		0B50D60B1EA7891100B34818 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 325F5AB71E6763EC00E6CDE4;
+			remoteInfo = "KCKeepAwake-tvOS";
+		};
 		0B8752851E26E54A004C5CAB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B09C20C78C74A548AAAC1FA /* KCKeepAwake.xcodeproj */;
@@ -394,6 +401,7 @@
 			isa = PBXGroup;
 			children = (
 				0B8752861E26E54A004C5CAB /* libKCKeepAwake.a */,
+				0B50D60C1EA7891100B34818 /* libKCKeepAwake-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -726,6 +734,13 @@
 			fileType = archive.ar;
 			path = libRCTVibration.a;
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B50D60C1EA7891100B34818 /* libKCKeepAwake-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libKCKeepAwake-tvOS.a";
+			remoteRef = 0B50D60B1EA7891100B34818 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		0B8752861E26E54A004C5CAB /* libKCKeepAwake.a */ = {
