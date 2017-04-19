@@ -1,7 +1,9 @@
-/* global config,
-          createConnectionExternally,
-          getConfigParamsFromUrl,
-          getRoomName */
+/* global config, createConnectionExternally */
+
+import {
+    getConfigParamsFromUrl,
+    getRoomName
+} from '../react/features/base/config/functions';
 
 /**
  * Implements external connect using createConnectionExternally function defined
@@ -15,8 +17,8 @@
  * external_connect.js.
  */
 
-const hashParams = getConfigParamsFromUrl('hash', true);
-const searchParams = getConfigParamsFromUrl('search', true);
+const hashParams = getConfigParamsFromUrl(window.location, true);
+const searchParams = getConfigParamsFromUrl(window.location, true, 'search');
 
 // URL params have higher proirity than config params.
 let url
