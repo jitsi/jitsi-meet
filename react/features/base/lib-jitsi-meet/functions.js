@@ -1,6 +1,8 @@
 import { loadScript } from '../../base/util';
 
-import URLProcessor from '../../../../modules/config/URLProcessor';
+import {
+    setConfigParametersFromUrl
+} from '../../../../modules/config/URLProcessor';
 
 import JitsiMeetJS from './_';
 
@@ -44,7 +46,7 @@ export function loadConfig(host: string, path: string = '/config.js') {
         // but URLProcessor still deals with the global variables config,
         // interfaceConfig, and loggingConfig and loadConfig. As the latter will
         // surely change in the future, so will the former then.
-        URLProcessor.setConfigParametersFromUrl();
+        setConfigParametersFromUrl();
 
         return Promise.resolve(window.config);
     }
