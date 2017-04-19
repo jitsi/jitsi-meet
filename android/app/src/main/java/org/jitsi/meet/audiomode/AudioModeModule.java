@@ -188,7 +188,13 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                if (updateAudioRoute(mode)) {
+                boolean success = false;
+                try {
+                    success = updateAudioRoute(mode);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                if (success) {
                     AudioModeModule.this.mode = mode;
                     promise.resolve(null);
                 } else {
