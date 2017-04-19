@@ -62,11 +62,19 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  */
 function connect(id, password, roomName) {
 
-    let connectionConfig = Object.assign({}, config);
+    const connectionConfig = Object.assign({}, config);
+    const state = APP.store.getState();
+    const { jwt, issuer } = state['features/jwt'];
+    let token;
 
     connectionConfig.bosh += '?room=' + roomName;
+
+    if (issuer !== 'anonymous') {
+        token = jwt;
+    }
+
     let connection
-        = new JitsiMeetJS.JitsiConnection(null, config.token, connectionConfig);
+        = new JitsiMeetJS.JitsiConnection(null, token, connectionConfig);
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
@@ -144,19 +152,18 @@ export function openConnection({id, password, retry, roomName}) {
     }
 
     return connect(id, password, roomName).catch(function (err) {
+        const state = APP.store.getState();
+        const { issuer } = state['features/jwt'];
+
         if (!retry) {
             throw err;
         }
 
-        if (err === ConnectionErrors.PASSWORD_REQUIRED) {
-            // do not retry if token is not valid
-            if (config.token) {
-                throw err;
-            } else {
-                return AuthHandler.requestAuth(roomName, connect);
-            }
-        } else {
-            throw err;
+        if (err === ConnectionErrors.PASSWORD_REQUIRED
+                && issuer === 'anonymous') {
+            return AuthHandler.requestAuth(roomName, connect);
         }
+
+        throw err;
     });
 }

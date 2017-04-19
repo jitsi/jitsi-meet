@@ -77,9 +77,9 @@ class RingOverlay {
             <div id="${this._containerId}" class='ringing' >
                 <div class='ringing__content'>
                     ${callingLabel}
-                    <img class='ringing__avatar' src="${callee.getAvatarUrl()}" />
+                    <img class='ringing__avatar' src="${callee.avatarUrl}" />
                     <div class="ringing__caller-info">
-                        <p>${callee.getName()}${callerStateLabel}</p>
+                        <p>${callee.name}${callerStateLabel}</p>
                     </div>
                 </div>
                 ${audioHTML}
@@ -137,9 +137,12 @@ class RingOverlay {
 export default {
     /**
      * Shows the ring overlay for the passed callee.
-     * @param callee {class User} the callee. Instance of User class from
-     * TokenData.js
-     * @param {boolean} disableRingingSound if true the ringing sound wont be played.
+     *
+     * @param {Object} callee - The callee. Object containing data about
+     * callee. Set in TokenData.js
+     * @param {boolean} disableRingingSound - If true the ringing sound won't be
+     * played.
+     * @returns {void}
      */
     show(callee, disableRingingSound = false) {
         if(overlay) {

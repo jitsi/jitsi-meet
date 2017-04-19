@@ -17,7 +17,7 @@ import {
  * @returns {Function}
  */
 export function appInit() {
-    return () => init();
+    return (dispatch, getState) => init(getState());
 }
 
 /**
@@ -34,9 +34,7 @@ export function appNavigate(uri) {
         const state = getState();
         const oldDomain = getDomain(state);
         const defaultURL = state['features/app'].app._getDefaultURL();
-        const urlObject = new URL(uri, defaultURL);
-
-        dispatch(setRoomUrl(urlObject));
+        let urlObject;
 
         // eslint-disable-next-line prefer-const
         let { domain, room } = _parseURIString(uri);
@@ -48,6 +46,15 @@ export function appNavigate(uri) {
                 = _parseURIString(defaultURL)
                     .domain;
         }
+
+        if (room) {
+            const splitUrl = uri.split(domain);
+            const urlWithoutDomain = splitUrl[splitUrl.length - 1];
+
+            urlObject = new URL(urlWithoutDomain, `https://${domain}`);
+        }
+
+        dispatch(setRoomUrl(urlObject));
 
         // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
         // currently in a conference and ask her if she wants to close the
