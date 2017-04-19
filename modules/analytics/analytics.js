@@ -111,7 +111,13 @@ class Analytics {
                     userAgent: navigator.userAgent,
                     roomName: APP.conference.roomName
                 };
-                let {server, group} = APP.tokenData;
+
+                const state = APP.store.getState();
+                const {
+                    group,
+                    server
+                } = state['features/jwt'];
+
                 if(server) {
                     permanentProperties.server = server;
                 }

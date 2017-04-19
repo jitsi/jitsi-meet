@@ -1,9 +1,11 @@
 /* global APP, config, JitsiMeetJS, Promise */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
+import { setTokenData } from '../../../react/features/jwt';
+
 import LoginDialog from './LoginDialog';
 import UIUtil from '../util/UIUtil';
-import {openConnection} from '../../../connection';
+import { openConnection } from '../../../connection';
 
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
@@ -80,8 +82,11 @@ function initJWTTokenListener(room) {
             return;
         }
         if (event.data && event.data.jwtToken) {
-            config.token = event.data.jwtToken;
-            logger.info("Received JWT token:", config.token);
+            const token = event.data.jwtToken;
+
+            APP.store.dispatch(setTokenData({ token }));
+
+            logger.info("Received JWT token:", token);
             var roomName = room.getName();
             openConnection({retry: false, roomName: roomName })
                 .then(function (connection) {
