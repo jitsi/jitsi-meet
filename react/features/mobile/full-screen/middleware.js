@@ -10,6 +10,7 @@ import {
     CONFERENCE_WILL_JOIN,
     SET_AUDIO_ONLY
 } from '../../base/conference';
+import { HIDE_DIALOG } from '../../base/dialog';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry } from '../../base/redux';
 
@@ -51,6 +52,14 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_LEFT:
         fullScreen = false;
         break;
+
+    case HIDE_DIALOG: {
+        const { audioOnly, conference }
+            = store.getState()['features/base/conference'];
+
+        fullScreen = conference ? !audioOnly : false;
+        break;
+    }
 
     case SET_AUDIO_ONLY:
         fullScreen = !action.audioOnly;
