@@ -319,16 +319,14 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     dispose() {
-        const frame = document.getElementById(this.frameName);
-
-        this.postis.destroy();
-        if (frame) {
-            frame.src = 'about:blank';
+        if (this.postis) {
+            this.postis.destroy();
+            this.postis = null;
         }
-        window.setTimeout(() => {
-            this.iframeHolder.removeChild(this.frame);
+        this.removeAllListeners();
+        if (this.iframeHolder) {
             this.iframeHolder.parentNode.removeChild(this.iframeHolder);
-        }, 10);
+        }
     }
 
     /**
@@ -350,6 +348,13 @@ class JitsiMeetExternalAPI extends EventEmitter {
 
             return;
         }
+
+        if (!this.postis) {
+            logger.error('Cannot execute command using disposed instance.');
+
+            return;
+        }
+
         this.postis.send({
             method: commands[name],
             params: args
@@ -398,7 +403,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * NOTE: This method is not removed for backward comatability purposes.
      */
     removeEventListener(event) {
-        this.removeListeners(event);
+        this.removeAllListeners(event);
     }
 
     /**
