@@ -428,9 +428,14 @@
     },
     "invite": {
         "addPassword": "Add password",
+        "dialInNumbers": "Dial-in telephone numbers",
+        "errorFetchingNumbers": "Failed to obtain dial-in numbers",
         "hidePassword": "Hide password",
         "inviteTo": "Invite people to __conferenceName__",
+        "loadingNumbers": "Loading...",
         "locked": "This call is locked. New callers must have the link and enter the password to join.",
+        "noNumbers": "No numbers available",
+        "numbersDisabled": "Dialing in has been disabled",
         "showPassword": "Show password",
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     }

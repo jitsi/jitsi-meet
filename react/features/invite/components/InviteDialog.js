@@ -11,6 +11,7 @@ import {
 
 import PasswordContainer from './PasswordContainer';
 import ShareLinkForm from './ShareLinkForm';
+import DialInNumbersForm from './DialInNumbersForm';
 
 /**
  * A React {@code Component} for displaying other components responsible for
@@ -39,6 +40,11 @@ class InviteDialog extends Component {
          * The url for the JitsiConference.
          */
         conferenceUrl: React.PropTypes.string,
+
+        /**
+         * The url for retrieving dial-in numbers.
+         */
+        dialInNumbersUrl: React.PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
@@ -75,6 +81,7 @@ class InviteDialog extends Component {
                 titleString = { titleString }>
                 <div className = 'invite-dialog'>
                     <ShareLinkForm toCopy = { this.props.conferenceUrl } />
+                    { this._renderDialInNumbersForm() }
                     <PasswordContainer
                         conference = { _conference.conference }
                         locked = { _conference.locked }
@@ -82,6 +89,22 @@ class InviteDialog extends Component {
                         showPasswordEdit = { this.props._isModerator } />
                 </div>
             </Dialog>
+        );
+    }
+
+    /**
+     * Creates a React {@code Component} for displaying and copying to clipboard
+     * telephone numbers for dialing in to the conference.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderDialInNumbersForm() {
+        return (
+            this.props.dialInNumbersUrl
+                ? <DialInNumbersForm
+                    dialInNumbersUrl = { this.props.dialInNumbersUrl } />
+                : null
         );
     }
 }
