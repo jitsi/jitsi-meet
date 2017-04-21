@@ -1,11 +1,13 @@
 /* global APP, config, JitsiMeetJS, Promise */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+
+import { openConnection } from '../../../connection';
+import { setJWT } from '../../../react/features/jwt';
+import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';
-import UIUtil from '../util/UIUtil';
-import {openConnection} from '../../../connection';
 
 const ConnectionErrors = JitsiMeetJS.errors.connection;
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 let externalAuthWindow;
 let authRequiredDialog;
@@ -73,15 +75,20 @@ function redirectToTokenAuthService(roomName) {
  * @param room the name fo the conference room.
  */
 function initJWTTokenListener(room) {
-    var listener = function (event) {
-        if (externalAuthWindow !== event.source) {
+    var listener = function ({ data, source }) {
+        if (externalAuthWindow !== source) {
             logger.warn("Ignored message not coming " +
                 "from external authnetication window");
             return;
         }
-        if (event.data && event.data.jwtToken) {
-            config.token = event.data.jwtToken;
-            logger.info("Received JWT token:", config.token);
+
+        let jwt;
+
+        if (data && (jwt = data.jwtToken)) {
+            logger.info("Received JSON Web Token (JWT):", jwt);
+
+            APP.store.dispatch(setJWT(jwt));
+
             var roomName = room.getName();
             openConnection({retry: false, roomName: roomName })
                 .then(function (connection) {

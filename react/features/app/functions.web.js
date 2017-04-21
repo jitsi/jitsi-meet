@@ -16,7 +16,6 @@ import { WelcomePage } from '../welcome';
 
 import KeyboardShortcut
     from '../../../modules/keyboardshortcut/keyboardshortcut';
-import getTokenData from '../../../modules/tokendata/TokenData';
 import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
 declare var APP: Object;
@@ -111,18 +110,20 @@ export function _getRouteToRender(stateOrGetState: Object | Function) {
  * Temporary solution. Later we'll get rid of global APP and set its properties
  * in redux store.
  *
+ * @param {Object} state - Snapshot of current state of redux store.
  * @returns {void}
  */
-export function init() {
+export function init(state: Object) {
     _initLogging();
 
     APP.keyboardshortcut = KeyboardShortcut;
-    APP.tokenData = getTokenData();
+
+    const { jwt } = state['features/jwt'];
 
     // Force enable the API if jwt token is passed because most probably
     // jitsi meet is displayed inside of wrapper that will need to communicate
     // with jitsi meet.
-    APP.API.init(APP.tokenData.jwt ? { forceEnable: true } : undefined);
+    APP.API.init(jwt ? { forceEnable: true } : undefined);
 
     APP.translation.init();
 }

@@ -34,6 +34,12 @@ class SecondaryToolbar extends Component {
      */
     static propTypes = {
         /**
+         * The indicator which determines whether the local participant is a
+         * guest in the conference.
+         */
+        _isGuest: React.PropTypes.bool,
+
+        /**
          * Handler dispatching local "Raise hand".
          */
         _onLocalRaiseHandChanged: React.PropTypes.func,
@@ -79,9 +85,14 @@ class SecondaryToolbar extends Component {
              * @type {Object}
              */
             profile: {
-                onMount: () =>
-                    APP.tokenData.isGuest
-                        || this.props._onSetProfileButtonUnclickable(true)
+                onMount: () => {
+                    const {
+                        _isGuest,
+                        _onSetProfileButtonUnclickable
+                    } = this.props;
+
+                    _isGuest || _onSetProfileButtonUnclickable(true);
+                }
             },
 
             /**
@@ -237,18 +248,26 @@ function _mapDispatchToProps(dispatch: Function): Object {
  *
  * @param {Object} state - Snapshot of Redux store.
  * @returns {{
+ *     _isGuest: boolean,
  *     _secondaryToolbarButtons: Map,
  *     _visible: boolean
  * }}
  * @private
  */
 function _mapStateToProps(state: Object): Object {
-    const {
-        secondaryToolbarButtons,
-        visible
-    } = state['features/toolbox'];
+    const { isGuest } = state['features/jwt'];
+    const { secondaryToolbarButtons, visible } = state['features/toolbox'];
 
     return {
+        /**
+         * The indicator which determines whether the local participant is a
+         * guest in the conference.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _isGuest: isGuest,
+
         /**
          * Default toolbar buttons for secondary toolbar.
          *
@@ -258,7 +277,8 @@ function _mapStateToProps(state: Object): Object {
         _secondaryToolbarButtons: secondaryToolbarButtons,
 
         /**
-         * Shows whether toolbar is visible.
+         * The indicator which determines whether the {@code SecondaryToolbar}
+         * is visible.
          *
          * @private
          * @type {boolean}

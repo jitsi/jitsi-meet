@@ -1,5 +1,4 @@
 /* global APP, JitsiMeetJS, config */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
@@ -14,6 +13,7 @@ import {
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 /**
  * Checks if we have data to use attach instead of connect. If we have the data
@@ -61,22 +61,27 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  * everything is ok, else error.
  */
 function connect(id, password, roomName) {
-
-    let connectionConfig = Object.assign({}, config);
+    const connectionConfig = Object.assign({}, config);
+    const { issuer, jwt } = APP.store.getState()['features/jwt'];
 
     connectionConfig.bosh += '?room=' + roomName;
+
     let connection
-        = new JitsiMeetJS.JitsiConnection(null, config.token, connectionConfig);
+        = new JitsiMeetJS.JitsiConnection(
+            null,
+            jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
+            connectionConfig);
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_ESTABLISHED, handleConnectionEstablished
-        );
+            ConnectionEvents.CONNECTION_ESTABLISHED,
+            handleConnectionEstablished);
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_FAILED, handleConnectionFailed
-        );
+            ConnectionEvents.CONNECTION_FAILED,
+            handleConnectionFailed);
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_FAILED, connectionFailedHandler);
+            ConnectionEvents.CONNECTION_FAILED,
+            connectionFailedHandler);
 
         function connectionFailedHandler(error, errMsg) {
             APP.store.dispatch(connectionFailed(connection, error, errMsg));
@@ -91,12 +96,10 @@ function connect(id, password, roomName) {
         function unsubscribe() {
             connection.removeEventListener(
                 ConnectionEvents.CONNECTION_ESTABLISHED,
-                handleConnectionEstablished
-            );
+                handleConnectionEstablished);
             connection.removeEventListener(
                 ConnectionEvents.CONNECTION_FAILED,
-                handleConnectionFailed
-            );
+                handleConnectionFailed);
         }
 
         function handleConnectionEstablished() {
@@ -129,7 +132,6 @@ function connect(id, password, roomName) {
  * @returns {Promise<JitsiConnection>}
  */
 export function openConnection({id, password, retry, roomName}) {
-
     let usernameOverride
         = jitsiLocalStorage.getItem("xmpp_username_override");
     let passwordOverride
@@ -138,25 +140,20 @@ export function openConnection({id, password, retry, roomName}) {
     if (usernameOverride && usernameOverride.length > 0) {
         id = usernameOverride;
     }
-
     if (passwordOverride && passwordOverride.length > 0) {
         password = passwordOverride;
     }
 
-    return connect(id, password, roomName).catch(function (err) {
-        if (!retry) {
-            throw err;
-        }
+    return connect(id, password, roomName).catch(err => {
+        if (retry) {
+            const { issuer, jwt } = APP.store.getState()['features/jwt'];
 
-        if (err === ConnectionErrors.PASSWORD_REQUIRED) {
-            // do not retry if token is not valid
-            if (config.token) {
-                throw err;
-            } else {
+            if (err === ConnectionErrors.PASSWORD_REQUIRED
+                    && (!jwt || issuer === 'anonymous')) {
                 return AuthHandler.requestAuth(roomName, connect);
             }
-        } else {
-            throw err;
         }
+
+        throw err;
     });
 }

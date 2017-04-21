@@ -113,12 +113,13 @@ function _obtainConfigHandler() {
  * @returns {void}
  */
 function _setTokenData() {
-    const localUser = APP.tokenData.caller;
+    const state = APP.store.getState();
+    const { caller } = state['features/jwt'];
 
-    if (localUser) {
-        const email = localUser.getEmail();
-        const avatarUrl = localUser.getAvatarUrl();
-        const name = localUser.getName();
+    if (caller) {
+        const email = caller.email;
+        const avatarUrl = caller.avatarUrl;
+        const name = caller.name;
 
         APP.settings.setEmail((email || '').trim(), true);
         APP.settings.setAvatarUrl((avatarUrl || '').trim());
