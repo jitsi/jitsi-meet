@@ -96,7 +96,7 @@ class DeviceSelector extends Component {
             defaultSelected,
             isDisabled: this.props.isDisabled,
             items,
-            placeholder: 'deviceSelection.selectADevice'
+            placeholder: this.props.t('deviceSelection.selectADevice')
         });
     }
 
