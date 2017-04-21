@@ -4,12 +4,6 @@
     .device-selectors {
         font-size: 14px;
 
-        /* ensure all child components do not exceed parent width */
-        button,
-        div {
-            max-width: 100%;
-        }
-
         > div {
             display: block;
             margin-bottom: 10px;
@@ -20,8 +14,35 @@
         }
 
         .device-selector-icon {
+            align-self: center;
             color: inherit;
             font-size: 20px;
+            margin-left: 3px;
+        }
+
+        /* device-selector-trigger stylings attempt to mimic AtlasKit button */
+        .device-selector-trigger {
+            background-color: rgba(9, 30, 66, 0.04);
+            border-radius: 3px;
+            color: #505f79;
+            display: flex;
+            height: 2.3em;
+            justify-content: space-between;
+            line-height: 2.3em;
+            overflow: hidden;
+            padding: 0 8px;
+
+            &:hover {
+                background-color: rgba(9,30,66,.08);
+            }
+        }
+
+        .device-selector-trigger-text {
+            overflow: hidden;
+            margin-left: 8px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
         }
     }
 

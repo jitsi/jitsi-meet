@@ -1,4 +1,3 @@
-import AKButton from '@atlaskit/button';
 import AKDropdownMenu from '@atlaskit/dropdown-menu';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
 import React, { Component } from 'react';
@@ -102,32 +101,24 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates an AtlasKit Button.
+     * Creates a React Element for displaying the passed in text surrounded by
+     * two icons. The left icon is the icon class passed in through props and
+     * the right icon is AtlasKit ExpandIcon.
      *
-     * @param {string} buttonText - The text to display within the button.
+     * @param {string} triggerText - The text to display within the element.
      * @private
      * @returns {ReactElement}
      */
-    _createDropdownTrigger(buttonText) {
+    _createDropdownTrigger(triggerText) {
         return (
-            <AKButton
-                className = 'device-selector-trigger'
-                iconAfter = { EXPAND_ICON }
-                iconBefore = { this._createDropdownIcon() }>
-                { buttonText }
-            </AKButton>
-        );
-    }
-
-    /**
-     * Creates a ReactComponent for displaying an icon.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _createDropdownIcon() {
-        return (
-            <span className = { `device-selector-icon ${this.props.icon}` } />
+            <div className = 'device-selector-trigger'>
+                <span
+                    className = { `device-selector-icon ${this.props.icon}` } />
+                <span className = 'device-selector-trigger-text'>
+                    { triggerText }
+                </span>
+                { EXPAND_ICON }
+            </div>
         );
     }
 
@@ -171,7 +162,8 @@ class DeviceSelector extends Component {
                 items = { [ { items: options.items || [] } ] }
                 noMatchesFound
                     = { this.props.t('deviceSelection.noOtherDevices') }
-                onItemActivated = { this._onSelect }>
+                onItemActivated = { this._onSelect }
+                shouldFitContainer = { true }>
                 { this._createDropdownTrigger(triggerText) }
             </AKDropdownMenu>
         );
