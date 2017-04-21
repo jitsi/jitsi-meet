@@ -9,7 +9,7 @@
 
 module:set_global(); -- Global module
 
-local split_jid = require "util.jid".split;
+local jid = require "util.jid";
 local st = require "util.stanza";
 local it = require "util.iterators";
 local json = require "util.json";
@@ -20,17 +20,19 @@ local tostring = tostring;
 local neturl = require "net.url";
 local parse = neturl.parseQuery;
 
-function get_room_from_jid(jid)
-	local node, host = split_jid(jid);
+local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
+
+function get_room_from_jid(room_jid)
+	local _, host = jid.split(room_jid);
 	local component = hosts[host];
 	if component then
 		local muc = component.modules.muc
 		if muc and rawget(muc,"rooms") then
 			-- We're running 0.9.x or 0.10 (old MUC API)
-			return muc.rooms[jid];
+			return muc.rooms[room_jid];
 		elseif muc and rawget(muc,"get_room_from_jid") then
 			-- We're running >0.10 (new MUC API)
-			return muc.get_room_from_jid(jid);
+			return muc.get_room_from_jid(room_jid);
 		else
 			return
 		end
@@ -41,7 +43,13 @@ function handle_get_room_size(event)
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
 	local domain_name = params["domain"];
-	local room_address = room_name .. "@" .. "conference." .. domain_name;
+    local subdomain = params["subdomain"];
+	local room_address = jid.join(room_name, muc_domain_prefix.."."..domain_name);
+
+    if subdomain ~= "" then
+        room_address = "["..subdomain.."]"..room_address;
+    end
+
 	local room = get_room_from_jid(room_address);
 	local participant_count = 0;
 
@@ -74,7 +82,13 @@ function handle_get_room (event)
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
 	local domain_name = params["domain"];
-	local room_address = room_name .. "@" .. "conference." .. domain_name;
+    local subdomain = params["subdomain"];
+	local room_address = jid.join(room_name, muc_domain_prefix.."."..domain_name);
+
+    if subdomain ~= "" then
+        room_address = "["..subdomain.."]"..room_address;
+    end
+
 	local room = get_room_from_jid(room_address);
 	local participant_count = 0;
 	local occupants_json = array();
