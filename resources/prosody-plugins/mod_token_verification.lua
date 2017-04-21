@@ -1,6 +1,8 @@
 -- Token authentication
 -- Copyright (C) 2015 Atlassian
 
+local token_util = module:require "token/util";
+
 local log = module._log;
 local host = module.host;
 local st = require "util.stanza";
@@ -50,25 +52,17 @@ local function verify_user(session, stanza)
 		return nil;
 	end
 
-	local room = string.match(stanza.attr.to, "^(%w+)@");
-	log("debug", "Will verify token for user: %s, room: %s ", user_jid, room);
-	if room == nil then
-		log("error",
-			"Unable to get name of the MUC room ? to: %s", stanza.attr.to);
-		return nil;
-	end
-
 	local token = session.auth_token;
 	local auth_room = session.jitsi_meet_room;
-	if disableRoomNameConstraints ~= true and room ~= string.lower(auth_room) then
+	local auth_domain = session.jitsi_meet_domain;
+	if disableRoomNameConstraints ~= true and token_util.verify_room_and_domain(stanza.attr.to, auth_room, auth_domain) ~= true then
 		log("error", "Token %s not allowed to join: %s",
-			tostring(token), tostring(auth_room));
+			tostring(token), tostring(stanza.attr.to));
 		session.send(
 			st.error_reply(
 				stanza, "cancel", "not-allowed", "Room and token mismatched"));
 		return true;
 	end
-	log("debug", "allowed: %s to enter/create room: %s", user_jid, room);
 end
 
 module:hook("muc-room-pre-create", function(event)

@@ -5,6 +5,7 @@ local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local http = require "net.http";
+local jid = require "util.jid";
 local json = require "cjson";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
@@ -19,6 +20,13 @@ local appSecret = module:get_option_string("app_secret");
 local asapKeyServer = module:get_option_string("asap_key_server");
 local allowEmptyToken = module:get_option_boolean("allow_empty_token");
 local disableRoomNameConstraints = module:get_option_boolean("disable_room_name_constraints");
+
+local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
+-- domain base, which is the main domain used in the deployment, the main VirtualHost for the deployment
+local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
+-- The "real" MUC domain that we are proxying to
+local muc_domain = module:get_option_string("muc_mapper_domain", muc_domain_prefix.."."..muc_domain_base);
+local enableDomainVerification = module:get_option_boolean("enable_domain_verification", false);
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
@@ -177,12 +185,49 @@ local function _verify_token(session, token)
     end
 end
 
+local function _verify_room_and_domain(room_address_to_verify, room, domain)
+
+    local room_to_verify,_,_ = jid.split(room_address_to_verify);
+    if not enableDomainVerification then
+        -- extract room name using all chars, except the not allowed ones
+
+        if room_to_verify == nil then
+            log("error",
+                "Unable to get name of the MUC room ? to: %s", room_address_to_verify);
+            return false;
+        end
+        return room_to_verify == string.lower(room);
+    end
+
+    -- make sure we remove any resource when comparing
+    room_address_to_verify = jid.bare(room_address_to_verify);
+    local target_subdomain, target_room = room_to_verify:match("^%[([^%]]+)%](.+)$");
+    if target_subdomain then
+
+        -- from this point we depend on muc_domain_base, deny access if option is missing
+        if not muc_domain_base then
+            module:log("warn", "No 'muc_domain_base' option set, denying access!");
+            return false;
+        end
+
+        return room_address_to_verify == jid.join("["..domain.."]"..string.lower(room), muc_domain);
+    else
+        -- we do not have a domain part (multidomain is not enabled)
+        -- verify with info from the token
+        return room_address_to_verify == jid.join(string.lower(room), muc_domain_prefix.."."..domain);
+    end
+end
+
 function _M.verify_token(session, token)
     return _verify_token(session, token);
 end
 
 function _M.check_config()
     return _check_config();
+end
+
+function _M.verify_room_and_domain(room_address_to_verify, room, domain)
+    return _verify_room_and_domain(room_address_to_verify, room, domain);
 end
 
 return _M;
