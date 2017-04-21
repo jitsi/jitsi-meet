@@ -20,6 +20,7 @@ import {
     LOCK_STATE_CHANGED,
     SET_AUDIO_ONLY,
     _SET_AUDIO_ONLY_VIDEO_MUTED,
+    SET_LARGE_VIDEO_HD_STATUS,
     SET_LASTN,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -355,6 +356,23 @@ export function _setAudioOnlyVideoMuted(muted: boolean) {
             muted
         });
         dispatch(setVideoMuted(muted));
+    };
+}
+
+/**
+ * Action to set whether or not the currently displayed large video is in
+ * high-definition.
+ *
+ * @param {boolean} isLargeVideoHD - True if the large video is high-definition.
+ * @returns {{
+ *     type: SET_LARGE_VIDEO_HD_STATUS,
+ *     isLargeVideoHD: boolean
+ * }}
+ */
+export function setLargeVideoHDStatus(isLargeVideoHD) {
+    return {
+        type: SET_LARGE_VIDEO_HD_STATUS,
+        isLargeVideoHD
     };
 }
 

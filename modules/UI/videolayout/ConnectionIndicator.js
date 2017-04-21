@@ -1,5 +1,9 @@
 /* global $, APP, config */
 /* jshint -W101 */
+import {
+    setLargeVideoHDStatus
+} from '../../../react/features/base/conference';
+
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
 import UIUtil from "../util/UIUtil";
@@ -478,7 +482,7 @@ ConnectionIndicator.prototype.updateResolutionIndicator = function () {
                 });
         }
 
-        VideoLayout.updateResolutionLabel(showResolutionLabel);
+        APP.store.dispatch(setLargeVideoHDStatus(showResolutionLabel));
     }
 };
 

@@ -1081,16 +1081,6 @@ var VideoLayout = {
     },
 
     /**
-     * Updates the resolution label, indicating to the user that the large
-     * video stream is currently HD.
-     */
-    updateResolutionLabel(isResolutionHD) {
-        let id = 'videoResolutionLabel';
-
-        UIUtil.setVisible(id, isResolutionHD);
-    },
-
-    /**
      * Sets the flipX state of the local video.
      * @param {boolean} true for flipped otherwise false;
      */

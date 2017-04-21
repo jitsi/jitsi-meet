@@ -66,7 +66,7 @@ export class AudioOnlyLabel extends Component {
     render() {
         return (
             <div
-                className = 'audio-only-label'
+                className = 'audio-only-label moveToCorner'
                 ref = { this._setRootElement }>
                 <i className = 'icon-visibility-off' />
             </div>

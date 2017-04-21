@@ -517,19 +517,16 @@
     position: absolute;
     box-sizing: border-box;
 }
-.video-state-indicator {
-    height: 40px;
-}
 
 #videoResolutionLabel,
 .centeredVideoLabel {
-    display: none;
     z-index: $centeredVideoLabelZ;
 }
 
 .centeredVideoLabel {
     bottom: 45%;
     border-radius: 2px;
+    display: none;
     -webkit-transition: all 2s 2s linear;
     transition: all 2s 2s linear;
 
