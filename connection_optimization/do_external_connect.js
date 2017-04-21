@@ -1,7 +1,9 @@
-/* global config,
-          createConnectionExternally,
-          getConfigParamsFromUrl,
-          getRoomName */
+/* global config, createConnectionExternally */
+
+import {
+    getRoomName,
+    parseURLParams
+} from '../react/features/base/config/functions';
 
 /**
  * Implements external connect using createConnectionExternally function defined
@@ -15,14 +17,10 @@
  * external_connect.js.
  */
 
-const hashParams = getConfigParamsFromUrl('hash', true);
-const searchParams = getConfigParamsFromUrl('search', true);
+const hashParams = parseURLParams(window.location, true);
 
 // URL params have higher proirity than config params.
-let url
-    = hashParams.hasOwnProperty('config.externalConnectUrl')
-        ? hashParams['config.externalConnectUrl']
-        : config.externalConnectUrl;
+let url = hashParams['config.externalConnectUrl'] || config.externalConnectUrl;
 
 if (url && window.createConnectionExternally) {
     const roomName = getRoomName();
@@ -30,9 +28,14 @@ if (url && window.createConnectionExternally) {
     if (roomName) {
         url += `?room=${roomName}`;
 
-        const token
-            = hashParams['config.token'] || config.token || searchParams.jwt;
+        let token = hashParams['config.token'] || config.token;
 
+        if (!token) {
+            const searchParams
+                = parseURLParams(window.location, true, 'search');
+
+            token = searchParams.jwt;
+        }
         if (token) {
             url += `&token=${token}`;
         }

@@ -1,13 +1,13 @@
-/* global config, getConfigParamsFromUrl, interfaceConfig, loggingConfig */
+/* global config, interfaceConfig, loggingConfig */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-var configUtils = require('./Util');
-var params = {};
+import { getConfigParamsFromUrl } from '../../react/features/base/config';
 
-if (typeof getConfigParamsFromUrl === 'function') {
-    params = getConfigParamsFromUrl();
-}
+import configUtils from './Util';
+
+// Parsing config params from URL hash.
+const URL_PARAMS = getConfigParamsFromUrl(window.location);
 
 var URLProcessor = {
     setConfigParametersFromUrl: function () {
@@ -33,7 +33,7 @@ var URLProcessor = {
             interfaceConfig: {},
             loggingConfig: {}
         };
-        for (var key in params) {
+        for (var key in URL_PARAMS) {
             if (typeof key !== "string") {
                 logger.warn("Invalid config key: ", key);
                 continue;
@@ -59,7 +59,7 @@ var URLProcessor = {
             if (!confObj)
                 continue;
 
-            confObj[confKey] = params[key];
+            confObj[confKey] = URL_PARAMS[key];
         }
         configUtils.overrideConfigJSON(
             config, interfaceConfig, loggingConfig, configJSON);

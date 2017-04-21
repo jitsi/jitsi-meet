@@ -1,4 +1,4 @@
-/* global  getConfigParamsFromUrl, config */
+/* global config */
 
 /**
  * Parses and handles JWT tokens. Sets config.token.
@@ -6,10 +6,12 @@
 
 import * as jws from "jws";
 
+import { getConfigParamsFromUrl } from '../../react/features/base/config';
+
 /**
  * Get the JWT token from the URL.
  */
-let params = getConfigParamsFromUrl("search", true);
+let params = getConfigParamsFromUrl(window.location, true, 'search');
 let jwt = params.jwt;
 
 /**
