@@ -70,14 +70,14 @@ export function loadConfig(host: string, path: string = '/config.js') {
  * @returns {Promise<JitsiLocalTrack>}
  */
 export function createLocalTrack(type, deviceId) {
-    return JitsiMeetJS
-        .createLocalTracks({
-            devices: [ type ],
-            micDeviceId: deviceId,
-            cameraDeviceId: deviceId,
+    return JitsiMeetJS.createLocalTracks({
+        cameraDeviceId: deviceId,
+        devices: [ type ],
 
-            // eslint-disable-next-line camelcase
-            firefox_fake_device: window.config
-                && window.config.firefox_fake_device
-        }).then(([ jitsiLocalTrack ]) => jitsiLocalTrack);
+        // eslint-disable-next-line camelcase
+        firefox_fake_device:
+            window.config && window.config.firefox_fake_device,
+        micDeviceId: deviceId
+    })
+        .then(([ jitsiLocalTrack ]) => jitsiLocalTrack);
 }

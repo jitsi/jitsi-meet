@@ -12,8 +12,8 @@ import { WEBRTC_NOT_READY, WEBRTC_NOT_SUPPORTED } from './constants';
  * lib-jitsi-meet, and initializes a new one with new config.
  *
  * @param {Store} store - Redux store.
- * @returns {Function}
  * @private
+ * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -45,14 +45,14 @@ MiddlewareRegistry.register(store => next => action => {
  * specified action to the specified store.
  * @param {Action} action - The Redux action LIB_INIT_ERROR which is being
  * dispatched in the specified store.
+ * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
- * @private
  */
 function _libInitError(store, next, action) {
     const nextState = next(action);
 
-    const error = action.error;
+    const { error } = action;
 
     if (error) {
         let webRTCReady;
@@ -83,16 +83,15 @@ function _libInitError(store, next, action) {
  * specified action to the specified store.
  * @param {Action} action - The Redux action SET_CONFIG which is being
  * dispatched in the specified store.
+ * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
- * @private
  */
-function _setConfig(store, next, action) {
-    const { dispatch, getState } = store;
+function _setConfig({ dispatch, getState }, next, action) {
     const { initialized } = getState()['features/base/lib-jitsi-meet'];
 
     // XXX Since the config is changing, the library lib-jitsi-meet must be
-    // initialized again with the new config. Consequntly, it may need to be
+    // initialized again with the new config. Consequently, it may need to be
     // disposed of first.
     // TODO Currently, disposeLib actually does not dispose of lib-jitsi-meet
     // because lib-jitsi-meet does not implement such functionality.

@@ -1,18 +1,11 @@
 import { CONFERENCE_FAILED } from '../base/conference';
-import {
-    CONNECTION_ESTABLISHED,
-    CONNECTION_FAILED
-} from '../base/connection';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection';
 import {
     isFatalJitsiConnectionError,
     JitsiConferenceErrors,
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
-import {
-    ReducerRegistry,
-    setStateProperties,
-    setStateProperty
-} from '../base/redux';
+import { assign, ReducerRegistry, set } from '../base/redux';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
@@ -59,7 +52,7 @@ function _conferenceFailed(state, action) {
 
     if (error === JitsiConferenceErrors.FOCUS_LEFT
             || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE) {
-        return setStateProperties(state, {
+        return assign(state, {
             haveToReload: true,
             isNetworkFailure: false,
             reason: action.errorMessage
@@ -79,7 +72,7 @@ function _conferenceFailed(state, action) {
  * @private
  */
 function _connectionEstablished(state) {
-    return setStateProperty(state, 'connectionEstablished', true);
+    return set(state, 'connectionEstablished', true);
 }
 
 /**
@@ -99,9 +92,8 @@ function _connectionFailed(state, action) {
 
         logger.error(`XMPP connection error: ${errorMessage}`);
 
-        return setStateProperties(state, {
+        return assign(state, {
             haveToReload: true,
-
 
             // From all of the cases above only CONNECTION_DROPPED_ERROR is
             // considered a network type of failure.
@@ -125,7 +117,7 @@ function _connectionFailed(state, action) {
  * @private
  */
 function _mediaPermissionPromptVisibilityChanged(state, action) {
-    return setStateProperties(state, {
+    return assign(state, {
         browser: action.browser,
         isMediaPermissionPromptVisible: action.isVisible
     });
@@ -140,5 +132,5 @@ function _mediaPermissionPromptVisibilityChanged(state, action) {
  * @private
  */
 function _suspendDetected(state) {
-    return setStateProperty(state, 'suspendDetected', true);
+    return set(state, 'suspendDetected', true);
 }

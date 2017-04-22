@@ -1,11 +1,7 @@
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
-import {
-    ReducerRegistry,
-    setStateProperties,
-    setStateProperty
-} from '../redux';
+import { assign, ReducerRegistry, set } from '../redux';
 
 import {
     CONFERENCE_FAILED,
@@ -80,7 +76,7 @@ function _conferenceFailed(state, action) {
             : undefined;
 
     return (
-        setStateProperties(state, {
+        assign(state, {
             audioOnly: undefined,
             audioOnlyVideoMuted: undefined,
             conference: undefined,
@@ -125,7 +121,7 @@ function _conferenceJoined(state, action) {
     const locked = conference.room.locked ? LOCKED_REMOTELY : undefined;
 
     return (
-        setStateProperties(state, {
+        assign(state, {
             /**
              * The JitsiConference instance represented by the Redux state of
              * the feature base/conference.
@@ -163,7 +159,7 @@ function _conferenceLeft(state, action) {
     }
 
     return (
-        setStateProperties(state, {
+        assign(state, {
             audioOnly: undefined,
             audioOnlyVideoMuted: undefined,
             conference: undefined,
@@ -192,7 +188,7 @@ function _conferenceWillLeave(state, action) {
     }
 
     return (
-        setStateProperties(state, {
+        assign(state, {
             /**
              * The JitsiConference instance which is currently in the process of
              * being left.
@@ -225,7 +221,7 @@ function _lockStateChanged(state, action) {
         locked = state.locked || LOCKED_REMOTELY;
     }
 
-    return setStateProperties(state, {
+    return assign(state, {
         locked,
         password: action.locked ? state.password : null
     });
@@ -242,7 +238,7 @@ function _lockStateChanged(state, action) {
  * reduction of the specified action.
  */
 function _setAudioOnly(state, action) {
-    return setStateProperty(state, 'audioOnly', action.audioOnly);
+    return set(state, 'audioOnly', action.audioOnly);
 }
 
 /**
@@ -257,7 +253,7 @@ function _setAudioOnly(state, action) {
  * reduction of the specified action.
  */
 function _setAudioOnlyVideoMuted(state, action) {
-    return setStateProperty(state, 'audioOnlyVideoMuted', action.muted);
+    return set(state, 'audioOnlyVideoMuted', action.muted);
 }
 
 /**
@@ -276,7 +272,7 @@ function _setPassword(state, action) {
     case conference.join:
         if (state.passwordRequired === conference) {
             return (
-                setStateProperties(state, {
+                assign(state, {
                     locked: LOCKED_REMOTELY,
 
                     /**
@@ -291,7 +287,7 @@ function _setPassword(state, action) {
         break;
 
     case conference.lock:
-        return setStateProperties(state, {
+        return assign(state, {
             locked: action.password ? LOCKED_LOCALLY : undefined,
             password: action.password
         });
@@ -324,5 +320,5 @@ function _setRoom(state, action) {
      *
      * @type {string}
      */
-    return setStateProperty(state, 'room', room);
+    return set(state, 'room', room);
 }

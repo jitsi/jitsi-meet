@@ -1,6 +1,6 @@
 /* @flow */
 
-import { ReducerRegistry, setStateProperty } from '../redux';
+import { ReducerRegistry, set } from '../redux';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -40,7 +40,7 @@ ReducerRegistry.register(
  */
 function _connectionDisconnected(state: Object, action: Object) {
     if (state.connection === action.connection) {
-        return setStateProperty(state, 'connection', undefined);
+        return set(state, 'connection', undefined);
     }
 
     return state;
@@ -57,7 +57,7 @@ function _connectionDisconnected(state: Object, action: Object) {
  * reduction of the specified action.
  */
 function _connectionEstablished(state: Object, action: Object) {
-    return setStateProperty(state, 'connection', action.connection);
+    return set(state, 'connection', action.connection);
 }
 
 /**

@@ -11,11 +11,11 @@
  * from the specified target by setting the specified properties to the
  * specified values.
  */
-export function setStateProperties(target, source) {
+export function assign(target, source) {
     let t = target;
 
     for (const property in source) { // eslint-disable-line guard-for-in
-        t = setStateProperty(t, property, source[property], t === target);
+        t = set(t, property, source[property], t === target);
     }
 
     return t;
@@ -37,8 +37,8 @@ export function setStateProperties(target, source) {
  * constructed from the specified <tt>state</tt> by setting the specified
  * <tt>property</tt> to the specified <tt>value</tt>.
  */
-export function setStateProperty(state, property, value) {
-    return _setStateProperty(state, property, value, /* copyOnWrite */ true);
+export function set(state, property, value) {
+    return _set(state, property, value, /* copyOnWrite */ true);
 }
 
 /* eslint-disable max-params */
@@ -62,7 +62,7 @@ export function setStateProperty(state, property, value) {
  * <tt>state</tt> by setting the specified <tt>property</tt> to the specified
  * <tt>value</tt>.
  */
-function _setStateProperty(state, property, value, copyOnWrite) {
+function _set(state, property, value, copyOnWrite) {
     // Delete state properties that are to be set to undefined. (It is a matter
     // of personal preference, mostly.)
     if (typeof value === 'undefined'

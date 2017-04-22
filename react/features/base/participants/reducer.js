@@ -1,4 +1,4 @@
-import { ReducerRegistry, setStateProperty } from '../redux';
+import { ReducerRegistry, set } from '../redux';
 import { randomHexString } from '../util';
 
 import {
@@ -55,10 +55,7 @@ function _participant(state, action) {
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
         return (
-            setStateProperty(
-                    state,
-                    'dominantSpeaker',
-                    state.id === action.participant.id));
+            set(state, 'dominantSpeaker', state.id === action.participant.id));
 
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
@@ -145,11 +142,7 @@ function _participant(state, action) {
 
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
-        return (
-            setStateProperty(
-                    state,
-                    'pinned',
-                    state.id === action.participant.id));
+        return set(state, 'pinned', state.id === action.participant.id);
     }
 
     return state;
