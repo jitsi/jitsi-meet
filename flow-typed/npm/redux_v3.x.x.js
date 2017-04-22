@@ -1,5 +1,5 @@
-// flow-typed signature: ba132c96664f1a05288f3eb2272a3c35
-// flow-typed version: c4bbd91cfc/redux_v3.x.x/flow_>=v0.33.x
+// flow-typed signature: 7f1a115f75043c44385071ea3f33c586
+// flow-typed version: 358375125e/redux_v3.x.x/flow_>=v0.33.x
 
 declare module 'redux' {
 
@@ -27,6 +27,8 @@ declare module 'redux' {
 
   declare type Reducer<S, A> = (state: S, action: A) => S;
 
+  declare type CombinedReducer<S, A> = (state: $Shape<S> & {} | void, action: A) => S;
+
   declare type Middleware<S, A> =
     (api: MiddlewareAPI<S, A>) =>
       (next: Dispatch<A>) => Dispatch<A>;
@@ -49,7 +51,7 @@ declare module 'redux' {
   declare function bindActionCreators<A, C: ActionCreator<A, any>>(actionCreator: C, dispatch: Dispatch<A>): C;
   declare function bindActionCreators<A, K, C: ActionCreators<K, A>>(actionCreators: C, dispatch: Dispatch<A>): C;
 
-  declare function combineReducers<O: Object, A>(reducers: O): Reducer<$ObjMap<O, <S>(r: Reducer<S, any>) => S>, A>;
+  declare function combineReducers<O: Object, A>(reducers: O): CombinedReducer<$ObjMap<O, <S>(r: Reducer<S, any>) => S>, A>;
 
   declare function compose<S, A>(...fns: Array<StoreEnhancer<S, A>>): Function;
 
