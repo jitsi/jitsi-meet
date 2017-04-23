@@ -1,6 +1,7 @@
 import { setRoom } from '../base/conference';
+import { setConfig } from '../base/config';
 import { getDomain, setDomain } from '../base/connection';
-import { loadConfig, setConfig } from '../base/lib-jitsi-meet';
+import { loadConfig } from '../base/lib-jitsi-meet';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import {

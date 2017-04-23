@@ -7,7 +7,6 @@ import {
     LIB_INIT_ERROR,
     LIB_WILL_DISPOSE,
     LIB_WILL_INIT,
-    SET_CONFIG,
     SET_WEBRTC_READY
 } from './actionTypes';
 
@@ -42,7 +41,7 @@ export function disposeLib() {
  */
 export function initLib() {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const { config } = getState()['features/base/lib-jitsi-meet'];
+        const config = getState()['features/base/config'];
 
         if (!config) {
             throw new Error('Cannot init lib-jitsi-meet without config');
@@ -82,23 +81,6 @@ export function libInitError(error: Error) {
     return {
         type: LIB_INIT_ERROR,
         error
-    };
-}
-
-/**
- * Sets config.
- *
- * @param {Object} config - The config(uration) object in the format accepted by
- * the JitsiMeetJS.init() method.
- * @returns {{
- *     type: SET_CONFIG,
- *     config: Object
- * }}
- */
-export function setConfig(config: Object) {
-    return {
-        type: SET_CONFIG,
-        config
     };
 }
 

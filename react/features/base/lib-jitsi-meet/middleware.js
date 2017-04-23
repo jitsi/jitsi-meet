@@ -1,8 +1,11 @@
+/* @flow */
+
+import { SET_CONFIG } from '../config';
 import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { disposeLib, initLib, setWebRTCReady } from './actions';
-import { LIB_DID_INIT, LIB_INIT_ERROR, SET_CONFIG } from './actionTypes';
+import { LIB_DID_INIT, LIB_INIT_ERROR } from './actionTypes';
 import { WEBRTC_NOT_READY, WEBRTC_NOT_SUPPORTED } from './constants';
 
 /**

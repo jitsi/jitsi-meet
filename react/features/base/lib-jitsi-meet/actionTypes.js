@@ -50,16 +50,6 @@ export const LIB_WILL_DISPOSE = Symbol('LIB_WILL_DISPOSE');
 export const LIB_WILL_INIT = Symbol('LIB_WILL_INIT');
 
 /**
- * Action to signal that config was set.
- *
- * {
- *     type: SET_CONFIG,
- *     config: Object
- * }
- */
-export const SET_CONFIG = Symbol('SET_CONFIG');
-
-/**
  * The type of Redux action which indicates whether WebRTC is ready.
  *
  * {

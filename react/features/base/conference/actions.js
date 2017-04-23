@@ -254,7 +254,7 @@ export function createConference() {
 
         dispatch(_conferenceWillJoin(room));
 
-        const { config } = state['features/base/lib-jitsi-meet'];
+        const config = state['features/base/config'];
         const conference
             = connection.initJitsiConference(
 
@@ -368,7 +368,7 @@ export function _setAudioOnlyVideoMuted(muted: boolean) {
 export function setLastN(lastN: ?number) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         if (typeof lastN === 'undefined') {
-            const { config } = getState()['features/base/lib-jitsi-meet'];
+            const config = getState()['features/base/config'];
 
             /* eslint-disable no-param-reassign */
 
