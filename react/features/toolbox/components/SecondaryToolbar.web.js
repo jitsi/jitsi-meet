@@ -34,6 +34,11 @@ class SecondaryToolbar extends Component {
      */
     static propTypes = {
         /**
+         * Contains information about whether the current user is a guest.
+         */
+        _isGuest: React.PropTypes.bool,
+
+        /**
          * Handler dispatching local "Raise hand".
          */
         _onLocalRaiseHandChanged: React.PropTypes.func,
@@ -79,9 +84,14 @@ class SecondaryToolbar extends Component {
              * @type {Object}
              */
             profile: {
-                onMount: () =>
-                    APP.tokenData.isGuest
-                        || this.props._onSetProfileButtonUnclickable(true)
+                onMount: () => {
+                    const {
+                        _onSetProfileButtonUnclickable,
+                        _isGuest
+                    } = this.props;
+
+                    _isGuest || _onSetProfileButtonUnclickable(true);
+                }
             },
 
             /**
@@ -237,8 +247,9 @@ function _mapDispatchToProps(dispatch: Function): Object {
  *
  * @param {Object} state - Snapshot of Redux store.
  * @returns {{
- *     _secondaryToolbarButtons: Map,
- *     _visible: boolean
+ *      _isGuest: boolean,
+ *      _secondaryToolbarButtons: Map,
+ *      _visible: boolean
  * }}
  * @private
  */
@@ -248,7 +259,19 @@ function _mapStateToProps(state: Object): Object {
         visible
     } = state['features/toolbox'];
 
+    const {
+        isGuest
+    } = state['features/jwt'];
+
     return {
+        /**
+         * Shows whether user is guest.
+         *
+         * @protected
+         * @type {boolean}
+         */
+        _isGuest: isGuest,
+
         /**
          * Default toolbar buttons for secondary toolbar.
          *
