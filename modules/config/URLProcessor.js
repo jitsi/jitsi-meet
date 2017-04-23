@@ -1,10 +1,13 @@
-/* global config, interfaceConfig, loggingConfig, getConfigParamsFromUrl */
+/* global config, getConfigParamsFromUrl, interfaceConfig, loggingConfig */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var configUtils = require('./Util');
 var params = {};
 
-params = getConfigParamsFromUrl();
+if (typeof getConfigParamsFromUrl === 'function') {
+    params = getConfigParamsFromUrl();
+}
 
 var URLProcessor = {
     setConfigParametersFromUrl: function () {

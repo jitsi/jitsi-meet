@@ -47,8 +47,8 @@ export function initLib() {
             throw new Error('Cannot init lib-jitsi-meet without config');
         }
 
-        // XXX Temporarily until conference.js is moved to the React app we
-        // shouldn't use JitsiMeetJS from the React app.
+        // FIXME Until the logic of conference.js is rewritten into the React
+        // app we, JitsiMeetJS.init is to not be used for the React app.
         if (typeof APP !== 'undefined') {
             return Promise.resolve();
         }

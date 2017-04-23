@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Sets specific properties of a specific state to specific values and prevents
  * unnecessary state changes.
@@ -19,6 +21,19 @@ export function assign(target, source) {
     }
 
     return t;
+}
+
+/**
+ * Determines whether {@code a} equals {@code b} according to deep comparison
+ * (which makes sense for Redux and its state definition).
+ *
+ * @param {*} a - The value to compare to {@code b}.
+ * @param {*} b - The value to compare to {@code a}.
+ * @returns {boolean} True if {@code a} equals {@code b} (according to deep
+ * comparison); false, otherwise.
+ */
+export function equals(a, b) {
+    return _.isEqual(a, b);
 }
 
 /**

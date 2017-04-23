@@ -1,5 +1,7 @@
 import { loadScript } from '../../base/util';
 
+import URLProcessor from '../../../../modules/config/URLProcessor';
+
 import JitsiMeetJS from './_';
 
 declare var APP: Object;
@@ -38,6 +40,12 @@ export function loadConfig(host: string, path: string = '/config.js') {
     // being used for the React Native app because the old/current Web app uses
     // config from the global scope.
     if (typeof APP !== 'undefined') {
+        // FIXME The following call to setConfigParametersFromUrl is bad design
+        // but URLProcessor still deals with the global variables config,
+        // interfaceConfig, and loggingConfig and loadConfig. As the latter will
+        // surely change in the future, so will the former then.
+        URLProcessor.setConfigParametersFromUrl();
+
         return Promise.resolve(window.config);
     }
 

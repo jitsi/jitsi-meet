@@ -14,7 +14,6 @@ import {
 } from '../unsupported-browser';
 import { WelcomePage } from '../welcome';
 
-import URLProcessor from '../../../modules/config/URLProcessor';
 import KeyboardShortcut
     from '../../../modules/keyboardshortcut/keyboardshortcut';
 import getTokenData from '../../../modules/tokendata/TokenData';
@@ -115,7 +114,6 @@ export function _getRouteToRender(stateOrGetState: Object | Function) {
  * @returns {void}
  */
 export function init() {
-    URLProcessor.setConfigParametersFromUrl();
     _initLogging();
 
     APP.keyboardshortcut = KeyboardShortcut;
@@ -130,49 +128,12 @@ export function init() {
 }
 
 /**
- * Adjusts the logging levels.
- *
- * @private
- * @returns {void}
- */
-function _configureLoggingLevels() {
-    // NOTE The library Logger is separated from the app loggers, so the levels
-    // have to be set in two places
-
-    // Set default logging level
-    const defaultLogLevel
-        = loggingConfig.defaultLogLevel || JitsiMeetJS.logLevels.TRACE;
-
-    Logger.setLogLevel(defaultLogLevel);
-    JitsiMeetJS.setLogLevel(defaultLogLevel);
-
-    // NOTE console was used on purpose here to go around the logging and always
-    // print the default logging level to the console
-    console.info(`Default logging level set to: ${defaultLogLevel}`);
-
-    // Set log level for each logger
-    if (loggingConfig) {
-        Object.keys(loggingConfig).forEach(loggerName => {
-            if (loggerName !== 'defaultLogLevel') {
-                const level = loggingConfig[loggerName];
-
-                Logger.setLogLevelById(level, loggerName);
-                JitsiMeetJS.setLogLevelById(level, loggerName);
-            }
-        });
-    }
-}
-
-/**
  * Initializes logging in the app.
  *
  * @private
  * @returns {void}
  */
 function _initLogging() {
-    // Adjust logging level
-    _configureLoggingLevels();
-
     // Create the LogCollector and register it as the global log transport. It
     // is done early to capture as much logs as possible. Captured logs will be
     // cached, before the JitsiMeetLogStorage gets ready (statistics module is
