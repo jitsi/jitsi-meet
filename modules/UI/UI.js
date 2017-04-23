@@ -362,7 +362,9 @@ UI.start = function () {
 
     }
 
-    if(APP.tokenData.callee) {
+    const { callee } = APP.store.getState()['features/jwt'];
+
+    if (callee) {
         UI.showRingOverlay();
     }
 };
@@ -1324,7 +1326,9 @@ UI.setMicrophoneButtonEnabled
     = enabled => APP.store.dispatch(setAudioIconEnabled(enabled));
 
 UI.showRingOverlay = function () {
-    RingOverlay.show(APP.tokenData.callee, interfaceConfig.DISABLE_RINGING);
+    const { callee } = APP.store.getState()['features/jwt'];
+
+    RingOverlay.show(callee, interfaceConfig.DISABLE_RINGING);
     Filmstrip.toggleFilmstrip(false, false);
 };
 
@@ -1389,7 +1393,11 @@ const UIListeners = new Map([
         UI.toggleContactList
     ], [
         UIEvents.TOGGLE_PROFILE,
-        () => APP.tokenData.isGuest && UI.toggleSidePanel("profile_container")
+        () => {
+            const { isGuest } = APP.store.getState()['features/jwt'];
+
+            isGuest && UI.toggleSidePanel('profile_container');
+        }
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         UI.handleToggleFilmstrip

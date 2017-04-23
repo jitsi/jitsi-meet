@@ -1,10 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../i18n';
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -119,7 +119,7 @@ class Watermarks extends Component {
      */
     _renderJitsiWatermark() {
         if (this.state.showJitsiWatermark
-            || (APP.tokenData.isGuest
+            || (this.props._isGuest
                     && this.state.showJitsiWatermarkForGuests)) {
             return (
                 <a
@@ -157,4 +157,23 @@ class Watermarks extends Component {
     }
 }
 
-export default translate(Watermarks);
+/**
+ * Maps parts of Redux store to component prop types.
+ *
+ * @param {Object} state - Snapshot of Redux store.
+ * @returns {{
+ *      _isGuest: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    const { isGuest } = state['features/jwt'];
+
+    return {
+        /**
+         * Indicates whether user is a guest.
+         */
+        _isGuest: isGuest
+    };
+}
+
+export default connect(_mapStateToProps)(translate(Watermarks));
