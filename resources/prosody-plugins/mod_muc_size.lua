@@ -7,8 +7,6 @@
 -- This module requires net-url module
 -- Install it using #luarocks install net-url
 
-module:set_global(); -- Global module
-
 local jid = require "util.jid";
 local st = require "util.stanza";
 local it = require "util.iterators";
@@ -20,7 +18,10 @@ local tostring = tostring;
 local neturl = require "net.url";
 local parse = neturl.parseQuery;
 
+local token_util = module:require "token/util";
+
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
+local enableTokenVerification = module:get_option_boolean("enable_roomsize_token_verification", false);
 
 function get_room_from_jid(room_jid)
 	local _, host = jid.split(room_jid);
@@ -39,6 +40,33 @@ function get_room_from_jid(room_jid)
 	end
 end
 
+function verify_token(token, room_address)
+    if not enableTokenVerification then
+        return true;
+    end
+
+    local session = {};
+    if not token or token == "" then
+        return false;
+    end
+
+    local verified, reason = token_util.verify_token(session, token);
+    if not verified then
+        log("info", "not a valid token %s", tostring(reason));
+        return false;
+    end
+
+    local auth_room = session.jitsi_meet_room;
+    local auth_domain = session.jitsi_meet_domain;
+    if token_util.verify_room_and_domain(room_address, auth_room, auth_domain) ~= true then
+        log("error", "Token %s not allowed to join: %s",
+            tostring(token), tostring(room_address));
+        return false;
+    end
+
+    return true;
+end
+
 function handle_get_room_size(event)
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
@@ -48,6 +76,10 @@ function handle_get_room_size(event)
 
     if subdomain ~= "" then
         room_address = "["..subdomain.."]"..room_address;
+    end
+
+    if not verify_token(params["token"], room_address) then
+        return 403;
     end
 
 	local room = get_room_from_jid(room_address);
@@ -87,6 +119,10 @@ function handle_get_room (event)
 
     if subdomain ~= "" then
         room_address = "["..subdomain.."]"..room_address;
+    end
+
+    if not verify_token(params["token"], room_address) then
+        return 403;
     end
 
 	local room = get_room_from_jid(room_address);
@@ -131,7 +167,7 @@ function handle_get_room (event)
 	return GET_response;
 end;
 
-function module.add_host(module)
+function module.load()
 	module:depends("http");
 	module:provides("http", {
 		default_path = "/";
@@ -142,4 +178,3 @@ function module.add_host(module)
 		};
 	});
 end
-
