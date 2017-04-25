@@ -149,7 +149,6 @@
         "selectAudioOutput": "Audio output",
         "followMe": "Everyone follows me",
         "noDevice": "None",
-        "noPermission": "Permission to use device is not granted",
         "cameraAndMic": "Camera and microphone",
         "moderator": "MODERATOR",
         "password": "SET PASSWORD",
@@ -423,7 +422,7 @@
     "deviceSelection": {
         "currentlyVideoMuted": "Video is currently muted",
         "deviceSettings": "Device settings",
-        "noOtherDevices": "No other devices available",
+        "noPermission": "Permission not granted",
         "selectADevice": "Select a device",
         "testAudio": "Test sound"
     },

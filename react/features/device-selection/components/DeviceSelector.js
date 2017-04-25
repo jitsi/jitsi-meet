@@ -138,13 +138,15 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates a AKDropdownMenu Component using passed in props and options.
+     * Creates a AKDropdownMenu Component using passed in props and options. If
+     * the dropdown needs to be disabled, then only the AKDropdownMenu trigger
+     * element is returned to simulate a disabled state.
      *
      * @param {Object} options - Additional configuration for display.
      * @param {Object} options.defaultSelected - The option that should be set
      * as currently chosen.
-     * @param {boolean} options.isDisabled - If true, AKDropdownMenu will not
-     * open on click.
+     * @param {boolean} options.isDisabled - If true, only the AKDropdownMenu
+     * trigger component will be returned to simulate a disabled dropdown.
      * @param {Array} options.items - All the selectable options to display.
      * @param {string} options.placeholder - The translation key to display when
      * no selection has been made.
@@ -155,16 +157,22 @@ class DeviceSelector extends Component {
         const triggerText
             = (options.defaultSelected && options.defaultSelected.content)
                 || options.placeholder;
+        const trigger = this._createDropdownTrigger(triggerText);
+
+        if (options.isDisabled) {
+            return (
+                <div className = 'device-selector-trigger-disabled'>
+                    { trigger }
+                </div>
+            );
+        }
 
         return (
             <AKDropdownMenu
-                { ...(options.isDisabled && { isOpen: !options.isDisabled }) }
                 items = { [ { items: options.items || [] } ] }
-                noMatchesFound
-                    = { this.props.t('deviceSelection.noOtherDevices') }
                 onItemActivated = { this._onSelect }
                 shouldFitContainer = { true }>
-                { this._createDropdownTrigger(triggerText) }
+                { trigger }
             </AKDropdownMenu>
         );
     }
@@ -208,7 +216,7 @@ class DeviceSelector extends Component {
     _renderNoPermission() {
         return this._createDropdown({
             isDisabled: true,
-            placeholder: this.props.t('settings.noPermission')
+            placeholder: this.props.t('deviceSelection.noPermission')
         });
     }
 }
