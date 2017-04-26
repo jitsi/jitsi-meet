@@ -265,7 +265,7 @@ var Chat = {
         } else {
             divClassName = "remoteuser";
 
-            if (!Chat.isVisible()) {
+            if (!Chat.isVisible() && Chat.getChatConversationMode()) {
                 unreadMessages++;
                 UIUtil.playSoundNotification('chatNotification');
                 updateVisualNotification();
@@ -336,6 +336,14 @@ var Chat = {
         $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
     },
+
+    /**
+     * Gets the chat conversation mode.
+     */
+    getChatConversationMode () {
+        return $('#chatspace').hasClass('is-conversation-mode');
+    },
+
 
     /**
      * Resizes the chat area.
