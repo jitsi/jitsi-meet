@@ -96,19 +96,29 @@ class Watermarks extends Component {
      * @returns {ReactElement|null} Watermark element or null.
      */
     _renderBrandWatermark() {
+        let reactElement = null;
+
         if (this.state.showBrandWatermark) {
-            return (
-                <a
-                    href = { this.state.brandWatermarkLink }
-                    target = '_new'>
-                    <div
-                        className = 'watermark rightwatermark'
-                        style = { _RIGHT_WATERMARK_STYLE } />
-                </a>
+            reactElement = ( // eslint-disable-line no-extra-parens
+                <div
+                    className = 'watermark rightwatermark'
+                    style = { _RIGHT_WATERMARK_STYLE } />
             );
+
+            const { brandWatermarkLink } = this.state;
+
+            if (brandWatermarkLink) {
+                reactElement = ( // eslint-disable-line no-extra-parens
+                    <a
+                        href = { brandWatermarkLink }
+                        target = '_new'>
+                        { reactElement }
+                    </a>
+                );
+            }
         }
 
-        return null;
+        return reactElement;
     }
 
     /**
@@ -118,19 +128,27 @@ class Watermarks extends Component {
      * @returns {ReactElement|null}
      */
     _renderJitsiWatermark() {
+        let reactElement = null;
+
         if (this.state.showJitsiWatermark
-            || (APP.tokenData.isGuest
+                || (APP.tokenData.isGuest
                     && this.state.showJitsiWatermarkForGuests)) {
-            return (
-                <a
-                    href = { this.state.jitsiWatermarkLink }
-                    target = '_new'>
-                    <div className = 'watermark leftwatermark' />
-                </a>
-            );
+            reactElement = <div className = 'watermark leftwatermark' />;
+
+            const { jitsiWatermarkLink } = this.state;
+
+            if (jitsiWatermarkLink) {
+                reactElement = ( // eslint-disable-line no-extra-parens
+                    <a
+                        href = { jitsiWatermarkLink }
+                        target = '_new'>
+                        { reactElement }
+                    </a>
+                );
+            }
         }
 
-        return null;
+        return reactElement;
     }
 
     /**
