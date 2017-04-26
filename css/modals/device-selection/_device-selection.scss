@@ -36,6 +36,12 @@
                 background-color: rgba(9,30,66,.08);
             }
         }
+        .device-selector-trigger-disabled {
+            .device-selector-trigger {
+                color: #a5adba;
+                cursor: default;
+            }
+        }
 
         .device-selector-trigger-text {
             overflow: hidden;
