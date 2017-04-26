@@ -79,7 +79,7 @@
                 border-radius: 3px;
             }
 
-            .video-input-preview-muted {
+            .video-input-preview-error {
                 color: $participantNameColor;
                 display: none;
                 left: 0;
@@ -89,12 +89,10 @@
                 top: 50%;
             }
 
-            &.video-muted {
-                /* TOFIX: to be removed when we move out from muted preview */
+            &.video-preview-has-error {
                 background: black;
-                /* TOFIX-END */
 
-                .video-input-preview-muted {
+                .video-input-preview-error {
                     display: block;
                 }
             }

@@ -34,29 +34,25 @@ class DeviceSelectionDialog extends Component {
          * All known audio and video devices split by type. This prop comes from
          * the app state.
          */
-        _devices: React.PropTypes.object,
+        _availableDevices: React.PropTypes.object,
 
         /**
-         * Device id for the current audio output device.
+         * Device id for the current audio input device. This device will be set
+         * as the default audio input device to preview.
+         */
+        currentAudioInputId: React.PropTypes.string,
+
+        /**
+         * Device id for the current audio output device. This device will be
+         * set as the default audio output device to preview.
          */
         currentAudioOutputId: React.PropTypes.string,
 
         /**
-         * JitsiLocalTrack for the current local audio.
-         *
-         * JitsiLocalTracks for the current audio and video, if any, should be
-         * passed in for re-use in the previews. This is needed for Internet
-         * Explorer, which cannot get multiple tracks from the same device, even
-         * across tabs.
+         * Device id for the current video input device. This device will be set
+         * as the default video input device to preview.
          */
-        currentAudioTrack: React.PropTypes.object,
-
-        /**
-         * JitsiLocalTrack for the current local video.
-         *
-         * Needed for reuse. See comment for propTypes.currentAudioTrack.
-         */
-        currentVideoTrack: React.PropTypes.object,
+        currentVideoInputId: React.PropTypes.string,
 
         /**
          * Whether or not the audio selector can be interacted with. If true,
@@ -78,12 +74,12 @@ class DeviceSelectionDialog extends Component {
         dispatch: React.PropTypes.func,
 
         /**
-         * Whether or not new audio input source can be selected.
+         * Whether or not a new audio input source can be selected.
          */
         hasAudioPermission: React.PropTypes.bool,
 
         /**
-         * Whether or not new video input sources can be selected.
+         * Whether or not a new video input sources can be selected.
          */
         hasVideoPermission: React.PropTypes.bool,
 
@@ -117,15 +113,40 @@ class DeviceSelectionDialog extends Component {
     constructor(props) {
         super(props);
 
+        const { _availableDevices } = this.props;
+
         this.state = {
-            // JitsiLocalTracks to use for live previewing.
+            // JitsiLocalTrack to use for live previewing of audio input.
             previewAudioTrack: null,
+
+            // JitsiLocalTrack to use for live previewing of video input.
             previewVideoTrack: null,
 
-            // Device ids to keep track of new selections.
-            videInput: null,
-            audioInput: null,
-            audioOutput: null
+            // An message describing a problem with obtaining a video preview.
+            previewVideoTrackError: null,
+
+            // The audio input device id to show as selected by default.
+            selectedAudioInputId: this.props.currentAudioInputId || '',
+
+            // The audio output device id to show as selected by default.
+            selectedAudioOutputId: this.props.currentAudioOutputId || '',
+
+            // The video input device id to show as selected by default.
+            // FIXME: On temasys, without a device selected and put into local
+            // storage as the default device to use, the current video device id
+            // is a blank string. This is because the library gets a local video
+            // track and then maps the track's device id by matching the track's
+            // label to the MediaDeviceInfos returned from enumerateDevices. In
+            // WebRTC, the track label is expected to return the camera device
+            // label. However, temasys video track labels refer to track id, not
+            // device label, so the library cannot match the track to a device.
+            // The workaround of defaulting to the first videoInput available
+            // is re-used from the previous device settings implementation.
+            selectedVideoInputId: this.props.currentVideoInputId
+                || (_availableDevices.videoInput
+                    && _availableDevices.videoInput[0]
+                    && _availableDevices.videoInput[0].deviceId)
+                || ''
         };
 
         // Preventing closing while cleaning up previews is important for
@@ -134,16 +155,29 @@ class DeviceSelectionDialog extends Component {
         // closure until cleanup is complete ensures no errors in the process.
         this._isClosing = false;
 
+        // Bind event handlers so they are only bound once for every instance.
         this._closeModal = this._closeModal.bind(this);
-        this._getAndSetAudioOutput = this._getAndSetAudioOutput.bind(this);
-        this._getAndSetAudioTrack = this._getAndSetAudioTrack.bind(this);
-        this._getAndSetVideoTrack = this._getAndSetVideoTrack.bind(this);
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._updateAudioOutput = this._updateAudioOutput.bind(this);
+        this._updateAudioInput = this._updateAudioInput.bind(this);
+        this._updateVideoInput = this._updateVideoInput.bind(this);
     }
 
     /**
-     * Clean up any preview tracks that might not have been cleaned up already.
+     * Sets default device choices so a choice is pre-selected in the dropdowns
+     * and live previews are created.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this._updateAudioOutput(this.state.selectedAudioOutputId);
+        this._updateAudioInput(this.state.selectedAudioInputId);
+        this._updateVideoInput(this.state.selectedVideoInputId);
+    }
+
+    /**
+     * Disposes preview tracks that might not already be disposed.
      *
      * @inheritdoc
      */
@@ -173,8 +207,8 @@ class DeviceSelectionDialog extends Component {
                     <div className = 'device-selection-column column-video'>
                         <div className = 'device-selection-video-container'>
                             <VideoInputPreview
-                                track = { this.state.previewVideoTrack
-                                    || this.props.currentVideoTrack } />
+                                error = { this.state.previewVideoTrackError }
+                                track = { this.state.previewVideoTrack } />
                         </div>
                         { this._renderAudioInputPreview() }
                     </div>
@@ -197,17 +231,10 @@ class DeviceSelectionDialog extends Component {
      * promise can be for video cleanup and another for audio cleanup.
      */
     _attemptPreviewTrackCleanup() {
-        const cleanupPromises = [];
-
-        if (!this._isPreviewingCurrentVideoTrack()) {
-            cleanupPromises.push(this._disposeVideoPreview());
-        }
-
-        if (!this._isPreviewingCurrentAudioTrack()) {
-            cleanupPromises.push(this._disposeAudioPreview());
-        }
-
-        return cleanupPromises;
+        return Promise.all([
+            this._disposeVideoPreview(),
+            this._disposeAudioPreview()
+        ]);
     }
 
     /**
@@ -243,147 +270,7 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Callback invoked when a new audio output device has been selected.
-     * Updates the internal state of the user's selection.
-     *
-     * @param {string} deviceId - The id of the chosen audio output device.
-     * @private
-     * @returns {void}
-     */
-    _getAndSetAudioOutput(deviceId) {
-        this.setState({
-            audioOutput: deviceId
-        });
-    }
-
-    /**
-     * Callback invoked when a new audio input device has been selected.
-     * Updates the internal state of the user's selection as well as the audio
-     * track that should display in the preview. Will reuse the current local
-     * audio track if it has been selected.
-     *
-     * @param {string} deviceId - The id of the chosen audio input device.
-     * @private
-     * @returns {void}
-     */
-    _getAndSetAudioTrack(deviceId) {
-        this.setState({
-            audioInput: deviceId
-        }, () => {
-            const cleanupPromise = this._isPreviewingCurrentAudioTrack()
-                ? Promise.resolve() : this._disposeAudioPreview();
-
-            if (this._isCurrentAudioTrack(deviceId)) {
-                cleanupPromise
-                    .then(() => {
-                        this.setState({
-                            previewAudioTrack: this.props.currentAudioTrack
-                        });
-                    });
-            } else {
-                cleanupPromise
-                    .then(() => createLocalTrack('audio', deviceId))
-                    .then(jitsiLocalTrack => {
-                        this.setState({
-                            previewAudioTrack: jitsiLocalTrack
-                        });
-                    });
-            }
-        });
-    }
-
-    /**
-     * Callback invoked when a new video input device has been selected. Updates
-     * the internal state of the user's selection as well as the video track
-     * that should display in the preview. Will reuse the current local video
-     * track if it has been selected.
-     *
-     * @param {string} deviceId - The id of the chosen video input device.
-     * @private
-     * @returns {void}
-     */
-    _getAndSetVideoTrack(deviceId) {
-        this.setState({
-            videoInput: deviceId
-        }, () => {
-            const cleanupPromise = this._isPreviewingCurrentVideoTrack()
-                ? Promise.resolve() : this._disposeVideoPreview();
-
-            if (this._isCurrentVideoTrack(deviceId)) {
-                cleanupPromise
-                    .then(() => {
-                        this.setState({
-                            previewVideoTrack: this.props.currentVideoTrack
-                        });
-                    });
-            } else {
-                cleanupPromise
-                    .then(() => createLocalTrack('video', deviceId))
-                    .then(jitsiLocalTrack => {
-                        this.setState({
-                            previewVideoTrack: jitsiLocalTrack
-                        });
-                    });
-            }
-        });
-    }
-
-    /**
-     * Utility function for determining if the current local audio track has the
-     * passed in device id.
-     *
-     * @param {string} deviceId - The device id to match against.
-     * @private
-     * @returns {boolean} True if the device id is being used by the local audio
-     * track.
-     */
-    _isCurrentAudioTrack(deviceId) {
-        return this.props.currentAudioTrack
-            && this.props.currentAudioTrack.getDeviceId() === deviceId;
-    }
-
-    /**
-     * Utility function for determining if the current local video track has the
-     * passed in device id.
-     *
-     * @param {string} deviceId - The device id to match against.
-     * @private
-     * @returns {boolean} True if the device id is being used by the local
-     * video track.
-     */
-    _isCurrentVideoTrack(deviceId) {
-        return this.props.currentVideoTrack
-            && this.props.currentVideoTrack.getDeviceId() === deviceId;
-    }
-
-    /**
-     * Utility function for detecting if the current audio preview track is not
-     * the currently used audio track.
-     *
-     * @private
-     * @returns {boolean} True if the current audio track is being used for
-     * the preview.
-     */
-    _isPreviewingCurrentAudioTrack() {
-        return !this.state.previewAudioTrack
-            || this.state.previewAudioTrack === this.props.currentAudioTrack;
-    }
-
-    /**
-     * Utility function for detecting if the current video preview track is not
-     * the currently used video track.
-     *
-     * @private
-     * @returns {boolean} True if the current video track is being used as the
-     * preview.
-     */
-    _isPreviewingCurrentVideoTrack() {
-        return !this.state.previewVideoTrack
-            || this.state.previewVideoTrack === this.props.currentVideoTrack;
-    }
-
-    /**
-     * Cleans existing preview tracks and signal to closeDeviceSelectionDialog.
+     * Disposes preview tracks and signals to close DeviceSelectionDialog.
      *
      * @private
      * @returns {boolean} Returns false to prevent closure until cleanup is
@@ -406,7 +293,7 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Identify changes to the preferred input/output devices and perform
+     * Identifies changes to the preferred input/output devices and perform
      * necessary cleanup and requests to use those devices. Closes the modal
      * after cleanup and device change requests complete.
      *
@@ -421,32 +308,26 @@ class DeviceSelectionDialog extends Component {
 
         this._isClosing = true;
 
-        const deviceChangePromises = [];
+        const deviceChangePromises = this._attemptPreviewTrackCleanup()
+            .then(() => {
+                if (this.state.selectedVideoInputId
+                        !== this.props.currentVideoInputId) {
+                    this.props.dispatch(
+                        setVideoInputDevice(this.state.selectedVideoInputId));
+                }
 
-        if (this.state.videoInput && !this._isPreviewingCurrentVideoTrack()) {
-            const changeVideoPromise = this._disposeVideoPreview()
-                .then(() => {
-                    this.props.dispatch(setVideoInputDevice(
-                        this.state.videoInput));
-                });
+                if (this.state.selectedAudioInputId
+                        !== this.props.currentAudioInputId) {
+                    this.props.dispatch(
+                        setAudioInputDevice(this.state.selectedAudioInputId));
+                }
 
-            deviceChangePromises.push(changeVideoPromise);
-        }
-
-        if (this.state.audioInput && !this._isPreviewingCurrentAudioTrack()) {
-            const changeAudioPromise = this._disposeAudioPreview()
-                .then(() => {
-                    this.props.dispatch(setAudioInputDevice(
-                        this.state.audioInput));
-                });
-
-            deviceChangePromises.push(changeAudioPromise);
-        }
-
-        if (this.state.audioOutput
-            && this.state.audioOutput !== this.props.currentAudioOutputId) {
-            this.props.dispatch(setAudioOutputDevice(this.state.audioOutput));
-        }
+                if (this.state.selectedAudioOutputId
+                        !== this.props.currentAudioOutputId) {
+                    this.props.dispatch(
+                        setAudioOutputDevice(this.state.selectedAudioOutputId));
+                }
+            });
 
         Promise.all(deviceChangePromises)
             .then(this._closeModal)
@@ -470,8 +351,7 @@ class DeviceSelectionDialog extends Component {
 
         return (
             <AudioInputPreview
-                track = { this.state.previewAudioTrack
-                    || this.props.currentAudioTrack } />
+                track = { this.state.previewAudioTrack } />
         );
     }
 
@@ -489,8 +369,7 @@ class DeviceSelectionDialog extends Component {
 
         return (
             <AudioOutputPreview
-                deviceId = { this.state.audioOutput
-                    || this.props.currentAudioOutputId } />
+                deviceId = { this.state.selectedAudioOutputId } />
         );
     }
 
@@ -515,69 +394,119 @@ class DeviceSelectionDialog extends Component {
      * @returns {Array<ReactElement>} DeviceSelector instances.
      */
     _renderSelectors() {
-        const availableDevices = this.props._devices;
-        const currentAudioId = this.state.audioInput
-            || (this.props.currentAudioTrack
-                && this.props.currentAudioTrack.getDeviceId());
-        const currentAudioOutId = this.state.audioOutput
-            || this.props.currentAudioOutputId;
-
-        // FIXME: On temasys, without a device selected and put into local
-        // storage as the default device to use, the current video device id is
-        // a blank string. This is because the library gets a local video track
-        // and then maps the track's device id by matching the track's label to
-        // the MediaDeviceInfos returned from enumerateDevices. In WebRTC, the
-        // track label is expected to return the camera device label. However,
-        // temasys video track labels refer to track id, not device label, so
-        // the library cannot match the track to a device. The workaround of
-        // defaulting to the first videoInput available has been re-used from
-        // the previous device settings implementation.
-        const currentVideoId = this.state.videoInput
-            || (this.props.currentVideoTrack
-                && this.props.currentVideoTrack.getDeviceId())
-            || (availableDevices.videoInput[0]
-                && availableDevices.videoInput[0].deviceId)
-            || ''; // DeviceSelector expects a string for prop selectedDeviceId.
-
+        const { _availableDevices } = this.props;
         const configurations = [
             {
-                devices: availableDevices.videoInput,
+                devices: _availableDevices.videoInput,
                 hasPermission: this.props.hasVideoPermission,
                 icon: 'icon-camera',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
                 label: 'settings.selectCamera',
-                onSelect: this._getAndSetVideoTrack,
-                selectedDeviceId: currentVideoId
+                onSelect: this._updateVideoInput,
+                selectedDeviceId: this.state.selectedVideoInputId
             },
             {
-                devices: availableDevices.audioInput,
+                devices: _availableDevices.audioInput,
                 hasPermission: this.props.hasAudioPermission,
                 icon: 'icon-microphone',
                 isDisabled: this.props.disableAudioInputChange
                     || this.props.disableDeviceChange,
                 key: 'audioInput',
                 label: 'settings.selectMic',
-                onSelect: this._getAndSetAudioTrack,
-                selectedDeviceId: currentAudioId
+                onSelect: this._updateAudioInput,
+                selectedDeviceId: this.state.selectedAudioInputId
             }
         ];
 
         if (!this.props.hideAudioOutputSelect) {
             configurations.push({
-                devices: availableDevices.audioOutput,
+                devices: _availableDevices.audioOutput,
                 hasPermission: this.props.hasAudioPermission
                     || this.props.hasVideoPermission,
                 icon: 'icon-volume',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
                 label: 'settings.selectAudioOutput',
-                onSelect: this._getAndSetAudioOutput,
-                selectedDeviceId: currentAudioOutId
+                onSelect: this._updateAudioOutput,
+                selectedDeviceId: this.state.selectedAudioOutputId
             });
         }
 
         return configurations.map(this._renderSelector);
+    }
+
+    /**
+     * Callback invoked when a new audio input device has been selected. Updates
+     * the internal state of the user's selection as well as the audio track
+     * that should display in the preview.
+     *
+     * @param {string} deviceId - The id of the chosen audio input device.
+     * @private
+     * @returns {void}
+     */
+    _updateAudioInput(deviceId) {
+        this.setState({
+            selectedAudioInputId: deviceId
+        }, () => {
+            this._disposeAudioPreview()
+                .then(() => createLocalTrack('audio', deviceId))
+                .then(jitsiLocalTrack => {
+                    this.setState({
+                        previewAudioTrack: jitsiLocalTrack
+                    });
+                })
+                .catch(() => {
+                    this.setState({
+                        previewAudioTrack: null
+                    });
+                });
+        });
+    }
+
+    /**
+     * Callback invoked when a new audio output device has been selected.
+     * Updates the internal state of the user's selection.
+     *
+     * @param {string} deviceId - The id of the chosen audio output device.
+     * @private
+     * @returns {void}
+     */
+    _updateAudioOutput(deviceId) {
+        this.setState({
+            selectedAudioOutputId: deviceId
+        });
+    }
+
+    /**
+     * Callback invoked when a new video input device has been selected. Updates
+     * the internal state of the user's selection as well as the video track
+     * that should display in the preview.
+     *
+     * @param {string} deviceId - The id of the chosen video input device.
+     * @private
+     * @returns {void}
+     */
+    _updateVideoInput(deviceId) {
+        this.setState({
+            selectedVideoInputId: deviceId
+        }, () => {
+            this._disposeVideoPreview()
+                .then(() => createLocalTrack('video', deviceId))
+                .then(jitsiLocalTrack => {
+                    this.setState({
+                        previewVideoTrack: jitsiLocalTrack,
+                        previewVideoTrackError: null
+                    });
+                })
+                .catch(() => {
+                    this.setState({
+                        previewVideoTrack: null,
+                        previewVideoTrackError:
+                            this.props.t('deviceSelection.previewUnavailable')
+                    });
+                });
+        });
     }
 }
 
@@ -588,12 +517,12 @@ class DeviceSelectionDialog extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _devices: Object
+ *     _availableDevices: Object
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        _devices: state['features/base/devices']
+        _availableDevices: state['features/base/devices']
     };
 }
 

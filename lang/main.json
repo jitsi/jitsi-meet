@@ -429,9 +429,9 @@
         "speakerTime": "Speaker Time"
     },
     "deviceSelection": {
-        "currentlyVideoMuted": "Video is currently muted",
         "deviceSettings": "Device settings",
         "noPermission": "Permission not granted",
+        "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
         "testAudio": "Test sound"
     },
