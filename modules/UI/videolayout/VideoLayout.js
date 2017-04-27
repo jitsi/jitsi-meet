@@ -176,9 +176,7 @@ var VideoLayout = {
         let localId = APP.conference.getMyUserId();
         this.onVideoTypeChanged(localId, stream.videoType);
 
-        if (!stream.isMuted()) {
-            localVideoThumbnail.changeVideo(stream);
-        }
+        localVideoThumbnail.changeVideo(stream);
 
         /* force update if we're currently being displayed */
         if (this.isCurrentlyOnLarge(localId)) {
