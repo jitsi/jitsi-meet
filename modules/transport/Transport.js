@@ -14,9 +14,7 @@ export default class Transport {
      * @param {Object} options - Optional parameters for configuration of the
      * transport.
      */
-    constructor(options = {}) {
-        const { transport } = options;
-
+    constructor({ transport } = {}) {
         this._requestID = 0;
 
         this._responseHandlers = new Map();
@@ -66,9 +64,9 @@ export default class Transport {
             this.emit('request', data.data, (result, error) => {
                 this._transport.send({
                     type: MESSAGE_TYPE_RESPONSE,
-                    result,
                     error,
-                    id: data.id
+                    id: data.id,
+                    result
                 });
             });
         } else {
@@ -97,22 +95,19 @@ export default class Transport {
      */
     emit(eventName, ...args) {
         const listenersForEvent = this._listeners.get(eventName);
-
-        if (!listenersForEvent || listenersForEvent.size === 0) {
-            this._unprocessedMessages.add(args);
-
-            return false;
-        }
-
         let isProcessed = false;
 
-        listenersForEvent.forEach(listener => {
-            isProcessed = listener(...args) || isProcessed;
-        });
+        if (listenersForEvent && listenersForEvent.size) {
+            listenersForEvent.forEach(listener => {
+                isProcessed = listener(...args) || isProcessed;
+            });
+        }
 
         if (!isProcessed) {
             this._unprocessedMessages.add(args);
         }
+
+        return isProcessed;
     }
 
     /**
@@ -146,7 +141,7 @@ export default class Transport {
     /**
      * Removes all listeners, or those of the specified eventName.
      *
-     * @param {string} [eventName] -  The name of the event.
+     * @param {string} eventName - The name of the event.
      * @returns {Transport} References to the instance of Transport class, so
      * that calls can be chained.
      */
@@ -204,13 +199,13 @@ export default class Transport {
         if (!this._transport) {
             return Promise.reject(new Error('No transport defined!'));
         }
+
         this._requestID++;
+
         const id = this._requestID;
 
         return new Promise((resolve, reject) => {
-            this._responseHandlers.set(this._requestID, response => {
-                const { result, error } = response;
-
+            this._responseHandlers.set(this._requestID, ({ error, result }) => {
                 if (result) {
                     resolve(result);
                 } else if (error) {
@@ -221,9 +216,9 @@ export default class Transport {
             });
 
             this._transport.send({
-                id,
                 type: MESSAGE_TYPE_REQUEST,
-                data
+                data,
+                id
             });
         });
     }
@@ -236,8 +231,8 @@ export default class Transport {
      */
     setTransport(transport) {
         this._disposeTransport();
+
         this._transport = transport;
-        this._transport.setDataReceivedCallback(
-            this._onDataReceived.bind(this));
+        this._transport.setReceiveCallback(this._onDataReceived.bind(this));
     }
 }

@@ -1,4 +1,5 @@
-/* global APP, JitsiMeetJS, interfaceConfig, config */
+/* global APP, config, interfaceConfig, JitsiMeetJS */
+
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import {
     DISCO_REMOTE_CONTROL_FEATURE,
@@ -10,8 +11,8 @@ import { transport } from '../transport';
 
 import RemoteControlParticipant from "./RemoteControlParticipant";
 
-const logger = require("jitsi-meet-logger").getLogger(__filename);
 const ConferenceEvents = JitsiMeetJS.events.conference;
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 /**
  * This class represents the receiver party for a remote controller session.
@@ -33,9 +34,9 @@ export default class Receiver extends RemoteControlParticipant {
         this._hangupListener = this._onHangup.bind(this);
         // We expect here that even if we receive the supported event earlier
         // it will be cached and we'll receive it.
-        transport.on('event', data => {
-            if(data.name === REMOTE_CONTROL_EVENT_TYPE) {
-                this._onRemoteControlAPIEvent(data.event);
+        transport.on('event', ({ event, name }) => {
+            if(name === REMOTE_CONTROL_EVENT_TYPE) {
+                this._onRemoteControlAPIEvent(event);
 
                 return true;
             }
@@ -193,7 +194,7 @@ export default class Receiver extends RemoteControlParticipant {
         }
         this._sendRemoteControlEvent(userId, {
             type: EVENT_TYPES.permissions,
-            action: action
+            action
         });
     }
 
@@ -204,13 +205,12 @@ export default class Receiver extends RemoteControlParticipant {
      */
     _onRemoteControlAPIEvent(event) {
         switch(event.type) {
-            case EVENT_TYPES.supported:
-                this._onRemoteControlSupported();
-                break;
-            case EVENT_TYPES.permissions:
-                this._onRemoteControlPermissionsEvent(
-                    event.userId, event.action);
-                break;
+        case EVENT_TYPES.supported:
+            this._onRemoteControlSupported();
+            break;
+        case EVENT_TYPES.permissions:
+            this._onRemoteControlPermissionsEvent(event.userId, event.action);
+            break;
         }
     }
 

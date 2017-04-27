@@ -12,8 +12,7 @@ import PostMessageTransportBackend from './PostMessageTransportBackend';
 const postisOptions = {};
 
 if (typeof API_ID === 'number') {
-    postisOptions.scope
-        = `jitsi_meet_external_api_${API_ID}`;
+    postisOptions.scope = `jitsi_meet_external_api_${API_ID}`;
 }
 
 export const transport = new Transport({

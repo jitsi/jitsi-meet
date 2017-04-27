@@ -1,15 +1,33 @@
 import Postis from 'postis';
 
 /**
+ * The default options for postis.
+ *
+ * @type {Object}
+ */
+const DEFAULT_POSTIS_OPTIONS = {
+    window: window.opener || window.parent
+};
+
+/**
  * The list of methods of incomming postis messages that we have to support for
  * backward compatability for the users that are directly sending messages to
  * Jitsi Meet (without using external_api.js)
  *
  * @type {string[]}
  */
-const legacyIncomingMethods = [ 'display-name', 'toggle-audio', 'toggle-video',
-    'toggle-film-strip', 'toggle-chat', 'toggle-contact-list',
-    'toggle-share-screen', 'video-hangup', 'email', 'avatar-url' ];
+const LEGACY_INCOMING_METHODS = [
+    'avatar-url',
+    'display-name',
+    'email',
+    'toggle-audio',
+    'toggle-chat',
+    'toggle-contact-list',
+    'toggle-film-strip',
+    'toggle-share-screen',
+    'toggle-video',
+    'video-hangup'
+];
 
 /**
  * The list of methods of outgoing postis messages that we have to support for
@@ -18,10 +36,16 @@ const legacyIncomingMethods = [ 'display-name', 'toggle-audio', 'toggle-video',
  *
  * @type {string[]}
  */
-const legacyOutgoingMethods = [ 'display-name-change', 'incoming-message',
-    'outgoing-message', 'participant-joined', 'participant-left',
-    'video-ready-to-close', 'video-conference-joined',
-    'video-conference-left' ];
+const LEGACY_OUTGOING_METHODS = [
+    'display-name-change',
+    'incoming-message',
+    'outgoing-message',
+    'participant-joined',
+    'participant-left',
+    'video-conference-joined',
+    'video-conference-left',
+    'video-ready-to-close'
+];
 
 /**
  * The postis method used for all messages.
@@ -29,15 +53,6 @@ const legacyOutgoingMethods = [ 'display-name-change', 'incoming-message',
  * @type {string}
  */
 const POSTIS_METHOD_NAME = 'data';
-
-/**
- * The default options for postis.
- *
- * @type {Object}
- */
-const defaultPostisOptions = {
-    window: window.opener || window.parent
-};
 
 /**
  * Implements message transport using the postMessage API.
@@ -49,27 +64,30 @@ export default class PostMessageTransportBackend {
      * @param {Object} options - Optional parameters for configuration of the
      * transport.
      */
-    constructor(options = {}) {
-        const postisOptions = Object.assign({}, defaultPostisOptions,
-            options.postisOptions);
+    constructor({ enableLegacyFormat, postisOptions } = {}) {
+        this.postis = Postis({
+            ...DEFAULT_POSTIS_OPTIONS,
+            ...postisOptions
+        });
 
-        this.postis = Postis(postisOptions);
-
-        this._enableLegacyFormat = options.enableLegacyFormat;
+        this._enableLegacyFormat = enableLegacyFormat;
 
         if (!this._enableLegacyFormat) {
             // backward compatability
-            legacyIncomingMethods.forEach(method =>
-                this.postis.listen(method,
-                    params => this._onPostisDataReceived(method, params)));
+            LEGACY_INCOMING_METHODS.forEach(method =>
+                this.postis.listen(
+                    method,
+                    params => this._legacyDataReceiveCallback(method, params)));
         }
 
-        this.postis.listen(POSTIS_METHOD_NAME, data =>
-            this._dataReceivedCallBack(data));
-
-        this._dataReceivedCallBack = () => {
-            // do nothing until real callback is set;
+        this._receiveCallback = () => {
+            // Do nothing until a callback is set by the consumer of
+            // PostMessageTransportBackend via setReceiveCallback.
         };
+
+        this.postis.listen(
+            POSTIS_METHOD_NAME,
+            data => this._receiveCallback(data));
     }
 
     /**
@@ -79,15 +97,13 @@ export default class PostMessageTransportBackend {
      * @param {Any} params - The params property from postis data object.
      * @returns {void}
      */
-    _onPostisDataReceived(method, params = {}) {
-        const newData = {
+    _legacyDataReceiveCallback(method, params = {}) {
+        this._receiveCallback({
             data: {
                 name: method,
                 data: params
             }
-        };
-
-        this._dataReceivedCallBack(newData);
+        });
     }
 
     /**
@@ -96,13 +112,11 @@ export default class PostMessageTransportBackend {
      * @param {Object} data - The data to be sent.
      * @returns {void}
      */
-    _sendLegacyData(data) {
-        const method = data.name;
-
-        if (method && legacyOutgoingMethods.indexOf(method) !== -1) {
+    _sendLegacyData({ data, name }) {
+        if (name && LEGACY_OUTGOING_METHODS.indexOf(name) !== -1) {
             this.postis.send({
-                method,
-                params: data.data
+                method: name,
+                params: data
             });
         }
     }
@@ -143,7 +157,7 @@ export default class PostMessageTransportBackend {
      * @param {Function} callback - The new callback.
      * @returns {void}
      */
-    setDataReceivedCallback(callback) {
-        this._dataReceivedCallBack = callback;
+    setReceiveCallback(callback) {
+        this._receiveCallback = callback;
     }
 }

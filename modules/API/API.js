@@ -37,9 +37,7 @@ function initCommands() {
         'email': APP.conference.changeLocalEmail,
         'avatar-url': APP.conference.changeLocalAvatarUrl
     };
-    transport.on('event', event => {
-        const { name, data } = event;
-
+    transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
             commands[name](...data);
 
@@ -101,15 +99,18 @@ class API {
      * module.
      * @returns {void}
      */
-    init(options = {}) {
-        if (!shouldBeEnabled() && !options.forceEnable) {
+    init({ forceEnable } = {}) {
+        if (!shouldBeEnabled() && !forceEnable) {
             return;
         }
 
         /**
          * Current status (enabled/disabled) of API.
+         *
+         * @private
+         * @type {boolean}
          */
-        this.enabled = true;
+        this._enabled = true;
 
         APP.conference.addListener(
             JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
@@ -126,10 +127,10 @@ class API {
      * @returns {void}
      */
     _sendEvent(name, data = {}) {
-        if (this.enabled) {
+        if (this._enabled) {
             transport.sendEvent({
-                name,
-                data
+                data,
+                name
             });
         }
     }
@@ -151,17 +152,15 @@ class API {
      * @param {Object} options - Object with the message properties.
      * @returns {void}
      */
-    notifyReceivedChatMessage(options = {}) {
-        const { id, nick, body, ts } = options;
-
+    notifyReceivedChatMessage({ body, id, nick, ts } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
         }
 
         this._sendEvent('incoming-message', {
             from: id,
-            nick,
             message: body,
+            nick,
             stamp: ts
         });
     }
@@ -198,8 +197,8 @@ class API {
      */
     notifyDisplayNameChanged(id, displayname) {
         this._sendEvent('display-name-change', {
-            id,
-            displayname
+            displayname,
+            id
         });
     }
 
@@ -241,8 +240,8 @@ class API {
      * @returns {void}
      */
     dispose() {
-        if (this.enabled) {
-            this.enabled = false;
+        if (this._enabled) {
+            this._enabled = false;
             APP.conference.removeListener(
                 JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
                 onDesktopSharingEnabledChanged);

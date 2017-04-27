@@ -25,8 +25,9 @@ class RemoteControl {
      * enabled or not.
      */
     init() {
-        if(config.disableRemoteControl || this.initialized
-            || !APP.conference.isDesktopSharingEnabled) {
+        if(config.disableRemoteControl
+                || this.initialized
+                || !APP.conference.isDesktopSharingEnabled) {
             return;
         }
         logger.log("Initializing remote control.");
@@ -42,8 +43,9 @@ class RemoteControl {
      * the user supports remote control and with false if not.
      */
     checkUserRemoteControlSupport(user) {
-        return user.getFeatures().then(features =>
-            features.has(DISCO_REMOTE_CONTROL_FEATURE), () => false
+        return user.getFeatures().then(
+            features => features.has(DISCO_REMOTE_CONTROL_FEATURE),
+            () => false
         );
     }
 }

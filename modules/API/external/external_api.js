@@ -81,8 +81,8 @@ function configToURLParamsArray(config = {}) {
 
     for (const key in config) { // eslint-disable-line guard-for-in
         try {
-            params.push(`${key}=${
-                encodeURIComponent(JSON.stringify(config[key]))}`);
+            params.push(
+                `${key}=${encodeURIComponent(JSON.stringify(config[key]))}`);
         } catch (e) {
             console.warn(`Error encoding ${key}: ${e}`);
         }
@@ -233,14 +233,10 @@ class JitsiMeetExternalAPI extends EventEmitter {
      */
     _setupListeners() {
 
-        this._transport.on('event', event => {
-            const { name, data } = event;
-
+        this._transport.on('event', ({ data, name }) => {
             if (name === 'participant-joined') {
                 changeParticipantNumber(this, 1);
-            }
-
-            if (name === 'participant-left') {
+            } else if (name === 'participant-left') {
                 changeParticipantNumber(this, -1);
             }
 
@@ -364,8 +360,8 @@ class JitsiMeetExternalAPI extends EventEmitter {
             return;
         }
         this._transport.sendEvent({
-            name: commands[name],
-            data: args
+            data: args,
+            name: commands[name]
         });
     }
 
