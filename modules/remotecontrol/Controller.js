@@ -99,6 +99,7 @@ export default class Controller extends RemoteControlParticipant {
                 try {
                     result = this._handleReply(participant, event);
                 } catch (e) {
+                    clearRequest();
                     reject(e);
                 }
                 if(result !== null) {

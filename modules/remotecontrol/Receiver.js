@@ -7,6 +7,8 @@ import {
     PERMISSIONS_ACTIONS,
     REMOTE_CONTROL_EVENT_NAME
 } from '../../service/remotecontrol/Constants';
+import { openRemoteControlAuthorizationDialog }
+    from '../../react/features/remote-control';
 import { getJitsiMeetTransport } from '../transport';
 
 import RemoteControlParticipant from './RemoteControlParticipant';
@@ -98,10 +100,12 @@ export default class Receiver extends RemoteControlParticipant {
         this.controller = null;
         APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
             this._userLeftListener);
-        transport.sendEvent({
-            name: REMOTE_CONTROL_EVENT_NAME,
-            type: EVENT_TYPES.stop
-        });
+        if (this.remoteControlExternalAuth) {
+            transport.sendEvent({
+                name: REMOTE_CONTROL_EVENT_NAME,
+                type: EVENT_TYPES.stop
+            });
+        }
         if(!dontShowDialog) {
             APP.UI.messageHandler.openMessageDialog(
                 "dialog.remoteControlTitle",
@@ -144,8 +148,15 @@ export default class Receiver extends RemoteControlParticipant {
             if (this.controller === null
                     && event.type === EVENT_TYPES.permissions
                     && event.action === PERMISSIONS_ACTIONS.request) {
+                const userId = participant.getId();
+
+                if(!config.remoteControlExternalAuth) {
+                    APP.store.dispatch(
+                        openRemoteControlAuthorizationDialog(userId));
+                    return;
+                }
                 // FIXME: Maybe use transport.sendRequest in this case???
-                remoteControlEvent.userId = participant.getId();
+                remoteControlEvent.userId = userId;
                 remoteControlEvent.userJID = participant.getJid();
                 remoteControlEvent.displayName = participant.getDisplayName()
                     || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
@@ -171,38 +182,76 @@ export default class Receiver extends RemoteControlParticipant {
      * @param {PERMISSIONS_ACTIONS} action the action related to the event.
      */
     _onRemoteControlPermissionsEvent(userId, action) {
-        if (action === PERMISSIONS_ACTIONS.grant) {
-            APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
-                this._userLeftListener);
-            this.controller = userId;
-            logger.log("Remote control permissions granted to: " + userId);
-            if(!APP.conference.isSharingScreen) {
-                APP.conference.toggleScreenSharing();
-                APP.conference.screenSharingPromise.then(() => {
-                    if(APP.conference.isSharingScreen) {
-                        this._sendRemoteControlEvent(userId, {
-                            type: EVENT_TYPES.permissions,
-                            action: action
-                        });
-                    } else {
-                        this._sendRemoteControlEvent(userId, {
-                            type: EVENT_TYPES.permissions,
-                            action: PERMISSIONS_ACTIONS.error
-                        });
-                    }
-                }).catch(() => {
+        switch(action) {
+            case PERMISSIONS_ACTIONS.grant:
+                this.grant(userId);
+                break;
+            case PERMISSIONS_ACTIONS.deny:
+                this.deny(userId);
+                break;
+            case PERMISSIONS_ACTIONS.error:
+                this._sendRemoteControlEvent(userId, {
+                    type: EVENT_TYPES.permissions,
+                    action: action
+                });
+                break;
+            default:
+                // Unknown action. Ignore.
+        }
+    }
+
+    /**
+     * Denies remote control access for user associated with the passed user id.
+     *
+     * @param {string} userId - The id associated with the user who sent the
+     * request for remote control authorization.
+     * @returns {void}
+     */
+    deny(userId) {
+        this._sendRemoteControlEvent(userId, {
+            type: EVENT_TYPES.permissions,
+            action: PERMISSIONS_ACTIONS.deny
+        });
+    }
+
+    /**
+     * Grants remote control access to user associated with the passed user id.
+     *
+     * @param {string} userId - The id associated with the user who sent the
+     * request for remote control authorization.
+     * @returns {void}
+     */
+    grant(userId) {
+        APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+            this._userLeftListener);
+        this.controller = userId;
+        logger.log("Remote control permissions granted to: " + userId);
+        if(!APP.conference.isSharingScreen) {
+            APP.conference.toggleScreenSharing();
+            APP.conference.screenSharingPromise.then(() => {
+                if(APP.conference.isSharingScreen) {
+                    this._sendRemoteControlEvent(userId, {
+                        type: EVENT_TYPES.permissions,
+                        action: PERMISSIONS_ACTIONS.grant
+                    });
+                } else {
                     this._sendRemoteControlEvent(userId, {
                         type: EVENT_TYPES.permissions,
                         action: PERMISSIONS_ACTIONS.error
                     });
+                }
+            }).catch(() => {
+                this._sendRemoteControlEvent(userId, {
+                    type: EVENT_TYPES.permissions,
+                    action: PERMISSIONS_ACTIONS.error
                 });
-                return;
-            }
+            });
+        } else {
+            this._sendRemoteControlEvent(userId, {
+                type: EVENT_TYPES.permissions,
+                action: PERMISSIONS_ACTIONS.grant
+            });
         }
-        this._sendRemoteControlEvent(userId, {
-            type: EVENT_TYPES.permissions,
-            action
-        });
     }
 
     /**

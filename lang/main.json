@@ -212,6 +212,7 @@
     },
     "dialog": {
         "add": "Add",
+        "allow": "Allow",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
         "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser's security settings and try again.",
         "passwordErrorTitle": "Password Error",
@@ -330,7 +331,9 @@
         "muteParticipantTitle": "Mute this participant?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
-        "remoteControlTitle": "Remote Control",
+        "remoteControlTitle": "Remote desktop control",
+        "remoteControlRequestMessage": "Will you allow __user__ to remotely control your desktop?",
+        "remoteControlShareScreenWarning": "Note that if you press \"Allow\" you will share your screen!",
         "remoteControlDeniedMessage": "__user__ rejected your remote control request!",
         "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
         "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
