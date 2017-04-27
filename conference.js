@@ -1442,6 +1442,10 @@ export default {
         room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
             const formattedDisplayName
                 = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
+            APP.store.dispatch(participantUpdated({
+                id,
+                name: formattedDisplayName
+            }));
             APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
             APP.UI.changeDisplayName(id, formattedDisplayName);
         });
@@ -2052,6 +2056,12 @@ export default {
         if (formattedNickname === APP.settings.getDisplayName()) {
             return;
         }
+
+        APP.store.dispatch(participantUpdated({
+            id: this.getMyUserId(),
+            local: true,
+            name: formattedNickname
+        }));
 
         APP.settings.setDisplayName(formattedNickname);
         if (room) {

@@ -88,7 +88,8 @@ export class AbstractApp extends Component {
             localParticipant = {
                 avatarID: APP.settings.getAvatarId(),
                 avatarURL: APP.settings.getAvatarUrl(),
-                email: APP.settings.getEmail()
+                email: APP.settings.getEmail(),
+                name: APP.settings.getDisplayName()
             };
         }
         dispatch(localParticipantJoined(localParticipant));
