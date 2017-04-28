@@ -3,12 +3,14 @@
 import Logger from 'jitsi-meet-logger';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
+import { CONFERENCE_JOINED } from '../conference';
 import JitsiMeetJS, { LIB_WILL_INIT } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 
 import {
     setLogCollector,
-    setLogCollectorStarted
+    startLogCollector,
+    stopLogCollector
 } from './actions';
 import { SET_LOGGING_CONFIG } from './actionTypes';
 import JitsiMeetLogStorage from './JitsiMeetLogStorage';
@@ -28,7 +30,10 @@ MiddlewareRegistry.register(store => next => action => {
         return _appWillMount(store, next, action);
 
     case APP_WILL_UNMOUNT:
-        return _stopLogCollector(store, next, action);
+        return _appWillUnmount(store, next, action);
+
+    case CONFERENCE_JOINED:
+        return _conferenceJoined(store, next, action);
 
     case LIB_WILL_INIT:
         return _libWillInit(store, next, action);
@@ -71,6 +76,26 @@ function _appWillMount({ getState, dispatch }, next, action) {
 }
 
 /**
+ * Notifies the feature base/logger that the action APP_WILL_UNMOUNT
+ * is being dispatched within a specific Redux store.
+ *
+ * @param {Store} store - The Redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The Redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The Redux action {@code CONFERENCE_JOINED} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified {@code action}.
+ */
+function _conferenceJoined(store, next, action) {
+    store.dispatch(startLogCollector());
+
+    return next(action);
+}
+
+/**
  * Notifies the feature base/logging that the action {@link LIB_WILL_INIT} is
  * being dispatched within a specific Redux {@code store}.
  *
@@ -85,7 +110,7 @@ function _appWillMount({ getState, dispatch }, next, action) {
  * specified {@code action}.
  */
 function _libWillInit({ getState }, next, action) {
-    const { config, logCollector } = getState();
+    const { config, logCollector } = getState()['features/base/logging'];
 
     _setLogLevels(JitsiMeetJS, config);
     JitsiMeetJS.addGlobalLogTransport(logCollector);
@@ -201,15 +226,13 @@ function _setLogLevels(logger, config) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _stopLogCollector(store, next, action) {
+function _appWillUnmount(store, next, action) {
     const {
-        logCollector,
         logCollectorStarted
     } = store.getState()['features/base/logging'];
 
     if (logCollectorStarted) {
-        logCollector.stop();
-        store.dispatch(setLogCollectorStarted(false));
+        store.dispatch(stopLogCollector());
     }
 
     return next(action);

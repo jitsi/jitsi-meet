@@ -9,7 +9,7 @@ import {
     WEBRTC_NOT_SUPPORTED
 } from '../lib-jitsi-meet';
 import {
-    setLogCollectorStarted
+    startLogCollector
 } from '../logging';
 
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -45,14 +45,12 @@ export function connect() {
         // from the old app (at the moment of writing).
         return APP.conference.init({ roomName: room }).then(() => {
             if (logCollector) {
-                // Start the LogCollector's periodic "store logs" task
-                logCollector.start();
 
-                dispatch(setLogCollectorStarted(true));
-
-                // Make an attempt to flush in case a lot of logs have been
-                // cached, before the collector was started.
-                logCollector.flush();
+                // FIXME: This should be removed when conference will be
+                // reactified. For mobile version we use CONFERENCE_JOINED
+                // action to start log collector but conference on the web
+                // is not reactified yet and doesn't support that action.
+                dispatch(startLogCollector());
 
                 // This event listener will flush the logs, before
                 // the statistics module (CallStats) is stopped.

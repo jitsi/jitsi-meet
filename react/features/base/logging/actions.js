@@ -57,3 +57,41 @@ export function setLoggingConfig(config: Object) {
         config
     };
 }
+
+/**
+ * Starts log collector.
+ *
+ * @returns {Function}
+ */
+export function startLogCollector() {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        const { logCollector } = getState()['features/base/logging'];
+
+        if (logCollector) {
+            logCollector.start();
+
+            dispatch(setLogCollectorStarted(true));
+
+            // Make an attempt to flush in case a lot of logs have been
+            // cached, before the collector was started.
+            logCollector.flush();
+        }
+    };
+}
+
+/**
+ * Stops log collector.
+ *
+ * @returns {Function}
+ */
+export function stopLogCollector() {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        const { logCollector } = getState()['features/base/logging'];
+
+        if (logCollector) {
+            logCollector.stop();
+
+            dispatch(setLogCollectorStarted(false));
+        }
+    };
+}
