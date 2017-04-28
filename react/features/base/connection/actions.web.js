@@ -8,6 +8,9 @@ import {
     WEBRTC_NOT_READY,
     WEBRTC_NOT_SUPPORTED
 } from '../lib-jitsi-meet';
+import {
+    setLogCollectorStarted
+} from '../logging';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
@@ -31,6 +34,9 @@ export {
 export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
+        const {
+            logCollector
+        } = state['features/base/logging'];
 
         // XXX Lib-jitsi-meet does not accept uppercase letters.
         const room = state['features/base/conference'].room.toLowerCase();
@@ -38,14 +44,15 @@ export function connect() {
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
         return APP.conference.init({ roomName: room }).then(() => {
-            if (APP.logCollector) {
+            if (logCollector) {
                 // Start the LogCollector's periodic "store logs" task
-                APP.logCollector.start();
-                APP.logCollectorStarted = true;
+                logCollector.start();
+
+                dispatch(setLogCollectorStarted(true));
 
                 // Make an attempt to flush in case a lot of logs have been
                 // cached, before the collector was started.
-                APP.logCollector.flush();
+                logCollector.flush();
 
                 // This event listener will flush the logs, before
                 // the statistics module (CallStats) is stopped.
@@ -59,8 +66,8 @@ export function connect() {
                 APP.conference.addConferenceListener(
                     JitsiConferenceEvents.BEFORE_STATISTICS_DISPOSED,
                     () => {
-                        if (APP.logCollector) {
-                            APP.logCollector.flush();
+                        if (logCollector) {
+                            logCollector.flush();
                         }
                     }
                 );

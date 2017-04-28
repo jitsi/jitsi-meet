@@ -2,11 +2,16 @@
 
 import Logger from 'jitsi-meet-logger';
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import JitsiMeetJS, { LIB_WILL_INIT } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 
+import {
+    setLogCollector,
+    setLogCollectorStarted
+} from './actions';
 import { SET_LOGGING_CONFIG } from './actionTypes';
+import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 
 declare var APP: Object;
 
@@ -21,6 +26,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         return _appWillMount(store, next, action);
+
+    case APP_WILL_UNMOUNT:
+        return _stopLogCollector(store, next, action);
 
     case LIB_WILL_INIT:
         return _libWillInit(store, next, action);
@@ -46,9 +54,11 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _appWillMount({ getState }, next, action) {
-    const { config } = getState()['features/base/logging'];
+function _appWillMount({ getState, dispatch }, next, action) {
+    const state = getState();
+    const { config } = state['features/base/logging'];
 
+    _setLogCollector(state, dispatch);
     _setLogLevels(Logger, config);
 
     // FIXME Until the logic of conference.js is rewritten into the React
@@ -75,9 +85,56 @@ function _appWillMount({ getState }, next, action) {
  * specified {@code action}.
  */
 function _libWillInit({ getState }, next, action) {
-    _setLogLevels(JitsiMeetJS, getState()['features/base/logging'].config);
+    const { config, logCollector } = getState();
+
+    _setLogLevels(JitsiMeetJS, config);
+    JitsiMeetJS.addGlobalLogTransport(logCollector);
 
     return next(action);
+}
+
+/**
+ * Sets logging collector.
+ *
+ * @param {Function} state - Snapshot of the Redux store.
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @private
+ * @returns {void}
+ */
+function _setLogCollector(state, dispatch) {
+    let conference = state['features/base/conference'];
+    const isAPPExist = typeof APP !== 'undefined';
+
+    // Let's use conference object from APP global if it's defined.
+    if (isAPPExist) {
+        conference = APP.conference;
+    }
+    const {
+        logCollector,
+        logCollectorStarted,
+        config
+    } = state['features/base/logging'];
+
+    // Create the LogCollector and register it as the global log transport. It
+    // is done early to capture as much logs as possible. Captured logs will be
+    // cached, before the JitsiMeetLogStorage gets ready (statistics module is
+    // initialized).
+    if (!logCollector && !config.disableLogCollector) {
+        const logStorage
+            = new JitsiMeetLogStorage(logCollectorStarted, conference);
+        const newLogCollector = new Logger.LogCollector(logStorage);
+
+        dispatch(setLogCollector(newLogCollector));
+        Logger.addGlobalTransport(newLogCollector);
+
+        // FIXME Until the logic of conference.js is rewritten into the React
+        // app we, JitsiMeetJS.init is to not be used for the React app.
+        // Consequently, LIB_WILL_INIT will not be dispatched. In the meantime,
+        // do the following:
+        if (isAPPExist) {
+            JitsiMeetJS.addGlobalLogTransport(newLogCollector);
+        }
+    }
 }
 
 /**
@@ -128,4 +185,32 @@ function _setLogLevels(logger, config) {
     Object.keys(config).forEach(
         id =>
             id === 'defaultLogLevel' || logger.setLogLevelById(config[id], id));
+}
+
+/**
+ * Notifies the feature base/logger that the action APP_WILL_UNMOUNT
+ * is being dispatched within a specific Redux store.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action APP_WILL_UNMOUNT which is
+ * being dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _stopLogCollector(store, next, action) {
+    const {
+        logCollector,
+        logCollectorStarted
+    } = store.getState()['features/base/logging'];
+
+    if (logCollectorStarted) {
+        logCollector.stop();
+        store.dispatch(setLogCollectorStarted(false));
+    }
+
+    return next(action);
 }

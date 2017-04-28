@@ -1,6 +1,11 @@
+/* @flow */
 import { equals, ReducerRegistry } from '../redux';
 
-import { SET_LOGGING_CONFIG } from './actionTypes';
+import {
+    SET_LOG_COLLECTOR,
+    SET_LOG_COLLECTOR_STARTED,
+    SET_LOGGING_CONFIG
+} from './actionTypes';
 
 /**
  * The initial state of the feature base/logging.
@@ -24,6 +29,18 @@ ReducerRegistry.register(
     'features/base/logging',
     (state = INITIAL_STATE, action) => {
         switch (action.type) {
+        case SET_LOG_COLLECTOR:
+            return {
+                ...state,
+                logCollector: action.logCollector
+            };
+
+        case SET_LOG_COLLECTOR_STARTED:
+            return {
+                ...state,
+                logCollectorStarted: action.isStarted
+            };
+
         case SET_LOGGING_CONFIG:
             return _setLoggingConfig(state, action);
 

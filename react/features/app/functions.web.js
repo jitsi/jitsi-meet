@@ -1,10 +1,6 @@
 /* @flow */
 
-import Logger from 'jitsi-meet-logger';
-
 import { isRoomValid } from '../base/conference';
-import { JitsiMeetLogStorage } from '../base/logger';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { Platform, RouteRegistry } from '../base/react';
 import { Conference } from '../conference';
 import {
@@ -21,7 +17,6 @@ import getTokenData from '../../../modules/tokendata/TokenData';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
-declare var loggingConfig: Object;
 
 /**
  * Array of rules defining whether we should {@link _interceptComponent} to
@@ -111,11 +106,12 @@ export function _getRouteToRender(stateOrGetState: Object | Function) {
  * Temporary solution. Later we'll get rid of global APP and set its properties
  * in redux store.
  *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @param {Function} getState - Function that returns snapshot of the Redux
+ * store.
  * @returns {void}
  */
-export function init() {
-    _initLogging();
-
+export function init(): void {
     APP.keyboardshortcut = KeyboardShortcut;
     APP.tokenData = getTokenData();
 
@@ -125,31 +121,6 @@ export function init() {
     APP.API.init(APP.tokenData.jwt ? { forceEnable: true } : undefined);
 
     APP.translation.init();
-}
-
-/**
- * Initializes logging in the app.
- *
- * @private
- * @returns {void}
- */
-function _initLogging() {
-    // Create the LogCollector and register it as the global log transport. It
-    // is done early to capture as much logs as possible. Captured logs will be
-    // cached, before the JitsiMeetLogStorage gets ready (statistics module is
-    // initialized).
-    if (!APP.logCollector && !loggingConfig.disableLogCollector) {
-        const {
-            conference,
-            logCollectorStarted
-        } = APP;
-        const logCollector
-            = new JitsiMeetLogStorage(logCollectorStarted, conference);
-
-        APP.logCollector = new Logger.LogCollector(logCollector);
-        Logger.addGlobalTransport(APP.logCollector);
-        JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
-    }
 }
 
 /**

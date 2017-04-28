@@ -1,7 +1,9 @@
+import '../../room-lock';
+
 import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
 
-import '../../room-lock';
+declare var APP: Object;
 
 /**
  * Root application component.

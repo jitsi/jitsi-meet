@@ -24,14 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Stops collecting the logs and disposing the API when the user closes the
- * page.
+ * Stops disposing the API when the user closes the page.
  */
 window.addEventListener('beforeunload', () => {
-    // Stop the LogCollector
-    if (APP.logCollectorStarted) {
-        APP.logCollector.stop();
-        APP.logCollectorStarted = false;
-    }
     APP.API.dispose();
 });
