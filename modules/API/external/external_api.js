@@ -1,8 +1,9 @@
 import EventEmitter from 'events';
 
-import PostMessageTransportBackend
-    from '../../transport/PostMessageTransportBackend';
-import Transport from '../../transport/Transport';
+import {
+    PostMessageTransportBackend,
+    Transport
+} from '../../transport';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -184,7 +185,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
         this._createIFrame(Math.max(height, MIN_HEIGHT),
             Math.max(width, MIN_WIDTH));
         this._transport = new Transport({
-            transport: new PostMessageTransportBackend({
+            backend: new PostMessageTransportBackend({
                 postisOptions: {
                     scope: `jitsi_meet_external_api_${id}`,
                     window: this.frame.contentWindow

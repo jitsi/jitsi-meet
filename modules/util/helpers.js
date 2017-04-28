@@ -84,8 +84,11 @@ export function debounce(fn, wait = 0, options = {}) {
  * we store everything that needs to be global (for some reason).
  */
 export function getJitsiMeetGlobalNS() {
-    if(!window.JitsiMeetGlobalNS) {
-        window.JitsiMeetGlobalNS = { };
+    if(!window.JitsiMeetJS) {
+        window.JitsiMeetJS = { };
     }
-    return window.JitsiMeetGlobalNS;
+    if(!window.JitsiMeetJS.app) {
+        window.JitsiMeetJS.app = { };
+    }
+    return window.JitsiMeetJS.app;
 }

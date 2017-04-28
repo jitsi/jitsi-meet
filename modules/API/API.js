@@ -1,5 +1,5 @@
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
-import { transport } from '../transport';
+import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
 
@@ -17,6 +17,13 @@ let commands = {};
  * was received before the initialization.
  */
 let initialScreenSharingState = false;
+
+/**
+ * The transport instance used for communication with external apps.
+ *
+ * @type {Transport}
+ */
+const transport = getJitsiMeetTransport();
 
 /**
  * Initializes supported commands.

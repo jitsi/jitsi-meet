@@ -10,8 +10,8 @@ const DEFAULT_POSTIS_OPTIONS = {
 };
 
 /**
- * The list of methods of incomming postis messages that we have to support for
- * backward compatability for the users that are directly sending messages to
+ * The list of methods of incoming postis messages that we have to support for
+ * backward compatibility for the users that are directly sending messages to
  * Jitsi Meet (without using external_api.js)
  *
  * @type {string[]}
@@ -31,7 +31,7 @@ const LEGACY_INCOMING_METHODS = [
 
 /**
  * The list of methods of outgoing postis messages that we have to support for
- * backward compatability for the users that are directly listening to the
+ * backward compatibility for the users that are directly listening to the
  * postis messages send by Jitsi Meet(without using external_api.js).
  *
  * @type {string[]}
@@ -70,10 +70,18 @@ export default class PostMessageTransportBackend {
             ...postisOptions
         });
 
+        /**
+         * If true PostMessageTransportBackend will process and send data using
+         * the legacy format and in the same time the current format. Otherwise
+         * all data received that is using the legacy format will be ignored and
+         * no data with the legacy format will be sent.
+         *
+         * @type {boolean}
+         */
         this._enableLegacyFormat = enableLegacyFormat;
 
-        if (!this._enableLegacyFormat) {
-            // backward compatability
+        if (this._enableLegacyFormat) {
+            // backward compatibility
             LEGACY_INCOMING_METHODS.forEach(method =>
                 this.postis.listen(
                     method,
@@ -91,7 +99,7 @@ export default class PostMessageTransportBackend {
     }
 
     /**
-     * Handles incomming legacy postis data.
+     * Handles incoming legacy postis data.
      *
      * @param {string} method - The method property from postis data object.
      * @param {Any} params - The params property from postis data object.
@@ -142,7 +150,7 @@ export default class PostMessageTransportBackend {
             params: data
         });
 
-        if (!this._enableLegacyFormat) {
+        if (this._enableLegacyFormat) {
             // For the legacy use case we don't need any new fields defined in
             // Transport class. That's why we are passing only the original
             // object passed by the consumer of the Transport class which is

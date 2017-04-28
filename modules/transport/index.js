@@ -1,8 +1,15 @@
-import { API_ID } from '../API';
+// FIXME: change to '../API' when we update to webpack2. If we do this now all
+// files from API modules will be included in external_api.js.
+import { API_ID } from '../API/constants';
 import { getJitsiMeetGlobalNS } from '../util/helpers';
 
 import Transport from './Transport';
 import PostMessageTransportBackend from './PostMessageTransportBackend';
+
+export {
+    Transport,
+    PostMessageTransportBackend
+};
 
 /**
  * Option for the default low level transport.
@@ -15,19 +22,38 @@ if (typeof API_ID === 'number') {
     postisOptions.scope = `jitsi_meet_external_api_${API_ID}`;
 }
 
-export const transport = new Transport({
-    transport: new PostMessageTransportBackend({
-        enableLegacyFormat: true,
-        postisOptions
-    })
-});
+/**
+ * The instance of Transport class that will be used by Jitsi Meet.
+ *
+ * @type {Transport}
+ */
+let transport;
+
+/**
+ * Returns the instance of Transport class that will be used by Jitsi Meet.
+ *
+ * @returns {Transport}
+ */
+export function getJitsiMeetTransport() {
+    if (!transport) {
+        transport = new Transport({
+            backend: new PostMessageTransportBackend({
+                enableLegacyFormat: true,
+                postisOptions
+            })
+        });
+    }
+
+    return transport;
+}
 
 /**
  * Sets the transport to passed transport.
  *
- * @param {Object} newTransport - The new transport.
+ * @param {Object} externalTransportBackend - The new transport.
  * @returns {void}
  */
-getJitsiMeetGlobalNS().useNewExternalTransport = function(newTransport) {
-    transport.setTransport(newTransport);
+getJitsiMeetGlobalNS().setExternalTransportBackend = function(
+    externalTransportBackend) {
+    transport.setBackend(externalTransportBackend);
 };

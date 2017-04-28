@@ -7,12 +7,19 @@ import {
     PERMISSIONS_ACTIONS,
     REMOTE_CONTROL_EVENT_TYPE
 } from "../../service/remotecontrol/Constants";
-import { transport } from '../transport';
+import { getJitsiMeetTransport } from '../transport';
 
 import RemoteControlParticipant from "./RemoteControlParticipant";
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require("jitsi-meet-logger").getLogger(__filename);
+
+/**
+ * The transport instance used for communication with external apps.
+ *
+ * @type {Transport}
+ */
+const transport = getJitsiMeetTransport();
 
 /**
  * This class represents the receiver party for a remote controller session.
