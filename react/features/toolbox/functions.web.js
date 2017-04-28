@@ -29,6 +29,7 @@ export function getButtonAttributesByProps(props: Object = {})
         classNames = [ ...classNames ];
     }
 
+    props.sideContainerId && classNames.push('expandable');
     props.toggled && classNames.push('toggled');
     props.unclickable && classNames.push('unclickable');
 

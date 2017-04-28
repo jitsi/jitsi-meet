@@ -174,8 +174,7 @@
         width: $defaultToolbarSize;
         -webkit-transform: translateX(-100%);
 
-        .button.toggled:not(.icon-raised-hand):not(.button-active) {
-            background: $toolbarSelectBackground;
+        .button.toggled {
             cursor: pointer;
             text-decoration: none;
 
@@ -186,6 +185,10 @@
                     background: none;
                     cursor: default;
                 }
+            }
+
+            &.expandable {
+                background: $toolbarSelectBackground;
             }
         }
     }
