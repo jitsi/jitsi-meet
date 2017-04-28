@@ -3,11 +3,14 @@ import React, { PureComponent } from 'react';
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 
 /**
- * React component for displaying a audio level meter for a JitsiLocalTrack.
+ * React {@code Component} for displaying an audio level meter for a
+ * JitsiLocalTrack.
+ *
+ * @extends PureComponent
  */
 class AudioInputPreview extends PureComponent {
     /**
-     * AudioInputPreview component's property types.
+     * {@code AudioInputPreview}'s property types.
      *
      * @static
      */
@@ -19,18 +22,26 @@ class AudioInputPreview extends PureComponent {
     }
 
     /**
-     * Initializes a new AudioInputPreview instance.
+     * Initializes a new {@code AudioInputPreview} instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
         this.state = {
+            /**
+             * The current audio level to display. The number should be between
+             * 0 and 1, as the audio level meter will fill itself based on the
+             * percentage of audioLevel divided by 1.
+             *
+             * @type {number}
+             */
             audioLevel: 0
         };
 
+        // Bind event handlers so they are only bound once for every instance.
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
     }
 

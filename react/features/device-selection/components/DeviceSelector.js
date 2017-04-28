@@ -7,14 +7,14 @@ import { translate } from '../../base/i18n';
 const EXPAND_ICON = <ExpandIcon label = 'expand' />;
 
 /**
- * React component for selecting a device from a select element. Wraps
- * AKDropdownMenu with device selection specific logic.
+ * React {@code Component} for selecting a device from a dropdwn. Wraps
+ * {@code AKDropdownMenu} with device selection specific logic.
  *
  * @extends Component
  */
 class DeviceSelector extends Component {
     /**
-     * DeviceSelector component's property types.
+     * {@code DeviceSelector}'s property types.
      *
      * @static
      */
@@ -63,12 +63,13 @@ class DeviceSelector extends Component {
     /**
      * Initializes a new DeviceSelector instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onSelect = this._onSelect.bind(this);
     }
 
@@ -101,9 +102,9 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates a React Element for displaying the passed in text surrounded by
+     * Creates a ReactElement for displaying the passed in text surrounded by
      * two icons. The left icon is the icon class passed in through props and
-     * the right icon is AtlasKit ExpandIcon.
+     * the right icon is AtlasKit {@code ExpandIcon}.
      *
      * @param {string} triggerText - The text to display within the element.
      * @private
@@ -123,7 +124,8 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates an object in the format expected by AKDropdownMenu for an option.
+     * Creates an object in the format expected by {@code AKDropdownMenu} for a
+     * dropdown option.
      *
      * @param {MediaDeviceInfo} device - An object with a label and a deviceId.
      * @private
@@ -138,15 +140,16 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates a AKDropdownMenu Component using passed in props and options. If
-     * the dropdown needs to be disabled, then only the AKDropdownMenu trigger
-     * element is returned to simulate a disabled state.
+     * Creates an instance of {@code AKDropdownMenu} using props and passed in
+     * options. If the dropdown needs to be disabled, then only the
+     * {@code AKDropdownMenu} trigger element is returned to simulate a disabled
+     * state.
      *
      * @param {Object} options - Additional configuration for display.
      * @param {Object} options.defaultSelected - The option that should be set
      * as currently chosen.
-     * @param {boolean} options.isDisabled - If true, only the AKDropdownMenu
-     * trigger component will be returned to simulate a disabled dropdown.
+     * @param {boolean} options.isDisabled - If true, only the trigger element
+     * will be returned to simulate a disabled dropdown.
      * @param {Array} options.items - All the selectable options to display.
      * @param {string} options.placeholder - The translation key to display when
      * no selection has been made.
@@ -159,6 +162,11 @@ class DeviceSelector extends Component {
                 || options.placeholder;
         const trigger = this._createDropdownTrigger(triggerText);
 
+        // FIXME Returning of just the trigger is a workaround for
+        // {@code AKDropdownMenu} not supporting a disabled state, causing a
+        // click to always show a dropdown. The true fix is to implement or wait
+        // for {@code AKDropdownMenu} to support disabling or refactor this
+        // component to use {@code StatelessDropdownMenu}.
         if (options.isDisabled) {
             return (
                 <div className = 'device-selector-trigger-disabled'>
@@ -193,8 +201,8 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates a Select Component that is disabled and has a placeholder
-     * indicating there are no devices to select.
+     * Creates an instance of {@code AKDropdownMenu} that is disabled and has a
+     * placeholder indicating there are no devices to select.
      *
      * @private
      * @returns {ReactElement}
@@ -207,8 +215,8 @@ class DeviceSelector extends Component {
     }
 
     /**
-     * Creates a AKDropdownMenu Component that is disabled and has a placeholder
-     * stating there is no permission to display the devices.
+     * Creates an instance of {@code AKDropdownMenu} that is disabled and has a
+     * placeholder indicating there is no permission to display the devices.
      *
      * @private
      * @returns {ReactElement}

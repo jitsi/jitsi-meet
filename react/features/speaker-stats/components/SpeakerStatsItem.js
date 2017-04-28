@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 import TimeElapsed from './TimeElapsed';
 
 /**
- * React component for display an individual user's speaker stats.
+ * React {@code Component} for display an individual user's speaker stats.
  *
  * @extends Component
  */
 class SpeakerStatsItem extends Component {
     /**
-     * SpeakerStatsItem component's property types.
+     * {@code SpeakerStatsItem}'s property types.
      *
      * @static
      */

@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 
 /**
- * A React Component for displaying the conference lock state.
+ * A React {@code Component} for displaying the conference lock state.
+ *
+ * @extends Component
  */
 class LockStatePanel extends Component {
     /**

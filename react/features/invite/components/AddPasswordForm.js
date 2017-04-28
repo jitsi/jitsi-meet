@@ -6,6 +6,8 @@ import { translate } from '../../base/i18n';
 
 /**
  * A React {@code Component} for locking a JitsiConference with a password.
+ *
+ * @extends Component
  */
 class AddPasswordForm extends Component {
     /**

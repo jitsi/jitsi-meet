@@ -7,6 +7,8 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 /**
  * A React {@code Component} for displaying a value with a copy button to copy
  * the value into the clipboard.
+ *
+ * @extends Component
  */
 class ShareLinkForm extends Component {
     /**

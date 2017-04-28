@@ -20,7 +20,8 @@
             margin-left: 3px;
         }
 
-        /* device-selector-trigger stylings attempt to mimic AtlasKit button */
+        /* TOFIX: remove trigger stylings once AtlasKit button supports fitting
+           container width and device selector uses it */
         .device-selector-trigger {
             background-color: rgba(9, 30, 66, 0.04);
             border-radius: 3px;
@@ -36,6 +37,7 @@
                 background-color: rgba(9,30,66,.08);
             }
         }
+
         .device-selector-trigger-disabled {
             .device-selector-trigger {
                 color: #a5adba;
@@ -50,6 +52,7 @@
             white-space: nowrap;
             width: 100%;
         }
+        /* TOFIX-END */
     }
 
     .device-selection-column {

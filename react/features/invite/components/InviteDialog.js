@@ -17,6 +17,8 @@ import DialInNumbersForm from './DialInNumbersForm';
  * A React {@code Component} for displaying other components responsible for
  * copying the current conference url and for setting or removing a conference
  * password.
+ *
+ * @extends Component
  */
 class InviteDialog extends Component {
     /**

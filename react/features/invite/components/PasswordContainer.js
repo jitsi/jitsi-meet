@@ -10,6 +10,8 @@ import RemovePasswordForm from './RemovePasswordForm';
 /**
  * React {@code Component} for displaying the current room lock state as well as
  * exposing features to modify the room lock.
+ *
+ * @extends Component
  */
 class PasswordContainer extends Component {
     /**
