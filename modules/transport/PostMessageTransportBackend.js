@@ -52,7 +52,7 @@ const LEGACY_OUTGOING_METHODS = [
  *
  * @type {string}
  */
-const POSTIS_METHOD_NAME = 'data';
+const POSTIS_METHOD_NAME = 'message';
 
 /**
  * Implements message transport using the postMessage API.
@@ -71,10 +71,10 @@ export default class PostMessageTransportBackend {
         });
 
         /**
-         * If true PostMessageTransportBackend will process and send data using
-         * the legacy format and in the same time the current format. Otherwise
-         * all data received that is using the legacy format will be ignored and
-         * no data with the legacy format will be sent.
+         * If true PostMessageTransportBackend will process and send messages
+         * using the legacy format and in the same time the current format.
+         * Otherwise all messages (outgoing and incoming) that are using the
+         * legacy format will be ignored.
          *
          * @type {boolean}
          */
@@ -85,7 +85,10 @@ export default class PostMessageTransportBackend {
             LEGACY_INCOMING_METHODS.forEach(method =>
                 this.postis.listen(
                     method,
-                    params => this._legacyDataReceiveCallback(method, params)));
+                    params =>
+                        this._legacyMessageReceivedCallback(method, params)
+                )
+            );
         }
 
         this._receiveCallback = () => {
@@ -95,17 +98,17 @@ export default class PostMessageTransportBackend {
 
         this.postis.listen(
             POSTIS_METHOD_NAME,
-            data => this._receiveCallback(data));
+            message => this._receiveCallback(message));
     }
 
     /**
-     * Handles incoming legacy postis data.
+     * Handles incoming legacy postis messages.
      *
-     * @param {string} method - The method property from postis data object.
-     * @param {Any} params - The params property from postis data object.
+     * @param {string} method - The method property from the postis message.
+     * @param {Any} params - The params property from the postis message.
      * @returns {void}
      */
-    _legacyDataReceiveCallback(method, params = {}) {
+    _legacyMessageReceivedCallback(method, params = {}) {
         this._receiveCallback({
             data: {
                 name: method,
@@ -115,12 +118,12 @@ export default class PostMessageTransportBackend {
     }
 
     /**
-     * Sends the passed data via postis using the old format.
+     * Sends the passed message via postis using the old format.
      *
-     * @param {Object} data - The data to be sent.
+     * @param {Object} legacyMessage - The message to be sent.
      * @returns {void}
      */
-    _sendLegacyData({ data, name }) {
+    _sendLegacyMessage({ data, name }) {
         if (name && LEGACY_OUTGOING_METHODS.indexOf(name) !== -1) {
             this.postis.send({
                 method: name,
@@ -139,23 +142,23 @@ export default class PostMessageTransportBackend {
     }
 
     /**
-     * Sends the passed data.
+     * Sends the passed message.
      *
-     * @param {Object} data - The data to be sent.
+     * @param {Object} message - The message to be sent.
      * @returns {void}
      */
-    send(data) {
+    send(message) {
         this.postis.send({
             method: POSTIS_METHOD_NAME,
-            params: data
+            params: message
         });
 
         if (this._enableLegacyFormat) {
             // For the legacy use case we don't need any new fields defined in
             // Transport class. That's why we are passing only the original
             // object passed by the consumer of the Transport class which is
-            // data.data.
-            this._sendLegacyData(data.data);
+            // message.data.
+            this._sendLegacyMessage(message.data);
         }
     }
 

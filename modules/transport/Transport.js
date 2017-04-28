@@ -72,30 +72,30 @@ export default class Transport {
     }
 
     /**
-     * Handles incoming data from the transport backend.
+     * Handles incoming messages from the transport backend.
      *
-     * @param {Object} data - The data.
+     * @param {Object} message - The message.
      * @returns {void}
      */
-    _onDataReceived(data) {
-        if (data.type === MESSAGE_TYPE_RESPONSE) {
-            const handler = this._responseHandlers.get(data.id);
+    _onMessageReceived(message) {
+        if (message.type === MESSAGE_TYPE_RESPONSE) {
+            const handler = this._responseHandlers.get(message.id);
 
             if (handler) {
-                handler(data);
-                this._responseHandlers.delete(data.id);
+                handler(message);
+                this._responseHandlers.delete(message.id);
             }
-        } else if (data.type === MESSAGE_TYPE_REQUEST) {
-            this.emit('request', data.data, (result, error) => {
+        } else if (message.type === MESSAGE_TYPE_REQUEST) {
+            this.emit('request', message.data, (result, error) => {
                 this._backend.send({
                     type: MESSAGE_TYPE_RESPONSE,
                     error,
-                    id: data.id,
+                    id: message.id,
                     result
                 });
             });
         } else {
-            this.emit('event', data.data);
+            this.emit('event', message.data);
         }
     }
 
@@ -202,16 +202,16 @@ export default class Transport {
     }
 
     /**
-     * Sends the passed data.
+     * Sends the passed event.
      *
-     * @param {Object} data - The data to be sent.
+     * @param {Object} event - The event to be sent.
      * @returns {void}
      */
-    sendEvent(data = {}) {
+    sendEvent(event = {}) {
         if (this._backend) {
             this._backend.send({
                 type: MESSAGE_TYPE_EVENT,
-                data
+                data: event
             });
         }
     }
@@ -219,10 +219,10 @@ export default class Transport {
     /**
      * Sending request.
      *
-     * @param {Object} data - The data for the request.
+     * @param {Object} request - The request to be sent.
      * @returns {Promise}
      */
-    sendRequest(data) {
+    sendRequest(request) {
         if (!this._backend) {
             return Promise.reject(new Error('No transport backend defined!'));
         }
@@ -244,7 +244,7 @@ export default class Transport {
 
             this._backend.send({
                 type: MESSAGE_TYPE_REQUEST,
-                data,
+                data: request,
                 id
             });
         });
@@ -260,6 +260,6 @@ export default class Transport {
         this._disposeBackend();
 
         this._backend = backend;
-        this._backend.setReceiveCallback(this._onDataReceived.bind(this));
+        this._backend.setReceiveCallback(this._onMessageReceived.bind(this));
     }
 }
