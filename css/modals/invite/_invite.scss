@@ -7,6 +7,26 @@
 }
 
 .invite-dialog {
+    .dial-in-numbers {
+        .dial-in-numbers-trigger {
+            position: relative;
+            width: 100%;
+
+            .dial-in-numbers-trigger-icon {
+                position: absolute;
+                right: 0;
+                top: 4px;
+            }
+        }
+
+        .is-disabled,
+        .is-loading {
+            .dial-in-numbers-trigger-icon {
+                display: none;
+            }
+        }
+    }
+
     .form-control {
         padding: 0;
     }
@@ -20,6 +40,8 @@
     }
 
     .password-overview {
+        margin-top: 10px;
+
         .form-control {
             margin-top: 10px;
         }
