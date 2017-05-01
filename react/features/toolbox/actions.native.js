@@ -4,7 +4,6 @@ import type { Dispatch } from 'redux-thunk';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
-    SET_DEFAULT_TOOLBOX_BUTTONS,
     SET_SUBJECT,
     SET_SUBJECT_SLIDE_IN,
     SET_TOOLBAR_BUTTON,
@@ -15,7 +14,6 @@ import {
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE
 } from './actionTypes';
-import { getDefaultToolboxButtons } from './functions';
 
 /**
  * Event handler for local raise hand changed event.
@@ -67,22 +65,6 @@ export function setAudioIconEnabled(enabled: boolean = false): Function {
         };
 
         dispatch(setToolbarButton('microphone', button));
-    };
-}
-
-/**
- * Sets the default toolbar buttons of the Toolbox.
- *
- * @returns {{
- *     type: SET_DEFAULT_TOOLBOX_BUTTONS,
- *     primaryToolbarButtons: Map,
- *     secondaryToolbarButtons: Map
- * }}
- */
-export function setDefaultToolboxButtons(): Object {
-    return {
-        type: SET_DEFAULT_TOOLBOX_BUTTONS,
-        ...getDefaultToolboxButtons()
     };
 }
 
