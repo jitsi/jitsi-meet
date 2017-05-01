@@ -9,6 +9,7 @@ node_modules/
 # supersedes JSHint.
 flow-typed/
 modules/API/
+modules/remotecontrol/RemoteControlParticipant.js
 modules/transport/
 react/
 

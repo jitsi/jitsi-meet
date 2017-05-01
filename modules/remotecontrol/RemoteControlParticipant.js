@@ -31,8 +31,10 @@ export default class RemoteControlParticipant {
             return;
         }
         try{
-            APP.conference.sendEndpointMessage(to,
-                {type: REMOTE_CONTROL_EVENT_TYPE, event});
+            APP.conference.sendEndpointMessage(to, {
+                name: REMOTE_CONTROL_EVENT_TYPE,
+                ...event
+            });
         } catch (e) {
             logger.error("Failed to send EndpointMessage via the datachannels",
                 e);

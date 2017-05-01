@@ -232,7 +232,7 @@ export default class Transport {
         const id = this._requestID;
 
         return new Promise((resolve, reject) => {
-            this._responseHandlers.set(this._requestID, ({ error, result }) => {
+            this._responseHandlers.set(id, ({ error, result }) => {
                 if (result) {
                     resolve(result);
                 } else if (error) {

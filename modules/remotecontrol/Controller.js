@@ -132,15 +132,14 @@ export default class Controller extends RemoteControlParticipant {
      * @param {RemoteControlEvent} event the remote control event.
      */
     _handleReply(participant, event) {
-        const remoteControlEvent = event.event;
         const userId = participant.getId();
-        if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
-            && remoteControlEvent.type === EVENT_TYPES.permissions
+        if(this.enabled && event.name === REMOTE_CONTROL_EVENT_TYPE
+            && event.type === EVENT_TYPES.permissions
             && userId === this.requestedParticipant) {
-            if(remoteControlEvent.action !== PERMISSIONS_ACTIONS.grant) {
+            if(event.action !== PERMISSIONS_ACTIONS.grant) {
                 this.area = null;
             }
-            switch(remoteControlEvent.action) {
+            switch(event.action) {
                 case PERMISSIONS_ACTIONS.grant: {
                     this.controlledParticipant = userId;
                     logger.log("Remote control permissions granted to: "
@@ -166,13 +165,13 @@ export default class Controller extends RemoteControlParticipant {
      * @param {JitsiParticipant} participant the participant that has sent the
      * event
      * @param {Object} event EndpointMessage event from the data channels.
-     * @property {string} type property. The function process only events of
-     * type REMOTE_CONTROL_EVENT_TYPE
+     * @property {string} type property. The function process only events with
+     * name REMOTE_CONTROL_EVENT_TYPE
      * @property {RemoteControlEvent} event - the remote control event.
      */
     _handleRemoteControlStoppedEvent(participant, event) {
-        if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
-            && event.event.type === EVENT_TYPES.stop
+        if(this.enabled && event.name === REMOTE_CONTROL_EVENT_TYPE
+            && event.type === EVENT_TYPES.stop
             && participant.getId() === this.controlledParticipant) {
             this._stop();
         }

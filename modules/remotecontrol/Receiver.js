@@ -6,10 +6,10 @@ import {
     EVENT_TYPES,
     PERMISSIONS_ACTIONS,
     REMOTE_CONTROL_EVENT_TYPE
-} from "../../service/remotecontrol/Constants";
+} from '../../service/remotecontrol/Constants';
 import { getJitsiMeetTransport } from '../transport';
 
-import RemoteControlParticipant from "./RemoteControlParticipant";
+import RemoteControlParticipant from './RemoteControlParticipant';
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
 const logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -41,8 +41,8 @@ export default class Receiver extends RemoteControlParticipant {
         this._hangupListener = this._onHangup.bind(this);
         // We expect here that even if we receive the supported event earlier
         // it will be cached and we'll receive it.
-        transport.on('event', ({ event, name }) => {
-            if(name === REMOTE_CONTROL_EVENT_TYPE) {
+        transport.on('event', event => {
+            if (event.name === REMOTE_CONTROL_EVENT_TYPE) {
                 this._onRemoteControlAPIEvent(event);
 
                 return true;
@@ -100,9 +100,7 @@ export default class Receiver extends RemoteControlParticipant {
             this._userLeftListener);
         transport.sendEvent({
             name: REMOTE_CONTROL_EVENT_TYPE,
-            event: {
-                type: EVENT_TYPES.stop
-            }
+            type: EVENT_TYPES.stop
         });
         if(!dontShowDialog) {
             APP.UI.messageHandler.openMessageDialog(
@@ -131,16 +129,21 @@ export default class Receiver extends RemoteControlParticipant {
      * module.
      * @param {JitsiParticipant} participant the controller participant
      * @param {Object} event EndpointMessage event from the data channels.
-     * @property {string} type property. The function process only events of
-     * type REMOTE_CONTROL_EVENT_TYPE
+     * @property {string} type property. The function process only events with
+     * name REMOTE_CONTROL_EVENT_TYPE
      * @property {RemoteControlEvent} event - the remote control event.
      */
     _onRemoteControlEvent(participant, event) {
-        if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE) {
-            const remoteControlEvent = event.event;
-            if(this.controller === null
-                && remoteControlEvent.type === EVENT_TYPES.permissions
-                && remoteControlEvent.action === PERMISSIONS_ACTIONS.request) {
+        if (event.name !== REMOTE_CONTROL_EVENT_TYPE) {
+            return;
+        }
+
+        const remoteControlEvent = Object.assign({}, event);
+
+        if (this.enabled) {
+            if (this.controller === null
+                && event.type === EVENT_TYPES.permissions
+                && event.action === PERMISSIONS_ACTIONS.request) {
                 // FIXME: Maybe use transport.sendRequest in this case???
                 remoteControlEvent.userId = participant.getId();
                 remoteControlEvent.userJID = participant.getJid();
@@ -148,17 +151,14 @@ export default class Receiver extends RemoteControlParticipant {
                     || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
                 remoteControlEvent.screenSharing
                     = APP.conference.isSharingScreen;
-            } else if(this.controller !== participant.getId()) {
+            } else if (this.controller !== participant.getId()) {
                 return;
-            } else if(remoteControlEvent.type === EVENT_TYPES.stop) {
+            } else if (event.type === EVENT_TYPES.stop) {
                 this._stop();
                 return;
             }
-            transport.sendEvent({
-                name: REMOTE_CONTROL_EVENT_TYPE,
-                event: remoteControlEvent
-            });
-        } else if(event.type === REMOTE_CONTROL_EVENT_TYPE) {
+            transport.sendEvent(remoteControlEvent);
+        } else {
             logger.log("Remote control event is ignored because remote "
                 + "control is disabled", event);
         }
@@ -171,7 +171,7 @@ export default class Receiver extends RemoteControlParticipant {
      * @param {PERMISSIONS_ACTIONS} action the action related to the event.
      */
     _onRemoteControlPermissionsEvent(userId, action) {
-        if(action === PERMISSIONS_ACTIONS.grant) {
+        if (action === PERMISSIONS_ACTIONS.grant) {
             APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
                 this._userLeftListener);
             this.controller = userId;
@@ -227,7 +227,7 @@ export default class Receiver extends RemoteControlParticipant {
      */
     _onRemoteControlSupported() {
         logger.log("Remote Control supported.");
-        if(!config.disableRemoteControl) {
+        if (!config.disableRemoteControl) {
             this._enable(true);
         } else {
             logger.log("Remote Control disabled.");
