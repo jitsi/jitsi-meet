@@ -3,8 +3,8 @@
 import Recording from '../../../modules/UI/recording/Recording';
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
-import UIUtil from '../../../modules/UI/util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../../../modules/UI/util/UIUtil';
 
 import {
     clearToolboxTimeout,
@@ -15,13 +15,15 @@ import {
     setToolboxVisible,
     toggleToolbarButton
 } from './actions.native';
-
-export * from './actions.native';
+import { SET_DEFAULT_TOOLBOX_BUTTONS } from './actionTypes';
+import { getDefaultToolboxButtons } from './functions';
 
 declare var $: Function;
 declare var APP: Object;
 declare var config: Object;
 declare var interfaceConfig: Object;
+
+export * from './actions.native';
 
 /**
  * Checks whether desktop sharing is enabled and whether
@@ -106,6 +108,22 @@ export function hideToolbox(force: boolean = false): Function {
             dispatch(setToolboxVisible(false));
             dispatch(setSubjectSlideIn(false));
         }
+    };
+}
+
+/**
+ * Sets the default toolbar buttons of the Toolbox.
+ *
+ * @returns {{
+ *     type: SET_DEFAULT_TOOLBOX_BUTTONS,
+ *     primaryToolbarButtons: Map,
+ *     secondaryToolbarButtons: Map
+ * }}
+ */
+export function setDefaultToolboxButtons(): Object {
+    return {
+        type: SET_DEFAULT_TOOLBOX_BUTTONS,
+        ...getDefaultToolboxButtons()
     };
 }
 
