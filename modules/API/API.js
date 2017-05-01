@@ -127,18 +127,14 @@ class API {
     }
 
     /**
-     * Sends message to the external application.
+     * Sends event to the external application.
      *
-     * @param {string} name - The name of the event.
-     * @param {Object} data - The data to be sent.
+     * @param {Object} event - The event to be sent.
      * @returns {void}
      */
-    _sendEvent(name, data = {}) {
+    _sendEvent(event = {}) {
         if (this._enabled) {
-            transport.sendEvent({
-                data,
-                name
-            });
+            transport.sendEvent(event);
         }
     }
 
@@ -149,7 +145,10 @@ class API {
      * @returns {void}
      */
     notifySendingChatMessage(message) {
-        this._sendEvent('outgoing-message', { message });
+        this._sendEvent({
+            name: 'outgoing-message',
+            message
+        });
     }
 
     /**
@@ -164,7 +163,8 @@ class API {
             return;
         }
 
-        this._sendEvent('incoming-message', {
+        this._sendEvent({
+            name: 'incoming-message',
             from: id,
             message: body,
             nick,
@@ -180,7 +180,10 @@ class API {
      * @returns {void}
      */
     notifyUserJoined(id) {
-        this._sendEvent('participant-joined', { id });
+        this._sendEvent({
+            name: 'participant-joined',
+            id
+        });
     }
 
     /**
@@ -191,7 +194,10 @@ class API {
      * @returns {void}
      */
     notifyUserLeft(id) {
-        this._sendEvent('participant-left', { id });
+        this._sendEvent({
+            name: 'participant-left',
+            id
+        });
     }
 
     /**
@@ -203,7 +209,7 @@ class API {
      * @returns {void}
      */
     notifyDisplayNameChanged(id, displayname) {
-        this._sendEvent('display-name-change', {
+        this._sendEvent({ name: 'display-name-change',
             displayname,
             id
         });
@@ -217,7 +223,10 @@ class API {
      * @returns {void}
      */
     notifyConferenceJoined(roomName) {
-        this._sendEvent('video-conference-joined', { roomName });
+        this._sendEvent({
+            name: 'video-conference-joined',
+            roomName
+        });
     }
 
     /**
@@ -228,7 +237,10 @@ class API {
      * @returns {void}
      */
     notifyConferenceLeft(roomName) {
-        this._sendEvent('video-conference-left', { roomName });
+        this._sendEvent({
+            name: 'video-conference-left',
+            roomName
+        });
     }
 
     /**
@@ -238,7 +250,7 @@ class API {
      * @returns {void}
      */
     notifyReadyToClose() {
-        this._sendEvent('video-ready-to-close', {});
+        this._sendEvent({ name: 'video-ready-to-close' });
     }
 
     /**

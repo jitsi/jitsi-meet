@@ -123,7 +123,7 @@ export default class PostMessageTransportBackend {
      * @param {Object} legacyMessage - The message to be sent.
      * @returns {void}
      */
-    _sendLegacyMessage({ data, name }) {
+    _sendLegacyMessage({ name, ...data }) {
         if (name && LEGACY_OUTGOING_METHODS.indexOf(name) !== -1) {
             this.postis.send({
                 method: name,

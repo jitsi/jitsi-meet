@@ -234,7 +234,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
      */
     _setupListeners() {
 
-        this._transport.on('event', ({ data, name }) => {
+        this._transport.on('event', ({ name, ...data }) => {
             if (name === 'participant-joined') {
                 changeParticipantNumber(this, 1);
             } else if (name === 'participant-left') {
