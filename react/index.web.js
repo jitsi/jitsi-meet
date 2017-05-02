@@ -3,6 +3,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { getJitsiMeetTransport } from '../modules/transport';
+
 import config from './config';
 import { App } from './features/app';
 
@@ -34,4 +36,5 @@ window.addEventListener('beforeunload', () => {
         APP.logCollectorStarted = false;
     }
     APP.API.dispose();
+    getJitsiMeetTransport().dispose();
 });

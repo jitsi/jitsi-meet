@@ -17,35 +17,6 @@ export function createDeferred() {
 }
 
 /**
- * Reload page.
- */
-export function reload() {
-    window.location.reload();
-}
-
-/**
- * Redirects to a specific new URL by replacing the current location (in the
- * history).
- *
- * @param {string} url the URL pointing to the location where the user should
- * be redirected to.
- */
-export function replace(url) {
-    window.location.replace(url);
-}
-
-/**
- * Prints the error and reports it to the global error handler.
- *
- * @param e {Error} the error
- * @param msg {string} [optional] the message printed in addition to the error
- */
-export function reportError(e, msg = "") {
-    logger.error(msg, e);
-    window.onerror && window.onerror(msg, null, null, null, e);
-}
-
-/**
  * Creates a debounced function that delays invoking func until after wait
  * milliseconds have elapsed since the last time the debounced function was
  * invoked.
@@ -73,4 +44,50 @@ export function debounce(fn, wait = 0, options = {}) {
             called = true;
         }
     };
+}
+
+/**
+ * Returns the namespace for all global variables, functions, etc that we need.
+ *
+ * @returns {Object} the namespace.
+ *
+ * NOTE: After React-ifying everything this should be the only global.
+ */
+export function getJitsiMeetGlobalNS() {
+    if (!window.JitsiMeetJS) {
+        window.JitsiMeetJS = {};
+    }
+    if (!window.JitsiMeetJS.app) {
+        window.JitsiMeetJS.app = {};
+    }
+    return window.JitsiMeetJS.app;
+}
+
+/**
+ * Reload page.
+ */
+export function reload() {
+    window.location.reload();
+}
+
+/**
+ * Redirects to a specific new URL by replacing the current location (in the
+ * history).
+ *
+ * @param {string} url the URL pointing to the location where the user should
+ * be redirected to.
+ */
+export function replace(url) {
+    window.location.replace(url);
+}
+
+/**
+ * Prints the error and reports it to the global error handler.
+ *
+ * @param e {Error} the error
+ * @param msg {string} [optional] the message printed in addition to the error
+ */
+export function reportError(e, msg = "") {
+    logger.error(msg, e);
+    window.onerror && window.onerror(msg, null, null, null, e);
 }

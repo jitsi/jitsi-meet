@@ -1,8 +1,11 @@
 /* global $, JitsiMeetJS, APP */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 import * as KeyCodes from "../keycode/keycode";
-import {EVENT_TYPES, REMOTE_CONTROL_EVENT_TYPE, PERMISSIONS_ACTIONS}
-    from "../../service/remotecontrol/Constants";
+import {
+    EVENT_TYPES,
+    PERMISSIONS_ACTIONS,
+    REMOTE_CONTROL_EVENT_NAME
+} from "../../service/remotecontrol/Constants";
 import RemoteControlParticipant from "./RemoteControlParticipant";
 import UIEvents from "../../service/UI/UIEvents";
 
@@ -132,15 +135,15 @@ export default class Controller extends RemoteControlParticipant {
      * @param {RemoteControlEvent} event the remote control event.
      */
     _handleReply(participant, event) {
-        const remoteControlEvent = event.event;
         const userId = participant.getId();
-        if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
-            && remoteControlEvent.type === EVENT_TYPES.permissions
-            && userId === this.requestedParticipant) {
-            if(remoteControlEvent.action !== PERMISSIONS_ACTIONS.grant) {
+        if(this.enabled
+                && event.name === REMOTE_CONTROL_EVENT_NAME
+                && event.type === EVENT_TYPES.permissions
+                && userId === this.requestedParticipant) {
+            if(event.action !== PERMISSIONS_ACTIONS.grant) {
                 this.area = null;
             }
-            switch(remoteControlEvent.action) {
+            switch(event.action) {
                 case PERMISSIONS_ACTIONS.grant: {
                     this.controlledParticipant = userId;
                     logger.log("Remote control permissions granted to: "
@@ -166,14 +169,15 @@ export default class Controller extends RemoteControlParticipant {
      * @param {JitsiParticipant} participant the participant that has sent the
      * event
      * @param {Object} event EndpointMessage event from the data channels.
-     * @property {string} type property. The function process only events of
-     * type REMOTE_CONTROL_EVENT_TYPE
+     * @property {string} type property. The function process only events with
+     * name REMOTE_CONTROL_EVENT_NAME
      * @property {RemoteControlEvent} event - the remote control event.
      */
     _handleRemoteControlStoppedEvent(participant, event) {
-        if(this.enabled && event.type === REMOTE_CONTROL_EVENT_TYPE
-            && event.event.type === EVENT_TYPES.stop
-            && participant.getId() === this.controlledParticipant) {
+        if(this.enabled
+                && event.name === REMOTE_CONTROL_EVENT_NAME
+                && event.type === EVENT_TYPES.stop
+                && participant.getId() === this.controlledParticipant) {
             this._stop();
         }
     }

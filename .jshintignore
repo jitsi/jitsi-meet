@@ -8,6 +8,9 @@ node_modules/
 # The following are checked by ESLint with the maximum configuration which
 # supersedes JSHint.
 flow-typed/
+modules/API/
+modules/remotecontrol/RemoteControlParticipant.js
+modules/transport/
 react/
 
 # The following are checked by ESLint with the minimum configuration which does

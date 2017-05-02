@@ -37,7 +37,7 @@ export const PERMISSIONS_ACTIONS = {
 /**
  * The type of remote control events sent trough the API module.
  */
-export const REMOTE_CONTROL_EVENT_TYPE = "remote-control-event";
+export const REMOTE_CONTROL_EVENT_NAME = "remote-control-event";
 
 /**
  * The remote control event.

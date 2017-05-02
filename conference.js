@@ -603,8 +603,8 @@ export default {
 
                 APP.store.dispatch(showDesktopSharingButton());
 
-                APP.remoteControl.init();
                 this._createRoom(tracks);
+                APP.remoteControl.init();
 
                 if (UIUtil.isButtonEnabled('contacts')
                     && !interfaceConfig.filmStripOnly) {

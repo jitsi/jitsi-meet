@@ -1,7 +1,10 @@
 /* global APP */
+
+import {
+    REMOTE_CONTROL_EVENT_NAME
+} from "../../service/remotecontrol/Constants";
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
-import {REMOTE_CONTROL_EVENT_TYPE}
-    from "../../service/remotecontrol/Constants";
 
 export default class RemoteControlParticipant {
     /**
@@ -26,15 +29,20 @@ export default class RemoteControlParticipant {
      */
     _sendRemoteControlEvent(to, event, onDataChannelFail = () => {}) {
         if(!this.enabled || !to) {
-            logger.warn("Remote control: Skip sending remote control event."
-                + " Params:", this.enable, to);
+            logger.warn(
+                "Remote control: Skip sending remote control event. Params:",
+                this.enable,
+                to);
             return;
         }
         try{
-            APP.conference.sendEndpointMessage(to,
-                {type: REMOTE_CONTROL_EVENT_TYPE, event});
+            APP.conference.sendEndpointMessage(to, {
+                name: REMOTE_CONTROL_EVENT_NAME,
+                ...event
+            });
         } catch (e) {
-            logger.error("Failed to send EndpointMessage via the datachannels",
+            logger.error(
+                "Failed to send EndpointMessage via the datachannels",
                 e);
             onDataChannelFail(e);
         }
