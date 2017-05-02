@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
-import postisInit from 'postis';
+
+import Transport from '../../transport/Transport';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -180,9 +181,11 @@ class JitsiMeetExternalAPI extends EventEmitter {
         });
         this._createIFrame(Math.max(height, MIN_HEIGHT),
             Math.max(width, MIN_WIDTH));
-        this.postis = postisInit({
-            scope: `jitsi_meet_external_api_${id}`,
-            window: this.frame.contentWindow
+        this._transport = new Transport({
+            defaultTransportOptions: {
+                scope: `jitsi_meet_external_api_${id}`,
+                window: this.frame.contentWindow
+            }
         });
         this.numberOfParticipants = 1;
         this._setupListeners();
@@ -225,16 +228,17 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * @private
      */
     _setupListeners() {
-        this.postis.listen('participant-joined',
+        this._transport.on('participant-joined',
             changeParticipantNumber.bind(null, this, 1));
-        this.postis.listen('participant-left',
+        this._transport.on('participant-left',
             changeParticipantNumber.bind(null, this, -1));
 
-        for (const eventName in events) { // eslint-disable-line guard-for-in
-            const postisMethod = events[eventName];
+        // eslint-disable-next-line guard-for-in
+        for (const jitsiMeetEventName in events) {
+            const eventName = events[jitsiMeetEventName];
 
-            this.postis.listen(postisMethod,
-                (...args) => this.emit(eventName, ...args));
+            this._transport.on(eventName,
+                (...args) => this.emit(jitsiMeetEventName, ...args));
         }
     }
 
@@ -319,10 +323,7 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     dispose() {
-        if (this.postis) {
-            this.postis.destroy();
-            this.postis = null;
-        }
+        this._transport.dispose();
         this.removeAllListeners();
         if (this.iframeHolder) {
             this.iframeHolder.parentNode.removeChild(this.iframeHolder);
@@ -340,25 +341,16 @@ class JitsiMeetExternalAPI extends EventEmitter {
      * to empty array or it may be omitted.
      *
      * @param {string} name - The name of the command.
+     * @param {string} value - The new value.
      * @returns {void}
      */
-    executeCommand(name, ...args) {
+    executeCommand(name, value) {
         if (!(name in commands)) {
             logger.error('Not supported command name.');
 
             return;
         }
-
-        if (!this.postis) {
-            logger.error('Cannot execute command using disposed instance.');
-
-            return;
-        }
-
-        this.postis.send({
-            method: commands[name],
-            params: args
-        });
+        this._transport.sendEvent(commands[name], { value });
     }
 
     /**

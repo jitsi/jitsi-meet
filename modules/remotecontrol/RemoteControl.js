@@ -1,9 +1,11 @@
 /* global APP, config */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
-import Controller from "./Controller";
-import Receiver from "./Receiver";
-import {EVENT_TYPES, DISCO_REMOTE_CONTROL_FEATURE}
-    from "../../service/remotecontrol/Constants";
+import { DISCO_REMOTE_CONTROL_FEATURE }
+    from '../../service/remotecontrol/Constants';
+
+import Controller from './Controller';
+import Receiver from './Receiver';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Implements the remote control functionality.
@@ -15,14 +17,12 @@ class RemoteControl {
      */
     constructor() {
         this.controller = new Controller();
-        this.receiver = new Receiver();
-        this.enabled = false;
         this.initialized = false;
     }
 
     /**
      * Initializes the remote control - checks if the remote control should be
-     * enabled or not, initializes the API module.
+     * enabled or not.
      */
     init() {
         if(config.disableRemoteControl || this.initialized
@@ -31,46 +31,8 @@ class RemoteControl {
         }
         logger.log("Initializing remote control.");
         this.initialized = true;
-        APP.API.init({
-            forceEnable: true,
-        });
         this.controller.enable(true);
-        if(this.enabled) { // supported message came before init.
-            this._onRemoteControlSupported();
-        }
-    }
-
-    /**
-     * Handles remote control events from the API module. Currently only events
-     * with type = EVENT_TYPES.supported or EVENT_TYPES.permissions
-     * @param {RemoteControlEvent} event the remote control event.
-     */
-    onRemoteControlAPIEvent(event) {
-        switch(event.type) {
-            case EVENT_TYPES.supported:
-                this._onRemoteControlSupported();
-                break;
-            case EVENT_TYPES.permissions:
-                this.receiver._onRemoteControlPermissionsEvent(
-                    event.userId, event.action);
-                break;
-        }
-    }
-
-    /**
-     * Handles API event for support for executing remote control events into
-     * the wrapper application.
-     */
-    _onRemoteControlSupported() {
-        logger.log("Remote Control supported.");
-        if(!config.disableRemoteControl) {
-            this.enabled = true;
-            if(this.initialized) {
-                this.receiver.enable(true);
-            }
-        } else {
-            logger.log("Remote Control disabled.");
-        }
+        this.receiver = new Receiver();
     }
 
     /**
