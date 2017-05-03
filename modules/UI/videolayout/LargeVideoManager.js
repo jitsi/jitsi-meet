@@ -60,6 +60,14 @@ export default class LargeVideoManager {
         this.width = 0;
         this.height = 0;
 
+        /**
+         * Cache the aspect ratio of the video displayed to detect changes to
+         * the aspect ratio on video resize events.
+         *
+         * @type {number}
+         */
+        this._videoAspectRatio = 0;
+
         this.$container = $('#largeVideoContainer');
 
         this.$container.css({
@@ -72,11 +80,10 @@ export default class LargeVideoManager {
         );
 
         // Bind event handler so it is only bound once for every instance.
-        this._updateVideoResolutionStatus
-            = this._updateVideoResolutionStatus.bind(this);
+        this._onVideoResolutionUpdate
+            = this._onVideoResolutionUpdate.bind(this);
 
-        this.videoContainer.addResizeListener(
-            this._updateVideoResolutionStatus);
+        this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
 
         if (!JitsiMeetJS.util.RTCUIHelper.isResizeEventSupported()) {
             /**
@@ -88,7 +95,7 @@ export default class LargeVideoManager {
              * @type {timeoutId}
              */
             this._updateVideoResolutionInterval = window.setInterval(
-                this._updateVideoResolutionStatus,
+                this._onVideoResolutionUpdate,
                 VIDEO_RESOLUTION_POLL_INTERVAL);
         }
     }
@@ -102,7 +109,7 @@ export default class LargeVideoManager {
     destroy() {
         window.clearInterval(this._updateVideoResolutionInterval);
         this.videoContainer.removeResizeListener(
-            this._updateVideoResolutionStatus);
+            this._onVideoResolutionUpdate);
     }
 
     onHoverIn (e) {
@@ -565,15 +572,21 @@ export default class LargeVideoManager {
 
     /**
      * Dispatches an action to update the known resolution state of the
-     * large video.
+     * large video and adjusts container sizes when the resolution changes.
      *
      * @private
      * @returns {void}
      */
-    _updateVideoResolutionStatus() {
+    _onVideoResolutionUpdate() {
         const { height, width } = this.videoContainer.getStreamSize();
+        const currentAspectRatio = width/ height;
         const isCurrentlyHD = Math.min(height, width) >= config.minHDHeight;
 
         APP.store.dispatch(setLargeVideoHDStatus(isCurrentlyHD));
+
+        if (this._videoAspectRatio !== currentAspectRatio) {
+            this._videoAspectRatio = currentAspectRatio;
+            this.resize();
+        }
     }
 }
