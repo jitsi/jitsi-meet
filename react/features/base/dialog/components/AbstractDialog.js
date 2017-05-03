@@ -24,7 +24,7 @@ export default class AbstractDialog extends Component {
         cancelTitleKey: React.PropTypes.string,
 
         /**
-         * Used to show hide the dialog on cancel.
+         * Used to show/hide the dialog on cancel.
          */
         dispatch: React.PropTypes.func,
 

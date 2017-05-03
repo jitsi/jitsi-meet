@@ -1,4 +1,6 @@
-/* global APP, config */
+/* @flow */
+
+import { getLogger } from 'jitsi-meet-logger';
 
 import { DISCO_REMOTE_CONTROL_FEATURE }
     from '../../service/remotecontrol/Constants';
@@ -6,44 +8,53 @@ import { DISCO_REMOTE_CONTROL_FEATURE }
 import Controller from './Controller';
 import Receiver from './Receiver';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = getLogger(__filename);
+
+declare var APP: Object;
+declare var config: Object;
 
 /**
  * Implements the remote control functionality.
  */
 class RemoteControl {
+    _initialized: boolean;
+    controller: Controller;
+    receiver: Receiver;
+
     /**
      * Constructs new instance. Creates controller and receiver properties.
-     * @constructor
      */
     constructor() {
         this.controller = new Controller();
-        this.initialized = false;
+        this._initialized = false;
     }
 
     /**
      * Initializes the remote control - checks if the remote control should be
      * enabled or not.
+     *
+     * @returns {void}
      */
     init() {
-        if(config.disableRemoteControl
-                || this.initialized
+        if (config.disableRemoteControl
+                || this._initialized
                 || !APP.conference.isDesktopSharingEnabled) {
             return;
         }
-        logger.log("Initializing remote control.");
-        this.initialized = true;
+        logger.log('Initializing remote control.');
+        this._initialized = true;
         this.controller.enable(true);
         this.receiver = new Receiver();
     }
 
     /**
-     * Checks whether the passed user supports remote control or not
-     * @param {JitsiParticipant} user the user to be tested
-     * @returns {Promise<boolean>} the promise will be resolved with true if
+     * Checks whether the passed user supports remote control or not.
+     *
+     * @param {JitsiParticipant} user - The user to be tested.
+     * @returns {Promise<boolean>} The promise will be resolved with true if
      * the user supports remote control and with false if not.
      */
-    checkUserRemoteControlSupport(user) {
+    checkUserRemoteControlSupport(user: Object) {
         return user.getFeatures().then(
             features => features.has(DISCO_REMOTE_CONTROL_FEATURE),
             () => false);

@@ -1,20 +1,29 @@
-/* global $, JitsiMeetJS, APP */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
-import * as KeyCodes from "../keycode/keycode";
+/* @flow */
+
+import { getLogger } from 'jitsi-meet-logger';
+
+import * as KeyCodes from '../keycode/keycode';
 import {
     EVENT_TYPES,
     PERMISSIONS_ACTIONS,
     REMOTE_CONTROL_EVENT_NAME
-} from "../../service/remotecontrol/Constants";
-import RemoteControlParticipant from "./RemoteControlParticipant";
-import UIEvents from "../../service/UI/UIEvents";
+} from '../../service/remotecontrol/Constants';
+import UIEvents from '../../service/UI/UIEvents';
+
+import RemoteControlParticipant from './RemoteControlParticipant';
+
+declare var $: Function;
+declare var APP: Object;
+declare var JitsiMeetJS: Object;
 
 const ConferenceEvents = JitsiMeetJS.events.conference;
+const logger = getLogger(__filename);
 
 /**
  * Extract the keyboard key from the keyboard event.
- * @param event {KeyboardEvent} the event.
- * @returns {KEYS} the key that is pressed or undefined.
+ *
+ * @param {KeyboardEvent} event - The event.
+ * @returns {KEYS} The key that is pressed or undefined.
  */
 function getKey(event) {
     return KeyCodes.keyboardEventToKey(event);
@@ -22,26 +31,28 @@ function getKey(event) {
 
 /**
  * Extract the modifiers from the keyboard event.
- * @param event {KeyboardEvent} the event.
- * @returns {Array} with possible values: "shift", "control", "alt", "command".
+ *
+ * @param {KeyboardEvent} event - The event.
+ * @returns {Array} With possible values: "shift", "control", "alt", "command".
  */
 function getModifiers(event) {
-    let modifiers = [];
-    if(event.shiftKey) {
-        modifiers.push("shift");
+    const modifiers = [];
+
+    if (event.shiftKey) {
+        modifiers.push('shift');
     }
 
-    if(event.ctrlKey) {
-        modifiers.push("control");
+    if (event.ctrlKey) {
+        modifiers.push('control');
     }
 
 
-    if(event.altKey) {
-        modifiers.push("alt");
+    if (event.altKey) {
+        modifiers.push('alt');
     }
 
-    if(event.metaKey) {
-        modifiers.push("command");
+    if (event.metaKey) {
+        modifiers.push('command');
     }
 
     return modifiers;
@@ -53,14 +64,22 @@ function getModifiers(event) {
  * party of the remote control session.
  */
 export default class Controller extends RemoteControlParticipant {
+    _area: ?Object;
+    _controlledParticipant: string | null;
+    _isCollectingEvents: boolean;
+    _largeVideoChangedListener: Function;
+    _requestedParticipant: string | null;
+    _stopListener: Function;
+    _userLeftListener: Function;
+
     /**
      * Creates new instance.
      */
     constructor() {
         super();
-        this.isCollectingEvents = false;
-        this.controlledParticipant = null;
-        this.requestedParticipant = null;
+        this._isCollectingEvents = false;
+        this._controlledParticipant = null;
+        this._requestedParticipant = null;
         this._stopListener = this._handleRemoteControlStoppedEvent.bind(this);
         this._userLeftListener = this._onUserLeft.bind(this);
         this._largeVideoChangedListener
@@ -69,24 +88,28 @@ export default class Controller extends RemoteControlParticipant {
 
     /**
      * Requests permissions from the remote control receiver side.
-     * @param {string} userId the user id of the participant that will be
+     *
+     * @param {string} userId - The user id of the participant that will be
      * requested.
-     * @param {JQuerySelector} eventCaptureArea the area that is going to be
+     * @param {JQuerySelector} eventCaptureArea - The area that is going to be
      * used mouse and keyboard event capture.
-     * @returns {Promise<boolean>} - resolve values:
-     * true - accept
-     * false - deny
-     * null - the participant has left.
+     * @returns {Promise<boolean>} Resolve values - true(accept), false(deny),
+     * null(the participant has left).
      */
-    requestPermissions(userId, eventCaptureArea) {
-        if(!this.enabled) {
-            return Promise.reject(new Error("Remote control is disabled!"));
+    requestPermissions(userId: string, eventCaptureArea: Object) {
+        if (!this.enabled) {
+            return Promise.reject(new Error('Remote control is disabled!'));
         }
-        this.area = eventCaptureArea;// $("#largeVideoWrapper")
-        logger.log("Requsting remote control permissions from: " + userId);
+
+        this._area = eventCaptureArea;// $("#largeVideoWrapper")
+        logger.log(`Requsting remote control permissions from: ${userId}`);
+
         return new Promise((resolve, reject) => {
+            // eslint-disable-next-line prefer-const
+            let onUserLeft, permissionsReplyListener;
+
             const clearRequest = () => {
-                this.requestedParticipant = null;
+                this._requestedParticipant = null;
                 APP.conference.removeConferenceListener(
                     ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                     permissionsReplyListener);
@@ -94,31 +117,35 @@ export default class Controller extends RemoteControlParticipant {
                     ConferenceEvents.USER_LEFT,
                     onUserLeft);
             };
-            const permissionsReplyListener = (participant, event) => {
+
+            permissionsReplyListener = (participant, event) => {
                 let result = null;
+
                 try {
                     result = this._handleReply(participant, event);
                 } catch (e) {
+                    clearRequest();
                     reject(e);
                 }
-                if(result !== null) {
+                if (result !== null) {
                     clearRequest();
                     resolve(result);
                 }
             };
-            const onUserLeft = (id) => {
-                if(id === this.requestedParticipant) {
+            onUserLeft = id => {
+                if (id === this._requestedParticipant) {
                     clearRequest();
                     resolve(null);
                 }
             };
+
             APP.conference.addConferenceListener(
                 ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 permissionsReplyListener);
             APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
                 onUserLeft);
-            this.requestedParticipant = userId;
-            this._sendRemoteControlEvent(userId, {
+            this._requestedParticipant = userId;
+            this.sendRemoteControlEvent(userId, {
                 type: EVENT_TYPES.permissions,
                 action: PERMISSIONS_ACTIONS.request
             }, e => {
@@ -130,54 +157,58 @@ export default class Controller extends RemoteControlParticipant {
 
     /**
      * Handles the reply of the permissions request.
-     * @param {JitsiParticipant} participant the participant that has sent the
-     * reply
-     * @param {RemoteControlEvent} event the remote control event.
+     *
+     * @param {JitsiParticipant} participant - The participant that has sent the
+     * reply.
+     * @param {RemoteControlEvent} event - The remote control event.
+     * @returns {void}
      */
-    _handleReply(participant, event) {
+    _handleReply(participant: Object, event: Object) {
         const userId = participant.getId();
-        if(this.enabled
+
+        if (this.enabled
                 && event.name === REMOTE_CONTROL_EVENT_NAME
                 && event.type === EVENT_TYPES.permissions
-                && userId === this.requestedParticipant) {
-            if(event.action !== PERMISSIONS_ACTIONS.grant) {
-                this.area = null;
+                && userId === this._requestedParticipant) {
+            if (event.action !== PERMISSIONS_ACTIONS.grant) {
+                this._area = undefined;
             }
-            switch(event.action) {
-                case PERMISSIONS_ACTIONS.grant: {
-                    this.controlledParticipant = userId;
-                    logger.log("Remote control permissions granted to: "
-                        + userId);
-                    this._start();
-                    return true;
-                }
-                case PERMISSIONS_ACTIONS.deny:
-                    return false;
-                case PERMISSIONS_ACTIONS.error:
-                    throw new Error("Error occurred on receiver side");
-                default:
-                    throw new Error("Unknown reply received!");
+            switch (event.action) {
+            case PERMISSIONS_ACTIONS.grant: {
+                this._controlledParticipant = userId;
+                logger.log('Remote control permissions granted to:', userId);
+                this._start();
+
+                return true;
+            }
+            case PERMISSIONS_ACTIONS.deny:
+                return false;
+            case PERMISSIONS_ACTIONS.error:
+                throw new Error('Error occurred on receiver side');
+            default:
+                throw new Error('Unknown reply received!');
             }
         } else {
-            //different message type or another user -> ignoring the message
+            // different message type or another user -> ignoring the message
             return null;
         }
     }
 
     /**
      * Handles remote control stopped.
-     * @param {JitsiParticipant} participant the participant that has sent the
-     * event
-     * @param {Object} event EndpointMessage event from the data channels.
-     * @property {string} type property. The function process only events with
-     * name REMOTE_CONTROL_EVENT_NAME
-     * @property {RemoteControlEvent} event - the remote control event.
+     *
+     * @param {JitsiParticipant} participant - The participant that has sent the
+     * event.
+     * @param {Object} event - EndpointMessage event from the data channels.
+     * @property {string} type - The function process only events with
+     * name REMOTE_CONTROL_EVENT_NAME.
+     * @returns {void}
      */
-    _handleRemoteControlStoppedEvent(participant, event) {
-        if(this.enabled
+    _handleRemoteControlStoppedEvent(participant: Object, event: Object) {
+        if (this.enabled
                 && event.name === REMOTE_CONTROL_EVENT_NAME
                 && event.type === EVENT_TYPES.stop
-                && participant.getId() === this.controlledParticipant) {
+                && participant.getId() === this._controlledParticipant) {
             this._stop();
         }
     }
@@ -185,9 +216,11 @@ export default class Controller extends RemoteControlParticipant {
     /**
      * Starts processing the mouse and keyboard events. Sets conference
      * listeners. Disables keyboard events.
+     *
+     * @returns {void}
      */
     _start() {
-        logger.log("Starting remote control controller.");
+        logger.log('Starting remote control controller.');
         APP.UI.addListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.addConferenceListener(
@@ -200,35 +233,53 @@ export default class Controller extends RemoteControlParticipant {
 
     /**
      * Disables the keyboatd shortcuts. Starts collecting remote control
-     * events.
+     * events. It can be used to resume an active remote control session wchich
+     * was paused with this.pause().
      *
-     * It can be used to resume an active remote control session wchich was
-     * paused with this.pause().
+     * @returns {void}
      */
     resume() {
-        if(!this.enabled || this.isCollectingEvents) {
+        if (!this.enabled || this._isCollectingEvents || !this._area) {
             return;
         }
-        logger.log("Resuming remote control controller.");
-        this.isCollectingEvents = true;
+        logger.log('Resuming remote control controller.');
+        this._isCollectingEvents = true;
         APP.keyboardshortcut.enable(false);
-        this.area.mousemove(event => {
-            const position = this.area.position();
-            this._sendRemoteControlEvent(this.controlledParticipant, {
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.mousemove(event => {
+            // $FlowDisableNextLine: we are sure that this._area is not null.
+            const position = this._area.position();
+
+            this.sendRemoteControlEvent(this._controlledParticipant, {
                 type: EVENT_TYPES.mousemove,
-                x: (event.pageX - position.left)/this.area.width(),
-                y: (event.pageY - position.top)/this.area.height()
+
+                // $FlowDisableNextLine: we are sure that this._area is not null
+                x: (event.pageX - position.left) / this._area.width(),
+
+                // $FlowDisableNextLine: we are sure that this._area is not null
+                y: (event.pageY - position.top) / this._area.height()
             });
         });
-        this.area.mousedown(this._onMouseClickHandler.bind(this,
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.mousedown(this._onMouseClickHandler.bind(this,
             EVENT_TYPES.mousedown));
-        this.area.mouseup(this._onMouseClickHandler.bind(this,
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.mouseup(this._onMouseClickHandler.bind(this,
             EVENT_TYPES.mouseup));
-        this.area.dblclick(
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.dblclick(
             this._onMouseClickHandler.bind(this, EVENT_TYPES.mousedblclick));
-        this.area.contextmenu(() => false);
-        this.area[0].onmousewheel = event => {
-            this._sendRemoteControlEvent(this.controlledParticipant, {
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.contextmenu(() => false);
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area[0].onmousewheel = event => {
+            this.sendRemoteControlEvent(this._controlledParticipant, {
                 type: EVENT_TYPES.mousescroll,
                 x: event.deltaX,
                 y: event.deltaY
@@ -243,12 +294,14 @@ export default class Controller extends RemoteControlParticipant {
      * Stops processing the mouse and keyboard events. Removes added listeners.
      * Enables the keyboard shortcuts. Displays dialog to notify the user that
      * remote control session has ended.
+     *
+     * @returns {void}
      */
     _stop() {
-        if(!this.controlledParticipant) {
+        if (!this._controlledParticipant) {
             return;
         }
-        logger.log("Stopping remote control controller.");
+        logger.log('Stopping remote control controller.');
         APP.UI.removeListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.removeConferenceListener(
@@ -256,29 +309,28 @@ export default class Controller extends RemoteControlParticipant {
             this._stopListener);
         APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
             this._userLeftListener);
-        this.controlledParticipant = null;
+        this._controlledParticipant = null;
         this.pause();
-        this.area = null;
+        this._area = undefined;
         APP.UI.messageHandler.openMessageDialog(
-            "dialog.remoteControlTitle",
-            "dialog.remoteControlStopMessage"
+            'dialog.remoteControlTitle',
+            'dialog.remoteControlStopMessage'
         );
     }
 
     /**
-     * Executes this._stop() mehtod:
-     * Stops processing the mouse and keyboard events. Removes added listeners.
-     * Enables the keyboard shortcuts. Displays dialog to notify the user that
-     * remote control session has ended.
+     * Executes this._stop() mehtod which stops processing the mouse and
+     * keyboard events, removes added listeners, enables the keyboard shortcuts,
+     * displays dialog to notify the user that remote control session has ended.
+     * In addition sends stop message to the controlled participant.
      *
-     * In addition:
-     * Sends stop message to the controlled participant.
+     * @returns {void}
      */
     stop() {
-        if(!this.controlledParticipant) {
+        if (!this._controlledParticipant) {
             return;
         }
-        this._sendRemoteControlEvent(this.controlledParticipant, {
+        this.sendRemoteControlEvent(this._controlledParticipant, {
             type: EVENT_TYPES.stop
         });
         this._stop();
@@ -288,88 +340,112 @@ export default class Controller extends RemoteControlParticipant {
      * Pauses the collecting of events and enables the keyboard shortcus. But
      * it doesn't removes any other listeners. Basically the remote control
      * session will be still active after this.pause(), but no events from the
-     * controller side will be captured and sent.
+     * controller side will be captured and sent. You can resume the collecting
+     * of the events with this.resume().
      *
-     * You can resume the collecting of the events with this.resume().
+     * @returns {void}
      */
     pause() {
-        if(!this.controlledParticipant) {
+        if (!this._controlledParticipant) {
             return;
         }
-        logger.log("Pausing remote control controller.");
-        this.isCollectingEvents = false;
+        logger.log('Pausing remote control controller.');
+        this._isCollectingEvents = false;
         APP.keyboardshortcut.enable(true);
-        this.area.off( "mousemove" );
-        this.area.off( "mousedown" );
-        this.area.off( "mouseup" );
-        this.area.off( "contextmenu" );
-        this.area.off( "dblclick" );
-        $(window).off( "keydown");
-        $(window).off( "keyup");
-        this.area[0].onmousewheel = undefined;
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.off('mousemove');
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.off('mousedown');
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.off('mouseup');
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.off('contextmenu');
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area.off('dblclick');
+
+        $(window).off('keydown');
+        $(window).off('keyup');
+
+        // $FlowDisableNextLine: we are sure that this._area is not null.
+        this._area[0].onmousewheel = undefined;
     }
 
     /**
      * Handler for mouse click events.
-     * @param {String} type the type of event ("mousedown"/"mouseup")
-     * @param {Event} event the mouse event.
+     *
+     * @param {string} type - The type of event ("mousedown"/"mouseup").
+     * @param {Event} event - The mouse event.
+     * @returns {void}
      */
-    _onMouseClickHandler(type, event) {
-        this._sendRemoteControlEvent(this.controlledParticipant, {
-            type: type,
+    _onMouseClickHandler(type: string, event: Object) {
+        this.sendRemoteControlEvent(this._controlledParticipant, {
+            type,
             button: event.which
         });
     }
 
     /**
      * Returns true if the remote control session is started.
+     *
      * @returns {boolean}
      */
     isStarted() {
-        return this.controlledParticipant !== null;
+        return this._controlledParticipant !== null;
     }
 
     /**
-     * Returns the id of the requested participant
-     * @returns {string} this.requestedParticipant.
+     * Returns the id of the requested participant.
+     *
+     * @returns {string} The id of the requested participant.
      * NOTE: This id should be the result of JitsiParticipant.getId() call.
      */
     getRequestedParticipant() {
-        return this.requestedParticipant;
+        return this._requestedParticipant;
     }
 
     /**
      * Handler for key press events.
-     * @param {String} type the type of event ("keydown"/"keyup")
-     * @param {Event} event the key event.
+     *
+     * @param {string} type - The type of event ("keydown"/"keyup").
+     * @param {Event} event - The key event.
+     * @returns {void}
      */
-    _onKeyPessHandler(type, event) {
-        this._sendRemoteControlEvent(this.controlledParticipant, {
-            type: type,
+    _onKeyPessHandler(type: string, event: Object) {
+        this.sendRemoteControlEvent(this._controlledParticipant, {
+            type,
             key: getKey(event),
-            modifiers: getModifiers(event),
+            modifiers: getModifiers(event)
         });
     }
 
     /**
      * Calls the stop method if the other side have left.
-     * @param {string} id - the user id for the participant that have left
+     *
+     * @param {string} id - The user id for the participant that have left.
+     * @returns {void}
      */
-    _onUserLeft(id) {
-        if(this.controlledParticipant === id) {
+    _onUserLeft(id: string) {
+        if (this._controlledParticipant === id) {
             this._stop();
         }
     }
 
     /**
      * Handles changes of the participant displayed on the large video.
-     * @param {string} id - the user id for the participant that is displayed.
+     *
+     * @param {string} id - The user id for the participant that is displayed.
+     * @returns {void}
      */
-    _onLargeVideoIdChanged(id) {
-        if (!this.controlledParticipant) {
+    _onLargeVideoIdChanged(id: string) {
+        if (!this._controlledParticipant) {
             return;
         }
-        if(this.controlledParticipant == id) {
+        if (this._controlledParticipant === id) {
             this.resume();
         } else {
             this.pause();
