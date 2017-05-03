@@ -120,10 +120,14 @@ export function hideToolbox(force: boolean = false): Function {
  *     secondaryToolbarButtons: Map
  * }}
  */
-export function setDefaultToolboxButtons(): Object {
-    return {
-        type: SET_DEFAULT_TOOLBOX_BUTTONS,
-        ...getDefaultToolboxButtons()
+export function setDefaultToolboxButtons(): Function {
+    return (dispatch: Dispatch, getState: Function) => {
+        const appConfig = getState()['features/base/config'];
+
+        dispatch({
+            type: SET_DEFAULT_TOOLBOX_BUTTONS,
+            ...getDefaultToolboxButtons(appConfig)
+        });
     };
 }
 

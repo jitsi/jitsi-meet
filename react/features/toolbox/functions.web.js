@@ -11,6 +11,23 @@ declare var interfaceConfig: Object;
 
 export { abstractMapStateToProps } from './functions.native';
 
+/**
+ * Utility function that checks whether conference is launched by Jibri.
+ *
+ * @param {Object} config - Application config.
+ * @returns {boolean} Returns true if conference is launched by Jibri and false
+ * otherwise.
+ * @private
+ */
+function _checkIfLaunchedByJibri(config) {
+    const {
+        iAmRecorder,
+        iAmSipGateway
+    } = config;
+
+    return iAmRecorder || iAmSipGateway;
+}
+
 /* eslint-disable flowtype/space-before-type-colon */
 
 /**
@@ -56,9 +73,10 @@ export function getButtonAttributesByProps(props: Object = {})
  * Returns an object which contains the default buttons for the primary and
  * secondary toolbars.
  *
+ * @param {Object} config - Application config.
  * @returns {Object}
  */
-export function getDefaultToolboxButtons(): Object {
+export function getDefaultToolboxButtons(config: Object = {}): Object {
     let toolbarButtons = {
         primaryToolbarButtons: new Map(),
         secondaryToolbarButtons: new Map()
@@ -71,6 +89,11 @@ export function getDefaultToolboxButtons(): Object {
         toolbarButtons
             = interfaceConfig.TOOLBAR_BUTTONS.reduce(
                 (acc, buttonName) => {
+                    if (buttonName === 'chat'
+                        && _checkIfLaunchedByJibri(config)) {
+                        return acc;
+                    }
+
                     const button = defaultToolbarButtons[buttonName];
 
                     if (button) {
