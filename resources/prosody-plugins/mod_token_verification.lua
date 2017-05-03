@@ -21,15 +21,17 @@ if parentCtx == nil then
 	return;
 end
 
-local appId = parentCtx:get_option_string("app_id");
-local appSecret = parentCtx:get_option_string("app_secret");
-local allowEmptyToken = parentCtx:get_option_boolean("allow_empty_token");
-local disableRoomNameConstraints = parentCtx:get_option_boolean("disable_room_name_constraints")
+local token_util = module:require "token/util".new(parentCtx);
+
+-- no token configuration
+if token_util == nil then
+    return;
+end
 
 log("debug",
 	"%s - starting MUC token verifier app_id: %s app_secret: %s allow empty: %s",
-	tostring(host), tostring(appId), tostring(appSecret),
-	tostring(allowEmptyToken));
+	tostring(host), tostring(token_util.appId), tostring(token_util.appSecret),
+	tostring(token_util.allowEmptyToken));
 
 local function verify_user(session, stanza)
 	log("debug", "Session token: %s, session room: %s",
@@ -43,32 +45,18 @@ local function verify_user(session, stanza)
 		return nil;
 	end
 
-	if allowEmptyToken and session.auth_token == nil then
-		module:log(
-			"debug",
-			"Skipped room token verification - empty tokens are allowed");
-		return nil;
-	end
-
-	local room = string.match(stanza.attr.to, "^(%w+)@");
-	log("debug", "Will verify token for user: %s, room: %s ", user_jid, room);
-	if room == nil then
-		log("error",
-			"Unable to get name of the MUC room ? to: %s", stanza.attr.to);
-		return nil;
-	end
-
-	local token = session.auth_token;
-	local auth_room = session.jitsi_meet_room;
-	if disableRoomNameConstraints ~= true and room ~= string.lower(auth_room) then
-		log("error", "Token %s not allowed to join: %s",
-			tostring(token), tostring(auth_room));
-		session.send(
-			st.error_reply(
-				stanza, "cancel", "not-allowed", "Room and token mismatched"));
-		return true;
-	end
-	log("debug", "allowed: %s to enter/create room: %s", user_jid, room);
+    log("debug",
+        "Will verify token for user: %s, room: %s ", user_jid, stanza.attr.to);
+    if not token_util:verify_room(session, stanza.attr.to) then
+        log("error", "Token %s not allowed to join: %s",
+            tostring(session.auth_token), tostring(session.jitsi_meet_room));
+        session.send(
+            st.error_reply(
+                stanza, "cancel", "not-allowed", "Room and token mismatched"));
+        return false; -- we need to just return non nil
+    end
+	log("debug",
+        "allowed: %s to enter/create room: %s", user_jid, stanza.attr.to);
 end
 
 module:hook("muc-room-pre-create", function(event)
