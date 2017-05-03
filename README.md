@@ -97,9 +97,6 @@ Jitsi Meet provides a very flexible way of embedding it in external applications
 Jitsi Meet is also available as a React Native application for Android and iOS.
 Instructions on how to build it can be  found [here](doc/mobile.md).
 
-## Discuss
-Please use the [Jitsi dev mailing list](http://lists.jitsi.org/pipermail/dev/) to discuss feature requests before opening an issue on Github.
-
 ## Acknowledgements
 
 Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by then ESTOS' developer Philipp Hancke who then contributed it to the community where development continues with joint forces!
