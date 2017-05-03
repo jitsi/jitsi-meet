@@ -38,7 +38,7 @@ function getStreamOwnerId(stream) {
  * @param videoSpaceHeight the height of the available space
  * @return an array with 2 elements, the video width and the video height
  */
-function getDesktopVideoSize(videoWidth,
+function computeDesktopVideoSize(videoWidth,
                              videoHeight,
                              videoSpaceWidth,
                              videoSpaceHeight) {
@@ -75,25 +75,22 @@ function getDesktopVideoSize(videoWidth,
  * @param videoSpaceHeight the height of the video space
  * @return an array with 2 elements, the video width and the video height
  */
-function getCameraVideoSize(videoWidth,
+function computeCameraVideoSize(videoWidth,
                             videoHeight,
                             videoSpaceWidth,
                             videoSpaceHeight) {
 
-    let aspectRatio = videoWidth / videoHeight;
-
+    const aspectRatio = videoWidth / videoHeight;
     let availableWidth = videoWidth;
     let availableHeight = videoHeight;
 
-    if (interfaceConfig.VIDEO_LAYOUT_FIT == 'height') {
+    if (interfaceConfig.VIDEO_LAYOUT_FIT === 'height') {
         availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight*aspectRatio;
-    }
-    else if (interfaceConfig.VIDEO_LAYOUT_FIT == 'width') {
+        availableWidth = availableHeight * aspectRatio;
+    } else if (interfaceConfig.VIDEO_LAYOUT_FIT === 'width') {
         availableWidth = videoSpaceWidth;
-        availableHeight = availableWidth/aspectRatio;
-    }
-    else if (interfaceConfig.VIDEO_LAYOUT_FIT == 'both') {
+        availableHeight = availableWidth / aspectRatio;
+    } else if (interfaceConfig.VIDEO_LAYOUT_FIT === 'both') {
         availableWidth = Math.max(videoWidth, videoSpaceWidth);
         availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
@@ -102,12 +99,21 @@ function getCameraVideoSize(videoWidth,
             availableWidth = availableHeight * aspectRatio;
         }
 
-        if (availableHeight * aspectRatio < videoSpaceWidth) {
+        if (aspectRatio <= 1) {
+            const zoomRateHeight = videoSpaceHeight / videoHeight;
+            const zoomRateWidth = videoSpaceWidth / videoWidth;
+            const maxZoomRate
+                = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity;
+            let zoomRate = Math.min(zoomRateWidth, maxZoomRate);
+
+            zoomRate = Math.max(zoomRate, zoomRateHeight);
+            availableWidth = videoWidth * zoomRate;
+            availableHeight = videoHeight * zoomRate;
+        } else if (availableHeight * aspectRatio < videoSpaceWidth) {
             availableWidth = videoSpaceWidth;
             availableHeight = availableWidth / aspectRatio;
         }
     }
-
 
     return [ availableWidth, availableHeight ];
 }
@@ -269,19 +275,20 @@ export class VideoContainer extends LargeContainer {
      * @param {number} containerHeight container height
      * @returns {{availableWidth, availableHeight}}
      */
-    getVideoSize (containerWidth, containerHeight) {
+    getVideoSize(containerWidth, containerHeight) {
         let { width, height } = this.getStreamSize();
+
         if (this.stream && this.isScreenSharing()) {
-            return getDesktopVideoSize( width,
-                height,
-                containerWidth,
-                containerHeight);
-        } else {
-            return getCameraVideoSize(  width,
+            return computeDesktopVideoSize(width,
                 height,
                 containerWidth,
                 containerHeight);
         }
+
+        return computeCameraVideoSize(width,
+            height,
+            containerWidth,
+            containerHeight);
     }
 
     /**
