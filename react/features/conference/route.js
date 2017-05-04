@@ -1,9 +1,8 @@
 /* global APP, config */
 
-import BoshAddressChoice from '../../../modules/config/BoshAddressChoice';
-import HttpConfigFetch from '../../../modules/config/HttpConfigFetch';
 import ConferenceUrl from '../../../modules/URL/ConferenceUrl';
 
+import { chooseBOSHAddress, obtainConfig } from '../base/config';
 import { RouteRegistry } from '../base/react';
 
 import { Conference } from './components';
@@ -47,15 +46,11 @@ function _initConference() {
  * @returns {Promise}
  */
 function _obtainConfig(location, room) {
-    return new Promise((resolve, reject) => {
-        HttpConfigFetch.obtainConfig(location, room, (success, error) => {
-            if (success) {
-                resolve();
-            } else {
-                reject(error);
-            }
-        });
-    });
+    return new Promise((resolve, reject) =>
+        obtainConfig(location, room, (success, error) => {
+            success ? resolve() : reject(error);
+        })
+    );
 }
 
 /**
@@ -87,7 +82,7 @@ function _obtainConfigAndInit() {
                         null, 'dialog.connectError', err);
                 });
         } else {
-            BoshAddressChoice.chooseAddress(config, room);
+            chooseBOSHAddress(config, room);
             _initConference();
         }
     }

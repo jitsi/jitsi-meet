@@ -21,11 +21,12 @@ export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const { options } = state['features/base/connection'];
+        const { issuer, jwt } = state['features/jwt'];
         const { room } = state['features/base/conference'];
         const connection
             = new JitsiMeetJS.JitsiConnection(
                 options.appId,
-                options.token,
+                jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
                 {
                     ...options,
                     bosh:

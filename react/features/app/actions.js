@@ -18,7 +18,8 @@ import {
  * @returns {Function}
  */
 export function appInit() {
-    return (dispatch, getState) => init(getState());
+    return (dispatch: Dispatch<*>, getState: Function) =>
+        init(getState());
 }
 
 /**
@@ -31,7 +32,7 @@ export function appInit() {
  * @returns {Function}
  */
 export function appNavigate(uri) {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const oldDomain = getDomain(state);
         const defaultURL = state['features/app'].app._getDefaultURL();
@@ -43,14 +44,12 @@ export function appNavigate(uri) {
         // If the specified URI does not identify a domain, use the app's
         // default.
         if (typeof domain === 'undefined') {
-            domain
-                = _parseURIString(defaultURL)
-                    .domain;
+            domain = _parseURIString(defaultURL).domain;
         }
 
         if (room) {
-            const splitUrl = uri.split(domain);
-            const urlWithoutDomain = splitUrl[splitUrl.length - 1];
+            const splitURL = uri.split(domain);
+            const urlWithoutDomain = splitURL[splitURL.length - 1];
 
             urlObject = new URL(urlWithoutDomain, `https://${domain}`);
         }
