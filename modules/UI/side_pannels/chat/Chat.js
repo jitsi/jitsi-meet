@@ -30,7 +30,7 @@ const htmlStr = `
         <textarea id="usermsg" autofocus
             data-i18n="[placeholder]chat.messagebox"></textarea>
         <div id="smileysarea">
-            <div id="smileys" id="toggle_smileys">
+            <div id="smileys">
                 <img src="images/smile.svg"/>
             </div>
         </div>
@@ -191,7 +191,7 @@ var Chat = {
             Chat.setChatConversationMode(true);
         }
 
-        $("#toggle_smileys").click(function() {
+        $("#smileys").click(function() {
             Chat.toggleSmileys();
         });
 
