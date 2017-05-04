@@ -1,6 +1,17 @@
 import { Symbol } from '../base/react';
 
 /**
+ * The type of Redux action which signals to remove cached device errors from
+ * the store.
+ *
+ * {
+ *     type: CLEAR_DEVICE_ERRORS
+ * }
+ * @public
+ */
+export const CLEAR_DEVICE_ERRORS = Symbol('CLEAR_DEVICE_ERRORS');
+
+/**
  * The type of the Redux action which signals that the prompt for media
  * permission is visible or not.
  *

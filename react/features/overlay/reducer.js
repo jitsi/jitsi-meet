@@ -9,6 +9,7 @@ import { assign, ReducerRegistry, set } from '../base/redux';
 import { CREATE_LOCAL_TRACKS_FAILED } from '../base/tracks';
 
 import {
+    CLEAR_DEVICE_ERRORS,
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SUSPEND_DETECTED
 } from './actionTypes';
@@ -20,6 +21,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 ReducerRegistry.register('features/overlay', (state = {}, action) => {
     switch (action.type) {
+    case CLEAR_DEVICE_ERRORS:
+        return _clearDeviceErrors(state, action);
+
     case CONFERENCE_FAILED:
         return _conferenceFailed(state, action);
 
@@ -41,6 +45,22 @@ ReducerRegistry.register('features/overlay', (state = {}, action) => {
 
     return state;
 });
+
+
+/**
+ * Reduces a specific Redux action CLEAR_DEVICE_ERRORS for the feature overlay.
+ *
+ * @param {Object} state - The Redux state of the feature overlay.
+ * @returns {Object} The new state of the feature overlay after the reduction of
+ * the specified action.
+ * @private
+ */
+function _clearDeviceErrors(state) {
+    return assign(state, {
+        cameraError: null,
+        micError: null
+    });
+}
 
 /**
  * Reduces a specific Redux action CONFERENCE_FAILED of the feature overlay.

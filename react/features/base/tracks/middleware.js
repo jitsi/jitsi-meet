@@ -25,6 +25,7 @@ import {
 import { getLocalTrack, setTrackMuted } from './functions';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -37,7 +38,7 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CREATE_LOCAL_TRACKS_FAILED: {
-        if (typeof APP !== 'undefined') {
+        if (typeof APP !== 'undefined' && !interfaceConfig.filmStripOnly) {
             APP.UI.showDeviceErrorDialog(action.micError, action.cameraError);
         }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import DeviceErrorFilmstripOnlyOverlay from './DeviceErrorFilmstripOnlyOverlay';
 import PageReloadFilmstripOnlyOverlay from './PageReloadFilmstripOnlyOverlay';
 import PageReloadOverlay from './PageReloadOverlay';
 import SuspendedFilmstripOnlyOverlay from './SuspendedFilmstripOnlyOverlay';
@@ -32,6 +33,16 @@ class OverlayContainer extends Component {
          * @type {string}
          */
         _browser: React.PropTypes.string,
+
+        /**
+         * The JitsiTrackError returned from failing to use a camera.
+         *
+         * NOTE: Used by DeviceErrorFilmstripOnlyOverlay only.
+         *
+         * @private
+         * @type {JitsiTrackError}
+         */
+        _cameraError: React.PropTypes.object,
 
         /**
          * The indicator which determines whether the status of the
@@ -76,6 +87,16 @@ class OverlayContainer extends Component {
          * @type {boolean}
          */
         _isNetworkFailure: React.PropTypes.bool,
+
+        /**
+         * The JitsiTrackError returned from failing to use a microphone.
+         *
+         * NOTE: Used by DeviceErrorFilmstripOnlyOverlay only.
+         *
+         * @private
+         * @type {JitsiTrackError}
+         */
+        _micError: React.PropTypes.object,
 
         /**
          * The reason for the error that will cause the reload.
@@ -165,6 +186,13 @@ class OverlayContainer extends Component {
                     ? UserMediaPermissionsFilmstripOnlyOverlay
                     : UserMediaPermissionsOverlay;
             props = { browser: this.props._browser };
+        } else if (this.props._micError || this.props._cameraError) {
+            overlayComponent = filmstripOnly
+                ? DeviceErrorFilmstripOnlyOverlay : null;
+            props = {
+                cameraError: this.props._cameraError,
+                micError: this.props._micError
+            };
         }
 
         return (
@@ -202,6 +230,16 @@ function _mapStateToProps(state) {
          * @type {string}
          */
         _browser: stateFeaturesOverlay.browser,
+
+        /**
+         * The JitsiTrackError returned from failing to use a camera.
+         *
+         * NOTE: Used by DeviceErrorFilmstripOnlyOverlay only.
+         *
+         * @private
+         * @type {JitsiTrackError}
+         */
+        _cameraError: stateFeaturesOverlay.cameraError,
 
         /**
          * The indicator which determines whether the status of the
@@ -247,6 +285,16 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _isNetworkFailure: stateFeaturesOverlay.isNetworkFailure,
+
+        /**
+         * The JitsiTrackError returned from failing to use a microphone.
+         *
+         * NOTE: Used by DeviceErrorFilmstripOnlyOverlay only.
+         *
+         * @private
+         * @type {JitsiTrackError}
+         */
+        _micError: stateFeaturesOverlay.micError,
 
         /**
          * The reason for the error that will cause the reload.
