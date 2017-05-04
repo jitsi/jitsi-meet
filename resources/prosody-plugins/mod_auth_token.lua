@@ -52,11 +52,9 @@ function provider.delete_user(username)
 end
 
 function provider.get_sasl_handler(session)
-	-- JWT token extracted from BOSH URL
-	local token = session.auth_token;
 
 	local function get_username_from_token(self, message)
-        return token_util:process_and_verify_token(session, token);
+        return token_util:process_and_verify_token(session);
 	end
 
 	return new_sasl(host, { anonymous = get_username_from_token });
