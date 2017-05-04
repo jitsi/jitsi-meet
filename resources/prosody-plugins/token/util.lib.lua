@@ -36,7 +36,6 @@ function Util.new(module)
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
-    self.disableRoomNameConstraints = module:get_option_boolean("disable_room_name_constraints");
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
@@ -136,7 +135,7 @@ function Util:verify_token(token)
     end
 
     local roomClaim = claims["room"];
-    if roomClaim == nil and self.disableRoomNameConstraints ~= true then
+    if roomClaim == nil then
         return nil, "'room' claim is missing";
     end
 
@@ -214,7 +213,7 @@ function Util:verify_room(session, room_address)
     end
 
     local auth_room = session.jitsi_meet_room;
-    if self.disableRoomNameConstraints ~= true and room ~= string.lower(auth_room) then
+    if room ~= string.lower(auth_room) then
         return false;
     end
 
