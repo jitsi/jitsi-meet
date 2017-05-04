@@ -6,6 +6,7 @@ local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = require "luajwtjitsi";
 local http = require "net.http";
+local jid = require "util.jid";
 local json = require "cjson";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
@@ -36,6 +37,40 @@ function Util.new(module)
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
+
+    --[[
+        Multidomain can be supported in some deployments. In these deployments
+        there is a virtual conference muc, which address contains the subdomain
+        to use. Those deployments are accessible
+        by URL https://domain/subdomain.
+        Then the address of the room will be:
+        roomName@conference.subdomain.domain. This is like a virtual address
+        where there is only one muc configured by default with address:
+        conference.domain and the actual presentation of the room in that muc
+        component is [subdomain]roomName@conference.domain.
+        These setups relay on configuration 'muc_domain_base' which holds
+        the main domain and we use it to substract subdomains from the
+        virtual addresses.
+        The following confgurations are for multidomain setups and domain name
+        verification:
+     --]]
+
+    -- optional parameter for custom muc component prefix,
+    -- defaults to "conference"
+    self.muc_domain_prefix = module:get_option_string(
+        "muc_mapper_domain_prefix", "conference");
+    -- domain base, which is the main domain used in the deployment,
+    -- the main VirtualHost for the deployment
+    self.muc_domain_base = module:get_option_string("muc_mapper_domain_base");
+    -- The "real" MUC domain that we are proxying to
+    if self.muc_domain_base then
+        self.muc_domain = module:get_option_string(
+            "muc_mapper_domain",
+            self.muc_domain_prefix.."."..self.muc_domain_base);
+    end
+    -- whether domain name verification is enabled, by default it is disabled
+    self.enableDomainVerification = module:get_option_boolean(
+        "enable_domain_verification", false);
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
@@ -139,12 +174,18 @@ function Util:verify_token(token)
         return nil, "'room' claim is missing";
     end
 
+    local audClaim = claims["aud"];
+    if audClaim == nil then
+        return nil, "'aud' claim is missing";
+    end
+
     return claims;
 end
 
 --- Verifies token and process needed values to be stored in the session.
 -- Stores in session the following values:
 -- session.jitsi_meet_room - the room name value from the token
+-- session.jitsi_meet_domain - the domain name value from the token
 -- @param session the current session
 -- @param token the token to verify
 -- @return false and error
@@ -183,15 +224,19 @@ function Util:process_and_verify_token(session, token)
     if claims ~= nil then
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
+        -- Binds domain name to the session
+        session.jitsi_meet_domain = claims["aud"];
         return true;
     else
         return false, "not-allowed", msg;
     end
 end
 
---- Verifies room name if necesarry.
+--- Verifies room name and domain if necesarry.
 -- Checks configs and if necessary checks the room name extracted from
--- room_address against the one saved in the session when token was verified
+-- room_address against the one saved in the session when token was verified.
+-- Also verifies domain name from token against the domain in the room_address,
+-- if enableDomainVerification is enabled.
 -- @param session the current session
 -- @param room_address the whole room address as received
 -- @return returns true in case room was verified or there is no need to verify
@@ -205,7 +250,8 @@ function Util:verify_room(session, room_address)
         return true;
     end
 
-    local room = string.match(room_address, "^(%w+)@");
+    -- extract room name using all chars, except the not allowed ones
+    local room,_,_ = jid.split(room_address);
     if room == nil then
         log("error",
             "Unable to get name of the MUC room ? to: %s", room_address);
@@ -213,11 +259,37 @@ function Util:verify_room(session, room_address)
     end
 
     local auth_room = session.jitsi_meet_room;
-    if room ~= string.lower(auth_room) then
-        return false;
+    if not self.enableDomainVerification then
+        if room ~= string.lower(auth_room) then
+            return false;
+        end
+
+        return true;
     end
 
-    return true;
+    local room_address_to_verify = jid.bare(room_address);
+    -- parses bare room address, for multidomain expected format is:
+    -- [subdomain]roomName@conference.domain
+    local target_subdomain, target_room
+            = room_address_to_verify:match("^%[([^%]]+)%](.+)$");
+
+    local auth_domain = session.jitsi_meet_domain;
+    if target_subdomain then
+        -- from this point we depend on muc_domain_base,
+        -- deny access if option is missing
+        if not self.muc_domain_base then
+            module:log("warn", "No 'muc_domain_base' option set, denying access!");
+            return false;
+        end
+
+        return room_address_to_verify == jid.join(
+            "["..auth_domain.."]"..string.lower(auth_room), self.muc_domain);
+    else
+        -- we do not have a domain part (multidomain is not enabled)
+        -- verify with info from the token
+        return room_address_to_verify == jid.join(
+            string.lower(auth_room), self.muc_domain_prefix.."."..auth_domain);
+    end
 end
 
 return Util;
