@@ -183,15 +183,15 @@ function Util:verify_token(token)
 end
 
 --- Verifies token and process needed values to be stored in the session.
+-- Token is obtained from session.auth_token.
 -- Stores in session the following values:
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
 -- @param session the current session
--- @param token the token to verify
 -- @return false and error
-function Util:process_and_verify_token(session, token)
+function Util:process_and_verify_token(session)
 
-    if token == nil then
+    if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
         else
@@ -217,9 +217,9 @@ function Util:process_and_verify_token(session, token)
     -- now verify the whole token
     local claims, msg;
     if self.asapKeyServer then
-        claims, msg = self:verify_token(token);
+        claims, msg = self:verify_token(session.auth_token);
     else
-        claims, msg = self:verify_token(token);
+        claims, msg = self:verify_token(session.auth_token);
     end
     if claims ~= nil then
         -- Binds room name to the session which is later checked on MUC join
