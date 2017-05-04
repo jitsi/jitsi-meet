@@ -43,6 +43,7 @@ import {
     participantRoleChanged,
     participantUpdated
 } from './react/features/base/participants';
+import { createLocalTracksFailed } from './react/features/base/tracks';
 import {
     showDesktopPicker
 } from  './react/features/desktop-picker';
@@ -162,12 +163,14 @@ function createInitialLocalTracksAndConnect(roomName) {
                     // If both requests for 'audio' + 'video' and 'audio' only
                     // failed, we assume that there is some problems with user's
                     // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
+                    APP.store.dispatch(createLocalTracksFailed(
+                        null, audioOnlyError));
                 } else {
                     // If request for 'audio' + 'video' failed, but request for
                     // 'audio' only was OK, we assume that we had problems with
                     // camera and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                    APP.store.dispatch(createLocalTracksFailed(
+                        audioAndVideoError, null));
                 }
             }
 
@@ -1666,7 +1669,7 @@ export default {
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
                 .catch((err) => {
-                    APP.UI.showDeviceErrorDialog(null, err);
+                    APP.store.dispatch(createLocalTracksFailed(err, null));
                 });
             }
         );
@@ -1687,7 +1690,7 @@ export default {
                     APP.settings.setMicDeviceId(micDeviceId, true);
                 })
                 .catch((err) => {
-                    APP.UI.showDeviceErrorDialog(err, null);
+                    APP.store.dispatch(createLocalTracksFailed(null, err));
                 });
             }
         );

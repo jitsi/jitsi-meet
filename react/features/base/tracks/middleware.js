@@ -18,8 +18,13 @@ import {
     createLocalTracks,
     destroyLocalTracks
 } from './actions';
-import { TRACK_UPDATED } from './actionTypes';
+import {
+    CREATE_LOCAL_TRACKS_FAILED,
+    TRACK_UPDATED
+} from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
+
+declare var APP: Object;
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -31,6 +36,13 @@ import { getLocalTrack, setTrackMuted } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case CREATE_LOCAL_TRACKS_FAILED: {
+        if (typeof APP !== 'undefined') {
+            APP.UI.showDeviceErrorDialog(action.micError, action.cameraError);
+        }
+
+        break;
+    }
     case LIB_DID_DISPOSE:
         store.dispatch(destroyLocalTracks());
         break;

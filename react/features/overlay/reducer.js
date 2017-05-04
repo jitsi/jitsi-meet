@@ -6,6 +6,7 @@ import {
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../base/redux';
+import { CREATE_LOCAL_TRACKS_FAILED } from '../base/tracks';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
@@ -27,6 +28,9 @@ ReducerRegistry.register('features/overlay', (state = {}, action) => {
 
     case CONNECTION_FAILED:
         return _connectionFailed(state, action);
+
+    case CREATE_LOCAL_TRACKS_FAILED:
+        return _createLocalTracksFailed(state, action);
 
     case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
         return _mediaPermissionPromptVisibilityChanged(state, action);
@@ -104,6 +108,23 @@ function _connectionFailed(state, action) {
     }
 
     return state;
+}
+
+/**
+ * Reduces a specific Redux action CREATE_LOCAL_TRACKS_FAILED for the feature
+ * overlay.
+ *
+ * @param {Object} state - The Redux state of the feature overlay.
+ * @param {Action} action - The Redux action to reduce.
+ * @returns {Object} The new state of the feature overlay after the reduction of
+ * the specified action.
+ * @private
+ */
+function _createLocalTracksFailed(state, action) {
+    return assign(state, {
+        cameraError: action.cameraError,
+        micError: action.micError
+    });
 }
 
 /**

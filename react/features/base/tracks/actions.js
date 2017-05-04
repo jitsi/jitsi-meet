@@ -9,6 +9,7 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import {
+    CREATE_LOCAL_TRACKS_FAILED,
     TRACK_ADDED,
     TRACK_REMOVED,
     TRACK_UPDATED
@@ -35,6 +36,28 @@ export function createLocalTracks(options = {}) {
                 `JitsiMeetJS.createLocalTracks.catch rejection reason: ${err}`);
         });
 }
+
+/**
+ * Signals to display a device error notification with the passed in errors.
+ *
+ * @param {JitsiTrackError} cameraError - The error, if any, from attempting to
+ * use a camera.
+ * @param {JitsiTrackError} micError - The error, if any, from attempting to use
+ * a microphone.
+ * @returns {{
+ *     type: CREATE_LOCAL_TRACKS_FAILED,
+ *     cameraError: JitsiTrackError,
+ *     micError: JitsiTrackError
+ * }}
+ */
+export function createLocalTracksFailed(cameraError, micError) {
+    return {
+        type: CREATE_LOCAL_TRACKS_FAILED,
+        cameraError,
+        micError
+    };
+}
+
 
 /**
  * Calls JitsiLocalTrack#dispose() on all local tracks ignoring errors when
