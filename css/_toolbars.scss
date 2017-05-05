@@ -71,6 +71,10 @@
         &.icon-microphone {
             @extend .icon-mic-disabled;
         }
+
+        &.icon-visibility {
+            @extend .icon-visibility-off;
+        }
     }
 
     &.unclickable {
@@ -170,7 +174,7 @@
         width: $defaultToolbarSize;
         -webkit-transform: translateX(-100%);
 
-        .button.toggled:not(.icon-raised-hand) {
+        .button.toggled:not(.icon-raised-hand):not(.button-active) {
             background: $toolbarSelectBackground;
             cursor: pointer;
             text-decoration: none;

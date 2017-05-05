@@ -11,6 +11,7 @@ import {
     LOCK_STATE_CHANGED,
     SET_AUDIO_ONLY,
     _SET_AUDIO_ONLY_VIDEO_MUTED,
+    SET_LARGE_VIDEO_HD_STATUS,
     SET_PASSWORD,
     SET_ROOM
 } from './actionTypes';
@@ -42,6 +43,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case _SET_AUDIO_ONLY_VIDEO_MUTED:
         return _setAudioOnlyVideoMuted(state, action);
+
+    case SET_LARGE_VIDEO_HD_STATUS:
+        return _setLargeVideoHDStatus(state, action);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
@@ -238,7 +242,10 @@ function _lockStateChanged(state, action) {
  * reduction of the specified action.
  */
 function _setAudioOnly(state, action) {
-    return set(state, 'audioOnly', action.audioOnly);
+    return assign(state, {
+        audioOnly: action.audioOnly,
+        isLargeVideoHD: action.audioOnly ? false : state.isLargeVideoHD
+    });
 }
 
 /**
@@ -254,6 +261,21 @@ function _setAudioOnly(state, action) {
  */
 function _setAudioOnlyVideoMuted(state, action) {
     return set(state, 'audioOnlyVideoMuted', action.muted);
+}
+
+/**
+ * Reduces a specific Redux action SET_LARGE_VIDEO_HD_STATUS of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_LARGE_VIDEO_HD_STATUS to
+ * reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setLargeVideoHDStatus(state, action) {
+    return set(state, 'isLargeVideoHD', action.isLargeVideoHD);
 }
 
 /**

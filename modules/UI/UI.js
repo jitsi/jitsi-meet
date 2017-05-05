@@ -712,6 +712,14 @@ UI.setVideoMuted = function (id, muted) {
 };
 
 /**
+ * Triggers an update of remote video and large video displays so they may pick
+ * up any state changes that have occurred elsewhere.
+ *
+ * @returns {void}
+ */
+UI.updateAllVideos = () => VideoLayout.updateAllVideos();
+
+/**
  * Adds a listener that would be notified on the given type of event.
  *
  * @param type the type of the event we're listening for

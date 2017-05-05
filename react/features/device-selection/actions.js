@@ -12,16 +12,13 @@ import { DeviceSelectionDialog } from './components';
  * @returns {Function}
  */
 export function openDeviceSelectionDialog() {
-    return (dispatch, getState) => {
+    return dispatch => {
         JitsiMeetJS.mediaDevices.isDeviceListAvailable()
             .then(isDeviceListAvailable => {
-                const state = getState();
-                const conference = state['features/base/conference'].conference;
-
                 dispatch(openDialog(DeviceSelectionDialog, {
+                    currentAudioInputId: APP.settings.getMicDeviceId(),
                     currentAudioOutputId: APP.settings.getAudioOutputDeviceId(),
-                    currentAudioTrack: conference.getLocalAudioTrack(),
-                    currentVideoTrack: conference.getLocalVideoTrack(),
+                    currentVideoInputId: APP.settings.getCameraDeviceId(),
                     disableAudioInputChange:
                         !JitsiMeetJS.isMultipleAudioInputSupported(),
                     disableDeviceChange: !isDeviceListAvailable

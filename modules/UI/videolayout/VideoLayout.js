@@ -176,9 +176,7 @@ var VideoLayout = {
         let localId = APP.conference.getMyUserId();
         this.onVideoTypeChanged(localId, stream.videoType);
 
-        if (!stream.isMuted()) {
-            localVideoThumbnail.changeVideo(stream);
-        }
+        localVideoThumbnail.changeVideo(stream);
 
         /* force update if we're currently being displayed */
         if (this.isCurrentlyOnLarge(localId)) {
@@ -956,6 +954,24 @@ var VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
+    /**
+     * Triggers an update of remote video and large video displays so they may
+     * pick up any state changes that have occurred elsewhere.
+     *
+     * @returns {void}
+     */
+    updateAllVideos() {
+        const displayedUserId = this.getLargeVideoID();
+
+        if (displayedUserId) {
+            this.updateLargeVideo(displayedUserId, true);
+        }
+
+        Object.keys(remoteVideos).forEach(video => {
+            remoteVideos[video].updateView();
+        });
+    },
+
     updateLargeVideo (id, forceUpdate) {
         if (!largeVideo) {
             return;
@@ -1060,16 +1076,6 @@ var VideoLayout = {
      */
     getLargeVideo () {
         return largeVideo;
-    },
-
-    /**
-     * Updates the resolution label, indicating to the user that the large
-     * video stream is currently HD.
-     */
-    updateResolutionLabel(isResolutionHD) {
-        let id = 'videoResolutionLabel';
-
-        UIUtil.setVisible(id, isResolutionHD);
     },
 
     /**

@@ -94,6 +94,17 @@ export const _SET_AUDIO_ONLY_VIDEO_MUTED
     = Symbol('_SET_AUDIO_ONLY_VIDEO_MUTED');
 
 /**
+ * The type of (redux) action to set whether or not the displayed large video is
+ * in high-definition.
+ *
+ * {
+ *     type: SET_LARGE_VIDEO_HD_STATUS,
+ *     isLargeVideoHD: boolean
+ * }
+ */
+export const SET_LARGE_VIDEO_HD_STATUS = Symbol('SET_LARGE_VIDEO_HD_STATUS');
+
+/**
  * The type of redux action which sets the video channel's lastN (value).
  *
  * {

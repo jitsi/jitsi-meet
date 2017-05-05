@@ -9,6 +9,7 @@ import { Watermarks } from '../../base/react';
 import { OverlayContainer } from '../../overlay';
 import { Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
+import { VideoStatusLabel } from '../../video-status-label';
 
 declare var $: Function;
 declare var APP: Object;
@@ -92,9 +93,7 @@ class Conference extends Component {
                                 muted = 'true' />
                         </div>
                         <span id = 'localConnectionMessage' />
-                        <span
-                            className = 'video-state-indicator moveToCorner'
-                            id = 'videoResolutionLabel'>HD</span>
+                        <VideoStatusLabel />
                         <span
                             className
                                 = 'video-state-indicator centeredVideoLabel'

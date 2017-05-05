@@ -11,6 +11,7 @@ import AudioLevels from "../audio_levels/AudioLevels";
 
 const ParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
+const DESKTOP_CONTAINER_TYPE = 'desktop';
 
 /**
  * Manager for all Large containers.
@@ -33,7 +34,7 @@ export default class LargeVideoManager {
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
         // use the same video container to handle desktop tracks
-        this.addContainer("desktop", this.videoContainer);
+        this.addContainer(DESKTOP_CONTAINER_TYPE, this.videoContainer);
 
         this.width = 0;
         this.height = 0;
@@ -103,6 +104,8 @@ export default class LargeVideoManager {
 
         preUpdate.then(() => {
             const { id, stream, videoType, resolve } = this.newStreamData;
+            const isVideoFromCamera = videoType === VIDEO_CONTAINER_TYPE;
+
             this.newStreamData = null;
 
             logger.info("hover in %s", id);
@@ -120,9 +123,7 @@ export default class LargeVideoManager {
             // If the container is VIDEO_CONTAINER_TYPE, we need to check
             // its stream whether exist and is muted to set isVideoMuted
             // in rest of the cases it is false
-            let showAvatar
-                = (videoType === VIDEO_CONTAINER_TYPE)
-                    && (!stream || stream.isMuted());
+            let showAvatar = isVideoFromCamera && (!stream || stream.isMuted());
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
@@ -130,9 +131,17 @@ export default class LargeVideoManager {
             // the video was not rendered, before the connection has failed.
             const isConnectionActive = this._isConnectionActive(id);
 
-            if (videoType === VIDEO_CONTAINER_TYPE
+            if (isVideoFromCamera
                     && !isConnectionActive
                     && (isUserSwitch || !container.wasVideoRendered)) {
+                showAvatar = true;
+            }
+
+            // If audio only mode is enabled, always show the avatar for
+            // videos from another participant.
+            if (APP.conference.isAudioOnly()
+                && (isVideoFromCamera
+                    || videoType === DESKTOP_CONTAINER_TYPE)) {
                 showAvatar = true;
             }
 
@@ -159,8 +168,12 @@ export default class LargeVideoManager {
 
             // Make sure no notification about remote failure is shown as
             // its UI conflicts with the one for local connection interrupted.
-            const isConnected = APP.conference.isConnectionInterrupted()
-                                || isConnectionActive;
+            // For the purposes of UI indicators, audio only is considered as
+            // an "active" connection.
+            const isConnected
+                = APP.conference.isAudioOnly()
+                    || APP.conference.isConnectionInterrupted()
+                    || isConnectionActive;
 
             // when isHavingConnectivityIssues, state can be inactive,
             // interrupted or restoring. We show different message for
