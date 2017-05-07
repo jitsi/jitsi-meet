@@ -1,6 +1,7 @@
 import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
 
+import '../../device-error';
 import '../../room-lock';
 
 /**
