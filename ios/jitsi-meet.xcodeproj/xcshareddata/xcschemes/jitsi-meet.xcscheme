@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "jitsi-meet-react.app"
-               BlueprintName = "jitsi-meet-react"
-               ReferencedContainer = "container:jitsi-meet-react.xcodeproj">
+               BuildableName = "jitsi-meet.app"
+               BlueprintName = "jitsi-meet"
+               ReferencedContainer = "container:jitsi-meet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "jitsi-meet-react.app"
-            BlueprintName = "jitsi-meet-react"
-            ReferencedContainer = "container:jitsi-meet-react.xcodeproj">
+            BuildableName = "jitsi-meet.app"
+            BlueprintName = "jitsi-meet"
+            ReferencedContainer = "container:jitsi-meet.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "jitsi-meet-react.app"
-            BlueprintName = "jitsi-meet-react"
-            ReferencedContainer = "container:jitsi-meet-react.xcodeproj">
+            BuildableName = "jitsi-meet.app"
+            BlueprintName = "jitsi-meet"
+            ReferencedContainer = "container:jitsi-meet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -89,9 +89,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "jitsi-meet-react.app"
-            BlueprintName = "jitsi-meet-react"
-            ReferencedContainer = "container:jitsi-meet-react.xcodeproj">
+            BuildableName = "jitsi-meet.app"
+            BlueprintName = "jitsi-meet"
+            ReferencedContainer = "container:jitsi-meet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
