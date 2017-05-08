@@ -43,16 +43,6 @@ const APP = {
     conference,
     translation,
     /**
-     * The log collector which captures JS console logs for this app.
-     * @type {LogCollector}
-     */
-    logCollector: null,
-    /**
-     * Indicates if the log collector has been started (it will not be started
-     * if the welcome page is displayed).
-     */
-    logCollectorStarted : false,
-    /**
      * After the APP has been initialized provides utility methods for dealing
      * with the conference room URL(address).
      * @type ConferenceUrl
