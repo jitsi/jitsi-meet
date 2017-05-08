@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Jitsi Meet SDK.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:jitsi-meet.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

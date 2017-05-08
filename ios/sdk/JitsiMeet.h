@@ -14,11 +14,5 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
-
-
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
-@property (nonatomic, strong) UIWindow *window;
-
-@end
+#import <JitsiMeet/JitsiMeetView.h>
+#import <JitsiMeet/JitsiMeetViewDelegate.h>

@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#import "JitsiMeetViewDelegate.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (nonatomic, strong) UIWindow *window;
+@interface JitsiMeetView : UIView
+
+@property (nonatomic, weak, nullable) id<JitsiMeetViewDelegate> delegate;
+
++ (BOOL)application:(UIApplication *)application
+continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray *))restorationHandler;
+
++ (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)URL
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation;
+
+- (void)loadURL:(nullable NSURL *)url;
 
 @end

@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "83CBBA2D1A601D0E00E9B192"
-               BuildableName = "libReact.a"
-               BlueprintName = "React"
-               ReferencedContainer = "container:../node_modules/react-native/React/React.xcodeproj">
+               BlueprintIdentifier = "0BD906E41EC0C00300C8C18E"
+               BuildableName = "JitsiMeet.framework"
+               BlueprintName = "JitsiMeet"
+               ReferencedContainer = "container:Jitsi Meet SDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

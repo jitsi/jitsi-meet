@@ -1,101 +1,51 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
+/*
+ * Copyright @ 2017-present Atlassian Pty Ltd
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "AppDelegate.h"
 
-#import <React/RCTAssert.h>
-#import <React/RCTBundleURLProvider.h>
-#import <React/RCTLinkingManager.h>
-#import <React/RCTRootView.h>
+#import <JitsiMeet/JitsiMeet.h>
 
-/**
- * A <tt>RCTFatalHandler</tt> implementation which swallows JavaScript errors.
- * In the Release configuration, React Native will (intentionally) raise an
- * unhandled NSException for an unhandled JavaScript error. This will
- * effectively kill the application. <tt>_RCTFatal</tt> is suitable to be in
- * accord with the Web i.e. not kill the application.
- */
-RCTFatalHandler _RCTFatal = ^(NSError *error) {
-  id jsStackTrace = error.userInfo[RCTJSStackTraceKey];
-  @try {
-    NSString *name
-      = [NSString stringWithFormat:@"%@: %@",
-                  RCTFatalExceptionName,
-                  error.localizedDescription];
-    NSString *message
-      = RCTFormatError(error.localizedDescription, jsStackTrace, 75);
-    [NSException raise:name format:@"%@", message];
-  } @catch (NSException *e) {
-    if (!jsStackTrace) {
-      @throw;
-    }
-  }
-};
 
 @implementation AppDelegate
 
-// https://facebook.github.io/react-native/docs/linking.html
+- (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  return YES;
+}
+
+#pragma mark linking delegate methods
+
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
-  return [RCTLinkingManager application:application
-                   continueUserActivity:userActivity
-                     restorationHandler:restorationHandler];
-}
+  return [JitsiMeetView application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
+ }
 
-- (BOOL)application:(UIApplication *)application
-didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-#if !DEBUG
-  // In the Release configuration, React Native will (intentionally) raise an
-  // unhandled NSException for an unhandled JavaScript error. This will
-  // effectively kill the application. In accord with the Web, do not kill the
-  // application.
-  if (!RCTGetFatalHandler()) {
-    RCTSetFatalHandler(_RCTFatal);
-  }
-#endif
-
-  NSURL *jsCodeLocation
-    = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
-                                                     fallbackResource:nil];
-  RCTRootView *rootView
-    = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                  moduleName:@"App"
-                           initialProperties:nil
-                               launchOptions:launchOptions];
-
-  // Set a background color which is in accord with the JavaScript and Android
-  // parts of the application and causes less perceived visual flicker than the
-  // default background color.
-  rootView.backgroundColor
-    = [[UIColor alloc] initWithRed:.07f green:.07f blue:.07f alpha:1];
-
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-  return YES;
-}
-
-// https://facebook.github.io/react-native/docs/linking.html
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
         annotation:(id)annotation
 {
-  return [RCTLinkingManager application:application
-                                openURL:url
-                      sourceApplication:sourceApplication
-                             annotation:annotation];
+  return [JitsiMeetView application:application
+                            openURL:url
+                  sourceApplication:sourceApplication
+                         annotation:annotation];
 }
 
 @end

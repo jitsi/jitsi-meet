@@ -14,11 +14,24 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import "ViewController.h"
 
+@interface ViewController ()
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@end
 
-@property (nonatomic, strong) UIWindow *window;
+@implementation ViewController
+
+- (void)viewDidLoad {
+  [super viewDidLoad];
+
+  JitsiMeetView *meetView = (JitsiMeetView*) self.view;
+  meetView.delegate = self;
+  [meetView loadURL:nil];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
 
 @end

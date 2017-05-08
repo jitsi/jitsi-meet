@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+@protocol JitsiMeetViewDelegate <NSObject>
 
-
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
-@property (nonatomic, strong) UIWindow *window;
+// TODO: add delegate methods
 
 @end
