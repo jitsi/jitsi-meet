@@ -78,7 +78,7 @@ const _INTERCEPT_COMPONENT_RULES = [
     }
 ];
 
-export { _parseURIString } from './functions.native';
+export { getLocationContextRoot, _parseURIString } from './functions.native';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

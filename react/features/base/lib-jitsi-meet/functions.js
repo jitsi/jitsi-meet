@@ -52,13 +52,13 @@ export function isFatalJitsiConnectionError(error: string) {
 }
 
 /**
- * Loads config.js file from remote server.
+ * Loads config.js from a specific remote server.
  *
  * @param {string} host - Host where config.js is hosted.
- * @param {string} path='/config.js' - Relative pah to config.js file.
+ * @param {string} path='config.js' - Relative pah to config.js file.
  * @returns {Promise<Object>}
  */
-export function loadConfig(host: string, path: string = '/config.js') {
+export function loadConfig(host: string, path: string = 'config.js') {
     let promise;
 
     if (typeof APP === 'undefined') {

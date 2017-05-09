@@ -9,7 +9,7 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
-    SET_DOMAIN
+    SET_LOCATION_URL
 } from './actionTypes';
 
 /**
@@ -88,7 +88,7 @@ export function connect() {
         function _onConnectionFailed(err) {
             unsubscribe();
             console.error('CONNECTION FAILED:', err);
-            dispatch(connectionFailed(connection, err, ''));
+            dispatch(connectionFailed(connection, err));
         }
 
         /**
@@ -109,6 +109,70 @@ export function connect() {
 }
 
 /**
+ * Create an action for when the signaling connection has been lost.
+ *
+ * @param {JitsiConnection} connection - The JitsiConnection which disconnected.
+ * @param {string} message - Error message.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_DISCONNECTED,
+ *     connection: JitsiConnection,
+ *     message: string
+ * }}
+ */
+function _connectionDisconnected(connection: Object, message: string) {
+    return {
+        type: CONNECTION_DISCONNECTED,
+        connection,
+        message
+    };
+}
+
+/**
+ * Create an action for when the signaling connection has been established.
+ *
+ * @param {JitsiConnection} connection - The JitsiConnection which was
+ * established.
+ * @public
+ * @returns {{
+ *     type: CONNECTION_ESTABLISHED,
+ *     connection: JitsiConnection
+ * }}
+ */
+export function connectionEstablished(connection: Object) {
+    return {
+        type: CONNECTION_ESTABLISHED,
+        connection
+    };
+}
+
+/**
+ * Create an action for when the signaling connection could not be created.
+ *
+ * @param {JitsiConnection} connection - The JitsiConnection which failed.
+ * @param {string} error - Error.
+ * @param {string} message - Error message.
+ * @public
+ * @returns {{
+ *     type: CONNECTION_FAILED,
+ *     connection: JitsiConnection,
+ *     error: string,
+ *     message: string
+ * }}
+ */
+export function connectionFailed(
+        connection: Object,
+        error: string,
+        message: ?string) {
+    return {
+        type: CONNECTION_FAILED,
+        connection,
+        error,
+        message
+    };
+}
+
+/**
  * Closes connection.
  *
  * @returns {Function}
@@ -116,8 +180,8 @@ export function connect() {
 export function disconnect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        const conference = state['features/base/conference'].conference;
-        const connection = state['features/base/connection'].connection;
+        const { conference } = state['features/base/conference'];
+        const { connection } = state['features/base/connection'];
 
         let promise;
 
@@ -144,79 +208,18 @@ export function disconnect() {
 }
 
 /**
- * Sets connection domain.
+ * Sets the location URL of the application, connecton, conference, etc.
  *
- * @param {string} domain - Domain name.
+ * @param {URL} [locationURL] - The location URL of the application,
+ * connection, conference, etc.
  * @returns {{
- *      type: SET_DOMAIN,
- *      domain: string
- *  }}
- */
-export function setDomain(domain: string) {
-    return {
-        type: SET_DOMAIN,
-        domain
-    };
-}
-
-/**
- * Create an action for when the signaling connection has been lost.
- *
- * @param {JitsiConnection} connection - The JitsiConnection which disconnected.
- * @param {string} message - Error message.
- * @private
- * @returns {{
- *     type: CONNECTION_DISCONNECTED,
- *     connection: JitsiConnection,
- *     message: string
+ *     type: SET_LOCATION_URL,
+ *     locationURL: URL
  * }}
  */
-function _connectionDisconnected(connection, message: string) {
+export function setLocationURL(locationURL: ?URL) {
     return {
-        type: CONNECTION_DISCONNECTED,
-        connection,
-        message
-    };
-}
-
-/**
- * Create an action for when the signaling connection has been established.
- *
- * @param {JitsiConnection} connection - The JitsiConnection which was
- * established.
- * @returns {{
- *     type: CONNECTION_ESTABLISHED,
- *     connection: JitsiConnection
- * }}
- * @public
- */
-export function connectionEstablished(connection: Object) {
-    return {
-        type: CONNECTION_ESTABLISHED,
-        connection
-    };
-}
-
-/**
- * Create an action for when the signaling connection could not be created.
- *
- * @param {JitsiConnection} connection - The JitsiConnection which failed.
- * @param {string} error - Error.
- * @param {string} errorMessage - Error message.
- * @returns {{
- *     type: CONNECTION_FAILED,
- *     connection: JitsiConnection,
- *     error: string,
- *     errorMessage: string
- * }}
- * @public
- */
-export function connectionFailed(
-    connection: Object, error: string, errorMessage: string) {
-    return {
-        type: CONNECTION_FAILED,
-        connection,
-        error,
-        errorMessage
+        type: SET_LOCATION_URL,
+        locationURL
     };
 }

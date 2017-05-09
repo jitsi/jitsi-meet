@@ -19,8 +19,7 @@ import analytics from './modules/analytics/analytics';
 
 import EventEmitter from "events";
 
-import { showDesktopSharingButton } from './react/features/toolbox';
-
+import { getLocationContextRoot } from './react/features/app';
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
@@ -50,6 +49,7 @@ import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
+import { showDesktopSharingButton } from './react/features/toolbox';
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -311,18 +311,11 @@ function assignWindowLocationPathname(pathname) {
     const windowLocation = window.location;
 
     if (!pathname.startsWith('/')) {
-        // XXX To support a deployment in a sub-directory, assume that the room
-        // (name) is the last non-directory component of the path (name).
-        let contextRoot = windowLocation.pathname;
-
-        contextRoot
-            = contextRoot.substring(0, contextRoot.lastIndexOf('/') + 1);
-
         // A pathname equal to ./ specifies the current directory. It will be
         // fine but pointless to include it because contextRoot is the current
         // directory.
         pathname.startsWith('./') && (pathname = pathname.substring(2));
-        pathname = contextRoot + pathname;
+        pathname = getLocationContextRoot(windowLocation) + pathname;
     }
 
     windowLocation.pathname = pathname;

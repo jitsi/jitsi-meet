@@ -1,6 +1,6 @@
-import { setRoom, setRoomURL } from '../base/conference';
+import { setRoom } from '../base/conference';
+import { setLocationURL } from '../base/connection';
 import { setConfig } from '../base/config';
-import { getDomain, setDomain } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
@@ -23,100 +23,151 @@ export function appInit() {
 }
 
 /**
- * Triggers an in-app navigation to a different route. Allows navigation to be
- * abstracted between the mobile and web versions.
+ * Triggers an in-app navigation to a specific route. Allows navigation to be
+ * abstracted between the mobile/React Native and Web/React applications.
  *
  * @param {(string|undefined)} uri - The URI to which to navigate. It may be a
- * full URL with an http(s) scheme, a full or partial URI with the app-specific
+ * full URL with an HTTP(S) scheme, a full or partial URI with the app-specific
  * sheme, or a mere room name.
  * @returns {Function}
  */
-export function appNavigate(uri) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const state = getState();
-        const oldDomain = getDomain(state);
-        const defaultURL = state['features/app'].app._getDefaultURL();
-        let urlObject;
+export function appNavigate(uri: ?string) {
+    return (dispatch: Dispatch<*>, getState: Function) =>
+        _appNavigateToOptionalLocation(
+            dispatch, getState,
+            _parseURIString(uri));
+}
 
-        // eslint-disable-next-line prefer-const
-        let { domain, room } = _parseURIString(uri);
+/**
+ * Triggers an in-app navigation to a specific location URI.
+ *
+ * @param {Dispatch} dispatch - The redux {@code dispatch} function.
+ * @param {Function} getState - The redux function that gets/retrieves the redux
+ * state.
+ * @param {Object} newLocation - The location URI to navigate to. The value
+ * cannot be undefined and is assumed to have all properties such as
+ * {@code host} and {@code room} defined values.
+ * @private
+ * @returns {void}
+ */
+function _appNavigateToMandatoryLocation(
+        dispatch: Dispatch<*>, getState: Function,
+        newLocation: Object) {
+    // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
+    // currently in a conference and ask her if she wants to close the
+    // current conference and start a new one with the new room name or
+    // domain.
 
-        // If the specified URI does not identify a domain, use the app's
-        // default.
-        if (typeof domain === 'undefined') {
-            domain = _parseURIString(defaultURL).domain;
+    const oldLocationURL = getState()['features/base/connection'].locationURL;
+    const oldHost = oldLocationURL ? oldLocationURL.host : undefined;
+    const newHost = newLocation.host;
+
+    if (oldHost === newHost) {
+        dispatchSetLocationURL();
+        dispatchSetRoomAndNavigate();
+    } else {
+        // If the host has changed, we need to load the config of the new host
+        // and set it, and only after that we can navigate to a different route.
+        _loadConfig(newLocation)
+            .then(
+                config => configLoaded(/* err */ undefined, config),
+                err => configLoaded(err, /* config */ undefined))
+            .then(dispatchSetRoomAndNavigate);
+    }
+
+    /**
+     * Notifies that an attempt to load the config(uration) of domain has
+     * completed.
+     *
+     * @param {string|undefined} err - If the loading has failed, the error
+     * detailing the cause of the failure.
+     * @param {Object|undefined} config - If the loading has succeeded, the
+     * loaded config(uration).
+     * @returns {void}
+     */
+    function configLoaded(err, config) {
+        if (err) {
+            // XXX The failure could be, for example, because of a
+            // certificate-related error. In which case the connection will
+            // fail later in Strophe anyway even if we use the default
+            // config here.
+
+            // The function loadConfig will log the err.
+            return;
         }
 
-        if (room) {
-            const splitURL = uri.split(domain);
-            const urlWithoutDomain = splitURL[splitURL.length - 1];
+        dispatchSetLocationURL();
+        dispatch(setConfig(config));
+    }
 
-            urlObject = new URL(urlWithoutDomain, `https://${domain}`);
+    /**
+     * Dispatches {@link setLocationURL} in the redux store.
+     *
+     * @returns {void}
+     */
+    function dispatchSetLocationURL() {
+        dispatch(
+            setLocationURL(
+                new URL(
+                    (newLocation.protocol || 'https:')
+
+                        // TODO userinfo
+
+                        + newLocation.host
+                        + (newLocation.pathname || '/')
+                        + newLocation.search
+                        + newLocation.hash)));
+    }
+
+    /**
+     * Dispatches {@link _setRoomAndNavigate} in the redux store.
+     *
+     * @returns {void}
+     */
+    function dispatchSetRoomAndNavigate() {
+        dispatch(_setRoomAndNavigate(newLocation.room));
+    }
+}
+
+/**
+ * Triggers an in-app navigation to a specific or undefined location (URI).
+ *
+ * @param {Dispatch} dispatch - The redux {@code dispatch} function.
+ * @param {Function} getState - The redux function that gets/retrieves the redux
+ * state.
+ * @param {Object} location - The location (URI) to navigate to. The value may
+ * be undefined.
+ * @private
+ * @returns {void}
+ */
+function _appNavigateToOptionalLocation(
+        dispatch: Dispatch<*>, getState: Function,
+        location: Object) {
+    // If the specified location (URI) does not identify a host, use the app's
+    // default.
+    if (!location || !location.host) {
+        const defaultLocation
+            = _parseURIString(getState()['features/app'].app._getDefaultURL());
+
+        if (location) {
+            location.host = defaultLocation.host;
+
+            // FIXME Turn location's host, hostname, and port properties into
+            // setters in order to reduce the risks of inconsistent state.
+            location.hostname = defaultLocation.hostname;
+            location.port = defaultLocation.port;
+            location.protocol = defaultLocation.protocol;
+        } else {
+            // eslint-disable-next-line no-param-reassign
+            location = defaultLocation;
         }
+    }
 
-        dispatch(setRoomURL(urlObject));
+    if (!location.protocol) {
+        location.protocol = 'https:';
+    }
 
-        // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
-        // currently in a conference and ask her if she wants to close the
-        // current conference and start a new one with the new room name or
-        // domain.
-
-        if (typeof domain === 'undefined' || oldDomain === domain) {
-            dispatchSetRoomAndNavigate();
-        } else if (oldDomain !== domain) {
-            // Update domain without waiting for config to be loaded to prevent
-            // race conditions when we will start to load config multiple times.
-            dispatch(setDomain(domain));
-
-            // If domain has changed, we need to load the config of the new
-            // domain and set it, and only after that we can navigate to a
-            // different route.
-            loadConfig(`https://${domain}`)
-                .then(
-                    config => configLoaded(/* err */ undefined, config),
-                    err => configLoaded(err, /* config */ undefined))
-                .then(dispatchSetRoomAndNavigate);
-        }
-
-        /**
-         * Notifies that an attempt to load the config(uration) of domain has
-         * completed.
-         *
-         * @param {string|undefined} err - If the loading has failed, the error
-         * detailing the cause of the failure.
-         * @param {Object|undefined} config - If the loading has succeeded, the
-         * loaded config(uration).
-         * @returns {void}
-         */
-        function configLoaded(err, config) {
-            if (err) {
-                // XXX The failure could be, for example, because of a
-                // certificate-related error. In which case the connection will
-                // fail later in Strophe anyway even if we use the default
-                // config here.
-
-                // The function loadConfig will log the err.
-                return;
-            }
-
-            dispatch(setConfig(config));
-        }
-
-        /**
-         * Dispatches _setRoomAndNavigate in the Redux store.
-         *
-         * @returns {void}
-         */
-        function dispatchSetRoomAndNavigate() {
-            // If both domain and room vars became undefined, that means we're
-            // actually dealing with just room name and not with URL.
-            dispatch(
-                _setRoomAndNavigate(
-                    typeof room === 'undefined' && typeof domain === 'undefined'
-                        ? uri
-                        : room));
-        }
-    };
+    _appNavigateToMandatoryLocation(dispatch, getState, location);
 }
 
 /**
@@ -149,6 +200,27 @@ export function appWillUnmount(app) {
         type: APP_WILL_UNMOUNT,
         app
     };
+}
+
+/**
+ * Loads config.js from a specific host.
+ *
+ * @param {Object} location - The loction URI which specifies the host to load
+ * the config.js from.
+ * @returns {Promise<Object>}
+ */
+function _loadConfig(location: Object) {
+    let protocol = location.protocol.toLowerCase();
+
+    // The React Native app supports an app-specific scheme which is sure to not
+    // be supported by fetch (or whatever loadConfig utilizes).
+    if (protocol !== 'http:' && protocol !== 'https:') {
+        protocol = 'https:';
+    }
+
+    // TDOO userinfo
+
+    return loadConfig(protocol + location.host + (location.contextRoot || '/'));
 }
 
 /**

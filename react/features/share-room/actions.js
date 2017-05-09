@@ -12,18 +12,17 @@ import { BEGIN_SHARE_ROOM, END_SHARE_ROOM } from './actionTypes';
 export function beginShareRoom(roomURL: ?string): Function {
     return (dispatch, getState) => {
         if (!roomURL) {
-            const { conference, room } = getState()['features/base/conference'];
+            const { locationURL } = getState()['features/base/connection'];
 
-            // eslint-disable-next-line no-param-reassign
-            roomURL = _getRoomURL(conference, room);
+            if (locationURL) {
+                // eslint-disable-next-line no-param-reassign
+                roomURL = locationURL.toString();
+            }
         }
-
-        if (roomURL) {
-            dispatch({
-                type: BEGIN_SHARE_ROOM,
-                roomURL
-            });
-        }
+        roomURL && dispatch({
+            type: BEGIN_SHARE_ROOM,
+            roomURL
+        });
     };
 }
 
@@ -46,20 +45,4 @@ export function endShareRoom(roomURL: string, shared: boolean): Object {
         roomURL,
         shared
     };
-}
-
-/**
- * Gets the public URL of a conference/room.
- *
- * @param {JitsiConference} conference - The JitsiConference to share the URL
- * of.
- * @param {string} room - The name of the room to share the URL of.
- * @private
- * @returns {string|null}
- */
-function _getRoomURL(conference, room) {
-    return (
-        conference
-            && room
-            && `https://${conference.connection.options.hosts.domain}/${room}`);
 }

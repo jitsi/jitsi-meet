@@ -24,8 +24,7 @@ import {
     SET_LASTN,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_ROOM,
-    SET_ROOM_URL
+    SET_ROOM
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -488,22 +487,6 @@ export function setRoom(room) {
     return {
         type: SET_ROOM,
         room
-    };
-}
-
-/**
- * Sets the room URL.
- *
- * @param {string} roomURL - Room url.
- * @returns {{
- *     type: SET_ROOM_URL,
- *     roomURL: URL
- * }}
- */
-export function setRoomURL(roomURL) {
-    return {
-        type: SET_ROOM_URL,
-        roomURL
     };
 }
 

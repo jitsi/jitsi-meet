@@ -8,10 +8,7 @@ import {
     WEBRTC_NOT_READY,
     WEBRTC_NOT_SUPPORTED
 } from '../lib-jitsi-meet';
-
 import UIEvents from '../../../../service/UI/UIEvents';
-
-import { SET_DOMAIN } from './actionTypes';
 
 declare var APP: Object;
 declare var config: Object;
@@ -20,7 +17,8 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 export {
     connectionEstablished,
-    connectionFailed
+    connectionFailed,
+    setLocationURL
 } from './actions.native.js';
 
 /**
@@ -105,20 +103,4 @@ export function disconnect() {
     // XXX For web based version we use conference hanging up logic from the old
     // app.
     return () => APP.conference.hangup();
-}
-
-/**
- * Sets connection domain.
- *
- * @param {string} domain - Domain name.
- * @returns {{
- *      type: SET_DOMAIN,
- *      domain: string
- *  }}
- */
-export function setDomain(domain: string) {
-    return {
-        type: SET_DOMAIN,
-        domain
-    };
 }

@@ -47,15 +47,13 @@ ReducerRegistry.register('features/overlay', (state = {}, action) => {
  * the specified action.
  * @private
  */
-function _conferenceFailed(state, action) {
-    const error = action.error;
-
+function _conferenceFailed(state, { error, message }) {
     if (error === JitsiConferenceErrors.FOCUS_LEFT
             || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE) {
         return assign(state, {
             haveToReload: true,
             isNetworkFailure: false,
-            reason: action.errorMessage
+            reason: message
         });
     }
 
@@ -84,13 +82,9 @@ function _connectionEstablished(state) {
  * the specified action.
  * @private
  */
-function _connectionFailed(state, action) {
-    const error = action.error;
-
+function _connectionFailed(state, { error, message }) {
     if (isFatalJitsiConnectionError(error)) {
-        const errorMessage = action.errorMessage;
-
-        logger.error(`XMPP connection error: ${errorMessage}`);
+        logger.error(`XMPP connection error: ${message}`);
 
         return assign(state, {
             haveToReload: true,
@@ -99,7 +93,7 @@ function _connectionFailed(state, action) {
             // considered a network type of failure.
             isNetworkFailure:
                 error === JitsiConnectionErrors.CONNECTION_DROPPED_ERROR,
-            reason: `xmpp-conn-dropped: ${errorMessage}`
+            reason: `xmpp-conn-dropped: ${message}`
         });
     }
 

@@ -112,39 +112,21 @@ function _fixURIStringScheme(uri) {
 }
 
 /**
- * Gets room name and domain from URL object.
+ * Gets the (Web application) context root defined by a specific location (URI).
  *
- * @param {URL} url - URL object.
- * @private
- * @returns {{
- *     domain: (string|undefined),
- *     room: (string|undefined)
- * }}
+ * @param {Object} location - The location (URI) which defines the (Web
+ * application) context root.
+ * @returns {string} - The (Web application) context root defined by the
+ * specified {@code location} (URI).
  */
-function _getRoomAndDomainFromURLObject(url) {
-    let domain;
-    let room;
+export function getLocationContextRoot(location: Object) {
+    const pathname = location.pathname;
+    const contextRootEndIndex = pathname.lastIndexOf('/');
 
-    if (url) {
-        domain = url.host;
-
-        // The room (name) is the last component of pathname.
-        room = url.pathname;
-        room = room.substring(room.lastIndexOf('/') + 1);
-
-        // Convert empty string to undefined to simplify checks.
-        if (room === '') {
-            room = undefined;
-        }
-        if (domain === '') {
-            domain = undefined;
-        }
-    }
-
-    return {
-        domain,
-        room
-    };
+    return (
+        contextRootEndIndex === -1
+            ? '/'
+            : pathname.substring(0, contextRootEndIndex + 1));
 }
 
 /**
@@ -160,10 +142,111 @@ export function _getRouteToRender(stateOrGetState) {
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
-    const room = state['features/base/conference'].room;
+    const { room } = state['features/base/conference'];
     const component = isRoomValid(room) ? Conference : WelcomePage;
 
     return RouteRegistry.getRouteByComponent(component);
+}
+
+/**
+ * Parses a specific URI string into an object with the well-known properties of
+ * the {@link Location} and/or {@link URL} interfaces implemented by Web
+ * browsers. The parsing attempts to be in accord with IETF's RFC 3986.
+ *
+ * @param {string} str - The URI string to parse.
+ * @returns {{
+ *     hash: string,
+ *     host: (string|undefined),
+ *     hostname: (string|undefined),
+ *     pathname: string,
+ *     port: (string|undefined),
+ *     protocol: (string|undefined),
+ *     search: string
+ * }}
+ */
+function _parseStandardURIString(str: string) {
+    /* eslint-disable no-param-reassign */
+
+    const obj = {};
+
+    let regex;
+    let match;
+
+    // protocol
+    regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}`, 'gi');
+    match = regex.exec(str);
+    if (match) {
+        obj.protocol = match[1].toLowerCase();
+        str = str.substring(regex.lastIndex);
+    }
+
+    // authority
+    regex = new RegExp(`^${_URI_AUTHORITY_PATTERN}`, 'gi');
+    match = regex.exec(str);
+    if (match) {
+        let authority = match[1].substring(/* // */ 2);
+
+        str = str.substring(regex.lastIndex);
+
+        // userinfo
+        const userinfoEndIndex = authority.indexOf('@');
+
+        if (userinfoEndIndex !== -1) {
+            authority = authority.substring(userinfoEndIndex + 1);
+        }
+
+        obj.host = authority;
+
+        // port
+        const portBeginIndex = authority.lastIndexOf(':');
+
+        if (portBeginIndex !== -1) {
+            obj.port = authority.substring(portBeginIndex + 1);
+            authority = authority.substring(0, portBeginIndex);
+        }
+
+        // hostname
+        obj.hostname = authority;
+    }
+
+    // pathname
+    regex = new RegExp(`^${_URI_PATH_PATTERN}`, 'gi');
+    match = regex.exec(str);
+
+    let pathname;
+
+    if (match) {
+        pathname = match[1];
+        str = str.substring(regex.lastIndex);
+    }
+    if (pathname) {
+        if (!pathname.startsWith('/')) {
+            pathname = `/${pathname}`;
+        }
+    } else {
+        pathname = '/';
+    }
+    obj.pathname = pathname;
+
+    // query
+    if (str.startsWith('?')) {
+        let hashBeginIndex = str.indexOf('#', 1);
+
+        if (hashBeginIndex === -1) {
+            hashBeginIndex = str.length;
+        }
+        obj.search = str.substring(0, hashBeginIndex);
+        str = str.substring(hashBeginIndex);
+    } else {
+        obj.search = ''; // Google Chrome
+    }
+
+    // fragment
+    obj.hash = str.startsWith('#') ? str : '';
+
+    /* eslint-enable no-param-reassign */
+
+    return obj;
 }
 
 /**
@@ -173,68 +256,28 @@ export function _getRouteToRender(stateOrGetState) {
  * @param {(string|undefined)} uri - The URI to parse which (supposedly)
  * references a Jitsi Meet resource (location).
  * @returns {{
- *     domain: (string|undefined),
  *     room: (string|undefined)
  * }}
  */
-export function _parseURIString(uri) {
-    let obj;
-
-    if (typeof uri === 'string') {
-        let str = uri;
-
-        str = _fixURIStringScheme(str);
-        str = _fixURIStringHierPart(str);
-
-        obj = {};
-
-        let regex;
-        let match;
-
-        // protocol
-        regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}`, 'gi');
-        match = regex.exec(str);
-        if (match) {
-            obj.protocol = match[1].toLowerCase();
-            str = str.substring(regex.lastIndex);
-        }
-
-        // authority
-        regex = new RegExp(`^${_URI_AUTHORITY_PATTERN}`, 'gi');
-        match = regex.exec(str);
-        if (match) {
-            let authority = match[1].substring(/* // */ 2);
-
-            str = str.substring(regex.lastIndex);
-
-            // userinfo
-            const userinfoEndIndex = authority.indexOf('@');
-
-            if (userinfoEndIndex !== -1) {
-                authority = authority.substring(userinfoEndIndex + 1);
-            }
-
-            obj.host = authority;
-
-            // port
-            const portBeginIndex = authority.lastIndexOf(':');
-
-            if (portBeginIndex !== -1) {
-                obj.port = authority.substring(portBeginIndex + 1);
-                authority = authority.substring(0, portBeginIndex);
-            }
-
-            obj.hostname = authority;
-        }
-
-        // pathname
-        regex = new RegExp(`^${_URI_PATH_PATTERN}`, 'gi');
-        match = regex.exec(str);
-        if (match) {
-            obj.pathname = match[1] || '/';
-            str = str.substring(regex.lastIndex);
-        }
+export function _parseURIString(uri: ?string) {
+    if (typeof uri !== 'string') {
+        return undefined;
     }
 
-    return _getRoomAndDomainFromURLObject(obj);
+    const obj
+        = _parseStandardURIString(
+            _fixURIStringHierPart(_fixURIStringScheme(uri)));
+
+    // Add the properties that are specific to a Jitsi Meet resource (location)
+    // such as contextRoot, room:
+
+    // contextRoot
+    obj.contextRoot = getLocationContextRoot(obj);
+
+    // The room (name) is the last component of pathname.
+    const { pathname } = obj;
+
+    obj.room = pathname.substring(pathname.lastIndexOf('/') + 1) || undefined;
+
+    return obj;
 }

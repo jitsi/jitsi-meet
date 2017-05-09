@@ -1,11 +1,11 @@
 /* @flow */
 
-import { ReducerRegistry, set } from '../redux';
+import { assign, ReducerRegistry, set } from '../redux';
 
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
-    SET_DOMAIN
+    SET_LOCATION_URL
 } from './actionTypes';
 
 /**
@@ -21,8 +21,8 @@ ReducerRegistry.register(
         case CONNECTION_ESTABLISHED:
             return _connectionEstablished(state, action);
 
-        case SET_DOMAIN:
-            return _setDomain(state, action);
+        case SET_LOCATION_URL:
+            return _setLocationURL(state, action);
         }
 
         return state;
@@ -38,8 +38,10 @@ ReducerRegistry.register(
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _connectionDisconnected(state: Object, action: Object) {
-    if (state.connection === action.connection) {
+function _connectionDisconnected(
+        state: Object,
+        { connection }: { connection: Object }) {
+    if (state.connection === connection) {
         return set(state, 'connection', undefined);
     }
 
@@ -56,13 +58,15 @@ function _connectionDisconnected(state: Object, action: Object) {
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _connectionEstablished(state: Object, action: Object) {
-    return set(state, 'connection', action.connection);
+function _connectionEstablished(
+        state: Object,
+        { connection }: { connection: Object }) {
+    return set(state, 'connection', connection);
 }
 
 /**
- * Constructs options to be passed to the constructor of JitsiConnection based
- * on a specific domain.
+ * Constructs options to be passed to the constructor of {@code JitsiConnection}
+ * based on a specific domain.
  *
  * @param {string} domain - The domain with which the returned options are to be
  * populated.
@@ -105,20 +109,20 @@ function _constructOptions(domain: string) {
 }
 
 /**
- * Reduces a specific Redux action SET_DOMAIN of the feature base/connection.
+ * Reduces a specific redux action {@link SET_LOCATION_URL} of the feature
+ * base/connection.
  *
- * @param {Object} state - The Redux state of the feature base/connection.
- * @param {Action} action - The Redux action SET_DOMAIN to reduce.
+ * @param {Object} state - The redux state of the feature base/connection.
+ * @param {Action} action - The redux action {@code SET_LOCATION_URL} to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _setDomain(state: Object, action: Object) {
-    return {
-        ...state,
-        options: {
-            ...state.options,
-            ..._constructOptions(action.domain)
-        }
-    };
+function _setLocationURL(
+        state: Object,
+        { locationURL }: { locationURL: ?URL }) {
+    return assign(state, {
+        locationURL,
+        options: locationURL ? _constructOptions(locationURL.host) : undefined
+    });
 }

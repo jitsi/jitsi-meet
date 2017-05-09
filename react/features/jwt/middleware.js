@@ -1,7 +1,7 @@
 import jwtDecode from 'jwt-decode';
 
-import { SET_ROOM_URL } from '../base/conference';
 import { parseURLParams, SET_CONFIG } from '../base/config';
+import { SET_LOCATION_URL } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { setJWT } from './actions';
@@ -17,13 +17,13 @@ import { SET_JWT } from './actionTypes';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_CONFIG:
-    case SET_ROOM_URL:
+    case SET_LOCATION_URL:
         // XXX The JSON Web Token (JWT) is not the only piece of state that we
         // have decided to store in the feature jwt, there is isGuest as well
         // which depends on the states of the features base/config and jwt. So
-        // the JSON Web Token comes from the room's URL and isGuest needs a
-        // recalculation upon SET_CONFIG as well.
-        return _setConfigOrRoomURL(store, next, action);
+        // the JSON Web Token comes from the conference/room's URL and isGuest
+        // needs a recalculation upon SET_CONFIG as well.
+        return _setConfigOrLocationURL(store, next, action);
 
     case SET_JWT:
         return _setJWT(store, next, action);
@@ -34,7 +34,7 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Notifies the feature jwt that the action {@link SET_CONFIG} or
- * {@link SET_ROOM_URL} is being dispatched within a specific Redux
+ * {@link SET_LOCATION_URL} is being dispatched within a specific Redux
  * {@code store}.
  *
  * @param {Store} store - The Redux store in which the specified {@code action}
@@ -42,20 +42,20 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Dispatch} next - The Redux dispatch function to dispatch the
  * specified {@code action} to the specified {@code store}.
  * @param {Action} action - The Redux action {@code SET_CONFIG} or
- * {@code SET_ROOM_NAME} which is being dispatched in the specified
+ * {@code SET_LOCATION_URL} which is being dispatched in the specified
  * {@code store}.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setConfigOrRoomURL({ dispatch, getState }, next, action) {
+function _setConfigOrLocationURL({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    const { roomURL } = getState()['features/base/conference'];
+    const { locationURL } = getState()['features/base/connection'];
     let jwt;
 
-    if (roomURL) {
-        jwt = parseURLParams(roomURL, true, 'search').jwt;
+    if (locationURL) {
+        jwt = parseURLParams(locationURL, true, 'search').jwt;
     }
     dispatch(setJWT(jwt));
 

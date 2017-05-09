@@ -268,13 +268,13 @@ export class AbstractApp extends Component {
         // By default, open the domain configured in the configuration file
         // which may be the domain at which the whole server infrastructure is
         // deployed.
-        const config = this.props.config;
+        const { config } = this.props;
 
         if (typeof config === 'object') {
-            const hosts = config.hosts;
+            const { hosts } = config;
 
             if (typeof hosts === 'object') {
-                const domain = hosts.domain;
+                const { domain } = hosts;
 
                 if (domain) {
                     return `https://${domain}`;

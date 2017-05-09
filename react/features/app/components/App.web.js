@@ -1,5 +1,6 @@
 import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
+import { getLocationContextRoot } from '../functions';
 
 import '../../room-lock';
 
@@ -65,13 +66,7 @@ export class App extends AbstractApp {
      * @returns {string} The context root of window.location i.e. this Web App.
      */
     _getWindowLocationContextRoot() {
-        const pathname = this.getWindowLocation().pathname;
-        const contextRootEndIndex = pathname.lastIndexOf('/');
-
-        return (
-            contextRootEndIndex === -1
-                ? '/'
-                : pathname.substring(0, contextRootEndIndex + 1));
+        return getLocationContextRoot(this.getWindowLocation());
     }
 
     /**
