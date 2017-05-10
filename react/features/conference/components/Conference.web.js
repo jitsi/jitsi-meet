@@ -69,7 +69,6 @@ class Conference extends Component {
             <div id = 'videoconference_page'>
                 <div id = 'videospace'>
                     <LargeVideo />
-
                     <Filmstrip />
                 </div>
 
