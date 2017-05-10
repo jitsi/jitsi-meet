@@ -166,6 +166,10 @@ export class VideoContainer extends LargeContainer {
         return $('#largeVideo');
     }
 
+    get $videoBackground() {
+        return $('#largeVideoBackground');
+    }
+
     get id () {
         return getStreamOwnerId(this.stream);
     }
@@ -233,6 +237,7 @@ export class VideoContainer extends LargeContainer {
      */
     enableLocalConnectionProblemFilter (enable) {
         this.$video.toggleClass("videoProblemFilter", enable);
+        this.$videoBackground.toggleClass("videoProblemFilter", enable);
     }
 
     /**
@@ -323,8 +328,17 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        let [width, height]
+        this.$videoBackground.hide();
+        this.$videoBackground[0].pause();
+
+        let [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
+
+        if (containerWidth > width) {
+            this.$videoBackground.show();
+            this.$videoBackground[0].play();
+        }
+
         let { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height,
             containerWidth, containerHeight);
@@ -374,6 +388,7 @@ export class VideoContainer extends LargeContainer {
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
+            this.stream.detach(this.$videoBackground[0]);
         }
 
         this.stream = stream;
@@ -384,8 +399,17 @@ export class VideoContainer extends LargeContainer {
         }
 
         stream.attach(this.$video[0]);
-        let flipX = stream.isLocal() && this.localFlipX;
+        stream.attach(this.$videoBackground[0]);
+
+        this.$videoBackground.hide();
+        this.$videoBackground[0].pause();
+
+        const flipX = stream.isLocal() && this.localFlipX;
+
         this.$video.css({
+            transform: flipX ? 'scaleX(-1)' : 'none'
+        });
+        this.$videoBackground.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
 
@@ -404,7 +428,12 @@ export class VideoContainer extends LargeContainer {
         this.$video.css({
             transform: this.localFlipX ? 'scaleX(-1)' : 'none'
         });
+
+        this.$videoBackground.css({
+            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
+        });
     }
+
 
     /**
      * Check if current video stream is screen sharing.
@@ -442,6 +471,8 @@ export class VideoContainer extends LargeContainer {
      */
     showRemoteConnectionProblemIndicator (show) {
         this.$video.toggleClass("remoteVideoProblemFilter", show);
+        this.$videoBackground.toggleClass("remoteVideoProblemFilter", show);
+
         this.$avatar.toggleClass("remoteVideoProblemFilter", show);
     }
 
