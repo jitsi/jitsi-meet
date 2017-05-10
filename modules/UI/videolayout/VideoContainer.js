@@ -102,11 +102,11 @@ function computeCameraVideoSize(videoWidth,
         if (aspectRatio <= 1) {
             const zoomRateHeight = videoSpaceHeight / videoHeight;
             const zoomRateWidth = videoSpaceWidth / videoWidth;
-            const maxZoomRate
-                = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity;
-            let zoomRate = Math.min(zoomRateWidth, maxZoomRate);
+            const zoomRate = Math.min(
+                zoomRateWidth,
+                zoomRateHeight,
+                interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity);
 
-            zoomRate = Math.max(zoomRate, zoomRateHeight);
             availableWidth = videoWidth * zoomRate;
             availableHeight = videoHeight * zoomRate;
         } else if (availableHeight * aspectRatio < videoSpaceWidth) {
@@ -164,6 +164,10 @@ export class VideoContainer extends LargeContainer {
     // FIXME: With Temasys we have to re-select everytime
     get $video () {
         return $('#largeVideo');
+    }
+
+    get $videoBackground() {
+        return $('#largeVideoBackground');
     }
 
     get id () {
@@ -255,6 +259,7 @@ export class VideoContainer extends LargeContainer {
      */
     enableLocalConnectionProblemFilter (enable) {
         this.$video.toggleClass("videoProblemFilter", enable);
+        this.$videoBackground.toggleClass("videoProblemFilter", enable);
     }
 
     /**
@@ -345,8 +350,15 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        let [width, height]
+        this._hideVideoBackground();
+
+        let [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
+
+        if (containerWidth > width) {
+            this._showVideoBackground();
+        }
+
         let { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height,
             containerWidth, containerHeight);
@@ -408,6 +420,7 @@ export class VideoContainer extends LargeContainer {
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
+            this.stream.detach(this.$videoBackground[0]);
         }
 
         this.stream = stream;
@@ -418,8 +431,16 @@ export class VideoContainer extends LargeContainer {
         }
 
         stream.attach(this.$video[0]);
-        let flipX = stream.isLocal() && this.localFlipX;
+        stream.attach(this.$videoBackground[0]);
+
+        this._hideVideoBackground();
+
+        const flipX = stream.isLocal() && this.localFlipX;
+
         this.$video.css({
+            transform: flipX ? 'scaleX(-1)' : 'none'
+        });
+        this.$videoBackground.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
 
@@ -438,7 +459,12 @@ export class VideoContainer extends LargeContainer {
         this.$video.css({
             transform: this.localFlipX ? 'scaleX(-1)' : 'none'
         });
+
+        this.$videoBackground.css({
+            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
+        });
     }
+
 
     /**
      * Check if current video stream is screen sharing.
@@ -476,6 +502,8 @@ export class VideoContainer extends LargeContainer {
      */
     showRemoteConnectionProblemIndicator (show) {
         this.$video.toggleClass("remoteVideoProblemFilter", show);
+        this.$videoBackground.toggleClass("remoteVideoProblemFilter", show);
+
         this.$avatar.toggleClass("remoteVideoProblemFilter", show);
     }
 
@@ -545,6 +573,17 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
+     * Sets the blur background to be invisible and pauses any playing video.
+     *
+     * @private
+     * @returns {void}
+     */
+    _hideVideoBackground() {
+        this.$videoBackground.css({ visibility: 'hidden' });
+        this.$videoBackground[0].pause();
+    }
+
+    /**
      * Callback invoked when the video element changes dimensions.
      *
      * @private
@@ -552,5 +591,16 @@ export class VideoContainer extends LargeContainer {
      */
     _onResize() {
         this._resizeListeners.forEach(callback => callback());
+    }
+
+    /**
+     * Sets the blur background to be visible and starts any loaded video.
+     *
+     * @private
+     * @returns {void}
+     */
+    _showVideoBackground() {
+        this.$videoBackground.css({ visibility: 'visible' });
+        this.$videoBackground[0].play();
     }
 }
