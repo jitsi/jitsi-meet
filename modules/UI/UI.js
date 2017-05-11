@@ -368,6 +368,15 @@ UI.start = function () {
 };
 
 /**
+ * Invokes cleanup of any deferred execution within relevant UI modules.
+ *
+ * @returns {void}
+ */
+UI.stopDaemons = () => {
+    VideoLayout.resetLargeVideo();
+};
+
+/**
  * Setup some UI event listeners.
  */
 UI.registerListeners
