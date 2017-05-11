@@ -51,6 +51,7 @@ class Conference extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
+        APP.UI.stopDaemons();
         APP.UI.unregisterListeners();
         APP.UI.unbindEvents();
 

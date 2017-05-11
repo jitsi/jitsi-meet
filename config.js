@@ -76,7 +76,9 @@ var config = { // eslint-disable-line no-unused-vars
     'During that time service will not be available. ' +
     'Apologise for inconvenience.',*/
     disableThirdPartyRequests: false,
-    minHDHeight: 540,
+    // The minumum value a video's height or width can be, whichever is
+    // smaller, to be considered high-definition.
+    minHDSize: 540,
     // If true - all users without token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.

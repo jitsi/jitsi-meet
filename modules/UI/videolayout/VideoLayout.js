@@ -112,6 +112,18 @@ var VideoLayout = {
     },
 
     /**
+     * Cleans up any existing largeVideo instance.
+     *
+     * @returns {void}
+     */
+    resetLargeVideo() {
+        if (largeVideo) {
+            largeVideo.destroy();
+        }
+        largeVideo = null;
+    },
+
+    /**
      * Registering listeners for UI events in Video layout component.
      *
      * @returns {void}
@@ -132,6 +144,8 @@ var VideoLayout = {
     },
 
     initLargeVideo () {
+        this.resetLargeVideo();
+
         largeVideo = new LargeVideoManager(eventEmitter);
         if(localFlipX) {
             largeVideo.onLocalFlipXChange(localFlipX);

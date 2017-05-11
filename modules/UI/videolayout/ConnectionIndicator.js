@@ -1,11 +1,7 @@
-/* global $, APP, config */
+/* global $, APP */
 /* jshint -W101 */
-import {
-    setLargeVideoHDStatus
-} from '../../../react/features/base/conference';
 
 import JitsiPopover from "../util/JitsiPopover";
-import VideoLayout from "./VideoLayout";
 import UIUtil from "../util/UIUtil";
 
 /**
@@ -38,7 +34,6 @@ function ConnectionIndicator(videoContainer, videoId) {
     this.bitrate = null;
     this.showMoreValue = false;
     this.resolution = null;
-    this.isResolutionHD = null;
     this.transport = [];
     this.framerate = null;
     this.popover = null;
@@ -405,10 +400,6 @@ ConnectionIndicator.prototype.updateConnectionQuality =
     let width = qualityToWidth.find(x => percent >= x.percent);
     this.fullIcon.style.width = width.width;
 
-    if (object && typeof object.isResolutionHD === 'boolean') {
-        this.isResolutionHD = object.isResolutionHD;
-    }
-    this.updateResolutionIndicator();
     this.updatePopoverData();
 };
 
@@ -418,7 +409,6 @@ ConnectionIndicator.prototype.updateConnectionQuality =
  */
 ConnectionIndicator.prototype.updateResolution = function (resolution) {
     this.resolution = resolution;
-    this.updateResolutionIndicator();
     this.updatePopoverData();
 };
 
@@ -459,31 +449,6 @@ ConnectionIndicator.prototype.hideIndicator = function () {
     this.connectionIndicatorContainer.style.display = "none";
     if(this.popover)
         this.popover.forceHide();
-};
-
-/**
- * Updates the resolution indicator.
- */
-ConnectionIndicator.prototype.updateResolutionIndicator = function () {
-
-    if (this.id !== null
-        && VideoLayout.isCurrentlyOnLarge(this.id)) {
-
-        let showResolutionLabel = false;
-
-        if (this.isResolutionHD !== null)
-            showResolutionLabel = this.isResolutionHD;
-        else if (this.resolution !== null) {
-            let resolutions = this.resolution || {};
-            Object.keys(resolutions).map(function (ssrc) {
-                    const { height } = resolutions[ssrc];
-                    if (height >= config.minHDHeight)
-                        showResolutionLabel = true;
-                });
-        }
-
-        APP.store.dispatch(setLargeVideoHDStatus(showResolutionLabel));
-    }
 };
 
 /**
