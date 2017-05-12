@@ -21,13 +21,9 @@ export { abstractMapStateToProps } from './functions.native';
  */
 export function getButtonAttributesByProps(props: Object = {})
         : MapOfAttributes {
-    let classNames = props.classNames;
-
-    if (classNames) {
-        // XXX Make sure to not modify props.classNames because that'd be bad
-        // practice.
-        classNames = [ ...classNames ];
-    }
+    // XXX Make sure to not modify props.classNames because that'd be bad
+    // practice.
+    const classNames = (props.classNames && [ ...props.classNames ]) || [];
 
     props.toggled && classNames.push('toggled');
     props.unclickable && classNames.push('unclickable');
