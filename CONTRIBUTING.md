@@ -3,13 +3,9 @@ We would love to have your help. Before you start working however, please read
 and follow this short guide.
 
 # Reporting Issues
-Before you open an issue on GitHub, please discuss it on one of our
-[mailing lists](https://jitsi.org/Development/MailingLists) and wait for
-confirmation from one of the committers. Once you have that confirmation,
-please proceed to reporting the issue on GitHub, while providing as much
-information as possible. Mention the version of Jitsi Meet, Jicofo and JVB
-you are using, and explain (as detailed as you can) how the problem can
-be reproduced.
+Provide as much information as possible. Mention the version of Jitsi Meet, 
+Jicofo and JVB you are using, and explain (as detailed as you can) how the 
+problem can be reproduced.
 
 # Code contributions
 Found a bug and know how to fix it? Great! Please read on.
