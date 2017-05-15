@@ -16,8 +16,7 @@
     "callingName": "__name__",
     "audioOnly": {
         "audioOnly": "Audio only",
-        "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode",
-        "howToDisable": "Audio only mode is currently enabled. Click the audio only button in the toolbar to disable the feature."
+        "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode"
     },
     "userMedia": {
       "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
@@ -447,5 +446,11 @@
         "numbersDisabled": "Dialing in has been disabled",
         "showPassword": "Show password",
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
+    },
+    "videoStatus": {
+        "hd": "HD",
+        "hdVideo": "HD video",
+        "sd": "SD",
+        "sdVideo": "SD video"
     }
 }

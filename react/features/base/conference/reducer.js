@@ -242,10 +242,7 @@ function _lockStateChanged(state, action) {
  * reduction of the specified action.
  */
 function _setAudioOnly(state, action) {
-    return assign(state, {
-        audioOnly: action.audioOnly,
-        isLargeVideoHD: action.audioOnly ? false : state.isLargeVideoHD
-    });
+    return set(state, 'audioOnly', action.audioOnly);
 }
 
 /**

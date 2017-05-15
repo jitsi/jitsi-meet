@@ -544,3 +544,57 @@
 .moveToCorner + .moveToCorner {
     right: 80px;
 }
+
+.video-state-indicator-menu {
+    display: none;
+    padding: 10px;
+    position: absolute;
+    right: -10px;
+    top: 20px;
+
+    .video-state-indicator-menu-options {
+        background: $popoverBg;
+        border-radius: 3px;
+        color: $popoverFontColor;
+        margin-top: 20px;
+        padding: 5px 0;
+        position: relative;
+
+        div {
+            cursor: pointer;
+            padding: 10px;
+            padding-right: 30px;
+            text-align: left;
+            white-space: nowrap;
+
+            &.active {
+                background: $toolbarToggleBackground;
+            }
+            &:hover:not(.active) {
+                background: $popupMenuSelectedItemBackground;
+            }
+
+            i {
+                margin-right: 5px;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    .video-state-indicator-menu-options::after {
+        content: " ";
+        border-color: transparent transparent $popoverBg transparent;
+        border-style: solid;
+        border-width: 5px;
+        position: absolute;
+        right: 15px;
+        top: -10px;
+    }
+}
+
+.video-state-indicator:hover,
+.video-state-indicator *:hover {
+    .video-state-indicator-menu {
+        display: block;
+    }
+}
