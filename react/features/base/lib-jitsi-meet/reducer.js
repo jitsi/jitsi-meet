@@ -1,63 +1,44 @@
 import { ReducerRegistry } from '../redux';
 
 import {
-    LIB_DISPOSED,
+    LIB_DID_DISPOSE,
+    LIB_DID_INIT,
     LIB_INIT_ERROR,
-    LIB_INITIALIZED,
-    SET_CONFIG
+    SET_WEBRTC_READY
 } from './actionTypes';
 
 /**
- * Initial state of 'features/base/lib-jitsi-meet'.
+ * The initial state of the feature base/lib-jitsi-meet.
  *
- * @type {{
- *      initializationError: null,
- *      initialized: boolean
- * }}
+ * @type {Object}
  */
-const INITIAL_STATE = {
-    config: {
-        // FIXME Lib-jitsi-meet uses HTML script elements to asynchronously
-        // load certain pieces of JavaScript. Unfortunately, the technique
-        // doesn't work on React Native (because there are no HTML elements
-        // in the first place). Fortunately, these pieces of JavaScript
-        // currently involve third parties and we can temporarily disable
-        // them (until we implement an alternative to async script elements
-        // on React Native).
-        disableThirdPartyRequests: true
-    },
-    initializationError: null,
-    initialized: false
-};
+const INITIAL_STATE = {};
 
 ReducerRegistry.register(
     'features/base/lib-jitsi-meet',
     (state = INITIAL_STATE, action) => {
         switch (action.type) {
-        case LIB_DISPOSED:
+        case LIB_DID_DISPOSE:
             return INITIAL_STATE;
+
+        case LIB_DID_INIT:
+            return {
+                ...state,
+                initError: undefined,
+                initialized: true
+            };
 
         case LIB_INIT_ERROR:
             return {
                 ...state,
-                initializationError: action.lib.error,
+                initError: action.error,
                 initialized: false
             };
 
-        case LIB_INITIALIZED:
+        case SET_WEBRTC_READY:
             return {
                 ...state,
-                initializationError: null,
-                initialized: true
-            };
-
-        case SET_CONFIG:
-            return {
-                ...state,
-                config: {
-                    ...action.config,
-                    ...state.config
-                }
+                webRTCReady: action.webRTCReady
             };
 
         default:

@@ -1,11 +1,15 @@
-#notice {
-    position: relative;
-    z-index: 3;
+.notice {
+    position: absolute;
+    left: 50%;
+    z-index: $zindex3;
     margin-top: 6px;
-}
-#noticeText {
-    background-color: #000000;
-    color: white;
-    padding: 3px;
-    border-radius: 5px;
+
+    @include transform(translateX(-50%));
+
+    &__message {
+        background-color: #000000;
+        color: white;
+        padding: 3px;
+        border-radius: 5px;
+    }
 }

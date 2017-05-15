@@ -9,9 +9,34 @@
 
 #import "AppDelegate.h"
 
-#import "RCTBundleURLProvider.h"
-#import "RCTLinkingManager.h"
-#import "RCTRootView.h"
+#import <React/RCTAssert.h>
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTLinkingManager.h>
+#import <React/RCTRootView.h>
+
+/**
+ * A <tt>RCTFatalHandler</tt> implementation which swallows JavaScript errors.
+ * In the Release configuration, React Native will (intentionally) raise an
+ * unhandled NSException for an unhandled JavaScript error. This will
+ * effectively kill the application. <tt>_RCTFatal</tt> is suitable to be in
+ * accord with the Web i.e. not kill the application.
+ */
+RCTFatalHandler _RCTFatal = ^(NSError *error) {
+  id jsStackTrace = error.userInfo[RCTJSStackTraceKey];
+  @try {
+    NSString *name
+      = [NSString stringWithFormat:@"%@: %@",
+                  RCTFatalExceptionName,
+                  error.localizedDescription];
+    NSString *message
+      = RCTFormatError(error.localizedDescription, jsStackTrace, 75);
+    [NSException raise:name format:@"%@", message];
+  } @catch (NSException *e) {
+    if (!jsStackTrace) {
+      @throw;
+    }
+  }
+};
 
 @implementation AppDelegate
 
@@ -28,6 +53,16 @@ continueUserActivity:(NSUserActivity *)userActivity
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#if !DEBUG
+  // In the Release configuration, React Native will (intentionally) raise an
+  // unhandled NSException for an unhandled JavaScript error. This will
+  // effectively kill the application. In accord with the Web, do not kill the
+  // application.
+  if (!RCTGetFatalHandler()) {
+    RCTSetFatalHandler(_RCTFatal);
+  }
+#endif
+
   NSURL *jsCodeLocation
     = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
                                                      fallbackResource:nil];

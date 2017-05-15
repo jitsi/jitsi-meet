@@ -10,34 +10,24 @@
     position: absolute;
     top: 0;
     width: 0;
-    z-index: 800;
+    z-index: $sideToolbarContainerZ;
 
     /**
      * Labels inside the side panel.
      */
     label {
-        color: $defaultColor;
+        color: $baseLight;
     }
 
     /**
      * Form elements and blocks.
      */
     input, select, a,
-    .sideToolbarBlock, .input-control, .button-control {
+    .sideToolbarBlock, .form-control, .button-control {
         display: block;
         margin-top: 15px;
         margin-left: 10%;
         width: 80%;
-    }
-
-    /**
-     * Specify colors for edit elements.
-     */
-    select, input[type="button"], input[type="text"], input[type="reset"],
-    input[type="submit"] {
-        color: $inputColor;
-        background: $inputBackground;
-        border: none;
     }
 
     /**
@@ -70,20 +60,24 @@
         box-sizing: border-box;
         color: #FFF;
 
+        .input-control {
+            border: 0;
+        }
+
         /**
          * Titles and subtitles of inner containers.
          */
         div.title, div.subTitle {
-            margin: 10px 0;
+            margin: 24px 0 11px;
         }
 
         /**
          * Main title size.
          */
         div.title {
-            color: $defaultColor !important;
-            font-size: 16px;
+            color: $toolbarTitleColor;
             text-align: center;
+            font-size: $toolbarTitleFontSize;
         }
 
         /**
@@ -117,6 +111,12 @@
 #device_settings {
     width : auto !important;
     text-align: center;
+}
+
+#deviceOptionsWrapper {
+    button {
+        float: none;
+    }
 }
 
 /**

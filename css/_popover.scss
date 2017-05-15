@@ -2,7 +2,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1015;
+  z-index: $popoverZ;
   display: none;
   max-width: 300px;
   min-width: 100px;

@@ -1,11 +1,36 @@
-/* global MD5, config, interfaceConfig, APP */
+/*
+ * Adorable Avatars service used at the end of this file is released under the
+ * terms of the MIT License.
+ *
+ * Copyright (c) 2014 Adorable IO LLC
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/* global APP */
+
+import { getAvatarURL } from '../../../react/features/base/participants';
 
 let users = {};
 
 export default {
     /**
      * Sets prop in users object.
-     * @param id {string} user id
+     * @param id {string} user id or undefined for the local user.
      * @param prop {string} name of the prop
      * @param val {string} value to be set
      */
@@ -13,7 +38,7 @@ export default {
         // FIXME: Fixes the issue with not be able to return avatar for the
         // local user when the conference has been left. Maybe there is beter
         // way to solve it.
-        if(APP.conference.isLocalId(id)) {
+        if(!id || APP.conference.isLocalId(id)) {
             id = "local";
         }
         if(!val || (users[id] && users[id][prop] === val))
@@ -40,7 +65,7 @@ export default {
      * @param url the url for the avatar
      */
     setUserAvatarUrl: function (id, url) {
-        this._setUserProp(id, "url", url);
+        this._setUserProp(id, "avatarUrl", url);
     },
 
     /**
@@ -58,57 +83,19 @@ export default {
      * @param {string} userId user id
      */
     getAvatarUrl: function (userId) {
-        if (config.disableThirdPartyRequests) {
-            return 'images/avatar2.png';
-        }
-
+        let user;
         if (!userId || APP.conference.isLocalId(userId)) {
-            userId = "local";
+            user = users.local;
+            userId = APP.conference.getMyUserId();
+        } else {
+            user = users[userId];
         }
 
-        let avatarId = null;
-        const user = users[userId];
-
-        // The priority is url, email and lowest is avatarId
-        if(user) {
-            if(user.url)
-                return user.url;
-
-            if (user.email)
-                avatarId = user.email;
-            else {
-                avatarId = user.avatarId;
-            }
-        }
-
-        // If the ID looks like an email, we'll use gravatar.
-        // Otherwise, it's a random avatar, and we'll use the configured
-        // URL.
-        let random = !avatarId || avatarId.indexOf('@') < 0;
-
-        if (!avatarId) {
-            console.warn(
-                `No avatar stored yet for ${userId} - using ID as avatar ID`);
-            avatarId = userId;
-        }
-        avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());
-
-
-        let urlPref = null;
-        let urlSuf = null;
-        if (!random) {
-            urlPref = 'https://www.gravatar.com/avatar/';
-            urlSuf = "?d=wavatar&size=200";
-        }
-        else if (random && interfaceConfig.RANDOM_AVATAR_URL_PREFIX) {
-            urlPref = interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
-            urlSuf = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
-        }
-        else {
-            urlPref = 'https://robohash.org/';
-            urlSuf = ".png?size=200x200";
-        }
-
-        return urlPref + avatarId + urlSuf;
+        return getAvatarURL({
+            avatarID: user ? user.avatarId : undefined,
+            avatarURL: user ? user.avatarUrl : undefined,
+            email: user ? user.email : undefined,
+            id: userId
+        });
     }
 };

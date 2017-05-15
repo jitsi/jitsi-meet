@@ -23,6 +23,8 @@ VirtualHost "jitmeet.example.com"
             "ping"; -- Enable mod_ping
         }
 
+        c2s_require_encryption = false
+
 Component "conference.jitmeet.example.com" "muc"
     --modules_enabled = { "token_verification" }
 admins = { "focusUser@auth.jitmeet.example.com" }

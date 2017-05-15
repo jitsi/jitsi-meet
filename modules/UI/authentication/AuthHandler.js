@@ -1,10 +1,13 @@
 /* global APP, config, JitsiMeetJS, Promise */
 
-import LoginDialog from './LoginDialog';
+import { openConnection } from '../../../connection';
+import { setJWT } from '../../../react/features/jwt';
 import UIUtil from '../util/UIUtil';
-import {openConnection} from '../../../connection';
+
+import LoginDialog from './LoginDialog';
 
 const ConnectionErrors = JitsiMeetJS.errors.connection;
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 let externalAuthWindow;
 let authRequiredDialog;
@@ -72,15 +75,20 @@ function redirectToTokenAuthService(roomName) {
  * @param room the name fo the conference room.
  */
 function initJWTTokenListener(room) {
-    var listener = function (event) {
-        if (externalAuthWindow !== event.source) {
-            console.warn("Ignored message not coming " +
+    var listener = function ({ data, source }) {
+        if (externalAuthWindow !== source) {
+            logger.warn("Ignored message not coming " +
                 "from external authnetication window");
             return;
         }
-        if (event.data && event.data.jwtToken) {
-            config.token = event.data.jwtToken;
-            console.info("Received JWT token:", config.token);
+
+        let jwt;
+
+        if (data && (jwt = data.jwtToken)) {
+            logger.info("Received JSON Web Token (JWT):", jwt);
+
+            APP.store.dispatch(setJWT(jwt));
+
             var roomName = room.getName();
             openConnection({retry: false, roomName: roomName })
                 .then(function (connection) {
@@ -97,10 +105,10 @@ function initJWTTokenListener(room) {
                         // to upgrade user's role
                         room.room.moderator.authenticate()
                             .then(function () {
-                                console.info("User role upgrade done !");
+                                logger.info("User role upgrade done !");
                                 unregister();
                             }).catch(function (err, errCode) {
-                                console.error(
+                                logger.error(
                                     "Authentication failed: ", err, errCode);
                                 unregister();
                             }
@@ -108,13 +116,13 @@ function initJWTTokenListener(room) {
                     }).catch(function (error, code) {
                         unregister();
                         connection.disconnect();
-                        console.error(
+                        logger.error(
                             'Authentication failed on the new connection',
                             error, code);
                     });
                 }, function (err) {
                     unregister();
-                    console.error("Failed to open new connection", err);
+                    logger.error("Failed to open new connection", err);
                 });
         }
     };
@@ -161,7 +169,7 @@ function doXmppAuth (room, lockPassword) {
             }).catch(function (error, code) {
                 connection.disconnect();
 
-                console.error('Auth on the fly failed', error);
+                logger.error('Auth on the fly failed', error);
 
                 loginDialog.displayError(
                     'connection.GET_SESSION_ID_ERROR', {code: code});

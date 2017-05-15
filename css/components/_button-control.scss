@@ -1,0 +1,101 @@
+.button-control {
+    box-sizing: border-box;
+    display: inline-block;
+    border: 1px solid $buttonBorder;
+    vertical-align: baseline;
+    height: 30px;
+    min-width: 60px;
+    padding: 4px 10px;
+    margin: 0;
+    line-height: 1.5em;
+    outline: none;
+    background-color: transparent;
+    float: right;
+    font-size: 14px;
+    margin-left: 10px;
+    color: $buttonColor;
+    font-weight: $buttonFontWeight;
+    @include transition(background-color .1s ease-out);
+
+    &[disabled] {
+        color: #666;
+        cursor: default;
+    }
+
+    &_full-width {
+        margin: 0;
+        width: 100%;
+    }
+
+    &:hover {
+        border: 1px solid $buttonHoverBorder;
+        background-color: $buttonHoverBackground;
+        @include transition(background-color .1s ease-in);
+    }
+
+    &:active {
+        @include box-shadow(0, 0, 1px, $buttonShadowColor, true);
+    }
+
+    &_light {
+        color: $defaultDarkColor;
+        background-color: $buttonLightBackground;
+        border: 1px solid $buttonLightBorder;
+
+        &:hover {
+            border: 1px solid $buttonLightHoverBorder;
+            background-color: $buttonLightHoverBackground;
+        }
+    }
+
+    &_link {
+        color: $buttonLinkColor;
+        background-color: $buttonLinkBackground;
+
+        &:hover {
+            background-color: $buttonLinkBackground;
+        }
+    }
+
+    &_overlay {
+        color: $primaryButtonColor;
+        background-color: $overlayButtonBg;
+        border-radius: 2px;
+        border: none;
+
+        &:hover {
+            background-color: $primaryButtonBackground;
+            border: none;
+        }
+    }
+
+    &_primary {
+        background-color: $primaryButtonBackground;
+        border: 1px solid $primaryButtonBackground;
+        color: $primaryButtonColor !important;
+        font-weight: $primaryButtonFontWeight;
+
+        &:hover {
+            border: 1px solid $primaryButtonHoverBackground;
+            background-color: $primaryButtonHoverBackground;
+        }
+
+        &[disabled] {
+            color: $primaryButtonColor;
+        }
+    }
+
+    &_close {
+        color: $defaultFontColor;
+    }
+    &_submit {
+        color: $linkFontColor;
+        &:hover {
+            color: $linkHoverFontColor;
+        }
+    }
+
+    &_center {
+        float: none !important;
+    }
+}

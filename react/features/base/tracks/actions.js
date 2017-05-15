@@ -1,4 +1,7 @@
-import JitsiMeetJS from '../lib-jitsi-meet';
+import JitsiMeetJS, {
+    JitsiTrackErrors,
+    JitsiTrackEvents
+} from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE
@@ -10,11 +13,6 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
-import './middleware';
-import './reducer';
-
-const JitsiTrackErrors = JitsiMeetJS.errors.track;
-const JitsiTrackEvents = JitsiMeetJS.events.track;
 
 /**
  * Request to start capturing local audio and/or video. By default, the user
@@ -54,39 +52,6 @@ export function destroyLocalTracks() {
 }
 
 /**
- * Returns true if the provided JitsiTrack should be rendered as a mirror.
- *
- * We only want to show a video in mirrored mode when:
- * 1) The video source is local, and not remote.
- * 2) The video source is a camera, not a desktop (capture).
- * 3) The camera is capturing the user, not the environment.
- *
- * TODO Similar functionality is part of lib-jitsi-meet. This function should be
- * removed after https://github.com/jitsi/lib-jitsi-meet/pull/187 is merged.
- *
- * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
- * @private
- * @returns {boolean}
- */
-function _shouldMirror(track) {
-    return (
-        track
-            && track.isLocal()
-            && track.isVideoTrack()
-
-            // XXX Type of the return value of
-            // JitsiLocalTrack#getCameraFacingMode() happens to be named
-            // CAMERA_FACING_MODE as well, it's defined by lib-jitsi-meet. Note
-            // though that the type of the value on the right side of the
-            // equality check is defined by jitsi-meet-react. The type
-            // definitions are surely compatible today but that may not be the
-            // case tomorrow.
-            && track.getCameraFacingMode() === CAMERA_FACING_MODE.USER
-            && !track.isScreenSharing()
-    );
-}
-
-/**
  * Create an action for when a new track has been signaled to be added to the
  * conference.
  *
@@ -103,9 +68,10 @@ export function trackAdded(track) {
             type => dispatch(trackVideoTypeChanged(track, type)));
 
         // participantId
+        const local = track.isLocal();
         let participantId;
 
-        if (track.isLocal()) {
+        if (local) {
             const participant = getLocalParticipant(getState);
 
             if (participant) {
@@ -119,9 +85,9 @@ export function trackAdded(track) {
             type: TRACK_ADDED,
             track: {
                 jitsiTrack: track,
-                local: track.isLocal(),
+                local,
                 mediaType: track.getType(),
-                mirrorVideo: _shouldMirror(track),
+                mirror: _shouldMirror(track),
                 muted: track.isMuted(),
                 participantId,
                 videoStarted: false,
@@ -213,10 +179,10 @@ function _addTracks(tracks) {
  * Disposes passed tracks and signals them to be removed.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} tracks - List of tracks.
- * @private
+ * @protected
  * @returns {Function}
  */
-function _disposeAndRemoveTracks(tracks) {
+export function _disposeAndRemoveTracks(tracks) {
     return dispatch =>
         Promise.all(
             tracks.map(t =>
@@ -240,6 +206,7 @@ function _disposeAndRemoveTracks(tracks) {
  * through.
  * @param {MEDIA_TYPE} mediaType - The <tt>MEDIA_TYPE</tt> of the first
  * <tt>JitsiLocalTrack</tt> to be returned.
+ * @private
  * @returns {JitsiLocalTrack} The first <tt>JitsiLocalTrack</tt>, if any, in the
  * specified <tt>tracks</tt> of the specified <tt>mediaType</tt>.
  */
@@ -288,11 +255,44 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
 }
 
 /**
+ * Returns true if the provided JitsiTrack should be rendered as a mirror.
+ *
+ * We only want to show a video in mirrored mode when:
+ * 1) The video source is local, and not remote.
+ * 2) The video source is a camera, not a desktop (capture).
+ * 3) The camera is capturing the user, not the environment.
+ *
+ * TODO Similar functionality is part of lib-jitsi-meet. This function should be
+ * removed after https://github.com/jitsi/lib-jitsi-meet/pull/187 is merged.
+ *
+ * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @private
+ * @returns {boolean}
+ */
+function _shouldMirror(track) {
+    return (
+        track
+            && track.isLocal()
+            && track.isVideoTrack()
+
+            // XXX The type of the return value of
+            // JitsiLocalTrack's getCameraFacingMode happens to be named
+            // CAMERA_FACING_MODE as well, it's defined by lib-jitsi-meet. Note
+            // though that the type of the value on the right side of the
+            // equality check is defined by jitsi-meet-react. The type
+            // definitions are surely compatible today but that may not be the
+            // case tomorrow.
+            && track.getCameraFacingMode() === CAMERA_FACING_MODE.USER
+    );
+}
+
+/**
  * Set new local tracks replacing any existing tracks that were previously
  * available. Currently only one audio and one video local tracks are allowed.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} [newTracks=[]] - List of new
  * media tracks.
+ * @private
  * @returns {Function}
  */
 function _updateLocalTracks(newTracks = []) {

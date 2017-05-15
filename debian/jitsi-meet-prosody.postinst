@@ -21,12 +21,48 @@ set -e
 case "$1" in
     configure)
 
-        . /etc/jitsi/videobridge/config
-
-        . /etc/jitsi/jicofo/config
-
         # loading debconf
         . /usr/share/debconf/confmodule
+
+        # try to get host from jitsi-videobridge
+        db_get jitsi-videobridge/jvb-hostname
+        if [ -z "$RET" ] ; then
+            # server hostname
+            db_set jitsi-videobridge/jvb-hostname "localhost"
+            db_input critical jitsi-videobridge/jvb-hostname || true
+            db_go
+        fi
+        JVB_HOSTNAME="$RET"
+
+        db_get jitsi-videobridge/jvbsecret
+        if [ -z "$RET" ] ; then
+            db_input critical jitsi-videobridge/jvbsecret || true
+            db_go
+        fi
+        JVB_SECRET="$RET"
+
+        db_get jicofo/jicofo-authuser
+        if [ -z "$RET" ] ; then
+            db_input critical jicofo/jicofo-authuser || true
+            db_go
+        fi
+        JICOFO_AUTH_USER="$RET"
+
+        db_get jicofo/jicofo-authpassword
+        if [ -z "$RET" ] ; then
+            db_input critical jicofo/jicofo-authpassword || true
+            db_go
+        fi
+        JICOFO_AUTH_PASSWORD="$RET"
+
+        db_get jicofo/jicofosecret
+        if [ -z "$RET" ] ; then
+            db_input critical jicofo/jicofosecret || true
+            db_go
+        fi
+        JICOFO_SECRET="$RET"
+
+        JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-prosody/jvb-hostname
@@ -38,7 +74,7 @@ case "$1" in
         fi
 
         # stores the hostname so we will reuse it later, like in purge
-        db_set jitsi-meet-prosody/jvb-hostname $JVB_HOSTNAME
+        db_set jitsi-meet-prosody/jvb-hostname "$JVB_HOSTNAME"
 
         # and we're done with debconf
         db_stop
@@ -68,21 +104,21 @@ case "$1" in
             fi
         fi
         # UPGRADE to server side focus check if focus is configured
-        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG; then
-            echo -e "\nVirtualHost \"auth.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JICOFO_AUTH_DOMAIN\"" $PROSODY_HOST_CONFIG; then
+            echo -e "\nVirtualHost \"$JICOFO_AUTH_DOMAIN\"" >> $PROSODY_HOST_CONFIG
             echo -e "        authentication = \"internal_plain\"\n" >> $PROSODY_HOST_CONFIG
-            sed -i "s/Component \"conference.$JVB_HOSTNAME\" \"muc\"/Component \"conference.$JVB_HOSTNAME\" \"muc\"\nadmins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n/g" $PROSODY_HOST_CONFIG
+            sed -i "s/Component \"conference.$JVB_HOSTNAME\" \"muc\"/Component \"conference.$JVB_HOSTNAME\" \"muc\"\nadmins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\" }\n/g" $PROSODY_HOST_CONFIG
             echo -e "Component \"focus.$JVB_HOSTNAME\"" >> $PROSODY_HOST_CONFIG
             echo -e "    component_secret=\"$JICOFO_SECRET\"\n" >> $PROSODY_HOST_CONFIG
             PROSODY_CREATE_JICOFO_USER="true"
         # UPGRADE to server side focus on old config(/etc/prosody/prosody.cfg.lua)
-        elif [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"auth.$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
-            echo -e "\nVirtualHost \"auth.$JVB_HOSTNAME\"" >> $PROSODY_CONFIG_OLD
+        elif [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JICOFO_AUTH_DOMAIN\"" $PROSODY_CONFIG_OLD; then
+            echo -e "\nVirtualHost \"$JICOFO_AUTH_DOMAIN\"" >> $PROSODY_CONFIG_OLD
             echo -e "        authentication = \"internal_plain\"\n" >> $PROSODY_CONFIG_OLD
             if ! grep -q "admins = { }" $PROSODY_CONFIG_OLD; then
-                echo -e "admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n" >> $PROSODY_CONFIG_OLD
+                echo -e "admins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\" }\n" >> $PROSODY_CONFIG_OLD
             else
-                sed -i "s/admins = { }/admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\" }\n/g" $PROSODY_CONFIG_OLD
+                sed -i "s/admins = { }/admins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\" }\n/g" $PROSODY_CONFIG_OLD
             fi
             echo -e "Component \"focus.$JVB_HOSTNAME\"" >> $PROSODY_CONFIG_OLD
             echo -e "    component_secret=\"$JICOFO_SECRET\"\n" >> $PROSODY_CONFIG_OLD
@@ -109,8 +145,6 @@ case "$1" in
 
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart
-            invoke-rc.d jitsi-videobridge restart
-            invoke-rc.d jicofo restart
         fi
     ;;
 

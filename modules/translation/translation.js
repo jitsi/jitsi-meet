@@ -1,128 +1,57 @@
-/* global $, require, config, interfaceConfig */
-var i18n = require("i18next-client");
-var languages = require("../../service/translation/languages");
-var DEFAULT_LANG = languages.EN;
+/* @flow */
 
-i18n.addPostProcessor(
-    "resolveAppName",
-    value => value.replace("__app__", interfaceConfig.APP_NAME));
+import jqueryI18next from 'jquery-i18next';
 
-var defaultOptions = {
-    detectLngQS: "lang",
-    useCookie: false,
-    fallbackLng: DEFAULT_LANG,
-    load: "unspecific",
-    resGetPath: 'lang/__ns__-__lng__.json',
-    ns: {
-        namespaces: ['main', 'languages'],
-        defaultNs: 'main'
-    },
-    lngWhitelist : languages.getLanguages(),
-    fallbackOnNull: true,
-    fallbackOnEmpty: true,
-    useDataAttrOptions: true,
-    app: interfaceConfig.APP_NAME,
-    getAsync: true,
-    defaultValueFromContent: false,
-    customLoad: function(lng, ns, options, done) {
-        var resPath = "lang/__ns__-__lng__.json";
-        if(lng === languages.EN)
-            resPath = "lang/__ns__.json";
-        var url = i18n.functions.applyReplacement(resPath,
-                                                 { lng: lng, ns: ns });
-        i18n.functions.ajax({
-            url: url,
-            success: function(data) {
-                i18n.functions.log('loaded: ' + url);
-                done(null, data);
-            },
-            error : function(xhr, status, error) {
-                if ((status && status == 200) ||
-                    (xhr && xhr.status && xhr.status == 200)) {
-                    // file loaded but invalid json, stop waste time !
-                    i18n.functions.error('There is a typo in: ' + url);
-                } else if ((status && status == 404) ||
-                    (xhr && xhr.status && xhr.status == 404)) {
-                    i18n.functions.log('Does not exist: ' + url);
-                } else {
-                    var theStatus = status ? status :
-                        ((xhr && xhr.status) ? xhr.status : null);
-                    i18n.functions.log(theStatus + ' when loading ' + url);
-                }
+import { DEFAULT_LANGUAGE, i18next } from '../../react/features/base/i18n';
 
-                done(error, {});
-            },
-            dataType: "json",
-            async : options.getAsync
-        });
-    }
-    //              options for caching
-//                useLocalStorage: true,
-//                localStorageExpirationTime: 86400000 // in ms, default 1 week
-};
+declare var $: Function;
 
-function initCompleted() {
-    $("[data-i18n]").i18n();
+/**
+ * Notifies that the {@link i18next} instance has finished its initialization.
+ *
+ * @returns {void}
+ * @private
+ */
+function _onI18nInitialized() {
+    $('[data-i18n]').localize();
 }
 
-function getLangFromQuery() {
-    var query = window.location.search.substring(1);
-    var vars = query.split("&");
-    for (var i=0;i<vars.length;i++) {
-        var pair = vars[i].split("=");
-        if(pair[0] == "lang")
-        {
-            return pair[1];
-        }
+class Translation {
+    addLanguageChangedListener(listener: Function) {
+        i18next.on('languageChanged', listener);
     }
-    return null;
+
+    generateTranslationHTML(key: string, options: Object) {
+        const optAttr
+            = options ? ` data-i18n-options='${JSON.stringify(options)}'` : '';
+
+        // XXX i18next expects undefined if options are missing.
+        const text = i18next.t(key, options ? options : undefined);
+
+        return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
+    }
+
+    getCurrentLanguage() {
+        return i18next.lng();
+    }
+
+    init() {
+        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+
+        if (i18next.isInitialized)
+            _onI18nInitialized();
+        else
+            i18next.on('initialized', _onI18nInitialized);
+    }
+
+    setLanguage(language: string = DEFAULT_LANGUAGE) {
+        i18next.setLng(language, {}, _onI18nInitialized);
+    }
+
+    translateElement(selector: Object, options: Object) {
+        // XXX i18next expects undefined if options are missing.
+        selector.localize(options ? options : undefined);
+    }
 }
 
-module.exports = {
-    init: function (settingsLang) {
-        let options = defaultOptions;
-
-        let lang = getLangFromQuery() || settingsLang || config.defaultLanguage;
-        // XXX If none of the above has been set then the 'lang' will be
-        // 'undefined' and the i18n lib will try to auto detect user's
-        // preferred language based on browser's locale.
-        // The interface config option allows to disable this auto detection
-        // by specifying the fallback language in that case.
-        let langDetection = interfaceConfig.LANG_DETECTION;
-
-        if (!langDetection && !lang) {
-            lang = DEFAULT_LANG;
-        }
-
-        if (lang) {
-            options.lng = lang;
-        }
-
-        i18n.init(options, initCompleted);
-    },
-    setLanguage: function (lang) {
-        if(!lang)
-            lang = DEFAULT_LANG;
-        i18n.setLng(lang, defaultOptions, initCompleted);
-    },
-    getCurrentLanguage: function () {
-        return i18n.lng();
-    },
-    translateElement: function (selector, options) {
-        // i18next expects undefined if options are missing, check if its null
-        selector.i18n(
-            options === null ? undefined : options);
-    },
-    generateTranslationHTML: function (key, options) {
-        var str = "<span data-i18n=\"" + key + "\"";
-        if (options) {
-            str += " data-i18n-options='" + JSON.stringify(options) + "'";
-        }
-        str += ">";
-        // i18next expects undefined if options ARE missing, check if its null
-        str += i18n.t(key, options === null ? undefined : options);
-        str += "</span>";
-        return str;
-
-    }
-};
+export default new Translation();

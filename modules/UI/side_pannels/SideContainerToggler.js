@@ -16,17 +16,27 @@ const SideContainerToggler = {
     init(eventEmitter) {
         this.eventEmitter = eventEmitter;
 
-        // Adds a listener for the animation end event that would take care
-        // of hiding all internal containers when the extendedToolbarPanel is
+        // We may not have a side toolbar container, for example, in
+        // filmstrip-only mode.
+        const sideToolbarContainer
+            = document.getElementById("sideToolbarContainer");
+
+        if (!sideToolbarContainer)
+            return;
+
+        // Adds a listener for the animationend event that would take care of
+        // hiding all internal containers when the extendedToolbarPanel is
         // closed.
-        document.getElementById("sideToolbarContainer")
-            .addEventListener("animationend", function(e) {
-                if(e.animationName === "slideOutExt")
+        sideToolbarContainer.addEventListener(
+            "animationend",
+            function(e) {
+                if (e.animationName === "slideOutExt")
                     $("#sideToolbarContainer").children().each(function() {
                         if ($(this).hasClass("show"))
                             SideContainerToggler.hideInnerContainer($(this));
                     });
-            }, false);
+            },
+            false);
     },
 
     /**
@@ -109,6 +119,16 @@ const SideContainerToggler = {
      * element to show
      */
     showInnerContainer(containerSelector) {
+
+        // Before showing the container, make sure there is no other visible.
+        // If we quickly show a container, while another one is animating
+        // and animation never ends, so we do not really hide the first one and
+        // we end up with to shown panels
+        $("#sideToolbarContainer").children().each(function() {
+            if ($(this).hasClass("show"))
+                SideContainerToggler.hideInnerContainer($(this));
+        });
+
         containerSelector.removeClass("hide").addClass("show");
 
         this.eventEmitter.emit(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,

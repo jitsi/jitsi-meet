@@ -1,3 +1,5 @@
+import { Symbol } from '../react';
+
 /**
  * Create an action for when dominant speaker changes.
  *
@@ -8,7 +10,7 @@
  *      }
  * }
  */
-export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
+export const DOMINANT_SPEAKER_CHANGED = Symbol('DOMINANT_SPEAKER_CHANGED');
 
 /**
  * Action to signal that ID of participant has changed. This happens when
@@ -20,7 +22,7 @@ export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
  *      oldValue: string
  * }
  */
-export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
+export const PARTICIPANT_ID_CHANGED = Symbol('PARTICIPANT_ID_CHANGED');
 
 /**
  * Action to signal that a participant has joined.
@@ -30,7 +32,7 @@ export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
  *      participant: Participant
  * }
  */
-export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
+export const PARTICIPANT_JOINED = Symbol('PARTICIPANT_JOINED');
 
 /**
  * Action to handle case when participant lefts.
@@ -42,7 +44,7 @@ export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
  *      }
  * }
  */
-export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
+export const PARTICIPANT_LEFT = Symbol('PARTICIPANT_LEFT');
 
 /**
  * Action to handle case when info about participant changes.
@@ -52,7 +54,7 @@ export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
  *      participant: Participant
  * }
  */
-export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
+export const PARTICIPANT_UPDATED = Symbol('PARTICIPANT_UPDATED');
 
 /**
  * The type of the Redux action which pins a conference participant.
@@ -64,4 +66,4 @@ export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
  *      }
  * }
  */
-export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
+export const PIN_PARTICIPANT = Symbol('PIN_PARTICIPANT');

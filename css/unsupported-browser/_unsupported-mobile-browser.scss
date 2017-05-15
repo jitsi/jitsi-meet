@@ -1,0 +1,69 @@
+.unsupported-mobile-browser {
+    background-color: #fff;
+    height: 100vh;
+    padding: 35px 0;
+    width: 100vw;
+
+    &__body {
+        color: $unsupportedBrowserTextColor;
+        margin: auto;
+        max-width: 40em;
+        text-align: center;
+        width: 75%;
+
+        a:active {
+            text-decoration: none;
+        }
+    }
+
+    &__text {
+        font-size: 1.8em;
+        line-height: em(29px, 21px);
+        margin-bottom: 0.65em;
+
+        &_small {
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            margin-top: em(21, 18);
+
+            strong {
+                font-size: em(21, 18);
+            }
+        }
+    }
+
+    &__logo {
+        height: 108px;
+        width: 77px;
+    }
+
+    &__button {
+        border: 0;
+        height: 42px;
+        margin: 0 auto;
+        max-width: 300px;
+        width: 98%;
+        @include border-radius(8px);
+        background-color: $unsupportedBrowserButtonBgColor;
+        font-size: 1.5em;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+        text-shadow: 0px 1px 2px $unsupportedBrowserTextColor;
+
+        // Disable standard button effects.
+        box-shadow: none;
+        outline: none;
+
+        &:active {
+            background-color: $unsupportedBrowserButtonBgColor;
+        }
+
+        &_primary {
+            background-color: $primaryUnsupportedBrowserButtonBgColor;
+
+            &:active {
+                background-color: $primaryUnsupportedBrowserButtonBgColor;
+            }
+        }
+    }
+}

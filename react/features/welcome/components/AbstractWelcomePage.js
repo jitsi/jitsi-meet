@@ -5,12 +5,25 @@ import { isRoomValid } from '../../base/conference';
 import { VideoTrack } from '../../base/media';
 import { getLocalVideoTrack } from '../../base/tracks';
 
+import { generateRoomWithoutSeparator } from '../roomnameGenerator';
+
 /**
  * Base (abstract) class for container component rendering the welcome page.
  *
  * @abstract
  */
 export class AbstractWelcomePage extends Component {
+    /**
+     * AbstractWelcomePage component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        _localVideoTrack: React.PropTypes.object,
+        _room: React.PropTypes.string,
+        dispatch: React.PropTypes.func
+    }
+
     /**
      * Initializes a new AbstractWelcomePage instance, including the initial
      * state of the room name input.
@@ -23,15 +36,31 @@ export class AbstractWelcomePage extends Component {
         /**
          * Save room name into component's local state.
          *
-         * @type {{room: string}}
+         * @type {Object}
+         * @property {number|null} animateTimeoutId - Identificator for
+         * letter animation timeout.
+         * @property {string} generatedRoomname - Automatically generated
+         * room name.
+         * @property {string} room - Room name.
+         * @property {string} roomPlaceholder - Room placeholder
+         * that's used as a placeholder for input.
+         * @property {nubmer|null} updateTimeoutId - Identificator for
+         * updating generated room name.
          */
         this.state = {
-            room: ''
+            animateTimeoutId: null,
+            generatedRoomname: '',
+            room: '',
+            roomPlaceholder: '',
+            updateTimeoutId: null
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onJoinClick = this._onJoinClick.bind(this);
+        this._animateRoomnameChanging
+            = this._animateRoomnameChanging.bind(this);
+        this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._updateRoomname = this._updateRoomname.bind(this);
     }
 
     /**
@@ -41,7 +70,55 @@ export class AbstractWelcomePage extends Component {
      * @param {Object} nextProps - New props component will receive.
      */
     componentWillReceiveProps(nextProps) {
-        this.setState({ room: nextProps.room });
+        this.setState({ room: nextProps._room });
+    }
+
+    /**
+     * This method is executed when method will be unmounted from DOM.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this._clearTimeouts();
+    }
+
+    /**
+     * Animates the changing of the room name.
+     *
+     * @param {string} word - The part of room name that should be added to
+     * placeholder.
+     * @private
+     * @returns {void}
+     */
+    _animateRoomnameChanging(word) {
+        let animateTimeoutId = null;
+        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
+
+        if (word.length > 1) {
+            animateTimeoutId
+                = setTimeout(
+                        () => {
+                            this._animateRoomnameChanging(
+                                    word.substring(1, word.length));
+                        },
+                        70);
+        }
+
+        this.setState({
+            animateTimeoutId,
+            roomPlaceholder
+        });
+    }
+
+    /**
+     * Method that clears timeouts for animations and updates of room name.
+     *
+     * @private
+     * @returns {void}
+     */
+    _clearTimeouts() {
+        clearTimeout(this.state.animateTimeoutId);
+        clearTimeout(this.state.updateTimeoutId);
     }
 
     /**
@@ -57,13 +134,18 @@ export class AbstractWelcomePage extends Component {
     }
 
     /**
-     * Handles click on 'Join' button.
+     * Handles joining. Either by clicking on 'Join' button
+     * or by pressing 'Enter' in room name input field.
      *
      * @protected
      * @returns {void}
      */
-    _onJoinClick() {
-        this.props.dispatch(appNavigate(this.state.room));
+    _onJoin() {
+        const room = this.state.room || this.state.generatedRoomname;
+
+        if (room) {
+            this.props.dispatch(appNavigate(room));
+        }
     }
 
     /**
@@ -86,21 +168,32 @@ export class AbstractWelcomePage extends Component {
      */
     _renderLocalVideo() {
         return (
-            <VideoTrack videoTrack = { this.props.localVideoTrack } />
+            <VideoTrack videoTrack = { this.props._localVideoTrack } />
         );
     }
-}
 
-/**
- * AbstractWelcomePage component's property types.
- *
- * @static
- */
-AbstractWelcomePage.propTypes = {
-    dispatch: React.PropTypes.func,
-    localVideoTrack: React.PropTypes.object,
-    room: React.PropTypes.string
-};
+    /**
+     * Triggers the generation of a new room name and initiates an animation of
+     * its changing.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _updateRoomname() {
+        const generatedRoomname = generateRoomWithoutSeparator();
+        const roomPlaceholder = '';
+        const updateTimeoutId = setTimeout(this._updateRoomname, 10000);
+
+        this._clearTimeouts();
+        this.setState(
+            {
+                generatedRoomname,
+                roomPlaceholder,
+                updateTimeoutId
+            },
+            () => this._animateRoomnameChanging(generatedRoomname));
+    }
+}
 
 /**
  * Selects local video track from tracks in state, local participant and room
@@ -109,17 +202,18 @@ AbstractWelcomePage.propTypes = {
  * to be used in child classes for 'connect'.
  *
  * @param {Object} state - Redux state.
+ * @protected
  * @returns {{
- *      localVideoTrack: (Track|undefined),
- *      room: string
+ *     _localVideoTrack: (Track|undefined),
+ *     _room: string
  * }}
  */
-export function mapStateToProps(state) {
+export function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const tracks = state['features/base/tracks'];
 
     return {
-        localVideoTrack: getLocalVideoTrack(tracks),
-        room: conference.room
+        _localVideoTrack: getLocalVideoTrack(tracks),
+        _room: conference.room
     };
 }

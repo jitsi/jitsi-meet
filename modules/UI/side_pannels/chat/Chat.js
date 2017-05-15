@@ -2,7 +2,6 @@
 
 import {processReplacements, linkify} from './Replacement';
 import CommandsProcessor from './Commands';
-import ToolbarToggler from '../../toolbars/ToolbarToggler';
 import VideoLayout from "../../videolayout/VideoLayout";
 
 import UIUtil from '../../util/UIUtil';
@@ -10,7 +9,37 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
 
-var unreadMessages = 0;
+import { dockToolbox, setSubject } from '../../../../react/features/toolbox';
+
+let unreadMessages = 0;
+const sidePanelsContainerId = 'sideToolbarContainer';
+const htmlStr = `
+    <div id="chat_container" class="sideToolbarContainer__inner">
+        <div id="nickname">
+            <span data-i18n="chat.nickname.title"></span>
+            <form>
+                <input type='text'
+                       class="input-control" id="nickinput" autofocus
+                    data-i18n="[placeholder]chat.nickname.popover">
+            </form>
+        </div>
+
+        <div id="chatconversation"></div>
+        <audio id="chatNotification" src="sounds/incomingMessage.wav"
+            preload="auto"></audio>
+        <textarea id="usermsg" autofocus
+            data-i18n="[placeholder]chat.messagebox"></textarea>
+        <div id="smileysarea">
+            <div id="smileys">
+                <img src="images/smile.svg"/>
+            </div>
+        </div>
+    </div>`;
+
+function initHTML() {
+    $(`#${sidePanelsContainerId}`)
+        .append(htmlStr);
+}
 
 /**
  * The container id, which is and the element id.
@@ -21,30 +50,41 @@ var CHAT_CONTAINER_ID = "chat_container";
  *  Updates visual notification, indicating that a message has arrived.
  */
 function updateVisualNotification() {
-    var unreadMsgElement = document.getElementById('unreadMessages');
+    // XXX The rewrite of the toolbar in React delayed the availability of the
+    // element unreadMessages. In order to work around the delay, I introduced
+    // and utilized unreadMsgSelector in addition to unreadMsgElement.
+    const unreadMsgSelector = $('#unreadMessages');
+    const unreadMsgElement
+        = unreadMsgSelector.length > 0 ? unreadMsgSelector[0] : undefined;
 
     if (unreadMessages) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
 
-        ToolbarToggler.dockToolbar(true);
+        APP.store.dispatch(dockToolbox(true));
 
-        var chatButtonElement
+        const chatButtonElement
             = document.getElementById('toolbar_button_chat');
-        var leftIndent = (UIUtil.getTextWidth(chatButtonElement) -
-            UIUtil.getTextWidth(unreadMsgElement)) / 2;
-        var topIndent = (UIUtil.getTextHeight(chatButtonElement) -
-            UIUtil.getTextHeight(unreadMsgElement)) / 2 - 5;
+        const leftIndent
+            = (UIUtil.getTextWidth(chatButtonElement)
+                    - UIUtil.getTextWidth(unreadMsgElement))
+                / 2;
+        const topIndent
+            = (UIUtil.getTextHeight(chatButtonElement)
+                        - UIUtil.getTextHeight(unreadMsgElement))
+                    / 2
+                - 5;
 
         unreadMsgElement.setAttribute(
-            'style',
-                'top:' + topIndent +
-                '; left:' + leftIndent + ';');
+                'style',
+                'top:' + topIndent + '; left:' + leftIndent + ';');
     }
     else {
-        unreadMsgElement.innerHTML = '';
+        unreadMsgSelector.html('');
     }
 
-    $(unreadMsgElement).parent()[unreadMessages > 0 ? 'show' : 'hide']();
+    if (unreadMsgElement) {
+        unreadMsgSelector.parent()[unreadMessages > 0 ? 'show' : 'hide']();
+    }
 }
 
 
@@ -130,6 +170,15 @@ function resizeChatConversation() {
 }
 
 /**
+ * Focus input after 400 ms
+ * Found input by id
+ *
+ * @param id {string} input id
+ */
+function deferredFocus(id){
+    setTimeout(() => $(`#${id}`).focus(), 400);
+}
+/**
  * Chat related user interface.
  */
 var Chat = {
@@ -137,9 +186,14 @@ var Chat = {
      * Initializes chat related interface.
      */
     init (eventEmitter) {
+        initHTML();
         if (APP.settings.getDisplayName()) {
             Chat.setChatConversationMode(true);
         }
+
+        $("#smileys").click(function() {
+            Chat.toggleSmileys();
+        });
 
         $('#nickinput').keydown(function (event) {
             if (event.keyCode === 13) {
@@ -147,6 +201,7 @@ var Chat = {
                 let val = this.value;
                 this.value = '';
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
+                deferredFocus('usermsg');
             }
         });
 
@@ -184,15 +239,15 @@ var Chat = {
                 // Undock the toolbar when the chat is shown and if we're in a
                 // video mode.
                 if (VideoLayout.isLargeVideoVisible()) {
-                    ToolbarToggler.dockToolbar(false);
+                    APP.store.dispatch(dockToolbox(false));
                 }
 
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
                 if (APP.settings.getDisplayName())
-                    $('#usermsg').focus();
+                    deferredFocus('usermsg');
                 else
-                    $('#nickinput').focus();
+                    deferredFocus('nickinput');
             });
 
         addSmileys();
@@ -264,12 +319,10 @@ var Chat = {
         if (subject) {
             subject = subject.trim();
         }
-        $('#subject').html(linkify(UIUtil.escapeHtml(subject)));
-        if (subject) {
-            $("#subject").css({display: "block"});
-        } else {
-            $("#subject").css({display: "none"});
-        }
+
+        const html = linkify(UIUtil.escapeHtml(subject));
+
+        APP.store.dispatch(setSubject(html));
     },
 
     /**
@@ -282,13 +335,6 @@ var Chat = {
     setChatConversationMode (isConversationMode) {
         $('#' + CHAT_CONTAINER_ID)
             .toggleClass('is-conversation-mode', isConversationMode);
-
-        // this is needed when we transition from no conversation mode to
-        // conversation mode. When user enters his nickname and hits enter,
-        // to focus on the write area.
-        if (isConversationMode) {
-            $('#usermsg').focus();
-        }
     },
 
     /**
@@ -316,10 +362,17 @@ var Chat = {
      * Scrolls chat to the bottom.
      */
     scrollChatToBottom () {
-        setTimeout(function () {
-            $('#chatconversation').scrollTop(
-                $('#chatconversation')[0].scrollHeight);
-        }, 5);
+        setTimeout(
+            () => {
+                const chatconversation = $('#chatconversation');
+
+                // XXX Prevent TypeError: undefined is not an object when the
+                // Web browser does not support WebRTC (yet).
+                chatconversation.length > 0
+                    && chatconversation.scrollTop(
+                            chatconversation[0].scrollHeight);
+            },
+            5);
     }
 };
 

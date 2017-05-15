@@ -107,6 +107,10 @@
     float: left;
     padding-left: 5px;
     font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 95%;
+    overflow: hidden;
 }
 
 #chat_container .timestamp {
@@ -208,24 +212,24 @@
     line-height: 30px;
 }
 
-::-webkit-scrollbar {
+:not(.default-scrollbar)::-webkit-scrollbar {
     background: #06a5df;
     width: 7px;
 }
 
-::-webkit-scrollbar-button {
+:not(.default-scrollbar)::-webkit-scrollbar-button {
     display: none;
 }
 
-::-webkit-scrollbar-track {
+:not(.default-scrollbar)::-webkit-scrollbar-track {
     background: black;
 }
 
-::-webkit-scrollbar-track-piece {
+:not(.default-scrollbar)::-webkit-scrollbar-track-piece {
     background: black;
 }
 
-::-webkit-scrollbar-thumb {
+:not(.default-scrollbar)::-webkit-scrollbar-thumb {
     background: #06a5df;
     border-radius: 4px;
 }

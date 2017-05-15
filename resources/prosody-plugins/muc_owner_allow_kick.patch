@@ -1,0 +1,21 @@
+--- muc.lib.lua	2016-10-26 18:26:53.432377291 +0000
++++ muc.lib.lua	2016-10-26 18:41:40.754426072 +0000
+@@ -1256,15 +1256,16 @@
+ 	if actor == true then
+ 		actor = nil -- So we can pass it safely to 'publicise_occupant_status' below
+ 	else
++		local actor_affiliation = self:get_affiliation(actor);
++
+ 		-- Can't do anything to other owners or admins
+ 		local occupant_affiliation = self:get_affiliation(occupant.bare_jid);
+-		if occupant_affiliation == "owner" or occupant_affiliation == "admin" then
++		if (occupant_affiliation == "owner" and actor_affiliation ~= "owner") or (occupant_affiliation == "admin" and actor_affiliation ~= "admin" and actor_affiliation ~= "owner") then
+ 			return nil, "cancel", "not-allowed";
+ 		end
+ 
+ 		-- If you are trying to give or take moderator role you need to be an owner or admin
+ 		if occupant.role == "moderator" or role == "moderator" then
+-			local actor_affiliation = self:get_affiliation(actor);
+ 			if actor_affiliation ~= "owner" and actor_affiliation ~= "admin" then
+ 				return nil, "cancel", "not-allowed";
+ 			end

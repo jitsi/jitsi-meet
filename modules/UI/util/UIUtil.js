@@ -19,6 +19,34 @@ const TOOLTIP_POSITIONS = {
 };
 
 /**
+ * Associates the default display type with corresponding CSS class
+ */
+const SHOW_CLASSES = {
+    'block': 'show',
+    'inline': 'show-inline',
+    'list-item': 'show-list-item'
+};
+
+/**
+ * Contains sizes of thumbnails
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const ThumbnailSizes = {
+    SMALL: 60,
+    MEDIUM: 80
+};
+
+/**
+ * Contains font sizes for thumbnail indicators
+ * @type {{SMALL: number, MEDIUM: number}}
+ */
+const IndicatorFontSizes = {
+    SMALL: 5,
+    MEDIUM: 6,
+    NORMAL: 8
+};
+
+/**
  * Created by hristo on 12/22/14.
  */
  var UIUtil = {
@@ -26,10 +54,8 @@ const TOOLTIP_POSITIONS = {
     /**
      * Returns the available video width.
      */
-    getAvailableVideoWidth: function () {
-        let rightPanelWidth = 0;
-
-        return window.innerWidth - rightPanelWidth;
+    getAvailableVideoWidth() {
+        return window.innerWidth;
     },
 
     /**
@@ -44,7 +70,7 @@ const TOOLTIP_POSITIONS = {
      *
      * @param el the element
      */
-    getTextWidth: function (el) {
+    getTextWidth(el) {
         return (el.clientWidth + 1);
     },
 
@@ -53,7 +79,7 @@ const TOOLTIP_POSITIONS = {
      *
      * @param el the element
      */
-    getTextHeight: function (el) {
+    getTextHeight(el) {
         return (el.clientHeight + 1);
     },
 
@@ -62,14 +88,14 @@ const TOOLTIP_POSITIONS = {
      *
      * @param id the identifier of the audio element.
      */
-    playSoundNotification: function (id) {
+    playSoundNotification(id) {
         document.getElementById(id).play();
     },
 
     /**
      * Escapes the given text.
      */
-    escapeHtml: function (unsafeText) {
+    escapeHtml(unsafeText) {
         return $('<div/>').text(unsafeText).html();
     },
 
@@ -79,11 +105,11 @@ const TOOLTIP_POSITIONS = {
      * @param {string} safe string which contains escaped html
      * @returns {string} unescaped html string.
      */
-    unescapeHtml: function (safe) {
+    unescapeHtml(safe) {
         return $('<div />').html(safe).text();
     },
 
-    imageToGrayScale: function (canvas) {
+    imageToGrayScale(canvas) {
         var context = canvas.getContext('2d');
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
         var pixels  = imgData.data;
@@ -130,12 +156,14 @@ const TOOLTIP_POSITIONS = {
      * @param key the tooltip data-i18n key
      * @param position the position of the tooltip in relation to the element
      */
-    setTooltip: function (element, key, position) {
-        if (element !== null) {
-            element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
-            element.setAttribute('data-i18n', '[content]' + key);
+    setTooltip(element, key, position) {
+        if (element) {
+            const selector = element.jquery ? element : $(element);
 
-            APP.translation.translateElement($(element));
+            selector.attr('data-tooltip', TOOLTIP_POSITIONS[position]);
+            selector.attr('data-i18n', `[content]${key}`);
+
+            APP.translation.translateElement(selector);
         }
     },
 
@@ -144,7 +172,7 @@ const TOOLTIP_POSITIONS = {
      *
      * @param element the element to remove the tooltip from
      */
-    removeTooltip: function (element) {
+    removeTooltip(element) {
         element.removeAttribute('data-tooltip', '');
         element.removeAttribute('data-i18n','');
         element.removeAttribute('content','');
@@ -157,7 +185,7 @@ const TOOLTIP_POSITIONS = {
      * @returns {string|*}
      * @private
      */
-    _getTooltipText: function (element) {
+    _getTooltipText(element) {
         let title = element.getAttribute('content');
         let shortcut = element.getAttribute('shortcut');
         if(shortcut) {
@@ -172,7 +200,7 @@ const TOOLTIP_POSITIONS = {
      * @param container the container to which new child element will be added
      * @param newChild the new element that will be inserted into the container
      */
-    prependChild: function (container, newChild) {
+    prependChild(container, newChild) {
         var firstChild = container.childNodes[0];
         if (firstChild) {
             container.insertBefore(newChild, firstChild);
@@ -188,7 +216,7 @@ const TOOLTIP_POSITIONS = {
      * @returns {boolean} {true} to indicate that the given toolbar button
      * is enabled, {false} - otherwise
      */
-    isButtonEnabled: function (name) {
+    isButtonEnabled(name) {
         return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
                 || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
     },
@@ -200,7 +228,7 @@ const TOOLTIP_POSITIONS = {
      * @returns {boolean} {true} to indicate that the given setting section
      * is enabled, {false} - otherwise
      */
-    isSettingEnabled: function (name) {
+    isSettingEnabled(name) {
         return interfaceConfig.SETTINGS_SECTIONS.indexOf(name) !== -1;
     },
 
@@ -209,47 +237,75 @@ const TOOLTIP_POSITIONS = {
      *
      * @returns {boolean}
      */
-    isAuthenticationEnabled: function() {
+    isAuthenticationEnabled() {
         return interfaceConfig.AUTHENTICATION_ENABLE;
     },
 
     /**
-     * Shows the element given by id.
+     * Shows / hides the element given by id.
      *
-     * @param {String} the identifier of the element to show
+     * @param {string|HTMLElement} idOrElement the identifier or the element
+     *        to show/hide
+     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
      */
-    showElement(id) {
-        if ($("#"+id).hasClass("hide"))
-            $("#"+id).removeClass("hide");
+    setVisible(id, visible) {
+        let element;
+        if (id instanceof HTMLElement) {
+            element = id;
+        } else {
+            element = document.getElementById(id);
+        }
 
-        $("#"+id).addClass("show");
+        if (!element) {
+            return;
+        }
+
+        if (!visible)
+            element.classList.add('hide');
+        else if (element.classList.contains('hide')) {
+            element.classList.remove('hide');
+        }
+
+        let type = this._getElementDefaultDisplay(element.tagName);
+        let className = SHOW_CLASSES[type];
+
+        if (visible) {
+            element.classList.add(className);
+        }
+        else if (element.classList.contains(className))
+            element.classList.remove(className);
     },
 
     /**
-     * Hides the element given by id.
-     *
-     * @param {String} the identifier of the element to hide
+     * Returns default display style for the tag
+     * @param tag
+     * @returns {*}
+     * @private
      */
-    hideElement(id) {
-        if ($("#"+id).hasClass("show"))
-            $("#"+id).removeClass("show");
+    _getElementDefaultDisplay(tag) {
+        let tempElement = document.createElement(tag);
 
-        $("#"+id).addClass("hide");
+        document.body.appendChild(tempElement);
+        let style = window.getComputedStyle(tempElement).display;
+        document.body.removeChild(tempElement);
+
+        return style;
     },
 
     /**
      * Shows / hides the element with the given jQuery selector.
      *
-     * @param {jQuery} selector the jQuery selector of the element to show/hide
+     * @param {jQuery} jquerySelector the jQuery selector of the element to
+     * show / shide
      * @param {boolean} isVisible
      */
-    setVisibility(selector, isVisible) {
-        if (selector && selector.length > 0) {
-            selector.css("visibility", isVisible ? "visible" : "hidden");
+    setVisibleBySelector(jquerySelector, isVisible) {
+        if (jquerySelector && jquerySelector.length > 0) {
+            jquerySelector.css("visibility", isVisible ? "visible" : "hidden");
         }
     },
 
-    hideDisabledButtons: function (mappings) {
+    hideDisabledButtons(mappings) {
         var selector = Object.keys(mappings)
           .map(function (buttonName) {
                 return UIUtil.isButtonEnabled(buttonName)
@@ -259,7 +315,7 @@ const TOOLTIP_POSITIONS = {
         $(selector).hide();
     },
 
-    redirect (url) {
+    redirect(url) {
          window.location.href = url;
     },
 
@@ -314,7 +370,7 @@ const TOOLTIP_POSITIONS = {
       * @param {Object} attrs object with properties
       * @returns {String} string of html element attributes
       */
-     attrsToString: function (attrs) {
+     attrsToString(attrs) {
          return Object.keys(attrs).map(
              key => ` ${key}="${attrs[key]}"`
          ).join(' ');
@@ -411,6 +467,7 @@ const TOOLTIP_POSITIONS = {
 
         if (indicators.length <= 0) {
             indicatorSpan = document.createElement('span');
+
             indicatorSpan.className = 'indicator';
             indicatorSpan.id = indicatorId;
 
@@ -423,6 +480,8 @@ const TOOLTIP_POSITIONS = {
                 APP.translation.translateElement($(indicatorSpan));
             }
 
+            this._resizeIndicator(indicatorSpan);
+
             document.getElementById(videoSpanId)
                 .querySelector('.videocontainer__toptoolbar')
                 .appendChild(indicatorSpan);
@@ -431,6 +490,37 @@ const TOOLTIP_POSITIONS = {
         }
 
         return indicatorSpan;
+    },
+
+    /**
+     * Resizing indicator element passing via argument
+     * according to the current thumbnail size
+     * @param {HTMLElement} indicator - indicator element
+     * @private
+     */
+    _resizeIndicator(indicator) {
+        let height = $('#localVideoContainer').height();
+        let fontSize = this.getIndicatorFontSize(height);
+        $(indicator).css('font-size', fontSize);
+    },
+
+    /**
+     * Returns font size for indicators according to current
+     * height of thumbnail
+     * @param {Number} - height - current height of thumbnail
+     * @returns {Number} - font size for current height
+     */
+    getIndicatorFontSize(height) {
+        const { SMALL, MEDIUM } = ThumbnailSizes;
+        let fontSize = IndicatorFontSizes.NORMAL;
+
+        if (height <= SMALL) {
+            fontSize = IndicatorFontSizes.SMALL;
+        } else if (height > SMALL && height <= MEDIUM) {
+            fontSize = IndicatorFontSizes.MEDIUM;
+        }
+
+        return fontSize;
     }
 };
 

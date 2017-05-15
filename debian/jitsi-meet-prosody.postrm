@@ -36,6 +36,9 @@ case "$1" in
             rm -f /etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
         fi
+
+        # Clear the debconf variable
+        db_purge
     ;;
 
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

@@ -1,6 +1,5 @@
-/* global MD5 */
-
-import { ReducerRegistry } from '../redux';
+import { ReducerRegistry, set } from '../redux';
+import { randomHexString } from '../util';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -25,8 +24,9 @@ import {
  * @property {boolean} local - If true, participant is local.
  * @property {boolean} pinned - If true, participant is currently a
  * "PINNED_ENDPOINT".
- * @property {boolean} speaking - If true, participant is currently a dominant
- * speaker.
+ * @property {boolean} dominantSpeaker - If this participant is the dominant
+ * speaker in the (associated) conference, <tt>true</tt>; otherwise,
+ * <tt>false</tt>.
  * @property {string} email - Participant email.
  */
 
@@ -36,7 +36,7 @@ import {
  * @type {string[]}
  */
 const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
-    = [ 'id', 'local', 'pinned', 'speaking' ];
+    = [ 'dominantSpeaker', 'id', 'local', 'pinned' ];
 
 /**
  * Reducer function for a single participant.
@@ -47,89 +47,105 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
  * @param {Participant} action.participant - Information about participant to be
  * added/modified.
  * @param {JitsiConference} action.conference - Conference instance.
+ * @private
  * @returns {Participant|undefined}
  */
-function participant(state, action) {
+function _participant(state, action) {
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
-        return {
-            ...state,
-            speaking: state.id === action.participant.id
-        };
+        return (
+            set(state, 'dominantSpeaker', state.id === action.participant.id));
 
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
-            const id = action.newValue;
-
             return {
                 ...state,
-                id,
-                avatar: state.avatar || _getAvatarURL(id, state.email)
+                id: action.newValue
             };
         }
-
-        return state;
+        break;
 
     case PARTICIPANT_JOINED: {
         const participant = action.participant; // eslint-disable-line no-shadow
+        const {
+            avatarURL,
+            connectionStatus,
+            dominantSpeaker,
+            email,
+            local,
+            pinned,
+            role
+        } = participant;
+        let { avatarID, id, name } = participant;
+
+        // avatarID
+        //
+        // TODO Get the avatarID of the local participant from localStorage.
+        if (!avatarID && local) {
+            avatarID = randomHexString(32);
+        }
+
+        // id
+        //
         // XXX The situation of not having an ID for a remote participant should
         // not happen. Maybe we should raise an error in this case or generate a
         // random ID.
-        const id
-            = participant.id
-                || (participant.local && LOCAL_PARTICIPANT_DEFAULT_ID);
-        const avatar
-            = participant.avatar || _getAvatarURL(id, participant.email);
+        if (!id && local) {
+            id = LOCAL_PARTICIPANT_DEFAULT_ID;
+        }
 
-        // TODO Get these names from config/localized.
-        const name
-            = participant.name || (participant.local ? 'me' : 'Fellow Jitster');
+        // name
+        if (!name) {
+            // TODO Get the from config and/or localized.
+            name = local ? 'me' : 'Fellow Jitster';
+        }
 
         return {
-            avatar,
-            email: participant.email,
+            avatarID,
+            avatarURL,
+            connectionStatus,
+            dominantSpeaker: dominantSpeaker || false,
+            email,
             id,
-            local: participant.local || false,
+            local: local || false,
             name,
-            pinned: participant.pinned || false,
-            role: participant.role || PARTICIPANT_ROLE.NONE,
-            speaking: participant.speaking || false
+            pinned: pinned || false,
+            role: role || PARTICIPANT_ROLE.NONE
         };
     }
 
-    case PARTICIPANT_UPDATED:
-        if (state.id === action.participant.id) {
+    case PARTICIPANT_UPDATED: {
+        const participant = action.participant; // eslint-disable-line no-shadow
+        const { local } = participant;
+        let { id } = participant;
+
+        if (!id && local) {
+            id = LOCAL_PARTICIPANT_DEFAULT_ID;
+        }
+
+        if (state.id === id) {
             const newState = { ...state };
 
-            for (const key in action.participant) {
-                if (action.participant.hasOwnProperty(key)
+            for (const key in participant) {
+                if (participant.hasOwnProperty(key)
                         && PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key)
                             === -1) {
-                    newState[key] = action.participant[key];
+                    newState[key] = participant[key];
                 }
-            }
-
-            if (!newState.avatar) {
-                newState.avatar
-                    = _getAvatarURL(action.participant.id, newState.email);
             }
 
             return newState;
         }
-
-        return state;
+        break;
+    }
 
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
-        return {
-            ...state,
-            pinned: state.id === action.participant.id
-        };
-
-    default:
-        return state;
+        return set(state, 'pinned', state.id === action.participant.id);
     }
+
+    return state;
 }
 
 /**
@@ -146,7 +162,7 @@ function participant(state, action) {
 ReducerRegistry.register('features/base/participants', (state = [], action) => {
     switch (action.type) {
     case PARTICIPANT_JOINED:
-        return [ ...state, participant(undefined, action) ];
+        return [ ...state, _participant(undefined, action) ];
 
     case PARTICIPANT_LEFT:
         return state.filter(p => p.id !== action.participant.id);
@@ -155,49 +171,9 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PARTICIPANT_ID_CHANGED:
     case PARTICIPANT_UPDATED:
     case PIN_PARTICIPANT:
-        return state.map(p => participant(p, action));
+        return state.map(p => _participant(p, action));
 
     default:
         return state;
     }
 });
-
-/**
- * Returns the URL of the image for the avatar of a particular participant
- * identified by their id and/or e-mail address.
- *
- * @param {string} participantId - Participant's id.
- * @param {string} [email] - Participant's email.
- * @returns {string} The URL of the image for the avatar of the participant
- * identified by the specified participantId and/or email.
- */
-function _getAvatarURL(participantId, email) {
-    // TODO: Use disableThirdPartyRequests config.
-
-    let avatarId = email || participantId;
-
-    // If the ID looks like an email, we'll use gravatar. Otherwise, it's a
-    // random avatar and we'll use the configured URL.
-    const random = !avatarId || avatarId.indexOf('@') < 0;
-
-    if (!avatarId) {
-        avatarId = participantId;
-    }
-
-    // MD5 is provided by Strophe
-    avatarId = MD5.hexdigest(avatarId.trim().toLowerCase());
-
-    let urlPref = null;
-    let urlSuf = null;
-
-    if (random) {
-        // TODO: Use RANDOM_AVATAR_URL_PREFIX from interface config.
-        urlPref = 'https://robohash.org/';
-        urlSuf = '.png?size=200x200';
-    } else {
-        urlPref = 'https://www.gravatar.com/avatar/';
-        urlSuf = '?d=wavatar&size=200';
-    }
-
-    return urlPref + avatarId + urlSuf;
-}

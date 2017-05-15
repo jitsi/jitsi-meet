@@ -29,18 +29,19 @@
 
 /* Fonts END */
 
-/* Theme  BEGIN */
-@import "themes/main";
-/* Theme END */
-
 /* Modules BEGIN */
 
 @import 'toastr';
 @import 'base';
+@import 'utils';
 @import 'overlay/overlay';
+@import 'inlay';
 @import 'reload_overlay/reload_overlay';
+@import 'modals/desktop-picker/desktop-picker';
+@import 'modals/device-selection/device-selection';
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
+@import 'modals/speaker_stats/speaker_stats';
 @import 'videolayout_default';
 @import 'notice';
 @import 'popup_menu';
@@ -54,16 +55,21 @@
 @import 'welcome_page';
 @import 'toolbars';
 @import 'side_toolbar_container';
-@import 'device_settings_dialog';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';
-@import 'input-control/input-control';
+@import 'components/form-control';
+@import 'components/link';
 @import 'shortcuts/main';
-@import 'buttons/button-control';
+@import 'components/button-control';
+@import 'components/input-control';
+@import 'components/input-slider';
 @import "modals/invite/invite";
 @import "connection-info";
 @import 'aui-components/dropdown';
 @import '404';
+@import 'policy';
+@import 'filmstrip';
+@import 'unsupported-browser/main';
 
 /* Modules END */

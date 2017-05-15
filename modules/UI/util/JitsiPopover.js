@@ -53,7 +53,8 @@ var JitsiPopover = (function () {
             `<div class="jitsipopover ${this.options.skin}">
                 ${arrow}
                 <div class="jitsipopover__content"></div>
-            <div class="jitsipopover__menu-padding"></div></div>`
+                <div class="jitsipopover__menu-padding"></div>
+            </div>`
         );
     };
 
@@ -68,7 +69,7 @@ var JitsiPopover = (function () {
     };
 
     /**
-     * Hides the popover
+     * Hides the popover if not hovered or popover is not shown.
      */
     JitsiPopover.prototype.hide = function () {
         if(!this.elementIsHovered && !this.popoverIsHovered &&
@@ -78,7 +79,7 @@ var JitsiPopover = (function () {
     };
 
     /**
-     * Hides the popover.
+     * Hides the popover and clears the document elements added by popover.
      */
     JitsiPopover.prototype.forceHide = function () {
         $(".jitsipopover").remove();

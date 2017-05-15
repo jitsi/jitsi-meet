@@ -66,7 +66,7 @@ function createRateFeedbackHTML() {
                 </div>
             </div>
             <div class="details">
-                <textarea id="feedbackTextArea" class="input-control__input" 
+                <textarea id="feedbackTextArea" class="input-control" 
                     data-i18n="[placeholder]dialog.feedbackHelp"></textarea>
             </div>
         </form>`;
@@ -164,9 +164,7 @@ export default class Dialog {
     }
 
     setFeedbackMessage() {
-        let message = $('#feedbackTextArea').val();
-
-        this.feedbackMessage = message;
+        this.feedbackMessage = $('#feedbackTextArea').val();
     }
 
     show(cb) {
@@ -179,6 +177,8 @@ export default class Dialog {
     }
 
     onHide() {
-        this.onCloseCallback(this.feedbackScore, this.feedbackMessage);
+        this.onCloseCallback({
+            feedbackSubmitted: this.submitted
+        });
     }
 }

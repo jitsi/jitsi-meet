@@ -20,12 +20,9 @@ export default {
     START_MUTED_CHANGED: "UI.start_muted_changed",
     AUDIO_MUTED: "UI.audio_muted",
     VIDEO_MUTED: "UI.video_muted",
+    VIDEO_UNMUTING_WHILE_AUDIO_ONLY: "UI.video_unmuting_while_audio_only",
     ETHERPAD_CLICKED: "UI.etherpad_clicked",
     SHARED_VIDEO_CLICKED: "UI.start_shared_video",
-    /**
-     * Indicates that an invite button has been clicked.
-     */
-    INVITE_CLICKED: "UI.invite_clicked",
     /**
      * Updates shared video with params: url, state, time(optional)
      * Where url is the video link, state is stop/start/pause and time is the
@@ -37,6 +34,10 @@ export default {
     TOGGLE_FULLSCREEN: "UI.toogle_fullscreen",
     FULLSCREEN_TOGGLED: "UI.fullscreen_toggled",
     AUTH_CLICKED: "UI.auth_clicked",
+    /**
+     * Notifies that the audio only mode was toggled.
+     */
+    TOGGLE_AUDIO_ONLY: "UI.toggle_audioonly",
     TOGGLE_CHAT: "UI.toggle_chat",
     TOGGLE_SETTINGS: "UI.toggle_settings",
     TOGGLE_CONTACT_LIST: "UI.toggle_contact_list",
@@ -45,25 +46,25 @@ export default {
      */
     TOGGLE_PROFILE: "UI.toggle_profile",
     /**
-     * Notifies that a command to toggle the film strip has been issued. The
+     * Notifies that a command to toggle the filmstrip has been issued. The
      * event may optionally specify a {Boolean} (primitive) value to assign to
-     * the visibility of the film strip (i.e. the event may act as a setter).
-     * The very toggling of the film strip may or may not occurred at the time
+     * the visibility of the filmstrip (i.e. the event may act as a setter).
+     * The very toggling of the filmstrip may or may not occurred at the time
      * of the receipt of the event depending on the position of the receiving
      * event listener in relation to the event listener which carries out the
-     * command to toggle the film strip.
+     * command to toggle the filmstrip.
      *
-     * @see {TOGGLED_FILM_STRIP}
+     * @see {TOGGLED_FILMSTRIP}
      */
-    TOGGLE_FILM_STRIP: "UI.toggle_film_strip",
+    TOGGLE_FILMSTRIP: "UI.toggle_filmstrip",
     /**
-     * Notifies that the film strip was (actually) toggled. The event supplies
-     * a {Boolean} (primitive) value indicating the visibility of the film
-     * strip after the toggling (at the time of the event emission).
+     * Notifies that the filmstrip was (actually) toggled. The event supplies a
+     * {Boolean} (primitive) value indicating the visibility of the filmstrip
+     * after the toggling (at the time of the event emission).
      *
-     * @see {TOGGLE_FILM_STRIP}
+     * @see {TOGGLE_FILMSTRIP}
      */
-    TOGGLED_FILM_STRIP: "UI.toggled_film_strip",
+    TOGGLED_FILMSTRIP: "UI.toggled_filmstrip",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
     TOGGLED_SHARED_DOCUMENT: "UI.toggled_shared_document",
     CONTACT_CLICKED: "UI.contact_clicked",
@@ -121,6 +122,11 @@ export default {
     LARGE_VIDEO_AVATAR_VISIBLE: "UI.large_video_avatar_visible",
 
     /**
+     * Notifies that the displayed particpant id on the largeVideo is changed.
+     */
+    LARGE_VIDEO_ID_CHANGED: "UI.large_video_id_changed",
+
+    /**
      * Toggling room lock
      */
     TOGGLE_ROOM_LOCK: "UI.toggle_room_lock",
@@ -146,7 +152,7 @@ export default {
     DISPLAY_NAME_CHANGED: "UI.display_name_changed",
 
     /**
-     * Indicates that a password is required for the call.
+     * Show custom popup/tooltip for a specified button.
      */
-    PASSWORD_REQUIRED: "UI.password_required"
+    SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP: "UI.show_custom_toolbar_button_popup"
 };

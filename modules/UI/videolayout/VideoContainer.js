@@ -1,7 +1,7 @@
 /* global $, APP, interfaceConfig */
 /* jshint -W101 */
 
-import FilmStrip from './FilmStrip';
+import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -32,6 +32,10 @@ function getStreamOwnerId(stream) {
  * ratio and fits available area with it's larger dimension. This method
  * ensures that whole video will be visible and can leave empty areas.
  *
+ * @param videoWidth the width of the video to position
+ * @param videoHeight the height of the video to position
+ * @param videoSpaceWidth the width of the available space
+ * @param videoSpaceHeight the height of the available space
  * @return an array with 2 elements, the video width and the video height
  */
 function getDesktopVideoSize(videoWidth,
@@ -44,7 +48,7 @@ function getDesktopVideoSize(videoWidth,
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    videoSpaceHeight -= FilmStrip.getFilmStripHeight();
+    videoSpaceHeight -= Filmstrip.getFilmstripHeight();
 
     if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;
@@ -160,12 +164,20 @@ export class VideoContainer extends LargeContainer {
         return getStreamOwnerId(this.stream);
     }
 
-    constructor (onPlay, emitter) {
+    /**
+     * Creates new VideoContainer instance.
+     * @param resizeContainer {Function} function that takes care of the size
+     * of the video container.
+     * @param emitter {EventEmitter} the event emitter that will be used by
+     * this instance.
+     */
+    constructor (resizeContainer, emitter) {
         super();
         this.stream = null;
         this.videoType = null;
         this.localFlipX = true;
         this.emitter = emitter;
+        this.resizeContainer = resizeContainer;
 
         this.isVisible = false;
 
@@ -195,8 +207,8 @@ export class VideoContainer extends LargeContainer {
         this.avatarHeight = $("#dominantSpeakerAvatar").height();
 
         var onPlayCallback = function (event) {
-            if (typeof onPlay === 'function') {
-                onPlay(event);
+            if (typeof resizeContainer === 'function') {
+                resizeContainer(event);
             }
             this.wasVideoRendered = true;
         }.bind(this);
@@ -298,6 +310,12 @@ export class VideoContainer extends LargeContainer {
     }
 
     resize (containerWidth, containerHeight, animate = false) {
+        // XXX Prevent TypeError: undefined is not an object when the Web
+        // browser does not support WebRTC (yet).
+        if (this.$video.length === 0) {
+            return;
+        }
+
         let [width, height]
             = this.getVideoSize(containerWidth, containerHeight);
         let { horizontalIndent, verticalIndent }
@@ -332,8 +350,14 @@ export class VideoContainer extends LargeContainer {
      * @param {string} videoType video type
      */
     setStream (stream, videoType) {
-
         if (this.stream === stream) {
+            // Handles the use case for the remote participants when the
+            // videoType is received with delay after turning on/off the
+            // desktop sharing.
+            if(this.videoType !== videoType) {
+                this.videoType = videoType;
+                this.resizeContainer();
+            }
             return;
         } else {
             // The stream has changed, so the image will be lost on detach
@@ -357,6 +381,9 @@ export class VideoContainer extends LargeContainer {
         this.$video.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
+
+        // Reset the large video background depending on the stream.
+        this.setLargeVideoBackground(this.avatarDisplayed);
     }
 
     /**
@@ -391,8 +418,7 @@ export class VideoContainer extends LargeContainer {
         // default background set.
         // In order to fix this code we need to introduce video background or
         // find a workaround for the video flickering.
-        $("#largeVideoContainer").css("background",
-            (show) ? interfaceConfig.DEFAULT_BACKGROUND : "#000");
+        this.setLargeVideoBackground(show);
 
         this.$avatar.css("visibility", show ? "visible" : "hidden");
         this.avatarDisplayed = show;
@@ -460,5 +486,20 @@ export class VideoContainer extends LargeContainer {
      */
     stayOnStage () {
         return false;
+    }
+
+    /**
+     * Sets the large video container background depending on the container
+     * type and the parameter indicating if an avatar is currently shown on
+     * large.
+     *
+     * @param {boolean} isAvatar - Indicates if the avatar is currently shown
+     * on the large video.
+     * @returns {void}
+     */
+    setLargeVideoBackground (isAvatar) {
+        $("#largeVideoContainer").css("background",
+            (this.videoType === VIDEO_CONTAINER_TYPE && !isAvatar)
+                ? "#000" : interfaceConfig.DEFAULT_BACKGROUND);
     }
 }

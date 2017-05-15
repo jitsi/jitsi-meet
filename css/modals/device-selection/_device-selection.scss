@@ -1,0 +1,132 @@
+.device-selection {
+    color: $feedbackInputTextColor;
+
+    .device-selectors {
+        font-size: 14px;
+
+        > div {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        > div:last-child {
+            margin-bottom: 5px;
+        }
+
+        .device-selector-icon {
+            align-self: center;
+            color: inherit;
+            font-size: 20px;
+            margin-left: 3px;
+        }
+
+        /* device-selector-trigger stylings attempt to mimic AtlasKit button */
+        .device-selector-trigger {
+            background-color: rgba(9, 30, 66, 0.04);
+            border-radius: 3px;
+            color: #505f79;
+            display: flex;
+            height: 2.3em;
+            justify-content: space-between;
+            line-height: 2.3em;
+            overflow: hidden;
+            padding: 0 8px;
+
+            &:hover {
+                background-color: rgba(9,30,66,.08);
+            }
+        }
+        .device-selector-trigger-disabled {
+            .device-selector-trigger {
+                color: #a5adba;
+                cursor: default;
+            }
+        }
+
+        .device-selector-trigger-text {
+            overflow: hidden;
+            margin-left: 8px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+    }
+
+    .device-selection-column {
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: top;
+
+        &.column-selectors {
+            margin-left: 15px;
+            width: 45%;
+        }
+
+        &.column-video {
+            width: 50%;
+        }
+    }
+
+    .device-selection-video-container {
+        border-radius: 3px;
+        margin-bottom: 5px;
+
+        .video-input-preview {
+            margin-top: 2px;
+            position: relative;
+
+            > video {
+                border-radius: 3px;
+            }
+
+            .video-input-preview-error {
+                color: $participantNameColor;
+                display: none;
+                left: 0;
+                position: absolute;
+                right: 0;
+                text-align: center;
+                top: 50%;
+            }
+
+            &.video-preview-has-error {
+                background: black;
+
+                .video-input-preview-error {
+                    display: block;
+                }
+            }
+
+            .video-input-preview-display {
+                height: auto;
+                overflow: hidden;
+                width: 100%;
+            }
+        }
+    }
+
+    .audio-output-preview {
+        font-size: 14px;
+        margin-top: 10px;
+        a {
+            cursor: pointer;
+            text-decoration: none;
+        }
+    }
+
+    .audio-input-preview {
+        background: #f4f5f7;
+        border-radius: 5px;
+        height: 6px;
+
+        .audio-input-preview-level {
+            background: #0052cc;
+            border-radius: 5px;
+            height: 100%;
+            -webkit-transition: width .1s ease-in-out;
+            -moz-transition: width .1s ease-in-out;
+            -o-transition: width .1s ease-in-out;
+            transition: width .1s ease-in-out;
+        }
+    }
+}

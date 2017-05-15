@@ -3,9 +3,10 @@ import { combineReducers } from 'redux';
 import { ReducerRegistry } from '../redux';
 
 import {
-    AUDIO_MUTED_CHANGED,
-    CAMERA_FACING_MODE_CHANGED,
-    VIDEO_MUTED_CHANGED
+    SET_AUDIO_MUTED,
+    SET_CAMERA_FACING_MODE,
+    SET_VIDEO_MUTED,
+    TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
 
@@ -31,11 +32,12 @@ const AUDIO_INITIAL_MEDIA_STATE = {
  * @param {AudioMediaState} state - Media state of local audio.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
+ * @private
  * @returns {AudioMediaState}
  */
-function audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
+function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
-    case AUDIO_MUTED_CHANGED:
+    case SET_AUDIO_MUTED:
         return {
             ...state,
             muted: action.muted
@@ -70,21 +72,36 @@ const VIDEO_INITIAL_MEDIA_STATE = {
  * @param {VideoMediaState} state - Media state of local video.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
+ * @private
  * @returns {VideoMediaState}
  */
-function video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
+function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
-    case CAMERA_FACING_MODE_CHANGED:
+    case SET_CAMERA_FACING_MODE:
         return {
             ...state,
             facingMode: action.cameraFacingMode
         };
 
-    case VIDEO_MUTED_CHANGED:
+    case SET_VIDEO_MUTED:
         return {
             ...state,
             muted: action.muted
         };
+
+    case TOGGLE_CAMERA_FACING_MODE: {
+        let cameraFacingMode = state.facingMode;
+
+        cameraFacingMode
+            = cameraFacingMode === CAMERA_FACING_MODE.USER
+                ? CAMERA_FACING_MODE.ENVIRONMENT
+                : CAMERA_FACING_MODE.USER;
+
+        return {
+            ...state,
+            facingMode: cameraFacingMode
+        };
+    }
 
     default:
         return state;
@@ -102,6 +119,6 @@ function video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
  * @returns {Object}
  */
 ReducerRegistry.register('features/base/media', combineReducers({
-    audio,
-    video
+    audio: _audio,
+    video: _video
 }));

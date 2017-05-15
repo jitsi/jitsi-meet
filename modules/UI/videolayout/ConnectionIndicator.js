@@ -1,8 +1,29 @@
 /* global $, APP, config */
 /* jshint -W101 */
+import {
+    setLargeVideoHDStatus
+} from '../../../react/features/base/conference';
+
 import JitsiPopover from "../util/JitsiPopover";
 import VideoLayout from "./VideoLayout";
 import UIUtil from "../util/UIUtil";
+
+/**
+ * Maps a connection quality value (in percent) to the width of the "full" icon.
+ */
+const qualityToWidth = [
+    // Full (5 bars)
+    {percent: 80, width: "100%"},
+    // 4 bars
+    {percent: 60, width: "80%"},
+    // 3 bars
+    {percent: 40, width: "55%"},
+    // 2 bars
+    {percent: 20, width: "40%"},
+    // 1 bar
+    {percent: 0, width: "20%"}
+    // Note: we never show 0 bars.
+];
 
 /**
  * Constructs new connection indicator.
@@ -19,28 +40,11 @@ function ConnectionIndicator(videoContainer, videoId) {
     this.resolution = null;
     this.isResolutionHD = null;
     this.transport = [];
+    this.framerate = null;
     this.popover = null;
     this.id = videoId;
     this.create();
 }
-
-/**
- * Values for the connection quality
- * @type {{98: string,
- *         81: string,
- *         64: string,
- *         47: string,
- *         30: string,
- *         0: string}}
- */
-ConnectionIndicator.connectionQualityValues = {
-    98: "100%", //full
-    81: "80%",//4 bars
-    64: "55%",//3 bars
-    47: "40%",//2 bars
-    30: "20%",//1 bar
-    0: "0"//empty
-};
 
 ConnectionIndicator.getIP = function(value) {
     return value.substring(0, value.lastIndexOf(":"));
@@ -65,7 +69,7 @@ ConnectionIndicator.getStringFromArray = function (array) {
 ConnectionIndicator.prototype.generateText = function () {
     var downloadBitrate, uploadBitrate, packetLoss, i;
 
-    if(this.bitrate === null) {
+    if(!this.bitrate) {
         downloadBitrate = "N/A";
         uploadBitrate = "N/A";
     }
@@ -76,7 +80,7 @@ ConnectionIndicator.prototype.generateText = function () {
             this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
     }
 
-    if(this.packetLoss === null) {
+    if(!this.packetLoss) {
         packetLoss = "N/A";
     } else {
 
@@ -89,11 +93,16 @@ ConnectionIndicator.prototype.generateText = function () {
     }
 
     // GENERATE RESOLUTIONS STRING
-    let resolutions = this.resolution || {};
-    let resolutionStr = Object.keys(resolutions).map(function (ssrc) {
+    const resolutions = this.resolution || {};
+    const resolutionStr = Object.keys(resolutions).map(ssrc => {
         let {width, height} = resolutions[ssrc];
         return `${width}x${height}`;
     }).join(', ') || 'N/A';
+
+    const framerates = this.framerate || {};
+    const frameRateStr = Object.keys(framerates).map(ssrc =>
+        framerates[ssrc]
+    ).join(', ') || 'N/A';
 
     let result = (
         `<table class="connection-info__container" style='width:100%'>
@@ -120,6 +129,14 @@ ConnectionIndicator.prototype.generateText = function () {
                     ${resolutionStr}
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <span data-i18n='connectionindicator.framerate'></span>
+                </td>
+                <td>
+                    ${frameRateStr}
+                </td>
+            </tr>
         </table>`);
 
     if(this.videoContainer.videoSpanId == "localVideoContainer") {
@@ -133,7 +150,7 @@ ConnectionIndicator.prototype.generateText = function () {
 
     if (this.showMoreValue) {
         var downloadBandwidth, uploadBandwidth, transport;
-        if (this.bandwidth === null) {
+        if (!this.bandwidth) {
             downloadBandwidth = "N/A";
             uploadBandwidth = "N/A";
         } else {
@@ -151,7 +168,12 @@ ConnectionIndicator.prototype.generateText = function () {
                 "data-i18n='connectionindicator.address'></span></td>" +
                 "<td> N/A</td></tr>";
         } else {
-            var data = {remoteIP: [], localIP:[], remotePort:[], localPort:[]};
+            var data = {
+                remoteIP: [],
+                localIP:[],
+                remotePort:[],
+                localPort:[],
+                transportType:[]};
             for(i = 0; i < this.transport.length; i++) {
                 var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
                 var port = ConnectionIndicator.getPort(this.transport[i].ip);
@@ -174,7 +196,14 @@ ConnectionIndicator.prototype.generateText = function () {
                 if(data.localPort.indexOf(localPort) == -1) {
                     data.localPort.push(localPort);
                 }
+
+                if(data.transportType.indexOf(this.transport[i].type) == -1) {
+                    data.transportType.push(this.transport[i].type);
+                }
             }
+
+            // All of the transports should be either P2P or JVB
+            const isP2P = this.transport.length ? this.transport[0].p2p : false;
 
             var local_address_key = "connectionindicator.localaddress";
             var remote_address_key = "connectionindicator.remoteaddress";
@@ -190,8 +219,14 @@ ConnectionIndicator.prototype.generateText = function () {
                 remote_address_key + "' data-i18n-options='" +
                     JSON.stringify({count: data.remoteIP.length})
                         + "'></span></td><td> " +
-                ConnectionIndicator.getStringFromArray(data.remoteIP) +
-                "</td></tr>";
+                ConnectionIndicator.getStringFromArray(data.remoteIP);
+
+            // Append (p2p) to indicate the P2P type of transport
+            if (isP2P) {
+                transport
+                    += "<span data-i18n='connectionindicator.peer_to_peer'>";
+            }
+            transport += "</td></tr>";
 
             var key_remote = "connectionindicator.remoteport",
                 key_local = "connectionindicator.localport";
@@ -216,9 +251,13 @@ ConnectionIndicator.prototype.generateText = function () {
             transport += "</td></tr>";
             transport += localTransport + "</td></tr>";
             transport +="<tr>" +
-                "<td><span data-i18n='connectionindicator.transport'>" +
-                    "</span></td>" +
-                "<td>" + this.transport[0].type + "</td></tr>";
+                "<td><span data-i18n='connectionindicator.transport' "
+                    + " data-i18n-options='" +
+                    JSON.stringify({count: data.transportType.length})
+                + "'></span></td>" +
+                "<td>"
+                    + ConnectionIndicator.getStringFromArray(data.transportType);
+                + "</td></tr>";
 
         }
 
@@ -322,17 +361,17 @@ ConnectionIndicator.prototype.remove = function() {
  * the user is having connectivity issues.
  */
 ConnectionIndicator.prototype.updateConnectionStatusIndicator
-= function (isActive) {
-    this.isConnectionActive = isActive;
-    if (this.isConnectionActive) {
-        $(this.interruptedIndicator).hide();
-        $(this.emptyIcon).show();
-        $(this.fullIcon).show();
-    } else {
-        $(this.interruptedIndicator).show();
-        $(this.emptyIcon).hide();
-        $(this.fullIcon).hide();
-    }
+    = function (isActive) {
+        this.isConnectionActive = isActive;
+        if (this.isConnectionActive) {
+            $(this.interruptedIndicator).hide();
+            $(this.emptyIcon).show();
+            $(this.fullIcon).show();
+        } else {
+            $(this.interruptedIndicator).show();
+            $(this.emptyIcon).hide();
+            $(this.fullIcon).hide();
+        }
 };
 
 /**
@@ -342,7 +381,7 @@ ConnectionIndicator.prototype.updateConnectionStatusIndicator
  */
 ConnectionIndicator.prototype.updateConnectionQuality =
     function (percent, object) {
-    if (percent === null) {
+    if (!percent) {
         this.connectionIndicatorContainer.style.display = "none";
         this.popover.forceHide();
         return;
@@ -359,13 +398,13 @@ ConnectionIndicator.prototype.updateConnectionQuality =
         if (object.resolution) {
             this.resolution = object.resolution;
         }
+        if (object.framerate)
+            this.framerate = object.framerate;
     }
-    for (var quality in ConnectionIndicator.connectionQualityValues) {
-        if (percent >= quality) {
-            this.fullIcon.style.width =
-                ConnectionIndicator.connectionQualityValues[quality];
-        }
-    }
+
+    let width = qualityToWidth.find(x => percent >= x.percent);
+    this.fullIcon.style.width = width.width;
+
     if (object && typeof object.isResolutionHD === 'boolean') {
         this.isResolutionHD = object.isResolutionHD;
     }
@@ -380,6 +419,15 @@ ConnectionIndicator.prototype.updateConnectionQuality =
 ConnectionIndicator.prototype.updateResolution = function (resolution) {
     this.resolution = resolution;
     this.updateResolutionIndicator();
+    this.updatePopoverData();
+};
+
+/**
+ * Updates the framerate
+ * @param framerate the new resolution
+ */
+ConnectionIndicator.prototype.updateFramerate = function (framerate) {
+    this.framerate = framerate;
     this.updatePopoverData();
 };
 
@@ -434,7 +482,7 @@ ConnectionIndicator.prototype.updateResolutionIndicator = function () {
                 });
         }
 
-        VideoLayout.updateResolutionLabel(showResolutionLabel);
+        APP.store.dispatch(setLargeVideoHDStatus(showResolutionLabel));
     }
 };
 

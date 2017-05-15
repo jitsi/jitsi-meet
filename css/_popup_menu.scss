@@ -6,7 +6,6 @@
     padding: 0;
     margin: 2px 0;
     bottom: 0;
-    width: 100px;
     height: auto;
 
     &:first-child {
@@ -24,7 +23,8 @@
     }
 
     // Link Appearance
-    &__link {
+    &__link,
+    &__contents {
         display: block;
         box-sizing: border-box;
         text-decoration: none;
@@ -41,9 +41,14 @@
         }
     }
 
-    &__text {
+    &__text,
+    &__slider {
         display: inline-block;
         vertical-align: middle;
+    }
+
+    &__slider {
+        width: 50px;
     }
 
     &__icon {
@@ -66,4 +71,9 @@
 
 span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
     display:block !important;
+}
+
+.remote-control-spinner {
+    top: 6px;
+    left: 2px;
 }

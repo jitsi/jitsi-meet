@@ -1,264 +1,272 @@
-/* global APP, getConfigParamsFromUrl */
-/**
- * Implements API class that communicates with external api class
- * and provides interface to access Jitsi Meet features by external
- * applications that embed Jitsi Meet
- */
+import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
+import { getJitsiMeetTransport } from '../transport';
 
-import postisInit from 'postis';
+import { API_ID } from './constants';
+
+declare var APP: Object;
 
 /**
  * List of the available commands.
- * @type {{
- *              displayName: inputDisplayNameHandler,
- *              toggleAudio: toggleAudio,
- *              toggleVideo: toggleVideo,
- *              toggleFilmStrip: toggleFilmStrip,
- *              toggleChat: toggleChat,
- *              toggleContactList: toggleContactList
- *          }}
  */
 let commands = {};
 
-let hashParams = getConfigParamsFromUrl();
+/**
+ * The state of screen sharing(started/stopped) before the screen sharing is
+ * enabled and initialized.
+ * NOTE: This flag help us to cache the state and use it if toggle-share-screen
+ * was received before the initialization.
+ */
+let initialScreenSharingState = false;
 
 /**
- * JitsiMeetExternalAPI id - unique for a webpage.
+ * The transport instance used for communication with external apps.
+ *
+ * @type {Transport}
  */
-let jitsi_meet_external_api_id = hashParams.jitsi_meet_external_api_id;
+const transport = getJitsiMeetTransport();
 
 /**
- * Object that will execute sendMessage
+ * Initializes supported commands.
+ *
+ * @returns {void}
  */
-let target = window.opener ? window.opener : window.parent;
-
-/**
- * Postis instance. Used to communicate with the external application.
- */
-let postis;
-
-/**
- * Current status (enabled/disabled) of API.
- */
-let enabled = false;
-
 function initCommands() {
     commands = {
-        "display-name": APP.UI.inputDisplayNameHandler,
-        "toggle-audio": APP.conference.toggleAudioMuted.bind(APP.conference),
-        "toggle-video": APP.conference.toggleVideoMuted.bind(APP.conference),
-        "toggle-film-strip": APP.UI.toggleFilmStrip,
-        "toggle-chat": APP.UI.toggleChat,
-        "toggle-contact-list": APP.UI.toggleContactList,
-        "toggle-share-screen":
-            APP.conference.toggleScreenSharing.bind(APP.conference),
-        "video-hangup": () => APP.conference.hangup()
+        'display-name':
+            APP.conference.changeLocalDisplayName.bind(APP.conference),
+        'toggle-audio': () => APP.conference.toggleAudioMuted(true),
+        'toggle-video': () => APP.conference.toggleVideoMuted(true),
+        'toggle-film-strip': APP.UI.toggleFilmstrip,
+        'toggle-chat': APP.UI.toggleChat,
+        'toggle-contact-list': APP.UI.toggleContactList,
+        'toggle-share-screen': toggleScreenSharing,
+        'video-hangup': () => APP.conference.hangup(),
+        'email': APP.conference.changeLocalEmail,
+        'avatar-url': APP.conference.changeLocalAvatarUrl
     };
-    Object.keys(commands).forEach(function (key) {
-        postis.listen(key, commands[key]);
+    transport.on('event', ({ data, name }) => {
+        if (name && commands[name]) {
+            commands[name](...data);
+
+            return true;
+        }
+
+        return false;
     });
 }
 
-
 /**
- * Maps the supported events and their status
- * (true it the event is enabled and false if it is disabled)
- * @type {{
- *              incoming-message: boolean,
- *              outgoing-message: boolean,
- *              display-name-change: boolean,
- *              participant-left: boolean,
- *              participant-joined: boolean,
- *              video-conference-left: boolean,
- *              video-conference-joined: boolean
- *      }}
+ * Listens for desktop/screen sharing enabled events and toggles the screen
+ * sharing if needed.
+ *
+ * @param {boolean} enabled - Current screen sharing enabled status.
+ * @returns {void}
  */
-const events = {
-    "incoming-message": false,
-    "outgoing-message":false,
-    "display-name-change": false,
-    "participant-joined": false,
-    "participant-left": false,
-    "video-conference-joined": false,
-    "video-conference-left": false,
-    "video-ready-to-close": false
-};
-
-/**
- * Sends message to the external application.
- * @param message {object}
- * @param method {string}
- * @param params {object} the object that will be sent as JSON string
- */
-function sendMessage(message) {
-    if(enabled)
-        postis.send(message);
+function onDesktopSharingEnabledChanged(enabled = false) {
+    if (enabled && initialScreenSharingState) {
+        toggleScreenSharing();
+    }
 }
 
 /**
  * Check whether the API should be enabled or not.
+ *
  * @returns {boolean}
  */
-function isEnabled () {
-    return (typeof jitsi_meet_external_api_id === "number");
+function shouldBeEnabled() {
+    return typeof API_ID === 'number';
 }
 
 /**
- * Checks whether the event is enabled ot not.
- * @param name the name of the event.
- * @returns {*}
+ * Executes on toggle-share-screen command.
+ *
+ * @returns {void}
  */
-function isEventEnabled (name) {
-    return events[name];
-}
-
-/**
- * Sends event object to the external application that has been subscribed
- * for that event.
- * @param name the name event
- * @param object data associated with the event
- */
-function triggerEvent (name, object) {
-    if(isEventEnabled(name))
-        sendMessage({method: name, params: object});
-}
-
-/**
- * Handles system messages. (for example: enable/disable events)
- * @param message {object} the message
- */
-function onSystemMessage(message) {
-    switch (message.type) {
-        case "eventStatus":
-            if(!message.name || !message.value) {
-                console.warn("Unknown system message format", message);
-                break;
-            }
-            events[message.name] = message.value;
-            break;
-        default:
-            console.warn("Unknown system message type", message);
+function toggleScreenSharing() {
+    if (APP.conference.isDesktopSharingEnabled) {
+        APP.conference.toggleScreenSharing();
+    } else {
+        initialScreenSharingState = !initialScreenSharingState;
     }
 }
 
-export default {
+/**
+ * Implements API class that communicates with external API class and provides
+ * interface to access Jitsi Meet features by external applications that embed
+ * Jitsi Meet.
+ */
+class API {
     /**
-     * Initializes the APIConnector. Setups message event listeners that will
-     * receive information from external applications that embed Jitsi Meet.
-     * It also sends a message to the external application that APIConnector
-     * is initialized.
-     * @param options {object}
-     * @param forceEnable {boolean} if true the module will be enabled.
-     * @param enabledEvents {array} array of events that should be enabled.
+     * Initializes the API. Setups message event listeners that will receive
+     * information from external applications that embed Jitsi Meet. It also
+     * sends a message to the external application that API is initialized.
+     *
+     * @param {Object} options - Optional parameters.
+     * @param {boolean} options.forceEnable - True to forcefully enable the
+     * module.
+     * @returns {void}
      */
-    init (options = {}) {
-        if(!isEnabled() && !options.forceEnable)
+    init({ forceEnable } = {}) {
+        if (!shouldBeEnabled() && !forceEnable) {
             return;
+        }
 
-        enabled = true;
-        if(options.enabledEvents)
-            options.enabledEvents.forEach(function (eventName) {
-                events[eventName] = true;
-            });
-        let postisOptions = {
-            window: target
-        };
-        if(typeof jitsi_meet_external_api_id === "number")
-            postisOptions.scope
-                = "jitsi_meet_external_api_" + jitsi_meet_external_api_id;
-        postis = postisInit(postisOptions);
-        postis.listen("jitsiSystemMessage", onSystemMessage);
+        /**
+         * Current status (enabled/disabled) of API.
+         *
+         * @private
+         * @type {boolean}
+         */
+        this._enabled = true;
+
+        APP.conference.addListener(
+            JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
+            onDesktopSharingEnabledChanged);
+
         initCommands();
-    },
+    }
+
+    /**
+     * Sends event to the external application.
+     *
+     * @param {Object} event - The event to be sent.
+     * @returns {void}
+     */
+    _sendEvent(event = {}) {
+        if (this._enabled) {
+            transport.sendEvent(event);
+        }
+    }
 
     /**
      * Notify external application (if API is enabled) that message was sent.
-     * @param {string} body message body
+     *
+     * @param {string} message - Message body.
+     * @returns {void}
      */
-    notifySendingChatMessage (body) {
-        triggerEvent("outgoing-message", {"message": body});
-    },
+    notifySendingChatMessage(message) {
+        this._sendEvent({
+            name: 'outgoing-message',
+            message
+        });
+    }
 
     /**
-     * Notify external application (if API is enabled) that
-     * message was received.
-     * @param {string} id user id
-     * @param {string} nick user nickname
-     * @param {string} body message body
-     * @param {number} ts message creation timestamp
+     * Notify external application (if API is enabled) that message was
+     * received.
+     *
+     * @param {Object} options - Object with the message properties.
+     * @returns {void}
      */
-    notifyReceivedChatMessage (id, nick, body, ts) {
+    notifyReceivedChatMessage({ body, id, nick, ts } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
         }
 
-        triggerEvent(
-            "incoming-message",
-            {"from": id, "nick": nick, "message": body, "stamp": ts}
-        );
-    },
-
-    /**
-     * Notify external application (if API is enabled) that
-     * user joined the conference.
-     * @param {string} id user id
-     */
-    notifyUserJoined (id) {
-        triggerEvent("participant-joined", {id});
-    },
-
-    /**
-     * Notify external application (if API is enabled) that
-     * user left the conference.
-     * @param {string} id user id
-     */
-    notifyUserLeft (id) {
-        triggerEvent("participant-left", {id});
-    },
-
-    /**
-     * Notify external application (if API is enabled) that
-     * user changed their nickname.
-     * @param {string} id user id
-     * @param {string} displayName user nickname
-     */
-    notifyDisplayNameChanged (id, displayName) {
-        triggerEvent("display-name-change", {id, displayname: displayName});
-    },
-
-    /**
-     * Notify external application (if API is enabled) that
-     * user changed their nickname.
-     * @param {string} id user id
-     * @param {string} displayName user nickname
-     */
-    notifyConferenceJoined (room) {
-        triggerEvent("video-conference-joined", {roomName: room});
-    },
-
-    /**
-     * Notify external application (if API is enabled) that
-     * user changed their nickname.
-     * @param {string} id user id
-     * @param {string} displayName user nickname
-     */
-    notifyConferenceLeft (room) {
-        triggerEvent("video-conference-left", {roomName: room});
-    },
-
-    /**
-     * Notify external application (if API is enabled) that
-     * we are ready to be closed.
-     */
-    notifyReadyToClose () {
-        triggerEvent("video-ready-to-close", {});
-    },
-
-    /**
-     * Removes the listeners.
-     */
-    dispose: function () {
-        if(enabled)
-            postis.destroy();
+        this._sendEvent({
+            name: 'incoming-message',
+            from: id,
+            message: body,
+            nick,
+            stamp: ts
+        });
     }
-};
+
+    /**
+     * Notify external application (if API is enabled) that user joined the
+     * conference.
+     *
+     * @param {string} id - User id.
+     * @returns {void}
+     */
+    notifyUserJoined(id) {
+        this._sendEvent({
+            name: 'participant-joined',
+            id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that user left the
+     * conference.
+     *
+     * @param {string} id - User id.
+     * @returns {void}
+     */
+    notifyUserLeft(id) {
+        this._sendEvent({
+            name: 'participant-left',
+            id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that user changed their
+     * nickname.
+     *
+     * @param {string} id - User id.
+     * @param {string} displayname - User nickname.
+     * @returns {void}
+     */
+    notifyDisplayNameChanged(id, displayname) {
+        this._sendEvent({
+            name: 'display-name-change',
+            displayname,
+            id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the conference has
+     * been joined.
+     *
+     * @param {string} roomName - The room name.
+     * @returns {void}
+     */
+    notifyConferenceJoined(roomName) {
+        this._sendEvent({
+            name: 'video-conference-joined',
+            roomName
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that user changed their
+     * nickname.
+     *
+     * @param {string} roomName - User id.
+     * @returns {void}
+     */
+    notifyConferenceLeft(roomName) {
+        this._sendEvent({
+            name: 'video-conference-left',
+            roomName
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that we are ready to be
+     * closed.
+     *
+     * @returns {void}
+     */
+    notifyReadyToClose() {
+        this._sendEvent({ name: 'video-ready-to-close' });
+    }
+
+    /**
+     * Disposes the allocated resources.
+     *
+     * @returns {void}
+     */
+    dispose() {
+        if (this._enabled) {
+            this._enabled = false;
+            APP.conference.removeListener(
+                JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
+                onDesktopSharingEnabledChanged);
+        }
+    }
+}
+
+export default new API();

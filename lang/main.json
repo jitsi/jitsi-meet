@@ -14,93 +14,122 @@
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
     "callingName": "__name__",
+    "audioOnly": {
+        "audioOnly": "Audio only",
+        "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode",
+        "howToDisable": "Audio only mode is currently enabled. Click the audio only button in the toolbar to disable the feature."
+    },
     "userMedia": {
-      "react-nativeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "chromeGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "androidGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "firefoxGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Share Selected Device</i></b> button",
-      "operaGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>Allow</i></b> button",
-      "iexplorerGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
-      "safariGrantPermissions": "Please grant permissions to use your camera and microphone by pressing <b><i>OK</i></b> button",
-      "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone"
+      "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "firefoxGrantPermissions": "Select <b><i>Share Selected Device</i></b> when your browser asks for permissions.",
+      "operaGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "iexplorerGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
+      "safariGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
+      "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone",
+      "edgeGrantPermissions": "Select <b><i>Yes</i></b> when your browser asks for permissions."
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "Keyboard shortcuts:",
-        "raiseHand": "Raise your hand.",
-        "pushToTalk": "Push to talk.",
-        "toggleScreensharing": "Switch between camera and screensharing.",
-        "toggleFilmstrip": "Show or hide the videos.",
-        "toggleShortcuts": "Show or hide this help menu.",
-        "focusLocal": "Focus on the local video.",
-        "focusRemote": "Focus on one of the remote videos.",
-        "toggleChat": "Open or close the chat panel.",
-        "mute": "Mute or unmute the microphone.",
-        "fullScreen": "Enter or exit full screen mode.",
-        "videoMute": "Stop or start the local video."
+        "keyboardShortcuts": "Keyboard shortcuts",
+        "raiseHand": "Raise or lower your hand",
+        "pushToTalk": "Push to talk",
+        "toggleScreensharing": "Switch between camera and screen sharing",
+        "toggleFilmstrip": "Show or hide the videos",
+        "toggleShortcuts": "Show or hide this help menu",
+        "focusLocal": "Focus on your video",
+        "focusRemote": "Focus on another caller's video",
+        "toggleChat": "Open or close the chat",
+        "mute": "Mute or unmute your microphone",
+        "fullScreen": "Enter or exit full screen",
+        "videoMute": "Start or stop your camera",
+        "showSpeakerStats": "Show speaker stats"
     },
     "welcomepage":{
-        "go": "GO",
-        "roomname": "Enter room name",
         "disable": "Don't show this page again",
         "feature1": {
-            "title": "Simple to use",
-            "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started."
+            "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started.",
+            "title": "Simple to use"
         },
         "feature2": {
-            "title": "Low bandwidth",
-            "content": "Multi-party video conferences work with as little as 128Kbps. Screen-sharing and audio-only conferences are possible with far less."
+            "content": "Multi-party video conferences work with as little as 128Kbps. Screen-sharing and audio-only conferences are possible with far less.",
+            "title": "Low bandwidth"
         },
         "feature3": {
-            "title": "Open source",
-            "content": "__app__ is licensed under the Apache License. You are free to download, use, modify, and share it as per this license."
+            "content": "__app__ is licensed under the Apache License. You are free to download, use, modify, and share it as per this license.",
+            "title": "Open source"
         },
         "feature4": {
-            "title": "Unlimited users",
-            "content": "There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors."
+            "content": "There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors.",
+            "title": "Unlimited users"
         },
         "feature5": {
-            "title": "Screen sharing",
-            "content": "It's easy to share your screen with others. __app__ is ideal for on-line presentations, lectures, and tech support sessions."
+            "content": "It's easy to share your screen with others. __app__ is ideal for on-line presentations, lectures, and tech support sessions.",
+            "title": "Screen sharing"
         },
         "feature6": {
-            "title": "Secure rooms",
-            "content": "Need some privacy? __app__ conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions."
+            "content": "Need some privacy? __app__ conference rooms can be secured with a password in order to exclude unwanted guests and prevent interruptions.",
+            "title": "Secure rooms"
         },
         "feature7": {
-            "title": "Shared notes",
-            "content": "__app__ features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more."
+            "content": "__app__ features Etherpad, a real-time collaborative text editor that's great for meeting minutes, writing articles, and more.",
+            "title": "Shared notes"
         },
         "feature8": {
-            "title": "Usage statistics",
-            "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems."
-        }
+            "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems.",
+            "title": "Usage statistics"
+        },
+        "go": "GO",
+        "join": "JOIN",
+        "privacy": "Privacy",
+        "roomname": "Enter room name",
+        "roomnamePlaceHolder": "room name",
+        "sendFeedback": "Send feedback",
+        "terms": "Terms"
+    },
+    "startupoverlay": {
+        "policyText": " ",
+        "title": "__app__ needs to use your microphone and camera."
+    },
+    "suspendedoverlay": {
+        "title": "Your video call was interrupted, because this computer went to sleep.",
+        "text": "Press <i>Rejoin</i> button to connect back to your conversation.",
+        "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "mute": "Mute / Unmute",
-        "videomute": "Start / stop camera",
+        "videomute": "Start / Stop camera",
         "authenticate": "Authenticate",
-        "lock": "Lock / unlock room",
-        "invite": "Invite others",
-        "chat": "Open / close chat",
-        "etherpad": "Shared document",
+        "lock": "Lock / Unlock room",
+        "invite": "Share the link",
+        "chat": "Open / Close chat",
+        "etherpad": "Open / Close shared document",
         "sharedvideo": "Share a YouTube video",
-        "sharescreen": "Share screen",
-        "fullscreen": "Enter / Exit Full Screen",
+        "sharescreen": "Start / Stop screen sharing",
+        "fullscreen": "View / Exit full screen",
         "sip": "Call SIP number",
         "Settings": "Settings",
-        "hangup": "Hang Up",
+        "hangup": "Leave",
         "login": "Login",
         "logout": "Logout",
-        "dialpad": "Show dialpad",
+        "dialpad": "Open / Close dialpad",
         "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
         "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
-        "filmstrip": "Show / hide videos",
+        "filmstrip": "Show / Hide videos",
         "profile": "Edit your profile",
-        "raiseHand": "Raise hand to speak"
+        "raiseHand": "Raise / Lower your hand"
+    },
+    "unsupportedBrowser": {
+        "appInstalled": "or if you already have it<br /><strong>then</strong>",
+        "appNotInstalled": "You need <strong>__app__</strong> to join a conversation on your mobile",
+        "downloadApp": "Download the App",
+        "joinConversation": "Join the conversation",
+        "startConference": "Start a conference"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",
@@ -126,12 +155,10 @@
         "selectAudioOutput": "Audio output",
         "followMe": "Everyone follows me",
         "noDevice": "None",
-        "noPermission": "Permission to use device is not granted",
         "cameraAndMic": "Camera and microphone",
         "moderator": "MODERATOR",
         "password": "SET PASSWORD",
-        "audioVideo": "AUDIO AND VIDEO",
-        "setPasswordLabel": "Lock your room with a password."
+        "audioVideo": "AUDIO AND VIDEO"
     },
     "profile": {
         "title": "Profile",
@@ -148,8 +175,8 @@
         "kick": "Kick out",
         "muted": "Muted",
         "domute": "Mute",
-        "flip": "Flip"
-
+        "flip": "Flip",
+        "remoteControl": "Remote control"
     },
     "connectionindicator":
     {
@@ -157,6 +184,7 @@
         "bitrate": "Bitrate:",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",
+        "framerate": "Frame rate:",
         "less": "Show less",
         "more": "Show more",
         "address": "Address:",
@@ -169,8 +197,10 @@
         "remoteaddress": "Remote address:",
         "remoteaddress_plural": "Remote addresses:",
         "transport": "Transport:",
+        "transport_plural": "Transports:",
         "bandwidth": "Estimated bandwidth:",
-        "na": "Come back here for connection information once the conference starts"
+        "na": "Come back here for connection information once the conference starts",
+        "peer_to_peer": " (p2p)"
     },
     "notify": {
         "disconnected": "disconnected",
@@ -181,13 +211,14 @@
         "focus": "Conference focus",
         "focusFail": "__component__ not available - retry in __ms__ sec",
         "grantedTo": "Moderator rights granted to __to__!",
-        "grantedToUnknown": "Moderator rights granted to $t(somebody)!",
+        "grantedToUnknown": "Moderator rights granted to $t(notify.somebody)!",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
         "raisedHand": "Would like to speak."
     },
     "dialog": {
         "add": "Add",
+        "allow": "Allow",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
         "popupError": "Your browser is blocking popup windows from this site. Please enable popups in your browser's security settings and try again.",
         "passwordErrorTitle": "Password Error",
@@ -195,18 +226,19 @@
         "passwordError2": "This conversation isn't currently protected by a password. Only the owner of the conference can set a password.",
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
         "connectErrorWithMsg": "Oops! Something went wrong and we couldn't connect to the conference: __msg__",
+        "incorrectPassword": "Password is incorrect",
         "connecting": "Connecting",
         "copy": "Copy",
         "error": "Error",
-        "roomLocked": "This call is locked. New callers must have the link and enter the password to join",
-        "addPassword": "Add a password",
         "createPassword": "Create password",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failtoinstall": "Failed to install desktop sharing extension",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
-        "conferenceReloadTitle": "Unfortunately, something went wrong",
-        "conferenceReloadMsg": "We're trying to fix this",
-        "conferenceReloadTimeLeft": "__seconds__ sec.",
+        "conferenceReloadTitle": "Unfortunately, something went wrong.",
+        "conferenceReloadMsg": "We're trying to fix this. Reconnecting in __seconds__ sec...",
+        "conferenceDisconnectTitle": "You have been disconnected.",
+        "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in __seconds__ sec...",
+        "rejoinNow": "Rejoin now",
         "maxUsersLimitReached": "The limit for maximum number of participants in the conference has been reached. The conference is full. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
@@ -292,11 +324,11 @@
         "cameraUnknownError": "Cannot use camera for a unknown reason.",
         "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
         "cameraNotFoundError": "Camera was not found.",
-        "cameraConstraintFailedError": "Yor camera does not satisfy some of required constraints.",
+        "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "micUnknownError": "Cannot use microphone for a unknown reason.",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micNotFoundError": "Microphone was not found.",
-        "micConstraintFailedError": "Yor microphone does not satisfy some of required constraints.",
+        "micConstraintFailedError": "Your microphone does not satisfy some of the required constraints.",
         "micNotSendingData": "We are unable to access your microphone. Please select another device from the settings menu or try to restart the application.",
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to restart the application.",
         "goToStore": "Go to the webstore",
@@ -304,7 +336,18 @@
         "externalInstallationMsg": "You need to install our desktop sharing extension.",
         "muteParticipantTitle": "Mute this participant?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
-        "muteParticipantButton": "Mute"
+        "muteParticipantButton": "Mute",
+        "remoteControlTitle": "Remote desktop control",
+        "remoteControlRequestMessage": "Will you allow __user__ to remotely control your desktop?",
+        "remoteControlShareScreenWarning": "Note that if you press \"Allow\" you will share your screen!",
+        "remoteControlDeniedMessage": "__user__ rejected your remote control request!",
+        "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
+        "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
+        "remoteControlStopMessage": "The remote control session ended!",
+        "close": "Close",
+        "shareYourScreen": "Share your screen",
+        "yourEntireScreen": "Your entire screen",
+        "applicationWindow": "Application window"
     },
     "email":
     {
@@ -349,7 +392,9 @@
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
         "GET_SESSION_ID_ERROR": "Get session-id error: __code__",
-        "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues..."
+        "USER_CONNECTION_INTERRUPTED": "__displayName__ is having connectivity issues...",
+        "LOW_BANDWIDTH": "Video for __displayName__ has been turned off to save bandwidth"
+
     },
     "recording":
     {
@@ -357,7 +402,7 @@
         "on": "Recording",
         "off": "Recording stopped",
         "failedToStart": "Recording failed to start",
-        "buttonTooltip": "Start / stop recording",
+        "buttonTooltip": "Start / Stop recording",
         "error": "Recording failed. Please try again.",
         "unavailable": "The recording service is currently unavailable. Please try again later."
     },
@@ -368,9 +413,39 @@
         "off": "Live Streaming Stopped",
         "unavailable": "The live streaming service is currently unavailable. Please try again later.",
         "failedToStart": "Live streaming failed to start",
-        "buttonTooltip": "Start / stop live stream",
+        "buttonTooltip": "Start / Stop live stream",
         "streamIdRequired": "Please fill in the stream id in order to launch the live streaming.",
+        "streamIdHelp": "Where do I find this?",
         "error": "Live streaming failed. Please try again.",
         "busy": "All recorders are currently busy. Please try again later."
+    },
+    "speakerStats":
+    {
+        "hours": "__count__h",
+        "minutes": "__count__m",
+        "name": "Name",
+        "seconds": "__count__s",
+        "speakerStats": "Speaker Stats",
+        "speakerTime": "Speaker Time"
+    },
+    "deviceSelection": {
+        "deviceSettings": "Device settings",
+        "noPermission": "Permission not granted",
+        "previewUnavailable": "Preview unavailable",
+        "selectADevice": "Select a device",
+        "testAudio": "Test sound"
+    },
+    "invite": {
+        "addPassword": "Add password",
+        "dialInNumbers": "Dial-in telephone numbers",
+        "errorFetchingNumbers": "Failed to obtain dial-in numbers",
+        "hidePassword": "Hide password",
+        "inviteTo": "Invite people to __conferenceName__",
+        "loadingNumbers": "Loading...",
+        "locked": "This call is locked. New callers must have the link and enter the password to join.",
+        "noNumbers": "No numbers available",
+        "numbersDisabled": "Dialing in has been disabled",
+        "showPassword": "Show password",
+        "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     }
 }

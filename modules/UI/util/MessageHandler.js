@@ -1,6 +1,8 @@
-/* global $, APP, toastr, Impromptu */
+/* global $, APP, toastr */
+const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIUtil from './UIUtil';
+import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 /**
  * Flag for enable/disable of the notifications.
@@ -19,6 +21,91 @@ let popupEnabled = true;
  * @type {null}
  */
 let twoButtonDialog = null;
+
+/**
+ * Generates html for dont show again checkbox.
+ * @param {object} options options
+ * @param {string} options.id the id of the checkbox.
+ * @param {string} options.textKey the key for the text displayed next to
+ * checkbox
+ * @param {boolean} options.checked if true the checkbox is foing to be checked
+ * by default.
+ * @returns {string}
+ */
+function generateDontShowCheckbox(options) {
+    if(!isDontShowAgainEnabled(options)) {
+        return "";
+    }
+
+    let checked
+        = (options.checked === true) ? "checked" : "";
+    return `<br />
+        <label>
+            <input type='checkbox' ${checked} id='${options.id}' />
+            <span data-i18n='${options.textKey}'></span>
+        </label>`;
+}
+
+/**
+ * Checks whether the dont show again checkbox was checked before.
+ * @param {object} options - options for dont show again checkbox.
+ * @param {string} options.id the id of the checkbox.
+ * @param {string} options.localStorageKey the key for the local storage. if
+ * not provided options.id will be used.
+ * @returns {boolean} true if the dialog mustn't be displayed and
+ * false otherwise.
+ */
+function dontShowTheDialog(options) {
+    if(isDontShowAgainEnabled(options)) {
+        if(jitsiLocalStorage.getItem(options.localStorageKey || options.id)
+            === "true") {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Wraps the submit function to process the dont show again status and store
+ * it.
+ * @param {object} options - options for dont show again checkbox.
+ * @param {string} options.id the id of the checkbox.
+ * @param {Array} options.buttonValues The button values that will trigger
+ * storing he checkbox value
+ * @param {string} options.localStorageKey the key for the local storage. if
+ * not provided options.id will be used.
+ * @param {Function} submitFunction the submit function to be wrapped
+ * @returns {Function} wrapped function
+ */
+function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
+    if(isDontShowAgainEnabled(options)) {
+        return (...args) => {
+            logger.debug(args, options.buttonValues);
+            //args[1] is the value associated with the pressed button
+            if(!options.buttonValues || options.buttonValues.length === 0
+                || options.buttonValues.indexOf(args[1]) !== -1 ) {
+                let checkbox = $(`#${options.id}`);
+                if (checkbox.length) {
+                    jitsiLocalStorage.setItem(
+                        options.localStorageKey || options.id,
+                        checkbox.prop("checked"));
+                }
+            }
+            submitFunction(...args);
+        };
+    } else {
+        return submitFunction;
+    }
+}
+
+/**
+ * Check whether dont show again checkbox is enabled or not.
+ * @param {object} options - options for dont show again checkbox.
+ * @returns {boolean} true if enabled and false if not.
+ */
+function isDontShowAgainEnabled(options) {
+    return typeof options === "object";
+}
 
 var messageHandler = {
     OK: "dialog.OK",
@@ -41,7 +128,8 @@ var messageHandler = {
             return null;
 
         let dialog = $.prompt(
-            APP.translation.generateTranslationHTML(messageKey, i18nOptions), {
+            APP.translation.generateTranslationHTML(messageKey, i18nOptions),
+            {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
             promptspeed: 0,
@@ -52,7 +140,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(dialog, i18nOptions);
-        return dialog;
+        return $.prompt.getApi();
     },
     /**
      * Shows a message to the user with two buttons: first is given as a
@@ -72,6 +160,16 @@ var messageHandler = {
      *        the dialog is opened
      * @param defaultButton index of default button which will be activated when
      *        the user press 'enter'. Indexed from 0.
+     * @param {object} dontShowAgain - options for dont show again checkbox.
+     * @param {string} dontShowAgain.id the id of the checkbox.
+     * @param {string} dontShowAgain.textKey the key for the text displayed
+     * next to checkbox
+     * @param {boolean} dontShowAgain.checked if true the checkbox is foing to
+     * be checked
+     * @param {Array} dontShowAgain.buttonValues The button values that will
+     * trigger storing the checkbox value
+     * @param {string} dontShowAgain.localStorageKey the key for the local
+     * storage. if not provided dontShowAgain.id will be used.
      * @return the prompt that was created, or null
      */
     openTwoButtonDialog: function(options) {
@@ -87,11 +185,19 @@ var messageHandler = {
             size,
             defaultButton,
             wrapperClass,
-            classes
+            classes,
+            dontShowAgain
         } = options;
 
         if (!popupEnabled || twoButtonDialog)
             return null;
+
+        if(dontShowTheDialog(dontShowAgain)) {
+            // Maybe we should pass some parameters here? I'm not sure
+            // and currently we don't need any parameters.
+            submitFunction();
+            return null;
+        }
 
         var buttons = [];
 
@@ -108,6 +214,7 @@ var messageHandler = {
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
+        message += generateDontShowCheckbox(dontShowAgain);
         classes = classes || this._getDialogClasses(size);
         if (wrapperClass) {
             classes.prompt += ` ${wrapperClass}`;
@@ -122,13 +229,13 @@ var messageHandler = {
             loaded: loadedFunction,
             promptspeed: 0,
             classes,
-            submit: function (e, v, m, f) {
-                twoButtonDialog = null;
-                if (v){
-                    if (submitFunction)
+            submit: dontShowAgainSubmitFunctionWrapper(dontShowAgain,
+                function (e, v, m, f) {
+                    twoButtonDialog = null;
+                    if (v && submitFunction) {
                         submitFunction(e, v, m, f);
-                }
-            },
+                    }
+                }),
             close: function (e, v, m, f) {
                 twoButtonDialog = null;
                 if (closeFunction) {
@@ -137,7 +244,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(twoButtonDialog);
-        return twoButtonDialog;
+        return $.prompt.getApi();
     },
 
     /**
@@ -155,11 +262,28 @@ var messageHandler = {
      * @param loadedFunction function to be called after the prompt is fully
      *        loaded
      * @param closeFunction function to be called on dialog close
+     * @param {object} dontShowAgain - options for dont show again checkbox.
+     * @param {string} dontShowAgain.id the id of the checkbox.
+     * @param {string} dontShowAgain.textKey the key for the text displayed
+     * next to checkbox
+     * @param {boolean} dontShowAgain.checked if true the checkbox is foing to
+     * be checked
+     * @param {Array} dontShowAgain.buttonValues The button values that will
+     * trigger storing the checkbox value
+     * @param {string} dontShowAgain.localStorageKey the key for the local
+     * storage. if not provided dontShowAgain.id will be used.
      */
     openDialog: function (titleKey, msgString, persistent, buttons,
-                              submitFunction, loadedFunction, closeFunction) {
+        submitFunction, loadedFunction, closeFunction, dontShowAgain) {
         if (!popupEnabled)
             return;
+
+        if(dontShowTheDialog(dontShowAgain)) {
+            // Maybe we should pass some parameters here? I'm not sure
+            // and currently we don't need any parameters.
+            submitFunction();
+            return;
+        }
 
         let args = {
             title: this._getFormattedTitleString(titleKey),
@@ -167,8 +291,17 @@ var messageHandler = {
             buttons: buttons,
             defaultButton: 1,
             promptspeed: 0,
-            loaded: loadedFunction,
-            submit: submitFunction,
+            loaded: function() {
+                if (loadedFunction) {
+                    loadedFunction.apply(this, arguments);
+                }
+                // Hide the close button
+                if (persistent) {
+                    $(".jqiclose", this).hide();
+                }
+            },
+            submit: dontShowAgainSubmitFunctionWrapper(
+                dontShowAgain, submitFunction),
             close: closeFunction,
             classes: this._getDialogClasses()
         };
@@ -177,9 +310,10 @@ var messageHandler = {
             args.closeText = '';
         }
 
-        let dialog = new Impromptu(msgString, args);
-        APP.translation.translateElement(dialog.getPrompt());
-        return dialog;
+        let dialog = $.prompt(
+            msgString + generateDontShowCheckbox(dontShowAgain), args);
+        APP.translation.translateElement(dialog);
+        return $.prompt.getApi();
     },
 
     /**
@@ -215,13 +349,6 @@ var messageHandler = {
     },
 
     /**
-     * Closes currently opened dialog.
-     */
-    closeDialog: function () {
-        $.prompt.close();
-    },
-
-    /**
      * Shows a dialog with different states to the user.
      *
      * @param statesObject object containing all the states of the dialog.
@@ -243,9 +370,9 @@ var messageHandler = {
                     = this._getFormattedTitleString(currentState.titleKey);
             }
         }
-        let dialog = new Impromptu(statesObject, options);
-        APP.translation.translateElement(dialog.getPrompt(), translateOptions);
-        return dialog;
+        let dialog = $.prompt(statesObject, options);
+        APP.translation.translateElement(dialog, translateOptions);
+        return $.prompt.getApi();
     },
 
     /**
@@ -291,7 +418,7 @@ var messageHandler = {
      */
     openReportDialog: function(titleKey, msgKey, error) {
         this.openMessageDialog(titleKey, msgKey);
-        console.log(error);
+        logger.log(error);
         //FIXME send the error to the server
     },
 
@@ -321,7 +448,7 @@ var messageHandler = {
      * @param messageKey the key from the language file for the text of the
      * message.
      * @param messageArguments object with the arguments for the message.
-     * @param options object with language options.
+     * @param options passed to toastr (e.g. timeOut)
      */
     notify: function(displayName, displayNameKey, cls, messageKey,
                      messageArguments, options) {

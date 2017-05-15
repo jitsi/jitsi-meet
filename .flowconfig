@@ -1,0 +1,71 @@
+[ignore]
+; We fork some components by platform
+.*/*[.]android.js
+
+; Ignore "BUCK" generated dirs
+<PROJECT_ROOT>/\.buckd/
+
+; Ignore unexpected extra "@providesModule"
+.*/node_modules/.*/node_modules/fbjs/.*
+
+; Ignore duplicate module providers
+; For RN Apps installed via npm, "Libraries" folder is inside
+; "node_modules/react-native" but in the source repo it is in the root
+.*/Libraries/react-native/React.js
+.*/Libraries/react-native/ReactNative.js
+
+; Ignore packages in node_modules which we (i.e. the jitsi-meet project) have
+; seen to cause errors and we have chosen not to fix.
+.*/node_modules/babel-core/.*
+.*/node_modules/bower/.*
+.*/node_modules/jsonlint/.*
+.*/node_modules/styled-components/.*
+
+[include]
+
+[libs]
+node_modules/react-native/Libraries/react-native/react-native-interface.js
+node_modules/react-native/flow
+flow/
+
+[options]
+emoji=true
+
+module.system=haste
+
+experimental.strict_type_args=true
+
+; FIXME: munge_underscores should be false but right now there are some errors
+; if we change the value to false
+; Treats class properties with underscore as private. Disabled because currently
+; for us "_" can mean protected too.
+; munge_underscores=false
+munge_underscores=true
+
+module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
+
+suppress_type=$FlowIssue
+suppress_type=$FlowFixMe
+suppress_type=$FixMe
+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(3[0-8]\\|[1-2][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(3[0-8]\\|1[0-9]\\|[1-2][0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+suppress_comment=\\(.\\|\n\\)*\\$FlowDisableNextLine
+
+unsafe.enable_getters_and_setters=true
+
+; We (i.e. the jitsi-meet project) are using the haste module system on Web as
+; well, not only on React Native. Unfortunately, Flow does not support .web.js
+; by default. Override Flow's defaults to include .web.js as well. Technically,
+; we have .native.js as well so the choice of .web.js may lead to errors.
+; Practically though, it is a potential future problem that we do not have at
+; the time of this writing.
+module.file_ext=.web.js
+; Flow's defaults:
+module.file_ext=.js
+module.file_ext=.jsx
+module.file_ext=.json
+
+[version]
+^0.38.0

@@ -20,13 +20,20 @@ var config = { // eslint-disable-line no-unused-vars
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
 
-    // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
-    desktopSharingChromeMethod: 'ext',
+    // The STUN servers that will be used in the peer to peer connections
+    p2pStunServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" }
+    ],
+
     // The ID of the jidesha extension for Chrome.
-    desktopSharingChromeExtId: 'diibjkoicjeejcmhdnailmkgecihlobk',
+    desktopSharingChromeExtId: null,
+    // Whether desktop sharing should be disabled on Chrome.
+    desktopSharingChromeDisabled: true,
     // The media sources to use when using screen sharing with the Chrome
     // extension.
-    desktopSharingChromeSources: ['screen', 'window'],
+    desktopSharingChromeSources: ['screen', 'window', 'tab'],
     // Required version of Chrome extension
     desktopSharingChromeMinExtVersion: '0.1',
 
@@ -40,7 +47,7 @@ var config = { // eslint-disable-line no-unused-vars
     // up to and including 41. On Firefox 42 and higher, we will run without the
     // extension.
     // If set to -1, an extension will be required for all versions of Firefox.
-    desktopSharingFirefoxMaxVersionExtRequired: -1,
+    desktopSharingFirefoxMaxVersionExtRequired: 51,
     // The URL to the Firefox extension for desktop sharing.
     desktopSharingFirefoxExtensionURL: null,
 
@@ -53,14 +60,11 @@ var config = { // eslint-disable-line no-unused-vars
     disableStats: false,
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.
-    adaptiveLastN: false,
-    //disableAdaptiveSimulcast: false,
     enableRecording: false,
     enableWelcomePage: true,
     //enableClosePage: false, // enabling the close page will ignore the welcome
                               // page redirection when call is hangup
     disableSimulcast: false,
-    logStats: false, // Enable logging of PeerConnection stats via the focus
 //    requireDisplayName: true, // Forces the participants that doesn't have display name to enter it when they enter the room.
 //    startAudioMuted: 10, // every participant after the Nth will start audio muted
 //    startVideoMuted: 10, // every participant after the Nth will start video muted
@@ -76,5 +80,20 @@ var config = { // eslint-disable-line no-unused-vars
     // If true - all users without token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
-    enableUserRolesBasedOnToken: false
+    enableUserRolesBasedOnToken: false,
+    // Suspending video might cause problems with audio playback. Disabling until these are fixed.
+    disableSuspendVideo: true,
+    // disables or enables RTX (RFC 4588) (defaults to false).
+    disableRtx: false,
+    // Sets the preferred resolution (height) for local video. Defaults to 360.
+    resolution: 720,
+    // Enables peer to peer mode. When enabled system will try to establish
+    // direct connection given that there are exactly 2 participants in
+    // the room. If that succeeds the conference will stop sending data through
+    // the JVB and use the peer to peer connection instead. When 3rd participant
+    // joins the conference will be moved back to the JVB connection.
+    //enableP2P: true
+    // How long we're going to wait, before going back to P2P after
+    // the 3rd participant has left the conference (to filter out page reload)
+    //backToP2PDelay: 5
 };

@@ -7,42 +7,16 @@ import {
     PIN_PARTICIPANT
 } from './actionTypes';
 import { getLocalParticipant } from './functions';
-import './middleware';
-import './reducer';
-
-/**
- * Action to update a participant's email.
- *
- * @param {string} id - Participant's id.
- * @param {string} email - Participant's email.
- * @returns {{
- *      type: PARTICIPANT_UPDATED,
- *      participant: {
- *          id: string,
- *          avatar: string,
- *          email: string
- *      }
- * }}
- */
-export function changeParticipantEmail(id, email) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            email
-        }
-    };
-}
 
 /**
  * Create an action for when dominant speaker changes.
  *
- * @param {string} id - Participant id.
+ * @param {string} id - Participant's ID.
  * @returns {{
- *      type: DOMINANT_SPEAKER_CHANGED,
- *      participant: {
- *          id: string
- *      }
+ *     type: DOMINANT_SPEAKER_CHANGED,
+ *     participant: {
+ *         id: string
+ *     }
  * }}
  */
 export function dominantSpeakerChanged(id) {
@@ -55,15 +29,12 @@ export function dominantSpeakerChanged(id) {
 }
 
 /**
- * Action to signal that ID of local participant has changed. This happens when
- * local participant joins a new conference or quits one.
+ * Action to signal that the ID of local participant has changed. It happens
+ * when the local participant joins a new conference or leaves an existing
+ * conference.
  *
  * @param {string} id - New ID for local participant.
- * @returns {{
- *      type: PARTICIPANT_ID_CHANGED,
- *      newValue: string,
- *      oldValue: string
- * }}
+ * @returns {Function}
  */
 export function localParticipantIdChanged(id) {
     return (dispatch, getState) => {
@@ -84,8 +55,8 @@ export function localParticipantIdChanged(id) {
  *
  * @param {Participant} participant={} - Information about participant.
  * @returns {{
- *      type: PARTICIPANT_JOINED,
- *      participant: Participant
+ *     type: PARTICIPANT_JOINED,
+ *     participant: Participant
  * }}
  */
 export function localParticipantJoined(participant = {}) {
@@ -93,6 +64,48 @@ export function localParticipantJoined(participant = {}) {
         ...participant,
         local: true
     });
+}
+
+/**
+ * Action to signal the role of the local participant has changed. It can happen
+ * when the participant has joined a conference, even before a non-default local
+ * id has been set, or after a moderator leaves.
+ *
+ * @param {string} role - The new role of the local participant.
+ * @returns {Function}
+ */
+export function localParticipantRoleChanged(role) {
+    return (dispatch, getState) => {
+        const participant = getLocalParticipant(getState);
+
+        if (participant) {
+            return dispatch(participantRoleChanged(participant.id, role));
+        }
+    };
+}
+
+/**
+ * Action to update a participant's connection status.
+ *
+ * @param {string} id - Participant's ID.
+ * @param {string} connectionStatus - The new connection status of the
+ * participant.
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: {
+ *         connectionStatus: string,
+ *         id: string
+ *     }
+ * }}
+ */
+export function participantConnectionStatusChanged(id, connectionStatus) {
+    return {
+        type: PARTICIPANT_UPDATED,
+        participant: {
+            connectionStatus,
+            id
+        }
+    };
 }
 
 /**
@@ -127,14 +140,14 @@ export function participantJoined(participant) {
 }
 
 /**
- * Action to handle case when participant lefts.
+ * Action to signal that a participant has left.
  *
- * @param {string} id - Participant id.
+ * @param {string} id - Participant's ID.
  * @returns {{
- *      type: PARTICIPANT_LEFT,
- *      participant: {
- *          id: string
- *      }
+ *     type: PARTICIPANT_LEFT,
+ *     participant: {
+ *         id: string
+ *     }
  * }}
  */
 export function participantLeft(id) {
@@ -147,25 +160,41 @@ export function participantLeft(id) {
 }
 
 /**
- * Action to handle case when participant's role changes.
+ * Action to signal that a participant's role has changed.
  *
- * @param {string} id - Participant id.
+ * @param {string} id - Participant's ID.
  * @param {PARTICIPANT_ROLE} role - Participant's new role.
  * @returns {{
- *      type: PARTICIPANT_UPDATED,
- *      participant: {
- *          id: string,
- *          role: PARTICIPANT_ROLE
- *      }
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         role: PARTICIPANT_ROLE
+ *     }
  * }}
  */
 export function participantRoleChanged(id, role) {
+    return participantUpdated({
+        id,
+        role
+    });
+}
+
+/**
+ * Action to signal that some of participant properties has been changed.
+ *
+ * @param {Participant} participant={} - Information about participant. To
+ * identify the participant the object should contain either property id with
+ * value the id of the participant or property local with value true (if the
+ * local participant hasn't joined the conference yet).
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: Participant
+ * }}
+ */
+export function participantUpdated(participant = {}) {
     return {
         type: PARTICIPANT_UPDATED,
-        participant: {
-            id,
-            role
-        }
+        participant
     };
 }
 
@@ -175,10 +204,10 @@ export function participantRoleChanged(id, role) {
  * @param {string|null} id - The ID of the conference participant to pin or null
  * if none of the conference's participants are to be pinned.
  * @returns {{
- *      type: PIN_PARTICIPANT,
- *      participant: {
- *          id: string
- *      }
+ *     type: PIN_PARTICIPANT,
+ *     participant: {
+ *         id: string
+ *     }
  * }}
  */
 export function pinParticipant(id) {

@@ -1,42 +1,58 @@
+/* @flow */
+
+import { LIB_DID_DISPOSE, LIB_DID_INIT } from '../lib-jitsi-meet';
 import {
-    LIB_DISPOSED,
-    LIB_INITIALIZED
-} from '../lib-jitsi-meet';
-import {
-    AUDIO_MUTED_CHANGED,
-    audioMutedChanged,
-    CAMERA_FACING_MODE_CHANGED,
+    CAMERA_FACING_MODE,
     MEDIA_TYPE,
-    VIDEO_MUTED_CHANGED,
-    videoMutedChanged
+    SET_AUDIO_MUTED,
+    SET_CAMERA_FACING_MODE,
+    SET_VIDEO_MUTED,
+    TOGGLE_CAMERA_FACING_MODE,
+    setAudioMuted,
+    setVideoMuted
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
 import {
+    _disposeAndRemoveTracks,
     createLocalTracks,
     destroyLocalTracks
 } from './actions';
 import { TRACK_UPDATED } from './actionTypes';
-import {
-    getLocalTrack,
-    setTrackMuted
-} from './functions';
+import { getLocalTrack, setTrackMuted } from './functions';
 
 /**
- * Middleware that captures LIB_INITIALIZED and LIB_DISPOSED actions
- * and respectively creates/destroys local media tracks. Also listens to media-
- * related actions and performs corresponding operations with tracks.
+ * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
+ * respectively, creates/destroys local media tracks. Also listens to
+ * media-related actions and performs corresponding operations with tracks.
  *
  * @param {Store} store - Redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case AUDIO_MUTED_CHANGED:
-        _mutedChanged(store, action, MEDIA_TYPE.AUDIO);
+    case LIB_DID_DISPOSE:
+        store.dispatch(destroyLocalTracks());
         break;
 
-    case CAMERA_FACING_MODE_CHANGED:
+    case LIB_DID_INIT:
+        store.dispatch(createLocalTracks());
+        break;
+
+    case SET_AUDIO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.AUDIO);
+        break;
+
+    case SET_CAMERA_FACING_MODE: {
+        // XXX Destroy the local video track before creating a new one or
+        // react-native-webrtc may be slow or get stuck when opening a (video)
+        // capturer twice.
+        const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
+
+        if (localTrack) {
+            store.dispatch(_disposeAndRemoveTracks([ localTrack.jitsiTrack ]));
+        }
+
         store.dispatch(
             createLocalTracks({
                 devices: [ MEDIA_TYPE.VIDEO ],
@@ -44,21 +60,40 @@ MiddlewareRegistry.register(store => next => action => {
             })
         );
         break;
+    }
 
-    case LIB_INITIALIZED:
-        store.dispatch(createLocalTracks());
+    case SET_VIDEO_MUTED:
+        _setMuted(store, action, MEDIA_TYPE.VIDEO);
         break;
 
-    case LIB_DISPOSED:
-        store.dispatch(destroyLocalTracks());
+    case TOGGLE_CAMERA_FACING_MODE: {
+        const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
+        let jitsiTrack;
+
+        if (localTrack && (jitsiTrack = localTrack.jitsiTrack)) {
+            // XXX MediaStreamTrack._switchCamera is a custom function
+            // implemented in react-native-webrtc for video which switches
+            // between the cameras via a native WebRTC library implementation
+            // without making any changes to the track.
+            jitsiTrack._switchCamera();
+
+            // Don't mirror the video of the back/environment-facing camera.
+            const mirror
+                = jitsiTrack.getCameraFacingMode() === CAMERA_FACING_MODE.USER;
+
+            store.dispatch({
+                type: TRACK_UPDATED,
+                track: {
+                    jitsiTrack,
+                    mirror
+                }
+            });
+        }
         break;
+    }
 
     case TRACK_UPDATED:
         return _trackUpdated(store, next, action);
-
-    case VIDEO_MUTED_CHANGED:
-        _mutedChanged(store, action, MEDIA_TYPE.VIDEO);
-        break;
     }
 
     return next(action);
@@ -76,7 +111,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Track} The local <tt>Track</tt> associated with the specified
  * <tt>mediaType</tt> in the specified <tt>store</tt>.
  */
-function _getLocalTrack(store, mediaType) {
+function _getLocalTrack(store, mediaType: MEDIA_TYPE) {
     return getLocalTrack(store.getState()['features/base/tracks'], mediaType);
 }
 
@@ -91,7 +126,7 @@ function _getLocalTrack(store, mediaType) {
  * @private
  * @returns {void}
  */
-function _mutedChanged(store, action, mediaType) {
+function _setMuted(store, action, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
     localTrack && setTrackMuted(localTrack.jitsiTrack, action.muted);
@@ -109,7 +144,8 @@ function _mutedChanged(store, action, mediaType) {
  * @param {Action} action - The Redux action <tt>TRACK_UPDATED</tt> which is
  * being dispatched in the specified <tt>store</tt>.
  * @private
- * @returns {void}
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified <tt>action</tt>.
  */
 function _trackUpdated(store, next, action) {
     // Determine the muted state of the local track before the update.
@@ -144,10 +180,10 @@ function _trackUpdated(store, next, action) {
             if (oldMuted !== newMuted) {
                 switch (mediaType) {
                 case MEDIA_TYPE.AUDIO:
-                    store.dispatch(audioMutedChanged(newMuted));
+                    store.dispatch(setAudioMuted(newMuted));
                     break;
                 case MEDIA_TYPE.VIDEO:
-                    store.dispatch(videoMutedChanged(newMuted));
+                    store.dispatch(setVideoMuted(newMuted));
                     break;
                 }
             }

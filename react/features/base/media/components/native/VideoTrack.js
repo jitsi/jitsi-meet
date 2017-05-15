@@ -12,6 +12,13 @@ import { styles } from './styles';
  */
 class VideoTrack extends AbstractVideoTrack {
     /**
+     * VideoTrack component's property types.
+     *
+     * @static
+     */
+    static propTypes = AbstractVideoTrack.propTypes
+
+    /**
      * Initializes a new VideoTrack instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -133,9 +140,10 @@ class VideoTrack extends AbstractVideoTrack {
 
     // eslint-disable-next-line valid-jsdoc
     /**
-     * @inheritdoc
-     *
      * Animate the setting of the video track to be rendered by this instance.
+     *
+     * @inheritdoc
+     * @protected
      */
     _setVideoTrack(videoTrack) {
         // If JitsiTrack instance didn't change, that means some other track's
@@ -152,12 +160,5 @@ class VideoTrack extends AbstractVideoTrack {
         }
     }
 }
-
-/**
- * VideoTrack component's property types.
- *
- * @static
- */
-VideoTrack.propTypes = AbstractVideoTrack.propTypes;
 
 export default connect()(VideoTrack);
