@@ -260,7 +260,9 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if not self.enableDomainVerification then
-        if room ~= string.lower(auth_room) then
+        -- if auth_room is missing, this means user is anonymous (no token for
+        -- its domain) we let it through, jicofo is verifying creation domain
+        if auth_room and room ~= string.lower(auth_room) then
             return false;
         end
 
