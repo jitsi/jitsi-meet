@@ -216,6 +216,28 @@ export class VideoContainer extends LargeContainer {
         // copied between new <object> elements
         //this.$video.on('play', onPlay);
         this.$video[0].onplay = onPlayCallback;
+
+        /**
+         * A Set of functions to invoke when the video element resizes.
+         *
+         * @private
+         */
+        this._resizeListeners = new Set();
+
+        // As of May 16, 2017, temasys does not support resize events.
+        this.$video[0].onresize = this._onResize.bind(this);
+    }
+
+    /**
+     * Adds a function to the known subscribers of video element resize
+     * events.
+     *
+     * @param {Function} callback - The subscriber to notify when the video
+     * element resizes.
+     * @returns {void}
+     */
+    addResizeListener(callback) {
+        this._resizeListeners.add(callback);
     }
 
     /**
@@ -342,6 +364,18 @@ export class VideoContainer extends LargeContainer {
             queue: false,
             duration: animate ? 500 : 0
         });
+    }
+
+    /**
+     * Removes a function from the known subscribers of video element resize
+     * events.
+     *
+     * @param {Function} callback - The callback to remove from known
+     * subscribers of video resize events.
+     * @returns {void}
+     */
+    removeResizeListener(callback) {
+        this._resizeListeners.delete(callback);
     }
 
     /**
@@ -501,5 +535,15 @@ export class VideoContainer extends LargeContainer {
         $("#largeVideoContainer").css("background",
             (this.videoType === VIDEO_CONTAINER_TYPE && !isAvatar)
                 ? "#000" : interfaceConfig.DEFAULT_BACKGROUND);
+    }
+
+    /**
+     * Callback invoked when the video element changes dimensions.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onResize() {
+        this._resizeListeners.forEach(callback => callback());
     }
 }
