@@ -30,6 +30,17 @@ During the installation, you will be asked to enter the hostname of the Jitsi Me
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
+#### Advanced configuration
+If installation is on a machine behind NAT further configuration of jitsi-videobridge is needed in order for it to be accessible.
+Provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000).
+The following extra lines need to be added the file `/etc/jitsi/videobridge/sip-communicator.properties`:
+```
+org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
+org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
+```
+See [the documenation of ice4j](https://github.com/jitsi/ice4j/blob/master/doc/configuration.md)
+for details.
+
 ### Open a conference
 
 Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
@@ -63,7 +74,7 @@ Enjoy!
 ## Uninstall
 
 ```sh
-apt-get purge jigasi jitsi-meet jicofo jitsi-videobridge
+apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-web jicofo jitsi-videobridge
 ```
 
 Sometimes the following packages will fail to uninstall properly:
