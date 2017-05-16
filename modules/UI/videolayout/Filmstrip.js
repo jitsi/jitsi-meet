@@ -15,18 +15,19 @@ const Filmstrip = {
         this.filmstripContainerClassName = 'filmstrip';
         this.filmstrip = $('#remoteVideos');
         this.eventEmitter = eventEmitter;
-        this._initFilmstripToolbar();
-        this.registerListeners();
+
+        // Show the toggle button and add event listeners only when out of
+        // filmstrip only mode.
+        if (!interfaceConfig.filmStripOnly) {
+            this._initFilmstripToolbar();
+            this.registerListeners();
+        }
     },
 
     /**
      * Initializes the filmstrip toolbar.
      */
     _initFilmstripToolbar() {
-        // Do not show the toggle button in filmstrip only mode.
-        if (interfaceConfig.filmStripOnly)
-            return;
-
         let toolbarContainerHTML = this._generateToolbarHTML();
         let className = this.filmstripContainerClassName;
         let container = document.querySelector(`.${className}`);
