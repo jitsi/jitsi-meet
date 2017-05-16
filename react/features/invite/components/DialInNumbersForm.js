@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import { getLocalParticipant } from '../../base/participants';
 
 import { updateDialInNumbers } from '../actions';
 
@@ -26,14 +27,19 @@ class DialInNumbersForm extends Component {
      */
     static propTypes = {
         /**
+         * The name of the current user.
+         */
+        _currentUserName: React.PropTypes.string,
+
+        /**
          * The redux state representing the dial-in numbers feature.
          */
         _dialIn: React.PropTypes.object,
 
         /**
-         * The url for retrieving dial-in numbers.
+         * The url for the JitsiConference.
          */
-        dialInNumbersUrl: React.PropTypes.string,
+        conferenceUrl: React.PropTypes.string,
 
         /**
          * Invoked to send an ajax request for dial-in numbers.
@@ -77,35 +83,32 @@ class DialInNumbersForm extends Component {
 
         /**
          * The internal reference to the DOM/HTML element backing the React
-         * {@code Component} input. It is necessary for the implementation of
-         * copying to the clipboard.
+         * {@code Component} text area. It is necessary for the implementation
+         * of copying to the clipboard.
          *
          * @private
-         * @type {HTMLInputElement}
+         * @type {HTMLTextAreaElement}
          */
-        this._inputElement = null;
+        this._copyElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onClick = this._onClick.bind(this);
+        this._onCopyClick = this._onCopyClick.bind(this);
         this._onOpenChange = this._onOpenChange.bind(this);
         this._onSelect = this._onSelect.bind(this);
-        this._setInput = this._setInput.bind(this);
+        this._setCopyElement = this._setCopyElement.bind(this);
     }
 
     /**
-     * Dispatches a request for numbers if not already present in the redux
-     * store. If numbers are present, sets a default number to display in the
-     * dropdown trigger.
+     * Sets a default number to display in the dropdown trigger.
      *
      * @inheritdoc
      * returns {void}
      */
-    componentDidMount() {
+    componentWillMount() {
         if (this.props._dialIn.numbers) {
             this._setDefaultNumber(this.props._dialIn.numbers);
         } else {
-            this.props.dispatch(
-                updateDialInNumbers(this.props.dialInNumbersUrl));
+            this.props.dispatch(updateDialInNumbers());
         }
     }
 
@@ -123,52 +126,46 @@ class DialInNumbersForm extends Component {
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Implements React's {@link Component#render()}. Returns null if the
+     * component is not ready for display.
      *
      * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {ReactElement|null}
      */
     render() {
-        const { t, _dialIn } = this.props;
+        const { _dialIn, t } = this.props;
+        const { conferenceId, numbers, numbersEnabled } = _dialIn;
+        const { selectedNumber } = this.state;
 
-        const numbers = _dialIn.numbers;
-        const items = numbers ? this._formatNumbers(numbers) : [];
-
-        const isEnabled = this._isDropdownEnabled();
-        const inputWrapperClassNames
-            = `form-control__container ${isEnabled ? '' : 'is-disabled'}
-                ${_dialIn.loading ? 'is-loading' : ''}`;
-
-        let triggerText = '';
-
-        if (!_dialIn.numbersEnabled) {
-            triggerText = t('invite.numbersDisabled');
-        } else if (this.state.selectedNumber
-            && this.state.selectedNumber.content) {
-            triggerText = this.state.selectedNumber.content;
-        } else if (!numbers && _dialIn.loading) {
-            triggerText = t('invite.loadingNumbers');
-        } else if (_dialIn.error) {
-            triggerText = t('invite.errorFetchingNumbers');
-        } else {
-            triggerText = t('invite.noNumbers');
+        if (!conferenceId || !numbers || !numbersEnabled || !selectedNumber) {
+            return null;
         }
+
+        const items = numbers ? this._formatNumbers(numbers) : [];
 
         return (
             <div className = 'form-control dial-in-numbers'>
                 <label className = 'form-control__label'>
-                    { t('invite.dialInNumbers') }
+                    { t('invite.howToDialIn') }
+                    <span className = 'dial-in-numbers-conference-id'>
+                        { conferenceId }
+                    </span>
                 </label>
-                <div className = { inputWrapperClassNames }>
-                    { this._createDropdownMenu(items, triggerText) }
+                <div className = 'form-control__container'>
+                    { this._createDropdownMenu(items, selectedNumber.content) }
                     <button
                         className = 'button-control button-control_light'
-                        disabled = { !isEnabled }
-                        onClick = { this._onClick }
+                        onClick = { this._onCopyClick }
                         type = 'button'>
                         Copy
                     </button>
                 </div>
+                <textarea
+                    className = 'dial-in-numbers-copy'
+                    readOnly = { true }
+                    ref = { this._setCopyElement }
+                    tabIndex = '-1'
+                    value = { this._generateCopyText() } />
             </div>
         );
     }
@@ -209,7 +206,6 @@ class DialInNumbersForm extends Component {
                 <input
                     className = 'input-control'
                     readOnly = { true }
-                    ref = { this._setInput }
                     type = 'text'
                     value = { triggerText || '' } />
                 <span className = 'dial-in-numbers-trigger-icon'>
@@ -288,19 +284,26 @@ class DialInNumbersForm extends Component {
     }
 
     /**
-     * Determines if the dropdown can be opened.
+     * Creates a message describing how to dial in to the conference.
      *
      * @private
-     * @returns {boolean} True if the dropdown can be opened.
+     * @returns {string}
      */
-    _isDropdownEnabled() {
-        const { selectedNumber } = this.state;
+    _generateCopyText() {
+        const welcome = this.props.t('invite.invitedYouTo', {
+            meetingUrl: this.props.conferenceUrl,
+            userName: this.props._currentUserName
+        });
 
-        return Boolean(
-            this.props._dialIn.numbersEnabled
-            && selectedNumber
-            && selectedNumber.content
-        );
+        const callNumber = this.props.t('invite.callNumber',
+            { number: this.state.selectedNumber.number });
+        const stepOne = `1) ${callNumber}`;
+
+        const enterId = this.props.t('invite.enterId',
+            { meetingId: this.props._dialIn.conferenceId });
+        const stepTwo = `2) ${enterId}`;
+
+        return `${welcome}\n${stepOne}\n${stepTwo}`;
     }
 
     /**
@@ -311,16 +314,11 @@ class DialInNumbersForm extends Component {
      * @private
      * @returns {void}
      */
-    _onClick() {
-        const displayedValue = this.state.selectedNumber.content;
-        const desiredNumber = this.state.selectedNumber.number;
-        const startIndex = displayedValue.indexOf(desiredNumber);
-
+    _onCopyClick() {
         try {
-            this._input.focus();
-            this._input.setSelectionRange(startIndex, displayedValue.length);
+            this._copyElement.select();
             document.execCommand('copy');
-            this._input.blur();
+            this._copyElement.blur();
         } catch (err) {
             logger.error('error when copying the text', err);
         }
@@ -337,7 +335,7 @@ class DialInNumbersForm extends Component {
      */
     _onOpenChange(dropdownEvent) {
         this.setState({
-            isDropdownOpen: this._isDropdownEnabled() && dropdownEvent.isOpen
+            isDropdownOpen: dropdownEvent.isOpen
         });
     }
 
@@ -356,6 +354,19 @@ class DialInNumbersForm extends Component {
     }
 
     /**
+     * Sets the internal reference to the DOM/HTML element backing the React
+     * {@code Component} text area.
+     *
+     * @param {HTMLTextAreaElement} element - The DOM/HTML element for this
+     * {@code Component}'s text area.
+     * @private
+     * @returns {void}
+     */
+    _setCopyElement(element) {
+        this._copyElement = element;
+    }
+
+    /**
      * Updates the internal state of the currently selected number by defaulting
      * to the first available number.
      *
@@ -370,19 +381,6 @@ class DialInNumbersForm extends Component {
             selectedNumber: numbers[0]
         });
     }
-
-    /**
-     * Sets the internal reference to the DOM/HTML element backing the React
-     * {@code Component} input.
-     *
-     * @param {HTMLInputElement} element - The DOM/HTML element for this
-     * {@code Component}'s input.
-     * @private
-     * @returns {void}
-     */
-    _setInput(element) {
-        this._input = element;
-    }
 }
 
 /**
@@ -392,11 +390,16 @@ class DialInNumbersForm extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _currentUserName: React.PropTypes.string,
  *     _dialIn: React.PropTypes.object
  * }}
  */
 function _mapStateToProps(state) {
+    const { name }
+        = getLocalParticipant(state['features/base/participants']);
+
     return {
+        _currentUserName: name,
         _dialIn: state['features/invite/dial-in']
     };
 }

@@ -8,6 +8,19 @@
 
 .invite-dialog {
     .dial-in-numbers {
+        .dial-in-numbers-copy {
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        .dial-in-numbers-conference-id {
+            color: orange;
+            margin-left: 3px;
+        }
+
         .dial-in-numbers-trigger {
             position: relative;
             width: 100%;
