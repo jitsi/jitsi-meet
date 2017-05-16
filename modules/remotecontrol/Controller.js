@@ -97,7 +97,7 @@ export default class Controller extends RemoteControlParticipant {
      * null(the participant has left).
      */
     requestPermissions(userId: string, eventCaptureArea: Object) {
-        if (!this.enabled) {
+        if (!this._enabled) {
             return Promise.reject(new Error('Remote control is disabled!'));
         }
 
@@ -166,7 +166,7 @@ export default class Controller extends RemoteControlParticipant {
     _handleReply(participant: Object, event: Object) {
         const userId = participant.getId();
 
-        if (this.enabled
+        if (this._enabled
                 && event.name === REMOTE_CONTROL_EVENT_NAME
                 && event.type === EVENT_TYPES.permissions
                 && userId === this._requestedParticipant) {
@@ -205,7 +205,7 @@ export default class Controller extends RemoteControlParticipant {
      * @returns {void}
      */
     _handleRemoteControlStoppedEvent(participant: Object, event: Object) {
-        if (this.enabled
+        if (this._enabled
                 && event.name === REMOTE_CONTROL_EVENT_NAME
                 && event.type === EVENT_TYPES.stop
                 && participant.getId() === this._controlledParticipant) {
@@ -239,7 +239,7 @@ export default class Controller extends RemoteControlParticipant {
      * @returns {void}
      */
     resume() {
-        if (!this.enabled || this._isCollectingEvents || !this._area) {
+        if (!this._enabled || this._isCollectingEvents || !this._area) {
             return;
         }
         logger.log('Resuming remote control controller.');
