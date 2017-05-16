@@ -59,26 +59,38 @@ export default class LargeVideoManager {
             e => this.onHoverOut(e)
         );
 
-        // TODO Use the onresize event when temasys video objects support it.
-        /**
-         * The interval for checking if the displayed video resolution is or is
-         * not high-definition.
-         *
-         * @private
-         * @type {timeoutId}
-         */
-        this._updateVideoResolutionInterval = window.setInterval(
-            () => this._updateVideoResolutionStatus(),
-            VIDEO_RESOLUTION_POLL_INTERVAL);
+        // Bind event handler so it is only bound once for every instance.
+        this._updateVideoResolutionStatus
+            = this._updateVideoResolutionStatus.bind(this);
+
+        this.videoContainer.addResizeListener(
+            this._updateVideoResolutionStatus);
+
+        if (!JitsiMeetJS.util.RTCUIHelper.isResizeEventSupported()) {
+            /**
+             * An interval for polling if the displayed video resolution is or
+             * is not high-definition. For browsers that do not support video
+             * resize events, polling is the fallback.
+             *
+             * @private
+             * @type {timeoutId}
+             */
+            this._updateVideoResolutionInterval = window.setInterval(
+                this._updateVideoResolutionStatus,
+                VIDEO_RESOLUTION_POLL_INTERVAL);
+        }
     }
 
     /**
-     * Stops any polling intervals on the instance.
+     * Stops any polling intervals on the instance and and removes any
+     * listeners registered on child components.
      *
      * @returns {void}
      */
     destroy() {
         window.clearInterval(this._updateVideoResolutionInterval);
+        this.videoContainer.removeResizeListener(
+            this._updateVideoResolutionStatus);
     }
 
     onHoverIn (e) {
