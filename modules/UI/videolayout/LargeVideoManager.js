@@ -569,7 +569,7 @@ export default class LargeVideoManager {
      */
     _updateVideoResolutionStatus() {
         const { height, width } = this.videoContainer.getStreamSize();
-        const isCurrentlyHD = Math.min(height, width) >= config.minHDSize;
+        const isCurrentlyHD = Math.min(height, width) >= config.minHDHeight;
 
         APP.store.dispatch(setLargeVideoHDStatus(isCurrentlyHD));
     }
