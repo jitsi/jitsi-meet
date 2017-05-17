@@ -178,7 +178,10 @@ const Filmstrip = {
      * @returns {number} height
      */
     getFilmstripHeight() {
-        if (this.isFilmstripVisible()) {
+        // FIXME Make it more clear the getFilmstripHeight check is used in
+        // horizontal film strip mode for calculating how tall large video
+        // display should be.
+        if (this.isFilmstripVisible() && !interfaceConfig.VERTICAL_FILMSTRIP) {
             return $(`.${this.filmstripContainerClassName}`).outerHeight();
         } else {
             return 0;
@@ -365,13 +368,27 @@ const Filmstrip = {
             (remoteLocalWidthRatio * numberRemoteThumbs + 1), availableHeight *
             interfaceConfig.LOCAL_THUMBNAIL_RATIO);
         const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
+
+        const removeVideoWidth = lW * remoteLocalWidthRatio;
+
+        let localVideo;
+        if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            // scale both width and height
+            localVideo = {
+                thumbWidth: removeVideoWidth,
+                thumbHeight: h * remoteLocalWidthRatio
+            };
+        } else {
+            localVideo = {
+                thumbWidth: lW,
+                thumbHeight: h
+            };
+        }
+
         return {
-                    localVideo:{
-                        thumbWidth: lW,
-                        thumbHeight: h
-                    },
+                    localVideo,
                     remoteVideo: {
-                        thumbWidth: lW * remoteLocalWidthRatio,
+                        thumbWidth: removeVideoWidth,
                         thumbHeight: h
                     }
                 };
@@ -407,10 +424,15 @@ const Filmstrip = {
                 }));
             }
             promises.push(new Promise((resolve) => {
-                this.filmstrip.animate({
-                    // adds 2 px because of small video 1px border
-                    height: remote.thumbHeight + 2
-                }, this._getAnimateOptions(animate, resolve));
+                // Let CSS take care of height in vertical filmstrip mode.
+                if (interfaceConfig.VERTICAL_FILMSTRIP) {
+                    resolve();
+                } else {
+                    this.filmstrip.animate({
+                        // adds 2 px because of small video 1px border
+                        height: remote.thumbHeight + 2
+                    }, this._getAnimateOptions(animate, resolve));
+                }
             }));
 
             promises.push(new Promise(() => {

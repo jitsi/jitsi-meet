@@ -339,6 +339,10 @@ UI.start = function () {
         JitsiPopover.enabled = false;
     }
 
+    if (interfaceConfig.VERTICAL_FILMSTRIP) {
+        $("body").addClass("vertical-filmstrip");
+    }
+
     document.title = interfaceConfig.APP_NAME;
 
     if (!interfaceConfig.filmStripOnly) {

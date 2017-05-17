@@ -55,6 +55,12 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * Whether to only show the filmstrip (and hide the toolbar).
      */
     filmStripOnly: false,
+
+    /**
+     * Whether to show thumbnails in filmstrip as a column instead of as a row.
+     */
+    VERTICAL_FILMSTRIP: false,
+
     //A html text to be shown to guests on the close page, false disables it
     CLOSE_PAGE_GUEST_HINT: false,
     RANDOM_AVATAR_URL_PREFIX: false,

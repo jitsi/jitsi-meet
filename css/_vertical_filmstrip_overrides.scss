@@ -1,0 +1,150 @@
+/**
+ * Override other styles to support vertical filmstrip mode.
+ */
+.vertical-filmstrip {
+    .filmstrip {
+        align-items: flex-end;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column-reverse;
+        height: 100%;
+
+        /**
+         * Hide videos by making them slight to the right.
+         */
+        .filmstrip__videos {
+            right: 0;
+            transition: right 2s;
+
+            &.hidden {
+                bottom: auto;
+                right: -196px;
+            }
+        }
+
+        #filmstripLocalVideo {
+            height: auto;
+            justify-content: flex-end;
+        }
+
+        /**
+         * Remove unnecssary padding that is normally used to prevent horizontal
+         * filmstrip from overlapping the left edge of the screen.
+         */
+        #filmstripLocalVideo,
+        #filmstripRemoteVideos {
+            padding: 0;
+        }
+
+        #filmstripRemoteVideos {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            height: auto;
+            overflow-x: hidden !important;
+
+            .remote-videos-container {
+                flex-direction: column;
+            }
+        }
+
+        /**
+         * Rotate the hide filmstrip icon so it points towards the right edge
+         * of the screen.
+         */
+        &__toolbar {
+            transform: rotate(-90deg);
+        }
+
+        /**
+         * Move the remote video menu trigger to the bottom left of the
+         * video thumbnail.
+         */
+        .remotevideomenu {
+            bottom: 0;
+            left: 0;
+            top: auto;
+            right: auto;
+            transform: rotate(-90deg);
+        }
+
+        #remoteVideos {
+            flex-direction: column-reverse;
+            height: 100%;
+        }
+
+        .videocontainer {
+            /**
+             * Move status icons to the bottom right of the thumbnail.
+             */
+            &__toolbar {
+                text-align: right;
+
+                .toolbar-icon {
+                    float: none;
+                }
+            }
+        }
+    }
+
+    .video-state-indicator {
+        bottom: 30px;
+        left: 30px;
+        right: auto;
+        top: auto;
+
+        /**
+         * Move the label to the bottom left of the screen
+         */
+        &#videoResolutionLabel {
+            left: 60px;
+            z-index: $poweredByZ;
+
+            /**
+             * Open the menu above the label.
+             */
+            .video-state-indicator-menu {
+                bottom: calc(100% - 15px);
+                left: -10px;
+
+                /**
+                 * Create padding for mouse travel on hover.
+                 */
+                padding-bottom: 20px;
+                right: auto;
+                top: auto;
+
+                .video-state-indicator-menu-options {
+                    margin: 0;
+
+                    /**
+                     * The menu arrow should point down
+                     */
+                    &::after {
+                        border-color: $popoverBg transparent transparent;
+                        bottom: -10px;
+                        left: 15px;
+                        right: auto;
+                        top: auto;
+                    }
+                }
+            }
+        }
+
+        &#recordingLabel {
+            left: 110px;
+            z-index: $poweredByZ;
+        }
+    }
+
+    /**
+     * Move toastr closer to the bottom of the screen and move left to avoid
+     * overlapping of videos when they are configured at default height.
+     */
+    #toast-container {
+        &.notification-bottom-right {
+            bottom: 25px;
+            right: 130 + 2 * ($thumbnailVideoMargin + $thumbnailsBorder) + $thumbnailVideoBorder;
+        }
+    }
+}

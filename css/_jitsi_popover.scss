@@ -44,4 +44,28 @@
         border-width: 5px;
         border-bottom-width: 0;
     }
+
+    /**
+     * Override default "top" styles to support popovers appearing from the
+     * left of the popover trigger element.
+     */
+    &.left {
+        margin-left: -$popoverMenuPadding;
+        margin-top: 0;
+
+        .arrow {
+            border-color: transparent transparent transparent $popoverBg;
+            border-width: 5px 0px 5px 5px;
+            margin-left: 0;
+            margin-top: -5px;
+        }
+
+        .jitsipopover {
+            &__menu-padding {
+                bottom: 0;
+                height: 100%;
+                width: $popoverMenuPadding;
+            }
+        }
+    }
 }
