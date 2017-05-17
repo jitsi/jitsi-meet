@@ -58,6 +58,13 @@ function _setConfig(state, action) {
         // The config of INITIAL_STATE is meant to override the config
         // downloaded from the Jitsi Meet deployment because the former contains
         // values that are mandatory.
+        //
+        // FIXME At the time of this writing the hard-coded overriding values
+        // are specific to mobile/React Native but the source code here is
+        // executed on Web/React as well. The latter is not a practical problem
+        // right now because the rest of the Web/React source code does not read
+        // the overridden properties/values, it still relies on the global
+        // variable config.
         ...INITIAL_STATE
     };
 }

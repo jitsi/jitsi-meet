@@ -172,9 +172,8 @@ export function showDesktopSharingButton(): Function {
 export function showDialPadButton(show: boolean): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'dialpad';
-        const shouldShow = UIUtil.isButtonEnabled(buttonName) && show;
 
-        if (shouldShow) {
+        if (show && UIUtil.isButtonEnabled(buttonName)) {
             dispatch(setToolbarButton(buttonName, {
                 hidden: false
             }));
@@ -205,11 +204,9 @@ export function showRecordingButton(): Function {
 export function showSharedVideoButton(): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'sharedvideo';
-        const shouldShow
-            = UIUtil.isButtonEnabled(buttonName)
-                && !config.disableThirdPartyRequests;
 
-        if (shouldShow) {
+        if (UIUtil.isButtonEnabled(buttonName)
+                && !config.disableThirdPartyRequests) {
             dispatch(setToolbarButton(buttonName, {
                 hidden: false
             }));
@@ -218,28 +215,22 @@ export function showSharedVideoButton(): Function {
 }
 
 /**
- * Shows SIP call button if it's required and appropriate
- * flag is passed.
+ * Shows SIP call button if it's required and appropriate flag is passed.
  *
  * @param {boolean} show - Flag showing whether to show button or not.
  * @returns {Function}
  */
 export function showSIPCallButton(show: boolean): Function {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const buttonName = 'sip';
 
-        // hide the button if there is a config to check for user roles,
-        // based on the token and the the user is guest
-        const shouldShow
-            = APP.conference.sipGatewayEnabled()
+        if (show
+                && APP.conference.sipGatewayEnabled()
                 && UIUtil.isButtonEnabled(buttonName)
-                && show
                 && (!config.enableUserRolesBasedOnToken
-                        || !APP.tokenData.isGuest);
-
-        if (shouldShow) {
+                    || !getState()['features/jwt'].isGuest)) {
             dispatch(setToolbarButton(buttonName, {
-                hidden: !shouldShow
+                hidden: false
             }));
         }
     };
