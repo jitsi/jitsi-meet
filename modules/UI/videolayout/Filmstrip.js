@@ -14,6 +14,7 @@ const Filmstrip = {
         this.iconMenuUpClassName = 'icon-menu-up';
         this.filmstripContainerClassName = 'filmstrip';
         this.filmstrip = $('#remoteVideos');
+        this.filmstripRemoteVideos = $('#filmstripRemoteVideosContainer');
         this.eventEmitter = eventEmitter;
 
         // Show the toggle button and add event listeners only when out of
@@ -456,8 +457,7 @@ const Filmstrip = {
         }
 
         let localThumb = $("#localVideoContainer");
-        let remoteThumbs = this.filmstrip.children(selector)
-            .not("#localVideoContainer");
+        let remoteThumbs = this.filmstripRemoteVideos.children(selector);
 
         // Exclude the local video container if it has been hidden.
         if (localThumb.hasClass("hidden")) {

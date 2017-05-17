@@ -800,7 +800,7 @@ RemoteVideo.createContainer = function (spanId) {
     overlay.className = "videocontainer__hoverOverlay";
     container.appendChild(overlay);
 
-    var remotes = document.getElementById('remoteVideos');
+    var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
 };
 

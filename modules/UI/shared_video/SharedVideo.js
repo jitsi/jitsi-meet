@@ -656,7 +656,7 @@ SharedVideoThumb.prototype.createContainer = function (spanId) {
     avatar.src = "https://img.youtube.com/vi/" + this.url + "/0.jpg";
     container.appendChild(avatar);
 
-    var remotes = document.getElementById('remoteVideos');
+    var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
 };
 
