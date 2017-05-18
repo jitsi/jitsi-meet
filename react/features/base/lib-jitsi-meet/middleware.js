@@ -99,22 +99,23 @@ function _setConfig({ dispatch, getState }, next, action) {
     // disposed of first.
     // TODO Currently, disposeLib actually does not dispose of lib-jitsi-meet
     // because lib-jitsi-meet does not implement such functionality.
-    const disposeLibPromise
-        = initialized ? dispatch(disposeLib()) : Promise.resolve();
+    if (initialized) {
+        dispatch(disposeLib());
+    }
 
-    disposeLibPromise.then(() => {
-        // Let the new config into the Redux store (because initLib will read it
-        // from there).
-        next(action);
+    // Let the new config into the Redux store (because initLib will read it
+    // from there).
+    const result = next(action);
 
-        // FIXME Obviously, the following is bad design. However, I'm currently
-        // introducing the features base/config and base/logging and I'm trying
-        // to minimize the scope of the changes while I'm attempting to preserve
-        // compatibility with the existing partially React-ified Web source code
-        // and what was already executing on React Native. Additionally, I do
-        // not care to load logging_config.js on React Native.
-        dispatch(setLoggingConfig(window.loggingConfig));
+    // FIXME Obviously, the following is bad design. However, I'm currently
+    // introducing the features base/config and base/logging and I'm trying to
+    // minimize the scope of the changes while I'm attempting to preserve
+    // compatibility with the existing partially React-ified Web source code and
+    // what was already executing on React Native. Additionally, I do not care
+    // to load logging_config.js on React Native.
+    dispatch(setLoggingConfig(window.loggingConfig));
 
-        dispatch(initLib());
-    });
+    dispatch(initLib());
+
+    return result;
 }
