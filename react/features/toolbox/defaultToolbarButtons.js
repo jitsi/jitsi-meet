@@ -6,8 +6,6 @@ import UIEvents from '../../../service/UI/UIEvents';
 
 import { openInviteDialog } from '../invite';
 
-import { AudioOnlyButton } from './components';
-
 declare var APP: Object;
 declare var config: Object;
 declare var JitsiMeetJS: Object;
@@ -44,14 +42,6 @@ function _showSIPNumberInput() {
  * All toolbar buttons' descriptors.
  */
 export default {
-    /**
-     * The descriptor of the audio only toolbar button. Defers actual
-     * descriptor implementation to the {@code AudioOnlyButton} component.
-     */
-    audioonly: {
-        component: AudioOnlyButton
-    },
-
     /**
      * The descriptor of the camera toolbar button.
      */

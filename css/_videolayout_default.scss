@@ -496,7 +496,6 @@
 }
 
 .audio-only-label {
-    cursor: default;
     display: flex;
     height: auto;
     justify-content: center;
@@ -507,6 +506,7 @@
 .video-state-indicator {
     background: $videoStateIndicatorBackground;
     color: $videoStateIndicatorColor;
+    cursor: default;
     font-size: 13px;
     height: 40px;
     line-height: 20px;

@@ -66,14 +66,10 @@ export class VideoStatusLabel extends Component {
     render() {
         const { _audioOnly, _conferenceStarted, _largeVideoHD, t } = this.props;
 
-        // FIXME These truthy checks should not be necessary. The
-        // _conferenceStarted check is used to be defensive against toggling
-        // audio only mode while there is no conference and hides the need for
-        // error handling around audio only mode toggling. The _largeVideoHD
-        // check is used to prevent the label from displaying while the video
-        // resolution status is unknown but ties this component to the
-        // LargeVideoManager.
-        if (!_conferenceStarted || _largeVideoHD === undefined) {
+        // FIXME The _conferenceStarted check is used to be defensive against
+        // toggling audio only mode while there is no conference and hides the
+        // need for error handling around audio only mode toggling.
+        if (!_conferenceStarted) {
             return null;
         }
 
