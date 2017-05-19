@@ -71,7 +71,6 @@ export default {
     HANGUP: "UI.hangup",
     LOGOUT: "UI.logout",
     RECORDING_TOGGLED: "UI.recording_toggled",
-    SIP_DIAL: "UI.sip_dial",
     SUBJECT_CHANGED: "UI.subject_changed",
     VIDEO_DEVICE_CHANGED: "UI.video_device_changed",
     AUDIO_DEVICE_CHANGED: "UI.audio_device_changed",

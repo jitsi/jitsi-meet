@@ -215,14 +215,15 @@ export function showSharedVideoButton(): Function {
 }
 
 /**
- * Shows SIP call button if it's required and appropriate flag is passed.
+ * Shows the dial out button if it's required and appropriate
+ * flag is passed.
  *
  * @param {boolean} show - Flag showing whether to show button or not.
  * @returns {Function}
  */
-export function showSIPCallButton(show: boolean): Function {
+export function showDialOutButton(show: boolean): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const buttonName = 'sip';
+        const buttonName = 'dialout';
 
         if (show
                 && APP.conference.sipGatewayEnabled()

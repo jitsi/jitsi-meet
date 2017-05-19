@@ -277,8 +277,6 @@
         "Save": "Save",
         "recording": "Recording",
         "recordingToken": "Enter recording token",
-        "Dial": "Dial",
-        "sipMsg": "Enter SIP number",
         "passwordCheck": "Are you sure you would like to remove your password?",
         "passwordMsg": "Set a password to lock your room",
         "shareLink": "Share the link to the call",
@@ -447,9 +445,16 @@
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {
-        "hd": "HD",
-        "hdVideo": "HD video",
-        "sd": "SD",
-        "sdVideo": "SD video"
+      "hd": "HD",
+      "hdVideo": "HD video",
+      "sd": "SD",
+      "sdVideo": "SD video"
+    },
+    "dialOut": {
+        "dial": "Dial",
+        "dialOut": "Call a phone number",
+        "statusMessage": "is now __status__",
+        "enterPhone": "Enter phone number",
+        "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"
     }
 }
