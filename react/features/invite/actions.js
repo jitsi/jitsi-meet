@@ -8,29 +8,6 @@ import { InviteDialog } from './components';
 
 declare var $: Function;
 declare var APP: Object;
-declare var config: Object;
-
-/**
- * The url for the api that matches a conference name and muc to an id.
- *
- * @type {string}
- */
-const DIAL_IN_CONF_CODE_URL = config.dialInConfCodeUrl;
-
-/**
- * The url for the api that returns phone numbers to dial in to the conference
- * and join using the conference id.
- *
- * @type {string}
- */
-const DIAL_IN_NUMBERS_URLS = config.dialInNumbersUrl;
-
-/**
- * The url for the MUC component joined for the conference.
- *
- * @type {string}
- */
-const MUC_URL = config.hosts && config.hosts.muc;
 
 /**
  * Opens the Invite Dialog.
@@ -50,8 +27,11 @@ export function openInviteDialog() {
  */
 export function updateDialInNumbers() {
     return (dispatch, getState) => {
+        const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
+            = getState()['features/base/config'];
+        const mucUrl = hosts && hosts.muc;
 
-        if (!DIAL_IN_CONF_CODE_URL || !DIAL_IN_NUMBERS_URLS || !MUC_URL) {
+        if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucUrl) {
             dispatch({
                 type: UPDATE_DIAL_IN_NUMBERS_FAILED,
                 error: 'URLs for fetching dial in numbers not properly defined'
@@ -62,10 +42,10 @@ export function updateDialInNumbers() {
 
         const { room } = getState()['features/base/conference'];
         const conferenceIdUrl
-            = `${DIAL_IN_CONF_CODE_URL}?conference=${room}@${MUC_URL}`;
+            = `${dialInConfCodeUrl}?conference=${room}@${mucUrl}`;
 
         Promise.all([
-            $.getJSON(DIAL_IN_NUMBERS_URLS),
+            $.getJSON(dialInNumbersUrl),
             $.getJSON(conferenceIdUrl)
         ]).then(([ numbersResponse, idResponse ]) => {
             if (!idResponse.conference || !idResponse.id) {
