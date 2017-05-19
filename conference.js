@@ -1286,6 +1286,8 @@ export default {
 
             // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
+
+            updateRemoteThumbnailsVisibility();
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
             APP.store.dispatch(participantLeft(id, user));
@@ -1293,6 +1295,8 @@ export default {
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
             APP.UI.onSharedVideoStop(id);
+
+            updateRemoteThumbnailsVisibility();
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
@@ -1475,6 +1479,8 @@ export default {
                         reportError(e);
                     }
                 }
+
+                updateRemoteThumbnailsVisibility();
             });
         }
 
@@ -1811,6 +1817,8 @@ export default {
                     }
                 });
             }
+
+            updateRemoteThumbnailsVisibility();
         });
         room.addCommandListener(
             this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
@@ -1826,6 +1834,21 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+
+        function updateRemoteThumbnailsVisibility() {
+            const localUserId = APP.conference.getMyUserId();
+            const remoteParticipantsCount = room.getParticipantCount() - 1;
+
+            // Get the remote thumbnail count for cases where there are
+            // non-participants displaying video, such as with video sharing.
+            const remoteVideosCount = APP.UI.getRemoteVideosCount();
+
+            const shouldShowRemoteThumbnails = APP.UI.isPinned(localUserId)
+                || remoteVideosCount > 1
+                || remoteParticipantsCount !== remoteVideosCount;
+
+            APP.UI.setRemoteThumbnailsVisibility(shouldShowRemoteThumbnails);
+        }
     },
     /**
     * Adds any room listener.

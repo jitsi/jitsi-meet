@@ -138,4 +138,13 @@
         margin-bottom: auto;
         padding-right: $defaultToolbarSize;
     }
+
+    .remote-videos-container {
+        transition: opacity 1s;
+
+        &.hide-videos {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
 }

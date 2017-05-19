@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, APP, config, JitsiMeetJS, interfaceConfig */
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -23,6 +23,27 @@ const Filmstrip = {
             this._initFilmstripToolbar();
             this.registerListeners();
         }
+    },
+
+    /**
+     * Sets a class on the remote videos container for CSS to adjust visibility
+     * of the remote videos. Will no-op if config.debug is truthy, as should be
+     * the case with torture tests.
+     *
+     * @param {boolean} shouldHide - True if remote videos should be hidden,
+     * false if they should be visible.
+     * @returns {void}
+     */
+    setRemoteVideoVisibility(shouldShow) {
+        // FIXME Checking config.debug is a grand hack to avoid fixing the
+        // torture tests after the 1-on-1 UI was implemented, which hides remote
+        // videos on 1-on-1 calls. If this check is to be kept, at least create
+        // new torture tests to verify 1-on-1 mode.
+        if (config.debug || config.disable1On1Mode) {
+            return;
+        }
+
+        this.filmstripRemoteVideos.toggleClass('hide-videos', !shouldShow);
     },
 
     /**

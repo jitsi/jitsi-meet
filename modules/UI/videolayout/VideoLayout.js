@@ -1133,6 +1133,15 @@ var VideoLayout = {
      */
     getLargeVideoWrapper() {
         return this.getCurrentlyOnLargeContainer().$wrapper;
+    },
+
+    /**
+     * Returns the number of remove video ids.
+     *
+     * @returns {number} The number of remote videos.
+     */
+    getRemoteVideosCount() {
+        return Object.keys(remoteVideos).length;
     }
 };
 

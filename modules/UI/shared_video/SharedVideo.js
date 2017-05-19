@@ -456,6 +456,9 @@ export default class SharedVideoManager {
                 // revert to original behavior (prevents pausing
                 // for participants not sharing the video to pause it)
                 $("#sharedVideo").css("pointer-events","auto");
+
+                this.emitter.emit(
+                    UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
         });
 
         this.url = null;
