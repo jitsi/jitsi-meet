@@ -565,7 +565,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
 
     let indicatorSpanId = "dominantspeakerindicator";
     let content = `<i id="indicatoricon"
-        '             class="indicatoricon fa fa-bullhorn"></i>`;
+                      class="indicatoricon fa fa-bullhorn"></i>`;
     let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
         videoSpanId: this.videoSpanId,
         indicatorId: indicatorSpanId,
