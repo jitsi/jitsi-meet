@@ -27,14 +27,14 @@ class DialInNumbersForm extends Component {
      */
     static propTypes = {
         /**
-         * The name of the current user.
-         */
-        _currentUserName: React.PropTypes.string,
-
-        /**
          * The redux state representing the dial-in numbers feature.
          */
         _dialIn: React.PropTypes.object,
+
+        /**
+         * The display name of the local user.
+         */
+        _localUserDisplayName: React.PropTypes.string,
 
         /**
          * The url for the JitsiConference.
@@ -292,7 +292,7 @@ class DialInNumbersForm extends Component {
     _generateCopyText() {
         const welcome = this.props.t('invite.invitedYouTo', {
             meetingUrl: this.props.conferenceUrl,
-            userName: this.props._currentUserName
+            userName: this.props._localUserDisplayName
         });
 
         const callNumber = this.props.t('invite.callNumber',
@@ -390,7 +390,7 @@ class DialInNumbersForm extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _currentUserName: React.PropTypes.string,
+ *     _localUserDisplayName: React.PropTypes.string,
  *     _dialIn: React.PropTypes.object
  * }}
  */
@@ -399,7 +399,7 @@ function _mapStateToProps(state) {
         = getLocalParticipant(state['features/base/participants']);
 
     return {
-        _currentUserName: name,
+        _localUserDisplayName: name,
         _dialIn: state['features/invite/dial-in']
     };
 }
