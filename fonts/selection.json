@@ -27,7 +27,7 @@
         "code": 59651
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 0
     },
     {
@@ -56,7 +56,7 @@
         "code": 59677
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 1
     },
     {
@@ -85,7 +85,7 @@
         "code": 59676
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 2
     },
     {
@@ -111,7 +111,7 @@
         "name": "avatar"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 3
     },
     {
@@ -137,7 +137,7 @@
         "name": "hangup"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 4
     },
     {
@@ -163,7 +163,7 @@
         "name": "chat"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 5
     },
     {
@@ -189,7 +189,7 @@
         "name": "download"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 6
     },
     {
@@ -215,7 +215,7 @@
         "name": "edit"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 7
     },
     {
@@ -241,34 +241,8 @@
         "name": "share-doc"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 8
-    },
-    {
-      "icon": {
-        "paths": [
-          "M854 662c24 0 42 18 42 42v150c0 24-18 42-42 42-400 0-726-326-726-726 0-24 18-42 42-42h150c24 0 42 18 42 42 0 54 8 104 24 152 4 14 2 32-10 44l-94 94c62 122 162 220 282 282l94-94c12-12 30-14 44-10 48 16 98 24 152 24zM854 214v-44h-44v44h44zM768 128h128v128h-86v86h-42v-214zM640 214v128h-128v-44h86v-42h-86v-128h128v42h-86v44h86zM726 128v214h-44v-214h44z"
-        ],
-        "attrs": [],
-        "isMulticolor": false,
-        "isMulticolor2": false,
-        "tags": [
-          "dialer_sip"
-        ],
-        "grid": 0
-      },
-      "attrs": [],
-      "properties": {
-        "id": 9,
-        "order": 95,
-        "ligatures": "dialer_sip",
-        "prevSize": 32,
-        "code": 59657,
-        "name": "telephone"
-      },
-      "setIdx": 0,
-      "setId": 3,
-      "iconIdx": 9
     },
     {
       "icon": {
@@ -293,7 +267,7 @@
         "name": "kick"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 10
     },
     {
@@ -319,7 +293,7 @@
         "name": "menu-up"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 11
     },
     {
@@ -345,7 +319,7 @@
         "name": "menu-down"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 12
     },
     {
@@ -371,7 +345,7 @@
         "name": "full-screen"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 13
     },
     {
@@ -397,7 +371,7 @@
         "name": "exit-full-screen"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 14
     },
     {
@@ -423,7 +397,7 @@
         "name": "star-full"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 15
     },
     {
@@ -449,7 +423,7 @@
         "name": "security"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 16
     },
     {
@@ -475,7 +449,7 @@
         "name": "security-locked"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 17
     },
     {
@@ -501,7 +475,7 @@
         "name": "reload"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 18
     },
     {
@@ -527,7 +501,7 @@
         "name": "microphone"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 19
     },
     {
@@ -553,7 +527,7 @@
         "name": "mic-empty"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 20
     },
     {
@@ -579,7 +553,7 @@
         "name": "mic-disabled"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 21
     },
     {
@@ -605,7 +579,7 @@
         "name": "raised-hand"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 22
     },
     {
@@ -631,7 +605,7 @@
         "name": "contactList"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 23
     },
     {
@@ -657,7 +631,7 @@
         "name": "link"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 24
     },
     {
@@ -683,7 +657,7 @@
         "name": "shared-video"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 25
     },
     {
@@ -709,7 +683,7 @@
         "name": "settings"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 26
     },
     {
@@ -735,7 +709,7 @@
         "name": "star"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 27
     },
     {
@@ -761,7 +735,7 @@
         "name": "switch-camera"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 28
     },
     {
@@ -787,7 +761,7 @@
         "name": "share-desktop"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 29
     },
     {
@@ -813,7 +787,7 @@
         "name": "camera"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 30
     },
     {
@@ -839,7 +813,7 @@
         "name": "camera-disabled"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 31
     },
     {
@@ -865,7 +839,7 @@
         "name": "volume"
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 32
     },
     {
@@ -913,7 +887,7 @@
         "code": 59648
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 33
     },
     {
@@ -986,7 +960,7 @@
         "ligatures": ""
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 34
     },
     {
@@ -1015,7 +989,7 @@
         "ligatures": ""
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 35
     },
     {
@@ -1045,7 +1019,7 @@
         "ligatures": ""
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 36
     },
     {
@@ -1075,7 +1049,7 @@
         "ligatures": ""
       },
       "setIdx": 0,
-      "setId": 3,
+      "setId": 1,
       "iconIdx": 37
     },
     {
@@ -1095,14 +1069,14 @@
       "properties": {
         "order": 115,
         "ligatures": "dialpad",
-        "id": 217,
+        "id": 38,
         "prevSize": 32,
         "code": 59685,
         "name": "dialpad"
       },
-      "setIdx": 1,
-      "setId": 2,
-      "iconIdx": 217
+      "setIdx": 0,
+      "setId": 1,
+      "iconIdx": 38
     },
     {
       "icon": {
@@ -1121,14 +1095,14 @@
       "properties": {
         "order": 114,
         "ligatures": "remove_red_eye, visibility",
-        "id": 622,
+        "id": 39,
         "prevSize": 32,
         "code": 59683,
         "name": "visibility"
       },
-      "setIdx": 1,
-      "setId": 2,
-      "iconIdx": 622
+      "setIdx": 0,
+      "setId": 1,
+      "iconIdx": 39
     },
     {
       "icon": {
@@ -1147,14 +1121,41 @@
       "properties": {
         "order": 113,
         "ligatures": "visibility_off",
-        "id": 816,
+        "id": 40,
         "prevSize": 32,
         "code": 59684,
         "name": "visibility-off"
       },
+      "setIdx": 0,
+      "setId": 1,
+      "iconIdx": 40
+    },
+    {
+      "icon": {
+        "paths": [
+          "M282 460c62 120 162 220 282 282l94-94c12-12 30-16 44-10 48 16 100 24 152 24 24 0 42 18 42 42v150c0 24-18 42-42 42-400 0-726-326-726-726 0-24 18-42 42-42h150c24 0 42 18 42 42 0 54 8 104 24 152 4 14 2 32-10 44z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "phone"
+        ],
+        "defaultCode": 57549,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "call, local_phone, phone",
+        "id": 120,
+        "order": 848,
+        "prevSize": 24,
+        "code": 57549,
+        "name": "phone"
+      },
       "setIdx": 1,
-      "setId": 2,
-      "iconIdx": 816
+      "setId": 0,
+      "iconIdx": 120
     }
   ],
   "height": 1024,
@@ -1185,7 +1186,8 @@
       "useClassSelector": true
     },
     "historySize": 100,
-    "showCodes": true,
-    "search": ""
+    "showCodes": false,
+    "search": "",
+    "showLiga": false
   }
 }
