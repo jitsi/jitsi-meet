@@ -436,14 +436,13 @@
     },
     "invite": {
         "addPassword": "Add password",
-        "dialInNumbers": "Dial-in telephone numbers",
-        "errorFetchingNumbers": "Failed to obtain dial-in numbers",
+        "callNumber": "Call __number__",
+        "enterId": "Enter Meeting ID: __meetingId__ following by # to dial in from a phone",
+        "howToDialIn": "To dial in, use one of the following numbers and meeting ID",
         "hidePassword": "Hide password",
         "inviteTo": "Invite people to __conferenceName__",
-        "loadingNumbers": "Loading...",
+        "invitedYouTo": "__userName__ has invited you to the __meetingUrl__ conference",
         "locked": "This call is locked. New callers must have the link and enter the password to join.",
-        "noNumbers": "No numbers available",
-        "numbersDisabled": "Dialing in has been disabled",
         "showPassword": "Show password",
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },

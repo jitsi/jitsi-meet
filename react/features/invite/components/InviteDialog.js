@@ -42,11 +42,6 @@ class InviteDialog extends Component {
         conferenceUrl: React.PropTypes.string,
 
         /**
-         * The url for retrieving dial-in numbers.
-         */
-        dialInNumbersUrl: React.PropTypes.string,
-
-        /**
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
@@ -68,7 +63,7 @@ class InviteDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _conference } = this.props;
+        const { _conference, conferenceUrl } = this.props;
         const titleString
             = this.props.t(
                 'invite.inviteTo',
@@ -80,8 +75,8 @@ class InviteDialog extends Component {
                 okTitleKey = 'dialog.done'
                 titleString = { titleString }>
                 <div className = 'invite-dialog'>
-                    <ShareLinkForm toCopy = { this.props.conferenceUrl } />
-                    { this._renderDialInNumbersForm() }
+                    <ShareLinkForm toCopy = { conferenceUrl } />
+                    <DialInNumbersForm conferenceUrl = { conferenceUrl } />
                     <PasswordContainer
                         conference = { _conference.conference }
                         locked = { _conference.locked }
@@ -89,22 +84,6 @@ class InviteDialog extends Component {
                         showPasswordEdit = { this.props._isModerator } />
                 </div>
             </Dialog>
-        );
-    }
-
-    /**
-     * Creates a React {@code Component} for displaying and copying to clipboard
-     * telephone numbers for dialing in to the conference.
-     *
-     * @private
-     * @returns {ReactElement|null}
-     */
-    _renderDialInNumbersForm() {
-        return (
-            this.props.dialInNumbersUrl
-                ? <DialInNumbersForm
-                    dialInNumbersUrl = { this.props.dialInNumbersUrl } />
-                : null
         );
     }
 }

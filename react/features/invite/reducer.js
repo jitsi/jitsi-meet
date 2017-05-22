@@ -4,7 +4,6 @@ import {
 
 import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,
-    UPDATE_DIAL_IN_NUMBERS_REQUEST,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
 
@@ -19,24 +18,16 @@ ReducerRegistry.register(
         case UPDATE_DIAL_IN_NUMBERS_FAILED: {
             return {
                 ...state,
-                error: action.error,
-                loading: false
+                error: action.error
             };
         }
 
-        case UPDATE_DIAL_IN_NUMBERS_REQUEST: {
-            return {
-                ...state,
-                error: null,
-                loading: true
-            };
-        }
         case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
-            const { numbers, numbersEnabled } = action.response;
+            const { numbers, numbersEnabled } = action.dialInNumbers;
 
             return {
+                conferenceId: action.conferenceId.id,
                 error: null,
-                loading: false,
                 numbers,
                 numbersEnabled
             };
