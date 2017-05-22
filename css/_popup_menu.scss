@@ -41,21 +41,37 @@
         }
     }
 
-    &__text,
-    &__slider {
+    &__text {
         display: inline-block;
         vertical-align: middle;
     }
 
-    &__slider {
-        width: 50px;
+    &__contents {
+        display: flex;
+
+        /**
+         * Positioning styles on the slider and its container are used to make
+         * the container fit the popup width, by removing the slider from the
+         * page flow, and then making the slider fit the container.
+         */
+        .popupmenu__slider_container {
+            position: relative;
+            width: 100%;
+
+            .popupmenu__slider {
+                bottom: 50%;
+                position: absolute;
+                top: 50%;
+                width: 100%;
+            }
+        }
     }
 
     &__icon {
         vertical-align: middle;
         position: relative;
         display: inline-block;
-        width: 20px;
+        min-width: 20px;
         height: 100%;
         text-align: center;
 
