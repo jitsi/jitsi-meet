@@ -140,7 +140,7 @@ function createInitialLocalTracksAndConnect(roomName) {
                 mediaPermissionPromptVisibilityChanged(true, browser))
     );
 
-    const noVideo = !!config.noVideoDevice;
+    const noVideo = !!config._noVideoDevice;
     const initialDevices = noVideo ? ['audio'] : ['audio', 'video'];
 
     // First try to retrieve both audio and video.
