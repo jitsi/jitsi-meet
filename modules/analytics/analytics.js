@@ -111,7 +111,8 @@ class Analytics {
             handlers => {
                 const permanentProperties = {
                     roomName: APP.conference.roomName,
-                    userAgent: navigator.userAgent
+                    userAgent: navigator.userAgent,
+                    ...window.jitsiRegionInfo
                 };
 
                 const { group, server } = APP.store.getState()['features/jwt'];
