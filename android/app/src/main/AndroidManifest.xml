@@ -1,30 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.jitsi.meet"
-    android:versionCode="1"
-    android:versionName="1.0">
-
-    <!-- XXX: ACCESS_NETWORK_STATE is required by WebRTC. -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus"/>
-
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="23" />
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.jitsi.meet">
     <application
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
-      android:name=".MainApplication"
       android:theme="@style/AppTheme">
       <activity
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
@@ -54,7 +32,5 @@
             <data android:scheme="org.jitsi.meet" />
         </intent-filter>
       </activity>
-      <activity
-        android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
 </manifest>

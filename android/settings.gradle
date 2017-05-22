@@ -1,6 +1,6 @@
 rootProject.name = 'jitsi-meet'
 
-include ':app'
+include ':app', ':sdk'
 include ':react-native-background-timer'
 project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
 include ':react-native-immersive'
