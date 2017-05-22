@@ -1,0 +1,108 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        publishNonDefault true
+    }
+
+    buildTypes {
+        debug {}
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.facebook.react:react-native:+'
+
+    compile project(':react-native-background-timer')
+    compile project(':react-native-immersive')
+    compile project(':react-native-keep-awake')
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-webrtc')
+}
+
+// Build process helpers
+//
+
+void runBefore(String dependentTaskName, Task task) {
+    Task dependentTask = tasks.findByPath(dependentTaskName);
+    if (dependentTask != null) {
+        dependentTask.dependsOn task
+    }
+}
+
+gradle.projectsEvaluated {
+    android.buildTypes.all { buildType ->
+        def buildNameCapitalized = "${buildType.name.capitalize()}"
+        def bundlePath = "${buildDir}/intermediates/bundles/${buildType.name}"
+
+        // Bundle fonts in react-native-vector-icons
+        //
+
+        def currentFontTask = tasks.create(name: "${buildType.name}CopyFonts", type: Copy) {
+            from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
+            into("${bundlePath}/assets/fonts")
+        }
+
+        currentFontTask.dependsOn("merge${buildNameCapitalized}Resources")
+        currentFontTask.dependsOn("merge${buildNameCapitalized}Assets")
+
+        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentFontTask)
+        runBefore("processX86${buildNameCapitalized}Resources", currentFontTask)
+        runBefore("processUniversal${buildNameCapitalized}Resources", currentFontTask)
+        runBefore("process${buildNameCapitalized}Resources", currentFontTask)
+
+        // Bundle JavaScript and React resources
+        // (adapted from react-native/react.gradle)
+        //
+
+        // React js bundle directories
+        def jsBundleDir = file("${bundlePath}/assets")
+        def resourcesDir = file("${bundlePath}/res/merged")
+        def jsBundleFile = file("${jsBundleDir}/index.android.bundle")
+
+        // Bundle task name for variant
+        def bundleJsAndAssetsTaskName = "bundle${buildNameCapitalized}JsAndAssets"
+
+        def currentBundleTask = tasks.create(
+                name: bundleJsAndAssetsTaskName,
+                type: Exec) {
+
+            // Set up inputs and outputs so gradle can cache the result
+            def reactRoot = file("${projectDir}/../../")
+            inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
+            outputs.dir jsBundleDir
+            outputs.dir resourcesDir
+
+            // Set up the call to the react-native cli
+            workingDir reactRoot
+
+            // Create JS bundle
+            def devEnabled = !buildNameCapitalized.toLowerCase().contains("release")
+            commandLine("node", "node_modules/react-native/local-cli/cli.js", "bundle", "--platform", "android", "--dev", "${devEnabled}",
+                    "--reset-cache", "--entry-file", "index.android.js", "--bundle-output", jsBundleFile, "--assets-dest", resourcesDir)
+
+            // TODO: disable task in Debug mode?
+        }
+
+        // Hook bundle${productFlavor}${buildType}JsAndAssets into the android build process
+        currentBundleTask.dependsOn("merge${buildNameCapitalized}Resources")
+        currentBundleTask.dependsOn("merge${buildNameCapitalized}Assets")
+
+        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentBundleTask)
+        runBefore("processX86${buildNameCapitalized}Resources", currentBundleTask)
+        runBefore("processUniversal${buildNameCapitalized}Resources", currentBundleTask)
+        runBefore("process${buildNameCapitalized}Resources", currentBundleTask)
+    }
+}
