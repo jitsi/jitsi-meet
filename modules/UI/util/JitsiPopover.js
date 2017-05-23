@@ -1,4 +1,74 @@
 /* global $ */
+
+const positionConfigurations = {
+    left: {
+
+        // Align the popover's right side to the target element.
+        my: 'right',
+
+        // Align the popover to the left side of the target element.
+        at: 'left',
+
+        // Force the popover to fit within the viewport.
+        collision: 'fit',
+
+        /**
+         * Callback invoked by jQuery UI tooltip.
+         *
+         * @param {Object} position - The top and bottom position the popover
+         * element should be set at.
+         * @param {Object} element. - Additional size and position information
+         * about the popover element and target.
+         * @param {Object} elements.element - Has position and size related data
+         * for the popover element itself.
+         * @param {Object} elements.target - Has position and size related data
+         * for the target element the popover displays from.
+         */
+        using: function setPositionLeft(position, elements) {
+            const { element, target } = elements;
+
+            $('.jitsipopover').css({
+                display: 'table',
+                left: position.left,
+                top: position.top
+            });
+
+            // Move additional padding to the right edge of the popover and
+            // allow css to take care of width. The padding is used to maintain
+            // a hover state between the target and the popover.
+            $('.jitsipopover > .jitsipopover__menu-padding').css({
+                left: element.width
+            });
+
+            // Find the distance from the top of the popover to the center of
+            // the target and use that value to position the arrow to point to
+            // it.
+            const verticalCenterOfTarget = target.height / 2;
+            const verticalDistanceFromTops = target.top - element.top;
+            const verticalPositionOfTargetCenter
+                = verticalDistanceFromTops + verticalCenterOfTarget;
+
+            $('.jitsipopover > .arrow').css({
+                left: element.width,
+                top: verticalPositionOfTargetCenter
+            });
+        }
+    },
+    top: {
+        my: "bottom",
+        at: "top",
+        collision: "fit",
+        using: function setPositionTop(position, elements) {
+            var calcLeft = elements.target.left - elements.element.left +
+                elements.target.width/2;
+            $(".jitsipopover").css(
+                {top: position.top, left: position.left, display: "table"});
+            $(".jitsipopover > .arrow").css({left: calcLeft});
+            $(".jitsipopover > .jitsipopover__menu-padding").css(
+                {left: calcLeft - 50});
+        }
+    }
+};
 var JitsiPopover = (function () {
     /**
      * The default options
@@ -7,7 +77,8 @@ var JitsiPopover = (function () {
         skin: 'white',
         content: '',
         hasArrow: true,
-        onBeforePosition: undefined
+        onBeforePosition: undefined,
+        position: 'top'
     };
 
     /**
@@ -21,7 +92,6 @@ var JitsiPopover = (function () {
     function JitsiPopover(element, options)
     {
         this.options = Object.assign({}, defaultOptions, options);
-
         this.elementIsHovered = false;
         this.popoverIsHovered = false;
         this.popoverShown = false;
@@ -45,12 +115,15 @@ var JitsiPopover = (function () {
      * Returns template for popover
      */
     JitsiPopover.prototype.getTemplate = function () {
+        const { hasArrow, position, skin } = this.options;
+
         let arrow = '';
-        if (this.options.hasArrow) {
+        if (hasArrow) {
             arrow = '<div class="arrow"></div>';
         }
+
         return  (
-            `<div class="jitsipopover ${this.options.skin}">
+            `<div class="jitsipopover ${skin} ${position}">
                 ${arrow}
                 <div class="jitsipopover__content"></div>
                 <div class="jitsipopover__menu-padding"></div>
@@ -129,21 +202,14 @@ var JitsiPopover = (function () {
      * Refreshes the position of the popover.
      */
     JitsiPopover.prototype.refreshPosition = function () {
-        $(".jitsipopover").position({
-            my: "bottom",
-            at: "top",
-            collision: "fit",
-            of: this.element,
-            using: function (position, elements) {
-                var calcLeft = elements.target.left - elements.element.left +
-                    elements.target.width/2;
-                $(".jitsipopover").css(
-                    {top: position.top, left: position.left, display: "table"});
-                $(".jitsipopover > .arrow").css({left: calcLeft});
-                $(".jitsipopover > .jitsipopover__menu-padding").css(
-                    {left: calcLeft - 50});
+        const positionOptions = Object.assign(
+            {},
+            positionConfigurations[this.options.position],
+            {
+                of: this.element
             }
-        });
+        );
+        $(".jitsipopover").position(positionOptions);
     };
 
     /**

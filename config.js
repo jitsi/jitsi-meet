@@ -57,6 +57,9 @@ var config = { // eslint-disable-line no-unused-vars
     webrtcIceTcpDisable: false,
 
     openSctp: true, // Toggle to enable/disable SCTP channels
+
+    // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
+    disable1On1Mode: false,
     disableStats: false,
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.

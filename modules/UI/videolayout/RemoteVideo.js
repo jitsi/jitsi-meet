@@ -91,7 +91,8 @@ RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
         content: popupMenuElement.outerHTML,
         skin: "black",
         hasArrow: false,
-        onBeforePosition: el => APP.translation.translateElement(el)
+        onBeforePosition: el => APP.translation.translateElement(el),
+        position: interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top'
     };
     let element = $("#" + this.videoSpanId + " .remotevideomenu");
     this.popover = new JitsiPopover(element, options);
@@ -800,7 +801,7 @@ RemoteVideo.createContainer = function (spanId) {
     overlay.className = "videocontainer__hoverOverlay";
     container.appendChild(overlay);
 
-    var remotes = document.getElementById('remoteVideos');
+    var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
 };
 

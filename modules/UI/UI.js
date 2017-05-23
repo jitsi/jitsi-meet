@@ -309,6 +309,10 @@ UI.start = function () {
     SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);
 
+    // By default start with remote videos hidden and rely on other logic to
+    // make them visible.
+    UI.setRemoteThumbnailsVisibility(false);
+
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo();
@@ -337,6 +341,10 @@ UI.start = function () {
         Filmstrip.setFilmstripOnly();
         messageHandler.enableNotifications(false);
         JitsiPopover.enabled = false;
+    }
+
+    if (interfaceConfig.VERTICAL_FILMSTRIP) {
+        $("body").addClass("vertical-filmstrip");
     }
 
     document.title = interfaceConfig.APP_NAME;
@@ -1143,6 +1151,15 @@ UI.getLargeVideo = function () {
 };
 
 /**
+ * Returns whether or not the passed in user id is currently pinned to the large
+ * video.
+ *
+ * @param {string} userId - The id of the user to check is pinned or not.
+ * @returns {boolean} True if the user is currently pinned to the large video.
+ */
+UI.isPinned = userId => VideoLayout.getPinnedId() === userId;
+
+/**
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
@@ -1391,6 +1408,23 @@ UI.isRingOverlayVisible = () => RingOverlay.isVisible();
  * Handles user's features changes.
  */
 UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
+
+/**
+ * Returns the number of known remote videos.
+ *
+ * @returns {number} The number of remote videos.
+ */
+UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
+
+/**
+ * Makes remote thumbnail videos visible or not visible.
+ *
+ * @param {boolean} shouldHide - True if remote thumbnails should be hidden,
+ * false f they should be visible.
+ * @returns {void}
+ */
+UI.setRemoteThumbnailsVisibility
+    = shouldHide => Filmstrip.setRemoteVideoVisibility(shouldHide);
 
 const UIListeners = new Map([
     [

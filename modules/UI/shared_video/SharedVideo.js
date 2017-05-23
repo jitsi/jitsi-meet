@@ -456,6 +456,9 @@ export default class SharedVideoManager {
                 // revert to original behavior (prevents pausing
                 // for participants not sharing the video to pause it)
                 $("#sharedVideo").css("pointer-events","auto");
+
+                this.emitter.emit(
+                    UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
         });
 
         this.url = null;
@@ -656,7 +659,7 @@ SharedVideoThumb.prototype.createContainer = function (spanId) {
     avatar.src = "https://img.youtube.com/vi/" + this.url + "/0.jpg";
     container.appendChild(avatar);
 
-    var remotes = document.getElementById('remoteVideos');
+    var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
 };
 

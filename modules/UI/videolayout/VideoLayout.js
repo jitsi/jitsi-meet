@@ -1,6 +1,10 @@
 /* global APP, $, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
+import {
+    setFilmstripRemoteVideosCount
+} from '../../../react/features/filmstrip';
+
 import Filmstrip from "./Filmstrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -550,6 +554,9 @@ var VideoLayout = {
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
             });
+
+        APP.store.dispatch(
+            setFilmstripRemoteVideosCount(this.getRemoteVideosCount()));
         return { localVideo, remoteVideo };
     },
 
@@ -1133,6 +1140,15 @@ var VideoLayout = {
      */
     getLargeVideoWrapper() {
         return this.getCurrentlyOnLargeContainer().$wrapper;
+    },
+
+    /**
+     * Returns the number of remove video ids.
+     *
+     * @returns {number} The number of remote videos.
+     */
+    getRemoteVideosCount() {
+        return Object.keys(remoteVideos).length;
     }
 };
 

@@ -1,4 +1,9 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, APP, config, JitsiMeetJS, interfaceConfig */
+
+import {
+    setFilmstripRemoteVideosVisibility,
+    setFilmstripVisibility
+} from '../../../react/features/filmstrip';
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -14,6 +19,7 @@ const Filmstrip = {
         this.iconMenuUpClassName = 'icon-menu-up';
         this.filmstripContainerClassName = 'filmstrip';
         this.filmstrip = $('#remoteVideos');
+        this.filmstripRemoteVideos = $('#filmstripRemoteVideosContainer');
         this.eventEmitter = eventEmitter;
 
         // Show the toggle button and add event listeners only when out of
@@ -22,6 +28,28 @@ const Filmstrip = {
             this._initFilmstripToolbar();
             this.registerListeners();
         }
+    },
+
+    /**
+     * Sets a class on the remote videos container for CSS to adjust visibility
+     * of the remote videos. Will no-op if config.debug is truthy, as should be
+     * the case with torture tests.
+     *
+     * @param {boolean} shouldHide - True if remote videos should be hidden,
+     * false if they should be visible.
+     * @returns {void}
+     */
+    setRemoteVideoVisibility(shouldShow) {
+        // FIXME Checking config.debug is a grand hack to avoid fixing the
+        // torture tests after the 1-on-1 UI was implemented, which hides remote
+        // videos on 1-on-1 calls. If this check is to be kept, at least create
+        // new torture tests to verify 1-on-1 mode.
+        if (config.debug || config.disable1On1Mode) {
+            return;
+        }
+
+        APP.store.dispatch(setFilmstripRemoteVideosVisibility(shouldShow));
+        this.filmstripRemoteVideos.toggleClass('hide-videos', !shouldShow);
     },
 
     /**
@@ -150,11 +178,14 @@ const Filmstrip = {
 
         // Emit/fire UIEvents.TOGGLED_FILMSTRIP.
         const eventEmitter = this.eventEmitter;
+        const isFilmstripVisible = this.isFilmstripVisible();
+
         if (eventEmitter) {
             eventEmitter.emit(
                 UIEvents.TOGGLED_FILMSTRIP,
                 this.isFilmstripVisible());
         }
+        APP.store.dispatch(setFilmstripVisibility(isFilmstripVisible));
     },
 
     /**
@@ -177,7 +208,10 @@ const Filmstrip = {
      * @returns {number} height
      */
     getFilmstripHeight() {
-        if (this.isFilmstripVisible()) {
+        // FIXME Make it more clear the getFilmstripHeight check is used in
+        // horizontal film strip mode for calculating how tall large video
+        // display should be.
+        if (this.isFilmstripVisible() && !interfaceConfig.VERTICAL_FILMSTRIP) {
             return $(`.${this.filmstripContainerClassName}`).outerHeight();
         } else {
             return 0;
@@ -364,13 +398,27 @@ const Filmstrip = {
             (remoteLocalWidthRatio * numberRemoteThumbs + 1), availableHeight *
             interfaceConfig.LOCAL_THUMBNAIL_RATIO);
         const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
+
+        const removeVideoWidth = lW * remoteLocalWidthRatio;
+
+        let localVideo;
+        if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            // scale both width and height
+            localVideo = {
+                thumbWidth: removeVideoWidth,
+                thumbHeight: h * remoteLocalWidthRatio
+            };
+        } else {
+            localVideo = {
+                thumbWidth: lW,
+                thumbHeight: h
+            };
+        }
+
         return {
-                    localVideo:{
-                        thumbWidth: lW,
-                        thumbHeight: h
-                    },
+                    localVideo,
                     remoteVideo: {
-                        thumbWidth: lW * remoteLocalWidthRatio,
+                        thumbWidth: removeVideoWidth,
                         thumbHeight: h
                     }
                 };
@@ -406,10 +454,15 @@ const Filmstrip = {
                 }));
             }
             promises.push(new Promise((resolve) => {
-                this.filmstrip.animate({
-                    // adds 2 px because of small video 1px border
-                    height: remote.thumbHeight + 2
-                }, this._getAnimateOptions(animate, resolve));
+                // Let CSS take care of height in vertical filmstrip mode.
+                if (interfaceConfig.VERTICAL_FILMSTRIP) {
+                    resolve();
+                } else {
+                    this.filmstrip.animate({
+                        // adds 2 px because of small video 1px border
+                        height: remote.thumbHeight + 2
+                    }, this._getAnimateOptions(animate, resolve));
+                }
             }));
 
             promises.push(new Promise(() => {
@@ -456,8 +509,7 @@ const Filmstrip = {
         }
 
         let localThumb = $("#localVideoContainer");
-        let remoteThumbs = this.filmstrip.children(selector)
-            .not("#localVideoContainer");
+        let remoteThumbs = this.filmstripRemoteVideos.children(selector);
 
         // Exclude the local video container if it has been hidden.
         if (localThumb.hasClass("hidden")) {

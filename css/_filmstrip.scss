@@ -62,8 +62,16 @@
         videos. */
         font-size: 0pt;
 
+        #filmstripLocalVideo {
+            padding-left: 0;
+        }
+
         &.hidden {
             bottom: -196px;
+        }
+
+        .remote-videos-container {
+            display: flex;
         }
 
         .videocontainer {
@@ -129,5 +137,14 @@
         margin-top: auto;
         margin-bottom: auto;
         padding-right: $defaultToolbarSize;
+    }
+
+    .remote-videos-container {
+        transition: opacity 1s;
+
+        &.hide-videos {
+            opacity: 0;
+            pointer-events: none;
+        }
     }
 }

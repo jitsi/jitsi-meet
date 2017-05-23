@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, interfaceConfig */
 /* jshint -W101 */
 
 import JitsiPopover from "../util/JitsiPopover";
@@ -309,7 +309,8 @@ ConnectionIndicator.prototype.create = function () {
     this.popover = new JitsiPopover($(element), {
         content: popoverContent,
         skin: "black",
-        onBeforePosition: el => APP.translation.translateElement(el)
+        onBeforePosition: el => APP.translation.translateElement(el),
+        position: interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top'
     });
 
     // override popover show method to make sure we will update the content
