@@ -43,7 +43,7 @@ import {
     showDialPadButton,
     showEtherpadButton,
     showSharedVideoButton,
-    showSIPCallButton,
+    showDialOutButton,
     showToolbox
 } from '../../react/features/toolbox';
 
@@ -544,7 +544,7 @@ UI.onPeerVideoTypeChanged
 UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
 
-    APP.store.dispatch(showSIPCallButton(isModerator));
+    APP.store.dispatch(showDialOutButton(isModerator));
     APP.store.dispatch(showSharedVideoButton());
 
     Recording.showRecordingButton(isModerator);
@@ -587,6 +587,21 @@ UI.updateUserRole = user => {
             '', 'notify.somebody',
             'connected', 'notify.grantedToUnknown');
     }
+};
+
+/**
+ * Updates the user status.
+ *
+ * @param {JitsiParticipant} user - The user which status we need to update.
+ * @param {string} status - The new status.
+ */
+UI.updateUserStatus = (user, status) => {
+    let displayName = user.getDisplayName();
+    messageHandler.notify(
+        displayName, '', 'connected', "dialOut.statusMessage",
+        {
+            status: UIUtil.escapeHtml(status)
+        });
 };
 
 /**

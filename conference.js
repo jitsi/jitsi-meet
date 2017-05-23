@@ -1295,6 +1295,12 @@ export default {
             APP.UI.onSharedVideoStop(id);
         });
 
+        room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
+            let user = room.getParticipantById(id);
+            if (user) {
+                APP.UI.updateUserStatus(user, status);
+            }
+        });
 
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
@@ -1649,13 +1655,6 @@ export default {
                     this.hangup(true);
                 }
             });
-        });
-
-        APP.UI.addListener(UIEvents.SIP_DIAL, (sipNumber) => {
-            room.dial(sipNumber)
-                .catch((err) => {
-                    logger.error("Error dialing out", err);
-                });
         });
 
         APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
