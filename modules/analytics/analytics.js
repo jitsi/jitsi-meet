@@ -123,8 +123,10 @@ class Analytics {
                     permanentProperties.group = group;
                 }
                 if (window.jitsiAnalyticsPermanentProperties) {
-                    permanentProperties.assign(
-                        window.jitsiAnalyticsPermanentProperties);
+                    for (var key in window.jitsiAnalyticsPermanentProperties) {
+                        permanentProperties[key] 
+                            = window.jitsiAnalyticsPermanentProperties[key];
+                    }
                 }
 
                 analytics.addPermanentProperties(permanentProperties);
