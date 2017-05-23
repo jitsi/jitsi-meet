@@ -201,6 +201,15 @@ function _showStopRecordingPrompt(recordingType) {
  * position
  */
 function moveToCorner(selector, move) {
+    const {
+        remoteVideosCount,
+        remoteVideosVisible,
+        visible
+    } = APP.store.getState()['features/filmstrip'];
+    selector.toggleClass(
+        'with-filmstrip',
+        Boolean(remoteVideosCount && remoteVideosVisible && visible));
+
     let moveToCornerClass = "moveToCorner";
     let containsClass = selector.hasClass(moveToCornerClass);
 
@@ -295,6 +304,10 @@ var Recording = {
             APP.UI.messageHandler.enableNotifications(false);
             APP.UI.messageHandler.enablePopups(false);
         }
+
+        this.eventEmitter.addListener(UIEvents.UPDATED_FILMSTRIP_DISPLAY, () =>{
+            this._updateStatusLabel();
+        });
     },
 
     /**

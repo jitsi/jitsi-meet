@@ -10,6 +10,7 @@ import { OverlayContainer } from '../../overlay';
 import { Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 import { VideoStatusLabel } from '../../video-status-label';
+import '../../filmstrip';
 
 declare var $: Function;
 declare var APP: Object;

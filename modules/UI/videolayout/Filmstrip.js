@@ -1,5 +1,10 @@
 /* global $, APP, config, JitsiMeetJS, interfaceConfig */
 
+import {
+    setFilmstripRemoteVideosVisibility,
+    setFilmstripVisibility
+} from '../../../react/features/filmstrip';
+
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
@@ -43,6 +48,7 @@ const Filmstrip = {
             return;
         }
 
+        APP.store.dispatch(setFilmstripRemoteVideosVisibility(shouldShow));
         this.filmstripRemoteVideos.toggleClass('hide-videos', !shouldShow);
     },
 
@@ -172,11 +178,14 @@ const Filmstrip = {
 
         // Emit/fire UIEvents.TOGGLED_FILMSTRIP.
         const eventEmitter = this.eventEmitter;
+        const isFilmstripVisible = this.isFilmstripVisible();
+
         if (eventEmitter) {
             eventEmitter.emit(
                 UIEvents.TOGGLED_FILMSTRIP,
                 this.isFilmstripVisible());
         }
+        APP.store.dispatch(setFilmstripVisibility(isFilmstripVisible));
     },
 
     /**

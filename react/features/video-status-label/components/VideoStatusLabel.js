@@ -29,6 +29,11 @@ export class VideoStatusLabel extends Component {
         _conferenceStarted: React.PropTypes.bool,
 
         /**
+         * Whether or not the filmstrip is displayed with remote videos.
+         */
+        _filmstripVisible: React.PropTypes.bool,
+
+        /**
          * Whether or not a high-definition large video is displayed.
          */
         _largeVideoHD: React.PropTypes.bool,
@@ -64,7 +69,13 @@ export class VideoStatusLabel extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _conferenceStarted, _largeVideoHD, t } = this.props;
+        const {
+            _audioOnly,
+            _conferenceStarted,
+            _filmstripVisible,
+            _largeVideoHD,
+            t
+        } = this.props;
 
         // FIXME The _conferenceStarted check is used to be defensive against
         // toggling audio only mode while there is no conference and hides the
@@ -82,9 +93,14 @@ export class VideoStatusLabel extends Component {
                 ? t('videoStatus.hd') : t('videoStatus.sd');
         }
 
+        const filmstripClassName
+            = _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip';
+        const classNames
+            = `video-state-indicator moveToCorner ${filmstripClassName}`;
+
         return (
             <div
-                className = 'video-state-indicator moveToCorner'
+                className = { classNames }
                 id = 'videoResolutionLabel' >
                 { displayedLabel }
                 { this._renderVideonMenu() }
@@ -152,10 +168,17 @@ function _mapStateToProps(state) {
         conference,
         isLargeVideoHD
     } = state['features/base/conference'];
+    const {
+        remoteVideosCount,
+        remoteVideosVisible,
+        visible
+    } = state['features/filmstrip'];
 
     return {
         _audioOnly: audioOnly,
         _conferenceStarted: Boolean(conference),
+        _filmstripVisible:
+            Boolean(remoteVideosCount && remoteVideosVisible && visible),
         _largeVideoHD: isLargeVideoHD
     };
 }

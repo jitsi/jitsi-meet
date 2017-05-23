@@ -87,53 +87,21 @@
         }
     }
 
+    /**
+     * For video labels that display on the top right to adjust its position as
+     * the filmstrip itself or filmstrip remote videos appear and disappear.
+     */
     .video-state-indicator {
-        bottom: 30px;
-        left: 30px;
-        right: auto;
-        top: auto;
+        transition: right 2s;
 
-        /**
-         * Move the label to the bottom left of the screen
-         */
-        &#videoResolutionLabel {
-            left: 60px;
-            z-index: $poweredByZ;
-
-            /**
-             * Open the menu above the label.
-             */
-            .video-state-indicator-menu {
-                bottom: calc(100% - 15px);
-                left: -10px;
-
-                /**
-                 * Create padding for mouse travel on hover.
-                 */
-                padding-bottom: 20px;
-                right: auto;
-                top: auto;
-
-                .video-state-indicator-menu-options {
-                    margin: 0;
-
-                    /**
-                     * The menu arrow should point down
-                     */
-                    &::after {
-                        border-color: $popoverBg transparent transparent;
-                        bottom: -10px;
-                        left: 15px;
-                        right: auto;
-                        top: auto;
-                    }
-                }
+        &.with-filmstrip {
+            &#recordingLabel {
+                right: 200px;
             }
-        }
 
-        &#recordingLabel {
-            left: 110px;
-            z-index: $poweredByZ;
+            &#videoResolutionLabel {
+                right: 150px;
+            }
         }
     }
 
