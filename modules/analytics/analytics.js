@@ -124,10 +124,14 @@ class Analytics {
                 }
 
                 if (window.jitsiRegionInfo) {
-                    permanentProperties.ProxyRegion;
-                    permanentProperties.Region;
-                    permanentProperties.Shard;
-                    permanentProperties.CrossRegion;
+                    permanentProperties.ProxyRegion
+                        = window.jitsiRegionInfo.ProxyRegion;
+                    permanentProperties.Region 
+                        = window.jitsiRegionInfo.Region;
+                    permanentProperties.Shard
+                        = window.jitsiRegionInfo.Shard;
+                    permanentProperties.CrossRegion
+                        = window.jitsiRegionInfo.CrossRegion;
                 }
 
                 analytics.addPermanentProperties(permanentProperties);
