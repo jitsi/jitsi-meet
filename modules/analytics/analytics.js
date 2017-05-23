@@ -122,16 +122,9 @@ class Analytics {
                 if (group) {
                     permanentProperties.group = group;
                 }
-
-                if (window.jitsiRegionInfo) {
-                    permanentProperties.ProxyRegion
-                        = window.jitsiRegionInfo.ProxyRegion;
-                    permanentProperties.Region 
-                        = window.jitsiRegionInfo.Region;
-                    permanentProperties.Shard
-                        = window.jitsiRegionInfo.Shard;
-                    permanentProperties.CrossRegion
-                        = window.jitsiRegionInfo.CrossRegion;
+                if (window.jitsiAnalyticsPermanentProperties) {
+                    permanentProperties.assign(
+                        window.jitsiAnalyticsPermanentProperties);
                 }
 
                 analytics.addPermanentProperties(permanentProperties);
