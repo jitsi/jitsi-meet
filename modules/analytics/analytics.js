@@ -112,7 +112,6 @@ class Analytics {
                 const permanentProperties = {
                     roomName: APP.conference.roomName,
                     userAgent: navigator.userAgent,
-                    ...window.jitsiRegionInfo
                 };
 
                 const { group, server } = APP.store.getState()['features/jwt'];
@@ -122,6 +121,13 @@ class Analytics {
                 }
                 if (group) {
                     permanentProperties.group = group;
+                }
+
+                if (window.jitsiRegionInfo) {
+                    permanentProperties.ProxyRegion;
+                    permanentProperties.Region;
+                    permanentProperties.Shard;
+                    permanentProperties.CrossRegion;
                 }
 
                 analytics.addPermanentProperties(permanentProperties);
