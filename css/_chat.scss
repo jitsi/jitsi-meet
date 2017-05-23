@@ -31,6 +31,28 @@
     a:active {
         color: black;
     }
+
+    &::-webkit-scrollbar {
+        background: #06a5df;
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: black;
+    }
+
+    &::-webkit-scrollbar-track-piece {
+        background: black;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #06a5df;
+        border-radius: 4px;
+    }
 }
 
 #chat_container.is-conversation-mode #chatconversation {
@@ -210,28 +232,6 @@
 
 #usermsg::-webkit-input-placeholder {
     line-height: 30px;
-}
-
-:not(.default-scrollbar)::-webkit-scrollbar {
-    background: #06a5df;
-    width: 7px;
-}
-
-:not(.default-scrollbar)::-webkit-scrollbar-button {
-    display: none;
-}
-
-:not(.default-scrollbar)::-webkit-scrollbar-track {
-    background: black;
-}
-
-:not(.default-scrollbar)::-webkit-scrollbar-track-piece {
-    background: black;
-}
-
-:not(.default-scrollbar)::-webkit-scrollbar-thumb {
-    background: #06a5df;
-    border-radius: 4px;
 }
 
 #usermsg::-webkit-scrollbar-track-piece {

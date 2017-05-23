@@ -150,3 +150,28 @@ form {
     -webkit-user-select: text;
     user-select: text;
 }
+
+/**
+ * Re-style default OS scrollbar.
+ */
+::-webkit-scrollbar {
+    background: transparent;
+    width: 7px;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track-piece {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, .5);
+    border-radius: 4px;
+}
