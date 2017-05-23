@@ -375,12 +375,14 @@ RemoteVideo.prototype._generatePopupMenuSliderItem = function (options) {
         <span class='popupmenu__icon'>
             <i class=${options.icon}></i>
         </span>
-        <input class='popupmenu__slider'
-            type='range'
-            min='0'
-            max=${options.maxValue || 100}
-            value=${options.initialValue || 0}>
-        </input>
+        <div class='popupmenu__slider_container'>
+            <input class='popupmenu__slider'
+                type='range'
+                min='0'
+                max=${options.maxValue || 100}
+                value=${options.initialValue || 0}>
+            </input>
+        </div>
     </div>`;
 
     const menuItem = document.createElement('li');
