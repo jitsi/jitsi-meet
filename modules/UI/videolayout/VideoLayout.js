@@ -439,6 +439,19 @@ var VideoLayout = {
             remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
         this._setRemoteControlProperties(user, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
+
+        const remoteVideosCount = Object.keys(remoteVideos).length;
+
+        if (remoteVideosCount === 1) {
+            window.setTimeout(() => {
+                const updatedRemoteVideosCount
+                    = Object.keys(remoteVideos).length;
+
+                if (updatedRemoteVideosCount === 1 && remoteVideos[id]) {
+                    this.remoteVideoActive(null, id);
+                }
+            }, 3000);
+        }
     },
 
     /**
