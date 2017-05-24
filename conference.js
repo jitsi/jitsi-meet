@@ -1843,7 +1843,8 @@ export default {
             // non-participants displaying video, such as with video sharing.
             const remoteVideosCount = APP.UI.getRemoteVideosCount();
 
-            const shouldShowRemoteThumbnails = APP.UI.isPinned(localUserId)
+            const shouldShowRemoteThumbnails = interfaceConfig.filmStripOnly
+                || APP.UI.isPinned(localUserId)
                 || remoteVideosCount > 1
                 || remoteParticipantsCount !== remoteVideosCount;
 
