@@ -91,7 +91,7 @@
      * For video labels that display on the top right to adjust its position as
      * the filmstrip itself or filmstrip remote videos appear and disappear.
      */
-    .video-state-indicator {
+    .video-state-indicator.moveToCorner {
         transition: right 2s;
 
         &.with-filmstrip {
