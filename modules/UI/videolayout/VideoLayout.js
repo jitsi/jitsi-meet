@@ -482,7 +482,11 @@ var VideoLayout = {
         logger.info(resourceJid + " video is now active", videoElement);
 
         VideoLayout.resizeThumbnails(
-            false, false, function() {$(videoElement).show();});
+            false, false, () => {
+                if (videoElement) {
+                    $(videoElement).show();
+                }
+            });
 
         // Update the large video to the last added video only if there's no
         // current dominant, focused speaker or update it to
