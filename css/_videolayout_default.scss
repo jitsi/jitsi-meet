@@ -495,18 +495,10 @@
                     0px 0px 1px rgba(0,0,0,0.3);
 }
 
-.audio-only-label {
-    display: flex;
-    height: auto;
-    justify-content: center;
-    z-index: $centeredVideoLabelZ;
-}
-
-.audio-only-label,
 .video-state-indicator {
     background: $videoStateIndicatorBackground;
     color: $videoStateIndicatorColor;
-    cursor: default;
+    cursor: pointer;
     font-size: 13px;
     height: 40px;
     line-height: 20px;
@@ -516,11 +508,15 @@
     border-radius: 50%;
     position: absolute;
     box-sizing: border-box;
+
+    i {
+        cursor: pointer;
+    }
 }
 
 #videoResolutionLabel,
-.centeredVideoLabel {
-    z-index: $centeredVideoLabelZ;
+.centeredVideoLabel.moveToCorner {
+    z-index: $tooltipsZ;
 }
 
 .centeredVideoLabel {
@@ -529,6 +525,7 @@
     display: none;
     -webkit-transition: all 2s 2s linear;
     transition: all 2s 2s linear;
+    z-index: $centeredVideoLabelZ;
 
     &.moveToCorner {
         bottom: auto;
