@@ -18,7 +18,7 @@ export const SET_FILMSTRIP_REMOTE_VIDEOS_COUNT
  *
  * {
  *     type: SET_FILMSTRIP_REMOTE_VIDEOS_VISIBLITY,
- *     removeVideosVisible: boolean
+ *     remoteVideosVisible: boolean
  * }
  */
 export const SET_FILMSTRIP_REMOTE_VIDEOS_VISIBLITY

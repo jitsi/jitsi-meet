@@ -92,9 +92,9 @@
      * the filmstrip itself or filmstrip remote videos appear and disappear.
      */
     .video-state-indicator.moveToCorner {
-        transition: right 2s;
+        transition: right 0.5s;
 
-        &.with-filmstrip {
+        &.with-filmstrip.with-remote-videos {
             &#recordingLabel {
                 right: 200px;
             }
@@ -102,6 +102,20 @@
             &#videoResolutionLabel {
                 right: 150px;
             }
+        }
+
+        &.with-filmstrip.without-remote-videos {
+            transition-delay: 0.5s;
+        }
+
+        &.with-filmstrip.with-remote-videos.opening {
+            transition: 0.9s;
+            transition-timing-function: ease-in-out;
+        }
+
+        &.without-filmstrip {
+            transition: 1.2s ease-in-out;
+            transition-delay: 0.1s;
         }
     }
 
