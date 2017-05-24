@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
@@ -8,7 +10,8 @@ import Thumbnail from './Thumbnail';
 import { styles } from './_';
 
 /**
- * React component for filmstrip.
+ * Implements a React {@link Component} which represents the filmstrip on
+ * mobile/React Native.
  *
  * @extends Component
  */
@@ -40,6 +43,7 @@ class Filmstrip extends Component {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
+     * @returns {ReactElement}
      */
     render() {
         return (
