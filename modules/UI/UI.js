@@ -4,10 +4,6 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
 
-import {
-    updateDeviceList
-} from '../../react/features/base/devices';
-
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
@@ -27,6 +23,10 @@ import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
 import { debounce } from "../util/helpers";
 
+
+import {
+    updateDeviceList
+} from '../../react/features/base/devices';
 import {
     setAudioMuted,
     setVideoMuted
@@ -493,7 +493,7 @@ UI.getSharedDocumentManager = () => etherpadManager;
 UI.addUser = function (user) {
     var id = user.getId();
     var displayName = user.getDisplayName();
-    UI.hideRingOverLay();
+    UI.hideRingOverlay();
     if (UI.ContactList)
         UI.ContactList.addContact(id);
 
@@ -1380,21 +1380,18 @@ UI.showRingOverlay = function () {
     Filmstrip.toggleFilmstrip(false, false);
 };
 
-UI.hideRingOverLay = function () {
-    if (!RingOverlay.hide())
-        return;
-    Filmstrip.toggleFilmstrip(true, false);
-};
+UI.hideRingOverlay
+    = () => RingOverlay.hide() && Filmstrip.toggleFilmstrip(true, false);
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes
- * the call overlay, suspended overlay, GUM permissions overlay
- * and a page reload overlay.
+ * the call overlay, the suspended overlay, the GUM permissions overlay, and the
+ * page-reload overlay.
  *
- * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
+ * @returns {*|boolean} {true} if an overlay is visible; {false}, otherwise
  */
 UI.isOverlayVisible = function () {
-    return RingOverlay.isVisible() || this.overlayVisible;
+    return this.isRingOverlayVisible() || this.overlayVisible;
 };
 
 /**
