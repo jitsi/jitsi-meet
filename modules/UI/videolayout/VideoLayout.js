@@ -1,10 +1,6 @@
 /* global APP, $, interfaceConfig */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import {
-    setFilmstripRemoteVideosCount
-} from '../../../react/features/filmstrip';
-
 import Filmstrip from "./Filmstrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -555,8 +551,6 @@ var VideoLayout = {
                     onComplete();
             });
 
-        APP.store.dispatch(
-            setFilmstripRemoteVideosCount(this.getRemoteVideosCount()));
         return { localVideo, remoteVideo };
     },
 

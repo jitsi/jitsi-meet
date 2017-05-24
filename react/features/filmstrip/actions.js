@@ -1,5 +1,4 @@
 import {
-    SET_FILMSTRIP_REMOTE_VIDEOS_COUNT,
     SET_FILMSTRIP_REMOTE_VIDEOS_VISIBLITY,
     SET_FILMSTRIP_VISIBILITY
 } from './actionTypes';
@@ -18,22 +17,6 @@ export function setFilmstripRemoteVideosVisibility(remoteVideosVisible) {
     return {
         type: SET_FILMSTRIP_REMOTE_VIDEOS_VISIBLITY,
         remoteVideosVisible
-    };
-}
-
-/**
- * Sets how many remote videos are currently in the filmstrip.
- *
- * @param {number} remoteVideosCount - The number of remote videos.
- * @returns {{
- *     type: SET_FILMSTRIP_REMOTE_VIDEOS_COUNT,
- *     remoteVideosCount: number
- * }}
- */
-export function setFilmstripRemoteVideosCount(remoteVideosCount) {
-    return {
-        type: SET_FILMSTRIP_REMOTE_VIDEOS_COUNT,
-        remoteVideosCount
     };
 }
 

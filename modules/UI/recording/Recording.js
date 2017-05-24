@@ -213,7 +213,6 @@ function moveToCorner(selector, move) {
         selector.removeClass(moveToCornerClass);
 
     const {
-        remoteVideosCount,
         remoteVideosVisible,
         visible
     } = APP.store.getState()['features/filmstrip'];
@@ -224,9 +223,8 @@ function moveToCorner(selector, move) {
     selector.toggleClass('with-filmstrip', visible);
     selector.toggleClass('without-filmstrip', !visible);
 
-    const oneOnOne = Boolean(remoteVideosVisible && remoteVideosCount);
-    selector.toggleClass('with-remote-videos', oneOnOne);
-    selector.toggleClass('without-remote-videos', !oneOnOne);
+    selector.toggleClass('with-remote-videos', remoteVideosVisible);
+    selector.toggleClass('without-remote-videos', !remoteVideosVisible);
 }
 
 /**

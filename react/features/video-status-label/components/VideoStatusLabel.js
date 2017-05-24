@@ -40,12 +40,6 @@ export class VideoStatusLabel extends Component {
         _largeVideoHD: React.PropTypes.bool,
 
         /**
-         * The number of remote video thumbnails in the filmstrip. Used to
-         * determine display classes to set.
-         */
-        _remoteVideosCount: React.PropTypes.number,
-
-        /**
          * Whether or note remote videos are visible in the filmstrip,
          * regardless of count. Used to determine display classes to set.
          */
@@ -108,7 +102,6 @@ export class VideoStatusLabel extends Component {
             _audioOnly,
             _conferenceStarted,
             _filmstripVisible,
-            _remoteVideosCount,
             _remoteVideosVisible,
             _largeVideoHD,
             t
@@ -135,11 +128,12 @@ export class VideoStatusLabel extends Component {
         const baseClasses = 'video-state-indicator moveToCorner';
         const filmstrip
             = _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip';
-        const oneOnOne = _remoteVideosVisible && _remoteVideosCount
-            ? 'with-remote-videos' : 'without-remote-videos';
+        const remoteVideosVisible = _remoteVideosVisible
+            ? 'with-remote-videos'
+            : 'without-remote-videos';
         const opening = this.state.togglingToVisible ? 'opening' : '';
         const classNames
-            = `${baseClasses} ${filmstrip} ${oneOnOne} ${opening}`;
+            = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
 
         return (
             <div
@@ -204,7 +198,6 @@ export class VideoStatusLabel extends Component {
  *     _conferenceStarted: boolean,
  *     _filmstripVisible: true,
  *     _largeVideoHD: (boolean|undefined),
- *     _remoteVideosCount: number,
  *     _remoteVideosVisible: boolean
  * }}
  */
@@ -215,7 +208,6 @@ function _mapStateToProps(state) {
         isLargeVideoHD
     } = state['features/base/conference'];
     const {
-        remoteVideosCount,
         remoteVideosVisible,
         visible
     } = state['features/filmstrip'];
@@ -225,8 +217,7 @@ function _mapStateToProps(state) {
         _conferenceStarted: Boolean(conference),
         _filmstripVisible: visible,
         _largeVideoHD: isLargeVideoHD,
-        _remoteVideosVisible: remoteVideosVisible,
-        _remoteVideosCount: remoteVideosCount
+        _remoteVideosVisible: remoteVideosVisible
     };
 }
 
