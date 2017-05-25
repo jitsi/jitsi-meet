@@ -448,29 +448,27 @@ RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
 
 /**
  * @inheritDoc
+ * @override
  */
-RemoteVideo.prototype.setMutedView = function(isMuted) {
-    SmallVideo.prototype.setMutedView.call(this, isMuted);
+RemoteVideo.prototype.setVideoMutedView = function(isMuted) {
+    SmallVideo.prototype.setVideoMutedView.call(this, isMuted);
     // Update 'mutedWhileDisconnected' flag
-    this._figureOutMutedWhileDisconnected(this.isConnectionInterrupted());
+    this._figureOutMutedWhileDisconnected();
 };
 
 /**
  * Figures out the value of {@link #mutedWhileDisconnected} flag by taking into
  * account remote participant's network connectivity and video muted status.
  *
- * @param {boolean} isDisconnected <tt>true</tt> if the remote participant is
- * currently having connectivity issues or <tt>false</tt> otherwise.
- *
  * @private
  */
-RemoteVideo.prototype._figureOutMutedWhileDisconnected
-    = function(isDisconnected) {
-        if (isDisconnected && this.isVideoMuted) {
-            this.mutedWhileDisconnected = true;
-        } else if (!isDisconnected && !this.isVideoMuted) {
-            this.mutedWhileDisconnected = false;
-        }
+RemoteVideo.prototype._figureOutMutedWhileDisconnected = function() {
+    const isActive = this.isConnectionActive();
+    if (!isActive && this.isVideoMuted) {
+        this.mutedWhileDisconnected = true;
+    } else if (isActive && !this.isVideoMuted) {
+        this.mutedWhileDisconnected = false;
+    }
 };
 
 /**
@@ -572,26 +570,25 @@ RemoteVideo.prototype.updateView = function () {
  * Updates the UI to reflect user's connectivity status.
  */
 RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
-    const isActive = this.isConnectionActive();
+    const connectionStatus = this.user.getConnectionStatus();
 
-    if (isActive === null) {
-        // Cancel processing at this point - no update
-        return;
+    logger.debug(`${this.id} thumbnail connection status: ${connectionStatus}`);
+
+    // FIXME rename 'mutedWhileDisconnected' to 'mutedWhileNotRendering'
+    // Update 'mutedWhileDisconnected' flag
+    this._figureOutMutedWhileDisconnected();
+    if(this.connectionIndicator) {
+        this.connectionIndicator.updateConnectionStatusIndicator(
+            connectionStatus);
     }
 
-    logger.debug(this.id + " thumbnail is connection active ? " + isActive);
-
-    // Update 'mutedWhileDisconnected' flag
-    this._figureOutMutedWhileDisconnected(!isActive);
-
-    if(this.connectionIndicator)
-        this.connectionIndicator.updateConnectionStatusIndicator(isActive);
-
+    const isInterrupted
+        = connectionStatus === ParticipantConnectionStatus.INTERRUPTED;
     // Toggle thumbnail video problem filter
     this.selectVideoElement().toggleClass(
-        "videoThumbnailProblemFilter", !isActive);
+        "videoThumbnailProblemFilter", isInterrupted);
     this.$avatar().toggleClass(
-        "videoThumbnailProblemFilter", !isActive);
+        "videoThumbnailProblemFilter", isInterrupted);
 };
 
 /**
