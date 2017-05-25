@@ -1,5 +1,7 @@
 /* global APP, JitsiMeetJS */
 
+import { createLocalTracksFailed } from './../../react/features/base/tracks';
+
 let currentAudioInputDevices,
     currentVideoInputDevices,
     currentAudioOutputDevices;
@@ -203,8 +205,8 @@ export default {
                     ]))
                     .then(tracks => {
                         if (audioTrackError || videoTrackError) {
-                            APP.UI.showDeviceErrorDialog(
-                                audioTrackError, videoTrackError);
+                            APP.store.dispatch(createLocalTracksFailed(
+                                videoTrackError, audioTrackError));
                         }
 
                         return tracks.filter(t => typeof t !== 'undefined');
@@ -225,7 +227,9 @@ export default {
                 })
                 .catch(err => {
                     audioTrackError = err;
-                    showError && APP.UI.showDeviceErrorDialog(err, null);
+                    if (showError) {
+                        APP.store.dispatch(createLocalTracksFailed(null, err));
+                    }
                     return [];
                 });
         }
@@ -238,7 +242,9 @@ export default {
                 })
                 .catch(err => {
                     videoTrackError = err;
-                    showError && APP.UI.showDeviceErrorDialog(null, err);
+                    if (showError) {
+                        APP.store.dispatch(createLocalTracksFailed(err, null));
+                    }
                     return [];
                 });
         }

@@ -1,4 +1,4 @@
-/* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
+/* global APP, $, config, interfaceConfig, toastr */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -72,38 +72,6 @@ let etherpadManager;
 let sharedVideoManager;
 
 let followMeHandler;
-
-let deviceErrorDialog;
-
-const TrackErrors = JitsiMeetJS.errors.track;
-
-const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
-    microphone: {},
-    camera: {}
-};
-
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.UNSUPPORTED_RESOLUTION]
-    = "dialog.cameraUnsupportedResolutionError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
-    = "dialog.cameraUnknownError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.PERMISSION_DENIED]
-    = "dialog.cameraPermissionDeniedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NOT_FOUND]
-    = "dialog.cameraNotFoundError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.CONSTRAINT_FAILED]
-    = "dialog.cameraConstraintFailedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NO_DATA_FROM_SOURCE]
-    = "dialog.cameraNotSendingData";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
-    = "dialog.micUnknownError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.PERMISSION_DENIED]
-    = "dialog.micPermissionDeniedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NOT_FOUND]
-    = "dialog.micNotFoundError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.CONSTRAINT_FAILED]
-    = "dialog.micConstraintFailedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
-    = "dialog.micNotSendingData";
 
 /**
  * Toggles the application in and out of full screen mode
@@ -1194,117 +1162,6 @@ UI.showExtensionExternalInstallationDialog = function (url) {
         loadedFunction: $.noop,
         closeFunction
     });
-};
-
-
-/**
- * Shows dialog with combined information about camera and microphone errors.
- * @param {JitsiTrackError} micError
- * @param {JitsiTrackError} cameraError
- */
-UI.showDeviceErrorDialog = function (micError, cameraError) {
-    let dontShowAgain = {
-        id: "doNotShowWarningAgain",
-        localStorageKey: "doNotShowErrorAgain",
-        textKey: "dialog.doNotShowWarningAgain"
-    };
-    let isMicJitsiTrackErrorAndHasName = micError && micError.name &&
-        micError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
-    let isCameraJitsiTrackErrorAndHasName = cameraError && cameraError.name &&
-        cameraError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
-    let showDoNotShowWarning = false;
-
-    if (micError && cameraError && isMicJitsiTrackErrorAndHasName &&
-        isCameraJitsiTrackErrorAndHasName) {
-        showDoNotShowWarning =  true;
-    } else if (micError && isMicJitsiTrackErrorAndHasName && !cameraError) {
-        showDoNotShowWarning =  true;
-    } else if (cameraError && isCameraJitsiTrackErrorAndHasName && !micError) {
-        showDoNotShowWarning =  true;
-    }
-
-    if (micError) {
-        dontShowAgain.localStorageKey += "-mic-" + micError.name;
-    }
-
-    if (cameraError) {
-        dontShowAgain.localStorageKey += "-camera-" + cameraError.name;
-    }
-
-    let cameraJitsiTrackErrorMsg = cameraError
-        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
-        : undefined;
-    let micJitsiTrackErrorMsg = micError
-        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[micError.name]
-        : undefined;
-    let cameraErrorMsg = cameraError
-        ? cameraJitsiTrackErrorMsg ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
-        : "";
-    let micErrorMsg = micError
-        ? micJitsiTrackErrorMsg ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
-        : "";
-    let additionalCameraErrorMsg = !cameraJitsiTrackErrorMsg && cameraError &&
-        cameraError.message
-            ? `<div>${cameraError.message}</div>`
-            : ``;
-    let additionalMicErrorMsg = !micJitsiTrackErrorMsg && micError &&
-        micError.message
-            ? `<div>${micError.message}</div>`
-            : ``;
-    let message = '';
-
-    if (micError) {
-        message = `
-            ${message}
-            <h3 data-i18n='dialog.micErrorPresent'></h3>
-            <h4 data-i18n='${micErrorMsg}'></h4>
-            ${additionalMicErrorMsg}`;
-    }
-
-    if (cameraError) {
-        message = `
-            ${message}
-            <h3 data-i18n='dialog.cameraErrorPresent'></h3>
-            <h4 data-i18n='${cameraErrorMsg}'></h4>
-            ${additionalCameraErrorMsg}`;
-    }
-
-    // To make sure we don't have multiple error dialogs open at the same time,
-    // we will just close the previous one if we are going to show a new one.
-    deviceErrorDialog && deviceErrorDialog.close();
-
-    deviceErrorDialog = messageHandler.openDialog(
-        getTitleKey(),
-        message,
-        false,
-        {Ok: true},
-        function () {},
-        null,
-        function () {
-            // Reset dialog reference to null to avoid memory leaks when
-            // user closed the dialog manually.
-            deviceErrorDialog = null;
-        },
-        showDoNotShowWarning ? dontShowAgain : undefined
-    );
-
-    function getTitleKey() {
-        let title = "dialog.error";
-
-        if (micError && micError.name === TrackErrors.PERMISSION_DENIED) {
-            if (!cameraError
-                    || cameraError.name === TrackErrors.PERMISSION_DENIED) {
-                title = "dialog.permissionDenied";
-            }
-        } else if (cameraError
-                && cameraError.name === TrackErrors.PERMISSION_DENIED) {
-            title = "dialog.permissionDenied";
-        }
-
-        return title;
-    }
 };
 
 /**

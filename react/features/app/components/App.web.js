@@ -2,6 +2,7 @@ import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
 import { getLocationContextRoot } from '../functions';
 
+import '../../device-error';
 import '../../room-lock';
 
 /**

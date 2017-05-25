@@ -1,7 +1,22 @@
 import {
+    CLEAR_DEVICE_ERRORS,
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SUSPEND_DETECTED
 } from './actionTypes';
+
+/**
+ * Signals to remove cached device errors from the store.
+ *
+ * @returns {{
+ *     type: CLEAR_DEVICE_ERRORS
+ * }}
+ * @public
+ */
+export function clearDeviceErrors() {
+    return {
+        type: CLEAR_DEVICE_ERRORS
+    };
+}
 
 /**
  * Signals that the prompt for media permission is visible or not.
