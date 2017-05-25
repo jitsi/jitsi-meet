@@ -57,7 +57,7 @@ function updateVisualNotification() {
     const unreadMsgElement
         = unreadMsgSelector.length > 0 ? unreadMsgSelector[0] : undefined;
 
-    if (unreadMessages) {
+    if (unreadMessages && unreadMsgElement) {
         unreadMsgElement.innerHTML = unreadMessages.toString();
 
         APP.store.dispatch(dockToolbox(true));
