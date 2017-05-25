@@ -40,11 +40,8 @@ const Filmstrip = {
      * @returns {void}
      */
     setRemoteVideoVisibility(shouldShow) {
-        // FIXME Checking config.debug is a grand hack to avoid fixing the
-        // torture tests after the 1-on-1 UI was implemented, which hides remote
-        // videos on 1-on-1 calls. If this check is to be kept, at least create
-        // new torture tests to verify 1-on-1 mode.
-        if (config.debug || config.disable1On1Mode) {
+        // Allow disabling on 1-on-1 UI mode. Used by torture tests.
+        if (config.disable1On1Mode) {
             return;
         }
 
