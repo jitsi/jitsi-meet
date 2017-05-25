@@ -1844,11 +1844,12 @@ export default {
             const remoteVideosCount = APP.UI.getRemoteVideosCount();
 
             const shouldShowRemoteThumbnails = interfaceConfig.filmStripOnly
-                || APP.UI.isPinned(localUserId)
+                || (APP.UI.isPinned(localUserId) && remoteVideosCount)
                 || remoteVideosCount > 1
                 || remoteParticipantsCount !== remoteVideosCount;
 
-            APP.UI.setRemoteThumbnailsVisibility(shouldShowRemoteThumbnails);
+            APP.UI.setRemoteThumbnailsVisibility(
+                Boolean(shouldShowRemoteThumbnails));
         }
     },
     /**
