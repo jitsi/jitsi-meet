@@ -448,7 +448,7 @@ var VideoLayout = {
                     = Object.keys(remoteVideos).length;
 
                 if (updatedRemoteVideosCount === 1 && remoteVideos[id]) {
-                    this.remoteVideoActive(null, id);
+                    this._maybePlaceParticipantOnLargeVideo(id);
                 }
             }, 3000);
         }
@@ -488,9 +488,18 @@ var VideoLayout = {
                 }
             });
 
-        // Update the large video to the last added video only if there's no
-        // current dominant, focused speaker or update it to
-        // the current dominant speaker.
+        this._maybePlaceParticipantOnLargeVideo(resourceJid);
+    },
+
+    /**
+     * Update the large video to the last added video only if there's no current
+     * dominant, focused speaker or update it to the current dominant speaker.
+     *
+     * @params {string} resourceJid - The id of the user to maybe display on
+     * large video.
+     * @returns {void}
+     */
+    _maybePlaceParticipantOnLargeVideo(resourceJid) {
         if ((!pinnedId &&
             !currentDominantSpeaker &&
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
