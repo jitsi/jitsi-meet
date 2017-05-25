@@ -1,8 +1,11 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
 import JitsiPopover from "../util/JitsiPopover";
 import UIUtil from "../util/UIUtil";
+
+const ParticipantConnectionStatus
+    = JitsiMeetJS.constants.participantConnectionStatus;
 
 /**
  * Maps a connection quality value (in percent) to the width of the "full" icon.
@@ -334,8 +337,11 @@ ConnectionIndicator.prototype.create = function () {
         createIcon(["connection_full"], "icon-connection"));
     this.interruptedIndicator = connectionIconContainer.appendChild(
         createIcon(["connection_lost"],"icon-connection-lost"));
+    this.ninjaIndicator = connectionIconContainer.appendChild(
+        createIcon(["connection_ninja"],"icon-ninja"));
 
     $(this.interruptedIndicator).hide();
+    $(this.ninjaIndicator).hide();
     this.connectionIndicatorContainer.appendChild(connectionIconContainer);
 };
 
@@ -351,23 +357,30 @@ ConnectionIndicator.prototype.remove = function() {
 };
 
 /**
- * Updates the UI which displays warning about user's connectivity problems.
+ * Updates the UI which displays or not a warning about user's connectivity
+ * problems.
  *
- * @param {boolean} isActive true if the connection is working fine or false if
- * the user is having connectivity issues.
+ * @param {ParticipantConnectionStatus} connectionStatus
  */
 ConnectionIndicator.prototype.updateConnectionStatusIndicator
-    = function (isActive) {
-        this.isConnectionActive = isActive;
-        if (this.isConnectionActive) {
-            $(this.interruptedIndicator).hide();
-            $(this.emptyIcon).show();
-            $(this.fullIcon).show();
-        } else {
-            $(this.interruptedIndicator).show();
-            $(this.emptyIcon).hide();
-            $(this.fullIcon).hide();
-        }
+= function (connectionStatus) {
+    this.connectionStatus = connectionStatus;
+    if (connectionStatus === ParticipantConnectionStatus.INTERRUPTED) {
+        $(this.interruptedIndicator).show();
+        $(this.emptyIcon).hide();
+        $(this.fullIcon).hide();
+        $(this.ninjaIndicator).hide();
+    } else if (connectionStatus === ParticipantConnectionStatus.INACTIVE) {
+        $(this.interruptedIndicator).hide();
+        $(this.emptyIcon).hide();
+        $(this.fullIcon).hide();
+        $(this.ninjaIndicator).show();
+    } else {
+        $(this.interruptedIndicator).hide();
+        $(this.emptyIcon).show();
+        $(this.fullIcon).show();
+        $(this.ninjaIndicator).hide();
+    }
 };
 
 /**
