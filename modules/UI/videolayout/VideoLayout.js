@@ -859,6 +859,20 @@ var VideoLayout = {
         }
 
         VideoLayout.resizeThumbnails();
+
+        const remoteVideosCount = Object.keys(remoteVideos).length;
+
+        if (!remoteVideosCount) {
+            window.setTimeout(() => {
+                const updatedRemoteVideosCount
+                    = Object.keys(remoteVideos).length;
+
+                if (!updatedRemoteVideosCount) {
+                    this._maybePlaceParticipantOnLargeVideo(
+                        APP.conference.getMyUserId());
+                }
+            }, 3000);
+        }
     },
 
     onVideoTypeChanged (id, newVideoType) {
