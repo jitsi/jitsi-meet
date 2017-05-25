@@ -596,6 +596,8 @@
 
 .video-state-indicator:hover,
 .video-state-indicator *:hover {
+    background: $toolbarSelectBackground;
+
     .video-state-indicator-menu {
         display: block;
     }
