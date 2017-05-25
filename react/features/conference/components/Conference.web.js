@@ -88,6 +88,13 @@ class Conference extends Component {
                                 src = '' />
                         </div>
                         <span id = 'remoteConnectionMessage' />
+                        <div className = 'video_blurred_container'>
+                            <video
+                                autoPlay = { true }
+                                className = 'video_blurred'
+                                id = 'largeVideoBackground'
+                                muted = 'true' />
+                        </div>
                         <div id = 'largeVideoWrapper'>
                             <video
                                 autoPlay = { true }

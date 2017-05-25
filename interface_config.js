@@ -87,5 +87,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      *
      * @type {boolean}
      */
-    MOBILE_APP_PROMO: true
+    MOBILE_APP_PROMO: true,
+    MAXIMUM_ZOOMING_COEFFICIENT: 1.3
 };

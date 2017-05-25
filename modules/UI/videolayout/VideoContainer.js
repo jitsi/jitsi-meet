@@ -38,7 +38,7 @@ function getStreamOwnerId(stream) {
  * @param videoSpaceHeight the height of the available space
  * @return an array with 2 elements, the video width and the video height
  */
-function getDesktopVideoSize(videoWidth,
+function computeDesktopVideoSize(videoWidth,
                              videoHeight,
                              videoSpaceWidth,
                              videoSpaceHeight) {
@@ -75,25 +75,22 @@ function getDesktopVideoSize(videoWidth,
  * @param videoSpaceHeight the height of the video space
  * @return an array with 2 elements, the video width and the video height
  */
-function getCameraVideoSize(videoWidth,
+function computeCameraVideoSize(videoWidth,
                             videoHeight,
                             videoSpaceWidth,
                             videoSpaceHeight) {
 
-    let aspectRatio = videoWidth / videoHeight;
-
+    const aspectRatio = videoWidth / videoHeight;
     let availableWidth = videoWidth;
     let availableHeight = videoHeight;
 
-    if (interfaceConfig.VIDEO_LAYOUT_FIT == 'height') {
+    if (interfaceConfig.VIDEO_LAYOUT_FIT === 'height') {
         availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight*aspectRatio;
-    }
-    else if (interfaceConfig.VIDEO_LAYOUT_FIT == 'width') {
+        availableWidth = availableHeight * aspectRatio;
+    } else if (interfaceConfig.VIDEO_LAYOUT_FIT === 'width') {
         availableWidth = videoSpaceWidth;
-        availableHeight = availableWidth/aspectRatio;
-    }
-    else if (interfaceConfig.VIDEO_LAYOUT_FIT == 'both') {
+        availableHeight = availableWidth / aspectRatio;
+    } else if (interfaceConfig.VIDEO_LAYOUT_FIT === 'both') {
         availableWidth = Math.max(videoWidth, videoSpaceWidth);
         availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
@@ -102,12 +99,21 @@ function getCameraVideoSize(videoWidth,
             availableWidth = availableHeight * aspectRatio;
         }
 
-        if (availableHeight * aspectRatio < videoSpaceWidth) {
+        if (aspectRatio < 1) {
+            const zoomRateHeight = videoSpaceHeight / videoHeight;
+            const zoomRateWidth = videoSpaceWidth / videoWidth;
+            const maxZoomRate
+                = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity;
+            let zoomRate = Math.min(zoomRateWidth, maxZoomRate);
+
+            zoomRate = Math.max(zoomRate, zoomRateHeight);
+            availableWidth = videoWidth * zoomRate;
+            availableHeight = videoHeight * zoomRate;
+        } else if (availableHeight * aspectRatio < videoSpaceWidth) {
             availableWidth = videoSpaceWidth;
             availableHeight = availableWidth / aspectRatio;
         }
     }
-
 
     return [ availableWidth, availableHeight ];
 }
@@ -158,6 +164,10 @@ export class VideoContainer extends LargeContainer {
     // FIXME: With Temasys we have to re-select everytime
     get $video () {
         return $('#largeVideo');
+    }
+
+    get $videoBackground() {
+        return $('#largeVideoBackground');
     }
 
     get id () {
@@ -249,6 +259,7 @@ export class VideoContainer extends LargeContainer {
      */
     enableLocalConnectionProblemFilter (enable) {
         this.$video.toggleClass("videoProblemFilter", enable);
+        this.$videoBackground.toggleClass("videoProblemFilter", enable);
     }
 
     /**
@@ -269,19 +280,20 @@ export class VideoContainer extends LargeContainer {
      * @param {number} containerHeight container height
      * @returns {{availableWidth, availableHeight}}
      */
-    getVideoSize (containerWidth, containerHeight) {
+    getVideoSize(containerWidth, containerHeight) {
         let { width, height } = this.getStreamSize();
+
         if (this.stream && this.isScreenSharing()) {
-            return getDesktopVideoSize( width,
-                height,
-                containerWidth,
-                containerHeight);
-        } else {
-            return getCameraVideoSize(  width,
+            return computeDesktopVideoSize(width,
                 height,
                 containerWidth,
                 containerHeight);
         }
+
+        return computeCameraVideoSize(width,
+            height,
+            containerWidth,
+            containerHeight);
     }
 
     /**
@@ -338,8 +350,17 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        let [width, height]
+        this.$videoBackground.hide();
+        this.$videoBackground[0].pause();
+
+        let [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
+
+        if (containerWidth > width) {
+            this.$videoBackground.show();
+            this.$videoBackground[0].play();
+        }
+
         let { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height,
             containerWidth, containerHeight);
@@ -401,6 +422,7 @@ export class VideoContainer extends LargeContainer {
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
+            this.stream.detach(this.$videoBackground[0]);
         }
 
         this.stream = stream;
@@ -411,8 +433,17 @@ export class VideoContainer extends LargeContainer {
         }
 
         stream.attach(this.$video[0]);
-        let flipX = stream.isLocal() && this.localFlipX;
+        stream.attach(this.$videoBackground[0]);
+
+        this.$videoBackground.hide();
+        this.$videoBackground[0].pause();
+
+        const flipX = stream.isLocal() && this.localFlipX;
+
         this.$video.css({
+            transform: flipX ? 'scaleX(-1)' : 'none'
+        });
+        this.$videoBackground.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
 
@@ -431,7 +462,12 @@ export class VideoContainer extends LargeContainer {
         this.$video.css({
             transform: this.localFlipX ? 'scaleX(-1)' : 'none'
         });
+
+        this.$videoBackground.css({
+            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
+        });
     }
+
 
     /**
      * Check if current video stream is screen sharing.
@@ -469,6 +505,8 @@ export class VideoContainer extends LargeContainer {
      */
     showRemoteConnectionProblemIndicator (show) {
         this.$video.toggleClass("remoteVideoProblemFilter", show);
+        this.$videoBackground.toggleClass("remoteVideoProblemFilter", show);
+
         this.$avatar.toggleClass("remoteVideoProblemFilter", show);
     }
 
