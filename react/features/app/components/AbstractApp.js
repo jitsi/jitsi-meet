@@ -84,7 +84,7 @@ export class AbstractApp extends Component {
         // business logic in the React Component (i.e. UI) AbstractApp now.
         let localParticipant;
 
-        if (typeof APP !== 'undefined') {
+        if (typeof APP === 'object') {
             localParticipant = {
                 avatarID: APP.settings.getAvatarId(),
                 avatarURL: APP.settings.getAvatarUrl(),

@@ -1,4 +1,3 @@
-import { appInit } from '../actions';
 import { AbstractApp } from './AbstractApp';
 import { getLocationContextRoot } from '../functions';
 
@@ -36,17 +35,6 @@ export class App extends AbstractApp {
              */
             windowLocationContextRoot: this._getWindowLocationContextRoot()
         };
-    }
-
-    /**
-     * Inits the app before component will mount.
-     *
-     * @inheritdoc
-     */
-    componentWillMount(...args) {
-        super.componentWillMount(...args);
-
-        this._getStore().dispatch(appInit());
     }
 
     /**

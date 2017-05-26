@@ -1,11 +1,12 @@
 import jwtDecode from 'jwt-decode';
 
-import { parseURLParams, SET_CONFIG } from '../base/config';
+import { SET_CONFIG } from '../base/config';
 import { SET_LOCATION_URL } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { setJWT } from './actions';
 import { SET_JWT } from './actionTypes';
+import { parseJWTFromURLParams } from './functions';
 
 /**
  * Middleware to parse token data upon setting a new room URL.
@@ -55,7 +56,7 @@ function _setConfigOrLocationURL({ dispatch, getState }, next, action) {
     let jwt;
 
     if (locationURL) {
-        jwt = parseURLParams(locationURL, true, 'search').jwt;
+        jwt = parseJWTFromURLParams(locationURL);
     }
     dispatch(setJWT(jwt));
 

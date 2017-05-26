@@ -6,6 +6,8 @@ import { APP_WILL_MOUNT } from '../../app';
 import JitsiMeetJS, { LIB_WILL_INIT } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 
+import JitsiMeetLogStorage from '../../../../modules/util/JitsiMeetLogStorage';
+
 import { SET_LOGGING_CONFIG } from './actionTypes';
 
 declare var APP: Object;
@@ -61,6 +63,28 @@ function _appWillMount({ getState }, next, action) {
 }
 
 /**
+ * Initializes logging in the app.
+ *
+ * @param {Object} loggingConfig - The configuration with which logging is to be
+ * initialized.
+ * @private
+ * @returns {void}
+ */
+function _initLogging(loggingConfig) {
+    // Create the LogCollector and register it as the global log transport. It
+    // is done early to capture as much logs as possible. Captured logs will be
+    // cached, before the JitsiMeetLogStorage gets ready (statistics module is
+    // initialized).
+    if (typeof APP === 'object'
+            && !APP.logCollector
+            && !loggingConfig.disableLogCollector) {
+        APP.logCollector = new Logger.LogCollector(new JitsiMeetLogStorage());
+        Logger.addGlobalTransport(APP.logCollector);
+        JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
+    }
+}
+
+/**
  * Notifies the feature base/logging that the action {@link LIB_WILL_INIT} is
  * being dispatched within a specific Redux {@code store}.
  *
@@ -102,6 +126,8 @@ function _setLoggingConfig({ getState }, next, action) {
     if (oldValue !== newValue) {
         _setLogLevels(Logger, newValue);
         _setLogLevels(JitsiMeetJS, newValue);
+
+        _initLogging(newValue);
     }
 
     return result;

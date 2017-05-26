@@ -1,8 +1,6 @@
 /* global APP, $, JitsiMeetJS, interfaceConfig */
 
-import {
-    toggleDialog
-} from '../../react/features/base/dialog';
+import { toggleDialog } from '../../react/features/base/dialog';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
 /**
@@ -17,7 +15,6 @@ let keyboardShortcutDialog = null;
  * triggered _only_ with a shortcut.
  */
 function initGlobalShortcuts() {
-
     KeyboardShortcut.registerShortcut("ESCAPE", null, function() {
         showKeyboardShortcutsPanel(false);
     });
@@ -57,19 +54,16 @@ function initGlobalShortcuts() {
  */
 function showKeyboardShortcutsPanel(show) {
     if (show
-        && !APP.UI.messageHandler.isDialogOpened()
-        && keyboardShortcutDialog === null) {
-
+            && !APP.UI.messageHandler.isDialogOpened()
+            && keyboardShortcutDialog === null) {
         let msg = $('#keyboard-shortcuts').html();
         let buttons = { Close: true };
 
         keyboardShortcutDialog = APP.UI.messageHandler.openDialog(
             'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
-    } else {
-        if (keyboardShortcutDialog !== null) {
-            keyboardShortcutDialog.close();
-            keyboardShortcutDialog = null;
-        }
+    } else if (keyboardShortcutDialog !== null) {
+        keyboardShortcutDialog.close();
+        keyboardShortcutDialog = null;
     }
 }
 
