@@ -51,10 +51,8 @@
         height:196px;
         padding: 0;
         /* The filmstrip should not be covered by the left toolbar. */
-        padding-left: $defaultToolbarSize + 5;
         bottom: 0;
         width:auto;
-        border: $thumbnailsBorder solid transparent;
         z-index: $filmstripVideosZ;
         transition: bottom 2s;
         overflow: visible !important;
@@ -62,9 +60,10 @@
         videos. */
         font-size: 0pt;
 
-        #filmstripLocalVideo {
-            padding-left: 0;
-        }
+        &#remoteVideos {
+            border: $thumbnailsBorder solid transparent;
+            padding-left: $defaultToolbarSize + 5;
+       }
 
         &.hidden {
             bottom: -196px;
