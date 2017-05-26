@@ -702,13 +702,7 @@ var VideoLayout = {
     onParticipantConnectionStatusChanged (id) {
         // Show/hide warning on the large video
         if (this.isCurrentlyOnLarge(id)) {
-            // when pinning and we have lastN enabled, we have rapid connection
-            // status changed between inactive, restoring and active and
-            // if there was a large video update scheduled already it will
-            // reflect the current status and no need to schedule new one
-            // otherwise we end up scheduling updates for endpoints which are
-            // were on large while checking, but a change was already scheduled
-            if (largeVideo && !largeVideo.updateInProcess) {
+            if (largeVideo) {
                 // We have to trigger full large video update to transition from
                 // avatar to video on connectivity restored.
                 this.updateLargeVideo(id, true /* force update */);
