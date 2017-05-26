@@ -264,7 +264,8 @@ var VideoLayout = {
      */
     updateAfterThumbRemoved (id) {
         // Always trigger an update if large video is empty.
-        if (this.getLargeVideoID() && !this.isCurrentlyOnLarge(id)) {
+        if (!largeVideo
+            || (this.getLargeVideoID() && !this.isCurrentlyOnLarge(id))) {
             return;
         }
 
