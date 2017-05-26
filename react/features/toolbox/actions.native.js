@@ -17,10 +17,9 @@ import {
 
 /**
  * FIXME: We should make sure all common functions for native and web are
- * separated in a global functions file, as well as all actions! Currently this
- * file contains actions that are imported in actions.web.
+ * merged in a global functions file.
  */
-import { getButton } from './functions.web';
+import { getButton } from './functions.native';
 
 /**
  * Event handler for local raise hand changed event.
