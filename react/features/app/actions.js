@@ -4,23 +4,9 @@ import { setConfig } from '../base/config';
 import { loadConfig } from '../base/lib-jitsi-meet';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
-import {
-    _getRouteToRender,
-    _parseURIString,
-    init
-} from './functions';
+import { _getRouteToRender, _parseURIString } from './functions';
 
-/**
- * Temporary solution. Should dispatch actions related to initial settings of
- * the app like setting log levels, reading the config parameters from query
- * string etc.
- *
- * @returns {Function}
- */
-export function appInit() {
-    return (dispatch: Dispatch<*>, getState: Function) =>
-        init(getState());
-}
+declare var APP: Object;
 
 /**
  * Triggers an in-app navigation to a specific route. Allows navigation to be
@@ -28,7 +14,7 @@ export function appInit() {
  *
  * @param {(string|undefined)} uri - The URI to which to navigate. It may be a
  * full URL with an HTTP(S) scheme, a full or partial URI with the app-specific
- * sheme, or a mere room name.
+ * scheme, or a mere room name.
  * @returns {Function}
  */
 export function appNavigate(uri: ?string) {
@@ -180,9 +166,20 @@ function _appNavigateToOptionalLocation(
  * }}
  */
 export function appWillMount(app) {
-    return {
-        type: APP_WILL_MOUNT,
-        app
+    return (dispatch: Dispatch<*>) => {
+        dispatch({
+            type: APP_WILL_MOUNT,
+            app
+        });
+
+        // TODO There was a redux action creator appInit which I did not like
+        // because we already had the redux action creator appWillMount and,
+        // respectively, the redux action APP_WILL_MOUNT. So I set out to remove
+        // appInit and managed to move everything it was doing but the
+        // following. Which is not extremely bad because we haven't moved the
+        // API module into its own feature yet so we're bound to work on that in
+        // the future.
+        typeof APP === 'object' && APP.API.init();
     };
 }
 
@@ -205,7 +202,7 @@ export function appWillUnmount(app) {
 /**
  * Loads config.js from a specific host.
  *
- * @param {Object} location - The loction URI which specifies the host to load
+ * @param {Object} location - The location URI which specifies the host to load
  * the config.js from.
  * @returns {Promise<Object>}
  */
@@ -224,9 +221,9 @@ function _loadConfig(location: Object) {
 }
 
 /**
- * Navigates to a route in accord with a specific Redux state.
+ * Navigates to a route in accord with a specific redux state.
  *
- * @param {Object} state - The Redux state which determines/identifies the route
+ * @param {Object} state - The redux state which determines/identifies the route
  * to navigate to.
  * @private
  * @returns {void}
