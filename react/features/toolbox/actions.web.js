@@ -1,5 +1,7 @@
 /* @flow */
 
+import { compose } from 'redux';
+
 import Recording from '../../../modules/UI/recording/Recording';
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
@@ -7,14 +9,17 @@ import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../../../modules/UI/util/UIUtil';
 
 import {
+    changeLocalRaiseHand,
     clearToolboxTimeout,
     setSubjectSlideIn,
     setToolbarButton,
     setToolboxTimeout,
     setToolboxTimeoutMS,
     setToolboxVisible,
+    toggleFullScreen,
     toggleToolbarButton
 } from './actions.native';
+
 import { SET_DEFAULT_TOOLBOX_BUTTONS } from './actionTypes';
 import { getDefaultToolboxButtons } from './functions';
 
@@ -75,6 +80,87 @@ export function dockToolbox(dock: boolean): Function {
 }
 
 /**
+ * Returns button on mount/unmount handlers with dispatch function stored in
+ * closure.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @param {Function} getState - The function fetching the Redux state.
+ * @returns {Object} Button on mount/unmount handlers.
+ * @private
+ */
+function _getButtonHandlers(dispatch, getState) {
+    const { isGuest } = getState()['features/jwt'];
+
+    const localRaiseHandHandler = compose(dispatch, changeLocalRaiseHand);
+    const toggleFullScreenHandler = compose(dispatch, toggleFullScreen);
+
+    return {
+        /**
+         * Mount handler for desktop button.
+         *
+         * @type {Object}
+         */
+        desktop: {
+            onMount: () => dispatch(showDesktopSharingButton())
+        },
+
+        /**
+         * Mount/Unmount handler for toggling fullscreen button.
+         *
+         * @type {Object}
+         */
+        fullscreen: {
+            onMount: () =>
+                APP.UI.addListener(
+                    UIEvents.FULLSCREEN_TOGGLED,
+                    toggleFullScreenHandler),
+            onUnmount: () =>
+                APP.UI.removeListener(
+                    UIEvents.FULLSCREEN_TOGGLED,
+                    toggleFullScreenHandler)
+        },
+
+        /**
+         * Mount handler for profile button.
+         *
+         * @type {Object}
+         */
+        profile: {
+            onMount: () =>
+            isGuest
+            || dispatch(setProfileButtonUnclickable(true))
+        },
+
+        /**
+         * Mount/Unmount handlers for raisehand button.
+         *
+         * @type {button}
+         */
+        raisehand: {
+            onMount: () =>
+                APP.UI.addListener(
+                    UIEvents.LOCAL_RAISE_HAND_CHANGED,
+                    localRaiseHandHandler),
+            onUnmount: () =>
+                APP.UI.removeListener(
+                    UIEvents.LOCAL_RAISE_HAND_CHANGED,
+                    localRaiseHandHandler)
+        },
+
+        /**
+         * Mount handler for recording button.
+         *
+         * @type {Object}
+         */
+        recording: {
+            onMount: () =>
+            config.enableRecording
+            && dispatch(showRecordingButton())
+        }
+    };
+}
+
+/**
  * Hides the toolbox.
  *
  * @param {boolean} force - True to force the hiding of the toolbox without
@@ -114,16 +200,18 @@ export function hideToolbox(force: boolean = false): Function {
 /**
  * Sets the default toolbar buttons of the Toolbox.
  *
- * @returns {{
- *     type: SET_DEFAULT_TOOLBOX_BUTTONS,
- *     primaryToolbarButtons: Map,
- *     secondaryToolbarButtons: Map
- * }}
+ * @returns {Function}
  */
-export function setDefaultToolboxButtons(): Object {
-    return {
-        type: SET_DEFAULT_TOOLBOX_BUTTONS,
-        ...getDefaultToolboxButtons()
+export function setDefaultToolboxButtons(): Function {
+    return (dispatch: Dispatch, getState: Function) => {
+        // Save dispatch function in closure.
+        const buttonHandlers = _getButtonHandlers(dispatch, getState);
+        const toolboxButtons = getDefaultToolboxButtons(buttonHandlers);
+
+        dispatch({
+            type: SET_DEFAULT_TOOLBOX_BUTTONS,
+            ...toolboxButtons
+        });
     };
 }
 

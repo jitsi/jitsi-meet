@@ -37,11 +37,6 @@ class Toolbar extends Component {
         _onMouseOver: React.PropTypes.func,
 
         /**
-         * Contains button handlers.
-         */
-        buttonHandlers: React.PropTypes.object,
-
-        /**
          * Children of current React component.
          */
         children: React.PropTypes.element,
@@ -76,8 +71,6 @@ class Toolbar extends Component {
      */
     constructor(props) {
         super(props);
-
-        this._setButtonHandlers();
 
         // Bind callbacks to preverse this.
         this._renderToolbarButton = this._renderToolbarButton.bind(this);
@@ -153,35 +146,6 @@ class Toolbar extends Component {
         );
 
         return acc;
-    }
-
-    /**
-     * Sets handlers for some of the buttons.
-     *
-     * @private
-     * @returns {void}
-     */
-    _setButtonHandlers(): void {
-        const {
-            buttonHandlers,
-            toolbarButtons
-        } = this.props;
-
-        // Only a few buttons have buttonHandlers defined, so it may be
-        // undefined or empty depending on the buttons rendered.
-        // TODO Merge the buttonHandlers and onClick properties and come up with
-        // a consistent event handling property.
-        buttonHandlers && Object.keys(buttonHandlers).forEach(key => {
-            let button = toolbarButtons.get(key);
-
-            if (button) {
-                button = {
-                    ...button,
-                    ...buttonHandlers[key]
-                };
-                toolbarButtons.set(key, button);
-            }
-        });
     }
 }
 

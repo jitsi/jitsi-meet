@@ -55,4 +55,8 @@ declare module 'redux' {
 
   declare function compose<S, A>(...fns: Array<StoreEnhancer<S, A>>): Function;
 
+  // Utility function in Redux that can be used for function composition
+  // e.g. bar(foo(baz)) is equivalent to compose(bar, foo)(baz).
+  declare function compose(...fns: Array<Function>): Function;
+
 }
