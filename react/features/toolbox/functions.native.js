@@ -100,3 +100,18 @@ export function abstractMapStateToProps(state: Object): Object {
         _visible: visible
     };
 }
+
+/**
+ * Returns the button object corresponding to the given buttonName.
+ *
+ * @param {string} buttonName - The name of the button.
+ * @param {Object} state - The current state.
+ * @returns {Object} - The button object.
+ */
+export function getButton(buttonName: string, state: Object) {
+    const { primaryToolbarButtons, secondaryToolbarButtons }
+        = state['features/toolbox'];
+
+    return primaryToolbarButtons.get(buttonName)
+        || secondaryToolbarButtons.get(buttonName);
+}
