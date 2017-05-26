@@ -1263,10 +1263,8 @@ export default {
 
         room.on(
             ConferenceEvents.AUTH_STATUS_CHANGED,
-            function (authEnabled, authLogin) {
-                APP.UI.updateAuthInfo(authEnabled, authLogin);
-            }
-        );
+            (authEnabled, authLogin) =>
+                APP.UI.updateAuthInfo(authEnabled, authLogin));
 
         room.on(ConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));

@@ -295,7 +295,7 @@ UI.getSharedVideoManager = function () {
  * Starts the UI module and initializes all related components.
  *
  * @returns {boolean} true if the UI is ready and the conference should be
- * esablished, false - otherwise (for example in the case of welcome page)
+ * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
@@ -367,7 +367,6 @@ UI.start = function () {
             // this is the default toastr close button html, just adds tabIndex
             "closeHtml": '<button type="button" tabIndex="-1">&times;</button>'
         };
-
     }
 
     const { callee } = APP.store.getState()['features/jwt'];
@@ -1385,8 +1384,8 @@ UI.hideRingOverlay
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes
- * the call overlay, the suspended overlay, the GUM permissions overlay, and the
- * page-reload overlay.
+ * the call/ring overlay, the suspended overlay, the GUM permissions overlay,
+ * and the page-reload overlay.
  *
  * @returns {*|boolean} {true} if an overlay is visible; {false}, otherwise
  */
