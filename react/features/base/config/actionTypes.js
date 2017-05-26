@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * The redux action which sets the configuration represented by the feature
  * base/config. The configuration is defined and consumed by the library

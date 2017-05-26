@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * Action for when a track has been added to the conference,
  * local or remote.

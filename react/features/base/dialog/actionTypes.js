@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * The type of Redux action which closes a dialog
  *

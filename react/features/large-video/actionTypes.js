@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * Action to select the participant to be displayed in LargeVideo.
  *

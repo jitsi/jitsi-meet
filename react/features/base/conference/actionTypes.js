@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * The type of (redux) action which signals that a specific conference failed.
  *

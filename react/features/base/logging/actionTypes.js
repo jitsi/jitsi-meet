@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * The type of redux action which sets the configuration of the feature
  * base/logging.

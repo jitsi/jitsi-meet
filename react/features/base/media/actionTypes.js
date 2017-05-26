@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * The type of (redux) action to set the muted state of the local audio.
  *

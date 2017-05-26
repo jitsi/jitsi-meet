@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of action which signals to change the visibility of remote videos in
  * the filmstrip.

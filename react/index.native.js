@@ -1,3 +1,4 @@
+import 'es6-symbol/implement';
 import React, { Component } from 'react';
 import { AppRegistry, Linking } from 'react-native';
 

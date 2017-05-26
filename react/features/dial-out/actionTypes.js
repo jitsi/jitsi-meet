@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of the action which signals a check for a dial-out phone number has
  * succeeded.

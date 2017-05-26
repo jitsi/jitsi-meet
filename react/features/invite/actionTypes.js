@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of the action which signals an error occurred while requesting dial-
  * in numbers.
@@ -23,5 +21,3 @@ export const UPDATE_DIAL_IN_NUMBERS_FAILED
  */
 export const UPDATE_DIAL_IN_NUMBERS_SUCCESS
     = Symbol('UPDATE_DIAL_IN_NUMBERS_SUCCESS');
-
-
