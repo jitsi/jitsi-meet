@@ -263,7 +263,8 @@ var VideoLayout = {
      * otherwise elects new video, in this order.
      */
     updateAfterThumbRemoved (id) {
-        if (!this.isCurrentlyOnLarge(id)) {
+        // Always trigger an update if large video is empty.
+        if (this.getLargeVideoID() && !this.isCurrentlyOnLarge(id)) {
             return;
         }
 
@@ -859,20 +860,6 @@ var VideoLayout = {
         }
 
         VideoLayout.resizeThumbnails();
-
-        const remoteVideosCount = Object.keys(remoteVideos).length;
-
-        if (!remoteVideosCount) {
-            window.setTimeout(() => {
-                const updatedRemoteVideosCount
-                    = Object.keys(remoteVideos).length;
-
-                if (!updatedRemoteVideosCount) {
-                    this._maybePlaceParticipantOnLargeVideo(
-                        APP.conference.getMyUserId());
-                }
-            }, 3000);
-        }
     },
 
     onVideoTypeChanged (id, newVideoType) {
