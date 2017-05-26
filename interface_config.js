@@ -59,7 +59,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     /**
      * Whether to show thumbnails in filmstrip as a column instead of as a row.
      */
-    VERTICAL_FILMSTRIP: false,
+    VERTICAL_FILMSTRIP: true,
 
     //A html text to be shown to guests on the close page, false disables it
     CLOSE_PAGE_GUEST_HINT: false,
