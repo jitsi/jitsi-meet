@@ -122,6 +122,12 @@ class Analytics {
                 if (group) {
                     permanentProperties.group = group;
                 }
+                if (window.jitsiAnalyticsPermanentProperties) {
+                    for (var key in window.jitsiAnalyticsPermanentProperties) {
+                        permanentProperties[key] 
+                            = window.jitsiAnalyticsPermanentProperties[key];
+                    }
+                }
 
                 analytics.addPermanentProperties(permanentProperties);
                 analytics.setAnalyticsHandlers(handlers);
