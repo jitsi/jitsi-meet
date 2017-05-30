@@ -119,22 +119,21 @@ case "$1" in
             echo "AUTHBIND=yes" >> $JVB_ETC_CONFIG
             sed -i "s/JVB_OPTS=.*/JVB_OPTS=--apis=rest,xmpp/g" $JVB_ETC_CONFIG
 
-            echo "org.jitsi.videobridge.rest.jetty.host=::" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.port=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.hostHeader=$JVB_HOSTNAME" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.pathSpec=/http-bind" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.proxyTo=http://localhost:5280/http-bind" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.resourceBase=/usr/share/jitsi-meet" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.tls.port=443" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.host=::" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ProxyServlet.hostHeader=$JVB_HOSTNAME" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ProxyServlet.pathSpec=/http-bind" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ProxyServlet.proxyTo=http://localhost:5280/http-bind" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ResourceHandler.resourceBase=/usr/share/jitsi-meet" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.tls.port=443" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.TCP_HARVESTER_PORT=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePath=/etc/jitsi/videobridge/$JVB_HOSTNAME.jks" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePassword=changeit" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.sslContextFactory.keyStorePath=/etc/jitsi/videobridge/$JVB_HOSTNAME.jks" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.public.jetty.sslContextFactory.keyStorePassword=changeit" >> $JVB_CONFIG
 
             # configure authbind to allow jvb to bind to privileged ports
             OWNER=$(stat -c '%U' /usr/share/jitsi-videobridge)
