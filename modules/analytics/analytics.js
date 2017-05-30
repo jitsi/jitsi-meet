@@ -122,6 +122,17 @@ class Analytics {
                 if (group) {
                     permanentProperties.group = group;
                 }
+                /**
+                 * optionally include local deployment information,
+                 * window.jitsiDeploymentInfo defined outside of application
+                 * to use, override contents in local.html
+                **/
+                if (window.jitsiDeploymentInfo) {
+                    for (var key in window.jitsiDeploymentInfo) {
+                        permanentProperties[key] 
+                            = window.jitsiDeploymentInfo[key];
+                    }
+                }
 
                 analytics.addPermanentProperties(permanentProperties);
                 analytics.setAnalyticsHandlers(handlers);
