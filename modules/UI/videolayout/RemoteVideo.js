@@ -544,13 +544,24 @@ RemoteVideo.prototype.isConnectionActive = function() {
 /**
  * The remote video is considered "playable" once the stream has started
  * according to the {@link #hasVideoStarted} result.
+ * It will be allowed to display video also in
+ * {@link ParticipantConnectionStatus.INTERRUPTED} if the video was ever played
+ * and was not muted while not in ACTIVE state. This basically means that there
+ * is stalled video image cached that could be displayed. It's used to show
+ * "grey video image" in user's thumbnail when there are connectivity issues.
  *
  * @inheritdoc
  * @override
  */
 RemoteVideo.prototype.isVideoPlayable = function () {
+    const connectionState
+        = APP.conference.getParticipantConnectionStatus(this.id);
+
     return SmallVideo.prototype.isVideoPlayable.call(this)
-        && this.hasVideoStarted() && !this.mutedWhileDisconnected;
+        && this.hasVideoStarted()
+        && (connectionState === ParticipantConnectionStatus.ACTIVE
+            || (connectionState === ParticipantConnectionStatus.INTERRUPTED
+                    && !this.mutedWhileDisconnected));
 };
 
 /**

@@ -6,8 +6,6 @@ import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import AudioLevels from "../audio_levels/AudioLevels";
 
-const ParticipantConnectionStatus
-    = JitsiMeetJS.constants.participantConnectionStatus;
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
 /**
@@ -446,13 +444,8 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function () {
  * or <tt>false</tt> otherwise.
  */
 SmallVideo.prototype.isVideoPlayable = function() {
-    const connectionState
-        = APP.conference.getParticipantConnectionStatus(this.id);
-
     return this.videoStream // Is there anything to display ?
-        && !this.isVideoMuted && !this.videoStream.isMuted() // Muted ?
-        && (this.isLocal
-                || connectionState === ParticipantConnectionStatus.ACTIVE);
+        && !this.isVideoMuted && !this.videoStream.isMuted(); // Muted ?
 };
 
 /**
