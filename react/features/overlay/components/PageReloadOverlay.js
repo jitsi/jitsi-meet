@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 
@@ -39,4 +40,4 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
     }
 }
 
-export default translate(PageReloadOverlay);
+export default translate(connect()(PageReloadOverlay));

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { randomInt } from '../../base/util';
 
-import { reconnectNow } from '../functions';
+import { _reloadNow } from '../actions';
 import ReloadButton from './ReloadButton';
 
 declare var AJS: Object;
@@ -22,6 +22,8 @@ export default class AbstractPageReloadOverlay extends Component {
      * @static
      */
     static propTypes = {
+        dispatch: React.PropTypes.func,
+
         /**
          * The indicator which determines whether the reload was caused by
          * network failure.
@@ -149,7 +151,7 @@ export default class AbstractPageReloadOverlay extends Component {
                                 this._interval = undefined;
                             }
 
-                            reconnectNow();
+                            this.props.dispatch(_reloadNow());
                         } else {
                             this.setState(prevState => {
                                 return {
