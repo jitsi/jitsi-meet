@@ -1,5 +1,13 @@
 /* global $ */
 
+/* eslint-disable no-unused-vars */
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
+
+import { i18next } from '../../../react/features/base/i18n';
+/* eslint-enable no-unused-vars */
+
 const positionConfigurations = {
     left: {
 
@@ -155,7 +163,7 @@ var JitsiPopover = (function () {
      * Hides the popover and clears the document elements added by popover.
      */
     JitsiPopover.prototype.forceHide = function () {
-        $(".jitsipopover").remove();
+        this.remove();
         this.popoverShown = false;
         if(this.popoverIsHovered) { //the browser is not firing hover events
             //when the element was on hover if got removed.
@@ -170,21 +178,59 @@ var JitsiPopover = (function () {
     JitsiPopover.prototype.createPopover = function () {
         $("body").append(this.template);
         let popoverElem = $(".jitsipopover > .jitsipopover__content");
-        popoverElem.html(this.options.content);
-        if(typeof this.options.onBeforePosition === "function") {
-            this.options.onBeforePosition($(".jitsipopover"));
+
+        const { content } = this.options;
+
+        if (React.isValidElement(content)) {
+            /* jshint ignore:start */
+            ReactDOM.render(
+                <I18nextProvider i18n = { i18next }>
+                    { content }
+                </I18nextProvider>,
+                popoverElem.get(0),
+                () => {
+                    // FIXME There seems to be odd timing interaction when a
+                    // React Component is manually removed from the DOM and then
+                    // created again, as the ReactDOM callback will fire before
+                    // render is called on the React Component. Using a timeout
+                    // looks to bypass this behavior, maybe by creating
+                    // different execution context. JitsiPopover should be
+                    // rewritten into react soon anyway or at least rewritten
+                    // so the html isn't completely torn down with each update.
+                    setTimeout(() => this._popoverCreated());
+                });
+            /* jshint ignore:end */
+            return;
         }
-        var self = this;
-        $(".jitsipopover").on("mouseenter", function () {
-            self.popoverIsHovered = true;
-            if(typeof self.onHoverPopover === "function") {
-                self.onHoverPopover(self.popoverIsHovered);
+
+        popoverElem.html(content);
+        this._popoverCreated();
+    };
+
+    /**
+     * Adds listeners and executes callbacks after the popover has been created
+     * and displayed.
+     *
+     * @private
+     * @returns {void}
+     */
+    JitsiPopover.prototype._popoverCreated = function () {
+        const { onBeforePosition } = this.options;
+
+        if (typeof onBeforePosition === 'function') {
+            onBeforePosition($(".jitsipopover"));
+        }
+
+        $('.jitsipopover').on('mouseenter', () => {
+            this.popoverIsHovered = true;
+            if (typeof this.onHoverPopover === 'function') {
+                this.onHoverPopover(this.popoverIsHovered);
             }
-        }).on("mouseleave", function () {
-            self.popoverIsHovered = false;
-            self.hide();
-            if(typeof self.onHoverPopover === "function") {
-                self.onHoverPopover(self.popoverIsHovered);
+        }).on('mouseleave', () => {
+            this.popoverIsHovered = false;
+            this.hide();
+            if (typeof this.onHoverPopover === 'function') {
+                this.onHoverPopover(this.popoverIsHovered);
             }
         });
 
@@ -220,8 +266,28 @@ var JitsiPopover = (function () {
         this.options.content = content;
         if(!this.popoverShown)
             return;
-        $(".jitsipopover").remove();
+        this.remove();
         this.createPopover();
+    };
+
+    /**
+     * Unmounts any present child React Component and removes the popover itself
+     * from the DOM.
+     *
+     * @returns {void}
+     */
+    JitsiPopover.prototype.remove = function () {
+        const $popover = $('.jitsipopover');
+        const $popoverContent = $popover.find('.jitsipopover__content');
+        const attachedComponent = $popoverContent.get(0);
+
+        if (attachedComponent) {
+            // ReactDOM will no-op if no React Component is found.
+            ReactDOM.unmountComponentAtNode(attachedComponent);
+        }
+
+        $popover.off();
+        $popover.remove();
     };
 
     JitsiPopover.enabled = true;
