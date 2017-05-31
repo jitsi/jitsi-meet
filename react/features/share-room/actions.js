@@ -1,5 +1,7 @@
 /* @flow */
 
+import { getInviteURL } from '../base/connection';
+
 import { BEGIN_SHARE_ROOM, END_SHARE_ROOM } from './actionTypes';
 
 /**
@@ -12,12 +14,8 @@ import { BEGIN_SHARE_ROOM, END_SHARE_ROOM } from './actionTypes';
 export function beginShareRoom(roomURL: ?string): Function {
     return (dispatch, getState) => {
         if (!roomURL) {
-            const { locationURL } = getState()['features/base/connection'];
-
-            if (locationURL) {
-                // eslint-disable-next-line no-param-reassign
-                roomURL = locationURL.toString();
-            }
+            // eslint-disable-next-line no-param-reassign
+            roomURL = getInviteURL(getState);
         }
         roomURL && dispatch({
             type: BEGIN_SHARE_ROOM,

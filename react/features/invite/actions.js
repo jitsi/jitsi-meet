@@ -15,23 +15,22 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function openInviteDialog() {
-    return openDialog(InviteDialog, {
-        conferenceUrl: encodeURI(APP.ConferenceUrl.getInviteUrl())
-    });
+    return openDialog(InviteDialog);
 }
 
 /**
- * Sends an ajax requests for dial-in numbers and conference id.
+ * Sends AJAX requests for dial-in numbers and conference ID.
  *
  * @returns {Function}
  */
 export function updateDialInNumbers() {
     return (dispatch, getState) => {
+        const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
-            = getState()['features/base/config'];
-        const mucUrl = hosts && hosts.muc;
+            = state['features/base/config'];
+        const mucURL = hosts && hosts.muc;
 
-        if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucUrl) {
+        if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
             dispatch({
                 type: UPDATE_DIAL_IN_NUMBERS_FAILED,
                 error: 'URLs for fetching dial in numbers not properly defined'
@@ -40,30 +39,30 @@ export function updateDialInNumbers() {
             return;
         }
 
-        const { room } = getState()['features/base/conference'];
-        const conferenceIdUrl
-            = `${dialInConfCodeUrl}?conference=${room}@${mucUrl}`;
+        const { room } = state['features/base/conference'];
+        const conferenceIDURL
+            = `${dialInConfCodeUrl}?conference=${room}@${mucURL}`;
 
         Promise.all([
             $.getJSON(dialInNumbersUrl),
-            $.getJSON(conferenceIdUrl)
-        ]).then(([ numbersResponse, idResponse ]) => {
-            if (!idResponse.conference || !idResponse.id) {
-                return Promise.reject(idResponse.message);
-            }
+            $.getJSON(conferenceIDURL)
+        ])
+            .then(([ dialInNumbers, { conference, id, message } ]) => {
+                if (!conference || !id) {
+                    return Promise.reject(message);
+                }
 
-            dispatch({
-                type: UPDATE_DIAL_IN_NUMBERS_SUCCESS,
-                conferenceId: idResponse,
-                dialInNumbers: numbersResponse
+                dispatch({
+                    type: UPDATE_DIAL_IN_NUMBERS_SUCCESS,
+                    conferenceID: id,
+                    dialInNumbers
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: UPDATE_DIAL_IN_NUMBERS_FAILED,
+                    error
+                });
             });
-        })
-        .catch(error => {
-            dispatch({
-                type: UPDATE_DIAL_IN_NUMBERS_FAILED,
-                error
-            });
-        });
-
     };
 }

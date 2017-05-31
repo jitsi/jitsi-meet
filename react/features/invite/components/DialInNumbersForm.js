@@ -35,14 +35,15 @@ class DialInNumbersForm extends Component {
         _localUserDisplayName: React.PropTypes.string,
 
         /**
-         * The url for the JitsiConference.
-         */
-        conferenceUrl: React.PropTypes.string,
-
-        /**
          * Invoked to send an ajax request for dial-in numbers.
          */
         dispatch: React.PropTypes.func,
+
+        /**
+         * The URL of the conference into which this {@code DialInNumbersForm}
+         * is inviting the local participant.
+         */
+        inviteURL: React.PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
@@ -134,21 +135,21 @@ class DialInNumbersForm extends Component {
      */
     render() {
         const { _dialIn, t } = this.props;
-        const { conferenceId, numbers, numbersEnabled } = _dialIn;
+        const { conferenceID, numbers, numbersEnabled } = _dialIn;
         const { selectedNumber } = this.state;
 
-        if (!conferenceId || !numbers || !numbersEnabled || !selectedNumber) {
+        if (!conferenceID || !numbers || !numbersEnabled || !selectedNumber) {
             return null;
         }
 
-        const items = numbers ? this._formatNumbers(numbers) : [];
+        const items = this._formatNumbers(numbers);
 
         return (
             <div className = 'form-control dial-in-numbers'>
                 <label className = 'form-control__label'>
                     { t('invite.howToDialIn') }
                     <span className = 'dial-in-numbers-conference-id'>
-                        { conferenceId }
+                        { conferenceID }
                     </span>
                 </label>
                 <div className = 'form-control__container'>
@@ -290,18 +291,21 @@ class DialInNumbersForm extends Component {
      * @returns {string}
      */
     _generateCopyText() {
-        const welcome = this.props.t('invite.invitedYouTo', {
-            meetingUrl: this.props.conferenceUrl,
+        const { t } = this.props;
+        const welcome = t('invite.invitedYouTo', {
+            inviteURL: this.props.inviteURL,
             userName: this.props._localUserDisplayName
         });
 
-        const callNumber = this.props.t('invite.callNumber',
-            { number: this.state.selectedNumber.number });
+        const callNumber = t('invite.callNumber', {
+            number: this.state.selectedNumber.number
+        });
         const stepOne = `1) ${callNumber}`;
 
-        const enterId = this.props.t('invite.enterId',
-            { meetingId: this.props._dialIn.conferenceId });
-        const stepTwo = `2) ${enterId}`;
+        const enterID = t('invite.enterID', {
+            conferenceID: this.props._dialIn.conferenceID
+        });
+        const stepTwo = `2) ${enterID}`;
 
         return `${welcome}\n${stepOne}\n${stepTwo}`;
     }
@@ -395,12 +399,9 @@ class DialInNumbersForm extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { name }
-        = getLocalParticipant(state['features/base/participants']);
-
     return {
-        _localUserDisplayName: name,
-        _dialIn: state['features/invite/dial-in']
+        _localUserDisplayName: getLocalParticipant(state).name,
+        _dialIn: state['features/invite']
     };
 }
 

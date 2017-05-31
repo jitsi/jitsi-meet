@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { getInviteURL } from '../../base/connection';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
@@ -24,19 +25,18 @@ class InviteDialog extends Component {
     static propTypes = {
         /**
          * The redux store representation of the JitsiConference.
-         *
          */
         _conference: React.PropTypes.object,
+
+        /**
+         * The url for the JitsiConference.
+         */
+        _inviteURL: React.PropTypes.string,
 
         /**
          * Whether or not the current user is a conference moderator.
          */
         _isModerator: React.PropTypes.bool,
-
-        /**
-         * The url for the JitsiConference.
-         */
-        conferenceUrl: React.PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
@@ -60,11 +60,9 @@ class InviteDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _conference, conferenceUrl } = this.props;
+        const { _conference, _inviteURL, t } = this.props;
         const titleString
-            = this.props.t(
-                'invite.inviteTo',
-                { conferenceName: _conference.room });
+            = t('invite.inviteTo', { conferenceName: _conference.room });
 
         return (
             <Dialog
@@ -72,8 +70,8 @@ class InviteDialog extends Component {
                 okTitleKey = 'dialog.done'
                 titleString = { titleString }>
                 <div className = 'invite-dialog'>
-                    <ShareLinkForm toCopy = { conferenceUrl } />
-                    <DialInNumbersForm conferenceUrl = { conferenceUrl } />
+                    <ShareLinkForm toCopy = { _inviteURL } />
+                    <DialInNumbersForm inviteURL = { _inviteURL } />
                     <PasswordContainer
                         conference = { _conference.conference }
                         locked = { _conference.locked }
@@ -93,16 +91,16 @@ class InviteDialog extends Component {
  * @private
  * @returns {{
  *     _conference: Object,
+ *     _inviteURL: string,
  *     _isModerator: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const { role }
-        = getLocalParticipant(state['features/base/participants']);
-
     return {
         _conference: state['features/base/conference'],
-        _isModerator: role === PARTICIPANT_ROLE.MODERATOR
+        _inviteURL: getInviteURL(state),
+        _isModerator:
+            getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
     };
 }
 

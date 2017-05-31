@@ -115,18 +115,8 @@ class FilmstripOnlyOverlayFrame extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const participant
-        = getLocalParticipant(
-            state['features/base/participants']);
-    const { avatarId, avatarUrl, email } = participant || {};
-
     return {
-        _avatar: getAvatarURL({
-            avatarId,
-            avatarUrl,
-            email,
-            participantId: participant.id
-        })
+        _avatar: getAvatarURL(getLocalParticipant(state) || {})
     };
 }
 

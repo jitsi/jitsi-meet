@@ -121,12 +121,11 @@ function _addConferenceListeners(conference, dispatch) {
  * @returns {void}
  */
 function _setLocalParticipantData(conference, state) {
-    const localParticipant
-        = getLocalParticipant(state['features/base/participants']);
+    const { avatarID } = getLocalParticipant(state);
 
     conference.removeCommand(AVATAR_ID_COMMAND);
     conference.sendCommand(AVATAR_ID_COMMAND, {
-        value: localParticipant.avatarID
+        value: avatarID
     });
 }
 

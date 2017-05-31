@@ -9,28 +9,24 @@ const DEFAULT_STATE = {
     numbersEnabled: true
 };
 
-ReducerRegistry.register(
-    'features/invite/dial-in',
-    (state = DEFAULT_STATE, action) => {
-        switch (action.type) {
-        case UPDATE_DIAL_IN_NUMBERS_FAILED: {
-            return {
-                ...state,
-                error: action.error
-            };
-        }
+ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
+    switch (action.type) {
+    case UPDATE_DIAL_IN_NUMBERS_FAILED:
+        return {
+            ...state,
+            error: action.error
+        };
 
-        case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
-            const { numbers, numbersEnabled } = action.dialInNumbers;
+    case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
+        const { numbers, numbersEnabled } = action.dialInNumbers;
 
-            return {
-                conferenceId: action.conferenceId.id,
-                error: null,
-                numbers,
-                numbersEnabled
-            };
-        }
-        }
+        return {
+            conferenceID: action.conferenceID,
+            numbers,
+            numbersEnabled
+        };
+    }
+    }
 
-        return state;
-    });
+    return state;
+});

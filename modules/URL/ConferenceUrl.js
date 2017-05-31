@@ -24,24 +24,9 @@ export default class ConferenceUrl {
      * from the sample URL.
      */
     constructor(location) {
-        /**
-         * A simplified version of the conference URL stripped out of
-         * the parameters which should be used for sending invites.
-         * Example:
-         * https://example.com:8888/SomeConference1245
-         * @type {string}
-         */
-        this.inviteURL
-            = location.protocol + "//" + location.host + location.pathname;
         logger.info("Stored original conference URL: " + location.href);
-        logger.info("Conference URL for invites: " + this.inviteURL);
-    }
-    /**
-     * Obtains the conference invite URL.
-     * @return {string} the URL pointing o the conference which is mean to be
-     * used to invite new participants.
-     */
-    getInviteUrl() {
-        return this.inviteURL;
+        logger.info(
+                "Conference URL for invites: " + location.protocol + "//"
+                    + location.host + location.pathname);
     }
 }

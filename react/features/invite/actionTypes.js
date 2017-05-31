@@ -16,7 +16,8 @@ export const UPDATE_DIAL_IN_NUMBERS_FAILED
  *
  * {
  *     type: UPDATE_DIAL_IN_NUMBERS_SUCCESS,
- *     response: Object
+ *     conferenceID: Object,
+ *     dialInNumbers: Object
  * }
  */
 export const UPDATE_DIAL_IN_NUMBERS_SUCCESS
