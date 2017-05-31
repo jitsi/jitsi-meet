@@ -3,9 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    setToolbarHovered
-} from '../actions';
+import { setToolbarHovered } from '../actions';
 import ToolbarButton from './ToolbarButton';
 
 /**
@@ -108,8 +106,8 @@ class Toolbar extends Component {
      * @param {Array} keyValuePair - Key value pair containing button and its
      * key.
      * @param {number} index - Index of the key value pair in the array.
-     * @returns {Array} Array of toolbar buttons and splitter if it's on.
      * @private
+     * @returns {Array} Array of toolbar buttons and splitter if it's on.
      */
     _renderToolbarButton(acc: Array<*>, keyValuePair: Array<*>,
                          index: number): Array<ReactElement<*>> {
@@ -153,8 +151,8 @@ class Toolbar extends Component {
  * Maps part of Redux actions to component's props.
  *
  * @param {Function} dispatch - Redux action dispatcher.
- * @returns {Object}
  * @private
+ * @returns {Object}
  */
 function _mapDispatchToProps(dispatch: Function): Object {
     return {
@@ -180,4 +178,4 @@ function _mapDispatchToProps(dispatch: Function): Object {
     };
 }
 
-export default connect(null, _mapDispatchToProps)(Toolbar);
+export default connect(undefined, _mapDispatchToProps)(Toolbar);

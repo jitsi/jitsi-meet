@@ -34,8 +34,8 @@ class ReloadButton extends Component {
     /**
      * Renders the button for relaod the page if necessary.
      *
-     * @returns {ReactElement|null}
      * @private
+     * @returns {ReactElement}
      */
     render() {
         const className
@@ -54,6 +54,7 @@ class ReloadButton extends Component {
 
         /* eslint-enable react/jsx-handler-names */
     }
+}
 
 }
 

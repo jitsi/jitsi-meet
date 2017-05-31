@@ -1,6 +1,4 @@
-import {
-    ReducerRegistry
-} from '../base/redux';
+import { ReducerRegistry } from '../base/redux';
 
 import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,

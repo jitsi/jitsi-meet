@@ -113,7 +113,7 @@ function _pinParticipant(store, next, action) {
         pin = !localParticipant || !localParticipant.pinned;
     }
     if (pin) {
-        const conference = state['features/base/conference'].conference;
+        const { conference } = state['features/base/conference'];
 
         try {
             conference.pinParticipant(id);

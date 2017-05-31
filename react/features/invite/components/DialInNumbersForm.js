@@ -10,11 +10,9 @@ import { updateDialInNumbers } from '../actions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-const EXPAND_ICON = <ExpandIcon label = 'expand' />;
-
 /**
  * React {@code Component} responsible for fetching and displaying telephone
- * numbers for dialing into the conference. Also supports copying a selected
+ * numbers for dialing into a conference. Also supports copying a selected
  * dial-in number to the clipboard.
  *
  * @extends Component
@@ -105,8 +103,10 @@ class DialInNumbersForm extends Component {
      * returns {void}
      */
     componentWillMount() {
-        if (this.props._dialIn.numbers) {
-            this._setDefaultNumber(this.props._dialIn.numbers);
+        const { numbers } = this.props._dialIn;
+
+        if (numbers) {
+            this._setDefaultNumber(numbers);
         } else {
             this.props.dispatch(updateDialInNumbers());
         }
@@ -209,7 +209,7 @@ class DialInNumbersForm extends Component {
                     type = 'text'
                     value = { triggerText || '' } />
                 <span className = 'dial-in-numbers-trigger-icon'>
-                    { EXPAND_ICON }
+                    <ExpandIcon label = 'expand' />
                 </span>
             </div>
         );

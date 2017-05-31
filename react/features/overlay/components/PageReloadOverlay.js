@@ -12,23 +12,6 @@ import OverlayFrame from './OverlayFrame';
  */
 class PageReloadOverlay extends AbstractPageReloadOverlay {
     /**
-     * PageReloadOverlay component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractPageReloadOverlay.propTypes,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: React.PropTypes.func
-    };
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc

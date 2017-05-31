@@ -48,8 +48,7 @@ class SuspendedOverlay extends Component {
                             translateToHTML(t, 'suspendedoverlay.title')
                         }
                     </span>
-                    <ReloadButton
-                        textKey = 'suspendedoverlay.rejoinKeyTitle' />
+                    <ReloadButton textKey = 'suspendedoverlay.rejoinKeyTitle' />
                 </div>
             </OverlayFrame>
         );

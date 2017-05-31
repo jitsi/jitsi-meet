@@ -4,14 +4,11 @@ import { connect } from 'react-redux';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    PARTICIPANT_ROLE
-} from '../../base/participants';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 
+import DialInNumbersForm from './DialInNumbersForm';
 import PasswordContainer from './PasswordContainer';
 import ShareLinkForm from './ShareLinkForm';
-import DialInNumbersForm from './DialInNumbersForm';
 
 /**
  * A React {@code Component} for displaying other components responsible for
