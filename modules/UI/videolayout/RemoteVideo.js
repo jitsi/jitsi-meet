@@ -436,8 +436,11 @@ RemoteVideo.prototype._setAudioVolume = function (scale, newVal) {
  * @param force to work even if popover is not visible
  */
 RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
-
     this.isAudioMuted = isMuted;
+
+    if (!this.popover) {
+        return;
+    }
 
     // generate content, translate it and add it to document only if
     // popover is visible or we force to do so.
