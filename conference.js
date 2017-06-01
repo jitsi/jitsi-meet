@@ -2052,7 +2052,7 @@ export default {
      * @param email {string} the new email
      */
     changeLocalEmail(email = '') {
-        email = email.trim();
+        email = String(email).trim();
 
         if (email === APP.settings.getEmail()) {
             return;
@@ -2076,7 +2076,7 @@ export default {
      * @param url {string} the new url
      */
     changeLocalAvatarUrl(url = '') {
-        url = url.trim();
+        url = String(url).trim();
 
         if (url === APP.settings.getAvatarUrl()) {
             return;
