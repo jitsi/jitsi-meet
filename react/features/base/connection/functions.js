@@ -17,10 +17,29 @@ export function getInviteURL(stateOrGetState: Function | Object): ?string {
     let inviteURL;
 
     if (locationURL) {
-        const { host, pathname, protocol } = locationURL;
-
-        inviteURL = `${protocol}//${host}${pathname}`;
+        inviteURL = getURLWithoutParams(locationURL).href;
     }
 
     return inviteURL;
+}
+
+/**
+ * Gets a {@link URL} without hash and query/search params from a specific
+ * {@code URL}.
+ *
+ * @param {URL} url - The {@code URL} which may have hash and query/search
+ * params.
+ * @returns {URL}
+ */
+export function getURLWithoutParams(url: URL): URL {
+    const { hash, search } = url;
+
+    if ((hash && hash.length > 1) || (search && search.length > 1)) {
+        // eslint-disable-next-line no-param-reassign
+        url = new URL(url.href);
+        url.hash = '';
+        url.search = '';
+    }
+
+    return url;
 }
