@@ -39,7 +39,7 @@ export default class AbstractContainer extends Component {
          * instance is to be hidden or not rendered at all.
          */
         visible: React.PropTypes.bool
-    }
+    };
 
     /**
      * Renders this AbstractContainer as a React Component of a specific type.

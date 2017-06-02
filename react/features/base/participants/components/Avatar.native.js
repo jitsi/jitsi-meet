@@ -17,7 +17,7 @@ export default class Avatar extends Component {
          */
         style: React.PropTypes.object,
         uri: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new Avatar instance.

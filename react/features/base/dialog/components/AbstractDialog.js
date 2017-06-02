@@ -64,7 +64,7 @@ export default class AbstractDialog extends Component {
          * the latter is unused.
          */
         titleString: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new Dialog instance.

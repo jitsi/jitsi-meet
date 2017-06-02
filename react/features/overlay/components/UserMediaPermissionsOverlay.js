@@ -33,7 +33,7 @@ class UserMediaPermissionsOverlay extends Component {
          * @type {Function}
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new SuspendedOverlay instance.

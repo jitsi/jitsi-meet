@@ -35,7 +35,7 @@ class UnsupportedDesktopBrowser extends Component {
          * @type {Function}
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Renders the component.

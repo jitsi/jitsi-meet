@@ -26,7 +26,7 @@ class LargeVideo extends Component {
          * @private
          */
         _participantId: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

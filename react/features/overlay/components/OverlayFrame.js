@@ -24,7 +24,7 @@ export default class OverlayFrame extends Component {
          * @type {boolean}
          */
         isLightOverlay: React.PropTypes.bool
-    }
+    };
 
     /**
      * Initializes a new AbstractOverlay instance.

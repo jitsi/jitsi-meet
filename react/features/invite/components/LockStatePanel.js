@@ -21,7 +21,7 @@ class LockStatePanel extends Component {
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

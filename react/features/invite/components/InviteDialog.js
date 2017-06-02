@@ -45,7 +45,7 @@ class InviteDialog extends Component {
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Reports an analytics event for the invite modal being closed.

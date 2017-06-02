@@ -66,7 +66,7 @@ class UnsupportedMobileBrowser extends Component {
          * @type {Function}
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes the text and URL of the `Start a conference` / `Join the

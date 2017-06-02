@@ -25,7 +25,7 @@ class TimeElapsed extends Component {
          * The milliseconds to be converted into a human-readable format.
          */
         time: React.PropTypes.number
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

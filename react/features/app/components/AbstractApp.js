@@ -39,7 +39,7 @@ export class AbstractApp extends Component {
          * The URL, if any, with which the app was launched.
          */
         url: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new AbstractApp instance.

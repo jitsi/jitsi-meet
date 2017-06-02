@@ -86,7 +86,7 @@ class ParticipantView extends Component {
          * Video class for React Native.
          */
         zOrder: React.PropTypes.number
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

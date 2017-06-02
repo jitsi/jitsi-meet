@@ -43,7 +43,7 @@ class DialOutDialog extends Component {
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new {@code DialOutNumbersForm} instance.

@@ -37,7 +37,7 @@ class Filmstrip extends Component {
          * @type {boolean}
          */
         _visible: React.PropTypes.bool.isRequired
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

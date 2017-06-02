@@ -33,7 +33,7 @@ class SpeakerStatsItem extends Component {
          * True if the participant is currently the dominant speaker.
          */
         isDominantSpeaker: React.PropTypes.bool
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

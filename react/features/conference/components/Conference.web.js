@@ -26,7 +26,7 @@ class Conference extends Component {
      */
     static propTypes = {
         dispatch: React.PropTypes.func
-    }
+    };
 
     /**
      * Until we don't rewrite UI using react components

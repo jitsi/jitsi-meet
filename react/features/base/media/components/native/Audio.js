@@ -13,7 +13,7 @@ export class Audio extends Component {
     static propTypes = {
         muted: React.PropTypes.bool,
         stream: React.PropTypes.object
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

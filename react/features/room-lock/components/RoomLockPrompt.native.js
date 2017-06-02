@@ -22,7 +22,7 @@ class RoomLockPrompt extends Component {
          */
         conference: React.PropTypes.object,
         dispatch: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new RoomLockPrompt instance.

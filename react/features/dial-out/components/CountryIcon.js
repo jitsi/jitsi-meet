@@ -19,7 +19,7 @@ class CountryIcon extends Component {
          * The 2-letter country code.
          */
         countryCode: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

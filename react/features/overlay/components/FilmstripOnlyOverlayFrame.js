@@ -51,7 +51,7 @@ class FilmstripOnlyOverlayFrame extends Component {
          * @type {boolean}
          */
         isLightOverlay: React.PropTypes.bool
-    }
+    };
 
     /**
      * Renders content related to the icon.

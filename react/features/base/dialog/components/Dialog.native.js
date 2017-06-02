@@ -21,7 +21,7 @@ class Dialog extends AbstractDialog {
          * I18n key to put as body title.
          */
         bodyKey: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

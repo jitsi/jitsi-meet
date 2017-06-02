@@ -23,7 +23,7 @@ export class DialogContainer extends Component {
          * The props to pass to the component that will be rendered.
          */
         _componentProps: React.PropTypes.object
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

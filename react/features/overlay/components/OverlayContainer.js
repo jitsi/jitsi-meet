@@ -97,7 +97,7 @@ class OverlayContainer extends Component {
          * @type {string}
          */
         _suspendDetected: React.PropTypes.bool
-    }
+    };
 
     /**
      * Initializes a new ReloadTimer instance.

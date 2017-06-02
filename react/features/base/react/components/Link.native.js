@@ -31,7 +31,7 @@ export class Link extends Component {
          * The URL to be opened when this Link is clicked/pressed.
          */
         url: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new Link instance.

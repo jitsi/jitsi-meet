@@ -35,7 +35,7 @@ class DesktopSourcePreview extends Component {
          * The DesktopCapturerSource to display.
          */
         source: React.PropTypes.object
-    }
+    };
 
     /**
      * Initializes a new DesktopSourcePreview instance.

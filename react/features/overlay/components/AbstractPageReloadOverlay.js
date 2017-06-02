@@ -37,7 +37,7 @@ export default class AbstractPageReloadOverlay extends Component {
          * @type {string}
          */
         reason: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new AbstractPageReloadOverlay instance.

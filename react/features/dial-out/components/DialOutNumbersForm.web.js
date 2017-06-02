@@ -57,7 +57,7 @@ class DialOutNumbersForm extends Component {
          * Invoked to send an ajax request for dial-out codes.
          */
         updateDialOutCodes: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new {@code DialOutNumbersForm} instance.

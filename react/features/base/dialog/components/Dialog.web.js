@@ -38,7 +38,7 @@ class Dialog extends AbstractDialog {
          * - string value for percentage
          */
         width: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

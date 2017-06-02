@@ -16,7 +16,7 @@ export default class Avatar extends Component {
          * @type {string}
          */
         uri: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

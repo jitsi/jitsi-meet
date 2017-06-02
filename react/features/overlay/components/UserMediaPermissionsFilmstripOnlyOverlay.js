@@ -31,7 +31,7 @@ class UserMediaPermissionsFilmstripOnlyOverlay extends Component {
          * @type {Function}
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

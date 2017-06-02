@@ -29,7 +29,7 @@ class ReloadButton extends Component {
          * @type {string}
          */
         textKey: React.PropTypes.string.isRequired
-    }
+    };
 
     /**
      * Renders the button for relaod the page if necessary.
