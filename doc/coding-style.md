@@ -76,7 +76,7 @@
   projects. For example:
 
   * The instance of lib-jitsi-meet's `JitsiConnection` type should be named
-    `connection` or `jitsiConnection` in jitsi-meet-react, not `client`.
+    `connection` or `jitsiConnection` in jitsi-meet, not `client`.
 
   * The class `ReducerRegistry` should be defined in ReducerRegistry.js and its
     imports in other files should use the same name. Don't define the class

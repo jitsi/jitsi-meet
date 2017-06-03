@@ -1,7 +1,11 @@
+import { reload, replace } from '../../../modules/util/helpers';
+
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SUSPEND_DETECTED
 } from './actionTypes';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Signals that the prompt for media permission is visible or not.
@@ -9,12 +13,12 @@ import {
  * @param {boolean} isVisible - If the value is true - the prompt for media
  * permission is visible otherwise the value is false/undefined.
  * @param {string} browser - The name of the current browser.
+ * @public
  * @returns {{
  *     type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
  *     browser: {string},
  *     isVisible: {boolean}
  * }}
- * @public
  */
 export function mediaPermissionPromptVisibilityChanged(isVisible, browser) {
     return {
@@ -25,12 +29,34 @@ export function mediaPermissionPromptVisibilityChanged(isVisible, browser) {
 }
 
 /**
+ * Reloads the page.
+ *
+ * @protected
+ * @returns {Function}
+ */
+export function _reloadNow() {
+    return (dispatch, getState) => {
+        const { locationURL } = getState()['features/base/connection'];
+
+        logger.info(`Reloading the conference using URL: ${locationURL}`);
+
+        // In an iframe reload with the reload() utility because the replace()
+        // utility does not work on an iframe.
+        if (window.self === window.top) {
+            replace(locationURL);
+        } else {
+            reload();
+        }
+    };
+}
+
+/**
  * Signals that suspend was detected.
  *
+ * @public
  * @returns {{
  *     type: SUSPEND_DETECTED
  * }}
- * @public
  */
 export function suspendDetected() {
     return {

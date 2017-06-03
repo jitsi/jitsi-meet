@@ -1,5 +1,3 @@
-import { Symbol } from '../react';
-
 /**
  * The type of Redux action which signals that the currently used audio
  * input device should be changed.

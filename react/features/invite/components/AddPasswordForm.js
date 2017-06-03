@@ -30,7 +30,7 @@ class AddPasswordForm extends Component {
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new {@code AddPasswordForm} instance.

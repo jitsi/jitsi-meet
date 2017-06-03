@@ -38,7 +38,7 @@ class Dialog extends AbstractDialog {
          * - string value for percentage
          */
         width: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.
@@ -137,6 +137,7 @@ class Dialog extends AbstractDialog {
                 appearance = 'primary'
                 form = 'modal-dialog-form'
                 id = 'modal-dialog-ok-button'
+                isDisabled = { this.props.okDisabled }
                 onClick = { this._onSubmit }>
                 { this.props.t(this.props.okTitleKey || 'dialog.Ok') }
             </AKButton>

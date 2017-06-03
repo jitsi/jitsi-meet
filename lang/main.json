@@ -16,8 +16,7 @@
     "callingName": "__name__",
     "audioOnly": {
         "audioOnly": "Audio only",
-        "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode",
-        "howToDisable": "Audio only mode is currently enabled. Click the audio only button in the toolbar to disable the feature."
+        "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode"
     },
     "userMedia": {
       "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
@@ -278,8 +277,6 @@
         "Save": "Save",
         "recording": "Recording",
         "recordingToken": "Enter recording token",
-        "Dial": "Dial",
-        "sipMsg": "Enter SIP number",
         "passwordCheck": "Are you sure you would like to remove your password?",
         "passwordMsg": "Set a password to lock your room",
         "shareLink": "Share the link to the call",
@@ -437,15 +434,27 @@
     },
     "invite": {
         "addPassword": "Add password",
-        "dialInNumbers": "Dial-in telephone numbers",
-        "errorFetchingNumbers": "Failed to obtain dial-in numbers",
+        "callNumber": "Call __number__",
+        "enterID": "Enter Meeting ID: __conferenceID__ following by # to dial in from a phone",
+        "howToDialIn": "To dial in, use one of the following numbers and meeting ID",
         "hidePassword": "Hide password",
         "inviteTo": "Invite people to __conferenceName__",
-        "loadingNumbers": "Loading...",
+        "invitedYouTo": "__userName__ has invited you to the __inviteURL__ conference",
         "locked": "This call is locked. New callers must have the link and enter the password to join.",
-        "noNumbers": "No numbers available",
-        "numbersDisabled": "Dialing in has been disabled",
         "showPassword": "Show password",
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
+    },
+    "videoStatus": {
+      "hd": "HD",
+      "hdVideo": "HD video",
+      "sd": "SD",
+      "sdVideo": "SD video"
+    },
+    "dialOut": {
+        "dial": "Dial",
+        "dialOut": "Call a phone number",
+        "statusMessage": "is now __status__",
+        "enterPhone": "Enter phone number",
+        "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"
     }
 }

@@ -24,7 +24,7 @@ class ShareLinkForm extends Component {
          * The value to be displayed and copied into the clipboard.
          */
         toCopy: React.PropTypes.string
-    }
+    };
 
     /**
      * Initializes a new {@code ShareLinkForm} instance.

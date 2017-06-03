@@ -1,0 +1,64 @@
+/**
+ * The dialog content element.
+ */
+.dial-out-content {
+    margin-top: 5px;
+
+   /**
+    * The style of the flag icon.
+    */
+    .dial-out-flag-icon {
+        position: absolute;
+        left: 5px;
+        top: 10px;
+    }
+
+    /**
+     * The style of the dial code element.
+     */
+    .dial-out-code {
+        padding-left: 25px !important;
+    }
+
+    /**
+     * The dial-out dialog error element.
+     */
+    .dial-out-error {
+        color: $errorColor;
+    }
+
+    /**
+     * The style of the dial input element.
+     */
+    .dial-out-input {
+        padding-left: 70px;
+    }
+
+    /**
+     * Re-styling the default dropdown inside the dial-out-content.
+     */
+    .dropdown {
+        left: $formPadding;
+        position: absolute !important;
+        width: 65px
+    }
+
+    /**
+     * Re-styling the default form-control inside the dial-out-content.
+     */
+    .form-control {
+        padding-bottom: 8px !important;
+    }
+
+    .dropdown {
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dropdown-trigger-icon {
+        position: absolute;
+        right: 0;
+        top: 4px;
+    }
+}

@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of redux action which stores a specific JSON Web Token (JWT) into
  * the redux store.

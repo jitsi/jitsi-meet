@@ -495,18 +495,15 @@
                     0px 0px 1px rgba(0,0,0,0.3);
 }
 
-.audio-only-label {
-    cursor: default;
-    display: flex;
-    height: auto;
-    justify-content: center;
-    z-index: $centeredVideoLabelZ;
+.filmstrip-only {
+    #videoResolutionLabel {
+        display: none;
+    }
 }
-
-.audio-only-label,
 .video-state-indicator {
     background: $videoStateIndicatorBackground;
     color: $videoStateIndicatorColor;
+    cursor: pointer;
     font-size: 13px;
     height: 40px;
     line-height: 20px;
@@ -516,11 +513,15 @@
     border-radius: 50%;
     position: absolute;
     box-sizing: border-box;
+
+    i {
+        cursor: pointer;
+    }
 }
 
 #videoResolutionLabel,
-.centeredVideoLabel {
-    z-index: $centeredVideoLabelZ;
+.centeredVideoLabel.moveToCorner {
+    z-index: $tooltipsZ;
 }
 
 .centeredVideoLabel {
@@ -529,6 +530,7 @@
     display: none;
     -webkit-transition: all 2s 2s linear;
     transition: all 2s 2s linear;
+    z-index: $centeredVideoLabelZ;
 
     &.moveToCorner {
         bottom: auto;
@@ -543,4 +545,60 @@
 
 .moveToCorner + .moveToCorner {
     right: 80px;
+}
+
+.video-state-indicator-menu {
+    display: none;
+    padding: 10px;
+    position: absolute;
+    right: -10px;
+    top: 20px;
+
+    .video-state-indicator-menu-options {
+        background: $popoverBg;
+        border-radius: 3px;
+        color: $popoverFontColor;
+        margin-top: 20px;
+        padding: 5px 0;
+        position: relative;
+
+        div {
+            cursor: pointer;
+            padding: 10px;
+            padding-right: 30px;
+            text-align: left;
+            white-space: nowrap;
+
+            &.active {
+                background: $toolbarToggleBackground;
+            }
+            &:hover:not(.active) {
+                background: $popupMenuSelectedItemBackground;
+            }
+
+            i {
+                margin-right: 5px;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    .video-state-indicator-menu-options::after {
+        content: " ";
+        border-color: transparent transparent $popoverBg transparent;
+        border-style: solid;
+        border-width: 5px;
+        position: absolute;
+        right: 15px;
+        top: -10px;
+    }
+}
+
+.video-state-indicator:hover,
+.video-state-indicator *:hover {
+    background: $toolbarSelectBackground;
+
+    .video-state-indicator-menu {
+        display: block;
+    }
 }

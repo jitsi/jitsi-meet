@@ -32,7 +32,7 @@ class VideoInputPreview extends Component {
          * The JitsiLocalTrack to display.
          */
         track: React.PropTypes.object
-    }
+    };
 
     /**
      * Initializes a new VideoInputPreview instance.

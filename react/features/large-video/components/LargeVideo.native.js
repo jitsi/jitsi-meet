@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -6,7 +8,8 @@ import { ParticipantView } from '../../base/participants';
 import { styles } from './styles';
 
 /**
- * Large video React component.
+ * Implements a React {@link Component} which represents the large video (a.k.a.
+ * the conference participant who is on the local stage) on mobile/React Native.
  *
  * @extends Component
  */
@@ -23,7 +26,7 @@ class LargeVideo extends Component {
          * @private
          */
         _participantId: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

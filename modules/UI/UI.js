@@ -4,10 +4,6 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
 
-import {
-    updateDeviceList
-} from '../../react/features/base/devices';
-
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
@@ -27,6 +23,10 @@ import RingOverlay from "./ring_overlay/RingOverlay";
 import UIErrors from './UIErrors';
 import { debounce } from "../util/helpers";
 
+
+import {
+    updateDeviceList
+} from '../../react/features/base/devices';
 import {
     setAudioMuted,
     setVideoMuted
@@ -43,7 +43,7 @@ import {
     showDialPadButton,
     showEtherpadButton,
     showSharedVideoButton,
-    showSIPCallButton,
+    showDialOutButton,
     showToolbox
 } from '../../react/features/toolbox';
 
@@ -295,7 +295,7 @@ UI.getSharedVideoManager = function () {
  * Starts the UI module and initializes all related components.
  *
  * @returns {boolean} true if the UI is ready and the conference should be
- * esablished, false - otherwise (for example in the case of welcome page)
+ * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function () {
     document.title = interfaceConfig.APP_NAME;
@@ -308,6 +308,10 @@ UI.start = function () {
 
     SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);
+
+    // By default start with remote videos hidden and rely on other logic to
+    // make them visible.
+    UI.setRemoteThumbnailsVisibility(false);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
@@ -339,6 +343,10 @@ UI.start = function () {
         JitsiPopover.enabled = false;
     }
 
+    if (interfaceConfig.VERTICAL_FILMSTRIP) {
+        $("body").addClass("vertical-filmstrip");
+    }
+
     document.title = interfaceConfig.APP_NAME;
 
     if (!interfaceConfig.filmStripOnly) {
@@ -359,12 +367,20 @@ UI.start = function () {
             // this is the default toastr close button html, just adds tabIndex
             "closeHtml": '<button type="button" tabIndex="-1">&times;</button>'
         };
-
     }
 
     const { callee } = APP.store.getState()['features/jwt'];
 
     callee && UI.showRingOverlay();
+};
+
+/**
+ * Invokes cleanup of any deferred execution within relevant UI modules.
+ *
+ * @returns {void}
+ */
+UI.stopDaemons = () => {
+    VideoLayout.resetLargeVideo();
 };
 
 /**
@@ -476,7 +492,7 @@ UI.getSharedDocumentManager = () => etherpadManager;
 UI.addUser = function (user) {
     var id = user.getId();
     var displayName = user.getDisplayName();
-    UI.hideRingOverLay();
+    UI.hideRingOverlay();
     if (UI.ContactList)
         UI.ContactList.addContact(id);
 
@@ -535,7 +551,7 @@ UI.onPeerVideoTypeChanged
 UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
 
-    APP.store.dispatch(showSIPCallButton(isModerator));
+    APP.store.dispatch(showDialOutButton(isModerator));
     APP.store.dispatch(showSharedVideoButton());
 
     Recording.showRecordingButton(isModerator);
@@ -578,6 +594,21 @@ UI.updateUserRole = user => {
             '', 'notify.somebody',
             'connected', 'notify.grantedToUnknown');
     }
+};
+
+/**
+ * Updates the user status.
+ *
+ * @param {JitsiParticipant} user - The user which status we need to update.
+ * @param {string} status - The new status.
+ */
+UI.updateUserStatus = (user, status) => {
+    let displayName = user.getDisplayName();
+    messageHandler.notify(
+        displayName, '', 'connected', "dialOut.statusMessage",
+        {
+            status: UIUtil.escapeHtml(status)
+        });
 };
 
 /**
@@ -1119,6 +1150,15 @@ UI.getLargeVideo = function () {
 };
 
 /**
+ * Returns whether or not the passed in user id is currently pinned to the large
+ * video.
+ *
+ * @param {string} userId - The id of the user to check is pinned or not.
+ * @returns {boolean} True if the user is currently pinned to the large video.
+ */
+UI.isPinned = userId => VideoLayout.getPinnedId() === userId;
+
+/**
  * Shows dialog with a link to FF extension.
  */
 UI.showExtensionRequiredDialog = function (url) {
@@ -1339,21 +1379,18 @@ UI.showRingOverlay = function () {
     Filmstrip.toggleFilmstrip(false, false);
 };
 
-UI.hideRingOverLay = function () {
-    if (!RingOverlay.hide())
-        return;
-    Filmstrip.toggleFilmstrip(true, false);
-};
+UI.hideRingOverlay
+    = () => RingOverlay.hide() && Filmstrip.toggleFilmstrip(true, false);
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes
- * the call overlay, suspended overlay, GUM permissions overlay
- * and a page reload overlay.
+ * the call/ring overlay, the suspended overlay, the GUM permissions overlay,
+ * and the page-reload overlay.
  *
- * @returns {*|boolean} {true} if the overlay is visible, {false} otherwise
+ * @returns {*|boolean} {true} if an overlay is visible; {false}, otherwise
  */
 UI.isOverlayVisible = function () {
-    return RingOverlay.isVisible() || this.overlayVisible;
+    return this.isRingOverlayVisible() || this.overlayVisible;
 };
 
 /**
@@ -1367,6 +1404,23 @@ UI.isRingOverlayVisible = () => RingOverlay.isVisible();
  * Handles user's features changes.
  */
 UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
+
+/**
+ * Returns the number of known remote videos.
+ *
+ * @returns {number} The number of remote videos.
+ */
+UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
+
+/**
+ * Makes remote thumbnail videos visible or not visible.
+ *
+ * @param {boolean} shouldHide - True if remote thumbnails should be hidden,
+ * false f they should be visible.
+ * @returns {void}
+ */
+UI.setRemoteThumbnailsVisibility
+    = shouldHide => Filmstrip.setRemoteVideoVisibility(shouldHide);
 
 const UIListeners = new Map([
     [

@@ -1,5 +1,7 @@
-/* global $, APP, JitsiMeetJS */
+/* global $, APP, config, JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
+
+import { setLargeVideoHDStatus } from '../../../react/features/base/conference';
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
@@ -12,6 +14,13 @@ import AudioLevels from "../audio_levels/AudioLevels";
 const ParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
 const DESKTOP_CONTAINER_TYPE = 'desktop';
+/**
+ * The time interval in milliseconds to check the video resolution of the video
+ * being displayed.
+ *
+ * @type {number}
+ */
+const VIDEO_RESOLUTION_POLL_INTERVAL = 2000;
 
 /**
  * Manager for all Large containers.
@@ -49,6 +58,39 @@ export default class LargeVideoManager {
             e => this.onHoverIn(e),
             e => this.onHoverOut(e)
         );
+
+        // Bind event handler so it is only bound once for every instance.
+        this._updateVideoResolutionStatus
+            = this._updateVideoResolutionStatus.bind(this);
+
+        this.videoContainer.addResizeListener(
+            this._updateVideoResolutionStatus);
+
+        if (!JitsiMeetJS.util.RTCUIHelper.isResizeEventSupported()) {
+            /**
+             * An interval for polling if the displayed video resolution is or
+             * is not high-definition. For browsers that do not support video
+             * resize events, polling is the fallback.
+             *
+             * @private
+             * @type {timeoutId}
+             */
+            this._updateVideoResolutionInterval = window.setInterval(
+                this._updateVideoResolutionStatus,
+                VIDEO_RESOLUTION_POLL_INTERVAL);
+        }
+    }
+
+    /**
+     * Stops any polling intervals on the instance and and removes any
+     * listeners registered on child components.
+     *
+     * @returns {void}
+     */
+    destroy() {
+        window.clearInterval(this._updateVideoResolutionInterval);
+        this.videoContainer.removeResizeListener(
+            this._updateVideoResolutionStatus);
     }
 
     onHoverIn (e) {
@@ -516,5 +558,19 @@ export default class LargeVideoManager {
      */
     onLocalFlipXChange(val) {
         this.videoContainer.setLocalFlipX(val);
+    }
+
+    /**
+     * Dispatches an action to update the known resolution state of the
+     * large video.
+     *
+     * @private
+     * @returns {void}
+     */
+    _updateVideoResolutionStatus() {
+        const { height, width } = this.videoContainer.getStreamSize();
+        const isCurrentlyHD = Math.min(height, width) >= config.minHDHeight;
+
+        APP.store.dispatch(setLargeVideoHDStatus(isCurrentlyHD));
     }
 }

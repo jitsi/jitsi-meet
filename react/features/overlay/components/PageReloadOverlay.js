@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 
@@ -11,23 +12,6 @@ import OverlayFrame from './OverlayFrame';
  * reload.
  */
 class PageReloadOverlay extends AbstractPageReloadOverlay {
-    /**
-     * PageReloadOverlay component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractPageReloadOverlay.propTypes,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: React.PropTypes.func
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -56,4 +40,4 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
     }
 }
 
-export default translate(PageReloadOverlay);
+export default translate(connect()(PageReloadOverlay));

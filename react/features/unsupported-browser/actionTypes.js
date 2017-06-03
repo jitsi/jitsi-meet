@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of the Redux action which signals that the React Component
  * UnsupportedMobileBrowser which was rendered as a promotion of the mobile app

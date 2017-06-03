@@ -63,7 +63,7 @@ class ReloadTimer extends Component {
          * @type {Function}
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new ReloadTimer instance.

@@ -112,6 +112,18 @@ var VideoLayout = {
     },
 
     /**
+     * Cleans up any existing largeVideo instance.
+     *
+     * @returns {void}
+     */
+    resetLargeVideo() {
+        if (largeVideo) {
+            largeVideo.destroy();
+        }
+        largeVideo = null;
+    },
+
+    /**
      * Registering listeners for UI events in Video layout component.
      *
      * @returns {void}
@@ -132,6 +144,8 @@ var VideoLayout = {
     },
 
     initLargeVideo () {
+        this.resetLargeVideo();
+
         largeVideo = new LargeVideoManager(eventEmitter);
         if(localFlipX) {
             largeVideo.onLocalFlipXChange(localFlipX);
@@ -421,6 +435,19 @@ var VideoLayout = {
             remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
         this._setRemoteControlProperties(user, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
+
+        const remoteVideosCount = Object.keys(remoteVideos).length;
+
+        if (remoteVideosCount === 1) {
+            window.setTimeout(() => {
+                const updatedRemoteVideosCount
+                    = Object.keys(remoteVideos).length;
+
+                if (updatedRemoteVideosCount === 1 && remoteVideos[id]) {
+                    this._maybePlaceParticipantOnLargeVideo(id);
+                }
+            }, 3000);
+        }
     },
 
     /**
@@ -451,11 +478,24 @@ var VideoLayout = {
         logger.info(resourceJid + " video is now active", videoElement);
 
         VideoLayout.resizeThumbnails(
-            false, false, function() {$(videoElement).show();});
+            false, false, () => {
+                if (videoElement) {
+                    $(videoElement).show();
+                }
+            });
 
-        // Update the large video to the last added video only if there's no
-        // current dominant, focused speaker or update it to
-        // the current dominant speaker.
+        this._maybePlaceParticipantOnLargeVideo(resourceJid);
+    },
+
+    /**
+     * Update the large video to the last added video only if there's no current
+     * dominant, focused speaker or update it to the current dominant speaker.
+     *
+     * @params {string} resourceJid - The id of the user to maybe display on
+     * large video.
+     * @returns {void}
+     */
+    _maybePlaceParticipantOnLargeVideo(resourceJid) {
         if ((!pinnedId &&
             !currentDominantSpeaker &&
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
@@ -536,6 +576,7 @@ var VideoLayout = {
                 if (onComplete && typeof onComplete === "function")
                     onComplete();
             });
+
         return { localVideo, remoteVideo };
     },
 
@@ -661,13 +702,7 @@ var VideoLayout = {
     onParticipantConnectionStatusChanged (id) {
         // Show/hide warning on the large video
         if (this.isCurrentlyOnLarge(id)) {
-            // when pinning and we have lastN enabled, we have rapid connection
-            // status changed between inactive, restoring and active and
-            // if there was a large video update scheduled already it will
-            // reflect the current status and no need to schedule new one
-            // otherwise we end up scheduling updates for endpoints which are
-            // were on large while checking, but a change was already scheduled
-            if (largeVideo && !largeVideo.updateInProcess) {
+            if (largeVideo) {
                 // We have to trigger full large video update to transition from
                 // avatar to video on connectivity restored.
                 this.updateLargeVideo(id, true /* force update */);
@@ -1119,6 +1154,15 @@ var VideoLayout = {
      */
     getLargeVideoWrapper() {
         return this.getCurrentlyOnLargeContainer().$wrapper;
+    },
+
+    /**
+     * Returns the number of remove video ids.
+     *
+     * @returns {number} The number of remote videos.
+     */
+    getRemoteVideosCount() {
+        return Object.keys(remoteVideos).length;
     }
 };
 

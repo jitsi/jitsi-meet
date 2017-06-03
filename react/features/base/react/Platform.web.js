@@ -1,6 +1,6 @@
 /* @flow */
 
-const userAgent = navigator.userAgent;
+const { userAgent } = navigator;
 let OS;
 
 if (userAgent.match(/Android/i)) {

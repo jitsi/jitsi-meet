@@ -149,9 +149,10 @@ end
 
 --- Verifies token
 -- @param token the token to verify
+-- @param secret the secret to use to verify token
 -- @return nil and error or the extracted claims from the token
-function Util:verify_token(token)
-    local claims, err = jwt.decode(token, self.appSecret, true);
+function Util:verify_token(token, secret)
+    local claims, err = jwt.decode(token, secret, true);
     if claims == nil then
         return nil, err;
     end
@@ -217,9 +218,9 @@ function Util:process_and_verify_token(session)
     -- now verify the whole token
     local claims, msg;
     if self.asapKeyServer then
-        claims, msg = self:verify_token(session.auth_token);
+        claims, msg = self:verify_token(session.auth_token, pubKey);
     else
-        claims, msg = self:verify_token(session.auth_token);
+        claims, msg = self:verify_token(session.auth_token, self.appSecret);
     end
     if claims ~= nil then
         -- Binds room name to the session which is later checked on MUC join
@@ -260,7 +261,9 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if not self.enableDomainVerification then
-        if room ~= string.lower(auth_room) then
+        -- if auth_room is missing, this means user is anonymous (no token for
+        -- its domain) we let it through, jicofo is verifying creation domain
+        if auth_room and room ~= string.lower(auth_room) then
             return false;
         end
 

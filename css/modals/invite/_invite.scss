@@ -8,6 +8,24 @@
 
 .invite-dialog {
     .dial-in-numbers {
+        .dial-in-numbers-conference-id {
+            color: orange;
+            margin-left: 3px;
+        }
+
+        /*
+         * dial-in-numbers-copy styling is needed for the feature of copying
+         * text to the clipboard. The styling keeps the element invisible
+         * to the user but still programmatically selectable for copying.
+         */
+        .dial-in-numbers-copy {
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
         .dial-in-numbers-trigger {
             position: relative;
             width: 100%;

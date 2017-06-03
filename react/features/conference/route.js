@@ -23,10 +23,10 @@ RouteRegistry.register({
 });
 
 /**
- *  Initialization of the app.
+ * Initialization of the app.
  *
- *  @private
- *  @returns {void}
+ * @private
+ * @returns {void}
  */
 function _initConference() {
     _setTokenData();
@@ -79,7 +79,9 @@ function _obtainConfigAndInit() {
                 .catch(err => {
                     // Show obtain config error.
                     APP.UI.messageHandler.openReportDialog(
-                        null, 'dialog.connectError', err);
+                        null,
+                        'dialog.connectError',
+                        err);
                 });
         } else {
             chooseBOSHAddress(config, room);
@@ -112,9 +114,7 @@ function _setTokenData() {
     const { caller } = state['features/jwt'];
 
     if (caller) {
-        const email = caller.email;
-        const avatarUrl = caller.avatarUrl;
-        const name = caller.name;
+        const { avatarUrl, email, name } = caller;
 
         APP.settings.setEmail((email || '').trim(), true);
         APP.settings.setAvatarUrl((avatarUrl || '').trim());

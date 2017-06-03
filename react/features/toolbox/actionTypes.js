@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of the action which clears the Toolbox visibility timeout.
  *

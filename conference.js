@@ -386,7 +386,7 @@ class ConferenceConnector {
     _onConferenceFailed(err, ...params) {
         APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
-        APP.UI.hideRingOverLay();
+        APP.UI.hideRingOverlay();
         switch (err) {
 
         case ConferenceErrors.CONNECTION_ERROR:
@@ -1263,10 +1263,8 @@ export default {
 
         room.on(
             ConferenceEvents.AUTH_STATUS_CHANGED,
-            function (authEnabled, authLogin) {
-                APP.UI.updateAuthInfo(authEnabled, authLogin);
-            }
-        );
+            (authEnabled, authLogin) =>
+                APP.UI.updateAuthInfo(authEnabled, authLogin));
 
         room.on(ConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
@@ -1286,6 +1284,8 @@ export default {
 
             // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
+
+            updateRemoteThumbnailsVisibility();
         });
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
             APP.store.dispatch(participantLeft(id, user));
@@ -1293,8 +1293,16 @@ export default {
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
             APP.UI.onSharedVideoStop(id);
+
+            updateRemoteThumbnailsVisibility();
         });
 
+        room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
+            let user = room.getParticipantById(id);
+            if (user) {
+                APP.UI.updateUserStatus(user, status);
+            }
+        });
 
         room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
@@ -1469,6 +1477,8 @@ export default {
                         reportError(e);
                     }
                 }
+
+                updateRemoteThumbnailsVisibility();
             });
         }
 
@@ -1651,13 +1661,6 @@ export default {
             });
         });
 
-        APP.UI.addListener(UIEvents.SIP_DIAL, (sipNumber) => {
-            room.dial(sipNumber)
-                .catch((err) => {
-                    logger.error("Error dialing out", err);
-                });
-        });
-
         APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
             var logObject = {
@@ -1812,6 +1815,8 @@ export default {
                     }
                 });
             }
+
+            updateRemoteThumbnailsVisibility();
         });
         room.addCommandListener(
             this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
@@ -1827,6 +1832,23 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+
+        function updateRemoteThumbnailsVisibility() {
+            const localUserId = APP.conference.getMyUserId();
+            const remoteParticipantsCount = room.getParticipantCount() - 1;
+
+            // Get the remote thumbnail count for cases where there are
+            // non-participants displaying video, such as with video sharing.
+            const remoteVideosCount = APP.UI.getRemoteVideosCount();
+
+            const shouldShowRemoteThumbnails = interfaceConfig.filmStripOnly
+                || (APP.UI.isPinned(localUserId) && remoteVideosCount)
+                || remoteVideosCount > 1
+                || remoteParticipantsCount !== remoteVideosCount;
+
+            APP.UI.setRemoteThumbnailsVisibility(
+                Boolean(shouldShowRemoteThumbnails));
+        }
     },
     /**
     * Adds any room listener.
@@ -2005,7 +2027,7 @@ export default {
      */
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
-        APP.UI.hideRingOverLay();
+        APP.UI.hideRingOverlay();
         let requestFeedbackPromise = requestFeedback
                 ? APP.UI.requestFeedbackOnHangup()
                 // false - because the thank you dialog shouldn't be displayed

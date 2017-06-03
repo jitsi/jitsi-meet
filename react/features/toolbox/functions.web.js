@@ -52,9 +52,11 @@ export function getButtonAttributesByProps(props: Object = {})
  * Returns an object which contains the default buttons for the primary and
  * secondary toolbars.
  *
+ * @param {Object} buttonHandlers - Contains additional toolbox button
+ * handlers.
  * @returns {Object}
  */
-export function getDefaultToolboxButtons(): Object {
+export function getDefaultToolboxButtons(buttonHandlers: Object): Object {
     let toolbarButtons = {
         primaryToolbarButtons: new Map(),
         secondaryToolbarButtons: new Map()
@@ -67,12 +69,20 @@ export function getDefaultToolboxButtons(): Object {
         toolbarButtons
             = interfaceConfig.TOOLBAR_BUTTONS.reduce(
                 (acc, buttonName) => {
-                    const button = defaultToolbarButtons[buttonName];
+                    let button = defaultToolbarButtons[buttonName];
+                    const currentButtonHandlers = buttonHandlers[buttonName];
 
                     if (button) {
                         const place = _getToolbarButtonPlace(buttonName);
 
                         button.buttonName = buttonName;
+
+                        if (currentButtonHandlers) {
+                            button = {
+                                ...button,
+                                ...currentButtonHandlers
+                            };
+                        }
 
                         // In filmstrip-only mode we only add a button if it's
                         // filmstrip-only enabled.
@@ -87,21 +97,6 @@ export function getDefaultToolboxButtons(): Object {
     }
 
     return toolbarButtons;
-}
-
-/**
- * Get place for toolbar button. Now it can be in the primary Toolbar or in the
- * secondary Toolbar.
- *
- * @param {string} btn - Button name.
- * @private
- * @returns {string}
- */
-function _getToolbarButtonPlace(btn) {
-    return (
-        interfaceConfig.MAIN_TOOLBAR_BUTTONS.includes(btn)
-            ? 'primaryToolbarButtons'
-            : 'secondaryToolbarButtons');
 }
 
 /**
@@ -170,4 +165,19 @@ export function showCustomToolbarPopup(
     } else {
         AJS.$(popupSelectorID).tooltip('hide');
     }
+}
+
+/**
+ * Get place for toolbar button. Now it can be in the primary Toolbar or in the
+ * secondary Toolbar.
+ *
+ * @param {string} btn - Button name.
+ * @private
+ * @returns {string}
+ */
+function _getToolbarButtonPlace(btn) {
+    return (
+        interfaceConfig.MAIN_TOOLBAR_BUTTONS.includes(btn)
+            ? 'primaryToolbarButtons'
+            : 'secondaryToolbarButtons');
 }

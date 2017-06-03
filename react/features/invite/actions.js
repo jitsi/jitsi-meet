@@ -2,14 +2,12 @@ import { openDialog } from '../../features/base/dialog';
 
 import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,
-    UPDATE_DIAL_IN_NUMBERS_REQUEST,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
 import { InviteDialog } from './components';
 
 declare var $: Function;
 declare var APP: Object;
-declare var config: Object;
 
 /**
  * Opens the Invite Dialog.
@@ -17,35 +15,54 @@ declare var config: Object;
  * @returns {Function}
  */
 export function openInviteDialog() {
-    return openDialog(InviteDialog, {
-        conferenceUrl: encodeURI(APP.ConferenceUrl.getInviteUrl()),
-        dialInNumbersUrl: config.dialInNumbersUrl
-    });
+    return openDialog(InviteDialog);
 }
 
 /**
- * Sends an ajax request for dial-in numbers.
+ * Sends AJAX requests for dial-in numbers and conference ID.
  *
- * @param {string} dialInNumbersUrl - The endpoint for retrieving json that
- * includes numbers for dialing in to a conference.
  * @returns {Function}
  */
-export function updateDialInNumbers(dialInNumbersUrl) {
-    return dispatch => {
-        dispatch({
-            type: UPDATE_DIAL_IN_NUMBERS_REQUEST
-        });
+export function updateDialInNumbers() {
+    return (dispatch, getState) => {
+        const state = getState();
+        const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
+            = state['features/base/config'];
+        const mucURL = hosts && hosts.muc;
 
-        $.getJSON(dialInNumbersUrl)
-            .success(response =>
+        if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+            dispatch({
+                type: UPDATE_DIAL_IN_NUMBERS_FAILED,
+                error: 'URLs for fetching dial in numbers not properly defined'
+            });
+
+            return;
+        }
+
+        const { room } = state['features/base/conference'];
+        const conferenceIDURL
+            = `${dialInConfCodeUrl}?conference=${room}@${mucURL}`;
+
+        Promise.all([
+            $.getJSON(dialInNumbersUrl),
+            $.getJSON(conferenceIDURL)
+        ])
+            .then(([ dialInNumbers, { conference, id, message } ]) => {
+                if (!conference || !id) {
+                    return Promise.reject(message);
+                }
+
                 dispatch({
                     type: UPDATE_DIAL_IN_NUMBERS_SUCCESS,
-                    response
-                }))
-            .error(error =>
+                    conferenceID: id,
+                    dialInNumbers
+                });
+            })
+            .catch(error => {
                 dispatch({
                     type: UPDATE_DIAL_IN_NUMBERS_FAILED,
                     error
-                }));
+                });
+            });
     };
 }

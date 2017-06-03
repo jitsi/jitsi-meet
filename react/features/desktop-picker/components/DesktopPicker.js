@@ -73,7 +73,7 @@ class DesktopPicker extends Component {
          * Used to obtain translations.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new DesktopPicker instance.

@@ -18,7 +18,7 @@ class SpeakerStatsLabels extends Component {
          * The function to translate human-readable text.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

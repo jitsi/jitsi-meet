@@ -34,7 +34,7 @@ class Thumbnail extends Component {
         _videoTrack: React.PropTypes.object,
         dispatch: React.PropTypes.func,
         participant: React.PropTypes.object
-    }
+    };
 
     /**
      * Initializes new Video Thumbnail component.

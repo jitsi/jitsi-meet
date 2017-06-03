@@ -1,5 +1,5 @@
 /* global $, APP */
-/* jshint -W101 */
+
 import UIEvents from "../../../service/UI/UIEvents";
 
 /**
@@ -24,21 +24,24 @@ class RingOverlay {
     /**
      *
      * @param callee The callee (Object) as defined by the JWT support.
-     * @param {boolean} disableRingingSound if true the ringing sound wont be played.
+     * @param {boolean} disableRinging if true the ringing sound wont be played.
      */
-    constructor(callee, disableRingingSound) {
+    constructor(callee, disableRinging) {
         this._containerId = 'ringOverlay';
         this._audioContainerId = 'ringOverlayRinging';
         this.isRinging = true;
         this.callee = callee;
-        this.disableRingingSound = disableRingingSound;
+        this.disableRinging = disableRinging;
         this.render();
-        if(!disableRingingSound)
+        if (!disableRinging)
             this._initAudio();
-        this._timeout = setTimeout(() => {
-            this.destroy();
-            this.render();
-        }, 30000);
+        this._timeout
+            = setTimeout(
+                    () => {
+                        this.destroy();
+                        this.render();
+                    },
+                    30000);
     }
 
     /**
@@ -47,7 +50,7 @@ class RingOverlay {
     _initAudio() {
         this.audio = document.getElementById(this._audioContainerId);
         this.audio.play();
-        this._setAudioTimeout();
+        this.interval = setInterval(() => this.audio.play(), 5000);
     }
 
     /**
@@ -58,7 +61,8 @@ class RingOverlay {
      */
     _changeBackground(solid) {
         const container = $("#" + this._containerId);
-        if(solid) {
+
+        if (solid) {
             container.addClass("solidBG");
         } else {
             container.removeClass("solidBG");
@@ -71,9 +75,10 @@ class RingOverlay {
     _getHtmlStr(callee) {
         let callingLabel = this.isRinging ? "<p>Calling...</p>" : "";
         let callerStateLabel =  this.isRinging ? "" : " isn't available";
-        let audioHTML = this.disableRingingSound ? ""
+        let audioHTML = this.disableRinging ? ""
             : "<audio id=\"" + this._audioContainerId
                 + "\" src=\"./sounds/ring.ogg\" />";
+
         return `
             <div id="${this._containerId}" class='ringing' >
                 <div class='ringing__content'>
@@ -120,18 +125,9 @@ class RingOverlay {
         if (this.interval) {
             clearInterval(this.interval);
         }
-        if(this._timeout) {
+        if (this._timeout) {
             clearTimeout(this._timeout);
         }
-    }
-
-    /**
-     * Sets the interval that is going to play the ringing sound.
-     */
-    _setAudioTimeout() {
-        this.interval = setInterval( () => {
-            this.audio.play();
-        }, 5000);
     }
 }
 
@@ -141,16 +137,16 @@ export default {
      *
      * @param {Object} callee - The callee. Object containing data about
      * callee.
-     * @param {boolean} disableRingingSound - If true the ringing sound won't be
+     * @param {boolean} disableRinging - If true the ringing sound won't be
      * played.
      * @returns {void}
      */
-    show(callee, disableRingingSound = false) {
-        if(overlay) {
+    show(callee, disableRinging = false) {
+        if (overlay) {
             this.hide();
         }
 
-        overlay = new RingOverlay(callee, disableRingingSound);
+        overlay = new RingOverlay(callee, disableRinging);
         APP.UI.addListener(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE,
             onAvatarVisible);
     },
@@ -160,7 +156,7 @@ export default {
      * overlay.
      */
     hide() {
-        if(!overlay) {
+        if (!overlay) {
             return false;
         }
         overlay.destroy();
@@ -176,7 +172,7 @@ export default {
      * @returns {boolean} true if the ring overlay is currently displayed or
      * false otherwise.
      */
-    isVisible () {
+    isVisible() {
         return overlay !== null;
     }
 };

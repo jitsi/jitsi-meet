@@ -22,7 +22,7 @@ class PasswordRequiredPrompt extends Component {
          */
         conference: React.PropTypes.object,
         dispatch: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new PasswordRequiredPrompt instance.

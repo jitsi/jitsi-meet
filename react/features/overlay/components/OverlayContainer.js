@@ -97,7 +97,7 @@ class OverlayContainer extends Component {
          * @type {string}
          */
         _suspendDetected: React.PropTypes.bool
-    }
+    };
 
     /**
      * Initializes a new ReloadTimer instance.
@@ -111,11 +111,14 @@ class OverlayContainer extends Component {
 
         this.state = {
             /**
-             * Indicates whether the filmstrip only mode is enabled or not.
+             * The indicator which determines whether filmstrip-only mode is
+             * enabled.
              *
              * @type {boolean}
              */
-            filmstripOnly: interfaceConfig.filmStripOnly
+            filmstripOnly:
+                typeof interfaceConfig === 'object'
+                    && interfaceConfig.filmStripOnly
         };
     }
 
@@ -127,11 +130,13 @@ class OverlayContainer extends Component {
      * @protected
      */
     componentDidUpdate() {
-        // FIXME: Temporary workaround until everything is moved to react.
-        APP.UI.overlayVisible
-            = (this.props._connectionEstablished && this.props._haveToReload)
-                || this.props._suspendDetected
-                || this.props._isMediaPermissionPromptVisible;
+        if (typeof APP === 'object') {
+            APP.UI.overlayVisible
+                = (this.props._connectionEstablished
+                        && this.props._haveToReload)
+                    || this.props._suspendDetected
+                    || this.props._isMediaPermissionPromptVisible;
+        }
     }
 
     /**
@@ -164,7 +169,9 @@ class OverlayContainer extends Component {
                 = filmstripOnly
                     ? UserMediaPermissionsFilmstripOnlyOverlay
                     : UserMediaPermissionsOverlay;
-            props = { browser: this.props._browser };
+            props = {
+                browser: this.props._browser
+            };
         }
 
         return (

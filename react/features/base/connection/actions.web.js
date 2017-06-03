@@ -77,7 +77,7 @@ export function connect() {
             }
         })
             .catch(error => {
-                APP.UI.hideRingOverLay();
+                APP.UI.hideRingOverlay();
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
                 logger.error(error);
 

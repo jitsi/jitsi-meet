@@ -43,7 +43,7 @@ export class Video extends Component {
          * 1 for the local video(s) which appear above the remote video(s).
          */
         zOrder: React.PropTypes.number
-    }
+    };
 
     /**
      * React Component method that executes once component is mounted.

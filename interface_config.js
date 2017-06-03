@@ -38,7 +38,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
         //main toolbar
         'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'hangup',
         //extended toolbar
-        'profile', 'contacts', 'chat', 'audioonly', 'recording', 'etherpad', 'sharedvideo', 'sip', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
+        'profile', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
     /**
      * Main Toolbar Buttons
      * All of them should be in TOOLBAR_BUTTONS
@@ -55,6 +55,12 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * Whether to only show the filmstrip (and hide the toolbar).
      */
     filmStripOnly: false,
+
+    /**
+     * Whether to show thumbnails in filmstrip as a column instead of as a row.
+     */
+    VERTICAL_FILMSTRIP: true,
+
     //A html text to be shown to guests on the close page, false disables it
     CLOSE_PAGE_GUEST_HINT: false,
     RANDOM_AVATAR_URL_PREFIX: false,

@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * Action to remove known DesktopCapturerSources.
  *

@@ -22,7 +22,7 @@ export class AbstractWelcomePage extends Component {
         _localVideoTrack: React.PropTypes.object,
         _room: React.PropTypes.string,
         dispatch: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new AbstractWelcomePage instance, including the initial

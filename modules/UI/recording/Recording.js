@@ -196,6 +196,9 @@ function _showStopRecordingPrompt(recordingType) {
 
 /**
  * Moves the element given by {selector} to the top right corner of the screen.
+ * Set additional classes that can be used to style the selector relative to the
+ * state of the filmstrip.
+ *
  * @param selector the selector for the element to move
  * @param move {true} to move the element, {false} to move it back to its intial
  * position
@@ -208,6 +211,20 @@ function moveToCorner(selector, move) {
         selector.addClass(moveToCornerClass);
     else if (!move && containsClass)
         selector.removeClass(moveToCornerClass);
+
+    const {
+        remoteVideosVisible,
+        visible
+    } = APP.store.getState()['features/filmstrip'];
+    const filmstripWasHidden = selector.hasClass('without-filmstrip');
+    const filmstipIsOpening = filmstripWasHidden && visible;
+    selector.toggleClass('opening', filmstipIsOpening);
+
+    selector.toggleClass('with-filmstrip', visible);
+    selector.toggleClass('without-filmstrip', !visible);
+
+    selector.toggleClass('with-remote-videos', remoteVideosVisible);
+    selector.toggleClass('without-remote-videos', !remoteVideosVisible);
 }
 
 /**
@@ -295,6 +312,10 @@ var Recording = {
             APP.UI.messageHandler.enableNotifications(false);
             APP.UI.messageHandler.enablePopups(false);
         }
+
+        this.eventEmitter.addListener(UIEvents.UPDATED_FILMSTRIP_DISPLAY, () =>{
+            this._updateStatusLabel();
+        });
     },
 
     /**

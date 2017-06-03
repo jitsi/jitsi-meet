@@ -89,7 +89,7 @@ function _conferenceFailed(state, action) {
             /**
              * The indicator of how the conference/room is locked. If falsy, the
              * conference/room is unlocked; otherwise, it's either
-             * {@code LOCKED_LOCALLY| or {@code LOCKED_REMOTELY}.
+             * {@code LOCKED_LOCALLY} or {@code LOCKED_REMOTELY}.
              *
              * @type {string}
              */
@@ -242,10 +242,7 @@ function _lockStateChanged(state, action) {
  * reduction of the specified action.
  */
 function _setAudioOnly(state, action) {
-    return assign(state, {
-        audioOnly: action.audioOnly,
-        isLargeVideoHD: action.audioOnly ? false : state.isLargeVideoHD
-    });
+    return set(state, 'audioOnly', action.audioOnly);
 }
 
 /**

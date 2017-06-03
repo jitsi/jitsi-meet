@@ -41,7 +41,7 @@ var config = { // eslint-disable-line no-unused-vars
     // extension is required.
     desktopSharingFirefoxExtId: null,
     // Whether desktop sharing should be disabled on Firefox.
-    desktopSharingFirefoxDisabled: true,
+    desktopSharingFirefoxDisabled: false,
     // The maximum version of Firefox which requires a jidesha extension.
     // Example: if set to 41, we will require the extension for Firefox versions
     // up to and including 41. On Firefox 42 and higher, we will run without the
@@ -57,6 +57,9 @@ var config = { // eslint-disable-line no-unused-vars
     webrtcIceTcpDisable: false,
 
     openSctp: true, // Toggle to enable/disable SCTP channels
+
+    // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
+    disable1On1Mode: false,
     disableStats: false,
     disableAudioLevels: false,
     channelLastN: -1, // The default value of the channel attribute last-n.
@@ -76,6 +79,8 @@ var config = { // eslint-disable-line no-unused-vars
     'During that time service will not be available. ' +
     'Apologise for inconvenience.',*/
     disableThirdPartyRequests: false,
+    // The minumum value a video's height (or width, whichever is smaller) needs
+    // to be in order to be considered high-definition.
     minHDHeight: 540,
     // If true - all users without token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
@@ -92,7 +97,7 @@ var config = { // eslint-disable-line no-unused-vars
     // the room. If that succeeds the conference will stop sending data through
     // the JVB and use the peer to peer connection instead. When 3rd participant
     // joins the conference will be moved back to the JVB connection.
-    //enableP2P: true
+    enableP2P: true
     // How long we're going to wait, before going back to P2P after
     // the 3rd participant has left the conference (to filter out page reload)
     //backToP2PDelay: 5

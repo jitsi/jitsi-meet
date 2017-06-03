@@ -1,9 +1,6 @@
 /* @flow */
 
-import Logger from 'jitsi-meet-logger';
-
 import { isRoomValid } from '../base/conference';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { Platform, RouteRegistry } from '../base/react';
 import { Conference } from '../conference';
 import {
@@ -13,10 +10,6 @@ import {
     UnsupportedMobileBrowser
 } from '../unsupported-browser';
 import { WelcomePage } from '../welcome';
-
-import KeyboardShortcut
-    from '../../../modules/keyboardshortcut/keyboardshortcut';
-import JitsiMeetLogStorage from '../../../modules/util/JitsiMeetLogStorage';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -104,46 +97,6 @@ export function _getRouteToRender(stateOrGetState: Object | Function) {
     route.component = _interceptComponent(state, component);
 
     return route;
-}
-
-/**
- * Temporary solution. Later we'll get rid of global APP and set its properties
- * in redux store.
- *
- * @param {Object} state - Snapshot of current state of redux store.
- * @returns {void}
- */
-export function init(state: Object) {
-    _initLogging();
-
-    APP.keyboardshortcut = KeyboardShortcut;
-
-    const { jwt } = state['features/jwt'];
-
-    // Force enable the API if jwt token is passed because most probably
-    // jitsi meet is displayed inside of wrapper that will need to communicate
-    // with jitsi meet.
-    APP.API.init(jwt ? { forceEnable: true } : undefined);
-
-    APP.translation.init();
-}
-
-/**
- * Initializes logging in the app.
- *
- * @private
- * @returns {void}
- */
-function _initLogging() {
-    // Create the LogCollector and register it as the global log transport. It
-    // is done early to capture as much logs as possible. Captured logs will be
-    // cached, before the JitsiMeetLogStorage gets ready (statistics module is
-    // initialized).
-    if (!APP.logCollector && !loggingConfig.disableLogCollector) {
-        APP.logCollector = new Logger.LogCollector(new JitsiMeetLogStorage());
-        Logger.addGlobalTransport(APP.logCollector);
-        JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
-    }
 }
 
 /**

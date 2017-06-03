@@ -72,8 +72,6 @@ case "$1" in
                 echo "Use the following command, after this package has been installed and"
                 echo "after every prosody-trunk upgrade:"
                 echo "sudo patch -N /usr/lib/prosody/modules/mod_bosh.lua /usr/share/jitsi-meet/prosody-plugins/mod_bosh.lua.patch"
-            else
-                echo "Failed apply auto-config to $PROSODY_HOST_CONFIG which most likely comes from not supported version of jitsi-meet"
             fi
         else
             echo "Prosody config not found at $PROSODY_HOST_CONFIG - unable to auto-configure token authentication"

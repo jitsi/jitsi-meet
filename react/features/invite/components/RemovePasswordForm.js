@@ -40,7 +40,7 @@ class RemovePasswordForm extends Component {
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
-    }
+    };
 
     /**
      * Initializes a new {@code RemovePasswordForm} instance.

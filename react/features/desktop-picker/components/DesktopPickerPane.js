@@ -39,7 +39,7 @@ class DesktopPickerPane extends Component {
          * The source type of the DesktopCapturerSources to display.
          */
         type: React.PropTypes.string
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

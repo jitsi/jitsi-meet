@@ -40,7 +40,7 @@ export default class AbstractToolbarButton extends Component {
          * The color underlaying the button.
          */
         underlayColor: React.PropTypes.any
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

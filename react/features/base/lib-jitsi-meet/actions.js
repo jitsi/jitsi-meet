@@ -21,15 +21,9 @@ export function disposeLib() {
     return (dispatch: Dispatch<*>) => {
         dispatch({ type: LIB_WILL_DISPOSE });
 
-        // XXX We're wrapping it with Promise because:
-        // a) to be better aligned with initLib() method which is async;
-        // b) as currently there is no implementation for it in lib-jitsi-meet
-        //    and there is a big chance it will be async.
         // TODO Currently, lib-jitsi-meet doesn't have the functionality to
         // dispose itself.
-        return (
-            Promise.resolve()
-                .then(() => dispatch({ type: LIB_DID_DISPOSE })));
+        dispatch({ type: LIB_DID_DISPOSE });
     };
 }
 

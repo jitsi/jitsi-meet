@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of (redux) action which begins the UI procedure to share the current
  * conference/room URL.

@@ -1,5 +1,3 @@
-import { Symbol } from '../base/react';
-
 /**
  * The type of the actions which signals that a specific App will mount (in the
  * terms of React).

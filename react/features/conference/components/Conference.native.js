@@ -6,6 +6,7 @@ import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { OverlayContainer } from '../../overlay';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import { styles } from './styles';
@@ -130,12 +131,33 @@ class Conference extends Component {
                 style = { styles.conference }
                 touchFeedback = { false }>
 
+                {/*
+                  * The LargeVideo is the lowermost stacking layer.
+                  */}
                 <LargeVideo />
 
-                <Toolbox />
+                {/*
+                  * The Filmstrip is in a stacking layer above the LargeVideo.
+                  * The LargeVideo and the Filmstrip form what the Web/React app
+                  * calls "videospace". Presumably, the name and grouping stem
+                  * from the fact that these two React Components depict the
+                  * videos of the conference's participants.
+                  */}
                 <Filmstrip />
 
+                {/*
+                  * The Toolbox is in a stacking layer above the Filmstrip.
+                  */}
+                <Toolbox />
+
+                {/*
+                  * The dialogs and overlays are in the topmost stacking layers.
+                  * Generally, the dialogs and overlays should not be visible at
+                  * the same time so it is not really defined which one is above
+                  * the other.
+                  */}
                 <DialogContainer />
+                <OverlayContainer />
             </Container>
         );
     }

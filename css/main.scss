@@ -26,11 +26,13 @@
 
 @import 'font';
 @import 'font-awesome';
-
 /* Fonts END */
+
+@import 'flag-icon';
 
 /* Modules BEGIN */
 
+@import 'dial-out';
 @import 'toastr';
 @import 'base';
 @import 'utils';
@@ -71,5 +73,6 @@
 @import 'policy';
 @import 'filmstrip';
 @import 'unsupported-browser/main';
+@import 'vertical_filmstrip_overrides';
 
 /* Modules END */

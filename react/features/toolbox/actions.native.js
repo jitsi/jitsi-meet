@@ -16,6 +16,12 @@ import {
 } from './actionTypes';
 
 /**
+ * FIXME: We should make sure all common functions for native and web are
+ * merged in a global functions file.
+ */
+import { getButton } from './functions.native';
+
+/**
  * Event handler for local raise hand changed event.
  *
  * @param {boolean} handRaised - Flag showing whether hand is raised.
@@ -23,10 +29,8 @@ import {
  */
 export function changeLocalRaiseHand(handRaised: boolean): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const state = getState();
-        const { secondaryToolbarButtons } = state['features/toolbox'];
         const buttonName = 'raisehand';
-        const button = secondaryToolbarButtons.get(buttonName);
+        const button = getButton(buttonName, getState());
 
         button.toggled = handRaised;
 
@@ -264,10 +268,8 @@ export function showEtherpadButton(): Function {
  */
 export function toggleFullScreen(isFullScreen: boolean): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const state = getState();
-        const { primaryToolbarButtons } = state['features/toolbox'];
         const buttonName = 'fullscreen';
-        const button = primaryToolbarButtons.get(buttonName);
+        const button = getButton(buttonName, getState());
 
         button.toggled = isFullScreen;
 
@@ -283,14 +285,7 @@ export function toggleFullScreen(isFullScreen: boolean): Function {
  */
 export function toggleToolbarButton(buttonName: string): Function {
     return (dispatch: Dispatch, getState: Function) => {
-        const state = getState();
-        const {
-            primaryToolbarButtons,
-            secondaryToolbarButtons
-        } = state['features/toolbox'];
-        const button
-            = primaryToolbarButtons.get(buttonName)
-                || secondaryToolbarButtons.get(buttonName);
+        const button = getButton(buttonName, getState());
 
         dispatch(setToolbarButton(buttonName, {
             toggled: !button.toggled

@@ -3,9 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    setToolbarHovered
-} from '../actions';
+import { setToolbarHovered } from '../actions';
 import ToolbarButton from './ToolbarButton';
 
 /**
@@ -35,11 +33,6 @@ class Toolbar extends Component {
          * Handler for mouse over event.
          */
         _onMouseOver: React.PropTypes.func,
-
-        /**
-         * Contains button handlers.
-         */
-        buttonHandlers: React.PropTypes.object,
 
         /**
          * Children of current React component.
@@ -77,8 +70,6 @@ class Toolbar extends Component {
     constructor(props) {
         super(props);
 
-        this._setButtonHandlers();
-
         // Bind callbacks to preverse this.
         this._renderToolbarButton = this._renderToolbarButton.bind(this);
     }
@@ -115,8 +106,8 @@ class Toolbar extends Component {
      * @param {Array} keyValuePair - Key value pair containing button and its
      * key.
      * @param {number} index - Index of the key value pair in the array.
-     * @returns {Array} Array of toolbar buttons and splitter if it's on.
      * @private
+     * @returns {Array} Array of toolbar buttons and splitter if it's on.
      */
     _renderToolbarButton(acc: Array<*>, keyValuePair: Array<*>,
                          index: number): Array<ReactElement<*>> {
@@ -154,43 +145,14 @@ class Toolbar extends Component {
 
         return acc;
     }
-
-    /**
-     * Sets handlers for some of the buttons.
-     *
-     * @private
-     * @returns {void}
-     */
-    _setButtonHandlers(): void {
-        const {
-            buttonHandlers,
-            toolbarButtons
-        } = this.props;
-
-        // Only a few buttons have buttonHandlers defined, so it may be
-        // undefined or empty depending on the buttons rendered.
-        // TODO Merge the buttonHandlers and onClick properties and come up with
-        // a consistent event handling property.
-        buttonHandlers && Object.keys(buttonHandlers).forEach(key => {
-            let button = toolbarButtons.get(key);
-
-            if (button) {
-                button = {
-                    ...button,
-                    ...buttonHandlers[key]
-                };
-                toolbarButtons.set(key, button);
-            }
-        });
-    }
 }
 
 /**
  * Maps part of Redux actions to component's props.
  *
  * @param {Function} dispatch - Redux action dispatcher.
- * @returns {Object}
  * @private
+ * @returns {Object}
  */
 function _mapDispatchToProps(dispatch: Function): Object {
     return {
@@ -216,4 +178,4 @@ function _mapDispatchToProps(dispatch: Function): Object {
     };
 }
 
-export default connect(null, _mapDispatchToProps)(Toolbar);
+export default connect(undefined, _mapDispatchToProps)(Toolbar);

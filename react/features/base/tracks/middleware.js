@@ -156,7 +156,7 @@ function _trackUpdated(store, next, action) {
     if ('muted' in track) {
         // XXX The return value of JitsiTrack.getType() is of type MEDIA_TYPE
         // that happens to be compatible with the type MEDIA_TYPE defined by
-        // jitsi-meet-react.
+        // jitsi-meet.
         mediaType = track.jitsiTrack.getType();
 
         const localTrack = _getLocalTrack(store, mediaType);

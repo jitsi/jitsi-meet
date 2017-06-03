@@ -43,8 +43,8 @@ work properly with the native plugins we require.
 
     Using Xcode
 
-    - Open **ios/jitsi-meet-react.xcworkspace** in Xcode. Make sure it's the
-      workspace file!
+    - Open **ios/jitsi-meet.xcworkspace** in Xcode. Make sure it's the workspace
+      file!
 
     - Select your device from the top bar and hit the "play" button.
 

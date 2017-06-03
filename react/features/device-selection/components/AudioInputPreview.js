@@ -16,7 +16,7 @@ class AudioInputPreview extends PureComponent {
          * The JitsiLocalTrack to show an audio level meter for.
          */
         track: React.PropTypes.object
-    }
+    };
 
     /**
      * Initializes a new AudioInputPreview instance.
@@ -118,11 +118,13 @@ class AudioInputPreview extends PureComponent {
      * Updates the internal state of the last know audio level. The level should
      * be between 0 and 1, as the level will be used as a percentage out of 1.
      *
+     * @param {TraceablePeerConnection} peerConnection - The peer connection
+     * representation from the library.
      * @param {number} audioLevel - The new audio level for the track.
      * @private
      * @returns {void}
      */
-    _updateAudioLevel(audioLevel) {
+    _updateAudioLevel(peerConnection, audioLevel) {
         this.setState({
             audioLevel
         });

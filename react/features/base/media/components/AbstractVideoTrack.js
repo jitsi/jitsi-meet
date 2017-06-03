@@ -27,7 +27,7 @@ export class AbstractVideoTrack extends Component {
          * Video class for React Native.
          */
         zOrder: React.PropTypes.number
-    }
+    };
 
     /**
      * Initializes a new AbstractVideoTrack instance.
