@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 
@@ -35,6 +36,11 @@ class ToolbarButton extends AbstractToolbarButton {
          * Object describing button.
          */
         button: React.PropTypes.object.isRequired,
+
+        /**
+         * Used to dispatch an action when the button is clicked.
+         */
+        dispatch: React.PropTypes.func,
 
         /**
          * Handler for component mount.
@@ -151,7 +157,11 @@ class ToolbarButton extends AbstractToolbarButton {
         } = button;
 
         if (enabled && !unclickable && onClick) {
-            onClick(event);
+            const action = onClick(event);
+
+            if (action) {
+                this.props.dispatch(action);
+            }
         }
     }
 
@@ -228,4 +238,4 @@ class ToolbarButton extends AbstractToolbarButton {
     }
 }
 
-export default translate(ToolbarButton);
+export default translate(connect()(ToolbarButton));

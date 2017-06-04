@@ -64,7 +64,6 @@ export function getDefaultToolboxButtons(buttonHandlers: Object): Object {
 
     if (typeof interfaceConfig !== 'undefined'
             && interfaceConfig.TOOLBAR_BUTTONS) {
-        const { filmStripOnly } = interfaceConfig;
 
         toolbarButtons
             = interfaceConfig.TOOLBAR_BUTTONS.reduce(
@@ -84,9 +83,9 @@ export function getDefaultToolboxButtons(buttonHandlers: Object): Object {
                             };
                         }
 
-                        // In filmstrip-only mode we only add a button if it's
-                        // filmstrip-only enabled.
-                        if (!filmStripOnly || button.filmstripOnlyEnabled) {
+                        // If isDisplayed method is not defined, display the
+                        // button only for non-filmstripOnly mode
+                        if (button.isDisplayed()) {
                             acc[place].set(buttonName, button);
                         }
                     }

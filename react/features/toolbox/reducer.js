@@ -15,6 +15,7 @@ import {
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE
 } from './actionTypes';
+import defaultToolbarButtons from './defaultToolbarButtons';
 
 declare var interfaceConfig: Object;
 
@@ -208,6 +209,15 @@ ReducerRegistry.register(
  * @returns {Object}
  */
 function _setButton(state, { button, buttonName }): Object {
+    const buttonDefinition = defaultToolbarButtons[buttonName];
+
+    // We don't need to update if the button shouldn't be displayed
+    if (!buttonDefinition || !buttonDefinition.isDisplayed()) {
+        return {
+            ...state
+        };
+    }
+
     const { primaryToolbarButtons, secondaryToolbarButtons } = state;
     let selectedButton = primaryToolbarButtons.get(buttonName);
     let place = 'primaryToolbarButtons';
@@ -221,18 +231,6 @@ function _setButton(state, { button, buttonName }): Object {
         ...selectedButton,
         ...button
     };
-
-    // In filmstrip-only mode we only show buttons if they're filmstrip-only
-    // enabled, so we don't need to update if this isn't the case.
-    // FIXME A reducer should be a pure function of the current state and the
-    // specified action so it should not use the global variable
-    // interfaceConfig. Anyway, we'll move interfaceConfig into the (redux)
-    // store so we'll surely revisit the source code bellow.
-    if (interfaceConfig.filmStripOnly && !selectedButton.filmstripOnlyEnabled) {
-        return {
-            ...state
-        };
-    }
 
     const updatedToolbar = state[place].set(buttonName, selectedButton);
 

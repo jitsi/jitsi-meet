@@ -83,7 +83,7 @@ class DeviceSelector extends Component {
             return this._renderNoPermission();
         }
 
-        if (!this.props.devices.length) {
+        if (!this.props.devices || !this.props.devices.length) {
             return this._renderNoDevices();
         }
 

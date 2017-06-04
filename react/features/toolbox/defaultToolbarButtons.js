@@ -2,25 +2,26 @@
 
 import React from 'react';
 
+import { openDeviceSelectionDialog } from '../device-selection';
+import { openDialOutDialog } from '../dial-out';
+import { openInviteDialog } from '../invite';
 import UIEvents from '../../../service/UI/UIEvents';
 
-import { openInviteDialog } from '../invite';
-import { openDialOutDialog } from '../dial-out';
-
 declare var APP: Object;
+declare var interfaceConfig: Object;
 declare var JitsiMeetJS: Object;
 
 /**
  * All toolbar buttons' descriptors.
  */
-export default {
+const buttons: Object = {
     /**
      * The descriptor of the camera toolbar button.
      */
     camera: {
         classNames: [ 'button', 'icon-camera' ],
         enabled: true,
-        filmstripOnlyEnabled: true,
+        isDisplayed: () => true,
         id: 'toolbar_button_camera',
         onClick() {
             if (APP.conference.videoMuted) {
@@ -153,9 +154,30 @@ export default {
         id: 'toolbar_button_dial_out',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
-            APP.store.dispatch(openDialOutDialog());
+
+            return openDialOutDialog();
         },
         tooltipKey: 'dialOut.dialOut'
+    },
+
+    /**
+     * The descriptor of the device selection toolbar button.
+     */
+    fodeviceselection: {
+        classNames: [ 'button', 'icon-settings' ],
+        enabled: true,
+        isDisplayed() {
+            return interfaceConfig.filmStripOnly;
+        },
+        id: 'toolbar_button_fodeviceselection',
+        onClick() {
+            JitsiMeetJS.analytics.sendEvent(
+                'toolbar.fodeviceselection.toggled');
+
+            return openDeviceSelectionDialog();
+        },
+        sideContainerId: 'settings_container',
+        tooltipKey: 'toolbar.Settings'
     },
 
     /**
@@ -217,7 +239,7 @@ export default {
     hangup: {
         classNames: [ 'button', 'icon-hangup', 'button_hangup' ],
         enabled: true,
-        filmstripOnlyEnabled: true,
+        isDisplayed: () => true,
         id: 'toolbar_button_hangup',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
@@ -235,7 +257,8 @@ export default {
         id: 'toolbar_button_link',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
-            APP.store.dispatch(openInviteDialog());
+
+            return openInviteDialog();
         },
         tooltipKey: 'toolbar.invite'
     },
@@ -246,7 +269,7 @@ export default {
     microphone: {
         classNames: [ 'button', 'icon-microphone' ],
         enabled: true,
-        filmstripOnlyEnabled: true,
+        isDisplayed: () => true,
         id: 'toolbar_button_mute',
         onClick() {
             const sharedVideoManager = APP.UI.getSharedVideoManager();
@@ -386,3 +409,14 @@ export default {
         tooltipKey: 'toolbar.sharedvideo'
     }
 };
+
+
+Object.keys(buttons).forEach(name => {
+    const button = buttons[name];
+
+    if (!button.isDisplayed) {
+        button.isDisplayed = () => !interfaceConfig.filmStripOnly;
+    }
+});
+
+export default buttons;
