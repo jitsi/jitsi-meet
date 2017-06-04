@@ -200,7 +200,13 @@
         height: auto;
         position: absolute;
         right: 0;
-        width: $defaultToolbarSize;
+        width: $defaultFilmStripOnlyToolbarSize;
+
+        .button {
+            height: 37px;
+            line-height: 37px !important;
+            width: 37px;
+        }
 
         .button:first-child {
             border-top-left-radius: 3px;

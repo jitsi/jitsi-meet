@@ -53,7 +53,7 @@ class AudioInputPreview extends PureComponent {
      */
     componentWillReceiveProps(nextProps) {
         this._listenForAudioUpdates(nextProps.track);
-        this._updateAudioLevel(0);
+        this._updateAudioLevel(undefined, 0);
     }
 
     /**
