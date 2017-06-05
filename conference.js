@@ -386,9 +386,8 @@ class ConferenceConnector {
     _onConferenceFailed(err, ...params) {
         APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
-        APP.UI.hideRingOverlay();
-        switch (err) {
 
+        switch (err) {
         case ConferenceErrors.CONNECTION_ERROR:
             {
                 let [msg] = params;
@@ -2027,7 +2026,7 @@ export default {
      */
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
-        APP.UI.hideRingOverlay();
+
         let requestFeedbackPromise = requestFeedback
                 ? APP.UI.requestFeedbackOnHangup()
                 // false - because the thank you dialog shouldn't be displayed

@@ -70,7 +70,13 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     ENABLE_FEEDBACK_ANIMATION: false,
     DISABLE_FOCUS_INDICATOR: false,
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
-    // disables the ringing sound when the RingOverlay is shown.
+
+    /**
+     * Whether the ringing sound in the call/ring overlay is disabled. If
+     * {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
     DISABLE_RINGING: false,
     AUDIO_LEVEL_PRIMARY_COLOR: "rgba(255,255,255,0.4)",
     AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.2)",
@@ -82,8 +88,8 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
 
     /**
      * Whether the mobile app Jitsi Meet is to be promoted to participants
-     * attempting to join a conference in a mobile Web browser. If undefined,
-     * default to true.
+     * attempting to join a conference in a mobile Web browser. If
+     * {@code undefined}, defaults to {@code true}.
      *
      * @type {boolean}
      */

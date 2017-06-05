@@ -178,7 +178,7 @@ export function hideToolbox(force: boolean = false): Function {
 
         if (!force
                 && (hovered
-                    || APP.UI.isRingOverlayVisible()
+                    || state['features/jwt'].callOverlayVisible
                     || SideContainerToggler.isVisible())) {
             dispatch(
                 setToolboxTimeout(
