@@ -286,9 +286,10 @@ const Filmstrip = {
             );
         }
 
-        // If the number of videos is 0 or undefined we don't need to calculate
-        // further.
-        if (numvids) {
+        // If the number of videos is 0 or undefined or we're in vertical
+        // filmstrip mode we don't need to calculate further any adjustments
+        // to width based on the number of videos present.
+        if (numvids && !interfaceConfig.VERTICAL_FILMSTRIP) {
             let remoteVideoContainer = thumbs.remoteThumbs.eq(0);
             availableWidth = Math.floor(
                 (videoAreaAvailableWidth - numvids * (
@@ -358,8 +359,9 @@ const Filmstrip = {
          * h - the height of the thumbnails
          * remoteRatio - width:height for the remote thumbnail
          * localRatio - width:height for the local thumbnail
-         * numberRemoteThumbs - number of remote thumbnails (we have only one
-         * local thumbnail)
+         * remoteThumbsInRow - number of remote thumbnails in a row (we have
+         * only one local thumbnail) next to the local thumbnail. In vertical
+         * filmstrip mode, this will always be 0.
          *
          * Since the height for local thumbnail = height for remote thumbnail
          * and we know the ratio (width:height) for the local and for the
@@ -368,9 +370,9 @@ const Filmstrip = {
          * remoteLocalWidthRatio = rW / lW = remoteRatio / localRatio
          * and rW = lW * remoteRatio / localRatio = lW * remoteLocalWidthRatio
          * And the total width for the thumbnails is:
-         * totalWidth = rW * numberRemoteThumbs + lW
-         * = lW * remoteLocalWidthRatio * numberRemoteThumbs + lW =
-         * lW * (remoteLocalWidthRatio * numberRemoteThumbs + 1)
+         * totalWidth = rW * remoteThumbsInRow + lW
+         * = lW * remoteLocalWidthRatio * remoteThumbsInRow + lW =
+         * lW * (remoteLocalWidthRatio * remoteThumbsInRow + 1)
          * and the h = lW/localRatio
          *
          * In order to fit all the thumbails in the area defined by
@@ -388,21 +390,21 @@ const Filmstrip = {
          * availableHeight/h > availableWidth/totalWidth otherwise 2) is true
          */
 
-        const numberRemoteThumbs = this.getThumbs(true).remoteThumbs.length;
+        const remoteThumbsInRow = interfaceConfig.VERTICAL_FILMSTRIP
+            ? 0 : this.getThumbs(true).remoteThumbs.length;
         const remoteLocalWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO /
             interfaceConfig.LOCAL_THUMBNAIL_RATIO;
         const lW = Math.min(availableWidth /
-            (remoteLocalWidthRatio * numberRemoteThumbs + 1), availableHeight *
+            (remoteLocalWidthRatio * remoteThumbsInRow + 1), availableHeight *
             interfaceConfig.LOCAL_THUMBNAIL_RATIO);
         const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
 
-        const removeVideoWidth = lW * remoteLocalWidthRatio;
+        const remoteVideoWidth = lW * remoteLocalWidthRatio;
 
         let localVideo;
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
-            // scale both width and height
             localVideo = {
-                thumbWidth: removeVideoWidth,
+                thumbWidth: remoteVideoWidth,
                 thumbHeight: h * remoteLocalWidthRatio
             };
         } else {
@@ -413,12 +415,12 @@ const Filmstrip = {
         }
 
         return {
-                    localVideo,
-                    remoteVideo: {
-                        thumbWidth: removeVideoWidth,
-                        thumbHeight: h
-                    }
-                };
+            localVideo,
+            remoteVideo: {
+                thumbWidth: remoteVideoWidth,
+                thumbHeight: h
+            }
+        };
     },
 
     /**
