@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Linking, Text } from 'react-native';
+import { Linking } from 'react-native';
+
+import Text from './Text';
 
 /**
  * Implements a (hyper)link to a URL in the fashion of the HTML anchor element
  * and its href attribute.
  */
-export class Link extends Component {
+export default class Link extends Component {
     /**
-     * Link component's property types.
+     * {@code Link} component's property types.
      *
      * @static
      */
@@ -56,9 +58,7 @@ export class Link extends Component {
             <Text
                 onPress = { this._onPress }
                 style = { this.props.style }>
-                {
-                    this.props.children
-                }
+                { this.props.children }
             </Text>
         );
     }

@@ -6,11 +6,12 @@ import { shouldRenderVideoTrack } from '../functions';
 import { Video } from './_';
 
 /**
- * Component that renders video element for a specified video track.
+ * Implements a React {@link Component} that renders video element for a
+ * specific video track.
  *
  * @abstract
  */
-export class AbstractVideoTrack extends Component {
+export default class AbstractVideoTrack extends Component {
     /**
      * AbstractVideoTrack component's property types.
      *

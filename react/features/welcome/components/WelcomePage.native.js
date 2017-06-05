@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { TextInput, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { Link } from '../../base/react';
+import { Link, Text } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';

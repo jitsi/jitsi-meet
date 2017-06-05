@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../i18n';
+import { translate } from '../../../i18n';
 
 declare var interfaceConfig: Object;
 
