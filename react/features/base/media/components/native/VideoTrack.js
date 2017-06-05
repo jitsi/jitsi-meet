@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AbstractVideoTrack } from '../AbstractVideoTrack';
+import AbstractVideoTrack from '../AbstractVideoTrack';
 import { styles } from './styles';
 
 /**
