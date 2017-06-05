@@ -426,11 +426,11 @@ export default class LargeVideoManager {
      * Shows hides the "avatar" message which is to be displayed either in
      * the middle of the screen or below the avatar image.
      *
-     * @param {null|boolean} [show=null] <tt>true</tt> to show the avatar
-     * message or <tt>false</tt> to hide it. If not provided then the connection
-     * status of the user currently on the large video will be obtained form
-     * "APP.conference" and the message will be displayed if the user's
-     * connection is either interrupted or inactive.
+     * @param {boolean|undefined} [show=undefined] <tt>true</tt> to show
+     * the avatar message or <tt>false</tt> to hide it. If not provided then
+     * the connection status of the user currently on the large video will be
+     * obtained form "APP.conference" and the message will be displayed if
+     * the user's connection is either interrupted or inactive.
      */
     showRemoteConnectionMessage (show) {
         if (typeof show !== 'boolean') {
