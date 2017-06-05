@@ -257,22 +257,6 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Checks whether a participant's peer connection status is active.
-     * There is no JitsiParticipant for local id we skip checking local
-     * participant and report it as having no connectivity issues.
-     *
-     * @param {string} id the id of participant(MUC nickname)
-     * @returns {boolean} <tt>true</tt> when participant connection status is
-     * {@link ParticipantConnectionStatus.ACTIVE} and <tt>false</tt> otherwise.
-     * @private
-     */
-    _isConnectionActive(id) {
-        return APP.conference.isLocalId(id)
-                || APP.conference.getParticipantConnectionStatus(this.id)
-                    === ParticipantConnectionStatus.ACTIVE;
-    }
-
-    /**
      * Shows/hides notification about participant's connectivity issues to be
      * shown on the large video area.
      *
