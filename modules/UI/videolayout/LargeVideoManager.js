@@ -241,8 +241,7 @@ export default class LargeVideoManager {
             this.updateParticipantConnStatusIndication(
                     id,
                     !overrideAndHide && isConnectionInterrupted,
-                    !overrideAndHide && messageKey !== null,
-                    messageKey);
+                    !overrideAndHide && messageKey);
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
@@ -279,19 +278,19 @@ export default class LargeVideoManager {
      *
      * @param {string} id the id of remote participant(MUC nickname)
      * @param {boolean} showProblemsIndication
-     * @param {boolean} showMessage
-     * @param {string} messageKey the i18n key of the message
+     * @param {string|null} messageKey the i18n key of the message which will be
+     * displayed on the large video or <tt>null</tt> to hide it.
      *
      * @private
      */
     updateParticipantConnStatusIndication (
-        id, showProblemsIndication, showMessage, messageKey) {
+        id, showProblemsIndication, messageKey) {
 
         // Apply grey filter on the large video
         this.videoContainer.showRemoteConnectionProblemIndicator(
             showProblemsIndication);
 
-        if (!showMessage) {
+        if (!messageKey) {
             // Hide the message
             this.showRemoteConnectionMessage(false);
         } else {
