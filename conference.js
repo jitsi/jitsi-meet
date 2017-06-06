@@ -2126,18 +2126,6 @@ export default {
     },
 
     /**
-     * Checks if the participant given by participantId is currently in the
-     * last N set if there's one supported.
-     *
-     * @param participantId the identifier of the participant
-     * @returns {boolean} {true} if the participant given by the participantId
-     * is currently in the last N set or if there's no last N set at this point
-     * and {false} otherwise
-     */
-    isInLastN(participantId) {
-        return room.isInLastN(participantId);
-    },
-    /**
      * Changes the display name for the local user
      * @param nickname {string} the new display name
      */

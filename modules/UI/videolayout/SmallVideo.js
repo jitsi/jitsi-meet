@@ -445,8 +445,7 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function () {
  */
 SmallVideo.prototype.isVideoPlayable = function() {
     return this.videoStream // Is there anything to display ?
-        && !this.isVideoMuted && !this.videoStream.isMuted() // Muted ?
-        && (this.isLocal || APP.conference.isInLastN(this.id));
+        && !this.isVideoMuted && !this.videoStream.isMuted(); // Muted ?
 };
 
 /**
