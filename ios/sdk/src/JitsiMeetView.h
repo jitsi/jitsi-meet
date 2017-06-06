@@ -19,14 +19,13 @@
 
 #import "JitsiMeetViewDelegate.h"
 
-
 @interface JitsiMeetView : UIView
 
 @property (nonatomic, weak, nullable) id<JitsiMeetViewDelegate> delegate;
 
-+ (BOOL)application:(UIApplication *)application
-continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray *))restorationHandler;
++    (BOOL)application:(UIApplication *)application
+  continueUserActivity:(NSUserActivity *)userActivity
+    restorationHandler:(void (^)(NSArray *))restorationHandler;
 
 + (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)URL

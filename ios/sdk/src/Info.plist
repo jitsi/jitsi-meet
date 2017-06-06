@@ -20,10 +20,10 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
-    <key>JitsiKitFonts</key>
-    <array>
-        <string>jitsi.ttf</string>
-        <string>FontAwesome.ttf</string>
-    </array>
+  <key>JitsiMeetFonts</key>
+  <array>
+    <string>FontAwesome.ttf</string>
+    <string>jitsi.ttf</string>
+  </array>
 </dict>
 </plist>

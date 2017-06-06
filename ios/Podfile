@@ -1,9 +1,10 @@
 platform :ios, '9.0'
 
 workspace 'jitsi-meet'
-project 'Jitsi Meet SDK.xcodeproj'
 
 target 'JitsiMeet' do
+  project 'sdk/sdk.xcodeproj'
+
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',
     'RCTActionSheet',
@@ -20,7 +21,6 @@ target 'JitsiMeet' do
   pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
 end
 
 post_install do |installer|

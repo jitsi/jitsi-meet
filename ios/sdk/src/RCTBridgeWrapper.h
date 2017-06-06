@@ -30,7 +30,7 @@
  * singleton, however, so it's possible for us to create multiple instances of
  * it, though that's not currently used.
  */
-@interface JitsiRCTBridgeWrapper : NSObject<RCTBridgeDelegate>
+@interface RCTBridgeWrapper : NSObject<RCTBridgeDelegate>
 
 @property (nonatomic, readonly, strong)  RCTBridge *bridge;
 

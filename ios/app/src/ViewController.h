@@ -16,9 +16,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import <JitsiMeet/JitsiMeet.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
-@property (nonatomic, strong) UIWindow *window;
+@interface ViewController : UIViewController<JitsiMeetViewDelegate>
 
 @end

@@ -22,16 +22,17 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-  [super viewDidLoad];
-
-  JitsiMeetView *meetView = (JitsiMeetView*) self.view;
-  meetView.delegate = self;
-  [meetView loadURL:nil];
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    JitsiMeetView *view = (JitsiMeetView *) self.view;
+
+    view.delegate = self;
+    [view loadURL:nil];
 }
 
 @end

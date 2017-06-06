@@ -17,7 +17,7 @@
                BlueprintIdentifier = "0BD906E41EC0C00300C8C18E"
                BuildableName = "JitsiMeet.framework"
                BlueprintName = "JitsiMeet"
-               ReferencedContainer = "container:Jitsi Meet SDK.xcodeproj">
+               ReferencedContainer = "container:sdk.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "jitsi-meet.app"
                BlueprintName = "jitsi-meet"
-               ReferencedContainer = "container:jitsi-meet.xcodeproj">
+               ReferencedContainer = "container:app.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -49,7 +49,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "jitsi-meet.app"
             BlueprintName = "jitsi-meet"
-            ReferencedContainer = "container:jitsi-meet.xcodeproj">
+            ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -72,7 +72,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "jitsi-meet.app"
             BlueprintName = "jitsi-meet"
-            ReferencedContainer = "container:jitsi-meet.xcodeproj">
+            ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -91,7 +91,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "jitsi-meet.app"
             BlueprintName = "jitsi-meet"
-            ReferencedContainer = "container:jitsi-meet.xcodeproj">
+            ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

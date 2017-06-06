@@ -21,8 +21,7 @@
 #import <React/RCTRootView.h>
 
 #import "JitsiMeetView.h"
-#import "JitsiRCTBridgeWrapper.h"
-
+#import "RCTBridgeWrapper.h"
 
 /**
  * A <tt>RCTFatalHandler</tt> implementation which swallows JavaScript errors.
@@ -31,8 +30,7 @@
  * effectively kill the application. <tt>_RCTFatal</tt> is suitable to be in
  * accord with the Web i.e. not kill the application.
  */
-RCTFatalHandler _RCTFatal = ^(NSError *error)
-{
+RCTFatalHandler _RCTFatal = ^(NSError *error) {
     id jsStackTrace = error.userInfo[RCTJSStackTraceKey];
     @try {
         NSString *name
@@ -48,25 +46,22 @@ RCTFatalHandler _RCTFatal = ^(NSError *error)
     }
 };
 
-
 @interface JitsiMeetView() {
     RCTRootView *rootView;
 }
 
 @end
 
-
 @implementation JitsiMeetView
 
-static JitsiRCTBridgeWrapper *jitsiBridge;
+static RCTBridgeWrapper *bridgeWrapper;
 
-
-#pragma mark linking delegate helpers
+#pragma mark Linking delegate helpers
 // https://facebook.github.io/react-native/docs/linking.html
 
-+ (BOOL)application:(UIApplication *)application
-continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
++    (BOOL)application:(UIApplication *)application
+  continueUserActivity:(NSUserActivity *)userActivity
+    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
     return [RCTLinkingManager application:application
                      continueUserActivity:userActivity
@@ -76,8 +71,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 + (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation
-{
+         annotation:(id)annotation {
     return [RCTLinkingManager application:application
                                   openURL:url
                         sourceApplication:sourceApplication
@@ -86,9 +80,8 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 #pragma mark initializers
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
     if (self) {
         [self initialize];
     }
@@ -96,9 +89,8 @@ continueUserActivity:(NSUserActivity *)userActivity
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
     if (self) {
         [self initialize];
     }
@@ -112,12 +104,12 @@ continueUserActivity:(NSUserActivity *)userActivity
  * Loads the given URL and joins the specified conference. If the specified URL
  * is null, the welcome page is shown.
  */
-- (void)loadURL:(NSURL *)url
-{
+- (void)loadURL:(NSURL *)url {
     NSDictionary *props = url ? @{ url : url.absoluteString } : nil;
+
     if (rootView == nil) {
         rootView
-            = [[RCTRootView alloc] initWithBridge:jitsiBridge.bridge
+            = [[RCTRootView alloc] initWithBridge:bridgeWrapper.bridge
                                        moduleName:@"App"
                                 initialProperties:props];
         rootView.backgroundColor = self.backgroundColor;
@@ -126,7 +118,7 @@ continueUserActivity:(NSUserActivity *)userActivity
         [rootView setFrame:[self bounds]];
         [self addSubview:rootView];
     } else {
-        // Update props with the new URL
+        // Update props with the new URL.
         rootView.appProperties = props;
     }
 }
@@ -141,8 +133,7 @@ continueUserActivity:(NSUserActivity *)userActivity
  *   - loads the necessary custom fonts
  *   - registers a custom fatal error error handler for React
  */
-- (void)initialize
-{
+- (void)initialize {
     static dispatch_once_t onceToken;
 
     dispatch_once(&onceToken, ^{
@@ -153,7 +144,7 @@ continueUserActivity:(NSUserActivity *)userActivity
             = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
 
         // Initialize the React bridge.
-        jitsiBridge = [[JitsiRCTBridgeWrapper alloc] init];
+        bridgeWrapper = [[RCTBridgeWrapper alloc] init];
 
         // Dynamically load custom bundled fonts.
         [self loadCustomFonts];
@@ -167,10 +158,9 @@ continueUserActivity:(NSUserActivity *)userActivity
  * Helper function to dynamically load custom fonts. The UIAppFonts key in the
  * plist file doesn't work for frameworks, so fonts have to be manually loaded.
  */
-- (void)loadCustomFonts
-{
+- (void)loadCustomFonts {
     NSBundle *bundle = [NSBundle bundleForClass:self.class];
-    NSArray *fonts = [bundle objectForInfoDictionaryKey:@"JitsiKitFonts"];
+    NSArray *fonts = [bundle objectForInfoDictionaryKey:@"JitsiMeetFonts"];
 
     for (NSString *item in fonts) {
         NSString *fontName = [item stringByDeletingPathExtension];
@@ -181,8 +171,10 @@ continueUserActivity:(NSUserActivity *)userActivity
         CGDataProviderRef provider
             = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
         CGFontRef font = CGFontCreateWithDataProvider(provider);
+
         if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
             CFStringRef errorDescription = CFErrorCopyDescription(error);
+
             NSLog(@"Failed to load font: %@", errorDescription);
             CFRelease(errorDescription);
         }
@@ -196,8 +188,7 @@ continueUserActivity:(NSUserActivity *)userActivity
  * won't kill the process, it will swallow JS errors and print stack traces
  * instead.
  */
-- (void)registerFatalErrorHandler
-{
+- (void)registerFatalErrorHandler {
 #if !DEBUG
     // In the Release configuration, React Native will (intentionally) raise
     // an unhandled NSException for an unhandled JavaScript error. This will
