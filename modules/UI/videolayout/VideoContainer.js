@@ -350,15 +350,13 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        this.$videoBackground.hide();
-        this.$videoBackground[0].pause();
+        this._hideVideoBackground();
 
         let [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
 
         if (containerWidth > width) {
-            this.$videoBackground.show();
-            this.$videoBackground[0].play();
+            this._showVideoBackground();
         }
 
         let { horizontalIndent, verticalIndent }
@@ -435,8 +433,7 @@ export class VideoContainer extends LargeContainer {
         stream.attach(this.$video[0]);
         stream.attach(this.$videoBackground[0]);
 
-        this.$videoBackground.hide();
-        this.$videoBackground[0].pause();
+        this._hideVideoBackground();
 
         const flipX = stream.isLocal() && this.localFlipX;
 
@@ -576,6 +573,17 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
+     * Sets the blur background to be invisible and pauses any playing video.
+     *
+     * @private
+     * @returns {void}
+     */
+    _hideVideoBackground() {
+        this.$videoBackground.css({ visibility: 'hidden' });
+        this.$videoBackground[0].pause();
+    }
+
+    /**
      * Callback invoked when the video element changes dimensions.
      *
      * @private
@@ -583,5 +591,16 @@ export class VideoContainer extends LargeContainer {
      */
     _onResize() {
         this._resizeListeners.forEach(callback => callback());
+    }
+
+    /**
+     * Sets the blur background to be visible and starts any loaded video.
+     *
+     * @private
+     * @returns {void}
+     */
+    _showVideoBackground() {
+        this.$videoBackground.css({ visibility: 'visible' });
+        this.$videoBackground[0].play();
     }
 }
