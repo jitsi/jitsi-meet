@@ -110,7 +110,7 @@ server {
     # we recommend the use of https://certbot.eff.org/
     server_name jitsi.example.com;
     # set the root
-    root /srv/jitsi.example.com;
+    root /srv/jitsi;
     index index.html;
     location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
@@ -191,25 +191,9 @@ Checkout and configure Jitsi Meet:
 ```sh
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
-mv jitsi-meet/ jitsi.example.com
+mv jitsi-meet/ jitsi
 npm install
 make
-```
-
-Edit host names in `/srv/jitsi.example.com/config.js` (see also the example config file):
-```
-var config = {
-    hosts: {
-        domain: 'jitsi.example.com',
-        muc: 'conference.jitsi.example.com',
-        bridge: 'jitsi-videobridge.jitsi.example.com',
-        focus: 'focus.jitsi.example.com'
-    },
-    useNicks: false,
-    bosh: '//jitsi.example.com/http-bind', // FIXME: use xep-0156 for that
-    //chromeExtensionId: 'diibjkoicjeejcmhdnailmkgecihlobk', // Id of desktop streamer Chrome extension
-    //minChromeExtVersion: '0.1' // Required version of Chrome extension
-};
 ```
 
 Restart nginx to get the new configuration:
@@ -220,7 +204,7 @@ invoke-rc.d nginx restart
 ## Running behind NAT
 Jitsi-Videobridge can run behind a NAT, provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000-20000).
 
-The following extra lines need to be added the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
+The following extra lines need to be added to the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
 ```
 org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
@@ -235,7 +219,6 @@ org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 
 # Hold your first conference
 You are now all set and ready to have your first meet by going to http://jitsi.example.com
-
 
 ## Enabling recording
 [Jibri](https://github.com/jitsi/jibri)is a set of tools for recording and/or streaming a Jitsi Meet conference.

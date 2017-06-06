@@ -95,7 +95,6 @@ case "$1" in
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
         if [ ! -f $JITSI_MEET_CONFIG ] ; then
             cp /usr/share/doc/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
-            sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
         # this is new install let's configure jvb to serve meet
