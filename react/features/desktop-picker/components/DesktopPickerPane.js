@@ -3,24 +3,24 @@ import React, { Component } from 'react';
 import DesktopSourcePreview from './DesktopSourcePreview';
 
 /**
- * React component for showing a grid of DesktopSourcePreviews.
+ * React {@code Component} for showing a grid of DesktopSourcePreviews.
  *
  * @extends Component
  */
 class DesktopPickerPane extends Component {
     /**
-     * DesktopPickerPane component's property types.
+     * {@code DesktopPickerPane}'s property types.
      *
      * @static
      */
     static propTypes = {
         /**
-         * The handler to be invoked when a DesktopSourcePreview is clicked.
+         * The handler to invoke when a {@code DesktopSourcePreview} is clicked.
          */
         onClick: React.PropTypes.func,
 
         /**
-         * The handler to be invoked when a DesktopSourcePreview is double
+         * The handler to invoke when a {@code DesktopSourcePreview} is double
          * clicked.
          */
         onDoubleClick: React.PropTypes.func,
@@ -31,7 +31,7 @@ class DesktopPickerPane extends Component {
         selectedSourceId: React.PropTypes.string,
 
         /**
-         * An array of DesktopCapturerSources.
+         * An array of DesktopCapturerSources to display.
          */
         sources: React.PropTypes.array,
 

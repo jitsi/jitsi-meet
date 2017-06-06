@@ -19,13 +19,14 @@ import DeviceSelector from './DeviceSelector';
 import VideoInputPreview from './VideoInputPreview';
 
 /**
- * React component for previewing and selecting new audio and video sources.
+ * React {@code Component} for previewing and selecting new audio and video
+ * sources.
  *
  * @extends Component
  */
 class DeviceSelectionDialog extends Component {
     /**
-     * DeviceSelectionDialog component's property types.
+     * {@code DeviceSelectionDialog}'s property types.
      *
      * @static
      */
@@ -105,10 +106,10 @@ class DeviceSelectionDialog extends Component {
     };
 
     /**
-     * Initializes a new DeviceSelectionDialog instance.
+     * Initializes a new {@code DeviceSelectionDialog} instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
     constructor(props) {
         super(props);
@@ -149,10 +150,17 @@ class DeviceSelectionDialog extends Component {
                 || ''
         };
 
-        // Preventing closing while cleaning up previews is important for
-        // supporting temasys video cleanup. Temasys requires its video object
-        // to be in the dom and visible for proper detaching of tracks. Delaying
-        // closure until cleanup is complete ensures no errors in the process.
+        /**
+         * Instance variable that keeps track of any modal closing in progress.
+         * This component does not close the modal immediately, rather it
+         * prevents closing while cleaning up previews as temasys requires its
+         * video objects to be in the dom and visible for proper detaching of
+         * tracks. Delaying closure until cleanup is complete prevents errors
+         * during cleanup.
+         *
+         * @private
+         * @type {boolean}
+         */
         this._isClosing = false;
 
         // Bind event handlers so they are only bound once for every instance.
@@ -238,7 +246,7 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Signals to close DeviceSelectionDialog.
+     * Signals to close {@code DeviceSelectionDialog}.
      *
      * @private
      * @returns {void}
@@ -337,9 +345,9 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Creates an AudioInputPreview for previewing if audio is being received.
-     * Null will be returned if local stats for tracking audio input levels
-     * cannot be obtained.
+     * Creates an {@code AudioInputPreview} for previewing if audio is being
+     * received. Null will be returned if local stats for tracking audio input
+     * levels cannot be obtained.
      *
      * @private
      * @returns {ReactComponent|null}
@@ -356,8 +364,9 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Creates an AudioOutputPreview instance for playing a test sound with the
-     * passed in device id. Null will be returned if hideAudioOutput is truthy.
+     * Creates an {@code AudioOutputPreview} instance for playing a test sound
+     * with the passed in device id. Null will be returned if hideAudioOutput is
+     * truthy.
      *
      * @private
      * @returns {ReactComponent|null}
@@ -374,7 +383,8 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Creates a DeviceSelector instance based on the passed in configuration.
+     * Creates a {@code DeviceSelector} instance based on the passed in
+     * configuration.
      *
      * @private
      * @param {Object} props - The props for the DeviceSelector.
@@ -387,8 +397,8 @@ class DeviceSelectionDialog extends Component {
     }
 
     /**
-     * Creates DeviceSelector instances for video output, audio input, and audio
-     * output.
+     * Creates {@code DeviceSelector} instances for video output, audio input,
+     * and audio output.
      *
      * @private
      * @returns {Array<ReactElement>} DeviceSelector instances.
@@ -511,8 +521,8 @@ class DeviceSelectionDialog extends Component {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated DeviceSelectionDialog's
- * props.
+ * Maps (parts of) the Redux state to the associated
+ * {@code DeviceSelectionDialog}'s props.
  *
  * @param {Object} state - The Redux state.
  * @private

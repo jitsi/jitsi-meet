@@ -3,21 +3,21 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 
 /**
- * React component for displaying total time elapsed. Converts a total count of
- * milliseconds into a more humanized form: "# hours, # minutes, # seconds".
- * With a time of 0, "0s" will be displayed.
+ * React {@code Component} for displaying total time elapsed. Converts a total
+ * count of milliseconds into a more humanized form: "# hours, # minutes, #
+ * seconds". With a time of 0, "0s" will be displayed.
  *
  * @extends Component
  */
 class TimeElapsed extends Component {
     /**
-     * TimeElapsed component's property types.
+     * {@code TimeElapsed}'s property types.
      *
      * @static
      */
     static propTypes = {
         /**
-         * The function to translate human-readable text.
+         * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func,
 
@@ -75,12 +75,12 @@ class TimeElapsed extends Component {
     /**
      * Returns a ReactElement to display the passed in count and a count noun.
      *
-     * @private
      * @param {number} count - The number used for display and to check for
      * count noun plurality.
      * @param {string} countNounKey - Translation key for the time's count noun.
      * @param {string} countType - What is being counted. Used as the element's
      * key for react to iterate upon.
+     * @private
      * @returns {ReactElement}
      */
     _createTimeDisplay(count, countNounKey, countType) {

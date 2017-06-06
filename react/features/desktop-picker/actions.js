@@ -60,10 +60,10 @@ export function resetDesktopSources() {
 }
 
 /**
- * Signals to open a dialog with the DesktopPicker component.
+ * Signals to open a dialog with the {@code DesktopPicker} component.
  *
- * @param {Function} onSourceChoose - The callback to invoke when
- * a DesktopCapturerSource has been chosen.
+ * @param {Function} onSourceChoose - The callback to invoke when a
+ * DesktopCapturerSource has been chosen.
  * @returns {Object}
  */
 export function showDesktopPicker(onSourceChoose) {

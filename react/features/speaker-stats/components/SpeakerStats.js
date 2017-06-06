@@ -4,17 +4,18 @@ import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
 /**
- * React component for displaying a list of speaker stats.
+ * React {@code Component} for displaying a list of speaker stats.
  *
  * @extends Component
  */
 class SpeakerStats extends Component {
     /**
-     * SpeakerStats component's property types.
+     * {@code SpeakerStats}'s property types.
      *
      * @static
      */
@@ -31,7 +32,7 @@ class SpeakerStats extends Component {
     };
 
     /**
-     * Initializes a new SpeakerStats instance.
+     * Initializes a new {@code SpeakerStats} instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -40,15 +41,31 @@ class SpeakerStats extends Component {
         super(props);
 
         this.state = {
+            /**
+             * A cached reference to the local speaker stats object obtained
+             * from the library. It will be parsed to display stats.
+             *
+             * type {@object}
+             */
             stats: {}
         };
+
+        /**
+         * The return value from the interval used to poll for new local speaker
+         * stats.
+         *
+         * @private
+         * @type {timeoutID}
+         */
         this._updateInterval = null;
+
+        // Bind event handlers so they are only bound once for every instance.
         this._updateStats = this._updateStats.bind(this);
     }
 
     /**
-     * Immediately request for updated speaker stats and begin
-     * polling for speaker stats updates.
+     * Requests for updated speaker stats and begins polling for speaker stats
+     * updates.
      *
      * @inheritdoc
      * @returns {void}
@@ -59,7 +76,7 @@ class SpeakerStats extends Component {
     }
 
     /**
-     * Stop polling for speaker stats updates.
+     * Stops polling for speaker stats updates.
      *
      * @inheritdoc
      * @returns {void}
@@ -91,25 +108,13 @@ class SpeakerStats extends Component {
         );
     }
 
-   /**
-     * Update the internal state with the latest speaker stats.
-     *
-     * @returns {void}
-     * @private
-     */
-    _updateStats() {
-        const stats = this.props.conference.getSpeakerStats();
-
-        this.setState({ stats });
-    }
-
     /**
-     * Create a SpeakerStatsItem instance for the passed in user id.
+     * Creates a {@code SpeakerStatsItem} instance for the passed in user id.
      *
-     * @param {string} userId -  User id used to look up the associated
-     * speaker stats from the jitsi library.
-     * @returns {SpeakerStatsItem|null}
+     * @param {string} userId -  User id used to look up the associated speaker
+     * stats from the jitsi library.
      * @private
+     * @returns {SpeakerStatsItem|null}
      */
     _createStatsItem(userId) {
         const statsModel = this.state.stats[userId];
@@ -144,6 +149,18 @@ class SpeakerStats extends Component {
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId } />
         );
+    }
+
+    /**
+     * Updates the internal state with the latest speaker stats.
+     *
+     * @private
+     * @returns {void}
+     */
+    _updateStats() {
+        const stats = this.props.conference.getSpeakerStats();
+
+        this.setState({ stats });
     }
 }
 

@@ -5,7 +5,8 @@ import { translate } from '../../base/i18n';
 const TEST_SOUND_PATH = 'sounds/ring.wav';
 
 /**
- * React component for playing a test sound through a specified audio device.
+ * React {@code Component} for playing a test sound through a specified audio
+ * device.
  *
  * @extends Component
  */
@@ -30,14 +31,23 @@ class AudioOutputPreview extends Component {
     /**
      * Initializes a new AudioOutputPreview instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
+        /**
+         * The internal reference to the DOM/HTML element backing the React
+         * {@code Component} audio element. It is necessary for setting the
+         * targeted audio output device to play sound from.
+         *
+         * @private
+         * @type {HTMLAudioElement}
+         */
         this._audioElement = null;
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onClick = this._onClick.bind(this);
         this._setAudioElement = this._setAudioElement.bind(this);
     }

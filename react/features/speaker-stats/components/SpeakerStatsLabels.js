@@ -3,19 +3,19 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 
 /**
- * React component for labeling speaker stats column items.
+ * React {@code Component} for labeling speaker stats column items.
  *
  * @extends Component
  */
 class SpeakerStatsLabels extends Component {
     /**
-     * SpeakerStatsLabels component's property types.
+     * {@code SpeakerStatsLabels}'s property types.
      *
      * @static
      */
     static propTypes = {
         /**
-         * The function to translate human-readable text.
+         * Invoked to obtain translated strings
          */
         t: React.PropTypes.func
     };

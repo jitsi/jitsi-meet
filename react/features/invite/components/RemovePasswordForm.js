@@ -6,6 +6,8 @@ import { translate } from '../../base/i18n';
 
 /**
  * A React {@code Component} for removing a lock from a JitsiConference.
+ *
+ * @extends Component
  */
 class RemovePasswordForm extends Component {
     /**

@@ -41,25 +41,26 @@ const TABS_TO_POPULATE
 const TYPES_TO_FETCH = TABS_TO_POPULATE.map(c => c.type);
 
 /**
- * React component for DesktopPicker.
+ * React {@code Component} for displaying DesktopCapturerSources and selecting
+ * one of those sources.
  *
  * @extends Component
  */
 class DesktopPicker extends Component {
     /**
-     * DesktopPicker component's property types.
+     * {@code DesktopPicker}'s property types.
      *
      * @static
      */
     static propTypes = {
         /**
-         * Used to request DesktopCapturerSources.
+         * Invoked to request DesktopCapturerSources.
          */
         dispatch: React.PropTypes.func,
 
         /**
-         * The callback to be invoked when the component is closed or when
-         * a DesktopCapturerSource has been chosen.
+         * The callback to be invoked when {@code DesktopPicker} is closed or
+         * when a DesktopCapturerSource has been chosen.
          */
         onSourceChoose: React.PropTypes.func,
 
@@ -70,13 +71,13 @@ class DesktopPicker extends Component {
         sources: React.PropTypes.object,
 
         /**
-         * Used to obtain translations.
+         * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
     };
 
     /**
-     * Initializes a new DesktopPicker instance.
+     * Initializes a new {@code DesktopPicker} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -85,10 +86,24 @@ class DesktopPicker extends Component {
         super(props);
 
         this.state = {
+            /**
+             * The DesktopCapturerSource id that is currently selected.
+             *
+             * @type {string}
+             */
             selectedSourceId: ''
         };
 
+        /**
+         * A reference to the interval used to request the current list of
+         * DesktopCapturerSources and their preview images.
+         *
+         * @private
+         * @type {timeoutID}
+         */
         this._poller = null;
+
+        // Bind event handlers so they are only bound once for every instance.
         this._onCloseModal = this._onCloseModal.bind(this);
         this._onPreviewClick = this._onPreviewClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -107,12 +122,12 @@ class DesktopPicker extends Component {
     }
 
     /**
-     * Notifies this mounted React Component that it will receive new props.
-     * Sets a default selected source if one is not already set.
+     * Notifies this mounted React {@code Component} that it will receive new
+     * props. Sets a default selectedSourceId if one is not already set.
      *
      * @inheritdoc
-     * @param {Object} nextProps - The read-only React Component props that this
-     * instance will receive.
+     * @param {Object} nextProps - The read-only React {@code Component} props
+     * that the instance will receive.
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
@@ -125,7 +140,8 @@ class DesktopPicker extends Component {
     }
 
     /**
-     * Clean up component and DesktopCapturerSource store state.
+     * Stops any polling in progress and clears the DesktopCapturerSource store
+     * state.
      *
      * @inheritdoc
      */
@@ -154,8 +170,8 @@ class DesktopPicker extends Component {
     }
 
     /**
-     * Dispatches an action to hide the DesktopPicker and invokes the passed in
-     * callback with a selectedSourceId, if any.
+     * Dispatches an action to hide the {@code DesktopPicker} and invokes the
+     * passed in callback with selectedSourceId, if any.
      *
      * @param {string} id - The id of the DesktopCapturerSource to pass into the
      * onSourceChoose callback.
@@ -177,8 +193,7 @@ class DesktopPicker extends Component {
     }
 
     /**
-     * Request to close the modal and execute callbacks with the selected source
-     * id.
+     * Closes the modal and execute callbacks with selectedSourceId.
      *
      * @returns {void}
      */
@@ -252,7 +267,8 @@ class DesktopPicker extends Component {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated DesktopPicker's props.
+ * Maps (parts of) the Redux state to the associated {@code DesktopPicker}'s
+ * props.
  *
  * @param {Object} state - Redux state.
  * @private

@@ -5,14 +5,14 @@ import { translate } from '../../base/i18n';
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
 
 /**
- * React component for displaying video. This component defers to lib-jitsi-meet
- * logic for rendering the video.
+ * React {@code Component} for displaying a video stream. This component defers
+ * to lib-jitsi-meet logic for actually rendering the video.
  *
  * @extends Component
  */
 class VideoInputPreview extends Component {
     /**
-     * VideoInputPreview component's property types.
+     * {@code VideoInputPreview}'s property types.
      *
      * @static
      */
@@ -35,10 +35,10 @@ class VideoInputPreview extends Component {
     };
 
     /**
-     * Initializes a new VideoInputPreview instance.
+     * Initializes a new {@code VideoInputPreview} instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
     constructor(props) {
         super(props);
@@ -53,9 +53,11 @@ class VideoInputPreview extends Component {
         this._errorElement = null;
 
         /**
-         * The internal reference to topmost DOM/HTML element backing the React
-         * {@code Component}. Accessed directly for toggling a classname to
-         * indicate an error is present so styling can be changed to display it.
+         * The internal reference to the DOM/HTML element backing the React
+         * {@code Component} div at the top of this component's DOM/HTML
+         * hierarchy. {@code VideoInputPreview} blackboxes itself from React, so
+         * direct access to the root is used to set a CSS class intended for
+         * additional styling when an error is present.
          *
          * @private
          * @type {HTMLDivElement}
@@ -63,12 +65,14 @@ class VideoInputPreview extends Component {
         this._rootElement = null;
 
         /**
-         * The internal reference to the DOM/HTML element intended for
-         * displaying a video. This element may be an HTML video element or a
-         * temasys video object.
+         * The internal reference to the DOM/HTML element backing the React
+         * {@code Component} video element. It is necessary for changing video
+         * displays without React tearing down the video element, which would
+         * not be compatible with Temasys, which needs the video element to
+         * be visible to attach and detach video streams.
          *
          * @private
-         * @type {HTMLVideoElement|Object}
+         * @type {HTMLObjectElement|HTMLVideoElement}
          */
         this._videoElement = null;
 
