@@ -5,20 +5,19 @@ import React, { Component } from 'react';
 
 import { translate } from '../../i18n';
 
-import { dialogPropTypes } from '../constants';
+import { DIALOG_PROP_TYPES } from '../constants';
 
 /**
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
 class StatelessDialog extends Component {
-
     /**
-     * Web dialog component's property types.
+     * {@code StatelessDialog} component's property types.
      *
      * @static
      */
     static propTypes = {
-        ...dialogPropTypes,
+        ...DIALOG_PROP_TYPES,
 
         /**
          * This is the body of the dialog, the component children.
@@ -45,16 +44,15 @@ class StatelessDialog extends Component {
         /**
          * Width of the dialog, can be:
          * - 'small' (400px), 'medium' (600px), 'large' (800px),
-         * 'x-large' (968px)
+         *   'x-large' (968px)
          * - integer value for pixel width
          * - string value for percentage
          */
         width: React.PropTypes.string
-
     };
 
     /**
-     * Initializes a new Dialog instance.
+     * Initializes a new {@code StatelessDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -62,6 +60,7 @@ class StatelessDialog extends Component {
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onCancel = this._onCancel.bind(this);
         this._onDialogDismissed = this._onDialogDismissed.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -89,7 +88,19 @@ class StatelessDialog extends Component {
                         { this.props.children }
                     </form>
                 </div>
-            </ModalDialog>);
+            </ModalDialog>
+        );
+    }
+
+    /**
+     * Dispatches action to hide the dialog.
+     *
+     * @returns {void}
+     */
+    _onCancel() {
+        if (!this.props.isModal) {
+            this.props.onCancel();
+        }
     }
 
     /**
@@ -104,10 +115,21 @@ class StatelessDialog extends Component {
     }
 
     /**
-     * Render cancel button.
+     * Dispatches the action when submitting the dialog.
      *
-     * @returns {*} The cancel button if enabled and dialog is not modal.
      * @private
+     * @param {string} value - The submitted value if any.
+     * @returns {void}
+     */
+    _onSubmit(value) {
+        this.props.onSubmit(value);
+    }
+
+    /**
+     * Renders Cancel button.
+     *
+     * @private
+     * @returns {*} The Cancel button if enabled and dialog is not modal.
      */
     _renderCancelButton() {
         if (this.props.cancelDisabled || this.props.isModal) {
@@ -125,10 +147,10 @@ class StatelessDialog extends Component {
     }
 
     /**
-     * Render component in dialog footer.
+     * Renders component in dialog footer.
      *
-     * @returns {ReactElement}
      * @private
+     * @returns {ReactElement}
      */
     _renderFooter() {
         return (
@@ -142,10 +164,10 @@ class StatelessDialog extends Component {
     }
 
     /**
-     * Render component in dialog header.
+     * Renders component in dialog header.
      *
-     * @returns {ReactElement}
      * @private
+     * @returns {ReactElement}
      */
     _renderHeader() {
         const { t } = this.props;
@@ -160,10 +182,10 @@ class StatelessDialog extends Component {
     }
 
     /**
-     * Render ok button.
+     * Renders OK button.
      *
-     * @returns {*} The ok button if enabled.
      * @private
+     * @returns {*} The OK button if enabled.
      */
     _renderOKButton() {
         if (this.props.submitDisabled) {
@@ -180,30 +202,6 @@ class StatelessDialog extends Component {
                 { this.props.t(this.props.okTitleKey || 'dialog.Ok') }
             </AKButton>
         );
-    }
-
-    /**
-     * Dispatches action to hide the dialog.
-     *
-     * @returns {void}
-     */
-    _onCancel() {
-        if (this.props.isModal) {
-            return;
-        }
-
-        this.props.onCancel();
-    }
-
-    /**
-     * Dispatches the action when submitting the dialog.
-     *
-     * @private
-     * @param {string} value - The submitted value if any.
-     * @returns {void}
-     */
-    _onSubmit(value) {
-        this.props.onSubmit(value);
     }
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import Prompt from 'react-native-prompt';
+import { connect } from 'react-redux';
 
 import { translate } from '../../i18n';
 
