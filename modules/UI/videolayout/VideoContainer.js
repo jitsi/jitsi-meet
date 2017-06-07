@@ -102,11 +102,11 @@ function computeCameraVideoSize(videoWidth,
         if (aspectRatio <= 1) {
             const zoomRateHeight = videoSpaceHeight / videoHeight;
             const zoomRateWidth = videoSpaceWidth / videoWidth;
-            const maxZoomRate
-                = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity;
-            let zoomRate = Math.min(zoomRateWidth, maxZoomRate);
+            const zoomRate = Math.min(
+                zoomRateWidth,
+                zoomRateHeight,
+                interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity);
 
-            zoomRate = Math.max(zoomRate, zoomRateHeight);
             availableWidth = videoWidth * zoomRate;
             availableHeight = videoHeight * zoomRate;
         } else if (availableHeight * aspectRatio < videoSpaceWidth) {
