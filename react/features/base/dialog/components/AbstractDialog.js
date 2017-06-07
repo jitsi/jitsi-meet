@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { hideDialog } from '../actions';
-import { dialogPropTypes } from '../constants';
+import { DIALOG_PROP_TYPES } from '../constants';
 
 /**
  * Abstract dialog to display dialogs.
@@ -14,7 +14,7 @@ export default class AbstractDialog extends Component {
      * @static
      */
     static propTypes = {
-        ...dialogPropTypes,
+        ...DIALOG_PROP_TYPES,
 
         /**
          * Used to show/hide the dialog on cancel.

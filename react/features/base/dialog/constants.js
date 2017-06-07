@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const dialogPropTypes = {
+export const DIALOG_PROP_TYPES = {
     /**
      * Whether cancel button is disabled. Enabled by default.
      */
