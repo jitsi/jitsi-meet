@@ -93,10 +93,19 @@ See JitsiMeetView.loadURL.
 The `JitsiMeetView` class is the core of Jitsi Meet SDK. It's designed to
 display a Jitsi Meet conference view (or a welcome page).
 
+#### getListener()
+
+Returns the `JitsiMeetView.Listener` instance attached to the view.
+
 #### loadURL(url)
 
 Loads the given URL and joins the conference which is being pointed to. If null,
 it will load the welcome page.
+
+#### setListener(listener)
+
+Sets the given listener (class implementing the `JitsiMeetView.Listener`
+interface) on the view.
 
 #### onBackPressed()
 
@@ -132,3 +141,41 @@ application's activity is launched in "singleTask" mode this method should
 be called from the activity's `onNewIntent` method.
 
 This is a static method.
+
+#### Listener
+
+JitsiMeetView.Listener provides an interface applications can implement in order
+to get notified about the state of the Jitsi Meet conference.
+
+##### onConferenceFailed
+
+Called when a joining a conference was unsuccessful or when there was an error
+while in a conference.
+
+The `data` HashMap contains an "error" key describing the error and a "url"
+key with the conference URL.
+
+#### onConferenceJoined
+
+Called when a conference was joined.
+
+The `data` HashMap contains a "url" key with the conference URL.
+
+#### onConferenceLeft
+
+Called when a conference was left.
+
+The `data` HashMap contains a "url" key with the conference URL.
+
+#### onConferenceWillJoin
+
+Called before a conference is joined.
+
+The `data` HashMap contains a "url" key with the conference URL.
+
+#### onConferenceWillLeave
+
+Called before a conference is left.
+
+The `data` HashMap contains a "url" key with the conference URL.
+
