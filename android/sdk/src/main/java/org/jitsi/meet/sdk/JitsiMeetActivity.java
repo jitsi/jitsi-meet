@@ -26,53 +26,57 @@ import android.os.Bundle;
 
 import java.net.URL;
 
-
 /**
- * Base Activity for applications integrating Jitsi Meet at a higher level. It contains all the
- * required wiring between the <tt>JKConferenceView</tt> and the Activity lifecycle methods already
- * implemented.
+ * Base Activity for applications integrating Jitsi Meet at a higher level. It
+ * contains all the required wiring between the <tt>JKConferenceView</tt> and
+ * the Activity lifecycle methods already implemented.
  *
- * In this activity we use a single <tt>JKConferenceView</tt> instance. This instance gives us
- * access to a view which displays the welcome page and the conference itself. All lifetime methods
- * associated with this Activity are hooked to the React Native subsystem via proxy calls through
- * the <tt>JKConferenceView</tt> static methods.
+ * In this activity we use a single <tt>JKConferenceView</tt> instance. This
+ * instance gives us access to a view which displays the welcome page and the
+ * conference itself. All lifetime methods associated with this Activity are
+ * hooked to the React Native subsystem via proxy calls through the
+ * <tt>JKConferenceView</tt> static methods.
  */
-public class JitsiMeetBaseActivity extends AppCompatActivity {
+public class JitsiMeetActivity extends AppCompatActivity {
     /**
-     * Instance of the {@JitsiMeetView} which this activity will display.
-     */
-    private JitsiMeetView jitsiMeetView;
-
-    /**
-     * Code for identifying the permission to draw on top of other apps. The number is chosen
-     * arbitrarily and used to correlate the intent with its result.
+     * Code for identifying the permission to draw on top of other apps. The
+     * number is chosen arbitrarily and used to correlate the intent with its
+     * result.
      */
     public static final int OVERLAY_PERMISSION_REQ_CODE = 4242;
 
     /**
-     * Loads the given URL and displays the conference. If the specified URL is null, the welcome
-     * page is displayed instead.
+     * Instance of the {@JitsiMeetView} which this activity will display.
+     */
+    private JitsiMeetView view;
+
+    /**
+     * Loads the given URL and displays the conference. If the specified URL is
+     * null, the welcome page is displayed instead.
      *
      * @param url - The conference URL.
      */
     public void loadURL(@Nullable URL url) {
-        jitsiMeetView.loadURL(url);
+        view.loadURL(url);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data) {
         if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
-                    // Permission not granted...
+                    // Permission not granted.
                     return;
                 }
             }
 
-            setContentView(jitsiMeetView);
+            setContentView(view);
         }
     }
 
@@ -94,24 +98,34 @@ public class JitsiMeetBaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        jitsiMeetView = new JitsiMeetView(this);
-        jitsiMeetView.loadURL(null);
+        view = new JitsiMeetView(this);
+        view.loadURL(null);
 
-        /**
-         * In debug mode React needs permission to write over other apps in order to display the
-         * warning and error overlays.
-         */
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-            !Settings.canDrawOverlays(this)) {
-
+        // In debug mode React needs permission to write over other apps in
+        // order to display the warning and error overlays.
+        if (BuildConfig.DEBUG
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && !Settings.canDrawOverlays(this)) {
             Intent intent
-                = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:" + getPackageName()));
+                = new Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+
             startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
             return;
         }
 
-        setContentView(jitsiMeetView);
+        setContentView(view);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        JitsiMeetView.onHostDestroy(this);
     }
 
     /**
@@ -126,17 +140,9 @@ public class JitsiMeetBaseActivity extends AppCompatActivity {
      * {@inheritDoc}
      */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        JitsiMeetView.onHostDestroy(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected void onPause() {
         super.onPause();
+
         JitsiMeetView.onHostPause(this);
     }
 
@@ -146,7 +152,7 @@ public class JitsiMeetBaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         JitsiMeetView.onHostResume(this);
     }
-
 }

@@ -16,18 +16,19 @@
 
 package org.jitsi.meet;
 
-import org.jitsi.meet.sdk.JitsiMeetBaseActivity;
-
+import org.jitsi.meet.sdk.JitsiMeetActivity;
 
 /**
- * The one and only Activity that Jitsi Meet (the app) needs. The activity is launched in
- * "singleTask" mode, so it will be created upon application initialization and there will be
- * a single instance of it. Further attempts at launching the application once it was already
- * launched will result in <tt>onNewIntent</tt> being called.
+ * The one and only {@link Activity} that the Jitsi Meet app needs. The
+ * {@code Activity} is launched in {@code singleTask} mode, so it will be
+ * created upon application initialization and there will be a single instance
+ * of it. Further attempts at launching the application once it was already
+ * launched will result in {@link Activity#onNewIntent(Intent)} being called.
  *
- * This Activity inherits from JitsiMeetBaseActivity without adding anything to it. It merely exists to
- * keep the React Native CLI working, since it always tries to launch an activity called
- * "MainActivity" when doing "react-native run-android".
+ * This {@code Activity} extends {@link JitsiMeetActivity} without adding
+ * anything to it. It exists to merely keep the React Native CLI working, since
+ * the latter always tries to launch an {@code Activity} named
+ * {@code MainActivity} when doing {@code react-native run-android}.
  */
-public class MainActivity extends JitsiMeetBaseActivity {
+public class MainActivity extends JitsiMeetActivity {
 }

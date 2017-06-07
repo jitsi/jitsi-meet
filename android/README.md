@@ -1,24 +1,38 @@
-# Jitsi Meet for Android
+# Jitsi Meet SDK for Android
 
-This directory contains the source code for Jitsi Meet for Android (the
-application) and the Jitsi Meet SDK for Android.
+This directory contains the source code of the Jitsi Meet app and the Jitsi Meet
+SDK for Android.
 
 ## Jitsi Meet SDK
 
-Jitsi Meet SDK is an Android library which embodies the Jitsi Meet experience,
-gift-wrapped so other applications can use it. Example use:
+Jitsi Meet SDK is an Android library which embodies the whole Jitsi Meet
+experience and makes it reusable by third-party apps.
+
+To get started, extends your `android.app.Activity` from
+`org.jitsi.meet.sdk.JitsiMeetActivity`:
 
 ```java
 package org.jitsi.example;
 
-import android.support.v7.app.AppCompatActivity;
+import org.jitsi.meet.sdk.JitsiMeetActivity;
+
+public class MainActivity extends JitsiMeetActivity {
+}
+```
+
+Alternatively, you can use the `org.jitsi.meet.sdk.JitsiMeetView` class which
+extends `android.view.View`:
+
+```java
+package org.jitsi.example;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import org.jitsi.meet.sdk.*;
+import org.jitsi.meet.sdk.JitsiMeetView;
 
-
-public class CustomActivity extends AppCompatActivity {
-    private JitsiMeetView jitsiMeetView;
+public class MainActivity extends AppCompatActivity {
+    private JitsiMeetView view;
 
     @Override
     public void onBackPressed() {
@@ -32,10 +46,17 @@ public class CustomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        jitsiMeetView = new JitsiMeetView(this);
-        jitsiMeetView.loadURL(null);
+        view = new JitsiMeetView(this);
+        view.loadURL(null);
 
-        setContentView(jitsiMeetView);
+        setContentView(view);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        JitsiMeetView.onHostDestroy(this);
     }
 
     @Override
@@ -44,44 +65,25 @@ public class CustomActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        JitsiMeetView.onHostDestroy(this);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
+
         JitsiMeetView.onHostPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         JitsiMeetView.onHostResume(this);
     }
-
 }
 ```
 
-Alternatively, you can use the `JitsiMeetBaseActivity` class, which already has
-all activity lifecycle methods hooked up:
+### JitsiMeetActivity
 
-```java
-package org.jitsi.example;
-
-import org.jitsi.meet.sdk.*;
-
-
-public class MainActivity extends JitsiMeetBaseActivity {
-}
-
-```
-
-### JitsiMeetBaseActivity
-
-This class encapsulates a high level API in the form of an Android activity
-which displays a single `JitsiMeetView` views.
+This class encapsulates a high level API in the form of an Android `Activity`
+which displays a single `JitsiMeetView`.
 
 #### loadURL(url)
 
@@ -91,7 +93,7 @@ See JitsiMeetView.loadURL.
 ### JitsiMeetView
 
 The `JitsiMeetView` class is the core of Jitsi Meet SDK. It's designed to
-display a Jitsi Meet conference view (or a welcome page).
+display a Jitsi Meet conference (or a welcome page).
 
 #### getListener()
 
@@ -99,8 +101,8 @@ Returns the `JitsiMeetView.Listener` instance attached to the view.
 
 #### loadURL(url)
 
-Loads the given URL and joins the conference which is being pointed to. If null,
-it will load the welcome page.
+Loads the given URL and joins the room. If `null` is specified, the welcome page
+is displayed instead.
 
 #### setListener(listener)
 
@@ -110,8 +112,8 @@ interface) on the view.
 #### onBackPressed()
 
 Helper method which should be called from the activity's `onBackPressed` method.
-If this function returns `true` it means the action was handled and thus no
-extra processing is required, otherwise the application should call the parent's
+If this function returns `true`, it means the action was handled and thus no
+extra processing is required; otherwise the app should call the parent's
 `onBackPressed` method.
 
 This is a static method.
@@ -136,16 +138,16 @@ This is a static method.
 
 #### onNewIntent(intent)
 
-Helper method for integrating the *deep linking* functionality. If your
-application's activity is launched in "singleTask" mode this method should
-be called from the activity's `onNewIntent` method.
+Helper method for integrating the *deep linking* functionality. If your app's
+activity is launched in "singleTask" mode this method should be called from the
+activity's `onNewIntent` method.
 
 This is a static method.
 
 #### Listener
 
-JitsiMeetView.Listener provides an interface applications can implement in order
-to get notified about the state of the Jitsi Meet conference.
+JitsiMeetView.Listener provides an interface apps can implement in order to get
+notified about the state of the Jitsi Meet conference.
 
 ##### onConferenceFailed
 
@@ -178,4 +180,3 @@ The `data` HashMap contains a "url" key with the conference URL.
 Called before a conference is left.
 
 The `data` HashMap contains a "url" key with the conference URL.
-

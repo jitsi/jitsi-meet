@@ -45,7 +45,7 @@ public class ExternalAPIPackage implements ReactPackage {
      */
     @Override
     public List<NativeModule> createNativeModules(
-        ReactApplicationContext reactContext) {
+            ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
         modules.add(new ExternalAPIModule(reactContext));
@@ -58,7 +58,7 @@ public class ExternalAPIPackage implements ReactPackage {
      */
     @Override
     public List<ViewManager> createViewManagers(
-        ReactApplicationContext reactContext) {
+            ReactApplicationContext reactContext) {
         return Collections.emptyList();
     }
 }

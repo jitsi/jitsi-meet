@@ -32,56 +32,58 @@ import com.facebook.react.common.LifecycleState;
 import java.net.URL;
 import java.util.HashMap;
 
-
 public class JitsiMeetView extends FrameLayout {
     /**
-     * Background color used by this view and the React Native root view.
+     * Background color used by {@code JitsiMeetView} and the React Native root
+     * view.
      */
     private static final int BACKGROUND_COLOR = 0xFF111111;
 
     /**
-     * {@JitsiMeetView.Listener} instance for reporting events occurring in Jitsi Meet.
+     * Reference to the single instance of this class we currently allow. It's
+     * currently used for fetching the instance from the listener's callbacks.
+     *
+     * TODO: lift this limitation.
+     */
+    private static JitsiMeetView instance;
+
+    /**
+     * React Native bridge. The instance manager allows embedding applications
+     * to create multiple root views off the same JavaScript bundle.
+     */
+    private static ReactInstanceManager reactInstanceManager;
+
+    /**
+     * {@JitsiMeetView.Listener} instance for reporting events occurring in
+     * Jitsi Meet.
      */
     private JitsiMeetView.Listener listener;
 
     /**
-     * Reference to the single instance of this class we currently allow. It's currently used for
-     * fetching the instance from the listener's callbacks.
-     *
-     * TODO: lift this limitation.
-     */
-    private static JitsiMeetView mInstance;
-
-    /**
-     * React Native bridge. The instance manager allows embedding applications to create multiple
-     * root views off the same JavaScript bundle.
-     */
-    private static ReactInstanceManager mReactInstanceManager;
-
-    /**
      * React Native root view.
      */
-    private ReactRootView mReactRootView;
+    private ReactRootView reactRootView;
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
 
-        if (mInstance != null) {
-            throw new RuntimeException("Only a single instance is currently allowed");
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Only a single instance is currently allowed");
         }
 
         /*
-         * TODO: Only allow a single instance for now. All React Native modules are
-         * kinda singletons so global state would be broken since we have a single
-         * bridge. Once we have that sorted out multiple instances of JitsiMeetView
-         * will be allowed.
+         * TODO: Only allow a single instance for now. All React Native modules
+         * are kinda singletons so global state would be broken since we have a
+         * single bridge. Once we have that sorted out multiple instances of
+         * JitsiMeetView will be allowed.
          */
-        mInstance = this;
+        instance = this;
 
         setBackgroundColor(BACKGROUND_COLOR);
 
-        if (mReactInstanceManager == null) {
-            initReactInstanceManager(((Activity)context).getApplication());
+        if (reactInstanceManager == null) {
+            initReactInstanceManager(((Activity) context).getApplication());
         }
     }
 
@@ -91,7 +93,7 @@ public class JitsiMeetView extends FrameLayout {
      * @returns The {@JitsiMeetView} instance.
      */
     public static JitsiMeetView getInstance() {
-        return mInstance;
+        return instance;
     }
 
     /**
@@ -104,14 +106,15 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Internal method to initialize the React Native instance manager. We create a single instance
-     * in order to load the JavaScript bundle a single time. All <tt>ReactRootView</tt> instances
-     * will be tied to the one and only <tt>ReactInstanceManager</tt>.
+     * Internal method to initialize the React Native instance manager. We
+     * create a single instance in order to load the JavaScript bundle a single
+     * time. All <tt>ReactRootView</tt> instances will be tied to the one and
+     * only <tt>ReactInstanceManager</tt>.
      *
      * @param application - <tt>Application</tt> instance which is running.
      */
     private static void initReactInstanceManager(Application application) {
-        mReactInstanceManager = ReactInstanceManager.builder()
+        reactInstanceManager = ReactInstanceManager.builder()
             .setApplication(application)
             .setBundleAssetName("index.android.bundle")
             .setJSMainModuleName("index.android")
@@ -130,8 +133,8 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Loads the given URL and displays the conference. If the specified URL is null, the welcome
-     * page is displayed instead.
+     * Loads the given URL and displays the conference. If the specified URL is
+     * null, the welcome page is displayed instead.
      *
      * @param url - The conference URL.
      */
@@ -142,17 +145,18 @@ public class JitsiMeetView extends FrameLayout {
             props.putString("url", url.toString());
         }
 
-        // TODO: ReactRootView#setAppProperties is only available on React Native 0.45, so destroy
-        // the current root view and create a new one.
-        if (mReactRootView != null) {
-            removeView(mReactRootView);
-            mReactRootView = null;
+        // TODO: ReactRootView#setAppProperties is only available on React
+        // Native 0.45, so destroy the current root view and create a new one.
+        if (reactRootView != null) {
+            removeView(reactRootView);
+            reactRootView = null;
         }
 
-        mReactRootView = new ReactRootView(getContext());
-        mReactRootView.startReactApplication(mReactInstanceManager, "App", props);
-        mReactRootView.setBackgroundColor(BACKGROUND_COLOR);
-        addView(mReactRootView);
+        reactRootView = new ReactRootView(getContext());
+        reactRootView
+            .startReactApplication(reactInstanceManager, "App", props);
+        reactRootView.setBackgroundColor(BACKGROUND_COLOR);
+        addView(reactRootView);
     }
 
     /**
@@ -165,15 +169,17 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Activity lifecycle method which should be called from <tt>Activity.onBackPressed</tt> so
-     * we can do the required internal processing.
+     * Activity lifecycle method which should be called from
+     * <tt>Activity.onBackPressed</tt> so we can do the required internal
+     * processing.
      *
-     * @return - true if the back-press was processed, false otherwise. In case false is returned
-     * the application should call the parent's implementation.
+     * @return - true if the back-press was processed, false otherwise. In case
+     * false is returned the application should call the parent's
+     * implementation.
      */
     public static boolean onBackPressed() {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onBackPressed();
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onBackPressed();
             return true;
         } else {
             return false;
@@ -181,52 +187,54 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Activity lifecycle method which should be called from <tt>Activity.onDestroy</tt> so
-     * we can do the required internal processing.
+     * Activity lifecycle method which should be called from
+     * <tt>Activity.onDestroy</tt> so we can do the required internal
+     * processing.
      *
      * @param activity - <tt>Activity</tt> being destroyed.
      */
     public static void onHostDestroy(Activity activity) {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostDestroy(activity);
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onHostDestroy(activity);
         }
     }
 
     /**
-     * Activity lifecycle method which should be called from <tt>Activity.onPause</tt> so
-     * we can do the required internal processing.
+     * Activity lifecycle method which should be called from
+     * <tt>Activity.onPause</tt> so we can do the required internal processing.
      *
      * @param activity - <tt>Activity</tt> being paused.
      */
     public static void onHostPause(Activity activity) {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostPause(activity);
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onHostPause(activity);
         }
     }
 
     /**
-     * Activity lifecycle method which should be called from <tt>Activity.onResume</tt> so
-     * we can do the required internal processing.
+     * Activity lifecycle method which should be called from
+     * <tt>Activity.onResume</tt> so we can do the required internal processing.
      *
      * @param activity - <tt>Activity</tt> being resumed.
      */
     public static void onHostResume(Activity activity) {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostResume(activity, null);
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onHostResume(activity, null);
         }
     }
 
     /**
-     * Activity lifecycle method which should be called from <tt>Activity.onNewIntent</tt> so
-     * we can do the required internal processing. Note that this is only needed if the activity's
-     * "launchMode" was set to "singleTask". This is required for deep linking to work once the
-     * application is already running.
+     * Activity lifecycle method which should be called from
+     * <tt>Activity.onNewIntent</tt> so we can do the required internal
+     * processing. Note that this is only needed if the activity's "launchMode"
+     * was set to "singleTask". This is required for deep linking to work once
+     * the application is already running.
      *
      * @param intent - <tt>Intent</tt> instance which was received.
      */
     public static void onNewIntent(Intent intent) {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onNewIntent(intent);
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onNewIntent(intent);
         }
     }
 
@@ -235,33 +243,38 @@ public class JitsiMeetView extends FrameLayout {
      */
     public interface Listener {
         /**
-         * Called when joining a conference fails or an ongoing conference is interrupted due to a
-         * failure.
-         * @param data - HashMap with an "error" key describing the problem, and a "url" key with
-         *             the conference URL.
+         * Called when joining a conference fails or an ongoing conference is
+         * interrupted due to a failure.
+         *
+         * @param data - HashMap with an "error" key describing the problem, and
+         * a "url" key with the conference URL.
          */
         void onConferenceFailed(HashMap<String, Object> data);
 
         /**
          * Called when a conference was joined.
+         *
          * @param data - HashMap with a "url" key with the conference URL.
          */
         void onConferenceJoined(HashMap<String, Object> data);
 
         /**
          * Called when the conference was left, typically after hanging up.
+         *
          * @param data - HashMap with a "url" key with the conference URL.
          */
         void onConferenceLeft(HashMap<String, Object> data);
 
         /**
          * Called before the conference is joined.
+         *
          * @param data - HashMap with a "url" key with the conference URL.
          */
         void onConferenceWillJoin(HashMap<String, Object> data);
 
         /**
          * Called before the conference is left.
+         *
          * @param data - HashMap with a "url" key with the conference URL.
          */
         void onConferenceWillLeave(HashMap<String, Object> data);

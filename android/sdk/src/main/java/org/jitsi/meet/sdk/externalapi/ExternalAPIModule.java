@@ -25,7 +25,6 @@ import org.jitsi.meet.sdk.JitsiMeetView;
 
 import java.util.HashMap;
 
-
 /**
  * Module implementing a simple API to enable a proximity sensor-controlled
  * wake lock. When the lock is held, if the proximity sensor detects a nearby
@@ -61,20 +60,22 @@ public class ExternalAPIModule extends ReactContextBaseJavaModule {
 
     /**
      * Dispatches an event that occurred on JavaScript to the view's listener.
+     *
      * @param name - Event name.
      * @param data - Ancillary data for the event.
      */
     @ReactMethod
     public void sendEvent(final String name, ReadableMap data) {
         JitsiMeetView view = JitsiMeetView.getInstance();
-        JitsiMeetView.Listener listener = view != null ? view.getListener() : null;
+        JitsiMeetView.Listener listener
+            = view != null ? view.getListener() : null;
 
         if (listener == null) {
             return;
         }
 
-        // TODO: Sigh, converting a ReadableMap to a HashMap is not supported until React Native
-        // 0.46.
+        // TODO: Sigh, converting a ReadableMap to a HashMap is not supported
+        // until React Native 0.46.
         final HashMap<String, Object> dataMap = new HashMap<>();
 
         try {

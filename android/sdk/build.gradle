@@ -47,7 +47,7 @@ gradle.projectsEvaluated {
         def buildNameCapitalized = "${buildType.name.capitalize()}"
         def bundlePath = "${buildDir}/intermediates/bundles/${buildType.name}"
 
-        // Bundle fonts in react-native-vector-icons
+        // Bundle fonts in react-native-vector-icons.
         //
 
         def currentFontTask = tasks.create(name: "${buildType.name}CopyFonts", type: Copy) {
@@ -63,35 +63,43 @@ gradle.projectsEvaluated {
         runBefore("processUniversal${buildNameCapitalized}Resources", currentFontTask)
         runBefore("process${buildNameCapitalized}Resources", currentFontTask)
 
-        // Bundle JavaScript and React resources
+        // Bundle JavaScript and React resources.
         // (adapted from react-native/react.gradle)
         //
 
-        // React js bundle directories
+        // React JS bundle directories
         def jsBundleDir = file("${bundlePath}/assets")
         def resourcesDir = file("${bundlePath}/res/merged")
         def jsBundleFile = file("${jsBundleDir}/index.android.bundle")
 
-        // Bundle task name for variant
+        // Bundle task name for variant.
         def bundleJsAndAssetsTaskName = "bundle${buildNameCapitalized}JsAndAssets"
 
         def currentBundleTask = tasks.create(
                 name: bundleJsAndAssetsTaskName,
                 type: Exec) {
 
-            // Set up inputs and outputs so gradle can cache the result
+            // Set up inputs and outputs so gradle can cache the result.
             def reactRoot = file("${projectDir}/../../")
             inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
             outputs.dir jsBundleDir
             outputs.dir resourcesDir
 
-            // Set up the call to the react-native cli
+            // Set up the call to the react-native cli.
             workingDir reactRoot
 
             // Create JS bundle
             def devEnabled = !buildNameCapitalized.toLowerCase().contains("release")
-            commandLine("node", "node_modules/react-native/local-cli/cli.js", "bundle", "--platform", "android", "--dev", "${devEnabled}",
-                    "--reset-cache", "--entry-file", "index.android.js", "--bundle-output", jsBundleFile, "--assets-dest", resourcesDir)
+            commandLine(
+                "node",
+                "node_modules/react-native/local-cli/cli.js",
+                "bundle",
+                "--assets-dest", resourcesDir,
+                "--bundle-output", jsBundleFile,
+                "--dev", "${devEnabled}",
+                "--entry-file", "index.android.js",
+                "--platform", "android",
+                "--reset-cache")
 
             // TODO: disable task in Debug mode?
         }

@@ -32,7 +32,7 @@
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation;
 
-+ (instancetype) getInstance;
++ (instancetype)getInstance;
 
 - (void)loadURL:(nullable NSURL *)url;
 

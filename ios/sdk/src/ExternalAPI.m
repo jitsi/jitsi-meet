@@ -18,7 +18,6 @@
 
 #import "JitsiMeetView.h"
 
-
 @interface ExternalAPI : NSObject<RCTBridgeModule>
 @end
 
@@ -40,25 +39,20 @@ RCT_EXPORT_METHOD(sendEvent:(NSString*)name data:(NSDictionary *) data) {
         return;
     }
 
-    if ([name isEqualToString:@"CONFERENCE_FAILED"] &&
-        [delegate respondsToSelector:@selector(conferenceFailed:)]) {
-
+    if ([name isEqualToString:@"CONFERENCE_FAILED"]
+            && [delegate respondsToSelector:@selector(conferenceFailed:)]) {
         [delegate conferenceFailed:data];
-    } else if ([name isEqualToString:@"CONFERENCE_JOINED"] &&
-               [delegate respondsToSelector:@selector(conferenceJoined:)]) {
-
+    } else if ([name isEqualToString:@"CONFERENCE_JOINED"]
+            && [delegate respondsToSelector:@selector(conferenceJoined:)]) {
         [delegate conferenceJoined:data];
-    } else if ([name isEqualToString:@"CONFERENCE_LEFT"] &&
-               [delegate respondsToSelector:@selector(conferenceLeft:)]) {
-
+    } else if ([name isEqualToString:@"CONFERENCE_LEFT"]
+            && [delegate respondsToSelector:@selector(conferenceLeft:)]) {
         [delegate conferenceLeft:data];
-    } else if ([name isEqualToString:@"CONFERENCE_WILL_JOIN"] &&
-               [delegate respondsToSelector:@selector(conferenceWillJoin:)]) {
-
+    } else if ([name isEqualToString:@"CONFERENCE_WILL_JOIN"]
+            && [delegate respondsToSelector:@selector(conferenceWillJoin:)]) {
         [delegate conferenceWillJoin:data];
-    } else if ([name isEqualToString:@"CONFERENCE_WILL_LEAVE"] &&
-               [delegate respondsToSelector:@selector(conferenceWillLeave:)]) {
-
+    } else if ([name isEqualToString:@"CONFERENCE_WILL_LEAVE"]
+            && [delegate respondsToSelector:@selector(conferenceWillLeave:)]) {
         [delegate conferenceWillLeave:data];
     }
 }
