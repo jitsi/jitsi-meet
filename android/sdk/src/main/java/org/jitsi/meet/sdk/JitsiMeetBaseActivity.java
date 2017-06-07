@@ -38,7 +38,15 @@ import java.net.URL;
  * the <tt>JKConferenceView</tt> static methods.
  */
 public class JitsiMeetBaseActivity extends AppCompatActivity {
+    /**
+     * Instance of the {@JitsiMeetView} which this activity will display.
+     */
     private JitsiMeetView jitsiMeetView;
+
+    /**
+     * Code for identifying the permission to draw on top of other apps. The number is chosen
+     * arbitrarily and used to correlate the intent with its result.
+     */
     public static final int OVERLAY_PERMISSION_REQ_CODE = 4242;
 
     /**

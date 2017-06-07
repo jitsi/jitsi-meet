@@ -55,6 +55,7 @@ RCTFatalHandler _RCTFatal = ^(NSError *error) {
 @implementation JitsiMeetView
 
 static RCTBridgeWrapper *bridgeWrapper;
+static JitsiMeetView *instance;
 
 #pragma mark Linking delegate helpers
 // https://facebook.github.io/react-native/docs/linking.html
@@ -125,6 +126,10 @@ static RCTBridgeWrapper *bridgeWrapper;
 
 #pragma mark private methods
 
++ (instancetype)getInstance {
+    return instance;
+}
+
 /*
  * Internal initialization:
  *
@@ -135,6 +140,20 @@ static RCTBridgeWrapper *bridgeWrapper;
  */
 - (void)initialize {
     static dispatch_once_t onceToken;
+
+    /*
+     * TODO: Only allow a single instance for now. All React Native modules are
+     * kinda singletons so global state would be broken since we have a single
+     * bridge. Once we have that sorted out multiple instances of JitsiMeetView
+     * will be allowed.
+     */
+    if (instance != nil) {
+        @throw [NSException
+            exceptionWithName:@"RuntimeError"
+                       reason:@"Only a single instance is currently allowed"
+                     userInfo:nil];
+    }
+    instance = self;
 
     dispatch_once(&onceToken, ^{
         // Set a background color which is in accord with the JavaScript and

@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 import { Platform } from '../../base/react';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
+import '../../mobile/external-api';
 import '../../mobile/full-screen';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
@@ -22,7 +23,7 @@ export class App extends AbstractApp {
      *
      * @static
      */
-    static propTypes = AbstractApp.propTypes
+    static propTypes = AbstractApp.propTypes;
 
     /**
      * Initializes a new App instance.

@@ -30,13 +30,27 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.common.LifecycleState;
 
 import java.net.URL;
+import java.util.HashMap;
 
 
 public class JitsiMeetView extends FrameLayout {
     /**
-     * React Native root view.
+     * Background color used by this view and the React Native root view.
      */
-    private ReactRootView mReactRootView;
+    private static final int BACKGROUND_COLOR = 0xFF111111;
+
+    /**
+     * {@JitsiMeetView.Listener} instance for reporting events occurring in Jitsi Meet.
+     */
+    private JitsiMeetView.Listener listener;
+
+    /**
+     * Reference to the single instance of this class we currently allow. It's currently used for
+     * fetching the instance from the listener's callbacks.
+     *
+     * TODO: lift this limitation.
+     */
+    private static JitsiMeetView mInstance;
 
     /**
      * React Native bridge. The instance manager allows embedding applications to create multiple
@@ -45,18 +59,74 @@ public class JitsiMeetView extends FrameLayout {
     private static ReactInstanceManager mReactInstanceManager;
 
     /**
-     * Background color used by this view and the React Native root view.
+     * React Native root view.
      */
-    private static final int BACKGROUND_COLOR = 0xFF111111;
+    private ReactRootView mReactRootView;
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
+
+        if (mInstance != null) {
+            throw new RuntimeException("Only a single instance is currently allowed");
+        }
+
+        /*
+         * TODO: Only allow a single instance for now. All React Native modules are
+         * kinda singletons so global state would be broken since we have a single
+         * bridge. Once we have that sorted out multiple instances of JitsiMeetView
+         * will be allowed.
+         */
+        mInstance = this;
 
         setBackgroundColor(BACKGROUND_COLOR);
 
         if (mReactInstanceManager == null) {
             initReactInstanceManager(((Activity)context).getApplication());
         }
+    }
+
+    /**
+     * Returns the only instance of this class we currently allow creating.
+     *
+     * @returns The {@JitsiMeetView} instance.
+     */
+    public static JitsiMeetView getInstance() {
+        return mInstance;
+    }
+
+    /**
+     * Getter for the {@JitsiMeetView.Listener} set on this view.
+     *
+     * @returns The {@JitsiMeetView.Listener} instance.
+     */
+    public Listener getListener() {
+        return listener;
+    }
+
+    /**
+     * Internal method to initialize the React Native instance manager. We create a single instance
+     * in order to load the JavaScript bundle a single time. All <tt>ReactRootView</tt> instances
+     * will be tied to the one and only <tt>ReactInstanceManager</tt>.
+     *
+     * @param application - <tt>Application</tt> instance which is running.
+     */
+    private static void initReactInstanceManager(Application application) {
+        mReactInstanceManager = ReactInstanceManager.builder()
+            .setApplication(application)
+            .setBundleAssetName("index.android.bundle")
+            .setJSMainModuleName("index.android")
+            .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
+            .addPackage(new com.facebook.react.shell.MainReactPackage())
+            .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
+            .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
+            .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
+            .addPackage(new com.rnimmersive.RNImmersivePackage())
+            .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
+            .addPackage(new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
+            .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
+            .setUseDeveloperSupport(BuildConfig.DEBUG)
+            .setInitialLifecycleState(LifecycleState.RESUMED)
+            .build();
     }
 
     /**
@@ -84,28 +154,12 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Internal method to initialize the React Native instance manager. We create a single instance
-     * in order to load the JavaScript bundle a single time. All <tt>ReactRootView</tt> instances
-     * will be tied to the one and only <tt>ReactInstanceManager</tt>.
+     * Setter for the {@JitsiMeetView.Listener} set on this view.
      *
-     * @param application - <tt>Application</tt> instance which is running.
+     * @param listener - Listener for this view.
      */
-    private static void initReactInstanceManager(Application application) {
-        mReactInstanceManager = ReactInstanceManager.builder()
-            .setApplication(application)
-            .setBundleAssetName("index.android.bundle")
-            .setJSMainModuleName("index.android")
-            .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
-            .addPackage(new com.facebook.react.shell.MainReactPackage())
-            .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
-            .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
-            .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
-            .addPackage(new com.rnimmersive.RNImmersivePackage())
-            .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
-            .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
-            .setUseDeveloperSupport(BuildConfig.DEBUG)
-            .setInitialLifecycleState(LifecycleState.RESUMED)
-            .build();
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -172,5 +226,42 @@ public class JitsiMeetView extends FrameLayout {
         if (mReactInstanceManager != null) {
             mReactInstanceManager.onNewIntent(intent);
         }
+    }
+
+    /**
+     * Interface for listening to events coming from Jitsi Meet.
+     */
+    public interface Listener {
+        /**
+         * Called when joining a conference fails or an ongoing conference is interrupted due to a
+         * failure.
+         * @param data - HashMap with an "error" key describing the problem, and a "url" key with
+         *             the conference URL.
+         */
+        void onConferenceFailed(HashMap<String, Object> data);
+
+        /**
+         * Called when a conference was joined.
+         * @param data - HashMap with a "url" key with the conference URL.
+         */
+        void onConferenceJoined(HashMap<String, Object> data);
+
+        /**
+         * Called when the conference was left, typically after hanging up.
+         * @param data - HashMap with a "url" key with the conference URL.
+         */
+        void onConferenceLeft(HashMap<String, Object> data);
+
+        /**
+         * Called before the conference is joined.
+         * @param data - HashMap with a "url" key with the conference URL.
+         */
+        void onConferenceWillJoin(HashMap<String, Object> data);
+
+        /**
+         * Called before the conference is left.
+         * @param data - HashMap with a "url" key with the conference URL.
+         */
+        void onConferenceWillLeave(HashMap<String, Object> data);
     }
 }
