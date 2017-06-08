@@ -3,6 +3,7 @@
 import { Linking } from 'react-native';
 
 import { Platform } from '../../base/react';
+import '../../jwt';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/full-screen';
