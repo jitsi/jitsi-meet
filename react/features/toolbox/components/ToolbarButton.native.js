@@ -37,7 +37,7 @@ class ToolbarButton extends AbstractToolbarButton {
     _renderButton(children) {
         const props = {};
 
-        'onClick' in this.props && (props.onPress = () => {
+        'onClick' in this.props && (props.onPress = event => {
             const action = this.props.onClick(event);
 
             if (action) {
