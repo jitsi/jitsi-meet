@@ -142,15 +142,17 @@ public class JitsiMeetView extends FrameLayout {
             props.putString("url", url.toString());
         }
 
-        if (mReactRootView == null) {
-            mReactRootView = new ReactRootView(getContext());
-            mReactRootView.startReactApplication(mReactInstanceManager, "App", props);
-            mReactRootView.setBackgroundColor(BACKGROUND_COLOR);
-            addView(mReactRootView);
-        } else {
-            // TODO: ReactRootView#setAppProperties is only available on React Native 0.45.
-            throw new RuntimeException("Not yet supported");
+        // TODO: ReactRootView#setAppProperties is only available on React Native 0.45, so destroy
+        // the current root view and create a new one.
+        if (mReactRootView != null) {
+            removeView(mReactRootView);
+            mReactRootView = null;
         }
+
+        mReactRootView = new ReactRootView(getContext());
+        mReactRootView.startReactApplication(mReactInstanceManager, "App", props);
+        mReactRootView.setBackgroundColor(BACKGROUND_COLOR);
+        addView(mReactRootView);
     }
 
     /**
