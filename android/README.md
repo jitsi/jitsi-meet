@@ -180,3 +180,10 @@ The `data` HashMap contains a "url" key with the conference URL.
 Called before a conference is left.
 
 The `data` HashMap contains a "url" key with the conference URL.
+
+### JitsiMeetViewAbstractListener
+
+Utility (abstract) class with stub methods for the `JitsiMeetView.Listener`
+interface. Applications can innherit from this class instead of implementing
+the interface in order to avoid adding stubs for methods they don't care about.
+
