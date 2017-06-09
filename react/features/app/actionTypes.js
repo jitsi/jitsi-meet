@@ -1,18 +1,5 @@
 /**
- * The type of (Redux) action which configures if the welcome page should be
- * disabled or not.
- *
- * {
- *     type: APP_SET_WELCOME_PAGE_DISABLED,
- *     app: App,
- *     disabled: boolean
- * }
- */
-export const APP_SET_WELCOME_PAGE_DISABLED
-    = Symbol('APP_SET_WELCOME_PAGE_DISABLED');
-
-/**
- * The type of (Redux) action which signals that a specific App will mount (in
+ * The type of (redux) action which signals that a specific App will mount (in
  * React terms).
  *
  * {
@@ -23,7 +10,7 @@ export const APP_SET_WELCOME_PAGE_DISABLED
 export const APP_WILL_MOUNT = Symbol('APP_WILL_MOUNT');
 
 /**
- * The type of (Redux) action which signals that a specific App will unmount (in
+ * The type of (redux) action which signals that a specific App will unmount (in
  * React terms).
  *
  * {

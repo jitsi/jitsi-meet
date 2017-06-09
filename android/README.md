@@ -85,17 +85,17 @@ public class MainActivity extends AppCompatActivity {
 This class encapsulates a high level API in the form of an Android `Activity`
 which displays a single `JitsiMeetView`.
 
-#### getWelcomePageDisabled()
+#### getWelcomePageEnabled()
 
-See JitsiMeetView.getWelcomePageDisabled.
+See JitsiMeetView.getWelcomePageEnabled.
 
-#### loadURL(url)
+#### loadURL(URL)
 
 See JitsiMeetView.loadURL.
 
-#### setWelcomePageDisabled(disabled)
+#### setWelcomePageEnabled(boolean)
 
-See JitsiMeetView.setWelcomePageDisabled.
+See JitsiMeetView.setWelcomePageEnabled.
 
 ### JitsiMeetView
 
@@ -106,12 +106,12 @@ display a Jitsi Meet conference (or a welcome page).
 
 Returns the `JitsiMeetViewListener` instance attached to the view.
 
-#### getWelcomePageDisabled()
+#### getWelcomePageEnabled()
 
-Returns true if the welcome page is disable,d false if not. If the welcome page
-is disabled, a black empty view will be rendered when not in a conference.
+Returns true if the Welcome page is enabled; otherwise, false. If false, a black
+empty view will be rendered when not in a conference. Defaults to false.
 
-#### loadURL(url)
+#### loadURL(URL)
 
 Loads the given URL and joins the room. If `null` is specified, the welcome page
 is displayed instead.
@@ -121,12 +121,12 @@ is displayed instead.
 Sets the given listener (class implementing the `JitsiMeetViewListener`
 interface) on the view.
 
-#### setWelcomePageDisabled(disabled)
+#### setWelcomePageEnabled(boolean)
 
-Sets if the welcome page should be disabled or not. See `getWelcomePageDisabled`
-for more info.
+Sets whether the Welcome page is enabled. See `getWelcomePageEnabled` for more
+information.
 
-NOTE: This function must be called before `loadURL` for it to take effect.
+NOTE: Must be called before `loadURL` for it to take effect.
 
 #### onBackPressed()
 

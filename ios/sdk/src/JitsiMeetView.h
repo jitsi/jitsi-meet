@@ -22,7 +22,8 @@
 @interface JitsiMeetView : UIView
 
 @property (nonatomic, weak, nullable) id<JitsiMeetViewDelegate> delegate;
-@property (nonatomic) BOOL disableWelcomePage;
+
+@property (nonatomic) BOOL welcomePageEnabled;
 
 +    (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity

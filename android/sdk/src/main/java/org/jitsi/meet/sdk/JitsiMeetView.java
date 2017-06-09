@@ -59,14 +59,14 @@ public class JitsiMeetView extends FrameLayout {
     private JitsiMeetViewListener listener;
 
     /**
-     * Indicates if the welcome page should be disabled or not.
-     */
-    private boolean welcomePageDisabled;
-
-    /**
      * React Native root view.
      */
     private ReactRootView reactRootView;
+
+    /**
+     * Whether the Welcome page is enabled.
+     */
+    private boolean welcomePageEnabled;
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
@@ -94,7 +94,7 @@ public class JitsiMeetView extends FrameLayout {
     /**
      * Returns the only instance of this class we currently allow creating.
      *
-     * @returns The {@code JitsiMeetView} instance.
+     * @return The {@code JitsiMeetView} instance.
      */
     public static JitsiMeetView getInstance() {
         return instance;
@@ -103,7 +103,7 @@ public class JitsiMeetView extends FrameLayout {
     /**
      * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
      *
-     * @returns The {@code JitsiMeetViewListener} set on this
+     * @return The {@code JitsiMeetViewListener} set on this
      * {@code JitsiMeetView}.
      */
     public JitsiMeetViewListener getListener() {
@@ -111,10 +111,14 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * @return - true if the welcome page is disabled, false if not.
+     * Gets whether the Welcome page is enabled. If {@code true}, the Welcome
+     * page is rendered when this {@code JitsiMeetView} is not at a URL
+     * identifying a Jitsi Meet conference/room.
+     *
+     * @return {@true} if the Welcome page is enabled; otherwise, {@code false}.
      */
-    public boolean getWelcomePageDisabled() {
-        return welcomePageDisabled;
+    public boolean getWelcomePageEnabled() {
+        return welcomePageEnabled;
     }
 
     /**
@@ -153,11 +157,12 @@ public class JitsiMeetView extends FrameLayout {
     public void loadURL(@Nullable URL url) {
         Bundle props = new Bundle();
 
+        // url
         if (url != null) {
             props.putString("url", url.toString());
         }
-
-        props.putBoolean("disableWelcomePage", welcomePageDisabled);
+        // welcomePageEnabled
+        props.putBoolean("welcomePageEnabled", welcomePageEnabled);
 
         // TODO: ReactRootView#setAppProperties is only available on React
         // Native 0.45, so destroy the current root view and create a new one.
@@ -185,13 +190,14 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Sets if the welcome page should be enabled or not. Must be called before calling loadURL or
-     * it won't take effect.
+     * Sets whether the Welcome page is enabled. Must be called before
+     * {@link #loadURL(URL)} for it to take effect.
      *
-     * @param disabled - set to true for disabling the welcome page, false not to do so.
+     * @param welcomePageEnabled {@code true} to enable the Welcome page;
+     * otherwise, {@code false}.
      */
-    public void setWelcomePageDisabled(boolean disabled) {
-        welcomePageDisabled = disabled;
+    public void setWelcomePageEnabled(boolean welcomePageEnabled) {
+        this.welcomePageEnabled = welcomePageEnabled;
     }
 
     /**

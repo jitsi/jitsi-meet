@@ -1,23 +1,13 @@
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    APP_SET_WELCOME_PAGE_DISABLED,
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 
 ReducerRegistry.register('features/app', (state = {}, action) => {
     switch (action.type) {
-    case APP_SET_WELCOME_PAGE_DISABLED:
-        if (state.app === action.app) {
-            return {
-                ...state,
-                disableWelcomePage: action.disabled
-            };
-        }
-        break;
-    case APP_WILL_MOUNT:
-        if (state.app !== action.app) {
+    case APP_WILL_MOUNT: {
+        const { app } = action;
+
+        if (state.app !== app) {
             return {
                 ...state,
 
@@ -27,10 +17,11 @@ ReducerRegistry.register('features/app', (state = {}, action) => {
                  *
                  * @type {App}
                  */
-                app: action.app
+                app
             };
         }
         break;
+    }
 
     case APP_WILL_UNMOUNT:
         if (state.app === action.app) {

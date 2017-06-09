@@ -12,7 +12,6 @@ import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
-import { appSetWelcomePageDisabled } from '../actions';
 
 /**
  * Root application component.
@@ -29,10 +28,11 @@ export class App extends AbstractApp {
         ...AbstractApp.propTypes,
 
         /**
-         * Indicates if the welcome page should be shown when not in a
-         * conference.
+         * Whether the Welcome page is enabled. If {@code true}, the Welcome
+         * page is rendered when the {@link App} is not at a location (URL)
+         * identifying a Jitsi Meet conference/room.
          */
-        disableWelcomePage: React.PropTypes.bool
+        welcomePageEnabled: React.PropTypes.bool
     };
 
     /**
@@ -66,13 +66,6 @@ export class App extends AbstractApp {
         super.componentWillMount();
 
         Linking.addEventListener('url', this._onLinkingURL);
-
-        // Store the desire to use the welcome page or not in the Redux store.
-        const dispatch = this._getStore().dispatch;
-
-        dispatch(
-            appSetWelcomePageDisabled(
-                this, Boolean(this.props.disableWelcomePage)));
     }
 
     /**

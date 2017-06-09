@@ -3,11 +3,7 @@ import { setLocationURL } from '../base/connection';
 import { setConfig } from '../base/config';
 import { loadConfig } from '../base/lib-jitsi-meet';
 
-import {
-    APP_SET_WELCOME_PAGE_DISABLED,
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import { _getRouteToRender, _parseURIString } from './functions';
 
 declare var APP: Object;
@@ -158,26 +154,6 @@ function _appNavigateToOptionalLocation(
     }
 
     _appNavigateToMandatoryLocation(dispatch, getState, location);
-}
-
-/**
- * Configures the welcome page display for this app.
- *
- * @param {App} app - The App being configured.
- * @param {boolean} disabled - Set to true if the welcome page should be
- * disabled, false if it shouldn't.
- * @returns {{
- *     type: APP_SET_WELCOME_PAGE_DISABLED,
- *     app: App,
- *     disabled: boolean
- * }}
- */
-export function appSetWelcomePageDisabled(app, disabled) {
-    return {
-        type: APP_SET_WELCOME_PAGE_DISABLED,
-        app,
-        disabled
-    };
 }
 
 /**

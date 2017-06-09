@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     APP.connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
 
-    // Render the main Component.
+    // Render the main/root Component.
     ReactDOM.render(<App />, document.getElementById('react'));
 });
 

@@ -108,11 +108,12 @@ static JitsiMeetView *instance;
 - (void)loadURL:(NSURL *)url {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
+    // url
     if (url) {
         [props setObject:url.absoluteString forKey:@"url"];
     }
-
-    [props setObject:@(self.disableWelcomePage) forKey:@"disableWelcomePage"];
+    // welcomePageEnabled
+    [props setObject:@(self.welcomePageEnabled) forKey:@"welcomePageEnabled"];
 
     if (rootView == nil) {
         rootView

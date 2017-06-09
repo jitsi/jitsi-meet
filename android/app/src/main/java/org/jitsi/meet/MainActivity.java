@@ -16,6 +16,8 @@
 
 package org.jitsi.meet;
 
+import android.os.Bundle;
+
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 
 /**
@@ -25,10 +27,23 @@ import org.jitsi.meet.sdk.JitsiMeetActivity;
  * of it. Further attempts at launching the application once it was already
  * launched will result in {@link Activity#onNewIntent(Intent)} being called.
  *
- * This {@code Activity} extends {@link JitsiMeetActivity} without adding
- * anything to it. It exists to merely keep the React Native CLI working, since
- * the latter always tries to launch an {@code Activity} named
- * {@code MainActivity} when doing {@code react-native run-android}.
+ * This {@code Activity} extends {@link JitsiMeetActivity} to keep the React
+ * Native CLI working, since the latter always tries to launch an
+ * {@code Activity} named {@code MainActivity} when doing
+ * {@code react-native run-android}.
  */
 public class MainActivity extends JitsiMeetActivity {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do
+        // want the Welcome page to be enabled. It defaults to disabled in the
+        // SDK at the time of this writing but it is clearer to be explicit
+        // about what we want anyway.
+        setWelcomePageEnabled(true);
+
+        super.onCreate(savedInstanceState);
+    }
 }

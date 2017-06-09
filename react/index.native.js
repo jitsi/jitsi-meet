@@ -13,25 +13,26 @@ import { App } from './features/app';
  */
 class Root extends Component {
     /**
-     * Root component's property types.
+     * {@code Root} component's property types.
      *
      * @static
      */
     static propTypes = {
         /**
-         * Indicates if the welcome page should be shown when not in a
-         * conference.
-         */
-        disableWelcomePage: React.PropTypes.bool,
-
-        /**
          * The URL, if any, with which the app was launched.
          */
-        url: React.PropTypes.string
+        url: React.PropTypes.string,
+
+        /**
+         * Whether the Welcome page is enabled. If {@code true}, the Welcome
+         * page is rendered when the {@link App} is not at a location (URL)
+         * identifying a Jitsi Meet conference/room.
+         */
+        welcomePageEnabled: React.PropTypes.bool
     };
 
     /**
-     * Initializes a new Root instance.
+     * Initializes a new {@code Root} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -42,7 +43,9 @@ class Root extends Component {
         /**
          * The initial state of this Component.
          *
-         * @type {{url: string}}
+         * @type {{
+         *     url: string
+         * }}
          */
         this.state = {
             /**
@@ -74,19 +77,29 @@ class Root extends Component {
      * @returns {ReactElement}
      */
     render() {
-        // XXX We don't render the App component until we get the initial URL,
-        // either it's null or some other non-null defined value;
-        if (typeof this.state.url === 'undefined') {
+        const { url } = this.state;
+
+        // XXX We don't render the App component until we get the initial URL.
+        // Either it's null or some other non-null defined value.
+        if (typeof url === 'undefined') {
             return null;
         }
 
+        const {
+            // The following props are forked in state:
+            url: _, // eslint-disable-line no-unused-vars
+
+            // The remaining props are passed through to App.
+            ...props
+        } = this.props;
+
         return (
             <App
-                disableWelcomePage = { this.props.disableWelcomePage }
-                url = { this.state.url } />
+                { ...props }
+                url = { url } />
         );
     }
 }
 
-// Register the main Component.
+// Register the main/root Component.
 AppRegistry.registerComponent('App', () => Root);

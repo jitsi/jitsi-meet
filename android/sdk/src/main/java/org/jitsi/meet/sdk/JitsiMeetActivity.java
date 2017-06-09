@@ -51,10 +51,17 @@ public class JitsiMeetActivity extends AppCompatActivity {
     private JitsiMeetView view;
 
     /**
-     * See {@JitsiMeetView.getWelcomePageDisabled}.
+     * Whether the Welcome page is enabled. The value is used only while
+     * {@link #view} equals {@code null}.
      */
-    public boolean getWelcomePageDisabled() {
-        return view != null && view.getWelcomePageDisabled();
+    private boolean welcomePageEnabled;
+
+    /**
+     *
+     * @see JitsiMeetView#getWelcomePageEnabled
+     */
+    public boolean getWelcomePageEnabled() {
+        return view == null ? welcomePageEnabled : view.getWelcomePageEnabled();
     }
 
     /**
@@ -65,15 +72,6 @@ public class JitsiMeetActivity extends AppCompatActivity {
      */
     public void loadURL(@Nullable URL url) {
         view.loadURL(url);
-    }
-
-    /**
-     * See {@JitsiMeetView.setWelcomePageDisabled}.
-     */
-    public void setWelcomePageDisabled(boolean disabled) {
-        if (view != null) {
-            view.setWelcomePageDisabled(disabled);
-        }
     }
 
     /**
@@ -115,6 +113,11 @@ public class JitsiMeetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         view = new JitsiMeetView(this);
+
+        // In order to have the desired effect
+        // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
+        // JitsiMeetView#loadURL(URL).
+        view.setWelcomePageEnabled(welcomePageEnabled);
         view.loadURL(null);
 
         // In debug mode React needs permission to write over other apps in
@@ -170,5 +173,17 @@ public class JitsiMeetActivity extends AppCompatActivity {
         super.onResume();
 
         JitsiMeetView.onHostResume(this);
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#setWelcomePageEnabled
+     */
+    public void setWelcomePageEnabled(boolean welcomePageEnabled) {
+        if (view == null) {
+            this.welcomePageEnabled = welcomePageEnabled;
+        } else {
+            view.setWelcomePageEnabled(welcomePageEnabled);
+        }
     }
 }
