@@ -32,6 +32,8 @@
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation;
 
++ (instancetype) getInstance;
+
 - (void)loadURL:(nullable NSURL *)url;
 
 @end
