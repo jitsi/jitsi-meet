@@ -2,7 +2,6 @@ import 'es6-symbol/implement';
 import React, { Component } from 'react';
 import { AppRegistry, Linking } from 'react-native';
 
-import config from './config';
 import { App } from './features/app';
 
 /**
@@ -65,7 +64,6 @@ class Root extends Component {
 
         return (
             <App
-                config = { config }
                 url = { this.state.url } />
         );
     }

@@ -21,6 +21,11 @@ import {
 declare var APP: Object;
 
 /**
+ * Default URL to be loaded if no other was specified using props.
+ */
+const DEFAULT_URL = 'https://meet.jit.si';
+
+/**
  * Base (abstract) class for main App component.
  *
  * @abstract
@@ -32,7 +37,14 @@ export class AbstractApp extends Component {
      * @static
      */
     static propTypes = {
-        config: React.PropTypes.object,
+        /**
+         * Default URL to be loaded by the app when not in any room.
+         */
+        defaultUrl: React.PropTypes.string,
+
+        /**
+         * (Optional) Redux store for this app.
+         */
         store: React.PropTypes.object,
 
         /**
@@ -193,10 +205,9 @@ export class AbstractApp extends Component {
     _createElement(component, props) {
         /* eslint-disable no-unused-vars, lines-around-comment */
         const {
-            // Don't propagate the config prop(erty) because the config is
-            // stored inside the Redux state and, thus, is visible to the
-            // children anyway.
-            config,
+            // The defaultUrl property was introduced to be consumed entirely by
+            // AbstractApp.
+            defaultUrl,
             // Don't propagate the dispatch and store props because they usually
             // come from react-redux and programmers don't really expect them to
             // be inherited but rather explicitly connected.
@@ -265,24 +276,7 @@ export class AbstractApp extends Component {
             }
         }
 
-        // By default, open the domain configured in the configuration file
-        // which may be the domain at which the whole server infrastructure is
-        // deployed.
-        const { config } = this.props;
-
-        if (typeof config === 'object') {
-            const { hosts } = config;
-
-            if (typeof hosts === 'object') {
-                const { domain } = hosts;
-
-                if (domain) {
-                    return `https://${domain}`;
-                }
-            }
-        }
-
-        return 'https://meet.jit.si';
+        return this.props.defaultUrl || DEFAULT_URL;
     }
 
     /**

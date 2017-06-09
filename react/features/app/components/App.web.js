@@ -14,7 +14,7 @@ export class App extends AbstractApp {
      *
      * @static
      */
-    static propTypes = AbstractApp.propTypes
+    static propTypes = AbstractApp.propTypes;
 
     /**
      * Initializes a new App instance.
