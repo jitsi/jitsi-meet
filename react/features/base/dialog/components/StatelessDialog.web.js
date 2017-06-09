@@ -263,7 +263,7 @@ class StatelessDialog extends Component {
      * Handles 'Enter' key in the dialog to submit/hide dialog depending on
      * the available buttons and their disabled state.
      *
-     * @param {Object} event - the key event.
+     * @param {Object} event - The key event.
      * @private
      * @returns {void}
      */
