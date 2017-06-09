@@ -16,51 +16,45 @@
 
 package org.jitsi.meet.sdk;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This class provides a reference implementation for {@JitsiMeetView.Listener} so applications
- * don't need to add stubs for all methods in the interface if they are only interested in some.
+ * Implements {@link JitsiMeetViewListener} so apps don't have to add stubs for
+ * all methods in the interface if they are only interested in some.
  */
-public abstract class JitsiMeetViewAbstractListener implements JitsiMeetView.Listener {
-
+public abstract class JitsiMeetViewAdapter implements JitsiMeetViewListener {
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onConferenceFailed(HashMap<String, Object> data) {
-
+    public void onConferenceFailed(Map<String, Object> data) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onConferenceJoined(HashMap<String, Object> data) {
-
+    public void onConferenceJoined(Map<String, Object> data) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onConferenceLeft(HashMap<String, Object> data) {
-
+    public void onConferenceLeft(Map<String, Object> data) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onConferenceWillJoin(HashMap<String, Object> data) {
-
+    public void onConferenceWillJoin(Map<String, Object> data) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onConferenceWillLeave(HashMap<String, Object> data) {
-
+    public void onConferenceWillLeave(Map<String, Object> data) {
     }
 }

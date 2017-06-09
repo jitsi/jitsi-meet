@@ -30,7 +30,6 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.common.LifecycleState;
 
 import java.net.URL;
-import java.util.HashMap;
 
 public class JitsiMeetView extends FrameLayout {
     /**
@@ -43,7 +42,7 @@ public class JitsiMeetView extends FrameLayout {
      * Reference to the single instance of this class we currently allow. It's
      * currently used for fetching the instance from the listener's callbacks.
      *
-     * TODO: lift this limitation.
+     * TODO: Lift this limitation.
      */
     private static JitsiMeetView instance;
 
@@ -54,10 +53,10 @@ public class JitsiMeetView extends FrameLayout {
     private static ReactInstanceManager reactInstanceManager;
 
     /**
-     * {@JitsiMeetView.Listener} instance for reporting events occurring in
+     * {@link JitsiMeetViewListener} instance for reporting events occurring in
      * Jitsi Meet.
      */
-    private JitsiMeetView.Listener listener;
+    private JitsiMeetViewListener listener;
 
     /**
      * React Native root view.
@@ -90,18 +89,19 @@ public class JitsiMeetView extends FrameLayout {
     /**
      * Returns the only instance of this class we currently allow creating.
      *
-     * @returns The {@JitsiMeetView} instance.
+     * @returns The {@code JitsiMeetView} instance.
      */
     public static JitsiMeetView getInstance() {
         return instance;
     }
 
     /**
-     * Getter for the {@JitsiMeetView.Listener} set on this view.
+     * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
      *
-     * @returns The {@JitsiMeetView.Listener} instance.
+     * @returns The {@code JitsiMeetViewListener} set on this
+     * {@code JitsiMeetView}.
      */
-    public Listener getListener() {
+    public JitsiMeetViewListener getListener() {
         return listener;
     }
 
@@ -160,11 +160,13 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Setter for the {@JitsiMeetView.Listener} set on this view.
+     * Sets a specific {@link JitsiMeetViewListener} on this
+     * {@code JitsiMeetView}.
      *
-     * @param listener - Listener for this view.
+     * @param listener - The {@code JitsiMeetViewListener} to set on this
+     * {@code JitsiMeetView}.
      */
-    public void setListener(Listener listener) {
+    public void setListener(JitsiMeetViewListener listener) {
         this.listener = listener;
     }
 
@@ -236,47 +238,5 @@ public class JitsiMeetView extends FrameLayout {
         if (reactInstanceManager != null) {
             reactInstanceManager.onNewIntent(intent);
         }
-    }
-
-    /**
-     * Interface for listening to events coming from Jitsi Meet.
-     */
-    public interface Listener {
-        /**
-         * Called when joining a conference fails or an ongoing conference is
-         * interrupted due to a failure.
-         *
-         * @param data - HashMap with an "error" key describing the problem, and
-         * a "url" key with the conference URL.
-         */
-        void onConferenceFailed(HashMap<String, Object> data);
-
-        /**
-         * Called when a conference was joined.
-         *
-         * @param data - HashMap with a "url" key with the conference URL.
-         */
-        void onConferenceJoined(HashMap<String, Object> data);
-
-        /**
-         * Called when the conference was left, typically after hanging up.
-         *
-         * @param data - HashMap with a "url" key with the conference URL.
-         */
-        void onConferenceLeft(HashMap<String, Object> data);
-
-        /**
-         * Called before the conference is joined.
-         *
-         * @param data - HashMap with a "url" key with the conference URL.
-         */
-        void onConferenceWillJoin(HashMap<String, Object> data);
-
-        /**
-         * Called before the conference is left.
-         *
-         * @param data - HashMap with a "url" key with the conference URL.
-         */
-        void onConferenceWillLeave(HashMap<String, Object> data);
     }
 }

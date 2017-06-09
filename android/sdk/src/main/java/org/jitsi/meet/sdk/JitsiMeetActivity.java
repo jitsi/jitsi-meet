@@ -46,7 +46,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
     public static final int OVERLAY_PERMISSION_REQ_CODE = 4242;
 
     /**
-     * Instance of the {@JitsiMeetView} which this activity will display.
+     * Instance of the {@link JitsiMeetView} which this activity will display.
      */
     private JitsiMeetView view;
 

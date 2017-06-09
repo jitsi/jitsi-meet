@@ -97,7 +97,7 @@ display a Jitsi Meet conference (or a welcome page).
 
 #### getListener()
 
-Returns the `JitsiMeetView.Listener` instance attached to the view.
+Returns the `JitsiMeetViewListener` instance attached to the view.
 
 #### loadURL(url)
 
@@ -106,7 +106,7 @@ is displayed instead.
 
 #### setListener(listener)
 
-Sets the given listener (class implementing the `JitsiMeetView.Listener`
+Sets the given listener (class implementing the `JitsiMeetViewListener`
 interface) on the view.
 
 #### onBackPressed()
@@ -144,10 +144,16 @@ activity's `onNewIntent` method.
 
 This is a static method.
 
-#### Listener
+#### JitsiMeetViewListener
 
-JitsiMeetView.Listener provides an interface apps can implement in order to get
-notified about the state of the Jitsi Meet conference.
+`JitsiMeetViewListener` provides an interface apps can implement to listen to
+the state of the Jitsi Meet conference displayed in a `JitsiMeetView`.
+
+### JitsiMeetViewAdapter
+
+A default implementation of the `JitsiMeetViewListener` interface. Apps may
+extend the class instead of implementing the interface in order to minimize
+boilerplate.
 
 ##### onConferenceFailed
 
@@ -180,10 +186,3 @@ The `data` HashMap contains a "url" key with the conference URL.
 Called before a conference is left.
 
 The `data` HashMap contains a "url" key with the conference URL.
-
-### JitsiMeetViewAbstractListener
-
-Utility (abstract) class with stub methods for the `JitsiMeetView.Listener`
-interface. Applications can innherit from this class instead of implementing
-the interface in order to avoid adding stubs for methods they don't care about.
-

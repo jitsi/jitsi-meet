@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
 import org.jitsi.meet.sdk.JitsiMeetView;
+import org.jitsi.meet.sdk.JitsiMeetViewListener;
 
 import java.util.HashMap;
 
@@ -67,7 +68,7 @@ public class ExternalAPIModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void sendEvent(final String name, ReadableMap data) {
         JitsiMeetView view = JitsiMeetView.getInstance();
-        JitsiMeetView.Listener listener
+        JitsiMeetViewListener listener
             = view != null ? view.getListener() : null;
 
         if (listener == null) {
@@ -84,18 +85,22 @@ public class ExternalAPIModule extends ReactContextBaseJavaModule {
             dataMap.put("url", data.getString("url"));
             listener.onConferenceFailed(dataMap);
             break;
+
         case "CONFERENCE_JOINED":
             dataMap.put("url", data.getString("url"));
             listener.onConferenceJoined(dataMap);
             break;
+
         case "CONFERENCE_LEFT":
             dataMap.put("url", data.getString("url"));
             listener.onConferenceLeft(dataMap);
             break;
+
         case "CONFERENCE_WILL_JOIN":
             dataMap.put("url", data.getString("url"));
             listener.onConferenceWillJoin(dataMap);
             break;
+
         case "CONFERENCE_WILL_LEAVE":
             dataMap.put("url", data.getString("url"));
             listener.onConferenceWillLeave(dataMap);
