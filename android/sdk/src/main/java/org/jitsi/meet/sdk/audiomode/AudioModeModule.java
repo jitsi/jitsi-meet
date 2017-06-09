@@ -300,7 +300,6 @@ public class AudioModeModule extends ReactContextBaseJavaModule {
             audioManager.setMode(AudioManager.MODE_NORMAL);
             audioManager.abandonAudioFocus(null);
             audioManager.setSpeakerphoneOn(false);
-            audioManager.setMicrophoneMute(true);
             setBluetoothAudioRoute(false);
 
             return true;
