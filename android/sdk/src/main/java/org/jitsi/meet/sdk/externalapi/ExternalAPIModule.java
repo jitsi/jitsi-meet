@@ -78,32 +78,28 @@ public class ExternalAPIModule extends ReactContextBaseJavaModule {
         // until React Native 0.46.
         final HashMap<String, Object> dataMap = new HashMap<>();
 
-        try {
-            switch (name) {
-            case "CONFERENCE_FAILED":
-                dataMap.put("error", data.getString("error"));
-                dataMap.put("url", data.getString("url"));
-                listener.onConferenceFailed(dataMap);
-                break;
-            case "CONFERENCE_JOINED":
-                dataMap.put("url", data.getString("url"));
-                listener.onConferenceJoined(dataMap);
-                break;
-            case "CONFERENCE_LEFT":
-                dataMap.put("url", data.getString("url"));
-                listener.onConferenceLeft(dataMap);
-                break;
-            case "CONFERENCE_WILL_JOIN":
-                dataMap.put("url", data.getString("url"));
-                listener.onConferenceWillJoin(dataMap);
-                break;
-            case "CONFERENCE_WILL_LEAVE":
-                dataMap.put("url", data.getString("url"));
-                listener.onConferenceWillLeave(dataMap);
-                break;
-            }
-        } catch (UnsupportedOperationException e) {
-            // Allow partial interface implementations.
+        switch (name) {
+        case "CONFERENCE_FAILED":
+            dataMap.put("error", data.getString("error"));
+            dataMap.put("url", data.getString("url"));
+            listener.onConferenceFailed(dataMap);
+            break;
+        case "CONFERENCE_JOINED":
+            dataMap.put("url", data.getString("url"));
+            listener.onConferenceJoined(dataMap);
+            break;
+        case "CONFERENCE_LEFT":
+            dataMap.put("url", data.getString("url"));
+            listener.onConferenceLeft(dataMap);
+            break;
+        case "CONFERENCE_WILL_JOIN":
+            dataMap.put("url", data.getString("url"));
+            listener.onConferenceWillJoin(dataMap);
+            break;
+        case "CONFERENCE_WILL_LEAVE":
+            dataMap.put("url", data.getString("url"));
+            listener.onConferenceWillLeave(dataMap);
+            break;
         }
     }
 }
