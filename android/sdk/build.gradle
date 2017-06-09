@@ -51,6 +51,7 @@ gradle.projectsEvaluated {
         //
 
         def currentFontTask = tasks.create(name: "${buildType.name}CopyFonts", type: Copy) {
+            from("${projectDir}/../../fonts/jitsi.ttf")
             from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
             into("${bundlePath}/assets/fonts")
         }
