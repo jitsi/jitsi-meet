@@ -24,6 +24,15 @@ work properly with the native plugins we require.
 
     You may need to add ```--unsafe-perm=true``` if you are running on [Mac OS 10.11 or greater](https://github.com/phonegap/ios-deploy#os-x-1011-el-capitan-or-greater).
 
+  - Install the required pods (CocoaPods must be installled first, it can
+    be done with Homebrew: `brew install cocoapods`)
+
+    ```bash
+    cd ios
+    pod install
+    cd ..
+    ```
+
 2. Build the app
 
     There are 2 ways to build the app: using the CLI or using Xcode.
