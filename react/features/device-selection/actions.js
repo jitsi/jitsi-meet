@@ -79,8 +79,9 @@ function _openDeviceSelectionDialogInPopup() {
 
         // API_ID will always be defined because the iframe api is enabled
         const scope = `dialog_${API_ID}`;
-        const url = `static/deviceSelectionPopup.html#scope=${
-            encodeURIComponent(JSON.stringify(scope))}`;
+        const url = `${
+            window.location.origin}/static/deviceSelectionPopup.html#scope=${
+                encodeURIComponent(JSON.stringify(scope))}`;
         const popup
             = window.open(
                 url,
