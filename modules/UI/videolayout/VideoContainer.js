@@ -78,44 +78,44 @@ function computeDesktopVideoSize(videoWidth,
 function computeCameraVideoSize(videoWidth,
                             videoHeight,
                             videoSpaceWidth,
-                            videoSpaceHeight) {
-
+                            videoSpaceHeight,
+                            videoLayoutFit) {
     const aspectRatio = videoWidth / videoHeight;
-    let availableWidth = videoWidth;
-    let availableHeight = videoHeight;
+    switch (videoLayoutFit) {
+    case 'height':
+        return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
+    case 'width':
+        return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
+    case 'both': {
+        const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
+        const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
+            || Infinity;
 
-    if (interfaceConfig.VIDEO_LAYOUT_FIT === 'height') {
-        availableHeight = videoSpaceHeight;
-        availableWidth = availableHeight * aspectRatio;
-    } else if (interfaceConfig.VIDEO_LAYOUT_FIT === 'width') {
-        availableWidth = videoSpaceWidth;
-        availableHeight = availableWidth / aspectRatio;
-    } else if (interfaceConfig.VIDEO_LAYOUT_FIT === 'both') {
-        availableWidth = Math.max(videoWidth, videoSpaceWidth);
-        availableHeight = Math.max(videoHeight, videoSpaceHeight);
-
-        if (availableWidth / aspectRatio < videoSpaceHeight) {
-            availableHeight = videoSpaceHeight;
-            availableWidth = availableHeight * aspectRatio;
+        if (videoSpaceRatio === aspectRatio) {
+            return [videoSpaceWidth, videoSpaceHeight];
         }
 
-        if (aspectRatio <= 1) {
-            const zoomRateHeight = videoSpaceHeight / videoHeight;
-            const zoomRateWidth = videoSpaceWidth / videoWidth;
-            const zoomRate = Math.min(
-                zoomRateWidth,
-                zoomRateHeight,
-                interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity);
+        let [ width, height] = computeCameraVideoSize(
+            videoWidth,
+            videoHeight,
+            videoSpaceWidth,
+            videoSpaceHeight,
+            videoSpaceRatio < aspectRatio ? 'height' : 'width');
+        const maxWidth = videoSpaceWidth * maxZoomCoefficient;
+        const maxHeight = videoSpaceHeight * maxZoomCoefficient;
 
-            availableWidth = videoWidth * zoomRate;
-            availableHeight = videoHeight * zoomRate;
-        } else if (availableHeight * aspectRatio < videoSpaceWidth) {
-            availableWidth = videoSpaceWidth;
-            availableHeight = availableWidth / aspectRatio;
+        if (width > maxWidth) {
+            width = maxWidth;
+            height = width / aspectRatio;
+        } else if (height > maxHeight) {
+            height = maxHeight;
+            width = height * aspectRatio;
         }
+        return [width, height];
     }
-
-    return [ availableWidth, availableHeight ];
+    default:
+        return [ videoWidth, videoHeight ];
+    }
 }
 
 /**
@@ -293,7 +293,8 @@ export class VideoContainer extends LargeContainer {
         return computeCameraVideoSize(width,
             height,
             containerWidth,
-            containerHeight);
+            containerHeight,
+            interfaceConfig.VIDEO_LAYOUT_FIT);
     }
 
     /**
@@ -355,8 +356,11 @@ export class VideoContainer extends LargeContainer {
         let [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
 
-        if (containerWidth > width) {
+        if ((containerWidth > width) || (containerHeight > height)) {
             this._showVideoBackground();
+            const css = containerWidth > width
+                ? {width: '100%', height: 'auto'} : {width: 'auto', height: '100%'};
+            this.$videoBackground.css(css);
         }
 
         let { horizontalIndent, verticalIndent }

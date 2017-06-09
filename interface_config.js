@@ -94,5 +94,11 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * @type {boolean}
      */
     MOBILE_APP_PROMO: true,
+    /**
+     * Maximum coeficient of the ratio of the large video to the visible area
+     * after the large video is scaled to fit the window.
+     *
+     * @type {number}
+     */
     MAXIMUM_ZOOMING_COEFFICIENT: 1.3
 };
