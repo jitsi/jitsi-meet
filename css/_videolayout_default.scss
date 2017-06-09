@@ -12,6 +12,20 @@
     overflow: hidden;
 }
 
+.video_blurred {
+    width: 100%;
+
+    &_container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        filter: blur(40px);
+    }
+}
+
 .videocontainer {
     position: relative;
     text-align: center;
@@ -151,6 +165,10 @@
 #largeVideoContainer {
     overflow: hidden;
     text-align: center;
+}
+
+#largeVideoWrapper {
+    box-shadow: 0 0 20px -2px #444;
 }
 
 #largeVideo,
