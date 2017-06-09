@@ -12,18 +12,14 @@
     overflow: hidden;
 }
 
-.video_blurred {
+.video_blurred_container {
+    height: 100%;
+    filter: blur(40px);
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
     width: 100%;
-
-    &_container {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        overflow: hidden;
-        filter: blur(40px);
-    }
 }
 
 .videocontainer {

@@ -40,7 +40,6 @@ export default class LargeVideo extends Component {
                 <div className = 'video_blurred_container'>
                     <video
                         autoPlay = { true }
-                        className = 'video_blurred'
                         id = 'largeVideoBackground'
                         muted = 'true' />
                 </div>
