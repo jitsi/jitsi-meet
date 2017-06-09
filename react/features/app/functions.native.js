@@ -142,8 +142,13 @@ export function _getRouteToRender(stateOrGetState) {
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
+    const { disableWelcomePage } = state['features/app'];
     const { room } = state['features/base/conference'];
     const component = isRoomValid(room) ? Conference : WelcomePage;
+
+    if (component === WelcomePage && disableWelcomePage) {
+        return null;
+    }
 
     return RouteRegistry.getRouteByComponent(component);
 }

@@ -51,6 +51,13 @@ public class JitsiMeetActivity extends AppCompatActivity {
     private JitsiMeetView view;
 
     /**
+     * See {@JitsiMeetView.getWelcomePageDisabled}.
+     */
+    public boolean getWelcomePageDisabled() {
+        return view != null && view.getWelcomePageDisabled();
+    }
+
+    /**
      * Loads the given URL and displays the conference. If the specified URL is
      * null, the welcome page is displayed instead.
      *
@@ -58,6 +65,15 @@ public class JitsiMeetActivity extends AppCompatActivity {
      */
     public void loadURL(@Nullable URL url) {
         view.loadURL(url);
+    }
+
+    /**
+     * See {@JitsiMeetView.setWelcomePageDisabled}.
+     */
+    public void setWelcomePageDisabled(boolean disabled) {
+        if (view != null) {
+            view.setWelcomePageDisabled(disabled);
+        }
     }
 
     /**

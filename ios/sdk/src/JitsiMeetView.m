@@ -106,7 +106,13 @@ static JitsiMeetView *instance;
  * is null, the welcome page is shown.
  */
 - (void)loadURL:(NSURL *)url {
-    NSDictionary *props = url ? @{ url : url.absoluteString } : nil;
+    NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
+
+    if (url) {
+        [props setObject:url.absoluteString forKey:@"url"];
+    }
+
+    [props setObject:@(self.disableWelcomePage) forKey:@"disableWelcomePage"];
 
     if (rootView == nil) {
         rootView

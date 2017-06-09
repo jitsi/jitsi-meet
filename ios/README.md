@@ -32,6 +32,22 @@ To get started:
 The `JitsiMeetView` class is the entry point to the SDK. It a subclass of
 `UIView` which renders a full conference in the designated area.
 
+#### delegate
+
+Property for getting / setting the delegate (instance of `JitsiMeetViewDelegate`
+in the view.
+
+#### disableWelcomePage
+
+Property for setting the welcome page as disabled (or not). It default to NO, so
+a welcome page would be shown. When the welcome page is set to disabled, an
+empty black view is rendered.
+
+NOTE: This property must be set before calling `loadURL` in order for it to take
+effect.
+
+#### loadURL(url)
+
 ```objc
 [meetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
 ```

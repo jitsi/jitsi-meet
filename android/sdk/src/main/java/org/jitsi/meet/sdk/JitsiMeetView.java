@@ -59,6 +59,11 @@ public class JitsiMeetView extends FrameLayout {
     private JitsiMeetViewListener listener;
 
     /**
+     * Indicates if the welcome page should be disabled or not.
+     */
+    private boolean welcomePageDisabled;
+
+    /**
      * React Native root view.
      */
     private ReactRootView reactRootView;
@@ -106,6 +111,13 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * @return - true if the welcome page is disabled, false if not.
+     */
+    public boolean getWelcomePageDisabled() {
+        return welcomePageDisabled;
+    }
+
+    /**
      * Internal method to initialize the React Native instance manager. We
      * create a single instance in order to load the JavaScript bundle a single
      * time. All <tt>ReactRootView</tt> instances will be tied to the one and
@@ -145,6 +157,8 @@ public class JitsiMeetView extends FrameLayout {
             props.putString("url", url.toString());
         }
 
+        props.putBoolean("disableWelcomePage", welcomePageDisabled);
+
         // TODO: ReactRootView#setAppProperties is only available on React
         // Native 0.45, so destroy the current root view and create a new one.
         if (reactRootView != null) {
@@ -168,6 +182,16 @@ public class JitsiMeetView extends FrameLayout {
      */
     public void setListener(JitsiMeetViewListener listener) {
         this.listener = listener;
+    }
+
+    /**
+     * Sets if the welcome page should be enabled or not. Must be called before calling loadURL or
+     * it won't take effect.
+     *
+     * @param disabled - set to true for disabling the welcome page, false not to do so.
+     */
+    public void setWelcomePageDisabled(boolean disabled) {
+        welcomePageDisabled = disabled;
     }
 
     /**

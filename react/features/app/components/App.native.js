@@ -1,5 +1,6 @@
 /* global __DEV__ */
 
+import React from 'react';
 import { Linking } from 'react-native';
 
 import { Platform } from '../../base/react';
@@ -11,6 +12,7 @@ import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
+import { appSetWelcomePageDisabled } from '../actions';
 
 /**
  * Root application component.
@@ -23,7 +25,15 @@ export class App extends AbstractApp {
      *
      * @static
      */
-    static propTypes = AbstractApp.propTypes;
+    static propTypes = {
+        ...AbstractApp.propTypes,
+
+        /**
+         * Indicates if the welcome page should be shown when not in a
+         * conference.
+         */
+        disableWelcomePage: React.PropTypes.bool
+    };
 
     /**
      * Initializes a new App instance.
@@ -56,6 +66,13 @@ export class App extends AbstractApp {
         super.componentWillMount();
 
         Linking.addEventListener('url', this._onLinkingURL);
+
+        // Store the desire to use the welcome page or not in the Redux store.
+        const dispatch = this._getStore().dispatch;
+
+        dispatch(
+            appSetWelcomePageDisabled(
+                this, Boolean(this.props.disableWelcomePage)));
     }
 
     /**

@@ -13,6 +13,24 @@ import { App } from './features/app';
  */
 class Root extends Component {
     /**
+     * Root component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        /**
+         * Indicates if the welcome page should be shown when not in a
+         * conference.
+         */
+        disableWelcomePage: React.PropTypes.bool,
+
+        /**
+         * The URL, if any, with which the app was launched.
+         */
+        url: React.PropTypes.string
+    };
+
+    /**
      * Initializes a new Root instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -32,7 +50,7 @@ class Root extends Component {
              *
              * @type {string}
              */
-            url: undefined
+            url: this.props.url
         };
 
         // Handle the URL, if any, with which the app was launched.
@@ -64,6 +82,7 @@ class Root extends Component {
 
         return (
             <App
+                disableWelcomePage = { this.props.disableWelcomePage }
                 url = { this.state.url } />
         );
     }

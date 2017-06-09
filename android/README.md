@@ -85,10 +85,17 @@ public class MainActivity extends AppCompatActivity {
 This class encapsulates a high level API in the form of an Android `Activity`
 which displays a single `JitsiMeetView`.
 
+#### getWelcomePageDisabled()
+
+See JitsiMeetView.getWelcomePageDisabled.
+
 #### loadURL(url)
 
 See JitsiMeetView.loadURL.
 
+#### setWelcomePageDisabled(disabled)
+
+See JitsiMeetView.setWelcomePageDisabled.
 
 ### JitsiMeetView
 
@@ -99,6 +106,11 @@ display a Jitsi Meet conference (or a welcome page).
 
 Returns the `JitsiMeetViewListener` instance attached to the view.
 
+#### getWelcomePageDisabled()
+
+Returns true if the welcome page is disable,d false if not. If the welcome page
+is disabled, a black empty view will be rendered when not in a conference.
+
 #### loadURL(url)
 
 Loads the given URL and joins the room. If `null` is specified, the welcome page
@@ -108,6 +120,13 @@ is displayed instead.
 
 Sets the given listener (class implementing the `JitsiMeetViewListener`
 interface) on the view.
+
+#### setWelcomePageDisabled(disabled)
+
+Sets if the welcome page should be disabled or not. See `getWelcomePageDisabled`
+for more info.
+
+NOTE: This function must be called before `loadURL` for it to take effect.
 
 #### onBackPressed()
 

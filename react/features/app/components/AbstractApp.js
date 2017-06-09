@@ -370,7 +370,7 @@ export class AbstractApp extends Component {
      */
     _onRouteEnter(route, ...args) {
         // Notify the route that it is about to be entered.
-        const onEnter = route.onEnter;
+        const onEnter = route && route.onEnter;
 
         if (typeof onEnter === 'function') {
             onEnter(...args);
