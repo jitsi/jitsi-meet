@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableHighlight } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Icon } from '../../base/font-icons';
 
@@ -10,13 +11,20 @@ import AbstractToolbarButton from './AbstractToolbarButton';
  *
  * @extends AbstractToolbarButton
  */
-export default class ToolbarButton extends AbstractToolbarButton {
+class ToolbarButton extends AbstractToolbarButton {
     /**
      * ToolbarButton component's property types.
      *
      * @static
      */
-    static propTypes = AbstractToolbarButton.propTypes
+    static propTypes = {
+        ...AbstractToolbarButton.propTypes,
+
+        /**
+         * Used to dispatch an action when the button is clicked.
+         */
+        dispatch: React.PropTypes.func
+    };
 
     /**
      * Renders the button of this Toolbar button.
@@ -29,7 +37,13 @@ export default class ToolbarButton extends AbstractToolbarButton {
     _renderButton(children) {
         const props = {};
 
-        'onClick' in this.props && (props.onPress = this.props.onClick);
+        'onClick' in this.props && (props.onPress = event => {
+            const action = this.props.onClick(event);
+
+            if (action) {
+                this.props.dispatch(action);
+            }
+        });
         'style' in this.props && (props.style = this.props.style);
         'underlayColor' in this.props
             && (props.underlayColor = this.props.underlayColor);
@@ -45,3 +59,5 @@ export default class ToolbarButton extends AbstractToolbarButton {
         return super._renderIcon(Icon);
     }
 }
+
+export default connect()(ToolbarButton);

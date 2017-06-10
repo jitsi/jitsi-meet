@@ -1,21 +1,23 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
 import { styles } from './styles';
 
 /**
- * The React Native component which is similar to Web's video element and wraps
- * around react-native-webrtc's RTCView.
+ * The React Native {@link Component} which is similar to Web's
+ * {@code HTMLVideoElement} and wraps around react-native-webrtc's
+ * {@link RTCView}.
  */
-export class Video extends Component {
+export default class Video extends Component {
     /**
-     * Video component's property types.
+     * {@code Video} component's property types.
      *
      * @static
      */
     static propTypes = {
         mirror: React.PropTypes.bool,
-        muted: React.PropTypes.bool,
         onPlaying: React.PropTypes.func,
         stream: React.PropTypes.object,
 

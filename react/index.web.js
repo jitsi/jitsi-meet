@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 
 import { getJitsiMeetTransport } from '../modules/transport';
 
-import config from './config';
 import { App } from './features/app';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -19,10 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     APP.connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
 
-    // Render the main Component.
-    ReactDOM.render(
-        <App config = { config } />,
-        document.getElementById('react'));
+    // Render the main/root Component.
+    ReactDOM.render(<App />, document.getElementById('react'));
 });
 
 /**

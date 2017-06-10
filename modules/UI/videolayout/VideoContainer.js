@@ -206,7 +206,7 @@ export class VideoContainer extends LargeContainer {
 
         this.avatarHeight = $("#dominantSpeakerAvatar").height();
 
-        var onPlayCallback = function (event) {
+        var onPlayingCallback = function (event) {
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
             }
@@ -215,7 +215,7 @@ export class VideoContainer extends LargeContainer {
         // This does not work with Temasys plugin - has to be a property to be
         // copied between new <object> elements
         //this.$video.on('play', onPlay);
-        this.$video[0].onplay = onPlayCallback;
+        this.$video[0].onplaying = onPlayingCallback;
 
         /**
          * A Set of functions to invoke when the video element resizes.

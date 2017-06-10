@@ -1,29 +1,34 @@
+import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
+import ExpandIcon from '@atlaskit/icon/glyph/expand';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ExpandIcon from '@atlaskit/icon/glyph/expand';
-import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 
 import { translate } from '../../base/i18n';
-import CountryIcon from './CountryIcon';
-import { updateDialOutCodes } from '../actions';
 
-/**
- * The expand icon of the dropdown menu.
- *
- * @type {XML}
- */
-const EXPAND_ICON = <ExpandIcon label = 'expand' />;
+import { updateDialOutCodes } from '../actions';
+import CountryIcon from './CountryIcon';
 
 /**
  * The default value of the country if the fetch service is unavailable.
  *
- * @type {{name: string, dialCode: string, code: string}}
+ * @type {{
+ *     code: string,
+ *     dialCode: string,
+ *     name: string
+ * }}
  */
 const DEFAULT_COUNTRY = {
-    name: 'United States',
+    code: 'US',
     dialCode: '+1',
-    code: 'US'
+    name: 'United States'
 };
+
+/**
+ * The expand icon of the dropdown menu.
+ *
+ * @type {ReactElement}
+ */
+const EXPAND_ICON = <ExpandIcon label = 'expand' />;
 
 /**
  * React {@code Component} responsible for fetching and displaying dial-out
@@ -108,7 +113,7 @@ class DialOutNumbersForm extends Component {
      * display in the dropdown trigger.
      *
      * @inheritdoc
-     * returns {void}
+     * @returns {void}
      */
     componentDidMount() {
         const dialOutCodes = this.props._dialOutCodes;
@@ -125,7 +130,7 @@ class DialOutNumbersForm extends Component {
      * the dropdown trigger if not already set.
      *
      * @inheritdoc
-     * returns {void}
+     * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
         if (!this.state.selectedCountry && nextProps._dialOutCodes) {
@@ -141,7 +146,6 @@ class DialOutNumbersForm extends Component {
      */
     render() {
         const { t, _dialOutCodes } = this.props;
-
         const items
             = _dialOutCodes ? this._formatCountryCodes(_dialOutCodes) : [];
 
@@ -219,18 +223,16 @@ class DialOutNumbersForm extends Component {
      * @returns {Array<Object>}
      */
     _formatCountryCodes(countryCodes) {
-
         return countryCodes.map(country => {
             const countryIcon
                 = <CountryIcon countryCode = { `${country.code}` } />;
-
             const countryElement
                 = <span>{countryIcon} { country.name }</span>;
 
             return {
                 content: `${country.dialCode}`,
-                elemBefore: countryElement,
-                country
+                country,
+                elemBefore: countryElement
             };
         });
     }
@@ -342,5 +344,5 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps,
-    { updateDialOutCodes })(DialOutNumbersForm));
+export default translate(
+    connect(_mapStateToProps, { updateDialOutCodes })(DialOutNumbersForm));

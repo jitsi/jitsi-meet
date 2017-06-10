@@ -445,8 +445,7 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function () {
  */
 SmallVideo.prototype.isVideoPlayable = function() {
     return this.videoStream // Is there anything to display ?
-        && !this.isVideoMuted && !this.videoStream.isMuted() // Muted ?
-        && (this.isLocal || APP.conference.isInLastN(this.id));
+        && !this.isVideoMuted && !this.videoStream.isMuted(); // Muted ?
 };
 
 /**
@@ -566,7 +565,7 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
 
     let indicatorSpanId = "dominantspeakerindicator";
     let content = `<i id="indicatoricon"
-        '             class="indicatoricon fa fa-bullhorn"></i>`;
+                      class="indicatoricon fa fa-bullhorn"></i>`;
     let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
         videoSpanId: this.videoSpanId,
         indicatorId: indicatorSpanId,

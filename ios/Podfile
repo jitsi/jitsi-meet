@@ -1,0 +1,32 @@
+platform :ios, '9.0'
+
+workspace 'jitsi-meet'
+
+target 'JitsiMeet' do
+  project 'sdk/sdk.xcodeproj'
+
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTNetwork',
+    'RCTText',
+    'RCTWebSocket',
+  ]
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
+  pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
+  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+    end
+  end
+end

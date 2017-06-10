@@ -1,6 +1,6 @@
-import { equals, ReducerRegistry } from '../base/redux';
+import { equals, set, ReducerRegistry } from '../base/redux';
 
-import { SET_JWT } from './actionTypes';
+import { SET_CALL_OVERLAY_VISIBLE, SET_JWT } from './actionTypes';
 
 /**
  * The initial redux state of the feature jwt.
@@ -11,6 +11,14 @@ import { SET_JWT } from './actionTypes';
  * }}
  */
 const _INITIAL_STATE = {
+    /**
+     * The indicator which determines whether (the) {@code CallOverlay} is
+     * visible.
+     *
+     * @type {boolean|undefined}
+     */
+    callOverlayVisible: undefined,
+
     /**
      * The indicator which determines whether the local participant is a guest
      * in the conference.
@@ -31,6 +39,9 @@ const _INITIAL_STATE = {
  */
 ReducerRegistry.register('features/jwt', (state = _INITIAL_STATE, action) => {
     switch (action.type) {
+    case SET_CALL_OVERLAY_VISIBLE:
+        return set(state, 'callOverlayVisible', action.callOverlayVisible);
+
     case SET_JWT: {
         // eslint-disable-next-line no-unused-vars
         const { type, ...payload } = action;

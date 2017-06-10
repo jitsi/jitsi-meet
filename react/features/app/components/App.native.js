@@ -1,10 +1,12 @@
 /* global __DEV__ */
 
+import React from 'react';
 import { Linking } from 'react-native';
 
 import { Platform } from '../../base/react';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
+import '../../mobile/external-api';
 import '../../mobile/full-screen';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
@@ -22,7 +24,16 @@ export class App extends AbstractApp {
      *
      * @static
      */
-    static propTypes = AbstractApp.propTypes
+    static propTypes = {
+        ...AbstractApp.propTypes,
+
+        /**
+         * Whether the Welcome page is enabled. If {@code true}, the Welcome
+         * page is rendered when the {@link App} is not at a location (URL)
+         * identifying a Jitsi Meet conference/room.
+         */
+        welcomePageEnabled: React.PropTypes.bool
+    };
 
     /**
      * Initializes a new App instance.

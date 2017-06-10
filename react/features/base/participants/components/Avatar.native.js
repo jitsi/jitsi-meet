@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Image } from 'react-native';
 
 /**
- * Display a participant avatar.
+ * Implements an avatar as a React Native/mobile {@link Component}.
  */
 export default class Avatar extends Component {
     /**
@@ -12,10 +12,16 @@ export default class Avatar extends Component {
      */
     static propTypes = {
         /**
-         * The optional style to add to an Avatar in order to customize its base
-         * look (and feel).
+         * The optional style to add to the {@link Avatar} in order to customize
+         * its base look (and feel).
          */
         style: React.PropTypes.object,
+
+        /**
+         * The URI of the {@link Avatar}.
+         *
+         * @type {string}
+         */
         uri: React.PropTypes.string
     };
 
@@ -87,13 +93,19 @@ export default class Avatar extends Component {
      * @inheritdoc
      */
     render() {
+        // Propagate all props of this Avatar but the ones consumed by this
+        // Avatar to the Image it renders.
+
+        // eslint-disable-next-line no-unused-vars
+        const { uri, ...props } = this.props;
+
         return (
             <Image
+                { ...props }
 
                 // XXX Avatar is expected to display the whole image.
                 resizeMode = 'contain'
-                source = { this.state.source }
-                style = { this.props.style } />
+                source = { this.state.source } />
         );
     }
 }

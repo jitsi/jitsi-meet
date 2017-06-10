@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+/* @flow */
+
+import AbstractAudio from '../AbstractAudio';
 
 /**
- * The React Native component which is similar to Web's audio element and wraps
- * around react-native-webrtc's RTCView.
+ * The React Native/mobile {@link Component} which is similar to Web's
+ * {@code HTMLAudioElement} and wraps around react-native-webrtc's
+ * {@link RTCView}.
  */
-export class Audio extends Component {
+export default class Audio extends AbstractAudio {
     /**
-     * Audio component's property types.
+     * {@code Audio} component's property types.
      *
      * @static
      */
-    static propTypes = {
-        muted: React.PropTypes.bool,
-        stream: React.PropTypes.object
-    };
+    static propTypes = AbstractAudio.propTypes;
 
     /**
      * Implements React's {@link Component#render()}.

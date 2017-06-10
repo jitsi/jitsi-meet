@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig */
+/* global APP, $, interfaceConfig, JitsiMeetJS  */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Filmstrip from "./Filmstrip";
@@ -9,6 +9,9 @@ import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager  from "./LargeVideoManager";
 import {VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 import LocalVideo from "./LocalVideo";
+
+const ParticipantConnectionStatus
+    = JitsiMeetJS.constants.participantConnectionStatus;
 
 var remoteVideos = {};
 var localVideoThumbnail = null;
@@ -263,7 +266,9 @@ var VideoLayout = {
      * otherwise elects new video, in this order.
      */
     updateAfterThumbRemoved (id) {
-        if (!this.isCurrentlyOnLarge(id)) {
+        // Always trigger an update if large video is empty.
+        if (!largeVideo
+            || (this.getLargeVideoID() && !this.isCurrentlyOnLarge(id))) {
             return;
         }
 
@@ -557,8 +562,16 @@ var VideoLayout = {
      * is fine.
      */
     showLocalConnectionInterrupted (isInterrupted) {
-        localVideoThumbnail.connectionIndicator
-            .updateConnectionStatusIndicator(!isInterrupted);
+        // Currently local video thumbnail displays only "active" or
+        // "interrupted" despite the fact that ConnectionIndicator supports more
+        // states.
+        const status
+            = isInterrupted
+                ? ParticipantConnectionStatus.INTERRUPTED
+                : ParticipantConnectionStatus.ACTIVE;
+
+        localVideoThumbnail
+            .connectionIndicator.updateConnectionStatusIndicator(status);
     },
 
     /**

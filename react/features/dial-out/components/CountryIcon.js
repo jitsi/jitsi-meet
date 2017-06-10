@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 /**
- * Implements a React Component to render a country flag icon.
+ * Implements a React {@link Component} to render a country flag icon.
  */
-class CountryIcon extends Component {
+export default class CountryIcon extends Component {
     /**
      * {@code CountryIcon}'s property types.
      *
@@ -29,12 +29,9 @@ class CountryIcon extends Component {
      */
     render() {
         const iconClassName
-            = `flag-icon flag-icon-${this.props.countryCode}
-             flag-icon-squared ${this.props.className}`;
+            = `flag-icon flag-icon-${this.props.countryCode
+                } flag-icon-squared ${this.props.className}`;
 
         return <span className = { iconClassName } />;
-
     }
 }
-
-export default CountryIcon;

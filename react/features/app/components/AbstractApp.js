@@ -21,6 +21,12 @@ import {
 declare var APP: Object;
 
 /**
+ * The default URL to open if no other was specified to {@code AbstractApp}
+ * via props.
+ */
+const DEFAULT_URL = 'https://meet.jit.si';
+
+/**
  * Base (abstract) class for main App component.
  *
  * @abstract
@@ -32,7 +38,15 @@ export class AbstractApp extends Component {
      * @static
      */
     static propTypes = {
-        config: React.PropTypes.object,
+        /**
+         * The default URL {@code AbstractApp} is to open when not in any
+         * conference/room.
+         */
+        defaultURL: React.PropTypes.string,
+
+        /**
+         * (Optional) Redux store for this app.
+         */
         store: React.PropTypes.object,
 
         /**
@@ -191,28 +205,31 @@ export class AbstractApp extends Component {
      * @protected
      */
     _createElement(component, props) {
-        /* eslint-disable no-unused-vars, lines-around-comment */
+        /* eslint-disable no-unused-vars */
+
         const {
-            // Don't propagate the config prop(erty) because the config is
-            // stored inside the Redux state and, thus, is visible to the
-            // children anyway.
-            config,
             // Don't propagate the dispatch and store props because they usually
             // come from react-redux and programmers don't really expect them to
             // be inherited but rather explicitly connected.
             dispatch, // eslint-disable-line react/prop-types
             store,
-            // The url property was introduced to be consumed entirely by
-            // AbstractApp.
+
+            // The following props were introduced to be consumed entirely by
+            // AbstractApp:
+            defaultURL,
             url,
+
             // The remaining props, if any, are considered suitable for
             // propagation to the children of this Component.
             ...thisProps
         } = this.props;
-        /* eslint-enable no-unused-vars, lines-around-comment */
 
-        // eslint-disable-next-line object-property-newline
-        return React.createElement(component, { ...thisProps, ...props });
+        /* eslint-enable no-unused-vars */
+
+        return React.createElement(component, {
+            ...thisProps,
+            ...props
+        });
     }
 
     /**
@@ -265,24 +282,7 @@ export class AbstractApp extends Component {
             }
         }
 
-        // By default, open the domain configured in the configuration file
-        // which may be the domain at which the whole server infrastructure is
-        // deployed.
-        const { config } = this.props;
-
-        if (typeof config === 'object') {
-            const { hosts } = config;
-
-            if (typeof hosts === 'object') {
-                const { domain } = hosts;
-
-                if (domain) {
-                    return `https://${domain}`;
-                }
-            }
-        }
-
-        return 'https://meet.jit.si';
+        return this.props.defaultURL || DEFAULT_URL;
     }
 
     /**
@@ -356,7 +356,7 @@ export class AbstractApp extends Component {
         // role of Router is now this AbstractApp, provide its nextState.
         // (2) A replace function would be provided to the Route in case it
         // chose to redirect to another path.
-        this._onRouteEnter(route, nextState, pathname => {
+        route && this._onRouteEnter(route, nextState, pathname => {
             this._openURL(pathname);
 
             // Do not proceed with the route because it chose to redirect to
@@ -376,11 +376,9 @@ export class AbstractApp extends Component {
      */
     _onRouteEnter(route, ...args) {
         // Notify the route that it is about to be entered.
-        const onEnter = route.onEnter;
+        const { onEnter } = route;
 
-        if (typeof onEnter === 'function') {
-            onEnter(...args);
-        }
+        typeof onEnter === 'function' && onEnter(...args);
     }
 
     /**

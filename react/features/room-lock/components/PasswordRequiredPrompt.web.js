@@ -75,6 +75,7 @@ class PasswordRequiredPrompt extends Component {
         return (
             <div>
                 <AKFieldText
+                    autoFocus = { true }
                     compact = { true }
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'

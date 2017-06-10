@@ -8,11 +8,10 @@ import { cancel, checkDialNumber, dial } from '../actions';
 import DialOutNumbersForm from './DialOutNumbersForm';
 
 /**
- * Implements a React Component which allows the user to dial out from the
- * conference.
+ * Implements a React {@link Component} which allows the user to dial out from
+ * the conference.
  */
 class DialOutDialog extends Component {
-
     /**
      * {@code DialOutDialog} component's property types.
      *
@@ -91,7 +90,8 @@ class DialOutDialog extends Component {
                 titleKey = 'dialOut.dialOut'
                 width = 'small'>
                 { this._renderContent() }
-            </Dialog>);
+            </Dialog>
+        );
     }
 
     /**
@@ -221,6 +221,6 @@ function _mapStateToProps(state) {
 export default translate(
     connect(_mapStateToProps, {
         cancel,
-        dial,
-        checkDialNumber
+        checkDialNumber,
+        dial
     })(DialOutDialog));

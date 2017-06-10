@@ -386,9 +386,8 @@ class ConferenceConnector {
     _onConferenceFailed(err, ...params) {
         APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
-        APP.UI.hideRingOverlay();
-        switch (err) {
 
+        switch (err) {
         case ConferenceErrors.CONNECTION_ERROR:
             {
                 let [msg] = params;
@@ -2027,7 +2026,7 @@ export default {
      */
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
-        APP.UI.hideRingOverlay();
+
         let requestFeedbackPromise = requestFeedback
                 ? APP.UI.requestFeedbackOnHangup()
                 // false - because the thank you dialog shouldn't be displayed
@@ -2052,7 +2051,7 @@ export default {
      * @param email {string} the new email
      */
     changeLocalEmail(email = '') {
-        email = email.trim();
+        email = String(email).trim();
 
         if (email === APP.settings.getEmail()) {
             return;
@@ -2076,7 +2075,7 @@ export default {
      * @param url {string} the new url
      */
     changeLocalAvatarUrl(url = '') {
-        url = url.trim();
+        url = String(url).trim();
 
         if (url === APP.settings.getAvatarUrl()) {
             return;
@@ -2126,18 +2125,6 @@ export default {
         eventEmitter.removeListener(eventName, listener);
     },
 
-    /**
-     * Checks if the participant given by participantId is currently in the
-     * last N set if there's one supported.
-     *
-     * @param participantId the identifier of the participant
-     * @returns {boolean} {true} if the participant given by the participantId
-     * is currently in the last N set or if there's no last N set at this point
-     * and {false} otherwise
-     */
-    isInLastN(participantId) {
-        return room.isInLastN(participantId);
-    },
     /**
      * Changes the display name for the local user
      * @param nickname {string} the new display name
