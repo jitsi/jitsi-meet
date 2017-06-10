@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * Thumbnail badge showing that the participant is the dominant speaker in

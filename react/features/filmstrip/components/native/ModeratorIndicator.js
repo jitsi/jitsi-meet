@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * Thumbnail badge showing that the participant is a conference moderator.

@@ -1,11 +1,11 @@
 import { createStyleSheet } from '../../styles';
 
 /**
- * The style of the avatar and participant view UI (components).
+ * The styles of the feature base/participants.
  */
-export const styles = createStyleSheet({
+export default createStyleSheet({
     /**
-     * ParticipantView style.
+     * {@code ParticipantView} style.
      */
     participantView: {
         alignItems: 'stretch',

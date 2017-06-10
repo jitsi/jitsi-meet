@@ -1,15 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 /**
- * Make video element fill its container.
+ * Make {@code Video} fill its container.
  */
 const video = {
     flex: 1
 };
 
 /**
- * Native-specific styles for media components.
+ * The styles of the feature base/media.
  */
-export const styles = StyleSheet.create({
+export default StyleSheet.create({
     video
 });

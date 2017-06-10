@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { ParticipantView } from '../../base/participants';
 
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * Implements a React {@link Component} which represents the large video (a.k.a.

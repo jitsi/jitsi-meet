@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * The React Native {@link Component} which is similar to Web's

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * Thumbnail badge for displaying the audio mute status of a participant.

@@ -12,7 +12,7 @@ import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
 import Avatar from './Avatar';
 import { getAvatarURL, getParticipantById } from '../functions';
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * Implements a React Component which depicts a specific participant's avatar
