@@ -2,7 +2,6 @@
 
 import { NativeModules } from 'react-native';
 
-import { Platform } from '../../base/react';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -102,13 +101,8 @@ function _sendEvent(store: Object, name: string, data: Object) {
     if (app) {
         const { externalAPIScope } = app.props;
 
-        // TODO Lift the restriction on the JitsiMeetView instance count on
-        // Android as well.
         if (externalAPIScope) {
             NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
-        } else if (Platform.OS === 'android') {
-            NativeModules.ExternalAPI.sendEvent(name, data);
-            console.warn(name);
         }
     }
 }

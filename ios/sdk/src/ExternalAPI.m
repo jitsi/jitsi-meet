@@ -29,8 +29,10 @@ RCT_EXPORT_MODULE();
 /**
  * Dispatches an event that occurred on JavaScript to the view's delegate.
  *
- * - name: name of the event.
- * - data: dictionary (JSON object in JS) with data associated with the event.
+ * @param name The name of the event.
+ * @param data The details/specifics of the event to send determined
+ * by/associated with the specified {@code name}.
+ * @param scope
  */
 RCT_EXPORT_METHOD(sendEvent:(NSString *)name
                        data:(NSDictionary *)data

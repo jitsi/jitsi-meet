@@ -30,6 +30,10 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.common.LifecycleState;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
 
 public class JitsiMeetView extends FrameLayout {
     /**
@@ -39,86 +43,23 @@ public class JitsiMeetView extends FrameLayout {
     private static final int BACKGROUND_COLOR = 0xFF111111;
 
     /**
-     * Reference to the single instance of this class we currently allow. It's
-     * currently used for fetching the instance from the listener's callbacks.
-     *
-     * TODO: Lift this limitation.
-     */
-    private static JitsiMeetView instance;
-
-    /**
      * React Native bridge. The instance manager allows embedding applications
      * to create multiple root views off the same JavaScript bundle.
      */
     private static ReactInstanceManager reactInstanceManager;
 
-    /**
-     * {@link JitsiMeetViewListener} instance for reporting events occurring in
-     * Jitsi Meet.
-     */
-    private JitsiMeetViewListener listener;
+    private static final Set<JitsiMeetView> views
+        = Collections.newSetFromMap(new WeakHashMap<JitsiMeetView, Boolean>());
 
-    /**
-     * React Native root view.
-     */
-    private ReactRootView reactRootView;
-
-    /**
-     * Whether the Welcome page is enabled.
-     */
-    private boolean welcomePageEnabled;
-
-    public JitsiMeetView(@NonNull Context context) {
-        super(context);
-
-        if (instance != null) {
-            throw new RuntimeException(
-                    "Only a single instance is currently allowed");
+    public static JitsiMeetView findViewByExternalAPIScope(
+            String externalAPIScope) {
+        for (JitsiMeetView view : views) {
+            if (view.externalAPIScope.equals(externalAPIScope)) {
+                return view;
+            }
         }
 
-        /*
-         * TODO: Only allow a single instance for now. All React Native modules
-         * are kinda singletons so global state would be broken since we have a
-         * single bridge. Once we have that sorted out multiple instances of
-         * JitsiMeetView will be allowed.
-         */
-        instance = this;
-
-        setBackgroundColor(BACKGROUND_COLOR);
-
-        if (reactInstanceManager == null) {
-            initReactInstanceManager(((Activity) context).getApplication());
-        }
-    }
-
-    /**
-     * Returns the only instance of this class we currently allow creating.
-     *
-     * @return The {@code JitsiMeetView} instance.
-     */
-    public static JitsiMeetView getInstance() {
-        return instance;
-    }
-
-    /**
-     * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
-     *
-     * @return The {@code JitsiMeetViewListener} set on this
-     * {@code JitsiMeetView}.
-     */
-    public JitsiMeetViewListener getListener() {
-        return listener;
-    }
-
-    /**
-     * Gets whether the Welcome page is enabled. If {@code true}, the Welcome
-     * page is rendered when this {@code JitsiMeetView} is not at a URL
-     * identifying a Jitsi Meet conference/room.
-     *
-     * @return {@true} if the Welcome page is enabled; otherwise, {@code false}.
-     */
-    public boolean getWelcomePageEnabled() {
-        return welcomePageEnabled;
+        return null;
     }
 
     /**
@@ -130,74 +71,24 @@ public class JitsiMeetView extends FrameLayout {
      * @param application - <tt>Application</tt> instance which is running.
      */
     private static void initReactInstanceManager(Application application) {
-        reactInstanceManager = ReactInstanceManager.builder()
-            .setApplication(application)
-            .setBundleAssetName("index.android.bundle")
-            .setJSMainModuleName("index.android")
-            .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
-            .addPackage(new com.facebook.react.shell.MainReactPackage())
-            .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
-            .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
-            .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
-            .addPackage(new com.rnimmersive.RNImmersivePackage())
-            .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
-            .addPackage(new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
-            .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
-            .setUseDeveloperSupport(BuildConfig.DEBUG)
-            .setInitialLifecycleState(LifecycleState.RESUMED)
-            .build();
-    }
-
-    /**
-     * Loads the given URL and displays the conference. If the specified URL is
-     * null, the welcome page is displayed instead.
-     *
-     * @param url - The conference URL.
-     */
-    public void loadURL(@Nullable URL url) {
-        Bundle props = new Bundle();
-
-        // url
-        if (url != null) {
-            props.putString("url", url.toString());
-        }
-        // welcomePageEnabled
-        props.putBoolean("welcomePageEnabled", welcomePageEnabled);
-
-        // TODO: ReactRootView#setAppProperties is only available on React
-        // Native 0.45, so destroy the current root view and create a new one.
-        if (reactRootView != null) {
-            removeView(reactRootView);
-            reactRootView = null;
-        }
-
-        reactRootView = new ReactRootView(getContext());
-        reactRootView
-            .startReactApplication(reactInstanceManager, "App", props);
-        reactRootView.setBackgroundColor(BACKGROUND_COLOR);
-        addView(reactRootView);
-    }
-
-    /**
-     * Sets a specific {@link JitsiMeetViewListener} on this
-     * {@code JitsiMeetView}.
-     *
-     * @param listener - The {@code JitsiMeetViewListener} to set on this
-     * {@code JitsiMeetView}.
-     */
-    public void setListener(JitsiMeetViewListener listener) {
-        this.listener = listener;
-    }
-
-    /**
-     * Sets whether the Welcome page is enabled. Must be called before
-     * {@link #loadURL(URL)} for it to take effect.
-     *
-     * @param welcomePageEnabled {@code true} to enable the Welcome page;
-     * otherwise, {@code false}.
-     */
-    public void setWelcomePageEnabled(boolean welcomePageEnabled) {
-        this.welcomePageEnabled = welcomePageEnabled;
+        reactInstanceManager
+            = ReactInstanceManager.builder()
+                .setApplication(application)
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModuleName("index.android")
+                .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
+                .addPackage(new com.facebook.react.shell.MainReactPackage())
+                .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
+                .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
+                .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
+                .addPackage(new com.rnimmersive.RNImmersivePackage())
+                .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
+                .addPackage(
+                        new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
+                .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
+                .setUseDeveloperSupport(BuildConfig.DEBUG)
+                .setInitialLifecycleState(LifecycleState.RESUMED)
+                .build();
     }
 
     /**
@@ -268,5 +159,118 @@ public class JitsiMeetView extends FrameLayout {
         if (reactInstanceManager != null) {
             reactInstanceManager.onNewIntent(intent);
         }
+    }
+
+    /**
+     * The unique identifier of this {@code JitsiMeetView} within the process
+     * for the purposes of {@link ExternalAPI}. The name scope was inspired by
+     * postis which we use on Web for the similar purposes of the iframe-based
+     * external API.
+     */
+    private final String externalAPIScope;
+
+    /**
+     * {@link JitsiMeetViewListener} instance for reporting events occurring in
+     * Jitsi Meet.
+     */
+    private JitsiMeetViewListener listener;
+
+    /**
+     * React Native root view.
+     */
+    private ReactRootView reactRootView;
+
+    /**
+     * Whether the Welcome page is enabled.
+     */
+    private boolean welcomePageEnabled;
+
+    public JitsiMeetView(@NonNull Context context) {
+        super(context);
+
+        setBackgroundColor(BACKGROUND_COLOR);
+
+        if (reactInstanceManager == null) {
+            initReactInstanceManager(((Activity) context).getApplication());
+        }
+
+        // Hook this JitsiMeetView into ExternalAPI.
+        externalAPIScope = UUID.randomUUID().toString();
+        views.add(this);
+    }
+
+    /**
+     * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
+     *
+     * @return The {@code JitsiMeetViewListener} set on this
+     * {@code JitsiMeetView}.
+     */
+    public JitsiMeetViewListener getListener() {
+        return listener;
+    }
+
+    /**
+     * Gets whether the Welcome page is enabled. If {@code true}, the Welcome
+     * page is rendered when this {@code JitsiMeetView} is not at a URL
+     * identifying a Jitsi Meet conference/room.
+     *
+     * @return {@true} if the Welcome page is enabled; otherwise, {@code false}.
+     */
+    public boolean getWelcomePageEnabled() {
+        return welcomePageEnabled;
+    }
+
+    /**
+     * Loads the given URL and displays the conference. If the specified URL is
+     * null, the welcome page is displayed instead.
+     *
+     * @param url - The conference URL.
+     */
+    public void loadURL(@Nullable URL url) {
+        Bundle props = new Bundle();
+
+        // externalAPIScope
+        props.putString("externalAPIScope", externalAPIScope);
+        // url
+        if (url != null) {
+            props.putString("url", url.toString());
+        }
+        // welcomePageEnabled
+        props.putBoolean("welcomePageEnabled", welcomePageEnabled);
+
+        // TODO: ReactRootView#setAppProperties is only available on React
+        // Native 0.45, so destroy the current root view and create a new one.
+        if (reactRootView != null) {
+            removeView(reactRootView);
+            reactRootView = null;
+        }
+
+        reactRootView = new ReactRootView(getContext());
+        reactRootView
+            .startReactApplication(reactInstanceManager, "App", props);
+        reactRootView.setBackgroundColor(BACKGROUND_COLOR);
+        addView(reactRootView);
+    }
+
+    /**
+     * Sets a specific {@link JitsiMeetViewListener} on this
+     * {@code JitsiMeetView}.
+     *
+     * @param listener - The {@code JitsiMeetViewListener} to set on this
+     * {@code JitsiMeetView}.
+     */
+    public void setListener(JitsiMeetViewListener listener) {
+        this.listener = listener;
+    }
+
+    /**
+     * Sets whether the Welcome page is enabled. Must be called before
+     * {@link #loadURL(URL)} for it to take effect.
+     *
+     * @param welcomePageEnabled {@code true} to enable the Welcome page;
+     * otherwise, {@code false}.
+     */
+    public void setWelcomePageEnabled(boolean welcomePageEnabled) {
+        this.welcomePageEnabled = welcomePageEnabled;
     }
 }

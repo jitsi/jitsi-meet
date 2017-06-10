@@ -62,22 +62,31 @@ public class ExternalAPIModule extends ReactContextBaseJavaModule {
     /**
      * Dispatches an event that occurred on JavaScript to the view's listener.
      *
-     * @param name - Event name.
-     * @param data - Ancillary data for the event.
+     * @param name The name of the event.
+     * @param data The details/specifics of the event to send determined
+     * by/associated with the specified {@code name}.
+     * @param scope
      */
     @ReactMethod
-    public void sendEvent(final String name, ReadableMap data) {
-        JitsiMeetView view = JitsiMeetView.getInstance();
-        JitsiMeetViewListener listener
-            = view != null ? view.getListener() : null;
+    public void sendEvent(String name, ReadableMap data, String scope) {
+        // The JavaScript App needs to provide uniquely identifying information
+        // to the native ExternalAPI module so that the latter may match the
+        // former to the native JitsiMeetView which hosts it.
+        JitsiMeetView view = JitsiMeetView.findViewByExternalAPIScope(scope);
+
+        if (view == null) {
+            return;
+        }
+
+        JitsiMeetViewListener listener = view.getListener();
 
         if (listener == null) {
             return;
         }
 
-        // TODO: Sigh, converting a ReadableMap to a HashMap is not supported
-        // until React Native 0.46.
-        final HashMap<String, Object> dataMap = new HashMap<>();
+        // TODO Converting a ReadableMap to a HashMap is not supported until
+        // React Native 0.46.
+        HashMap<String, Object> dataMap = new HashMap<>();
 
         switch (name) {
         case "CONFERENCE_FAILED":
