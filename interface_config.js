@@ -44,7 +44,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * All of them should be in TOOLBAR_BUTTONS
      */
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup'], // jshint ignore:line
-    SETTINGS_SECTIONS: ['language', 'devices', 'moderator'],
+    SETTINGS_SECTIONS: ['language', 'devices', 'moderator', 'facetracking'],
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the

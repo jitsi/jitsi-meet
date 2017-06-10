@@ -13,12 +13,12 @@ const htmlStr = `
     <div id="settings_container" class="sideToolbarContainer__inner">
         <div class="title" data-i18n="settings.title"></div>
         <form class="aui">
-            <div id="languagesSelectWrapper" 
+            <div id="languagesSelectWrapper"
                 class="sideToolbarBlock first hide">
                 <select id="languagesSelect"></select>
             </div>
             <div id="deviceOptionsWrapper" class="hide">
-                <div id="deviceOptionsTitle" class="subTitle hide" 
+                <div id="deviceOptionsTitle" class="subTitle hide"
                     data-i18n="settings.audioVideo"></div>
                 <div class="sideToolbarBlock first">
                     <button
@@ -29,25 +29,37 @@ const htmlStr = `
                 </div>
             </div>
             <div id="moderatorOptionsWrapper" class="hide">
-                <div id="moderatorOptionsTitle" class="subTitle hide" 
+                <div id="moderatorOptionsTitle" class="subTitle hide"
                     data-i18n="settings.moderator"></div>
                 <div id="startMutedOptions" class="hide">
                     <div class="sideToolbarBlock first">
                         <input type="checkbox" id="startAudioMuted">
-                        <label class="startMutedLabel" for="startAudioMuted" 
+                        <label class="startMutedLabel" for="startAudioMuted"
                             data-i18n="settings.startAudioMuted"></label>
                     </div>
                     <div class="sideToolbarBlock">
                         <input type="checkbox" id="startVideoMuted">
-                        <label class="startMutedLabel" for="startVideoMuted" 
+                        <label class="startMutedLabel" for="startVideoMuted"
                             data-i18n="settings.startVideoMuted"></label>
                     </div>
                 </div>
                 <div id="followMeOptions" class="hide">
                     <div class="sideToolbarBlock">
                         <input type="checkbox" id="followMeCheckBox">
-                        <label class="followMeLabel" for="followMeCheckBox" 
+                        <label class="followMeLabel" for="followMeCheckBox"
                             data-i18n="settings.followMe"></label>
+                    </div>
+                </div>
+            </div>
+            <div id="faceTrackingOptionsWrapper" class="hide">
+                <div id="faceTrackingOptionsTitle" class="subTitle hide"
+                    data-i18n="settings.faceTracking"></div>
+                <div id="faceTrackingOptions" class="hide">
+                    <div class="sideToolbarBlock first">
+                        <input type="checkbox" id="startFaceTracking">
+                        <label class="startFaceTrackingLabel" 
+                            for="startFaceTracking"
+                            data-i18n="settings.startFaceTracking"></label>
                     </div>
                 </div>
             </div>
@@ -175,6 +187,18 @@ export default {
 
             UIUtil.setVisible(wrapperId, true);
         }
+        // FACE-TRACKING
+        if (UIUtil.isSettingEnabled('facetracking')) {
+            const wrapperId = 'faceTrackingOptionsWrapper';
+
+            $("#faceTrackingOptions").change(function () {
+                //TODO:
+                // Toggle face tracking
+            });
+
+            this.showFaceTrackingOptions(true);
+            UIUtil.setVisible(wrapperId, true);
+        }
     },
 
     /**
@@ -212,6 +236,18 @@ export default {
         UIUtil.setVisible(
             "followMeOptions",
             show && UIUtil.isSettingEnabled('moderator'));
+    },
+
+    /**
+     * Show face tracking options in the settings dialog.
+     *
+     * @param {boolean} show {true} to show those options, {false} to hide them
+     */
+    showFaceTrackingOptions (show) {
+        if (show && UIUtil.isSettingEnabled('facetracking')) {
+            UIUtil.setVisible("faceTrackingOptionsTitle", true);
+            UIUtil.setVisible("faceTrackingOptions", true);
+        }
     },
 
     /**
