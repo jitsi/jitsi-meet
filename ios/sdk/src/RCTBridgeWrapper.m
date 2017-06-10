@@ -16,7 +16,7 @@
 
 #include "RCTBridgeWrapper.h"
 
-/*
+/**
  * Wrapper around RCTBridge which also implements the RCTBridgeDelegate methods,
  * allowing us to specify where the bundles are loaded from.
  */
@@ -56,9 +56,9 @@ static NSURL *serverRootWithHost(NSString *host) {
 
 - (NSString *)guessPackagerHost {
     static NSString *ipGuess;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t dispatchOncePredicate;
 
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&dispatchOncePredicate, ^{
         NSString *ipPath
             = [[NSBundle bundleForClass:self.class] pathForResource:@"ip"
                                                              ofType:@"txt"];

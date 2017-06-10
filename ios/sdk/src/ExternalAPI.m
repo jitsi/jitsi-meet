@@ -16,9 +16,10 @@
 
 #import "RCTBridgeModule.h"
 
-#import "JitsiMeetView.h"
+#import "JitsiMeetView+Private.h"
 
 @interface ExternalAPI : NSObject<RCTBridgeModule>
+
 @end
 
 @implementation ExternalAPI
@@ -31,26 +32,40 @@ RCT_EXPORT_MODULE();
  * - name: name of the event.
  * - data: dictionary (JSON object in JS) with data associated with the event.
  */
-RCT_EXPORT_METHOD(sendEvent:(NSString*)name data:(NSDictionary *) data) {
-    JitsiMeetView *view = [JitsiMeetView getInstance];
-    id delegate = view != nil ? view.delegate : nil;
+RCT_EXPORT_METHOD(sendEvent:(NSString *)name
+                       data:(NSDictionary *)data
+                      scope:(NSString *)scope) {
+    // The JavaScript App needs to provide uniquely identifying information to
+    // the native ExternalAPI module so that the latter may match the former
+    // to the native JitsiMeetView which hosts it.
+    JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:scope];
 
-    if (delegate == nil) {
+    if (!view) {
+        return;
+    }
+
+    id delegate = view.delegate;
+
+    if (!delegate) {
         return;
     }
 
     if ([name isEqualToString:@"CONFERENCE_FAILED"]
             && [delegate respondsToSelector:@selector(conferenceFailed:)]) {
         [delegate conferenceFailed:data];
+
     } else if ([name isEqualToString:@"CONFERENCE_JOINED"]
             && [delegate respondsToSelector:@selector(conferenceJoined:)]) {
         [delegate conferenceJoined:data];
+
     } else if ([name isEqualToString:@"CONFERENCE_LEFT"]
             && [delegate respondsToSelector:@selector(conferenceLeft:)]) {
         [delegate conferenceLeft:data];
+
     } else if ([name isEqualToString:@"CONFERENCE_WILL_JOIN"]
             && [delegate respondsToSelector:@selector(conferenceWillJoin:)]) {
         [delegate conferenceWillJoin:data];
+
     } else if ([name isEqualToString:@"CONFERENCE_WILL_LEAVE"]
             && [delegate respondsToSelector:@selector(conferenceWillLeave:)]) {
         [delegate conferenceWillLeave:data];

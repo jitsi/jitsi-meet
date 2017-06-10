@@ -18,41 +18,45 @@
 
 @optional
 
-/*
- * Called when a joining a conference was unsuccessful or when there was an error
- * while in a conference.
+/**
+ * Called when a joining a conference was unsuccessful or when there was an
+ * error while in a conference.
  *
- * The `data` dictionary contains an "error" key describing the error and a "url"
- * key with the conference URL.
+ * The {@code data} dictionary contains an "error" key describing the error and
+ * a {@code url} key with the conference URL.
  */
-- (void) conferenceFailed:(NSDictionary *) data;
+- (void) conferenceFailed:(NSDictionary *)data;
 
-/*
+/**
  * Called when a conference was joined.
  *
- * The `data` dictionary contains a "url" key with the conference URL.
+ * The {@code data} dictionary contains a {@code url} key with the conference
+ * URL.
  */
-- (void) conferenceJoined:(NSDictionary *) data;
+- (void) conferenceJoined:(NSDictionary *)data;
 
-/*
+/**
  * Called when a conference was left.
  *
- * The `data` dictionary contains a "url" key with the conference URL.
+ * The {@code data} dictionary contains a {@code url} key with the conference
+ * URL.
  */
-- (void) conferenceLeft:(NSDictionary *) data;
+- (void) conferenceLeft:(NSDictionary *)data;
 
-/*
+/**
  * Called before a conference is joined.
  *
- * The `data` dictionary contains a "url" key with the conference URL.
+ * The {@code data} dictionary contains a {@code url} key with the conference
+ * URL.
  */
-- (void) conferenceWillJoin:(NSDictionary *) data;
+- (void) conferenceWillJoin:(NSDictionary *)data;
 
-/*
+/**
  * Called before a conference is left.
  *
- * The `data` dictionary contains a "url" key with the conference URL.
+ * The {@code data} dictionary contains a {@code url} key with the conference
+ * URL.
  */
-- (void) conferenceWillLeave:(NSDictionary *) data;
+- (void) conferenceWillLeave:(NSDictionary *)data;
 
 @end

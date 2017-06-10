@@ -2,6 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
+import { Platform } from '../../base/react';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -41,8 +42,8 @@ MiddlewareRegistry.register(store => next => action => {
             // of locationURL at the time of CONFERENCE_WILL_LEAVE and
             // CONFERENCE_LEFT will not be the value with which the
             // JitsiConference instance being left.)
-            const { locationURL }
-                = store.getState()['features/base/connection'];
+            const state = store.getState();
+            const { locationURL } = state['features/base/connection'];
 
             if (!locationURL) {
                 // The (redux) action cannot be fully converted to an (external
@@ -63,7 +64,14 @@ MiddlewareRegistry.register(store => next => action => {
             name = name.slice(7, -1);
         }
 
-        _sendEvent(name, data);
+        // The polyfill es6-symbol that we use does not appear to comply with
+        // the Symbol standard and, merely, adds @@ at the beginning of the
+        // description.
+        if (name.startsWith('@@')) {
+            name = name.slice(2);
+        }
+
+        _sendEvent(store, name, data);
         break;
     }
     }
@@ -76,12 +84,31 @@ MiddlewareRegistry.register(store => next => action => {
  * apps may listen to such events via the mechanisms provided by the (native)
  * mobile Jitsi Meet SDK.
  *
+ * @param {Object} store - The redux store associated with the need to send the
+ * specified event.
  * @param {string} name - The name of the event to send.
  * @param {Object} data - The details/specifics of the event to send determined
  * by/associated with the specified {@code name}.
  * @private
  * @returns {void}
  */
-function _sendEvent(name: string, data: Object) {
-    NativeModules.ExternalAPI.sendEvent(name, data);
+function _sendEvent(store: Object, name: string, data: Object) {
+    // The JavaScript App needs to provide uniquely identifying information
+    // to the native ExternalAPI module so that the latter may match the former
+    // to the native JitsiMeetView which hosts it.
+    const state = store.getState();
+    const { app } = state['features/app'];
+
+    if (app) {
+        const { externalAPIScope } = app.props;
+
+        // TODO Lift the restriction on the JitsiMeetView instance count on
+        // Android as well.
+        if (externalAPIScope) {
+            NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
+        } else if (Platform.OS === 'android') {
+            NativeModules.ExternalAPI.sendEvent(name, data);
+            console.warn(name);
+        }
+    }
 }
