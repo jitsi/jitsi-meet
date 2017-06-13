@@ -1109,26 +1109,32 @@ export default {
     },
 
     videoSwitchInProgress: false,
+
+    /**
+     * Toggles between screensharing and camera video.
+     * @param {boolean} [shareScreen]
+     * @return {Promise.<T>}
+     */
     toggleScreenSharing(shareScreen = !this.isSharingScreen) {
         if (this.videoSwitchInProgress) {
-            logger.warn("Switch in progress.");
-            return;
+            return Promise.reject('Switch in progress.');
         }
         if (!this.isDesktopSharingEnabled) {
-            logger.warn("Cannot toggle screen sharing: not supported.");
-            return;
+            return Promise.reject(
+                'Cannot toggle screen sharing: not supported.');
         }
 
         if (this.isAudioOnly()) {
             this._displayAudioOnlyTooltip('screenShare');
-            return;
+
+            return Promise.reject('No screensharing in audio only mode');
         }
 
         this.videoSwitchInProgress = true;
         let externalInstallation = false;
 
         if (shareScreen) {
-            this.screenSharingPromise = createLocalTracks({
+            return createLocalTracks({
                 devices: ['desktop'],
                 desktopSharingExtensionExternalInstallation: {
                     interval: 500,
@@ -1218,7 +1224,7 @@ export default {
             });
         } else {
             APP.remoteControl.receiver.stop();
-            this.screenSharingPromise = createLocalTracks(
+            return createLocalTracks(
                 { devices: ['video'] })
             .then(
                 ([stream]) => this.useVideoStream(stream)
