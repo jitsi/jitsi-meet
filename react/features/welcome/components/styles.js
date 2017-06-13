@@ -13,7 +13,7 @@ const TEXT_COLOR = ColorPalette.white;
 /**
  * The styles of WelcomePage.
  */
-export const styles = createStyleSheet({
+export default createStyleSheet({
     /**
      * Join button style.
      */

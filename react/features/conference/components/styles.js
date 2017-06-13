@@ -5,11 +5,11 @@ import {
 } from '../../base/styles';
 
 /**
- * The style of the conference UI (component).
+ * The styles of the feature conference.
  */
-export const styles = createStyleSheet({
+export default createStyleSheet({
     /**
-     * Conference style.
+     * {@code Conference} style.
      */
     conference: fixAndroidViewClipping({
         alignSelf: 'stretch',

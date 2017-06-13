@@ -2,9 +2,9 @@ import { Platform } from '../../base/react';
 import { BoxModel, ColorPalette } from '../../base/styles';
 
 /**
- * Filmstrip related styles common to both Web and native.
+ * The styles of the feature filmstrip common to both Web and native.
  */
-export const styles = {
+export default {
     /**
      * Avatar style.
      */

@@ -1,6 +1,6 @@
 import { ColorPalette, createStyleSheet } from '../../base/styles';
 
-export const styles = createStyleSheet({
+export default createStyleSheet({
     /**
      * The style of the avatar of the participant displayed in largeVideo. It's
      * an addition to the default style of Avatar.

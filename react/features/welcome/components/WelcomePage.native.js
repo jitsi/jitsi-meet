@@ -7,7 +7,7 @@ import { Link, Text } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * The URL at which the privacy policy is available to the user.

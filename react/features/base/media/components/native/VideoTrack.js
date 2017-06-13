@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import AbstractVideoTrack from '../AbstractVideoTrack';
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * Component that renders video element for a specified video track.

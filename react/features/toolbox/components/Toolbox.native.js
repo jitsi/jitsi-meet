@@ -13,7 +13,7 @@ import {
     abstractMapDispatchToProps,
     abstractMapStateToProps
 } from '../functions';
-import { styles } from './styles';
+import styles from './styles';
 import ToolbarButton from './ToolbarButton';
 
 /**

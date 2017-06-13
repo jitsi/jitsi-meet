@@ -9,7 +9,7 @@ import { LargeVideo } from '../../large-video';
 import { OverlayContainer } from '../../overlay';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
-import { styles } from './styles';
+import styles from './styles';
 
 /**
  * The timeout in milliseconds after which the Toolbox will be hidden.
@@ -146,18 +146,20 @@ class Conference extends Component {
                 <Filmstrip />
 
                 {/*
+                  * The overlays need to be bellow the Toolbox so that the user
+                  * may tap the ToolbarButtons.
+                  */}
+                <OverlayContainer />
+
+                {/*
                   * The Toolbox is in a stacking layer above the Filmstrip.
                   */}
                 <Toolbox />
 
                 {/*
-                  * The dialogs and overlays are in the topmost stacking layers.
-                  * Generally, the dialogs and overlays should not be visible at
-                  * the same time so it is not really defined which one is above
-                  * the other.
+                  * The dialogs are in the topmost stacking layers.
                   */}
                 <DialogContainer />
-                <OverlayContainer />
             </Container>
         );
     }

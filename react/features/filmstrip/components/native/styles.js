@@ -1,6 +1,6 @@
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
-import { styles as platformIndependentStyles } from '../styles';
+import { default as platformIndependentStyles } from '../styles';
 
 /**
  * The base/default style of indicators such as audioMutedIndicator,
@@ -15,9 +15,9 @@ const indicator = {
 };
 
 /**
- * Native-specific styles for the filmstrip.
+ * The styles of the feature filmstrip.
  */
-export const styles = createStyleSheet(platformIndependentStyles, {
+export default createStyleSheet(platformIndependentStyles, {
 
     /**
      * Audio muted indicator style.

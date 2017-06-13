@@ -70,7 +70,7 @@ const secondaryToolbarButtonIcon = {
 /**
  * The (conference) Toolbox/Toolbar related styles.
  */
-export const styles = createStyleSheet({
+export default createStyleSheet({
     /**
      * The style of the toolbar button in {@link #primaryToolbar} which
      * hangs the current conference up.
