@@ -66,14 +66,16 @@ class DeviceSelectionDialog extends Component {
         dispatch: React.PropTypes.func,
 
         /**
-         * Whether or not a new audio input source can be selected.
+         * Function that checks whether or not a new audio input source can be
+         * selected.
          */
-        hasAudioPermission: React.PropTypes.bool,
+        hasAudioPermission: React.PropTypes.func,
 
         /**
-         * Whether or not a new video input sources can be selected.
+         * Function that checks whether or not a new video input sources can be
+         * selected.
          */
-        hasVideoPermission: React.PropTypes.bool,
+        hasVideoPermission: React.PropTypes.func,
 
         /**
          * If true, the audio meter will not display. Necessary for browsers or

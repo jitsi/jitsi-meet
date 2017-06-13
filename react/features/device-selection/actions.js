@@ -51,9 +51,9 @@ function _openDeviceSelectionDialogHere() {
                     disableDeviceChange: !isDeviceListAvailable
                         || !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
                     hasAudioPermission: JitsiMeetJS.mediaDevices
-                        .isDevicePermissionGranted('audio'),
+                        .isDevicePermissionGranted.bind(null, 'audio'),
                     hasVideoPermission: JitsiMeetJS.mediaDevices
-                        .isDevicePermissionGranted('video'),
+                        .isDevicePermissionGranted.bind(null, 'video'),
                     hideAudioInputPreview:
                         !JitsiMeetJS.isCollectingLocalStats(),
                     hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
@@ -144,7 +144,8 @@ function _processRequest(dispatch, getState, request, responseCallback) {
             break;
         case 'isDeviceChangeAvailable':
             responseCallback(
-                JitsiMeetJS.mediaDevices.isDeviceChangeAvailable());
+                JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(
+                    request.deviceType));
             break;
         case 'isMultipleAudioInputSupported':
             responseCallback(JitsiMeetJS.isMultipleAudioInputSupported());
