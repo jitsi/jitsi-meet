@@ -261,25 +261,26 @@ export default class Receiver extends RemoteControlParticipant {
                 action: PERMISSIONS_ACTIONS.grant
             });
         } else {
-            APP.conference.toggleScreenSharing();
-            APP.conference.screenSharingPromise.then(() => {
-                if (APP.conference.isSharingScreen) {
-                    this.sendRemoteControlEvent(userId, {
-                        type: EVENT_TYPES.permissions,
-                        action: PERMISSIONS_ACTIONS.grant
-                    });
-                } else {
+            APP.conference.toggleScreenSharing()
+                .then(() => {
+                    if (APP.conference.isSharingScreen) {
+                        this.sendRemoteControlEvent(userId, {
+                            type: EVENT_TYPES.permissions,
+                            action: PERMISSIONS_ACTIONS.grant
+                        });
+                    } else {
+                        this.sendRemoteControlEvent(userId, {
+                            type: EVENT_TYPES.permissions,
+                            action: PERMISSIONS_ACTIONS.error
+                        });
+                    }
+                })
+                .catch(() => {
                     this.sendRemoteControlEvent(userId, {
                         type: EVENT_TYPES.permissions,
                         action: PERMISSIONS_ACTIONS.error
                     });
-                }
-            }).catch(() => {
-                this.sendRemoteControlEvent(userId, {
-                    type: EVENT_TYPES.permissions,
-                    action: PERMISSIONS_ACTIONS.error
                 });
-            });
         }
     }
 
