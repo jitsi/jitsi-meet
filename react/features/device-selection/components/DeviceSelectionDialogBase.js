@@ -71,14 +71,16 @@ class DeviceSelectionDialogBase extends Component {
         disableDeviceChange: React.PropTypes.bool,
 
         /**
-         * Whether or not a new audio input source can be selected.
+         * Function that checks whether or not a new audio input source can be
+         * selected.
          */
-        hasAudioPermission: React.PropTypes.bool,
+        hasAudioPermission: React.PropTypes.func,
 
         /**
-         * Whether or not a new video input sources can be selected.
+         * Function that checks whether or not a new video input sources can be
+         * selected.
          */
-        hasVideoPermission: React.PropTypes.bool,
+        hasVideoPermission: React.PropTypes.func,
 
         /**
          * If true, the audio meter will not display. Necessary for browsers or
@@ -381,7 +383,7 @@ class DeviceSelectionDialogBase extends Component {
         const configurations = [
             {
                 devices: availableDevices.videoInput,
-                hasPermission: this.props.hasVideoPermission,
+                hasPermission: this.props.hasVideoPermission(),
                 icon: 'icon-camera',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
@@ -391,7 +393,7 @@ class DeviceSelectionDialogBase extends Component {
             },
             {
                 devices: availableDevices.audioInput,
-                hasPermission: this.props.hasAudioPermission,
+                hasPermission: this.props.hasAudioPermission(),
                 icon: 'icon-microphone',
                 isDisabled: this.props.disableAudioInputChange
                     || this.props.disableDeviceChange,
@@ -405,8 +407,8 @@ class DeviceSelectionDialogBase extends Component {
         if (!this.props.hideAudioOutputSelect) {
             configurations.push({
                 devices: availableDevices.audioOutput,
-                hasPermission: this.props.hasAudioPermission
-                    || this.props.hasVideoPermission,
+                hasPermission: this.props.hasAudioPermission()
+                    || this.props.hasVideoPermission(),
                 icon: 'icon-volume',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
