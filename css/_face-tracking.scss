@@ -1,0 +1,47 @@
+.face-prompt-container {
+    position: absolute;
+    z-index: 10;
+
+    .face-rect, .face-text {
+        margin: 0 auto;
+        visibility: hidden;
+
+        &.show {
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            visibility: visible;
+        }
+    }
+
+    .face-rect {
+        border-style: solid;
+        border-color: #2196F3;
+        border-radius: 2%;
+
+        height: 90%;
+        left: 15%;
+        top: 5%;
+        width: 70%;
+        position: absolute;
+
+        z-index: 10;
+    }
+
+    .face-text {
+        background-color: #333;
+        color: #fff;
+
+        font-size: 100%;
+        text-align: center;
+
+        border-radius: 2%;
+        padding: 3%;
+
+        bottom: -75%;
+        width: 60%;
+        max-width: 300px;
+        position: relative;
+
+        z-index: 11;
+    }
+}
