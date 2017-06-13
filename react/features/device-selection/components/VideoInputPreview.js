@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { FaceTracker } from '../../face-tracking';
 import { translate } from '../../base/i18n';
 
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
@@ -114,6 +115,9 @@ class VideoInputPreview extends Component {
             <div
                 className = 'video-input-preview'
                 ref = { this._setRootElement }>
+                <FaceTracker
+                    isFaceTrackingEnabled = { true }
+                    videoElementSelector = '.video-input-preview-display' />
                 <video
                     autoPlay = { true }
                     className = 'video-input-preview-display flipVideoX'
