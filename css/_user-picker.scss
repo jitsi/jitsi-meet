@@ -1,0 +1,108 @@
+.modal-dialog-form {
+    .conversation-access-dialog-content {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .add-people-form-wrap {
+
+        .error {
+            padding-left: 5px;
+
+            a {
+                padding-left: 5px;
+            }
+        }
+    }
+
+    .add-people-form {
+        display: flex;
+        margin-bottom: 5px;
+
+        button[type=submit] {
+            margin-top: 4px;
+        }
+    }
+
+    .add-people-button {
+        margin-left: 5px;
+    }
+
+    h5 {
+        color: @ak-color-N300;
+        margin: @ak-grid-size 0;
+    }
+
+    .multi-select-wrap {
+        width: 310px;
+    }
+}
+
+.autocomplete-loading {
+    width: 260px;
+    height: 260px;
+    display: flex;
+}
+
+.autocomplete-error {
+    width: 260px;
+}
+
+.conversation-access-list,
+.watchers-list {
+    position: relative;
+    height: 270px;
+}
+
+.public-access-message {
+    .faces {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    p {
+        padding-left: 40px;
+    }
+}
+
+.conversation-access-list.loading {
+    display: flex;
+}
+
+.conversation-access-list.empty > .empty-message {
+    margin-top: 15px;
+    text-align: center;
+    .faces {
+        margin: 15px 0;
+    }
+}
+
+.conversation-access-item {
+    border-radius: 2px;
+    padding: 6px 60px 6px @ak-grid-size;
+    position: relative;
+    .ellipsis();
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 50px;
+
+    .ak-avatar {
+        display: inline-block;
+        height: 24px;
+        vertical-align: middle;
+    }
+
+    &:hover {
+        background-color: @ak-color-N30;
+    }
+}
+
+.conversation-access-item-name {
+    color: @ak-color-N800;
+    margin-left: @ak-grid-size;
+}
+
+.conversation-access-item-actions {
+    position: absolute;
+    top: 2px;
+    right: 0px;
+}

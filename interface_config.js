@@ -38,7 +38,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
         //main toolbar
         'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup', // jshint ignore:line
         //extended toolbar
-        'profile', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
+        'profile', 'add', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
     /**
      * Main Toolbar Buttons
      * All of them should be in TOOLBAR_BUTTONS

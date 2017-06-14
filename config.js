@@ -97,8 +97,9 @@ var config = { // eslint-disable-line no-unused-vars
     // the room. If that succeeds the conference will stop sending data through
     // the JVB and use the peer to peer connection instead. When 3rd participant
     // joins the conference will be moved back to the JVB connection.
-    enableP2P: true
+    enableP2P: true,
     // How long we're going to wait, before going back to P2P after
     // the 3rd participant has left the conference (to filter out page reload)
-    //backToP2PDelay: 5
+    //backToP2PDelay: 5,
+    peopleSearchUrl: 'https://damencho.jitsi.net/user-search'
 };
