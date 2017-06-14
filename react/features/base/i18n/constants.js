@@ -10,6 +10,7 @@ export const LANGUAGES = [
     'en', // XXX The default language.
 
     'bg',
+    'da',
     'de',
     'es',
     'fr',
