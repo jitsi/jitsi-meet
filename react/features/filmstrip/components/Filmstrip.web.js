@@ -40,6 +40,7 @@ export default class Filmstrip extends Component {
                                         = 'connection-indicator-container' />
                             </div>
                             <div className = 'videocontainer__hoverOverlay' />
+                            <div className = 'displayNameContainer' />
                         </span>
                     </div>
                     <div
