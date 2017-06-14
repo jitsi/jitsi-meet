@@ -180,6 +180,7 @@ function _setJWT(store, next, action) {
         if (jwtPayload) {
             const { context, iss } = jwtPayload;
 
+            action.jwt = jwt;
             action.issuer = iss;
             if (context) {
                 action.callee = context.callee;
