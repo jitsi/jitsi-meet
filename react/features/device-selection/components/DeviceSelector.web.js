@@ -4,8 +4,6 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
-const EXPAND_ICON = <ExpandIcon label = 'expand' />;
-
 /**
  * React component for selecting a device from a select element. Wraps
  * AKDropdownMenu with device selection specific logic.
@@ -117,7 +115,9 @@ class DeviceSelector extends Component {
                 <span className = 'device-selector-trigger-text'>
                     { triggerText }
                 </span>
-                { EXPAND_ICON }
+                <ExpandIcon
+                    label = 'expand'
+                    size = 'large' />
             </div>
         );
     }
