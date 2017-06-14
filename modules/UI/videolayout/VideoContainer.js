@@ -33,8 +33,13 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    // eslint-disable-next-line no-param-reassign
-    videoSpaceHeight -= Filmstrip.getFilmstripHeight();
+    if (interfaceConfig.VERTICAL_FILMSTRIP) {
+        // eslint-disable-next-line no-param-reassign
+        videoSpaceWidth -= Filmstrip.getFilmstripWidth();
+    } else {
+        // eslint-disable-next-line no-param-reassign
+        videoSpaceHeight -= Filmstrip.getFilmstripHeight();
+    }
 
     if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;
@@ -334,9 +339,15 @@ export class VideoContainer extends LargeContainer {
     getVideoPosition(width, height, containerWidth, containerHeight) {
         /* eslint-enable max-params */
         if (this.stream && this.isScreenSharing()) {
+            let availableContainerWidth = containerWidth;
+
+            if (interfaceConfig.VERTICAL_FILMSTRIP) {
+                availableContainerWidth -= Filmstrip.getFilmstripWidth();
+            }
+
             return getDesktopVideoPosition(width,
                 height,
-                containerWidth,
+                availableContainerWidth,
                 containerHeight);
         }
 

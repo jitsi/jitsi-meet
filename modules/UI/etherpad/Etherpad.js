@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, interfaceConfig */
 
 import VideoLayout from '../videolayout/VideoLayout';
 import LargeContainer from '../videolayout/LargeContainer';
@@ -123,8 +123,15 @@ class Etherpad extends LargeContainer {
      *
      */
     resize(containerWidth, containerHeight) {
-        const height = containerHeight - Filmstrip.getFilmstripHeight();
-        const width = containerWidth;
+        let height, width;
+
+        if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            height = containerHeight;
+            width = containerWidth - Filmstrip.getFilmstripWidth();
+        } else {
+            height = containerHeight - Filmstrip.getFilmstripHeight();
+            width = containerWidth;
+        }
 
         $(this.iframe)
             .width(width)
