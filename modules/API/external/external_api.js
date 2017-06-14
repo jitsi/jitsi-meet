@@ -145,7 +145,7 @@ function generateURL(domain, options = {}) {
 /**
  * The IFrame API interface class.
  */
-class JitsiMeetExternalAPI extends EventEmitter {
+export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Constructs new API instance. Creates iframe and loads Jitsi Meet in it.
      *
@@ -424,5 +424,3 @@ class JitsiMeetExternalAPI extends EventEmitter {
         eventList.forEach(event => this.removeEventListener(event));
     }
 }
-
-module.exports = JitsiMeetExternalAPI;

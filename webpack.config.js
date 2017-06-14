@@ -188,7 +188,7 @@ const configs = [
     // JitsiMeetExternalAPI).
     Object.assign({}, config, {
         entry: {
-            'external_api': './modules/API/external/external_api.js'
+            'external_api': './modules/API/external/index.js'
         },
         output: Object.assign({}, config.output, {
             library: 'JitsiMeetExternalAPI'

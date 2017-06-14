@@ -8,6 +8,8 @@ import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
+import JitsiPopover from "./util/JitsiPopover";
+import messageHandler from "./util/MessageHandler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
 import EtherpadManager from './etherpad/Etherpad';
@@ -19,7 +21,7 @@ import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
-import UIErrors from './UIErrors';
+import { FEEDBACK_REQUEST_IN_PROGRESS } from './UIErrors';
 import { debounce } from "../util/helpers";
 
 import { updateDeviceList } from '../../react/features/base/devices';
@@ -41,9 +43,7 @@ import {
 } from '../../react/features/toolbox';
 
 var EventEmitter = require("events");
-UI.messageHandler = require("./util/MessageHandler");
-var messageHandler = UI.messageHandler;
-var JitsiPopover = require("./util/JitsiPopover");
+UI.messageHandler = messageHandler;
 import Feedback from "./feedback/Feedback";
 import FollowMe from "../FollowMe";
 
@@ -1033,7 +1033,7 @@ UI.updateDTMFSupport
  */
 UI.requestFeedbackOnHangup = function () {
     if (Feedback.isVisible())
-        return Promise.reject(UIErrors.FEEDBACK_REQUEST_IN_PROGRESS);
+        return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
     // Feedback has been submitted already.
     else if (Feedback.isEnabled() && Feedback.isSubmitted()) {
         return Promise.resolve({
@@ -1443,4 +1443,6 @@ const UIListeners = new Map([
     ]
 ]);
 
-module.exports = UI;
+// TODO: Export every function separately. For now there is no point of doing
+// this because we are importing everything.
+export default UI;

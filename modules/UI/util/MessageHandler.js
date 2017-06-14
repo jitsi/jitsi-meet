@@ -504,4 +504,4 @@ var messageHandler = {
     }
 };
 
-module.exports = messageHandler;
+export default messageHandler;

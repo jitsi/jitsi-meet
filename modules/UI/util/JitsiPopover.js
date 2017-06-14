@@ -77,7 +77,7 @@ const positionConfigurations = {
         }
     }
 };
-var JitsiPopover = (function () {
+export default (function () {
     /**
      * The default options
      */
@@ -294,5 +294,3 @@ var JitsiPopover = (function () {
 
     return JitsiPopover;
 })();
-
-module.exports = JitsiPopover;

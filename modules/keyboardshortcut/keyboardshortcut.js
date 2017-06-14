@@ -82,7 +82,7 @@ let enabled = true;
 /**
  * Maps keycode to character, id of popover for given function and function.
  */
-var KeyboardShortcut = {
+const KeyboardShortcut = {
     init: function () {
         initGlobalShortcuts();
 
@@ -273,4 +273,4 @@ var KeyboardShortcut = {
     }
 };
 
-module.exports = KeyboardShortcut;
+export default KeyboardShortcut;
