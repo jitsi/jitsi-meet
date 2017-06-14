@@ -1,4 +1,6 @@
-/* global $, APP, YT, onPlayerReady, onPlayerStateChange, onPlayerError */
+/* global $, APP, YT, interfaceConfig, onPlayerReady, onPlayerStateChange,
+onPlayerError */
+
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import UIUtil from '../util/UIUtil';
@@ -681,9 +683,15 @@ class SharedVideoContainer extends LargeContainer {
      *
      */
     resize(containerWidth, containerHeight) {
-        const height = containerHeight - Filmstrip.getFilmstripHeight();
+        let height, width;
 
-        const width = containerWidth;
+        if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            height = containerHeight;
+            width = containerWidth - Filmstrip.getFilmstripWidth();
+        } else {
+            height = containerHeight - Filmstrip.getFilmstripHeight();
+            width = containerWidth;
+        }
 
         this.$iframe.width(width).height(height);
     }

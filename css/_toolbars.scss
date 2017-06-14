@@ -186,6 +186,7 @@
         justify-content: flex-start;
         left: 0;
         padding-top: 24px;
+        pointer-events: none;
         top: 0;
         transform: translateX(-100%);
         width: $defaultToolbarSize;
@@ -195,6 +196,10 @@
             font-size: $secToolbarFontSize;
             height: $secToolbarLineHeight;
             line-height: $secToolbarLineHeight;
+        }
+
+        > * {
+            pointer-events: auto
         }
 
         .button.toggled:not(.icon-raised-hand):not(.button-active) {

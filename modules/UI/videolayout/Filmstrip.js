@@ -200,7 +200,18 @@ const Filmstrip = {
         }
 
         return 0;
+    },
 
+    /**
+     * Returns the width of filmstip
+     * @returns {number} width
+     */
+    getFilmstripWidth() {
+        return this.isFilmstripVisible()
+            ? this.filmstrip.outerWidth()
+                - parseInt(this.filmstrip.css('paddingLeft'), 10)
+                - parseInt(this.filmstrip.css('paddingRight'), 10)
+            : 0;
     },
 
     /**
