@@ -22,7 +22,7 @@ class DeviceSelectionDialog extends Component {
      * @static
      */
     static propTypes = {
-       /**
+        /**
          * All known audio and video devices split by type. This prop comes from
          * the app state.
          */

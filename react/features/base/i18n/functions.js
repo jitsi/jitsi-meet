@@ -12,7 +12,7 @@ export function translate(component) {
     // Use the default list of namespaces.
     return (
         reactI18nextTranslate([ 'main', 'languages' ], { wait: true })(
-                component));
+            component));
 }
 
 /**

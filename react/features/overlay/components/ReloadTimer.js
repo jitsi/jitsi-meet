@@ -105,19 +105,19 @@ class ReloadTimer extends Component {
 
         const intervalId
             = setInterval(
-                    () => {
-                        if (this.state.current === this.props.end) {
-                            clearInterval(intervalId);
-                            this.props.onFinish();
-                        } else {
-                            this.setState((prevState, props) => {
-                                return {
-                                    current: prevState.current + props.step
-                                };
-                            });
-                        }
-                    },
-                    Math.abs(this.props.interval) * 1000);
+                () => {
+                    if (this.state.current === this.props.end) {
+                        clearInterval(intervalId);
+                        this.props.onFinish();
+                    } else {
+                        this.setState((prevState, props) => {
+                            return {
+                                current: prevState.current + props.step
+                            };
+                        });
+                    }
+                },
+                Math.abs(this.props.interval) * 1000);
     }
 
     /**
@@ -129,9 +129,8 @@ class ReloadTimer extends Component {
      */
     componentDidUpdate() {
         AJS.progressBars.update(
-                '#reloadProgressBar',
-                Math.abs(this.state.current - this.props.start)
-                    / this.state.time);
+            '#reloadProgressBar',
+            Math.abs(this.state.current - this.props.start) / this.state.time);
     }
 
     /**

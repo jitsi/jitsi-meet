@@ -52,8 +52,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case APP_WILL_MOUNT:
         store.dispatch(
-                _setAppStateListener(
-                        _onAppStateChange.bind(undefined, store.dispatch)));
+            _setAppStateListener(
+                _onAppStateChange.bind(undefined, store.dispatch)));
         break;
 
     case APP_WILL_UNMOUNT:

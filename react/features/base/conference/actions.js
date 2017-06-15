@@ -47,70 +47,70 @@ function _addConferenceListeners(conference, dispatch) {
     // Dispatches into features/base/conference follow:
 
     conference.on(
-            JitsiConferenceEvents.CONFERENCE_FAILED,
-            (...args) => dispatch(conferenceFailed(conference, ...args)));
+        JitsiConferenceEvents.CONFERENCE_FAILED,
+        (...args) => dispatch(conferenceFailed(conference, ...args)));
     conference.on(
-            JitsiConferenceEvents.CONFERENCE_JOINED,
-            (...args) => dispatch(conferenceJoined(conference, ...args)));
+        JitsiConferenceEvents.CONFERENCE_JOINED,
+        (...args) => dispatch(conferenceJoined(conference, ...args)));
     conference.on(
-            JitsiConferenceEvents.CONFERENCE_LEFT,
-            (...args) => dispatch(conferenceLeft(conference, ...args)));
+        JitsiConferenceEvents.CONFERENCE_LEFT,
+        (...args) => dispatch(conferenceLeft(conference, ...args)));
 
     conference.on(
-            JitsiConferenceEvents.LOCK_STATE_CHANGED,
-            (...args) => dispatch(lockStateChanged(conference, ...args)));
+        JitsiConferenceEvents.LOCK_STATE_CHANGED,
+        (...args) => dispatch(lockStateChanged(conference, ...args)));
 
     // Dispatches into features/base/tracks follow:
 
     conference.on(
-            JitsiConferenceEvents.TRACK_ADDED,
-            t => t && !t.isLocal() && dispatch(trackAdded(t)));
+        JitsiConferenceEvents.TRACK_ADDED,
+        t => t && !t.isLocal() && dispatch(trackAdded(t)));
     conference.on(
-            JitsiConferenceEvents.TRACK_REMOVED,
-            t => t && !t.isLocal() && dispatch(trackRemoved(t)));
+        JitsiConferenceEvents.TRACK_REMOVED,
+        t => t && !t.isLocal() && dispatch(trackRemoved(t)));
 
     // Dispatches into features/base/participants follow:
 
     conference.on(
-            JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-            (...args) => dispatch(dominantSpeakerChanged(...args)));
+        JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
+        (...args) => dispatch(dominantSpeakerChanged(...args)));
 
     conference.on(
-            JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
-            (...args) => dispatch(participantConnectionStatusChanged(...args)));
+        JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
+        (...args) => dispatch(participantConnectionStatusChanged(...args)));
 
     conference.on(
-            JitsiConferenceEvents.USER_JOINED,
-            (id, user) => dispatch(participantJoined({
-                id,
-                name: user.getDisplayName(),
-                role: user.getRole()
-            })));
+        JitsiConferenceEvents.USER_JOINED,
+        (id, user) => dispatch(participantJoined({
+            id,
+            name: user.getDisplayName(),
+            role: user.getRole()
+        })));
     conference.on(
-            JitsiConferenceEvents.USER_LEFT,
-            (...args) => dispatch(participantLeft(...args)));
+        JitsiConferenceEvents.USER_LEFT,
+        (...args) => dispatch(participantLeft(...args)));
     conference.on(
-            JitsiConferenceEvents.USER_ROLE_CHANGED,
-            (...args) => dispatch(participantRoleChanged(...args)));
+        JitsiConferenceEvents.USER_ROLE_CHANGED,
+        (...args) => dispatch(participantRoleChanged(...args)));
 
     conference.addCommandListener(
-            AVATAR_ID_COMMAND,
-            (data, id) => dispatch(participantUpdated({
-                id,
-                avatarID: data.value
-            })));
+        AVATAR_ID_COMMAND,
+        (data, id) => dispatch(participantUpdated({
+            id,
+            avatarID: data.value
+        })));
     conference.addCommandListener(
-            AVATAR_URL_COMMAND,
-            (data, id) => dispatch(participantUpdated({
-                id,
-                avatarURL: data.value
-            })));
+        AVATAR_URL_COMMAND,
+        (data, id) => dispatch(participantUpdated({
+            id,
+            avatarURL: data.value
+        })));
     conference.addCommandListener(
-            EMAIL_COMMAND,
-            (data, id) => dispatch(participantUpdated({
-                id,
-                email: data.value
-            })));
+        EMAIL_COMMAND,
+        (data, id) => dispatch(participantUpdated({
+            id,
+            email: data.value
+        })));
 }
 
 /**

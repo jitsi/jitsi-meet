@@ -304,7 +304,7 @@ var Chat = {
 
         $('#chatconversation').append(
             '<div class="errorMessage"><b>Error: </b>' + 'Your message' +
-            (originalText? (' \"'+ originalText + '\"') : "") +
+            (originalText? (` "${originalText}"`) : "") +
             ' was not sent.' +
             (errorMessage? (' Reason: ' + errorMessage) : '') +  '</div>');
         $('#chatconversation').animate(

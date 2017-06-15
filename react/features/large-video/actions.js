@@ -24,15 +24,15 @@ export function selectParticipant() {
             const id = largeVideo.participantId;
             const videoTrack
                 = getTrackByMediaTypeAndParticipant(
-                        tracks,
-                        MEDIA_TYPE.VIDEO,
-                        id);
+                    tracks,
+                    MEDIA_TYPE.VIDEO,
+                    id);
 
             try {
                 conference.selectParticipant(
-                        videoTrack && videoTrack.videoType === VIDEO_TYPE.CAMERA
-                            ? id
-                            : null);
+                    videoTrack && videoTrack.videoType === VIDEO_TYPE.CAMERA
+                        ? id
+                        : null);
             } catch (err) {
                 _handleParticipantError(err);
             }
