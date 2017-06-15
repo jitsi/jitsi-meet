@@ -613,7 +613,11 @@ export default {
                 }
 
                 if (!tracks.find((t) => t.isVideoTrack())) {
-                    APP.UI.setCameraButtonEnabled(false);
+                    // Instead of disabling the button we want to show button
+                    // muted, so that the user can have the opportunity to add
+                    // the video later on, even if joined without it.
+                    this.videoMuted = true;
+                    APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
                 }
 
                 this._initDeviceList();
@@ -1036,7 +1040,8 @@ export default {
                     newStream.videoType === 'camera'
                         && APP.UI.setCameraButtonEnabled(true);
                 } else {
-                    this.videoMuted = false;
+                    // No video is treated the same way as being video muted
+                    this.videoMuted = true;
                     this.isSharingScreen = false;
                 }
                 APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
@@ -1543,10 +1548,21 @@ export default {
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
             if (this.isAudioOnly() && !muted) {
                 this._displayAudioOnlyTooltip('videoMute');
-                return;
+            } else if (!localVideo && this.videoMuted && !muted) {
+                // Maybe try to create local video if there wasn't any ?
+                // This handles the case when user joined with no video
+                // (dismissed screen sharing screen), but decided to add it
+                // later on by clicking on muted video icon.
+                createLocalTracks({ devices: ['video'] }, false)
+                    .then(([videoTrack]) => {
+                        APP.conference.useVideoStream(videoTrack);
+                    })
+                    .catch(error => {
+                        APP.UI.showDeviceErrorDialog(null, error);
+                    });
+            } else {
+                muteLocalVideo(muted);
             }
-
-            muteLocalVideo(muted);
         });
 
         room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
