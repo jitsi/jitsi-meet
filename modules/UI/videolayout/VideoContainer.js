@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig */
+/* global $, interfaceConfig */
 /* jshint -W101 */
 
 import Filmstrip from './Filmstrip';
@@ -10,22 +10,6 @@ import UIUtil from "../util/UIUtil";
 export const VIDEO_CONTAINER_TYPE = "camera";
 
 const FADE_DURATION_MS = 300;
-
-/**
- * Get stream id.
- * @param {JitsiTrack?} stream
- */
-function getStreamOwnerId(stream) {
-    if (!stream) {
-        return;
-    }
-    // local stream doesn't have method "getParticipantId"
-    if (stream.isLocal()) {
-        return APP.conference.getMyUserId();
-    } else {
-        return stream.getParticipantId();
-    }
-}
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -171,7 +155,7 @@ export class VideoContainer extends LargeContainer {
     }
 
     get id () {
-        return getStreamOwnerId(this.stream);
+        return this.userId;
     }
 
     /**
@@ -184,6 +168,7 @@ export class VideoContainer extends LargeContainer {
     constructor (resizeContainer, emitter) {
         super();
         this.stream = null;
+        this.userId = null;
         this.videoType = null;
         this.localFlipX = true;
         this.emitter = emitter;
@@ -410,10 +395,12 @@ export class VideoContainer extends LargeContainer {
 
     /**
      * Update video stream.
+     * @param {string} userID
      * @param {JitsiTrack?} stream new stream
      * @param {string} videoType video type
      */
-    setStream (stream, videoType) {
+    setStream (userID, stream, videoType) {
+        this.userId = userID;
         if (this.stream === stream) {
             // Handles the use case for the remote participants when the
             // videoType is received with delay after turning on/off the

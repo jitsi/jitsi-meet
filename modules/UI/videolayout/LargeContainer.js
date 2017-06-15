@@ -42,10 +42,11 @@ export default class LargeContainer {
 
     /**
      * Update video stream.
+     * @param {string} userID
      * @param {JitsiTrack?} stream new stream
      * @param {string} videoType video type
      */
-    setStream (stream, videoType) { // eslint-disable-line no-unused-vars
+    setStream (userID, stream, videoType) {// eslint-disable-line no-unused-vars
     }
 
     /**
