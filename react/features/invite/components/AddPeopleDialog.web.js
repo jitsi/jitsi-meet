@@ -16,6 +16,7 @@ class AddPeopleDialog extends Component {
      * @static
      */
     static propTypes = {
+        _jwt: React.PropTypes.string,
         _peopleSearchUrl: React.PropTypes.string,
         addToConversationError: React.PropTypes.bool,
         addToConversationInProgress: React.PropTypes.bool,
@@ -38,10 +39,11 @@ class AddPeopleDialog extends Component {
         super(props);
         this.multiselect = null;
         this.resourceClient = {
-            makeQuery: text => searchPeople(text, this.props._peopleSearchUrl),
-            parseResults: response => response.data.query.map(user => {
+            makeQuery: text => searchPeople(
+                text, this.props._peopleSearchUrl, this.props._jwt),
+            parseResults: response => response.map(user => {
                 return {
-                    content: user.fullName,
+                    content: user.name,
                     value: user.id
                 };
             })
@@ -136,7 +138,8 @@ function _mapStateToProps(state) {
     const { peopleSearchUrl } = state['features/base/config'];
 
     return {
-        _peopleSearchUrl: peopleSearchUrl
+        _peopleSearchUrl: peopleSearchUrl,
+        _jwt: state['features/jwt'].jwt
     };
 }
 

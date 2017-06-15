@@ -18,6 +18,7 @@ const buttons: Object = {
     add: {
         classNames: [ 'button', 'icon-add' ],
         enabled: true,
+        isDisplayed: () => !APP.store.getState()['features/jwt'].isGuest,
         id: 'toolbar_button_add',
         tooltipKey: 'toolbar.addPeople',
         onClick() {
