@@ -178,7 +178,7 @@ export default class LargeVideoManager {
             logger.info("hover in %s", id);
             this.state = videoType;
             const container = this.getContainer(this.state);
-            container.setStream(stream, videoType);
+            container.setStream(id, stream, videoType);
 
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));

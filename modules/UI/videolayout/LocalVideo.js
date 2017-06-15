@@ -112,8 +112,11 @@ LocalVideo.prototype.changeVideo = function (stream) {
         localVideoContainer.removeChild(localVideo);
         // when removing only the video element and we are on stage
         // update the stage
-        if(this.isCurrentlyOnLargeVideo())
-            this.VideoLayout.updateLargeVideo(this.id);
+        if (this.isCurrentlyOnLargeVideo()) {
+            this.VideoLayout.updateLargeVideo(
+                this.id,
+                true /* force - stream removed for the same user ID */);
+        }
         stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
     stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);

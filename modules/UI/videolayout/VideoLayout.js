@@ -761,7 +761,7 @@ var VideoLayout = {
         if (remoteVideo) {
             remoteVideo.updateView();
             if (remoteVideo.isCurrentlyOnLargeVideo()) {
-                this.updateLargeVideo(id);
+                this.updateLargeVideo(id, true);
             }
         }
     },
