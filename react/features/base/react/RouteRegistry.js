@@ -76,7 +76,7 @@ class RouteRegistry {
         });
     }
 
-/* eslint-disable no-undef */
+    /* eslint-disable no-undef */
 
     /**
      * Returns registered route by name if any.
@@ -87,7 +87,7 @@ class RouteRegistry {
      */
     getRouteByComponent(component: Class<Component<*>>) {
 
-/* eslint-enable no-undef */
+        /* eslint-enable no-undef */
 
         const route = this._elements.find(r => r.component === component);
 
@@ -106,7 +106,7 @@ class RouteRegistry {
     register(route: Route) {
         if (this._elements.includes(route)) {
             throw new Error(
-                    `Route ${String(route.component)} is registered already!`);
+                `Route ${String(route.component)} is registered already!`);
         }
 
         this._elements.push(route);

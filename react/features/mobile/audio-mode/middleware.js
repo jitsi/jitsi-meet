@@ -55,8 +55,7 @@ MiddlewareRegistry.register(store => next => action => {
             AudioMode.setMode(mode)
                 .catch(err =>
                     console.error(
-                            `Failed to set audio mode ${String(mode)}: `
-                                + `${err}`));
+                        `Failed to set audio mode ${String(mode)}: ${err}`));
         }
     }
 

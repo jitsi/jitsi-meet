@@ -91,7 +91,7 @@ class SpeakerStats extends Component {
         );
     }
 
-   /**
+    /**
      * Update the internal state with the latest speaker stats.
      *
      * @returns {void}

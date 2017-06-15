@@ -120,8 +120,8 @@ function _visitNode(node, callback) {
     if (typeof global.document === 'undefined') {
         const document
             = new DOMParser().parseFromString(
-                    '<html><head></head><body></body></html>',
-                    'text/xml');
+                '<html><head></head><body></body></html>',
+                'text/xml');
 
         // document.addEventListener
         //
@@ -181,8 +181,8 @@ function _visitNode(node, callback) {
                         // Parse the content string.
                         const d
                             = new DOMParser().parseFromString(
-                                    `<div>${innerHTML}</div>`,
-                                    'text/xml');
+                                `<div>${innerHTML}</div>`,
+                                'text/xml');
 
                         // Assign the resulting nodes as children of the
                         // element.
@@ -353,8 +353,8 @@ function _visitNode(node, callback) {
                     if (responseText) {
                         responseXML
                             = new DOMParser().parseFromString(
-                                    responseText,
-                                    'text/xml');
+                                responseText,
+                                'text/xml');
                     }
 
                     return responseXML;

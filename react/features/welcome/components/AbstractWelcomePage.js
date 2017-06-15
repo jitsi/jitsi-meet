@@ -97,11 +97,11 @@ export class AbstractWelcomePage extends Component {
         if (word.length > 1) {
             animateTimeoutId
                 = setTimeout(
-                        () => {
-                            this._animateRoomnameChanging(
-                                    word.substring(1, word.length));
-                        },
-                        70);
+                    () => {
+                        this._animateRoomnameChanging(
+                            word.substring(1, word.length));
+                    },
+                    70);
         }
 
         this.setState({

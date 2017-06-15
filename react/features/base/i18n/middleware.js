@@ -35,7 +35,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setConfig({ dispatch, getState }, next, action) {
+function _setConfig({ getState }, next, action) {
     const oldValue = getState()['features/base/config'];
     const result = next(action);
     const newValue = getState()['features/base/config'];

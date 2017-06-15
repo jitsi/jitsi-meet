@@ -44,16 +44,16 @@ function _fixURIStringHierPart(uri) {
     // hipchat.com
     let regex
         = new RegExp(
-                `^${_URI_PROTOCOL_PATTERN}//hipchat\\.com/video/call/`,
-                'gi');
+            `^${_URI_PROTOCOL_PATTERN}//hipchat\\.com/video/call/`,
+            'gi');
     let match = regex.exec(uri);
 
     if (!match) {
         // enso.me
         regex
             = new RegExp(
-                    `^${_URI_PROTOCOL_PATTERN}//enso\\.me/(?:call|meeting)/`,
-                    'gi');
+                `^${_URI_PROTOCOL_PATTERN}//enso\\.me/(?:call|meeting)/`,
+                'gi');
         match = regex.exec(uri);
     }
     if (match) {
