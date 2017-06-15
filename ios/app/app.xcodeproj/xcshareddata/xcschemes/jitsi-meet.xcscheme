@@ -17,7 +17,7 @@
                BlueprintIdentifier = "0BD906E41EC0C00300C8C18E"
                BuildableName = "JitsiMeet.framework"
                BlueprintName = "JitsiMeet"
-               ReferencedContainer = "container:sdk.xcodeproj">
+               ReferencedContainer = "container:../sdk/sdk.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
