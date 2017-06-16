@@ -14,6 +14,14 @@ echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-s
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 ```
 
+### Ensure you have apt-transport-https installed
+
+Before to make an update you should ensure you have the apt-transport-https installed
+
+```sh
+apt-get install apt-transport-https
+```
+
 ### Update the package lists
 
 ```sh
