@@ -16,11 +16,31 @@
     white-space: normal;
     margin-top: -$popoverMenuPadding;
 
-    &__menu-padding {
-        height: $popoverMenuPadding;
-        width: 100px;
+
+    &__menu-padding,
+    &__menu-padding-top {
         position: absolute;
+        width: 100px;
+    }
+
+    /**
+     * Invisible padding is added to the bottom of the popover to extend its
+     * height so it does not close when moving the mouse from the trigger
+     * element towards the popover itself.
+     */
+    &__menu-padding {
         bottom: -$popoverMenuPadding;
+        height: $popoverMenuPadding;
+    }
+
+    /**
+     * Invisible padding is added to the top of the popover to extend its height
+     * so it does not close automatically when its height is shrunk from showing
+     * less video statistics.
+     */
+    &__menu-padding-top {
+        height: 20px;
+        top: -20px;
     }
 
     &__showmore {

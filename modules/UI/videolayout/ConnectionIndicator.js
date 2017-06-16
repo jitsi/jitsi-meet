@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig, JitsiMeetJS */
+/* global $, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
 /* eslint-disable no-unused-vars */
@@ -113,7 +113,6 @@ ConnectionIndicator.prototype.create = function () {
     this.popover = new JitsiPopover($(element), {
         content: popoverContent,
         skin: "black",
-        onBeforePosition: el => APP.translation.translateElement(el),
         position: interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top'
     });
 

@@ -37,16 +37,15 @@ const positionConfigurations = {
 
             $('.jitsipopover').css({
                 display: 'table',
-                left: position.left,
-                top: position.top
+                left: element.left,
+                top: element.top
             });
 
             // Move additional padding to the right edge of the popover and
             // allow css to take care of width. The padding is used to maintain
             // a hover state between the target and the popover.
-            $('.jitsipopover > .jitsipopover__menu-padding').css({
-                left: element.width
-            });
+            $('.jitsipopover > .jitsipopover__menu-padding')
+                .css({ left: element.width });
 
             // Find the distance from the top of the popover to the center of
             // the target and use that value to position the arrow to point to
@@ -67,13 +66,21 @@ const positionConfigurations = {
         at: "top",
         collision: "fit",
         using: function setPositionTop(position, elements) {
-            var calcLeft = elements.target.left - elements.element.left +
-                elements.target.width/2;
-            $(".jitsipopover").css(
-                {top: position.top, left: position.left, display: "table"});
-            $(".jitsipopover > .arrow").css({left: calcLeft});
-            $(".jitsipopover > .jitsipopover__menu-padding").css(
-                {left: calcLeft - 50});
+            const { element, target } = elements;
+            const calcLeft = target.left - element.left + target.width / 2;
+            const paddingLeftPosition = calcLeft - 50;
+            const $jistiPopover = $('.jitsipopover');
+
+            $jistiPopover.css({
+                display: 'table',
+                left: element.left,
+                top: element.top
+            });
+            $jistiPopover.find('.arrow').css({ left: calcLeft });
+            $jistiPopover.find('.jitsipopover__menu-padding')
+                .css({ left: paddingLeftPosition });
+            $jistiPopover.find('.jitsipopover__menu-padding-top')
+                .css({ left: paddingLeftPosition });
         }
     }
 };
@@ -93,8 +100,6 @@ export default (function () {
      * Constructs new JitsiPopover and attaches it to the element
      * @param element jquery selector
      * @param options the options for the popover.
-     *  - {Function} onBeforePosition - function executed just before
-     *      positioning the popover. Useful for translation.
      * @constructor
      */
     function JitsiPopover(element, options)
@@ -132,6 +137,7 @@ export default (function () {
 
         return  (
             `<div class="jitsipopover ${skin} ${position}">
+                <div class="jitsipopover__menu-padding-top"></div>
                 ${arrow}
                 <div class="jitsipopover__content"></div>
                 <div class="jitsipopover__menu-padding"></div>
@@ -176,65 +182,41 @@ export default (function () {
      * Creates the popover html.
      */
     JitsiPopover.prototype.createPopover = function () {
-        $("body").append(this.template);
-        let popoverElem = $(".jitsipopover > .jitsipopover__content");
+        let $popover = $('.jitsipopover');
 
-        const { content } = this.options;
+        if (!$popover.length) {
+            $('body').append(this.template);
 
-        if (React.isValidElement(content)) {
-            /* jshint ignore:start */
-            ReactDOM.render(
-                <I18nextProvider i18n = { i18next }>
-                    { content }
-                </I18nextProvider>,
-                popoverElem.get(0),
-                () => {
-                    // FIXME There seems to be odd timing interaction when a
-                    // React Component is manually removed from the DOM and then
-                    // created again, as the ReactDOM callback will fire before
-                    // render is called on the React Component. Using a timeout
-                    // looks to bypass this behavior, maybe by creating
-                    // different execution context. JitsiPopover should be
-                    // rewritten into react soon anyway or at least rewritten
-                    // so the html isn't completely torn down with each update.
-                    setTimeout(() => this._popoverCreated());
-                });
-            /* jshint ignore:end */
-            return;
+            $popover = $('.jitsipopover');
+
+            $popover.on('mouseenter', () => {
+                this.popoverIsHovered = true;
+                if (typeof this.onHoverPopover === 'function') {
+                    this.onHoverPopover(this.popoverIsHovered);
+                }
+            });
+
+            $popover.on('mouseleave', () => {
+                this.popoverIsHovered = false;
+                this.hide();
+                if (typeof this.onHoverPopover === 'function') {
+                    this.onHoverPopover(this.popoverIsHovered);
+                }
+            });
         }
 
-        popoverElem.html(content);
-        this._popoverCreated();
-    };
+        const $popoverContent = $popover.find('.jitsipopover__content');
 
-    /**
-     * Adds listeners and executes callbacks after the popover has been created
-     * and displayed.
-     *
-     * @private
-     * @returns {void}
-     */
-    JitsiPopover.prototype._popoverCreated = function () {
-        const { onBeforePosition } = this.options;
-
-        if (typeof onBeforePosition === 'function') {
-            onBeforePosition($(".jitsipopover"));
-        }
-
-        $('.jitsipopover').on('mouseenter', () => {
-            this.popoverIsHovered = true;
-            if (typeof this.onHoverPopover === 'function') {
-                this.onHoverPopover(this.popoverIsHovered);
-            }
-        }).on('mouseleave', () => {
-            this.popoverIsHovered = false;
-            this.hide();
-            if (typeof this.onHoverPopover === 'function') {
-                this.onHoverPopover(this.popoverIsHovered);
-            }
-        });
-
-        this.refreshPosition();
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <I18nextProvider i18n = { i18next }>
+                { this.options.content }
+            </I18nextProvider>,
+            $popoverContent.get(0),
+            () => {
+                this.refreshPosition();
+            });
+        /* jshint ignore:end */
     };
 
     /**
@@ -264,9 +246,9 @@ export default (function () {
      */
     JitsiPopover.prototype.updateContent = function (content) {
         this.options.content = content;
-        if(!this.popoverShown)
+        if (!this.popoverShown) {
             return;
-        this.remove();
+        }
         this.createPopover();
     };
 
@@ -279,11 +261,9 @@ export default (function () {
     JitsiPopover.prototype.remove = function () {
         const $popover = $('.jitsipopover');
         const $popoverContent = $popover.find('.jitsipopover__content');
-        const attachedComponent = $popoverContent.get(0);
 
-        if (attachedComponent) {
-            // ReactDOM will no-op if no React Component is found.
-            ReactDOM.unmountComponentAtNode(attachedComponent);
+        if ($popoverContent.length) {
+            ReactDOM.unmountComponentAtNode($popoverContent.get(0));
         }
 
         $popover.off();
