@@ -147,7 +147,6 @@ const config = {
     },
     output: {
         filename: `[name]${minimize ? '.min' : ''}.js`,
-        libraryTarget: 'umd',
         path: `${__dirname}/build`,
         publicPath: '/libs/',
         sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
@@ -175,36 +174,19 @@ const config = {
     }
 };
 
-const configs = [
-
-    // The Webpack configuration to bundle app.bundle.js (aka APP).
+module.exports = [
     Object.assign({}, config, {
         entry: {
             'app.bundle': [
+
                 // XXX Required by at least IE11 at the time of this writing.
                 'babel-polyfill',
                 './app.js'
-            ]
-        },
-        output: Object.assign({}, config.output, {
-            library: 'APP'
-        })
-    }),
+            ],
 
-    // The Webpack configuration to bundle device_selection_popup_bundle.js
-    // (i.e. js file for the device selection popup dialog).
-    Object.assign({}, config, {
-        entry: {
             'device_selection_popup_bundle':
-                './react/features/device-selection/popup.js'
-        }
-    }),
+                './react/features/device-selection/popup.js',
 
-    // The Webpack configuration to bundle do_external_connect.js (which
-    // attempts to optimize Jitsi Meet's XMPP connection and, consequently, is
-    // also known as HTTP pre-bind).
-    Object.assign({}, config, {
-        entry: {
             'do_external_connect':
                 './connection_optimization/do_external_connect.js'
         }
@@ -217,12 +199,11 @@ const configs = [
             'external_api': './modules/API/external/index.js'
         },
         output: Object.assign({}, config.output, {
-            library: 'JitsiMeetExternalAPI'
+            library: 'JitsiMeetExternalAPI',
+            libraryTarget: 'umd'
         })
     })
 ];
-
-module.exports = configs;
 
 /**
  * Determines whether a specific (HTTP) request is to bypass the proxy of
