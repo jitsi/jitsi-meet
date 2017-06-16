@@ -74,8 +74,9 @@ class RemoteControlAuthorizationDialog extends Component {
                 titleKey = 'dialog.remoteControlTitle'
                 width = 'small'>
                 {
-                    this.props.t('dialog.remoteControlRequestMessage',
-                    { user: this.props._displayName })
+                    this.props.t(
+                        'dialog.remoteControlRequestMessage',
+                        { user: this.props._displayName })
                 }
                 {
                     this._getAdditionalMessage()
@@ -153,8 +154,10 @@ class RemoteControlAuthorizationDialog extends Component {
  */
 function _mapStateToProps(state, ownProps) {
     const { _displayName, participantId } = ownProps;
-    const participant = getParticipantById(
-            state['features/base/participants'], participantId);
+    const participant
+        = getParticipantById(
+            state['features/base/participants'],
+            participantId);
 
     return {
         _displayName: participant ? participant.name : _displayName

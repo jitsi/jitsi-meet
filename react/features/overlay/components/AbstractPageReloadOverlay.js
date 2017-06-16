@@ -133,34 +133,34 @@ export default class AbstractPageReloadOverlay extends Component {
         // sent to the backed.
         // FIXME: We should dispatch action for this.
         APP.conference.logEvent(
-                'page.reload',
-                /* value */ undefined,
-                /* label */ this.props.reason);
+            'page.reload',
+            /* value */ undefined,
+            /* label */ this.props.reason);
         logger.info(
-                `The conference will be reloaded after ${
-                    this.state.timeoutSeconds} seconds.`);
+            `The conference will be reloaded after ${
+                this.state.timeoutSeconds} seconds.`);
 
         AJS.progressBars.update('#reloadProgressBar', 0);
 
         this._interval
             = setInterval(
-                    () => {
-                        if (this.state.timeLeft === 0) {
-                            if (this._interval) {
-                                clearInterval(this._interval);
-                                this._interval = undefined;
-                            }
-
-                            this.props.dispatch(_reloadNow());
-                        } else {
-                            this.setState(prevState => {
-                                return {
-                                    timeLeft: prevState.timeLeft - 1
-                                };
-                            });
+                () => {
+                    if (this.state.timeLeft === 0) {
+                        if (this._interval) {
+                            clearInterval(this._interval);
+                            this._interval = undefined;
                         }
-                    },
-                    1000);
+
+                        this.props.dispatch(_reloadNow());
+                    } else {
+                        this.setState(prevState => {
+                            return {
+                                timeLeft: prevState.timeLeft - 1
+                            };
+                        });
+                    }
+                },
+                1000);
     }
 
     /**

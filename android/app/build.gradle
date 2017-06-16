@@ -34,11 +34,6 @@ android {
     }
 }
 
-if (project.hasProperty('JITSI_SIGNING')
-        && new File(project.property('JITSI_SIGNING')).exists()) {
-    apply from: project.property('JITSI_SIGNING');
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 

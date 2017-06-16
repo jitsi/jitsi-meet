@@ -48,16 +48,16 @@ i18next
 
 // Add default language which is preloaded from the source code.
 i18next.addResourceBundle(
-        DEFAULT_LANGUAGE,
-        'main',
-        MAIN_RESOURCES,
-        /* deep */ true,
-        /* overwrite */ true);
+    DEFAULT_LANGUAGE,
+    'main',
+    MAIN_RESOURCES,
+    /* deep */ true,
+    /* overwrite */ true);
 i18next.addResourceBundle(
-        DEFAULT_LANGUAGE,
-        'languages',
-        LANGUAGES_RESOURCES,
-        /* deep */ true,
-        /* overwrite */ true);
+    DEFAULT_LANGUAGE,
+    'languages',
+    LANGUAGES_RESOURCES,
+    /* deep */ true,
+    /* overwrite */ true);
 
 export default i18next;

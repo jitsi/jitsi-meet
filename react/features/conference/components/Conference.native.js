@@ -277,4 +277,4 @@ function _mapStateToProps(state) {
 }
 
 export default reactReduxConnect(_mapStateToProps, _mapDispatchToProps)(
-        Conference);
+    Conference);

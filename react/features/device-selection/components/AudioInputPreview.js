@@ -53,7 +53,7 @@ class AudioInputPreview extends PureComponent {
      */
     componentWillReceiveProps(nextProps) {
         this._listenForAudioUpdates(nextProps.track);
-        this._updateAudioLevel(undefined, 0);
+        this._updateAudioLevel(0);
     }
 
     /**
@@ -118,13 +118,11 @@ class AudioInputPreview extends PureComponent {
      * Updates the internal state of the last know audio level. The level should
      * be between 0 and 1, as the level will be used as a percentage out of 1.
      *
-     * @param {TraceablePeerConnection} peerConnection - The peer connection
-     * representation from the library.
      * @param {number} audioLevel - The new audio level for the track.
      * @private
      * @returns {void}
      */
-    _updateAudioLevel(peerConnection, audioLevel) {
+    _updateAudioLevel(audioLevel) {
         this.setState({
             audioLevel
         });

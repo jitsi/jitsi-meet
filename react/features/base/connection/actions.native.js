@@ -40,14 +40,14 @@ export function connect() {
                 });
 
         connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                _onConnectionDisconnected);
+            JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+            _onConnectionDisconnected);
         connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                _onConnectionEstablished);
+            JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+            _onConnectionEstablished);
         connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_FAILED,
-                _onConnectionFailed);
+            JitsiConnectionEvents.CONNECTION_FAILED,
+            _onConnectionFailed);
 
         connection.connect();
 
@@ -61,8 +61,8 @@ export function connect() {
          */
         function _onConnectionDisconnected(message: string) {
             connection.removeEventListener(
-                    JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                    _onConnectionDisconnected);
+                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                _onConnectionDisconnected);
 
             dispatch(_connectionDisconnected(connection, message));
         }
@@ -99,11 +99,11 @@ export function connect() {
          */
         function unsubscribe() {
             connection.removeEventListener(
-                    JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                    _onConnectionEstablished);
+                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+                _onConnectionEstablished);
             connection.removeEventListener(
-                    JitsiConnectionEvents.CONNECTION_FAILED,
-                    _onConnectionFailed);
+                JitsiConnectionEvents.CONNECTION_FAILED,
+                _onConnectionFailed);
         }
     };
 }

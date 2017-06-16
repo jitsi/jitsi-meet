@@ -21,7 +21,7 @@ export default class JitsiMeetLogStorage {
      * <tt>false</tt> otherwise.
      */
     isReady() {
-        return APP.logCollectorStarted && APP.conference;
+        return Boolean(APP.logCollectorStarted && APP.conference);
     }
 
     /**

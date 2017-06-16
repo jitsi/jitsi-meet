@@ -61,9 +61,9 @@ export default class DeviceSelectionPopup {
             disableAudioInputChange: true,
             disableDeviceChange: true,
             hasAudioPermission: JitsiMeetJS.mediaDevices
-                .isDevicePermissionGranted('audio'),
+                .isDevicePermissionGranted.bind(null, 'audio'),
             hasVideoPermission: JitsiMeetJS.mediaDevices
-                .isDevicePermissionGranted('video'),
+                .isDevicePermissionGranted.bind(null, 'video'),
             hideAudioInputPreview: !JitsiMeetJS.isCollectingLocalStats(),
             hideAudioOutputSelect: true
         };
@@ -139,12 +139,14 @@ export default class DeviceSelectionPopup {
             this._getAvailableDevices(),
             this._isDeviceListAvailable(),
             this._isDeviceChangeAvailable(),
+            this._isDeviceChangeAvailable('output'),
             this._getCurrentDevices(),
             this._isMultipleAudioInputSupported()
         ]).then(([
             availableDevices,
             listAvailable,
             changeAvailable,
+            changeOutputAvailable,
             currentDevices,
             multiAudioInputSupported
         ]) => {
@@ -155,7 +157,7 @@ export default class DeviceSelectionPopup {
                 currentVideoInputId: currentDevices.videoInput,
                 disableAudioInputChange: !multiAudioInputSupported,
                 disableDeviceChange: !listAvailable || !changeAvailable,
-                hideAudioOutputSelect: !changeAvailable
+                hideAudioOutputSelect: !changeOutputAvailable
             });
         });
     }
@@ -164,10 +166,13 @@ export default class DeviceSelectionPopup {
      * Returns Promise that resolves with true if the device change is available
      * and with false if not.
      *
+     * @param {string} [deviceType] - Values - 'output', 'input' or undefined.
+     * Default - 'input'.
      * @returns {Promise}
      */
-    _isDeviceChangeAvailable() {
+    _isDeviceChangeAvailable(deviceType) {
         return this._transport.sendRequest({
+            deviceType,
             type: 'devices',
             name: 'isDeviceChangeAvailable'
         }).catch(e => {

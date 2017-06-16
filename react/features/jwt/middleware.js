@@ -100,9 +100,9 @@ function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
 
                 callOverlayVisible
                     = Boolean(
-                            participants
-                                && participants.length === 1
-                                && participants[0].local);
+                        participants
+                            && participants.length === 1
+                            && participants[0].local);
 
                 // However, the CallDialog is not to be displayed/visible again
                 // after all remote participants leave.
