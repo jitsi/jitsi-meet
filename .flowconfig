@@ -19,6 +19,7 @@
 .*/node_modules/babel-core/.*
 .*/node_modules/bower/.*
 .*/node_modules/jsonlint/.*
+.*/node_modules/promise/index.js.flow
 .*/node_modules/styled-components/.*
 
 [include]
