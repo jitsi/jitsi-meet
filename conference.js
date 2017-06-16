@@ -1140,6 +1140,8 @@ export default {
         let externalInstallation = false;
 
         if (shareScreen) {
+            const didHaveVideo = Boolean(this.localVideo);
+
             return createLocalTracks({
                 desktopSharingSources: options.desktopSharingSources,
                 devices: ['desktop'],
@@ -1170,18 +1172,18 @@ export default {
                 // close external installation dialog on success.
                 if(externalInstallation)
                     $.prompt.close();
-                stream.on(
-                    TrackEvents.LOCAL_TRACK_STOPPED,
-                    () => {
-                        // if stream was stopped during screensharing session
-                        // then we should switch to video
-                        // otherwise we stopped it because we already switched
-                        // to video, so nothing to do here
-                        if (this.isSharingScreen) {
-                            this.toggleScreenSharing(false);
+                if (didHaveVideo) {
+                    stream.on(
+                        TrackEvents.LOCAL_TRACK_STOPPED,
+                        () => {
+                            // If the stream was stopped during screen sharing
+                            // session then we should switch back to video.
+                            if (this.isSharingScreen) {
+                                this.toggleScreenSharing(false);
+                            }
                         }
-                    }
-                );
+                    );
+                }
                 return this.useVideoStream(stream);
             }).then(() => {
                 this.videoSwitchInProgress = false;
