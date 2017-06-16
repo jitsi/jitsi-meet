@@ -14,15 +14,20 @@
     "defaultNickname": "Bsp: Heidi Blau",
     "defaultLink": "Bsp.: __url__",
     "callingName": "__name__",
+    "audioOnly": {
+        "audioOnly": "Nur Audio",
+        "featureToggleDisabled": "Umschalten zwischen __feature__ ist im Audio-Modus deaktiviert"
+    },
     "userMedia": {
-        "react-nativeGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
-        "chromeGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
-        "androidGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
-        "firefoxGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Ausgewähltes Gerät freigeben</i></b>",
-        "operaGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>Erlauben</i></b>",
-        "iexplorerGrantPermissions": "Bitte Berechtigung zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>OK</i></b> erteilen",
-        "safariGrantPermissions": "Bitte Berechtigung zur Verwendung der Kamera und des Mikrofons durch anwählen von <b><i>OK</i></b> erteilen",
-        "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen"
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "Wählen Sie <b><i>Markiertes Gerät teilen</i></b> wenn der Browser um Berechtigungen bittet.",
+        "operaGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b> wenn der Browser um Berechtigungen bittet.",
+        "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
+        "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b> wenn der Browser um Berechtigungen bittet."
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Tastenkürzel",
@@ -36,7 +41,8 @@
         "toggleChat": "Chat öffnen oder schliessen",
         "mute": "Stummschaltung aktivieren oder deaktivieren",
         "fullScreen": "Vollbildmodus aktivieren / deaktivieren",
-        "videoMute": "Kamera starten oder stoppen"
+        "videoMute": "Kamera starten oder stoppen",
+        "showSpeakerStats": "Statistiken für Sprecher anzeigen"
     },
     "welcomepage": {
         "disable": "Diesen Hinweis nicht mehr anzeigen",
@@ -81,14 +87,16 @@
         "terms": "Bedingungen"
     },
     "startupoverlay": {
-        "policyText": "&nbsp;",
+        "policyText": "",
         "title": "__app__ benötigt Kamera und Mikrofon."
     },
     "suspendedoverlay": {
         "title": "Die Konferenz wurde unterbrochen weil der Computer den Standbymodus aktivierte.",
+        "text": "Klicken Sie auf die <i>Erneut teilnehmen</i> Schaltfläche um die Verbindung wieder herzustellen.",
         "rejoinKeyTitle": "Erneut teilnehmen"
     },
     "toolbar": {
+        "audioonly": "Nur-Audio-Modus aktivieren/deaktivieren (spart Bandbreite)",
         "mute": "Stummschaltung aktivieren / deaktivieren",
         "videomute": "Kamera starten / stoppen",
         "authenticate": "Anmelden",
@@ -145,12 +153,10 @@
         "selectAudioOutput": "Audioausgabe",
         "followMe": "Follow-me für alle Teilnehmer",
         "noDevice": "Kein",
-        "noPermission": "Keine Berechtigung um das Gerät zu verwenden",
         "cameraAndMic": "Kamera und Mikrofon",
         "moderator": "MODERATOR",
         "password": "PASSWORT SETZEN",
-        "audioVideo": "AUDIO UND VIDEO",
-        "setPasswordLabel": "Konferenz mit einem Passwort schützen."
+        "audioVideo": "AUDIO UND VIDEO"
     },
     "profile": {
         "title": "Profil",
@@ -174,6 +180,7 @@
         "bitrate": "Bitrate:",
         "packetloss": "Paketverlust:",
         "resolution": "Auflösung:",
+        "framerate": "Bildwiederholrate:",
         "less": "Weniger anzeigen",
         "more": "Mehr anzeigen",
         "address": "Adresse:",
@@ -198,13 +205,14 @@
         "focus": "Konferenz-Organisator",
         "focusFail": "__component__ ist im Moment nicht verfügbar - wiederholen in __ms__ Sekunden",
         "grantedTo": "Moderatorenrechte an __to__ vergeben.",
-        "grantedToUnknown": "Moderatorenrechte an $t(somebody) vergeben.",
+        "grantedToUnknown": "Moderatorenrechte an $t(notify.somebody) vergeben.",
         "muted": "Der Konferenz wurde stumm beigetreten.",
         "mutedTitle": "Stummschaltung aktiv!",
         "raisedHand": "Möchte sprechen."
     },
     "dialog": {
         "add": "Hinzufügen",
+        "allow": "Erlauben",
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
         "popupError": "Ihr Browser blockiert Popup-Fenster von dieser Webseite. Bitte erlauben Sie dieser Seite Popups in den Sicherheitseinstellungen Ihres Browsers und versuchen Sie es erneut.",
         "passwordErrorTitle": "Passwort-Fehler",
@@ -216,18 +224,15 @@
         "connecting": "Verbindung wird hergestellt",
         "copy": "Kopieren",
         "error": "Fehler",
-        "roomLocked": "Diese Konferenz ist gesperrt. Neue Teilnehmer müssen über den Link beitreten das Passwort eingeben",
-        "addPassword": "Passwort hinzufügen",
         "createPassword": "Passwort erstellen",
         "detectext": "Fehler bei der Erkennung der Bildschirmfreigabeerweiterung.",
         "failtoinstall": "Die Bildschirmfreigabeerweiterung konnte nicht installiert werden.",
         "failedpermissions": "Die Zugriffsberechtigungen auf das Mikrofon und/oder die Kamera konnten nicht eingeholt werden.",
-        "conferenceReloadTitle": "Leider ist etwas schiefgegangen",
-        "conferenceReloadMsg": "Wir versuchen das zu beheben",
-        "conferenceDisconnectTitle": "Sie wurden getrennt. Prüfen Sie Ihre Netzwerkverbindung.",
-        "conferenceDisconnectMsg": "Verbinde erneut in...",
-        "reconnectNow": "Jetzt erneut verbinden",
-        "conferenceReloadTimeLeft": "__seconds__ sek.",
+        "conferenceReloadTitle": "Leider ist etwas schiefgegangen.",
+        "conferenceReloadMsg": "Wir versuchen das zu beheben. Verbinde in __seconds__ Sekunden...",
+        "conferenceDisconnectTitle": "Ihre Verbindung ist getrennt worden.",
+        "conferenceDisconnectMsg": "Prüfen Sie allenfalls Ihre Netzwerkverbindung. Verbinde in __seconds__ Sekunden...",
+        "rejoinNow": "Jetzt erneut beitreten",
         "maxUsersLimitReached": "Die maximale Teilnehmerzahl dieser Konferenz ist erreicht. Die Konferenz ist voll. Bitte versuchen Sie es später noch einmal.",
         "lockTitle": "Sperren fehlgeschlagen",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
@@ -267,8 +272,6 @@
         "Save": "Speichern",
         "recording": "Aufnahme",
         "recordingToken": "Aufnahme-Token eingeben",
-        "Dial": "Wählen",
-        "sipMsg": "Geben Sie eine SIP Nummer ein",
         "passwordCheck": "Sind Sie sicher, dass Sie das Passwort entfernen möchten?",
         "passwordMsg": "Passwort setzen um die Konferenz zu schützen",
         "shareLink": "Link zu dieser Konferenz teilen",
@@ -327,10 +330,16 @@
         "muteParticipantBody": "Sie können die Stummschaltung anderer Teilnehmer nicht aufheben, aber ein Teilnehmer kann seine eigene Stummschaltung jederzeit beenden.",
         "muteParticipantButton": "Stummschalten",
         "remoteControlTitle": "Fernsteuerung",
+        "remoteControlRequestMessage": "Möchten Sie __user__ erlauben den Computer fernzusteuern?",
+        "remoteControlShareScreenWarning": "Achtung, wenn Sie die Anfrage genehmigen starten Sie die Bildschirmfreigabe!",
         "remoteControlDeniedMessage": "__user__ hat die Anfrage zur Fernsteuerung verweigert.",
         "remoteControlAllowedMessage": "__user__ hat die Anfrage zur Fernsteuerung angenommen.",
         "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von __user__ ist ein Fehler aufgetreten.",
-        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet."
+        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet.",
+        "close": "Schliessen",
+        "shareYourScreen": "Bildschirm freigeben",
+        "yourEntireScreen": "Ganzer Bildschirm",
+        "applicationWindow": "Anwendungsfenster"
     },
     "\u0005dialog": {},
     "email": {
@@ -396,5 +405,45 @@
         "streamIdHelp": "Wo ist die Stream-ID zu finden?",
         "error": "Das Live-Streaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "busy": "All Aufnahmegeräte sind momentan ausgelastet. Bitte versuchen Sie es später noch einmal."
+    },
+    "speakerStats": {
+        "hours": "__count__h",
+        "minutes": "__count__m",
+        "name": "Name",
+        "seconds": "__count__s",
+        "speakerStats": "Sprecher-Statistiken",
+        "speakerTime": "Sprecher-Zeit"
+    },
+    "deviceSelection": {
+        "deviceSettings": "Geräteeinstellungen",
+        "noPermission": "Berechtigungen nicht erteilt",
+        "previewUnavailable": "Keine Vorschau verfügbar",
+        "selectADevice": "Ein Gerät wählen",
+        "testAudio": "Audio testen"
+    },
+    "invite": {
+        "addPassword": "Passwort hinzufügen",
+        "callNumber": "__number__ anrufen",
+        "enterID": "Um mit einem Telefon teilzunehmen, geben Sie die Konferenz ID (__conferenceID__) gefolgt von # ein",
+        "howToDialIn": "Wählen Sie eine der folgenden Nummern um via Telefon teilzunehmen und die Konferenz ID",
+        "hidePassword": "Passwort verstecken",
+        "inviteTo": "Teilnehmer zu __conferenceName__ einladen",
+        "invitedYouTo": "Sie wurden von __userName__ zur Konferenz __inviteURL__ eingeladen",
+        "locked": "Diese Konferenz ist gesperrt. Neue Teilnehmer müssen das Passwort eingeben um beizutreten.",
+        "showPassword": "Passwort anzeigen",
+        "unlocked": "Die Konferenz ist nicht geschützt. Jeder mit dem Link kann der Konferenz beitreten."
+    },
+    "videoStatus": {
+        "hd": "HD",
+        "hdVideo": "HD video",
+        "sd": "SD",
+        "sdVideo": "SD video"
+    },
+    "dialOut": {
+        "dial": "Wählen",
+        "dialOut": "Telefonnummer anrufen",
+        "statusMessage": "ist jetzt __status__",
+        "enterPhone": "Telefonnummer eingeben",
+        "phoneNotAllowed": "Diese Telefonnummer wird leider noch nicht unterstützt!"
     }
 }
