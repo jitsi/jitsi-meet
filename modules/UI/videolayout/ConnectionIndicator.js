@@ -1,6 +1,13 @@
 /* global $, APP, interfaceConfig, JitsiMeetJS */
 /* jshint -W101 */
 
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { ConnectionStatsTable } from '../../../react/features/connection-stats';
+/* eslint-enable no-unused-vars */
+
 import JitsiPopover from "../util/JitsiPopover";
 import UIUtil from "../util/UIUtil";
 
@@ -42,237 +49,31 @@ function ConnectionIndicator(videoContainer, videoId) {
     this.popover = null;
     this.id = videoId;
     this.create();
+
+    this.isLocalVideo
+        = this.videoContainer.videoSpanId === 'localVideoContainer';
+    this.showMore = this.showMore.bind(this);
 }
-
-ConnectionIndicator.getIP = function(value) {
-    return value.substring(0, value.lastIndexOf(":"));
-};
-
-ConnectionIndicator.getPort = function(value) {
-    return value.substring(value.lastIndexOf(":") + 1, value.length);
-};
-
-ConnectionIndicator.getStringFromArray = function (array) {
-    var res = "";
-    for(var i = 0; i < array.length; i++) {
-        res += (i === 0? "" : ", ") + array[i];
-    }
-    return res;
-};
 
 /**
  * Generates the html content.
  * @returns {string} the html content.
  */
 ConnectionIndicator.prototype.generateText = function () {
-    var downloadBitrate, uploadBitrate, packetLoss, i;
-
-    if(!this.bitrate) {
-        downloadBitrate = "N/A";
-        uploadBitrate = "N/A";
-    }
-    else {
-        downloadBitrate =
-            this.bitrate.download? this.bitrate.download + " Kbps" : "N/A";
-        uploadBitrate =
-            this.bitrate.upload? this.bitrate.upload + " Kbps" : "N/A";
-    }
-
-    if(!this.packetLoss) {
-        packetLoss = "N/A";
-    } else {
-
-        packetLoss = "<span class='connection-info__download'>&darr;</span>" +
-            (this.packetLoss.download !== null ?
-                this.packetLoss.download : "N/A") +
-            "% <span class='connection-info__upload'>&uarr;</span>" +
-            (this.packetLoss.upload !== null? this.packetLoss.upload : "N/A") +
-            "%";
-    }
-
-    // GENERATE RESOLUTIONS STRING
-    const resolutions = this.resolution || {};
-    const resolutionStr = Object.keys(resolutions).map(ssrc => {
-        let {width, height} = resolutions[ssrc];
-        return `${width}x${height}`;
-    }).join(', ') || 'N/A';
-
-    const framerates = this.framerate || {};
-    const frameRateStr = Object.keys(framerates).map(ssrc =>
-        framerates[ssrc]
-    ).join(', ') || 'N/A';
-
-    let result = (
-        `<table class="connection-info__container" style='width:100%'>
-            <tr>
-                <td>
-                    <span data-i18n='connectionindicator.bitrate'></span>
-                </td>
-                <td>
-                    <span class='connection-info__download'>&darr;</span>${downloadBitrate}
-                    <span class='connection-info__upload'>&uarr;</span>${uploadBitrate}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span data-i18n='connectionindicator.packetloss'></span>
-                </td>
-                <td>${packetLoss}</td>
-            </tr>
-            <tr>
-                <td>
-                    <span data-i18n='connectionindicator.resolution'></span>
-                </td>
-                <td>
-                    ${resolutionStr}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span data-i18n='connectionindicator.framerate'></span>
-                </td>
-                <td>
-                    ${frameRateStr}
-                </td>
-            </tr>
-        </table>`);
-
-    if(this.videoContainer.videoSpanId == "localVideoContainer") {
-        result += "<a class=\"jitsipopover__showmore link\" " +
-            "onclick = \"APP.UI.connectionIndicatorShowMore('" +
-            // FIXME: we do not know local id when this text is generated
-            //this.id + "')\"  data-i18n='connectionindicator." +
-            "local')\"  data-i18n='connectionindicator." +
-                (this.showMoreValue ? "less" : "more") + "'></a>";
-    }
-
-    if (this.showMoreValue) {
-        var downloadBandwidth, uploadBandwidth, transport;
-        if (!this.bandwidth) {
-            downloadBandwidth = "N/A";
-            uploadBandwidth = "N/A";
-        } else {
-            downloadBandwidth = this.bandwidth.download?
-                this.bandwidth.download + " Kbps" :
-                "N/A";
-            uploadBandwidth = this.bandwidth.upload?
-                this.bandwidth.upload + " Kbps" :
-                "N/A";
-        }
-
-        if (!this.transport || this.transport.length === 0) {
-            transport = "<tr>" +
-                "<td><span " +
-                "data-i18n='connectionindicator.address'></span></td>" +
-                "<td> N/A</td></tr>";
-        } else {
-            var data = {
-                remoteIP: [],
-                localIP:[],
-                remotePort:[],
-                localPort:[],
-                transportType:[]};
-            for(i = 0; i < this.transport.length; i++) {
-                var ip =  ConnectionIndicator.getIP(this.transport[i].ip);
-                var port = ConnectionIndicator.getPort(this.transport[i].ip);
-                var localIP =
-                    ConnectionIndicator.getIP(this.transport[i].localip);
-                var localPort =
-                    ConnectionIndicator.getPort(this.transport[i].localip);
-                if(data.remoteIP.indexOf(ip) == -1) {
-                    data.remoteIP.push(ip);
-                }
-
-                if(data.remotePort.indexOf(port) == -1) {
-                    data.remotePort.push(port);
-                }
-
-                if(data.localIP.indexOf(localIP) == -1) {
-                    data.localIP.push(localIP);
-                }
-
-                if(data.localPort.indexOf(localPort) == -1) {
-                    data.localPort.push(localPort);
-                }
-
-                if(data.transportType.indexOf(this.transport[i].type) == -1) {
-                    data.transportType.push(this.transport[i].type);
-                }
-            }
-
-            // All of the transports should be either P2P or JVB
-            const isP2P = this.transport.length ? this.transport[0].p2p : false;
-
-            var local_address_key = "connectionindicator.localaddress";
-            var remote_address_key = "connectionindicator.remoteaddress";
-            var localTransport =
-                "<tr><td><span data-i18n='" +
-                local_address_key +"' data-i18n-options='" +
-                    JSON.stringify({count: data.localIP.length})
-                        + "'></span></td><td> " +
-                ConnectionIndicator.getStringFromArray(data.localIP) +
-                "</td></tr>";
-            transport =
-                "<tr><td><span data-i18n='" +
-                remote_address_key + "' data-i18n-options='" +
-                    JSON.stringify({count: data.remoteIP.length})
-                        + "'></span></td><td> " +
-                ConnectionIndicator.getStringFromArray(data.remoteIP);
-
-            // Append (p2p) to indicate the P2P type of transport
-            if (isP2P) {
-                transport
-                    += "<span data-i18n='connectionindicator.peer_to_peer'>";
-            }
-            transport += "</td></tr>";
-
-            var key_remote = "connectionindicator.remoteport",
-                key_local = "connectionindicator.localport";
-
-            transport += "<tr>" +
-                "<td>" +
-                "<span data-i18n='" + key_remote +
-                "' data-i18n-options='" +
-                    JSON.stringify({count: this.transport.length})
-                        + "'></span></td><td>";
-            localTransport += "<tr>" +
-                "<td>" +
-                "<span data-i18n='" + key_local +
-                "' data-i18n-options='" +
-                    JSON.stringify({count: this.transport.length})
-                        + "'></span></td><td>";
-
-            transport +=
-                ConnectionIndicator.getStringFromArray(data.remotePort);
-            localTransport +=
-                ConnectionIndicator.getStringFromArray(data.localPort);
-            transport += "</td></tr>";
-            transport += localTransport + "</td></tr>";
-            transport +="<tr>" +
-                "<td><span data-i18n='connectionindicator.transport' "
-                    + " data-i18n-options='" +
-                    JSON.stringify({count: data.transportType.length})
-                + "'></span></td>" +
-                "<td>"
-                    + ConnectionIndicator.getStringFromArray(data.transportType);
-                + "</td></tr>";
-
-        }
-
-        result += "<table class='connection-info__container' style='width:100%'>" +
-            "<tr>" +
-            "<td>" +
-            "<span data-i18n='connectionindicator.bandwidth'></span>" +
-            "</td><td>" +
-            "<span class='connection-info__download'>&darr;</span>" +
-            downloadBandwidth +
-            " <span class='connection-info__upload'>&uarr;</span>" +
-            uploadBandwidth + "</td></tr>";
-
-        result += transport + "</table>";
-    }
-
-    return result;
+    /* jshint ignore:start */
+    return (
+        <ConnectionStatsTable
+            bandwidth = { this.bandwidth }
+            bitrate = { this.bitrate }
+            isLocalVideo = { this.isLocalVideo }
+            framerate = { this.framerate }
+            onShowMore = { this.showMore }
+            packetLoss = { this.packetLoss}
+            resolution = { this.resolution }
+            shouldShowMore = { this.showMoreValue }
+            transport = { this.transport } />
+    );
+    /* jshint ignore:end */
 };
 
 /**
@@ -443,9 +244,7 @@ ConnectionIndicator.prototype.updatePopoverData = function (force) {
     // generate content, translate it and add it to document only if
     // popover is visible or we force to do so.
     if(this.popover.popoverShown || force) {
-        this.popover.updateContent(
-            `<div class="connection-info">${this.generateText()}</div>`
-        );
+        this.popover.updateContent(this.generateText());
     }
 };
 
