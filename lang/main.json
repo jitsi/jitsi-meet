@@ -91,8 +91,8 @@
         "title": "__app__ needs to use your microphone and camera."
     },
     "suspendedoverlay": {
-        "title": "Your video call was interrupted, because this computer went to sleep.",
-        "text": "Press <i>Rejoin</i> button to connect back to your conversation.",
+        "title": "Your video call was interrupted because this computer went to sleep.",
+        "text": "Press the <i>Rejoin</i> button to reconnect.",
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
