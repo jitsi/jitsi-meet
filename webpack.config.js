@@ -34,21 +34,15 @@ if (minimize) {
         }
     }));
 
-    // While webpack will automatically insert UglifyJsPlugin when minimize is
-    // true, the defaults of UglifyJsPlugin in webpack 1 and webpack 2 are
-    // different. Explicitly state what we want even if we want defaults in
-    // order to prepare for webpack 2.
     plugins.push(new webpack.optimize.UglifyJsPlugin({
         compress: {
             // It is nice to see warnings from UglifyJsPlugin that something is
-            // unused and, consequently, is removed. The default is false in
-            // webpack 2.
+            // unused/removed.
             warnings: true
         },
         extractComments: true,
 
-        // Use the source map to map error message locations to modules. The
-        // default is false in webpack 2.
+        // Use the source map to map error message locations to modules.
         sourceMap: true
     }));
 }
@@ -160,11 +154,6 @@ const config = {
             'browser'
         ],
         extensions: [
-
-            // Webpack 2 broke haste-resolver-webpack-plugin and I could not fix
-            // it. But given that there is resolve.extensions and the only
-            // non-default extension we have is .web.js, drop
-            // haste-resolver-webpack-plugin and go with resolve.extensions.
             '.web.js',
 
             // Webpack defaults:
