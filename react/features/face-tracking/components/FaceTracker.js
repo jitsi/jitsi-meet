@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-import face from '../trackingjs/data/face';
-import tracking from '../trackingjs/tracking';
+import tracking from 'tracking';
 
 const ANOMALY_RECOGNIZED_DELAY = 6000;
 const FACE_PROMPT_DURATION = 4000;
@@ -223,7 +222,6 @@ class FaceTracker extends Component {
      * @returns {void}
      */
     _trackFace() {
-        tracking.ViolaJones.classifiers.face = face;
         const tracker = new tracking.ObjectTracker('face');
 
         // Sets necessary face tracking parameters.
