@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
 import tracking from 'tracking';
+
+import FacePrompt from './FacePrompt';
 
 const ANOMALY_RECOGNIZED_DELAY = 6000;
 const FACE_PROMPT_DURATION = 4000;
 
-const FACE_TEXT_FONT_SIZE_RATIO = 0.3;
+const FACE_RECT_WIDTH_RATIO = 0.7;
+const FACE_RECT_HEIGHT_RATIO = 0.9;
+const FACE_RECT_TOP_RATIO = (1 - FACE_RECT_HEIGHT_RATIO) / 2;
+const FACE_RECT_LEFT_RATIO = (1 - FACE_RECT_WIDTH_RATIO) / 2;
 
 const TRACKING_INITIAL_SCALE = 4;
 const TRACKING_STEP_SIZE = 2;
 const TRACKING_EDGES_DENSITY = 0.1;
 
 /**
- * React component for tracking face in a video, and displaying prompt if user's
- * face is not well-positioned for a while.
+ * React component for tracking face in a video, and calling FacePrompt
+ * component to display prompt if user's face is not well-positioned for a
+ * while.
  *
  * @extends Component
  */
@@ -25,15 +31,9 @@ class FaceTracker extends Component {
      */
     static propTypes = {
         /**
-         * Whether or not face tracking needs to be enabled during the creation
-         * of the component.
+         * Reference to a HTML video element for face tracking.
          */
-        isFaceTrackingEnabled: React.PropTypes.bool,
-
-        /**
-         * Element selector for selecting target video element.
-         */
-        videoElementSelector: React.PropTypes.string
+        videoElement: React.PropTypes.object
     };
 
     /**
@@ -46,42 +46,6 @@ class FaceTracker extends Component {
         super(props);
 
         /**
-         * The internal reference to the topmost DOM/HTML element backing the
-         * React {@code Component}. Used to contain warning message and
-         * appropriate face rectangle area.
-         *
-         * @private
-         * @type {HTMLDivElement}
-         */
-        this._rootElement = null;
-
-        /**
-         * The internal reference to the DOM/HTML element intended for showing
-         * warning message.
-         *
-         * @private
-         * @type {HTMLDivElement}
-         */
-        this._textElement = null;
-
-        /**
-         * The internal reference to the DOM/HTML element intended for showing
-         * appropriate face position in a rectangle area.
-         *
-         * @private
-         * @type {HTMLDivElement}
-         */
-        this._rectElement = null;
-
-        /**
-         * The internal reference to the DOM/HTML element for tracking.
-         *
-         * @private
-         * @type {HTMLVideoElement|Object}
-         */
-        this._videoElement = null;
-
-        /**
          * Previous time when the user's face is not well-positioned.
          *
          * @private
@@ -92,7 +56,7 @@ class FaceTracker extends Component {
         /**
          * An object which represents the rectangle area, considered as the good
          * position for a user's face recognized.
-         * It has four attributes:
+         * It has four key/value pairs:
          *     x - x coordinate of top left point based on the video.
          *     y - y coordinate of top left point based on the video.
          *     width - width of the good rectangle area.
@@ -104,29 +68,22 @@ class FaceTracker extends Component {
          */
         this._faceRect = null;
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._setRootElement = this._setRootElement.bind(this);
-        this._setTextElement = this._setTextElement.bind(this);
-        this._setRectElement = this._setRectElement.bind(this);
-    }
+        /**
+         * Whether or not the face tracking mechanism is enabled.
+         *
+         * @private
+         * @type {boolean}
+         */
+        this._enabled = false;
 
-    /**
-     * Invokes the library for tracking faces in the video.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        this._videoElement
-            = document.querySelector(this.props.videoElementSelector);
-
-        if (this.props.isFaceTrackingEnabled) {
-            if (this._videoElement.readyState === 4) {
-                this._attachFaceTracking();
-            } else {
-                this._attachFaceTrackingWhenReady();
-            }
-        }
+        this.state = {
+            /**
+             * Whether or not the face prompt is toggled.
+             *
+             * @type {boolean}
+             */
+            isPromptToggled: false
+        };
     }
 
     /**
@@ -147,40 +104,8 @@ class FaceTracker extends Component {
      * @returns {void}
      */
     _attachFaceTracking() {
-        this._initContainerSize();
         this._initFaceRect();
-        this._initFontSize();
         this._trackFace();
-    }
-
-    /**
-     * Registers handler to listen for 'canplay' event of target video. When
-     * the event is fired, attaches face tracking mechanism to target video.
-     * Only called when the target video is not ready.
-     *
-     * @private
-     * @returns {void}
-     */
-    _attachFaceTrackingWhenReady() {
-        const handler = e => {
-            this._attachFaceTracking();
-            this._videoElement.removeEventListener(e.type, handler);
-        };
-
-        this._videoElement.addEventListener('canplay', handler, false);
-    }
-
-    /**
-     * Sets the width and height of target video element to the face prompt
-     * container.
-     *
-     * @private
-     * @returns {void}
-     */
-    _initContainerSize() {
-        this._rootElement.setAttribute('style',
-            `width:${this._videoElement.offsetWidth}px;
-            height:${this._videoElement.offsetHeight}px`);
     }
 
     /**
@@ -190,27 +115,14 @@ class FaceTracker extends Component {
      * @returns {void}
      */
     _initFaceRect() {
+        const videoElement = this.props.videoElement;
+
         this._faceRect = {
-            x: this._rectElement.offsetLeft - this._rootElement.offsetLeft,
-            y: this._rectElement.offsetTop - this._rootElement.offsetTop,
-            width: this._rectElement.offsetWidth,
-            height: this._rectElement.offsetHeight
+            x: videoElement.offsetWidth * FACE_RECT_LEFT_RATIO,
+            y: videoElement.offsetHeight * FACE_RECT_TOP_RATIO,
+            width: videoElement.offsetWidth * FACE_RECT_WIDTH_RATIO,
+            height: videoElement.offsetHeight * FACE_RECT_HEIGHT_RATIO
         };
-    }
-
-    /**
-     * Initializes font size of warning messages, in precentage. Note that font
-     * size cannot be larger than 100%.
-     *
-     * @private
-     * @returns {void}
-     */
-    _initFontSize() {
-        let size = this._rootElement.offsetWidth * FACE_TEXT_FONT_SIZE_RATIO;
-
-        size = Math.min(size, 100);
-
-        this._textElement.setAttribute('style', `font-size: ${size}%`);
     }
 
     /**
@@ -230,7 +142,7 @@ class FaceTracker extends Component {
         tracker.setEdgesDensity(TRACKING_EDGES_DENSITY);
 
         tracking.track(
-            this.props.videoElementSelector, tracker, { camera: true });
+            this.props.videoElement, tracker, { camera: true });
 
         this._prevBadTime = new Date().getTime();
         tracker.on('track', event => {
@@ -240,7 +152,7 @@ class FaceTracker extends Component {
                 // A delay is set to make the face detection not very sensitive
                 // to trivial disturbs.
                 if (currTime - this._prevBadTime > ANOMALY_RECOGNIZED_DELAY) {
-                    this._showPrompt();
+                    this._togglePrompt();
                     this._prevBadTime = currTime;
                 }
             } else {
@@ -279,74 +191,35 @@ class FaceTracker extends Component {
     }
 
     /**
-     * Display warning message and appropriate face position rectangle for a
+     * Displays warning message and appropriate face position rectangle for a
      * range of time.
      *
      * @private
      * @returns {void}
      */
-    _showPrompt() {
+    _togglePrompt() {
         // If the prompt has been shown, just returns.
-        if (this._isPromptShown()) {
+        if (this.state.isPromptToggled) {
             return;
         }
 
-        this._textElement.className += ' show';
-        this._rectElement.className += ' show';
+        this.setState({ isPromptToggled: true });
 
+        this._setPromptTimeout();
+    }
+
+    /**
+     * Sets the timeout to dismiss the face prompt.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setPromptTimeout() {
         setTimeout(() => {
-            this._textElement.classList.remove('show');
-            this._rectElement.classList.remove('show');
+            this.setState({ isPromptToggled: false });
 
             this._prevBadTime = new Date().getTime();
         }, FACE_PROMPT_DURATION);
-    }
-
-    /**
-     * Whether or not the prompt information has been displayed.
-     *
-     * @returns {boolean}
-     * @private
-     */
-    _isPromptShown() {
-        return this._rectElement.classList.contains('show')
-            && this._textElement.classList.contains('show');
-    }
-
-    /**
-     * Sets an instance variable for the component's element intended for
-     * displaying warning messages.
-     *
-     * @param {Object} element - DOM element intended for displaying warnings.
-     * @private
-     * @returns {void}
-     */
-    _setTextElement(element) {
-        this._textElement = element;
-    }
-
-    /**
-     * Sets the component's container element.
-     *
-     * @param {Object} element - The highest DOM element in the component.
-     * @private
-     * @returns {void}
-     */
-    _setRootElement(element) {
-        this._rootElement = element;
-    }
-
-    /**
-     * Sets an instance variable for the component's element intended for
-     * displaying appropriate face position in a rectangle.
-     *
-     * @param {Object} element - DOM element intended for displaying appropriate
-     * face position.
-     * @private
-     * @returns {void}
-     */
-    _setRectElement(element) {
-        this._rectElement = element;
     }
 
     /**
@@ -356,21 +229,39 @@ class FaceTracker extends Component {
      * @private
      */
     _renderedView() {
-        return (
-            <div
-                className = 'face-prompt-container'
-                ref = { this._setRootElement }>
-                <div
-                    className = 'face-rect'
-                    ref = { this._setRectElement } />
-                <div
-                    className = 'face-text'
-                    ref = { this._setTextElement }>
-                    Make sure to be in the center.
+        if (this.props.videoElement) {
+            if (!this._enabled) {
+                this._enabled = true;
+                this._attachFaceTracking();
+            }
+
+            return (
+                <div>
+                    { this.state.isPromptToggled
+                      && <FacePrompt
+                          videoElement = { this.props.videoElement } /> }
                 </div>
-            </div>
-        );
+            );
+        }
+
+        return <div />;
     }
 }
 
-export default FaceTracker;
+/**
+ * Maps (parts of) the Redux state to the associated
+ * {@code FaceTracker}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     videoElement: React.PropTypes.object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        videoElement: state['features/face-tracking'].videoElement
+    };
+}
+
+export default connect(_mapStateToProps)(FaceTracker);
