@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
+import { FaceTracker, enableFaceTracking } from '../../face-tracking';
 import { translate } from '../../base/i18n';
 
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
@@ -17,6 +20,11 @@ class VideoInputPreview extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * Invoked to enable face tracking in the preview display.
+         */
+        enableFaceTracking: React.PropTypes.func,
+
         /**
          * An error message to display instead of a preview. Displaying an error
          * will take priority over displaying a video preview.
@@ -89,6 +97,7 @@ class VideoInputPreview extends Component {
             this._updateErrorView(this.props.error);
         } else {
             this._attachTrack(this.props.track);
+            this.props.enableFaceTracking(this._videoElement);
         }
     }
 
@@ -114,6 +123,7 @@ class VideoInputPreview extends Component {
             <div
                 className = 'video-input-preview'
                 ref = { this._setRootElement }>
+                <FaceTracker />
                 <video
                     autoPlay = { true }
                     className = 'video-input-preview-display flipVideoX'
@@ -252,4 +262,19 @@ class VideoInputPreview extends Component {
     }
 }
 
-export default translate(VideoInputPreview);
+/**
+ * Maps Redux dispatch to the associated {@code VideoInputPreview}'s props.
+ *
+ * @param {Object} dispatch - Redux dispatch.
+ * @private
+ * @returns {{
+ *     enableFaceTracking: React.PropTypes.func
+ * }}
+ */
+function _mapDispatchToProps(dispatch) {
+    return bindActionCreators({
+        enableFaceTracking
+    }, dispatch);
+}
+
+export default translate(connect(null, _mapDispatchToProps)(VideoInputPreview));
