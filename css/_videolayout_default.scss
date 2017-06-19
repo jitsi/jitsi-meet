@@ -304,7 +304,8 @@
 /**
  * Audio indicator on video thumbnails.
  */
-.videocontainer>span.audioindicator {
+.videocontainer>span.audioindicator,
+.videocontainer>.audioindicator-container {
     position: absolute;
     display: inline-block;
     left: 6px;

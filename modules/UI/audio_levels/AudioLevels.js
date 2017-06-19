@@ -6,69 +6,6 @@ import UIUtil from "../util/UIUtil";
  * Responsible for drawing audio levels.
  */
 const AudioLevels = {
-
-    /**
-     * The number of dots.
-     *
-     * IMPORTANT: functions below assume that this is an odd number.
-     */
-    _AUDIO_LEVEL_DOTS: 5,
-
-    /**
-     * Creates the audio level indicator span element.
-     *
-     * IMPORTANT: This function assumes that the number of dots is an
-     * odd number.
-     *
-     * @return {Element} the document element representing audio levels
-     */
-    createThumbnailAudioLevelIndicator() {
-
-        let audioSpan = document.createElement('span');
-        audioSpan.className = 'audioindicator';
-
-        this.sideDotsCount = Math.floor(this._AUDIO_LEVEL_DOTS/2);
-
-        for (let i = 0; i < this._AUDIO_LEVEL_DOTS; i++) {
-            let audioDot = document.createElement('span');
-
-            // The median index will be equal to the number of dots on each
-            // side.
-            if (i === this.sideDotsCount)
-                audioDot.className = "audiodot-middle";
-            else
-                audioDot.className = (i < this.sideDotsCount)
-                                    ? "audiodot-top"
-                                    : "audiodot-bottom";
-
-            audioSpan.appendChild(audioDot);
-        }
-        return audioSpan;
-    },
-
-    /**
-     * Updates the audio level UI for the given id.
-     *
-     * @param {string} id id of the user for whom we draw the audio level
-     * @param {number} audioLevel the newAudio level to render
-     */
-    updateThumbnailAudioLevel (id, audioLevel) {
-
-        // First make sure we are sensitive enough.
-        audioLevel *= 1.2;
-        audioLevel = Math.min(audioLevel, 1);
-
-        // Let's now stretch the audio level over the number of dots we have.
-        let stretchedAudioLevel = (this.sideDotsCount + 1) * audioLevel;
-        let dotLevel = 0.0;
-
-        for (let i = 0; i < (this.sideDotsCount + 1); i++) {
-
-            dotLevel = Math.min(1, Math.max(0, (stretchedAudioLevel - i)));
-            this._setDotLevel(id, i, dotLevel);
-        }
-    },
-
     /**
      * Fills the dot(s) with the specified "index", with as much opacity as
      * indicated by "opacity".
