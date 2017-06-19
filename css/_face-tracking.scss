@@ -1,9 +1,9 @@
 .face-prompt-container {
     position: absolute;
-    z-index: 10;
+    z-index: 2;
 
     .face-rect, .face-text {
-        margin: 0 auto;
+        margin: auto;
         visibility: hidden;
 
         &.show {
@@ -18,13 +18,16 @@
         border-color: #2196F3;
         border-radius: 2%;
 
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
         height: 90%;
-        left: 15%;
-        top: 5%;
         width: 70%;
         position: absolute;
 
-        z-index: 10;
+        z-index: 2;
     }
 
     .face-text {
@@ -42,6 +45,6 @@
         max-width: 300px;
         position: relative;
 
-        z-index: 11;
+        z-index: 3;
     }
 }
