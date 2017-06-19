@@ -516,6 +516,9 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
  */
 RemoteVideo.prototype.remove = function () {
     logger.log("Remove thumbnail", this.id);
+
+    this.removeAudioLevelIndicator();
+
     this.removeConnectionIndicator();
     // Make sure that the large video is updated if are removing its
     // corresponding small video.

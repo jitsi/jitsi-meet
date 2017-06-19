@@ -1,10 +1,18 @@
 /* global $, APP, JitsiMeetJS, interfaceConfig */
+
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { AudioLevelIndicator }
+    from '../../../react/features/audio-level-indicator';
+/* eslint-enable no-unused-vars */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
-import AudioLevels from "../audio_levels/AudioLevels";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -341,25 +349,63 @@ SmallVideo.prototype.addModeratorIndicator = function () {
 
 /**
  * Adds the element indicating the audio level of the participant.
+ *
+ * @returns {void}
  */
 SmallVideo.prototype.addAudioLevelIndicator = function () {
-    var audioSpan = $('#' + this.videoSpanId + ' .audioindicator');
+    let audioLevelContainer = this._getAudioLevelContainer();
 
-    if (audioSpan.length) {
+    if (audioLevelContainer) {
         return;
     }
 
-    this.container.appendChild(
-        AudioLevels.createThumbnailAudioLevelIndicator());
+    audioLevelContainer = document.createElement('span');
+    audioLevelContainer.className = 'audioindicator-container';
+    this.container.appendChild(audioLevelContainer);
+
+    this.updateAudioLevelIndicator();
+};
+
+/**
+ * Removes the element indicating the audio level of the participant.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.removeAudioLevelIndicator = function () {
+    const audioLevelContainer = this._getAudioLevelContainer();
+
+    if (audioLevelContainer) {
+        ReactDOM.unmountComponentAtNode(audioLevelContainer);
+    }
 };
 
 /**
  * Updates the audio level for this small video.
  *
  * @param lvl the new audio level to set
+ * @returns {void}
  */
-SmallVideo.prototype.updateAudioLevelIndicator = function (lvl) {
-    AudioLevels.updateThumbnailAudioLevel(this.videoSpanId, lvl);
+SmallVideo.prototype.updateAudioLevelIndicator = function (lvl = 0) {
+    const audioLevelContainer = this._getAudioLevelContainer();
+
+    if (audioLevelContainer) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <AudioLevelIndicator
+                audioLevel = { lvl }/>,
+            audioLevelContainer);
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Queries the component's DOM for the element that should be the parent to the
+ * AudioLevelIndicator.
+ *
+ * @returns {HTMLElement} The DOM element that holds the AudioLevelIndicator.
+ */
+SmallVideo.prototype._getAudioLevelContainer = function () {
+    return this.container.querySelector('.audioindicator-container');
 };
 
 /**
