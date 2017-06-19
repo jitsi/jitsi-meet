@@ -16,7 +16,12 @@ import {
     ConnectionIndicator
 } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
-/* eslint-disable no-unused-vars */
+import {
+    AudioMutedIndicator,
+    ModeratorIndicator,
+    VideoMutedIndicator
+} from '../../../react/features/filmstrip';
+/* eslint-enable no-unused-vars */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -64,6 +69,7 @@ const DISPLAY_VIDEO_WITH_NAME = 3;
 const DISPLAY_AVATAR_WITH_NAME = 4;
 
 function SmallVideo(VideoLayout) {
+    this._isModerator = false;
     this.isAudioMuted = false;
     this.hasAvatar = false;
     this.isVideoMuted = false;
@@ -270,43 +276,8 @@ SmallVideo.prototype.updateConnectionStatus = function (connectionStatus) {
  * or hidden
  */
 SmallVideo.prototype.showAudioIndicator = function (isMuted) {
-    let mutedIndicator = this.getAudioMutedIndicator();
-
-    UIUtil.setVisible(mutedIndicator, isMuted);
-
     this.isAudioMuted = isMuted;
-};
-
-/**
- * Returns the audio muted indicator jquery object. If it doesn't exists -
- * creates it.
- *
- * @returns {HTMLElement} the audio muted indicator
- */
-SmallVideo.prototype.getAudioMutedIndicator = function () {
-    let selector = '#' + this.videoSpanId + ' .audioMuted';
-    let audioMutedSpan = document.querySelector(selector);
-
-    if (audioMutedSpan) {
-        return audioMutedSpan;
-    }
-
-    audioMutedSpan = document.createElement('span');
-    audioMutedSpan.className = 'audioMuted toolbar-icon';
-
-    UIUtil.setTooltip(audioMutedSpan,
-        "videothumbnail.mute",
-        "top");
-
-    let mutedIndicator = document.createElement('i');
-    mutedIndicator.className = 'icon-mic-disabled';
-    audioMutedSpan.appendChild(mutedIndicator);
-
-    this.container
-        .querySelector('.videocontainer__toolbar')
-        .appendChild(audioMutedSpan);
-
-    return audioMutedSpan;
+    this.updateStatusBar();
 };
 
 /**
@@ -320,75 +291,38 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 
-    let element = this.getVideoMutedIndicator();
-
-    UIUtil.setVisible(element, isMuted);
+    this.updateStatusBar();
 };
 
 /**
- * Returns the video muted indicator jquery object. If it doesn't exists -
- * creates it.
+ * Create or updates the ReactElement for displaying status indicators about
+ * audio mute, video mute, and moderator status.
  *
- * @returns {jQuery|HTMLElement} the video muted indicator
+ * @returns {void}
  */
-SmallVideo.prototype.getVideoMutedIndicator = function () {
-    var selector = '#' + this.videoSpanId + ' .videoMuted';
-    var videoMutedSpan = document.querySelector(selector);
+SmallVideo.prototype.updateStatusBar = function () {
+    const statusBarContainer
+        = this.container.querySelector('.videocontainer__toolbar');
 
-    if (videoMutedSpan) {
-        return videoMutedSpan;
-    }
-
-    videoMutedSpan = document.createElement('span');
-    videoMutedSpan.className = 'videoMuted toolbar-icon';
-
-    this.container
-        .querySelector('.videocontainer__toolbar')
-        .appendChild(videoMutedSpan);
-
-    var mutedIndicator = document.createElement('i');
-    mutedIndicator.className = 'icon-camera-disabled';
-
-    UIUtil.setTooltip(mutedIndicator,
-        "videothumbnail.videomute",
-        "top");
-
-    videoMutedSpan.appendChild(mutedIndicator);
-
-    return videoMutedSpan;
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <div>
+            { this.isAudioMuted ? <AudioMutedIndicator /> : null }
+            { this.isVideoMuted ? <VideoMutedIndicator /> : null }
+            { this._isModerator
+                && !interfaceConfig.DISABLE_FOCUS_INDICATOR
+                    ? <ModeratorIndicator /> : null }
+        </div>,
+        statusBarContainer);
+    /* jshint ignore:end */
 };
 
 /**
  * Adds the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.addModeratorIndicator = function () {
-
-    // Don't create moderator indicator if DISABLE_FOCUS_INDICATOR is true
-    if (interfaceConfig.DISABLE_FOCUS_INDICATOR)
-        return false;
-
-    // Show moderator indicator
-    var indicatorSpan = $('#' + this.videoSpanId + ' .focusindicator');
-
-    if (indicatorSpan.length) {
-        return;
-    }
-
-    indicatorSpan = document.createElement('span');
-    indicatorSpan.className = 'focusindicator toolbar-icon right';
-
-    this.container
-        .querySelector('.videocontainer__toolbar')
-        .appendChild(indicatorSpan);
-
-    var moderatorIndicator = document.createElement('i');
-    moderatorIndicator.className = 'icon-star';
-
-    UIUtil.setTooltip(moderatorIndicator,
-        "videothumbnail.moderator",
-        "top-left");
-
-    indicatorSpan.appendChild(moderatorIndicator);
+    this._isModerator = true;
+    this.updateStatusBar();
 };
 
 /**
@@ -456,7 +390,8 @@ SmallVideo.prototype._getAudioLevelContainer = function () {
  * Removes the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.removeModeratorIndicator = function () {
-    $('#' + this.videoSpanId + ' .focusindicator').remove();
+    this._isModerator = false;
+    this.updateStatusBar();
 };
 
 /**

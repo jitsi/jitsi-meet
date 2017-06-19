@@ -2,6 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import {
     MuteButton,
@@ -514,6 +515,13 @@ RemoteVideo.prototype.remove = function () {
     logger.log("Remove thumbnail", this.id);
 
     this.removeAudioLevelIndicator();
+
+    const toolbarContainer
+        = this.container.querySelector('.videocontainer__toolbar');
+
+    if (toolbarContainer) {
+        ReactDOM.unmountComponentAtNode(toolbarContainer);
+    }
 
     this.removeConnectionIndicator();
 
