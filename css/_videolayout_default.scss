@@ -58,14 +58,27 @@
         padding: $toolbarPadding;
         padding-bottom: 0;
 
+        .connection-indicator-container,
+        .connection-indicator,
+        span.indicator {
+            margin-right: em(5, 8);
+        }
+
+        span.indicator {
+            display: none;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        .connection-indicator,
         span.indicator {
             position: relative;
             font-size: 8px;
             text-align: center;
             line-height: $thumbnailIndicatorSize;
-            display: none;
             padding: 0;
-            margin-right: em(5, 8);
             float: left;
             @include circle($thumbnailIndicatorSize);
             box-sizing: border-box;
@@ -73,10 +86,6 @@
             background: $dominantSpeakerBg;
             color: $thumbnailPictogramColor;
             border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
-
-            &:last-child {
-                margin-right: 0;
-            }
 
             .indicatoricon {
                 @include absoluteAligning();
@@ -297,7 +306,7 @@
   background: $raiseHandBg;
 }
 
-#connectionindicator {
+.connection-indicator {
   background: $connectionIndicatorBg;
 }
 

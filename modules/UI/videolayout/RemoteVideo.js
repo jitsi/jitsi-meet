@@ -15,7 +15,6 @@ import {
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import ConnectionIndicator from './ConnectionIndicator';
 
 import SmallVideo from "./SmallVideo";
 import UIUtils from "../util/UIUtil";
@@ -48,7 +47,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.hasRemoteVideoMenu = false;
     this._supportsRemoteControl = false;
     this.addRemoteVideoContainer();
-    this.connectionIndicator = new ConnectionIndicator(this, this.id);
+    this.updateConnectionIndicator();
     this.setDisplayName();
     this.bindHoverHandler();
     this.flipX = false;
@@ -497,10 +496,7 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
     // FIXME rename 'mutedWhileDisconnected' to 'mutedWhileNotRendering'
     // Update 'mutedWhileDisconnected' flag
     this._figureOutMutedWhileDisconnected();
-    if(this.connectionIndicator) {
-        this.connectionIndicator.updateConnectionStatusIndicator(
-            connectionStatus);
-    }
+    this.updateConnectionStatus(connectionStatus);
 
     const isInterrupted
         = connectionStatus === ParticipantConnectionStatus.INTERRUPTED;
@@ -621,9 +617,7 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 };
 
 RemoteVideo.prototype.updateResolution = function (resolution) {
-    if (this.connectionIndicator) {
-        this.connectionIndicator.updateResolution(resolution);
-    }
+    this.updateConnectionIndicator({ resolution });
 };
 
 /**
@@ -631,19 +625,7 @@ RemoteVideo.prototype.updateResolution = function (resolution) {
  * @param framerate the value to update
  */
 RemoteVideo.prototype.updateFramerate = function (framerate) {
-    if (this.connectionIndicator) {
-        this.connectionIndicator.updateFramerate(framerate);
-    }
-};
-
-RemoteVideo.prototype.removeConnectionIndicator = function () {
-    if (this.connectionIndicator)
-        this.connectionIndicator.remove();
-};
-
-RemoteVideo.prototype.hideConnectionIndicator = function () {
-    if (this.connectionIndicator)
-        this.connectionIndicator.hide();
+    this.updateConnectionIndicator({ framerate });
 };
 
 /**
@@ -712,6 +694,10 @@ RemoteVideo.createContainer = function (spanId) {
     let indicatorBar = document.createElement('div');
     indicatorBar.className = "videocontainer__toptoolbar";
     container.appendChild(indicatorBar);
+
+    const connectionIndicatorContainer = document.createElement('span');
+    connectionIndicatorContainer.className = 'connection-indicator-container';
+    indicatorBar.appendChild(connectionIndicatorContainer);
 
     let toolbar = document.createElement('div');
     toolbar.className = "videocontainer__toolbar";

@@ -1,7 +1,6 @@
 /* global $, config, interfaceConfig, APP, JitsiMeetJS */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import ConnectionIndicator from "./ConnectionIndicator";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
@@ -13,7 +12,6 @@ function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
-    this.createConnectionIndicator();
     this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
@@ -32,6 +30,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.setDisplayName();
 
     this.addAudioLevelIndicator();
+    this.updateConnectionIndicator();
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -146,13 +145,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
                 });
             });
     }
-};
-
-LocalVideo.prototype.createConnectionIndicator = function() {
-    if(this.connectionIndicator)
-        return;
-
-    this.connectionIndicator = new ConnectionIndicator(this, null);
 };
 
 LocalVideo.prototype.changeVideo = function (stream) {
