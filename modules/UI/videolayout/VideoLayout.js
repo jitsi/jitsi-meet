@@ -570,8 +570,7 @@ var VideoLayout = {
                 ? ParticipantConnectionStatus.INTERRUPTED
                 : ParticipantConnectionStatus.ACTIVE;
 
-        localVideoThumbnail
-            .connectionIndicator.updateConnectionStatusIndicator(status);
+        localVideoThumbnail.updateConnectionStatus(status);
     },
 
     /**
@@ -779,7 +778,7 @@ var VideoLayout = {
         // Why library internal objects are passed as event's args ?
         object.resolution = resolution[APP.conference.getMyUserId()];
         object.framerate = framerate[APP.conference.getMyUserId()];
-        localVideoThumbnail.updateStatsIndicator(percent, object);
+        localVideoThumbnail.updateConnectionStats(percent, object);
 
         Object.keys(resolution).forEach(function (id) {
             if (APP.conference.isLocalId(id)) {
@@ -817,7 +816,7 @@ var VideoLayout = {
     updateConnectionStats (id, percent, object) {
         let remoteVideo = remoteVideos[id];
         if (remoteVideo) {
-            remoteVideo.updateStatsIndicator(percent, object);
+            remoteVideo.updateConnectionStats(percent, object);
         }
     },
 
@@ -828,7 +827,7 @@ var VideoLayout = {
     hideConnectionIndicator (id) {
         let remoteVideo = remoteVideos[id];
         if (remoteVideo)
-            remoteVideo.hideConnectionIndicator();
+            remoteVideo.removeConnectionIndicator();
     },
 
     /**
@@ -891,19 +890,6 @@ var VideoLayout = {
 
         if (this.isCurrentlyOnLarge(id)) {
             this.updateLargeVideo(id, true);
-        }
-    },
-
-    showMore (id) {
-        if (id === 'local') {
-            localVideoThumbnail.connectionIndicator.showMore();
-        } else {
-            let remoteVideo = remoteVideos[id];
-            if (remoteVideo) {
-                remoteVideo.connectionIndicator.showMore();
-            } else {
-                logger.info("Error - no remote video for id: " + id);
-            }
         }
     },
 

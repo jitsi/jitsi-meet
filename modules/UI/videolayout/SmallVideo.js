@@ -6,6 +6,9 @@ import ReactDOM from 'react-dom';
 
 import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
+import {
+    ConnectionIndicator
+} from '../../../react/features/connection-indicator';
 /* eslint-enable no-unused-vars */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
@@ -64,6 +67,28 @@ function SmallVideo(VideoLayout) {
     this.hideDisplayName = false;
     // we can stop updating the thumbnail
     this.disableUpdateView = false;
+
+    /**
+     * Statistics to display within the connection indicator. With new updates,
+     * only changed values are updated through assignment to a new reference.
+     *
+     * @private
+     * @type {object}
+     */
+    this._cachedConnectionStats = {};
+
+    /**
+     * Whether or not the ConnectionIndicator's popover is hovered. Modifies
+     * how the video overlays display based on hover state.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._popoverIsHovered = false;
+
+    // Bind event handlers so they are only bound once for every instance.
+    this._onPopoverHover = this._onPopoverHover.bind(this);
+    this.updateView = this.updateView.bind(this);
 }
 
 /**
@@ -194,12 +219,6 @@ SmallVideo.prototype.bindHoverHandler = function () {
             this.updateView();
         }
     );
-    if (this.connectionIndicator) {
-        this.connectionIndicator.addPopoverHoverListener(
-            () => {
-                this.updateView();
-            });
-    }
 };
 
 /**
@@ -208,16 +227,34 @@ SmallVideo.prototype.bindHoverHandler = function () {
  * @param percent the percent for connection quality
  * @param object the data
  */
-SmallVideo.prototype.updateStatsIndicator = function (percent, object) {
-    if(this.connectionIndicator)
-        this.connectionIndicator.updateConnectionQuality(percent, object);
+SmallVideo.prototype.updateConnectionStats = function (percent, object) {
+    const newStats = Object.assign({}, object, { percent });
+
+    this.updateConnectionIndicator(newStats);
 };
 
-SmallVideo.prototype.hideIndicator = function () {
-    if(this.connectionIndicator)
-        this.connectionIndicator.hideIndicator();
+/**
+ * Unmounts the ConnectionIndicator component.
+
+ * @returns {void}
+ */
+SmallVideo.prototype.removeConnectionIndicator = function () {
+    const connectionIndicatorContainer
+        = this.container.querySelector('.connection-indicator-container');
+
+    if (connectionIndicatorContainer) {
+        ReactDOM.unmountComponentAtNode(connectionIndicatorContainer);
+    }
 };
 
+/**
+ * Updates the connectionStatus stat which displays in the ConnectionIndicator.
+
+ * @returns {void}
+ */
+SmallVideo.prototype.updateConnectionStatus = function (connectionStatus) {
+    this.updateConnectionIndicator({ connectionStatus });
+};
 
 /**
  * Shows / hides the audio muted indicator over small videos.
@@ -524,9 +561,7 @@ SmallVideo.prototype.selectDisplayMode = function() {
  * @private
  */
 SmallVideo.prototype._isHovered = function () {
-    return this.videoIsHovered
-        || (this.connectionIndicator
-            && this.connectionIndicator.popover.popoverIsHovered);
+    return this.videoIsHovered || this._popoverIsHovered;
 };
 
 /**
@@ -698,6 +733,46 @@ SmallVideo.prototype.initBrowserSpecificProperties = function() {
             || userAgent.indexOf("Linux") > -1)) {
         $('#' + this.videoSpanId).css("overflow", "hidden");
     }
+};
+
+/**
+ * Creates or updates the connection indicator. Updates the previously known
+ * statistics about the participant's connection.
+ *
+ * @param {Object} newStats - New statistics to merge with previously known
+ * statistics about the participant's connection.
+ * @returns {void}
+ */
+SmallVideo.prototype.updateConnectionIndicator = function (newStats = {}) {
+    this._cachedConnectionStats
+        = Object.assign({}, this._cachedConnectionStats, newStats);
+
+    const connectionIndicatorContainer
+        = this.container.querySelector('.connection-indicator-container');
+
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <ConnectionIndicator
+            isLocalVideo = { this.isLocal }
+            onHover = { this._onPopoverHover }
+            showMoreLink = { this.isLocal }
+            stats = { this._cachedConnectionStats } />,
+        connectionIndicatorContainer
+    );
+    /* jshint ignore:end */
+};
+
+/**
+ * Updates the current state of the connection indicator popover being hovered.
+ * If hovered, display the small video as if it is hovered.
+ *
+ * @param {boolean} popoverIsHovered - Whether or not the mouse cursor is
+ * currently over the connection indicator popover.
+ * @returns {void}
+ */
+SmallVideo.prototype._onPopoverHover = function (popoverIsHovered) {
+    this._popoverIsHovered = popoverIsHovered;
+    this.updateView();
 };
 
 export default SmallVideo;
