@@ -10,6 +10,8 @@ First make sure the [React Native dependencies] are installed.
 **NOTE**:  The app must be built for an actual device since the simulators don't
 work properly with the native plugins we require.
 
+**NOTE**: Node 6.X and npm 3.X are recommended for building.
+
 
 ## iOS
 
