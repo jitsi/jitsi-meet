@@ -37,17 +37,31 @@ export default class LargeVideo extends Component {
                         src = '' />
                 </div>
                 <span id = 'remoteConnectionMessage' />
-                <div className = 'video_blurred_container'>
-                    <video
-                        autoPlay = { true }
-                        id = 'largeVideoBackground'
-                        muted = 'true' />
-                </div>
-                <div id = 'largeVideoWrapper'>
-                    <video
-                        autoPlay = { true }
-                        id = 'largeVideo'
-                        muted = { true } />
+                <div>
+                    <div className = 'video_blurred_container'>
+                        <video
+                            autoPlay = { true }
+                            id = 'largeVideoBackground'
+                            muted = 'true' />
+                    </div>
+                    {
+
+                        /**
+                         * FIXME: the architecture of elements related to the
+                         * large video and  the naming. The background is not
+                         * part of largeVideoWrapper because we are controlling
+                         * the size of the video through largeVideoWrapper.
+                         * That's why we need another container for the the
+                         * background and the largeVideoWrapper in order to
+                         * hide/show them.
+                         */
+                    }
+                    <div id = 'largeVideoWrapper'>
+                        <video
+                            autoPlay = { true }
+                            id = 'largeVideo'
+                            muted = { true } />
+                    </div>
                 </div>
                 <span id = 'localConnectionMessage' />
 
