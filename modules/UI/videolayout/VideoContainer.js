@@ -214,6 +214,13 @@ export class VideoContainer extends LargeContainer {
 
         this.$wrapper = $('#largeVideoWrapper');
 
+        /**
+         * FIXME: currently using parent() because I can't come up with name
+         * for id. We'll need to probably refactor the HTML related to the large
+         * video anyway.
+         */
+        this.$wrapperParent = this.$wrapper.parent();
+
         this.avatarHeight = $("#dominantSpeakerAvatar").height();
 
         var onPlayingCallback = function (event) {
@@ -524,7 +531,7 @@ export class VideoContainer extends LargeContainer {
         }
 
         return new Promise((resolve) => {
-            this.$wrapper.css('visibility', 'visible').fadeTo(
+            this.$wrapperParent.css('visibility', 'visible').fadeTo(
                 FADE_DURATION_MS,
                 1,
                 () => {
@@ -539,15 +546,14 @@ export class VideoContainer extends LargeContainer {
         // as the container is hidden/replaced by another container
         // hide its avatar
         this.showAvatar(false);
-
         // its already hidden
         if (!this.isVisible) {
             return Promise.resolve();
         }
 
         return new Promise((resolve) => {
-            this.$wrapper.fadeTo(FADE_DURATION_MS, 0, () => {
-                this.$wrapper.css('visibility', 'hidden');
+            this.$wrapperParent.fadeTo(FADE_DURATION_MS, 0, () => {
+                this.$wrapperParent.css('visibility', 'hidden');
                 this.isVisible = false;
                 resolve();
             });
