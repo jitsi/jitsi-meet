@@ -47,6 +47,19 @@ export function checkDialNumber(dialNumber) {
     return (dispatch, getState) => {
         const { dialOutAuthUrl } = getState()['features/base/config'];
 
+        if (!dialOutAuthUrl) {
+            // no auth url, let's say it is valid
+            const response = {};
+
+            response.allow = true;
+            dispatch({
+                type: PHONE_NUMBER_CHECKED,
+                response
+            });
+
+            return;
+        }
+
         const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
 
         $.getJSON(fullUrl)
@@ -81,6 +94,10 @@ export function openDialOutDialog() {
 export function updateDialOutCodes() {
     return (dispatch, getState) => {
         const { dialOutCodesUrl } = getState()['features/base/config'];
+
+        if (!dialOutCodesUrl) {
+            return;
+        }
 
         $.getJSON(dialOutCodesUrl)
             .success(response =>

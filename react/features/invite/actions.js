@@ -40,11 +40,7 @@ export function updateDialInNumbers() {
         const mucURL = hosts && hosts.muc;
 
         if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
-            dispatch({
-                type: UPDATE_DIAL_IN_NUMBERS_FAILED,
-                error: 'URLs for fetching dial in numbers not properly defined'
-            });
-
+            // URLs for fetching dial in numbers not defined
             return;
         }
 
