@@ -18,8 +18,10 @@ import {
     createLocalTracks,
     destroyLocalTracks
 } from './actions';
-import { TRACK_UPDATED } from './actionTypes';
+import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
+
+declare var APP: Object;
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -92,7 +94,40 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case TRACK_ADDED:
+        // TODO Remove this middleware case once all UI interested in new tracks
+        // being added are converted to react and listening for store changes.
+        if (typeof APP !== 'undefined' && !action.track.local) {
+            APP.UI.addRemoteStream(action.track.jitsiTrack);
+        }
+        break;
+
+    case TRACK_REMOVED:
+        // TODO Remove this middleware case once all UI interested in tracks
+        // being removed are converted to react and listening for store changes.
+        if (typeof APP !== 'undefined' && !action.track.local) {
+            APP.UI.removeRemoteStream(action.track.jitsiTrack);
+        }
+        break;
+
     case TRACK_UPDATED:
+        // TODO Remove the below calls to APP.UI once components interested in
+        // track mute changes are moved into react.
+        if (typeof APP !== 'undefined' && !action.track.local) {
+            const { jitsiTrack } = action.track;
+            const isMuted = jitsiTrack.isMuted();
+            const participantID = jitsiTrack.getParticipantId();
+            const { videoType } = jitsiTrack;
+
+            if (videoType) {
+                APP.UI.setVideoMuted(participantID, isMuted);
+                APP.UI.onPeerVideoTypeChanged(
+                    participantID, jitsiTrack.videoType);
+            } else {
+                APP.UI.setAudioMuted(participantID, isMuted);
+            }
+        }
+
         return _trackUpdated(store, next, action);
     }
 

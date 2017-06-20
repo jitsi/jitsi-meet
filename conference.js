@@ -42,6 +42,7 @@ import {
     participantRoleChanged,
     participantUpdated
 } from './react/features/base/participants';
+import { trackAdded, trackRemoved } from './react/features/base/tracks';
 import {
     showDesktopPicker
 } from  './react/features/desktop-picker';
@@ -1327,36 +1328,32 @@ export default {
             if(!track || track.isLocal())
                 return;
 
-            track.on(TrackEvents.TRACK_VIDEOTYPE_CHANGED, (type) => {
-                APP.UI.onPeerVideoTypeChanged(track.getParticipantId(), type);
-            });
-            APP.UI.addRemoteStream(track);
+            APP.store.dispatch(trackAdded(track));
         });
 
         room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
             if(!track || track.isLocal())
                 return;
 
-            APP.UI.removeRemoteStream(track);
+            APP.store.dispatch(trackRemoved(track));
         });
 
         room.on(ConferenceEvents.TRACK_MUTE_CHANGED, (track) => {
-            if(!track)
+            if (!track || !track.isLocal()) {
                 return;
+            }
+
             const handler = (track.getType() === "audio")?
                 APP.UI.setAudioMuted : APP.UI.setVideoMuted;
-            let id;
             const mute = track.isMuted();
-            if(track.isLocal()){
-                id = APP.conference.getMyUserId();
-                if(track.getType() === "audio") {
-                    this.audioMuted = mute;
-                } else {
-                    this.videoMuted = mute;
-                }
+            const id = APP.conference.getMyUserId();
+
+            if (track.getType() === "audio") {
+                this.audioMuted = mute;
             } else {
-                id = track.getParticipantId();
+                this.videoMuted = mute;
             }
+
             handler(id , mute);
         });
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
