@@ -263,7 +263,7 @@ function Util:verify_room(session, room_address)
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= string.lower(auth_room) then
+        if auth_room and room ~= string.lower(auth_room) and auth_room ~= '*' then
             return false;
         end
 
@@ -271,10 +271,29 @@ function Util:verify_room(session, room_address)
     end
 
     local room_address_to_verify = jid.bare(room_address);
+    local room_node = jid.node(room_address);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room
-            = room_address_to_verify:match("^%[([^%]]+)%](.+)$");
+    local target_subdomain, target_room = room_node:match("^%[([^%]]+)%](.+)$");
+
+    -- if we have '*' as room name in token, this means all rooms are allowed
+    -- so we will use the actual name of the room when constructing strings
+    -- to verify subdomains and domains to simplify checks
+    local room_to_check;
+    if auth_room == '*' then
+        -- authorized for accessing any room assign to room_to_check the actual
+        -- room name
+        if target_room ~= nil then
+            -- we are in multidomain mode and we were able to extract room name
+            room_to_check = target_room;
+        else
+            -- no target_room, room_address_to_verify does not contain subdomain
+            -- so we get just the node which is the room name
+            room_to_check = room_node;
+        end
+    else
+        room_to_check = auth_room;
+    end
 
     local auth_domain = session.jitsi_meet_domain;
     if target_subdomain then
@@ -286,12 +305,12 @@ function Util:verify_room(session, room_address)
         end
 
         return room_address_to_verify == jid.join(
-            "["..auth_domain.."]"..string.lower(auth_room), self.muc_domain);
+            "["..auth_domain.."]"..string.lower(room_to_check), self.muc_domain);
     else
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(
-            string.lower(auth_room), self.muc_domain_prefix.."."..auth_domain);
+            string.lower(room_to_check), self.muc_domain_prefix.."."..auth_domain);
     end
 end
 
