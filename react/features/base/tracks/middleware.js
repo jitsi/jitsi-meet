@@ -113,13 +113,21 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_UPDATED:
         // TODO Remove the below calls to APP.UI once components interested in
         // track mute changes are moved into react.
-        if (typeof APP !== 'undefined' && !action.track.local) {
+        if (typeof APP !== 'undefined') {
             const { jitsiTrack } = action.track;
             const isMuted = jitsiTrack.isMuted();
             const participantID = jitsiTrack.getParticipantId();
-            const { videoType } = jitsiTrack;
+            const isVideoTrack = jitsiTrack.isVideoTrack();
 
-            if (videoType) {
+            if (jitsiTrack.isLocal()) {
+                if (isVideoTrack) {
+                    APP.conference.videoMuted = isMuted;
+                } else {
+                    APP.conference.audioMuted = isMuted;
+                }
+            }
+
+            if (isVideoTrack) {
                 APP.UI.setVideoMuted(participantID, isMuted);
                 APP.UI.onPeerVideoTypeChanged(
                     participantID, jitsiTrack.videoType);

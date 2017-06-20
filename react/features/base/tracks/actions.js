@@ -4,7 +4,9 @@ import JitsiMeetJS, {
 } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
-    MEDIA_TYPE
+    MEDIA_TYPE,
+    setAudioMuted,
+    setVideoMuted
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
@@ -49,6 +51,61 @@ export function destroyLocalTracks() {
                 getState()['features/base/tracks']
                     .filter(t => t.local)
                     .map(t => t.jitsiTrack)));
+}
+
+/**
+ * Replaces one track with another for one renegotiation instead of invoking
+ * two renegotations with a separate removeTrack and addTrack. Disposes the
+ * removed track as well.
+ *
+ * @param {JitsiLocalTrack|null} oldTrack - The track to dispose.
+ * @param {JitsiLocalTrack|null} newTrack - The track to use instead.
+ * @param {JitsiConference} [conference] - The conference from which to remove
+ * and add the tracks. If one is not provied, the conference in the redux store
+ * will be used.
+ * @returns {Function}
+ */
+export function replaceLocalTrack(oldTrack, newTrack, conference) {
+    return (dispatch, getState) => {
+        const currentConference = conference
+            || getState()['features/base/conference'].conference;
+
+        return currentConference.replaceTrack(oldTrack, newTrack)
+            .then(() => {
+                // We call dispose after doing the replace because
+                //  dispose will try and do a new o/a after the
+                //  track removes itself.  Doing it after means
+                //  the JitsiLocalTrack::conference member is already
+                //  cleared, so it won't try and do the o/a
+                const disposePromise = oldTrack
+                    ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
+                    : Promise.resolve();
+
+                return disposePromise
+                    .then(() => {
+                        if (newTrack) {
+                            // The mute state of the new track should be
+                            // reflected in the app's mute state. For example,
+                            // if the app is currently muted and changing to a
+                            // new track that is not muted, the app's mute
+                            // state should be falsey. As such, emit a mute
+                            // event here to set up the app to reflect the
+                            // track's mute state. If this is not done, the
+                            // current mute state of the app will be reflected
+                            // on the track, not vice-versa.
+                            const muteAction = newTrack.isVideoTrack()
+                                ? setVideoMuted : setAudioMuted;
+
+                            return dispatch(muteAction(newTrack.isMuted()));
+                        }
+                    })
+                    .then(() => {
+                        if (newTrack) {
+                            return dispatch(_addTracks([ newTrack ]));
+                        }
+                    });
+            });
+    };
 }
 
 /**

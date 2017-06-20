@@ -42,7 +42,11 @@ import {
     participantRoleChanged,
     participantUpdated
 } from './react/features/base/participants';
-import { trackAdded, trackRemoved } from './react/features/base/tracks';
+import {
+    replaceLocalTrack,
+    trackAdded,
+    trackRemoved
+} from './react/features/base/tracks';
 import {
     showDesktopPicker
 } from  './react/features/desktop-picker';
@@ -1023,16 +1027,9 @@ export default {
      * @returns {Promise}
      */
     useVideoStream(newStream) {
-        return room.replaceTrack(localVideo, newStream)
+        return APP.store.dispatch(
+            replaceLocalTrack(localVideo, newStream, room))
             .then(() => {
-                // We call dispose after doing the replace because
-                //  dispose will try and do a new o/a after the
-                //  track removes itself.  Doing it after means
-                //  the JitsiLocalTrack::conference member is already
-                //  cleared, so it won't try and do the o/a
-                if (localVideo) {
-                    localVideo.dispose();
-                }
                 localVideo = newStream;
                 if (newStream) {
                     this.videoMuted = newStream.isMuted();
@@ -1058,16 +1055,9 @@ export default {
      * @returns {Promise}
      */
     useAudioStream(newStream) {
-        return room.replaceTrack(localAudio, newStream)
+        return APP.store.dispatch(
+            replaceLocalTrack(localAudio, newStream, room))
             .then(() => {
-                // We call dispose after doing the replace because
-                //  dispose will try and do a new o/a after the
-                //  track removes itself.  Doing it after means
-                //  the JitsiLocalTrack::conference member is already
-                //  cleared, so it won't try and do the o/a
-                if (localAudio) {
-                    localAudio.dispose();
-                }
                 localAudio = newStream;
                 if (newStream) {
                     this.audioMuted = newStream.isMuted();
@@ -1338,24 +1328,6 @@ export default {
             APP.store.dispatch(trackRemoved(track));
         });
 
-        room.on(ConferenceEvents.TRACK_MUTE_CHANGED, (track) => {
-            if (!track || !track.isLocal()) {
-                return;
-            }
-
-            const handler = (track.getType() === "audio")?
-                APP.UI.setAudioMuted : APP.UI.setVideoMuted;
-            const mute = track.isMuted();
-            const id = APP.conference.getMyUserId();
-
-            if (track.getType() === "audio") {
-                this.audioMuted = mute;
-            } else {
-                this.videoMuted = mute;
-            }
-
-            handler(id , mute);
-        });
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
             if(this.isLocalId(id) && localAudio && localAudio.isMuted()) {
                 lvl = 0;
