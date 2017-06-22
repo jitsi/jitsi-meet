@@ -38,7 +38,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
         //main toolbar
         'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup', // jshint ignore:line
         //extended toolbar
-        'profile', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
+        'profile', 'add', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
     /**
      * Main Toolbar Buttons
      * All of them should be in TOOLBAR_BUTTONS
@@ -94,6 +94,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * @type {boolean}
      */
     MOBILE_APP_PROMO: true,
+
     /**
      * Maximum coeficient of the ratio of the large video to the visible area
      * after the large video is scaled to fit the window.
@@ -101,4 +102,10 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * @type {number}
      */
     MAXIMUM_ZOOMING_COEFFICIENT: 1.3
+
+    /*
+     * If indicated some of the error dialogs may point to the support URL for
+     * help.
+     */
+    // SUPPORT_URL: ""
 };

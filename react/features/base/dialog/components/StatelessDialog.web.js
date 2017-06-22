@@ -217,9 +217,9 @@ class StatelessDialog extends Component {
 
         return (
             <header>
-                <h2>
+                <h3>
                     { this.props.titleString || t(this.props.titleKey) }
-                </h2>
+                </h3>
             </header>
         );
     }

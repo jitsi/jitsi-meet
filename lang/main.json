@@ -96,6 +96,7 @@
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",
@@ -456,5 +457,17 @@
         "statusMessage": "is now __status__",
         "enterPhone": "Enter phone number",
         "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"
+    },
+    "addPeople": {
+        "add": "Add",
+        "noResults": "No matching search results",
+        "searchPlaceholder": "Search for people and rooms to add",
+        "title": "Add people to your call"
+    },
+    "inlineDialogFailure": {
+        "part1": "We stumbled a bit.",
+        "part2": "If this keeps happening, reach out to ",
+        "part3": "Support",
+        "retry": "Try again"
     }
 }

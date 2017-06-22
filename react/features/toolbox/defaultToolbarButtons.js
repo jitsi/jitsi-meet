@@ -4,7 +4,7 @@ import React from 'react';
 
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
-import { openInviteDialog } from '../invite';
+import { openAddPeopleDialog, openInviteDialog } from '../invite';
 import UIEvents from '../../../service/UI/UIEvents';
 
 declare var APP: Object;
@@ -15,6 +15,19 @@ declare var JitsiMeetJS: Object;
  * All toolbar buttons' descriptors.
  */
 const buttons: Object = {
+    add: {
+        classNames: [ 'button', 'icon-add' ],
+        enabled: true,
+        isDisplayed: () => !APP.store.getState()['features/jwt'].isGuest,
+        id: 'toolbar_button_add',
+        tooltipKey: 'toolbar.addPeople',
+        onClick() {
+            JitsiMeetJS.analytics.sendEvent('toolbar.add.clicked');
+
+            return openAddPeopleDialog();
+        }
+    },
+
     /**
      * The descriptor of the camera toolbar button.
      */
