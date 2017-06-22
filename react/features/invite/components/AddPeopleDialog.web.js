@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import { Immutable } from 'nuclear-js';
 import { connect } from 'react-redux';
+import Avatar from '@atlaskit/avatar';
 
 import MultiSelectAutocomplete
     from '../../base/react/components/web/MultiSelectAutocomplete';
 import { Dialog } from '../../base/dialog';
-import { searchPeople } from '../functions';
+import { translate } from '../../base/i18n';
 
-const FORM_ID = 'add-people-form';
+import { invitePeople, searchPeople } from '../functions';
 
+/**
+ * The dialog that allows to invite people to the call.
+ */
 class AddPeopleDialog extends Component {
     /**
      * {@code AddPeopleDialog}'s property types.
@@ -16,131 +20,233 @@ class AddPeopleDialog extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * The URL pointing to the service allowing for people invite.
+         */
+        _invitePeopleUrl: React.PropTypes.string,
+
+        /**
+         * The JWT token.
+         */
         _jwt: React.PropTypes.string,
+
+        /**
+         * The URL pointing to the service allowing for people search.
+         */
         _peopleSearchUrl: React.PropTypes.string,
-        addToConversationError: React.PropTypes.bool,
-        addToConversationInProgress: React.PropTypes.bool,
-        hasAccess: React.PropTypes.instanceOf(Immutable.Map),
-        preselectedUsers: React.PropTypes.array,
-        selectedUsers: React.PropTypes.instanceOf(Immutable.List),
-        watching: React.PropTypes.instanceOf(Immutable.Map)
+
+        /**
+         * Invoked to obtain translated strings.
+         */
+        t: React.PropTypes.func
     };
 
-//     ConversationAccessDialog.defaultProps = {
-//     watching: emptyListState(),
-//     hasAccess: emptyListState(),
-//     addToConversationInProgress: false,
-//     addToConversationError: false,
-//     selectedUsers: new Immutable.List(),
-//     preselectedUsers: []
-// };
-
+    /**
+     * Initializes a new {@code AddPeopleDialog} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
     constructor(props) {
         super(props);
-        this.multiselect = null;
-        this.resourceClient = {
+
+        this.state = {
+            /**
+             * Indicating that an error occurred when adding people to the call.
+             */
+            addToCallError: false,
+
+            /**
+             * Indicating that we're currently adding the new people to the
+             * call.
+             */
+            addToCallInProgress: false,
+
+            /**
+             * The list of invite items.
+             */
+            inviteItems: new Immutable.List()
+        };
+
+        this._multiselect = null;
+        this._resourceClient = {
             makeQuery: text => searchPeople(
-                text, this.props._peopleSearchUrl, this.props._jwt),
+                this.props._peopleSearchUrl, this.props._jwt, text),
             parseResults: response => response.map(user => {
+                const avatar = ( // eslint-disable-line no-extra-parens
+                    <Avatar
+                        size = 'medium'
+                        src = { user.avatar } />
+                );
+
                 return {
                     content: user.name,
-                    value: user.id
+                    value: user.id,
+                    elemBefore: avatar,
+                    item: user
                 };
             })
         };
 
-        this._handleSubmit = this._handleSubmit.bind(this);
-        this._onSelectionChange = this._onSelectionChange.bind(this);
         this._isAddDisabled = this._isAddDisabled.bind(this);
+        this._onSelectionChange = this._onSelectionChange.bind(this);
+        this._onSubmit = this._onSubmit.bind(this);
+        this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
     }
 
-    componentDidUpdate(prevProps) {
+    /**
+     * React Component method that executes once component is updated.
+     *
+     * @param {Object} prevState - The state object before the update.
+     * @returns {void}
+     */
+    componentDidUpdate(prevState) {
         /**
-         * Clear selected items from the multiselect on successful invite
+         * Clears selected items from the multi select component on successful
+         * invite.
          */
-        if (prevProps.addToConversationInProgress
-            && !this.props.addToConversationInProgress
-            && !this.props.addToConversationError
-            && this.multiselect) {
-            this.multiselect.clear();
+        if (prevState.addToCallError
+            && !this.state.addToCallInProgress
+            && !this.state.addToCallError
+            && this._multiselect) {
+            this._multiselect.clear();
         }
     }
 
-    _handleSubmit(e) {
-        if (!this._isAddDisabled()) {
-            e.preventDefault();
-
-            // const invite = new OutgoingConversationInvite({ users: this.props.selectedUsers });
-        }
-    }
-
-    _onSelectionChange(selectedItems) {
-        const userIds = selectedItems.map(item => item.value);
-    }
-
-    _isAddDisabled() {
-        return false;
-
-        // return !this.props.selectedUsers.size
-        //     || this.props.addToConversationInProgress;
-    }
-
-    getUserInputForm() {
-        return (
-            <div className = 'add-people-form-wrap'>
-                <form
-                    id = { FORM_ID }
-                    className = 'add-people-form'
-                    onSubmit = { this._handleSubmit }>
-                    <div className = 'multi-select-wrap'>
-                        <MultiSelectAutocomplete
-                            placeholder = { 'Placeholder multiselect' }
-                            noMatchesFound = { 'No results' }
-                            defaultValue = { this.props.preselectedUsers || [] }
-                            onSelectionChange = { this._onSelectionChange }
-                            isDisabled = { this.props.addToConversationInProgress || false }
-                            resourceClient = { this.resourceClient }
-                            shouldFitContainer = { true }
-                            shouldFocus = { true }
-                            ref = { ref => this.multiselect = ref } />
-                    </div>
-                </form>
-            </div>
-        );
-    }
-
+    /**
+     * Renders the content of this component.
+     *
+     * @returns {XML}
+     */
     render() {
         return (
             <Dialog
                 okDisabled = { this._isAddDisabled() }
                 okTitleKey = 'addPeople.add'
-                onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'addPeople.title'
                 width = 'small'>
-                { this.getUserInputForm() }
+                { this._getUserInputForm() }
             </Dialog>
         );
+    }
+
+    /**
+     * Renders the input form.
+     *
+     * @returns {XML}
+     * @private
+     */
+    _getUserInputForm() {
+        const { t } = this.props;
+
+        return (
+            <div className = 'add-people-form-wrap'>
+                <MultiSelectAutocomplete
+                    isDisabled
+                        = { this.state.addToCallInProgress || false }
+                    noMatchesFound = { t('addPeople.noResults') }
+                    onSelectionChange = { this._onSelectionChange }
+                    placeholder = { t('addPeople.searchPlaceholder') }
+                    ref = { this._setMultiSelectElement }
+                    resourceClient = { this._resourceClient }
+                    shouldFitContainer = { true }
+                    shouldFocus = { true } />
+            </div>
+        );
+    }
+
+    /**
+     * Indicates if the Add button should be disabled.
+     *
+     * @returns {boolean} - True to indicate that the Add button should
+     * be disabled, false otherwise.
+     * @private
+     */
+    _isAddDisabled() {
+        return !this.state.inviteItems.length
+            || this.state.addToCallInProgress;
+    }
+
+    /**
+     * Handles a selection change.
+     *
+     * @param {Map} selectedItems - The list of selected items.
+     * @private
+     * @returns {void}
+     */
+    _onSelectionChange(selectedItems) {
+        const selectedIds = selectedItems.map(o => o.item);
+
+        this.setState({
+            inviteItems: selectedIds
+        });
+    }
+
+    /**
+     * Handles the submit button action.
+     *
+     * @param {Object} e - The event notifying us for the submit.
+     * @private
+     * @returns {void}
+     */
+    _onSubmit() {
+        if (!this._isAddDisabled()) {
+            this.setState({
+                addToCallInProgress: true
+            });
+
+            invitePeople(
+                this.props._invitePeopleUrl,
+                this.props._jwt,
+                this.state.inviteItems)
+            .then(() => {
+                this.setState({
+                    addToCallInProgress: false
+                });
+            })
+            .catch(() => {
+                this.setState({
+                    addToCallInProgress: false,
+                    addToCallError: true
+                });
+            });
+        }
+    }
+
+    /**
+     * Sets the instance variable for the multi select component
+     * element so it can be accessed directly.
+     *
+     * @param {Object} element - The DOM element for the component's dialog.
+     * @private
+     * @returns {void}
+     */
+    _setMultiSelectElement(element) {
+        this._multiselect = element;
     }
 }
 
 /**
  * Maps (parts of) the Redux state to the associated
- * {@code DialOutNumbersForm}'s props.
+ * {@code AddPeopleDialog}'s props.
  *
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _dialOutCodes: React.PropTypes.object
+ *     _peopleSearchUrl: React.PropTypes.string,
+ *     _jwt: React.PropTypes.string
  * }}
  */
 function _mapStateToProps(state) {
-    const { peopleSearchUrl } = state['features/base/config'];
+    const { peopleSearchUrl, invitePeopleUrl } = state['features/base/config'];
 
     return {
-        _peopleSearchUrl: peopleSearchUrl,
-        _jwt: state['features/jwt'].jwt
+        _jwt: state['features/jwt'].jwt,
+        _invitePeopleUrl: invitePeopleUrl,
+        _peopleSearchUrl: peopleSearchUrl
     };
 }
 
-export default connect(_mapStateToProps, { searchPeople })(AddPeopleDialog);
+export default translate(
+    connect(_mapStateToProps)(AddPeopleDialog));

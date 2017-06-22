@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { StatelessMultiSelect } from '@atlaskit/multi-select';
+import { MultiSelectStateless } from '@atlaskit/multi-select';
 import AKInlineDialog from '@atlaskit/inline-dialog';
 import Spinner from '@atlaskit/spinner';
+
 import InlineDialogFailure from './InlineDialogFailure';
 
 /**
- *
+ * A MultiSelect that is also auto-completing.
  */
 class MultiSelectAutocomplete extends Component {
 
@@ -16,32 +17,32 @@ class MultiSelectAutocomplete extends Component {
      */
     static propTypes = {
         /**
-         *
+         * The default value of the selected item.
          */
         defaultValue: React.PropTypes.array,
 
         /**
-         *
+         * Indicates if the component is disabled.
          */
         isDisabled: React.PropTypes.bool,
 
         /**
-         *
+         * The text to show when no matches are found.
          */
         noMatchesFound: React.PropTypes.string,
 
         /**
-         *
+         * The function called when the selection changes.
          */
         onSelectionChange: React.PropTypes.func,
 
         /**
-         *
+         * The placeholder text of the input component.
          */
         placeholder: React.PropTypes.string,
 
         /**
-         *
+         * The service providing the search.
          */
         resourceClient: React.PropTypes.shape({
             makeQuery: React.PropTypes.func,
@@ -49,38 +50,70 @@ class MultiSelectAutocomplete extends Component {
         }).isRequired,
 
         /**
-         *
+         * Indicates if the component should fit the container.
          */
         shouldFitContainer: React.PropTypes.bool,
 
         /**
-         *
+         * Indicates if we should focus.
          */
-        shouldFocus: React.PropTypes.bool,
+        shouldFocus: React.PropTypes.bool
     };
 
     /**
+     * Initializes a new {@code MultiSelectAutocomplete} instance.
      *
-     * @param props
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
+        const defaultValue = this.props.defaultValue || [];
+
         this.state = {
+            /**
+             * Indicates if the dropdown is open.
+             */
             isOpen: false,
+
+            /**
+             * The filter value.
+             */
             filterValue: '',
+
+            /**
+             * Indicates if the component is currently loading results.
+             */
             loading: false,
+
+
+            /**
+             * Indicates if there was an error.
+             */
             error: false,
+
+            /**
+             * The list of result items.
+             */
             items: [],
-            selectedItems: [ ...props.defaultValue ] || []
+
+            /**
+             * The list of selected items.
+             */
+            selectedItems: [ ...defaultValue ] || []
         };
 
         this._onFilterChange = this._onFilterChange.bind(this);
+        this._onRetry = this._onRetry.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
+        this._sendQuery = this._sendQuery.bind(this);
     }
 
     /**
+     * Clears the selected items.
      *
+     * @returns {void}
      */
     clear() {
         this.setState({
@@ -89,94 +122,91 @@ class MultiSelectAutocomplete extends Component {
     }
 
     /**
+     * Sets the state and sends a query on filter change.
      *
-     * @param filterValue
+     * @param {string} filterValue - The filter text value.
      * @private
+     * @returns {void}
      */
     _onFilterChange(filterValue) {
         this.setState({
             filterValue,
-            isOpen: Boolean(this.state.items.length) && Boolean(filterValue),
+            isOpen: Boolean(this.state.items.length)
+                && Boolean(filterValue),
             items: filterValue ? this.state.items : []
-        });
-        if (filterValue) {
-            this.sendQuery(filterValue);
-        }
+        }, this._sendQuery);
     }
 
     /**
+     * Retries the query on retry.
      *
-     * @param text
+     * @private
+     * @returns {void}
      */
-    sendQuery(text) {
+    _onRetry() {
+        this._sendQuery();
+    }
+
+    /**
+     * Sends a query to the resourceClient.
+     *
+     * @returns {void}
+     */
+    _sendQuery() {
+        const text = this.state.filterValue;
+
+        if (!text) {
+            return;
+        }
+
         this.setState({
             loading: true,
             error: false
         });
-        this.props.resourceClient.makeQuery(text).success(response => {
-            if (this.state.filterValue !== text) {
+
+        const resourceClient = this.props.resourceClient || {
+            makeQuery: () => Promise.resolve([]),
+            parseResults: results => results
+        };
+
+        resourceClient.makeQuery(text)
+            .then(results => {
+                if (this.state.filterValue !== text) {
+                    this.setState({
+                        loading: false,
+                        error: false
+                    });
+
+                    return;
+                }
+                const itemGroups = [
+                    {
+                        items: resourceClient.parseResults(results)
+                    }
+                ];
+
                 this.setState({
+                    items: itemGroups,
+                    isOpen: true,
                     loading: false,
                     error: false
                 });
-
-                return;
-            }
-            const itemGroups = [
-                {
-                    items: this.props.resourceClient.parseResults(response)
-                }
-            ];
-
-            this.setState({
-                items: itemGroups,
-                isOpen: true,
-                loading: false,
-                error: false
+            })
+            .catch(() => {
+                this.setState({
+                    error: true,
+                    loading: false,
+                    isOpen: false
+                });
             });
-
-        })
-        .error(error => {
-            this.setState({
-                error: true,
-                loading: false,
-                isOpen: false
-            });
-        });
-
-        // then((results) => {
-        //     if (this.state.filterValue !== text) {
-        //         this.setState({
-        //             loading: false,
-        //             error: false
-        //         });
-        //         return;
-        //     }
-        //     const itemGroups = [
-        //         {
-        //             items: this.props.resourceClient.parseResults(results)
-        //         }
-        //     ];
-        //     this.setState({
-        //         items: itemGroups,
-        //         isOpen: true,
-        //         loading: false,
-        //         error: false
-        //     });
-        // })
-        //     .catch(() => {
-        //         this.setState({
-        //             error: true,
-        //             loading: false,
-        //             isOpen: false
-        //         });
-        //     });
     }
 
     /**
+     * Updates the selected items when a selection event occurs.
      *
-     * @param item
+     * @param {Object} item - The selected item.
      * @private
+     * @returns {void}
      */
     _onSelectionChange(item) {
         const existing
@@ -192,10 +222,14 @@ class MultiSelectAutocomplete extends Component {
             isOpen: false,
             selectedItems
         });
-        this.props.onSelectionChange(selectedItems);
+
+        if (this.props.onSelectionChange) {
+            this.props.onSelectionChange(selectedItems);
+        }
     }
 
     /**
+     * Renders the content of this component.
      *
      * @returns {XML}
      */
@@ -205,80 +239,75 @@ class MultiSelectAutocomplete extends Component {
         const isDisabled = this.props.isDisabled || false;
         const placeholder = this.props.placeholder || '';
         const noMatchesFound = this.props.noMatchesFound || '';
-        const onSelectionChange = this.props.onSelectionChange || null;
-        const resourceClient = this.props.resourceClient || {
-            makeQuery: () => Promise.resolve([]),
-            parseResults: results => results
-        };
-        const defaultValue = this.props.defaultValue || [];
 
         return (
             <div>
-                <StatelessMultiSelect
-                    isOpen = { this.state.isOpen }
+                <MultiSelectStateless
                     filterValue = { this.state.filterValue }
+                    isDisabled = { isDisabled }
+                    isOpen = { this.state.isOpen }
                     items = { this.state.items }
-                    selectedItems = { this.state.selectedItems }
-                    placeholder = { this.props.placeholder }
-                    noMatchesFound = { this.props.noMatchesFound }
-                    shouldFitContainer = { this.props.shouldFitContainer }
-                    shouldFocus = { this.props.shouldFocus }
-                    isDisabled = { this.props.isDisabled }
+                    noMatchesFound = { noMatchesFound }
                     onFilterChange = { this._onFilterChange }
+                    onRemoved = { this._onSelectionChange }
                     onSelected = { this._onSelectionChange }
-                    onRemoved = { this._onSelectionChange } />
-                { this.renderLoadingIndicator() }
-                { this.renderError() }
+                    placeholder = { placeholder }
+                    selectedItems = { this.state.selectedItems }
+                    shouldFitContainer = { shouldFitContainer }
+                    shouldFocus = { shouldFocus } />
+                { this._renderLoadingIndicator() }
+                { this._renderError() }
             </div>
         );
     }
 
     /**
+     * Renders the loading indicator.
      *
      * @returns {*}
      */
-    renderLoadingIndicator() {
+    _renderLoadingIndicator() {
         if (!(this.state.loading
             && !this.state.items.length
             && this.state.filterValue.length)) {
             return null;
         }
-        const content
-            = <div className = "autocomplete-loading">
-                <Spinner size = 'large' isCompleting = { false } />
+
+        const content = ( // eslint-disable-line no-extra-parens
+            <div className = 'autocomplete-loading'>
+                <Spinner
+                    isCompleting = { false }
+                    size = 'medium' />
             </div>
-
-        ;
-
+        );
 
         return (
             <AKInlineDialog
-                isOpen = { true }
-                content = { content } />
+                content = { content }
+                isOpen = { true } />
         );
     }
 
     /**
+     * Renders the error UI.
      *
      * @returns {*}
      */
-    renderError() {
+    _renderError() {
         if (!this.state.error) {
             return null;
         }
-        const content
-            = <div className = "autocomplete-error">
+        const content = ( // eslint-disable-line no-extra-parens
+            <div className = 'autocomplete-error'>
                 <InlineDialogFailure
-                    retry = { () => this.sendQuery(this.state.filterValue) } />
+                    onRetry = { this._onRetry } />
             </div>
-
-        ;
-
+        );
 
         return (
             <AKInlineDialog
-                isOpen = { true }
-                content = { content } />
+                content = { content }
+                isOpen = { true } />
         );
     }
 
