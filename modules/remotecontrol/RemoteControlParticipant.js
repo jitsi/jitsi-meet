@@ -3,7 +3,7 @@
 import { getLogger } from 'jitsi-meet-logger';
 
 import {
-    REMOTE_CONTROL_EVENT_NAME
+    REMOTE_CONTROL_MESSAGE_NAME
 } from '../../service/remotecontrol/Constants';
 
 const logger = getLogger(__filename);
@@ -34,14 +34,14 @@ export default class RemoteControlParticipant {
     }
 
     /**
-     * Sends remote control event to other participant trough data channel.
+     * Sends remote control message to other participant trough data channel.
      *
      * @param {string} to - The participant who will receive the event.
      * @param {RemoteControlEvent} event - The remote control event.
      * @param {Function} onDataChannelFail - Handler for data channel failure.
      * @returns {void}
      */
-    sendRemoteControlEvent(
+    sendRemoteControlEndpointMessage(
             to: ?string,
             event: Object,
             onDataChannelFail: ?Function) {
@@ -55,7 +55,7 @@ export default class RemoteControlParticipant {
         }
         try {
             APP.conference.sendEndpointMessage(to, {
-                name: REMOTE_CONTROL_EVENT_NAME,
+                name: REMOTE_CONTROL_MESSAGE_NAME,
                 ...event
             });
         } catch (e) {
