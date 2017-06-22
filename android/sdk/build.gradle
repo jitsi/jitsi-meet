@@ -1,7 +1,5 @@
 apply plugin: 'com.android.library'
 
-def config = project.hasProperty('react') ? project.react : [];
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -45,97 +43,76 @@ void runBefore(String dependentTaskName, Task task) {
 }
 
 gradle.projectsEvaluated {
-    // Grab all build types and product flavors
-    def buildTypes = android.buildTypes.collect { type -> type.name }
-    def productFlavors = android.productFlavors.collect { flavor -> flavor.name }
+    android.buildTypes.all { buildType ->
+        def buildNameCapitalized = "${buildType.name.capitalize()}"
+        def bundlePath = "${buildDir}/intermediates/bundles/${buildType.name}"
 
-    // When no product flavors defined, use empty
-    if (!productFlavors) productFlavors.add('')
+        // Bundle fonts in react-native-vector-icons.
+        //
 
-    productFlavors.each { productFlavorName ->
-        buildTypes.each { buildTypeName ->
-            // Create variant and target names
-            def flavorNameCapitalized = "${productFlavorName.capitalize()}"
-            def buildNameCapitalized = "${buildTypeName.capitalize()}"
-            def targetName = "${flavorNameCapitalized}${buildNameCapitalized}"
-            def targetPath = productFlavorName ?
-                    "${productFlavorName}/${buildTypeName}" :
-                    "${buildTypeName}"
+        def currentFontTask = tasks.create(
+                name: "copy${buildNameCapitalized}Fonts",
+                type: Copy) {
 
-            // Bundle JavaScript and React resources (like react-native/react.gradle)
-            //
-
-            // React js bundle directories
-            def jsBundleDir = file("$buildDir/intermediates/assets/${targetPath}")
-            def resourcesDir = file("$buildDir/intermediates/res/merged/${targetPath}")
-            def jsBundleFile = file("${jsBundleDir}/index.android.bundle")
-
-            // Create dirs if they are not there (e.g. the "clean" task just ran)
-            jsBundleDir.mkdirs()
-            resourcesDir.mkdirs()
-
-            // Bundle fonts in react-native-vector-icons.
-            //
-
-            def currentFontTask = tasks.create(
-                    name: "${buildTypeName}CopyFonts",
-                    type: Copy) {
-
-                from("${projectDir}/../../fonts/jitsi.ttf")
-                from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
-                into("${jsBundleDir}/fonts")
-            }
-
-            currentFontTask.dependsOn("merge${targetName}Resources")
-            currentFontTask.dependsOn("merge${targetName}Assets")
-
-            runBefore("process${flavorNameCapitalized}Armeabi-v7a${buildNameCapitalized}Resources", currentFontTask)
-            runBefore("process${flavorNameCapitalized}X86${buildNameCapitalized}Resources", currentFontTask)
-            runBefore("processUniversal${targetName}Resources", currentFontTask)
-            runBefore("process${targetName}Resources", currentFontTask)
-
-            // Bundle task name for variant
-            def bundleJsAndAssetsTaskName = "bundle${targetName}JsAndAssets"
-
-            def currentBundleTask = tasks.create(
-                    name: bundleJsAndAssetsTaskName,
-                    type: Exec) {
-
-                // Set up inputs and outputs so gradle can cache the result.
-                def reactRoot = file("${projectDir}/../../")
-                inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
-                outputs.dir jsBundleDir
-                outputs.dir resourcesDir
-
-                // Set up the call to the react-native cli.
-                workingDir reactRoot
-
-                // Create JS bundle
-                def devEnabled = !targetName.toLowerCase().contains('release')
-                commandLine(
-                    'node',
-                    'node_modules/react-native/local-cli/cli.js',
-                    'bundle',
-                    '--assets-dest', resourcesDir,
-                    '--bundle-output', jsBundleFile,
-                    '--dev', "${devEnabled}",
-                    '--entry-file', 'index.android.js',
-                    '--platform', 'android',
-                    '--reset-cache')
-
-                enabled config."bundleIn${targetName}" ||
-                    config."bundleIn${buildNameCapitalized}" ?:
-                            targetName.toLowerCase().contains('release')
-            }
-
-            // Hook bundle${productFlavor}${buildType}JsAndAssets into the android build process
-            currentBundleTask.dependsOn("merge${targetName}Resources")
-            currentBundleTask.dependsOn("merge${targetName}Assets")
-
-            runBefore("process${flavorNameCapitalized}Armeabi-v7a${buildNameCapitalized}Resources", currentBundleTask)
-            runBefore("process${flavorNameCapitalized}X86${buildNameCapitalized}Resources", currentBundleTask)
-            runBefore("processUniversal${targetName}Resources", currentBundleTask)
-            runBefore("process${targetName}Resources", currentBundleTask)
+            from("${projectDir}/../../fonts/jitsi.ttf")
+            from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
+            into("${bundlePath}/assets/fonts")
         }
+
+        currentFontTask.dependsOn("merge${buildNameCapitalized}Resources")
+        currentFontTask.dependsOn("merge${buildNameCapitalized}Assets")
+
+        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentFontTask)
+        runBefore("processX86${buildNameCapitalized}Resources", currentFontTask)
+        runBefore("processUniversal${buildNameCapitalized}Resources", currentFontTask)
+        runBefore("process${buildNameCapitalized}Resources", currentFontTask)
+
+        // Bundle JavaScript and React resources.
+        // (adapted from react-native/react.gradle)
+        //
+
+        // React JS bundle directories
+        def jsBundleDir = file("${bundlePath}/assets")
+        def resourcesDir = file("${bundlePath}/res/merged")
+        def jsBundleFile = file("${jsBundleDir}/index.android.bundle")
+
+        // Bundle task name for variant.
+        def bundleJsAndAssetsTaskName = "bundle${buildNameCapitalized}JsAndAssets"
+
+        def currentBundleTask = tasks.create(
+                name: bundleJsAndAssetsTaskName,
+                type: Exec) {
+
+            // Set up inputs and outputs so gradle can cache the result.
+            def reactRoot = file("${projectDir}/../../")
+            inputs.files fileTree(dir: reactRoot, excludes: ['android/**', 'ios/**'])
+            outputs.dir jsBundleDir
+            outputs.dir resourcesDir
+
+            // Set up the call to the react-native cli.
+            workingDir reactRoot
+
+            // Create JS bundle
+            def devEnabled = !buildNameCapitalized.toLowerCase().contains('release')
+            commandLine(
+                'node',
+                'node_modules/react-native/local-cli/cli.js',
+                'bundle',
+                '--assets-dest', resourcesDir,
+                '--bundle-output', jsBundleFile,
+                '--dev', "${devEnabled}",
+                '--entry-file', 'index.android.js',
+                '--platform', 'android',
+                '--reset-cache')
+        }
+
+        // Hook bundle${productFlavor}${buildType}JsAndAssets into the android build process
+        currentBundleTask.dependsOn("merge${buildNameCapitalized}Resources")
+        currentBundleTask.dependsOn("merge${buildNameCapitalized}Assets")
+
+        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentBundleTask)
+        runBefore("processX86${buildNameCapitalized}Resources", currentBundleTask)
+        runBefore("processUniversal${buildNameCapitalized}Resources", currentBundleTask)
+        runBefore("process${buildNameCapitalized}Resources", currentBundleTask)
     }
 }
