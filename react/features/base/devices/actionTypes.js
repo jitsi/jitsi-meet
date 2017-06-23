@@ -41,3 +41,14 @@ export const SET_VIDEO_INPUT_DEVICE = Symbol('SET_VIDEO_INPUT_DEVICE');
  * }
  */
 export const UPDATE_DEVICE_LIST = Symbol('UPDATE_DEVICE_LIST');
+
+/**
+ * The type of Redux action which signals that we need to show a device error.
+ *
+ * {
+ *     type: SHOW_DEVICE_ERROR,
+ *     micError: JitsiTrackError,
+ *     cameraError: JitsiTrackError
+ * }
+ */
+export const SHOW_DEVICE_ERROR = Symbol('SHOW_DEVICE_ERROR');

@@ -24,7 +24,10 @@ import Settings from "./../settings/Settings";
 import { FEEDBACK_REQUEST_IN_PROGRESS } from './UIErrors';
 import { debounce } from "../util/helpers";
 
-import { updateDeviceList } from '../../react/features/base/devices';
+import {
+    showDeviceError,
+    updateDeviceList
+} from '../../react/features/base/devices';
 import { setAudioMuted, setVideoMuted } from '../../react/features/base/media';
 import {
     openDeviceSelectionDialog
@@ -64,8 +67,6 @@ let etherpadManager;
 let sharedVideoManager;
 
 let followMeHandler;
-
-let deviceErrorDialog;
 
 const TrackErrors = JitsiMeetJS.errors.track;
 
@@ -1216,108 +1217,7 @@ UI.showExtensionInlineInstallationDialog = function (callback) {
  * @param {JitsiTrackError} cameraError
  */
 UI.showDeviceErrorDialog = function (micError, cameraError) {
-    let dontShowAgain = {
-        id: "doNotShowWarningAgain",
-        localStorageKey: "doNotShowErrorAgain",
-        textKey: "dialog.doNotShowWarningAgain"
-    };
-    let isMicJitsiTrackErrorAndHasName = micError && micError.name &&
-        micError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
-    let isCameraJitsiTrackErrorAndHasName = cameraError && cameraError.name &&
-        cameraError instanceof JitsiMeetJS.errorTypes.JitsiTrackError;
-    let showDoNotShowWarning = false;
-
-    if (micError && cameraError && isMicJitsiTrackErrorAndHasName &&
-        isCameraJitsiTrackErrorAndHasName) {
-        showDoNotShowWarning =  true;
-    } else if (micError && isMicJitsiTrackErrorAndHasName && !cameraError) {
-        showDoNotShowWarning =  true;
-    } else if (cameraError && isCameraJitsiTrackErrorAndHasName && !micError) {
-        showDoNotShowWarning =  true;
-    }
-
-    if (micError) {
-        dontShowAgain.localStorageKey += "-mic-" + micError.name;
-    }
-
-    if (cameraError) {
-        dontShowAgain.localStorageKey += "-camera-" + cameraError.name;
-    }
-
-    let cameraJitsiTrackErrorMsg = cameraError
-        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[cameraError.name]
-        : undefined;
-    let micJitsiTrackErrorMsg = micError
-        ? JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[micError.name]
-        : undefined;
-    let cameraErrorMsg = cameraError
-        ? cameraJitsiTrackErrorMsg ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
-        : "";
-    let micErrorMsg = micError
-        ? micJitsiTrackErrorMsg ||
-            JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
-        : "";
-    let additionalCameraErrorMsg = !cameraJitsiTrackErrorMsg && cameraError &&
-        cameraError.message
-            ? `<div>${cameraError.message}</div>`
-            : ``;
-    let additionalMicErrorMsg = !micJitsiTrackErrorMsg && micError &&
-        micError.message
-            ? `<div>${micError.message}</div>`
-            : ``;
-    let message = '';
-
-    if (micError) {
-        message = `
-            ${message}
-            <h3 data-i18n='dialog.micErrorPresent'></h3>
-            <h4 data-i18n='${micErrorMsg}'></h4>
-            ${additionalMicErrorMsg}`;
-    }
-
-    if (cameraError) {
-        message = `
-            ${message}
-            <h3 data-i18n='dialog.cameraErrorPresent'></h3>
-            <h4 data-i18n='${cameraErrorMsg}'></h4>
-            ${additionalCameraErrorMsg}`;
-    }
-
-    // To make sure we don't have multiple error dialogs open at the same time,
-    // we will just close the previous one if we are going to show a new one.
-    deviceErrorDialog && deviceErrorDialog.close();
-
-    deviceErrorDialog = messageHandler.openDialog(
-        getTitleKey(),
-        message,
-        false,
-        {Ok: true},
-        function () {},
-        null,
-        function () {
-            // Reset dialog reference to null to avoid memory leaks when
-            // user closed the dialog manually.
-            deviceErrorDialog = null;
-        },
-        showDoNotShowWarning ? dontShowAgain : undefined
-    );
-
-    function getTitleKey() {
-        let title = "dialog.error";
-
-        if (micError && micError.name === TrackErrors.PERMISSION_DENIED) {
-            if (!cameraError
-                    || cameraError.name === TrackErrors.PERMISSION_DENIED) {
-                title = "dialog.permissionDenied";
-            }
-        } else if (cameraError
-                && cameraError.name === TrackErrors.PERMISSION_DENIED) {
-            title = "dialog.permissionDenied";
-        }
-
-        return title;
-    }
+    APP.store.dispatch(showDeviceError(micError, cameraError));
 };
 
 /**

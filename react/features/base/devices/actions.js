@@ -2,6 +2,7 @@ import {
     SET_AUDIO_INPUT_DEVICE,
     SET_AUDIO_OUTPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
+    SHOW_DEVICE_ERROR,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 
@@ -67,5 +68,24 @@ export function updateDeviceList(devices) {
     return {
         type: UPDATE_DEVICE_LIST,
         devices
+    };
+}
+
+/**
+ * Signals to show and error about accessing devices.
+ *
+ * @param {JitsiTrackError} micError - The microphone error.
+ * @param {JitsiTrackError} cameraError - The camera error.
+ * @returns {{
+ *      type: SHOW_DEVICE_ERROR,
+ *      micError: JitsiTrackError,
+ *      cameraError: JitsiTrackError
+ * }}
+ */
+export function showDeviceError(micError, cameraError) {
+    return {
+        type: SHOW_DEVICE_ERROR,
+        micError,
+        cameraError
     };
 }

@@ -14,6 +14,7 @@ export const JitsiParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
 export const JitsiTrackErrors = JitsiMeetJS.errors.track;
 export const JitsiTrackEvents = JitsiMeetJS.events.track;
+export const JitsiTrackError = JitsiMeetJS.errorTypes.JitsiTrackError;
 
 export * from './actions';
 export * from './actionTypes';
