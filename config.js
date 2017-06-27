@@ -90,7 +90,7 @@ var config = { // eslint-disable-line no-unused-vars
     disableSuspendVideo: true,
     // disables or enables RTX (RFC 4588) (defaults to false).
     disableRtx: false,
-    // Sets the preferred resolution (height) for local video. Defaults to 360.
+    // Sets the preferred resolution (height) for local video. Defaults to 720.
     resolution: 720,
     // Enables peer to peer mode. When enabled system will try to establish
     // direct connection given that there are exactly 2 participants in
