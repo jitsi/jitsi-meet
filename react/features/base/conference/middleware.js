@@ -2,10 +2,12 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { CONNECTION_ESTABLISHED } from '../connection';
+import JitsiMeetJS from '../lib-jitsi-meet';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getLocalParticipant,
     getParticipantById,
+    getPinnedParticipant,
     PIN_PARTICIPANT
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
@@ -168,33 +170,56 @@ function _conferenceJoined(store, next, action) {
  */
 function _pinParticipant(store, next, action) {
     const state = store.getState();
+    const { conference } = state['features/base/conference'];
     const participants = state['features/base/participants'];
     const id = action.participant.id;
     const participantById = getParticipantById(participants, id);
     let pin;
 
-    // The following condition prevents signaling to pin local participant. The
-    // logic is:
+    const shouldEmitToLegacyApp = typeof APP !== 'undefined';
+
+    if (shouldEmitToLegacyApp) {
+        const pinnedParticipant = getPinnedParticipant(participants);
+        const actionName = action.participant.id ? 'pinned' : 'unpinned';
+        let videoType;
+
+        if ((participantById && participantById.local)
+            || (!id && pinnedParticipant && pinnedParticipant.local)) {
+            videoType = 'local';
+        } else {
+            videoType = 'remote';
+        }
+
+        JitsiMeetJS.analytics.sendEvent(
+                `${actionName}.${videoType}`,
+                { value: conference.getParticipantCount() });
+    }
+
+    // The following condition prevents signaling to pin local participant and
+    // shared videos. The logic is:
     // - If we have an ID, we check if the participant identified by that ID is
-    //   local.
+    //   local or a bot/fake participant (such as with shared video).
     // - If we don't have an ID (i.e. no participant identified by an ID), we
     //   check for local participant. If she's currently pinned, then this
     //   action will unpin her and that's why we won't signal here too.
     if (participantById) {
-        pin = !participantById.local;
+        pin = !participantById.local && !participantById.isBot;
     } else {
         const localParticipant = getLocalParticipant(participants);
 
         pin = !localParticipant || !localParticipant.pinned;
     }
     if (pin) {
-        const { conference } = state['features/base/conference'];
 
         try {
             conference.pinParticipant(id);
         } catch (err) {
             _handleParticipantError(err);
         }
+    }
+
+    if (shouldEmitToLegacyApp) {
+        APP.UI.emitEvent(UIEvents.PINNED_ENDPOINT, id, Boolean(id));
     }
 
     return next(action);

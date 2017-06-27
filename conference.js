@@ -83,8 +83,6 @@ let room;
 let connection;
 let localAudio, localVideo;
 
-import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
-
 /*
  * Logic to open a desktop picker put on the window global for
  * lib-jitsi-meet to detect and invoke
@@ -1777,37 +1775,9 @@ export default {
                 UIEvents.VIDEO_UNMUTING_WHILE_AUDIO_ONLY,
                 () => this._displayAudioOnlyTooltip('videoMute'));
 
-            APP.UI.addListener(UIEvents.PINNED_ENDPOINT,
-            (smallVideo, isPinned) => {
-                let smallVideoId = smallVideo.getId();
-                let isLocal = APP.conference.isLocalId(smallVideoId);
-
-                let eventName
-                    = (isPinned ? "pinned" : "unpinned") + "." +
-                            (isLocal ? "local" : "remote");
-                let participantCount = room.getParticipantCount();
-                JitsiMeetJS.analytics.sendEvent(
-                        eventName,
-                        { value: participantCount });
-
-                // FIXME why VIDEO_CONTAINER_TYPE instead of checking if
-                // the participant is on the large video ?
-                if (smallVideo.getVideoType() === VIDEO_CONTAINER_TYPE
-                    && !isLocal) {
-
-                    // When the library starts supporting multiple pins we
-                    // would pass the isPinned parameter together with the
-                    // identifier, but currently we send null to indicate that
-                    // we unpin the last pinned.
-                    try {
-                        room.pinParticipant(isPinned ? smallVideoId : null);
-                    } catch (e) {
-                        reportError(e);
-                    }
-                }
-
-                updateRemoteThumbnailsVisibility();
-            });
+            APP.UI.addListener(
+                UIEvents.PINNED_ENDPOINT,
+                updateRemoteThumbnailsVisibility);
         }
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {

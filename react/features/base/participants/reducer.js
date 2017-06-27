@@ -73,6 +73,7 @@ function _participant(state, action) {
             connectionStatus,
             dominantSpeaker,
             email,
+            isBot,
             local,
             pinned,
             role
@@ -108,6 +109,7 @@ function _participant(state, action) {
             dominantSpeaker: dominantSpeaker || false,
             email,
             id,
+            isBot,
             local: local || false,
             name,
             pinned: pinned || false,
