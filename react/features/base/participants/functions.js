@@ -99,6 +99,38 @@ export function getParticipantById(stateOrGetState, id) {
 }
 
 /**
+ * Returns a count of the known participants in the passed in redux state,
+ * excluding any fake participants.
+ *
+ * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the
+ * features/base/participants state.
+ * @returns {number}
+ */
+export function getParticipantCount(stateOrGetState) {
+    const participants = _getParticipants(stateOrGetState);
+    const realParticipants = participants.filter(p => !p.isBot);
+
+    return realParticipants.length;
+}
+
+/**
+ * Returns the participant which has its pinned state set to truthy.
+ *
+ * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the
+ * features/base/participants state.
+ * @returns {(Participant|undefined)}
+ */
+export function getPinnedParticipant(stateOrGetState) {
+    const participants = _getParticipants(stateOrGetState);
+
+    return participants.find(p => p.pinned);
+}
+
+/**
  * Returns array of participants from Redux state.
  *
  * @param {(Function|Object|Participant[])} stateOrGetState - The redux state

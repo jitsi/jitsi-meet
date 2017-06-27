@@ -1,6 +1,8 @@
 /* global APP, $, interfaceConfig, JitsiMeetJS  */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
+import { pinParticipant } from '../../../react/features/base/participants';
+
 import Filmstrip from "./Filmstrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -20,6 +22,8 @@ var currentDominantSpeaker = null;
 
 var eventEmitter = null;
 
+// TODO Remove this private reference to pinnedId once other components
+// interested in its updates are moved to react/redux.
 /**
  * Currently focused video jid
  * @type {String}
@@ -59,7 +63,7 @@ function onContactClicked (id) {
             // let the bridge adjust its lastN set for myjid and store
             // the pinned user in the lastNPickupId variable to be
             // picked up later by the lastN changed event handler.
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, remoteVideo, true);
+            APP.store.dispatch(pinParticipant(remoteVideo.id));
         }
     }
 }
@@ -406,12 +410,6 @@ var VideoLayout = {
             var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly) {
                 oldSmallVideo.focus(false);
-                // as no pinned event will be sent for local video
-                // and we will unpin old one, lets signal it
-                // otherwise we will just send the new pinned one
-                if (smallVideo.isLocal)
-                    eventEmitter.emit(
-                        UIEvents.PINNED_ENDPOINT, oldSmallVideo, false);
             }
         }
 
@@ -419,6 +417,9 @@ var VideoLayout = {
         if (pinnedId === id)
         {
             pinnedId = null;
+
+            APP.store.dispatch(pinParticipant(null));
+
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
                 if(smallVideo && smallVideo.hasVideo()) {
@@ -432,8 +433,6 @@ var VideoLayout = {
                 this.updateLargeVideo(this.electLastVisibleVideo());
             }
 
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, false);
-
             return;
         }
 
@@ -442,10 +441,10 @@ var VideoLayout = {
 
         // Update focused/pinned interface.
         if (id) {
-            if (smallVideo && !interfaceConfig.filmStripOnly)
+            if (smallVideo && !interfaceConfig.filmStripOnly) {
                 smallVideo.focus(true);
-
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, true);
+                APP.store.dispatch(pinParticipant(id));
+            }
         }
 
         this.updateLargeVideo(id);
@@ -823,6 +822,7 @@ var VideoLayout = {
         if (pinnedId === id) {
             logger.info("Focused video owner has left the conference");
             pinnedId = null;
+            APP.store.dispatch(pinParticipant(null));
         }
 
         if (currentDominantSpeaker === id) {
