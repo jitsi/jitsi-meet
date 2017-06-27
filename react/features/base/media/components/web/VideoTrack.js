@@ -9,7 +9,19 @@ import AbstractVideoTrack from '../AbstractVideoTrack';
  * @extends AbstractVideoTrack
  */
 class VideoTrack extends AbstractVideoTrack {
+    static defaultProps = {
+        /**
+         * Dispatch an action when the video starts playing.
+         */
+        triggerOnPlayingUpdate: true
+    };
+
     static propTypes = {
+        /**
+         * CSS classes to add to the video element.
+         */
+        className: React.PropTypes.string,
+
         /**
          * Invoked to update the store about the playing status of the video.
          */
@@ -20,6 +32,12 @@ class VideoTrack extends AbstractVideoTrack {
          * to locate video elements.
          */
         id: React.PropTypes.string,
+
+        /**
+         * Whether or not the store should be updated about the playing status
+         * of the video. Defaults to true.
+         */
+        triggerOnPlayingUpdate: React.PropTypes.bool,
 
         /**
          * The redux representation of the video track.
@@ -163,6 +181,20 @@ class VideoTrack extends AbstractVideoTrack {
             && videoTrack.jitsiTrack
             && videoTrack.jitsiTrack.containers.includes(this._videoElement)) {
             videoTrack.jitsiTrack.detach(this._videoElement);
+        }
+    }
+
+    /**
+     * Handler for case when video starts to play. Does not dispatch an update
+     * if the prop triggerOnPlayingUpdate is falsy.
+     *
+     * @override
+     * @private
+     * @returns {void}
+     */
+    _onVideoPlaying() {
+        if (this.props.triggerOnPlayingUpdate) {
+            super._onVideoPlaying();
         }
     }
 
