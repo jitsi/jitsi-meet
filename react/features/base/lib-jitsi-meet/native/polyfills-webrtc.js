@@ -2,6 +2,7 @@ import {
     MediaStream,
     MediaStreamTrack,
     RTCSessionDescription,
+    RTCIceCandidate,
     getUserMedia
 } from 'react-native-webrtc';
 
@@ -19,6 +20,9 @@ import RTCPeerConnection from './RTCPeerConnection';
     }
     if (typeof global.RTCSessionDescription === 'undefined') {
         global.RTCSessionDescription = RTCSessionDescription;
+    }
+    if (typeof global.RTCIceCandidate === 'undefined') {
+        global.RTCIceCandidate = RTCIceCandidate;
     }
 
     const navigator = global.navigator;
