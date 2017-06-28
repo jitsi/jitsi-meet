@@ -268,6 +268,12 @@ class StatelessDialog extends Component {
      * @returns {void}
      */
     _onKeyDown(event) {
+        // If the event coming to the dialog has been subject to preventDefault
+        // we don't handle it here.
+        if (event.defaultPrevented) {
+            return;
+        }
+
         if (event.key === 'Enter') {
             if (this.props.submitDisabled && !this.props.cancelDisabled) {
                 this._onCancel();
