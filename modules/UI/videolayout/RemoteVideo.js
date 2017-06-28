@@ -516,7 +516,11 @@ RemoteVideo.prototype.remove = function () {
     this.removeAudioLevelIndicator();
 
     this.removeConnectionIndicator();
+
     this.removeDisplayName();
+
+    this.removeAvatar();
+
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
     this.VideoLayout.updateAfterThumbRemoved(this.id);
@@ -691,6 +695,10 @@ RemoteVideo.createContainer = function (spanId) {
     const displayNameContainer = document.createElement('div');
     displayNameContainer.className = 'displayNameContainer';
     container.appendChild(displayNameContainer);
+
+    const avatarContainer = document.createElement('div');
+    avatarContainer.className = 'avatar-container';
+    container.appendChild(avatarContainer);
 
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
