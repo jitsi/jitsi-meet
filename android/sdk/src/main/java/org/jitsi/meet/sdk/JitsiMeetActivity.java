@@ -17,7 +17,10 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -35,6 +38,13 @@ import java.net.URL;
  * <tt>JKConferenceView</tt> static methods.
  */
 public class JitsiMeetActivity extends AppCompatActivity {
+    /**
+     * Code for identifying the permission to draw on top of other apps. The
+     * number is chosen arbitrarily and used to correlate the intent with its
+     * result.
+     */
+    public static final int OVERLAY_PERMISSION_REQ_CODE = 4242;
+
     /**
      * Instance of the {@link JitsiMeetView} which this activity will display.
      */
@@ -68,6 +78,26 @@ public class JitsiMeetActivity extends AppCompatActivity {
      * {@inheritDoc}
      */
     @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data) {
+        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    // Permission not granted.
+                    return;
+                }
+            }
+
+            setupView();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onBackPressed() {
         if (!JitsiMeetView.onBackPressed()) {
             // Invoke the default handler if it wasn't handled by React.
@@ -82,15 +112,21 @@ public class JitsiMeetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        view = new JitsiMeetView(this);
+        // In debug mode React needs permission to write over other apps in
+        // order to display the warning and error overlays.
+        if (BuildConfig.DEBUG
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && !Settings.canDrawOverlays(this)) {
+            Intent intent
+                = new Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
 
-        // In order to have the desired effect
-        // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
-        // JitsiMeetView#loadURL(URL).
-        view.setWelcomePageEnabled(welcomePageEnabled);
-        view.loadURL(null);
+            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+            return;
+        }
 
-        setContentView(view);
+        setupView();
     }
 
     /**
@@ -129,6 +165,18 @@ public class JitsiMeetActivity extends AppCompatActivity {
         super.onResume();
 
         JitsiMeetView.onHostResume(this);
+    }
+
+    private void setupView() {
+        view = new JitsiMeetView(this);
+
+        // In order to have the desired effect
+        // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
+        // JitsiMeetView#loadURL(URL).
+        view.setWelcomePageEnabled(welcomePageEnabled);
+        view.loadURL(null);
+
+        setContentView(view);
     }
 
     /**
