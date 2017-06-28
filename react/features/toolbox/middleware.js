@@ -7,6 +7,48 @@ import {
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
 
+import {
+    SET_VIDEO_AVAILABLE,
+    SET_VIDEO_MUTED
+} from '../../features/base/media/actionTypes';
+
+import {
+    setToolbarButton
+} from './actions';
+
+/**
+ * Adjusts the state of toolbar's camera button.
+ *
+ * @param {Store} store - The Redux store instance.
+ * @param {Object} action - Either SET_VIDEO_AVAILABLE or SET_VIDEO_MUTED.
+ *
+ * @returns {*}
+ */
+function setCameraButton(store, action) {
+    const video = store.getState()['features/base/media'].video;
+    let available = video.available;
+
+    if (typeof action.available === 'boolean') {
+        available = action.available;
+    }
+
+    let muted = video.muted;
+
+    if (typeof action.muted === 'boolean') {
+        muted = action.muted;
+    }
+
+    const i18nKey = available ? 'videomute' : 'cameraDisabled';
+    const i18n = `[content]toolbar.${i18nKey}`;
+    const button = {
+        enabled: available,
+        i18n,
+        toggled: available ? muted : true
+    };
+
+    store.dispatch(setToolbarButton('camera', button));
+}
+
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
  * visibility timeout of the Toolbox.
@@ -33,6 +75,14 @@ MiddlewareRegistry.register(store => next => action => {
         action.timeoutID = newTimeoutId;
         break;
     }
+
+    case SET_VIDEO_AVAILABLE:
+    case SET_VIDEO_MUTED: {
+        setCameraButton(store, action);
+        break;
+    }
+
+
     }
 
     return next(action);

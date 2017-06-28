@@ -97,11 +97,6 @@ function getNewVideoInputDevice(newDevices, localVideo) {
             availableVideoInputDevices[0].label !== '') {
             return availableVideoInputDevices[0].deviceId;
         }
-        // Otherwise we assume that we don't have any video input devices
-        // to use and that's why disable microphone button on UI.
-        else {
-            APP.UI.setCameraButtonEnabled(false);
-        }
     } else {
         // And here we handle case when we already have some device working,
         // but we plug-in a "preferred" (previously selected in settings, stored

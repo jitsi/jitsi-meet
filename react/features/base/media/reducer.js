@@ -6,6 +6,7 @@ import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_MUTED,
+    SET_VIDEO_AVAILABLE,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
@@ -63,7 +64,8 @@ function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
  */
 const VIDEO_INITIAL_MEDIA_STATE = {
     facingMode: CAMERA_FACING_MODE.USER,
-    muted: false
+    muted: true,
+    available: true
 };
 
 /**
@@ -77,6 +79,12 @@ const VIDEO_INITIAL_MEDIA_STATE = {
  */
 function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
+    case SET_VIDEO_AVAILABLE:
+        return {
+            ...state,
+            available: action.available
+        };
+
     case SET_CAMERA_FACING_MODE:
         return {
             ...state,

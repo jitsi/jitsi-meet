@@ -36,6 +36,9 @@ import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
+    setVideoAvailable
+} from './react/features/base/media';
+import {
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
     participantJoined,
@@ -1036,15 +1039,13 @@ export default {
                     this.isSharingScreen = newStream.videoType === 'desktop';
 
                     APP.UI.addLocalStream(newStream);
-
-                    newStream.videoType === 'camera'
-                        && APP.UI.setCameraButtonEnabled(true);
                 } else {
                     // No video is treated the same way as being video muted
                     this.videoMuted = true;
                     this.isSharingScreen = false;
                 }
                 APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                this.updateVideoIconEnabled();
                 APP.UI.updateDesktopSharingButtons();
             });
     },
@@ -1953,6 +1954,7 @@ export default {
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
                 APP.UI.onAvailableDevicesChanged(devices);
                 APP.store.dispatch(updateDeviceList(devices));
+                this.updateVideoIconEnabled();
             });
 
             this.deviceChangeListener = (devices) =>
@@ -2030,7 +2032,31 @@ export default {
             .then(() => {
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
                 APP.UI.onAvailableDevicesChanged(devices);
+                this.updateVideoIconEnabled();
             });
+    },
+    /**
+     * Determines whether or not the video button should be enabled.
+     */
+    updateVideoIconEnabled() {
+        const videoMediaDevices
+            = mediaDeviceHelper.getCurrentMediaDevices().videoinput;
+        const videoDeviceCount
+            = videoMediaDevices ? videoMediaDevices.length : 0;
+        // The video functionality is considered available if there are any
+        // video devices detected or if there is local video stream already
+        // active which could be either screensharing stream or a video track
+        // created before the permissions were rejected (through browser
+        // config).
+        const available = videoDeviceCount > 0 || Boolean(localVideo);
+
+        logger.debug(
+            'Camera button enabled: ' + available,
+            'local video: ' + localVideo,
+            'video devices: ' + videoMediaDevices,
+            'device count: ' + videoDeviceCount);
+
+        APP.store.dispatch(setVideoAvailable(available));
     },
 
     /**
