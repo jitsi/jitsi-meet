@@ -34,7 +34,6 @@ import {
     dockToolbox,
     setAudioIconEnabled,
     setToolbarButton,
-    setVideoIconEnabled,
     showDialPadButton,
     showEtherpadButton,
     showSharedVideoButton,
@@ -724,9 +723,6 @@ UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.store.dispatch(setVideoMuted(muted));
-        APP.store.dispatch(setToolbarButton('camera', {
-            toggled: muted
-        }));
     }
 };
 
@@ -1340,15 +1336,6 @@ UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
         sharedVideoManager.onSharedVideoStop(id, attributes);
 };
-
-/**
- * Enables / disables camera toolbar button.
- *
- * @param {boolean} enabled indicates if the camera button should be enabled
- * or disabled
- */
-UI.setCameraButtonEnabled
-    = enabled => APP.store.dispatch(setVideoIconEnabled(enabled));
 
 /**
  * Enables / disables microphone toolbar button.

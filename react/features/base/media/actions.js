@@ -5,6 +5,7 @@ import type { Dispatch } from 'redux';
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
+    SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
@@ -40,6 +41,23 @@ export function setCameraFacingMode(cameraFacingMode: CAMERA_FACING_MODE) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
+    };
+}
+
+/**
+ * Action to adjust the availability of the local video.
+ *
+ * @param {boolean} available - True if the local video is to be marked as
+ * available or false if the local video is not available.
+ * @returns {{
+ *      type: SET_VIDEO_AVAILABLE,
+ *      available: boolean
+ *  }}
+ */
+export function setVideoAvailable(available: boolean) {
+    return {
+        type: SET_VIDEO_AVAILABLE,
+        available
     };
 }
 

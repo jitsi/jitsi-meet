@@ -226,27 +226,6 @@ export function setToolboxVisible(visible: boolean): Object {
 }
 
 /**
- * Enables/disables audio toolbar button.
- *
- * @param {boolean} enabled - True if the button should be enabled; otherwise,
- * false.
- * @returns {Function}
- */
-export function setVideoIconEnabled(enabled: boolean = false): Function {
-    return (dispatch: Dispatch<*>) => {
-        const i18nKey = enabled ? 'videomute' : 'cameraDisabled';
-        const i18n = `[content]toolbar.${i18nKey}`;
-        const button = {
-            enabled,
-            i18n,
-            toggled: !enabled
-        };
-
-        dispatch(setToolbarButton('camera', button));
-    };
-}
-
-/**
  * Shows etherpad button if it's not shown.
  *
  * @returns {Function}
