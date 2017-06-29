@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setVideoMuted } from '../media';
 import {
@@ -255,22 +256,20 @@ export function createConference() {
         dispatch(_conferenceWillJoin(room));
 
         const config = state['features/base/config'];
+        const configOverride = {
+            p2p: {
+                preferH264: true
+            }
+        };
         const conference
             = connection.initJitsiConference(
 
                 // XXX Lib-jitsi-meet does not accept uppercase letters.
                 room.toLowerCase(),
-                {
-                    ...config,
 
-                    openSctp: true
-
-                    // FIXME I tested H.264 from iPhone 6S during a morning
-                    // standup but, unfortunately, the other participants who
-                    // happened to be running the Web app saw only black.
-                    //
-                    // preferH264: true
-                });
+                // We use lodash's merge here because it will recursively merge
+                // objects allowing partial overrides.
+                _.merge({}, config, configOverride));
 
         _addConferenceListeners(conference, dispatch);
 
