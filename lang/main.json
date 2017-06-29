@@ -332,6 +332,8 @@
         "goToStore": "Go to the webstore",
         "externalInstallationTitle": "Extension required",
         "externalInstallationMsg": "You need to install our desktop sharing extension.",
+        "inlineInstallationMsg": "You need to install our desktop sharing extension.",
+        "inlineInstallExtension": "Install now",
         "muteParticipantTitle": "Mute this participant?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
