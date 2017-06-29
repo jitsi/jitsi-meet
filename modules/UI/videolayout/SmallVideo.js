@@ -10,6 +10,9 @@ import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
 import {
+    Avatar as AvatarDisplay
+} from '../../../react/features/base/participants';
+import {
     ConnectionIndicator
 } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
@@ -477,7 +480,7 @@ SmallVideo.prototype.selectVideoElement = function () {
  * element which displays the user's avatar.
  */
 SmallVideo.prototype.$avatar = function () {
-    return $('#' + this.videoSpanId + ' .userAvatar');
+    return $('#' + this.videoSpanId + ' .avatar-container');
 };
 
 /**
@@ -652,21 +655,40 @@ SmallVideo.prototype.updateView = function () {
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
 };
 
+/**
+ * Updates the react component displaying the avatar with the passed in avatar
+ * url.
+ *
+ * @param {string} avatarUrl - The uri to the avatar image.
+ * @returns {void}
+ */
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
-    var thumbnail = $('#' + this.videoSpanId);
-    var avatarSel = this.$avatar();
+    const thumbnail = this.$avatar().get(0);
     this.hasAvatar = true;
 
-    // set the avatar in the thumbnail
-    if (avatarSel && avatarSel.length > 0) {
-        avatarSel[0].src = avatarUrl;
-    } else {
-        if (thumbnail && thumbnail.length > 0) {
-            var avatarElement = document.createElement('img');
-            avatarElement.className = 'userAvatar';
-            avatarElement.src = avatarUrl;
-            thumbnail.append(avatarElement);
-        }
+    if (thumbnail) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <AvatarDisplay
+                className = 'userAvatar'
+                uri = { avatarUrl } />,
+            thumbnail
+        );
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Unmounts any attached react components (particular the avatar image) from
+ * the avatar container.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.removeAvatar = function () {
+    const thumbnail = this.$avatar().get(0);
+
+    if (thumbnail) {
+        ReactDOM.unmountComponentAtNode(thumbnail);
     }
 };
 

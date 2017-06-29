@@ -41,6 +41,7 @@ export default class Filmstrip extends Component {
                             </div>
                             <div className = 'videocontainer__hoverOverlay' />
                             <div className = 'displayNameContainer' />
+                            <div className = 'avatar-container' />
                         </span>
                     </div>
                     <div
