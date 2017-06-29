@@ -20,13 +20,6 @@ var config = { // eslint-disable-line no-unused-vars
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
 
-    // The STUN servers that will be used in the peer to peer connections
-    p2pStunServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun2.l.google.com:19302" }
-    ],
-
     // The ID of the jidesha extension for Chrome.
     desktopSharingChromeExtId: null,
     // Whether desktop sharing should be disabled on Chrome.
@@ -92,13 +85,26 @@ var config = { // eslint-disable-line no-unused-vars
     disableRtx: false,
     // Sets the preferred resolution (height) for local video. Defaults to 720.
     resolution: 720,
-    // Enables peer to peer mode. When enabled system will try to establish
-    // direct connection given that there are exactly 2 participants in
-    // the room. If that succeeds the conference will stop sending data through
-    // the JVB and use the peer to peer connection instead. When 3rd participant
-    // joins the conference will be moved back to the JVB connection.
-    enableP2P: true
-    // How long we're going to wait, before going back to P2P after
-    // the 3rd participant has left the conference (to filter out page reload)
-    //backToP2PDelay: 5
+    // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
+    p2p: {
+        // Enables peer to peer mode. When enabled system will try to establish
+        // direct connection given that there are exactly 2 participants in
+        // the room. If that succeeds the conference will stop sending data
+        // through the JVB and use the peer to peer connection instead. When 3rd
+        // participant joins the conference will be moved back to the JVB
+        // connection.
+        enabled: true,
+        // The STUN servers that will be used in the peer to peer connections
+        stunServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:stun1.l.google.com:19302" },
+            { urls: "stun:stun2.l.google.com:19302" }
+        ],
+        // If set to true, it will prefer to use H.264 for P2P calls (if H.264
+        // is supported).
+        preferH264: false
+        // How long we're going to wait, before going back to P2P after
+        // the 3rd participant has left the conference (to filter out page reload)
+        //backToP2PDelay: 5
+    }
 };
