@@ -310,7 +310,7 @@ function Util:verify_room(session, room_address)
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(
-            string.lower(room_to_check), self.muc_domain_prefix.."."..auth_domain);
+            string.lower(room_to_check), self.muc_domain);
     end
 end
 
