@@ -558,6 +558,14 @@ export default {
             .then(([tracks, con]) => {
                 APP.store.dispatch(
                     mediaPermissionPromptVisibilityChanged(false));
+                // FIXME If there will be microphone error it will cover any
+                // screensharing dialog, but it's still better than in
+                // the reverse order where the screensharing dialog will
+                // sometime be closing the microphone alert ($.prompt.close();
+                // is called). Need to figure out dialogs chaining to fix that.
+                if (screenSharingError) {
+                    this._handleScreenSharingError(screenSharingError);
+                }
                 if (audioAndVideoError || audioOnlyError) {
                     if (audioOnlyError || videoOnlyError) {
                         // If both requests for 'audio' + 'video' and 'audio'
@@ -571,18 +579,6 @@ export default {
                         // problems with camera and show corresponding dialog.
                         APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
                     }
-                }
-
-                // FIXME If there was a screen sharing error or the extension
-                // needs to be installed it will appear on top of eventual
-                // "microphone error" dialog. That is not great, but currently
-                // it's pretty hard to chain dialogs since they don't return
-                // Promises.
-                if (screenSharingError) {
-                    // FIXME if _handleScreenSharingError will be dealing with
-                    // installing external extension it may close previously
-                    // opened microphone dialog ($.prompt.close(); is called).
-                    this._handleScreenSharingError(screenSharingError);
                 }
 
                 return [tracks, con];
