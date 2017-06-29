@@ -487,7 +487,7 @@ SmallVideo.prototype.$avatar = function () {
  * the video thumbnail
  */
 SmallVideo.prototype.$displayName = function () {
-    return $('#' + this.videoSpanId + ' .displayname');
+    return $('#' + this.videoSpanId + ' .displayNameContainer');
 };
 
 /**
