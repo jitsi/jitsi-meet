@@ -516,6 +516,7 @@ RemoteVideo.prototype.remove = function () {
     this.removeAudioLevelIndicator();
 
     this.removeConnectionIndicator();
+    this.removeDisplayName();
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
     this.VideoLayout.updateAfterThumbRemoved(this.id);
@@ -640,31 +641,11 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
         return;
     }
 
-    var nameSpan = $('#' + this.videoSpanId + ' .displayname');
-
-    // If we already have a display name for this video.
-    if (nameSpan.length > 0) {
-        if (displayName && displayName.length > 0) {
-            var displaynameSpan = $('#' + this.videoSpanId + '_name');
-            if (displaynameSpan.text() !== displayName)
-                displaynameSpan.text(displayName);
-        }
-        else
-            $('#' + this.videoSpanId + '_name').text(
-                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
-    } else {
-        nameSpan = document.createElement('span');
-        nameSpan.className = 'displayname';
-        $('#' + this.videoSpanId)[0]
-            .appendChild(nameSpan);
-
-        if (displayName && displayName.length > 0) {
-            $(nameSpan).text(displayName);
-        } else {
-            nameSpan.innerHTML = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-        }
-        nameSpan.id = this.videoSpanId + '_name';
-    }
+    this.updateDisplayName({
+        displayName: displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME,
+        elementID: `${this.videoSpanId}_name`,
+        participantID: this.id
+    });
 };
 
 /**
@@ -706,6 +687,10 @@ RemoteVideo.createContainer = function (spanId) {
     let overlay = document.createElement('div');
     overlay.className = "videocontainer__hoverOverlay";
     container.appendChild(overlay);
+
+    const displayNameContainer = document.createElement('div');
+    displayNameContainer.className = 'displayNameContainer';
+    container.appendChild(displayNameContainer);
 
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);

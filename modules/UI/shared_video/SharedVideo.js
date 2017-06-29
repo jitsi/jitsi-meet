@@ -659,6 +659,10 @@ SharedVideoThumb.prototype.createContainer = function (spanId) {
     avatar.src = "https://img.youtube.com/vi/" + this.url + "/0.jpg";
     container.appendChild(avatar);
 
+    const displayNameContainer = document.createElement('div');
+    displayNameContainer.className = 'displayNameContainer';
+    container.appendChild(displayNameContainer);
+
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
 };
@@ -696,23 +700,11 @@ SharedVideoThumb.prototype.setDisplayName = function(displayName) {
         return;
     }
 
-    var nameSpan = $('#' + this.videoSpanId + '>span.displayname');
-
-    // If we already have a display name for this video.
-    if (nameSpan.length > 0) {
-        if (displayName && displayName.length > 0) {
-            $('#' + this.videoSpanId + '_name').text(displayName);
-        }
-    } else {
-        nameSpan = document.createElement('span');
-        nameSpan.className = 'displayname';
-        $('#' + this.videoSpanId)[0].appendChild(nameSpan);
-
-        if (displayName && displayName.length > 0)
-            $(nameSpan).text(displayName);
-        nameSpan.id = this.videoSpanId + '_name';
-    }
-
+    this.updateDisplayName({
+        displayName: displayName || '',
+        elementID: `${this.videoSpanId}_name`,
+        participantID: this.id
+    });
 };
 
 /**

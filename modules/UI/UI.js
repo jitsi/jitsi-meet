@@ -253,6 +253,10 @@ UI.initConference = function () {
 
 UI.mucJoined = function () {
     VideoLayout.mucJoined();
+
+    // Update local video now that a conference is joined a user ID should be
+    // set.
+    UI.changeDisplayName('localVideoContainer', APP.settings.getDisplayName());
 };
 
 /***

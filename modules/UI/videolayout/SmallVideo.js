@@ -3,13 +3,17 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
 
+import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
 import {
     ConnectionIndicator
 } from '../../../react/features/connection-indicator';
-/* eslint-enable no-unused-vars */
+import { DisplayName } from '../../../react/features/display-name';
+/* eslint-disable no-unused-vars */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -483,7 +487,45 @@ SmallVideo.prototype.$avatar = function () {
  * the video thumbnail
  */
 SmallVideo.prototype.$displayName = function () {
-    return $('#' + this.videoSpanId + ' .displayname');
+    return $('#' + this.videoSpanId + ' .displayNameContainer');
+};
+
+/**
+ * Creates or updates the participant's display name that is shown over the
+ * video preview.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.updateDisplayName = function (props) {
+    const displayNameContainer
+        = this.container.querySelector('.displayNameContainer');
+
+    if (displayNameContainer) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <DisplayName { ...props } />
+                </I18nextProvider>
+            </Provider>,
+            displayNameContainer);
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Removes the component responsible for showing the participant's display name,
+ * if its container is present.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.removeDisplayName = function () {
+    const displayNameContainer
+        = this.container.querySelector('.displayNameContainer');
+
+    if (displayNameContainer) {
+        ReactDOM.unmountComponentAtNode(displayNameContainer);
+    }
 };
 
 /**

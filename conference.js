@@ -37,6 +37,7 @@ import {
 } from './react/features/base/lib-jitsi-meet';
 import {
     localParticipantRoleChanged,
+    MAX_DISPLAY_NAME_LENGTH,
     participantJoined,
     participantLeft,
     participantRoleChanged,
@@ -102,12 +103,6 @@ const commands = {
     ETHERPAD: "etherpad",
     SHARED_VIDEO: "shared-video"
 };
-
-/**
- * Max length of the display names. If we receive longer display name the
- * additional chars are going to be cut.
- */
-const MAX_DISPLAY_NAME_LENGTH = 50;
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
