@@ -663,8 +663,7 @@ SmallVideo.prototype.updateView = function () {
  * @returns {void}
  */
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
-    const $thumbnail = this.$avatar();
-    const thumbnail = $thumbnail.get(0);
+    const thumbnail = this.$avatar().get(0);
     this.hasAvatar = true;
 
     if (thumbnail) {
@@ -686,8 +685,7 @@ SmallVideo.prototype.avatarChanged = function (avatarUrl) {
  * @returns {void}
  */
 SmallVideo.prototype.removeAvatar = function () {
-    const $thumbnail = this.$avatar();
-    const thumbnail = $thumbnail && $thumbnail.get(0);
+    const thumbnail = this.$avatar().get(0);
 
     if (thumbnail) {
         ReactDOM.unmountComponentAtNode(thumbnail);
