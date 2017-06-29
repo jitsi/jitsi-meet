@@ -664,7 +664,7 @@ SmallVideo.prototype.updateView = function () {
  */
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
     const $thumbnail = this.$avatar();
-    const thumbnail = $thumbnail && $thumbnail.get(0);
+    const thumbnail = $thumbnail.get(0);
     this.hasAvatar = true;
 
     if (thumbnail) {
