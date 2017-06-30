@@ -17,7 +17,10 @@ const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
-    this.container = $("#localVideoContainer").get(0);
+
+    this.container = this.createContainer();
+    $("#filmstripLocalVideo").append(this.container);
+
     this.localVideoId = null;
     this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
@@ -45,6 +48,27 @@ function LocalVideo(VideoLayout, emitter) {
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
 LocalVideo.prototype.constructor = LocalVideo;
+
+LocalVideo.prototype.createContainer = function () {
+    const containerSpan = document.createElement('span');
+    containerSpan.classList.add('videocontainer');
+    containerSpan.id = this.videoSpanId;
+
+    containerSpan.innerHTML = `
+        <div class = 'videocontainer__background'></div>
+        <span id = 'localVideoWrapper'></span>
+        <audio
+            autoplay = true
+            id = 'localAudio'
+            muted = true></audio>
+        <div class = 'videocontainer__toolbar'></div>
+        <div class = 'videocontainer__toptoolbar'></div>
+        <div class = 'videocontainer__hoverOverlay'></div>
+        <div class = 'displayNameContainer'></div>
+        <div class = 'avatar-container'></div>`;
+
+    return containerSpan;
+};
 
 /**
  * Sets the display name for the given video span id.

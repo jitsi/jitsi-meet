@@ -52,23 +52,7 @@ class Filmstrip extends Component {
                     id = 'remoteVideos'>
                     <div
                         className = 'filmstrip__videos'
-                        id = 'filmstripLocalVideo'>
-                        <span
-                            className = 'videocontainer'
-                            id = 'localVideoContainer'>
-                            <div className = 'videocontainer__background' />
-                            <span id = 'localVideoWrapper' />
-                            <audio
-                                autoPlay = { true }
-                                id = 'localAudio'
-                                muted = { true } />
-                            <div className = 'videocontainer__toolbar' />
-                            <div className = 'videocontainer__toptoolbar' />
-                            <div className = 'videocontainer__hoverOverlay' />
-                            <div className = 'displayNameContainer' />
-                            <div className = 'avatar-container' />
-                        </span>
-                    </div>
+                        id = 'filmstripLocalVideo' />
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripRemoteVideos'>
