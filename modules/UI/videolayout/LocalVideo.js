@@ -57,10 +57,6 @@ LocalVideo.prototype.createContainer = function () {
     containerSpan.innerHTML = `
         <div class = 'videocontainer__background'></div>
         <span id = 'localVideoWrapper'></span>
-        <audio
-            autoplay = true
-            id = 'localAudio'
-            muted = true></audio>
         <div class = 'videocontainer__toolbar'></div>
         <div class = 'videocontainer__toptoolbar'></div>
         <div class = 'videocontainer__hoverOverlay'></div>
