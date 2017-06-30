@@ -106,5 +106,12 @@ var config = { // eslint-disable-line no-unused-vars
         // How long we're going to wait, before going back to P2P after
         // the 3rd participant has left the conference (to filter out page reload)
         //backToP2PDelay: 5
+    },
+    // Information about the jitsi-meet instance we are connecting to, including the
+    // user region as seen by the server.
+    deploymentInfo: {
+        //shard: "shard1",
+        //region: "europe",
+        //userRegion: "asia"
     }
 };
