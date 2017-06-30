@@ -170,24 +170,6 @@ var VideoLayout = {
             largeVideo.updateLargeVideoAudioLevel(lvl);
     },
 
-    changeLocalAudio (stream) {
-        let localAudio = document.getElementById('localAudio');
-        localAudio = stream.attach(localAudio);
-
-        // Now when Temasys plugin is converting also <audio> elements to
-        // plugin's <object>s, in current layout it will capture click events
-        // before it reaches the local video object. We hide it here in order
-        // to prevent that.
-        //if (RTCBrowserType.isIExplorer()) {
-            // The issue is not present on Safari. Also if we hide it in Safari
-            // then the local audio track will have 'enabled' flag set to false
-            // which will result in audio mute issues
-            //  $(localAudio).hide();
-            localAudio.width = 1;
-            localAudio.height = 1;
-        //}
-    },
-
     changeLocalVideo (stream) {
         let localId = APP.conference.getMyUserId();
         this.onVideoTypeChanged(localId, stream.videoType);
