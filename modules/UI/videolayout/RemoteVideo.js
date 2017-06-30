@@ -655,41 +655,19 @@ RemoteVideo.prototype.removePresenceLabel = function () {
 };
 
 RemoteVideo.createContainer = function (spanId) {
-    let container = document.createElement('span');
+    const container = document.createElement('span');
     container.id = spanId;
     container.className = 'videocontainer';
 
-    let wrapper = document.createElement('div');
-    wrapper.className = 'videocontainer__background';
-    container.appendChild(wrapper);
-
-    let indicatorBar = document.createElement('div');
-    indicatorBar.className = "videocontainer__toptoolbar";
-    container.appendChild(indicatorBar);
-
-    let toolbar = document.createElement('div');
-    toolbar.className = "videocontainer__toolbar";
-    container.appendChild(toolbar);
-
-    let overlay = document.createElement('div');
-    overlay.className = "videocontainer__hoverOverlay";
-    container.appendChild(overlay);
-
-    const displayNameContainer = document.createElement('div');
-    displayNameContainer.className = 'displayNameContainer';
-    container.appendChild(displayNameContainer);
-
-    const avatarContainer = document.createElement('div');
-    avatarContainer.className = 'avatar-container';
-    container.appendChild(avatarContainer);
-
-    const presenceLabelContainer = document.createElement('div');
-    presenceLabelContainer.className = 'presence-label-container';
-    container.appendChild(presenceLabelContainer);
-
-    const remoteVideoMenuContainer = document.createElement('span');
-    remoteVideoMenuContainer.className = 'remotevideomenu';
-    container.appendChild(remoteVideoMenuContainer);
+    container.innerHTML = `
+        <div class = 'videocontainer__background'></div>
+        <div class = 'videocontainer__toptoolbar'></div>
+        <div class = 'videocontainer__toolbar'></div>
+        <div class = 'videocontainer__hoverOverlay'></div>
+        <div class = 'displayNameContainer'></div>
+        <div class = 'avatar-container'></div>
+        <div class ='presence-label-container'></div>
+        <span class = 'remotevideomenu'></span>`;
 
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
