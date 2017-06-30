@@ -85,6 +85,7 @@ RemoteVideo.prototype.constructor = RemoteVideo;
 
 RemoteVideo.prototype.addRemoteVideoContainer = function() {
     this.container = RemoteVideo.createContainer(this.videoSpanId);
+    this.$container = $(this.container);
 
     this.initBrowserSpecificProperties();
 
@@ -409,7 +410,7 @@ RemoteVideo.prototype.isVideoPlayable = function () {
  * @inheritDoc
  */
 RemoteVideo.prototype.updateView = function () {
-    $(this.container).toggleClass('audio-only', APP.conference.isAudioOnly());
+    this.$container.toggleClass('audio-only', APP.conference.isAudioOnly());
 
     this.updateConnectionStatusIndicator();
 
@@ -610,7 +611,7 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
  * @param videoElementId the id of local or remote video element.
  */
 RemoteVideo.prototype.removeRemoteVideoMenu = function() {
-    var menuSpan = $('#' + this.videoSpanId + '> .remotevideomenu');
+    var menuSpan = this.$container.find('.remotevideomenu');
 
     if (menuSpan.length) {
         ReactDOM.unmountComponentAtNode(menuSpan.get(0));

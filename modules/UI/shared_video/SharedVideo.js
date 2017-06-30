@@ -647,6 +647,7 @@ function SharedVideoThumb (url)
     this.setVideoType(SHARED_VIDEO_CONTAINER_TYPE);
     this.videoSpanId = "sharedVideoContainer";
     this.container = this.createContainer(this.videoSpanId);
+    this.$container = $(this.container);
     this.container.onclick = this.videoClick.bind(this);
     this.bindHoverHandler();
     SmallVideo.call(this, VideoLayout);
