@@ -529,6 +529,8 @@ RemoteVideo.prototype.remove = function () {
 
     this.removeAvatar();
 
+    this._unmountIndicators();
+
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
     this.VideoLayout.updateAfterThumbRemoved(this.id);
@@ -687,10 +689,6 @@ RemoteVideo.createContainer = function (spanId) {
     let indicatorBar = document.createElement('div');
     indicatorBar.className = "videocontainer__toptoolbar";
     container.appendChild(indicatorBar);
-
-    const connectionIndicatorContainer = document.createElement('span');
-    connectionIndicatorContainer.className = 'connection-indicator-container';
-    indicatorBar.appendChild(connectionIndicatorContainer);
 
     let toolbar = document.createElement('div');
     toolbar.className = "videocontainer__toolbar";

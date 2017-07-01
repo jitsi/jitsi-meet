@@ -18,7 +18,9 @@ import {
 import { DisplayName } from '../../../react/features/display-name';
 import {
     AudioMutedIndicator,
+    DominantSpeakerIndicator,
     ModeratorIndicator,
+    RaisedHandIndicator,
     VideoMutedIndicator
 } from '../../../react/features/filmstrip';
 /* eslint-enable no-unused-vars */
@@ -98,6 +100,30 @@ function SmallVideo(VideoLayout) {
      * @type {boolean}
      */
     this._popoverIsHovered = false;
+
+    /**
+     * Whether or not the connection indicator should be displayed.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._showConnectionIndicator = true;
+
+    /**
+     * Whether or not the dominant speaker indicator should be displayed.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._showDominantSpeaker = false;
+
+    /**
+     * Whether or not the raised hand indicator should be displayed.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._showRaisedHand = false;
 
     // Bind event handlers so they are only bound once for every instance.
     this._onPopoverHover = this._onPopoverHover.bind(this);
@@ -252,12 +278,9 @@ SmallVideo.prototype.updateConnectionStats = function (percent, object) {
  * @returns {void}
  */
 SmallVideo.prototype.removeConnectionIndicator = function () {
-    const connectionIndicatorContainer
-        = this.container.querySelector('.connection-indicator-container');
+    this._showConnectionIndicator = false;
 
-    if (connectionIndicatorContainer) {
-        ReactDOM.unmountComponentAtNode(connectionIndicatorContainer);
-    }
+    this.updateIndicators();
 };
 
 /**
@@ -643,17 +666,9 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
     }
 
-    let indicatorSpanId = "dominantspeakerindicator";
-    let content = `<i id="indicatoricon"
-                      class="indicatoricon fa fa-bullhorn"></i>`;
-    let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
-        videoSpanId: this.videoSpanId,
-        indicatorId: indicatorSpanId,
-        content,
-        tooltip: 'speaker'
-    });
+    this._showDominantSpeaker = show;
 
-    UIUtil.setVisible(indicatorSpan, show);
+    this.updateIndicators();
 };
 
 /**
@@ -667,17 +682,9 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         return;
     }
 
-    let indicatorSpanId = "raisehandindicator";
-    let content = `<i id="indicatoricon"
-                      class="icon-raised-hand indicatoricon"></i>`;
-    let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
-        indicatorId: indicatorSpanId,
-        videoSpanId: this.videoSpanId,
-        content,
-        tooltip: 'raisedHand'
-    });
+    this._showRaisedHand = show;
 
-    UIUtil.setVisible(indicatorSpan, show);
+    this.updateIndicators();
 };
 
 /**
@@ -746,19 +753,58 @@ SmallVideo.prototype.updateConnectionIndicator = function (newStats = {}) {
     this._cachedConnectionStats
         = Object.assign({}, this._cachedConnectionStats, newStats);
 
-    const connectionIndicatorContainer
-        = this.container.querySelector('.connection-indicator-container');
+    this.updateIndicators();
+};
+
+/**
+ * Updates the React element responsible for showing connection status, dominant
+ * speaker, and raised hand icons. Uses instance variables to get the necessary
+ * state to display. Will create the React element if not already created.
+ *
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype.updateIndicators = function () {
+    const indicatorToolbar
+        = this.container.querySelector('.videocontainer__toptoolbar');
+
+    const iconSize = UIUtil.getIndicatorFontSize();
 
     /* jshint ignore:start */
     ReactDOM.render(
-        <ConnectionIndicator
-            isLocalVideo = { this.isLocal }
-            onHover = { this._onPopoverHover }
-            showMoreLink = { this.isLocal }
-            stats = { this._cachedConnectionStats } />,
-        connectionIndicatorContainer
+        <div>
+            { this._showConnectionIndicator
+                ? <ConnectionIndicator
+                    iconSize = { iconSize }
+                    isLocalVideo = { this.isLocal }
+                    onHover = { this._onPopoverHover }
+                    showMoreLink = { this.isLocal }
+                    stats = { this._cachedConnectionStats } />
+                : null }
+            { this._showRaisedHand
+                ? <RaisedHandIndicator iconSize = { iconSize } /> : null }
+            { this._showDominantSpeaker
+                ? <DominantSpeakerIndicator iconSize = { iconSize } /> : null }
+        </div>,
+        indicatorToolbar
     );
     /* jshint ignore:end */
+};
+
+/**
+ * Removes the React element responsible for showing connection status, dominant
+ * speaker, and raised hand icons.
+ *
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype._unmountIndicators = function () {
+    const indicatorToolbar
+        = this.container.querySelector('.videocontainer__toptoolbar');
+
+    if (indicatorToolbar) {
+        ReactDOM.unmountComponentAtNode(indicatorToolbar);
+    }
 };
 
 /**
