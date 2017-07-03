@@ -32,6 +32,11 @@ class Toolbox extends Component {
         _audioMuted: React.PropTypes.bool,
 
         /**
+         * Flag showing whether the audio-only mode is in use.
+         */
+        _audioOnly: React.PropTypes.bool,
+
+        /**
          * Flag showing whether room is locked.
          */
         _locked: React.PropTypes.bool,
@@ -207,7 +212,9 @@ class Toolbox extends Component {
                     style = { style }
                     underlayColor = { underlayColor } />
                 <ToolbarButton
-                    iconName = 'visibility'
+                    iconName = {
+                        this.props._audioOnly ? 'visibility-off' : 'visibility'
+                    }
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleAudioOnly }
                     style = { style }
@@ -305,6 +312,7 @@ function _mapDispatchToProps(dispatch) {
  *
  * @param {Object} state - Redux store.
  * @returns {{
+ *     _audioOnly: boolean,
  *     _locked: boolean
  * }}
  * @private
@@ -314,6 +322,15 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractMapStateToProps(state),
+
+        /**
+         * The indicator which determines whether the conference is in
+         * audio-only mode.
+         *
+         * @protected
+         * @type {boolean}
+         */
+        _audioOnly: Boolean(conference.audioOnly),
 
         /**
          * The indicator which determines whether the conference is
