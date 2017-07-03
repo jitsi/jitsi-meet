@@ -7,7 +7,6 @@ import UIEvents from '../../../service/UI/UIEvents';
 
 import VideoLayout from "../videolayout/VideoLayout";
 import LargeContainer from '../videolayout/LargeContainer';
-import SmallVideo from '../videolayout/SmallVideo';
 import Filmstrip from '../videolayout/Filmstrip';
 
 import {
@@ -15,6 +14,8 @@ import {
     participantLeft
 } from '../../../react/features/base/participants';
 import { dockToolbox, showToolbox } from '../../../react/features/toolbox';
+
+import SharedVideoThumb from './SharedVideoThumb';
 
 export const SHARED_VIDEO_CONTAINER_TYPE = "sharedvideo";
 
@@ -255,7 +256,8 @@ export default class SharedVideoManager {
             // in onPlayerStateChange
             player.playVideo();
 
-            let thumb = new SharedVideoThumb(self.url);
+            let thumb = new SharedVideoThumb(
+                self.url, SHARED_VIDEO_CONTAINER_TYPE, VideoLayout);
             thumb.setDisplayName(player.getVideoData().title);
             VideoLayout.addRemoteVideoContainer(self.url, thumb);
 
@@ -638,90 +640,6 @@ class SharedVideoContainer extends LargeContainer {
         return false;
     }
 }
-
-function SharedVideoThumb (url)
-{
-    this.id = url;
-
-    this.url = url;
-    this.setVideoType(SHARED_VIDEO_CONTAINER_TYPE);
-    this.videoSpanId = "sharedVideoContainer";
-    this.container = this.createContainer(this.videoSpanId);
-    this.$container = $(this.container);
-    this.container.onclick = this.videoClick.bind(this);
-    this.bindHoverHandler();
-    SmallVideo.call(this, VideoLayout);
-    this.isVideoMuted = true;
-}
-SharedVideoThumb.prototype = Object.create(SmallVideo.prototype);
-SharedVideoThumb.prototype.constructor = SharedVideoThumb;
-
-/**
- * hide display name
- */
-
-SharedVideoThumb.prototype.setDeviceAvailabilityIcons = function () {};
-
-SharedVideoThumb.prototype.avatarChanged = function () {};
-
-SharedVideoThumb.prototype.createContainer = function (spanId) {
-    var container = document.createElement('span');
-    container.id = spanId;
-    container.className = 'videocontainer';
-
-    // add the avatar
-    var avatar = document.createElement('img');
-    avatar.className = 'sharedVideoAvatar';
-    avatar.src = "https://img.youtube.com/vi/" + this.url + "/0.jpg";
-    container.appendChild(avatar);
-
-    const displayNameContainer = document.createElement('div');
-    displayNameContainer.className = 'displayNameContainer';
-    container.appendChild(displayNameContainer);
-
-    var remotes = document.getElementById('filmstripRemoteVideosContainer');
-    return remotes.appendChild(container);
-};
-
-/**
- * The thumb click handler.
- */
-SharedVideoThumb.prototype.videoClick = function () {
-    VideoLayout.handleVideoThumbClicked(this.url);
-};
-
-/**
- * Removes RemoteVideo from the page.
- */
-SharedVideoThumb.prototype.remove = function () {
-    logger.log("Remove shared video thumb", this.id);
-
-    // Make sure that the large video is updated if are removing its
-    // corresponding small video.
-    this.VideoLayout.updateAfterThumbRemoved(this.id);
-
-    // Remove whole container
-    if (this.container.parentNode) {
-        this.container.parentNode.removeChild(this.container);
-    }
-};
-
-/**
- * Sets the display name for the thumb.
- */
-SharedVideoThumb.prototype.setDisplayName = function(displayName) {
-    if (!this.container) {
-        logger.warn( "Unable to set displayName - " + this.videoSpanId +
-            " does not exist");
-        return;
-    }
-
-    this.updateDisplayName({
-        displayName: displayName || '',
-        elementID: `${this.videoSpanId}_name`,
-        participantID: this.id
-    });
-};
 
 /**
  * Checks if given string is youtube url.
