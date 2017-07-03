@@ -22,10 +22,12 @@
  */
 @implementation RCTBridgeWrapper
 
-- (instancetype)init {
+- (instancetype)initWithLaunchOptions:(NSDictionary *)launchOptions {
     self = [super init];
     if (self) {
-        _bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:nil];
+        _bridge
+            = [[RCTBridge alloc] initWithDelegate:self
+                                    launchOptions:launchOptions];
     }
 
     return self;
