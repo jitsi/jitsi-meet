@@ -134,15 +134,6 @@ export default createStyleSheet({
     secondaryToolbarButtonIcon,
 
     /**
-     * The icon style of the toolbar button in {@link #secondaryToolbar} which
-     * toggles the audio-only mode of the current conference.
-     */
-    toggleAudioOnlyIcon: {
-        ...secondaryToolbarButtonIcon,
-        transform: [ { rotate: '135deg' } ]
-    },
-
-    /**
      * The style of the root/top-level {@link Container} of {@link Toolbox}
      * which contains {@link Toolbar}s.
      */
