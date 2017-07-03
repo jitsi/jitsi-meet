@@ -2,6 +2,8 @@
 // but the file's name and/or location (within the directory structure) don't
 // reflect that, it suggests the file is platform-independent.
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
+
+// FIXME Share this with fonts/selection.json
 import icoMoonConfig from './jitsi.json';
 
 /**
