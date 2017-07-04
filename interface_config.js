@@ -1,7 +1,4 @@
 var interfaceConfig = { // eslint-disable-line no-unused-vars
-    CANVAS_EXTRA: 104,
-    CANVAS_RADIUS: 0,
-    SHADOW_COLOR: '#ffffff',
     // TO FIX: this needs to be handled from SASS variables. There are some
     // methods allowing to use variables both in css and js.
     DEFAULT_BACKGROUND: '#474747',
