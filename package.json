@@ -47,7 +47,7 @@
     "react-dom": "15.4.2",
     "react-i18next": "4.1.0",
     "react-native": "0.42.3",
-    "react-native-background-timer": "1.0.2",
+    "react-native-background-timer": "saghul/react-native-background-timer#ios-end-task",
     "react-native-immersive": "0.0.5",
     "react-native-keep-awake": "2.0.4",
     "react-native-locale-detector": "1.0.1",
