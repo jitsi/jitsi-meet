@@ -59,9 +59,9 @@
             width: 100%;
 
             .popupmenu__slider {
-                bottom: 50%;
                 position: absolute;
                 top: 50%;
+                transform: translate(0, -50%);
                 width: 100%;
             }
         }
