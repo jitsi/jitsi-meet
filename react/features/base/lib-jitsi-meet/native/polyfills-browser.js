@@ -372,9 +372,13 @@ function _visitNode(node, callback) {
     // Required by:
     // - lib-jitsi-meet
     // - Strophe
-    global.clearTimeout = window.clearTimeout = BackgroundTimer.clearTimeout;
-    global.clearInterval = window.clearInterval = BackgroundTimer.clearInterval;
-    global.setInterval = window.setInterval = BackgroundTimer.setInterval;
-    global.setTimeout = window.setTimeout = BackgroundTimer.setTimeout;
+    global.clearTimeout = window.clearTimeout
+        = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
+    global.clearInterval = window.clearInterval
+        = BackgroundTimer.clearInterval.bind(BackgroundTimer);
+    global.setInterval = window.setInterval
+        = BackgroundTimer.setInterval.bind(BackgroundTimer);
+    global.setTimeout = window.setTimeout
+        = BackgroundTimer.setTimeout.bind(BackgroundTimer);
 
 })(global || window || this); // eslint-disable-line no-invalid-this
