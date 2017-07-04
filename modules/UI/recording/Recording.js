@@ -133,7 +133,7 @@ function _requestLiveStreamId() {
  */
 function _requestRecordingToken() {
     let titleKey = "dialog.recordingToken";
-    let messageString = (
+    let msgString = (
         `<input name="recordingToken" type="text"
                 data-i18n="[placeholder]dialog.token"
                 class="input-control"
@@ -142,7 +142,7 @@ function _requestRecordingToken() {
     return new Promise(function (resolve, reject) {
         dialog = APP.UI.messageHandler.openTwoButtonDialog({
             titleKey,
-            messageString,
+            msgString,
             leftButtonKey: 'dialog.Save',
             submitFunction: function (e, v, m, f) {
                 if (v && f.recordingToken) {
