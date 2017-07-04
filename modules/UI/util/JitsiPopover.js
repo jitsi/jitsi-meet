@@ -36,9 +36,9 @@ const positionConfigurations = {
             const { element, target } = elements;
 
             $('.jitsipopover').css({
-                display: 'table',
                 left: element.left,
-                top: element.top
+                top: element.top,
+                visibility: 'visible'
             });
 
             // Move additional padding to the right edge of the popover and
@@ -72,9 +72,9 @@ const positionConfigurations = {
             const $jistiPopover = $('.jitsipopover');
 
             $jistiPopover.css({
-                display: 'table',
                 left: element.left,
-                top: element.top
+                top: element.top,
+                visibility: 'visible'
             });
             $jistiPopover.find('.arrow').css({ left: calcLeft });
             $jistiPopover.find('.jitsipopover__menu-padding')

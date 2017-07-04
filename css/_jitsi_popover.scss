@@ -3,7 +3,8 @@
     top: 0;
     left: 0;
     z-index: $jitsipopoverZ;
-    display: none;
+    display: table;
+    visibility: hidden;
     max-width: 300px;
     min-width: 100px;
     text-align: left;
