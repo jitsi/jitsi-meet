@@ -5,6 +5,8 @@ import JitsiPopover from '../../../../modules/UI/util/JitsiPopover';
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
 import { ConnectionStatsTable } from '../../connection-stats';
 
+import statsEmitter from '../statsEmitter';
+
 declare var $: Object;
 declare var interfaceConfig: Object;
 
@@ -58,6 +60,14 @@ class ConnectionIndicator extends Component {
      */
     static propTypes = {
         /**
+         * The current condition of the user's connection, matching one of the
+         * enumerated values in the library.
+         *
+         * @type {JitsiParticipantConnectionStatus}
+         */
+        connectionStatus: React.PropTypes.string,
+
+        /**
          * Whether or not the displays stats are for local video.
          */
         isLocalVideo: React.PropTypes.bool,
@@ -74,25 +84,15 @@ class ConnectionIndicator extends Component {
         showMoreLink: React.PropTypes.bool,
 
         /**
-         * An object that contains statistics related to connection quality.
-         *
-         * {
-         *     bandwidth: Object,
-         *     bitrate: Object,
-         *     connectionStatus: String,
-         *     framerate: Object,
-         *     packetLoss: Object,
-         *     percent: Number,
-         *     resolution: Object,
-         *     transport:  Array
-         * }
-         */
-        stats: React.PropTypes.object,
-
-        /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: React.PropTypes.func,
+
+        /**
+         * The user ID associated with the displayed connection indication and
+         * stats.
+         */
+        userID: React.PropTypes.string
     };
 
     /**
@@ -121,10 +121,19 @@ class ConnectionIndicator extends Component {
              *
              * @type {boolean}
              */
-            showMoreStats: false
+            showMoreStats: false,
+
+            /**
+             * Cache of the stats received from subscribing to stats emitting.
+             * The keys should be the name of the stat. With each stat update,
+             * updates stats are mixed in with cached stats and a new stats
+             * object is set in state.
+             */
+            stats: {}
         };
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
         this._setRootElement = this._setRootElement.bind(this);
     }
@@ -136,6 +145,9 @@ class ConnectionIndicator extends Component {
      * returns {void}
      */
     componentDidMount() {
+        statsEmitter.subscribeToClientStats(
+            this.props.userID, this._onStatsUpdated);
+
         this.popover = new JitsiPopover($(this._rootElement), {
             content: this._renderStatisticsTable(),
             skin: 'black',
@@ -153,7 +165,14 @@ class ConnectionIndicator extends Component {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
+        if (prevProps.userID !== this.props.userID) {
+            statsEmitter.unsubscribeToClientStats(
+                this.props.userID, this._onStatsUpdated);
+            statsEmitter.subscribeToClientStats(
+                this.props.userID, this._onStatsUpdated);
+        }
+
         this.popover.updateContent(this._renderStatisticsTable());
     }
 
@@ -164,6 +183,9 @@ class ConnectionIndicator extends Component {
      * returns {void}
      */
     componentWillUnmount() {
+        statsEmitter.unsubscribeToClientStats(
+            this.props.userID, this._onStatsUpdated);
+
         this.popover.forceHide();
         this.popover.remove();
     }
@@ -187,6 +209,30 @@ class ConnectionIndicator extends Component {
     }
 
     /**
+     * Callback invoked when new connection stats associated with the passed in
+     * user ID are available. Will update the component's display of current
+     * statistics.
+     *
+     * @param {Object} stats - Connection stats from the library.
+     * @private
+     * @returns {void}
+     */
+    _onStatsUpdated(stats = {}) {
+        const { connectionQuality } = stats;
+        const newPercentageState = typeof connectionQuality === 'undefined'
+            ? {} : { percent: connectionQuality };
+        const newStats = Object.assign(
+            {},
+            this.state.stats,
+            stats,
+            newPercentageState);
+
+        this.setState({
+            stats: newStats
+        });
+    }
+
+    /**
      * Callback to invoke when the show more link in the popover content is
      * clicked. Sets the state which will determine if the popover should show
      * additional statistics about the connection.
@@ -204,7 +250,7 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     _renderIcon() {
-        switch (this.props.stats.connectionStatus) {
+        switch (this.props.connectionStatus) {
         case JitsiParticipantConnectionStatus.INTERRUPTED:
             return (
                 <span className = 'connection_lost'>
@@ -218,7 +264,7 @@ class ConnectionIndicator extends Component {
                 </span>
             );
         default: {
-            const { percent } = this.props.stats;
+            const { percent } = this.state.stats;
             const width = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
             const iconWidth = width && width.width
                 ? { width: width && width.width } : {};
@@ -253,7 +299,7 @@ class ConnectionIndicator extends Component {
             packetLoss,
             resolution,
             transport
-        } = this.props.stats;
+        } = this.state.stats;
 
         return (
             <ConnectionStatsTable

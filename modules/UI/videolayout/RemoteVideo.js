@@ -48,7 +48,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.hasRemoteVideoMenu = false;
     this._supportsRemoteControl = false;
     this.addRemoteVideoContainer();
-    this.updateConnectionIndicator();
+    this.updateIndicators();
     this.setDisplayName();
     this.bindHoverHandler();
     this.flipX = false;
@@ -630,18 +630,6 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     if (!isVideo) {
         this._audioStreamElement = streamElement;
     }
-};
-
-RemoteVideo.prototype.updateResolution = function (resolution) {
-    this.updateConnectionIndicator({ resolution });
-};
-
-/**
- * Updates this video framerate indication.
- * @param framerate the value to update
- */
-RemoteVideo.prototype.updateFramerate = function (framerate) {
-    this.updateConnectionIndicator({ framerate });
 };
 
 /**
