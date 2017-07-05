@@ -95,6 +95,7 @@ var config = { // eslint-disable-line no-unused-vars
         // connection.
         enabled: true,
         // The STUN servers that will be used in the peer to peer connections
+        //  useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server
         stunServers: [
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:stun1.l.google.com:19302" },
