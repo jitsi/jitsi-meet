@@ -125,8 +125,11 @@ class Analytics {
                  // optionally include local deployment information based on
                  // the contents of window.config.deploymentInfo
                 if (config.deploymentInfo) {
-                    for (var key in config.deploymentInfo) {
-                        permanentProperties[key] = config.deploymentInfo[key];
+                    for (let key in config.deploymentInfo) {
+                        if (config.deploymentInfo.hasOwnProperty(key)) {
+                            permanentProperties[key]
+                                = config.deploymentInfo[key];
+                        }
                     }
                 }
 
