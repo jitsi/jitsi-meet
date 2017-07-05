@@ -20,24 +20,34 @@ import {
 export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        const { options } = state['features/base/connection'];
+        let { options } = state['features/base/connection'];
+
+        options = {
+            // Lib-jitsi-meet wants the config passed in multiple places and
+            // here is the latest one I have discovered.
+            ...state['features/base/config'],
+
+            // TODO It is probable that config should override the options that
+            // have been automatically constructed by the app. Unfortunately,
+            // config may specify URLs such as bosh at the time of this writing
+            // which react-native cannot parse (because they do not have a
+            // protocol/scheme).
+            ...options
+        };
+
         const { issuer, jwt } = state['features/jwt'];
         const { room } = state['features/base/conference'];
+
+        // XXX The Jitsi Meet deployments require the room argument to be in
+        // lower case at the time of this writing but, unfortunately, they do
+        // not ignore case themselves.
+        options.bosh += room ? `?room=${room.toLowerCase()}` : '';
+
         const connection
             = new JitsiMeetJS.JitsiConnection(
                 options.appId,
                 jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
-                {
-                    ...options,
-                    bosh:
-                        options.bosh
-
-                            // XXX The Jitsi Meet deployments require the room
-                            // argument to be in lower case at the time of this
-                            // writing but, unfortunately, they do not ignore
-                            // case themselves.
-                            + (room ? `?room=${room.toLowerCase()}` : '')
-                });
+                options);
 
         connection.addEventListener(
             JitsiConnectionEvents.CONNECTION_DISCONNECTED,

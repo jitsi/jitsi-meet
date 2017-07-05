@@ -263,7 +263,7 @@ function _visitNode(node, callback) {
         };
     }
 
-    const navigator = global.navigator;
+    const { navigator } = global;
 
     if (navigator) {
         // platform
@@ -372,13 +372,17 @@ function _visitNode(node, callback) {
     // Required by:
     // - lib-jitsi-meet
     // - Strophe
-    global.clearTimeout = window.clearTimeout
+    global.clearTimeout
+        = window.clearTimeout
         = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
-    global.clearInterval = window.clearInterval
+    global.clearInterval
+        = window.clearInterval
         = BackgroundTimer.clearInterval.bind(BackgroundTimer);
-    global.setInterval = window.setInterval
+    global.setInterval
+        = window.setInterval
         = BackgroundTimer.setInterval.bind(BackgroundTimer);
-    global.setTimeout = window.setTimeout
+    global.setTimeout
+        = window.setTimeout
         = BackgroundTimer.setTimeout.bind(BackgroundTimer);
 
 })(global || window || this); // eslint-disable-line no-invalid-this
