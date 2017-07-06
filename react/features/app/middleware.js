@@ -15,13 +15,13 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Notifies the feature app that the action {@link CONNECTION_ESTABLISHED} is
- * being dispatched within a specific Redux {@code store}.
+ * being dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The Redux store in which the specified {@code action}
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The Redux {@code dispatch} function to dispatch the
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The Redux action {@code CONNECTION_ESTABLISHED}
+ * @param {Action} action - The redux action {@code CONNECTION_ESTABLISHED}
  * which is being dispatched in the specified {@code store}.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the

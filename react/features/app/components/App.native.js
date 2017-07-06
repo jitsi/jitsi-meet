@@ -130,8 +130,8 @@ export class App extends AbstractApp {
      * @private
      * @returns {void}
      */
-    _onLinkingURL(event) {
-        this._openURL(event.url);
+    _onLinkingURL({ url }) {
+        this._openURL(url);
     }
 }
 
