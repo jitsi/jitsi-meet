@@ -246,6 +246,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this.frame.width = '100%';
         this.frame.height = '100%';
         this.frame.setAttribute('allowFullScreen', 'true');
+        this.frame.style.border = 0;
         this.frame = this.iframeHolder.appendChild(this.frame);
     }
 
