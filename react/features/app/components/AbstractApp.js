@@ -137,6 +137,11 @@ export class AbstractApp extends Component {
                 store: this._maybeCreateStore(nextProps)
             });
         }
+
+        // Deal with URL changes
+        if (typeof nextProps.url !== 'undefined') {
+            this._openURL(nextProps.url || this._getDefaultURL());
+        }
     }
 
     /**
