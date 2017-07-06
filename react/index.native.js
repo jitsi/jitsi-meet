@@ -56,8 +56,8 @@ class Root extends Component {
             url: this.props.url
         };
 
-        // Handle the URL the application was launched with, but props have
-        // precedence.
+        // Handle the URL, if any, with which the app was launched. But props
+        // have precedence.
         if (typeof this.props.url === 'undefined') {
             Linking.getInitialURL()
                 .then(url => this.setState({ url }))
@@ -79,8 +79,10 @@ class Root extends Component {
      *
      * @inheritdoc
      */
-    componentWillReceiveProps(nextProps) {
-        this.setState({ url: nextProps.url || null });
+    componentWillReceiveProps({ url }) {
+        if (this.props.url !== url) {
+            this.setState({ url: url || null });
+        }
     }
 
     /**

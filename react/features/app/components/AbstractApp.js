@@ -138,9 +138,11 @@ export class AbstractApp extends Component {
             });
         }
 
-        // Deal with URL changes
-        if (typeof nextProps.url !== 'undefined') {
-            this._openURL(nextProps.url || this._getDefaultURL());
+        // Deal with URL changes.
+        const { url } = nextProps;
+
+        if (this.props.url !== url) {
+            this._openURL(url || this._getDefaultURL());
         }
     }
 
