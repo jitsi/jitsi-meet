@@ -182,8 +182,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL,
             roomName
         });
-        this._createIFrame(Math.max(height, MIN_HEIGHT),
-            Math.max(width, MIN_WIDTH));
+        this._createIFrame(height, width);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
                 postisOptions: {
@@ -207,11 +206,36 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @private
      */
     _createIFrame(height, width) {
+        // Compute valid values for height and width. If a number is specified
+        // it's treated as pixel units and our minimum constraints are applied.
+        // If the value is expressed in em, pt or percentage, it's used as is.
+        // Also protect ourselves from undefined, because
+        // Math.max(undefined, 100) === NaN, obviously.
+        //
+        // This regex parses values of the form 100em, 100pt or 100%. Values
+        // like 100 or 100px are handled outside of the regex, and invalid
+        // values will be ignored and the minimum will be used.
+        const re = /([0-9]*\.?[0-9]+)(em|pt|%)$/;
+
+        /* eslint-disable no-param-reassign */
+
+        if (String(height).match(re) === null) {
+            height = parseInt(height, 10) || MIN_HEIGHT;
+            height = `${Math.max(height, MIN_HEIGHT)}px`;
+        }
+
+        if (String(width).match(re) === null) {
+            width = parseInt(width, 10) || MIN_WIDTH;
+            width = `${Math.max(width, MIN_WIDTH)}px`;
+        }
+
+        /* eslint-enable no-param-reassign */
+
         this.iframeHolder
             = this.parentNode.appendChild(document.createElement('div'));
         this.iframeHolder.id = `jitsiConference${id}`;
-        this.iframeHolder.style.width = `${width}px`;
-        this.iframeHolder.style.height = `${height}px`;
+        this.iframeHolder.style.width = width;
+        this.iframeHolder.style.height = height;
 
         this.frameName = `jitsiConferenceFrame${id}`;
 
