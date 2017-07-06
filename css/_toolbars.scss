@@ -195,11 +195,8 @@
      */
     &_filmstrip-only {
         border-radius: 3px;
-        bottom: 0;
         display: inline-block;
         height: auto;
-        position: absolute;
-        right: 0;
         width: $defaultFilmStripOnlyToolbarSize;
 
         .button {
@@ -225,6 +222,14 @@
         bottom: 9px;
         position: absolute;
         right: 9px;
+    }
+}
+
+.filmstrip-only {
+    .toolbox,
+    .toolbox-toolbars {
+        align-items: center;
+        display: flex;
     }
 }
 

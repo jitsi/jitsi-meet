@@ -13,6 +13,7 @@ import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 declare var $: Function;
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * The conference page of the Web application.
@@ -65,14 +66,16 @@ class Conference extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { filmStripOnly } = interfaceConfig;
+
         return (
             <div id = 'videoconference_page'>
                 <div id = 'videospace'>
                     <LargeVideo />
-                    <Filmstrip />
+                    <Filmstrip displayToolbox = { filmStripOnly } />
                 </div>
 
-                <Toolbox />
+                { filmStripOnly ? null : <Toolbox /> }
 
                 <DialogContainer />
                 <OverlayContainer />

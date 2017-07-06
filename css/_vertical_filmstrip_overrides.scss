@@ -93,6 +93,29 @@
         }
     }
 
+    &.filmstrip-only {
+        .filmstrip {
+            flex-direction: row-reverse;
+        }
+        .filmstrip__videos-filmstripOnly {
+            height: 100%;
+        }
+
+        /**
+         * In filmstrip only mode, the toolbar is normally displayed in the
+         * vertical center of the filmstrip strip. In vertical filmstrip mode,
+         * that alignment makes the toolbar appear floating and detached from
+         * the filmstrip. So, instead anchor the toolbar next to the local
+         * video.
+         */
+        .toolbar_filmstrip-only {
+            bottom: 0;
+            top: auto;
+            transform: none;
+        }
+
+    }
+
     /**
      * These styles are for the video labels that display on the top right. The
      * styles adjust the labels' positioning as the filmstrip itself or

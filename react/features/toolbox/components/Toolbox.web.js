@@ -108,7 +108,7 @@ class Toolbox extends Component {
      */
     render(): ReactElement<*> {
         return (
-            <div>
+            <div className = 'toolbox'>
                 {
                     this._renderSubject()
                 }
@@ -171,7 +171,7 @@ class Toolbox extends Component {
         }
 
         return (
-            <div>
+            <div className = 'toolbox-toolbars'>
                 <Notice />
                 <PrimaryToolbar />
                 <SecondaryToolbar />
