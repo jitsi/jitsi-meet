@@ -200,15 +200,19 @@ export function conferenceLeft(conference) {
  *
  * @param {string} room - The room (name) which identifies the conference the
  * local participant will (try to) join.
+ * @param {JitsiConference} conference - The JitsiConference instance the
+ * local participant will (try to) join.
  * @returns {{
  *     type: CONFERENCE_WILL_JOIN,
- *     room: string
+ *     room: string,
+*      conference: JitsiConference
  * }}
  */
-function _conferenceWillJoin(room) {
+function _conferenceWillJoin(room, conference) {
     return {
         type: CONFERENCE_WILL_JOIN,
-        room
+        room,
+        conference
     };
 }
 
@@ -252,14 +256,14 @@ export function createConference() {
             throw new Error('Cannot join conference without room name');
         }
 
-        dispatch(_conferenceWillJoin(room));
-
         const conference
             = connection.initJitsiConference(
 
                 // XXX Lib-jitsi-meet does not accept uppercase letters.
                 room.toLowerCase(),
                 state['features/base/config']);
+
+        dispatch(_conferenceWillJoin(room, conference));
 
         _addConferenceListeners(conference, dispatch);
 

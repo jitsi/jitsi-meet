@@ -7,6 +7,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     SET_AUDIO_ONLY,
@@ -31,6 +32,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case CONFERENCE_LEFT:
         return _conferenceLeft(state, action);
+
+    case CONFERENCE_WILL_JOIN:
+        return _conferenceWillJoin(state, action);
 
     case CONFERENCE_WILL_LEAVE:
         return _conferenceWillLeave(state, action);
@@ -84,6 +88,7 @@ function _conferenceFailed(state, action) {
             audioOnly: undefined,
             audioOnlyVideoMuted: undefined,
             conference: undefined,
+            joining: undefined,
             leaving: undefined,
 
             /**
@@ -133,6 +138,7 @@ function _conferenceJoined(state, action) {
              * @type {JitsiConference}
              */
             conference,
+            joining: undefined,
             leaving: undefined,
 
             /**
@@ -167,11 +173,26 @@ function _conferenceLeft(state, action) {
             audioOnly: undefined,
             audioOnlyVideoMuted: undefined,
             conference: undefined,
+            joining: undefined,
             leaving: undefined,
             locked: undefined,
             password: undefined,
             passwordRequired: undefined
         }));
+}
+
+/**
+ * Reduces a specific Redux action CONFERENCE_WILL_JOIN of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_WILL_JOIN to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceWillJoin(state, action) {
+    return set(state, 'joining', action.conference);
 }
 
 /**
