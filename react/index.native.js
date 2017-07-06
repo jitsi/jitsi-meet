@@ -56,18 +56,33 @@ class Root extends Component {
             url: this.props.url
         };
 
-        // Handle the URL, if any, with which the app was launched.
-        Linking.getInitialURL()
-            .then(url => this.setState({ url }))
-            .catch(err => {
-                console.error('Failed to get initial URL', err);
+        // Handle the URL the application was launched with, but props have
+        // precedence.
+        if (typeof this.props.url === 'undefined') {
+            Linking.getInitialURL()
+                .then(url => {
+                    this.setState({ url });
+                })
+                .catch(err => {
+                    console.error('Failed to get initial URL', err);
 
-                // XXX Start with an empty URL if getting the initial URL fails;
-                // otherwise, nothing will be rendered.
-                if (this.state.url !== null) {
+                    // Start with an empty URL if getting the initial URL fails
+                    // otherwise, nothing will be rendered.
                     this.setState({ url: null });
-                }
-            });
+                });
+        }
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillReceiveProps()}.
+     *
+     * New props can be set from the native side by setting the appProperties
+     * property (on iOS) or calling setAppProperties (on Android).
+     *
+     * @inheritdoc
+     */
+    componentWillReceiveProps(nextProps) {
+        this.setState({ url: nextProps.url || null });
     }
 
     /**
