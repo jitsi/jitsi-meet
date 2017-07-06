@@ -5,6 +5,8 @@ import { assign, ReducerRegistry, set } from '../redux';
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
+    CONNECTION_FAILED,
+    CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
 
@@ -20,6 +22,12 @@ ReducerRegistry.register(
 
         case CONNECTION_ESTABLISHED:
             return _connectionEstablished(state, action);
+
+        case CONNECTION_FAILED:
+            return _connectionFailed(state, action);
+
+        case CONNECTION_WILL_CONNECT:
+            return _connectionWillConnect(state, action);
 
         case SET_LOCATION_URL:
             return _setLocationURL(state, action);
@@ -61,7 +69,42 @@ function _connectionDisconnected(
 function _connectionEstablished(
         state: Object,
         { connection }: { connection: Object }) {
-    return set(state, 'connection', connection);
+    return assign(state, {
+        connecting: undefined,
+        connection
+    });
+}
+
+/* eslint-disable no-unused-vars */
+
+/**
+ * Reduces a specific Redux action CONNECTION_FAILED of the feature
+ * base/connection.
+ *
+ * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {Action} action - The Redux action CONNECTION_FAILED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _connectionFailed(state: Object, action: Object) {
+    return set(state, 'connecting', undefined);
+}
+
+/* eslint-enable no-unused-vars */
+
+/**
+ * Reduces a specific Redux action CONNECTION_WILL_CONNECT of the feature
+ * base/connection.
+ *
+ * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {Action} action - The Redux action CONNECTION_WILL_CONNECT to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _connectionWillConnect(state: Object, action: Object) {
+    return set(state, 'connecting', action.connection);
 }
 
 /**
