@@ -395,6 +395,16 @@ export class AbstractApp extends Component {
      * @returns {void}
      */
     _openURL(url) {
-        this._getStore().dispatch(appNavigate(url));
+        const dispatch = this._getStore().dispatch;
+        const { conference, joining }
+            = this._getStore().getState()['features/base/conference'];
+
+        // FIXME: revisit this after the hangup sequence is fixed.
+        // Make sure we disconnect from the current conference.
+        if (conference || joining) {
+            dispatch(appNavigate(undefined));
+        }
+
+        dispatch(appNavigate(url));
     }
 }
