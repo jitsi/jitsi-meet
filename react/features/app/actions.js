@@ -4,7 +4,7 @@ import { setConfig } from '../base/config';
 import { loadConfig } from '../base/lib-jitsi-meet';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
-import { _getRouteToRender, _parseURIString } from './functions';
+import { _parseURIString } from './functions';
 
 declare var APP: Object;
 
@@ -50,7 +50,7 @@ function _appNavigateToMandatoryLocation(
 
     if (oldHost === newHost) {
         dispatchSetLocationURL();
-        dispatchSetRoomAndNavigate();
+        dispatchSetRoom();
     } else {
         // If the host has changed, we need to load the config of the new host
         // and set it, and only after that we can navigate to a different route.
@@ -58,7 +58,7 @@ function _appNavigateToMandatoryLocation(
             .then(
                 config => configLoaded(/* err */ undefined, config),
                 err => configLoaded(err, /* config */ undefined))
-            .then(dispatchSetRoomAndNavigate);
+            .then(dispatchSetRoom);
     }
 
     /**
@@ -110,8 +110,8 @@ function _appNavigateToMandatoryLocation(
      *
      * @returns {void}
      */
-    function dispatchSetRoomAndNavigate() {
-        dispatch(_setRoomAndNavigate(newLocation.room));
+    function dispatchSetRoom() {
+        dispatch(setRoom(newLocation.room));
     }
 }
 
@@ -218,33 +218,4 @@ function _loadConfig(location: Object) {
     // TDOO userinfo
 
     return loadConfig(protocol + location.host + (location.contextRoot || '/'));
-}
-
-/**
- * Navigates to a route in accord with a specific redux state.
- *
- * @param {Object} state - The redux state which determines/identifies the route
- * to navigate to.
- * @private
- * @returns {void}
- */
-function _navigate(state) {
-    const app = state['features/app'].app;
-    const routeToRender = _getRouteToRender(state);
-
-    app._navigate(routeToRender);
-}
-
-/**
- * Sets room and navigates to new route if needed.
- *
- * @param {string} newRoom - New room name.
- * @private
- * @returns {Function}
- */
-function _setRoomAndNavigate(newRoom) {
-    return (dispatch, getState) => {
-        dispatch(setRoom(newRoom));
-        _navigate(getState());
-    };
 }
