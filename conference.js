@@ -38,6 +38,7 @@ import {
     setVideoAvailable
 } from './react/features/base/media';
 import {
+    dominantSpeakerChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
@@ -1706,17 +1707,7 @@ export default {
                 APP.UI.participantConnectionStatusChanged(id);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
-            if (this.isLocalId(id)) {
-                this.isDominantSpeaker = true;
-                this.setRaisedHand(false);
-            } else {
-                this.isDominantSpeaker = false;
-                var participant = room.getParticipantById(id);
-                if (participant) {
-                    APP.UI.setRaisedHandStatus(participant, false);
-                }
-            }
-            APP.UI.markDominantSpeaker(id);
+            APP.store.dispatch(dominantSpeakerChanged(id));
         });
 
         if (!interfaceConfig.filmStripOnly) {
