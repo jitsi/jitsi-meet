@@ -60,13 +60,19 @@ class Root extends Component {
         // have precedence.
         if (typeof this.props.url === 'undefined') {
             Linking.getInitialURL()
-                .then(url => this.setState({ url }))
+                .then(url => {
+                    if (typeof this.state.url === 'undefined') {
+                        this.setState({ url });
+                    }
+                })
                 .catch(err => {
                     console.error('Failed to get initial URL', err);
 
-                    // Start with an empty URL if getting the initial URL fails;
-                    // otherwise, nothing will be rendered.
-                    this.setState({ url: null });
+                    if (typeof this.state.url === 'undefined') {
+                        // Start with an empty URL if getting the initial URL
+                        // fails; otherwise, nothing will be rendered.
+                        this.setState({ url: null });
+                    }
                 });
         }
     }
