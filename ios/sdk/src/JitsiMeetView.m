@@ -111,10 +111,26 @@ void registerFatalErrorHandler() {
 static RCTBridgeWrapper *bridgeWrapper;
 
 /**
+ * Copy of the {@code launchOptions} dictionary that the application was started
+ * with. This is required for the initial URL to be used if a link was followed
+ * while the application was not started.
+ */
+static NSDictionary *_launchOptions;
+
+/**
  * The {@code JitsiMeetView}s associated with their {@code ExternalAPI} scopes
  * (i.e. unique identifiers within the process).
  */
 static NSMapTable<NSString *, JitsiMeetView *> *views;
+
+
++             (BOOL)application:(UIApplication *)application
+  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Store launch options, will be used when we create the bridge.
+    _launchOptions = [launchOptions copy];
+
+    return YES;
+}
 
 #pragma mark Linking delegate helpers
 // https://facebook.github.io/react-native/docs/linking.html
@@ -211,7 +227,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
     dispatch_once(&dispatchOncePredicate, ^{
         // Initialize the static state of JitsiMeetView.
-        bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+        bridgeWrapper
+            = [[RCTBridgeWrapper alloc] initWithLaunchOptions:_launchOptions];
         views = [NSMapTable strongToWeakObjectsMapTable];
 
         // Dynamically load custom bundled fonts.

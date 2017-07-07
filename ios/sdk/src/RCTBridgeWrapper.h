@@ -34,4 +34,6 @@
 
 @property (nonatomic, readonly, strong)  RCTBridge *bridge;
 
+- (instancetype)initWithLaunchOptions:(NSDictionary *)launchOptions;
+
 @end

@@ -22,7 +22,8 @@
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    return YES;
+  return [JitsiMeetView application:application
+      didFinishLaunchingWithOptions:launchOptions];
 }
 
 #pragma mark Linking delegate methods
