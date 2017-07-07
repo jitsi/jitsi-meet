@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { toggleLocalParticipantRaisedHand } from '../base/participants';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
 import { openAddPeopleDialog, openInviteDialog } from '../invite';
@@ -359,14 +360,15 @@ const buttons: Object = {
         id: 'toolbar_button_raisehand',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
-            APP.conference.maybeToggleRaisedHand();
+
+            return toggleLocalParticipantRaisedHand();
         },
         shortcut: 'R',
         shortcutAttr: 'raiseHandPopover',
         shortcutDescription: 'keyboardShortcuts.raiseHand',
         shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.raisehand.clicked');
-            APP.conference.maybeToggleRaisedHand();
+            APP.store.dispatch(toggleLocalParticipantRaisedHand());
         },
         tooltipKey: 'toolbar.raiseHand'
     },

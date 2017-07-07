@@ -5,7 +5,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    RAISED_HAND_CHANGED
 } from './actionTypes';
 import { MAX_DISPLAY_NAME_LENGTH } from './constants';
 import { getLocalParticipant } from './functions';
@@ -280,6 +281,48 @@ export function pinParticipant(id) {
         type: PIN_PARTICIPANT,
         participant: {
             id
+        }
+    };
+}
+
+/**
+ * Create an action to set the raised hand status of a participant.
+ *
+ * @param {string} id - The ID of the conference participant to change the
+ * raised hand status of.
+ * @param {boolean} raisedHand - Whether or not the participant's hand is
+ * raised.
+ * @returns {{
+ *     type: RAISED_HAND_CHANGED,
+ *     participant: {
+ *         id: string,
+ *         raisedHand: boolean
+ *     }
+ * }}
+ */
+export function raisedHandChanged(id, raisedHand) {
+    return {
+        type: RAISED_HAND_CHANGED,
+        participant: {
+            id,
+            raisedHand
+        }
+    };
+}
+
+/**
+ * Create an action to set the local participant's raised hand status to the
+ * opposite of its current status.
+ *
+ * @returns {Function}
+ */
+export function toggleLocalParticipantRaisedHand() {
+    return (dispatch, getState) => {
+        const participant = getLocalParticipant(getState);
+
+        if (participant) {
+            return dispatch(
+                raisedHandChanged(participant.id, !participant.raisedHand));
         }
     };
 }

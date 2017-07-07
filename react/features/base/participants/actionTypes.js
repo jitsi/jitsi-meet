@@ -77,3 +77,17 @@ export const PARTICIPANT_UPDATED = Symbol('PARTICIPANT_UPDATED');
  * }
  */
 export const PIN_PARTICIPANT = Symbol('PIN_PARTICIPANT');
+
+/**
+ * The type of the Redux action which updates the participant's raised hand
+ * status.
+ *
+ * {
+ *     type: RAISED_HAND_CHANGED,
+ *     participant: {
+ *         id: string,
+ *         raisedHand: boolean
+ *     }
+ * }
+ */
+export const RAISED_HAND_CHANGED = Symbol('RAISED_HAND_CHANGED');
