@@ -11,6 +11,13 @@ var config = { // eslint-disable-line no-unused-vars
         //call_control: 'callcontrol.jitsi-meet.example.com',
         //focus: 'focus.jitsi-meet.example.com', // defaults to 'focus.jitsi-meet.example.com'
     },
+    testing: {
+        /**
+         * P2P test mode disables automatic switching to P2P when there are 2
+         * participants in the conference.
+         */
+        p2pTestMode: false,
+    },
 //  getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
 //  useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server
 //  useIPv6: true, // ipv6 support. use at your own risk
