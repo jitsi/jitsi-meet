@@ -211,34 +211,35 @@ export function disconnect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const { conference, joining } = state['features/base/conference'];
-        const { connection, connecting } = state['features/base/connection'];
 
         // The conference we are joining or have already joined.
-        const _conference = joining || conference;
-
-        // The connection we are connecting or have already connected.
-        const _connection = connecting || connection;
+        const conference_ = conference || joining;
 
         // Promise which completes when the conference has been left and the
         // connection has been disconnected.
         let promise;
 
         // Leave the conference.
-        if (_conference) {
+        if (conference_) {
             // In a fashion similar to JitsiConference's CONFERENCE_LEFT event
             // (and the respective Redux action) which is fired after the
             // conference has been left, notify the application about the
             // intention to leave the conference.
-            dispatch(conferenceWillLeave(_conference));
+            dispatch(conferenceWillLeave(conference_));
 
-            promise = _conference.leave();
+            promise = conference_.leave();
         } else {
             promise = Promise.resolve();
         }
 
         // Disconnect the connection.
-        if (_connection) {
-            promise = promise.then(() => _connection.disconnect());
+        const { connecting, connection } = state['features/base/connection'];
+
+        // The connection we are connecting or have already connected.
+        const connection_ = connection || connecting;
+
+        if (connection_) {
+            promise = promise.then(() => connection_.disconnect());
         }
 
         return promise;

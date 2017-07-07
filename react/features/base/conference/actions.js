@@ -195,23 +195,18 @@ export function conferenceLeft(conference) {
 
 /**
  * Signals the intention of the application to have the local participant join a
- * conference with a specific room (name). Similar in fashion
- * to CONFERENCE_JOINED.
+ * specific conference. Similar in fashion to {@code CONFERENCE_JOINED}.
  *
- * @param {string} room - The room (name) which identifies the conference the
- * local participant will (try to) join.
  * @param {JitsiConference} conference - The JitsiConference instance the
  * local participant will (try to) join.
  * @returns {{
  *     type: CONFERENCE_WILL_JOIN,
- *     room: string,
-*      conference: JitsiConference
+ *     conference: JitsiConference
  * }}
  */
-function _conferenceWillJoin(room, conference) {
+function _conferenceWillJoin(conference) {
     return {
         type: CONFERENCE_WILL_JOIN,
-        room,
         conference
     };
 }
@@ -247,13 +242,13 @@ export function createConference() {
         const connection = state['features/base/connection'].connection;
 
         if (!connection) {
-            throw new Error('Cannot create conference without connection');
+            throw new Error('Cannot create a conference without a connection!');
         }
 
         const { password, room } = state['features/base/conference'];
 
-        if (typeof room === 'undefined' || room === '') {
-            throw new Error('Cannot join conference without room name');
+        if (!room) {
+            throw new Error('Cannot join a conference without a room name!');
         }
 
         const conference
@@ -263,7 +258,7 @@ export function createConference() {
                 room.toLowerCase(),
                 state['features/base/config']);
 
-        dispatch(_conferenceWillJoin(room, conference));
+        dispatch(_conferenceWillJoin(conference));
 
         _addConferenceListeners(conference, dispatch);
 

@@ -49,11 +49,14 @@ ReducerRegistry.register(
 function _connectionDisconnected(
         state: Object,
         { connection }: { connection: Object }) {
-    if (state.connection === connection) {
-        return set(state, 'connection', undefined);
+    if (state.connection !== connection) {
+        return state;
     }
 
-    return state;
+    return assign(state, {
+        connecting: undefined,
+        connection: undefined
+    });
 }
 
 /**
@@ -75,8 +78,6 @@ function _connectionEstablished(
     });
 }
 
-/* eslint-disable no-unused-vars */
-
 /**
  * Reduces a specific Redux action CONNECTION_FAILED of the feature
  * base/connection.
@@ -87,11 +88,18 @@ function _connectionEstablished(
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _connectionFailed(state: Object, action: Object) {
-    return set(state, 'connecting', undefined);
-}
+function _connectionFailed(
+        state: Object,
+        { connection }: { connection: Object }) {
+    if (state.connection && state.connection !== connection) {
+        return state;
+    }
 
-/* eslint-enable no-unused-vars */
+    return assign(state, {
+        connecting: undefined,
+        connection: undefined
+    });
+}
 
 /**
  * Reduces a specific Redux action CONNECTION_WILL_CONNECT of the feature
@@ -103,8 +111,10 @@ function _connectionFailed(state: Object, action: Object) {
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _connectionWillConnect(state: Object, action: Object) {
-    return set(state, 'connecting', action.connection);
+function _connectionWillConnect(
+        state: Object,
+        { connection }: { connection: Object }) {
+    return set(state, 'connecting', connection);
 }
 
 /**
