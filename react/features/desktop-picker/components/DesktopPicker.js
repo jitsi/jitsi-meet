@@ -85,7 +85,7 @@ class DesktopPicker extends Component {
         super(props);
 
         this.state = {
-            selectedSourceId: ''
+            selectedSource: {}
         };
 
         this._poller = null;
@@ -116,10 +116,13 @@ class DesktopPicker extends Component {
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
-        if (!this.state.selectedSourceId
+        if (!this.state.selectedSource.id
                 && nextProps.sources.screen.length) {
             this.setState({
-                selectedSourceId: nextProps.sources.screen[0].id
+                selectedSource: {
+                    id: nextProps.sources.screen[0].id,
+                    type: 'screen'
+                }
             });
         }
     }
@@ -155,14 +158,16 @@ class DesktopPicker extends Component {
 
     /**
      * Dispatches an action to hide the DesktopPicker and invokes the passed in
-     * callback with a selectedSourceId, if any.
+     * callback with a selectedSource, if any.
      *
      * @param {string} id - The id of the DesktopCapturerSource to pass into the
      * onSourceChoose callback.
+     * @param {string} type - The type of the DesktopCapturerSource to pass into
+     * the onSourceChoose callback.
      * @returns {void}
      */
-    _onCloseModal(id = '') {
-        this.props.onSourceChoose(id);
+    _onCloseModal(id, type) {
+        this.props.onSourceChoose(id, type);
         this.props.dispatch(hideDialog());
     }
 
@@ -170,10 +175,16 @@ class DesktopPicker extends Component {
      * Sets the currently selected DesktopCapturerSource.
      *
      * @param {string} id - The id of DesktopCapturerSource.
+     * @param {string} type - The type of DesktopCapturerSource.
      * @returns {void}
      */
-    _onPreviewClick(id) {
-        this.setState({ selectedSourceId: id });
+    _onPreviewClick(id, type) {
+        this.setState({
+            selectedSource: {
+                id,
+                type
+            }
+        });
     }
 
     /**
@@ -183,7 +194,9 @@ class DesktopPicker extends Component {
      * @returns {void}
      */
     _onSubmit() {
-        this._onCloseModal(this.state.selectedSourceId);
+        const { id, type } = this.state.selectedSource;
+
+        this._onCloseModal(id, type);
     }
 
     /**
@@ -193,7 +206,7 @@ class DesktopPicker extends Component {
      * @returns {ReactElement}
      */
     _renderTabs() {
-        const { selectedSourceId } = this.state;
+        const { selectedSource } = this.state;
         const { sources, t } = this.props;
         const tabs
             = TABS_TO_POPULATE.map(({ defaultSelected, label, type }) => {
@@ -202,7 +215,7 @@ class DesktopPicker extends Component {
                         key = { type }
                         onClick = { this._onPreviewClick }
                         onDoubleClick = { this._onCloseModal }
-                        selectedSourceId = { selectedSourceId }
+                        selectedSourceId = { selectedSource.id }
                         sources = { sources[type] || [] }
                         type = { type } />,
                     defaultSelected,

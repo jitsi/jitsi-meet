@@ -34,7 +34,12 @@ class DesktopSourcePreview extends Component {
         /**
          * The DesktopCapturerSource to display.
          */
-        source: React.PropTypes.object
+        source: React.PropTypes.object,
+
+        /**
+         * The source type of the DesktopCapturerSources to display.
+         */
+        type: React.PropTypes.string
     };
 
     /**
@@ -83,7 +88,9 @@ class DesktopSourcePreview extends Component {
      * @returns {void}
      */
     _onClick() {
-        this.props.onClick(this.props.source.id);
+        const { source, type } = this.props;
+
+        this.props.onClick(source.id, type);
     }
 
     /**
@@ -92,7 +99,9 @@ class DesktopSourcePreview extends Component {
      * @returns {void}
      */
     _onDoubleClick() {
-        this.props.onDoubleClick(this.props.source.id);
+        const { source, type } = this.props;
+
+        this.props.onDoubleClick(source.id, type);
     }
 }
 

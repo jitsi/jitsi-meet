@@ -2129,5 +2129,17 @@ export default {
      */
     getDesktopSharingSourceId() {
         return localVideo.sourceId;
+    },
+
+    /**
+     * Returns the desktop sharing source type or undefined if the desktop
+     * sharing is not active at the moment.
+     *
+     * @returns {'screen'|'window'|undefined} - The source type. If the track is
+     * not desktop track or the source type is not available, undefined will be
+     * returned.
+     */
+    getDesktopSharingSourceType() {
+        return localVideo.sourceType;
     }
 };
