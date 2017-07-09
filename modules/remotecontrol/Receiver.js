@@ -214,10 +214,15 @@ export default class Receiver extends RemoteControlParticipant {
 
         let promise;
 
-        if (APP.conference.isSharingScreen) {
+        if (APP.conference.isSharingScreen
+                && APP.conference.getDesktopSharingSourceType() === 'screen') {
             promise = this._sendStartRequest();
         } else {
-            promise = APP.conference.toggleScreenSharing()
+            promise = APP.conference.toggleScreenSharing(
+                true,
+                {
+                    desktopSharingSources: [ 'screen' ]
+                })
                 .then(() => this._sendStartRequest());
         }
 
@@ -228,14 +233,20 @@ export default class Receiver extends RemoteControlParticipant {
                     action: PERMISSIONS_ACTIONS.grant
                 })
             )
-            .catch(() => {
+            .catch(error => {
+                logger.error(error);
+
                 this.sendRemoteControlEndpointMessage(userId, {
                     type: EVENTS.permissions,
                     action: PERMISSIONS_ACTIONS.error
                 });
 
-                // FIXME: show err msg
-                this._stop();
+                APP.UI.messageHandler.openMessageDialog(
+                    'dialog.remoteControlTitle',
+                    'dialog.startRemoteControlErrorMessage'
+                );
+
+                this._stop(true);
             });
     }
 

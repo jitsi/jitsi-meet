@@ -94,7 +94,8 @@ class RemoteControlAuthorizationDialog extends Component {
     _getAdditionalMessage() {
         // FIXME: Once we have this information in redux we should
         // start getting it from there.
-        if (APP.conference.isSharingScreen) {
+        if (APP.conference.isSharingScreen
+                && APP.conference.getDesktopSharingSourceType() === 'screen') {
             return null;
         }
 
