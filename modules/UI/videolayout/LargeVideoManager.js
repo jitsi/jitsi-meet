@@ -524,6 +524,14 @@ export default class LargeVideoManager {
     }
 
     /**
+     * Returns type of the current {@link LargeContainer}
+     * @return {string}
+     */
+    getCurrentContainerType() {
+        return this.state;
+    }
+
+    /**
      * Remove Large container of specified type.
      * @param {string} type container type.
      */
