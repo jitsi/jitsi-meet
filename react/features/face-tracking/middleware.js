@@ -4,10 +4,10 @@ import {
     ADD_FACE_TRACKER
 } from './actionTypes';
 import { showPrompt, hidePrompt } from './actions.js';
-import { FaceTracker } from './components';
+import { FaceTrackerFactory } from './components';
 import { MiddlewareRegistry } from '../base/redux';
 
-const faceTrackers = new Map();
+const faceTrackerFactory = new FaceTrackerFactory();
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -16,17 +16,16 @@ MiddlewareRegistry.register(store => next => action => {
     switch (type) {
     case ADD_FACE_TRACKER:
         console.warn(ADD_FACE_TRACKER);
-        if (faceTrackers.has(action.videoElement)) {
+        if (faceTrackerFactory.hasFaceTracker(action.videoElement)) {
             break;
         }
-        faceTrackers.set(action.videoElement, new FaceTracker(options));
-        console.warn(faceTrackers);
+        faceTrackerFactory.addFaceTracker(action.videoElement, options);
         break;
 
     case ENABLE_FACE_TRACKING:
         console.warn(ENABLE_FACE_TRACKING);
-        faceTrackers
-            .get(action.videoElement)
+        faceTrackerFactory
+            .getFaceTracker(action.videoElement)
             .attachFaceTracking(
                 () => store.dispatch(showPrompt(action.videoElement)),
                 () => store.dispatch(hidePrompt(action.videoElement)));
@@ -34,8 +33,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case DISABLE_FACE_TRACKING:
         console.warn(DISABLE_FACE_TRACKING);
-        faceTrackers
-            .get(action.videoElement)
+        faceTrackerFactory
+            .getFaceTracker(action.videoElement)
             .detachFaceTracking();
         store.dispatch(hidePrompt(action.videoElement));
         break;

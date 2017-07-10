@@ -130,7 +130,6 @@ class LargeVideo extends Component {
      * @returns {void}
      */
     _onVideoCanPlay() {
-        console.warn('large video can play...');
         this.setState({ _isVideoReady: true });
 
         this.props.addFaceTracker({
