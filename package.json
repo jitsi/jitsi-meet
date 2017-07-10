@@ -98,6 +98,9 @@
     "webpack": "2.6.1",
     "webpack-dev-server": "2.4.5"
   },
+  "engines": {
+      "node": ">=6.0.0"
+  },
   "license": "Apache-2.0",
   "scripts": {
     "lint": "jshint . && eslint . && flow",
