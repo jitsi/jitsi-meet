@@ -195,9 +195,9 @@ var VideoLayout = {
 
         localVideoThumbnail.changeVideo(stream);
 
-        /* force update if we're currently being displayed */
+        /* Update if we're currently being displayed */
         if (this.isCurrentlyOnLarge(localId)) {
-            this.updateLargeVideo(localId, true);
+            this.updateLargeVideo(localId);
         }
     },
 
@@ -761,7 +761,7 @@ var VideoLayout = {
         if (remoteVideo) {
             remoteVideo.updateView();
             if (remoteVideo.isCurrentlyOnLargeVideo()) {
-                this.updateLargeVideo(id, true);
+                this.updateLargeVideo(id);
             }
         }
     },
@@ -1010,8 +1010,26 @@ var VideoLayout = {
         if (!largeVideo) {
             return;
         }
-        let isOnLarge = this.isCurrentlyOnLarge(id);
-        let currentId = largeVideo.id;
+        const currentContainer = largeVideo.getCurrentContainer();
+        const currentContainerType = largeVideo.getCurrentContainerType();
+        const currentId = largeVideo.id;
+        const isOnLarge = this.isCurrentlyOnLarge(id);
+        const smallVideo = this.getSmallVideo(id);
+
+        if (isOnLarge && !forceUpdate
+                && LargeVideoManager.isVideoContainer(currentContainerType)
+                && smallVideo) {
+            const currentStreamId = currentContainer.getStreamID();
+            const newStreamId
+                = smallVideo.videoStream
+                    ? smallVideo.videoStream.getId() : null;
+
+            // FIXME it might be possible to get rid of 'forceUpdate' argument
+            if (currentStreamId !== newStreamId) {
+                logger.debug('Enforcing large video update for stream change');
+                forceUpdate = true;
+            }
+        }
 
         if (!isOnLarge || forceUpdate) {
             let videoType = this.getRemoteVideoType(id);
@@ -1020,7 +1038,6 @@ var VideoLayout = {
                 eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
             }
 
-            let smallVideo = this.getSmallVideo(id);
             let oldSmallVideo;
             if (currentId) {
                 oldSmallVideo = this.getSmallVideo(currentId);

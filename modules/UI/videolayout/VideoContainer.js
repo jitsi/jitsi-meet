@@ -255,6 +255,14 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
+     * Obtains media stream ID of the underlying {@link JitsiTrack}.
+     * @return {string|null}
+     */
+    getStreamID() {
+        return this.stream ? this.stream.getId() : null;
+    }
+
+    /**
      * Get size of video element.
      * @returns {{width, height}}
      */
