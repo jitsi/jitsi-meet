@@ -193,8 +193,8 @@ UI.showLocalConnectionInterrupted = function (isInterrupted) {
 UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
     VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
     if (raisedHandStatus) {
-        messageHandler.notify(participant.getDisplayName(), 'notify.somebody',
-                          'connected', 'notify.raisedHand');
+        messageHandler.participantNotification(participant.getDisplayName(),
+            'notify.somebody', 'connected', 'notify.raisedHand');
     }
 };
 
@@ -489,7 +489,7 @@ UI.addUser = function (user) {
     if (UI.ContactList)
         UI.ContactList.addContact(id);
 
-    messageHandler.notify(
+    messageHandler.participantNotification(
         displayName,'notify.somebody', 'connected', 'notify.connected'
     );
 
@@ -517,7 +517,7 @@ UI.removeUser = function (id, displayName) {
     if (UI.ContactList)
         UI.ContactList.removeContact(id);
 
-    messageHandler.notify(
+    messageHandler.participantNotification(
         displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
     );
 
@@ -553,8 +553,8 @@ UI.updateLocalRole = isModerator => {
 
     if (isModerator) {
         if (!interfaceConfig.DISABLE_FOCUS_INDICATOR)
-            messageHandler
-                .notify(null, "notify.me", 'connected', "notify.moderator");
+            messageHandler.participantNotification(
+                null, "notify.me", 'connected', "notify.moderator");
 
         Recording.checkAutoRecord();
     }
@@ -576,14 +576,14 @@ UI.updateUserRole = user => {
 
     var displayName = user.getDisplayName();
     if (displayName) {
-        messageHandler.notify(
+        messageHandler.participantNotification(
             displayName, 'notify.somebody',
             'connected', 'notify.grantedTo', {
                 to: UIUtil.escapeHtml(displayName)
             }
         );
     } else {
-        messageHandler.notify(
+        messageHandler.participantNotification(
             '', 'notify.somebody',
             'connected', 'notify.grantedToUnknown');
     }
@@ -597,7 +597,7 @@ UI.updateUserRole = user => {
  */
 UI.updateUserStatus = (user, status) => {
     let displayName = user.getDisplayName();
-    messageHandler.notify(
+    messageHandler.participantNotification(
         displayName, '', 'connected', "dialOut.statusMessage",
         {
             status: UIUtil.escapeHtml(status)
@@ -868,7 +868,7 @@ UI.notifyMaxUsersLimitReached = function () {
  * Notify user that he was automatically muted when joned the conference.
  */
 UI.notifyInitiallyMuted = function () {
-    messageHandler.notify(
+    messageHandler.participantNotification(
         null,
         "notify.mutedTitle",
         "connected",
@@ -1073,7 +1073,7 @@ UI.notifyInternalError = function () {
 };
 
 UI.notifyFocusDisconnected = function (focus, retrySec) {
-    messageHandler.notify(
+    messageHandler.participantNotification(
         null, "notify.focus",
         'disconnected', "notify.focusFail",
         {component: focus, ms: retrySec}

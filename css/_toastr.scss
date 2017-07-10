@@ -12,7 +12,7 @@
  */
 
 .toast-title,
-.toast-message .nickname {
+.toast-message .title {
   font-weight: bold;
   margin: 0 0 3px;
   @include text-truncate;

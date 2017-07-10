@@ -312,7 +312,7 @@ export default class Controller extends RemoteControlParticipant {
         this.pause();
         this._controlledParticipant = null;
         this._area = undefined;
-        APP.UI.messageHandler.openMessageDialog(
+        APP.UI.messageHandler.notify(
             'dialog.remoteControlTitle',
             'dialog.remoteControlStopMessage'
         );
