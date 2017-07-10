@@ -981,7 +981,7 @@ var VideoLayout = {
      * video.
      */
     getCurrentlyOnLargeContainer () {
-        return largeVideo.getContainer(largeVideo.state);
+        return largeVideo.getCurrentContainer();
     },
 
     isCurrentlyOnLarge (id) {

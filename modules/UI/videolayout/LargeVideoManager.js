@@ -116,7 +116,8 @@ export default class LargeVideoManager {
         if (!this.state) {
             return;
         }
-        let container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
+
         container.onHoverIn(e);
     }
 
@@ -124,7 +125,8 @@ export default class LargeVideoManager {
         if (!this.state) {
             return;
         }
-        let container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
+
         container.onHoverOut(e);
     }
 
@@ -148,7 +150,7 @@ export default class LargeVideoManager {
     }
 
     get id () {
-        let container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
         return container.id;
     }
 
@@ -161,7 +163,7 @@ export default class LargeVideoManager {
 
         // Include hide()/fadeOut only if we're switching between users
         const isUserSwitch = this.newStreamData.id != this.id;
-        const container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
         const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
@@ -177,7 +179,7 @@ export default class LargeVideoManager {
 
             logger.info("hover in %s", id);
             this.state = videoType;
-            const container = this.getContainer(this.state);
+            const container = this.getCurrentContainer();
             container.setStream(id, stream, videoType);
 
             // change the avatar url on large
@@ -507,6 +509,18 @@ export default class LargeVideoManager {
         }
 
         return container;
+    }
+
+    /**
+     * Returns {@link LargeContainer} for the current {@link state}
+     *
+     * @return {LargeContainer}
+     *
+     * @throws an <tt>Error</tt> if there is no container for the current
+     * {@link state}.
+     */
+    getCurrentContainer() {
+        return this.getContainer(this.state);
     }
 
     /**
