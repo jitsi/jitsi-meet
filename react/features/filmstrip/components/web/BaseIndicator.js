@@ -8,6 +8,41 @@ import UIUtil from '../../../../../modules/UI/util/UIUtil';
  * @extends Component
  */
 class BaseIndicator extends Component {
+    static defaultProps = {
+        className: '',
+        iconClassName: '',
+        iconSize: 'auto',
+        id: ''
+    };
+
+    static propTypes = {
+        /**
+         * The CSS class names to set on the root element of the component.
+         */
+        className: React.PropTypes.string,
+
+        /**
+         * The CSS classnames to set on the icon element of the component.
+         */
+        iconClassName: React.PropTypes.string,
+
+        /**
+         * The front size for the icon.
+         */
+        iconSize: React.PropTypes.string,
+
+        /**
+         * The ID attribue to set on the root element of the component.
+         */
+        id: React.PropTypes.string,
+
+        /**
+         * The translation key to use for displaying a tooltip when hovering
+         * over the component.
+         */
+        tooltipKey: React.PropTypes.string
+    };
+
     /**
      * Initializes a new {@code BaseIndicator} instance.
      *
@@ -18,20 +53,6 @@ class BaseIndicator extends Component {
         super(props);
 
         /**
-         * The CSS classes to apply to the root HTML element of the component.
-         *
-         * @type {string}
-         */
-        this._classNames = '';
-
-        /**
-         * The CSS class which will display an icon.
-         *
-         * @type {string}
-         */
-        this._iconClass = '';
-
-        /**
          * An internal reference to the HTML element at the top of the
          * component's DOM hierarchy. The reference is needed for attaching a
          * tooltip.
@@ -39,13 +60,6 @@ class BaseIndicator extends Component {
          * @type {HTMLElement}
          */
         this._rootElement = null;
-
-        /**
-         * The translation key for the text to display in the tooltip.
-         *
-         * @type {string}
-         */
-        this._tooltipKey = '';
 
         // Bind event handler so it is only bound once for every instance.
         this._setRootElementRef = this._setRootElementRef.bind(this);
@@ -69,10 +83,13 @@ class BaseIndicator extends Component {
      */
     render() {
         return (
-            <span className = { this._classNames }>
+            <span
+                className = { this.props.className }
+                id = { this.props.id }
+                ref = { this._setRootElementRef }>
                 <i
-                    className = { this._iconClass }
-                    ref = { this._setRootElementRef } />
+                    className = { this.props.iconClassName }
+                    style = {{ fontSize: this.props.iconSize }} />
             </span>
         );
     }
@@ -101,7 +118,7 @@ class BaseIndicator extends Component {
         // becomes available for tooltips.
         UIUtil.setTooltip(
             this._rootElement,
-            this._tooltipKey,
+            this.props.tooltipKey,
             'top'
         );
     }

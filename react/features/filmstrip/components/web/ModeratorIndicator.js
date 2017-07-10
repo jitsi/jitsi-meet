@@ -1,23 +1,26 @@
+import React, { Component } from 'react';
+
 import BaseIndicator from './BaseIndicator';
 
 /**
  * React {@code Component} for showing a moderator icon with a tooltip.
  *
- * @extends BaseIndicator
+ * @extends Component
  */
-class ModeratorIndicator extends BaseIndicator {
+class ModeratorIndicator extends Component {
     /**
-     * Initializes a new ModeratorIndicator instance.
+     * Implements React's {@link Component#render()}.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @inheritdoc
+     * @returns {ReactElement}
      */
-    constructor(props) {
-        super(props);
-
-        this._classNames = 'focusindicator toolbar-icon right';
-        this._iconClass = 'icon-star';
-        this._tooltipKey = 'videothumbnail.moderator';
+    render() {
+        return (
+            <BaseIndicator
+                className = 'focusindicator toolbar-icon right'
+                iconClassName = 'icon-star'
+                tooltipKey = 'videothumbnail.moderator' />
+        );
     }
 }
 

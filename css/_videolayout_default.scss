@@ -58,7 +58,6 @@
         padding: $toolbarPadding;
         padding-bottom: 0;
 
-        .connection-indicator-container,
         .connection-indicator,
         span.indicator {
             margin-right: em(5, 8);
@@ -302,7 +301,7 @@
   margin: 0px 0px 0px 5px;
 }
 
-#raisehandindicator {
+.raisehandindicator {
   background: $raiseHandBg;
 }
 

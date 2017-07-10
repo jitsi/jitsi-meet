@@ -44,11 +44,7 @@ export default class Filmstrip extends Component {
                                 id = 'localAudio'
                                 muted = { true } />
                             <div className = 'videocontainer__toolbar' />
-                            <div className = 'videocontainer__toptoolbar'>
-                                <span
-                                    className
-                                        = 'connection-indicator-container' />
-                            </div>
+                            <div className = 'videocontainer__toptoolbar' />
                             <div className = 'videocontainer__hoverOverlay' />
                             <div className = 'displayNameContainer' />
                             <div className = 'avatar-container' />

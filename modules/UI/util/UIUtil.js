@@ -447,70 +447,15 @@ const IndicatorFontSizes = {
     },
 
     /**
-     * Gets an "indicator" span for a video thumbnail.
-     * If element doesn't exist then creates it and appends
-     * video span container.
-     *
-     * @param {object} opts
-     * @param opts.indicatorId {String} - identificator of indicator
-     * @param opts.videoSpanId {String} - identificator of video span
-     * @param opts.content {String} HTML content of indicator
-     * @param opts.tooltip {String} - tooltip key for translation
-     *
-     * @returns {HTMLSpanElement} indicatorSpan
-     */
-    getVideoThumbnailIndicatorSpan(opts = {}) {
-        let indicatorId = opts.indicatorId;
-        let videoSpanId = opts.videoSpanId;
-        let indicators = $(`#${videoSpanId} [id="${indicatorId}"]`);
-        let indicatorSpan;
-
-        if (indicators.length <= 0) {
-            indicatorSpan = document.createElement('span');
-
-            indicatorSpan.className = 'indicator';
-            indicatorSpan.id = indicatorId;
-
-            if(opts.content) {
-                indicatorSpan.innerHTML = opts.content;
-            }
-
-            if (opts.tooltip) {
-                this.setTooltip(indicatorSpan, opts.tooltip, "top");
-                APP.translation.translateElement($(indicatorSpan));
-            }
-
-            this._resizeIndicator(indicatorSpan);
-
-            document.getElementById(videoSpanId)
-                .querySelector('.videocontainer__toptoolbar')
-                .appendChild(indicatorSpan);
-        } else {
-            indicatorSpan = indicators[0];
-        }
-
-        return indicatorSpan;
-    },
-
-    /**
-     * Resizing indicator element passing via argument
-     * according to the current thumbnail size
-     * @param {HTMLElement} indicator - indicator element
-     * @private
-     */
-    _resizeIndicator(indicator) {
-        let height = $('#localVideoContainer').height();
-        let fontSize = this.getIndicatorFontSize(height);
-        $(indicator).css('font-size', fontSize);
-    },
-
-    /**
      * Returns font size for indicators according to current
      * height of thumbnail
-     * @param {Number} - height - current height of thumbnail
+     * @param {Number} [thumbnailHeight] - current height of thumbnail
      * @returns {Number} - font size for current height
      */
-    getIndicatorFontSize(height) {
+    getIndicatorFontSize(thumbnailHeight) {
+        const height = typeof thumbnailHeight === 'undefined'
+            ? $('#localVideoContainer').height() : thumbnailHeight;
+
         const { SMALL, MEDIUM } = ThumbnailSizes;
         let fontSize = IndicatorFontSizes.NORMAL;
 
