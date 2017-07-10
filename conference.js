@@ -1183,16 +1183,17 @@ export default {
                 JitsiMeetJS.analytics.sendEvent(
                     'conference.sharingDesktop.start');
                 logger.log('sharing local desktop');
-            }).catch((err) => {
+            }).catch(err => {
                 // close external installation dialog to show the error.
                 if(externalInstallation)
                     $.prompt.close();
                 this.videoSwitchInProgress = false;
-                this.toggleScreenSharing(false);
 
                 if (err.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
-                    return;
+                    return Promise.reject(err);
                 }
+
+                this.toggleScreenSharing(false);
 
                 logger.error('failed to share local desktop', err);
 
@@ -1200,7 +1201,7 @@ export default {
                     APP.UI.showExtensionRequiredDialog(
                         config.desktopSharingFirefoxExtensionURL
                     );
-                    return;
+                    return Promise.reject(err);
                 }
 
                 // Handling:
