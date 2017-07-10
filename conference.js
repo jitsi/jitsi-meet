@@ -134,7 +134,8 @@ function connect(roomName) {
  */
 function createInitialLocalTracksAndConnect(roomName) {
     let audioAndVideoError,
-        audioOnlyError;
+        audioOnlyError,
+        videoOnlyError;
 
     JitsiMeetJS.mediaDevices.addEventListener(
         JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
@@ -152,8 +153,14 @@ function createInitialLocalTracksAndConnect(roomName) {
             return createLocalTracks({ devices: ['audio'] }, true);
         })
         .catch(err => {
-            // If audio failed too then just return empty array for tracks.
             audioOnlyError = err;
+
+            // Try video only...
+            return createLocalTracks({ devices: ['video'] }, true);
+        })
+        .catch(err => {
+            videoOnlyError = err;
+
             return [];
         });
 
@@ -165,7 +172,8 @@ function createInitialLocalTracksAndConnect(roomName) {
                     // If both requests for 'audio' + 'video' and 'audio' only
                     // failed, we assume that there is some problems with user's
                     // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(audioOnlyError, null);
+                    APP.UI.showDeviceErrorDialog(
+                        audioOnlyError, videoOnlyError);
                 } else {
                     // If request for 'audio' + 'video' failed, but request for
                     // 'audio' only was OK, we assume that we had problems with
