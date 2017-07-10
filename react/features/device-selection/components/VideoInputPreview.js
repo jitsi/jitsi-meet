@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
-import { FaceTracker, enableFaceTracking } from '../../face-tracking';
+import {
+    FacePrompt,
+    addFaceTracker,
+    enableFaceTracking
+} from '../../face-tracking';
 import { translate } from '../../base/i18n';
 
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
+
+const PREVIEW_VIDEO_TRACKING_DELAY = 2000;
+const PREVIEW_VIDEO_PROMPT_DURATION = 500;
+const PREVIEW_VIDEO_TRACKING_FPS = 2;
 
 /**
  * React component for displaying video. This component defers to lib-jitsi-meet
@@ -20,6 +27,11 @@ class VideoInputPreview extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * Invoked to add a FaceTracker object in the middleware.
+         */
+        addFaceTracker: React.PropTypes.func,
+
         /**
          * Invoked to enable face tracking in the preview display.
          */
@@ -80,10 +92,23 @@ class VideoInputPreview extends Component {
          */
         this._videoElement = null;
 
+        this.state = {
+            /**
+             * Whether or not the video is in canplay state or not.
+             * FacePrompt component will not be rendered until the flag is
+             * set true.
+             *
+             * @private
+             * @type {boolean}
+             */
+            _isVideoReady: false
+        };
+
         // Bind event handlers so they are only bound once for every instance.
         this._setErrorElement = this._setErrorElement.bind(this);
         this._setRootElement = this._setRootElement.bind(this);
         this._setVideoElement = this._setVideoElement.bind(this);
+        this._onVideoCanPlay = this._onVideoCanPlay.bind(this);
     }
 
     /**
@@ -97,7 +122,6 @@ class VideoInputPreview extends Component {
             this._updateErrorView(this.props.error);
         } else {
             this._attachTrack(this.props.track);
-            this.props.enableFaceTracking(this._videoElement);
         }
     }
 
@@ -123,10 +147,14 @@ class VideoInputPreview extends Component {
             <div
                 className = 'video-input-preview'
                 ref = { this._setRootElement }>
-                <FaceTracker />
+                { this.state._isVideoReady
+                && this.props.addFaceTracker
+                && <FacePrompt
+                    videoElement = { this._videoElement } /> }
                 <video
                     autoPlay = { true }
                     className = 'video-input-preview-display flipVideoX'
+                    onCanPlay = { this._onVideoCanPlay }
                     ref = { this._setVideoElement } />
                 <div
                     className = 'video-input-preview-error'
@@ -146,7 +174,7 @@ class VideoInputPreview extends Component {
      * @inheritdoc
      * @returns {void}
      */
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps, nextState) {
         const hasNewTrack = nextProps.track !== this.props.track;
 
         if (hasNewTrack || nextProps.error) {
@@ -157,6 +185,10 @@ class VideoInputPreview extends Component {
         // Never attempt to show the new track if there is an error present.
         if (hasNewTrack && !nextProps.error) {
             this._attachTrack(nextProps.track);
+        }
+
+        if (nextState) {
+            return true;
         }
 
         return false;
@@ -204,6 +236,25 @@ class VideoInputPreview extends Component {
             && track.containers.includes(this._videoElement)) {
             track.detach(this._videoElement);
         }
+    }
+
+    /**
+     * Enables FacePrompt component, adds and enables FaceTracker to track the
+     * video, when the video is in canplay state.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onVideoCanPlay() {
+        this.setState({ _isVideoReady: true });
+
+        this.props.addFaceTracker({
+            videoElement: this._videoElement,
+            delay: PREVIEW_VIDEO_TRACKING_DELAY,
+            duration: PREVIEW_VIDEO_PROMPT_DURATION,
+            fps: PREVIEW_VIDEO_TRACKING_FPS
+        });
+        this.props.enableFaceTracking(this._videoElement);
     }
 
     /**
@@ -262,19 +313,7 @@ class VideoInputPreview extends Component {
     }
 }
 
-/**
- * Maps Redux dispatch to the associated {@code VideoInputPreview}'s props.
- *
- * @param {Object} dispatch - Redux dispatch.
- * @private
- * @returns {{
- *     enableFaceTracking: React.PropTypes.func
- * }}
- */
-function _mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        enableFaceTracking
-    }, dispatch);
-}
-
-export default translate(connect(null, _mapDispatchToProps)(VideoInputPreview));
+export default translate(connect(null, {
+    addFaceTracker,
+    enableFaceTracking
+})(VideoInputPreview));

@@ -5,6 +5,8 @@ import { openDeviceSelectionDialog }
 
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
+import { enableFaceTracking, disableFaceTracking }
+    from '../../../../react/features/face-tracking';
 
 const sidePanelsContainerId = 'sideToolbarContainer';
 const deviceSelectionButtonClasses
@@ -187,13 +189,24 @@ export default {
 
             UIUtil.setVisible(wrapperId, true);
         }
+        interfaceConfig.SETTINGS_SECTIONS.push('facetracking');
         // FACE-TRACKING
         if (UIUtil.isSettingEnabled('facetracking')) {
             const wrapperId = 'faceTrackingOptionsWrapper';
 
             $("#faceTrackingOptions").change(function () {
-                //TODO:
-                // Toggle face tracking
+                const startFaceTracking
+                    = $("#startFaceTracking").is(":checked");
+
+                if (startFaceTracking) {
+                    console.warn('enable');
+                    APP.store.dispatch(enableFaceTracking(
+                        document.getElementById('largeVideo')));
+                } else {
+                    console.warn('disable');
+                    APP.store.dispatch(disableFaceTracking(
+                        document.getElementById('largeVideo')));
+                }
             });
 
             this.showFaceTrackingOptions(true);

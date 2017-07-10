@@ -1,6 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
-import { ENABLE_FACE_TRACKING } from './actionTypes';
+import { SHOW_PROMPT, HIDE_PROMPT } from './actionTypes';
 
 /**
  * Listen for actions which changes the state of the face tracking mechanism.
@@ -15,11 +15,9 @@ import { ENABLE_FACE_TRACKING } from './actionTypes';
 ReducerRegistry.register(
     'features/face-tracking', (state = {}, action) => {
         switch (action.type) {
-        case ENABLE_FACE_TRACKING:
-            return {
-                ...state,
-                videoElement: action.videoElement
-            };
+        case SHOW_PROMPT:
+        case HIDE_PROMPT:
+            return Object.assign({}, state, action);
         default:
             return state;
         }

@@ -1,11 +1,4 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import tracking from 'tracking';
-
-import FacePrompt from './FacePrompt';
-
-const ANOMALY_RECOGNIZED_DELAY = 6000;
-const FACE_PROMPT_DURATION = 4000;
+import tracking from 'jstracking';
 
 const FACE_RECT_WIDTH_RATIO = 0.7;
 const FACE_RECT_HEIGHT_RATIO = 0.9;
@@ -17,33 +10,33 @@ const TRACKING_STEP_SIZE = 2;
 const TRACKING_EDGES_DENSITY = 0.1;
 
 /**
- * React component for tracking face in a video, and calling FacePrompt
- * component to display prompt if user's face is not well-positioned for a
- * while.
- *
- * @extends Component
+ * Class for tracking faces in a video.
  */
-class FaceTracker extends Component {
-    /**
-     * FaceTracker component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Reference to a HTML video element for face tracking.
-         */
-        videoElement: React.PropTypes.object
-    };
+class FaceTracker {
 
     /**
      * Initializes a new FaceTracker instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param  {Object} props - The read-only props with the new instance is
+     * to be initialized.
      */
     constructor(props) {
-        super(props);
+        const { videoElement, ...options } = props;
+
+        /**
+         * Options for tracking, and may contain tracking delay, tracking fps,
+         * and warning duration.
+         *
+         * @type {Object}
+         */
+        this._options = options;
+
+        /**
+         * The internal reference to the DOM/HTML video element to track face.
+         *
+         * @type {HTMLVideoElement|Object}
+         */
+        this._videoElement = videoElement;
 
         /**
          * Previous time when the user's face is not well-positioned.
@@ -56,7 +49,7 @@ class FaceTracker extends Component {
         /**
          * An object which represents the rectangle area, considered as the good
          * position for a user's face recognized.
-         * It has four key/value pairs:
+         * It has four properties:
          *     x - x coordinate of top left point based on the video.
          *     y - y coordinate of top left point based on the video.
          *     width - width of the good rectangle area.
@@ -76,36 +69,75 @@ class FaceTracker extends Component {
          */
         this._enabled = false;
 
-        this.state = {
-            /**
-             * Whether or not the face prompt is toggled.
-             *
-             * @type {boolean}
-             */
-            isPromptToggled: false
-        };
+        /**
+         * A ObjectTracker instance for face tracking.
+         *
+         * @type {Object}
+         */
+        this._tracker = null;
+
+        /**
+         * A TrackerTask instance to run the face tracking computation.
+         * It is created via a Tracker instance.
+         *
+         * @type {Object}
+         */
+        this._trackerTask = null;
+
+        /**
+         * Whether an anomaly (the user's face is not well-positioned for a
+         * while) is detected or not.
+         * If true, necessary warning infomration needs to be toggled.
+         *
+         * @type {Boolean}
+         */
+        this._isAnomalyDetected = false;
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Attach face tracking mechanism to target video.
      *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return this._renderedView();
-    }
-
-    /**
-     * Initializes necessary variables, and attaches face tracking mechanism
-     * to target video.
-     *
-     * @private
+     * @param {callback} showWarningCb - Callback to show warning
+     * information when anomaly is recognized.
+     * @param {callback} hideWarningCb - Callback to dismiss warning
+     * information.
      * @returns {void}
      */
-    _attachFaceTracking() {
+    attachFaceTracking(showWarningCb, hideWarningCb) {
+        if (this._enabled) {
+            return;
+        }
+        this._enabled = true;
         this._initFaceRect();
-        this._trackFace();
+        this._initTracker();
+        this._trackFace(showWarningCb, hideWarningCb);
+    }
+
+    /**
+     * Detach face tracking mechanism from target video.
+     *
+     * @returns {void}
+     */
+    detachFaceTracking() {
+        if (!this._enabled) {
+            return;
+        }
+        this._enabled = false;
+        this._detrackFace();
+    }
+
+    /**
+     * Initializes tracking instance and parameters.
+     *
+     * @returns {void}
+     */
+    _initTracker() {
+        this._tracker = new tracking.ObjectTracker('face');
+
+        // Sets necessary face tracking parameters.
+        this._tracker.setInitialScale(TRACKING_INITIAL_SCALE);
+        this._tracker.setStepSize(TRACKING_STEP_SIZE);
+        this._tracker.setEdgesDensity(TRACKING_EDGES_DENSITY);
     }
 
     /**
@@ -115,8 +147,9 @@ class FaceTracker extends Component {
      * @returns {void}
      */
     _initFaceRect() {
-        const videoElement = this.props.videoElement;
+        const videoElement = this._videoElement;
 
+        console.warn('offsetWidth', videoElement.offsetWidth);
         this._faceRect = {
             x: videoElement.offsetWidth * FACE_RECT_LEFT_RATIO,
             y: videoElement.offsetHeight * FACE_RECT_TOP_RATIO,
@@ -126,33 +159,36 @@ class FaceTracker extends Component {
     }
 
     /**
-     * Calls tracking.js library to recognize faces shown in the video. When the
-     * face is not well-positioned for a while, toggles necessary prompts on the
-     * video.
+     * Calls tracking.js library to recognize faces in the video.
      *
+     * @param {callback} showWarningCb - Callback to show warning
+     * information when anomaly is recognized.
+     * @param {callback} hideWarningCb - Callback to dismiss warning
+     * information.
      * @private
      * @returns {void}
      */
-    _trackFace() {
-        const tracker = new tracking.ObjectTracker('face');
-
-        // Sets necessary face tracking parameters.
-        tracker.setInitialScale(TRACKING_INITIAL_SCALE);
-        tracker.setStepSize(TRACKING_STEP_SIZE);
-        tracker.setEdgesDensity(TRACKING_EDGES_DENSITY);
-
-        tracking.track(
-            this.props.videoElement, tracker, { camera: true });
+    _trackFace(showWarningCb, hideWarningCb) {
+        this._trackerTask = tracking.track(
+            this._videoElement, this._tracker, {
+                fps: this._options.fps,
+                scaled: true
+            }
+        );
 
         this._prevBadTime = new Date().getTime();
-        tracker.on('track', event => {
+        this._tracker.on('track', event => {
             const currTime = new Date().getTime();
 
             if (this._isBadPosition(event.data)) {
-                // A delay is set to make the face detection not very sensitive
-                // to trivial disturbs.
-                if (currTime - this._prevBadTime > ANOMALY_RECOGNIZED_DELAY) {
-                    this._togglePrompt();
+                if (this._isAnomalyDetected) {
+                    clearTimeout(this._timeoutId);
+                    this._setWarningTimeout(hideWarningCb);
+                    this._prevBadTime = currTime;
+                } else if (currTime - this._prevBadTime > this._options.delay) {
+                    // A delay is set to make the face detection not very
+                    // sensitive to trivial disturbs.
+                    this._toggleWarning(showWarningCb, hideWarningCb);
                     this._prevBadTime = currTime;
                 }
             } else {
@@ -164,6 +200,17 @@ class FaceTracker extends Component {
     }
 
     /**
+     * Disable face tracking in the video.
+     *
+     * @private
+     * @returns {void}
+     */
+    _detrackFace() {
+        this._trackerTask.stop();
+        this._tracker.removeAllListeners();
+    }
+
+    /**
      * Checks whether or not the recognized face is at good position, namely,
      * in the scope of appropriate rectangle area.
      *
@@ -172,11 +219,16 @@ class FaceTracker extends Component {
      * @returns {boolean}
      */
     _isBadPosition(faceData) {
+        console.warn('faceData', faceData);
         if (faceData.length < 1) {
             return true;
         }
 
         for (const rect of faceData) {
+            console.warn(this._faceRect.x, this._faceRect.y,
+              this._faceRect.width, this._faceRect.height);
+            console.warn(rect.x, rect.y, rect.width, rect.height);
+
             if (rect.x > this._faceRect.x
                 && rect.y > this._faceRect.y
                 && rect.x + rect.width
@@ -191,77 +243,44 @@ class FaceTracker extends Component {
     }
 
     /**
-     * Displays warning message and appropriate face position rectangle for a
-     * range of time.
+     * Displays necessary warning information.
      *
+     * @param {callback} showWarningCb - Callback to show warning
+     * information when anomaly is recognized.
+     * @param {callback} hideWarningCb - Callback to dismiss warning
+     * information.
      * @private
      * @returns {void}
      */
-    _togglePrompt() {
-        // If the prompt has been shown, just returns.
-        if (this.state.isPromptToggled) {
+    _toggleWarning(showWarningCb, hideWarningCb) {
+        console.warn('togglewarning...');
+        console.warn(showWarningCb);
+        if (this._isAnomalyDetected) {
             return;
         }
 
-        this.setState({ isPromptToggled: true });
+        showWarningCb();
+        this._isAnomalyDetected = true;
 
-        this._setPromptTimeout();
+        this._setWarningTimeout(hideWarningCb);
     }
 
     /**
-     * Sets the timeout to dismiss the face prompt.
+     * Set the timeout for the warning information. When time out, warnings
+     * will be dismissed.
      *
+     * @param {callback} hideWarningCb - Callback to dismiss warning
+     * information.
      * @private
      * @returns {void}
      */
-    _setPromptTimeout() {
-        setTimeout(() => {
-            this.setState({ isPromptToggled: false });
-
+    _setWarningTimeout(hideWarningCb) {
+        this._timeoutId = setTimeout(() => {
+            hideWarningCb();
+            this._isAnomalyDetected = false;
             this._prevBadTime = new Date().getTime();
-        }, FACE_PROMPT_DURATION);
-    }
-
-    /**
-     * Returns the view of FaceTracker component.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderedView() {
-        if (this.props.videoElement) {
-            if (!this._enabled) {
-                this._enabled = true;
-                this._attachFaceTracking();
-            }
-
-            return (
-                <div>
-                    { this.state.isPromptToggled
-                      && <FacePrompt
-                          videoElement = { this.props.videoElement } /> }
-                </div>
-            );
-        }
-
-        return <div />;
+        }, this._options.duration);
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated
- * {@code FaceTracker}'s props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     videoElement: React.PropTypes.object
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        videoElement: state['features/face-tracking'].videoElement
-    };
-}
-
-export default connect(_mapStateToProps)(FaceTracker);
+export default FaceTracker;

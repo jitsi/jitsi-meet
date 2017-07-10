@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+import { SHOW_PROMPT } from '../actionTypes';
 
 const FACE_TEXT_FONT_SIZE_RATIO = 0.3;
+const FACE_MAX_TEXT_FONT_SIZE = 150;
+const PROMPT_SHOW_CLASS = 'show';
 
 /**
  * React component for displaying warning message and appropriate face area on
@@ -15,6 +20,17 @@ class FacePrompt extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * Shows face prompt or hides the prompt.
+         */
+        actionType: React.PropTypes.symbol,
+
+        /**
+         * Reference to a HTML video element whose face prompt needs
+         * to be toggled.
+         */
+        toggledVideoElement: React.PropTypes.object,
+
         /**
          * Reference to a HTML video element for displaying prompt on.
          */
@@ -80,9 +96,10 @@ class FacePrompt extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        this._initContainerSize();
-        this._initFontSize();
-        this._show();
+        setTimeout(() => {
+            this._initContainerSize();
+            this._initFontSize();
+        }, 1000);
     }
 
     /**
@@ -92,6 +109,16 @@ class FacePrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
+        console.warn(this.props);
+        if (this._videoElement
+            && this._videoElement === this.props.toggledVideoElement) {
+            if (this.props.actionType === SHOW_PROMPT) {
+                this._show();
+            } else {
+                this._hide();
+            }
+        }
+
         return (
             <div
                 className = 'face-prompt-container'
@@ -115,8 +142,19 @@ class FacePrompt extends Component {
      * @returns {void}
      */
     _show() {
-        this._textElement.className += ' show';
-        this._rectElement.className += ' show';
+        this._textElement.classList.add(PROMPT_SHOW_CLASS);
+        this._rectElement.classList.add(PROMPT_SHOW_CLASS);
+    }
+
+    /**
+     * Hides warning message and appropriate face position rectangle.
+     *
+     * @private
+     * @returns {void}
+     */
+    _hide() {
+        this._textElement.classList.remove(PROMPT_SHOW_CLASS);
+        this._rectElement.classList.remove(PROMPT_SHOW_CLASS);
     }
 
     /**
@@ -127,6 +165,7 @@ class FacePrompt extends Component {
      * @returns {void}
      */
     _initContainerSize() {
+        console.warn('rootElement', this._rootElement);
         this._rootElement.setAttribute('style',
             `width:${this._videoElement.offsetWidth}px;
             height:${this._videoElement.offsetHeight}px`);
@@ -134,7 +173,7 @@ class FacePrompt extends Component {
 
     /**
      * Initializes font size of warning messages, in percentage. Note that font
-     * size cannot be larger than 100%.
+     * size cannot be larger than FACE_MAX_TEXT_FONT_SIZE.
      *
      * @private
      * @returns {void}
@@ -142,7 +181,7 @@ class FacePrompt extends Component {
     _initFontSize() {
         let size = this._rootElement.offsetWidth * FACE_TEXT_FONT_SIZE_RATIO;
 
-        size = Math.min(size, 100);
+        size = Math.min(size, FACE_MAX_TEXT_FONT_SIZE);
 
         this._textElement.setAttribute('style', `font-size: ${size}%`);
     }
@@ -184,4 +223,22 @@ class FacePrompt extends Component {
     }
 }
 
-export default FacePrompt;
+/**
+ * Maps (parts of) the Redux state to the associated
+ * {@code FacePrompt}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     actionType: React.PropTypes.object,
+ *     toggledVideoElement: React.PropTypes.object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        actionType: state['features/face-tracking'].type,
+        toggledVideoElement: state['features/face-tracking'].videoElement
+    };
+}
+
+export default connect(_mapStateToProps)(FacePrompt);
