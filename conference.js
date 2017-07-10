@@ -87,8 +87,8 @@ import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
  * lib-jitsi-meet to detect and invoke
  */
 window.JitsiMeetScreenObtainer = {
-    openDesktopPicker(onSourceChoose) {
-        APP.store.dispatch(showDesktopPicker(onSourceChoose));
+    openDesktopPicker(options, onSourceChoose) {
+        APP.store.dispatch(showDesktopPicker(options, onSourceChoose));
     }
 };
 
@@ -341,6 +341,7 @@ function createLocalTracks(options, checkForPermissionPrompt) {
         .createLocalTracks({
             // copy array to avoid mutations inside library
             devices: options.devices.slice(0),
+            desktopSharingSources: options.desktopSharingSources,
             resolution: config.resolution,
             cameraDeviceId: typeof options.cameraDeviceId === 'undefined' ||
                     options.cameraDeviceId === null
@@ -1108,9 +1109,14 @@ export default {
     /**
      * Toggles between screensharing and camera video.
      * @param {boolean} [shareScreen]
+     * @param {Object} [options] - Screen sharing options that will be passed to
+     * createLocalTracks.
+     * @param {Array<string>} [options.desktopSharingSources] - Array with the
+     * sources that have to be displayed in the desktop picker window ('screen',
+     * 'window', etc.).
      * @return {Promise.<T>}
      */
-    toggleScreenSharing(shareScreen = !this.isSharingScreen) {
+    toggleScreenSharing(shareScreen = !this.isSharingScreen, options = {}) {
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
         }
@@ -1130,6 +1136,7 @@ export default {
 
         if (shareScreen) {
             return createLocalTracks({
+                desktopSharingSources: options.desktopSharingSources,
                 devices: ['desktop'],
                 desktopSharingExtensionExternalInstallation: {
                     interval: 500,
@@ -1176,16 +1183,17 @@ export default {
                 JitsiMeetJS.analytics.sendEvent(
                     'conference.sharingDesktop.start');
                 logger.log('sharing local desktop');
-            }).catch((err) => {
+            }).catch(err => {
                 // close external installation dialog to show the error.
                 if(externalInstallation)
                     $.prompt.close();
                 this.videoSwitchInProgress = false;
-                this.toggleScreenSharing(false);
 
                 if (err.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
-                    return;
+                    return Promise.reject(err);
                 }
+
+                this.toggleScreenSharing(false);
 
                 logger.error('failed to share local desktop', err);
 
@@ -1193,7 +1201,7 @@ export default {
                     APP.UI.showExtensionRequiredDialog(
                         config.desktopSharingFirefoxExtensionURL
                     );
-                    return;
+                    return Promise.reject(err);
                 }
 
                 // Handling:
@@ -2129,5 +2137,17 @@ export default {
      */
     getDesktopSharingSourceId() {
         return localVideo.sourceId;
+    },
+
+    /**
+     * Returns the desktop sharing source type or undefined if the desktop
+     * sharing is not active at the moment.
+     *
+     * @returns {'screen'|'window'|undefined} - The source type. If the track is
+     * not desktop track or the source type is not available, undefined will be
+     * returned.
+     */
+    getDesktopSharingSourceType() {
+        return localVideo.sourceType;
     }
 };
