@@ -629,6 +629,13 @@ export default {
                     // the video later on, even if joined without it.
                     this.videoMuted = true;
                     APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                    // FIXME this is a workaround for the situation where
+                    // both audio and video permissions are rejected initially
+                    // and the callback from _initDeviceList will never be
+                    // executed (GUM not initialized - check lib-jitsi-meet).
+                    // The goal here is to disable the video icon in case no
+                    // video permissions were granted.
+                    this.updateVideoIconEnabled();
                 }
 
                 this._initDeviceList();
