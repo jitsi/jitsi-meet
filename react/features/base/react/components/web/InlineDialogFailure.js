@@ -39,7 +39,8 @@ class InlineDialogFailure extends Component {
             = supportLink
                 ? ( // eslint-disable-line no-extra-parens
                     <div className = 'inline-dialog-error-text'>
-                        <span>{ t('inlineDialogFailure.supportMsg') }</span>
+                        <span>{ `${t('inlineDialogFailure.supportMsg')} `}
+                        </span>
                         <span>
                             <a
                                 href = { supportLink }

@@ -86,6 +86,10 @@
         border: $modalMockAKInputBorder;
         color: inherit;
     }
+
+    &-error {
+        margin-bottom: 8px;
+    }
 }
 .modal-dialog-footer {
     font-size: $modalButtonFontSize;

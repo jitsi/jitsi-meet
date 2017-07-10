@@ -463,7 +463,8 @@
         "add": "Add",
         "noResults": "No matching search results",
         "searchPlaceholder": "Search for people and rooms to add",
-        "title": "Add people to your call"
+        "title": "Add people to your call",
+        "failedToAdd": "Failed to add participants"
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
