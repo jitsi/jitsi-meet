@@ -1,23 +1,26 @@
+import React, { Component } from 'react';
+
 import BaseIndicator from './BaseIndicator';
 
 /**
  * React {@code Component} for showing an audio muted icon with a tooltip.
  *
- * @extends BaseIndicator
+ * @extends Component
  */
-class AudioMutedIndicator extends BaseIndicator {
+class AudioMutedIndicator extends Component {
     /**
-     * Initializes a new AudioMutedIcon instance.
+     * Implements React's {@link Component#render()}.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @inheritdoc
+     * @returns {ReactElement}
      */
-    constructor(props) {
-        super(props);
-
-        this._classNames = 'audioMuted toolbar-icon';
-        this._iconClass = 'icon-mic-disabled';
-        this._tooltipKey = 'videothumbnail.mute';
+    render() {
+        return (
+            <BaseIndicator
+                className = 'audioMuted toolbar-icon'
+                iconClassName = 'icon-mic-disabled'
+                tooltipKey = 'videothumbnail.mute' />
+        );
     }
 }
 

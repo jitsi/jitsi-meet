@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import BaseIndicator from './BaseIndicator';
 
 /**
  * Thumbnail badge showing that the participant would like to speak.
  *
- * @extends BaseIndicator
+ * @extends Component
  */
-class RaisedHandIndicator extends BaseIndicator {
+class RaisedHandIndicator extends Component {
     /**
      * {@code RaisedHandIndicator} component's property types.
      *
@@ -23,33 +23,17 @@ class RaisedHandIndicator extends BaseIndicator {
     };
 
     /**
-     * Initializes a new {@code RaisedHandIndicator} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        this._tooltipKey = 'raisedHand';
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     render() {
         return (
-            <span
-                className = 'indicator show-inline'
-                id = 'raisehandindicator'
-                ref = { this._setRootElementRef }
-                style = {{ fontSize: `${this.props.iconSize}px` }}>
-                <i
-                    className = 'icon-raised-hand indicatoricon'
-                    id = 'indicatoricon' />
-            </span>
+            <BaseIndicator
+                className = 'raisehandindicator indicator show-inline'
+                iconClassName = 'icon-raised-hand indicatoricon'
+                iconSize = { `${this.props.iconSize}px` }
+                tooltipKey = 'raisedHand' />
         );
     }
 }

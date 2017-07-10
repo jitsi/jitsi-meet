@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import BaseIndicator from './BaseIndicator';
 
@@ -6,9 +6,9 @@ import BaseIndicator from './BaseIndicator';
  * Thumbnail badge showing that the participant is the dominant speaker in
  * the conference.
  *
- * @extends BaseIndicator
+ * @extends Component
  */
-class DominantSpeakerIndicator extends BaseIndicator {
+class DominantSpeakerIndicator extends Component {
     /**
      * {@code DominantSpeakerIndicator} component's property types.
      *
@@ -24,33 +24,18 @@ class DominantSpeakerIndicator extends BaseIndicator {
     };
 
     /**
-     * Initializes a new {@code DominantSpeakerIndicator} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        this._tooltipKey = 'speaker';
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     render() {
         return (
-            <span
+            <BaseIndicator
                 className = 'indicator show-inline'
+                iconClassName = 'indicatoricon fa fa-bullhorn'
+                iconSize = { `${this.props.iconSize}px` }
                 id = 'dominantspeakerindicator'
-                ref = { this._setRootElementRef }
-                style = {{ fontSize: `${this.props.iconSize}px` }}>
-                <i
-                    className = 'indicatoricon fa fa-bullhorn'
-                    id = 'indicatoricon' />
-            </span>
+                tooltipKey = 'speaker' />
         );
     }
 }
