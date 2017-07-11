@@ -189,8 +189,8 @@
 #largeVideoWrapper,
 #largeVideoWrapper>video,
 #largeVideoWrapper>object,
-.videocontainer>video,
-.videocontainer>object {
+.videocontainer video,
+.videocontainer object {
     position: absolute;
     left: 0;
     top: 0;

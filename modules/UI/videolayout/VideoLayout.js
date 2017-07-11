@@ -478,16 +478,11 @@ var VideoLayout = {
     },
 
     // FIXME: what does this do???
-    remoteVideoActive(videoElement, resourceJid) {
+    remoteVideoActive(resourceJid) {
 
-        logger.info(resourceJid + " video is now active", videoElement);
+        logger.info(resourceJid + " video is now active");
 
-        VideoLayout.resizeThumbnails(
-            false, false, () => {
-                if (videoElement) {
-                    $(videoElement).show();
-                }
-            });
+        VideoLayout.resizeThumbnails(false, false);
 
         this._maybePlaceParticipantOnLargeVideo(resourceJid);
     },

@@ -131,6 +131,17 @@ LocalVideo.prototype.changeVideo = function (stream) {
 };
 
 /**
+ * Returns a jQuery wrapped object for the element that should be the parent
+ * to the video element.
+ *
+ * @override
+ * @returns {Object} A jQuery DOM collection
+ */
+LocalVideo.prototype.selectVideoElement = function () {
+    return $(this.container).find('#localVideoWrapper');
+};
+
+/**
  * Shows or hides the local video container.
  * @param {boolean} true to make the local video container visible, false
  * otherwise
