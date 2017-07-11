@@ -12,8 +12,8 @@ export function searchPeople(serviceUrl, jwt, text) {
     const queryTypes = '["conferenceRooms","user","room"]';
 
     return new Promise((resolve, reject) => {
-        $.getJSON(`${serviceUrl}?query=${encodeURIComponent(text)}
-            &queryTypes=${queryTypes}&jwt=${jwt}`,
+        $.getJSON(`${serviceUrl}?query=${encodeURIComponent(text)}`
+            + `&queryTypes=${queryTypes}&jwt=${jwt}`,
         response => resolve(response)
         ).fail((jqxhr, textStatus, error) =>
             reject(error)
