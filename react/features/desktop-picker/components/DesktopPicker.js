@@ -40,6 +40,15 @@ const VALID_TYPES = TAB_CONFIGURATIONS.map(c => c.type);
  */
 class DesktopPicker extends Component {
     /**
+     * Default values for DesktopPicker component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        options: {}
+    };
+
+    /**
      * DesktopPicker component's property types.
      *
      * @static
@@ -102,10 +111,10 @@ class DesktopPicker extends Component {
      * @inheritdoc
      */
     componentWillMount() {
-        const options = this.props.options || {};
+        const { desktopSharingSources } = this.props.options;
 
         this._onSourceTypesConfigChanged(
-            options.desktopSharingSources);
+            desktopSharingSources);
         this._updateSources();
         this._startPolling();
     }
@@ -130,10 +139,10 @@ class DesktopPicker extends Component {
             });
         }
 
-        const options = this.props.options || {};
+        const { desktopSharingSources } = this.props.options;
 
         this._onSourceTypesConfigChanged(
-            options.desktopSharingSources);
+            desktopSharingSources);
     }
 
     /**
