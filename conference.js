@@ -26,6 +26,7 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
+    toggleAudioOnly,
     EMAIL_COMMAND,
     lockStateChanged
 } from './react/features/base/conference';
@@ -459,11 +460,14 @@ export default {
      * Creates local media tracks and connects to a room. Will show error
      * dialogs in case accessing the local microphone and/or camera failed. Will
      * show guidance overlay for users on how to give access to camera and/or
-     * microphone,
+     * microphone.
      * @param {string} roomName
      * @param {object} options
-     * @param {boolean} options.startScreenSharing - if <tt>true</tt> should
-     * start with screensharing instead of camera video.
+     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
+     * only audio track will be created and the audio only mode will be turned
+     * on.
+     * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
+     * should start with screensharing instead of camera video.
      * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
      */
     createInitialLocalTracksAndConnect(roomName, options = {}) {
@@ -482,8 +486,18 @@ export default {
         // First try to retrieve both audio and video.
         let tryCreateLocalTracks;
 
+        // FIXME there is no video muted indication visible on the remote side,
+        // after starting in audio only (there's no video track)
         // FIXME the logic about trying to go audio only on error is duplicated
-        if (options.startScreenSharing) {
+        if (options.startAudioOnly) {
+            tryCreateLocalTracks
+                = createLocalTracks({ devices: ['audio'] }, true)
+                    .catch(err => {
+                        audioOnlyError = err;
+
+                        return [];
+                    });
+        } else if (options.startScreenSharing) {
             tryCreateLocalTracks = this._createDesktopTrack()
                 .then(desktopStream => {
                     return createLocalTracks({ devices: ['audio'] }, true)
@@ -591,6 +605,7 @@ export default {
                 analytics.init();
                 return this.createInitialLocalTracksAndConnect(
                     options.roomName, {
+                        startAudioOnly: config.startAudioOnly,
                         startScreenSharing: config.startScreenSharing
                     });
             }).then(([tracks, con]) => {
@@ -647,6 +662,15 @@ export default {
                     // The goal here is to disable the video icon in case no
                     // video permissions were granted.
                     this.updateVideoIconEnabled();
+                }
+
+                // Enable audio only mode
+                if (config.startAudioOnly) {
+                    // It is important to have that toggled after video muted
+                    // state is adjusted by the code about lack of video tracks
+                    // above. That's because audio only will store muted state
+                    // on toggle action.
+                    APP.store.dispatch(toggleAudioOnly());
                 }
 
                 this._initDeviceList();
@@ -2035,7 +2059,7 @@ export default {
                     JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
                         // Ugly way to synchronize real device IDs with local
                         // storage and settings menu. This is a workaround until
-                        // getConstraints() method will be implemented 
+                        // getConstraints() method will be implemented
                         // in browsers.
                         if (localAudio) {
                             APP.settings.setMicDeviceId(

@@ -15,7 +15,7 @@ import {
     _setAudioOnlyVideoMuted,
     setLastN
 } from './actions';
-import { SET_AUDIO_ONLY, SET_LASTN } from './actionTypes';
+import { CONFERENCE_JOINED, SET_AUDIO_ONLY, SET_LASTN } from './actionTypes';
 import {
     _addLocalTracksToConference,
     _handleParticipantError,
@@ -32,6 +32,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
+
+    case CONFERENCE_JOINED:
+        return _conferenceJoined(store, next, action);
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
@@ -71,6 +74,35 @@ function _connectionEstablished(store, next, action) {
     // conference is handled by /conference.js
     if (typeof APP === 'undefined') {
         store.dispatch(createConference());
+    }
+
+    return result;
+}
+
+/**
+ * Does extra sync up on properties that may need to be updated, after
+ * the conference was joined.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action CONFERENCE_JOINED which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _conferenceJoined(store, next, action) {
+    const result = next(action);
+    const { audioOnly, conference }
+        = store.getState()['features/base/conference'];
+
+    // FIXME On Web the audio only mode for "start audio only" is toggled before
+    // conference is added to the redux store ("on conference joined" action)
+    // and the LastN value needs to be synchronized here.
+    if (audioOnly && conference.getLastN() !== 0) {
+        store.dispatch(setLastN(0));
     }
 
     return result;
