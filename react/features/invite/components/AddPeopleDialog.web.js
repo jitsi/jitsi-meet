@@ -5,7 +5,7 @@ import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
 
 import { getInviteURL } from '../../base/connection';
-import { Dialog } from '../../base/dialog';
+import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import MultiSelectAutocomplete
     from '../../base/react/components/web/MultiSelectAutocomplete';
@@ -43,6 +43,11 @@ class AddPeopleDialog extends Component {
          * The URL pointing to the service allowing for people search.
          */
         _peopleSearchUrl: React.PropTypes.string,
+
+        /**
+         * The function closing the dialog.
+         */
+        hideDialog: React.PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -215,7 +220,7 @@ class AddPeopleDialog extends Component {
                     addToCallInProgress: false
                 });
 
-                return true;
+                this.props.hideDialog();
             })
             .catch(() => {
                 this.setState({
@@ -224,8 +229,6 @@ class AddPeopleDialog extends Component {
                 });
             });
         }
-
-        return true;
     }
 
     /**
@@ -240,12 +243,14 @@ class AddPeopleDialog extends Component {
         }
 
         const { t } = this.props;
+        const supportString = t('inlineDialogFailure.supportMsg');
         const supportLink = interfaceConfig.SUPPORT_URL;
         const supportLinkContent
-            = supportLink
-            ? ( // eslint-disable-line no-extra-parens
+            = ( // eslint-disable-line no-extra-parens
                 <span>
-                    <span>{ `${t('inlineDialogFailure.supportMsg')} `}</span>
+                    <span>
+                        { supportString.padEnd(supportString.length + 1) }
+                    </span>
                     <span>
                         <a
                             href = { supportLink }
@@ -256,13 +261,13 @@ class AddPeopleDialog extends Component {
                     </span>
                     <span>.</span>
                 </span>
-            )
-            : null;
+            );
 
         return (
             <div className = 'modal-dialog-form-error'>
                 <InlineMessage
-                    title = { t('addPeople.failedToAdd') }>
+                    title = { t('addPeople.failedToAdd') }
+                    type = 'error'>
                     { supportLinkContent }
                 </InlineMessage>
             </div>
@@ -305,4 +310,4 @@ function _mapStateToProps(state) {
 }
 
 export default translate(
-    connect(_mapStateToProps)(AddPeopleDialog));
+    connect(_mapStateToProps, { hideDialog })(AddPeopleDialog));
