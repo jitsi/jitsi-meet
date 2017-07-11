@@ -9,40 +9,40 @@ import AbstractVideoTrack from '../AbstractVideoTrack';
  * @extends AbstractVideoTrack
  */
 class VideoTrack extends AbstractVideoTrack {
+    /**
+     * Default values for VideoTrack component's properties.
+     *
+     * @static
+     */
     static defaultProps = {
+        ...AbstractVideoTrack.defaultProps,
+
+        className: '',
+
         /**
          * Dispatch an action when the video starts playing.
          */
         triggerOnPlayingUpdate: true
     };
 
+    /**
+     * {@code VideoTrack} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
+        ...AbstractVideoTrack.propTypes,
+
         /**
          * CSS classes to add to the video element.
          */
         className: React.PropTypes.string,
 
         /**
-         * Invoked to update the store about the playing status of the video.
-         */
-        dispatch: React.PropTypes.func,
-
-        /**
          * The value of the id attribute of the video. Used by the torture tests
          * to locate video elements.
          */
-        id: React.PropTypes.string,
-
-        /**
-         * Whether or not the store should be updated about the playing status
-         * of the video. Defaults to true.
-         */
-        triggerOnPlayingUpdate: React.PropTypes.bool,
-
-        /**
-         * The redux representation of the video track.
-         */
-        videoTrack: React.PropTypes.object
+        id: React.PropTypes.string
     };
 
     /**
@@ -130,7 +130,7 @@ class VideoTrack extends AbstractVideoTrack {
             <div>
                 <video
                     autoPlay = { true }
-                    className = { this.props.className || '' }
+                    className = { this.props.className }
                     id = { this.props.id }
                     ref = { this._setVideoElement } />
             </div>
@@ -181,20 +181,6 @@ class VideoTrack extends AbstractVideoTrack {
             && videoTrack.jitsiTrack
             && videoTrack.jitsiTrack.containers.includes(this._videoElement)) {
             videoTrack.jitsiTrack.detach(this._videoElement);
-        }
-    }
-
-    /**
-     * Handler for case when video starts to play. Does not dispatch an update
-     * if the prop triggerOnPlayingUpdate is falsy.
-     *
-     * @override
-     * @private
-     * @returns {void}
-     */
-    _onVideoPlaying() {
-        if (this.props.triggerOnPlayingUpdate) {
-            super._onVideoPlaying();
         }
     }
 

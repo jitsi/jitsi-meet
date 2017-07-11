@@ -13,13 +13,33 @@ import { Video } from './_';
  */
 export default class AbstractVideoTrack extends Component {
     /**
+     * Default values for AbstractVideoTrack component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        /**
+         * Dispatch an action when the video starts playing.
+         */
+        triggerOnPlayingUpdate: true
+    };
+
+    /**
      * AbstractVideoTrack component's property types.
      *
      * @static
      */
     static propTypes = {
         dispatch: React.PropTypes.func,
+
+        /**
+         * Whether or not the store should be updated about the playing status
+         * of the video. Defaults to true.
+         */
+        triggerOnPlayingUpdate: React.PropTypes.bool,
+
         videoTrack: React.PropTypes.object,
+
         waitForVideoStarted: React.PropTypes.bool,
 
         /**
@@ -117,7 +137,9 @@ export default class AbstractVideoTrack extends Component {
     _onVideoPlaying() {
         const videoTrack = this.props.videoTrack;
 
-        if (videoTrack && !videoTrack.videoStarted) {
+        if (this.props.triggerOnPlayingUpdate
+            && videoTrack
+            && !videoTrack.videoStarted) {
             this.props.dispatch(trackVideoStarted(videoTrack.jitsiTrack));
         }
     }
