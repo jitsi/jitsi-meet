@@ -140,13 +140,22 @@ function createInitialLocalTracksAndConnect(roomName) {
                 mediaPermissionPromptVisibilityChanged(true, browser))
     );
 
+    const noVideo = !!config._noVideoDevice;
+    const initialDevices = noVideo ? ['audio'] : ['audio', 'video'];
+
     // First try to retrieve both audio and video.
     let tryCreateLocalTracks = createLocalTracks(
-            { devices: ['audio', 'video'] }, true)
+            { devices: initialDevices }, true)
         .catch(err => {
-            // If failed then try to retrieve only audio.
-            audioAndVideoError = err;
-            return createLocalTracks({ devices: ['audio'] }, true);
+            if (noVideo) {
+                // If audio failed too then just return empty array for tracks.
+                audioOnlyError = err;
+                return [];
+            } else {
+                // If failed then try to retrieve only audio.
+                audioAndVideoError = err;
+                return createLocalTracks({ devices: ['audio'] }, true);
+            }
         })
         .catch(err => {
             // If audio failed too then just return empty array for tracks.
@@ -157,13 +166,13 @@ function createInitialLocalTracksAndConnect(roomName) {
     return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
         .then(([tracks, con]) => {
             APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
-            if (audioAndVideoError) {
+            if (audioAndVideoError || noVideo) {
                 if (audioOnlyError) {
                     // If both requests for 'audio' + 'video' and 'audio' only
                     // failed, we assume that there is some problems with user's
                     // microphone and show corresponding dialog.
                     APP.UI.showDeviceErrorDialog(audioOnlyError, null);
-                } else {
+                } else if (!noVideo) {
                     // If request for 'audio' + 'video' failed, but request for
                     // 'audio' only was OK, we assume that we had problems with
                     // camera and show corresponding dialog.
