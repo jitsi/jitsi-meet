@@ -2,14 +2,17 @@ import React, { Component } from 'react';
 import { Immutable } from 'nuclear-js';
 import { connect } from 'react-redux';
 import Avatar from '@atlaskit/avatar';
+import InlineMessage from '@atlaskit/inline-message';
 
 import { getInviteURL } from '../../base/connection';
-import { Dialog } from '../../base/dialog';
+import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import MultiSelectAutocomplete
     from '../../base/react/components/web/MultiSelectAutocomplete';
 
 import { invitePeople, searchPeople } from '../functions';
+
+declare var interfaceConfig: Object;
 
 /**
  * The dialog that allows to invite people to the call.
@@ -40,6 +43,11 @@ class AddPeopleDialog extends Component {
          * The URL pointing to the service allowing for people search.
          */
         _peopleSearchUrl: React.PropTypes.string,
+
+        /**
+         * The function closing the dialog.
+         */
+        hideDialog: React.PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -132,7 +140,7 @@ class AddPeopleDialog extends Component {
                 onSubmit = { this._onSubmit }
                 titleKey = 'addPeople.title'
                 width = 'small'>
-                { this._getUserInputForm() }
+                { this._renderUserInputForm() }
             </Dialog>
         );
     }
@@ -143,11 +151,12 @@ class AddPeopleDialog extends Component {
      * @returns {ReactElement}
      * @private
      */
-    _getUserInputForm() {
+    _renderUserInputForm() {
         const { t } = this.props;
 
         return (
             <div className = 'add-people-form-wrap'>
+                { this._renderErrorMessage() }
                 <MultiSelectAutocomplete
                     isDisabled
                         = { this.state.addToCallInProgress || false }
@@ -210,6 +219,8 @@ class AddPeopleDialog extends Component {
                 this.setState({
                     addToCallInProgress: false
                 });
+
+                this.props.hideDialog();
             })
             .catch(() => {
                 this.setState({
@@ -218,6 +229,49 @@ class AddPeopleDialog extends Component {
                 });
             });
         }
+    }
+
+    /**
+     * Renders the error message if the add doesn't succeed.
+     *
+     * @returns {ReactElement|null}
+     * @private
+     */
+    _renderErrorMessage() {
+        if (!this.state.addToCallError) {
+            return null;
+        }
+
+        const { t } = this.props;
+        const supportString = t('inlineDialogFailure.supportMsg');
+        const supportLink = interfaceConfig.SUPPORT_URL;
+        const supportLinkContent
+            = ( // eslint-disable-line no-extra-parens
+                <span>
+                    <span>
+                        { supportString.padEnd(supportString.length + 1) }
+                    </span>
+                    <span>
+                        <a
+                            href = { supportLink }
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
+                            { t('inlineDialogFailure.support') }
+                        </a>
+                    </span>
+                    <span>.</span>
+                </span>
+            );
+
+        return (
+            <div className = 'modal-dialog-form-error'>
+                <InlineMessage
+                    title = { t('addPeople.failedToAdd') }
+                    type = 'error'>
+                    { supportLinkContent }
+                </InlineMessage>
+            </div>
+        );
     }
 
     /**
@@ -256,4 +310,4 @@ function _mapStateToProps(state) {
 }
 
 export default translate(
-    connect(_mapStateToProps)(AddPeopleDialog));
+    connect(_mapStateToProps, { hideDialog })(AddPeopleDialog));

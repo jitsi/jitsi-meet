@@ -23,6 +23,7 @@
     "@atlaskit/field-text": "2.7.0",
     "@atlaskit/icon": "7.0.0",
     "@atlaskit/inline-dialog": "3.2.0",
+    "@atlaskit/inline-message": "2.1.1",
     "@atlaskit/modal-dialog": "2.1.2",
     "@atlaskit/multi-select": "6.2.0",
     "@atlaskit/spinner": "2.2.3",
