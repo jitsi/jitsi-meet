@@ -226,7 +226,19 @@ function Util:process_and_verify_token(session)
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
-        session.jitsi_meet_domain = claims["aud"];
+        session.jitsi_meet_domain = claims["sub"];
+
+        -- Binds the user details to the session if available
+        if claims["context"] ~= nil then
+          if claims["context"]["user"] ~= nil then
+            session.jitsi_meet_context_user = claims["context"]["user"];
+          end
+
+          if claims["context"]["group"] ~= nil then
+            -- Binds any group details to the session
+            session.jitsi_meet_context_group = claims["context"]["group"];
+          end
+        end
         return true;
     else
         return false, "not-allowed", msg;
