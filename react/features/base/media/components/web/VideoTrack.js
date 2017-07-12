@@ -10,7 +10,7 @@ import AbstractVideoTrack from '../AbstractVideoTrack';
  */
 class VideoTrack extends AbstractVideoTrack {
     /**
-     * Default values for VideoTrack component's properties.
+     * Default values for {@code VideoTrack} component's properties.
      *
      * @static
      */
@@ -19,10 +19,7 @@ class VideoTrack extends AbstractVideoTrack {
 
         className: '',
 
-        /**
-         * Dispatch an action when the video starts playing.
-         */
-        triggerOnPlayingUpdate: true
+        id: ''
     };
 
     /**
@@ -108,7 +105,12 @@ class VideoTrack extends AbstractVideoTrack {
      * from React.
      */
     shouldComponentUpdate(nextProps) {
-        if (nextProps.videoTrack !== this.props.videoTrack) {
+        const currentJitsiTrack = this.props.videoTrack
+            && this.props.videoTrack.jitsiTrack;
+        const nextJitsiTrack = nextProps.videoTrack
+            && nextProps.videoTrack.jitsiTrack;
+
+        if (currentJitsiTrack !== nextJitsiTrack) {
             this._detachTrack(this.props.videoTrack);
             this._attachTrack(nextProps.videoTrack);
         }
