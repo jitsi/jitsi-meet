@@ -34,7 +34,10 @@ export default class AbstractVideoTrack extends Component {
 
         /**
          * Whether or not the store should be updated about the playing status
-         * of the video. Defaults to true.
+         * of the video. Defaults to true. One use case for setting this prop
+         * to false is using multiple locals streams from the same video source,
+         * such as when previewing video. In those cases, the store may have no
+         * need to be updated about the existence or state of the stream.
          */
         triggerOnPlayingUpdate: React.PropTypes.bool,
 
