@@ -397,7 +397,7 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
     this.container.appendChild(spanElement);
 
     var menuElement = document.createElement('i');
-    menuElement.className = 'icon-menu-up';
+    menuElement.className = 'icon-thumb-menu';
     menuElement.title = 'Remote user controls';
     spanElement.appendChild(menuElement);
 

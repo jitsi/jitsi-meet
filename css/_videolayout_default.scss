@@ -315,12 +315,16 @@
     position: absolute;
     top: 0px;
     right: 0;
-    margin: 7px;
+    margin-top: 7px;
     z-index: $zindex3;
     width: 18px;
     height: 13px;
     color: #FFF;
-    font-size: 8pt;
+    font-size: 10pt;
+
+    >i{
+        cursor: hand;
+    }
 }
 
 /**
