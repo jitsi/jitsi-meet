@@ -5,6 +5,7 @@ import {
     SET_LOCATION_URL
 } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
+import { createInitialLocalTracks, destroyLocalTracks } from '../base/tracks';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -12,8 +13,10 @@ MiddlewareRegistry.register(store => next => action => {
         return _connectionEstablished(store, next, action);
 
     case SET_LOCATION_URL:
+        return _setLocationURL(store, next, action);
+
     case SET_ROOM:
-        return _setLocationURLOrRoom(store, next, action);
+        return _setRoom(store, next, action);
     }
 
     return next(action);
@@ -63,36 +66,77 @@ function _connectionEstablished(store, next, action) {
 /**
  * Navigates to a route in accord with a specific redux state.
  *
- * @param {Object} state - The redux state which determines/identifies the route
+ * @param {Store} store - The redux store which determines/identifies the route
  * to navigate to.
  * @private
  * @returns {void}
  */
-function _navigate(state) {
+function _navigate({ dispatch, getState }) {
+    const state = getState();
     const { app, getRouteToRender } = state['features/app'];
     const routeToRender = getRouteToRender && getRouteToRender(state);
+
+    // Create/destroy the local tracks as needed: create them the first time we
+    // are going to render an actual route (be that the WelcomePage or the
+    // Conference).
+    //
+    // When the WelcomePage is disabled, the app will transition to the
+    // null/undefined route. Detect these transitions and create/destroy the
+    // local tracks so the camera doesn't stay open if the app is not rendering
+    // any component.
+    if (typeof routeToRender === 'undefined' || routeToRender === null) {
+        // Destroy the local tracks if there is no route to render and there is
+        // no welcome page.
+        app.props.welcomePageEnabled || dispatch(destroyLocalTracks());
+    } else {
+        // Create the local tracks if they haven't been created yet.
+        state['features/base/tracks'].some(t => t.local)
+            || dispatch(createInitialLocalTracks());
+    }
 
     app._navigate(routeToRender);
 }
 
 /**
- * Notifies the feature app that the action {@link SET_LOCATION_URL} or
- * {@link SET_ROOM} is being dispatched within a specific redux {@code store}.
+ * Notifies the feature app that the action {@link SET_LOCATION_URL} is being
+ * dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_LOCATION_URL} or
- * {@code SET_ROOM} which is being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action, {@code SET_LOCATION_URL}, which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setLocationURLOrRoom({ getState }, next, action) {
+function _setLocationURL({ getState }, next, action) {
     const result = next(action);
 
-    _navigate(getState());
+    getState()['features/app'].app._navigate(undefined);
+
+    return result;
+}
+
+/**
+ * Notifies the feature app that the action {@link SET_ROOM} is being dispatched
+ * within a specific redux {@code store}.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action, {@code SET_ROOM}, which is being
+ * dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified {@code action}.
+ */
+function _setRoom(store, next, action) {
+    const result = next(action);
+
+    _navigate(store);
 
     return result;
 }

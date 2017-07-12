@@ -1,6 +1,5 @@
 /* @flow */
 
-import { LIB_DID_DISPOSE, LIB_DID_INIT } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -14,10 +13,6 @@ import {
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import {
-    createInitialLocalTracks,
-    destroyLocalTracks
-} from './actions';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
@@ -33,14 +28,6 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_DID_DISPOSE:
-        store.dispatch(destroyLocalTracks());
-        break;
-
-    case LIB_DID_INIT:
-        store.dispatch(createInitialLocalTracks());
-        break;
-
     case SET_AUDIO_MUTED:
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
