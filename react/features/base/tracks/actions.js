@@ -179,6 +179,9 @@ export function trackMutedChanged(track) {
  * @returns {{ type: TRACK_REMOVED, track: Track }}
  */
 export function trackRemoved(track) {
+    track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
+    track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
+
     return {
         type: TRACK_REMOVED,
         track: {
