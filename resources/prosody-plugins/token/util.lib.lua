@@ -90,7 +90,7 @@ function Util.new(module)
     self.acceptedIssuers = module:get_option_array('asap_accepted_issuers',{self.appId})
 
     --array of accepted audiences: by default only includes our appId
-    self.acceptedAudiences = module:get_option_array('asap_accepted_audiences',{self.appId})
+    self.acceptedAudiences = module:get_option_array('asap_accepted_audiences',{'*'})
 
     if self.asapKeyServer and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
@@ -172,6 +172,10 @@ end
 -- @return nil and error string or true for accepted claim
 function Util:verify_audience(audClaim)
     for i, aud in ipairs(self.acceptedAudiences) do
+        if aud == '*' then
+            --* indicates to accept any audience in the claims so return success
+            return true;
+        end
         if audClaim == aud then
             --claim matches an accepted audience so return success
             return true;
