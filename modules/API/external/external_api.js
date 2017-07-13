@@ -229,25 +229,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             width = `${Math.max(width, MIN_WIDTH)}px`;
         }
 
-        /* eslint-enable no-param-reassign */
-
-        this._iframeHolder
-            = this._parentNode.appendChild(document.createElement('div'));
-        this._iframeHolder.id = `jitsiConference${id}`;
-        this._iframeHolder.style.width = width;
-        this._iframeHolder.style.height = height;
-
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
         this._frame.src = this._url;
         this._frame.name = frameName;
         this._frame.id = frameName;
-        this._frame.width = '100%';
-        this._frame.height = '100%';
+        this._frame.style.width = width;
+        this._frame.style.height = height;
         this._frame.setAttribute('allowFullScreen', 'true');
         this._frame.style.border = 0;
-        this._frame = this._iframeHolder.appendChild(this._frame);
+        this._frame = this._parentNode.appendChild(this._frame);
     }
 
     /**
@@ -361,8 +353,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     dispose() {
         this._transport.dispose();
         this.removeAllListeners();
-        if (this._iframeHolder) {
-            this._iframeHolder._parentNode.removeChild(this._iframeHolder);
+        if (this._frame) {
+            this._frame.parentNode.removeChild(this._frame);
         }
     }
 
