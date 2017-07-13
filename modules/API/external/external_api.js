@@ -414,6 +414,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the iframe that loads Jitsi Meet.
+     *
+     * @returns {HTMLElement} The iframe.
+     */
+    getIFrame() {
+        return this.frame;
+    }
+
+    /**
      * Returns the number of participants in the conference. The local
      * participant is included.
      *
