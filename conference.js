@@ -35,8 +35,10 @@ import {
 } from './react/features/base/lib-jitsi-meet';
 import { setVideoAvailable } from './react/features/base/media';
 import {
+    localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
+    participantConnectionStatusChanged,
     participantJoined,
     participantLeft,
     participantRoleChanged,
@@ -54,6 +56,8 @@ import {
     suspendDetected
 } from './react/features/overlay';
 import { showDesktopSharingButton } from './react/features/toolbox';
+
+const { participantConnectionStatus } = JitsiMeetJS.constants;
 
 const ConnectionEvents = JitsiMeetJS.events.connection;
 const ConnectionErrors = JitsiMeetJS.errors.connection;
@@ -1543,7 +1547,10 @@ export default {
 
         room.on(
             ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
-            id => {
+            (id, connectionStatus) => {
+                APP.store.dispatch(participantConnectionStatusChanged(
+                    id, connectionStatus));
+
                 APP.UI.participantConnectionStatusChanged(id);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
@@ -1637,10 +1644,16 @@ export default {
         }
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
+            APP.store.dispatch(localParticipantConnectionStatusChanged(
+                participantConnectionStatus.INTERRUPTED));
+
             APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
+            APP.store.dispatch(localParticipantConnectionStatusChanged(
+                participantConnectionStatus.ACTIVE));
+
             APP.UI.showLocalConnectionInterrupted(false);
         });
 
