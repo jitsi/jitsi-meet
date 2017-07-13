@@ -234,6 +234,11 @@ You can get the number of participants in the conference with the following API 
 var numberOfParticipants = api.getNumberOfParticipants();
 ```
 
+You can get the iframe HTML element where Jitsi Meet is loaded with the following API function:
+```javascript
+var iframe = api.getIFrame();
+```
+
 You can remove the embedded Jitsi Meet Conference with the following API function:
 ```javascript
 api.dispose()
