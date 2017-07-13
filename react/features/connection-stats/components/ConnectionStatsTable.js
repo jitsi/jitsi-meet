@@ -380,14 +380,26 @@ class ConnectionStatsTable extends Component {
         }
 
         // All of the transports should be either P2P or JVB
-        const isP2P = transport.length ? transport[0].p2p : false;
+        let isP2P = false, isTURN = false;
+
+        if (transport.length) {
+            isP2P = transport[0].p2p;
+            isTURN = transport[0].localCandidateType === 'relay'
+                || transport[0].remoteCandidateType === 'relay';
+        }
+
+        let additionalData = null;
+
+        if (isP2P) {
+            additionalData = isTURN
+                ? <span>{ t('connectionindicator.turn') }</span>
+                : <span>{ t('connectionindicator.peer_to_peer') }</span>;
+        }
 
         // First show remote statistics, then local, and then transport type.
         const tableRowConfigurations = [
             {
-                additionalData: isP2P
-                    ? <span>{ t('connectionindicator.peer_to_peer') }</span>
-                    : null,
+                additionalData,
                 data: data.remoteIP,
                 key: 'remoteaddress',
                 label: t('connectionindicator.remoteaddress',
