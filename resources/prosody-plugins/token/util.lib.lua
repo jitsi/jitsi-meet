@@ -86,6 +86,12 @@ function Util.new(module)
         return nil;
     end
 
+    --array of accepted issuers: by default only includes our appId
+    self.acceptedIssuers = module:get_option_array('asap_accepted_issuers',{self.appId})
+
+    --array of accepted audiences: by default only includes our appId
+    self.acceptedAudiences = module:get_option_array('asap_accepted_audiences',{'*'})
+
     if self.asapKeyServer and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
@@ -147,6 +153,38 @@ function Util:get_public_key(keyId)
     return nil;
 end
 
+--- Verifies issuer part of token
+-- @param 'iss' claim from the token to verify
+-- @return nil and error string or true for accepted claim
+function Util:verify_issuer(issClaim)
+    for i, iss in ipairs(self.acceptedIssuers) do
+        if issClaim == iss then
+            --claim matches an accepted issuer so return success
+            return true;
+        end
+    end
+    --if issClaim not found in acceptedIssuers, fail claim
+    return nil, "Invalid issuer ('iss' claim)";
+end
+
+--- Verifies audience part of token
+-- @param 'aud' claim from the token to verify
+-- @return nil and error string or true for accepted claim
+function Util:verify_audience(audClaim)
+    for i, aud in ipairs(self.acceptedAudiences) do
+        if aud == '*' then
+            --* indicates to accept any audience in the claims so return success
+            return true;
+        end
+        if audClaim == aud then
+            --claim matches an accepted audience so return success
+            return true;
+        end
+    end
+    --if issClaim not found in acceptedIssuers, fail claim
+    return nil, "Invalid audience ('aud' claim)";
+end
+
 --- Verifies token
 -- @param token the token to verify
 -- @param secret the secret to use to verify token
@@ -166,8 +204,10 @@ function Util:verify_token(token, secret)
     if issClaim == nil then
         return nil, "'iss' claim is missing";
     end
-    if issClaim ~= self.appId then
-        return nil, "Invalid application ID('iss' claim)";
+    --check the issuer against the accepted list
+    local issCheck, issCheckErr = self:verify_issuer(issClaim);
+    if issCheck == nil then
+        return nil, issCheckErr;
     end
 
     local roomClaim = claims["room"];
@@ -179,6 +219,11 @@ function Util:verify_token(token, secret)
     if audClaim == nil then
         return nil, "'aud' claim is missing";
     end
+    --check the audience against the accepted list
+    local audCheck, audCheckErr = self:verify_audience(audClaim);
+    if audCheck == nil then
+        return nil, audCheckErr;
+    end
 
     return claims;
 end
@@ -188,6 +233,8 @@ end
 -- Stores in session the following values:
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
+-- session.jitsi_meet_context_user - the user details from the token
+-- session.jitsi_meet_context_group - the group value from the token
 -- @param session the current session
 -- @return false and error
 function Util:process_and_verify_token(session)
