@@ -143,6 +143,54 @@ function generateURL(domain, options = {}) {
 }
 
 /**
+ * Parses the arguments passed to the constructor. If the old format is used
+ * the function translates the arguments to the new format.
+ *
+ * @param {Array} args - The arguments to be parsed.
+ * @returns {Object} JS object with properties.
+ */
+function parseArguments(args) {
+    if (!args.length) {
+        return {};
+    }
+
+    const firstArg = args[0];
+
+    switch (typeof firstArg) {
+    case 'string': // old arguments format
+    case undefined: // eslint-disable-line no-case-declarations
+    // not sure which format but we are trying to parse the old
+    // format because if the new format is used everything will be undefined
+    // anyway.
+        const [
+            roomName,
+            width,
+            height,
+            parentNode,
+            configOverwrite,
+            interfaceConfigOverwrite,
+            noSSL,
+            jwt
+        ] = args;
+
+        return {
+            roomName,
+            width,
+            height,
+            parentNode,
+            configOverwrite,
+            interfaceConfigOverwrite,
+            noSSL,
+            jwt
+        };
+    case 'object': // new arguments format
+        return args[0];
+    default:
+        throw new Error('Can\'t parse the arguments!');
+    }
+}
+
+/**
  * The IFrame API interface class.
  */
 export default class JitsiMeetExternalAPI extends EventEmitter {
@@ -151,29 +199,34 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @param {string} domain - The domain name of the server that hosts the
      * conference.
-     * @param {string} [roomName] - The name of the room to join.
-     * @param {number} [width] - Width of the iframe.
-     * @param {number} [height] - Height of the iframe.
-     * @param {DOMElement} [parentNode] - The node that will contain the
+     * @param {Object} [options] - Optional arguments.
+     * @param {string} [options.roomName] - The name of the room to join.
+     * @param {number} [options.width] - Width of the iframe.
+     * @param {number} [options.height] - Height of the iframe.
+     * @param {DOMElement} [options.parentNode] - The node that will contain the
      * iframe.
-     * @param {Object} [configOverwrite] - Object containing configuration
-     * options defined in config.js to be overridden.
-     * @param {Object} [interfaceConfigOverwrite] - Object containing
+     * @param {Object} [options.configOverwrite] - Object containing
+     * configuration options defined in config.js to be overridden.
+     * @param {Object} [options.interfaceConfigOverwrite] - Object containing
      * configuration options defined in interface_config.js to be overridden.
-     * @param {boolean} [noSSL] - If the value is true https won't be used.
-     * @param {string} [jwt] - The JWT token if needed by jitsi-meet for
+     * @param {boolean} [options.noSSL] - If the value is true https won't be
+     * used.
+     * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
      * authentication.
      */
-    constructor(domain, // eslint-disable-line max-params
-        roomName = '',
-        width = MIN_WIDTH,
-        height = MIN_HEIGHT,
-        parentNode = document.body,
-        configOverwrite = {},
-        interfaceConfigOverwrite = {},
-        noSSL = false,
-        jwt = undefined) {
+    constructor(domain, ...args) {
         super();
+        const {
+            roomName = '',
+            width = MIN_WIDTH,
+            height = MIN_HEIGHT,
+            parentNode = document.body,
+            configOverwrite = {},
+            interfaceConfigOverwrite = {},
+            noSSL = false,
+            jwt = undefined
+        } = parseArguments(args);
+
         this._parentNode = parentNode;
         this._url = generateURL(domain, {
             configOverwrite,
