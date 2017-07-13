@@ -31,6 +31,26 @@ export function dominantSpeakerChanged(id) {
 }
 
 /**
+ * Creates an action to signal the connection status of the local participant
+ * has changed.
+ *
+ * @param {string} connectionStatus - The current connection status of the local
+ * participant, as enumerated by the library's participantConnectionStatus
+ * constants.
+ * @returns {Function}
+ */
+export function localParticipantConnectionStatusChanged(connectionStatus) {
+    return (dispatch, getState) => {
+        const participant = getLocalParticipant(getState);
+
+        if (participant) {
+            return dispatch(participantConnectionStatusChanged(
+                participant.id, connectionStatus));
+        }
+    };
+}
+
+/**
  * Action to signal that the ID of local participant has changed. It happens
  * when the local participant joins a new conference or leaves an existing
  * conference.
