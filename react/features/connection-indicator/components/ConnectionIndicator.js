@@ -168,7 +168,7 @@ class ConnectionIndicator extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.userID !== this.props.userID) {
             statsEmitter.unsubscribeToClientStats(
-                this.props.userID, this._onStatsUpdated);
+                prevProps.userID, this._onStatsUpdated);
             statsEmitter.subscribeToClientStats(
                 this.props.userID, this._onStatsUpdated);
         }

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 declare var APP: Object;
@@ -27,7 +29,7 @@ const statsEmitter = {
         const { connectionQuality } = JitsiMeetJS.events;
 
         conference.on(connectionQuality.LOCAL_STATS_UPDATED,
-            stats => this._onStatsUpdated(stats));
+            stats => this._onStatsUpdated(conference.myUserId(), stats));
 
         conference.on(connectionQuality.REMOTE_STATS_UPDATED,
             (id, stats) => this._emitStatsUpdate(id, stats));
@@ -100,15 +102,15 @@ const statsEmitter = {
      * also update listeners of remote user stats of changes related to their
      * stats.
      *
+     * @param {string} currentUserId - The user id for the local user.
      * @param {Object} stats - Connection stats for the local user as provided
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(stats) {
+    _onStatsUpdated(currentUserId, stats) {
         const allUserFramerates = stats.framerate;
         const allUserResolutions = stats.resolution;
 
-        const currentUserId = APP.conference.getMyUserId();
         const currentUserFramerate = allUserFramerates[currentUserId];
         const currentUserResolution = allUserResolutions[currentUserId];
 
@@ -121,26 +123,30 @@ const statsEmitter = {
 
         this._emitStatsUpdate(currentUserId, stats);
 
-        Object.keys(allUserFramerates)
+        // Get all the unique user ids from the framerate and resolution stats
+        // and update remote user stats as needed.
+        const framerateUserIds = Object.keys(allUserFramerates);
+        const resolutionUserIds = Object.keys(allUserResolutions);
+
+        _.union(framerateUserIds, resolutionUserIds)
             .filter(id => id !== currentUserId)
             .forEach(id => {
+                const remoteUserStats = {};
+
                 const framerate = allUserFramerates[id];
 
                 if (framerate) {
-                    this._emitStatsUpdate(id, { framerate });
+                    remoteUserStats.framerate = framerate;
                 }
-            });
 
-        Object.keys(allUserResolutions)
-            .filter(id => id !== currentUserId)
-            .forEach(id => {
                 const resolution = allUserResolutions[id];
 
                 if (resolution) {
-                    this._emitStatsUpdate(id, { resolution });
+                    remoteUserStats.resolution = resolution;
                 }
-            });
 
+                this._emitStatsUpdate(id, remoteUserStats);
+            });
     }
 };
 
