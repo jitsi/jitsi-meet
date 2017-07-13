@@ -46,18 +46,6 @@ const events = {
 let id = 0;
 
 /**
- * The minimum height for the Jitsi Meet frame
- * @type {number}
- */
-const MIN_HEIGHT = 300;
-
-/**
- * The minimum width for the Jitsi Meet frame
- * @type {number}
- */
-const MIN_WIDTH = 790;
-
-/**
  * Adds given number to the numberOfParticipants property of given APIInstance.
  *
  * @param {JitsiMeetExternalAPI} APIInstance - The instance of the API.
@@ -191,6 +179,34 @@ function parseArguments(args) {
 }
 
 /**
+ * Compute valid values for height and width. If a number is specified it's
+ * treated as pixel units. If the value is expressed in px, em, pt or
+ * percentage, it's used as is.
+ *
+ * @param {any} value - The value to be parsed.
+ * @returns {string|undefined} The parsed value that can be used for setting
+ * sizes through the style property. If invalid value is passed the method
+ * retuns undefined.
+ */
+function parseSizeParam(value) {
+    let parsedValue;
+
+    // This regex parses values of the form 100px, 100em, 100pt or 100%.
+    // Values like 100 or 100px are handled outside of the regex, and
+    // invalid values will be ignored and the minimum will be used.
+    const re = /([0-9]*\.?[0-9]+)(em|pt|px|%)$/;
+
+    if (typeof value === 'string' && String(value).match(re) !== null) {
+        parsedValue = value;
+    } else if (typeof value === 'number') {
+        parsedValue = `${value}px`;
+    }
+
+    return parsedValue;
+}
+
+
+/**
  * The IFrame API interface class.
  */
 export default class JitsiMeetExternalAPI extends EventEmitter {
@@ -201,8 +217,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * conference.
      * @param {Object} [options] - Optional arguments.
      * @param {string} [options.roomName] - The name of the room to join.
-     * @param {number} [options.width] - Width of the iframe.
-     * @param {number} [options.height] - Height of the iframe.
+     * @param {number|string} [options.width] - Width of the iframe. Check
+     * parseSizeParam for format details.
+     * @param {number|string} [options.height] - Height of the iframe. Check
+     * parseSizeParam for format details.
      * @param {DOMElement} [options.parentNode] - The node that will contain the
      * iframe.
      * @param {Object} [options.configOverwrite] - Object containing
@@ -218,8 +236,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         super();
         const {
             roomName = '',
-            width = MIN_WIDTH,
-            height = MIN_HEIGHT,
+            width = '100%',
+            height = '100%',
             parentNode = document.body,
             configOverwrite = {},
             interfaceConfigOverwrite = {},
@@ -252,47 +270,47 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Creates the iframe element.
      *
-     * @param {number} height - The height of the iframe.
-     * @param {number} width - The with of the iframe.
+     * @param {number|string} height - The height of the iframe. Check
+     * parseSizeParam for format details.
+     * @param {number|string} width - The with of the iframe. Check
+     * parseSizeParam for format details.
      * @returns {void}
      *
      * @private
      */
     _createIFrame(height, width) {
-        // Compute valid values for height and width. If a number is specified
-        // it's treated as pixel units and our minimum constraints are applied.
-        // If the value is expressed in em, pt or percentage, it's used as is.
-        // Also protect ourselves from undefined, because
-        // Math.max(undefined, 100) === NaN, obviously.
-        //
-        // This regex parses values of the form 100em, 100pt or 100%. Values
-        // like 100 or 100px are handled outside of the regex, and invalid
-        // values will be ignored and the minimum will be used.
-        const re = /([0-9]*\.?[0-9]+)(em|pt|%)$/;
-
-        /* eslint-disable no-param-reassign */
-
-        if (String(height).match(re) === null) {
-            height = parseInt(height, 10) || MIN_HEIGHT;
-            height = `${Math.max(height, MIN_HEIGHT)}px`;
-        }
-
-        if (String(width).match(re) === null) {
-            width = parseInt(width, 10) || MIN_WIDTH;
-            width = `${Math.max(width, MIN_WIDTH)}px`;
-        }
-
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
         this._frame.src = this._url;
         this._frame.name = frameName;
         this._frame.id = frameName;
-        this._frame.style.width = width;
-        this._frame.style.height = height;
+        this._setSize(height, width);
         this._frame.setAttribute('allowFullScreen', 'true');
         this._frame.style.border = 0;
         this._frame = this._parentNode.appendChild(this._frame);
+    }
+
+    /**
+     * Sets the size of the iframe element.
+     *
+     * @param {number|string} height - The height of the iframe.
+     * @param {number|string} width - The with of the iframe.
+     * @returns {void}
+     *
+     * @private
+     */
+    _setSize(height, width) {
+        const parsedHeight = parseSizeParam(height);
+        const parsedWidth = parseSizeParam(width);
+
+        if (parsedHeight !== undefined) {
+            this._frame.style.height = parsedHeight;
+        }
+
+        if (parsedWidth !== undefined) {
+            this._frame.style.width = parsedWidth;
+        }
     }
 
     /**
