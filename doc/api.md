@@ -20,8 +20,8 @@ Its constructor gets a number of options:
   example.
 * **options**: object with properties - the optional arguments:
     * **room**: (optional) name of the room to join.
-    * **width**: (optional) width for the iframe which will be created.
-    * **height**: (optional) height for the iframe which will be created.
+    * **width**: (optional) width for the iframe which will be created. If a number is specified it's treated as pixel units. If a string is specified the format is number followed by 'px', 'em', 'pt' or '%'.
+    * **height**: (optional) height for the iframe which will be created. If a number is specified it's treated as pixel units. If a string is specified the format is number followed by 'px', 'em', 'pt' or '%'.
     * **htmlElement**: (optional) HTL DOM Element where the iframe will be added as a child.
     * **configOverwite**: (optional) JS object with overrides for options defined in [config.js].
     * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
