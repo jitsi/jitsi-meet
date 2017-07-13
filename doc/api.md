@@ -9,54 +9,56 @@ To embed Jitsi Meet in your application you need to add the Jitsi Meet API libra
 ```javascript
 <script src="https://meet.jit.si/external_api.js"></script>
 ```
-
 ## API
 
-### `api = new JitsiMeetExternalAPI(domain, room, [width], [height], [htmlElement], [configOverwite], [interfaceConfigOverwrite], [noSsl], [jwt])`
+### `api = new JitsiMeetExternalAPI(domain, options)`
 
 The next step for embedding Jitsi Meet is to create the Jitsi Meet API object.
 Its constructor gets a number of options:
 
 * **domain**: domain used to build the conference URL, "meet.jit.si" for
   example.
-* **room**: name of the room to join.
-* **width**: (optional) width for the iframe which will be created.
-* **height**: (optional) height for the iframe which will be created.
-* **htmlElement**: (optional) HTL DOM Element where the iframe will be added as
-  a child.
-* **configOverwite**: (optional) JS object with overrides for options defined in
-  [config.js].
-* **interfaceConfigOverwrite**: (optional) JS object with overrides for options
-  defined in [interface_config.js].
-* **noSsl**: (optional, defaults to true) Boolean indicating if the server
-  should be contacted using HTTP or HTTPS.
-* **jwt**: (optional) [JWT](https://jwt.io/) token.
+* **options**: object with properties - the optional arguments:
+    * **room**: (optional) name of the room to join.
+    * **width**: (optional) width for the iframe which will be created.
+    * **height**: (optional) height for the iframe which will be created.
+    * **htmlElement**: (optional) HTL DOM Element where the iframe will be added as a child.
+    * **configOverwite**: (optional) JS object with overrides for options defined in [config.js].
+    * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
+    * **noSsl**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
+    * **jwt**: (optional) [JWT](https://jwt.io/) token.
 
 Example:
 
 ```javascript
-var domain = "meet.jit.si";
-var room = "JitsiMeetAPIExample";
-var width = 700;
-var height = 700;
-var htmlElement = document.querySelector('#meet');
-var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement);
+var options = {
+    domain: "meet.jit.si",
+    room: "JitsiMeetAPIExample",
+    width: 700,
+    height: 700,
+    htmlElement: document.querySelector('#meet')
+}
+var api = new JitsiMeetExternalAPI(domain, options);
 ```
 
 You can overwrite options set in [config.js] and [interface_config.js].
 For example, to enable the filmstrip-only interface mode, you can use:
 
 ```javascript
-var interfaceConfigOverwrite = {filmStripOnly: true};
-var api = new JitsiMeetExternalAPI(domain, room, width, height, undefined, undefined, interfaceConfigOverwrite);
+var options = {
+    interfaceConfigOverwrite: {filmStripOnly: true}
+};
+var api = new JitsiMeetExternalAPI(domain, options);
 ```
 
 You can also pass a jwt token to Jitsi Meet:
 
  ```javascript
-var jwt = "<jwt_token>";
-var noSsl = false;
-var api = new JitsiMeetExternalAPI(domain, room, width, height, htmlElement, configOverwrite, interfaceConfigOverwrite, noSsl, jwt);
+var options = {
+    jwt: "<jwt_token>",
+    noSsl: false
+};
+var api = new JitsiMeetExternalAPI(domain, options);
  ```
 
 ### Controlling the embedded Jitsi Meet Conference
