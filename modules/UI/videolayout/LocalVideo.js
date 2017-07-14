@@ -1,11 +1,18 @@
 /* global $, config, interfaceConfig, APP, JitsiMeetJS */
+
+/* eslint-disable no-unused-vars */
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+
+import { VideoTrack } from '../../../react/features/base/media';
+/* eslint-enable no-unused-vars */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
 
-const RTCUIUtils = JitsiMeetJS.util.RTCUIHelper;
 const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
@@ -85,31 +92,34 @@ LocalVideo.prototype.changeVideo = function (stream) {
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    let localVideo = document.createElement('video');
-    localVideo.id = this.localVideoId = 'localVideo_' + stream.getId();
-
-    RTCUIUtils.setAutoPlay(localVideo, true);
-    RTCUIUtils.setVolume(localVideo, 0);
+    this.localVideoId = 'localVideo_' + stream.getId();
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
-    // Put the new video always in front
-    UIUtil.prependChild(localVideoContainer, localVideo);
 
-    // Add click handler to both video and video wrapper elements in case
-    // there's no video.
-
-    // onclick has to be used with Temasys plugin
-    localVideo.onclick = localVideoClick;
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <Provider store = { APP.store }>
+            <VideoTrack
+                id = { this.localVideoId }
+                videoTrack = {{ jitsiTrack: stream }} />
+        </Provider>,
+        localVideoContainer
+    );
+    /* jshint ignore:end */
 
     let isVideo = stream.videoType != "desktop";
     this._enableDisableContextMenu(isVideo);
     this.setFlipX(isVideo? APP.settings.getLocalFlipX() : false);
 
-    // Attach WebRTC stream
-    localVideo = stream.attach(localVideo);
-
     let endedHandler = () => {
-        localVideoContainer.removeChild(localVideo);
+        // Only remove if there is no video and not a transition state.
+        // Previous non-react logic created a new video element with each track
+        // removal whereas react reuses the video component so it could be the
+        // stream ended but a new one is being used.
+        if (this.videoStream.isEnded()) {
+            ReactDOM.unmountComponentAtNode(localVideoContainer);
+        }
+
         // when removing only the video element and we are on stage
         // update the stage
         if (this.isCurrentlyOnLargeVideo()) {

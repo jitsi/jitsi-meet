@@ -157,8 +157,8 @@
     -o-transform: scale(-1, 1);
 }
 
-#localVideoWrapper>video,
-#localVideoWrapper>object {
+#localVideoWrapper video,
+#localVideoWrapper object {
     border-radius: $borderRadius !important;
     cursor: hand;
     object-fit: cover;
@@ -183,8 +183,8 @@
 
 #sharedVideo,
 #etherpad,
-#localVideoWrapper>video,
-#localVideoWrapper>object,
+#localVideoWrapper video,
+#localVideoWrapper object,
 #localVideoWrapper,
 #largeVideoWrapper,
 #largeVideoWrapper>video,
