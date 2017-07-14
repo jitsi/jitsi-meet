@@ -21,6 +21,7 @@
     "@atlaskit/button-group": "1.1.3",
     "@atlaskit/dropdown-menu": "1.4.0",
     "@atlaskit/field-text": "2.7.0",
+    "@atlaskit/flag": "3.0.0",
     "@atlaskit/icon": "7.0.0",
     "@atlaskit/inline-dialog": "3.2.0",
     "@atlaskit/inline-message": "2.1.1",

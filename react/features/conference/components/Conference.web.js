@@ -7,6 +7,7 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { NotificationsContainer } from '../../notifications';
 import { OverlayContainer } from '../../overlay';
 import { Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
@@ -78,6 +79,7 @@ class Conference extends Component {
                 { filmStripOnly ? null : <Toolbox /> }
 
                 <DialogContainer />
+                { filmStripOnly ? null : <NotificationsContainer /> }
                 <OverlayContainer />
 
                 {/*
