@@ -1977,35 +1977,42 @@ export default {
      * @private
      */
     _initDeviceList() {
-        if (JitsiMeetJS.mediaDevices.isDeviceListAvailable() &&
-            JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
-            JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
-                // Ugly way to synchronize real device IDs with local
-                // storage and settings menu. This is a workaround until
-                // getConstraints() method will be implemented in browsers.
-                if (localAudio) {
-                    APP.settings.setMicDeviceId(
-                        localAudio.getDeviceId(), false);
-                }
+        JitsiMeetJS.mediaDevices.isDeviceListAvailable()
+            .then(isDeviceListAvailable => {
+                if (isDeviceListAvailable
+                        && JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
+                    JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
+                        // Ugly way to synchronize real device IDs with local
+                        // storage and settings menu. This is a workaround until
+                        // getConstraints() method will be implemented 
+                        // in browsers.
+                        if (localAudio) {
+                            APP.settings.setMicDeviceId(
+                                localAudio.getDeviceId(), false);
+                        }
 
-                if (localVideo) {
-                    APP.settings.setCameraDeviceId(
-                        localVideo.getDeviceId(), false);
-                }
+                        if (localVideo) {
+                            APP.settings.setCameraDeviceId(
+                                localVideo.getDeviceId(), false);
+                        }
 
-                mediaDeviceHelper.setCurrentMediaDevices(devices);
-                APP.UI.onAvailableDevicesChanged(devices);
-                APP.store.dispatch(updateDeviceList(devices));
-                this.updateVideoIconEnabled();
+                        mediaDeviceHelper.setCurrentMediaDevices(devices);
+                        APP.UI.onAvailableDevicesChanged(devices);
+                        APP.store.dispatch(updateDeviceList(devices));
+                        this.updateVideoIconEnabled();
+                    });
+
+                    this.deviceChangeListener = (devices) =>
+                        window.setTimeout(
+                            () => this._onDeviceListChanged(devices), 0);
+                    JitsiMeetJS.mediaDevices.addEventListener(
+                        JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
+                        this.deviceChangeListener);
+                }
+            })
+            .catch((error) => {
+                logger.warn(`Error getting device list: ${error}`);
             });
-
-            this.deviceChangeListener = (devices) =>
-                window.setTimeout(
-                    () => this._onDeviceListChanged(devices), 0);
-            JitsiMeetJS.mediaDevices.addEventListener(
-                JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
-                this.deviceChangeListener);
-        }
     },
     /**
      * Event listener for JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED to
