@@ -13,7 +13,10 @@ import {
     REMOTE_CONTROL_MESSAGE_NAME,
     REQUESTS
 } from '../../service/remotecontrol/Constants';
-import { getJitsiMeetTransport } from '../transport';
+import {
+    Transport,
+    PostMessageTransportBackend
+ } from '../transport';
 
 import RemoteControlParticipant from './RemoteControlParticipant';
 
@@ -30,7 +33,11 @@ const logger = getLogger(__filename);
  *
  * @type {Transport}
  */
-const transport = getJitsiMeetTransport();
+const transport = new Transport({
+    backend: new PostMessageTransportBackend({
+        postisOptions: { scope: 'jitsi-remote-control' }
+    })
+});
 
 /**
  * This class represents the receiver party for a remote controller session.
