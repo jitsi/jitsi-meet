@@ -544,7 +544,27 @@ export default {
     audioMuted: false,
     videoMuted: false,
     isSharingScreen: false,
+    /**
+     * Indicates if the desktop sharing functionality has been enabled.
+     * It takes into consideration {@link isDesktopSharingDisabledByConfig}
+     * as well as the status returned by
+     * {@link JitsiMeetJS.isDesktopSharingEnabled()}. The latter can be false
+     * either if the desktop sharing is not supported by the current browser
+     * or if it was disabled through lib-jitsi-meet specific options (check
+     * config.js for listed options).
+     */
     isDesktopSharingEnabled: false,
+    /**
+     * Set to <tt>true</tt> if the desktop sharing functionality has been
+     * explicitly disabled in the config.
+     */
+    isDesktopSharingDisabledByConfig: false,
+    /**
+     * The text displayed when the desktop sharing button is disabled through
+     * the config. The value is set through
+     * {@link interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP}.
+     */
+    desktopSharingDisabledTooltip: null,
     /*
      * Whether the local "raisedHand" flag is on.
      */
@@ -601,8 +621,15 @@ export default {
                     ConnectionEvents.CONNECTION_FAILED,
                     _connectionFailedHandler);
                 APP.connection = connection = con;
-                this.isDesktopSharingEnabled =
-                    JitsiMeetJS.isDesktopSharingEnabled();
+
+                // Desktop sharing related stuff:
+                this.isDesktopSharingDisabledByConfig
+                    = config.disableDesktopSharing;
+                this.isDesktopSharingEnabled
+                    = !this.isDesktopSharingDisabledByConfig
+                        && JitsiMeetJS.isDesktopSharingEnabled();
+                this.desktopSharingDisabledTooltip
+                    = interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP;
                 eventEmitter.emit(
                     JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
                     this.isDesktopSharingEnabled);

@@ -26,7 +26,10 @@ var config = { // eslint-disable-line no-unused-vars
     clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
     //focusUserJid: 'focus@auth.jitsi-meet.example.com', // The real JID of focus participant - can be overridden here
     //defaultSipNumber: '', // Default SIP number
-
+    /**
+     * Disables desktop sharing functionality.
+     */
+    disableDesktopSharing: false,
     // The ID of the jidesha extension for Chrome.
     desktopSharingChromeExtId: null,
     // Whether desktop sharing should be disabled on Chrome.
