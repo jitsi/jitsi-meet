@@ -43,6 +43,10 @@ export function getButtonAttributesByProps(props: Object = {})
         result.style = { display: 'none' };
     }
 
+    if (props.tooltipText) {
+        result.content = props.tooltipText;
+    }
+
     return result;
 }
 

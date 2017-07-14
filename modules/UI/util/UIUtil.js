@@ -168,6 +168,23 @@ const IndicatorFontSizes = {
     },
 
     /**
+     * Sets the tooltip to the given element, but instead of using translation
+     * key uses text value.
+     *
+     * @param element the element to set the tooltip to
+     * @param text the tooltip text
+     * @param position the position of the tooltip in relation to the element
+     */
+    setTooltipText(element, text, position) {
+        if (element) {
+            UIUtil.removeTooltip(element);
+
+            element.setAttribute('data-tooltip', TOOLTIP_POSITIONS[position]);
+            element.setAttribute('content', text);
+        }
+    },
+
+    /**
      * Removes the tooltip to the given element.
      *
      * @param element the element to remove the tooltip from
