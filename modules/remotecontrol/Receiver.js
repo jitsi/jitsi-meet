@@ -109,11 +109,11 @@ export default class Receiver extends RemoteControlParticipant {
      * displays dialog for informing the user that remote control session
      * ended.
      *
-     * @param {boolean} [dontShowDialog] - If true the dialog won't be
-     * displayed.
+     * @param {boolean} [dontNotify] - If true - a notification about stopping
+     * the remote control won't be displayed.
      * @returns {void}
      */
-    _stop(dontShowDialog: boolean = false) {
+    _stop(dontNotify: boolean = false) {
         if (!this._controller) {
             return;
         }
@@ -125,8 +125,8 @@ export default class Receiver extends RemoteControlParticipant {
             name: REMOTE_CONTROL_MESSAGE_NAME,
             type: EVENTS.stop
         });
-        if (!dontShowDialog) {
-            APP.UI.messageHandler.openMessageDialog(
+        if (!dontNotify) {
+            APP.UI.messageHandler.notify(
                 'dialog.remoteControlTitle',
                 'dialog.remoteControlStopMessage'
             );
@@ -241,7 +241,7 @@ export default class Receiver extends RemoteControlParticipant {
                     action: PERMISSIONS_ACTIONS.error
                 });
 
-                APP.UI.messageHandler.openMessageDialog(
+                APP.UI.messageHandler.notify(
                     'dialog.remoteControlTitle',
                     'dialog.startRemoteControlErrorMessage'
                 );

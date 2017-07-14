@@ -248,7 +248,7 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
             return;
         }
         this.updateRemoteVideoMenu(this.isAudioMuted, true);
-        APP.UI.messageHandler.openMessageDialog(
+        APP.UI.messageHandler.notify(
             "dialog.remoteControlTitle",
             (result === false) ? "dialog.remoteControlDeniedMessage"
                 : "dialog.remoteControlAllowedMessage",
@@ -265,7 +265,7 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
     }, error => {
         logger.error(error);
         this.updateRemoteVideoMenu(this.isAudioMuted, true);
-        APP.UI.messageHandler.openMessageDialog(
+        APP.UI.messageHandler.notify(
             "dialog.remoteControlTitle",
             "dialog.remoteControlErrorMessage",
             {user: this.user.getDisplayName()

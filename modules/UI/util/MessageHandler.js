@@ -439,7 +439,7 @@ var messageHandler = {
     },
 
     /**
-     * Displays a notification.
+     * Displays a notification about participant action.
      * @param displayName the display name of the participant that is
      * associated with the notification.
      * @param displayNameKey the key from the language file for the display
@@ -450,14 +450,14 @@ var messageHandler = {
      * @param messageArguments object with the arguments for the message.
      * @param options passed to toastr (e.g. timeOut)
      */
-    notify: function(displayName, displayNameKey, cls, messageKey,
-                     messageArguments, options) {
+    participantNotification: function(displayName, displayNameKey, cls,
+                    messageKey, messageArguments, options) {
 
         // If we're in ringing state we skip all toaster notifications.
         if(!notificationsEnabled || APP.UI.isOverlayVisible())
             return;
 
-        var displayNameSpan = '<span class="nickname" ';
+        var displayNameSpan = '<span class="title" ';
         if (displayName) {
             displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
         } else {
@@ -471,6 +471,35 @@ var messageHandler = {
                     " data-i18n-options='"
                         + JSON.stringify(messageArguments) + "'"
                     : "") + "></span>", null, options);
+        APP.translation.translateElement(element);
+        return element;
+    },
+
+    /**
+     * Displays a notification.
+     *
+     * @param {string} titleKey - The key from the language file for the title
+     * of the notification.
+     * @param {string} messageKey - The key from the language file for the text
+     * of the message.
+     * @param {Object} messageArguments - The arguments for the message
+     * translation.
+     * @returns {void}
+     */
+    notify: function(titleKey, messageKey, messageArguments) {
+
+        // If we're in ringing state we skip all toaster notifications.
+        if(!notificationsEnabled || APP.UI.isOverlayVisible())
+            return;
+
+        const options = messageArguments
+            ? `data-i18n-options='${JSON.stringify(messageArguments)}'` : "";
+        let element = toastr.info(`
+            <span class="title" data-i18n="${titleKey}"></span>
+            <br>
+            <span data-i18n="${messageKey}" ${options}></span>
+            `
+        );
         APP.translation.translateElement(element);
         return element;
     },
