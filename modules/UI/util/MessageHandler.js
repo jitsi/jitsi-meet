@@ -495,14 +495,6 @@ var messageHandler = {
     },
 
     /**
-     * Removes the toaster.
-     * @param toasterElement
-     */
-    remove: function(toasterElement) {
-        toasterElement.remove();
-    },
-
-    /**
      * Enables / disables notifications.
      */
     enableNotifications: function (enable) {
