@@ -19,6 +19,7 @@ local enableTokenVerification
     = module:get_option_boolean("enable_roomsize_token_verification", false);
 
 local token_util = module:require "token/util".new(module);
+local get_room_from_jid = module:require "util".get_room_from_jid;
 
 -- no token configuration but required
 if token_util == nil and enableTokenVerification then
@@ -30,26 +31,6 @@ end
 -- defaults to "conference"
 local muc_domain_prefix
     = module:get_option_string("muc_mapper_domain_prefix", "conference");
-
---- Finds and returns room by its jid
--- @param room_jid the room jid to search in the muc component
--- @return returns room if found or nil
-function get_room_from_jid(room_jid)
-	local _, host = jid.split(room_jid);
-	local component = hosts[host];
-	if component then
-		local muc = component.modules.muc
-		if muc and rawget(muc,"rooms") then
-			-- We're running 0.9.x or 0.10 (old MUC API)
-			return muc.rooms[room_jid];
-		elseif muc and rawget(muc,"get_room_from_jid") then
-			-- We're running >0.10 (new MUC API)
-			return muc.get_room_from_jid(room_jid);
-		else
-			return
-		end
-	end
-end
 
 --- Verifies room name, domain name with the values in the token
 -- @param token the token we received
