@@ -29,15 +29,11 @@ import {
     EMAIL_COMMAND,
     lockStateChanged
 } from './react/features/base/conference';
-import {
-    updateDeviceList
-} from './react/features/base/devices';
+import { updateDeviceList } from './react/features/base/devices';
 import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
-import {
-    setVideoAvailable
-} from './react/features/base/media';
+import { setVideoAvailable } from './react/features/base/media';
 import {
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
@@ -51,9 +47,7 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import {
-    showDesktopPicker
-} from  './react/features/desktop-picker';
+import { showDesktopPicker } from  './react/features/desktop-picker';
 import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected

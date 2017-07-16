@@ -24,7 +24,7 @@ export const SET_CAMERA_FACING_MODE = Symbol('SET_CAMERA_FACING_MODE');
  *
  * {
  *     type: SET_VIDEO_AVAILABLE,
- *     muted: boolean
+ *     available: boolean
  * }
  */
 export const SET_VIDEO_AVAILABLE = Symbol('SET_VIDEO_AVAILABLE');
