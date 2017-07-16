@@ -39,11 +39,11 @@ import java.net.URL;
  */
 public class JitsiMeetActivity extends AppCompatActivity {
     /**
-     * Code for identifying the permission to draw on top of other apps. The
-     * number is chosen arbitrarily and used to correlate the intent with its
-     * result.
+     * The request code identifying requests for the permission to draw on top
+     * of other apps. The value must be 16-bit and is arbitrarily chosen here. 
      */
-    public static final int OVERLAY_PERMISSION_REQ_CODE = 4242;
+    private static final int OVERLAY_PERMISSION_REQUEST_CODE
+        = (int) (Math.random() * Short.MAX_VALUE);
 
     /**
      * Instance of the {@link JitsiMeetView} which this activity will display.
@@ -56,12 +56,36 @@ public class JitsiMeetActivity extends AppCompatActivity {
      */
     private boolean welcomePageEnabled;
 
+    private boolean canRequestOverlayPermission() {
+        return
+            BuildConfig.DEBUG
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && getApplicationInfo().targetSdkVersion
+                    >= Build.VERSION_CODES.M;
+    }
+
     /**
      *
      * @see JitsiMeetView#getWelcomePageEnabled
      */
     public boolean getWelcomePageEnabled() {
         return view == null ? welcomePageEnabled : view.getWelcomePageEnabled();
+    }
+
+    /**
+     * Initializes the {@link #view} of this {@code JitsiMeetActivity} with a
+     * new {@link JitsiMeetView} instance.
+     */
+    private void initializeView() {
+        view = new JitsiMeetView(this);
+
+        // In order to have the desired effect
+        // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
+        // JitsiMeetView#loadURL(URL).
+        view.setWelcomePageEnabled(welcomePageEnabled);
+        view.loadURL(null);
+
+        setContentView(view);
     }
 
     /**
@@ -82,15 +106,11 @@ public class JitsiMeetActivity extends AppCompatActivity {
             int requestCode,
             int resultCode,
             Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    // Permission not granted.
-                    return;
-                }
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
+                && canRequestOverlayPermission()) {
+            if (Settings.canDrawOverlays(this)) {
+                initializeView();
             }
-
-            setupView();
         }
     }
 
@@ -112,21 +132,19 @@ public class JitsiMeetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // In debug mode React needs permission to write over other apps in
+        // In Debug builds React needs permission to write over other apps in
         // order to display the warning and error overlays.
-        if (BuildConfig.DEBUG
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && !Settings.canDrawOverlays(this)) {
+        if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
             Intent intent
                 = new Intent(
                         Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getPackageName()));
 
-            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+            startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
             return;
         }
 
-        setupView();
+        initializeView();
     }
 
     /**
@@ -165,18 +183,6 @@ public class JitsiMeetActivity extends AppCompatActivity {
         super.onResume();
 
         JitsiMeetView.onHostResume(this);
-    }
-
-    private void setupView() {
-        view = new JitsiMeetView(this);
-
-        // In order to have the desired effect
-        // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
-        // JitsiMeetView#loadURL(URL).
-        view.setWelcomePageEnabled(welcomePageEnabled);
-        view.loadURL(null);
-
-        setContentView(view);
     }
 
     /**

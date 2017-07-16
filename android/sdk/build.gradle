@@ -106,7 +106,7 @@ gradle.projectsEvaluated {
                 '--reset-cache')
 
             // Disable bundling on dev builds
-            //enabled !devEnabled
+            enabled !devEnabled
         }
 
         // Hook bundle${productFlavor}${buildType}JsAndAssets into the android build process
