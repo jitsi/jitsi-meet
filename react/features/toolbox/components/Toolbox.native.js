@@ -268,7 +268,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onRoomLock() {
-            return dispatch(beginRoomLockRequest());
+            dispatch(beginRoomLockRequest());
         },
 
         /**
@@ -279,7 +279,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onShareRoom() {
-            return dispatch(beginShareRoom());
+            dispatch(beginShareRoom());
         },
 
         /**
@@ -290,7 +290,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onToggleAudioOnly() {
-            return dispatch(toggleAudioOnly());
+            dispatch(toggleAudioOnly());
         },
 
         /**
@@ -302,7 +302,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onToggleCameraFacingMode() {
-            return dispatch(toggleCameraFacingMode());
+            dispatch(toggleCameraFacingMode());
         }
     };
 }

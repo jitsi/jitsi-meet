@@ -79,7 +79,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _reloadNow() {
-            return dispatch(_reloadNow());
+            dispatch(_reloadNow());
         }
     };
 }

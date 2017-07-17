@@ -31,7 +31,7 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
             // business to know that anyway. The undefined value is our
             // expression of (1) the lack of knowledge & (2) the desire to no
             // longer have a valid room name to join.
-            return dispatch(appNavigate(undefined));
+            dispatch(appNavigate(undefined));
         },
 
         /**
@@ -43,7 +43,7 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
          * @type {Function}
          */
         _onToggleAudio() {
-            return dispatch(toggleAudioMuted());
+            dispatch(toggleAudioMuted());
         },
 
         /**
@@ -54,7 +54,7 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
          * @type {Function}
          */
         _onToggleVideo() {
-            return dispatch(toggleVideoMuted());
+            dispatch(toggleVideoMuted());
         }
     };
 }

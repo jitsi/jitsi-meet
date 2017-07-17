@@ -228,7 +228,7 @@ function _mapDispatchToProps(dispatch) {
          * @private
          */
         _onConnect() {
-            return dispatch(connect());
+            dispatch(connect());
         },
 
         /**
@@ -238,7 +238,7 @@ function _mapDispatchToProps(dispatch) {
          * @private
          */
         _onDisconnect() {
-            return dispatch(disconnect());
+            dispatch(disconnect());
         },
 
         /**
@@ -250,7 +250,7 @@ function _mapDispatchToProps(dispatch) {
          * @private
          */
         _setToolboxVisible(visible: boolean) {
-            return dispatch(setToolboxVisible(visible));
+            dispatch(setToolboxVisible(visible));
         }
     };
 }

@@ -121,7 +121,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _onSideToolbarContainerToggled(containerId: string) {
-            return dispatch(toggleSideToolbarContainer(containerId));
+            dispatch(toggleSideToolbarContainer(containerId));
         }
     };
 }
