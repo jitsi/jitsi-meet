@@ -163,7 +163,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _onMouseOut() {
-            return dispatch(setToolbarHovered(false));
+            dispatch(setToolbarHovered(false));
         },
 
         /**
@@ -173,7 +173,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _onMouseOver() {
-            return dispatch(setToolbarHovered(true));
+            dispatch(setToolbarHovered(true));
         }
     };
 }
