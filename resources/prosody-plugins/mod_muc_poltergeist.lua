@@ -178,7 +178,7 @@ function handle_create_poltergeist (event)
 
     local room = get_room(room_name, group);
     if (not room) then
-        log("error", "no room found %s", room_address);
+        log("error", "no room found %s", room_name);
         return 404;
     end
 
@@ -202,7 +202,7 @@ function handle_update_poltergeist (event)
 
     local room = get_room(room_name, group);
     if (not room) then
-        log("error", "no room found %s", room_address);
+        log("error", "no room found %s", room_name);
         return 404;
     end
 
