@@ -169,6 +169,10 @@ end, -100);
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with response details
 function handle_create_poltergeist (event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
     local params = parse(event.request.url.query);
     local user_id = params["user"];
     local room_name = params["room"];
@@ -194,6 +198,10 @@ end
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with response details
 function handle_update_poltergeist (event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
     local params = parse(event.request.url.query);
     local user_id = params["user"];
     local room_name = params["room"];

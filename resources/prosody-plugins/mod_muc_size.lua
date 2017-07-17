@@ -72,6 +72,10 @@ end
 -- @return GET response, containing a json with participants count,
 --         tha value is without counting the focus.
 function handle_get_room_size(event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
 	local domain_name = params["domain"];
@@ -121,6 +125,10 @@ end
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with participants details
 function handle_get_room (event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
 	local domain_name = params["domain"];
