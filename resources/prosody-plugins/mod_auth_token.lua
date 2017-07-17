@@ -23,8 +23,12 @@ module:hook("bosh-session", function(event)
 	local query = request.url.query;
 
 	if query ~= nil then
-		session.auth_token = query and formdecode(query).token or nil;
-	end
+        local params = formdecode(query);
+        session.auth_token = query and params.token or nil;
+
+        -- The room name from the bosh query
+        session.jitsi_bosh_query_room = params.room;
+    end
 end);
 
 function provider.test_password(username, password)
@@ -54,7 +58,18 @@ end
 function provider.get_sasl_handler(session)
 
 	local function get_username_from_token(self, message)
-        return token_util:process_and_verify_token(session);
+        local res = token_util:process_and_verify_token(session);
+
+        local customUsername
+            = prosody.events.fire_event("pre-jitsi-authentication", session);
+
+        if (customUsername) then
+            self.username = customUsername;
+        else
+            self.username = message;
+        end
+
+        return res;
 	end
 
 	return new_sasl(host, { anonymous = get_username_from_token });
@@ -68,8 +83,6 @@ local function anonymous(self, message)
 
 	-- This calls the handler created in 'provider.get_sasl_handler(session)'
 	local result, err, msg = self.profile.anonymous(self, username, self.realm);
-
-	self.username = username;
 
 	if result == true then
 		return "success";
