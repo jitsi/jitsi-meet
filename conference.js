@@ -125,68 +125,6 @@ function connect(roomName) {
 }
 
 /**
- * Creates local media tracks and connects to room. Will show error
- * dialogs in case if accessing local microphone and/or camera failed. Will
- * show guidance overlay for users on how to give access to camera and/or
- * microphone,
- * @param {string} roomName
- * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
- */
-function createInitialLocalTracksAndConnect(roomName) {
-    let audioAndVideoError,
-        audioOnlyError,
-        videoOnlyError;
-
-    JitsiMeetJS.mediaDevices.addEventListener(
-        JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
-        browser =>
-            APP.store.dispatch(
-                mediaPermissionPromptVisibilityChanged(true, browser))
-    );
-
-    // First try to retrieve both audio and video.
-    let tryCreateLocalTracks = createLocalTracks(
-            { devices: ['audio', 'video'] }, true)
-        .catch(err => {
-            // If failed then try to retrieve only audio.
-            audioAndVideoError = err;
-            return createLocalTracks({ devices: ['audio'] }, true);
-        })
-        .catch(err => {
-            audioOnlyError = err;
-
-            // Try video only...
-            return createLocalTracks({ devices: ['video'] }, true);
-        })
-        .catch(err => {
-            videoOnlyError = err;
-
-            return [];
-        });
-
-    return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
-        .then(([tracks, con]) => {
-            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
-            if (audioAndVideoError) {
-                if (audioOnlyError) {
-                    // If both requests for 'audio' + 'video' and 'audio' only
-                    // failed, we assume that there is some problems with user's
-                    // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(
-                        audioOnlyError, videoOnlyError);
-                } else {
-                    // If request for 'audio' + 'video' failed, but request for
-                    // 'audio' only was OK, we assume that we had problems with
-                    // camera and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
-                }
-            }
-
-            return [tracks, con];
-        });
-}
-
-/**
  * Share data to other users.
  * @param command the command
  * @param {string} value new value
@@ -553,6 +491,70 @@ export default {
      * Whether the local participant is the dominant speaker in the conference.
      */
     isDominantSpeaker: false,
+
+    /**
+     * Creates local media tracks and connects to a room. Will show error
+     * dialogs in case accessing the local microphone and/or camera failed. Will
+     * show guidance overlay for users on how to give access to camera and/or
+     * microphone,
+     * @param {string} roomName
+     * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
+     */
+    createInitialLocalTracksAndConnect(roomName) {
+        let audioAndVideoError,
+            audioOnlyError,
+            videoOnlyError;
+
+        JitsiMeetJS.mediaDevices.addEventListener(
+            JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
+            browser =>
+                APP.store.dispatch(
+                    mediaPermissionPromptVisibilityChanged(true, browser))
+        );
+
+        // First try to retrieve both audio and video.
+        let tryCreateLocalTracks = createLocalTracks(
+            { devices: ['audio', 'video'] }, true)
+            .catch(err => {
+                // If failed then try to retrieve only audio.
+                audioAndVideoError = err;
+                return createLocalTracks({ devices: ['audio'] }, true);
+            })
+            .catch(err => {
+                audioOnlyError = err;
+
+                // Try video only...
+                return createLocalTracks({ devices: ['video'] }, true);
+            })
+            .catch(err => {
+                videoOnlyError = err;
+
+                return [];
+            });
+
+        return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
+            .then(([tracks, con]) => {
+                APP.store.dispatch(
+                    mediaPermissionPromptVisibilityChanged(false));
+                if (audioAndVideoError) {
+                    if (audioOnlyError) {
+                        // If both requests for 'audio' + 'video' and 'audio'
+                        // only failed, we assume that there is some problems
+                        // with user's microphone and show corresponding dialog.
+                        APP.UI.showDeviceErrorDialog(
+                            audioOnlyError, videoOnlyError);
+                    } else {
+                        // If request for 'audio' + 'video' failed, but request
+                        // for 'audio' only was OK, we assume that we had
+                        // problems with camera and show corresponding dialog.
+                        APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                    }
+                }
+
+                return [tracks, con];
+            });
+    },
+
     /**
      * Open new connection and join to the conference.
      * @param {object} options
@@ -588,7 +590,8 @@ export default {
                 {enableAnalyticsLogging: analytics.isEnabled()}, config)
             ).then(() => {
                 analytics.init();
-                return createInitialLocalTracksAndConnect(options.roomName);
+                return this.createInitialLocalTracksAndConnect(
+                    options.roomName);
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
                     if((track.isAudioTrack() && initialAudioMutedState)
