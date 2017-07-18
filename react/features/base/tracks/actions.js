@@ -1,7 +1,4 @@
-import JitsiMeetJS, {
-    JitsiTrackErrors,
-    JitsiTrackEvents
-} from '../lib-jitsi-meet';
+import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -78,13 +75,13 @@ export function destroyLocalTracks() {
 
 /**
  * Replaces one track with another for one renegotiation instead of invoking
- * two renegotations with a separate removeTrack and addTrack. Disposes the
+ * two renegotiations with a separate removeTrack and addTrack. Disposes the
  * removed track as well.
  *
  * @param {JitsiLocalTrack|null} oldTrack - The track to dispose.
  * @param {JitsiLocalTrack|null} newTrack - The track to use instead.
  * @param {JitsiConference} [conference] - The conference from which to remove
- * and add the tracks. If one is not provied, the conference in the redux store
+ * and add the tracks. If one is not provided, the conference in the redux store
  * will be used.
  * @returns {Function}
  */
@@ -182,7 +179,10 @@ export function trackAdded(track) {
  * changed.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
- * @returns {{ type: TRACK_UPDATED, track: Track }}
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
  */
 export function trackMutedChanged(track) {
     return {
@@ -199,7 +199,10 @@ export function trackMutedChanged(track) {
  * conference.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
- * @returns {{ type: TRACK_REMOVED, track: Track }}
+ * @returns {{
+ *     type: TRACK_REMOVED,
+ *     track: Track
+ * }}
  */
 export function trackRemoved(track) {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
@@ -217,7 +220,10 @@ export function trackRemoved(track) {
  * Signal that track's video started to play.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
- * @returns {{ type: TRACK_UPDATED, track: Track }}
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
  */
 export function trackVideoStarted(track) {
     return {
@@ -234,7 +240,10 @@ export function trackVideoStarted(track) {
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
  * @param {VIDEO_TYPE|undefined} videoType - Video type.
- * @returns {{ type: TRACK_UPDATED, track: Track }}
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
  */
 export function trackVideoTypeChanged(track, videoType) {
     return {
@@ -254,8 +263,7 @@ export function trackVideoTypeChanged(track, videoType) {
  * @returns {Function}
  */
 function _addTracks(tracks) {
-    return dispatch =>
-        Promise.all(tracks.map(t => dispatch(trackAdded(t))));
+    return dispatch => Promise.all(tracks.map(t => dispatch(trackAdded(t))));
 }
 
 /**
@@ -311,8 +319,8 @@ function _getLocalTrack(tracks, mediaType) {
  * tracks.
  * @private
  * @returns {{
- *      tracksToAdd: JitsiLocalTrack[],
- *      tracksToRemove: JitsiLocalTrack[]
+ *     tracksToAdd: JitsiLocalTrack[],
+ *     tracksToRemove: JitsiLocalTrack[]
  * }}
  */
 function _getLocalTracksToChange(currentTracks, newTracks) {
@@ -363,8 +371,7 @@ function _shouldMirror(track) {
             // of the value on the right side of the equality check is defined
             // by jitsi-meet. The type definitions are surely compatible today
             // but that may not be the case tomorrow.
-            && track.getCameraFacingMode() === CAMERA_FACING_MODE.USER
-    );
+            && track.getCameraFacingMode() === CAMERA_FACING_MODE.USER);
 }
 
 /**

@@ -1256,40 +1256,36 @@ export default {
             devices: ['desktop'],
             desktopSharingExtensionExternalInstallation: {
                 interval: 500,
-                checkAgain: () => {
-                    return DSExternalInstallationInProgress;
-                },
+                checkAgain: () => DSExternalInstallationInProgress,
                 listener: (status, url) => {
                     switch(status) {
-                        case "waitingForExtension": {
-                            DSExternalInstallationInProgress = true;
-                            externalInstallation = true;
-                            const listener = () => {
-                                // Wait a little bit more just to be sure that
-                                // we won't miss the extension installation
-                                setTimeout(
-                                    () => {
+                    case "waitingForExtension": {
+                        DSExternalInstallationInProgress = true;
+                        externalInstallation = true;
+                        const listener = () => {
+                            // Wait a little bit more just to be sure that we
+                            // won't miss the extension installation
+                            setTimeout(
+                                () => {
                                     DSExternalInstallationInProgress = false;
-                                    }, 500);
-                                APP.UI.removeListener(
-                                    UIEvents.EXTERNAL_INSTALLATION_CANCELED,
-                                    listener);
-                            };
-                            APP.UI.addListener(
+                                },
+                                500);
+                            APP.UI.removeListener(
                                 UIEvents.EXTERNAL_INSTALLATION_CANCELED,
                                 listener);
-                            APP.UI.showExtensionExternalInstallationDialog(url);
-                            break;
-                        }
-                        case "extensionFound": {
-                            if (externalInstallation) { //close the dialog
-                                $.prompt.close();
-                            }
-                            break;
-                        }
-                        default: {
-                            //Unknown status
-                        }
+                        };
+                        APP.UI.addListener(
+                            UIEvents.EXTERNAL_INSTALLATION_CANCELED,
+                            listener);
+                        APP.UI.showExtensionExternalInstallationDialog(url);
+                        break;
+                    }
+                    case "extensionFound":
+                        // Close the dialog.
+                        externalInstallation && $.prompt.close();
+                        break;
+                    default:
+                        // Unknown status
                     }
                 }
             }
@@ -1304,23 +1300,18 @@ export default {
                 () => {
                     // If the stream was stopped during screen sharing
                     // session then we should switch back to video.
-                    if (this.isSharingScreen) {
-                        this._untoggleScreenSharing
-                            && this._untoggleScreenSharing();
-                    }
+                    this.isSharingScreen
+                        && this._untoggleScreenSharing
+                        && this._untoggleScreenSharing();
                 }
             );
             // close external installation dialog on success.
-            if (externalInstallation) {
-                $.prompt.close();
-            }
+            externalInstallation && $.prompt.close();
             return desktopStream;
         }, error => {
             DSExternalInstallationInProgress = false;
             // close external installation dialog on success.
-            if (externalInstallation) {
-                $.prompt.close();
-            }
+            externalInstallation && $.prompt.close();
             throw error;
         });
     },
