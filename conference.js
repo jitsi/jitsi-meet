@@ -43,6 +43,7 @@ import {
     participantUpdated
 } from './react/features/base/participants';
 import {
+    createLocalTracks,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
@@ -257,53 +258,6 @@ function assignWindowLocationPathname(pathname) {
     }
 
     windowLocation.pathname = pathname;
-}
-
-/**
- * Create local tracks of specified types.
- * @param {Object} options
- * @param {string[]} options.devices - required track types
- *      ('audio', 'video' etc.)
- * @param {string|null} (options.cameraDeviceId) - camera device id, if
- *      undefined - one from settings will be used
- * @param {string|null} (options.micDeviceId) - microphone device id, if
- *      undefined - one from settings will be used
- * @param {boolean} (checkForPermissionPrompt) - if lib-jitsi-meet should check
- *      for gUM permission prompt
- * @returns {Promise<JitsiLocalTrack[]>}
- */
-function createLocalTracks(options, checkForPermissionPrompt) {
-    options || (options = {});
-
-    return JitsiMeetJS
-        .createLocalTracks({
-            // copy array to avoid mutations inside library
-            devices: options.devices.slice(0),
-            desktopSharingSources: options.desktopSharingSources,
-            resolution: config.resolution,
-            cameraDeviceId: typeof options.cameraDeviceId === 'undefined' ||
-                    options.cameraDeviceId === null
-                ? APP.settings.getCameraDeviceId()
-                : options.cameraDeviceId,
-            micDeviceId: typeof options.micDeviceId === 'undefined' ||
-                    options.micDeviceId === null
-                ? APP.settings.getMicDeviceId()
-                : options.micDeviceId,
-            // adds any ff fake device settings if any
-            firefox_fake_device: config.firefox_fake_device,
-            desktopSharingExtensionExternalInstallation:
-                options.desktopSharingExtensionExternalInstallation
-        }, checkForPermissionPrompt).then( (tracks) => {
-            tracks.forEach((track) => {
-                track.on(TrackEvents.NO_DATA_FROM_SOURCE,
-                    APP.UI.showTrackNotWorkingDialog.bind(null, track));
-            });
-            return tracks;
-        }).catch(function (err) {
-            logger.error(
-                'failed to create local tracks', options.devices, err);
-            return Promise.reject(err);
-        });
 }
 
 class ConferenceConnector {

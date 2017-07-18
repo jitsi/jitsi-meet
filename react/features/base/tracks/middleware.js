@@ -7,15 +7,15 @@ import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_MUTED,
-    TOGGLE_CAMERA_FACING_MODE,
     setAudioMuted,
-    setVideoMuted
+    setVideoMuted,
+    TOGGLE_CAMERA_FACING_MODE,
+    toggleCameraFacingMode
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
 import {
-    _disposeAndRemoveTracks,
-    createLocalTracks,
+    createInitialLocalTracks,
     destroyLocalTracks
 } from './actions';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
@@ -38,7 +38,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case LIB_DID_INIT:
-        store.dispatch(createLocalTracks());
+        store.dispatch(createInitialLocalTracks());
         break;
 
     case SET_AUDIO_MUTED:
@@ -46,21 +46,22 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_CAMERA_FACING_MODE: {
-        // XXX Destroy the local video track before creating a new one or
-        // react-native-webrtc may be slow or get stuck when opening a (video)
-        // capturer twice.
+        // XXX The camera facing mode of a MediaStreamTrack can be specified
+        // only at initialization time and then it can only be toggled. So in
+        // order to set the camera facing mode, one may destroy the track and
+        // then initialize a new instance with the new camera facing mode. But
+        // that is inefficient on mobile at least so the following relies on the
+        // fact that there are 2 camera facing modes and merely toggles between
+        // them to (hopefully) get the camera in the specified state.
         const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
+        let jitsiTrack;
 
-        if (localTrack) {
-            store.dispatch(_disposeAndRemoveTracks([ localTrack.jitsiTrack ]));
+        if (localTrack
+                && (jitsiTrack = localTrack.jitsiTrack)
+                && jitsiTrack.getCameraFacingMode()
+                    !== action.cameraFacingMode) {
+            store.dispatch(toggleCameraFacingMode());
         }
-
-        store.dispatch(
-            createLocalTracks({
-                devices: [ MEDIA_TYPE.VIDEO ],
-                facingMode: action.cameraFacingMode
-            })
-        );
         break;
     }
 

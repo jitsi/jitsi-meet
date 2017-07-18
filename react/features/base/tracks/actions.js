@@ -10,11 +10,8 @@ import {
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
-import {
-    TRACK_ADDED,
-    TRACK_REMOVED,
-    TRACK_UPDATED
-} from './actionTypes';
+import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
+import { createLocalTracks } from './functions';
 
 /**
  * Request to start capturing local audio and/or video. By default, the user
@@ -23,19 +20,45 @@ import {
  * @param {Object} [options] - For info @see JitsiMeetJS.createLocalTracks.
  * @returns {Function}
  */
-export function createLocalTracks(options = {}) {
-    return dispatch =>
-        JitsiMeetJS.createLocalTracks({
-            cameraDeviceId: options.cameraDeviceId,
-            devices: options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ],
-            facingMode: options.facingMode || CAMERA_FACING_MODE.USER,
-            micDeviceId: options.micDeviceId
-        })
-        .then(localTracks => dispatch(_updateLocalTracks(localTracks)))
-        .catch(err => {
-            console.error(
-                `JitsiMeetJS.createLocalTracks.catch rejection reason: ${err}`);
-        });
+export function createInitialLocalTracks(options = {}) {
+    return (dispatch, getState) => {
+        const devices
+            = options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ];
+        const store = {
+            dispatch,
+            getState
+        };
+
+        // The following executes on React Native only at the time of this
+        // writing. The effort to port Web's createInitialLocalTracksAndConnect
+        // is significant and that's where the function createLocalTracks got
+        // born. I started with the idea a porting so that we could inherit the
+        // ability to getUserMedia for audio only or video only if getUserMedia
+        // for audio and video fails. Eventually though, I realized that on
+        // mobile we do not have combined permission prompts implemented anyway
+        // (either because there are no such prompts or it does not make sense
+        // to implement them) and the right thing to do is to ask for each
+        // device separately.
+        for (const device of devices) {
+            createLocalTracks(
+                {
+                    cameraDeviceId: options.cameraDeviceId,
+                    devices: [ device ],
+                    facingMode: options.facingMode || CAMERA_FACING_MODE.USER,
+                    micDeviceId: options.micDeviceId
+                },
+                /* firePermissionPromptIsShownEvent */ false,
+                store)
+            .then(localTracks => dispatch(_updateLocalTracks(localTracks)));
+
+            // TODO The function createLocalTracks logs the rejection reason of
+            // JitsiMeetJS.createLocalTracks so there is no real benefit to
+            // logging it here as well. Technically though,
+            // _updateLocalTracks may cause a rejection so it may be nice to log
+            // it. It's not too big of a concern at the time of this writing
+            // because React Native warns on unhandled Promise rejections.
+        }
+    };
 }
 
 /**
