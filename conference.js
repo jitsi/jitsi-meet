@@ -562,7 +562,7 @@ export default {
                 // FIXME If there will be microphone error it will cover any
                 // screensharing dialog, but it's still better than in
                 // the reverse order where the screensharing dialog will
-                // sometime be closing the microphone alert ($.prompt.close();
+                // sometimes be closing the microphone alert ($.prompt.close();
                 // is called). Need to figure out dialogs chaining to fix that.
                 if (screenSharingError) {
                     this._handleScreenSharingError(screenSharingError);
@@ -570,7 +570,7 @@ export default {
                 if (audioAndVideoError || audioOnlyError) {
                     if (audioOnlyError || videoOnlyError) {
                         // If both requests for 'audio' + 'video' and 'audio'
-                        // only failed, we assume that there is some problems
+                        // only failed, we assume that there are some problems
                         // with user's microphone and show corresponding dialog.
                         APP.UI.showDeviceErrorDialog(
                             audioOnlyError, videoOnlyError);
@@ -1307,8 +1307,9 @@ export default {
                             break;
                         }
                         case "extensionFound": {
-                            if (externalInstallation) //close the dialog
+                            if (externalInstallation) { //close the dialog
                                 $.prompt.close();
+                            }
                             break;
                         }
                         default: {
@@ -1317,7 +1318,7 @@ export default {
                     }
                 }
             }
-        }).then(([desktopStream])=> {
+        }).then(([desktopStream]) => {
             // Stores the "untoggle" handler which remembers whether was
             // there any video before and whether was it muted.
             this._untoggleScreenSharing
