@@ -182,6 +182,20 @@ function have_poltergeist_occupant(room, nick)
 	return not not room:get_occupant_jid(poltergeist_component.."/"..nick);
 end
 
+-- Returns the last presence of occupant
+-- @param room the room instance where to check for occupant
+-- @param nick the nick of the occupant
+-- @return presence of the occupant
+function get_presence(room, nick)
+    local occupant_jid
+        = room:get_occupant_jid(poltergeist_component.."/"..nick);
+    if (occupant_jid) then
+        return room:get_occupant_by_nick(occupant_jid):get_presence();
+    end
+
+    return nil;
+end
+
 -- Event handlers
 
 --- Note: mod_muc and some of its sub-modules add event handlers between 0 and -100,
@@ -268,10 +282,42 @@ function handle_update_poltergeist (event)
 
     local nick = string.sub(username, 0, 8);
     if (have_poltergeist_occupant(room, nick)) then
-        local update_presence = st.presence({
-            to = room.jid.."/"..nick,
-            from = poltergeist_component.."/"..nick
-        }):tag("status"):text(status):up();
+        local update_presence = get_presence(room, nick);
+
+        if (not update_presence) then
+            -- no presence found for occupant, create one
+            update_presence = st.presence({
+                to = room.jid.."/"..nick,
+                from = poltergeist_component.."/"..nick
+            });
+        else
+            -- update occupant presence with appropriate to and from
+            -- so we can send it again
+            update_presence = st.clone(update_presence);
+            update_presence.attr.to = room.jid.."/"..nick;
+            update_presence.attr.from = poltergeist_component.."/"..nick;
+        end
+
+        local once = false;
+        -- the status tag we will attach
+        local statusTag = st.stanza("status"):text(status);
+
+        -- if there is already a status tag replace it
+        update_presence:maptags(function (tag)
+            if tag.name == statusTag.name then
+                if not once then
+                    once = true;
+                    return statusTag;
+                else
+                    return nil;
+                end
+            end
+            return tag;
+        end);
+        if (not once) then
+            -- no status tag was repleced, attach it
+            update_presence:add_child(statusTag);
+        end
 
         room:handle_normal_presence(
             prosody.hosts[poltergeist_component], update_presence);
