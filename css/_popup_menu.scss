@@ -3,37 +3,32 @@
 **/
 
 .popupmenu {
+    text-align: left;
     padding: 0;
     margin: 2px 0;
-    bottom: 0;
-    height: auto;
-
-    &:first-child {
-        margin-top: 2px;
-    }
+    white-space: nowrap;
 
     &__item {
         list-style-type: none;
-        text-align: left;
         height: 35px;
 
         &:hover {
-            background-color: $popupMenuSelectedItemBackground;
+            background-color: rgba(9, 30, 66, 0.04);
         }
     }
 
     // Link Appearance
     &__link,
     &__contents {
+        color: $modalTextColor;
         display: block;
         box-sizing: border-box;
         text-decoration: none;
-        color: #fff;
-        padding: 5px;
         height: 100%;
         font-size: 9pt;
         width: 100%;
-        cursor: hand;
+        cursor: pointer;
+        padding: 0 5px;
 
         &.disabled {
             color: gray !important;
@@ -44,6 +39,12 @@
     &__text {
         display: inline-block;
         vertical-align: middle;
+    }
+
+    &__link {
+        i {
+            cursor: pointer;
+        }
     }
 
     &__contents {
@@ -73,7 +74,6 @@
         display: inline-block;
         min-width: 20px;
         height: 100%;
-        text-align: center;
 
         > * {
             @include absoluteAligning();

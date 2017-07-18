@@ -1,8 +1,7 @@
 %connection-info {
-    text-align: left;
     font-size: 12px;
     font-weight: 400;
-    color: $popoverFontColor;
+    color: $modalTextColor;
 
     td {
         padding: 2px 0;
@@ -11,9 +10,6 @@
 
 .connection-info
 {
-    float: left;
-    padding: 5px;
-    padding-left: 0;
     @extend %connection-info;
 
     > table {
@@ -39,5 +35,12 @@
     {
         @extend .connection-info__icon;
         color: $uploadConnectionIconColor;
+    }
+
+    .showmore {
+        display: block;
+        margin: 10px auto;
+        text-align: center;
+        width: 90px;
     }
 }

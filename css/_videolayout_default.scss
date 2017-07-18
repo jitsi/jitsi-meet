@@ -124,6 +124,7 @@
 
             .icon-connection,
             .icon-connection-lost {
+                cursor: pointer;
                 font-size: 1em;
             }
         }
@@ -309,7 +310,8 @@
   background: $connectionIndicatorBg;
 }
 
-.remotevideomenu
+.remotevideomenu,
+.remote-video-menu-trigger
 {
     display: inline-block;
     position: absolute;
