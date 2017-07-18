@@ -5,13 +5,20 @@ local neturl = require "net.url";
 local parse = neturl.parseQuery;
 local st = require "util.stanza";
 local get_room_from_jid = module:require "util".get_room_from_jid;
+local timer = require "util.timer";
 
 -- Options
 local poltergeist_component
     = module:get_option_string("poltergeist_component", module.host);
+-- defaults to 3 min
+local poltergeist_timeout
+    = module:get_option_string("poltergeist_leave_timeout", 180);
 
 -- table to store all poltergeists we create
 local poltergeists = {};
+-- table to mark that outgoing unavailable presences
+-- should be marked with ignore
+local poltergeists_pr_ignore = {};
 
 -- poltergaist management functions
 
@@ -88,7 +95,7 @@ prosody.events.add_handler("pre-jitsi-authentication", function(session)
         -- we will mark it with ignore tag
         local nick = string.sub(username, 0, 8);
         if (have_poltergeist_occupant(room, nick)) then
-            remove_poltergeist_occupant(room, nick);
+            remove_poltergeist_occupant(room, nick, true);
         end
 
         return username;
@@ -121,17 +128,28 @@ function create_poltergeist_occupant(room, nick, name, avatar)
 
     room:handle_first_presence(
         prosody.hosts[poltergeist_component], join_presence);
+
+    timer.add_task(poltergeist_timeout,
+        function ()
+            if (have_poltergeist_occupant(room, nick)) then
+                remove_poltergeist_occupant(room, nick, false);
+            end
+        end);
 end
 
 -- Removes poltergeist occupant
 -- @param room the room instance where to remove the occupant
 -- @param nick the nick of the occupant to remove
-function remove_poltergeist_occupant(room, nick)
+-- @param ignore to mark the poltergeist unavailble presence to be ignored
+function remove_poltergeist_occupant(room, nick, ignore)
     log("debug", "remove_poltergeist_occupant %s", nick);
     local leave_presence = st.presence({
         to = room.jid.."/"..nick,
         from = poltergeist_component.."/"..nick,
         type = "unavailable" });
+    if (ignore) then
+        poltergeists_pr_ignore[room.jid.."/"..nick] = true;
+    end
     room:handle_normal_presence(
         prosody.hosts[poltergeist_component], leave_presence);
 end
@@ -150,7 +168,7 @@ end
 --- Note: mod_muc and some of its sub-modules add event handlers between 0 and -100,
 --- e.g. to check for banned users, etc.. Hence adding these handlers at priority -100.
 module:hook("muc-decline", function (event)
-	remove_poltergeist_occupant(event.room, bare(event.stanza.attr.from));
+	remove_poltergeist_occupant(event.room, bare(event.stanza.attr.from), false);
 end, -100);
 -- before sending the presence for a poltergeist leaving add ignore tag
 -- as poltergeist is leaving just before the real user joins and in the client
@@ -158,9 +176,11 @@ end, -100);
 -- user will reuse all currently created UI components for the same nick
 module:hook("muc-broadcast-presence", function (event)
     if (bare(event.occupant.jid) == poltergeist_component) then
-        if(event.stanza.attr.type == "unavailable") then
+        if(event.stanza.attr.type == "unavailable"
+            and poltergeists_pr_ignore[event.occupant.nick]) then
             event.stanza:tag(
                 "ignore", { xmlns = "http://jitsi.org/jitmeet/" }):up();
+            poltergeists_pr_ignore[event.occupant.nick] = nil;
         end
     end
 end, -100);
@@ -235,6 +255,39 @@ function handle_update_poltergeist (event)
     end
 end
 
+--- Handles remove poltergeists
+-- @param event the http event, holds the request query
+-- @return GET response, containing a json with response details
+function handle_remove_poltergeist (event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
+    local params = parse(event.request.url.query);
+    local user_id = params["user"];
+    local room_name = params["room"];
+    local group = params["group"];
+
+    local room = get_room(room_name, group);
+    if (not room) then
+        log("error", "no room found %s", room_name);
+        return 404;
+    end
+
+    local username = get_username(room, user_id);
+    if (not username) then
+        return 404;
+    end
+
+    local nick = string.sub(username, 0, 8);
+    if (have_poltergeist_occupant(room, nick)) then
+        remove_poltergeist_occupant(room, nick, false);
+        return 200;
+    else
+        return 404;
+    end
+end
+
 
 log("info", "Loading poltergeist service");
 module:depends("http");
@@ -244,5 +297,6 @@ module:provides("http", {
     route = {
         ["GET /poltergeist/create"] = handle_create_poltergeist;
         ["GET /poltergeist/update"] = handle_update_poltergeist;
+        ["GET /poltergeist/remove"] = handle_remove_poltergeist;
     };
 });
