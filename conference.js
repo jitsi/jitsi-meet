@@ -493,11 +493,12 @@ export default {
      * show guidance overlay for users on how to give access to camera and/or
      * microphone,
      * @param {string} roomName
-     * @param {boolean} startScreenSharing - if <tt>true</tt> should start with
-     * screensharing instead of camera video.
+     * @param {object} options
+     * @param {boolean} options.startScreenSharing - if <tt>true</tt> should
+     * start with screensharing instead of camera video.
      * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
      */
-    createInitialLocalTracksAndConnect(roomName, startScreenSharing) {
+    createInitialLocalTracksAndConnect(roomName, options = {}) {
         let audioAndVideoError,
             audioOnlyError,
             screenSharingError,
@@ -514,7 +515,7 @@ export default {
         let tryCreateLocalTracks;
 
         // FIXME the logic about trying to go audio only on error is duplicated
-        if (startScreenSharing) {
+        if (options.startScreenSharing) {
             tryCreateLocalTracks = this._createDesktopTrack()
                 .then(desktopStream => {
                     return createLocalTracks({ devices: ['audio'] }, true)
@@ -621,8 +622,9 @@ export default {
             ).then(() => {
                 analytics.init();
                 return this.createInitialLocalTracksAndConnect(
-                    options.roomName,
-                    config.startScreenSharing);
+                    options.roomName, {
+                        startScreenSharing: config.startScreenSharing
+                    });
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
                     if((track.isAudioTrack() && initialAudioMutedState)
