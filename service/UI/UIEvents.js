@@ -98,12 +98,6 @@ export default {
     RESOLUTION_CHANGED: "UI.resolution_changed",
 
     /**
-     * Notifies that the button "Go to webstore" is pressed on the dialog for
-     * external extension installation.
-     */
-    OPEN_EXTENSION_STORE: "UI.open_extension_store",
-
-    /**
      * Notifies that the button "Cancel" is pressed on the dialog for
      * external extension installation.
      */

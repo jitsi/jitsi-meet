@@ -1158,21 +1158,70 @@ UI.showExtensionRequiredDialog = function (url) {
  * @param url {string} the url of the extension.
  */
 UI.showExtensionExternalInstallationDialog = function (url) {
+    let openedWindow = null;
+
     let submitFunction = function(e,v){
         if (v) {
             e.preventDefault();
-            eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
+            if (openedWindow === null || openedWindow.closed) {
+                openedWindow
+                    = window.open(
+                        url,
+                        "extension_store_window",
+                        "resizable,scrollbars=yes,status=1");
+            } else {
+                openedWindow.focus();
+            }
         }
     };
 
-    let closeFunction = function () {
-        eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+    let closeFunction = function (e, v) {
+        if (openedWindow) {
+            // Ideally we would close the popup, but this does not seem to work
+            // on Chrome. Leaving it uncommented in case it could work
+            // in some version.
+            openedWindow.close();
+            openedWindow = null;
+        }
+        if (!v) {
+            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+        }
     };
 
     messageHandler.openTwoButtonDialog({
         titleKey: 'dialog.externalInstallationTitle',
         msgKey: 'dialog.externalInstallationMsg',
         leftButtonKey: 'dialog.goToStore',
+        submitFunction,
+        loadedFunction: $.noop,
+        closeFunction
+    });
+};
+
+/**
+ * Shows a dialog which asks user to install the extension. This one is
+ * displayed after installation is triggered from the script, but fails because
+ * it must be initiated by user gesture.
+ * @param callback {function} function to be executed after user clicks
+ * the install button - it should make another attempt to install the extension.
+ */
+UI.showExtensionInlineInstallationDialog = function (callback) {
+    let submitFunction = function(e,v){
+        if (v) {
+            callback();
+        }
+    };
+
+    let closeFunction = function (e, v) {
+        if (!v) {
+            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+        }
+    };
+
+    messageHandler.openTwoButtonDialog({
+        titleKey: 'dialog.externalInstallationTitle',
+        msgKey: 'dialog.inlineInstallationMsg',
+        leftButtonKey: 'dialog.inlineInstallExtension',
         submitFunction,
         loadedFunction: $.noop,
         closeFunction

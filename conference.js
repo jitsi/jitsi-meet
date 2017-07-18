@@ -72,11 +72,6 @@ let connection;
 let localAudio, localVideo;
 let initialAudioMutedState = false, initialVideoMutedState = false;
 
-/**
- * Indicates whether extension external installation is in progress or not.
- */
-let DSExternalInstallationInProgress = false;
-
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
 /*
@@ -116,68 +111,6 @@ function connect(roomName) {
         }
         throw err;
     });
-}
-
-/**
- * Creates local media tracks and connects to room. Will show error
- * dialogs in case if accessing local microphone and/or camera failed. Will
- * show guidance overlay for users on how to give access to camera and/or
- * microphone,
- * @param {string} roomName
- * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
- */
-function createInitialLocalTracksAndConnect(roomName) {
-    let audioAndVideoError,
-        audioOnlyError,
-        videoOnlyError;
-
-    JitsiMeetJS.mediaDevices.addEventListener(
-        JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
-        browser =>
-            APP.store.dispatch(
-                mediaPermissionPromptVisibilityChanged(true, browser))
-    );
-
-    // First try to retrieve both audio and video.
-    let tryCreateLocalTracks = createLocalTracks(
-            { devices: ['audio', 'video'] }, true)
-        .catch(err => {
-            // If failed then try to retrieve only audio.
-            audioAndVideoError = err;
-            return createLocalTracks({ devices: ['audio'] }, true);
-        })
-        .catch(err => {
-            audioOnlyError = err;
-
-            // Try video only...
-            return createLocalTracks({ devices: ['video'] }, true);
-        })
-        .catch(err => {
-            videoOnlyError = err;
-
-            return [];
-        });
-
-    return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
-        .then(([tracks, con]) => {
-            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
-            if (audioAndVideoError) {
-                if (audioOnlyError) {
-                    // If both requests for 'audio' + 'video' and 'audio' only
-                    // failed, we assume that there is some problems with user's
-                    // microphone and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(
-                        audioOnlyError, videoOnlyError);
-                } else {
-                    // If request for 'audio' + 'video' failed, but request for
-                    // 'audio' only was OK, we assume that we had problems with
-                    // camera and show corresponding dialog.
-                    APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
-                }
-            }
-
-            return [tracks, con];
-        });
 }
 
 /**
@@ -567,6 +500,106 @@ export default {
      * Whether the local participant is the dominant speaker in the conference.
      */
     isDominantSpeaker: false,
+
+    /**
+     * Creates local media tracks and connects to a room. Will show error
+     * dialogs in case accessing the local microphone and/or camera failed. Will
+     * show guidance overlay for users on how to give access to camera and/or
+     * microphone,
+     * @param {string} roomName
+     * @param {object} options
+     * @param {boolean} options.startScreenSharing - if <tt>true</tt> should
+     * start with screensharing instead of camera video.
+     * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
+     */
+    createInitialLocalTracksAndConnect(roomName, options = {}) {
+        let audioAndVideoError,
+            audioOnlyError,
+            screenSharingError,
+            videoOnlyError;
+
+        JitsiMeetJS.mediaDevices.addEventListener(
+            JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
+            browser =>
+                APP.store.dispatch(
+                    mediaPermissionPromptVisibilityChanged(true, browser))
+        );
+
+        // First try to retrieve both audio and video.
+        let tryCreateLocalTracks;
+
+        // FIXME the logic about trying to go audio only on error is duplicated
+        if (options.startScreenSharing) {
+            tryCreateLocalTracks = this._createDesktopTrack()
+                .then(desktopStream => {
+                    return createLocalTracks({ devices: ['audio'] }, true)
+                        .then(([audioStream]) => {
+                            return [desktopStream, audioStream];
+                        })
+                        .catch(error => {
+                            audioOnlyError = error;
+                            return [desktopStream];
+                        });
+                }).catch(error => {
+                    logger.error('Failed to obtain desktop stream', error);
+                    screenSharingError = error;
+                    return createLocalTracks({ devices: ['audio'] }, true);
+                }).catch(error => {
+                    audioOnlyError = error;
+                    return [];
+                });
+        } else {
+            tryCreateLocalTracks = createLocalTracks(
+                {devices: ['audio', 'video']}, true)
+                .catch(err => {
+                    // If failed then try to retrieve only audio.
+                    audioAndVideoError = err;
+                    return createLocalTracks({devices: ['audio']}, true);
+                })
+                .catch(err => {
+                    audioOnlyError = err;
+
+                    // Try video only...
+                    return createLocalTracks({devices: ['video']}, true);
+                })
+                .catch(err => {
+                    videoOnlyError = err;
+
+                    return [];
+                });
+        }
+
+        return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
+            .then(([tracks, con]) => {
+                APP.store.dispatch(
+                    mediaPermissionPromptVisibilityChanged(false));
+                // FIXME If there will be microphone error it will cover any
+                // screensharing dialog, but it's still better than in
+                // the reverse order where the screensharing dialog will
+                // sometimes be closing the microphone alert ($.prompt.close();
+                // is called). Need to figure out dialogs chaining to fix that.
+                if (screenSharingError) {
+                    this._handleScreenSharingError(screenSharingError);
+                }
+                if (audioAndVideoError || audioOnlyError) {
+                    if (audioOnlyError || videoOnlyError) {
+                        // If both requests for 'audio' + 'video' and 'audio'
+                        // only failed, we assume that there are some problems
+                        // with user's microphone and show corresponding dialog.
+                        APP.UI.showDeviceErrorDialog(
+                            audioOnlyError, videoOnlyError);
+                    } else {
+                        // If request for 'audio' + 'video' failed, but request
+                        // for 'audio' only was OK, we assume that we had
+                        // problems with camera and show corresponding dialog.
+                        APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                    }
+                }
+
+                return [tracks, con];
+            });
+    },
+
     /**
      * Open new connection and join to the conference.
      * @param {object} options
@@ -602,7 +635,10 @@ export default {
                 {enableAnalyticsLogging: analytics.isEnabled()}, config)
             ).then(() => {
                 analytics.init();
-                return createInitialLocalTracksAndConnect(options.roomName);
+                return this.createInitialLocalTracksAndConnect(
+                    options.roomName, {
+                        startScreenSharing: config.startScreenSharing
+                    });
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
                     if((track.isAudioTrack() && initialAudioMutedState)
@@ -1215,7 +1251,6 @@ export default {
 
     /**
      * Toggles between screensharing and camera video.
-     * @param {boolean} [shareScreen]
      * @param {Object} [options] - Screen sharing options that will be passed to
      * createLocalTracks.
      * @param {Array<string>} [options.desktopSharingSources] - Array with the
@@ -1239,118 +1274,206 @@ export default {
         }
 
         if (!this._untoggleScreenSharing) {
-            this.videoSwitchInProgress = true;
-            let externalInstallation = false;
-            const didHaveVideo = Boolean(localVideo);
-            const wasVideoMuted = this.videoMuted;
-
-            return createLocalTracks({
-                desktopSharingSources: options.desktopSharingSources,
-                devices: ['desktop'],
-                desktopSharingExtensionExternalInstallation: {
-                    interval: 500,
-                    checkAgain: () => {
-                        return DSExternalInstallationInProgress;
-                    },
-                    listener: (status, url) => {
-                        switch(status) {
-                            case "waitingForExtension":
-                                DSExternalInstallationInProgress = true;
-                                externalInstallation = true;
-                                APP.UI.showExtensionExternalInstallationDialog(
-                                    url);
-                                break;
-                            case "extensionFound":
-                                if(externalInstallation) //close the dialog
-                                    $.prompt.close();
-                                break;
-                            default:
-                                //Unknown status
-                        }
-                    }
-                }
-            }).then(([stream]) => {
-                // Stores the "untoggle" handler which remembers whether was
-                // there any video before and whether was it muted.
-                this._untoggleScreenSharing
-                    = this._turnScreenSharingOff
-                          .bind(this, didHaveVideo, wasVideoMuted);
-                DSExternalInstallationInProgress = false;
-                // close external installation dialog on success.
-                if(externalInstallation)
-                    $.prompt.close();
-                stream.on(
-                    TrackEvents.LOCAL_TRACK_STOPPED,
-                    () => {
-                        // If the stream was stopped during screen sharing
-                        // session then we should switch back to video.
-                        if (this.isSharingScreen){
-                            this._untoggleScreenSharing
-                                && this._untoggleScreenSharing();
-                        }
-                    }
-                );
-                return this.useVideoStream(stream);
-            }).then(() => {
-                this.videoSwitchInProgress = false;
-                JitsiMeetJS.analytics.sendEvent(
-                    'conference.sharingDesktop.start');
-                logger.log('sharing local desktop');
-            }).catch(err => {
-                // close external installation dialog to show the error.
-                if(externalInstallation)
-                    $.prompt.close();
-                this.videoSwitchInProgress = false;
-
-                if (err.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
-                    return Promise.reject(err);
-                }
-
-                // Pawel: With this call I'm trying to preserve the original
-                // behaviour although it is not clear why would we "untoggle"
-                // on failure. I suppose it was to restore video in case there
-                // was some problem during "this.useVideoStream(desktopStream)".
-                // It's important to note that the handler will not be available
-                // if we fail early on trying to get desktop media (which makes
-                // sense, because the camera video is still being used, so
-                // nothing to "untoggle").
-                if (this._untoggleScreenSharing) {
-                    this._untoggleScreenSharing();
-                }
-
-                logger.error('failed to share local desktop', err);
-
-                if (err.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
-                    APP.UI.showExtensionRequiredDialog(
-                        config.desktopSharingFirefoxExtensionURL
-                    );
-                    return Promise.reject(err);
-                }
-
-                // Handling:
-                // TrackErrors.PERMISSION_DENIED
-                // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
-                // TrackErrors.GENERAL
-                // and any other
-                let dialogTxt;
-                let dialogTitleKey;
-
-                if (err.name === TrackErrors.PERMISSION_DENIED) {
-                    dialogTxt = APP.translation.generateTranslationHTML(
-                        "dialog.screenSharingPermissionDeniedError");
-                    dialogTitleKey = "dialog.error";
-                } else {
-                    dialogTxt = APP.translation.generateTranslationHTML(
-                        "dialog.failtoinstall");
-                    dialogTitleKey = "dialog.permissionDenied";
-                }
-
-                APP.UI.messageHandler.openDialog(
-                    dialogTitleKey, dialogTxt, false);
-            });
+            return this._switchToScreenSharing(options);
         } else {
             return this._untoggleScreenSharing();
         }
+    },
+
+    /**
+     * Creates desktop (screensharing) {@link JitsiLocalTrack}
+     * @param {Object} [options] - Screen sharing options that will be passed to
+     * createLocalTracks.
+     *
+     * @return {Promise.<JitsiLocalTrack>} - A Promise resolved with
+     * {@link JitsiLocalTrack} for the screensharing or rejected with
+     * {@link JitsiTrackError}.
+     *
+     * @private
+     */
+    _createDesktopTrack(options = {}) {
+        let externalInstallation = false;
+        let DSExternalInstallationInProgress = false;
+        const didHaveVideo = Boolean(localVideo);
+        const wasVideoMuted = this.videoMuted;
+
+        return createLocalTracks({
+            desktopSharingSources: options.desktopSharingSources,
+            devices: ['desktop'],
+            desktopSharingExtensionExternalInstallation: {
+                interval: 500,
+                checkAgain: () => {
+                    return DSExternalInstallationInProgress;
+                },
+                listener: (status, url) => {
+                    switch(status) {
+                        case "waitingForExtension": {
+                            DSExternalInstallationInProgress = true;
+                            externalInstallation = true;
+                            const listener = () => {
+                                // Wait a little bit more just to be sure that
+                                // we won't miss the extension installation
+                                setTimeout(
+                                    () => {
+                                    DSExternalInstallationInProgress = false;
+                                    }, 500);
+                                APP.UI.removeListener(
+                                    UIEvents.EXTERNAL_INSTALLATION_CANCELED,
+                                    listener);
+                            };
+                            APP.UI.addListener(
+                                UIEvents.EXTERNAL_INSTALLATION_CANCELED,
+                                listener);
+                            APP.UI.showExtensionExternalInstallationDialog(url);
+                            break;
+                        }
+                        case "extensionFound": {
+                            if (externalInstallation) { //close the dialog
+                                $.prompt.close();
+                            }
+                            break;
+                        }
+                        default: {
+                            //Unknown status
+                        }
+                    }
+                }
+            }
+        }).then(([desktopStream]) => {
+            // Stores the "untoggle" handler which remembers whether was
+            // there any video before and whether was it muted.
+            this._untoggleScreenSharing
+                = this._turnScreenSharingOff
+                      .bind(this, didHaveVideo, wasVideoMuted);
+            desktopStream.on(
+                TrackEvents.LOCAL_TRACK_STOPPED,
+                () => {
+                    // If the stream was stopped during screen sharing
+                    // session then we should switch back to video.
+                    if (this.isSharingScreen) {
+                        this._untoggleScreenSharing
+                            && this._untoggleScreenSharing();
+                    }
+                }
+            );
+            // close external installation dialog on success.
+            if (externalInstallation) {
+                $.prompt.close();
+            }
+            return desktopStream;
+        }, error => {
+            DSExternalInstallationInProgress = false;
+            // close external installation dialog on success.
+            if (externalInstallation) {
+                $.prompt.close();
+            }
+            throw error;
+        });
+    },
+
+    /**
+     * Tries to switch to the screenshairng mode by disposing camera stream and
+     * replacing it with a desktop one.
+     *
+     * @param {Object} [options] - Screen sharing options that will be passed to
+     * createLocalTracks.
+     *
+     * @return {Promise} - A Promise resolved if the operation succeeds or
+     * rejected with some unknown type of error in case it fails. Promise will
+     * be rejected immediately if {@link videoSwitchInProgress} is true.
+     *
+     * @private
+     */
+    _switchToScreenSharing(options = {}) {
+        if (this.videoSwitchInProgress) {
+            return Promise.reject('Switch in progress.');
+        }
+
+        this.videoSwitchInProgress = true;
+        return this._createDesktopTrack(options).then(stream => {
+            return this.useVideoStream(stream);
+        }).then(() => {
+            this.videoSwitchInProgress = false;
+            JitsiMeetJS.analytics.sendEvent('conference.sharingDesktop.start');
+            logger.log('sharing local desktop');
+        }).catch(error => {
+            this.videoSwitchInProgress = false;
+            // Pawel: With this call I'm trying to preserve the original
+            // behaviour although it is not clear why would we "untoggle"
+            // on failure. I suppose it was to restore video in case there
+            // was some problem during "this.useVideoStream(desktopStream)".
+            // It's important to note that the handler will not be available
+            // if we fail early on trying to get desktop media (which makes
+            // sense, because the camera video is still being used, so
+            // nothing to "untoggle").
+            if (this._untoggleScreenSharing) {
+                this._untoggleScreenSharing();
+            }
+
+            // FIXME the code inside of _handleScreenSharingError is
+            // asynchronous, but does not return a Promise and is not part of
+            // the current Promise chain.
+            this._handleScreenSharingError(error);
+        });
+    },
+
+    /**
+     * Handles {@link JitsiTrackError} returned by the lib-jitsi-meet when
+     * trying to create screensharing track. It will either do nothing if
+     * the dialog was canceled on user's request or display inline installation
+     * dialog and ask the user to install the extension, once the extension is
+     * installed it will switch the conference to screensharing. The last option
+     * is that an unrecoverable error dialog will be displayed.
+     * @param {JitsiTrackError} error - The error returned by
+     * {@link _createDesktopTrack} Promise.
+     * @private
+     */
+    _handleScreenSharingError(error) {
+        if (error.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
+            return;
+        }
+
+        logger.error('failed to share local desktop', error);
+
+        if (error.name === TrackErrors.CHROME_EXTENSION_USER_GESTURE_REQUIRED) {
+            // If start with screen sharing the extension will fail to install
+            // (if not found), because the request has been triggered by the
+            // script. Show a dialog which asks user to click "install" and try
+            // again switching to the screen sharing.
+            APP.UI.showExtensionInlineInstallationDialog(
+                () => {
+                    this.toggleScreenSharing();
+                }
+            );
+
+            return;
+        } else if (error.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+            APP.UI.showExtensionRequiredDialog(
+                config.desktopSharingFirefoxExtensionURL
+            );
+
+            return;
+        }
+
+        // Handling:
+        // TrackErrors.PERMISSION_DENIED
+        // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
+        // TrackErrors.GENERAL
+        // and any other
+        let dialogTxt;
+        let dialogTitleKey;
+
+        if (error.name === TrackErrors.PERMISSION_DENIED) {
+            dialogTxt = APP.translation.generateTranslationHTML(
+                "dialog.screenSharingPermissionDeniedError");
+            dialogTitleKey = "dialog.error";
+        } else {
+            dialogTxt = APP.translation.generateTranslationHTML(
+                "dialog.failtoinstall");
+            dialogTitleKey = "dialog.permissionDenied";
+        }
+
+        APP.UI.messageHandler.openDialog(dialogTitleKey, dialogTxt, false);
     },
     /**
      * Setup interaction between conference and UI.
@@ -1635,17 +1758,6 @@ export default {
 
         room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
             APP.UI.updateDTMFSupport(isDTMFSupported);
-        });
-
-        APP.UI.addListener(UIEvents.EXTERNAL_INSTALLATION_CANCELED, () => {
-            // Wait a little bit more just to be sure that we won't miss the
-            // extension installation
-            setTimeout(() => DSExternalInstallationInProgress = false, 500);
-        });
-        APP.UI.addListener(UIEvents.OPEN_EXTENSION_STORE, (url) => {
-            window.open(
-                url, "extension_store_window",
-                "resizable,scrollbars=yes,status=1");
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
