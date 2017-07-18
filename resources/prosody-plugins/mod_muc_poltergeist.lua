@@ -66,6 +66,24 @@ function get_username(room, user_id)
     return poltergeists[room_name][user_id];
 end
 
+-- Removes poltergeist values from table
+-- @param room the room instance
+-- @param nick the user nick
+function remove_username(room, nick)
+    local room_name = jid.node(room.jid);
+    if (poltergeists[room_name]) then
+        local user_id_to_remove;
+        for name,username in pairs(poltergeists[room_name]) do
+            if (string.sub(username, 0, 8) == nick) then
+                user_id_to_remove = name;
+            end
+        end
+        if (user_id_to_remove) then
+            poltergeists[room_name][user_id_to_remove] = nil;
+        end
+    end
+end
+
 -- if we found that a session for a user with id has a poltergiest already
 -- created, retrieve its jid and return it to the authentication
 -- so we can reuse it and we that real user will replace the poltergiest
@@ -152,6 +170,7 @@ function remove_poltergeist_occupant(room, nick, ignore)
     end
     room:handle_normal_presence(
         prosody.hosts[poltergeist_component], leave_presence);
+    remove_username(room, nick);
 end
 
 -- Checks for existance of a poltergeist occupant
@@ -184,6 +203,14 @@ module:hook("muc-broadcast-presence", function (event)
         end
     end
 end, -100);
+
+-- cleanup room table after room is destroyed
+module:hook("muc-room-destroyed",function(event)
+    local room_name = jid.node(event.room.jid);
+    if (poltergeists[room_name]) then
+        poltergeists[room_name] = nil;
+    end
+end);
 
 --- Handles request for creating/managing poltergeists
 -- @param event the http event, holds the request query
