@@ -3,7 +3,7 @@ Index: jitsi-meet/index.html
 ===================================================================
 --- jitsi-meet.orig/index.html
 +++ jitsi-meet/index.html
-@@ -10,14 +10,14 @@
+@@ -10,13 +10,13 @@
      <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
      <meta itemprop="image" content="/images/jitsilogo.png"/>
      <script src="https://api.callstats.io/static/callstats.min.js"></script>
@@ -19,4 +19,4 @@ Index: jitsi-meet/index.html
 +    <script src="libs/jquery-ui.min.js"></script>
      <script src="libs/tooltip.js?v=1"></script><!-- bootstrap tooltip lib -->
      <script src="libs/popover.js?v=1"></script><!-- bootstrap tooltip lib -->
-     <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
+-    <script src="libs/toastr.js?v=1"></script><!-- notifications lib -->
