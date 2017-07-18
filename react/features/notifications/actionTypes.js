@@ -16,9 +16,9 @@ export const HIDE_NOTIFICATION = Symbol('HIDE_NOTIFICATION');
  * {
  *     type: SHOW_NOTIFICATION,
  *     component: ReactComponent,
- *     options: Object,
  *     props: Object,
- *.    uid: number
+ *     timeout: number,
+ *     uid: number
  * }
  */
 export const SHOW_NOTIFICATION = Symbol('SHOW_NOTIFICATION');

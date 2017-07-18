@@ -5,14 +5,13 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 
 /**
- * Implements a React {@link Component} to display a notification specifically
- * about a partipant update.
+ * Implements a React {@link Component} to display a notification.
  *
  * @extends Component
  */
-class ParticipantNotification extends Component {
+class Notification extends Component {
     /**
-     * {@code ParticipantNotification} component's property types.
+     * {@code Notification} component's property types.
      *
      * @static
      */
@@ -51,7 +50,8 @@ class ParticipantNotification extends Component {
         t: React.PropTypes.func,
 
         /**
-         * The text to display at the top of the notification.
+         * The text to display at the top of the notification. If not passed in,
+         * the passed in defaultTitleKey will be used.
          */
         title: React.PropTypes.string,
 
@@ -97,4 +97,4 @@ class ParticipantNotification extends Component {
     }
 }
 
-export default translate(ParticipantNotification);
+export default translate(Notification);

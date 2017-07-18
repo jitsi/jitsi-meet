@@ -71,13 +71,11 @@ class NotificationsContainer extends Component {
 
         if (_notifications.length && !this._notificationDismissTimeout) {
             const notification = _notifications[0];
-            const { options, uid } = notification;
-            const timeoutDuration
-                = (options && options.timeout) || DEFAULT_NOTIFICATION_TIMEOUT;
+            const { timeout, uid } = notification;
 
             this._notificationDismissTimeout = setTimeout(() => {
                 this._onDismissed(uid);
-            }, timeoutDuration);
+            }, timeout || DEFAULT_NOTIFICATION_TIMEOUT);
         }
     }
 

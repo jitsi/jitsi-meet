@@ -26,23 +26,22 @@ export function hideNotification(uid) {
  * @param {ReactComponent} component - The notification component to be
  * displayed.
  * @param {Object} props - The props needed to show the notification component.
- * @param {Object} options - Additional configuration for the notification.
- * @param {number} [options.timeout] - How long the notification should display
- * before automatically being hidden.
+ * @param {number} timeout - How long the notification should display before
+ * automatically being hidden.
  * @returns {{
  *     type: SHOW_NOTIFICATION,
  *     component: ReactComponent,
- *     options: Object,
  *     props: Object,
+ *     timeout: number,
  *     uid: number
  * }}
  */
-export function showNotification(component, props = {}, options = {}) {
+export function showNotification(component, props = {}, timeout) {
     return {
         type: SHOW_NOTIFICATION,
         component,
-        options,
         props,
+        timeout,
         uid: window.Date.now()
     };
 }

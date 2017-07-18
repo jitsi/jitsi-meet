@@ -32,8 +32,8 @@ ReducerRegistry.register('features/notifications',
                 ...state,
                 {
                     component: action.component,
-                    options: action.options,
                     props: action.props,
+                    timeout: action.timeout,
                     uid: action.uid
                 }
             ];
