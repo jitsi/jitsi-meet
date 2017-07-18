@@ -870,7 +870,7 @@ UI.notifyInitiallyMuted = function () {
         "connected",
         "notify.muted",
         null,
-        { timeout: 120000 });
+        120000);
 };
 
 /**

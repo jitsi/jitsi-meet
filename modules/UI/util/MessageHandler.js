@@ -4,7 +4,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 import {
-    ParticipantNotification,
+    Notification,
     showNotification
 } from '../../../react/features/notifications';
 
@@ -455,19 +455,22 @@ var messageHandler = {
      * @param optional configurations for the notification (e.g. timeout)
      */
     participantNotification: function(displayName, displayNameKey, cls,
-                    messageKey, messageArguments, options) {
+                    messageKey, messageArguments, timeout) {
         // If we're in ringing state we skip all notifications.
         if (!notificationsEnabled || APP.UI.isOverlayVisible()) {
             return;
         }
 
         APP.store.dispatch(
-            showNotification(ParticipantNotification, {
-                title: displayName,
-                defaultTitleKey: displayNameKey,
-                descriptionKey: messageKey,
-                descriptionArgs: messageArguments
-            }, options));
+            showNotification(
+                Notification,
+                {
+                    defaultTitleKey: displayNameKey,
+                    descriptionArguments: messageArguments,
+                    descriptionKey: messageKey,
+                    title: displayName
+                },
+                timeout));
     },
 
     /**
