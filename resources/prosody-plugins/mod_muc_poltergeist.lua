@@ -13,6 +13,12 @@ local poltergeist_component
 -- defaults to 3 min
 local poltergeist_timeout
     = module:get_option_string("poltergeist_leave_timeout", 180);
+-- this basically strips the domain from the conference.domain address
+local parentHostName = string.gmatch(tostring(module.host), "%w+.(%w.+)")();
+if parentHostName == nil then
+    log("error", "Failed to start - unable to get parent hostname");
+    return;
+end
 
 -- table to store all poltergeists we create
 local poltergeists = {};
@@ -28,8 +34,9 @@ local poltergeists_pr_ignore = {};
 -- @return returns room if found or nil
 function get_room(room_name, group)
     local room_address = jid.join(room_name, module:get_host());
-    -- if there is a group we are in multidomain mode
-    if group and group ~= "" then
+    -- if there is a group we are in multidomain mode and that group is not
+    -- our parent host
+    if group and group ~= "" and group ~= parentHostName then
         room_address = "["..group.."]"..room_address;
     end
 
@@ -92,7 +99,7 @@ prosody.events.add_handler("pre-jitsi-authentication", function(session)
     if (session.jitsi_meet_context_user) then
         local room = get_room(
             session.jitsi_bosh_query_room,
-            session.jitsi_meet_context_group);
+            session.jitsi_meet_domain);
 
         if (not room) then
             return nil;
