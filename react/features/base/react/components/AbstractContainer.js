@@ -69,11 +69,6 @@ export default class AbstractContainer extends Component {
             ...filteredProps
         } = props || this.props;
 
-        // visible
-        if (typeof visible !== 'undefined' && !visible) {
-            return null;
-        }
-
         return React.createElement(type, filteredProps, children);
     }
 }

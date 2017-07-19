@@ -20,6 +20,12 @@ export default class Container extends AbstractContainer {
      * @returns {ReactElement}
      */
     render() {
+        const { visible } = this.props;
+
+        if (typeof visible !== 'undefined' && !visible) {
+            return null;
+        }
+
         return this._render('div');
     }
 }
