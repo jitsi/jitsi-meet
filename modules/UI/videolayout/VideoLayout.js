@@ -837,9 +837,9 @@ var VideoLayout = {
         for (var video in remoteVideos) {
             let remoteVideo = remoteVideos[video];
             if (remoteVideo)
-                remoteVideo.hideIndicator();
+                remoteVideo.removeConnectionIndicator();
         }
-        localVideoThumbnail.hideIndicator();
+        localVideoThumbnail.removeConnectionIndicator();
     },
 
     removeParticipantContainer (id) {
