@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../app';
 import { toggleAudioMuted, toggleVideoMuted } from '../base/media';
+import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
 
 /**
  * Maps (redux) actions to React component props.
@@ -71,8 +72,11 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
  * }}
  */
 export function abstractMapStateToProps(state: Object): Object {
-    const media = state['features/base/media'];
+    const tracks = state['features/base/tracks'];
     const { visible } = state['features/toolbox'];
+
+    const audioTrack = getLocalAudioTrack(tracks);
+    const videoTrack = getLocalVideoTrack(tracks);
 
     return {
         /**
@@ -81,7 +85,7 @@ export function abstractMapStateToProps(state: Object): Object {
          * @protected
          * @type {boolean}
          */
-        _audioMuted: media.audio.muted,
+        _audioMuted: !audioTrack || audioTrack.muted,
 
         /**
          * Flag showing whether video is muted.
@@ -89,7 +93,7 @@ export function abstractMapStateToProps(state: Object): Object {
          * @protected
          * @type {boolean}
          */
-        _videoMuted: media.video.muted,
+        _videoMuted: !videoTrack || videoTrack.muted,
 
         /**
          * Flag showing whether toolbox is visible.
