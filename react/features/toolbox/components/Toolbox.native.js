@@ -194,14 +194,17 @@ class Toolbox extends Component {
         const iconStyle = styles.secondaryToolbarButtonIcon;
         const style = styles.secondaryToolbarButton;
         const underlayColor = 'transparent';
-        const { _audioOnly: audioOnly } = this.props;
+        const {
+            _audioOnly: audioOnly,
+            _videoMuted: videoMuted
+        } = this.props;
 
         /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
         return (
             <View style = { styles.secondaryToolbar }>
                 <ToolbarButton
-                    disabled = { audioOnly }
+                    disabled = { audioOnly || videoMuted }
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleCameraFacingMode }
