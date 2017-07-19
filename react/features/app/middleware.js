@@ -76,22 +76,31 @@ function _navigate({ dispatch, getState }) {
     const { app, getRouteToRender } = state['features/app'];
     const routeToRender = getRouteToRender && getRouteToRender(state);
 
-    // Create/destroy the local tracks as needed: create them the first time we
-    // are going to render an actual route (be that the WelcomePage or the
-    // Conference).
-    //
-    // When the WelcomePage is disabled, the app will transition to the
-    // null/undefined route. Detect these transitions and create/destroy the
-    // local tracks so the camera doesn't stay open if the app is not rendering
-    // any component.
-    if (typeof routeToRender === 'undefined' || routeToRender === null) {
-        // Destroy the local tracks if there is no route to render and there is
-        // no welcome page.
-        app.props.welcomePageEnabled || dispatch(destroyLocalTracks());
-    } else {
-        // Create the local tracks if they haven't been created yet.
-        state['features/base/tracks'].some(t => t.local)
-            || dispatch(createInitialLocalTracks());
+    // FIXME The following is logic specific to the user experience of the
+    // mobile/React Native app. Firstly, I don't like that it's here at all.
+    // Secondly, I copied the mobile/React Native detection from
+    // react/features/base/config/reducer.js because I couldn't iron out an
+    // abstraction. Because of the first point, I'm leaving the second point
+    // unresolved to attract attention to the fact that the following needs more
+    // thinking.
+    if (navigator.userAgent.match(/react[ \s-]*native/i)) {
+        // Create/destroy the local tracks as needed: create them the first time
+        // we are going to render an actual route (be that the WelcomePage or
+        // the Conference).
+        //
+        // When the WelcomePage is disabled, the app will transition to the
+        // null/undefined route. Detect these transitions and create/destroy the
+        // local tracks so the camera doesn't stay open if the app is not
+        // rendering any component.
+        if (typeof routeToRender === 'undefined' || routeToRender === null) {
+            // Destroy the local tracks if there is no route to render and there
+            // is no WelcomePage.
+            app.props.welcomePageEnabled || dispatch(destroyLocalTracks());
+        } else {
+            // Create the local tracks if they haven't been created yet.
+            state['features/base/tracks'].some(t => t.local)
+                || dispatch(createInitialLocalTracks());
+        }
     }
 
     app._navigate(routeToRender);
