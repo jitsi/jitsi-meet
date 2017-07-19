@@ -1,5 +1,6 @@
 import {
     DOMINANT_SPEAKER_CHANGED,
+    KICK_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
@@ -47,6 +48,22 @@ export function localParticipantConnectionStatusChanged(connectionStatus) {
             return dispatch(participantConnectionStatusChanged(
                 participant.id, connectionStatus));
         }
+    };
+}
+
+/**
+ * Create an action for removing a participant from the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+ *     type: KICK_PARTICIPANT,
+ *     id: string
+ * }}
+ */
+export function kickParticipant(id) {
+    return {
+        type: KICK_PARTICIPANT,
+        id
     };
 }
 

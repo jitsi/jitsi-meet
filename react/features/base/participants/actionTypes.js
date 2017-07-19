@@ -11,6 +11,16 @@
 export const DOMINANT_SPEAKER_CHANGED = Symbol('DOMINANT_SPEAKER_CHANGED');
 
 /**
+ * Create an action for removing a participant from the conference.
+ *
+ * {
+ *     type: KICK_PARTICIPANT,
+ *     id: string
+ * }
+ */
+export const KICK_PARTICIPANT = Symbol('KICK_PARTICIPANT');
+
+/**
  * Create an action for when the local participant's display name is updated.
  *
  * {

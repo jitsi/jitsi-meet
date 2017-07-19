@@ -78,7 +78,6 @@ function RemoteVideo(user, VideoLayout, emitter) {
     // Bind event handlers so they are only bound once for every instance.
     // TODO The event handlers should be turned into actions so changes can be
     // handled through reducers and middleware.
-    this._kickHandler = this._kickHandler.bind(this);
     this._muteHandler = this._muteHandler.bind(this);
     this._requestRemoteControlPermissions
         = this._requestRemoteControlPermissions.bind(this);
@@ -168,19 +167,20 @@ RemoteVideo.prototype._generatePopupContent = function () {
 
     /* jshint ignore:start */
     ReactDOM.render(
-        <I18nextProvider i18n = { i18next }>
-            <RemoteVideoMenuTriggerButton
-                initialVolumeValue = { initialVolumeValue }
-                isAudioMuted = { this.isAudioMuted }
-                isModerator = { isModerator }
-                onKick = { this._kickHandler }
-                onMute = { this._muteHandler }
-                onMenuDisplay = { this._onRemoteVideoMenuDisplay.bind(this) }
-                onRemoteControlToggle = { onRemoteControlToggle }
-                onVolumeChange = { onVolumeChange }
-                participantID = { participantID }
-                remoteControlState = { remoteControlState } />
-        </I18nextProvider>,
+        <Provider store = { APP.store }>
+            <I18nextProvider i18n = { i18next }>
+                <RemoteVideoMenuTriggerButton
+                    initialVolumeValue = { initialVolumeValue }
+                    isAudioMuted = { this.isAudioMuted }
+                    isModerator = { isModerator }
+                    onMute = { this._muteHandler }
+                    onMenuDisplay = { this._onRemoteVideoMenuDisplay.bind(this) }
+                    onRemoteControlToggle = { onRemoteControlToggle }
+                    onVolumeChange = { onVolumeChange }
+                    participantID = { participantID }
+                    remoteControlState = { remoteControlState } />
+            </I18nextProvider>
+        </Provider>,
         remoteVideoMenuContainer);
     /* jshint ignore:end */
 };
@@ -271,10 +271,6 @@ RemoteVideo.prototype._muteHandler = function () {
         //currently shouldn't be called
         logger.error(e);
     });
-};
-
-RemoteVideo.prototype._kickHandler = function () {
-    this.emitter.emit(UIEvents.USER_KICKED, this.id);
 };
 
 /**

@@ -37,12 +37,6 @@ class RemoteVideoMenuTriggerButton extends Component {
         isModerator: React.PropTypes.bool,
 
         /**
-         * Callback to invoke when the participant is to be removed from the
-         * conference.
-         */
-        onKick: React.PropTypes.func,
-
-        /**
          * Callback to invoke when the popover has been displayed.
          */
         onMenuDisplay: React.PropTypes.func,
@@ -99,7 +93,6 @@ class RemoteVideoMenuTriggerButton extends Component {
         this._rootElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onKick = this._onKick.bind(this);
         this._onMute = this._onMute.bind(this);
         this._onRemoteMenuClose = this._onRemoteMenuClose.bind(this);
         this._onRemoteMenuOpen = this._onRemoteMenuOpen.bind(this);
@@ -129,17 +122,6 @@ class RemoteVideoMenuTriggerButton extends Component {
                 </span>
             </AKInlineDialog>
         );
-    }
-
-    /**
-     * Hides the popover and invokes the onKick callback.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onKick() {
-        this._onRemoteMenuClose();
-        this.props.onKick();
     }
 
     /**
@@ -202,7 +184,7 @@ class RemoteVideoMenuTriggerButton extends Component {
                     : null }
                 { isModerator
                     ? <KickButton
-                        onClick = { this._onKick }
+                        onClick = { this._onRemoteMenuClose }
                         participantID = { participantID } />
                     : null }
                 { remoteControlState
