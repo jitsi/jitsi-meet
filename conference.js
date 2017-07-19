@@ -486,8 +486,6 @@ export default {
         // First try to retrieve both audio and video.
         let tryCreateLocalTracks;
 
-        // FIXME there is no video muted indication visible on the remote side,
-        // after starting in audio only (there's no video track)
         // FIXME the logic about trying to go audio only on error is duplicated
         if (options.startAudioOnly) {
             tryCreateLocalTracks
