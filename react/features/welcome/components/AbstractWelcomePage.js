@@ -14,7 +14,7 @@ import { generateRoomWithoutSeparator } from '../roomnameGenerator';
  */
 export class AbstractWelcomePage extends Component {
     /**
-     * AbstractWelcomePage component's property types.
+     * {@code AbstractWelcomePage} component's property types.
      *
      * @static
      */
@@ -25,10 +25,10 @@ export class AbstractWelcomePage extends Component {
     };
 
     /**
-     * Initializes a new AbstractWelcomePage instance, including the initial
-     * state of the room name input.
+     * Initializes a new {@code AbstractWelcomePage} instance.
      *
-     * @param {Object} props - Component properties.
+     * @param {Object} props - The React {@code Component} props to initialize
+     * the new {@code AbstractWelcomePage} instance with.
      */
     constructor(props) {
         super(props);
@@ -37,15 +37,15 @@ export class AbstractWelcomePage extends Component {
          * Save room name into component's local state.
          *
          * @type {Object}
-         * @property {number|null} animateTimeoutId - Identificator for
-         * letter animation timeout.
+         * @property {number|null} animateTimeoutId - Identifier of the letter
+         * animation timeout.
          * @property {string} generatedRoomname - Automatically generated
          * room name.
          * @property {string} room - Room name.
          * @property {string} roomPlaceholder - Room placeholder
          * that's used as a placeholder for input.
-         * @property {nubmer|null} updateTimeoutId - Identificator for
-         * updating generated room name.
+         * @property {nubmer|null} updateTimeoutId - Identifier of the timeout
+         * updating the generated room name.
          */
         this.state = {
             animateTimeoutId: null,
@@ -55,7 +55,7 @@ export class AbstractWelcomePage extends Component {
             updateTimeoutId: null
         };
 
-        // Bind event handlers so they are only bound once for every instance.
+        // Bind event handlers so they are only bound once per instance.
         this._animateRoomnameChanging
             = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
@@ -143,9 +143,7 @@ export class AbstractWelcomePage extends Component {
     _onJoin() {
         const room = this.state.room || this.state.generatedRoomname;
 
-        if (room) {
-            this.props.dispatch(appNavigate(room));
-        }
+        room && this.props.dispatch(appNavigate(room));
     }
 
     /**

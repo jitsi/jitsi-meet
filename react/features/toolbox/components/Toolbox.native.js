@@ -154,7 +154,6 @@ class Toolbox extends Component {
     _renderPrimaryToolbar() {
         const audioButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.AUDIO);
         const videoButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.VIDEO);
-        const { _audioOnly: audioOnly } = this.props;
 
         /* eslint-disable react/jsx-handler-names */
 
@@ -172,7 +171,7 @@ class Toolbox extends Component {
                     style = { styles.hangup }
                     underlayColor = { ColorPalette.buttonUnderlay } />
                 <ToolbarButton
-                    disabled = { audioOnly }
+                    disabled = { this.props._audioOnly }
                     iconName = { videoButtonStyles.iconName }
                     iconStyle = { videoButtonStyles.iconStyle }
                     onClick = { this.props._onToggleVideo }

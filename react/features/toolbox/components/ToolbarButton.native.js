@@ -7,13 +7,13 @@ import { Icon } from '../../base/font-icons';
 import AbstractToolbarButton from './AbstractToolbarButton';
 
 /**
- * Represents a button in Toolbar on React Native.
+ * Represents a button in {@link Toolbar} on React Native.
  *
  * @extends AbstractToolbarButton
  */
 class ToolbarButton extends AbstractToolbarButton {
     /**
-     * ToolbarButton component's property types.
+     * {@code ToolbarButton} component's property types.
      *
      * @static
      */
@@ -21,18 +21,18 @@ class ToolbarButton extends AbstractToolbarButton {
         ...AbstractToolbarButton.propTypes,
 
         /**
-         * Indicates if this button is disabled or not.
+         * Indicates whether this {@code ToolbarButton} is disabled.
          */
         disabled: React.PropTypes.bool
     };
 
     /**
-     * Renders the button of this Toolbar button.
+     * Renders the button of this {@code ToolbarButton}.
      *
      * @param {Object} children - The children, if any, to be rendered inside
-     * the button. Presumably, contains the icon of this Toolbar button.
+     * the button. Presumably, contains the icon of this {@code ToolbarButton}.
      * @protected
-     * @returns {ReactElement} The button of this Toolbar button.
+     * @returns {ReactElement} The button of this {@code ToolbarButton}.
      */
     _renderButton(children) {
         const props = {};

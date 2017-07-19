@@ -7,9 +7,9 @@ import { toggleAudioMuted, toggleVideoMuted } from '../base/media';
 import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
 
 /**
- * Maps (redux) actions to React component props.
+ * Maps redux actions to {@link Toolbox} (React {@code Component}) props.
  *
- * @param {Function} dispatch - Redux action dispatcher.
+ * @param {Function} dispatch - The redux {@code dispatch} function.
  * @returns {{
  *     _onHangup: Function,
  *     _onToggleAudio: Function,
@@ -61,9 +61,11 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
 }
 
 /**
- * Maps parts of media state to component props.
+ * Maps parts of the redux state to {@link Toolbox} (React {@code Component})
+ * props.
  *
- * @param {Object} state - Redux state.
+ * @param {Object} state - The redux state of which parts are to be mapped to
+ * {@code Toolbox} props.
  * @protected
  * @returns {{
  *     _audioMuted: boolean,
@@ -80,7 +82,7 @@ export function abstractMapStateToProps(state: Object): Object {
 
     return {
         /**
-         * Flag showing that audio is muted.
+         * Flag showing whether audio is muted.
          *
          * @protected
          * @type {boolean}
@@ -106,7 +108,7 @@ export function abstractMapStateToProps(state: Object): Object {
 }
 
 /**
- * Returns the button object corresponding to the given buttonName.
+ * Returns the button object corresponding to a specific {@code buttonName}.
  *
  * @param {string} buttonName - The name of the button.
  * @param {Object} state - The current state.
