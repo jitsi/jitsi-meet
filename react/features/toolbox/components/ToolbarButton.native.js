@@ -38,9 +38,7 @@ class ToolbarButton extends AbstractToolbarButton {
         const props = {};
 
         'disabled' in this.props && (props.disabled = this.props.disabled);
-        'onClick' in this.props && (props.onPress = event => {
-            this.props.onClick(event);
-        });
+        'onClick' in this.props && (props.onPress = this._onClick);
         'style' in this.props && (props.style = this.props.style);
         'underlayColor' in this.props
             && (props.underlayColor = this.props.underlayColor);
