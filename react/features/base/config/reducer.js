@@ -73,7 +73,7 @@ ReducerRegistry.register(
  */
 function _getInitialState() {
     return (
-        navigator.userAgent.match(/react[ \s-]*native/i)
+        navigator.product === 'ReactNative'
             ? INITIAL_RN_STATE
             : INITIAL_NON_RN_STATE);
 }
