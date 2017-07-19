@@ -154,6 +154,7 @@ class Toolbox extends Component {
     _renderPrimaryToolbar() {
         const audioButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.AUDIO);
         const videoButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.VIDEO);
+        const { _audioOnly: audioOnly } = this.props;
 
         /* eslint-disable react/jsx-handler-names */
 
@@ -171,6 +172,7 @@ class Toolbox extends Component {
                     style = { styles.hangup }
                     underlayColor = { ColorPalette.buttonUnderlay } />
                 <ToolbarButton
+                    disabled = { audioOnly }
                     iconName = { videoButtonStyles.iconName }
                     iconStyle = { videoButtonStyles.iconStyle }
                     onClick = { this.props._onToggleVideo }
@@ -192,12 +194,14 @@ class Toolbox extends Component {
         const iconStyle = styles.secondaryToolbarButtonIcon;
         const style = styles.secondaryToolbarButton;
         const underlayColor = 'transparent';
+        const { _audioOnly: audioOnly } = this.props;
 
         /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
         return (
             <View style = { styles.secondaryToolbar }>
                 <ToolbarButton
+                    disabled = { audioOnly }
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleCameraFacingMode }
@@ -212,9 +216,7 @@ class Toolbox extends Component {
                     style = { style }
                     underlayColor = { underlayColor } />
                 <ToolbarButton
-                    iconName = {
-                        this.props._audioOnly ? 'visibility-off' : 'visibility'
-                    }
+                    iconName = { audioOnly ? 'visibility-off' : 'visibility' }
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleAudioOnly }
                     style = { style }
