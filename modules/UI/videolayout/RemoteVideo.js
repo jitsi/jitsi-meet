@@ -20,12 +20,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import SmallVideo from "./SmallVideo";
 import UIUtils from "../util/UIUtil";
-import UIEvents from '../../../service/UI/UIEvents';
 
-const MUTED_DIALOG_BUTTON_VALUES = {
-    cancel: 0,
-    muted: 1
-};
 const ParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
 
@@ -78,7 +73,6 @@ function RemoteVideo(user, VideoLayout, emitter) {
     // Bind event handlers so they are only bound once for every instance.
     // TODO The event handlers should be turned into actions so changes can be
     // handled through reducers and middleware.
-    this._muteHandler = this._muteHandler.bind(this);
     this._requestRemoteControlPermissions
         = this._requestRemoteControlPermissions.bind(this);
     this._setAudioVolume = this._setAudioVolume.bind(this);
@@ -173,7 +167,6 @@ RemoteVideo.prototype._generatePopupContent = function () {
                     initialVolumeValue = { initialVolumeValue }
                     isAudioMuted = { this.isAudioMuted }
                     isModerator = { isModerator }
-                    onMute = { this._muteHandler }
                     onMenuDisplay = { this._onRemoteVideoMenuDisplay.bind(this) }
                     onRemoteControlToggle = { onRemoteControlToggle }
                     onVolumeChange = { onVolumeChange }
@@ -257,20 +250,6 @@ RemoteVideo.prototype._stopRemoteControl = function () {
     // send message about stopping
     APP.remoteControl.controller.stop();
     this.updateRemoteVideoMenu(this.isAudioMuted, true);
-};
-
-RemoteVideo.prototype._muteHandler = function () {
-    if (this.isAudioMuted)
-        return;
-
-    RemoteVideo.showMuteParticipantDialog().then(reason => {
-        if(reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
-            this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
-        }
-    }).catch(e => {
-        //currently shouldn't be called
-        logger.error(e);
-    });
 };
 
 /**
@@ -709,28 +688,6 @@ RemoteVideo.createContainer = function (spanId) {
 
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
-};
-
-/**
- * Shows 2 button dialog for confirmation from the user for muting remote
- * participant.
- */
-RemoteVideo.showMuteParticipantDialog = function () {
-    return new Promise(resolve => {
-        APP.UI.messageHandler.openTwoButtonDialog({
-            titleKey : "dialog.muteParticipantTitle",
-            msgString: "<div data-i18n='dialog.muteParticipantBody'></div>",
-            leftButtonKey: "dialog.muteParticipantButton",
-            dontShowAgain: {
-                id: "dontShowMuteParticipantDialog",
-                textKey: "dialog.doNotShowMessageAgain",
-                checked: true,
-                buttonValues: [true]
-            },
-            submitFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.muted),
-            closeFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.cancel)
-        });
-    });
 };
 
 export default RemoteVideo;

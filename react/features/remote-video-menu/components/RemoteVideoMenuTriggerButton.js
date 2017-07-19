@@ -42,11 +42,6 @@ class RemoteVideoMenuTriggerButton extends Component {
         onMenuDisplay: React.PropTypes.func,
 
         /**
-         * Callback to invoke when the participant is to be audio muted.
-         */
-        onMute: React.PropTypes.func,
-
-        /**
          * Callback to invoke choosing to start a remote control session with
          * the participant.
          */
@@ -93,7 +88,6 @@ class RemoteVideoMenuTriggerButton extends Component {
         this._rootElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onMute = this._onMute.bind(this);
         this._onRemoteMenuClose = this._onRemoteMenuClose.bind(this);
         this._onRemoteMenuOpen = this._onRemoteMenuOpen.bind(this);
     }
@@ -122,17 +116,6 @@ class RemoteVideoMenuTriggerButton extends Component {
                 </span>
             </AKInlineDialog>
         );
-    }
-
-    /**
-     * Hides the popover and invokes the onMute callback.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onMute() {
-        this._onRemoteMenuClose();
-        this.props.onMute();
     }
 
     /**
@@ -179,7 +162,7 @@ class RemoteVideoMenuTriggerButton extends Component {
                 { isModerator
                     ? <MuteButton
                         isAudioMuted = { isAudioMuted }
-                        onClick = { this._onMute }
+                        onClick = { this._onRemoteMenuClose }
                         participantID = { participantID } />
                     : null }
                 { isModerator
