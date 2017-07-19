@@ -83,7 +83,7 @@ function _navigate({ dispatch, getState }) {
     // abstraction. Because of the first point, I'm leaving the second point
     // unresolved to attract attention to the fact that the following needs more
     // thinking.
-    if (navigator.userAgent.match(/react[ \s-]*native/i)) {
+    if (navigator.product === 'ReactNative') {
         // Create/destroy the local tracks as needed: create them the first time
         // we are going to render an actual route (be that the WelcomePage or
         // the Conference).
