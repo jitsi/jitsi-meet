@@ -21,9 +21,9 @@ class ToolbarButton extends AbstractToolbarButton {
         ...AbstractToolbarButton.propTypes,
 
         /**
-         * Used to dispatch an action when the button is clicked.
+         * Indicates if this button is disabled or not.
          */
-        dispatch: React.PropTypes.func
+        disabled: React.PropTypes.bool
     };
 
     /**
@@ -37,12 +37,9 @@ class ToolbarButton extends AbstractToolbarButton {
     _renderButton(children) {
         const props = {};
 
+        'disabled' in this.props && (props.disabled = this.props.disabled);
         'onClick' in this.props && (props.onPress = event => {
-            const action = this.props.onClick(event);
-
-            if (action) {
-                this.props.dispatch(action);
-            }
+            this.props.onClick(event);
         });
         'style' in this.props && (props.style = this.props.style);
         'underlayColor' in this.props
