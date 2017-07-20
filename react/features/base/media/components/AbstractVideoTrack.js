@@ -33,6 +33,12 @@ export default class AbstractVideoTrack extends Component {
         dispatch: React.PropTypes.func,
 
         /**
+         * Optional callback to invoke when the video element has started
+         * playing video.
+         */
+        onVideoPlaying: React.PropTypes.func,
+
+        /**
          * Whether or not the store should be updated about the playing status
          * of the video. Defaults to true. One use case for setting this prop
          * to false is using multiple locals streams from the same video source,
@@ -144,6 +150,10 @@ export default class AbstractVideoTrack extends Component {
             && videoTrack
             && !videoTrack.videoStarted) {
             this.props.dispatch(trackVideoStarted(videoTrack.jitsiTrack));
+        }
+
+        if (this.props.onVideoPlaying) {
+            this.props.onVideoPlaying(this.props.videoTrack.jitsiTrack);
         }
     }
 

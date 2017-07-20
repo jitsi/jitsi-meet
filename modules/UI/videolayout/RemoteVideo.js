@@ -3,7 +3,9 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
+import { VideoTrack } from '../../../react/features/base/media';
 import {
     MuteButton,
     KickButton,
@@ -78,6 +80,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     // handled through reducers and middleware.
     this._kickHandler = this._kickHandler.bind(this);
     this._muteHandler = this._muteHandler.bind(this);
+    this._onVideoPlaying = this._onVideoPlaying.bind(this);
     this._requestRemoteControlPermissions
         = this._requestRemoteControlPermissions.bind(this);
     this._setAudioVolume = this._setAudioVolume.bind(this);
@@ -608,14 +611,15 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     let streamElement = SmallVideo.createStreamElement(stream);
 
+    // TODO Divert logic to update a react element for video but allow pass
+    // through to existing UI logic for audio.
+    if (isVideo) {
+        this._changeVideo(stream);
+       return;
+    }
+
     // Put new stream element always in front
     UIUtils.prependChild(this.container, streamElement);
-
-    // If we hide element when Temasys plugin is used then
-    // we'll never receive 'onplay' event and other logic won't work as expected
-    // NOTE: hiding will not have effect when Temasys plugin is in use, as
-    // calling attach will show it back
-    $(streamElement).hide();
 
     // If the container is currently visible
     // we attach the stream to the element.
@@ -630,6 +634,39 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
     if (!isVideo) {
         this._audioStreamElement = streamElement;
     }
+};
+
+RemoteVideo.prototype._changeVideo = function (stream) {
+    const videoContainer
+        = $(this.container).find('.videocontainer__video_wrapper');
+
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <Provider store = { APP.store }>
+            <VideoTrack
+                id = { `remoteVideo_${this.id}` }
+                onVideoPlaying = { this._onVideoPlaying }
+                triggerOnPlayingUpdate = { true }
+                videoTrack = {{ jitsiTrack: stream }} />
+        </Provider>,
+        videoContainer.get(0)
+    );
+    /* jshint ignore:end */
+};
+
+RemoteVideo.prototype._onVideoPlaying = function (stream) {
+    if (this.videoStream !== stream
+        || this.wasVideoPlayed
+        || !stream.isVideoTrack()
+        || stream.getOriginalStream().id === 'mixedmslabel') {
+        return;
+    }
+
+    this.wasVideoPlayed = true;
+    this.VideoLayout.remoteVideoActive(this.id);
+
+    // Refresh to show the video
+    this.updateView();
 };
 
 RemoteVideo.prototype.updateResolution = function (resolution) {
@@ -686,6 +723,10 @@ RemoteVideo.createContainer = function (spanId) {
     let wrapper = document.createElement('div');
     wrapper.className = 'videocontainer__background';
     container.appendChild(wrapper);
+
+    const videoWrapper = document.createElement('div');
+    videoWrapper.className = 'videocontainer__video_wrapper';
+    container.appendChild(videoWrapper);
 
     let indicatorBar = document.createElement('div');
     indicatorBar.className = "videocontainer__toptoolbar";

@@ -418,17 +418,13 @@ SmallVideo.prototype.removeModeratorIndicator = function () {
 };
 
 /**
- * This is an especially interesting function. A naive reader might think that
- * it returns this SmallVideo's "video" element. But it is much more exciting.
- * It first finds this video's parent element using jquery, then uses a utility
- * from lib-jitsi-meet to extract the video element from it (with two more
- * jquery calls), and finally uses jquery again to encapsulate the video element
- * in an array. This last step allows (some might prefer "forces") users of
- * this function to access the video element via the 0th element of the returned
- * array (after checking its length of course!).
+ * Returns a jQuery wrapped object for the element that should be the parent
+ * to the video element.
+ *
+ * @returns {Object} A jQuery DOM collection
  */
 SmallVideo.prototype.selectVideoElement = function () {
-    return $(RTCUIHelper.findVideoElement($('#' + this.videoSpanId)[0]));
+    return $(this.container).find('.videocontainer__video_wrapper');
 };
 
 /**
@@ -508,7 +504,7 @@ SmallVideo.prototype.focus = function(isFocused) {
 };
 
 SmallVideo.prototype.hasVideo = function () {
-    return this.selectVideoElement().length !== 0;
+    return this.selectVideoElement().children().length !== 0;
 };
 
 /**
@@ -545,7 +541,7 @@ SmallVideo.prototype.selectDisplayMode = function() {
     if (this.isCurrentlyOnLargeVideo()) {
         return DISPLAY_BLACKNESS_WITH_NAME;
     } else if (this.isVideoPlayable()
-        && this.selectVideoElement().length
+        && this.selectVideoElement().children().length
         && !APP.conference.isAudioOnly()) {
         // check hovering and change state to video with name
         return this._isHovered() ?
