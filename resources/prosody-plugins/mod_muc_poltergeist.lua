@@ -5,6 +5,7 @@ local neturl = require "net.url";
 local parse = neturl.parseQuery;
 local st = require "util.stanza";
 local get_room_from_jid = module:require "util".get_room_from_jid;
+local wrap_async_run = module:require "util".wrap_async_run;
 local timer = require "util.timer";
 
 -- Options
@@ -430,7 +431,6 @@ function handle_update_poltergeist (event)
     local nick = string.sub(username, 0, 8);
     if (have_poltergeist_occupant(room, nick)) then
         update_poltergeist_occupant_status(room, nick, status);
-
         return 200;
     else
         return 404;
@@ -474,15 +474,14 @@ function handle_remove_poltergeist (event)
     end
 end
 
-
 log("info", "Loading poltergeist service");
 module:depends("http");
 module:provides("http", {
     default_path = "/";
     name = "poltergeist";
     route = {
-        ["GET /poltergeist/create"] = handle_create_poltergeist;
-        ["GET /poltergeist/update"] = handle_update_poltergeist;
-        ["GET /poltergeist/remove"] = handle_remove_poltergeist;
+        ["GET /poltergeist/create"] = function (event) return wrap_async_run(event,handle_create_poltergeist) end;
+        ["GET /poltergeist/update"] = function (event) return wrap_async_run(event,handle_update_poltergeist) end;
+        ["GET /poltergeist/remove"] = function (event) return wrap_async_run(event,handle_remove_poltergeist) end;
     };
 });
