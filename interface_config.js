@@ -28,12 +28,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      */
     AUTHENTICATION_ENABLE: true,
     /**
-     * The index of the splitter button in the main toolbar. The splitter
-     * button is a button in the toolbar that will be applied a special styling
-     * visually dividing the toolbar buttons.
-     */
-    //MAIN_TOOLBAR_SPLITTER_INDEX: -1,
-    /**
      * the toolbar buttons line is intentionally left in one line, to be able
      * to easily override values or remove them using regex
      */
