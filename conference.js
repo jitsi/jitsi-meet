@@ -72,7 +72,7 @@ const eventEmitter = new EventEmitter();
 let room;
 let connection;
 let localAudio, localVideo;
-let initialAudioMutedState = false, initialVideoMutedState = false;
+let initialAudioMutedState = false;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
@@ -495,6 +495,11 @@ export default {
 
                         return [];
                     });
+
+            // Enable audio only mode
+            if (config.startAudioOnly) {
+                APP.store.dispatch(toggleAudioOnly());
+            }
         } else if (options.startScreenSharing) {
             tryCreateLocalTracks = this._createDesktopTrack()
                 .then(desktopStream => {
@@ -608,8 +613,9 @@ export default {
                     });
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
-                    if((track.isAudioTrack() && initialAudioMutedState)
-                        || (track.isVideoTrack() && initialVideoMutedState)) {
+                    if (track.isAudioTrack() && initialAudioMutedState) {
+                        track.mute();
+                    } else if (track.isVideoTrack() && this.videoMuted) {
                         track.mute();
                     }
                 });
@@ -660,15 +666,6 @@ export default {
                     // The goal here is to disable the video icon in case no
                     // video permissions were granted.
                     this.updateVideoIconEnabled();
-                }
-
-                // Enable audio only mode
-                if (config.startAudioOnly) {
-                    // It is important to have that toggled after video muted
-                    // state is adjusted by the code about lack of video tracks
-                    // above. That's because audio only will store muted state
-                    // on toggle action.
-                    APP.store.dispatch(toggleAudioOnly());
                 }
 
                 this._initDeviceList();
@@ -722,22 +719,41 @@ export default {
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
      */
-    muteVideo(mute) {
-        muteLocalVideo(mute);
+    muteVideo(mute, showUI = true) {
+        if (!localVideo && this.videoMuted && !mute) {
+            // Try to create local video if there wasn't any.
+            // This handles the case when user joined with no video
+            // (dismissed screen sharing screen or in audio only mode), but
+            // decided to add it later on by clicking on muted video icon or
+            // turning off the audio only mode.
+            //
+            // FIXME when local track creation is moved to react/redux
+            // it should take care of the use case described above
+            createLocalTracks({ devices: ['video'] }, false)
+                .then(([videoTrack]) => videoTrack)
+                .catch(error => {
+                    // FIXME should send some feedback to the API on error ?
+                    if (showUI) {
+                        APP.UI.showDeviceErrorDialog(null, error);
+                    }
+                    // Rollback the video muted status by using null track
+                    return null;
+                })
+                .then(videoTrack => this.useVideoStream(videoTrack));
+        } else {
+            muteLocalVideo(mute);
+        }
     },
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
-     * @param {boolean} force - If the track is not created, the operation
-     * will be executed after the track is created. Otherwise the operation
-     * will be ignored.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
      */
-    toggleVideoMuted(force = false) {
-        if(!localVideo && force) {
-            initialVideoMutedState = !initialVideoMutedState;
-            return;
-        }
-        this.muteVideo(!this.videoMuted);
+    toggleVideoMuted(showUI = true) {
+        this.muteVideo(!this.videoMuted, showUI);
     },
     /**
      * Retrieve list of conference participants (without local user).
@@ -1731,20 +1747,8 @@ export default {
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
             if (this.isAudioOnly() && !muted) {
                 this._displayAudioOnlyTooltip('videoMute');
-            } else if (!localVideo && this.videoMuted && !muted) {
-                // Maybe try to create local video if there wasn't any ?
-                // This handles the case when user joined with no video
-                // (dismissed screen sharing screen), but decided to add it
-                // later on by clicking on muted video icon.
-                createLocalTracks({ devices: ['video'] }, false)
-                    .then(([videoTrack]) => {
-                        APP.conference.useVideoStream(videoTrack);
-                    })
-                    .catch(error => {
-                        APP.UI.showDeviceErrorDialog(null, error);
-                    });
             } else {
-                muteLocalVideo(muted);
+                this.muteVideo(muted);
             }
         });
 
@@ -1946,7 +1950,7 @@ export default {
         );
 
         APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
-            muteLocalVideo(audioOnly);
+            this.muteVideo(audioOnly);
 
             // Immediately update the UI by having remote videos and the large
             // video update themselves instead of waiting for some other event
