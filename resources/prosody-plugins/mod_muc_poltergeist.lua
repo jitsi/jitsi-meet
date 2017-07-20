@@ -134,7 +134,8 @@ end);
 -- @param nick the nick to use for the new occupant
 -- @param name the display name fot the occupant (optional)
 -- @param avatar the avatar to use for the new occupant (optional)
-function create_poltergeist_occupant(room, nick, name, avatar)
+-- @param status the initial status to use for the new occupant (optional)
+function create_poltergeist_occupant(room, nick, name, avatar, status)
     log("debug", "create_poltergeist_occupant %s:", nick);
     -- Join poltergeist occupant to room, with the invited JID as their nick
     local join_presence = st.presence({
@@ -149,6 +150,9 @@ function create_poltergeist_occupant(room, nick, name, avatar)
     end
     if (avatar) then
         join_presence:tag("avatar-url"):text(avatar):up();
+    end
+    if (status) then
+        join_presence:tag("status"):text(status):up();
     end
 
     room:handle_first_presence(
@@ -247,6 +251,7 @@ function handle_create_poltergeist (event)
     local group = params["group"];
     local name = params["name"];
     local avatar = params["avatar"];
+    local status = params["status"];
 
     local room = get_room(room_name, group);
     if (not room) then
@@ -257,7 +262,8 @@ function handle_create_poltergeist (event)
     local username = generate_uuid();
     store_username(room, user_id, username)
 
-    create_poltergeist_occupant(room, string.sub(username,0,8), name, avatar);
+    create_poltergeist_occupant(
+        room, string.sub(username,0,8), name, avatar, status);
 
     return 200;
 end
