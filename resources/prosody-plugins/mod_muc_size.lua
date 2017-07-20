@@ -9,6 +9,7 @@ local it = require "util.iterators";
 local json = require "util.json";
 local iterators = require "util.iterators";
 local array = require"util.array";
+local wrap_async_run = module:require "util".wrap_async_run;
 
 local tostring = tostring;
 local neturl = require "net.url";
@@ -192,9 +193,9 @@ function module.load()
 	module:provides("http", {
 		default_path = "/";
 		route = {
-			["GET room-size"] = handle_get_room_size;
+			["GET room-size"] = function (event) return wrap_async_run(event,handle_get_room_size) end;
 			["GET sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
-			["GET room"] = handle_get_room;
+			["GET room"] = function (event) return wrap_async_run(event,handle_get_room) end;
 		};
 	});
 end
