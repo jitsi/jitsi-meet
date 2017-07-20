@@ -9,6 +9,7 @@ local it = require "util.iterators";
 local json = require "util.json";
 local iterators = require "util.iterators";
 local array = require"util.array";
+local wrap_async_run = module:require "util".wrap_async_run;
 
 local tostring = tostring;
 local neturl = require "net.url";
@@ -72,6 +73,10 @@ end
 -- @return GET response, containing a json with participants count,
 --         tha value is without counting the focus.
 function handle_get_room_size(event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
 	local domain_name = params["domain"];
@@ -121,6 +126,10 @@ end
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with participants details
 function handle_get_room (event)
+    if (not event.request.url.query) then
+        return 400;
+    end
+
 	local params = parse(event.request.url.query);
 	local room_name = params["room"];
 	local domain_name = params["domain"];
@@ -184,9 +193,9 @@ function module.load()
 	module:provides("http", {
 		default_path = "/";
 		route = {
-			["GET room-size"] = handle_get_room_size;
+			["GET room-size"] = function (event) return wrap_async_run(event,handle_get_room_size) end;
 			["GET sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
-			["GET room"] = handle_get_room;
+			["GET room"] = function (event) return wrap_async_run(event,handle_get_room) end;
 		};
 	});
 end

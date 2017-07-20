@@ -1,4 +1,5 @@
 local jid = require "util.jid";
+local runner, waiter = require "util.async".runner, require "util.async".waiter;
 
 --- Finds and returns room by its jid
 -- @param room_jid the room jid to search in the muc component
@@ -20,6 +21,20 @@ function get_room_from_jid(room_jid)
     end
 end
 
+
+function wrap_async_run(event,handler)
+    local result;
+    local async_func = runner(function (event)
+        local wait, done = waiter();
+        result=handler(event);
+        done();
+        return result;
+    end)
+    async_func:run(event)
+    return result;
+end
+
 return {
     get_room_from_jid = get_room_from_jid;
+    wrap_async_run = wrap_async_run;
 };
