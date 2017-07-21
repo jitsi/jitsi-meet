@@ -210,7 +210,9 @@ class DialInNumbersForm extends Component {
                     type = 'text'
                     value = { triggerText || '' } />
                 <span className = 'dial-in-numbers-trigger-icon'>
-                    <ExpandIcon label = 'expand' />
+                    <ExpandIcon
+                        label = 'expand'
+                        size = 'medium' />
                 </span>
             </div>
         );

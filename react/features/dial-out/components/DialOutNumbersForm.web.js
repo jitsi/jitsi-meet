@@ -24,13 +24,6 @@ const DEFAULT_COUNTRY = {
 };
 
 /**
- * The expand icon of the dropdown menu.
- *
- * @type {ReactElement}
- */
-const EXPAND_ICON = <ExpandIcon label = 'expand' />;
-
-/**
  * React {@code Component} responsible for fetching and displaying dial-out
  * country codes, as well as dialing a phone number.
  *
@@ -208,7 +201,9 @@ class DialOutNumbersForm extends Component {
                     type = 'text'
                     value = { dialCode || '' } />
                 <span className = 'dropdown-trigger-icon'>
-                    { EXPAND_ICON }
+                    <ExpandIcon
+                        label = 'expand'
+                        size = 'medium' />
                 </span>
             </div>
         );
