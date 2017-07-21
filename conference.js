@@ -422,6 +422,12 @@ function _connectionFailedHandler(error) {
 }
 
 export default {
+    /**
+     * Flag used to delay modification of the muted status of local media tracks
+     * until those are created (or not, but at that point it's certain that
+     * the tracks won't exist).
+     */
+    _localTracksInitialized: false,
     isModerator: false,
     audioMuted: false,
     videoMuted: false,
@@ -620,6 +626,7 @@ export default {
                     }
                 });
                 logger.log('initialized with %s local tracks', tracks.length);
+                this._localTracksInitialized = true;
                 con.addEventListener(
                     ConnectionEvents.CONNECTION_FAILED,
                     _connectionFailedHandler);
@@ -711,6 +718,8 @@ export default {
      */
     toggleAudioMuted(force = false) {
         if(!localAudio && force) {
+            // NOTE this logic will be adjusted to the same one as for the video
+            // once 'startWithAudioMuted' option is added.
             initialAudioMutedState = !initialAudioMutedState;
             return;
         }
@@ -723,6 +732,13 @@ export default {
      * dialogs in case of media permissions error.
      */
     muteVideo(mute, showUI = true) {
+        // Not ready to modify track's state yet
+        if (!this._localTracksInitialized) {
+            this.videoMuted = mute;
+
+            return;
+        }
+
         if (!localVideo && this.videoMuted && !mute) {
             // Try to create local video if there wasn't any.
             // This handles the case when user joined with no video
@@ -744,6 +760,13 @@ export default {
                 })
                 .then(videoTrack => this.useVideoStream(videoTrack));
         } else {
+            // FIXME if localVideo exists and the permissions are blocked
+            // while video muted it will fail to unmute and UI will get out of
+            // sync (the toolbar will show unmuted even though unmute failed).
+            // But for some reason that only happens when toggling off from
+            // the audio only mode - the same scenario works fine from toolbar.
+            // This is very rare corner case and supposedly this will get fixed
+            // once everything goes to react/redux.
             muteLocalVideo(mute);
         }
     },
