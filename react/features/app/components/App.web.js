@@ -1,7 +1,7 @@
-import { AbstractApp } from './AbstractApp';
-import { getLocationContextRoot } from '../functions';
-
+import { getLocationContextRoot } from '../../base/util';
 import '../../room-lock';
+
+import { AbstractApp } from './AbstractApp';
 
 /**
  * Root application component.

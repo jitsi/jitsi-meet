@@ -1,9 +1,11 @@
 /* @flow */
 
+import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
 import { conferenceWillLeave } from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
+import { parseStandardURIString } from '../util';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -21,29 +23,8 @@ import {
 export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        let { options } = state['features/base/connection'];
-
-        options = {
-            // Lib-jitsi-meet wants the config passed in multiple places and
-            // here is the latest one I have discovered.
-            ...state['features/base/config'],
-
-            // TODO It is probable that config should override the options that
-            // have been automatically constructed by the app. Unfortunately,
-            // config may specify URLs such as bosh at the time of this writing
-            // which react-native cannot parse (because they do not have a
-            // protocol/scheme).
-            ...options
-        };
-
+        const options = _constructOptions(state);
         const { issuer, jwt } = state['features/jwt'];
-        const { room } = state['features/base/conference'];
-
-        // XXX The Jitsi Meet deployments require the room argument to be in
-        // lower case at the time of this writing but, unfortunately, they do
-        // not ignore case themselves.
-        options.bosh += room ? `?room=${room.toLowerCase()}` : '';
-
         const connection
             = new JitsiMeetJS.JitsiConnection(
                 options.appId,
@@ -200,6 +181,51 @@ export function connectionFailed(
         error,
         message
     };
+}
+
+/**
+ * Constructs options to be passed to the constructor of {@code JitsiConnection}
+ * based on the redux state.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object} The options to be passed to the constructor of
+ * {@code JitsiConnection}.
+ */
+function _constructOptions(state) {
+    const defaultOptions = state['features/base/connection'].options;
+    const options = _.merge(
+        {},
+        defaultOptions,
+
+        // Lib-jitsi-meet wants the config passed in multiple places and here is
+        // the latest one I have discovered.
+        state['features/base/config'],
+    );
+    let { bosh } = options;
+
+    if (bosh) {
+        // Append room to the URL's search.
+        const { room } = state['features/base/conference'];
+
+        // XXX The Jitsi Meet deployments require the room argument to be in
+        // lower case at the time of this writing but, unfortunately, they do
+        // not ignore case themselves.
+        room && (bosh += `?room=${room.toLowerCase()}`);
+
+        // XXX By default, config.js does not add a protocol to the BOSH URL.
+        // Which trips React Native. Make sure there is a protocol in order to
+        // satisfy React Native.
+        if (bosh !== defaultOptions.bosh
+                && !parseStandardURIString(bosh).protocol) {
+            const { protocol } = parseStandardURIString(defaultOptions.bosh);
+
+            protocol && (bosh = protocol + bosh);
+        }
+
+        options.bosh = bosh;
+    }
+
+    return options;
 }
 
 /**

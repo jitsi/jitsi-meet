@@ -1,6 +1,7 @@
 /* @flow */
 
 import { assign, ReducerRegistry, set } from '../redux';
+import { parseURIString } from '../util';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -119,38 +120,38 @@ function _connectionWillConnect(
 
 /**
  * Constructs options to be passed to the constructor of {@code JitsiConnection}
- * based on a specific domain.
+ * based on a specific location URL.
  *
- * @param {string} domain - The domain with which the returned options are to be
- * populated.
+ * @param {string} locationURL - The location URL with which the returned
+ * options are to be constructed.
  * @private
- * @returns {Object}
+ * @returns {Object} The options to be passed to the constructor of
+ * {@code JitsiConnection} based on the location URL.
  */
-function _constructOptions(domain: string) {
+function _constructOptions(locationURL: URL) {
+    const locationURI = parseURIString(locationURL.href);
+
     // FIXME The HTTPS scheme for the BOSH URL works with meet.jit.si on both
     // mobile & Web. It also works with beta.meet.jit.si on Web. Unfortunately,
     // it doesn't work with beta.meet.jit.si on mobile. Temporarily, use the
     // HTTP scheme for the BOSH URL with beta.meet.jit.si on mobile.
-    let boshProtocol;
+    let { protocol } = locationURI;
+    const domain = locationURI.hostname;
 
-    if (domain === 'beta.meet.jit.si') {
-        if (typeof window === 'object') {
-            const windowLocation = window.location;
+    if (!protocol && domain === 'beta.meet.jit.si') {
+        const windowLocation = window.location;
 
-            if (windowLocation) {
-                // React Native doesn't have a window.location at the time of
-                // this writing, let alone a window.location.protocol.
-                boshProtocol = windowLocation.protocol;
-            }
-        }
-        boshProtocol || (boshProtocol = 'http:');
+        windowLocation && (protocol = windowLocation.protocol);
+        protocol || (protocol = 'http:');
     }
 
     // Default to the HTTPS scheme for the BOSH URL.
-    boshProtocol || (boshProtocol = 'https:');
+    protocol || (protocol = 'https:');
 
     return {
-        bosh: `${String(boshProtocol)}//${domain}/http-bind`,
+        bosh:
+            `${String(protocol)}//${domain}${locationURI.contextRoot || '/'
+                }http-bind`,
         hosts: {
             domain,
 
@@ -176,6 +177,6 @@ function _setLocationURL(
         { locationURL }: { locationURL: ?URL }) {
     return assign(state, {
         locationURL,
-        options: locationURL ? _constructOptions(locationURL.host) : undefined
+        options: locationURL ? _constructOptions(locationURL) : undefined
     });
 }
