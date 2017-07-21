@@ -56,6 +56,8 @@
     "react-i18next": "4.7.0",
     "react-native": "0.42.3",
     "react-native-background-timer": "1.1.0",
+    "react-native-fetch-blob": "0.10.6",
+    "react-native-img-cache": "1.4.0",
     "react-native-immersive": "0.0.5",
     "react-native-keep-awake": "2.0.4",
     "react-native-locale-detector": "1.0.1",

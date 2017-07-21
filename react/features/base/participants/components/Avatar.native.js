@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Image } from 'react-native';
+import { CustomCachedImage } from 'react-native-img-cache';
+
+import AvatarImage from './AvatarImage';
+
 
 /**
  * Implements an avatar as a React Native/mobile {@link Component}.
@@ -52,21 +55,16 @@ export default class Avatar extends Component {
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
-        // uri
         const prevURI = this.props && this.props.uri;
         const nextURI = nextProps && nextProps.uri;
-        let nextState;
 
         if (prevURI !== nextURI || !this.state) {
-            nextState = {
-                ...nextState,
-
+            const nextState = {
                 /**
                  * The source of the {@link Image} which is the actual
-                 * representation of this {@link Avatar}. As {@code Avatar}
-                 * accepts a single URI and {@code Image} deals with a set of
-                 * possibly multiple URIs, the state {@code source} was
-                 * explicitly introduced in order to reduce unnecessary renders.
+                 * representation of this {@link Avatar}. The state
+                 * {@code source} was explicitly introduced in order to reduce
+                 * unnecessary renders.
                  *
                  * @type {{
                  *     uri: string
@@ -76,9 +74,7 @@ export default class Avatar extends Component {
                     uri: nextURI
                 }
             };
-        }
 
-        if (nextState) {
             if (this.state) {
                 this.setState(nextState);
             } else {
@@ -100,10 +96,9 @@ export default class Avatar extends Component {
         const { uri, ...props } = this.props;
 
         return (
-            <Image
+            <CustomCachedImage
                 { ...props }
-
-                // XXX Avatar is expected to display the whole image.
+                component = { AvatarImage }
                 resizeMode = 'contain'
                 source = { this.state.source } />
         );

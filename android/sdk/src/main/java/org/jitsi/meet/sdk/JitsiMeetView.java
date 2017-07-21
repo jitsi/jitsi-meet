@@ -84,10 +84,10 @@ public class JitsiMeetView extends FrameLayout {
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
                 .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
+                .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
                 .addPackage(new com.rnimmersive.RNImmersivePackage())
                 .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
-                .addPackage(
-                        new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
+                .addPackage(new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
                 .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
