@@ -211,6 +211,11 @@ var VideoLayout = {
         if (largeVideo && !largeVideo.id) {
             this.updateLargeVideo(APP.conference.getMyUserId(), true);
         }
+
+        // FIXME: replace this call with a generic update call once SmallVideo
+        // only contains a ReactElement. Then remove this call once the
+        // Filmstrip is fully in React.
+        localVideoThumbnail.updateIndicators();
     },
 
     /**
@@ -763,60 +768,6 @@ var VideoLayout = {
             if (remoteVideo.isCurrentlyOnLargeVideo()) {
                 this.updateLargeVideo(id);
             }
-        }
-    },
-
-    /**
-     * Updates local stats
-     * @param percent
-     * @param object
-     */
-    updateLocalConnectionStats (percent, object) {
-        const { framerate, resolution } = object;
-
-        // FIXME overwrites 'lib-jitsi-meet' internal object
-        // Why library internal objects are passed as event's args ?
-        object.resolution = resolution[APP.conference.getMyUserId()];
-        object.framerate = framerate[APP.conference.getMyUserId()];
-        localVideoThumbnail.updateConnectionStats(percent, object);
-
-        Object.keys(resolution).forEach(function (id) {
-            if (APP.conference.isLocalId(id)) {
-                return;
-            }
-
-            let resolutionValue = resolution[id];
-            let remoteVideo = remoteVideos[id];
-
-            if (resolutionValue && remoteVideo) {
-                remoteVideo.updateResolution(resolutionValue);
-            }
-        });
-
-        Object.keys(framerate).forEach(function (id) {
-            if (APP.conference.isLocalId(id)) {
-                return;
-            }
-
-            const framerateValue = framerate[id];
-            const remoteVideo = remoteVideos[id];
-
-            if (framerateValue && remoteVideo) {
-                remoteVideo.updateFramerate(framerateValue);
-            }
-        });
-    },
-
-    /**
-     * Updates remote stats.
-     * @param id the id associated with the stats
-     * @param percent the connection quality percent
-     * @param object the stats data
-     */
-    updateConnectionStats (id, percent, object) {
-        let remoteVideo = remoteVideos[id];
-        if (remoteVideo) {
-            remoteVideo.updateConnectionStats(percent, object);
         }
     },
 

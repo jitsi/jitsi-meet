@@ -973,25 +973,6 @@ UI.hideStats = function () {
 };
 
 /**
- * Update local connection quality statistics.
- * @param {number} percent
- * @param {object} stats
- */
-UI.updateLocalStats = function (percent, stats) {
-    VideoLayout.updateLocalConnectionStats(percent, stats);
-};
-
-/**
- * Update connection quality statistics for remote user.
- * @param {string} id user id
- * @param {number} percent
- * @param {object} stats
- */
-UI.updateRemoteStats = function (id, percent, stats) {
-    VideoLayout.updateConnectionStats(id, percent, stats);
-};
-
-/**
  * Mark video as interrupted or not.
  * @param {boolean} interrupted if video is interrupted
  */

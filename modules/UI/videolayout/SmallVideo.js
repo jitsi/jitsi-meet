@@ -84,13 +84,14 @@ function SmallVideo(VideoLayout) {
     this.disableUpdateView = false;
 
     /**
-     * Statistics to display within the connection indicator. With new updates,
-     * only changed values are updated through assignment to a new reference.
+     * The current state of the user's bridge connection. The value should be
+     * a string as enumerated in the library's participantConnectionStatus
+     * constants.
      *
      * @private
-     * @type {object}
+     * @type {string|null}
      */
-    this._cachedConnectionStats = {};
+    this._connectionStatus = null;
 
     /**
      * Whether or not the ConnectionIndicator's popover is hovered. Modifies
@@ -261,18 +262,6 @@ SmallVideo.prototype.bindHoverHandler = function () {
 };
 
 /**
- * Updates the data for the indicator
- * @param id the id of the indicator
- * @param percent the percent for connection quality
- * @param object the data
- */
-SmallVideo.prototype.updateConnectionStats = function (percent, object) {
-    const newStats = Object.assign({}, object, { percent });
-
-    this.updateConnectionIndicator(newStats);
-};
-
-/**
  * Unmounts the ConnectionIndicator component.
 
  * @returns {void}
@@ -289,7 +278,8 @@ SmallVideo.prototype.removeConnectionIndicator = function () {
  * @returns {void}
  */
 SmallVideo.prototype.updateConnectionStatus = function (connectionStatus) {
-    this.updateConnectionIndicator({ connectionStatus });
+    this._connectionStatus = connectionStatus;
+    this.updateIndicators();
 };
 
 /**
@@ -742,21 +732,6 @@ SmallVideo.prototype.initBrowserSpecificProperties = function() {
 };
 
 /**
- * Creates or updates the connection indicator. Updates the previously known
- * statistics about the participant's connection.
- *
- * @param {Object} newStats - New statistics to merge with previously known
- * statistics about the participant's connection.
- * @returns {void}
- */
-SmallVideo.prototype.updateConnectionIndicator = function (newStats = {}) {
-    this._cachedConnectionStats
-        = Object.assign({}, this._cachedConnectionStats, newStats);
-
-    this.updateIndicators();
-};
-
-/**
  * Updates the React element responsible for showing connection status, dominant
  * speaker, and raised hand icons. Uses instance variables to get the necessary
  * state to display. Will create the React element if not already created.
@@ -775,11 +750,12 @@ SmallVideo.prototype.updateIndicators = function () {
         <div>
             { this._showConnectionIndicator
                 ? <ConnectionIndicator
+                    connectionStatus = { this._connectionStatus }
                     iconSize = { iconSize }
                     isLocalVideo = { this.isLocal }
                     onHover = { this._onPopoverHover }
                     showMoreLink = { this.isLocal }
-                    stats = { this._cachedConnectionStats } />
+                    userID = { this.id } />
                 : null }
             { this._showRaisedHand
                 ? <RaisedHandIndicator iconSize = { iconSize } /> : null }

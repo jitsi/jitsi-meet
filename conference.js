@@ -48,6 +48,7 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
+import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from  './react/features/desktop-picker';
 import {
     mediaPermissionPromptVisibilityChanged,
@@ -63,8 +64,6 @@ const ConferenceErrors = JitsiMeetJS.errors.conference;
 
 const TrackEvents = JitsiMeetJS.events.track;
 const TrackErrors = JitsiMeetJS.errors.track;
-
-const ConnectionQualityEvents = JitsiMeetJS.events.connectionQuality;
 
 const eventEmitter = new EventEmitter();
 
@@ -1726,16 +1725,7 @@ export default {
             }
         });
 
-        room.on(ConnectionQualityEvents.LOCAL_STATS_UPDATED,
-            (stats) => {
-                APP.UI.updateLocalStats(stats.connectionQuality, stats);
-
-        });
-
-        room.on(ConnectionQualityEvents.REMOTE_STATS_UPDATED,
-            (id, stats) => {
-                APP.UI.updateRemoteStats(id, stats.connectionQuality, stats);
-        });
+        statsEmitter.startListeningForStats(room);
 
         room.addCommandListener(this.commands.defaults.ETHERPAD, ({value}) => {
             APP.UI.initEtherpad(value);
