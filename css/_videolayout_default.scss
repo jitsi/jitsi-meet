@@ -544,7 +544,7 @@
 .video-state-indicator {
     background: $videoStateIndicatorBackground;
     color: $videoStateIndicatorColor;
-    cursor: pointer;
+    cursor: default;
     font-size: 13px;
     height: 40px;
     line-height: 20px;
@@ -588,58 +588,100 @@
     right: 80px;
 }
 
-.video-state-indicator-menu {
-    display: none;
-    padding: 10px;
-    position: absolute;
-    right: -10px;
-    top: 20px;
+.video-quality-dialog-contents {
+    align-items: center;
+    color: $modalTextColor;
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
 
-    .video-state-indicator-menu-options {
-        background: $popoverBg;
-        border-radius: 3px;
-        color: $popoverFontColor;
-        margin-top: 20px;
-        padding: 5px 0;
-        position: relative;
+    .video-quality-dialog-slider-container {
+        width: 100%;
+        text-align: center;
+    }
 
-        div {
-            cursor: pointer;
-            padding: 10px;
-            padding-right: 30px;
-            text-align: left;
-            white-space: nowrap;
+    .video-quality-dialog-slider {
+        width: calc(100% - 5px);
 
-            &.active {
-                background: $toolbarToggleBackground;
-            }
-            &:hover:not(.active) {
-                background: $popupMenuSelectedItemBackground;
-            }
+        @mixin sliderTrackStyles() {
+            height: 15px;
+            border-radius: 10px;
+            background: black;
+        }
 
-            i {
-                margin-right: 5px;
-                vertical-align: middle;
-            }
+        &::-ms-track {
+            @include sliderTrackStyles();
+        }
+
+        &::-moz-range-track {
+            @include sliderTrackStyles();
+        }
+
+        &::-webkit-slider-runnable-track {
+            @include sliderTrackStyles();
+        }
+
+        @mixin sliderThumbStyles() {
+            top: 50%;
+            border: none;
+            position: relative;
+            opacity: 0;
+        }
+
+        &::-ms-thumb {
+            @include sliderThumbStyles();
+        }
+
+        &::-moz-range-thumb {
+            @include sliderThumbStyles();
+
+        }
+
+        &::-webkit-slider-thumb {
+            @include sliderThumbStyles();
         }
     }
 
-    .video-state-indicator-menu-options::after {
-        content: " ";
-        border-color: transparent transparent $popoverBg transparent;
-        border-style: solid;
-        border-width: 5px;
-        position: absolute;
-        right: 15px;
-        top: -10px;
+    .video-quality-dialog-labels {
+        box-sizing: border-box;
+        display: flex;
+        margin-top: 5px;
+        position: relative;
+        width: 90%;
     }
-}
 
-.video-state-indicator:hover,
-.video-state-indicator *:hover {
-    background: $toolbarSelectBackground;
+    .video-quality-dialog-label {
+        position: absolute;
+        text-align: center;
+        transform: translate(-50%, 0%);
 
-    .video-state-indicator-menu {
-        display: block;
+        &::before {
+            background: rgb(140, 156, 189);
+            content: '';
+            border-radius: 50%;
+            left: 0;
+            height: 6px;
+            margin: 0 auto;
+            pointer-events: none;
+            position: absolute;
+            right: 0;
+            top: -16px;
+            width: 6px;
+        }
+    }
+
+    .video-quality-dialog-label.active {
+        color: $toolbarToggleBackground;
+
+        &::before {
+            background: $toolbarToggleBackground;
+            height: 12px;
+            top: -19px;
+            width: 12px;
+        }
+    }
+
+    .video-quality-dialog-label:first-child {
+        position: relative;
     }
 }

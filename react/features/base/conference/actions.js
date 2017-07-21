@@ -17,12 +17,15 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
+    DATA_CHANNEL_OPEN,
     LOCK_STATE_CHANGED,
+    P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
     SET_LARGE_VIDEO_HD_STATUS,
     SET_LASTN,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
+    SET_RECEIVE_VIDEO_QUALITY,
     SET_ROOM
 } from './actionTypes';
 import {
@@ -287,6 +290,19 @@ export function createConference() {
 }
 
 /**
+ * Signals the data channel with the bridge has successfully opened.
+ *
+ * @returns {{
+ *     type: DATA_CHANNEL_OPEN
+ * }}
+ */
+export function dataChannelOpened() {
+    return {
+        type: DATA_CHANNEL_OPEN
+    };
+}
+
+/**
  * Signals that the lock state of a specific JitsiConference changed.
  *
  * @param {JitsiConference} conference - The JitsiConference which had its lock
@@ -304,6 +320,22 @@ export function lockStateChanged(conference, locked) {
         type: LOCK_STATE_CHANGED,
         conference,
         locked
+    };
+}
+
+/**
+ * Sets whether or not peer2peer is currently enabled.
+ *
+ * @param {boolean} p2p - Whether or not peer2peer is currently active.
+ * @returns {{
+ *     type: P2P_STATUS_CHANGED,
+ *     p2p: boolean
+ * }}
+ */
+export function p2pStatusChanged(p2p) {
+    return {
+        type: P2P_STATUS_CHANGED,
+        p2p
     };
 }
 
@@ -435,6 +467,22 @@ export function setPassword(conference, method, password) {
             return Promise.reject();
         }
         }
+    };
+}
+
+/**
+ * Sets the max frame height to receive from remote participant videos.
+ *
+ * @param {number} receiveVideoQuality - The max video resolution to receive.
+ * @returns {{
+ *     type: SET_RECEIVE_VIDEO_QUALITY,
+ *     receiveVideoQuality: number
+ * }}
+ */
+export function setReceiveVideoQuality(receiveVideoQuality) {
+    return {
+        type: SET_RECEIVE_VIDEO_QUALITY,
+        receiveVideoQuality
     };
 }
 

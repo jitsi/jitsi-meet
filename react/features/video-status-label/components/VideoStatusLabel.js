@@ -1,8 +1,20 @@
+import { Tooltip } from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { toggleAudioOnly } from '../../base/conference';
 import { translate } from '../../base/i18n';
+
+declare var interfaceConfig: Object;
+
+/**
+ * Whether or not the video quality button is displayed in a menu.
+ *
+ * @private
+ * @type {boolean}
+ */
+const HAS_VIDEO_QUALITY_BUTTON
+    = (interfaceConfig.TOOLBAR_BUTTONS || [])
+        .find(button => button === 'videoquality');
 
 /**
  * React {@code Component} responsible for displaying a label that indicates
@@ -46,11 +58,6 @@ export class VideoStatusLabel extends Component {
         _remoteVideosVisible: React.PropTypes.bool,
 
         /**
-         * Invoked to request toggling of audio only mode.
-         */
-        dispatch: React.PropTypes.func,
-
-        /**
          * Invoked to obtain translated strings.
          */
         t: React.PropTypes.func
@@ -71,8 +78,9 @@ export class VideoStatusLabel extends Component {
             togglingToVisible: false
         };
 
-        // Bind event handler so it is only bound once for every instance.
-        this._toggleAudioOnly = this._toggleAudioOnly.bind(this);
+        // Bind event handlers so they are only bound once for every instance.
+        this._onMouseOut = this._onMouseOut.bind(this);
+        this._onMouseOver = this._onMouseOver.bind(this);
     }
 
     /**
@@ -136,54 +144,41 @@ export class VideoStatusLabel extends Component {
             = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
 
         return (
-            <div
-                className = { classNames }
-                id = 'videoResolutionLabel' >
-                { displayedLabel }
-                { this._renderVideonMenu() }
-            </div>
-        );
-    }
-
-    /**
-     * Renders a dropdown menu for changing video modes.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderVideonMenu() {
-        const { _audioOnly, t } = this.props;
-        const audioOnlyAttributes = _audioOnly ? { className: 'active' }
-            : { onClick: this._toggleAudioOnly };
-        const videoAttributes = _audioOnly ? { onClick: this._toggleAudioOnly }
-            : { className: 'active' };
-
-        return (
-            <div className = 'video-state-indicator-menu'>
-                <div className = 'video-state-indicator-menu-options'>
-                    <div { ...audioOnlyAttributes }>
-                        <i className = 'icon-visibility' />
-                        { t('audioOnly.audioOnly') }
-                    </div>
-                    <div { ...videoAttributes }>
-                        <i className = 'icon-camera' />
-                        { this.props._largeVideoHD
-                            ? t('videoStatus.hdVideo')
-                            : t('videoStatus.sdVideo') }
-                    </div>
+            <Tooltip
+                description = { t('videoStatus.changeVideoTip') }
+                onMouseOut = { this._onMouseOut }
+                onMouseOver = { this._onMouseOver }
+                position = 'left'
+                visible = { this.state.showTooltip }>
+                <div
+                    className = { classNames }
+                    id = 'videoResolutionLabel' >
+                    { displayedLabel }
                 </div>
-            </div>
+            </Tooltip>
         );
     }
 
     /**
-     * Dispatches an action to toggle the state of audio only mode.
+     * Hides the tooltip for explaining how to change received video quality.
      *
      * @private
      * @returns {void}
      */
-    _toggleAudioOnly() {
-        this.props.dispatch(toggleAudioOnly());
+    _onMouseOut() {
+        this.setState({ showTooltip: false });
+    }
+
+    /**
+     * Displays a tooltip for explaining how to change received video quality.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onMouseOver() {
+        if (HAS_VIDEO_QUALITY_BUTTON) {
+            this.setState({ showTooltip: true });
+        }
     }
 }
 

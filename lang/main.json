@@ -450,10 +450,17 @@
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {
-      "hd": "HD",
-      "hdVideo": "HD video",
-      "sd": "SD",
-      "sdVideo": "SD video"
+        "callQuality": "Call Quality",
+        "changeVideoTip": "Video quality can be changed in the menus.",
+        "hd": "HD",
+        "highQuality": "High",
+        "lowQuality": "Low",
+        "p2pEnabled": "Peer to Peer Enabled",
+        "p2pVideoQualityDescription": "In peer to peer mode, video quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
+        "recHighQualityOnly": "Will prefer high quality.",
+        "sd": "SD",
+        "standardQuality": "standard",
+        "qualityButtonTip": "Change received video quality"
     },
     "dialOut": {
         "dial": "Dial",

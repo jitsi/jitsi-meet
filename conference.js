@@ -25,9 +25,11 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
+    dataChannelOpened,
     toggleAudioOnly,
     EMAIL_COMMAND,
-    lockStateChanged
+    lockStateChanged,
+    p2pStatusChanged
 } from './react/features/base/conference';
 import { updateDeviceList } from './react/features/base/devices';
 import {
@@ -1698,6 +1700,12 @@ export default {
         });
 
         room.on(
+            ConferenceEvents.P2P_STATUS,
+            (jitsiConference, p2p) => {
+                APP.store.dispatch(p2pStatusChanged(p2p));
+        });
+
+        room.on(
             ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
             (id, connectionStatus) => {
                 APP.store.dispatch(participantConnectionStatusChanged(
@@ -1942,6 +1950,12 @@ export default {
         room.on(
             ConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
                 APP.UI.updateDevicesAvailability(id, devices);
+            }
+        );
+
+        room.on(
+            ConferenceEvents.DATA_CHANNEL_OPEN, () => {
+                APP.store.dispatch(dataChannelOpened());
             }
         );
 
