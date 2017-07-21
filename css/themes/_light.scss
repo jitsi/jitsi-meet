@@ -91,7 +91,18 @@ $popoverFontColor: #ffffff;
 $popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
 
 // Toolbar
+$secondaryToolbarBg: rgba(0, 0, 0, 0.5);
+// TOFIX: Once moved to react rename to match the side panel class name.
+$sideToolbarContainerBg: rgba(0, 0, 0, 0.75);
 $splitterColor: #ccc;
+$toolbarBackground: rgba(0, 0, 0, 0.5);
+$toolbarBadgeBackground: #165ECC;
+$toolbarBadgeColor: #FFFFFF;
+$toolbarButtonColor: #FFFFFF;
+$toolbarSelectBackground: rgba(0, 0, 0, .6);
+$toolbarTitleColor: #FFFFFF;
+$toolbarToggleBackground: #12499C;
+
 
 /**
  * Forms
