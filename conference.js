@@ -19,7 +19,6 @@ import analytics from './modules/analytics/analytics';
 
 import EventEmitter from "events";
 
-import { getLocationContextRoot } from './react/features/app';
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
@@ -50,6 +49,7 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
+import { getLocationContextRoot } from './react/features/base/util';
 import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from  './react/features/desktop-picker';
 import {

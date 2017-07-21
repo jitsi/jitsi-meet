@@ -2,9 +2,9 @@ import { setRoom } from '../base/conference';
 import { setLocationURL } from '../base/connection';
 import { setConfig } from '../base/config';
 import { loadConfig } from '../base/lib-jitsi-meet';
+import { parseURIString } from '../base/util';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
-import { _parseURIString } from './functions';
 
 declare var APP: Object;
 
@@ -19,9 +19,7 @@ declare var APP: Object;
  */
 export function appNavigate(uri: ?string) {
     return (dispatch: Dispatch<*>, getState: Function) =>
-        _appNavigateToOptionalLocation(
-            dispatch, getState,
-            _parseURIString(uri));
+        _appNavigateToOptionalLocation(dispatch, getState, parseURIString(uri));
 }
 
 /**
@@ -133,7 +131,7 @@ function _appNavigateToOptionalLocation(
     // default.
     if (!location || !location.host) {
         const defaultLocation
-            = _parseURIString(getState()['features/app'].app._getDefaultURL());
+            = parseURIString(getState()['features/app'].app._getDefaultURL());
 
         if (location) {
             location.host = defaultLocation.host;
@@ -211,9 +209,7 @@ function _loadConfig(location: Object) {
 
     // The React Native app supports an app-specific scheme which is sure to not
     // be supported by fetch (or whatever loadConfig utilizes).
-    if (protocol !== 'http:' && protocol !== 'https:') {
-        protocol = 'https:';
-    }
+    protocol !== 'http:' && protocol !== 'https:' && (protocol = 'https:');
 
     // TDOO userinfo
 
