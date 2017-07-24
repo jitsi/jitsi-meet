@@ -753,6 +753,9 @@ export default {
             this.videoMuted = mute;
 
             return;
+        } else if (localVideo && localVideo.isMuted() === mute) {
+            // NO-OP
+            return;
         }
 
         const maybeShowErrorDialog = (error) => {
@@ -1994,7 +1997,23 @@ export default {
         );
 
         APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
-            this.muteVideo(audioOnly);
+
+            // FIXME On web video track is stored both in redux and in
+            // 'localVideo' field, video is attempted to be unmuted twice when
+            // turning off the audio only mode. This will crash the app with
+            // 'unmute operation is already in progress'.
+            // Because there's no logic in redux about creating new track in
+            // case unmute when not track exists the things have to go through
+            // muteVideo logic in such case.
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const isTrackInRedux
+                = Boolean(
+                    tracks.find(
+                        track => track.jitsiTrack
+                            && track.jitsiTrack.getType() === 'video'));
+            if (!isTrackInRedux) {
+                this.muteVideo(audioOnly);
+            }
 
             // Immediately update the UI by having remote videos and the large
             // video update themselves instead of waiting for some other event

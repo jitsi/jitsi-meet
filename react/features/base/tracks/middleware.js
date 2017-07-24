@@ -160,7 +160,19 @@ function _getLocalTrack(store, mediaType: MEDIA_TYPE) {
 function _setMuted(store, action, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
-    localTrack && setTrackMuted(localTrack.jitsiTrack, action.muted);
+    if (localTrack) {
+        setTrackMuted(localTrack.jitsiTrack, action.muted)
+            .catch(error => {
+                console.error(`setTrackMuted(${action.muted}) failed`, error);
+
+                const setMuted
+                    = mediaType === MEDIA_TYPE.AUDIO
+                        ? setAudioMuted : setVideoMuted;
+
+                // Failed to modify muted state - dispatch rollback action
+                store.dispatch(setMuted(!action.muted));
+            });
+    }
 }
 
 /**
