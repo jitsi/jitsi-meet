@@ -36,7 +36,9 @@ function initCommands() {
         'display-name':
             APP.conference.changeLocalDisplayName.bind(APP.conference),
         'toggle-audio': () => APP.conference.toggleAudioMuted(true),
-        'toggle-video': () => APP.conference.toggleVideoMuted(true),
+        'toggle-video': () => {
+            APP.conference.toggleVideoMuted(false /* no UI */);
+        },
         'toggle-film-strip': APP.UI.toggleFilmstrip,
         'toggle-chat': APP.UI.toggleChat,
         'toggle-contact-list': APP.UI.toggleContactList,

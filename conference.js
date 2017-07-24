@@ -25,6 +25,7 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
+    toggleAudioOnly,
     EMAIL_COMMAND,
     lockStateChanged
 } from './react/features/base/conference';
@@ -74,7 +75,7 @@ const eventEmitter = new EventEmitter();
 let room;
 let connection;
 let localAudio, localVideo;
-let initialAudioMutedState = false, initialVideoMutedState = false;
+let initialAudioMutedState = false;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
@@ -177,27 +178,40 @@ function getDisplayName(id) {
  * result of user interaction
  */
 function muteLocalAudio(muted) {
-    muteLocalMedia(localAudio, muted, 'Audio');
+    muteLocalMedia(localAudio, muted);
 }
 
-function muteLocalMedia(localMedia, muted, localMediaTypeString) {
-    if (!localMedia) {
-        return;
+/**
+ * Mute or unmute local media stream if it exists.
+ * @param {JitsiLocalTrack} localTrack
+ * @param {boolean} muted
+ *
+ * @returns {Promise} resolved in case mute/unmute operations succeeds or
+ * rejected with an error if something goes wrong. It is expected that often
+ * the error will be of the {@link JitsiTrackError} type, but it's not
+ * guaranteed.
+ */
+function muteLocalMedia(localTrack, muted) {
+    if (!localTrack) {
+        return Promise.resolve();
     }
 
     const method = muted ? 'mute' : 'unmute';
 
-    localMedia[method]().catch(reason => {
-        logger.warn(`${localMediaTypeString} ${method} was rejected:`, reason);
-    });
+    return localTrack[method]();
 }
 
 /**
  * Mute or unmute local video stream if it exists.
  * @param {boolean} muted if video stream should be muted or unmuted.
+ *
+ * @returns {Promise} resolved in case mute/unmute operations succeeds or
+ * rejected with an error if something goes wrong. It is expected that often
+ * the error will be of the {@link JitsiTrackError} type, but it's not
+ * guaranteed.
  */
 function muteLocalVideo(muted) {
-    muteLocalMedia(localVideo, muted, 'Video');
+    return muteLocalMedia(localVideo, muted);
 }
 
 /**
@@ -424,6 +438,12 @@ function _connectionFailedHandler(error) {
 }
 
 export default {
+    /**
+     * Flag used to delay modification of the muted status of local media tracks
+     * until those are created (or not, but at that point it's certain that
+     * the tracks won't exist).
+     */
+    _localTracksInitialized: false,
     isModerator: false,
     audioMuted: false,
     videoMuted: false,
@@ -462,11 +482,14 @@ export default {
      * Creates local media tracks and connects to a room. Will show error
      * dialogs in case accessing the local microphone and/or camera failed. Will
      * show guidance overlay for users on how to give access to camera and/or
-     * microphone,
+     * microphone.
      * @param {string} roomName
      * @param {object} options
-     * @param {boolean} options.startScreenSharing - if <tt>true</tt> should
-     * start with screensharing instead of camera video.
+     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
+     * only audio track will be created and the audio only mode will be turned
+     * on.
+     * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
+     * should start with screensharing instead of camera video.
      * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
      */
     createInitialLocalTracksAndConnect(roomName, options = {}) {
@@ -486,7 +509,20 @@ export default {
         let tryCreateLocalTracks;
 
         // FIXME the logic about trying to go audio only on error is duplicated
-        if (options.startScreenSharing) {
+        if (options.startAudioOnly) {
+            tryCreateLocalTracks
+                = createLocalTracks({ devices: ['audio'] }, true)
+                    .catch(err => {
+                        audioOnlyError = err;
+
+                        return [];
+                    });
+
+            // Enable audio only mode
+            if (config.startAudioOnly) {
+                APP.store.dispatch(toggleAudioOnly());
+            }
+        } else if (options.startScreenSharing) {
             tryCreateLocalTracks = this._createDesktopTrack()
                 .then(desktopStream => {
                     return createLocalTracks({ devices: ['audio'] }, true)
@@ -594,16 +630,19 @@ export default {
                 analytics.init();
                 return this.createInitialLocalTracksAndConnect(
                     options.roomName, {
+                        startAudioOnly: config.startAudioOnly,
                         startScreenSharing: config.startScreenSharing
                     });
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
-                    if((track.isAudioTrack() && initialAudioMutedState)
-                        || (track.isVideoTrack() && initialVideoMutedState)) {
+                    if (track.isAudioTrack() && initialAudioMutedState) {
+                        track.mute();
+                    } else if (track.isVideoTrack() && this.videoMuted) {
                         track.mute();
                     }
                 });
                 logger.log('initialized with %s local tracks', tracks.length);
+                this._localTracksInitialized = true;
                 con.addEventListener(
                     ConnectionEvents.CONNECTION_FAILED,
                     _connectionFailedHandler);
@@ -695,6 +734,8 @@ export default {
      */
     toggleAudioMuted(force = false) {
         if(!localAudio && force) {
+            // NOTE this logic will be adjusted to the same one as for the video
+            // once 'startWithAudioMuted' option is added.
             initialAudioMutedState = !initialAudioMutedState;
             return;
         }
@@ -703,22 +744,60 @@ export default {
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
      */
-    muteVideo(mute) {
-        muteLocalVideo(mute);
+    muteVideo(mute, showUI = true) {
+        // Not ready to modify track's state yet
+        if (!this._localTracksInitialized) {
+            this.videoMuted = mute;
+
+            return;
+        }
+
+        const maybeShowErrorDialog = (error) => {
+            if (showUI) {
+                APP.UI.showDeviceErrorDialog(null, error);
+            }
+        };
+
+        if (!localVideo && this.videoMuted && !mute) {
+            // Try to create local video if there wasn't any.
+            // This handles the case when user joined with no video
+            // (dismissed screen sharing screen or in audio only mode), but
+            // decided to add it later on by clicking on muted video icon or
+            // turning off the audio only mode.
+            //
+            // FIXME when local track creation is moved to react/redux
+            // it should take care of the use case described above
+            createLocalTracks({ devices: ['video'] }, false)
+                .then(([videoTrack]) => videoTrack)
+                .catch(error => {
+                    // FIXME should send some feedback to the API on error ?
+                    maybeShowErrorDialog(error);
+
+                    // Rollback the video muted status by using null track
+                    return null;
+                })
+                .then(videoTrack => this.useVideoStream(videoTrack));
+        } else {
+            const oldMutedStatus = this.videoMuted;
+
+            muteLocalVideo(mute)
+                .catch(error => {
+                    maybeShowErrorDialog(error);
+                    this.videoMuted = oldMutedStatus;
+                    APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                });
+        }
     },
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
-     * @param {boolean} force - If the track is not created, the operation
-     * will be executed after the track is created. Otherwise the operation
-     * will be ignored.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
      */
-    toggleVideoMuted(force = false) {
-        if(!localVideo && force) {
-            initialVideoMutedState = !initialVideoMutedState;
-            return;
-        }
-        this.muteVideo(!this.videoMuted);
+    toggleVideoMuted(showUI = true) {
+        this.muteVideo(!this.videoMuted, showUI);
     },
     /**
      * Retrieve list of conference participants (without local user).
@@ -1721,20 +1800,8 @@ export default {
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
             if (this.isAudioOnly() && !muted) {
                 this._displayAudioOnlyTooltip('videoMute');
-            } else if (!localVideo && this.videoMuted && !muted) {
-                // Maybe try to create local video if there wasn't any ?
-                // This handles the case when user joined with no video
-                // (dismissed screen sharing screen), but decided to add it
-                // later on by clicking on muted video icon.
-                createLocalTracks({ devices: ['video'] }, false)
-                    .then(([videoTrack]) => {
-                        APP.conference.useVideoStream(videoTrack);
-                    })
-                    .catch(error => {
-                        APP.UI.showDeviceErrorDialog(null, error);
-                    });
             } else {
-                muteLocalVideo(muted);
+                this.muteVideo(muted);
             }
         });
 
@@ -1927,7 +1994,7 @@ export default {
         );
 
         APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
-            muteLocalVideo(audioOnly);
+            this.muteVideo(audioOnly);
 
             // Immediately update the UI by having remote videos and the large
             // video update themselves instead of waiting for some other event
@@ -2038,7 +2105,7 @@ export default {
                     JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
                         // Ugly way to synchronize real device IDs with local
                         // storage and settings menu. This is a workaround until
-                        // getConstraints() method will be implemented 
+                        // getConstraints() method will be implemented
                         // in browsers.
                         if (localAudio) {
                             APP.settings.setMicDeviceId(
