@@ -1,3 +1,5 @@
+/* @flow */
+
 import React from 'react';
 import {
     Dimensions,
@@ -31,6 +33,9 @@ export default class Container extends AbstractContainer {
         // eslint-disable-next-line prefer-const
         let { onClick, style, touchFeedback, visible, ...props } = this.props;
 
+        // onClick & touchFeedback
+        (typeof touchFeedback === 'undefined') && (touchFeedback = onClick);
+
         // visible
 
         // The following property is responsible to hide/show this Container by
@@ -50,9 +55,6 @@ export default class Container extends AbstractContainer {
             };
         }
 
-        // onClick & touchFeedback
-        (typeof touchFeedback === 'undefined') && (touchFeedback = onClick);
-
         const renderParent = touchFeedback || onClick;
 
         if (!renderParent && visibilityStyle) {
@@ -63,20 +65,17 @@ export default class Container extends AbstractContainer {
         }
 
         // eslint-disable-next-line object-property-newline
-        let component = this._render(View, { ...props, style });
+        let component = super._render(View, { ...props, style });
 
         if (renderParent) {
             const parentType
-                = touchFeedback
-                    ? TouchableHighlight
-                    : TouchableWithoutFeedback;
+                = touchFeedback ? TouchableHighlight : TouchableWithoutFeedback;
             const parentProps = {};
 
             onClick && (parentProps.onPress = onClick);
             visibilityStyle && (parentProps.style = visibilityStyle);
 
-            component
-                = React.createElement(parentType, parentProps, component);
+            component = React.createElement(parentType, parentProps, component);
         }
 
         return component;

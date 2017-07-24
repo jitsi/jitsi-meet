@@ -1,3 +1,5 @@
+/* @flow */
+
 import AbstractContainer from '../AbstractContainer';
 
 /**
@@ -22,10 +24,9 @@ export default class Container extends AbstractContainer {
     render() {
         const { visible } = this.props;
 
-        if (typeof visible !== 'undefined' && !visible) {
-            return null;
-        }
-
-        return this._render('div');
+        return (
+            typeof visible === 'undefined' || visible
+                ? super._render('div')
+                : null);
     }
 }
