@@ -40,9 +40,13 @@ class LargeVideo extends Component {
         /**
          * The internal reference to the DOM/HTML element intended for
          * displaying a video.
-         * @type {[type]}
+         *
+         * @private
+         * @type {Object}
          */
         this._videoElement = null;
+
+        this._wrapperElement = null;
 
         this.state = {
             /**
@@ -67,6 +71,7 @@ class LargeVideo extends Component {
      */
     componentDidMount() {
         this._videoElement = document.getElementById('largeVideo');
+        this._wrapperElement = document.getElementById('largeVideoWrapper');
     }
 
     /**
@@ -98,6 +103,7 @@ class LargeVideo extends Component {
                     { this.state._isVideoReady
                     && this.props.addFaceTracker
                     && <FacePrompt
+                        wrapperElement = {this._wrapperElement }
                         videoElement = { this._videoElement } /> }
                     <video
                         autoPlay = { true }
@@ -134,6 +140,7 @@ class LargeVideo extends Component {
 
         this.props.addFaceTracker({
             videoElement: this._videoElement,
+            wrapperElement: this._wrapperElement,
             delay: LARGE_VIDEO_TRACKING_DELAY,
             duration: LARGE_VIDEO_PROMPT_DURATION,
             fps: LARGE_VIDEO_TRACKING_FPS

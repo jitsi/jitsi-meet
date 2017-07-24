@@ -1,4 +1,6 @@
-import tracking from 'jstracking';
+import { face, tracking } from 'tracking';
+
+import { elementResizeMonitor } from './ElementResizeMonitor';
 
 const FACE_RECT_WIDTH_RATIO = 0.7;
 const FACE_RECT_HEIGHT_RATIO = 0.9;
@@ -8,6 +10,7 @@ const FACE_RECT_LEFT_RATIO = (1 - FACE_RECT_WIDTH_RATIO) / 2;
 const TRACKING_INITIAL_SCALE = 4;
 const TRACKING_STEP_SIZE = 2;
 const TRACKING_EDGES_DENSITY = 0.1;
+const TRACKING_THRESHOLD = 60000;
 
 /**
  * Class for tracking faces in a video.
@@ -17,16 +20,17 @@ class FaceTracker {
     /**
      * Initializes a new FaceTracker instance.
      *
-     * @param  {Object} props - The read-only props with the new instance is
+     * @param {Object} props - The read-only props with the new instance is
      * to be initialized.
      */
     constructor(props) {
-        const { videoElement, ...options } = props;
+        const { videoElement, wrapperElement, ...options } = props;
 
         /**
          * Options for tracking, and may contain tracking delay, tracking fps,
          * and warning duration.
          *
+         * @private
          * @type {Object}
          */
         this._options = options;
@@ -34,9 +38,18 @@ class FaceTracker {
         /**
          * The internal reference to the DOM/HTML video element to track face.
          *
+         * @private
          * @type {HTMLVideoElement|Object}
          */
         this._videoElement = videoElement;
+
+        /**
+         * The internal reference to the wrapper element of the video.
+         *
+         * @private
+         * @type {HTMLDivElement}
+         */
+        this._wrapperElement = wrapperElement;
 
         /**
          * Previous time when the user's face is not well-positioned.
@@ -72,6 +85,7 @@ class FaceTracker {
         /**
          * A ObjectTracker instance for face tracking.
          *
+         * @private
          * @type {Object}
          */
         this._tracker = null;
@@ -80,6 +94,7 @@ class FaceTracker {
          * A TrackerTask instance to run the face tracking computation.
          * It is created via a Tracker instance.
          *
+         * @private
          * @type {Object}
          */
         this._trackerTask = null;
@@ -89,6 +104,7 @@ class FaceTracker {
          * while) is detected or not.
          * If true, necessary warning infomration needs to be toggled.
          *
+         * @private
          * @type {Boolean}
          */
         this._isAnomalyDetected = false;
@@ -111,6 +127,16 @@ class FaceTracker {
         this._initFaceRect();
         this._initTracker();
         this._trackFace(showWarningCb, hideWarningCb);
+
+        if (this._wrapperElement) {
+            elementResizeMonitor
+                .registerHandler(
+                    this._wrapperElement,
+                    () => {
+                        this._initFaceRect();
+                    }
+                );
+        }
     }
 
     /**
@@ -124,6 +150,16 @@ class FaceTracker {
         }
         this._enabled = false;
         this._detrackFace();
+
+        if (this._wrapperElement) {
+            elementResizeMonitor
+                .removeHandler(
+                    this._wrapperElement,
+                    () => {
+                        this._initFaceRect();
+                    }
+                );
+        }
     }
 
     /**
@@ -132,6 +168,7 @@ class FaceTracker {
      * @returns {void}
      */
     _initTracker() {
+        tracking.ViolaJones.classifiers.face = face;
         this._tracker = new tracking.ObjectTracker('face');
 
         // Sets necessary face tracking parameters.
@@ -149,7 +186,6 @@ class FaceTracker {
     _initFaceRect() {
         const videoElement = this._videoElement;
 
-        console.warn('offsetWidth', videoElement.offsetWidth);
         this._faceRect = {
             x: videoElement.offsetWidth * FACE_RECT_LEFT_RATIO,
             y: videoElement.offsetHeight * FACE_RECT_TOP_RATIO,
@@ -172,7 +208,8 @@ class FaceTracker {
         this._trackerTask = tracking.track(
             this._videoElement, this._tracker, {
                 fps: this._options.fps,
-                scaled: true
+                scaled: true,
+                threshold: TRACKING_THRESHOLD
             }
         );
 
@@ -219,7 +256,6 @@ class FaceTracker {
      * @returns {boolean}
      */
     _isBadPosition(faceData) {
-        console.warn('faceData', faceData);
         if (faceData.length < 1) {
             return true;
         }
@@ -253,8 +289,6 @@ class FaceTracker {
      * @returns {void}
      */
     _toggleWarning(showWarningCb, hideWarningCb) {
-        console.warn('togglewarning...');
-        console.warn(showWarningCb);
         if (this._isAnomalyDetected) {
             return;
         }

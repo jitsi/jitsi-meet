@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { SHOW_PROMPT } from '../actionTypes';
+import { elementResizeMonitor } from './ElementResizeMonitor';
 
 const FACE_TEXT_FONT_SIZE_RATIO = 0.3;
 const FACE_MAX_TEXT_FONT_SIZE = 150;
@@ -34,7 +35,12 @@ class FacePrompt extends Component {
         /**
          * Reference to a HTML video element for displaying prompt on.
          */
-        videoElement: React.PropTypes.object
+        videoElement: React.PropTypes.object,
+
+        /**
+         * Reference to a HTML element which wraps the video element.
+         */
+        wrapperElement: React.PropTypes.object
     };
 
     /**
@@ -83,6 +89,15 @@ class FacePrompt extends Component {
          */
         this._videoElement = this.props.videoElement;
 
+        /**
+         * The internal reference to the wrapper element of the video.
+         * The wrapper element is used for monitoring resizing event.
+         *
+         * @private
+         * @type {HTMLDivElement}
+         */
+        this._wrapperElement = this.props.wrapperElement;
+
         // Bind event handlers so they are only bound once for every instance.
         this._setRootElement = this._setRootElement.bind(this);
         this._setTextElement = this._setTextElement.bind(this);
@@ -96,10 +111,20 @@ class FacePrompt extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        setTimeout(() => {
-            this._initContainerSize();
-            this._initFontSize();
-        }, 1000);
+        if (this._wrapperElement) {
+            // The FacePrompt component is always rendered above the target
+            // video, so it's not necessary to remove the handler.
+            elementResizeMonitor
+                .registerHandler(
+                    this._wrapperElement, () => {
+                        this._initContainerSize();
+                        this._initFontSize();
+                    }
+                );
+        }
+
+        this._initContainerSize();
+        this._initFontSize();
     }
 
     /**
@@ -109,7 +134,6 @@ class FacePrompt extends Component {
      * @returns {ReactElement}
      */
     render() {
-        console.warn(this.props);
         if (this._videoElement
             && this._videoElement === this.props.toggledVideoElement) {
             if (this.props.actionType === SHOW_PROMPT) {
@@ -165,7 +189,6 @@ class FacePrompt extends Component {
      * @returns {void}
      */
     _initContainerSize() {
-        console.warn('rootElement', this._rootElement);
         this._rootElement.setAttribute('style',
             `width:${this._videoElement.offsetWidth}px;
             height:${this._videoElement.offsetHeight}px`);

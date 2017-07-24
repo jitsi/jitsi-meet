@@ -39,15 +39,24 @@ export function disableFaceTracking(videoElement) {
  *
  * @param {HTMLVideoElement|Object} videoElement - The target face-tracking
  * video.
+ * @param {HTMLDivElement|Object} wrapperElement - The wrapper element of video.
  * @param {number} delay - Tracking delay.
  * @param {number} duration - Duration for warning information.
  * @param {number} fps - Face tracking count per second.
+ * @param {number} threshold - Threshold of pixels for auto-scaling of
+ * tracking.
  * @returns {Object}
  */
-export function addFaceTracker({ videoElement, delay, duration, fps }) {
+export function addFaceTracker({
+    videoElement,
+    wrapperElement,
+    delay,
+    duration,
+    fps }) {
     return {
         type: ADD_FACE_TRACKER,
         videoElement,
+        wrapperElement,
         delay,
         duration,
         fps

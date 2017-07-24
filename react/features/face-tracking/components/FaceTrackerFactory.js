@@ -1,11 +1,11 @@
 import FaceTracker from './FaceTracker';
 
 /**
- * Class to manage a map of FaceTracker instances.
+ * Class to manage a collection of FaceTracker instances.
  */
 class FaceTrackerFactory {
     /**
-     * Initializes the map of FaceTracker instances.
+     * Initializes the collection of FaceTracker instances.
      */
     constructor() {
         this._faceTrackers = new Map();
