@@ -103,8 +103,8 @@ class LargeVideo extends Component {
                     { this.state._isVideoReady
                     && this.props.addFaceTracker
                     && <FacePrompt
-                        wrapperElement = {this._wrapperElement }
-                        videoElement = { this._videoElement } /> }
+                        videoElement = { this._videoElement }
+                        wrapperElement = { this._wrapperElement } /> }
                     <video
                         autoPlay = { true }
                         id = 'largeVideo'
