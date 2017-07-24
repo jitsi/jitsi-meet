@@ -493,6 +493,10 @@ export default {
      * on.
      * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
      * should start with screensharing instead of camera video.
+     * @param {boolean} options.startWithAudioMuted - will start the conference
+     * without any audio tracks.
+     * @param {boolean} options.startWithVideoMuted - will start the conference
+     * without any video tracks.
      * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
      */
     createInitialLocalTracksAndConnect(roomName, options = {}) {
@@ -500,6 +504,20 @@ export default {
             audioOnlyError,
             screenSharingError,
             videoOnlyError;
+        const initialDevices = [];
+        let requestedAudio = false;
+        let requestedVideo = false;
+
+        if (!options.startWithAudioMuted) {
+            initialDevices.push('audio');
+            requestedAudio = true;
+        }
+        if (!options.startWithVideoMuted
+                && !options.startAudioOnly
+                && !options.startScreenSharing) {
+            initialDevices.push('video');
+            requestedVideo = true;
+        }
 
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
@@ -508,26 +526,21 @@ export default {
                     mediaPermissionPromptVisibilityChanged(true, browser))
         );
 
-        // First try to retrieve both audio and video.
         let tryCreateLocalTracks;
 
-        // FIXME the logic about trying to go audio only on error is duplicated
-        if (options.startAudioOnly) {
-            tryCreateLocalTracks
-                = createLocalTracks({ devices: ['audio'] }, true)
-                    .catch(err => {
-                        audioOnlyError = err;
+        // Enable audio only mode
+        if (config.startAudioOnly) {
+            APP.store.dispatch(toggleAudioOnly());
+        }
 
-                        return [];
-                    });
-
-            // Enable audio only mode
-            if (config.startAudioOnly) {
-                APP.store.dispatch(toggleAudioOnly());
-            }
-        } else if (options.startScreenSharing) {
+        // FIXME is there any simpler way to rewrite this spaghetti below ?
+        if (options.startScreenSharing) {
             tryCreateLocalTracks = this._createDesktopTrack()
                 .then(desktopStream => {
+                    if (!requestedAudio) {
+                        return [desktopStream];
+                    }
+
                     return createLocalTracks({ devices: ['audio'] }, true)
                         .then(([audioStream]) => {
                             return [desktopStream, audioStream];
@@ -539,26 +552,53 @@ export default {
                 }).catch(error => {
                     logger.error('Failed to obtain desktop stream', error);
                     screenSharingError = error;
-                    return createLocalTracks({ devices: ['audio'] }, true);
+                    return requestedAudio
+                        ? createLocalTracks({ devices: ['audio'] }, true)
+                        : [];
                 }).catch(error => {
                     audioOnlyError = error;
                     return [];
                 });
+        } else if (!requestedAudio && !requestedVideo) {
+            // Resolve with no tracks
+            tryCreateLocalTracks = Promise.resolve([]);
         } else {
             tryCreateLocalTracks = createLocalTracks(
-                {devices: ['audio', 'video']}, true)
+                { devices: initialDevices }, true)
                 .catch(err => {
-                    // If failed then try to retrieve only audio.
-                    audioAndVideoError = err;
-                    return createLocalTracks({devices: ['audio']}, true);
-                })
-                .catch(err => {
+                    if (requestedAudio && requestedVideo) {
+
+                        // Try audio only...
+                        audioAndVideoError = err;
+
+                        return createLocalTracks({devices: ['audio']}, true);
+                    } else if (requestedAudio && !requestedVideo) {
+                        audioOnlyError = err;
+
+                        return [];
+                    } else if (requestedVideo && !requestedAudio) {
+                        videoOnlyError = err;
+
+                        return [];
+                    }
+                    logger.error('Should never happen');
+                }).catch(err => {
+                    // Log this just in case...
+                    if (!requestedAudio) {
+                        logger.error('The impossible just happened', err);
+                    }
                     audioOnlyError = err;
 
                     // Try video only...
-                    return createLocalTracks({devices: ['video']}, true);
+                    return requestedVideo
+                        ? createLocalTracks({devices: ['video']}, true)
+                        : [];
                 })
                 .catch(err => {
+                    // Log this just in case...
+                    if (!requestedVideo) {
+                        logger.error('The impossible just happened', err);
+                    }
                     videoOnlyError = err;
 
                     return [];
@@ -634,7 +674,9 @@ export default {
                 return this.createInitialLocalTracksAndConnect(
                     options.roomName, {
                         startAudioOnly: config.startAudioOnly,
-                        startScreenSharing: config.startScreenSharing
+                        startScreenSharing: config.startScreenSharing,
+                        startWithAudioMuted: config.startWithAudioMuted,
+                        startWithVideoMuted: config.startWithVideoMuted,
                     });
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
