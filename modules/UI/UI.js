@@ -32,7 +32,6 @@ import {
 import {
     checkAutoEnableDesktopSharing,
     dockToolbox,
-    setAudioIconEnabled,
     setToolbarButton,
     showDialPadButton,
     showEtherpadButton,
@@ -710,9 +709,7 @@ UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.store.dispatch(setAudioMuted(muted));
-        APP.store.dispatch(setToolbarButton('microphone', {
-            toggled: muted
-        }));
+        APP.conference.updateAudioIconEnabled();
     }
 };
 
@@ -723,6 +720,7 @@ UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.store.dispatch(setVideoMuted(muted));
+        APP.conference.updateVideoIconEnabled();
     }
 };
 
@@ -1096,6 +1094,8 @@ UI.onLocalRaiseHandChanged = function (isRaisedHand) {
  */
 UI.onAvailableDevicesChanged = function (devices) {
     APP.store.dispatch(updateDeviceList(devices));
+    APP.conference.updateAudioIconEnabled();
+    APP.conference.updateVideoIconEnabled();
 };
 
 /**
@@ -1366,15 +1366,6 @@ UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
         sharedVideoManager.onSharedVideoStop(id, attributes);
 };
-
-/**
- * Enables / disables microphone toolbar button.
- *
- * @param {boolean} enabled indicates if the microphone button should be
- * enabled or disabled
- */
-UI.setMicrophoneButtonEnabled
-    = enabled => APP.store.dispatch(setAudioIconEnabled(enabled));
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes

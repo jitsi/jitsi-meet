@@ -55,11 +55,6 @@ function getNewAudioInputDevice(newDevices, localAudio) {
             availableAudioInputDevices[0].label !== '') {
             return availableAudioInputDevices[0].deviceId;
         }
-        // Otherwise we assume that we don't have any audio input devices
-        // to use and that's why disable microphone button on UI.
-        else {
-            APP.UI.setMicrophoneButtonEnabled(false);
-        }
     } else {
         // And here we handle case when we already have some device working,
         // but we plug-in a "preferred" (previously selected in settings, stored

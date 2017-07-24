@@ -33,7 +33,10 @@ import { updateDeviceList } from './react/features/base/devices';
 import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
-import { setVideoAvailable } from './react/features/base/media';
+import {
+    setAudioAvailable,
+    setVideoAvailable
+} from './react/features/base/media';
 import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
@@ -671,24 +674,17 @@ export default {
                 }
 
                 // if user didn't give access to mic or camera or doesn't have
-                // them at all, we disable corresponding toolbar buttons
+                // them at all, we mark corresponding toolbar buttons as muted,
+                // so that the user can try unmute later on and add audio/video
+                // to the conference
                 if (!tracks.find((t) => t.isAudioTrack())) {
-                    APP.UI.setMicrophoneButtonEnabled(false);
+                    this.audioMuted = true;
+                    APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
                 }
 
                 if (!tracks.find((t) => t.isVideoTrack())) {
-                    // Instead of disabling the button we want to show button
-                    // muted, so that the user can have the opportunity to add
-                    // the video later on, even if joined without it.
                     this.videoMuted = true;
                     APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
-                    // FIXME this is a workaround for the situation where
-                    // both audio and video permissions are rejected initially
-                    // and the callback from _initDeviceList will never be
-                    // executed (GUM not initialized - check lib-jitsi-meet).
-                    // The goal here is to disable the video icon in case no
-                    // video permissions were granted.
-                    this.updateVideoIconEnabled();
                 }
 
                 this._initDeviceList();
@@ -1156,7 +1152,6 @@ export default {
                     this.isSharingScreen = false;
                 }
                 APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
-                this.updateVideoIconEnabled();
                 APP.UI.updateDesktopSharingButtons();
             });
     },
@@ -1178,7 +1173,6 @@ export default {
                 } else {
                     this.audioMuted = false;
                 }
-                APP.UI.setMicrophoneButtonEnabled(true);
                 APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
             });
     },
@@ -1799,7 +1793,19 @@ export default {
             APP.UI.updateDTMFSupport(isDTMFSupported);
         });
 
-        APP.UI.addListener(UIEvents.AUDIO_MUTED, muteLocalAudio);
+        APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
+            if (!localAudio && this.audioMuted && !muted) {
+                createLocalTracks({ devices: ['audio'] }, false)
+                    .then(([audioTrack]) => {
+                        this.useAudioStream(audioTrack);
+                    })
+                    .catch(error => {
+                        APP.UI.showDeviceErrorDialog(error, null);
+                    });
+            } else {
+                muteLocalAudio(muted);
+            }
+        });
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
             if (this.isAudioOnly() && !muted) {
                 this._displayAudioOnlyTooltip('videoMute');
@@ -2139,7 +2145,6 @@ export default {
                         mediaDeviceHelper.setCurrentMediaDevices(devices);
                         APP.UI.onAvailableDevicesChanged(devices);
                         APP.store.dispatch(updateDeviceList(devices));
-                        this.updateVideoIconEnabled();
                     });
 
                     this.deviceChangeListener = (devices) =>
@@ -2221,9 +2226,31 @@ export default {
             .then(() => {
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
                 APP.UI.onAvailableDevicesChanged(devices);
-                this.updateVideoIconEnabled();
             });
     },
+
+    /**
+     * Determines whether or not the audio button should be enabled.
+     */
+    updateAudioIconEnabled() {
+        const audioMediaDevices
+            = mediaDeviceHelper.getCurrentMediaDevices().audioinput;
+        const audioDeviceCount
+            = audioMediaDevices ? audioMediaDevices.length : 0;
+
+        // The audio functionality is considered available if there are any
+        // audio devices detected or if the local audio stream already exists.
+        const available = audioDeviceCount > 0 || Boolean(localAudio);
+
+        logger.debug(
+            'Microphone button enabled: ' + available,
+            'local audio: ' + localAudio,
+            'audio devices: ' + audioMediaDevices,
+            'device count: ' + audioDeviceCount);
+
+        APP.store.dispatch(setAudioAvailable(available));
+    },
+
     /**
      * Determines whether or not the video button should be enabled.
      */

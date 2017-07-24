@@ -4,12 +4,30 @@ import type { Dispatch } from 'redux';
 
 import {
     SET_AUDIO_MUTED,
+    SET_AUDIO_AVAILABLE,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
+
+/**
+ * Action to adjust the availability of the local audio.
+ *
+ * @param {boolean} available - True if the local audio is to be marked as
+ * available or false if the local audio is not available.
+ * @returns {{
+ *      type: SET_AUDIO_AVAILABLE,
+ *      available: boolean
+ *  }}
+ */
+export function setAudioAvailable(available: boolean) {
+    return {
+        type: SET_AUDIO_AVAILABLE,
+        available
+    };
+}
 
 /**
  * Action to set the muted state of the local audio.
