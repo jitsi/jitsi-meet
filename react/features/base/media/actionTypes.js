@@ -9,6 +9,16 @@
 export const SET_AUDIO_MUTED = Symbol('SET_AUDIO_MUTED');
 
 /**
+ * The type of (redux) action to adjust the availability of the local audio.
+ *
+ * {
+ *     type: SET_AUDIO_AVAILABLE,
+ *     muted: boolean
+ * }
+ */
+export const SET_AUDIO_AVAILABLE = Symbol('SET_AUDIO_AVAILABLE');
+
+/**
  * The type of (redux) action to set the facing mode of the local video camera
  * to a specific value.
  *

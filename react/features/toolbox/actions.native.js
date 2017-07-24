@@ -52,27 +52,6 @@ export function clearToolboxTimeout(): Object {
 }
 
 /**
- * Enables/disables audio toolbar button.
- *
- * @param {boolean} enabled - True if the button should be enabled; otherwise,
- * false.
- * @returns {Function}
- */
-export function setAudioIconEnabled(enabled: boolean = false): Function {
-    return (dispatch: Dispatch<*>) => {
-        const i18nKey = enabled ? 'mute' : 'micDisabled';
-        const i18n = `[content]toolbar.${i18nKey}`;
-        const button = {
-            enabled,
-            i18n,
-            toggled: !enabled
-        };
-
-        dispatch(setToolbarButton('microphone', button));
-    };
-}
-
-/**
  * Signals that value of conference subject should be changed.
  *
  * @param {string} subject - Conference subject string.
