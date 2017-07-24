@@ -175,27 +175,40 @@ function getDisplayName(id) {
  * result of user interaction
  */
 function muteLocalAudio(muted) {
-    muteLocalMedia(localAudio, muted, 'Audio');
+    muteLocalMedia(localAudio, muted);
 }
 
-function muteLocalMedia(localMedia, muted, localMediaTypeString) {
-    if (!localMedia) {
-        return;
+/**
+ * Mute or unmute local media stream if it exists.
+ * @param {JitsiLocalTrack} localTrack
+ * @param {boolean} muted
+ *
+ * @returns {Promise} resolved in case mute/unmute operations succeeds or
+ * rejected with an error if something goes wrong. It is expected that often
+ * the error will be of the {@link JitsiTrackError} type, but it's not
+ * guaranteed.
+ */
+function muteLocalMedia(localTrack, muted) {
+    if (!localTrack) {
+        return Promise.resolve();
     }
 
     const method = muted ? 'mute' : 'unmute';
 
-    localMedia[method]().catch(reason => {
-        logger.warn(`${localMediaTypeString} ${method} was rejected:`, reason);
-    });
+    return localTrack[method]();
 }
 
 /**
  * Mute or unmute local video stream if it exists.
  * @param {boolean} muted if video stream should be muted or unmuted.
+ *
+ * @returns {Promise} resolved in case mute/unmute operations succeeds or
+ * rejected with an error if something goes wrong. It is expected that often
+ * the error will be of the {@link JitsiTrackError} type, but it's not
+ * guaranteed.
  */
 function muteLocalVideo(muted) {
-    muteLocalMedia(localVideo, muted, 'Video');
+    return muteLocalMedia(localVideo, muted);
 }
 
 /**
@@ -739,6 +752,12 @@ export default {
             return;
         }
 
+        const maybeShowErrorDialog = (error) => {
+            if (showUI) {
+                APP.UI.showDeviceErrorDialog(null, error);
+            }
+        };
+
         if (!localVideo && this.videoMuted && !mute) {
             // Try to create local video if there wasn't any.
             // This handles the case when user joined with no video
@@ -752,22 +771,21 @@ export default {
                 .then(([videoTrack]) => videoTrack)
                 .catch(error => {
                     // FIXME should send some feedback to the API on error ?
-                    if (showUI) {
-                        APP.UI.showDeviceErrorDialog(null, error);
-                    }
+                    maybeShowErrorDialog(error);
+
                     // Rollback the video muted status by using null track
                     return null;
                 })
                 .then(videoTrack => this.useVideoStream(videoTrack));
         } else {
-            // FIXME if localVideo exists and the permissions are blocked
-            // while video muted it will fail to unmute and UI will get out of
-            // sync (the toolbar will show unmuted even though unmute failed).
-            // But for some reason that only happens when toggling off from
-            // the audio only mode - the same scenario works fine from toolbar.
-            // This is very rare corner case and supposedly this will get fixed
-            // once everything goes to react/redux.
-            muteLocalVideo(mute);
+            const oldMutedStatus = this.videoMuted;
+
+            muteLocalVideo(mute)
+                .catch(error => {
+                    maybeShowErrorDialog(error);
+                    this.videoMuted = oldMutedStatus;
+                    APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                });
         }
     },
     /**
