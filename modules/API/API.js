@@ -35,7 +35,9 @@ function initCommands() {
     commands = {
         'display-name':
             APP.conference.changeLocalDisplayName.bind(APP.conference),
-        'toggle-audio': () => APP.conference.toggleAudioMuted(true),
+        'toggle-audio': () => {
+            APP.conference.toggleAudioMuted(false /* no UI */);
+        },
         'toggle-video': () => {
             APP.conference.toggleVideoMuted(false /* no UI */);
         },
