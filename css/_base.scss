@@ -41,16 +41,11 @@ body, input, textarea, keygen, select, button {
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
-    color: $inputColor;
     font-size: 1em;
 }
 
 button, select, input[type="button"],
 input[type="reset"], input[type="submit"] {
-    height: 32px;
-    line-height: 32px;
-    padding-left: 4px;
-    padding-right: 4px;
     cursor: pointer;
 }
 

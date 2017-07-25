@@ -1,25 +1,22 @@
 /* @flow */
 
-import { LIB_DID_DISPOSE, LIB_DID_INIT } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_MUTED,
-    TOGGLE_CAMERA_FACING_MODE,
     setAudioMuted,
-    setVideoMuted
+    setVideoMuted,
+    TOGGLE_CAMERA_FACING_MODE,
+    toggleCameraFacingMode
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import {
-    _disposeAndRemoveTracks,
-    createLocalTracks,
-    destroyLocalTracks
-} from './actions';
-import { TRACK_UPDATED } from './actionTypes';
+import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
+
+declare var APP: Object;
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -31,34 +28,27 @@ import { getLocalTrack, setTrackMuted } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_DID_DISPOSE:
-        store.dispatch(destroyLocalTracks());
-        break;
-
-    case LIB_DID_INIT:
-        store.dispatch(createLocalTracks());
-        break;
-
     case SET_AUDIO_MUTED:
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
 
     case SET_CAMERA_FACING_MODE: {
-        // XXX Destroy the local video track before creating a new one or
-        // react-native-webrtc may be slow or get stuck when opening a (video)
-        // capturer twice.
+        // XXX The camera facing mode of a MediaStreamTrack can be specified
+        // only at initialization time and then it can only be toggled. So in
+        // order to set the camera facing mode, one may destroy the track and
+        // then initialize a new instance with the new camera facing mode. But
+        // that is inefficient on mobile at least so the following relies on the
+        // fact that there are 2 camera facing modes and merely toggles between
+        // them to (hopefully) get the camera in the specified state.
         const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
+        let jitsiTrack;
 
-        if (localTrack) {
-            store.dispatch(_disposeAndRemoveTracks([ localTrack.jitsiTrack ]));
+        if (localTrack
+                && (jitsiTrack = localTrack.jitsiTrack)
+                && jitsiTrack.getCameraFacingMode()
+                    !== action.cameraFacingMode) {
+            store.dispatch(toggleCameraFacingMode());
         }
-
-        store.dispatch(
-            createLocalTracks({
-                devices: [ MEDIA_TYPE.VIDEO ],
-                facingMode: action.cameraFacingMode
-            })
-        );
         break;
     }
 
@@ -92,7 +82,48 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case TRACK_ADDED:
+        // TODO Remove this middleware case once all UI interested in new tracks
+        // being added are converted to react and listening for store changes.
+        if (typeof APP !== 'undefined' && !action.track.local) {
+            APP.UI.addRemoteStream(action.track.jitsiTrack);
+        }
+        break;
+
+    case TRACK_REMOVED:
+        // TODO Remove this middleware case once all UI interested in tracks
+        // being removed are converted to react and listening for store changes.
+        if (typeof APP !== 'undefined' && !action.track.local) {
+            APP.UI.removeRemoteStream(action.track.jitsiTrack);
+        }
+        break;
+
     case TRACK_UPDATED:
+        // TODO Remove the below calls to APP.UI once components interested in
+        // track mute changes are moved into react.
+        if (typeof APP !== 'undefined') {
+            const { jitsiTrack } = action.track;
+            const isMuted = jitsiTrack.isMuted();
+            const participantID = jitsiTrack.getParticipantId();
+            const isVideoTrack = jitsiTrack.isVideoTrack();
+
+            if (jitsiTrack.isLocal()) {
+                if (isVideoTrack) {
+                    APP.conference.videoMuted = isMuted;
+                } else {
+                    APP.conference.audioMuted = isMuted;
+                }
+            }
+
+            if (isVideoTrack) {
+                APP.UI.setVideoMuted(participantID, isMuted);
+                APP.UI.onPeerVideoTypeChanged(
+                    participantID, jitsiTrack.videoType);
+            } else {
+                APP.UI.setAudioMuted(participantID, isMuted);
+            }
+        }
+
         return _trackUpdated(store, next, action);
     }
 

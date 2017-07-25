@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import { Toolbox } from '../../toolbox';
+
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
@@ -9,6 +11,13 @@ import React, { Component } from 'react';
  * @extends Component
  */
 export default class Filmstrip extends Component {
+    static propTypes = {
+        /**
+         * Whether or not the toolbox should be displayed within the filmstrip.
+         */
+        displayToolbox: React.PropTypes.bool
+    };
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -18,6 +27,7 @@ export default class Filmstrip extends Component {
     render() {
         return (
             <div className = 'filmstrip'>
+                { this.props.displayToolbox ? <Toolbox /> : null }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -36,6 +46,8 @@ export default class Filmstrip extends Component {
                             <div className = 'videocontainer__toolbar' />
                             <div className = 'videocontainer__toptoolbar' />
                             <div className = 'videocontainer__hoverOverlay' />
+                            <div className = 'displayNameContainer' />
+                            <div className = 'avatar-container' />
                         </span>
                     </div>
                     <div

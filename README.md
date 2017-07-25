@@ -15,9 +15,9 @@ For other systems, or if you wish to install all components manually, see the [d
 ## Download
 
 You can download Debian/Ubuntu binaries:
-* [stable](https://download.jitsi.org/stable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianStableRepository))
-* [testing](https://download.jitsi.org/testing/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianTestingRepository))
-* [nightly](https://download.jitsi.org/unstable/) ([instructions](https://jitsi.org/Main/InstallJitsiMeetDebianNightlyRepository))
+* [stable](https://download.jitsi.org/stable/) ([instructions](https://jitsi.org/downloads/ubuntu-debian-installations-instructions/))
+* [testing](https://download.jitsi.org/testing/) ([instructions](https://jitsi.org/downloads/ubuntu-debian-installations-instructions-for-testing/))
+* [nightly](https://download.jitsi.org/unstable/) ([instructions](https://jitsi.org/downloads/ubuntu-debian-installations-instructions-nightly/))
 
 You can download source archives (produced by ```make source-package```):
 * [source builds](https://download.jitsi.org/jitsi-meet/src/)
@@ -27,6 +27,8 @@ You can get our mobile versions from here:
 * [iOS](https://itunes.apple.com/us/app/jitsi-meet/id1165103905)
 
 ## Building the sources
+
+Node.js >= 6 is required.
 
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```

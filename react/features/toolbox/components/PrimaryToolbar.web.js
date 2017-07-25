@@ -31,28 +31,6 @@ class PrimaryToolbar extends Component {
     state: Object;
 
     /**
-     * Constructs instance of primary toolbar React component.
-     *
-     * @param {Object} props - React component's properties.
-     */
-    constructor(props) {
-        super(props);
-
-        const splitterIndex = interfaceConfig.MAIN_TOOLBAR_SPLITTER_INDEX;
-
-        this.state = {
-
-            /**
-             * If deployment supports toolbar splitter this value contains its
-             * index.
-             *
-             * @type {number}
-             */
-            splitterIndex
-        };
-    }
-
-    /**
      * Renders primary toolbar component.
      *
      * @returns {ReactElement}
@@ -67,7 +45,6 @@ class PrimaryToolbar extends Component {
             return null;
         }
 
-        const { splitterIndex } = this.state;
         const { primaryToolbarClassName } = getToolbarClassNames(this.props);
         const tooltipPosition
             = interfaceConfig.filmStripOnly ? 'left' : 'bottom';
@@ -75,7 +52,6 @@ class PrimaryToolbar extends Component {
         return (
             <Toolbar
                 className = { primaryToolbarClassName }
-                splitterIndex = { splitterIndex }
                 toolbarButtons = { _primaryToolbarButtons }
                 tooltipPosition = { tooltipPosition } />
         );

@@ -4,9 +4,10 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha6'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files.
@@ -26,8 +27,22 @@ allprojects {
 }
 
 ext {
-    compileSdkVersion = 23
-    buildToolsVersion = "23.0.1"
+    compileSdkVersion = 25
+    buildToolsVersion = "25.0.3"
     minSdkVersion    = 16
-    targetSdkVersion = 22
+    targetSdkVersion = 23
+}
+
+// Force the version of the Android build tools we have chosen on all
+// subprojects. The forcing was introduced for react-native and the third-party
+// modules that we utilize such as react-native-background-timer.
+subprojects { subproject ->
+    afterEvaluate{
+        if (subproject.plugins.hasPlugin('android')
+                || subproject.plugins.hasPlugin('android-library')) {
+            android {
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
+        }
+    }
 }

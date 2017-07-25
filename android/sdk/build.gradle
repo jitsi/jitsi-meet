@@ -50,7 +50,10 @@ gradle.projectsEvaluated {
         // Bundle fonts in react-native-vector-icons.
         //
 
-        def currentFontTask = tasks.create(name: "${buildType.name}CopyFonts", type: Copy) {
+        def currentFontTask = tasks.create(
+                name: "copy${buildNameCapitalized}Fonts",
+                type: Copy) {
+
             from("${projectDir}/../../fonts/jitsi.ttf")
             from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
             into("${bundlePath}/assets/fonts")
@@ -82,7 +85,7 @@ gradle.projectsEvaluated {
 
             // Set up inputs and outputs so gradle can cache the result.
             def reactRoot = file("${projectDir}/../../")
-            inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
+            inputs.files fileTree(dir: reactRoot, excludes: ['android/**', 'ios/**'])
             outputs.dir jsBundleDir
             outputs.dir resourcesDir
 
@@ -90,19 +93,20 @@ gradle.projectsEvaluated {
             workingDir reactRoot
 
             // Create JS bundle
-            def devEnabled = !buildNameCapitalized.toLowerCase().contains("release")
+            def devEnabled = !buildNameCapitalized.toLowerCase().contains('release')
             commandLine(
-                "node",
-                "node_modules/react-native/local-cli/cli.js",
-                "bundle",
-                "--assets-dest", resourcesDir,
-                "--bundle-output", jsBundleFile,
-                "--dev", "${devEnabled}",
-                "--entry-file", "index.android.js",
-                "--platform", "android",
-                "--reset-cache")
+                'node',
+                'node_modules/react-native/local-cli/cli.js',
+                'bundle',
+                '--assets-dest', resourcesDir,
+                '--bundle-output', jsBundleFile,
+                '--dev', "${devEnabled}",
+                '--entry-file', 'index.android.js',
+                '--platform', 'android',
+                '--reset-cache')
 
-            // TODO: disable task in Debug mode?
+            // Disable bundling on dev builds
+            enabled !devEnabled
         }
 
         // Hook bundle${productFlavor}${buildType}JsAndAssets into the android build process

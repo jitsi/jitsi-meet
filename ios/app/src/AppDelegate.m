@@ -22,14 +22,15 @@
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    return YES;
+    return [JitsiMeetView application:application
+        didFinishLaunchingWithOptions:launchOptions];
 }
 
 #pragma mark Linking delegate methods
 
--  (BOOL)application:(UIApplication *)application
-continueUserActivity:(NSUserActivity *)userActivity
-  restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+-    (BOOL)application:(UIApplication *)application
+  continueUserActivity:(NSUserActivity *)userActivity
+    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
     return [JitsiMeetView application:application
                  continueUserActivity:userActivity
                    restorationHandler:restorationHandler];

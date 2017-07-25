@@ -91,11 +91,12 @@
         "title": "__app__ needs to use your microphone and camera."
     },
     "suspendedoverlay": {
-        "title": "Your video call was interrupted, because this computer went to sleep.",
-        "text": "Press <i>Rejoin</i> button to connect back to your conversation.",
+        "title": "Your video call was interrupted because this computer went to sleep.",
+        "text": "Press the <i>Rejoin</i> button to reconnect.",
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",
@@ -201,7 +202,8 @@
         "transport_plural": "Transports:",
         "bandwidth": "Estimated bandwidth:",
         "na": "Come back here for connection information once the conference starts",
-        "peer_to_peer": " (p2p)"
+        "peer_to_peer": " (p2p)",
+        "turn": " (turn)"
     },
     "notify": {
         "disconnected": "disconnected",
@@ -333,6 +335,8 @@
         "goToStore": "Go to the webstore",
         "externalInstallationTitle": "Extension required",
         "externalInstallationMsg": "You need to install our desktop sharing extension.",
+        "inlineInstallationMsg": "You need to install our desktop sharing extension.",
+        "inlineInstallExtension": "Install now",
         "muteParticipantTitle": "Mute this participant?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
@@ -342,6 +346,7 @@
         "remoteControlDeniedMessage": "__user__ rejected your remote control request!",
         "remoteControlAllowedMessage": "__user__ accepted your remote control request!",
         "remoteControlErrorMessage": "An error occurred while trying to request remote control permissions from __user__!",
+        "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",
         "remoteControlStopMessage": "The remote control session ended!",
         "close": "Close",
         "shareYourScreen": "Share your screen",
@@ -458,5 +463,18 @@
         "statusMessage": "is now __status__",
         "enterPhone": "Enter phone number",
         "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"
+    },
+    "addPeople": {
+        "add": "Add",
+        "noResults": "No matching search results",
+        "searchPlaceholder": "Search for people and rooms to add",
+        "title": "Add people to your call",
+        "failedToAdd": "Failed to add participants"
+    },
+    "inlineDialogFailure": {
+        "msg": "We stumbled a bit.",
+        "retry": "Try again",
+        "support": "Support",
+        "supportMsg": "If this keeps happening, reach out to"
     }
 }

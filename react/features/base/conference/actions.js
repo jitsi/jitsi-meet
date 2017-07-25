@@ -195,20 +195,19 @@ export function conferenceLeft(conference) {
 
 /**
  * Signals the intention of the application to have the local participant join a
- * conference with a specific room (name). Similar in fashion
- * to CONFERENCE_JOINED.
+ * specific conference. Similar in fashion to {@code CONFERENCE_JOINED}.
  *
- * @param {string} room - The room (name) which identifies the conference the
+ * @param {JitsiConference} conference - The JitsiConference instance the
  * local participant will (try to) join.
  * @returns {{
  *     type: CONFERENCE_WILL_JOIN,
- *     room: string
+ *     conference: JitsiConference
  * }}
  */
-function _conferenceWillJoin(room) {
+function _conferenceWillJoin(conference) {
     return {
         type: CONFERENCE_WILL_JOIN,
-        room
+        conference
     };
 }
 
@@ -243,34 +242,23 @@ export function createConference() {
         const connection = state['features/base/connection'].connection;
 
         if (!connection) {
-            throw new Error('Cannot create conference without connection');
+            throw new Error('Cannot create a conference without a connection!');
         }
 
         const { password, room } = state['features/base/conference'];
 
-        if (typeof room === 'undefined' || room === '') {
-            throw new Error('Cannot join conference without room name');
+        if (!room) {
+            throw new Error('Cannot join a conference without a room name!');
         }
 
-        dispatch(_conferenceWillJoin(room));
-
-        const config = state['features/base/config'];
         const conference
             = connection.initJitsiConference(
 
                 // XXX Lib-jitsi-meet does not accept uppercase letters.
                 room.toLowerCase(),
-                {
-                    ...config,
+                state['features/base/config']);
 
-                    openSctp: true
-
-                    // FIXME I tested H.264 from iPhone 6S during a morning
-                    // standup but, unfortunately, the other participants who
-                    // happened to be running the Web app saw only black.
-                    //
-                    // preferH264: true
-                });
+        dispatch(_conferenceWillJoin(conference));
 
         _addConferenceListeners(conference, dispatch);
 

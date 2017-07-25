@@ -5,6 +5,7 @@ import { ReducerRegistry } from '../redux';
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
+    SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
@@ -62,6 +63,7 @@ function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
  * @type {VideoMediaState}
  */
 const VIDEO_INITIAL_MEDIA_STATE = {
+    available: true,
     facingMode: CAMERA_FACING_MODE.USER,
     muted: false
 };
@@ -81,6 +83,12 @@ function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
         return {
             ...state,
             facingMode: action.cameraFacingMode
+        };
+
+    case SET_VIDEO_AVAILABLE:
+        return {
+            ...state,
+            available: action.available
         };
 
     case SET_VIDEO_MUTED:

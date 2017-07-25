@@ -49,7 +49,7 @@ local function verify_user(session, stanza)
         "Will verify token for user: %s, room: %s ", user_jid, stanza.attr.to);
     if not token_util:verify_room(session, stanza.attr.to) then
         log("error", "Token %s not allowed to join: %s",
-            tostring(session.auth_token), tostring(session.jitsi_meet_room));
+            tostring(session.auth_token), tostring(stanza.attr.to));
         session.send(
             st.error_reply(
                 stanza, "cancel", "not-allowed", "Room and token mismatched"));

@@ -12,6 +12,16 @@
     overflow: hidden;
 }
 
+.video_blurred_container {
+    height: 100%;
+    filter: blur(40px);
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
 .videocontainer {
     position: relative;
     text-align: center;
@@ -48,14 +58,26 @@
         padding: $toolbarPadding;
         padding-bottom: 0;
 
+        .connection-indicator,
+        span.indicator {
+            margin-right: em(5, 8);
+        }
+
+        span.indicator {
+            display: none;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        .connection-indicator,
         span.indicator {
             position: relative;
             font-size: 8px;
             text-align: center;
             line-height: $thumbnailIndicatorSize;
-            display: none;
             padding: 0;
-            margin-right: em(5, 8);
             float: left;
             @include circle($thumbnailIndicatorSize);
             box-sizing: border-box;
@@ -63,10 +85,6 @@
             background: $dominantSpeakerBg;
             color: $thumbnailPictogramColor;
             border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
-
-            &:last-child {
-                margin-right: 0;
-            }
 
             .indicatoricon {
                 @include absoluteAligning();
@@ -139,8 +157,8 @@
     -o-transform: scale(-1, 1);
 }
 
-#localVideoWrapper>video,
-#localVideoWrapper>object {
+#localVideoWrapper video,
+#localVideoWrapper object {
     border-radius: $borderRadius !important;
     cursor: hand;
     object-fit: cover;
@@ -153,6 +171,10 @@
     text-align: center;
 }
 
+#largeVideoWrapper {
+    box-shadow: 0 0 20px -2px #444;
+}
+
 #largeVideo,
 #largeVideoWrapper
 {
@@ -161,8 +183,8 @@
 
 #sharedVideo,
 #etherpad,
-#localVideoWrapper>video,
-#localVideoWrapper>object,
+#localVideoWrapper video,
+#localVideoWrapper object,
 #localVideoWrapper,
 #largeVideoWrapper,
 #largeVideoWrapper>video,
@@ -279,11 +301,11 @@
   margin: 0px 0px 0px 5px;
 }
 
-#raisehandindicator {
+.raisehandindicator {
   background: $raiseHandBg;
 }
 
-#connectionindicator {
+.connection-indicator {
   background: $connectionIndicatorBg;
 }
 
@@ -293,18 +315,23 @@
     position: absolute;
     top: 0px;
     right: 0;
-    margin: 7px;
+    margin-top: 7px;
     z-index: $zindex3;
     width: 18px;
     height: 13px;
     color: #FFF;
-    font-size: 8pt;
+    font-size: 10pt;
+
+    >i{
+        cursor: hand;
+    }
 }
 
 /**
  * Audio indicator on video thumbnails.
  */
-.videocontainer>span.audioindicator {
+.videocontainer>span.audioindicator,
+.videocontainer>.audioindicator-container {
     position: absolute;
     display: inline-block;
     left: 6px;

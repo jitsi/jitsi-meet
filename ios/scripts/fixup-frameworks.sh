@@ -36,10 +36,4 @@ do
         rm "$FRAMEWORK_EXECUTABLE_PATH"
         mv "$FRAMEWORK_EXECUTABLE_PATH-merged" "$FRAMEWORK_EXECUTABLE_PATH"
     fi
-
-    echo "Code signing framework"
-    codesign \
-        --force --sign $EXPANDED_CODE_SIGN_IDENTITY \
-        --preserve-metadata=identifier,entitlements \
-        $FRAMEWORK
 done

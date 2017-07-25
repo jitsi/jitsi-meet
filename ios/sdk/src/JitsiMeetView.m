@@ -35,7 +35,8 @@ RCTFatalHandler _RCTFatal = ^(NSError *error) {
     @try {
         NSString *name
             = [NSString stringWithFormat:@"%@: %@",
-               RCTFatalExceptionName, error.localizedDescription];
+                        RCTFatalExceptionName,
+                        error.localizedDescription];
         NSString *message
             = RCTFormatError(error.localizedDescription, jsStackTrace, 75);
         [NSException raise:name format:@"%@", message];
@@ -111,10 +112,25 @@ void registerFatalErrorHandler() {
 static RCTBridgeWrapper *bridgeWrapper;
 
 /**
+ * Copy of the {@code launchOptions} dictionary that the application was started
+ * with. It is required for the initial URL to be used if a (Universal) link was
+ * used to launch a new instance of the application.
+ */
+static NSDictionary *_launchOptions;
+
+/**
  * The {@code JitsiMeetView}s associated with their {@code ExternalAPI} scopes
  * (i.e. unique identifiers within the process).
  */
 static NSMapTable<NSString *, JitsiMeetView *> *views;
+
++             (BOOL)application:(UIApplication *)application
+  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Store launch options, will be used when we create the bridge.
+    _launchOptions = [launchOptions copy];
+
+    return YES;
+}
 
 #pragma mark Linking delegate helpers
 // https://facebook.github.io/react-native/docs/linking.html
@@ -201,7 +217,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 /**
  * Internal initialization:
  *
- * - sets the backgroudn color
+ * - sets the background color
  * - creates the React bridge
  * - loads the necessary custom fonts
  * - registers a custom fatal error error handler for React
@@ -211,7 +227,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
     dispatch_once(&dispatchOncePredicate, ^{
         // Initialize the static state of JitsiMeetView.
-        bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+        bridgeWrapper
+            = [[RCTBridgeWrapper alloc] initWithLaunchOptions:_launchOptions];
         views = [NSMapTable strongToWeakObjectsMapTable];
 
         // Dynamically load custom bundled fonts.

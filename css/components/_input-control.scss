@@ -3,13 +3,10 @@
     display: inline-block;
     width: 100%;
     padding: 5px 7px;
-    color: $inputColor;
     border-radius: $borderRadius;
     line-height: 32px;
     height: 32px;
     text-align: left;
-    border:1px solid $inputBorderColor;
-    background-color: $inputBackground;
     margin-bottom: 8px;
 
     &:last-child {

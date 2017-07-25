@@ -114,10 +114,10 @@ function _setTokenData() {
     const { caller } = state['features/jwt'];
 
     if (caller) {
-        const { avatarUrl, email, name } = caller;
+        const { avatarUrl, avatar, email, name } = caller;
 
         APP.settings.setEmail((email || '').trim(), true);
-        APP.settings.setAvatarUrl((avatarUrl || '').trim());
+        APP.settings.setAvatarUrl((avatarUrl || avatar || '').trim());
         APP.settings.setDisplayName((name || '').trim(), true);
     }
 }

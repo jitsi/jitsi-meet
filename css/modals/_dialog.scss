@@ -79,13 +79,36 @@
 
 .modal-dialog-form {
     color: $modalTextColor;
+    margin-top: 5px !important;
 
     .input-control {
         background: $modalMockAKInputBackground;
         border: $modalMockAKInputBorder;
         color: inherit;
     }
+
+    &-error {
+        margin-bottom: 8px;
+    }
 }
 .modal-dialog-footer {
     font-size: $modalButtonFontSize;
+}
+
+/**
+ * Styling inline dialog errors.
+ */
+.inline-dialog-error {
+    margin-top: 16px;
+
+    &-text {
+        color: $dialogErrorText;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    &-button {
+        display: block;
+        margin: 16px auto 0 auto;
+    }
 }

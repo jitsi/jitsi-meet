@@ -2,7 +2,7 @@
  * Toolbar side panel main container element.
  */
 #sideToolbarContainer {
-    background-color: rgba(0,0,0,0.8);
+    background-color: $sideToolbarContainerBg;
     height: 100%;
     left: $defaultToolbarSize;
     max-width: $sidebarWidth;

@@ -86,6 +86,12 @@ function Util.new(module)
         return nil;
     end
 
+    --array of accepted issuers: by default only includes our appId
+    self.acceptedIssuers = module:get_option_array('asap_accepted_issuers',{self.appId})
+
+    --array of accepted audiences: by default only includes our appId
+    self.acceptedAudiences = module:get_option_array('asap_accepted_audiences',{'*'})
+
     if self.asapKeyServer and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
@@ -147,6 +153,38 @@ function Util:get_public_key(keyId)
     return nil;
 end
 
+--- Verifies issuer part of token
+-- @param 'iss' claim from the token to verify
+-- @return nil and error string or true for accepted claim
+function Util:verify_issuer(issClaim)
+    for i, iss in ipairs(self.acceptedIssuers) do
+        if issClaim == iss then
+            --claim matches an accepted issuer so return success
+            return true;
+        end
+    end
+    --if issClaim not found in acceptedIssuers, fail claim
+    return nil, "Invalid issuer ('iss' claim)";
+end
+
+--- Verifies audience part of token
+-- @param 'aud' claim from the token to verify
+-- @return nil and error string or true for accepted claim
+function Util:verify_audience(audClaim)
+    for i, aud in ipairs(self.acceptedAudiences) do
+        if aud == '*' then
+            --* indicates to accept any audience in the claims so return success
+            return true;
+        end
+        if audClaim == aud then
+            --claim matches an accepted audience so return success
+            return true;
+        end
+    end
+    --if issClaim not found in acceptedIssuers, fail claim
+    return nil, "Invalid audience ('aud' claim)";
+end
+
 --- Verifies token
 -- @param token the token to verify
 -- @param secret the secret to use to verify token
@@ -166,8 +204,10 @@ function Util:verify_token(token, secret)
     if issClaim == nil then
         return nil, "'iss' claim is missing";
     end
-    if issClaim ~= self.appId then
-        return nil, "Invalid application ID('iss' claim)";
+    --check the issuer against the accepted list
+    local issCheck, issCheckErr = self:verify_issuer(issClaim);
+    if issCheck == nil then
+        return nil, issCheckErr;
     end
 
     local roomClaim = claims["room"];
@@ -179,6 +219,11 @@ function Util:verify_token(token, secret)
     if audClaim == nil then
         return nil, "'aud' claim is missing";
     end
+    --check the audience against the accepted list
+    local audCheck, audCheckErr = self:verify_audience(audClaim);
+    if audCheck == nil then
+        return nil, audCheckErr;
+    end
 
     return claims;
 end
@@ -188,6 +233,8 @@ end
 -- Stores in session the following values:
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
+-- session.jitsi_meet_context_user - the user details from the token
+-- session.jitsi_meet_context_group - the group value from the token
 -- @param session the current session
 -- @return false and error
 function Util:process_and_verify_token(session)
@@ -226,7 +273,19 @@ function Util:process_and_verify_token(session)
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
-        session.jitsi_meet_domain = claims["aud"];
+        session.jitsi_meet_domain = claims["sub"];
+
+        -- Binds the user details to the session if available
+        if claims["context"] ~= nil then
+          if claims["context"]["user"] ~= nil then
+            session.jitsi_meet_context_user = claims["context"]["user"];
+          end
+
+          if claims["context"]["group"] ~= nil then
+            -- Binds any group details to the session
+            session.jitsi_meet_context_group = claims["context"]["group"];
+          end
+        end
         return true;
     else
         return false, "not-allowed", msg;
@@ -263,7 +322,7 @@ function Util:verify_room(session, room_address)
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= string.lower(auth_room) then
+        if auth_room and room ~= string.lower(auth_room) and auth_room ~= '*' then
             return false;
         end
 
@@ -271,10 +330,29 @@ function Util:verify_room(session, room_address)
     end
 
     local room_address_to_verify = jid.bare(room_address);
+    local room_node = jid.node(room_address);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room
-            = room_address_to_verify:match("^%[([^%]]+)%](.+)$");
+    local target_subdomain, target_room = room_node:match("^%[([^%]]+)%](.+)$");
+
+    -- if we have '*' as room name in token, this means all rooms are allowed
+    -- so we will use the actual name of the room when constructing strings
+    -- to verify subdomains and domains to simplify checks
+    local room_to_check;
+    if auth_room == '*' then
+        -- authorized for accessing any room assign to room_to_check the actual
+        -- room name
+        if target_room ~= nil then
+            -- we are in multidomain mode and we were able to extract room name
+            room_to_check = target_room;
+        else
+            -- no target_room, room_address_to_verify does not contain subdomain
+            -- so we get just the node which is the room name
+            room_to_check = room_node;
+        end
+    else
+        room_to_check = auth_room;
+    end
 
     local auth_domain = session.jitsi_meet_domain;
     if target_subdomain then
@@ -286,12 +364,12 @@ function Util:verify_room(session, room_address)
         end
 
         return room_address_to_verify == jid.join(
-            "["..auth_domain.."]"..string.lower(auth_room), self.muc_domain);
+            "["..auth_domain.."]"..string.lower(room_to_check), self.muc_domain);
     else
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(
-            string.lower(auth_room), self.muc_domain_prefix.."."..auth_domain);
+            string.lower(room_to_check), self.muc_domain_prefix.."."..auth_domain);
     end
 end
 

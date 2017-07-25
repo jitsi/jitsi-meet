@@ -45,12 +45,6 @@ class Toolbar extends Component {
         className: React.PropTypes.string,
 
         /**
-         * If the toolbar requires splitter this property defines splitter
-         * index.
-         */
-        splitterIndex: React.PropTypes.number,
-
-        /**
          * Map with toolbar buttons.
          */
         toolbarButtons: React.PropTypes.instanceOf(Map),
@@ -105,12 +99,11 @@ class Toolbar extends Component {
      * @param {Array} acc - Toolbar buttons array.
      * @param {Array} keyValuePair - Key value pair containing button and its
      * key.
-     * @param {number} index - Index of the key value pair in the array.
      * @private
-     * @returns {Array} Array of toolbar buttons and splitter if it's on.
+     * @returns {Array} Array of toolbar buttons.
      */
-    _renderToolbarButton(acc: Array<*>, keyValuePair: Array<*>,
-                         index: number): Array<ReactElement<*>> {
+    _renderToolbarButton(acc: Array<*>,
+                         keyValuePair: Array<*>): Array<ReactElement<*>> {
         const [ key, button ] = keyValuePair;
 
         if (button.component) {
@@ -123,13 +116,7 @@ class Toolbar extends Component {
             return acc;
         }
 
-        const { splitterIndex, tooltipPosition } = this.props;
-
-        if (splitterIndex && index === splitterIndex) {
-            const splitter = <span className = 'toolbar__splitter' />;
-
-            acc.push(splitter);
-        }
+        const { tooltipPosition } = this.props;
 
         const { onClick, onMount, onUnmount } = button;
 
@@ -163,7 +150,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _onMouseOut() {
-            return dispatch(setToolbarHovered(false));
+            dispatch(setToolbarHovered(false));
         },
 
         /**
@@ -173,7 +160,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _onMouseOver() {
-            return dispatch(setToolbarHovered(true));
+            dispatch(setToolbarHovered(true));
         }
     };
 }

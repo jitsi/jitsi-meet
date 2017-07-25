@@ -25,6 +25,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-thumb-menu:before {
+    content: "\e5d4";
+}
 .icon-mic-camera-combined:before {
     content: "\e903";
 }
@@ -150,4 +153,7 @@
 }
 .icon-telephone:before {
     content: "\e0cd";
+}
+.icon-add:before {
+    content: "\e145";
 }

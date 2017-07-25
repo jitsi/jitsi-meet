@@ -5,11 +5,11 @@ export const DISCO_REMOTE_CONTROL_FEATURE
     = "http://jitsi.org/meet/remotecontrol";
 
 /**
- * Types of remote-control-event events.
+ * Types of remote-control events.
   * @readonly
   * @enum {string}
  */
-export const EVENT_TYPES = {
+export const EVENTS = {
     mousemove: "mousemove",
     mousedown: "mousedown",
     mouseup: "mouseup",
@@ -18,8 +18,18 @@ export const EVENT_TYPES = {
     keydown: "keydown",
     keyup: "keyup",
     permissions: "permissions",
+    start: "start",
     stop: "stop",
     supported: "supported"
+};
+
+/**
+ * Types of remote-control requests.
+  * @readonly
+  * @enum {string}
+ */
+export const REQUESTS = {
+    start: "start"
 };
 
 /**
@@ -35,20 +45,20 @@ export const PERMISSIONS_ACTIONS = {
 };
 
 /**
- * The type of remote control events sent trough the API module.
+ * The type of remote control messages.
  */
-export const REMOTE_CONTROL_EVENT_NAME = "remote-control-event";
+export const REMOTE_CONTROL_MESSAGE_NAME = "remote-control";
 
 /**
  * The remote control event.
  * @typedef {object} RemoteControlEvent
- * @property {EVENT_TYPES} type - the type of the event
- * @property {int} x - avaibale for type === mousemove only. The new x
+ * @property {EVENTS | REQUESTS} type - the type of the message
+ * @property {number} x - avaibale for type === mousemove only. The new x
  * coordinate of the mouse
- * @property {int} y - For mousemove type - the new y
+ * @property {number} y - For mousemove type - the new y
  * coordinate of the mouse and for mousescroll - represents the vertical
  * scrolling diff value
- * @property {int} button - 1(left), 2(middle) or 3 (right). Supported by
+ * @property {number} button - 1(left), 2(middle) or 3 (right). Supported by
  * mousedown, mouseup and mousedblclick types.
  * @property {KEYS} key - Represents the key related to the event. Supported by
  * keydown and keyup types.

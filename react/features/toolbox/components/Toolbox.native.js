@@ -32,6 +32,11 @@ class Toolbox extends Component {
         _audioMuted: React.PropTypes.bool,
 
         /**
+         * Flag showing whether the audio-only mode is in use.
+         */
+        _audioOnly: React.PropTypes.bool,
+
+        /**
          * Flag showing whether room is locked.
          */
         _locked: React.PropTypes.bool,
@@ -166,6 +171,7 @@ class Toolbox extends Component {
                     style = { styles.hangup }
                     underlayColor = { ColorPalette.buttonUnderlay } />
                 <ToolbarButton
+                    disabled = { this.props._audioOnly }
                     iconName = { videoButtonStyles.iconName }
                     iconStyle = { videoButtonStyles.iconStyle }
                     onClick = { this.props._onToggleVideo }
@@ -187,12 +193,17 @@ class Toolbox extends Component {
         const iconStyle = styles.secondaryToolbarButtonIcon;
         const style = styles.secondaryToolbarButton;
         const underlayColor = 'transparent';
+        const {
+            _audioOnly: audioOnly,
+            _videoMuted: videoMuted
+        } = this.props;
 
         /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
         return (
             <View style = { styles.secondaryToolbar }>
                 <ToolbarButton
+                    disabled = { audioOnly || videoMuted }
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleCameraFacingMode }
@@ -207,8 +218,8 @@ class Toolbox extends Component {
                     style = { style }
                     underlayColor = { underlayColor } />
                 <ToolbarButton
-                    iconName = 'hangup'
-                    iconStyle = { styles.toggleAudioOnlyIcon }
+                    iconName = { audioOnly ? 'visibility-off' : 'visibility' }
+                    iconStyle = { iconStyle }
                     onClick = { this.props._onToggleAudioOnly }
                     style = { style }
                     underlayColor = { underlayColor } />
@@ -261,7 +272,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onRoomLock() {
-            return dispatch(beginRoomLockRequest());
+            dispatch(beginRoomLockRequest());
         },
 
         /**
@@ -272,7 +283,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onShareRoom() {
-            return dispatch(beginShareRoom());
+            dispatch(beginShareRoom());
         },
 
         /**
@@ -283,7 +294,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onToggleAudioOnly() {
-            return dispatch(toggleAudioOnly());
+            dispatch(toggleAudioOnly());
         },
 
         /**
@@ -295,7 +306,7 @@ function _mapDispatchToProps(dispatch) {
          * @type {Function}
          */
         _onToggleCameraFacingMode() {
-            return dispatch(toggleCameraFacingMode());
+            dispatch(toggleCameraFacingMode());
         }
     };
 }
@@ -305,6 +316,7 @@ function _mapDispatchToProps(dispatch) {
  *
  * @param {Object} state - Redux store.
  * @returns {{
+ *     _audioOnly: boolean,
  *     _locked: boolean
  * }}
  * @private
@@ -314,6 +326,15 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractMapStateToProps(state),
+
+        /**
+         * The indicator which determines whether the conference is in
+         * audio-only mode.
+         *
+         * @protected
+         * @type {boolean}
+         */
+        _audioOnly: Boolean(conference.audioOnly),
 
         /**
          * The indicator which determines whether the conference is

@@ -158,7 +158,7 @@ class CallOverlay extends Component {
      */
     render() {
         const { className, ringing } = this.state;
-        const { avatarUrl, name } = this.props._callee;
+        const { avatarUrl, avatar, name } = this.props._callee;
 
         return (
             <Container
@@ -171,7 +171,7 @@ class CallOverlay extends Component {
                     </Text>
                     <Avatar
                         { ...this._style('ringing__avatar') }
-                        uri = { avatarUrl } />
+                        uri = { avatarUrl || avatar } />
                     <Container
                         { ...this._style('ringing__caller-info') }>
                         <Text

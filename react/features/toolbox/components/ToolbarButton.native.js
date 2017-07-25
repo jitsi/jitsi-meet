@@ -7,13 +7,13 @@ import { Icon } from '../../base/font-icons';
 import AbstractToolbarButton from './AbstractToolbarButton';
 
 /**
- * Represents a button in Toolbar on React Native.
+ * Represents a button in {@link Toolbar} on React Native.
  *
  * @extends AbstractToolbarButton
  */
 class ToolbarButton extends AbstractToolbarButton {
     /**
-     * ToolbarButton component's property types.
+     * {@code ToolbarButton} component's property types.
      *
      * @static
      */
@@ -21,29 +21,24 @@ class ToolbarButton extends AbstractToolbarButton {
         ...AbstractToolbarButton.propTypes,
 
         /**
-         * Used to dispatch an action when the button is clicked.
+         * Indicates whether this {@code ToolbarButton} is disabled.
          */
-        dispatch: React.PropTypes.func
+        disabled: React.PropTypes.bool
     };
 
     /**
-     * Renders the button of this Toolbar button.
+     * Renders the button of this {@code ToolbarButton}.
      *
      * @param {Object} children - The children, if any, to be rendered inside
-     * the button. Presumably, contains the icon of this Toolbar button.
+     * the button. Presumably, contains the icon of this {@code ToolbarButton}.
      * @protected
-     * @returns {ReactElement} The button of this Toolbar button.
+     * @returns {ReactElement} The button of this {@code ToolbarButton}.
      */
     _renderButton(children) {
         const props = {};
 
-        'onClick' in this.props && (props.onPress = event => {
-            const action = this.props.onClick(event);
-
-            if (action) {
-                this.props.dispatch(action);
-            }
-        });
+        'disabled' in this.props && (props.disabled = this.props.disabled);
+        'onClick' in this.props && (props.onPress = this._onClick);
         'style' in this.props && (props.style = this.props.style);
         'underlayColor' in this.props
             && (props.underlayColor = this.props.underlayColor);

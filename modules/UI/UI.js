@@ -34,7 +34,6 @@ import {
     dockToolbox,
     setAudioIconEnabled,
     setToolbarButton,
-    setVideoIconEnabled,
     showDialPadButton,
     showEtherpadButton,
     showSharedVideoButton,
@@ -193,8 +192,8 @@ UI.showLocalConnectionInterrupted = function (isInterrupted) {
 UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
     VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
     if (raisedHandStatus) {
-        messageHandler.notify(participant.getDisplayName(), 'notify.somebody',
-                          'connected', 'notify.raisedHand');
+        messageHandler.participantNotification(participant.getDisplayName(),
+            'notify.somebody', 'connected', 'notify.raisedHand');
     }
 };
 
@@ -253,6 +252,10 @@ UI.initConference = function () {
 
 UI.mucJoined = function () {
     VideoLayout.mucJoined();
+
+    // Update local video now that a conference is joined a user ID should be
+    // set.
+    UI.changeDisplayName('localVideoContainer', APP.settings.getDisplayName());
 };
 
 /***
@@ -485,7 +488,7 @@ UI.addUser = function (user) {
     if (UI.ContactList)
         UI.ContactList.addContact(id);
 
-    messageHandler.notify(
+    messageHandler.participantNotification(
         displayName,'notify.somebody', 'connected', 'notify.connected'
     );
 
@@ -513,7 +516,7 @@ UI.removeUser = function (id, displayName) {
     if (UI.ContactList)
         UI.ContactList.removeContact(id);
 
-    messageHandler.notify(
+    messageHandler.participantNotification(
         displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
     );
 
@@ -549,8 +552,8 @@ UI.updateLocalRole = isModerator => {
 
     if (isModerator) {
         if (!interfaceConfig.DISABLE_FOCUS_INDICATOR)
-            messageHandler
-                .notify(null, "notify.me", 'connected', "notify.moderator");
+            messageHandler.participantNotification(
+                null, "notify.me", 'connected', "notify.moderator");
 
         Recording.checkAutoRecord();
     }
@@ -572,14 +575,14 @@ UI.updateUserRole = user => {
 
     var displayName = user.getDisplayName();
     if (displayName) {
-        messageHandler.notify(
+        messageHandler.participantNotification(
             displayName, 'notify.somebody',
             'connected', 'notify.grantedTo', {
                 to: UIUtil.escapeHtml(displayName)
             }
         );
     } else {
-        messageHandler.notify(
+        messageHandler.participantNotification(
             '', 'notify.somebody',
             'connected', 'notify.grantedToUnknown');
     }
@@ -593,7 +596,7 @@ UI.updateUserRole = user => {
  */
 UI.updateUserStatus = (user, status) => {
     let displayName = user.getDisplayName();
-    messageHandler.notify(
+    messageHandler.participantNotification(
         displayName, '', 'connected', "dialOut.statusMessage",
         {
             status: UIUtil.escapeHtml(status)
@@ -665,11 +668,6 @@ UI.getRemoteVideoType = function (jid) {
     return VideoLayout.getRemoteVideoType(jid);
 };
 
-UI.connectionIndicatorShowMore = function(id) {
-    VideoLayout.showMore(id);
-    return false;
-};
-
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     logger.log('password is required');
@@ -725,9 +723,6 @@ UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.store.dispatch(setVideoMuted(muted));
-        APP.store.dispatch(setToolbarButton('camera', {
-            toggled: muted
-        }));
     }
 };
 
@@ -869,7 +864,7 @@ UI.notifyMaxUsersLimitReached = function () {
  * Notify user that he was automatically muted when joned the conference.
  */
 UI.notifyInitiallyMuted = function () {
-    messageHandler.notify(
+    messageHandler.participantNotification(
         null,
         "notify.mutedTitle",
         "connected",
@@ -978,25 +973,6 @@ UI.hideStats = function () {
 };
 
 /**
- * Update local connection quality statistics.
- * @param {number} percent
- * @param {object} stats
- */
-UI.updateLocalStats = function (percent, stats) {
-    VideoLayout.updateLocalConnectionStats(percent, stats);
-};
-
-/**
- * Update connection quality statistics for remote user.
- * @param {string} id user id
- * @param {number} percent
- * @param {object} stats
- */
-UI.updateRemoteStats = function (id, percent, stats) {
-    VideoLayout.updateConnectionStats(id, percent, stats);
-};
-
-/**
  * Mark video as interrupted or not.
  * @param {boolean} interrupted if video is interrupted
  */
@@ -1074,7 +1050,7 @@ UI.notifyInternalError = function () {
 };
 
 UI.notifyFocusDisconnected = function (focus, retrySec) {
-    messageHandler.notify(
+    messageHandler.participantNotification(
         null, "notify.focus",
         'disconnected', "notify.focusFail",
         {component: focus, ms: retrySec}
@@ -1163,21 +1139,70 @@ UI.showExtensionRequiredDialog = function (url) {
  * @param url {string} the url of the extension.
  */
 UI.showExtensionExternalInstallationDialog = function (url) {
+    let openedWindow = null;
+
     let submitFunction = function(e,v){
         if (v) {
             e.preventDefault();
-            eventEmitter.emit(UIEvents.OPEN_EXTENSION_STORE, url);
+            if (openedWindow === null || openedWindow.closed) {
+                openedWindow
+                    = window.open(
+                        url,
+                        "extension_store_window",
+                        "resizable,scrollbars=yes,status=1");
+            } else {
+                openedWindow.focus();
+            }
         }
     };
 
-    let closeFunction = function () {
-        eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+    let closeFunction = function (e, v) {
+        if (openedWindow) {
+            // Ideally we would close the popup, but this does not seem to work
+            // on Chrome. Leaving it uncommented in case it could work
+            // in some version.
+            openedWindow.close();
+            openedWindow = null;
+        }
+        if (!v) {
+            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+        }
     };
 
     messageHandler.openTwoButtonDialog({
         titleKey: 'dialog.externalInstallationTitle',
         msgKey: 'dialog.externalInstallationMsg',
         leftButtonKey: 'dialog.goToStore',
+        submitFunction,
+        loadedFunction: $.noop,
+        closeFunction
+    });
+};
+
+/**
+ * Shows a dialog which asks user to install the extension. This one is
+ * displayed after installation is triggered from the script, but fails because
+ * it must be initiated by user gesture.
+ * @param callback {function} function to be executed after user clicks
+ * the install button - it should make another attempt to install the extension.
+ */
+UI.showExtensionInlineInstallationDialog = function (callback) {
+    let submitFunction = function(e,v){
+        if (v) {
+            callback();
+        }
+    };
+
+    let closeFunction = function (e, v) {
+        if (!v) {
+            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
+        }
+    };
+
+    messageHandler.openTwoButtonDialog({
+        titleKey: 'dialog.externalInstallationTitle',
+        msgKey: 'dialog.inlineInstallationMsg',
+        leftButtonKey: 'dialog.inlineInstallExtension',
         submitFunction,
         loadedFunction: $.noop,
         closeFunction
@@ -1341,15 +1366,6 @@ UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
         sharedVideoManager.onSharedVideoStop(id, attributes);
 };
-
-/**
- * Enables / disables camera toolbar button.
- *
- * @param {boolean} enabled indicates if the camera button should be enabled
- * or disabled
- */
-UI.setCameraButtonEnabled
-    = enabled => APP.store.dispatch(setVideoIconEnabled(enabled));
 
 /**
  * Enables / disables microphone toolbar button.

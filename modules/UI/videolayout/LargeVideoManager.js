@@ -60,6 +60,14 @@ export default class LargeVideoManager {
         this.width = 0;
         this.height = 0;
 
+        /**
+         * Cache the aspect ratio of the video displayed to detect changes to
+         * the aspect ratio on video resize events.
+         *
+         * @type {number}
+         */
+        this._videoAspectRatio = 0;
+
         this.$container = $('#largeVideoContainer');
 
         this.$container.css({
@@ -72,11 +80,10 @@ export default class LargeVideoManager {
         );
 
         // Bind event handler so it is only bound once for every instance.
-        this._updateVideoResolutionStatus
-            = this._updateVideoResolutionStatus.bind(this);
+        this._onVideoResolutionUpdate
+            = this._onVideoResolutionUpdate.bind(this);
 
-        this.videoContainer.addResizeListener(
-            this._updateVideoResolutionStatus);
+        this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
 
         if (!JitsiMeetJS.util.RTCUIHelper.isResizeEventSupported()) {
             /**
@@ -88,7 +95,7 @@ export default class LargeVideoManager {
              * @type {timeoutId}
              */
             this._updateVideoResolutionInterval = window.setInterval(
-                this._updateVideoResolutionStatus,
+                this._onVideoResolutionUpdate,
                 VIDEO_RESOLUTION_POLL_INTERVAL);
         }
     }
@@ -102,14 +109,15 @@ export default class LargeVideoManager {
     destroy() {
         window.clearInterval(this._updateVideoResolutionInterval);
         this.videoContainer.removeResizeListener(
-            this._updateVideoResolutionStatus);
+            this._onVideoResolutionUpdate);
     }
 
     onHoverIn (e) {
         if (!this.state) {
             return;
         }
-        let container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
+
         container.onHoverIn(e);
     }
 
@@ -117,7 +125,8 @@ export default class LargeVideoManager {
         if (!this.state) {
             return;
         }
-        let container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
+
         container.onHoverOut(e);
     }
 
@@ -141,7 +150,7 @@ export default class LargeVideoManager {
     }
 
     get id () {
-        let container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
         return container.id;
     }
 
@@ -154,7 +163,7 @@ export default class LargeVideoManager {
 
         // Include hide()/fadeOut only if we're switching between users
         const isUserSwitch = this.newStreamData.id != this.id;
-        const container = this.getContainer(this.state);
+        const container = this.getCurrentContainer();
         const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
@@ -170,8 +179,8 @@ export default class LargeVideoManager {
 
             logger.info("hover in %s", id);
             this.state = videoType;
-            const container = this.getContainer(this.state);
-            container.setStream(stream, videoType);
+            const container = this.getCurrentContainer();
+            container.setStream(id, stream, videoType);
 
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
@@ -503,6 +512,26 @@ export default class LargeVideoManager {
     }
 
     /**
+     * Returns {@link LargeContainer} for the current {@link state}
+     *
+     * @return {LargeContainer}
+     *
+     * @throws an <tt>Error</tt> if there is no container for the current
+     * {@link state}.
+     */
+    getCurrentContainer() {
+        return this.getContainer(this.state);
+    }
+
+    /**
+     * Returns type of the current {@link LargeContainer}
+     * @return {string}
+     */
+    getCurrentContainerType() {
+        return this.state;
+    }
+
+    /**
      * Remove Large container of specified type.
      * @param {string} type container type.
      */
@@ -565,15 +594,21 @@ export default class LargeVideoManager {
 
     /**
      * Dispatches an action to update the known resolution state of the
-     * large video.
+     * large video and adjusts container sizes when the resolution changes.
      *
      * @private
      * @returns {void}
      */
-    _updateVideoResolutionStatus() {
+    _onVideoResolutionUpdate() {
         const { height, width } = this.videoContainer.getStreamSize();
+        const currentAspectRatio = width/ height;
         const isCurrentlyHD = Math.min(height, width) >= config.minHDHeight;
 
         APP.store.dispatch(setLargeVideoHDStatus(isCurrentlyHD));
+
+        if (this._videoAspectRatio !== currentAspectRatio) {
+            this._videoAspectRatio = currentAspectRatio;
+            this.resize();
+        }
     }
 }

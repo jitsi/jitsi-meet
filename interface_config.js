@@ -1,10 +1,13 @@
 var interfaceConfig = { // eslint-disable-line no-unused-vars
-    CANVAS_EXTRA: 104,
-    CANVAS_RADIUS: 0,
-    SHADOW_COLOR: '#ffffff',
     // TO FIX: this needs to be handled from SASS variables. There are some
     // methods allowing to use variables both in css and js.
     DEFAULT_BACKGROUND: '#474747',
+    /**
+     * In case the desktop sharing is disabled through the config the button
+     * will not be hidden, but displayed as disabled with this text us as
+     * a tooltip.
+     */
+    DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP: null,
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     DEFAULT_REMOTE_DISPLAY_NAME: "Fellow Jitster",
@@ -25,12 +28,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      */
     AUTHENTICATION_ENABLE: true,
     /**
-     * The index of the splitter button in the main toolbar. The splitter
-     * button is a button in the toolbar that will be applied a special styling
-     * visually dividing the toolbar buttons.
-     */
-    //MAIN_TOOLBAR_SPLITTER_INDEX: -1,
-    /**
      * the toolbar buttons line is intentionally left in one line, to be able
      * to easily override values or remove them using regex
      */
@@ -38,7 +35,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
         //main toolbar
         'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup', // jshint ignore:line
         //extended toolbar
-        'profile', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
+        'profile', 'addtocall', 'contacts', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'filmstrip'], // jshint ignore:line
     /**
      * Main Toolbar Buttons
      * All of them should be in TOOLBAR_BUTTONS
@@ -93,5 +90,19 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      *
      * @type {boolean}
      */
-    MOBILE_APP_PROMO: true
+    MOBILE_APP_PROMO: true,
+
+    /**
+     * Maximum coeficient of the ratio of the large video to the visible area
+     * after the large video is scaled to fit the window.
+     *
+     * @type {number}
+     */
+    MAXIMUM_ZOOMING_COEFFICIENT: 1.3
+
+    /*
+     * If indicated some of the error dialogs may point to the support URL for
+     * help.
+     */
+    // SUPPORT_URL: ""
 };

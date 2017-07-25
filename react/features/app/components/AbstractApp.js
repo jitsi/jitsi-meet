@@ -126,7 +126,7 @@ export class AbstractApp extends Component {
         // The consumer of this AbstractApp did not provide a Redux store.
         if (typeof nextProps.store === 'undefined'
 
-                // The consumer of this AbstractApp  did provide a Redux store
+                // The consumer of this AbstractApp did provide a Redux store
                 // before. Which means that the consumer changed their mind. In
                 // such a case this instance should create its own internal
                 // Redux store. If the consumer did not provide a Redux store
@@ -136,6 +136,13 @@ export class AbstractApp extends Component {
             this.setState({
                 store: this._maybeCreateStore(nextProps)
             });
+        }
+
+        // Deal with URL changes.
+        const { url } = nextProps;
+
+        if (this.props.url !== url) {
+            this._openURL(url || this._getDefaultURL());
         }
     }
 

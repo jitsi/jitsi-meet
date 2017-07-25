@@ -221,9 +221,15 @@ class ToolbarButton extends AbstractToolbarButton {
         if (UIUtil.isButtonEnabled(name)) {
 
             if (!button.unclickable) {
-                UIUtil.setTooltip(this.button,
-                    button.tooltipKey,
-                    tooltipPosition);
+                if (button.tooltipText) {
+                    UIUtil.setTooltipText(this.button,
+                        button.tooltipText,
+                        tooltipPosition);
+                } else {
+                    UIUtil.setTooltip(this.button,
+                        button.tooltipKey,
+                        tooltipPosition);
+                }
             }
 
             if (button.shortcut) {

@@ -62,12 +62,14 @@ export function resetDesktopSources() {
 /**
  * Signals to open a dialog with the DesktopPicker component.
  *
+ * @param {Object} options - Desktop sharing settings.
  * @param {Function} onSourceChoose - The callback to invoke when
  * a DesktopCapturerSource has been chosen.
  * @returns {Object}
  */
-export function showDesktopPicker(onSourceChoose) {
+export function showDesktopPicker(options, onSourceChoose) {
     return openDialog(DesktopPicker, {
+        options,
         onSourceChoose
     });
 }

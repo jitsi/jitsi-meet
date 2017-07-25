@@ -1,10 +1,35 @@
 /* global $, APP, JitsiMeetJS, interfaceConfig */
+
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
+
+import { i18next } from '../../../react/features/base/i18n';
+import { AudioLevelIndicator }
+    from '../../../react/features/audio-level-indicator';
+import {
+    Avatar as AvatarDisplay
+} from '../../../react/features/base/participants';
+import {
+    ConnectionIndicator
+} from '../../../react/features/connection-indicator';
+import { DisplayName } from '../../../react/features/display-name';
+import {
+    AudioMutedIndicator,
+    DominantSpeakerIndicator,
+    ModeratorIndicator,
+    RaisedHandIndicator,
+    VideoMutedIndicator
+} from '../../../react/features/filmstrip';
+/* eslint-enable no-unused-vars */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import Avatar from "../avatar/Avatar";
 import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
-import AudioLevels from "../audio_levels/AudioLevels";
 
 const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
@@ -46,6 +71,7 @@ const DISPLAY_VIDEO_WITH_NAME = 3;
 const DISPLAY_AVATAR_WITH_NAME = 4;
 
 function SmallVideo(VideoLayout) {
+    this._isModerator = false;
     this.isAudioMuted = false;
     this.hasAvatar = false;
     this.isVideoMuted = false;
@@ -56,6 +82,53 @@ function SmallVideo(VideoLayout) {
     this.hideDisplayName = false;
     // we can stop updating the thumbnail
     this.disableUpdateView = false;
+
+    /**
+     * The current state of the user's bridge connection. The value should be
+     * a string as enumerated in the library's participantConnectionStatus
+     * constants.
+     *
+     * @private
+     * @type {string|null}
+     */
+    this._connectionStatus = null;
+
+    /**
+     * Whether or not the ConnectionIndicator's popover is hovered. Modifies
+     * how the video overlays display based on hover state.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._popoverIsHovered = false;
+
+    /**
+     * Whether or not the connection indicator should be displayed.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._showConnectionIndicator = true;
+
+    /**
+     * Whether or not the dominant speaker indicator should be displayed.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._showDominantSpeaker = false;
+
+    /**
+     * Whether or not the raised hand indicator should be displayed.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._showRaisedHand = false;
+
+    // Bind event handlers so they are only bound once for every instance.
+    this._onPopoverHover = this._onPopoverHover.bind(this);
+    this.updateView = this.updateView.bind(this);
 }
 
 /**
@@ -186,30 +259,28 @@ SmallVideo.prototype.bindHoverHandler = function () {
             this.updateView();
         }
     );
-    if (this.connectionIndicator) {
-        this.connectionIndicator.addPopoverHoverListener(
-            () => {
-                this.updateView();
-            });
-    }
 };
 
 /**
- * Updates the data for the indicator
- * @param id the id of the indicator
- * @param percent the percent for connection quality
- * @param object the data
+ * Unmounts the ConnectionIndicator component.
+
+ * @returns {void}
  */
-SmallVideo.prototype.updateStatsIndicator = function (percent, object) {
-    if(this.connectionIndicator)
-        this.connectionIndicator.updateConnectionQuality(percent, object);
+SmallVideo.prototype.removeConnectionIndicator = function () {
+    this._showConnectionIndicator = false;
+
+    this.updateIndicators();
 };
 
-SmallVideo.prototype.hideIndicator = function () {
-    if(this.connectionIndicator)
-        this.connectionIndicator.hideIndicator();
-};
+/**
+ * Updates the connectionStatus stat which displays in the ConnectionIndicator.
 
+ * @returns {void}
+ */
+SmallVideo.prototype.updateConnectionStatus = function (connectionStatus) {
+    this._connectionStatus = connectionStatus;
+    this.updateIndicators();
+};
 
 /**
  * Shows / hides the audio muted indicator over small videos.
@@ -218,43 +289,8 @@ SmallVideo.prototype.hideIndicator = function () {
  * or hidden
  */
 SmallVideo.prototype.showAudioIndicator = function (isMuted) {
-    let mutedIndicator = this.getAudioMutedIndicator();
-
-    UIUtil.setVisible(mutedIndicator, isMuted);
-
     this.isAudioMuted = isMuted;
-};
-
-/**
- * Returns the audio muted indicator jquery object. If it doesn't exists -
- * creates it.
- *
- * @returns {HTMLElement} the audio muted indicator
- */
-SmallVideo.prototype.getAudioMutedIndicator = function () {
-    let selector = '#' + this.videoSpanId + ' .audioMuted';
-    let audioMutedSpan = document.querySelector(selector);
-
-    if (audioMutedSpan) {
-        return audioMutedSpan;
-    }
-
-    audioMutedSpan = document.createElement('span');
-    audioMutedSpan.className = 'audioMuted toolbar-icon';
-
-    UIUtil.setTooltip(audioMutedSpan,
-        "videothumbnail.mute",
-        "top");
-
-    let mutedIndicator = document.createElement('i');
-    mutedIndicator.className = 'icon-mic-disabled';
-    audioMutedSpan.appendChild(mutedIndicator);
-
-    this.container
-        .querySelector('.videocontainer__toolbar')
-        .appendChild(audioMutedSpan);
-
-    return audioMutedSpan;
+    this.updateStatusBar();
 };
 
 /**
@@ -268,105 +304,107 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
     this.isVideoMuted = isMuted;
     this.updateView();
 
-    let element = this.getVideoMutedIndicator();
-
-    UIUtil.setVisible(element, isMuted);
+    this.updateStatusBar();
 };
 
 /**
- * Returns the video muted indicator jquery object. If it doesn't exists -
- * creates it.
+ * Create or updates the ReactElement for displaying status indicators about
+ * audio mute, video mute, and moderator status.
  *
- * @returns {jQuery|HTMLElement} the video muted indicator
+ * @returns {void}
  */
-SmallVideo.prototype.getVideoMutedIndicator = function () {
-    var selector = '#' + this.videoSpanId + ' .videoMuted';
-    var videoMutedSpan = document.querySelector(selector);
+SmallVideo.prototype.updateStatusBar = function () {
+    const statusBarContainer
+        = this.container.querySelector('.videocontainer__toolbar');
 
-    if (videoMutedSpan) {
-        return videoMutedSpan;
-    }
-
-    videoMutedSpan = document.createElement('span');
-    videoMutedSpan.className = 'videoMuted toolbar-icon';
-
-    this.container
-        .querySelector('.videocontainer__toolbar')
-        .appendChild(videoMutedSpan);
-
-    var mutedIndicator = document.createElement('i');
-    mutedIndicator.className = 'icon-camera-disabled';
-
-    UIUtil.setTooltip(mutedIndicator,
-        "videothumbnail.videomute",
-        "top");
-
-    videoMutedSpan.appendChild(mutedIndicator);
-
-    return videoMutedSpan;
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <div>
+            { this.isAudioMuted ? <AudioMutedIndicator /> : null }
+            { this.isVideoMuted ? <VideoMutedIndicator /> : null }
+            { this._isModerator
+                && !interfaceConfig.DISABLE_FOCUS_INDICATOR
+                    ? <ModeratorIndicator /> : null }
+        </div>,
+        statusBarContainer);
+    /* jshint ignore:end */
 };
 
 /**
  * Adds the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.addModeratorIndicator = function () {
-
-    // Don't create moderator indicator if DISABLE_FOCUS_INDICATOR is true
-    if (interfaceConfig.DISABLE_FOCUS_INDICATOR)
-        return false;
-
-    // Show moderator indicator
-    var indicatorSpan = $('#' + this.videoSpanId + ' .focusindicator');
-
-    if (indicatorSpan.length) {
-        return;
-    }
-
-    indicatorSpan = document.createElement('span');
-    indicatorSpan.className = 'focusindicator toolbar-icon right';
-
-    this.container
-        .querySelector('.videocontainer__toolbar')
-        .appendChild(indicatorSpan);
-
-    var moderatorIndicator = document.createElement('i');
-    moderatorIndicator.className = 'icon-star';
-
-    UIUtil.setTooltip(moderatorIndicator,
-        "videothumbnail.moderator",
-        "top-left");
-
-    indicatorSpan.appendChild(moderatorIndicator);
+    this._isModerator = true;
+    this.updateStatusBar();
 };
 
 /**
  * Adds the element indicating the audio level of the participant.
+ *
+ * @returns {void}
  */
 SmallVideo.prototype.addAudioLevelIndicator = function () {
-    var audioSpan = $('#' + this.videoSpanId + ' .audioindicator');
+    let audioLevelContainer = this._getAudioLevelContainer();
 
-    if (audioSpan.length) {
+    if (audioLevelContainer) {
         return;
     }
 
-    this.container.appendChild(
-        AudioLevels.createThumbnailAudioLevelIndicator());
+    audioLevelContainer = document.createElement('span');
+    audioLevelContainer.className = 'audioindicator-container';
+    this.container.appendChild(audioLevelContainer);
+
+    this.updateAudioLevelIndicator();
+};
+
+/**
+ * Removes the element indicating the audio level of the participant.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.removeAudioLevelIndicator = function () {
+    const audioLevelContainer = this._getAudioLevelContainer();
+
+    if (audioLevelContainer) {
+        ReactDOM.unmountComponentAtNode(audioLevelContainer);
+    }
 };
 
 /**
  * Updates the audio level for this small video.
  *
  * @param lvl the new audio level to set
+ * @returns {void}
  */
-SmallVideo.prototype.updateAudioLevelIndicator = function (lvl) {
-    AudioLevels.updateThumbnailAudioLevel(this.videoSpanId, lvl);
+SmallVideo.prototype.updateAudioLevelIndicator = function (lvl = 0) {
+    const audioLevelContainer = this._getAudioLevelContainer();
+
+    if (audioLevelContainer) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <AudioLevelIndicator
+                audioLevel = { lvl }/>,
+            audioLevelContainer);
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Queries the component's DOM for the element that should be the parent to the
+ * AudioLevelIndicator.
+ *
+ * @returns {HTMLElement} The DOM element that holds the AudioLevelIndicator.
+ */
+SmallVideo.prototype._getAudioLevelContainer = function () {
+    return this.container.querySelector('.audioindicator-container');
 };
 
 /**
  * Removes the element indicating the moderator(owner) of the conference.
  */
 SmallVideo.prototype.removeModeratorIndicator = function () {
-    $('#' + this.videoSpanId + ' .focusindicator').remove();
+    this._isModerator = false;
+    this.updateStatusBar();
 };
 
 /**
@@ -390,7 +428,7 @@ SmallVideo.prototype.selectVideoElement = function () {
  * element which displays the user's avatar.
  */
 SmallVideo.prototype.$avatar = function () {
-    return $('#' + this.videoSpanId + ' .userAvatar');
+    return $('#' + this.videoSpanId + ' .avatar-container');
 };
 
 /**
@@ -400,7 +438,45 @@ SmallVideo.prototype.$avatar = function () {
  * the video thumbnail
  */
 SmallVideo.prototype.$displayName = function () {
-    return $('#' + this.videoSpanId + ' .displayname');
+    return $('#' + this.videoSpanId + ' .displayNameContainer');
+};
+
+/**
+ * Creates or updates the participant's display name that is shown over the
+ * video preview.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.updateDisplayName = function (props) {
+    const displayNameContainer
+        = this.container.querySelector('.displayNameContainer');
+
+    if (displayNameContainer) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <DisplayName { ...props } />
+                </I18nextProvider>
+            </Provider>,
+            displayNameContainer);
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Removes the component responsible for showing the participant's display name,
+ * if its container is present.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.removeDisplayName = function () {
+    const displayNameContainer
+        = this.container.querySelector('.displayNameContainer');
+
+    if (displayNameContainer) {
+        ReactDOM.unmountComponentAtNode(displayNameContainer);
+    }
 };
 
 /**
@@ -478,9 +554,7 @@ SmallVideo.prototype.selectDisplayMode = function() {
  * @private
  */
 SmallVideo.prototype._isHovered = function () {
-    return this.videoIsHovered
-        || (this.connectionIndicator
-            && this.connectionIndicator.popover.popoverIsHovered);
+    return this.videoIsHovered || this._popoverIsHovered;
 };
 
 /**
@@ -529,21 +603,40 @@ SmallVideo.prototype.updateView = function () {
                                 || displayMode === DISPLAY_VIDEO_WITH_NAME));
 };
 
+/**
+ * Updates the react component displaying the avatar with the passed in avatar
+ * url.
+ *
+ * @param {string} avatarUrl - The uri to the avatar image.
+ * @returns {void}
+ */
 SmallVideo.prototype.avatarChanged = function (avatarUrl) {
-    var thumbnail = $('#' + this.videoSpanId);
-    var avatarSel = this.$avatar();
+    const thumbnail = this.$avatar().get(0);
     this.hasAvatar = true;
 
-    // set the avatar in the thumbnail
-    if (avatarSel && avatarSel.length > 0) {
-        avatarSel[0].src = avatarUrl;
-    } else {
-        if (thumbnail && thumbnail.length > 0) {
-            var avatarElement = document.createElement('img');
-            avatarElement.className = 'userAvatar';
-            avatarElement.src = avatarUrl;
-            thumbnail.append(avatarElement);
-        }
+    if (thumbnail) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <AvatarDisplay
+                className = 'userAvatar'
+                uri = { avatarUrl } />,
+            thumbnail
+        );
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Unmounts any attached react components (particular the avatar image) from
+ * the avatar container.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.removeAvatar = function () {
+    const thumbnail = this.$avatar().get(0);
+
+    if (thumbnail) {
+        ReactDOM.unmountComponentAtNode(thumbnail);
     }
 };
 
@@ -563,17 +656,9 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function (show) {
         return;
     }
 
-    let indicatorSpanId = "dominantspeakerindicator";
-    let content = `<i id="indicatoricon"
-                      class="indicatoricon fa fa-bullhorn"></i>`;
-    let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
-        videoSpanId: this.videoSpanId,
-        indicatorId: indicatorSpanId,
-        content,
-        tooltip: 'speaker'
-    });
+    this._showDominantSpeaker = show;
 
-    UIUtil.setVisible(indicatorSpan, show);
+    this.updateIndicators();
 };
 
 /**
@@ -587,17 +672,9 @@ SmallVideo.prototype.showRaisedHandIndicator = function (show) {
         return;
     }
 
-    let indicatorSpanId = "raisehandindicator";
-    let content = `<i id="indicatoricon"
-                      class="icon-raised-hand indicatoricon"></i>`;
-    let indicatorSpan = UIUtil.getVideoThumbnailIndicatorSpan({
-        indicatorId: indicatorSpanId,
-        videoSpanId: this.videoSpanId,
-        content,
-        tooltip: 'raisedHand'
-    });
+    this._showRaisedHand = show;
 
-    UIUtil.setVisible(indicatorSpan, show);
+    this.updateIndicators();
 };
 
 /**
@@ -652,6 +729,71 @@ SmallVideo.prototype.initBrowserSpecificProperties = function() {
             || userAgent.indexOf("Linux") > -1)) {
         $('#' + this.videoSpanId).css("overflow", "hidden");
     }
+};
+
+/**
+ * Updates the React element responsible for showing connection status, dominant
+ * speaker, and raised hand icons. Uses instance variables to get the necessary
+ * state to display. Will create the React element if not already created.
+ *
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype.updateIndicators = function () {
+    const indicatorToolbar
+        = this.container.querySelector('.videocontainer__toptoolbar');
+
+    const iconSize = UIUtil.getIndicatorFontSize();
+
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <div>
+            { this._showConnectionIndicator
+                ? <ConnectionIndicator
+                    connectionStatus = { this._connectionStatus }
+                    iconSize = { iconSize }
+                    isLocalVideo = { this.isLocal }
+                    onHover = { this._onPopoverHover }
+                    showMoreLink = { this.isLocal }
+                    userID = { this.id } />
+                : null }
+            { this._showRaisedHand
+                ? <RaisedHandIndicator iconSize = { iconSize } /> : null }
+            { this._showDominantSpeaker
+                ? <DominantSpeakerIndicator iconSize = { iconSize } /> : null }
+        </div>,
+        indicatorToolbar
+    );
+    /* jshint ignore:end */
+};
+
+/**
+ * Removes the React element responsible for showing connection status, dominant
+ * speaker, and raised hand icons.
+ *
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype._unmountIndicators = function () {
+    const indicatorToolbar
+        = this.container.querySelector('.videocontainer__toptoolbar');
+
+    if (indicatorToolbar) {
+        ReactDOM.unmountComponentAtNode(indicatorToolbar);
+    }
+};
+
+/**
+ * Updates the current state of the connection indicator popover being hovered.
+ * If hovered, display the small video as if it is hovered.
+ *
+ * @param {boolean} popoverIsHovered - Whether or not the mouse cursor is
+ * currently over the connection indicator popover.
+ * @returns {void}
+ */
+SmallVideo.prototype._onPopoverHover = function (popoverIsHovered) {
+    this._popoverIsHovered = popoverIsHovered;
+    this.updateView();
 };
 
 export default SmallVideo;

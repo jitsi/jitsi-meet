@@ -58,6 +58,7 @@ $auiDialogBg: #f5f5f5;
 $auiDialogContentBg: $baseLight;
 $auiBorderColor: #ccc;
 $dialogTitleFontWeight: 400;
+$dialogErrorText: #344563;
 
 /**
 * Inlay colors
@@ -70,9 +71,6 @@ $inlayFilmstripOnlyColor: #474747;
 $inlayFilmstripOnlyBg: #fff;
 
 // Main controls
-$inputBackground: $controlBackground;
-$inputBorderColor: #ccc;
-$inputColor: $controlColor;
 $placeHolderColor: #a7a7a7;
 $readOnlyInputColor: #a7a7a7;
 $defaultDarkSelectionColor: #ccc;
@@ -93,7 +91,17 @@ $popoverFontColor: #ffffff;
 $popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
 
 // Toolbar
-$splitterColor: #ccc;
+$secondaryToolbarBg: rgba(0, 0, 0, 0.5);
+// TOFIX: Once moved to react rename to match the side panel class name.
+$sideToolbarContainerBg: rgba(0, 0, 0, 0.75);
+$toolbarBackground: rgba(0, 0, 0, 0.5);
+$toolbarBadgeBackground: #165ECC;
+$toolbarBadgeColor: #FFFFFF;
+$toolbarButtonColor: #FFFFFF;
+$toolbarSelectBackground: rgba(0, 0, 0, .6);
+$toolbarTitleColor: #FFFFFF;
+$toolbarToggleBackground: #12499C;
+
 
 /**
  * Forms

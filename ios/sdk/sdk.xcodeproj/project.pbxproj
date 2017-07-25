@@ -17,25 +17,10 @@
 		0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495C1EC4B6C600B793EE /* AudioMode.m */; };
 		0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495D1EC4B6C600B793EE /* POSIX.m */; };
 		0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495E1EC4B6C600B793EE /* Proximity.m */; };
-		0BCA49641EC4B76D00B793EE /* WebRTC.framework in Copy embedded WebRTC framework */ = {isa = PBXBuildFile; fileRef = 0BCA49631EC4B76D00B793EE /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		0BCA49621EC4B74500B793EE /* Copy embedded WebRTC framework */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				0BCA49641EC4B76D00B793EE /* WebRTC.framework in Copy embedded WebRTC framework */,
-			);
-			name = "Copy embedded WebRTC framework";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,7 +146,6 @@
 				0BD906E11EC0C00300C8C18E /* Frameworks */,
 				0BD906E21EC0C00300C8C18E /* Headers */,
 				0BD906E31EC0C00300C8C18E /* Resources */,
-				0BCA49621EC4B74500B793EE /* Copy embedded WebRTC framework */,
 				0BCA49651EC4B77500B793EE /* Package React bundle */,
 				C7BC10B338C94EEB98048E64 /* [CP] Copy Pods Resources */,
 			);

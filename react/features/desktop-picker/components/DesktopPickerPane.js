@@ -66,7 +66,8 @@ class DesktopPickerPane extends Component {
                         onClick = { onClick }
                         onDoubleClick = { onDoubleClick }
                         selected = { source.id === selectedSourceId }
-                        source = { source } />);
+                        source = { source }
+                        type = { type } />);
 
         return (
             <div className = { classNames }>

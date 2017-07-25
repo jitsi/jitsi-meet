@@ -46,18 +46,6 @@ const events = {
 let id = 0;
 
 /**
- * The minimum height for the Jitsi Meet frame
- * @type {number}
- */
-const MIN_HEIGHT = 300;
-
-/**
- * The minimum width for the Jitsi Meet frame
- * @type {number}
- */
-const MIN_WIDTH = 790;
-
-/**
  * Adds given number to the numberOfParticipants property of given APIInstance.
  *
  * @param {JitsiMeetExternalAPI} APIInstance - The instance of the API.
@@ -67,7 +55,7 @@ const MIN_WIDTH = 790;
  * @returns {void}
  */
 function changeParticipantNumber(APIInstance, number) {
-    APIInstance.numberOfParticipants += number;
+    APIInstance._numberOfParticipants += number;
 }
 
 /**
@@ -143,6 +131,82 @@ function generateURL(domain, options = {}) {
 }
 
 /**
+ * Parses the arguments passed to the constructor. If the old format is used
+ * the function translates the arguments to the new format.
+ *
+ * @param {Array} args - The arguments to be parsed.
+ * @returns {Object} JS object with properties.
+ */
+function parseArguments(args) {
+    if (!args.length) {
+        return {};
+    }
+
+    const firstArg = args[0];
+
+    switch (typeof firstArg) {
+    case 'string': // old arguments format
+    case undefined: // eslint-disable-line no-case-declarations
+    // not sure which format but we are trying to parse the old
+    // format because if the new format is used everything will be undefined
+    // anyway.
+        const [
+            roomName,
+            width,
+            height,
+            parentNode,
+            configOverwrite,
+            interfaceConfigOverwrite,
+            noSSL,
+            jwt
+        ] = args;
+
+        return {
+            roomName,
+            width,
+            height,
+            parentNode,
+            configOverwrite,
+            interfaceConfigOverwrite,
+            noSSL,
+            jwt
+        };
+    case 'object': // new arguments format
+        return args[0];
+    default:
+        throw new Error('Can\'t parse the arguments!');
+    }
+}
+
+/**
+ * Compute valid values for height and width. If a number is specified it's
+ * treated as pixel units. If the value is expressed in px, em, pt or
+ * percentage, it's used as is.
+ *
+ * @param {any} value - The value to be parsed.
+ * @returns {string|undefined} The parsed value that can be used for setting
+ * sizes through the style property. If invalid value is passed the method
+ * retuns undefined.
+ */
+function parseSizeParam(value) {
+    let parsedValue;
+
+    // This regex parses values of the form 100px, 100em, 100pt or 100%.
+    // Values like 100 or 100px are handled outside of the regex, and
+    // invalid values will be ignored and the minimum will be used.
+    const re = /([0-9]*\.?[0-9]+)(em|pt|px|%)$/;
+
+    if (typeof value === 'string' && String(value).match(re) !== null) {
+        parsedValue = value;
+    } else if (typeof value === 'number') {
+        parsedValue = `${value}px`;
+    }
+
+    return parsedValue;
+}
+
+
+/**
  * The IFrame API interface class.
  */
 export default class JitsiMeetExternalAPI extends EventEmitter {
@@ -151,48 +215,54 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @param {string} domain - The domain name of the server that hosts the
      * conference.
-     * @param {string} [roomName] - The name of the room to join.
-     * @param {number} [width] - Width of the iframe.
-     * @param {number} [height] - Height of the iframe.
-     * @param {DOMElement} [parentNode] - The node that will contain the
+     * @param {Object} [options] - Optional arguments.
+     * @param {string} [options.roomName] - The name of the room to join.
+     * @param {number|string} [options.width] - Width of the iframe. Check
+     * parseSizeParam for format details.
+     * @param {number|string} [options.height] - Height of the iframe. Check
+     * parseSizeParam for format details.
+     * @param {DOMElement} [options.parentNode] - The node that will contain the
      * iframe.
-     * @param {Object} [configOverwrite] - Object containing configuration
-     * options defined in config.js to be overridden.
-     * @param {Object} [interfaceConfigOverwrite] - Object containing
+     * @param {Object} [options.configOverwrite] - Object containing
+     * configuration options defined in config.js to be overridden.
+     * @param {Object} [options.interfaceConfigOverwrite] - Object containing
      * configuration options defined in interface_config.js to be overridden.
-     * @param {boolean} [noSSL] - If the value is true https won't be used.
-     * @param {string} [jwt] - The JWT token if needed by jitsi-meet for
+     * @param {boolean} [options.noSSL] - If the value is true https won't be
+     * used.
+     * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
      * authentication.
      */
-    constructor(domain, // eslint-disable-line max-params
-        roomName = '',
-        width = MIN_WIDTH,
-        height = MIN_HEIGHT,
-        parentNode = document.body,
-        configOverwrite = {},
-        interfaceConfigOverwrite = {},
-        noSSL = false,
-        jwt = undefined) {
+    constructor(domain, ...args) {
         super();
-        this.parentNode = parentNode;
-        this.url = generateURL(domain, {
+        const {
+            roomName = '',
+            width = '100%',
+            height = '100%',
+            parentNode = document.body,
+            configOverwrite = {},
+            interfaceConfigOverwrite = {},
+            noSSL = false,
+            jwt = undefined
+        } = parseArguments(args);
+
+        this._parentNode = parentNode;
+        this._url = generateURL(domain, {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
             noSSL,
             roomName
         });
-        this._createIFrame(Math.max(height, MIN_HEIGHT),
-            Math.max(width, MIN_WIDTH));
+        this._createIFrame(height, width);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
                 postisOptions: {
                     scope: `jitsi_meet_external_api_${id}`,
-                    window: this.frame.contentWindow
+                    window: this._frame.contentWindow
                 }
             })
         });
-        this.numberOfParticipants = 1;
+        this._numberOfParticipants = 1;
         this._setupListeners();
         id++;
     }
@@ -200,29 +270,47 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Creates the iframe element.
      *
-     * @param {number} height - The height of the iframe.
-     * @param {number} width - The with of the iframe.
+     * @param {number|string} height - The height of the iframe. Check
+     * parseSizeParam for format details.
+     * @param {number|string} width - The with of the iframe. Check
+     * parseSizeParam for format details.
      * @returns {void}
      *
      * @private
      */
     _createIFrame(height, width) {
-        this.iframeHolder
-            = this.parentNode.appendChild(document.createElement('div'));
-        this.iframeHolder.id = `jitsiConference${id}`;
-        this.iframeHolder.style.width = `${width}px`;
-        this.iframeHolder.style.height = `${height}px`;
+        const frameName = `jitsiConferenceFrame${id}`;
 
-        this.frameName = `jitsiConferenceFrame${id}`;
+        this._frame = document.createElement('iframe');
+        this._frame.src = this._url;
+        this._frame.name = frameName;
+        this._frame.id = frameName;
+        this._setSize(height, width);
+        this._frame.setAttribute('allowFullScreen', 'true');
+        this._frame.style.border = 0;
+        this._frame = this._parentNode.appendChild(this._frame);
+    }
 
-        this.frame = document.createElement('iframe');
-        this.frame.src = this.url;
-        this.frame.name = this.frameName;
-        this.frame.id = this.frameName;
-        this.frame.width = '100%';
-        this.frame.height = '100%';
-        this.frame.setAttribute('allowFullScreen', 'true');
-        this.frame = this.iframeHolder.appendChild(this.frame);
+    /**
+     * Sets the size of the iframe element.
+     *
+     * @param {number|string} height - The height of the iframe.
+     * @param {number|string} width - The with of the iframe.
+     * @returns {void}
+     *
+     * @private
+     */
+    _setSize(height, width) {
+        const parsedHeight = parseSizeParam(height);
+        const parsedWidth = parseSizeParam(width);
+
+        if (parsedHeight !== undefined) {
+            this._frame.style.height = parsedHeight;
+        }
+
+        if (parsedWidth !== undefined) {
+            this._frame.style.width = parsedWidth;
+        }
     }
 
     /**
@@ -336,8 +424,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     dispose() {
         this._transport.dispose();
         this.removeAllListeners();
-        if (this.iframeHolder) {
-            this.iframeHolder.parentNode.removeChild(this.iframeHolder);
+        if (this._frame) {
+            this._frame.parentNode.removeChild(this._frame);
         }
     }
 
@@ -389,13 +477,22 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the iframe that loads Jitsi Meet.
+     *
+     * @returns {HTMLElement} The iframe.
+     */
+    getIFrame() {
+        return this._frame;
+    }
+
+    /**
      * Returns the number of participants in the conference. The local
      * participant is included.
      *
      * @returns {int} The number of participants in the conference.
      */
     getNumberOfParticipants() {
-        return this.numberOfParticipants;
+        return this._numberOfParticipants;
     }
 
     /**

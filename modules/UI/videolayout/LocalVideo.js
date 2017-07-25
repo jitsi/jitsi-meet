@@ -1,19 +1,24 @@
 /* global $, config, interfaceConfig, APP, JitsiMeetJS */
+
+/* eslint-disable no-unused-vars */
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+
+import { VideoTrack } from '../../../react/features/base/media';
+/* eslint-enable no-unused-vars */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import ConnectionIndicator from "./ConnectionIndicator";
-import UIUtil from "../util/UIUtil";
 import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
 
-const RTCUIUtils = JitsiMeetJS.util.RTCUIHelper;
 const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
     this.container = $("#localVideoContainer").get(0);
     this.localVideoId = null;
-    this.createConnectionIndicator();
     this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
         this._buildContextMenu();
@@ -32,6 +37,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.setDisplayName();
 
     this.addAudioLevelIndicator();
+    this.updateIndicators();
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -48,158 +54,77 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         return;
     }
 
-    var nameSpan = $('#' + this.videoSpanId + ' .displayname');
-    var defaultLocalDisplayName = APP.translation.generateTranslationHTML(
-        interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-
-    var meHTML;
-    // If we already have a display name for this video.
-    if (nameSpan.length > 0) {
-        if (nameSpan.text() !== displayName) {
-            if (displayName && displayName.length > 0) {
-                meHTML = APP.translation.generateTranslationHTML("me");
-                $('#localDisplayName').html(
-                    `${UIUtil.escapeHtml(displayName)} (${meHTML})`
-                );
-                $('#editDisplayName').val(
-                    `${UIUtil.escapeHtml(displayName)}`
-                );
-            } else {
-                $('#localDisplayName').html(defaultLocalDisplayName);
-            }
-        }
-        this.updateView();
-    } else {
-        nameSpan = document.createElement('span');
-        nameSpan.className = 'displayname';
-        document.getElementById(this.videoSpanId)
-            .appendChild(nameSpan);
-
-
-        if (displayName && displayName.length > 0) {
-            meHTML = APP.translation.generateTranslationHTML("me");
-            nameSpan.innerHTML = UIUtil.escapeHtml(displayName) + meHTML;
-        }
-        else {
-            nameSpan.innerHTML = defaultLocalDisplayName;
-        }
-
-
-        nameSpan.id = 'localDisplayName';
-        //translates popover of edit button
-        APP.translation.translateElement($("a.displayname"));
-
-        var editableText = document.createElement('input');
-        editableText.className = 'editdisplayname';
-        editableText.type = 'text';
-        editableText.id = 'editDisplayName';
-
-        if (displayName && displayName.length) {
-            editableText.value = displayName;
-        }
-
-        editableText.setAttribute('style', 'display:none;');
-        editableText.setAttribute('data-i18n',
-            '[placeholder]defaultNickname');
-        editableText.setAttribute("data-i18n-options",
-            JSON.stringify({name: "Jane Pink"}));
-        APP.translation.translateElement($(editableText));
-
-        this.container
-            .appendChild(editableText);
-
-        var self = this;
-        $('#localVideoContainer .displayname')
-            .bind("click", function (e) {
-                let $editDisplayName = $('#editDisplayName');
-
-                e.preventDefault();
-                e.stopPropagation();
-                // we set display to be hidden
-                self.hideDisplayName = true;
-                // update the small video vide to hide the display name
-                self.updateView();
-                // disables further updates in the thumbnail to stay in the
-                // edit mode
-                self.disableUpdateView = true;
-
-                $editDisplayName.show();
-                $editDisplayName.focus();
-                $editDisplayName.select();
-
-                $editDisplayName.one("focusout", function () {
-                    self.emitter.emit(UIEvents.NICKNAME_CHANGED, this.value);
-                    $editDisplayName.hide();
-                    // stop editing, display displayName and resume updating
-                    // the thumbnail
-                    self.hideDisplayName = false;
-                    self.disableUpdateView = false;
-                    self.updateView();
-                });
-
-                $editDisplayName.on('keydown', function (e) {
-                    if (e.keyCode === 13) {
-                        e.preventDefault();
-                        $('#editDisplayName').hide();
-                        // focusout handler will save display name
-                    }
-                });
-            });
-    }
-};
-
-LocalVideo.prototype.createConnectionIndicator = function() {
-    if(this.connectionIndicator)
-        return;
-
-    this.connectionIndicator = new ConnectionIndicator(this, null);
+    this.updateDisplayName({
+        allowEditing: true,
+        displayName: displayName,
+        displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
+        elementID: 'localDisplayName',
+        participantID: this.id
+    });
 };
 
 LocalVideo.prototype.changeVideo = function (stream) {
     this.videoStream = stream;
 
     let localVideoClick = (event) => {
+        // TODO Checking the classList is a workround to allow events to bubble
+        // into the DisplayName component if it was clicked. React's synthetic
+        // events will fire after jQuery handlers execute, so stop propogation
+        // at this point will prevent DisplayName from getting click events.
+        // This workaround should be removeable once LocalVideo is a React
+        // Component because then the components share the same eventing system.
+        const { classList } = event.target;
+        const clickedOnDisplayName = classList.contains('displayname')
+            || classList.contains('editdisplayname');
+
         // FIXME: with Temasys plugin event arg is not an event, but
         // the clicked object itself, so we have to skip this call
-        if (event.stopPropagation) {
+        if (event.stopPropagation && !clickedOnDisplayName) {
             event.stopPropagation();
         }
-        this.VideoLayout.handleVideoThumbClicked(this.id);
+
+        if (!clickedOnDisplayName) {
+            this.VideoLayout.handleVideoThumbClicked(this.id);
+        }
     };
 
     let localVideoContainerSelector = $('#localVideoContainer');
     localVideoContainerSelector.off('click');
     localVideoContainerSelector.on('click', localVideoClick);
 
-    let localVideo = document.createElement('video');
-    localVideo.id = this.localVideoId = 'localVideo_' + stream.getId();
-
-    RTCUIUtils.setAutoPlay(localVideo, true);
-    RTCUIUtils.setVolume(localVideo, 0);
+    this.localVideoId = 'localVideo_' + stream.getId();
 
     var localVideoContainer = document.getElementById('localVideoWrapper');
-    // Put the new video always in front
-    UIUtil.prependChild(localVideoContainer, localVideo);
 
-    // Add click handler to both video and video wrapper elements in case
-    // there's no video.
-
-    // onclick has to be used with Temasys plugin
-    localVideo.onclick = localVideoClick;
+    /* jshint ignore:start */
+    ReactDOM.render(
+        <Provider store = { APP.store }>
+            <VideoTrack
+                id = { this.localVideoId }
+                videoTrack = {{ jitsiTrack: stream }} />
+        </Provider>,
+        localVideoContainer
+    );
+    /* jshint ignore:end */
 
     let isVideo = stream.videoType != "desktop";
     this._enableDisableContextMenu(isVideo);
     this.setFlipX(isVideo? APP.settings.getLocalFlipX() : false);
 
-    // Attach WebRTC stream
-    localVideo = stream.attach(localVideo);
-
     let endedHandler = () => {
-        localVideoContainer.removeChild(localVideo);
+        // Only remove if there is no video and not a transition state.
+        // Previous non-react logic created a new video element with each track
+        // removal whereas react reuses the video component so it could be the
+        // stream ended but a new one is being used.
+        if (this.videoStream.isEnded()) {
+            ReactDOM.unmountComponentAtNode(localVideoContainer);
+        }
+
         // when removing only the video element and we are on stage
         // update the stage
-        if(this.isCurrentlyOnLargeVideo())
+        if (this.isCurrentlyOnLargeVideo()) {
             this.VideoLayout.updateLargeVideo(this.id);
+        }
         stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
     stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);

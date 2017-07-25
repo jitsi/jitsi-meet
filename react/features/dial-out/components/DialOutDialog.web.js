@@ -109,7 +109,7 @@ class DialOutDialog extends Component {
     /**
      * Renders the dialog content.
      *
-     * @returns {XML}
+     * @returns {ReactElement}
      * @private
      */
     _renderContent() {
@@ -127,7 +127,7 @@ class DialOutDialog extends Component {
      * Renders the error message to display if the dial phone number is not
      * allowed.
      *
-     * @returns {XML}
+     * @returns {ReactElement}
      * @private
      */
     _renderErrorMessage() {

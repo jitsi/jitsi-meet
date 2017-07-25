@@ -3,7 +3,7 @@
 const process = require('process');
 const webpack = require('webpack');
 
-const aui_css = __dirname + '/node_modules/@atlassian/aui/dist/aui/css/';
+const aui_css = `${__dirname}/node_modules/@atlassian/aui/dist/aui/css/`;
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -15,11 +15,11 @@ const devServerProxyTarget
 const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
-const node_modules = __dirname + '/node_modules/';
+const node_modules = `${__dirname}/node_modules/`;
 const plugins = [
     new webpack.LoaderOptionsPlugin({
         debug: !minimize,
-        minimize: minimize
+        minimize
     })
 ];
 const strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
@@ -34,21 +34,15 @@ if (minimize) {
         }
     }));
 
-    // While webpack will automatically insert UglifyJsPlugin when minimize is
-    // true, the defaults of UglifyJsPlugin in webpack 1 and webpack 2 are
-    // different. Explicitly state what we want even if we want defaults in
-    // order to prepare for webpack 2.
     plugins.push(new webpack.optimize.UglifyJsPlugin({
         compress: {
             // It is nice to see warnings from UglifyJsPlugin that something is
-            // unused and, consequently, is removed. The default is false in
-            // webpack 2.
+            // unused/removed.
             warnings: true
         },
         extractComments: true,
 
-        // Use the source map to map error message locations to modules. The
-        // default is false in webpack 2.
+        // Use the source map to map error message locations to modules.
         sourceMap: true
     }));
 }
@@ -146,25 +140,20 @@ const config = {
         __filename: true
     },
     output: {
-        filename: '[name]' + (minimize ? '.min' : '') + '.js',
-        libraryTarget: 'umd',
-        path: __dirname + '/build',
+        filename: `[name]${minimize ? '.min' : ''}.js`,
+        path: `${__dirname}/build`,
         publicPath: '/libs/',
-        sourceMapFilename: '[name].' + (minimize ? 'min' : 'js') + '.map'
+        sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
     },
-    plugins: plugins,
+    plugins,
     resolve: {
         alias: {
-            jquery: 'jquery/dist/jquery' + (minimize ? '.min' : '') + '.js'
+            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
         },
         aliasFields: [
             'browser'
         ],
         extensions: [
-            // Webpack 2 broke haste-resolver-webpack-plugin and I could not fix
-            // it. But given that there is resolve.extensions and the only
-            // non-default extension we have is .web.js, drop
-            // haste-resolver-webpack-plugin and go with resolve.extensions.
             '.web.js',
 
             // Webpack defaults:
@@ -174,36 +163,19 @@ const config = {
     }
 };
 
-const configs = [
-
-    // The Webpack configuration to bundle app.bundle.js (aka APP).
+module.exports = [
     Object.assign({}, config, {
         entry: {
             'app.bundle': [
+
                 // XXX Required by at least IE11 at the time of this writing.
                 'babel-polyfill',
                 './app.js'
-            ]
-        },
-        output: Object.assign({}, config.output, {
-            library: 'APP'
-        })
-    }),
+            ],
 
-    // The Webpack configuration to bundle device_selection_popup_bundle.js
-    // (i.e. js file for the device selection popup dialog).
-    Object.assign({}, config, {
-        entry: {
             'device_selection_popup_bundle':
-                './react/features/device-selection/popup.js'
-        }
-    }),
+                './react/features/device-selection/popup.js',
 
-    // The Webpack configuration to bundle do_external_connect.js (which
-    // attempts to optimize Jitsi Meet's XMPP connection and, consequently, is
-    // also known as HTTP pre-bind).
-    Object.assign({}, config, {
-        entry: {
             'do_external_connect':
                 './connection_optimization/do_external_connect.js'
         }
@@ -216,12 +188,11 @@ const configs = [
             'external_api': './modules/API/external/index.js'
         },
         output: Object.assign({}, config.output, {
-            library: 'JitsiMeetExternalAPI'
+            library: 'JitsiMeetExternalAPI',
+            libraryTarget: 'umd'
         })
     })
 ];
-
-module.exports = configs;
 
 /**
  * Determines whether a specific (HTTP) request is to bypass the proxy of
@@ -232,24 +203,25 @@ module.exports = configs;
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
-function devServerProxyBypass(request) {
-    let path = request.path;
-
+function devServerProxyBypass({ path }) {
     // Use local files from the css and libs directories.
     if (path.startsWith('/css/')) {
         return path;
     }
-    if (configs.some(function (c) {
+
+    const configs = module.exports;
+
+    if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
                 if (path.startsWith(c.output.publicPath)) {
                     if (!minimize) {
                         // Since webpack-dev-server is serving non-minimized
                         // artifacts, serve them even if the minimized ones are
                         // requested.
-                        Object.keys(c.entry).some(function (e) {
-                            var name = e + '.min.js';
+                        Object.keys(c.entry).some(e => {
+                            const name = `${e}.min.js`;
 
                             if (path.indexOf(name) !== -1) {
-                                path = path.replace(name, e + '.js');
+                                path = path.replace(name, `${e}.js`);
 
                                 return true;
                             }

@@ -1,36 +1,36 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.jitsi.meet">
-    <application
-      android:allowBackup="true"
-      android:icon="@mipmap/ic_launcher"
+  <application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme">
+    <activity
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
       android:label="@string/app_name"
-      android:theme="@style/AppTheme">
-      <activity
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:label="@string/app_name"
-        android:launchMode="singleTask"
-        android:name=".MainActivity"
-        android:windowSoftInputMode="adjustResize">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <data android:host="beta.hipchat.me" android:scheme="https" />
-            <data android:host="beta.meet.jit.si" android:scheme="https" />
-            <data android:host="chaos.hipchat.me" android:scheme="https" />
-            <data android:host="enso.me" android:scheme="https" />
-            <data android:host="hipchat.me" android:scheme="https" />
-            <data android:host="meet.jit.si" android:scheme="https" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <data android:scheme="org.jitsi.meet" />
-        </intent-filter>
-      </activity>
-    </application>
+      android:launchMode="singleTask"
+      android:name=".MainActivity"
+      android:windowSoftInputMode="adjustResize">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:host="beta.hipchat.me" android:scheme="https" />
+        <data android:host="beta.meet.jit.si" android:scheme="https" />
+        <data android:host="chaos.hipchat.me" android:scheme="https" />
+        <data android:host="enso.me" android:scheme="https" />
+        <data android:host="hipchat.me" android:scheme="https" />
+        <data android:host="meet.jit.si" android:scheme="https" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:scheme="org.jitsi.meet" />
+      </intent-filter>
+    </activity>
+  </application>
 </manifest>

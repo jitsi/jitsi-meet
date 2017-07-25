@@ -21,19 +21,22 @@
 
 @interface JitsiMeetView : UIView
 
-@property (nonatomic, weak, nullable) id<JitsiMeetViewDelegate> delegate;
+@property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
 
 @property (nonatomic) BOOL welcomePageEnabled;
 
-+    (BOOL)application:(UIApplication *)application
-  continueUserActivity:(NSUserActivity *)userActivity
-    restorationHandler:(void (^)(NSArray *))restorationHandler;
++             (BOOL)application:(UIApplication *_Nonnull)application
+  didFinishLaunchingWithOptions:(NSDictionary *_Nonnull)launchOptions;
 
-+ (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)URL
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation;
++    (BOOL)application:(UIApplication * _Nonnull)application
+  continueUserActivity:(NSUserActivity * _Nonnull)userActivity
+    restorationHandler:(void (^ _Nullable)(NSArray * _Nullable))restorationHandler;
 
-- (void)loadURL:(nullable NSURL *)url;
++ (BOOL)application:(UIApplication * _Nonnull)application
+            openURL:(NSURL * _Nonnull)URL
+  sourceApplication:(NSString * _Nullable)sourceApplication
+         annotation:(id _Nullable)annotation;
+
+- (void)loadURL:(NSURL * _Nullable)url;
 
 @end

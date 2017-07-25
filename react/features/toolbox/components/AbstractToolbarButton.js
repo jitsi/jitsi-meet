@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 /**
- * Abstract (base) class for a button in Toolbar.
+ * Abstract (base) class for a button in {@link Toolbar}.
  *
  * @abstract
  */
@@ -13,12 +13,12 @@ export default class AbstractToolbarButton extends Component {
      */
     static propTypes = {
         /**
-         * The name of the Icon of this AbstractToolbarButton.
+         * The name of the Icon of this {@code AbstractToolbarButton}.
          */
         iconName: React.PropTypes.string,
 
         /**
-         * The style of the Icon of this AbstractToolbarButton.
+         * The style of the Icon of this {@code AbstractToolbarButton}.
          */
         iconStyle: React.PropTypes.object,
 
@@ -28,7 +28,7 @@ export default class AbstractToolbarButton extends Component {
         onClick: React.PropTypes.func,
 
         /**
-         * Toolbar button styles.
+         * {@code AbstractToolbarButton} styles.
          */
         style:
             React.PropTypes.oneOfType([
@@ -43,6 +43,33 @@ export default class AbstractToolbarButton extends Component {
     };
 
     /**
+     * Initializes a new {@code AbstractToolbarButton} instance.
+     *
+     * @param {Object} props - The React {@code Component} props to initialize
+     * the new {@code AbstractToolbarButton} instance with.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onClick = this._onClick.bind(this);
+    }
+
+    /**
+     * Handles clicking/pressing this {@code AbstractToolbarButton} by
+     * forwarding the event to the {@code onClick} prop of this instance if any.
+     *
+     * @protected
+     * @returns {*} The result returned by the invocation of the {@code onClick}
+     * prop of this instance if any.
+     */
+    _onClick(...args) {
+        const { onClick } = this.props;
+
+        return onClick && onClick(...args);
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -53,12 +80,12 @@ export default class AbstractToolbarButton extends Component {
     }
 
     /**
-     * Renders the icon of this Toolbar button.
+     * Renders the icon of this {@code AbstractToolbarButton}.
      *
      * @param {string|ReactClass} type - The React Component type of the icon to
      * be rendered.
      * @protected
-     * @returns {ReactElement} The icon of this Toolbar button.
+     * @returns {ReactElement} The icon of this {@code AbstractToolbarButton}.
      */
     _renderIcon(type) {
         const props = {};

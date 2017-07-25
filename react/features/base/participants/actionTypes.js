@@ -11,6 +11,18 @@
 export const DOMINANT_SPEAKER_CHANGED = Symbol('DOMINANT_SPEAKER_CHANGED');
 
 /**
+ * Create an action for when the local participant's display name is updated.
+ *
+ * {
+ *     type: PARTICIPANT_DISPLAY_NAME_CHANGED,
+ *     id: string,
+ *     name: string
+ * }
+ */
+export const PARTICIPANT_DISPLAY_NAME_CHANGED
+    = Symbol('PARTICIPANT_DISPLAY_NAME_CHANGED');
+
+/**
  * Action to signal that ID of participant has changed. This happens when
  * local participant joins a new conference or quits one.
  *

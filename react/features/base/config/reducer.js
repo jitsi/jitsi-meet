@@ -1,17 +1,34 @@
-import { ReducerRegistry } from '../redux';
+/* @flow */
+
+import _ from 'lodash';
+
+import { equals, ReducerRegistry, set } from '../redux';
 
 import { SET_CONFIG } from './actionTypes';
 
 /**
- * The initial state of the feature base/config. The mandatory configuration to
- * be passed to JitsiMeetJS#init(). The app will download config.js from the
- * Jitsi Meet deployment and take its values into account but the values bellow
- * will be enforced (because they are essential to the correct execution of the
+ * The initial state of the feature base/config when executing in a
+ * non-React Native environment. The mandatory configuration to be passed to
+ * JitsiMeetJS#init(). The app will download config.js from the Jitsi Meet
+ * deployment and take its values into account but the values bellow will be
+ * enforced (because they are essential to the correct execution of the
  * application).
  *
  * @type {Object}
  */
-const INITIAL_STATE = {
+const INITIAL_NON_RN_STATE = {
+};
+
+/**
+ * The initial state of the feature base/config when executing in a React Native
+ * environment. The mandatory configuration to be passed to JitsiMeetJS#init().
+ * The app will download config.js from the Jitsi Meet deployment and take its
+ * values into account but the values bellow will be enforced (because they are
+ * essential to the correct execution of the application).
+ *
+ * @type {Object}
+ */
+const INITIAL_RN_STATE = {
     // FIXME The support for audio levels in lib-jitsi-meet polls the statistics
     // of WebRTC at a short interval multiple times a second. Unfortunately,
     // React Native is slow to fetch these statistics from the native WebRTC
@@ -26,12 +43,16 @@ const INITIAL_STATE = {
     // Fortunately, these pieces of JavaScript currently involve third parties
     // and we can temporarily disable them (until we implement an alternative to
     // async script elements on React Native).
-    disableThirdPartyRequests: true
+    disableThirdPartyRequests: true,
+
+    p2p: {
+        preferH264: true
+    }
 };
 
 ReducerRegistry.register(
     'features/base/config',
-    (state = INITIAL_STATE, action) => {
+    (state = _getInitialState(), action) => {
         switch (action.type) {
         case SET_CONFIG:
             return _setConfig(state, action);
@@ -40,6 +61,22 @@ ReducerRegistry.register(
             return state;
         }
     });
+
+/**
+ * Gets the initial state of the feature base/config. The mandatory
+ * configuration to be passed to JitsiMeetJS#init(). The app will download
+ * config.js from the Jitsi Meet deployment and take its values into account but
+ * the values bellow will be enforced (because they are essential to the correct
+ * execution of the application).
+ *
+ * @returns {Object}
+ */
+function _getInitialState() {
+    return (
+        navigator.product === 'ReactNative'
+            ? INITIAL_RN_STATE
+            : INITIAL_NON_RN_STATE);
+}
 
 /**
  * Reduces a specific Redux action SET_CONFIG of the feature
@@ -52,19 +89,80 @@ ReducerRegistry.register(
  * reduction of the specified action.
  */
 function _setConfig(state, action) {
-    return {
-        ...action.config,
+    let { config } = action;
 
-        // The config of INITIAL_STATE is meant to override the config
+    // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
+    // does not download them at runtime from the deployment on which it will
+    // join a conference. The downloading is planned for implementation in the
+    // future (later rather than sooner) but is not implemented yet at the time
+    // of this writing and, consequently, we must provide legacy support in the
+    // meantime.
+    config = _translateLegacyConfig(config);
+
+    const newState = _.merge(
+        {},
+        config,
+
+        // The config of _getInitialState() is meant to override the config
         // downloaded from the Jitsi Meet deployment because the former contains
         // values that are mandatory.
-        //
-        // FIXME At the time of this writing the hard-coded overriding values
-        // are specific to mobile/React Native but the source code here is
-        // executed on Web/React as well. The latter is not a practical problem
-        // right now because the rest of the Web/React source code does not read
-        // the overridden properties/values, it still relies on the global
-        // variable config.
-        ...INITIAL_STATE
-    };
+        _getInitialState()
+    );
+
+    return equals(state, newState) ? state : newState;
+}
+
+/**
+ * Constructs a new config {@code Object}, if necessary, out of a specific
+ * config {@code Object} which is in the latest format supported by jitsi-meet.
+ * Such a translation from an old config format to a new/the latest config
+ * format is necessary because the mobile app bundles jitsi-meet and
+ * lib-jitsi-meet at build time and does not download them at runtime from the
+ * deployment on which it will join a conference.
+ *
+ * @param {Object} oldValue - The config {@code Object} which may or may not be
+ * in the latest form supported by jitsi-meet and from which a new config
+ * {@code Object} is to be constructed if necessary.
+ * @returns {Object} A config {@code Object} which is in the latest format
+ * supported by jitsi-meet.
+ */
+function _translateLegacyConfig(oldValue: Object) {
+    // jitsi/jitsi-meet#3ea2f005787c9f49c48febaeed9dc0340fe0a01b
+
+    let newValue = oldValue;
+
+    // At the time of this writing lib-jitsi-meet will rely on config having a
+    // property with the name p2p and with a value of type Object.
+    if (typeof oldValue.p2p !== 'object') {
+        newValue = set(newValue, 'p2p', {});
+    }
+
+    // Translate the old config properties into the new config.p2p properties.
+    for (const [ oldKey, newKey ]
+            of [
+                [ 'backToP2PDelay', 'backToP2PDelay' ],
+                [ 'enableP2P', 'enabled' ],
+                [ 'p2pStunServers', 'stunServers' ]
+            ]) {
+        if (oldKey in newValue) {
+            const v = newValue[oldKey];
+
+            // Do not modify oldValue.
+            if (newValue === oldValue) {
+                newValue = {
+                    ...newValue
+                };
+            }
+            delete newValue[oldKey];
+
+            // Do not modify p2p because it may be from oldValue i.e. do not
+            // modify oldValue.
+            newValue.p2p = {
+                ...newValue.p2p,
+                [newKey]: v
+            };
+        }
+    }
+
+    return newValue;
 }

@@ -7,6 +7,13 @@
 export const LOCAL_PARTICIPANT_DEFAULT_ID = 'local';
 
 /**
+ * Max length of the display names.
+ *
+ * @type {string}
+ */
+export const MAX_DISPLAY_NAME_LENGTH = 50;
+
+/**
  * The set of possible XMPP MUC roles for conference participants.
  *
  * @enum {string}

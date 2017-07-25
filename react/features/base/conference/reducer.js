@@ -7,6 +7,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     SET_AUDIO_ONLY,
@@ -31,6 +32,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case CONFERENCE_LEFT:
         return _conferenceLeft(state, action);
+
+    case CONFERENCE_WILL_JOIN:
+        return _conferenceWillJoin(state, action);
 
     case CONFERENCE_WILL_LEAVE:
         return _conferenceWillLeave(state, action);
@@ -67,42 +71,40 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _conferenceFailed(state, action) {
-    const conference = action.conference;
-
+function _conferenceFailed(state, { conference, error }) {
     if (state.conference && state.conference !== conference) {
         return state;
     }
 
     const passwordRequired
-        = JitsiConferenceErrors.PASSWORD_REQUIRED === action.error
+        = JitsiConferenceErrors.PASSWORD_REQUIRED === error
             ? conference
             : undefined;
 
-    return (
-        assign(state, {
-            audioOnly: undefined,
-            audioOnlyVideoMuted: undefined,
-            conference: undefined,
-            leaving: undefined,
+    return assign(state, {
+        audioOnly: undefined,
+        audioOnlyVideoMuted: undefined,
+        conference: undefined,
+        joining: undefined,
+        leaving: undefined,
 
-            /**
-             * The indicator of how the conference/room is locked. If falsy, the
-             * conference/room is unlocked; otherwise, it's either
-             * {@code LOCKED_LOCALLY} or {@code LOCKED_REMOTELY}.
-             *
-             * @type {string}
-             */
-            locked: passwordRequired ? LOCKED_REMOTELY : undefined,
-            password: undefined,
+        /**
+         * The indicator of how the conference/room is locked. If falsy, the
+         * conference/room is unlocked; otherwise, it's either
+         * {@code LOCKED_LOCALLY} or {@code LOCKED_REMOTELY}.
+         *
+         * @type {string}
+         */
+        locked: passwordRequired ? LOCKED_REMOTELY : undefined,
+        password: undefined,
 
-            /**
-             * The JitsiConference instance which requires a password to join.
-             *
-             * @type {JitsiConference}
-             */
-            passwordRequired
-        }));
+        /**
+         * The JitsiConference instance which requires a password to join.
+         *
+         * @type {JitsiConference}
+         */
+        passwordRequired
+    });
 }
 
 /**
@@ -115,34 +117,32 @@ function _conferenceFailed(state, action) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _conferenceJoined(state, action) {
-    const conference = action.conference;
-
+function _conferenceJoined(state, { conference }) {
     // FIXME The indicator which determines whether a JitsiConference is locked
     // i.e. password-protected is private to lib-jitsi-meet. However, the
     // library does not fire LOCK_STATE_CHANGED upon joining a JitsiConference
     // with a password.
     const locked = conference.room.locked ? LOCKED_REMOTELY : undefined;
 
-    return (
-        assign(state, {
-            /**
-             * The JitsiConference instance represented by the Redux state of
-             * the feature base/conference.
-             *
-             * @type {JitsiConference}
-             */
-            conference,
-            leaving: undefined,
+    return assign(state, {
+        /**
+         * The JitsiConference instance represented by the Redux state of the
+         * feature base/conference.
+         *
+         * @type {JitsiConference}
+         */
+        conference,
+        joining: undefined,
+        leaving: undefined,
 
-            /**
-             * The indicator which determines whether the conference is locked.
-             *
-             * @type {boolean}
-             */
-            locked,
-            passwordRequired: undefined
-        }));
+        /**
+         * The indicator which determines whether the conference is locked.
+         *
+         * @type {boolean}
+         */
+        locked,
+        passwordRequired: undefined
+    });
 }
 
 /**
@@ -155,23 +155,35 @@ function _conferenceJoined(state, action) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _conferenceLeft(state, action) {
-    const conference = action.conference;
-
+function _conferenceLeft(state, { conference }) {
     if (state.conference !== conference) {
         return state;
     }
 
-    return (
-        assign(state, {
-            audioOnly: undefined,
-            audioOnlyVideoMuted: undefined,
-            conference: undefined,
-            leaving: undefined,
-            locked: undefined,
-            password: undefined,
-            passwordRequired: undefined
-        }));
+    return assign(state, {
+        audioOnly: undefined,
+        audioOnlyVideoMuted: undefined,
+        conference: undefined,
+        joining: undefined,
+        leaving: undefined,
+        locked: undefined,
+        password: undefined,
+        passwordRequired: undefined
+    });
+}
+
+/**
+ * Reduces a specific Redux action CONFERENCE_WILL_JOIN of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_WILL_JOIN to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferenceWillJoin(state, { conference }) {
+    return set(state, 'joining', conference);
 }
 
 /**
@@ -184,24 +196,23 @@ function _conferenceLeft(state, action) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _conferenceWillLeave(state, action) {
-    const conference = action.conference;
-
+function _conferenceWillLeave(state, { conference }) {
     if (state.conference !== conference) {
         return state;
     }
 
-    return (
-        assign(state, {
-            /**
-             * The JitsiConference instance which is currently in the process of
-             * being left.
-             *
-             * @type {JitsiConference}
-             */
-            leaving: conference,
-            passwordRequired: undefined
-        }));
+    return assign(state, {
+        joining: undefined,
+
+        /**
+         * The JitsiConference instance which is currently in the process of
+         * being left.
+         *
+         * @type {JitsiConference}
+         */
+        leaving: conference,
+        passwordRequired: undefined
+    });
 }
 
 /**
@@ -214,20 +225,14 @@ function _conferenceWillLeave(state, action) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _lockStateChanged(state, action) {
-    if (state.conference !== action.conference) {
+function _lockStateChanged(state, { conference, locked }) {
+    if (state.conference !== conference) {
         return state;
     }
 
-    let locked;
-
-    if (action.locked) {
-        locked = state.locked || LOCKED_REMOTELY;
-    }
-
     return assign(state, {
-        locked,
-        password: action.locked ? state.password : null
+        locked: locked ? state.locked || LOCKED_REMOTELY : undefined,
+        password: locked ? state.password : undefined
     });
 }
 
@@ -284,31 +289,28 @@ function _setLargeVideoHDStatus(state, action) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _setPassword(state, action) {
-    const conference = action.conference;
-
-    switch (action.method) {
+function _setPassword(state, { conference, method, password }) {
+    switch (method) {
     case conference.join:
         if (state.passwordRequired === conference) {
-            return (
-                assign(state, {
-                    locked: LOCKED_REMOTELY,
+            return assign(state, {
+                locked: LOCKED_REMOTELY,
 
-                    /**
-                     * The password with which the conference is to be joined.
-                     *
-                     * @type {string}
-                     */
-                    password: action.password,
-                    passwordRequired: undefined
-                }));
+                /**
+                 * The password with which the conference is to be joined.
+                 *
+                 * @type {string}
+                 */
+                password,
+                passwordRequired: undefined
+            });
         }
         break;
 
     case conference.lock:
         return assign(state, {
-            locked: action.password ? LOCKED_LOCALLY : undefined,
-            password: action.password
+            locked: password ? LOCKED_LOCALLY : undefined,
+            password
         });
     }
 

@@ -11,6 +11,6 @@ if [[ "$CONFIGURATION" = "Debug" ]]; then
       exit 2
     fi
   else
-    open "$SRCROOT/../../node_modules/react-native/packager/launchPackager.command" || echo "Can't start packager automatically"
+    open -g "$SRCROOT/../../node_modules/react-native/packager/launchPackager.command" || echo "Can't start packager automatically"
   fi
 fi
