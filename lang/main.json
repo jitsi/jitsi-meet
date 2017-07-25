@@ -476,5 +476,8 @@
         "retry": "Try again",
         "support": "Support",
         "supportMsg": "If this keeps happening, reach out to"
+    },
+    "faceTracking": {
+        "warning": "Make sure you are in the center."
     }
 }

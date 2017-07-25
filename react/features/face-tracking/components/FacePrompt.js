@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { translate } from '../../base/i18n';
 import { SHOW_PROMPT } from '../actionTypes';
 import { elementResizeMonitor } from './ElementResizeMonitor';
 
@@ -22,9 +23,14 @@ class FacePrompt extends Component {
      */
     static propTypes = {
         /**
-         * Shows face prompt or hides the prompt.
+         * Shows or hides the face prompt.
          */
         actionType: React.PropTypes.symbol,
+
+        /**
+         * Invoked to obtain translated strings.
+         */
+        t: React.PropTypes.func,
 
         /**
          * Reference to a HTML video element whose face prompt needs
@@ -153,7 +159,7 @@ class FacePrompt extends Component {
                 <div
                     className = 'face-text'
                     ref = { this._setTextElement }>
-                    Make sure to be in the center.
+                    { this.props.t('faceTracking.warning') }
                 </div>
             </div>
         );
@@ -264,4 +270,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(FacePrompt);
+export default translate(connect(_mapStateToProps)(FacePrompt));
