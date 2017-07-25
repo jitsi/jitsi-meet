@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-    Dimensions,
     TouchableHighlight,
     TouchableWithoutFeedback,
     View
@@ -39,41 +38,29 @@ export default class Container extends AbstractContainer {
         // visible
 
         // The following property is responsible to hide/show this Container by
-        // moving it out of site of the screen boundaries. An attempt to use the
-        // opacity property was made in order to eventually implement a
-        // fadeIn/fadeOut animation, however a known React Native problem was
-        // discovered, which allows the view to still capture touch events even
-        // if hidden.
-        let visibilityStyle;
+        // setting its size to 0. This will make the component not visible, but
+        // it won't be destroyed, all its state is preserved. This is
+        // intentional.
+        // TODO: replace with display: 'none', supported in RN >= 0.43.
+        const hidden = visible === false;  // true / undefined
 
-        if (typeof visible !== 'undefined' && !visible) {
-            const windowDimensions = Dimensions.get('window');
-
-            visibilityStyle = {
-                bottom: -windowDimensions.height,
-                right: -windowDimensions.width
-            };
-        }
-
-        const renderParent = touchFeedback || onClick;
-
-        if (!renderParent && visibilityStyle) {
+        if (hidden) {
             style = {
                 ...style,
-                ...visibilityStyle
+                height: 0,
+                width: 0
             };
         }
 
         // eslint-disable-next-line object-property-newline
         let component = super._render(View, { ...props, style });
 
-        if (renderParent) {
+        if (!hidden && (touchFeedback || onClick)) {
             const parentType
                 = touchFeedback ? TouchableHighlight : TouchableWithoutFeedback;
             const parentProps = {};
 
             onClick && (parentProps.onPress = onClick);
-            visibilityStyle && (parentProps.style = visibilityStyle);
 
             component = React.createElement(parentType, parentProps, component);
         }
