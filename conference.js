@@ -78,7 +78,6 @@ const eventEmitter = new EventEmitter();
 let room;
 let connection;
 let localAudio, localVideo;
-let initialAudioMutedState = false;
 
 import {VIDEO_CONTAINER_TYPE} from "./modules/UI/videolayout/VideoContainer";
 
@@ -177,11 +176,14 @@ function getDisplayName(id) {
 /**
  * Mute or unmute local audio stream if it exists.
  * @param {boolean} muted - if audio stream should be muted or unmuted.
- * @param {boolean} userInteraction - indicates if this local audio mute was a
- * result of user interaction
+ *
+ * @returns {Promise} resolved in case mute/unmute operations succeeds or
+ * rejected with an error if something goes wrong. It is expected that often
+ * the error will be of the {@link JitsiTrackError} type, but it's not
+ * guaranteed.
  */
 function muteLocalAudio(muted) {
-    muteLocalMedia(localAudio, muted);
+    return muteLocalMedia(localAudio, muted);
 }
 
 /**
@@ -680,7 +682,7 @@ export default {
                     });
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
-                    if (track.isAudioTrack() && initialAudioMutedState) {
+                    if (track.isAudioTrack() && this.audioMuted) {
                         track.mute();
                     } else if (track.isVideoTrack() && this.videoMuted) {
                         track.mute();
@@ -751,10 +753,46 @@ export default {
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
-     * @param mute true for mute and false for unmute.
+     * @param {boolean} mute true for mute and false for unmute.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
      */
-    muteAudio(mute) {
-        muteLocalAudio(mute);
+    muteAudio(mute, showUI = true) {
+        // Not ready to modify track's state yet
+        if (!this._localTracksInitialized) {
+            this.audioMuted = mute;
+            return;
+        } else if (localAudio && localAudio.isMuted() === mute) {
+            // NO-OP
+            return;
+        }
+
+        const maybeShowErrorDialog = (error) => {
+            if (showUI) {
+                APP.UI.showDeviceErrorDialog(error, null);
+            }
+        };
+
+        if (!localAudio && this.audioMuted && !mute) {
+            createLocalTracks({ devices: ['audio'] }, false)
+                .then(([audioTrack]) => audioTrack)
+                .catch(error => {
+                    maybeShowErrorDialog(error);
+
+                    // Rollback the audio muted status by using null track
+                    return null;
+                })
+                .then(audioTrack => this.useAudioStream(audioTrack));
+        } else {
+            const oldMutedStatus = this.audioMuted;
+
+            muteLocalAudio(mute)
+                .catch(error => {
+                    maybeShowErrorDialog(error);
+                    this.audioMuted = oldMutedStatus;
+                    APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
+                });
+        }
     },
     /**
      * Returns whether local audio is muted or not.
@@ -766,18 +804,11 @@ export default {
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts
      * and API.
-     * @param {boolean} force - If the track is not created, the operation
-     * will be executed after the track is created. Otherwise the operation
-     * will be ignored.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
      */
-    toggleAudioMuted(force = false) {
-        if(!localAudio && force) {
-            // NOTE this logic will be adjusted to the same one as for the video
-            // once 'startWithAudioMuted' option is added.
-            initialAudioMutedState = !initialAudioMutedState;
-            return;
-        }
-        this.muteAudio(!this.audioMuted);
+    toggleAudioMuted(showUI = true) {
+        this.muteAudio(!this.audioMuted, showUI);
     },
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
@@ -1213,7 +1244,8 @@ export default {
                     this.audioMuted = newStream.isMuted();
                     APP.UI.addLocalStream(newStream);
                 } else {
-                    this.audioMuted = false;
+                    // No audio is treated the same way as being audio muted
+                    this.audioMuted = true;
                 }
                 APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
             });
@@ -1836,17 +1868,7 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
-            if (!localAudio && this.audioMuted && !muted) {
-                createLocalTracks({ devices: ['audio'] }, false)
-                    .then(([audioTrack]) => {
-                        this.useAudioStream(audioTrack);
-                    })
-                    .catch(error => {
-                        APP.UI.showDeviceErrorDialog(error, null);
-                    });
-            } else {
-                muteLocalAudio(muted);
-            }
+            this.muteAudio(muted);
         });
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
             if (this.isAudioOnly() && !muted) {
