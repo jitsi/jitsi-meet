@@ -59,7 +59,7 @@ const htmlStr = `
                 <div id="faceTrackingOptions" class="hide">
                     <div class="sideToolbarBlock first">
                         <input type="checkbox" id="startFaceTracking">
-                        <label class="startFaceTrackingLabel" 
+                        <label class="startFaceTrackingLabel"
                             for="startFaceTracking"
                             data-i18n="settings.startFaceTracking"></label>
                     </div>
@@ -193,19 +193,16 @@ export default {
         // FACE-TRACKING
         if (UIUtil.isSettingEnabled('facetracking')) {
             const wrapperId = 'faceTrackingOptionsWrapper';
+            const largeVideoElement = document.getElementById('largeVideo');
 
             $("#faceTrackingOptions").change(function () {
                 const startFaceTracking
                     = $("#startFaceTracking").is(":checked");
 
                 if (startFaceTracking) {
-                    console.warn('enable');
-                    APP.store.dispatch(enableFaceTracking(
-                        document.getElementById('largeVideo')));
+                    APP.store.dispatch(enableFaceTracking(largeVideoElement));
                 } else {
-                    console.warn('disable');
-                    APP.store.dispatch(disableFaceTracking(
-                        document.getElementById('largeVideo')));
+                    APP.store.dispatch(disableFaceTracking(largeVideoElement));
                 }
             });
 
