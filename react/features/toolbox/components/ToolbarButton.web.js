@@ -10,10 +10,7 @@ import {
 } from '../../../../modules/UI/util/Tooltip';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
-import {
-    getButtonAttributesByProps,
-    isButtonEnabled
-} from '../functions';
+import { getButtonAttributesByProps } from '../functions';
 
 declare var APP: Object;
 
@@ -211,30 +208,26 @@ class ToolbarButton extends AbstractToolbarButton {
      */
     _setShortcutAndTooltip(): void {
         const { button, tooltipPosition } = this.props;
-        const name = button.buttonName;
 
-        if (isButtonEnabled(name)) {
-
-            if (!button.unclickable) {
-                if (button.tooltipText) {
-                    setTooltipText(this.button,
-                        button.tooltipText,
-                        tooltipPosition);
-                } else {
-                    setTooltip(this.button,
-                        button.tooltipKey,
-                        tooltipPosition);
-                }
+        if (!button.unclickable) {
+            if (button.tooltipText) {
+                setTooltipText(this.button,
+                    button.tooltipText,
+                    tooltipPosition);
+            } else {
+                setTooltip(this.button,
+                    button.tooltipKey,
+                    tooltipPosition);
             }
+        }
 
-            if (button.shortcut && APP && APP.keyboardshortcut) {
-                APP.keyboardshortcut.registerShortcut(
-                    button.shortcut,
-                    button.shortcutAttr,
-                    button.shortcutFunc,
-                    button.shortcutDescription
-                );
-            }
+        if (button.shortcut && APP && APP.keyboardshortcut) {
+            APP.keyboardshortcut.registerShortcut(
+                button.shortcut,
+                button.shortcutAttr,
+                button.shortcutFunc,
+                button.shortcutDescription
+            );
         }
     }
 }
