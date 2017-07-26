@@ -222,8 +222,8 @@ public class JitsiMeetView extends FrameLayout {
 
     /**
      * Loads a specific {@link URL} which may identify a conference to join. If
-     * the specified {@code URL} is {@code null}, the Welcome page is displayed
-     * instead.
+     * the specified {@code URL} is {@code null} and the Welcome page is
+     * enabled, the Welcome page is displayed instead.
      *
      * @param url - The {@code URL} to load which may identify a conference to
      * join.
@@ -263,16 +263,15 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         reactRootView = new ReactRootView(getContext());
-        reactRootView
-            .startReactApplication(reactInstanceManager, "App", props);
+        reactRootView.startReactApplication(reactInstanceManager, "App", props);
         reactRootView.setBackgroundColor(BACKGROUND_COLOR);
         addView(reactRootView);
     }
 
     /**
      * Loads a specific URL {@link String} which may identify a conference to
-     * join. If the specified URL {@code String} is {@code null}, the Welcome
-     * page is displayed instead.
+     * join. If the specified URL {@code String} is {@code null} and the Welcome
+     * page is enabled, the Welcome page is displayed instead.
      *
      * @param urlString - The URL {@code String} to load which may identify a
      * conference to join.

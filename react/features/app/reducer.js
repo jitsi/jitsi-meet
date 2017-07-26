@@ -16,8 +16,8 @@ ReducerRegistry.register('features/app', (state = {}, action) => {
                 ...state,
 
                 /**
-                 * The one and only (i.e. singleton) App instance which is
-                 * currently mounted.
+                 * The one and only (i.e. singleton) {@link App} instance which
+                 * is currently mounted.
                  *
                  * @type {App}
                  */

@@ -13,11 +13,7 @@ import { RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 
-import {
-    appNavigate,
-    appWillMount,
-    appWillUnmount
-} from '../actions';
+import { appNavigate, appWillMount, appWillUnmount } from '../actions';
 
 declare var APP: Object;
 
@@ -34,7 +30,7 @@ const DEFAULT_URL = 'https://meet.jit.si';
  */
 export class AbstractApp extends Component {
     /**
-     * AbstractApp component's property types.
+     * {@code AbstractApp} component's property types.
      *
      * @static
      */
@@ -46,7 +42,7 @@ export class AbstractApp extends Component {
         defaultURL: React.PropTypes.string,
 
         /**
-         * (Optional) Redux store for this app.
+         * (Optional) redux store for this app.
          */
         store: React.PropTypes.object,
 
@@ -60,24 +56,24 @@ export class AbstractApp extends Component {
     };
 
     /**
-     * Initializes a new AbstractApp instance.
+     * Initializes a new {@code AbstractApp} instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Object} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
         this.state = {
             /**
-             * The Route rendered by this AbstractApp.
+             * The Route rendered by this {@code AbstractApp}.
              *
              * @type {Route}
              */
             route: undefined,
 
             /**
-             * The Redux store used by this AbstractApp.
+             * The redux store used by this {@code AbstractApp}.
              *
              * @type {Store}
              */
@@ -118,23 +114,23 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Notifies this mounted React Component that it will receive new props.
-     * Makes sure that this AbstractApp has a Redux store to use.
+     * Notifies this mounted React {@code Component} that it will receive new
+     * props. Makes sure that this {@code AbstractApp} has a redux store to use.
      *
      * @inheritdoc
-     * @param {Object} nextProps - The read-only React Component props that this
-     * instance will receive.
+     * @param {Object} nextProps - The read-only React {@code Component} props
+     * that this instance will receive.
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
-        // The consumer of this AbstractApp did not provide a Redux store.
+        // The consumer of this AbstractApp did not provide a redux store.
         if (typeof nextProps.store === 'undefined'
 
-                // The consumer of this AbstractApp did provide a Redux store
+                // The consumer of this AbstractApp did provide a redux store
                 // before. Which means that the consumer changed their mind. In
                 // such a case this instance should create its own internal
-                // Redux store. If the consumer did not provide a Redux store
-                // before, then this instance is using its own internal Redux
+                // redux store. If the consumer did not provide a redux store
+                // before, then this instance is using its own internal redux
                 // store already.
                 && typeof this.props.store !== 'undefined') {
             this.setState({
@@ -166,15 +162,16 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Gets a Location object from the window with information about the current
-     * location of the document. Explicitly defined to allow extenders to
-     * override because React Native does not usually have a location property
-     * on its window unless debugging remotely in which case the browser that is
-     * the remote debugger will provide a location property on the window.
+     * Gets a {@code Location} object from the window with information about the
+     * current location of the document. Explicitly defined to allow extenders
+     * to override because React Native does not usually have a location
+     * property on its window unless debugging remotely in which case the
+     * browser that is the remote debugger will provide a location property on
+     * the window.
      *
      * @public
-     * @returns {Location} A Location object with information about the current
-     * location of the document.
+     * @returns {Location} A {@code Location} object with information about the
+     * current location of the document.
      */
     getWindowLocation() {
         return undefined;
@@ -205,14 +202,14 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Create a ReactElement from the specified component, the specified props
-     * and the props of this AbstractApp which are suitable for propagation to
-     * the children of this Component.
+     * Creates a {@link ReactElement} from the specified component, the
+     * specified props and the props of this {@code AbstractApp} which are
+     * suitable for propagation to the children of this {@code Component}.
      *
-     * @param {Component} component - The component from which the ReactElement
-     * is to be created.
-     * @param {Object} props - The read-only React Component props with which
-     * the ReactElement is to be initialized.
+     * @param {Component} component - The component from which the
+     * {@code ReactElement} is to be created.
+     * @param {Object} props - The read-only React {@code Component} props with
+     * which the {@code ReactElement} is to be initialized.
      * @returns {ReactElement}
      * @protected
      */
@@ -245,12 +242,12 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Initializes a new Redux store instance suitable for use by
-     * this AbstractApp.
+     * Initializes a new redux store instance suitable for use by this
+     * {@code AbstractApp}.
      *
      * @private
-     * @returns {Store} - A new Redux store instance suitable for use by
-     * this AbstractApp.
+     * @returns {Store} - A new redux store instance suitable for use by
+     * this {@code AbstractApp}.
      */
     _createStore() {
         // Create combined reducer from all reducers in ReducerRegistry.
@@ -275,10 +272,11 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Gets the default URL to be opened when this App mounts.
+     * Gets the default URL to be opened when this {@code App} mounts.
      *
      * @protected
-     * @returns {string} The default URL to be opened when this App mounts.
+     * @returns {string} The default URL to be opened when this {@code App}
+     * mounts.
      */
     _getDefaultURL() {
         // If the execution environment provides a Location abstraction, then
@@ -298,10 +296,10 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Gets the Redux store used by this AbstractApp.
+     * Gets the redux store used by this {@code AbstractApp}.
      *
      * @protected
-     * @returns {Store} - The Redux store used by this AbstractApp.
+     * @returns {Store} - The redux store used by this {@code AbstractApp}.
      */
     _getStore() {
         let store = this.state.store;
@@ -314,20 +312,21 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Creates a Redux store to be used by this AbstractApp if such as store is
-     * not defined by the consumer of this AbstractApp through its
-     * read-only React Component props.
+     * Creates a redux store to be used by this {@code AbstractApp} if such as a
+     * store is not defined by the consumer of this {@code AbstractApp} through
+     * its read-only React {@code Component} props.
      *
-     * @param {Object} props - The read-only React Component props that will
-     * eventually be received by this AbstractApp.
+     * @param {Object} props - The read-only React {@code Component} props that
+     * will eventually be received by this {@code AbstractApp}.
      * @private
-     * @returns {Store} - The Redux store to be used by this AbstractApp.
+     * @returns {Store} - The redux store to be used by this
+     * {@code AbstractApp}.
      */
     _maybeCreateStore(props) {
-        // The application Jitsi Meet is architected with Redux. However, I do
+        // The application Jitsi Meet is architected with redux. However, I do
         // not want consumers of the App React Component to be forced into
-        // dealing with Redux. If the consumer did not provide an external Redux
-        // store, utilize an internal Redux store.
+        // dealing with redux. If the consumer did not provide an external redux
+        // store, utilize an internal redux store.
         let store = props.store;
 
         if (typeof store === 'undefined') {
@@ -380,7 +379,7 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Notifies this App that a specific Route is about to be rendered.
+     * Notifies this {@code App} that a specific Route is about to be rendered.
      *
      * @param {Route} route - The Route that is about to be rendered.
      * @private
@@ -394,10 +393,10 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Navigates this AbstractApp to (i.e. opens) a specific URL.
+     * Navigates this {@code AbstractApp} to (i.e. opens) a specific URL.
      *
-     * @param {string|Object} url - The URL to navigate this AbstractApp to
-     * (i.e. the URL to open).
+     * @param {string|Object} url - The URL to navigate this {@code AbstractApp}
+     * to (i.e. the URL to open).
      * @protected
      * @returns {void}
      */

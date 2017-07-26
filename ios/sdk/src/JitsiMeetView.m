@@ -178,8 +178,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
 /**
  * Loads a specific {@link NSURL} which may identify a conference to join. If
- * the specified {@code NSURL} is {@code nil}, the Welcome page is displayed
- * instead.
+ * the specified {@code NSURL} is {@code nil} and the Welcome page is enabled,
+ * the Welcome page is displayed instead.
  *
  * @param url - The {@code NSURL} to load which may identify a conference to
  * join.
@@ -223,8 +223,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
 /**
  * Loads a specific URL {@link NSString} which may identify a conference to
- * join. If the specified URL {@code NSString} is {@code nil}, the Welcome page
- * is displayed instead.
+ * join. If the specified URL {@code NSString} is {@code nil} and the Welcome
+ * page is enabled, the Welcome page is displayed instead.
  *
  * @param urlString - The URL {@code NSString} to load which may identify a
  * conference to join.
