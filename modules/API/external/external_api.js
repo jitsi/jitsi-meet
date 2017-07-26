@@ -8,6 +8,10 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+const ALWAYS_ON_TOP_FILENAMES = [
+    'css/alwaysontop.css', 'libs/alwaysontop.bundle.min.js'
+];
+
 /**
  * Maps the names of the commands expected by the API with the name of the
  * commands expected by jitsi-meet
@@ -207,6 +211,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL,
             roomName
         });
+        this._baseUrl = generateURL(domain, {
+            noSSL
+        });
         this._createIFrame(height, width);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
@@ -243,6 +250,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._frame.setAttribute('allowFullScreen', 'true');
         this._frame.style.border = 0;
         this._frame = this._parentNode.appendChild(this._frame);
+    }
+
+    /**
+     * Returns arrays with the all resources for the always on top feature.
+     *
+     * @returns {Array<string>}
+     */
+    _getAlwaysOnTopResources() {
+        return ALWAYS_ON_TOP_FILENAMES.map(
+            filename => this._baseUrl + filename
+        );
     }
 
     /**
