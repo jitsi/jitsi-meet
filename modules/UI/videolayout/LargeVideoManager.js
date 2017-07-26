@@ -1,4 +1,12 @@
 /* global $, APP, config, JitsiMeetJS */
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+
+import { PresenceLabel } from '../../../react/features/presence-status';
+/* eslint-enable no-unused-vars */
+
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import { setLargeVideoHDStatus } from '../../../react/features/base/conference';
@@ -101,8 +109,8 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Stops any polling intervals on the instance and and removes any
-     * listeners registered on child components.
+     * Stops any polling intervals on the instance and removes any
+     * listeners registered on child components, including React Components.
      *
      * @returns {void}
      */
@@ -110,6 +118,14 @@ export default class LargeVideoManager {
         window.clearInterval(this._updateVideoResolutionInterval);
         this.videoContainer.removeResizeListener(
             this._onVideoResolutionUpdate);
+
+        const presenceLabelContainer = $('#remotePresenceMessage');
+
+        if (presenceLabelContainer.length) {
+            /* jshint ignore:start */
+            ReactDOM.unmountComponentAtNode(presenceLabelContainer.get(0));
+            /* jshint ignore:end */
+        }
     }
 
     onHoverIn (e) {
@@ -185,6 +201,9 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
+            // Change the participant id the presence label is listening to.
+            this.updatePresenceLabel(id);
+
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
             // there was a user switch (image is lost on stream detach) or if
@@ -251,6 +270,8 @@ export default class LargeVideoManager {
                     id,
                     !overrideAndHide && isConnectionInterrupted,
                     !overrideAndHide && messageKey);
+
+            this.videoContainer.positionRemoteStatusMessages();
 
             // resolve updateLargeVideo promise after everything is done
             promise.then(resolve);
@@ -386,6 +407,27 @@ export default class LargeVideoManager {
     }
 
     /**
+     * Displays a message of the passed in participant id's presence status.
+     *
+     * @param {string} id - The participant ID whose associated user's presence
+     * status should be displayed.
+     * @returns {void}
+     */
+    updatePresenceLabel(id) {
+        const presenceLabelContainer = $('#remotePresenceMessage');
+
+        if (presenceLabelContainer.length) {
+            /* jshint ignore:start */
+            ReactDOM.render(
+                <Provider store = { APP.store }>
+                    <PresenceLabel participantID = { id } />
+                </Provider>,
+                presenceLabelContainer.get(0));
+            /* jshint ignore:end */
+        }
+    }
+
+    /**
      * Show or hide watermark.
      * @param {boolean} show
      */
@@ -463,8 +505,6 @@ export default class LargeVideoManager {
             APP.translation.translateElement(
                 $('#remoteConnectionMessage'), msgOptions);
         }
-
-        this.videoContainer.positionRemoteConnectionMessage();
     }
 
     /**

@@ -36,6 +36,7 @@ export default class LargeVideo extends Component {
                         id = 'dominantSpeakerAvatar'
                         src = '' />
                 </div>
+                <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />
                 <div>
                     <div className = 'video_blurred_container'>

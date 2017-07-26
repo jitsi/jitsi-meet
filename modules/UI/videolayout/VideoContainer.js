@@ -189,6 +189,8 @@ export class VideoContainer extends LargeContainer {
          */
         this.$remoteConnectionMessage = $('#remoteConnectionMessage');
 
+        this.$remotePresenceMessage = $('#remotePresenceMessage');
+
         /**
          * Indicates whether or not the video stream attached to the video
          * element has started(which means that there is any image rendered
@@ -321,27 +323,35 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Update position of the remote connection message which describes that
-     * the remote user is having connectivity issues.
+     * Updates the positioning of the remote connection presence message and the
+     * connection status message which escribes that the remote user is having
+     * connectivity issues.
+     *
+     * @returns {void}
      */
-    positionRemoteConnectionMessage () {
+    positionRemoteStatusMessages() {
+        this._positionParticipantStatus(this.$remoteConnectionMessage);
+        this._positionParticipantStatus(this.$remotePresenceMessage);
+    }
 
+    /**
+     * Modifies the position of the passed in jQuery object so it displays
+     * in the middle of the video container or below the avatar.
+     *
+     * @private
+     * @returns {void}
+     */
+    _positionParticipantStatus($element) {
         if (this.avatarDisplayed) {
             let $avatarImage = $("#dominantSpeakerAvatar");
-            this.$remoteConnectionMessage.css(
+            $element.css(
                 'top',
                 $avatarImage.offset().top + $avatarImage.height() + 10);
         } else {
-            let height = this.$remoteConnectionMessage.height();
-            let parentHeight = this.$remoteConnectionMessage.parent().height();
-            this.$remoteConnectionMessage.css(
-                'top', (parentHeight/2) - (height/2));
+            let height = $element.height();
+            let parentHeight = $element.parent().height();
+            $element.css('top', (parentHeight/2) - (height/2));
         }
-
-        let width = this.$remoteConnectionMessage.width();
-        let parentWidth = this.$remoteConnectionMessage.parent().width();
-        this.$remoteConnectionMessage.css(
-            'left', ((parentWidth/2) - (width/2)));
     }
 
     resize (containerWidth, containerHeight, animate = false) {
@@ -372,7 +382,7 @@ export class VideoContainer extends LargeContainer {
 
         this.$avatar.css('top', top);
 
-        this.positionRemoteConnectionMessage();
+        this.positionRemoteStatusMessages();
 
         this.$wrapper.animate({
             width: width,
