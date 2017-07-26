@@ -177,17 +177,33 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 #pragma mark API
 
 /**
- * Loads the given URL and joins the specified conference. If the specified URL
- * is null, the welcome page is shown.
+ * Loads a specific {@link NSURL} which may identify a conference to join. If
+ * the specified {@code NSURL} is {@code nil}, the Welcome page is displayed
+ * instead.
+ *
+ * @param url - The {@code NSURL} to load which may identify a conference to
+ * join.
  */
 - (void)loadURL:(NSURL *)url {
+    [self loadURLString:(url ? url.absoluteString : nil)];
+}
+
+/**
+ * Loads a specific URL {@link NSString} which may identify a conference to
+ * join. If the specified URL {@code NSString} is {@code nil}, the Welcome page
+ * is displayed instead.
+ *
+ * @param urlString - The URL {@code NSString} to load which may identify a
+ * conference to join.
+ */
+- (void)loadURLString:(NSString *)urlString {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
     // externalAPIScope
     [props setObject:externalAPIScope forKey:@"externalAPIScope"];
     // url
-    if (url) {
-        [props setObject:url.absoluteString forKey:@"url"];
+    if (urlString) {
+        [props setObject:urlString forKey:@"url"];
     }
     // welcomePageEnabled
     [props setObject:@(self.welcomePageEnabled) forKey:@"welcomePageEnabled"];

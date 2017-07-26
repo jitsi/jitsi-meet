@@ -41,16 +41,25 @@ Property for getting / setting the `JitsiMeetViewDelegate` on `JitsiMeetView`.
 Property for getting / setting whether the Welcome page is enabled. If NO, a
 black empty view will be rendered when not in a conference. Defaults to NO.
 
-NOTE: Must be set before calling `loadURL` for it to take effect.
+NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
 
-#### loadURL(URL)
+#### loadURL:NSURL
 
 ```objc
 [meetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
 ```
 
-Loads the given URL and joins the room. If `null` is specified, the welcome page
-is displayed instead.
+Loads a specific URL which may identify a conference to join. If the specified
+URL is `nil`, the Welcome page is displayed instead.
+
+#### loadURLString:NSString
+
+```objc
+[meetView loadURLString:@"https://meet.jit.si/test123"];
+```
+
+Loads a specific URL which may identify a conference to join. If the specified
+URL is `nil`, the Welcome page is displayed instead.
 
 #### Universal / deep linking
 

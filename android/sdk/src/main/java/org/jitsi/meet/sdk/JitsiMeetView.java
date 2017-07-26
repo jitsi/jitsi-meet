@@ -221,19 +221,33 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Loads the given URL and displays the conference. If the specified URL is
-     * null, the welcome page is displayed instead.
+     * Loads a specific {@link URL} which may identify a conference to join. If
+     * the specified {@code URL} is {@code null}, the Welcome page is displayed
+     * instead.
      *
-     * @param url - The conference URL.
+     * @param url - The {@code URL} to load which may identify a conference to
+     * join.
      */
     public void loadURL(@Nullable URL url) {
+        loadURLString(url == null ? null : url.toString());
+    }
+
+    /**
+     * Loads a specific URL {@link String} which may identify a conference to
+     * join. If the specified URL {@code String} is {@code null}, the Welcome
+     * page is displayed instead.
+     *
+     * @param urlString - The URL {@code String} to load which may identify a
+     * conference to join.
+     */
+    public void loadURLString(@Nullable String urlString) {
         Bundle props = new Bundle();
 
         // externalAPIScope
         props.putString("externalAPIScope", externalAPIScope);
         // url
-        if (url != null) {
-            props.putString("url", url.toString());
+        if (urlString != null) {
+            props.putString("url", urlString);
         }
         // welcomePageEnabled
         props.putBoolean("welcomePageEnabled", welcomePageEnabled);

@@ -93,6 +93,10 @@ See JitsiMeetView.getWelcomePageEnabled.
 
 See JitsiMeetView.loadURL.
 
+#### loadURLString(String)
+
+See JitsiMeetView.loadURLString.
+
 #### setWelcomePageEnabled(boolean)
 
 See JitsiMeetView.setWelcomePageEnabled.
@@ -113,8 +117,13 @@ empty view will be rendered when not in a conference. Defaults to false.
 
 #### loadURL(URL)
 
-Loads the given URL and joins the room. If `null` is specified, the welcome page
-is displayed instead.
+Loads a specific URL which may identify a conference to join. If the specified
+URL is null, the Welcome page is displayed instead.
+
+#### loadURLString(String)
+
+Loads a specific URL which may identify a conference to join. If the specified
+URL is null, the Welcome page is displayed instead.
 
 #### setListener(listener)
 
@@ -126,7 +135,7 @@ interface) on the view.
 Sets whether the Welcome page is enabled. See `getWelcomePageEnabled` for more
 information.
 
-NOTE: Must be called before `loadURL` for it to take effect.
+NOTE: Must be called before `loadURL`/`loadURLString` for it to take effect.
 
 #### onBackPressed()
 
