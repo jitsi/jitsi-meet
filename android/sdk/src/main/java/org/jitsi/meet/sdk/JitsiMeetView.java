@@ -200,6 +200,21 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Releases the React resources (specifically the {@link ReactRootView})
+     * associated with this view.
+     *
+     * This method MUST be called when the Activity holding this view is destroyed, typically in the
+     * {@code onDestroy} method.
+     */
+    public void dispose() {
+        if (reactRootView != null) {
+            removeView(reactRootView);
+            reactRootView.unmountReactApplication();
+            reactRootView = null;
+        }
+    }
+
+    /**
      * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
      *
      * @return The {@code JitsiMeetViewListener} set on this
@@ -257,10 +272,7 @@ public class JitsiMeetView extends FrameLayout {
 
         // TODO: ReactRootView#setAppProperties is only available on React
         // Native 0.45, so destroy the current root view and create a new one.
-        if (reactRootView != null) {
-            removeView(reactRootView);
-            reactRootView = null;
-        }
+        dispose();
 
         reactRootView = new ReactRootView(getContext());
         reactRootView.startReactApplication(reactInstanceManager, "App", props);

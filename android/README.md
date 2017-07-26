@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        view.dispose();
+        view = null;
+
         JitsiMeetView.onHostDestroy(this);
     }
 
@@ -101,6 +104,12 @@ See JitsiMeetView.setWelcomePageEnabled.
 
 The `JitsiMeetView` class is the core of Jitsi Meet SDK. It's designed to
 display a Jitsi Meet conference (or a welcome page).
+
+#### dispose()
+
+Releases all resources associated with this view. This method MUST be called
+when the Activity holding this view is going to be destroyed, usually in the
+`onDestroy()` method.
 
 #### getListener()
 
