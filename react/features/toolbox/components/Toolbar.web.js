@@ -23,17 +23,6 @@ class Toolbar extends Component {
      * @static
      */
     static propTypes = {
-
-        /**
-         *  Handler for mouse out event.
-         */
-        _onMouseOut: React.PropTypes.func,
-
-        /**
-         * Handler for mouse over event.
-         */
-        _onMouseOver: React.PropTypes.func,
-
         /**
          * Children of current React component.
          */
@@ -43,6 +32,12 @@ class Toolbar extends Component {
          * Toolbar's class name.
          */
         className: React.PropTypes.string,
+
+        /**
+         * Used to dispatch an action when a button is clicked or on mouse
+         * out/in event.
+         */
+        dispatch: React.PropTypes.func,
 
         /**
          * Map with toolbar buttons.
@@ -80,17 +75,37 @@ class Toolbar extends Component {
         return (
             <div
                 className = { `toolbar ${className}` }
-                onMouseOut = { this.props._onMouseOut }
-                onMouseOver = { this.props._onMouseOver }>
+                onMouseOut = { this._onMouseOut }
+                onMouseOver = { this._onMouseOver }>
                 {
                     [ ...this.props.toolbarButtons.entries() ]
-                        .reduce(this._renderToolbarButton, [])
+                    .reduce(this._renderToolbarButton, [])
                 }
                 {
                     this.props.children
                 }
             </div>
         );
+    }
+
+    /**
+     * Dispatches an action signalling that toolbar is no being hovered.
+     *
+     * @protected
+     * @returns {Object} Dispatched action.
+     */
+    _onMouseOut() {
+        this.props.dispatch(setToolbarHovered(false));
+    }
+
+    /**
+     * Dispatches an action signalling that toolbar is now being hovered.
+     *
+     * @protected
+     * @returns {Object} Dispatched action.
+     */
+    _onMouseOver() {
+        this.props.dispatch(setToolbarHovered(true));
     }
 
     /**
@@ -120,11 +135,15 @@ class Toolbar extends Component {
 
         const { onClick, onMount, onUnmount } = button;
 
+        const onClickHandler
+            = (...args) =>
+                onClick(this.props.dispatch, ...args);
+
         acc.push(
             <ToolbarButton
                 button = { button }
                 key = { key }
-                onClick = { onClick }
+                onClick = { onClickHandler }
                 onMount = { onMount }
                 onUnmount = { onUnmount }
                 tooltipPosition = { tooltipPosition } />
@@ -134,35 +153,4 @@ class Toolbar extends Component {
     }
 }
 
-/**
- * Maps part of Redux actions to component's props.
- *
- * @param {Function} dispatch - Redux action dispatcher.
- * @private
- * @returns {Object}
- */
-function _mapDispatchToProps(dispatch: Function): Object {
-    return {
-        /**
-         * Dispatches an action signalling that toolbar is no being hovered.
-         *
-         * @protected
-         * @returns {Object} Dispatched action.
-         */
-        _onMouseOut() {
-            dispatch(setToolbarHovered(false));
-        },
-
-        /**
-         * Dispatches an action signalling that toolbar is now being hovered.
-         *
-         * @protected
-         * @returns {Object} Dispatched action.
-         */
-        _onMouseOver() {
-            dispatch(setToolbarHovered(true));
-        }
-    };
-}
-
-export default connect(undefined, _mapDispatchToProps)(Toolbar);
+export default connect()(Toolbar);
