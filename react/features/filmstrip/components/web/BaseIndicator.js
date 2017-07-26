@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import UIUtil from '../../../../../modules/UI/util/UIUtil';
+import { setTooltip } from '../../../../../modules/UI/util/Tooltip';
 
 /**
  * React {@code Component} for showing an icon with a tooltip.
@@ -116,7 +116,7 @@ class BaseIndicator extends Component {
     _setTooltip() {
         // TODO Replace UIUtil with an AtlasKit component when a suitable one
         // becomes available for tooltips.
-        UIUtil.setTooltip(
+        setTooltip(
             this._rootElement,
             this.props.tooltipKey,
             'top'

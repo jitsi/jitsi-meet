@@ -11,6 +11,7 @@ import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import JitsiPopover from "./util/JitsiPopover";
 import messageHandler from "./util/MessageHandler";
 import UIUtil from "./util/UIUtil";
+import { activateTooltips } from './util/Tooltip';
 import UIEvents from "../../service/UI/UIEvents";
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
@@ -232,7 +233,7 @@ UI.initConference = function () {
     // (2) APP.conference as means of communication between the participants.
     followMeHandler = new FollowMe(APP.conference, UI);
 
-    UIUtil.activateTooltips();
+    activateTooltips();
 };
 
 UI.mucJoined = function () {

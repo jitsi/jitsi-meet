@@ -3,7 +3,8 @@
 import Recording from '../../../modules/UI/recording/Recording';
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
-import UIUtil from '../../../modules/UI/util/UIUtil';
+
+import { removeTooltip } from '../../../modules/UI/util/Tooltip';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import {
@@ -226,7 +227,7 @@ export function setProfileButtonUnclickable(unclickable: boolean): Function {
             unclickable
         }));
 
-        UIUtil.removeTooltip(document.getElementById('toolbar_button_profile'));
+        removeTooltip(document.getElementById('toolbar_button_profile'));
     };
 }
 

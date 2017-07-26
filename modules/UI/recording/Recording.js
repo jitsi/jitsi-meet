@@ -18,6 +18,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
+import { setTooltip } from '../util/Tooltip';
 import VideoLayout from '../videolayout/VideoLayout';
 
 import { setToolboxEnabled } from '../../../react/features/toolbox';
@@ -323,7 +324,7 @@ var Recording = {
     initRecordingButton() {
         const selector = $('#toolbar_button_record');
 
-        UIUtil.setTooltip(selector, 'liveStreaming.buttonTooltip', 'right');
+        setTooltip(selector, 'liveStreaming.buttonTooltip', 'right');
 
         selector.addClass(this.baseClass);
         selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);

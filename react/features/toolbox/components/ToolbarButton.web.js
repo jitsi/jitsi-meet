@@ -4,7 +4,10 @@ import React from 'react';
 
 import { translate } from '../../base/i18n';
 
-import UIUtil from '../../../../modules/UI/util/UIUtil';
+import {
+    setTooltip,
+    setTooltipText
+} from '../../../../modules/UI/util/Tooltip';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
 import {
@@ -214,11 +217,11 @@ class ToolbarButton extends AbstractToolbarButton {
 
             if (!button.unclickable) {
                 if (button.tooltipText) {
-                    UIUtil.setTooltipText(this.button,
+                    setTooltipText(this.button,
                         button.tooltipText,
                         tooltipPosition);
                 } else {
-                    UIUtil.setTooltip(this.button,
+                    setTooltip(this.button,
                         button.tooltipKey,
                         tooltipPosition);
                 }
