@@ -64,7 +64,10 @@ import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
-import { showDesktopSharingButton } from './react/features/toolbox';
+import {
+    isButtonEnabled,
+    showDesktopSharingButton
+} from './react/features/toolbox';
 
 const { participantConnectionStatus } = JitsiMeetJS.constants;
 
@@ -714,7 +717,7 @@ export default {
                 this._createRoom(tracks);
                 APP.remoteControl.init();
 
-                if (UIUtil.isButtonEnabled('contacts')
+                if (isButtonEnabled('contacts')
                     && !interfaceConfig.filmStripOnly) {
                     APP.UI.ContactList = new ContactList(room);
                 }

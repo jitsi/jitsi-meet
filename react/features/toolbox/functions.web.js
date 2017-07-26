@@ -138,6 +138,19 @@ export function getToolbarClassNames(props: Object) {
 }
 
 /**
+ * Indicates if a toolbar button is enabled.
+ *
+ * @param {string} name - The name of the setting section as defined in
+ * interface_config.js.
+ * @returns {boolean} - True to indicate that the given toolbar button
+ * is enabled, false - otherwise.
+ */
+export function isButtonEnabled(name) {
+    return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
+            || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
+}
+
+/**
  * Show custom popup/tooltip for a specified button.
  *
  * @param {string} popupSelectorID - The selector id of the popup to show.

@@ -18,7 +18,10 @@ import {
     toggleToolbarButton
 } from './actions.native';
 import { SET_DEFAULT_TOOLBOX_BUTTONS } from './actionTypes';
-import { getDefaultToolboxButtons } from './functions';
+import {
+    getDefaultToolboxButtons,
+    isButtonEnabled
+} from './functions';
 
 declare var $: Function;
 declare var APP: Object;
@@ -37,7 +40,7 @@ export function checkAutoEnableDesktopSharing(): Function {
     return () => {
         // XXX Should use dispatcher to toggle screensharing but screensharing
         // hasn't been React-ified yet.
-        if (UIUtil.isButtonEnabled('desktop')
+        if (isButtonEnabled('desktop')
                 && config.autoEnableDesktopSharing) {
             APP.UI.eventEmitter.emit(UIEvents.TOGGLE_SCREENSHARING);
         }
@@ -241,7 +244,7 @@ export function showDesktopSharingButton(): Function {
             = disabledTooltipText
                 && APP.conference.isDesktopSharingDisabledByConfig;
         const visible
-            = UIUtil.isButtonEnabled(buttonName)
+            = isButtonEnabled(buttonName)
                 && (APP.conference.isDesktopSharingEnabled || showTooltip);
 
         const newState = {
@@ -264,7 +267,7 @@ export function showDialPadButton(show: boolean): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'dialpad';
 
-        if (show && UIUtil.isButtonEnabled(buttonName)) {
+        if (show && isButtonEnabled(buttonName)) {
             dispatch(setToolbarButton(buttonName, {
                 hidden: false
             }));
@@ -296,7 +299,7 @@ export function showSharedVideoButton(): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'sharedvideo';
 
-        if (UIUtil.isButtonEnabled(buttonName)
+        if (isButtonEnabled(buttonName)
                 && !config.disableThirdPartyRequests) {
             dispatch(setToolbarButton(buttonName, {
                 hidden: false
@@ -318,7 +321,7 @@ export function showDialOutButton(show: boolean): Function {
 
         if (show
                 && APP.conference.sipGatewayEnabled()
-                && UIUtil.isButtonEnabled(buttonName)
+                && isButtonEnabled(buttonName)
                 && (!config.enableUserRolesBasedOnToken
                     || !getState()['features/jwt'].isGuest)) {
             dispatch(setToolbarButton(buttonName, {
@@ -372,10 +375,9 @@ export function toggleSideToolbarContainer(containerId: string): Function {
         const { secondaryToolbarButtons } = getState()['features/toolbox'];
 
         for (const key of secondaryToolbarButtons.keys()) {
-            const isButtonEnabled = UIUtil.isButtonEnabled(key);
             const button = secondaryToolbarButtons.get(key);
 
-            if (isButtonEnabled
+            if (isButtonEnabled(key)
                     && button.sideContainerId
                     && button.sideContainerId === containerId) {
                 dispatch(toggleToolbarButton(key));
