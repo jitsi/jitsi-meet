@@ -39,6 +39,8 @@
 
 - (void)loadURL:(NSURL * _Nullable)url;
 
+- (void)loadURLObject:(NSDictionary * _Nullable)urlObject;
+
 - (void)loadURLString:(NSString * _Nullable)urlString;
 
 @end

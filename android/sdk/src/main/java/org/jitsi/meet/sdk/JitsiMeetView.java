@@ -233,21 +233,24 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Loads a specific URL {@link String} which may identify a conference to
-     * join. If the specified URL {@code String} is {@code null}, the Welcome
-     * page is displayed instead.
+     * Loads a specific URL which may identify a conference to join. The URL is
+     * specified in the form of a {@link Bundle} of properties which (1)
+     * internally are sufficient to construct a URL {@code String} while (2)
+     * abstracting the specifics of constructing the URL away from API
+     * clients/consumers. If the specified URL is {@code null} and the Welcome
+     * page is enabled, the Welcome page is displayed instead.
      *
-     * @param urlString - The URL {@code String} to load which may identify a
-     * conference to join.
+     * @param urlObject - The URL to load which may identify a conference to
+     * join.
      */
-    public void loadURLString(@Nullable String urlString) {
+    public void loadURLObject(@Nullable Bundle urlObject) {
         Bundle props = new Bundle();
 
         // externalAPIScope
         props.putString("externalAPIScope", externalAPIScope);
         // url
-        if (urlString != null) {
-            props.putString("url", urlString);
+        if (urlObject != null) {
+            props.putBundle("url", urlObject);
         }
         // welcomePageEnabled
         props.putBoolean("welcomePageEnabled", welcomePageEnabled);
@@ -264,6 +267,26 @@ public class JitsiMeetView extends FrameLayout {
             .startReactApplication(reactInstanceManager, "App", props);
         reactRootView.setBackgroundColor(BACKGROUND_COLOR);
         addView(reactRootView);
+    }
+
+    /**
+     * Loads a specific URL {@link String} which may identify a conference to
+     * join. If the specified URL {@code String} is {@code null}, the Welcome
+     * page is displayed instead.
+     *
+     * @param urlString - The URL {@code String} to load which may identify a
+     * conference to join.
+     */
+    public void loadURLString(@Nullable String urlString) {
+        Bundle urlObject;
+
+        if (urlString == null) {
+            urlObject = null;
+        } else {
+            urlObject = new Bundle();
+            urlObject.putString("url", urlString);
+        }
+        loadURLObject(urlObject);
     }
 
     /**

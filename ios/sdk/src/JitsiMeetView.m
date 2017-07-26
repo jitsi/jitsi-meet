@@ -185,28 +185,25 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  * join.
  */
 - (void)loadURL:(NSURL *)url {
-    [self loadURLString:(url ? url.absoluteString : nil)];
+    [self loadURLString:url ? url.absoluteString : nil];
 }
 
 /**
- * Loads a specific URL {@link NSString} which may identify a conference to
- * join. If the specified URL {@code NSString} is {@code nil}, the Welcome page
- * is displayed instead.
+ * Loads a specific URL which may identify a conference to join. The URL is
+ * specified in the form of an {@link NSDictionary} of properties which (1)
+ * internally are sufficient to construct a URL {@code NSString} while (2)
+ * abstracting the specifics of constructing the URL away from API
+ * clients/consumers. If the specified URL is {@code nil} and the Welcome page
+ * is enabled, the Welcome page is displayed instead.
  *
- * @param urlString - The URL {@code NSString} to load which may identify a
- * conference to join.
+ * @param urlObject - The URL to load which may identify a conference to join.
  */
-- (void)loadURLString:(NSString *)urlString {
-    NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
-
-    // externalAPIScope
-    [props setObject:externalAPIScope forKey:@"externalAPIScope"];
-    // url
-    if (urlString) {
-        [props setObject:urlString forKey:@"url"];
-    }
-    // welcomePageEnabled
-    [props setObject:@(self.welcomePageEnabled) forKey:@"welcomePageEnabled"];
+- (void)loadURLObject:(NSDictionary *)urlObject {
+    NSDictionary *props = @{
+        @"externalAPIScope": externalAPIScope,
+        @"url": urlObject,
+        @"welcomePageEnabled": @(self.welcomePageEnabled)
+    };
 
     if (rootView == nil) {
         rootView
@@ -222,6 +219,18 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         // Update props with the new URL.
         rootView.appProperties = props;
     }
+}
+
+/**
+ * Loads a specific URL {@link NSString} which may identify a conference to
+ * join. If the specified URL {@code NSString} is {@code nil}, the Welcome page
+ * is displayed instead.
+ *
+ * @param urlString - The URL {@code NSString} to load which may identify a
+ * conference to join.
+ */
+- (void)loadURLString:(NSString *)urlString {
+    [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
 }
 
 #pragma mark Private methods

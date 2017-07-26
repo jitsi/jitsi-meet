@@ -262,3 +262,53 @@ export function parseURIString(uri: ?string) {
 
     return obj;
 }
+
+/**
+ * Attempts to return a {@code String} representation of a specific
+ * {@code Object} which is supposed to represent a URL. Obviously, if a
+ * {@code String} is specified, it is returned. If a {@code URL} is specified,
+ * its {@code URL#href} is returned. Additionally, an {@code Object} similar to
+ * the one accepted by the constructor of Web's ExternalAPI is supported on both
+ * mobile/React Native and Web/React.
+ *
+ * @param {string|Object} obj - The URL to return a {@code String}
+ * representation of.
+ * @returns {string} - A {@code String} representation of the specified
+ * {@code obj} which is supposed to represent a URL.
+ */
+export function toURLString(obj: ?(string | Object)): ?string {
+    let str;
+
+    switch (typeof obj) {
+    case 'object':
+        if (obj) {
+            if (obj instanceof URL) {
+                str = obj.href;
+            } else {
+                str = _urlObjectToString(obj);
+            }
+        }
+        break;
+
+    case 'string':
+        str = String(obj);
+        break;
+    }
+
+    return str;
+}
+
+/**
+ * Attempts to return a {@code String} representation of a specific
+ * {@code Object} similar to the one accepted by the constructor
+ * of Web's ExternalAPI.
+ *
+ * @param {Object} obj - The URL to return a {@code String} representation of.
+ * @returns {string} - A {@code String} representation of the specified
+ * {@code obj}.
+ */
+function _urlObjectToString({ url }: Object): ?string {
+    // TODO Support properties other than url. Support (pretty much) all
+    // properties accepted by the constructor of Web's ExternalAPI.
+    return url;
+}

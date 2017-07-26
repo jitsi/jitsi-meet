@@ -11,6 +11,7 @@ import {
 } from '../../base/participants';
 import { RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
+import { toURLString } from '../../base/util';
 
 import {
     appNavigate,
@@ -52,7 +53,10 @@ export class AbstractApp extends Component {
         /**
          * The URL, if any, with which the app was launched.
          */
-        url: React.PropTypes.string
+        url: React.PropTypes.oneOfType([
+            React.PropTypes.object,
+            React.PropTypes.string
+        ])
     };
 
     /**
@@ -110,7 +114,7 @@ export class AbstractApp extends Component {
 
         // If a URL was explicitly specified to this React Component, then open
         // it; otherwise, use a default.
-        this._openURL(this.props.url || this._getDefaultURL());
+        this._openURL(toURLString(this.props.url) || this._getDefaultURL());
     }
 
     /**
@@ -139,9 +143,10 @@ export class AbstractApp extends Component {
         }
 
         // Deal with URL changes.
-        const { url } = nextProps;
+        let { url } = nextProps;
 
-        if (this.props.url !== url) {
+        url = toURLString(url);
+        if (toURLString(this.props.url) !== url) {
             this._openURL(url || this._getDefaultURL());
         }
     }
@@ -391,12 +396,12 @@ export class AbstractApp extends Component {
     /**
      * Navigates this AbstractApp to (i.e. opens) a specific URL.
      *
-     * @param {string} url - The URL to which to navigate this AbstractApp (i.e.
-     * the URL to open).
+     * @param {string|Object} url - The URL to navigate this AbstractApp to
+     * (i.e. the URL to open).
      * @protected
      * @returns {void}
      */
     _openURL(url) {
-        this._getStore().dispatch(appNavigate(url));
+        this._getStore().dispatch(appNavigate(toURLString(url)));
     }
 }

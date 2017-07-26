@@ -93,10 +93,6 @@ See JitsiMeetView.getWelcomePageEnabled.
 
 See JitsiMeetView.loadURL.
 
-#### loadURLString(String)
-
-See JitsiMeetView.loadURLString.
-
 #### setWelcomePageEnabled(boolean)
 
 See JitsiMeetView.setWelcomePageEnabled.
@@ -118,12 +114,22 @@ empty view will be rendered when not in a conference. Defaults to false.
 #### loadURL(URL)
 
 Loads a specific URL which may identify a conference to join. If the specified
-URL is null, the Welcome page is displayed instead.
+URL is null and the Welcome page is enabled, the Welcome page is displayed
+instead.
 
 #### loadURLString(String)
 
 Loads a specific URL which may identify a conference to join. If the specified
-URL is null, the Welcome page is displayed instead.
+URL is null and the Welcome page is enabled, the Welcome page is displayed
+instead.
+
+#### loadURLObject(Bundle)
+
+Loads a specific URL which may identify a conference to join. The URL is
+specified in the form of a Bundle of properties which (1) internally are
+sufficient to construct a URL (string) while (2) abstracting the specifics of
+constructing the URL away from API clients/consumers. If the specified URL is
+null and the Welcome page is enabled, the Welcome page is displayed instead.
 
 #### setListener(listener)
 

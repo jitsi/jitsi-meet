@@ -20,10 +20,10 @@ To get started:
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  JitsiMeetView *view = (JitsiMeetView *) self.view;
+  JitsiMeetView *jitsiMeetView = (JitsiMeetView *) self.view;
 
-  view.delegate = self;
-  [view loadURL:nil];
+  jitsiMeetView.delegate = self;
+  [jitsiMeetView loadURL:nil];
 }
 ```
 
@@ -46,20 +46,40 @@ NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
 #### loadURL:NSURL
 
 ```objc
-[meetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
+[jitsiMeetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
 ```
 
 Loads a specific URL which may identify a conference to join. If the specified
-URL is `nil`, the Welcome page is displayed instead.
+URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
+instead.
+
+#### loadURLObject:NSDictionary
+
+```objc
+[jitsiMeetView loadURLObject:@{
+    @"url": @"https://meet.jit.si/test123",
+    @"configOverwrite": @{
+        @"startWithAudioMuted": @YES,
+        @"startWithVideoMuted": @NO
+    }
+}];
+```
+
+Loads a specific URL which may identify a conference to join. The URL is
+specified in the form of an `NSDictionary` of properties which (1) internally
+are sufficient to construct a URL (string) while (2) abstracting the specifics
+of constructing the URL away from API clients/consumers. If the specified URL is
+`nil` and the Welcome page is enabled, the Welcome page is displayed instead.
 
 #### loadURLString:NSString
 
 ```objc
-[meetView loadURLString:@"https://meet.jit.si/test123"];
+[jitsiMeetView loadURLString:@"https://meet.jit.si/test123"];
 ```
 
 Loads a specific URL which may identify a conference to join. If the specified
-URL is `nil`, the Welcome page is displayed instead.
+URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
+instead.
 
 #### Universal / deep linking
 
