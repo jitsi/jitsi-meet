@@ -22,6 +22,8 @@
 .*/node_modules/promise/index.js.flow
 .*/node_modules/styled-components/.*
 
+.*/\.git/.*
+
 [include]
 
 [libs]
