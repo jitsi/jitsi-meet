@@ -156,6 +156,15 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
 #pragma mark Initializers
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self initWithXXX];
+    }
+
+    return self;
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
@@ -264,8 +273,10 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     });
 
     // Hook this JitsiMeetView into ExternalAPI.
-    externalAPIScope = [NSUUID UUID].UUIDString;
-    [views setObject:self forKey:externalAPIScope];
+    if (!externalAPIScope) {
+        externalAPIScope = [NSUUID UUID].UUIDString;
+        [views setObject:self forKey:externalAPIScope];
+    }
 
     // Set a background color which is in accord with the JavaScript and
     // Android parts of the application and causes less perceived visual
