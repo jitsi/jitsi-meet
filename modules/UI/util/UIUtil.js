@@ -227,17 +227,6 @@ const IndicatorFontSizes = {
     },
 
     /**
-     * Indicates if a toolbar button is enabled.
-     * @param name the name of the setting section as defined in
-     * interface_config.js and Toolbar.js
-     * @returns {boolean} {true} to indicate that the given toolbar button
-     * is enabled, {false} - otherwise
-     */
-    isButtonEnabled(name) {
-        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
-                || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
-    },
-    /**
      * Indicates if the setting section is enabled.
      *
      * @param name the name of the setting section as defined in
@@ -320,16 +309,6 @@ const IndicatorFontSizes = {
         if (jquerySelector && jquerySelector.length > 0) {
             jquerySelector.css("visibility", isVisible ? "visible" : "hidden");
         }
-    },
-
-    hideDisabledButtons(mappings) {
-        var selector = Object.keys(mappings)
-          .map(function (buttonName) {
-                return UIUtil.isButtonEnabled(buttonName)
-                    ? null : "#" + mappings[buttonName].id; })
-          .filter(function (item) { return item; })
-          .join(',');
-        $(selector).hide();
     },
 
     redirect(url) {

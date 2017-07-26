@@ -7,10 +7,12 @@ import { translate } from '../../base/i18n';
 import UIUtil from '../../../../modules/UI/util/UIUtil';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
-import { getButtonAttributesByProps } from '../functions';
+import {
+    getButtonAttributesByProps,
+    isButtonEnabled
+} from '../functions';
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
 
 /**
  * Represents a button in Toolbar on React.
@@ -208,7 +210,7 @@ class ToolbarButton extends AbstractToolbarButton {
         const { button, tooltipPosition } = this.props;
         const name = button.buttonName;
 
-        if (UIUtil.isButtonEnabled(name)) {
+        if (isButtonEnabled(name)) {
 
             if (!button.unclickable) {
                 if (button.tooltipText) {
