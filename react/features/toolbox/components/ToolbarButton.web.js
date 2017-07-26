@@ -227,7 +227,7 @@ class ToolbarButton extends AbstractToolbarButton {
                 }
             }
 
-            if (button.shortcut) {
+            if (button.shortcut && APP && APP.keyboardshortcut) {
                 APP.keyboardshortcut.registerShortcut(
                     button.shortcut,
                     button.shortcutAttr,
