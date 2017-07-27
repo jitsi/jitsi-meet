@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 
+import { urlObjectToString } from '../../../react/features/base/util';
 import {
     PostMessageTransportBackend,
     Transport
@@ -59,28 +60,6 @@ function changeParticipantNumber(APIInstance, number) {
 }
 
 /**
- * Generates array with URL params based on the passed config object that will
- * be used for the Jitsi Meet URL generation.
- *
- * @param {Object} config - The config object.
- * @returns {Array<string>} The array with URL param strings.
- */
-function configToURLParamsArray(config = {}) {
-    const params = [];
-
-    for (const key in config) { // eslint-disable-line guard-for-in
-        try {
-            params.push(
-                `${key}=${encodeURIComponent(JSON.stringify(config[key]))}`);
-        } catch (e) {
-            console.warn(`Error encoding ${key}: ${e}`);
-        }
-    }
-
-    return params;
-}
-
-/**
  * Generates the URL for the iframe.
  *
  * @param {string} domain - The domain name of the server that hosts the
@@ -92,42 +71,17 @@ function configToURLParamsArray(config = {}) {
  * configuration options defined in interface_config.js to be overridden.
  * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
  * authentication.
- * @param {boolean} [options.noSsl] - If the value is true https won't be used.
+ * @param {boolean} [options.noSSL] - If the value is true https won't be used.
  * @param {string} [options.roomName] - The name of the room to join.
  * @returns {string} The URL.
  */
 function generateURL(domain, options = {}) {
-    const {
-        configOverwrite,
-        interfaceConfigOverwrite,
-        jwt,
-        noSSL,
-        roomName
-    } = options;
-
-    let url = `${noSSL ? 'http' : 'https'}://${domain}/${roomName || ''}`;
-
-    if (jwt) {
-        url += `?jwt=${jwt}`;
-    }
-
-    url += `#jitsi_meet_external_api_id=${id}`;
-
-    const configURLParams = configToURLParamsArray(configOverwrite);
-
-    if (configURLParams.length) {
-        url += `&config.${configURLParams.join('&config.')}`;
-    }
-
-    const interfaceConfigURLParams
-        = configToURLParamsArray(interfaceConfigOverwrite);
-
-    if (interfaceConfigURLParams.length) {
-        url += `&interfaceConfig.${
-            interfaceConfigURLParams.join('&interfaceConfig.')}`;
-    }
-
-    return url;
+    return urlObjectToString({
+        ...options,
+        url:
+            `${options.noSSL ? 'http' : 'https'}://${domain
+                }/#jitsi_meet_external_api_id=${id}`
+    });
 }
 
 /**

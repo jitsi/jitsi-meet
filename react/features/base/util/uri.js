@@ -1,5 +1,3 @@
-/* @flow */
-
 /**
  * The {@link RegExp} pattern of the authority of a URI.
  *
@@ -128,6 +126,30 @@ export function getLocationContextRoot(location: Object) {
 }
 
 /**
+ * Constructs a new {@code Array} with URL parameter {@code String}s out of a
+ * specific {@code Object}.
+ *
+ * @param {Object} obj - The {@code Object} to turn into URL parameter
+ * {@code String}s.
+ * @returns {Array<string>} The {@code Array} with URL parameter {@code String}s
+ * constructed out of the specified {@code obj}.
+ */
+function _objectToURLParamsArray(obj = {}) {
+    const params = [];
+
+    for (const key in obj) { // eslint-disable-line guard-for-in
+        try {
+            params.push(
+                `${key}=${encodeURIComponent(JSON.stringify(obj[key]))}`);
+        } catch (e) {
+            console.warn(`Error encoding ${key}: ${e}`);
+        }
+    }
+
+    return params;
+}
+
+/**
  * Parses a specific URI string into an object with the well-known properties of
  * the {@link Location} and/or {@link URL} interfaces implemented by Web
  * browsers. The parsing attempts to be in accord with IETF's RFC 3986.
@@ -147,7 +169,9 @@ export function getLocationContextRoot(location: Object) {
 export function parseStandardURIString(str: string) {
     /* eslint-disable no-param-reassign */
 
-    const obj = {};
+    const obj = {
+        toString: _standardURIToString
+    };
 
     let regex;
     let match;
@@ -200,9 +224,7 @@ export function parseStandardURIString(str: string) {
         str = str.substring(regex.lastIndex);
     }
     if (pathname) {
-        if (!pathname.startsWith('/')) {
-            pathname = `/${pathname}`;
-        }
+        pathname.startsWith('/') || (pathname = `/${pathname}`);
     } else {
         pathname = '/';
     }
@@ -264,6 +286,32 @@ export function parseURIString(uri: ?string) {
 }
 
 /**
+ * Implements {@code href} and {@code toString} for the {@code Object} returned
+ * by {@link #parseStandardURIString}.
+ *
+ * @param {Object} [thiz] - An {@code Object} returned by
+ * {@code #parseStandardURIString} if any; otherwise, it is presumed that the
+ * function is invoked on such an instance.
+ * @returns {string}
+ */
+function _standardURIToString(thiz: ?Object) {
+    // eslint-disable-next-line no-invalid-this
+    const { hash, host, pathname, protocol, search } = thiz || this;
+    let str = '';
+
+    protocol && (str += protocol);
+
+    // TODO userinfo
+
+    host && (str += `//${host}`);
+    str += pathname || '/';
+    search && (str += search);
+    hash && (str += hash);
+
+    return str;
+}
+
+/**
  * Attempts to return a {@code String} representation of a specific
  * {@code Object} which is supposed to represent a URL. Obviously, if a
  * {@code String} is specified, it is returned. If a {@code URL} is specified,
@@ -285,7 +333,7 @@ export function toURLString(obj: ?(string | Object)): ?string {
             if (obj instanceof URL) {
                 str = obj.href;
             } else {
-                str = _urlObjectToString(obj);
+                str = urlObjectToString(obj);
             }
         }
         break;
@@ -303,12 +351,103 @@ export function toURLString(obj: ?(string | Object)): ?string {
  * {@code Object} similar to the one accepted by the constructor
  * of Web's ExternalAPI.
  *
- * @param {Object} obj - The URL to return a {@code String} representation of.
+ * @param {Object} o - The URL to return a {@code String} representation of.
  * @returns {string} - A {@code String} representation of the specified
- * {@code obj}.
+ * {@code Object}.
  */
-function _urlObjectToString({ url }: Object): ?string {
-    // TODO Support properties other than url. Support (pretty much) all
-    // properties accepted by the constructor of Web's ExternalAPI.
-    return url;
+export function urlObjectToString(o: Object): ?string {
+    const url = parseStandardURIString(o.url || '');
+
+    // protocol
+    if (!url.protocol) {
+        let protocol = o.protocol || o.scheme;
+
+        if (protocol) {
+            // Protocol is supposed to be the scheme and the final ':'. Anyway,
+            // do not make a fuss if the final ':' is not there.
+            protocol.endsWith(':') || (protocol += ':');
+            url.protocol = protocol;
+        }
+    }
+
+    // authority & pathname
+    let { pathname } = url;
+
+    if (!url.host) {
+        // Web's ExternalAPI domain
+        //
+        // It may be host/hostname and pathname with the latter denoting the
+        // tenant.
+        const { host, hostname, pathname: contextRoot, port }
+            = parseStandardURIString(o.domain || o.host || o.hostname);
+
+        // authority
+        if (host) {
+            url.host = host;
+            url.hostname = hostname;
+            url.port = port;
+        }
+
+        // pathname
+        pathname === '/' && contextRoot !== '/' && (pathname = contextRoot);
+    }
+
+    // pathname
+
+    // Web's ExternalAPI roomName
+    const room = o.roomName || o.room;
+
+    if (room
+            && (url.pathname.endsWith('/')
+                || !url.pathname.endsWith(`/${room}`))) {
+        pathname.endsWith('/') || (pathname += '/');
+        pathname += room;
+    }
+
+    url.pathname = pathname;
+
+    // query/search
+
+    // Web's ExternalAPI jwt
+    const { jwt } = o;
+
+    if (jwt) {
+        let { search } = url;
+
+        if (search.indexOf('?jwt=') === -1 && search.indexOf('&jwt=') === -1) {
+            search.startsWith('?') || (search = `?${search}`);
+            search.length === 1 || (search += '&');
+            search += `jwt=${jwt}`;
+
+            url.search = search;
+        }
+    }
+
+    // fragment/hash
+
+    let { hash } = url;
+
+    for (const configName of [ 'config', 'interfaceConfig' ]) {
+        const urlParamsArray
+            = _objectToURLParamsArray(
+                o[`${configName}Overwrite`]
+                    || o[configName]
+                    || o[`${configName}Override`]);
+
+        if (urlParamsArray.length) {
+            let urlParamsString
+                = `${configName}.${urlParamsArray.join(`&${configName}.`)}`;
+
+            if (hash.length) {
+                urlParamsString = `&${urlParamsString}`;
+            } else {
+                hash = '#';
+            }
+            hash += urlParamsString;
+        }
+    }
+
+    url.hash = hash;
+
+    return url.toString() || undefined;
 }

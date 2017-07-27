@@ -90,17 +90,7 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function dispatchSetLocationURL() {
-        dispatch(
-            setLocationURL(
-                new URL(
-                    (newLocation.protocol || 'https:')
-
-                        // TODO userinfo
-
-                        + newLocation.host
-                        + (newLocation.pathname || '/')
-                        + newLocation.search
-                        + newLocation.hash)));
+        dispatch(setLocationURL(new URL(newLocation.toString())));
     }
 
     /**
@@ -147,9 +137,7 @@ function _appNavigateToOptionalLocation(
         }
     }
 
-    if (!location.protocol) {
-        location.protocol = 'https:';
-    }
+    location.protocol || (location.protocol = 'https:');
 
     _appNavigateToMandatoryLocation(dispatch, getState, location);
 }
@@ -213,5 +201,7 @@ function _loadConfig(location: Object) {
 
     // TDOO userinfo
 
-    return loadConfig(protocol + location.host + (location.contextRoot || '/'));
+    return (
+        loadConfig(
+            `${protocol}//${location.host}${location.contextRoot || '/'}`));
 }
