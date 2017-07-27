@@ -22,7 +22,8 @@ export const LANGUAGES = [
     'sk',
     'sl',
     'sv',
-    'tr'
+    'tr',
+    'zhCN'
 ];
 
 /**
