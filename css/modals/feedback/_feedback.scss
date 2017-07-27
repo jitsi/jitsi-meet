@@ -45,83 +45,57 @@
     animation-timing-function: ease-in-out
 }
 
-.feedback.aui-dialog2{
-    .aui-dialog2{
-        &-header {
-            background-color: $feedbackContentBg;
-            border-bottom-color: transparent;
-            padding-top: 30px;
-            h2 {
-                color: $feedbackTextColor;
-                text-align: center;
-            }
+.feedback-dialog {
+    .input-control {
+        background-color: $feedbackInputBg;
+        color: $feedbackInputTextColor;
+
+        &::-webkit-input-placeholder {
+            color: $feedbackInputPlaceholderColor;
         }
-
-        &-content {
-            background-color: $feedbackContentBg;
-            text-align: center;
-            padding: 10px 40px 20px 40px;
-
-            .input-control {
-                background-color: $feedbackInputBg;
-                color: $feedbackInputTextColor;
-
-                &::-webkit-input-placeholder {
-                    color: $feedbackInputPlaceholderColor;
-                }
-                &::-moz-placeholder {  /* Firefox 19+ */
-                    color: $feedbackInputPlaceholderColor;
-                }
-                &:-ms-input-placeholder {
-                    color: $feedbackInputPlaceholderColor;
-                }
-            }
-
-            .rating {
-                line-height: 1.2;
-                text-align: center;
-                margin-top: 10px;
-
-                .star-label {
-                    height: 16px;
-                    font-size: 14px;
-                    color: $rateStarLabelColor;
-                }
-                .star-btn {
-                    display: inline-block;
-                    color: $rateStarDefault;
-                    font-size: $rateStarSize;
-                    position: relative;
-                    cursor: pointer;
-                    outline: none;
-                    text-decoration: none;
-                    @include transition(all .2s ease);
-
-                    &.starHover,
-                    &.active,
-                    &:hover {
-                        color: $rateStarActivity;
-                    };
-
-                }
-            }
-
-            .details {
-                padding-left: 60px;
-                padding-right: 60px;
-                margin-top: 20px;
-                textarea {
-                    min-height: 100px;
-                }
-            }
+        &::-moz-placeholder {  /* Firefox 19+ */
+            color: $feedbackInputPlaceholderColor;
         }
-        &-footer {
-            background-color: $feedbackContentBg;
-            border-top-color: transparent;
+        &:-ms-input-placeholder {
+            color: $feedbackInputPlaceholderColor;
+        }
+    }
 
-            .button-control {
-                color: $feedbackCancelFontColor;
-            }
+    .rating {
+        line-height: 1.2;
+        text-align: center;
+        margin-top: 10px;
+
+        .star-label {
+            height: 16px;
+            font-size: 14px;
+            color: $rateStarLabelColor;
+        }
+        .star-btn {
+            display: inline-block;
+            color: $rateStarDefault;
+            font-size: $rateStarSize;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            text-decoration: none;
+            @include transition(all .2s ease);
+
+            &.starHover,
+            &.active,
+            &:hover {
+                color: $rateStarActivity;
+            };
+
+        }
+    }
+
+    .details {
+        padding-left: 60px;
+        padding-right: 60px;
+        margin-top: 20px;
+        textarea {
+            min-height: 100px;
         }
     }
 }

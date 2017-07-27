@@ -2399,7 +2399,7 @@ export default {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
 
         let requestFeedbackPromise = requestFeedback
-                ? APP.UI.requestFeedbackOnHangup()
+                ? APP.UI.requestFeedbackOnHangup(room)
                 // false - because the thank you dialog shouldn't be displayed
                     .catch(() => Promise.resolve(false))
                 : Promise.resolve(true);// true - because the thank you dialog

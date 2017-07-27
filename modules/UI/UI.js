@@ -30,6 +30,11 @@ import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
 import {
+    FeedbackDialog,
+    openFeedbackDialog,
+    shouldShowPostCallFeedbackDialog
+} from '../../react/features/feedback';
+import {
     checkAutoEnableDesktopSharing,
     dockToolbox,
     setToolbarButton,
@@ -46,7 +51,6 @@ import {
 
 var EventEmitter = require("events");
 UI.messageHandler = messageHandler;
-import Feedback from "./feedback/Feedback";
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -227,8 +231,8 @@ UI.initConference = function () {
 
     APP.store.dispatch(checkAutoEnableDesktopSharing());
 
-    if(!interfaceConfig.filmStripOnly) {
-        Feedback.init(eventEmitter);
+    if (interfaceConfig.filmStripOnly) {
+        APP.store.dispatch(shouldShowPostCallFeedbackDialog(false));
     }
 
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
@@ -970,38 +974,54 @@ UI.updateDTMFSupport
 /**
  * Show user feedback dialog if its required and enabled after pressing the
  * hangup button.
+ *
+ * @param {JistiConference} conference - The conference for which the feedback
+ * would be about.
  * @returns {Promise} Resolved with value - false if the dialog is enabled and
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed. This values are
  * used to display or not display the thank you dialog from
  * conference.maybeRedirectToWelcomePage method.
  */
-UI.requestFeedbackOnHangup = function () {
-    if (Feedback.isVisible())
+UI.requestFeedbackOnHangup = function (conference) {
+    const state = APP.store.getState();
+
+    // Feedback is currently being displayed.
+    if (state['features/base/dialog'].component === FeedbackDialog) {
         return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
+    }
+
     // Feedback has been submitted already.
-    else if (Feedback.isEnabled() && Feedback.isSubmitted()) {
+    if (state['features/feedback'].submitted) {
         return Promise.resolve({
             thankYouDialogVisible : true,
             feedbackSubmitted: true
         });
     }
-    else
-        return new Promise(function (resolve) {
-            if (Feedback.isEnabled()) {
-                Feedback.openFeedbackWindow(
-                    (options) => {
-                        options.thankYouDialogVisible = false;
-                        resolve(options);
-                    });
-            } else {
-                // If the feedback functionality isn't enabled we show a thank
-                // you dialog. Signaling it (true), so the caller
-                // of requestFeedback can act on it
-                resolve(
-                    {thankYouDialogVisible : true, feedbackSubmitted: false});
-            }
-        });
+
+    return new Promise(function (resolve) {
+        const { shouldShowPostCallFeedbackDialog } = state['features/feedback'];
+        const isFeedbackPossible = APP.conference.isCallstatsEnabled();
+
+        if (shouldShowPostCallFeedbackDialog && isFeedbackPossible) {
+            APP.store.dispatch(openFeedbackDialog(conference, () => {
+                const { submitted } = APP.store.getState()['features/feedback'];
+
+                resolve({
+                    feedbackSubmitted: submitted,
+                    thankYouDialogVisible: false
+                });
+            }));
+        } else {
+            // If the feedback functionality isn't enabled we show a thank
+            // you dialog. Signaling it (true), so the caller
+            // of requestFeedback can act on it
+            resolve({
+                thankYouDialogVisible : true,
+                feedbackSubmitted: false
+            });
+        }
+    });
 };
 
 UI.updateRecordingState = function (state) {
