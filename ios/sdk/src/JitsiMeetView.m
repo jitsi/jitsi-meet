@@ -208,11 +208,16 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  * @param urlObject - The URL to load which may identify a conference to join.
  */
 - (void)loadURLObject:(NSDictionary *)urlObject {
-    NSDictionary *props = @{
-        @"externalAPIScope": externalAPIScope,
-        @"url": urlObject ?: [NSNull null],
-        @"welcomePageEnabled": @(self.welcomePageEnabled)
-    };
+    NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
+
+    [props setObject:externalAPIScope forKey:@"externalAPIScope"];
+    [props setObject:@(self.welcomePageEnabled) forKey:@"welcomePageEnabled"];
+
+    // XXX url must not be set when nil, so it appears as undefined in JS and we
+    // check the launch parameters.
+    if (urlObject) {
+        [props setObject:urlObject forKey:@"url"];
+    }
 
     if (rootView == nil) {
         rootView
