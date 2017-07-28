@@ -131,6 +131,18 @@ sufficient to construct a URL (string) while (2) abstracting the specifics of
 constructing the URL away from API clients/consumers. If the specified URL is
 null and the Welcome page is enabled, the Welcome page is displayed instead.
 
+Example:
+
+```java
+Bundle configOverwrite = new Bundle();
+configOverwrite.putBoolean("startWithAudioMuted", true);
+configOverwrite.putBoolean("startWithVideoMuted", false);
+Bundle urlBundle = new Bundle();
+urlBundle.putBundle("configOverwrite", configOverwrite);
+urlBundle.putString("url", "https://meet.jit.si/Test123");
+view.loadURLObject(urlBundle);
+```
+
 #### setListener(listener)
 
 Sets the given listener (class implementing the `JitsiMeetViewListener`
