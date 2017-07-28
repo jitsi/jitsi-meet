@@ -13,8 +13,6 @@ import 'aui-experimental';
 import 'aui-css';
 import 'aui-experimental-css';
 
-window.toastr = require('toastr');
-
 import conference from './conference';
 import API from './modules/API';
 import keyboardshortcut from './modules/keyboardshortcut/keyboardshortcut';

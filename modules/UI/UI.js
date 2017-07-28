@@ -1,4 +1,4 @@
-/* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
+/* global APP, JitsiMeetJS, $, config, interfaceConfig */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -343,26 +343,6 @@ UI.start = function () {
     }
 
     document.title = interfaceConfig.APP_NAME;
-
-    if (!interfaceConfig.filmStripOnly) {
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "positionClass": "notification-bottom-right",
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "2000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut",
-            "newestOnTop": false,
-            // this is the default toastr close button html, just adds tabIndex
-            "closeHtml": '<button type="button" tabIndex="-1">&times;</button>'
-        };
-    }
 };
 
 /**
@@ -868,7 +848,7 @@ UI.notifyInitiallyMuted = function () {
         "connected",
         "notify.muted",
         null,
-        { timeOut: 120000 });
+        120000);
 };
 
 /**
