@@ -4,20 +4,29 @@
 .dial-out-content {
     margin-top: 5px;
 
+    /**
+     * Wrap the contents in flex so items can be aligned on the same line.
+     */
+    .form-control {
+        display: flex;
+    }
+
    /**
     * The style of the flag icon.
     */
     .dial-out-flag-icon {
         position: absolute;
         left: 5px;
-        top: 10px;
+        top: 50%;
+        transform: translate(0, -50%);
     }
 
     /**
      * The style of the dial code element.
      */
     .dial-out-code {
-        padding-left: 25px !important;
+        margin-bottom: 0;
+        padding-left: 25px;
     }
 
     /**
@@ -31,34 +40,42 @@
      * The style of the dial input element.
      */
     .dial-out-input {
-        padding-left: 70px;
+        display: inline-block;
+        flex: 1;
+        margin-left: 5px;
     }
 
     /**
      * Re-styling the default dropdown inside the dial-out-content.
      */
     .dropdown {
-        left: $formPadding;
-        position: absolute !important;
-        width: 65px
+        position: relative;
+        width: 65px;
     }
 
     /**
      * Re-styling the default form-control inside the dial-out-content.
      */
     .form-control {
-        padding-bottom: 8px !important;
+        margin-bottom: 8px;
     }
 
     .dropdown {
-        display: inline-block;
         position: relative;
-        overflow: hidden;
+
+        input {
+            padding-left: 16px;
+
+            &:read-only {
+                color: inherit;
+            }
+        }
     }
 
     .dropdown-trigger-icon {
         position: absolute;
         right: 0;
-        top: 4px;
+        top: 50%;
+        transform: translate(0, -50%);
     }
 }
