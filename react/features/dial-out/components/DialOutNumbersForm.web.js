@@ -1,4 +1,5 @@
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
+import AKFieldText, { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -146,13 +147,14 @@ class DialOutNumbersForm extends Component {
             <div className = 'form-control'>
                 { this._createDropdownMenu(items) }
                 <div className = 'dial-out-input'>
-                    <input
+                    <AKFieldText
                         autoFocus = { true }
-                        className = 'input-control'
+                        isLabelHidden = { true }
+                        label = { 'dial-out-input-field' }
                         onChange = { this._onInputChange }
                         placeholder = { t('dialOut.enterPhone') }
                         ref = { this._setDialInputElement }
-                        type = 'text' />
+                        shouldFitContainer = { true } />
                 </div>
             </div>
         );
@@ -168,14 +170,16 @@ class DialOutNumbersForm extends Component {
         const { code, dialCode } = this.state.selectedCountry;
 
         return (
-            <StatelessDropdownMenu
-                isOpen = { this.state.isDropdownOpen }
-                items = { [ { items } ] }
-                onItemActivated = { this._onSelect }
-                onOpenChange = { this._onOpenChange }
-                shouldFitContainer = { true }>
-                { this._createDropdownTrigger(dialCode, code) }
-            </StatelessDropdownMenu>
+            <div className = 'dropdown-container'>
+                <StatelessDropdownMenu
+                    isOpen = { this.state.isDropdownOpen }
+                    items = { [ { items } ] }
+                    onItemActivated = { this._onSelect }
+                    onOpenChange = { this._onOpenChange }
+                    shouldFitContainer = { false }>
+                    { this._createDropdownTrigger(dialCode, code) }
+                </StatelessDropdownMenu>
+            </div>
         );
     }
 
@@ -195,9 +199,15 @@ class DialOutNumbersForm extends Component {
                 <CountryIcon
                     className = 'dial-out-flag-icon'
                     countryCode = { `${countryCode}` } />
-                <input
+                { /**
+                   * FIXME Replace FieldText with AtlasKit Button when an issue
+                   * with icons shrinking due to button text is fixed.
+                   */ }
+                <FieldText
                     className = 'input-control dial-out-code'
-                    readOnly = { true }
+                    isLabelHidden = { true }
+                    isReadOnly = { true }
+                    label = 'dial-out-code'
                     type = 'text'
                     value = { dialCode || '' } />
                 <span className = 'dropdown-trigger-icon'>
