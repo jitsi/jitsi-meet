@@ -200,6 +200,21 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Releases the React resources (specifically the {@link ReactRootView})
+     * associated with this view.
+     *
+     * This method MUST be called when the Activity holding this view is destroyed, typically in the
+     * {@code onDestroy} method.
+     */
+    public void dispose() {
+        if (reactRootView != null) {
+            removeView(reactRootView);
+            reactRootView.unmountReactApplication();
+            reactRootView = null;
+        }
+    }
+
+    /**
      * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
      *
      * @return The {@code JitsiMeetViewListener} set on this
@@ -221,35 +236,68 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Loads the given URL and displays the conference. If the specified URL is
-     * null, the welcome page is displayed instead.
+     * Loads a specific {@link URL} which may identify a conference to join. If
+     * the specified {@code URL} is {@code null} and the Welcome page is
+     * enabled, the Welcome page is displayed instead.
      *
-     * @param url - The conference URL.
+     * @param url - The {@code URL} to load which may identify a conference to
+     * join.
      */
     public void loadURL(@Nullable URL url) {
+        loadURLString(url == null ? null : url.toString());
+    }
+
+    /**
+     * Loads a specific URL which may identify a conference to join. The URL is
+     * specified in the form of a {@link Bundle} of properties which (1)
+     * internally are sufficient to construct a URL {@code String} while (2)
+     * abstracting the specifics of constructing the URL away from API
+     * clients/consumers. If the specified URL is {@code null} and the Welcome
+     * page is enabled, the Welcome page is displayed instead.
+     *
+     * @param urlObject - The URL to load which may identify a conference to
+     * join.
+     */
+    public void loadURLObject(@Nullable Bundle urlObject) {
         Bundle props = new Bundle();
 
         // externalAPIScope
         props.putString("externalAPIScope", externalAPIScope);
         // url
-        if (url != null) {
-            props.putString("url", url.toString());
+        if (urlObject != null) {
+            props.putBundle("url", urlObject);
         }
         // welcomePageEnabled
         props.putBoolean("welcomePageEnabled", welcomePageEnabled);
 
         // TODO: ReactRootView#setAppProperties is only available on React
         // Native 0.45, so destroy the current root view and create a new one.
-        if (reactRootView != null) {
-            removeView(reactRootView);
-            reactRootView = null;
-        }
+        dispose();
 
         reactRootView = new ReactRootView(getContext());
-        reactRootView
-            .startReactApplication(reactInstanceManager, "App", props);
+        reactRootView.startReactApplication(reactInstanceManager, "App", props);
         reactRootView.setBackgroundColor(BACKGROUND_COLOR);
         addView(reactRootView);
+    }
+
+    /**
+     * Loads a specific URL {@link String} which may identify a conference to
+     * join. If the specified URL {@code String} is {@code null} and the Welcome
+     * page is enabled, the Welcome page is displayed instead.
+     *
+     * @param urlString - The URL {@code String} to load which may identify a
+     * conference to join.
+     */
+    public void loadURLString(@Nullable String urlString) {
+        Bundle urlObject;
+
+        if (urlString == null) {
+            urlObject = null;
+        } else {
+            urlObject = new Bundle();
+            urlObject.putString("url", urlString);
+        }
+        loadURLObject(urlObject);
     }
 
     /**

@@ -159,15 +159,4 @@
             transition-delay: 0.1s;
         }
     }
-
-    /**
-     * Move toastr closer to the bottom of the screen and move left to avoid
-     * overlapping of videos when they are configured at default height.
-     */
-    #toast-container {
-        &.notification-bottom-right {
-            bottom: 25px;
-            right: 130 + 2 * ($thumbnailVideoMargin + $thumbnailsBorder) + $thumbnailVideoBorder;
-        }
-    }
 }

@@ -154,6 +154,11 @@ public class JitsiMeetActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if (view != null) {
+            view.dispose();
+            view = null;
+        }
+
         JitsiMeetView.onHostDestroy(this);
     }
 

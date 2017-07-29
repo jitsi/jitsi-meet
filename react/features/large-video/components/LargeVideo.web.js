@@ -7,7 +7,7 @@ import { VideoStatusLabel } from '../../video-status-label';
 
 const LARGE_VIDEO_TRACKING_DELAY = 5000;
 const LARGE_VIDEO_PROMPT_DURATION = 500;
-const LARGE_VIDEO_TRACKING_FPS = 2;
+const LARGE_VIDEO_TRACKING_FPS = 5;
 
 /**
  * Implements a React {@link Component} which represents the large video (a.k.a.

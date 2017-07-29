@@ -156,6 +156,15 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
 #pragma mark Initializers
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self initWithXXX];
+    }
+
+    return self;
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
@@ -177,20 +186,38 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 #pragma mark API
 
 /**
- * Loads the given URL and joins the specified conference. If the specified URL
- * is null, the welcome page is shown.
+ * Loads a specific {@link NSURL} which may identify a conference to join. If
+ * the specified {@code NSURL} is {@code nil} and the Welcome page is enabled,
+ * the Welcome page is displayed instead.
+ *
+ * @param url - The {@code NSURL} to load which may identify a conference to
+ * join.
  */
 - (void)loadURL:(NSURL *)url {
+    [self loadURLString:url ? url.absoluteString : nil];
+}
+
+/**
+ * Loads a specific URL which may identify a conference to join. The URL is
+ * specified in the form of an {@link NSDictionary} of properties which (1)
+ * internally are sufficient to construct a URL {@code NSString} while (2)
+ * abstracting the specifics of constructing the URL away from API
+ * clients/consumers. If the specified URL is {@code nil} and the Welcome page
+ * is enabled, the Welcome page is displayed instead.
+ *
+ * @param urlObject - The URL to load which may identify a conference to join.
+ */
+- (void)loadURLObject:(NSDictionary *)urlObject {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
-    // externalAPIScope
     [props setObject:externalAPIScope forKey:@"externalAPIScope"];
-    // url
-    if (url) {
-        [props setObject:url.absoluteString forKey:@"url"];
-    }
-    // welcomePageEnabled
     [props setObject:@(self.welcomePageEnabled) forKey:@"welcomePageEnabled"];
+
+    // XXX url must not be set when nil, so it appears as undefined in JS and we
+    // check the launch parameters.
+    if (urlObject) {
+        [props setObject:urlObject forKey:@"url"];
+    }
 
     if (rootView == nil) {
         rootView
@@ -206,6 +233,18 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         // Update props with the new URL.
         rootView.appProperties = props;
     }
+}
+
+/**
+ * Loads a specific URL {@link NSString} which may identify a conference to
+ * join. If the specified URL {@code NSString} is {@code nil} and the Welcome
+ * page is enabled, the Welcome page is displayed instead.
+ *
+ * @param urlString - The URL {@code NSString} to load which may identify a
+ * conference to join.
+ */
+- (void)loadURLString:(NSString *)urlString {
+    [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
 }
 
 #pragma mark Private methods
@@ -239,8 +278,10 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     });
 
     // Hook this JitsiMeetView into ExternalAPI.
-    externalAPIScope = [NSUUID UUID].UUIDString;
-    [views setObject:self forKey:externalAPIScope];
+    if (!externalAPIScope) {
+        externalAPIScope = [NSUUID UUID].UUIDString;
+        [views setObject:self forKey:externalAPIScope];
+    }
 
     // Set a background color which is in accord with the JavaScript and
     // Android parts of the application and causes less perceived visual

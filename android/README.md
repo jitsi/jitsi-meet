@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        view.dispose();
+        view = null;
+
         JitsiMeetView.onHostDestroy(this);
     }
 
@@ -102,6 +105,12 @@ See JitsiMeetView.setWelcomePageEnabled.
 The `JitsiMeetView` class is the core of Jitsi Meet SDK. It's designed to
 display a Jitsi Meet conference (or a welcome page).
 
+#### dispose()
+
+Releases all resources associated with this view. This method MUST be called
+when the Activity holding this view is going to be destroyed, usually in the
+`onDestroy()` method.
+
 #### getListener()
 
 Returns the `JitsiMeetViewListener` instance attached to the view.
@@ -113,8 +122,35 @@ empty view will be rendered when not in a conference. Defaults to false.
 
 #### loadURL(URL)
 
-Loads the given URL and joins the room. If `null` is specified, the welcome page
-is displayed instead.
+Loads a specific URL which may identify a conference to join. If the specified
+URL is null and the Welcome page is enabled, the Welcome page is displayed
+instead.
+
+#### loadURLString(String)
+
+Loads a specific URL which may identify a conference to join. If the specified
+URL is null and the Welcome page is enabled, the Welcome page is displayed
+instead.
+
+#### loadURLObject(Bundle)
+
+Loads a specific URL which may identify a conference to join. The URL is
+specified in the form of a Bundle of properties which (1) internally are
+sufficient to construct a URL (string) while (2) abstracting the specifics of
+constructing the URL away from API clients/consumers. If the specified URL is
+null and the Welcome page is enabled, the Welcome page is displayed instead.
+
+Example:
+
+```java
+Bundle configOverwrite = new Bundle();
+configOverwrite.putBoolean("startWithAudioMuted", true);
+configOverwrite.putBoolean("startWithVideoMuted", false);
+Bundle urlBundle = new Bundle();
+urlBundle.putBundle("configOverwrite", configOverwrite);
+urlBundle.putString("url", "https://meet.jit.si/Test123");
+view.loadURLObject(urlBundle);
+```
 
 #### setListener(listener)
 
@@ -126,7 +162,7 @@ interface) on the view.
 Sets whether the Welcome page is enabled. See `getWelcomePageEnabled` for more
 information.
 
-NOTE: Must be called before `loadURL` for it to take effect.
+NOTE: Must be called before `loadURL`/`loadURLString` for it to take effect.
 
 #### onBackPressed()
 

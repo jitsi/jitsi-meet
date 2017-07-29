@@ -1,13 +1,16 @@
+/* @flow */
+
 import React, { Component } from 'react';
 
 /**
- * Abstract (base) class for container of React Component children with a style.
+ * Abstract (base) class for container of React {@link Component} children with
+ * a style.
  *
  * @extends Component
  */
 export default class AbstractContainer extends Component {
     /**
-     * AbstractContainer component's property types.
+     * {@code AbstractContainer} component's property types.
      *
      * @static
      */
@@ -15,38 +18,43 @@ export default class AbstractContainer extends Component {
         children: React.PropTypes.node,
 
         /**
-         * The event handler/listener to be invoked when this AbstractContainer
-         * is clicked on Web or pressed on React Native. If onClick is defined
-         * and touchFeedback is undefined, touchFeedback is considered defined
-         * as true.
+         * The event handler/listener to be invoked when this
+         * {@code AbstractContainer} is clicked on Web or pressed on React
+         * Native. If {@code onClick} is defined and {@link touchFeedback} is
+         * undefined, {@code touchFeedback} is considered defined as
+         * {@code true}.
          */
         onClick: React.PropTypes.func,
 
         /**
-         * The style (as in stylesheet) to be applied to this AbstractContainer.
+         * The style (as in stylesheet) to be applied to this
+         * {@code AbstractContainer}.
          */
         style: React.PropTypes.object,
 
         /**
-         * True if this instance is to provide visual feedback when touched;
-         * otherwise, false. If touchFeedback is undefined and onClick is
-         * defined, touchFeedback is considered defined as true.
+         * If this instance is to provide visual feedback when touched, then
+         * {@code true}; otherwise, {@code false}. If {@code touchFeedback} is
+         * undefined and {@link onClick} is defined, {@code touchFeedback} is
+         * considered defined as {@code true}.
          */
         touchFeedback: React.PropTypes.bool,
 
         /**
-         * True if this AbstractContainer is to be visible or false if this
-         * instance is to be hidden or not rendered at all.
+         * If this {@code AbstractContainer} is to be visible, then {@code true}
+         * or {@code false} if this instance is to be hidden or not rendered at
+         * all.
          */
         visible: React.PropTypes.bool
     };
 
     /**
-     * Renders this AbstractContainer as a React Component of a specific type.
+     * Renders this {@code AbstractContainer} as a React {@code Component} of a
+     * specific type.
      *
-     * @param {string|ReactClass} type - The type of the React Component which
-     * is to be rendered.
-     * @param {Object|undefined} props - The read-only React Component
+     * @param {string|ReactClass} type - The type of the React {@code Component}
+     * which is to be rendered.
+     * @param {Object|undefined} props - The read-only React {@code Component}
      * properties, if any, to render. If undefined, the props of this instance
      * will be rendered.
      * @protected
@@ -68,11 +76,6 @@ export default class AbstractContainer extends Component {
 
             ...filteredProps
         } = props || this.props;
-
-        // visible
-        if (typeof visible !== 'undefined' && !visible) {
-            return null;
-        }
 
         return React.createElement(type, filteredProps, children);
     }

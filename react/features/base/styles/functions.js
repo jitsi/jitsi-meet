@@ -56,7 +56,7 @@ export function createStyleSheet(styles: StyleSheet, overrides: StyleSheet = {})
 export function fixAndroidViewClipping<T: StyleSheet>(styles: T): T {
     if (Platform.OS === 'android') {
         styles.borderColor = ColorPalette.appBackground;
-        styles.borderWidth = 0.2;
+        styles.borderWidth = 1;
     }
 
     return styles;

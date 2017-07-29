@@ -392,7 +392,7 @@ module.exports = {
         'react/jsx-uses-vars': 2,
         'react/jsx-wrap-multilines': 2,
 
-        // React-Mative plugin rules group
+        // React Native plugin rules group
         'react-native/no-color-literals': 2,
         'react-native/no-inline-styles': 2,
         'react-native/no-unused-styles': 2,

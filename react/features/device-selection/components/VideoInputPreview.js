@@ -12,7 +12,7 @@ const VIDEO_ERROR_CLASS = 'video-preview-has-error';
 
 const PREVIEW_VIDEO_TRACKING_DELAY = 2000;
 const PREVIEW_VIDEO_PROMPT_DURATION = 500;
-const PREVIEW_VIDEO_TRACKING_FPS = 2;
+const PREVIEW_VIDEO_TRACKING_FPS = 10;
 
 /**
  * React component for displaying video. This component defers to lib-jitsi-meet

@@ -20,10 +20,10 @@ To get started:
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  JitsiMeetView *view = (JitsiMeetView *) self.view;
+  JitsiMeetView *jitsiMeetView = (JitsiMeetView *) self.view;
 
-  view.delegate = self;
-  [view loadURL:nil];
+  jitsiMeetView.delegate = self;
+  [jitsiMeetView loadURL:nil];
 }
 ```
 
@@ -41,16 +41,45 @@ Property for getting / setting the `JitsiMeetViewDelegate` on `JitsiMeetView`.
 Property for getting / setting whether the Welcome page is enabled. If NO, a
 black empty view will be rendered when not in a conference. Defaults to NO.
 
-NOTE: Must be set before calling `loadURL` for it to take effect.
+NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
 
-#### loadURL(URL)
+#### loadURL:NSURL
 
 ```objc
-[meetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
+[jitsiMeetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
 ```
 
-Loads the given URL and joins the room. If `null` is specified, the welcome page
-is displayed instead.
+Loads a specific URL which may identify a conference to join. If the specified
+URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
+instead.
+
+#### loadURLObject:NSDictionary
+
+```objc
+[jitsiMeetView loadURLObject:@{
+    @"url": @"https://meet.jit.si/test123",
+    @"configOverwrite": @{
+        @"startWithAudioMuted": @YES,
+        @"startWithVideoMuted": @NO
+    }
+}];
+```
+
+Loads a specific URL which may identify a conference to join. The URL is
+specified in the form of an `NSDictionary` of properties which (1) internally
+are sufficient to construct a URL (string) while (2) abstracting the specifics
+of constructing the URL away from API clients/consumers. If the specified URL is
+`nil` and the Welcome page is enabled, the Welcome page is displayed instead.
+
+#### loadURLString:NSString
+
+```objc
+[jitsiMeetView loadURLString:@"https://meet.jit.si/test123"];
+```
+
+Loads a specific URL which may identify a conference to join. If the specified
+URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
+instead.
 
 #### Universal / deep linking
 

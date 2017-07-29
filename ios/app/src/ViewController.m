@@ -32,10 +32,10 @@
     JitsiMeetView *view = (JitsiMeetView *) self.view;
 
     view.delegate = self;
-    // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do
-    // want the Welcome page to be enabled. It defaults to disabled in the
-    // SDK at the time of this writing but it is clearer to be explicit
-    // about what we want anyway.
+    // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do want
+    // the Welcome page to be enabled. It defaults to disabled in the SDK at the
+    // time of this writing but it is clearer to be explicit about what we want
+    // anyway.
     view.welcomePageEnabled = YES;
     [view loadURL:nil];
 }

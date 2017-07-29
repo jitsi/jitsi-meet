@@ -1,4 +1,4 @@
-/* global APP, JitsiMeetJS, $, config, interfaceConfig, toastr */
+/* global APP, JitsiMeetJS, $, config, interfaceConfig */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -32,7 +32,6 @@ import {
 import {
     checkAutoEnableDesktopSharing,
     dockToolbox,
-    setAudioIconEnabled,
     setToolbarButton,
     showDialPadButton,
     showEtherpadButton,
@@ -344,26 +343,6 @@ UI.start = function () {
     }
 
     document.title = interfaceConfig.APP_NAME;
-
-    if (!interfaceConfig.filmStripOnly) {
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "positionClass": "notification-bottom-right",
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "2000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut",
-            "newestOnTop": false,
-            // this is the default toastr close button html, just adds tabIndex
-            "closeHtml": '<button type="button" tabIndex="-1">&times;</button>'
-        };
-    }
 };
 
 /**
@@ -710,9 +689,7 @@ UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.store.dispatch(setAudioMuted(muted));
-        APP.store.dispatch(setToolbarButton('microphone', {
-            toggled: muted
-        }));
+        APP.conference.updateAudioIconEnabled();
     }
 };
 
@@ -723,6 +700,7 @@ UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.store.dispatch(setVideoMuted(muted));
+        APP.conference.updateVideoIconEnabled();
     }
 };
 
@@ -870,7 +848,7 @@ UI.notifyInitiallyMuted = function () {
         "connected",
         "notify.muted",
         null,
-        { timeOut: 120000 });
+        120000);
 };
 
 /**
@@ -1096,6 +1074,8 @@ UI.onLocalRaiseHandChanged = function (isRaisedHand) {
  */
 UI.onAvailableDevicesChanged = function (devices) {
     APP.store.dispatch(updateDeviceList(devices));
+    APP.conference.updateAudioIconEnabled();
+    APP.conference.updateVideoIconEnabled();
 };
 
 /**
@@ -1366,15 +1346,6 @@ UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
         sharedVideoManager.onSharedVideoStop(id, attributes);
 };
-
-/**
- * Enables / disables microphone toolbar button.
- *
- * @param {boolean} enabled indicates if the microphone button should be
- * enabled or disabled
- */
-UI.setMicrophoneButtonEnabled
-    = enabled => APP.store.dispatch(setAudioIconEnabled(enabled));
 
 /**
  * Indicates if any the "top" overlays are currently visible. The check includes

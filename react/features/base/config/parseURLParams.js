@@ -1,13 +1,14 @@
 /* @flow */
 
 /**
- * Parses the parameters from the URL and returns them as a JS object.
+ * Parses the query/search or fragment/hash parameters out of a specific URL and
+ * returns them as a JS object.
  *
  * @param {string} url - The URL to parse.
- * @param {boolean} dontParse - If false or undefined some transformations
- * (for parsing the value as JSON) are going to be executed.
- * @param {string} source - Values - "hash"/"search" if "search" the parameters
- * will parsed from location.search otherwise from location.hash.
+ * @param {boolean} dontParse - If falsy, some transformations (for parsing the
+ * value as JSON) will be executed.
+ * @param {string} source - If {@code 'search'}, the parameters will parsed out
+ * of {@code url.search}; otherwise, out of {@code url.hash}.
  * @returns {Object}
  */
 export default function parseURLParams(

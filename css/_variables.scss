@@ -86,20 +86,6 @@ $modalMockAKInputBorder: 1px solid #f4f5f7;
 $modalTextColor: #333;
 
 /**
- * Notifications
- */
-$notificationFontSize: 13px;
-$notificationColor: #FFFFFF;
-$notificationBackground: $tooltipBg;
-$notificationTitleColor: $notificationColor;
-$notificationMessageColor: $notificationColor;
-$notificationLinkColor: $notificationColor;
-$notificationOpacity: 0.9;
-$notificationPadding: 15px 20px;
-$notificationBorderRadius: 4px;
-$notificationWidth: 215px;
-
-/**
  * Misc.
  */
 $borderRadius: 4px;
@@ -126,7 +112,6 @@ $tooltipsZ: 401;
 $dropdownMaskZ: 900;
 $dropdownZ: 901;
 $centeredVideoLabelZ: 1010;
-$notificationZ: 1011;
 $jitsipopoverZ: 1012;
 $popoverZ: 1015;
 $overlayZ: 1016;

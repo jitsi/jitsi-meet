@@ -4,10 +4,29 @@ import I18nextXHRBackend from 'i18next-xhr-backend';
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 
-import { DEFAULT_LANGUAGE, LANGUAGES } from './constants';
 import languageDetector from './languageDetector';
 
 declare var interfaceConfig: Object;
+
+/**
+ * The available/supported languages.
+ *
+ * XXX The element at index zero is the default language.
+ *
+ * @public
+ * @type {Array<string>}
+ */
+export const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
+
+/**
+ * The default language.
+ *
+ * XXX The element at index zero of {@link LANGUAGES} is the default language.
+ *
+ * @public
+ * @type {string} The default language.
+ */
+export const DEFAULT_LANGUAGE = LANGUAGES[0];
 
 /**
  * The options to initialize i18next with.

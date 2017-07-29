@@ -76,9 +76,12 @@ var config = { // eslint-disable-line no-unused-vars
                               // page redirection when call is hangup
     disableSimulcast: false,
 //    requireDisplayName: true, // Forces the participants that doesn't have display name to enter it when they enter the room.
+    startAudioOnly: false, // Will start the conference in the audio only mode (no video is being received nor sent)
     startScreenSharing: false, // Will try to start with screensharing instead of camera
 //    startAudioMuted: 10, // every participant after the Nth will start audio muted
 //    startVideoMuted: 10, // every participant after the Nth will start video muted
+    startWithAudioMuted: false, // will start with the microphone muted
+    startWithVideoMuted: false, // will start with the camera turned off
 //    defaultLanguage: "en",
 // To enable sending statistics to callstats.io you should provide Applicaiton ID and Secret.
 //    callStatsID: "", // Application ID for callstats.io API

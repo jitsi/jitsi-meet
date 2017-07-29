@@ -174,9 +174,5 @@ export function setTrackMuted(track, muted) {
 
     const f = muted ? 'mute' : 'unmute';
 
-    return track[f]()
-        .catch(err => {
-            console.warn(`Track ${f} was rejected:`, err);
-            throw err;
-        });
+    return track[f]();
 }

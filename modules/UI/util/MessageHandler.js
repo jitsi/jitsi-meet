@@ -1,8 +1,12 @@
-/* global $, APP, toastr */
+/* global $, APP */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import UIUtil from './UIUtil';
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
+
+import {
+    Notification,
+    showNotification
+} from '../../../react/features/notifications';
 
 /**
  * Flag for enable/disable of the notifications.
@@ -448,31 +452,25 @@ var messageHandler = {
      * @param messageKey the key from the language file for the text of the
      * message.
      * @param messageArguments object with the arguments for the message.
-     * @param options passed to toastr (e.g. timeOut)
+     * @param optional configurations for the notification (e.g. timeout)
      */
     participantNotification: function(displayName, displayNameKey, cls,
-                    messageKey, messageArguments, options) {
-
-        // If we're in ringing state we skip all toaster notifications.
-        if(!notificationsEnabled || APP.UI.isOverlayVisible())
+                    messageKey, messageArguments, timeout) {
+        // If we're in ringing state we skip all notifications.
+        if (!notificationsEnabled || APP.UI.isOverlayVisible()) {
             return;
-
-        var displayNameSpan = '<span class="title" ';
-        if (displayName) {
-            displayNameSpan += ">" + UIUtil.escapeHtml(displayName);
-        } else {
-            displayNameSpan += "data-i18n='" + displayNameKey + "'>";
         }
-        displayNameSpan += "</span>";
-        let element = toastr.info(
-            displayNameSpan + '<br>' +
-            '<span class=' + cls + ' data-i18n="' + messageKey + '"' +
-                (messageArguments?
-                    " data-i18n-options='"
-                        + JSON.stringify(messageArguments) + "'"
-                    : "") + "></span>", null, options);
-        APP.translation.translateElement(element);
-        return element;
+
+        APP.store.dispatch(
+            showNotification(
+                Notification,
+                {
+                    defaultTitleKey: displayNameKey,
+                    descriptionArguments: messageArguments,
+                    descriptionKey: messageKey,
+                    title: displayName
+                },
+                timeout));
     },
 
     /**
@@ -488,28 +486,12 @@ var messageHandler = {
      */
     notify: function(titleKey, messageKey, messageArguments) {
 
-        // If we're in ringing state we skip all toaster notifications.
+        // If we're in ringing state we skip all notifications.
         if(!notificationsEnabled || APP.UI.isOverlayVisible())
             return;
 
-        const options = messageArguments
-            ? `data-i18n-options='${JSON.stringify(messageArguments)}'` : "";
-        let element = toastr.info(`
-            <span class="title" data-i18n="${titleKey}"></span>
-            <br>
-            <span data-i18n="${messageKey}" ${options}></span>
-            `
-        );
-        APP.translation.translateElement(element);
-        return element;
-    },
-
-    /**
-     * Removes the toaster.
-     * @param toasterElement
-     */
-    remove: function(toasterElement) {
-        toasterElement.remove();
+        this.participantNotification(
+            null, titleKey, null, messageKey, messageArguments);
     },
 
     /**

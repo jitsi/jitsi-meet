@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import { ReducerRegistry } from '../redux';
 
 import {
+    SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_AVAILABLE,
@@ -24,6 +25,7 @@ import { CAMERA_FACING_MODE } from './constants';
  * @type {AudioMediaState}
  */
 const AUDIO_INITIAL_MEDIA_STATE = {
+    available: true,
     muted: false
 };
 
@@ -38,6 +40,12 @@ const AUDIO_INITIAL_MEDIA_STATE = {
  */
 function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
+    case SET_AUDIO_AVAILABLE:
+        return {
+            ...state,
+            available: action.available
+        };
+
     case SET_AUDIO_MUTED:
         return {
             ...state,

@@ -16,11 +16,13 @@
 
 ; Ignore packages in node_modules which we (i.e. the jitsi-meet project) have
 ; seen to cause errors and we have chosen not to fix.
-.*/node_modules/babel-core/.*
+.*/node_modules/babel-.*
 .*/node_modules/bower/.*
 .*/node_modules/jsonlint/.*
 .*/node_modules/promise/index.js.flow
 .*/node_modules/styled-components/.*
+
+.*/\.git/.*
 
 [include]
 

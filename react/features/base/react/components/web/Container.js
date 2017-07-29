@@ -1,3 +1,5 @@
+/* @flow */
+
 import AbstractContainer from '../AbstractContainer';
 
 /**
@@ -20,6 +22,11 @@ export default class Container extends AbstractContainer {
      * @returns {ReactElement}
      */
     render() {
-        return this._render('div');
+        const { visible } = this.props;
+
+        return (
+            typeof visible === 'undefined' || visible
+                ? super._render('div')
+                : null);
     }
 }

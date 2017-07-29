@@ -336,13 +336,11 @@ var VideoLayout = {
 
         remoteVideo.addRemoteStreamElement(stream);
 
-        // if track is muted make sure we reflect that
-        if(stream.isMuted())
-        {
-            if(stream.getType() === "audio")
-                this.onAudioMute(stream.getParticipantId(), true);
-            else
-                this.onVideoMute(stream.getParticipantId(), true);
+        // Make sure track's muted state is reflected
+        if (stream.getType() === "audio") {
+            this.onAudioMute(stream.getParticipantId(), stream.isMuted());
+        } else {
+            this.onVideoMute(stream.getParticipantId(), stream.isMuted());
         }
     },
 
@@ -352,6 +350,30 @@ var VideoLayout = {
         // Remote stream may be removed after participant left the conference.
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
+        }
+        this.updateMutedForNoTracks(id, stream.getType());
+    },
+
+    /**
+     * FIXME get rid of this method once muted indicator are reactified (by
+     * making sure that user with no tracks is displayed as muted )
+     *
+     * If participant has no tracks will make the UI display muted status.
+     * @param {string} participantId
+     * @param {string} mediaType 'audio' or 'video'
+     */
+    updateMutedForNoTracks(participantId, mediaType) {
+        const participant = APP.conference.getParticipantById(participantId);
+
+        if (participant
+                && !participant.getTracksByMediaType(mediaType).length) {
+            if (mediaType === 'audio') {
+                APP.UI.setAudioMuted(participantId, true);
+            } else if (mediaType === 'video') {
+                APP.UI.setVideoMuted(participantId, true);
+            } else {
+                logger.error(`Unsupported media type: ${mediaType}`);
+            }
         }
     },
 
@@ -445,6 +467,9 @@ var VideoLayout = {
             remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
         this._setRemoteControlProperties(user, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
+
+        this.updateMutedForNoTracks(id, 'audio');
+        this.updateMutedForNoTracks(id, 'video');
 
         const remoteVideosCount = Object.keys(remoteVideos).length;
 

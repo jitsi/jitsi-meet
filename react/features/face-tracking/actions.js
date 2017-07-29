@@ -43,8 +43,6 @@ export function disableFaceTracking(videoElement) {
  * @param {number} delay - Tracking delay.
  * @param {number} duration - Duration for warning information.
  * @param {number} fps - Face tracking count per second.
- * @param {number} threshold - Threshold of pixels for auto-scaling of
- * tracking.
  * @returns {Object}
  */
 export function addFaceTracker({
