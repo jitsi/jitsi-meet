@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
@@ -9,8 +9,7 @@ import {
     setTooltipText
 } from '../../../../modules/UI/util/Tooltip';
 
-import AbstractToolbarButton from './AbstractToolbarButton';
-import { getButtonAttributesByProps } from '../functions';
+import StatelessToolbarButton from './StatelessToolbarButton';
 
 declare var APP: Object;
 
@@ -20,10 +19,9 @@ declare var APP: Object;
  * @class ToolbarButton
  * @extends AbstractToolbarButton
  */
-class ToolbarButton extends AbstractToolbarButton {
+class ToolbarButton extends Component {
+    button: Object;
     _createRefToButton: Function;
-
-    _onClick: Function;
 
     /**
      * Toolbar button component's property types.
@@ -31,7 +29,7 @@ class ToolbarButton extends AbstractToolbarButton {
      * @static
      */
     static propTypes = {
-        ...AbstractToolbarButton.propTypes,
+        ...StatelessToolbarButton.propTypes,
 
         /**
          * Object describing button.
@@ -71,7 +69,6 @@ class ToolbarButton extends AbstractToolbarButton {
 
         // Bind methods to save the context
         this._createRefToButton = this._createRefToButton.bind(this);
-        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -109,17 +106,17 @@ class ToolbarButton extends AbstractToolbarButton {
      */
     render(): ReactElement<*> {
         const { button } = this.props;
-        const attributes = getButtonAttributesByProps(button);
         const popups = button.popups || [];
 
+        const props = {
+            ...this.props,
+            createRefToButton: this._createRefToButton
+        };
+
         return (
-            <a
-                { ...attributes }
-                onClick = { this._onClick }
-                ref = { this._createRefToButton }>
-                { this._renderInnerElementsIfRequired() }
+            <StatelessToolbarButton { ...props }>
                 { this._renderPopups(popups) }
-            </a>
+            </StatelessToolbarButton>
         );
     }
 
@@ -133,28 +130,6 @@ class ToolbarButton extends AbstractToolbarButton {
      */
     _createRefToButton(element: HTMLElement): void {
         this.button = element;
-    }
-
-    /**
-     * Wrapper on on click handler props for current button.
-     *
-     * @param {Event} event - Click event object.
-     * @returns {void}
-     * @private
-     */
-    _onClick(event: Event): void {
-        const {
-            button,
-            onClick
-        } = this.props;
-        const {
-            enabled,
-            unclickable
-        } = button;
-
-        if (enabled && !unclickable && onClick) {
-            onClick(event);
-        }
     }
 
     /**
