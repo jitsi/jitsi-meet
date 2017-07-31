@@ -119,13 +119,7 @@ export default class LargeVideoManager {
         this.videoContainer.removeResizeListener(
             this._onVideoResolutionUpdate);
 
-        const presenceLabelContainer = $('#remotePresenceMessage');
-
-        if (presenceLabelContainer.length) {
-            /* jshint ignore:start */
-            ReactDOM.unmountComponentAtNode(presenceLabelContainer.get(0));
-            /* jshint ignore:end */
-        }
+        this.removePresenceLabel();
     }
 
     onHoverIn (e) {
@@ -201,9 +195,6 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar(Avatar.getAvatarUrl(id));
 
-            // Change the participant id the presence label is listening to.
-            this.updatePresenceLabel(id);
-
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
             // there was a user switch (image is lost on stream detach) or if
@@ -270,6 +261,9 @@ export default class LargeVideoManager {
                     id,
                     !overrideAndHide && isConnectionInterrupted,
                     !overrideAndHide && messageKey);
+
+            // Change the participant id the presence label is listening to.
+            this.updatePresenceLabel(id);
 
             this.videoContainer.positionRemoteStatusMessages();
 
@@ -407,13 +401,22 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Displays a message of the passed in participant id's presence status.
+     * Displays a message of the passed in participant id's presence status. The
+     * message will not display if the remote connection message is displayed.
      *
      * @param {string} id - The participant ID whose associated user's presence
      * status should be displayed.
      * @returns {void}
      */
     updatePresenceLabel(id) {
+        const isConnectionMessageVisible
+            = $('#remoteConnectionMessage').is(':visible');
+
+        if (isConnectionMessageVisible) {
+            this.removePresenceLabel();
+            return;
+        }
+
         const presenceLabelContainer = $('#remotePresenceMessage');
 
         if (presenceLabelContainer.length) {
@@ -423,6 +426,21 @@ export default class LargeVideoManager {
                     <PresenceLabel participantID = { id } />
                 </Provider>,
                 presenceLabelContainer.get(0));
+            /* jshint ignore:end */
+        }
+    }
+
+    /**
+     * Removes the messages about the displayed participant's presence status.
+     *
+     * @returns {void}
+     */
+    removePresenceLabel() {
+        const presenceLabelContainer = $('#remotePresenceMessage');
+
+        if (presenceLabelContainer.length) {
+            /* jshint ignore:start */
+            ReactDOM.unmountComponentAtNode(presenceLabelContainer.get(0));
             /* jshint ignore:end */
         }
     }
