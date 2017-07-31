@@ -1,6 +1,7 @@
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 import AKFieldText, { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import { noop as _onNoop } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -208,6 +209,7 @@ class DialOutNumbersForm extends Component {
                     isLabelHidden = { true }
                     isReadOnly = { true }
                     label = 'dial-out-code'
+                    onChange = { _onNoop }
                     type = 'text'
                     value = { dialCode || '' } />
                 <span className = 'dropdown-trigger-icon'>
