@@ -3,7 +3,9 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
+import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     MuteButton,
     KickButton,
@@ -99,6 +101,8 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
     this.VideoLayout.resizeThumbnails(false, true);
 
     this.addAudioLevelIndicator();
+
+    this.addPresenceLabel();
 
     return this.container;
 };
@@ -530,6 +534,8 @@ RemoteVideo.prototype.remove = function () {
 
     this.removeAvatar();
 
+    this.removePresenceLabel();
+
     this._unmountIndicators();
 
     // Make sure that the large video is updated if are removing its
@@ -666,6 +672,41 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
     }
 };
 
+/**
+ * Mounts the {@code PresenceLabel} for displaying the participant's current
+ * presence status.
+ *
+ * @return {void}
+ */
+RemoteVideo.prototype.addPresenceLabel = function () {
+    const presenceLabelContainer
+        = this.container.querySelector('.presence-label-container');
+
+    if (presenceLabelContainer) {
+        /* jshint ignore:start */
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <PresenceLabel participantID = { this.id } />
+            </Provider>,
+            presenceLabelContainer);
+        /* jshint ignore:end */
+    }
+};
+
+/**
+ * Unmounts the {@code PresenceLabel} component.
+ *
+ * @return {void}
+ */
+RemoteVideo.prototype.removePresenceLabel = function () {
+    const presenceLabelContainer
+        = this.container.querySelector('.presence-label-container');
+
+    if (presenceLabelContainer) {
+        ReactDOM.unmountComponentAtNode(presenceLabelContainer);
+    }
+};
+
 RemoteVideo.createContainer = function (spanId) {
     let container = document.createElement('span');
     container.id = spanId;
@@ -694,6 +735,10 @@ RemoteVideo.createContainer = function (spanId) {
     const avatarContainer = document.createElement('div');
     avatarContainer.className = 'avatar-container';
     container.appendChild(avatarContainer);
+
+    const presenceLabelContainer = document.createElement('div');
+    presenceLabelContainer.className = 'presence-label-container';
+    container.appendChild(presenceLabelContainer);
 
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);

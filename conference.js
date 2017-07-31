@@ -44,6 +44,7 @@ import {
     participantConnectionStatusChanged,
     participantJoined,
     participantLeft,
+    participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
 } from './react/features/base/participants';
@@ -1627,6 +1628,8 @@ export default {
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
+            APP.store.dispatch(participantPresenceChanged(id, status));
+
             let user = room.getParticipantById(id);
             if (user) {
                 APP.UI.updateUserStatus(user, status);

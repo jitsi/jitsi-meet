@@ -205,6 +205,26 @@ export function participantLeft(id) {
 }
 
 /**
+ * Action to signal that a participant's presence status has changed.
+ *
+ * @param {string} id - Participant's ID.
+ * @param {string} presence - Participant's new presence status.
+ * @returns {{
+ *     type: PARTICIPANT_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         presence: string
+ *     }
+ * }}
+ */
+export function participantPresenceChanged(id, presence) {
+    return participantUpdated({
+        id,
+        presence
+    });
+}
+
+/**
  * Action to signal that a participant's role has changed.
  *
  * @param {string} id - Participant's ID.
