@@ -93,8 +93,8 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _syncTrackMutedState(store, track) {
-    const state = store.getState()['features/base/media'];
+function _syncTrackMutedState({ dispatch, getState }, track) {
+    const state = getState()['features/base/media'];
     const muted = state[track.mediaType].muted;
 
     // XXX If muted state of track when it was added is different from our media
@@ -104,6 +104,6 @@ function _syncTrackMutedState(store, track) {
     // fired before track gets to state.
     if (track.muted !== muted) {
         track.muted = muted;
-        setTrackMuted(track.jitsiTrack, muted, store);
+        dispatch(setTrackMuted(track.jitsiTrack, muted));
     }
 }

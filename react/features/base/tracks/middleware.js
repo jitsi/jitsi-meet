@@ -13,8 +13,9 @@ import {
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
+import { setTrackMuted } from './actions';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
-import { getLocalTrack, setTrackMuted } from './functions';
+import { getLocalTrack } from './functions';
 
 declare var APP: Object;
 
@@ -23,7 +24,7 @@ declare var APP: Object;
  * respectively, creates/destroys local media tracks. Also listens to
  * media-related actions and performs corresponding operations with tracks.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
@@ -132,9 +133,9 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Gets the local track associated with a specific <tt>MEDIA_TYPE</tt> in a
- * specific Redux store.
+ * specific redux store.
  *
- * @param {Store} store - The Redux store from which the local track associated
+ * @param {Store} store - The redux store from which the local track associated
  * with the specified <tt>mediaType</tt> is to be retrieved.
  * @param {MEDIA_TYPE} mediaType - The <tt>MEDIA_TYPE</tt> of the local track to
  * be retrieved from the specified <tt>store</tt>.
@@ -149,20 +150,18 @@ function _getLocalTrack(store, mediaType: MEDIA_TYPE) {
 /**
  * Mutes or unmutes a local track with a specific media type.
  *
- * @param {Store} store - The Redux store in which the specified action is
+ * @param {Store} store - The redux store in which the specified action is
  * dispatched.
- * @param {Action} action - The Redux action dispatched in the specified store.
+ * @param {Action} action - The redux action dispatched in the specified store.
  * @param {MEDIA_TYPE} mediaType - The {@link MEDIA_TYPE} of the local track
  * which is being muted or unmuted.
  * @private
  * @returns {void}
  */
-function _setMuted(store, action, mediaType: MEDIA_TYPE) {
+function _setMuted(store, { muted }, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
-    if (localTrack) {
-        setTrackMuted(localTrack.jitsiTrack, action.muted, store);
-    }
+    localTrack && store.dispatch(setTrackMuted(localTrack.jitsiTrack, muted));
 }
 
 /**
@@ -170,11 +169,11 @@ function _setMuted(store, action, mediaType: MEDIA_TYPE) {
  * muted states of the local tracks of features/base/tracks with the muted
  * states of features/base/media.
  *
- * @param {Store} store - The Redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified <tt>action</tt>
  * is being dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The Redux action <tt>TRACK_UPDATED</tt> which is
+ * @param {Action} action - The redux action <tt>TRACK_UPDATED</tt> which is
  * being dispatched in the specified <tt>store</tt>.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the

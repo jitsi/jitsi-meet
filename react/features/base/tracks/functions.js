@@ -1,7 +1,7 @@
 /* global APP */
 
 import JitsiMeetJS, { JitsiTrackEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
+import { MEDIA_TYPE } from '../media';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -154,40 +154,4 @@ export function getTrackByJitsiTrack(tracks, jitsiTrack) {
  */
 export function getTracksByMediaType(tracks, mediaType) {
     return tracks.filter(t => t.mediaType === mediaType);
-}
-
-/**
- * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
- * the specified <tt>track</tt> is already in accord with the specified
- * <tt>muted</tt> value, then does nothing. In case mute/unmute operation fails
- * (JitsiLocalTrack Promise is rejected) a rollback action will be dispatched on
- * the given store. For example if the mute operation fails then the 'unmute'
- * action will be dispatched to rollback to the previous state in base/media.
- *
- * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
- * unmute.
- * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
- * @param {Store} store - The redux store in the context of which the function
- * is to execute and which will be used to dispatch the rollback action in case
- * mute/unmute fails.
-* @returns {Promise}
- */
-export function setTrackMuted(track, muted, { dispatch }) {
-    if (track.isMuted() === muted) {
-        return Promise.resolve();
-    }
-
-    const f = muted ? 'mute' : 'unmute';
-
-    return track[f]().catch(error => {
-        console.error(`set track ${f} failed`, error);
-
-        const setMuted
-            = track.mediaType === MEDIA_TYPE.AUDIO
-                ? setAudioMuted
-                : setVideoMuted;
-
-        dispatch(setMuted(!muted));
-    });
 }
