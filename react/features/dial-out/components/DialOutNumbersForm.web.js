@@ -141,12 +141,11 @@ class DialOutNumbersForm extends Component {
      */
     render() {
         const { t, _dialOutCodes } = this.props;
-        const items
-            = _dialOutCodes ? this._formatCountryCodes(_dialOutCodes) : [];
 
         return (
             <div className = 'form-control'>
-                { this._createDropdownMenu(items) }
+                { _dialOutCodes ? this._createDropdownMenu(
+                        this._formatCountryCodes(_dialOutCodes)) : null }
                 <div className = 'dial-out-input'>
                     <AKFieldText
                         autoFocus = { true }
@@ -155,7 +154,8 @@ class DialOutNumbersForm extends Component {
                         onChange = { this._onInputChange }
                         placeholder = { t('dialOut.enterPhone') }
                         ref = { this._setDialInputElement }
-                        shouldFitContainer = { true } />
+                        shouldFitContainer = { true }
+                        value = { this.state.dialInput } />
                 </div>
             </div>
         );
