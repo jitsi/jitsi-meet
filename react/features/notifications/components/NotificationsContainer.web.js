@@ -5,14 +5,6 @@ import { connect } from 'react-redux';
 import { hideNotification } from '../actions';
 
 /**
- * The duration for which a notification should be displayed before being
- * dismissed automatically.
- *
- * @type {number}
- */
-const DEFAULT_NOTIFICATION_TIMEOUT = 2500;
-
-/**
  * Implements a React {@link Component} which displays notifications and handles
  * automatic dismissmal after a notification is shown for a defined timeout
  * period.
@@ -74,8 +66,11 @@ class NotificationsContainer extends Component {
             const { timeout, uid } = notification;
 
             this._notificationDismissTimeout = setTimeout(() => {
-                this._onDismissed(uid);
-            }, timeout || DEFAULT_NOTIFICATION_TIMEOUT);
+                // Perform a no-op if a timeout is not specified.
+                if (Number.isInteger(timeout)) {
+                    this._onDismissed(uid);
+                }
+            }, timeout);
         }
     }
 

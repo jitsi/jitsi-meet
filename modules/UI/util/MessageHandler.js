@@ -455,7 +455,7 @@ var messageHandler = {
      * @param optional configurations for the notification (e.g. timeout)
      */
     participantNotification: function(displayName, displayNameKey, cls,
-                    messageKey, messageArguments, timeout) {
+                    messageKey, messageArguments, timeout = 2500) {
         // If we're in ringing state we skip all notifications.
         if (!notificationsEnabled || APP.UI.isOverlayVisible()) {
             return;

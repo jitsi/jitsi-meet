@@ -4,7 +4,7 @@
  *
  * {
  *     type: HIDE_NOTIFICATION,
- *     uid: string
+ *     uid: number
  * }
  */
 export const HIDE_NOTIFICATION = Symbol('HIDE_NOTIFICATION');

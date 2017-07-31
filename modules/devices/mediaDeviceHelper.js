@@ -192,9 +192,12 @@ export default {
                         createVideoTrack(false).then(([stream]) => stream)
                     ]))
                     .then(tracks => {
-                        if (audioTrackError || videoTrackError) {
-                            APP.UI.showDeviceErrorDialog(
-                                audioTrackError, videoTrackError);
+                        if (audioTrackError) {
+                            APP.UI.showMicErrorNotification(audioTrackError);
+                        }
+
+                        if (videoTrackError) {
+                            APP.UI.showCameraErrorNotification(videoTrackError);
                         }
 
                         return tracks.filter(t => typeof t !== 'undefined');
@@ -215,7 +218,7 @@ export default {
                 })
                 .catch(err => {
                     audioTrackError = err;
-                    showError && APP.UI.showDeviceErrorDialog(err, null);
+                    showError && APP.UI.showMicErrorNotification(err);
                     return [];
                 });
         }
@@ -228,7 +231,7 @@ export default {
                 })
                 .catch(err => {
                     videoTrackError = err;
-                    showError && APP.UI.showDeviceErrorDialog(null, err);
+                    showError && APP.UI.showCameraErrorNotification(err);
                     return [];
                 });
         }

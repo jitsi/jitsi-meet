@@ -474,5 +474,9 @@
         "retry": "Try again",
         "support": "Support",
         "supportMsg": "If this keeps happening, reach out to"
+    },
+    "deviceError": {
+        "cameraPermission": "Error obtaining camera permission",
+        "microphonePermission": "Error obtaining microphone permission"
     }
 }
