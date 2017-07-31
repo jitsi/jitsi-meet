@@ -3,54 +3,11 @@ import SideContainerToggler
 
 import defaultToolbarButtons from './defaultToolbarButtons';
 
-type MapOfAttributes = { [key: string]: * };
-
 declare var $: Function;
 declare var AJS: Object;
 declare var interfaceConfig: Object;
 
 export { abstractMapStateToProps } from './functions.native';
-
-/* eslint-disable flowtype/space-before-type-colon */
-
-/**
- * Takes toolbar button props and maps them to HTML attributes to set.
- *
- * @param {Object} props - Props set to the React component.
- * @returns {MapOfAttributes}
- */
-export function getButtonAttributesByProps(props: Object = {})
-        : MapOfAttributes {
-    // XXX Make sure to not modify props.classNames because that'd be bad
-    // practice.
-    const classNames = (props.classNames && [ ...props.classNames ]) || [];
-
-    props.toggled && classNames.push('toggled');
-    props.unclickable && classNames.push('unclickable');
-
-    const result: MapOfAttributes = {
-        className: classNames.join(' '),
-        'data-container': 'body',
-        'data-placement': 'bottom',
-        id: props.id
-    };
-
-    if (!props.enabled) {
-        result.disabled = 'disabled';
-    }
-
-    if (props.hidden) {
-        result.style = { display: 'none' };
-    }
-
-    if (props.tooltipText) {
-        result.content = props.tooltipText;
-    }
-
-    return result;
-}
-
-/* eslint-enable flowtype/space-before-type-colon */
 
 /**
  * Returns an object which contains the default buttons for the primary and

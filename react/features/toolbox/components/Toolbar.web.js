@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { setToolbarHovered } from '../actions';
+
+import StatelessToolbar from './StatelessToolbar';
 import ToolbarButton from './ToolbarButton';
 
 /**
@@ -15,6 +17,8 @@ import ToolbarButton from './ToolbarButton';
  * @extends Component
  */
 class Toolbar extends Component {
+    _onMouseOut: Function;
+    _onMouseOver: Function;
     _renderToolbarButton: Function;
 
     /**
@@ -56,10 +60,12 @@ class Toolbar extends Component {
      *
      * @param {Object} props - Object containing React component properties.
      */
-    constructor(props) {
+    constructor(props: Object) {
         super(props);
 
         // Bind callbacks to preverse this.
+        this._onMouseOut = this._onMouseOut.bind(this);
+        this._onMouseOver = this._onMouseOver.bind(this);
         this._renderToolbarButton = this._renderToolbarButton.bind(this);
     }
 
@@ -70,21 +76,36 @@ class Toolbar extends Component {
      * @returns {ReactElement}
      */
     render(): ReactElement<*> {
-        const { className } = this.props;
+        const toolbarButtons = new Map();
+
+        this.props.toolbarButtons
+            .forEach((button, key) => {
+                const { onClick } = button;
+
+                toolbarButtons.set(key, {
+                    ...button,
+                    onClick: (...args) =>
+                        onClick && onClick(this.props.dispatch, ...args)
+                });
+            });
+
+        const props = {
+            ...this.props,
+            onMouseOut: this._onMouseOut,
+            onMouseOver: this._onMouseOver,
+            toolbarButtons
+        };
 
         return (
-            <div
-                className = { `toolbar ${className}` }
-                onMouseOut = { this._onMouseOut }
-                onMouseOver = { this._onMouseOver }>
+            <StatelessToolbar { ...props }>
                 {
                     [ ...this.props.toolbarButtons.entries() ]
-                    .reduce(this._renderToolbarButton, [])
+                    .map(this._renderToolbarButton)
                 }
                 {
                     this.props.children
                 }
-            </div>
+            </StatelessToolbar>
         );
     }
 
@@ -109,47 +130,38 @@ class Toolbar extends Component {
     }
 
     /**
-     * Renders toolbar button. Method is passed to reduce function.
+     * Renders toolbar button. Method is passed to map function.
      *
-     * @param {Array} acc - Toolbar buttons array.
      * @param {Array} keyValuePair - Key value pair containing button and its
      * key.
      * @private
-     * @returns {Array} Array of toolbar buttons.
+     * @returns {ReactElement} A toolbar button.
      */
-    _renderToolbarButton(acc: Array<*>,
-                         keyValuePair: Array<*>): Array<ReactElement<*>> {
+    _renderToolbarButton(
+                         keyValuePair: Array<*>): ReactElement<*> {
         const [ key, button ] = keyValuePair;
 
         if (button.component) {
-            acc.push(
+            return (
                 <button.component
                     key = { key }
                     tooltipPosition = { this.props.tooltipPosition } />
             );
-
-            return acc;
         }
 
         const { tooltipPosition } = this.props;
 
         const { onClick, onMount, onUnmount } = button;
 
-        const onClickHandler
-            = (...args) =>
-                onClick(this.props.dispatch, ...args);
-
-        acc.push(
+        return (
             <ToolbarButton
                 button = { button }
                 key = { key }
-                onClick = { onClickHandler }
+                onClick = { onClick }
                 onMount = { onMount }
                 onUnmount = { onUnmount }
                 tooltipPosition = { tooltipPosition } />
         );
-
-        return acc;
     }
 }
 
