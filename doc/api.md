@@ -19,11 +19,11 @@ Its constructor gets a number of options:
 * **domain**: domain used to build the conference URL, "meet.jit.si" for
   example.
 * **options**: object with properties - the optional arguments:
-    * **room**: (optional) name of the room to join.
+    * **roomName**: (optional) name of the room to join.
     * **width**: (optional) width for the iframe which will be created. If a number is specified it's treated as pixel units. If a string is specified the format is number followed by 'px', 'em', 'pt' or '%'.
     * **height**: (optional) height for the iframe which will be created. If a number is specified it's treated as pixel units. If a string is specified the format is number followed by 'px', 'em', 'pt' or '%'.
-    * **htmlElement**: (optional) HTL DOM Element where the iframe will be added as a child.
-    * **configOverwite**: (optional) JS object with overrides for options defined in [config.js].
+    * **parentNode**: (optional) HTML DOM Element where the iframe will be added as a child.
+    * **configOverwrite**: (optional) JS object with overrides for options defined in [config.js].
     * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
     * **noSsl**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
@@ -31,12 +31,12 @@ Its constructor gets a number of options:
 Example:
 
 ```javascript
+var domain = "meet.jit.si";
 var options = {
-    domain: "meet.jit.si",
-    room: "JitsiMeetAPIExample",
+    roomName: "JitsiMeetAPIExample",
     width: 700,
     height: 700,
-    htmlElement: document.querySelector('#meet')
+    parentNode: document.querySelector('#meet')
 }
 var api = new JitsiMeetExternalAPI(domain, options);
 ```
