@@ -3,7 +3,6 @@ import { CustomCachedImage } from 'react-native-img-cache';
 
 import AvatarImage from './AvatarImage';
 
-
 /**
  * Implements an avatar as a React Native/mobile {@link Component}.
  */
@@ -55,6 +54,7 @@ export default class Avatar extends Component {
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
+        // uri
         const prevURI = this.props && this.props.uri;
         const nextURI = nextProps && nextProps.uri;
 
