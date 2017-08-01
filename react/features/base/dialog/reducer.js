@@ -1,6 +1,7 @@
 import { assign, ReducerRegistry } from '../redux';
 
 import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 
 /**
  * Reduces redux actions which show or hide dialogs.
@@ -19,11 +20,21 @@ ReducerRegistry.register('features/base/dialog', (state = {}, action) => {
             componentProps: undefined
         });
 
-    case OPEN_DIALOG:
+    case OPEN_DIALOG: {
+        const { localStorageKeyForDoNotShowWarning } = action.componentProps;
+
+        if (localStorageKeyForDoNotShowWarning
+            && jitsiLocalStorage.getItem(localStorageKeyForDoNotShowWarning)
+                === 'true') {
+            // there is a setting to not show this dialog
+            return state;
+        }
+
         return assign(state, {
             component: action.component,
             componentProps: action.componentProps
         });
+    }
     }
 
     return state;
