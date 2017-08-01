@@ -139,6 +139,17 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
+    // XXX At least twice we received bug reports about malfunctioning loadURL
+    // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
+    // expected in our testing. But that was to be expected because the app does
+    // not exercise loadURL. In order to increase the test coverage of loadURL,
+    // channel Universal linking through loadURL.
+    if ([userActivity.activityType
+                isEqualToString:NSUserActivityTypeBrowsingWeb]
+            && [JitsiMeetView loadURLInViews:userActivity.webpageURL]) {
+        return YES;
+    }
+
     return [RCTLinkingManager application:application
                      continueUserActivity:userActivity
                        restorationHandler:restorationHandler];
@@ -148,6 +159,15 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
+    // XXX At least twice we received bug reports about malfunctioning loadURL
+    // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
+    // expected in our testing. But that was to be expected because the app does
+    // not exercise loadURL. In order to increase the test coverage of loadURL,
+    // channel Universal linking through loadURL.
+    if ([JitsiMeetView loadURLInViews:url]) {
+        return YES;
+    }
+
     return [RCTLinkingManager application:application
                                   openURL:url
                         sourceApplication:sourceApplication
@@ -248,6 +268,24 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 }
 
 #pragma mark Private methods
+
++ (BOOL)loadURLInViews:(NSURL *)url {
+    BOOL handled = NO;
+
+    if (views) {
+        for (NSString *externalAPIScope in views) {
+            JitsiMeetView *view
+                = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
+
+            if (view) {
+                [view loadURL:url];
+                handled = YES;
+            }
+        }
+    }
+
+    return handled;
+}
 
 + (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
     return [views objectForKey:externalAPIScope];
