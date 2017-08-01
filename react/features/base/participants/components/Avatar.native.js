@@ -3,7 +3,6 @@ import { CustomCachedImage } from 'react-native-img-cache';
 
 import AvatarImage from './AvatarImage';
 
-
 /**
  * Implements an avatar as a React Native/mobile {@link Component}.
  */

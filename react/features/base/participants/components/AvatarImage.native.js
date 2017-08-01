@@ -3,26 +3,22 @@ import { Image, View } from 'react-native';
 
 import { Platform } from '../../react';
 
-
 /**
  * The default avatar to be used, in case the requested URI is not available
- * or fails to be loaded.
- *
- * This is an inline version of images/avatar2.png.
+ * or fails to load. It is an inline version of images/avatar2.png.
  *
  * @type {string}
  */
 const DEFAULT_AVATAR = require('./defaultAvatar.png');
 
 /**
- * The amount of time to wait when the avatar URI is undefined before we start
- * showing a default locally generated one. Note that since we have no URI, we
- * have nothing we can cache, so the color will be random.
+ * The number of milliseconds to wait when the avatar URI is undefined before we
+ * start showing a default locally generated one. Note that since we have no
+ * URI, we have nothing we can cache, so the color will be random.
  *
  * @type {number}
  */
 const UNDEFINED_AVATAR_TIMEOUT = 1000;
-
 
 /**
  * Implements an Image component wrapper, which returns a default image if the
@@ -86,15 +82,18 @@ export default class AvatarImage extends Component {
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
-        const prevURI = this.props.source && this.props.source.uri;
-        const nextURI = nextProps.source && nextProps.source.uri;
+        const prevSource = this.props.source;
+        const prevURI = prevSource && prevSource.uri;
+        const nextSource = nextProps.source;
+        const nextURI = nextSource && nextSource.uri;
 
         if (typeof prevURI === 'undefined') {
             clearTimeout(this._timeout);
             if (typeof nextURI === 'undefined') {
-                this._timeout = setTimeout(() => {
-                    this.setState({ showDefault: true });
-                }, UNDEFINED_AVATAR_TIMEOUT);
+                this._timeout
+                    = setTimeout(
+                        () => this.setState({ showDefault: true }),
+                        UNDEFINED_AVATAR_TIMEOUT);
             } else {
                 this.setState({ showDefault: nextProps.forceDefault });
             }
@@ -115,8 +114,8 @@ export default class AvatarImage extends Component {
      * Computes a hash over the URI and returns a HSL background color. We use
      * 75% as lightness, for nice pastel style colors.
      *
-     * @returns {string} - The HSL CSS property.
      * @private
+     * @returns {string} - The HSL CSS property.
      */
     _getBackgroundColor() {
         const uri = this.props.source.uri;
@@ -157,9 +156,15 @@ export default class AvatarImage extends Component {
      * @inheritdoc
      */
     render() {
-        // eslint-disable-next-line no-unused-vars
-        const { forceDefault, source, style, ...props } = this.props;
         const { failed, showDefault } = this.state;
+        const {
+            // The following is/are forked in state:
+            forceDefault, // eslint-disable-line no-unused-vars
+
+            source,
+            style,
+            ...props
+        } = this.props;
 
         if (failed || showDefault) {
             const coloredBackground = {
@@ -168,19 +173,22 @@ export default class AvatarImage extends Component {
                 overflow: 'hidden'
             };
 
+            // We need to wrap the Image in a View because of a bug in React
+            // Native for Android:
+            // https://github.com/facebook/react-native/issues/3198
+            const workaround3198 = Platform.OS === 'android';
             let element = React.createElement(Image, {
                 ...props,
                 source: DEFAULT_AVATAR,
-                style: Platform.OS === 'android' ? style : coloredBackground
+                style: workaround3198 ? style : coloredBackground
             });
 
-            if (Platform.OS === 'android') {
-                // Here we need to wrap the Image in a View because of a bug in
-                // React Native for Android:
-                // https://github.com/facebook/react-native/issues/3198
-
-                element = React.createElement(View,
-                    { style: coloredBackground }, element);
+            if (workaround3198) {
+                element
+                    = React.createElement(
+                        View,
+                        { style: coloredBackground },
+                        element);
             }
 
             return element;
