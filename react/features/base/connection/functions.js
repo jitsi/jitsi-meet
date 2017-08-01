@@ -13,7 +13,10 @@ export function getInviteURL(stateOrGetState: Function | Object): ?string {
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
-    const { locationURL } = state['features/base/connection'];
+    const locationURL
+        = state instanceof URL
+            ? state
+            : state['features/base/connection'].locationURL;
     let inviteURL;
 
     if (locationURL) {
