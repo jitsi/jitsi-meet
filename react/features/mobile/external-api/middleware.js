@@ -7,9 +7,11 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    CONFERENCE_WILL_LEAVE
+    CONFERENCE_WILL_LEAVE,
+    JITSI_CONFERENCE_URL_KEY
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
+import { toURLString } from '../../base/util';
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -27,30 +29,13 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
     case CONFERENCE_WILL_LEAVE: {
-        const { conference, room, type, ...data } = action;
+        const { conference, type, ...data } = action;
 
-        // For the above (redux) actions, conference and/or room identify a
+        // For the above (redux) actions, conference identifies a
         // JitsiConference instance. The external API cannot transport such an
         // object so we have to transport an "equivalent".
-        if (conference || room) {
-            // We have chosen to identify the object in question by the
-            // (supposedly) associated location URL. (FIXME Actually, the redux
-            // state locationURL is not really asssociated with the
-            // JitsiConference instance. The value of localtionURL is utilized
-            // in order to initialize the JitsiConference instance but the value
-            // of locationURL at the time of CONFERENCE_WILL_LEAVE and
-            // CONFERENCE_LEFT will not be the value with which the
-            // JitsiConference instance being left.)
-            const state = store.getState();
-            const { locationURL } = state['features/base/connection'];
-
-            if (!locationURL) {
-                // The (redux) action cannot be fully converted to an (external
-                // API) event.
-                break;
-            }
-
-            data.url = locationURL.href;
+        if (conference) {
+            data.url = toURLString(conference[JITSI_CONFERENCE_URL_KEY]);
         }
 
         // The (externa API) event's name is the string representation of the
