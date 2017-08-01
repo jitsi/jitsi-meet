@@ -356,7 +356,7 @@ export function toURLString(obj: ?(string | Object)): ?string {
  * {@code Object}.
  */
 export function urlObjectToString(o: Object): ?string {
-    const url = parseStandardURIString(o.url || '');
+    const url = parseStandardURIString(_fixURIStringScheme(o.url || ''));
 
     // protocol
     if (!url.protocol) {
