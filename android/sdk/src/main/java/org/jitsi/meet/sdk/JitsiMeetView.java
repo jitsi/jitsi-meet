@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,9 +54,11 @@ public class JitsiMeetView extends FrameLayout {
 
     public static JitsiMeetView findViewByExternalAPIScope(
             String externalAPIScope) {
-        for (JitsiMeetView view : views) {
-            if (view.externalAPIScope.equals(externalAPIScope)) {
-                return view;
+        synchronized (views) {
+            for (JitsiMeetView view : views) {
+                if (view.externalAPIScope.equals(externalAPIScope)) {
+                    return view;
+                }
             }
         }
 
@@ -89,6 +92,30 @@ public class JitsiMeetView extends FrameLayout {
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
+    }
+
+    /**
+     * Loads a specific URL {@code String} in all existing
+     * {@code JitsiMeetView}s.
+     *
+     * @param urlString - The URL {@code String} to load in all existing
+     * {@code JitsiMeetView}s.
+     * @return If the specified {@code urlString} was submitted for loading in
+     * at least one {@code JitsiMeetView}, then {@code true}; otherwise,
+     * {@code false}.
+     */
+    private static boolean loadURLStringInViews(String urlString) {
+        synchronized (views) {
+            if (!views.isEmpty()) {
+                for (JitsiMeetView view : views) {
+                    view.loadURLString(urlString);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -156,6 +183,19 @@ public class JitsiMeetView extends FrameLayout {
      * @param intent - <tt>Intent</tt> instance which was received.
      */
     public static void onNewIntent(Intent intent) {
+        // XXX At least twice we received bug reports about malfunctioning
+        // loadURL in the Jitsi Meet SDK while the Jitsi Meet app seemed to
+        // functioning as expected in our testing. But that was to be expected
+        // because the app does not exercise loadURL. In order to increase the
+        // test coverage of loadURL, channel deep linking through loadURL.
+        Uri uri;
+
+        if (Intent.ACTION_VIEW.equals(intent.getAction())
+                && (uri = intent.getData()) != null
+                && loadURLStringInViews(uri.toString())) {
+            return;
+        }
+
         if (reactInstanceManager != null) {
             reactInstanceManager.onNewIntent(intent);
         }
@@ -196,7 +236,9 @@ public class JitsiMeetView extends FrameLayout {
 
         // Hook this JitsiMeetView into ExternalAPI.
         externalAPIScope = UUID.randomUUID().toString();
-        views.add(this);
+        synchronized (views) {
+            views.add(this);
+        }
     }
 
     /**

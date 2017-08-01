@@ -269,6 +269,14 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
 #pragma mark Private methods
 
+/**
+ * Loads a specific {@link NSURL} in all existing {@code JitsiMeetView}s.
+ *
+ * @param url - The {@code NSURL} to load in all existing
+ * {@code JitsiMeetView}s.
+ * @return {@code YES} if the specified {@code url} was submitted for loading
+ * in at least one {@code JitsiMeetView}; otherwise, {@code NO}.
+ */
 + (BOOL)loadURLInViews:(NSURL *)url {
     BOOL handled = NO;
 
