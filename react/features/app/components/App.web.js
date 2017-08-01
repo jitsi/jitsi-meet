@@ -84,18 +84,24 @@ export class App extends AbstractApp {
 
         // Navigate to the specified Route.
         const windowLocation = this.getWindowLocation();
+        let promise;
 
         if (!route || windowLocation.pathname === path) {
             // The browser is at the specified path already and what remains is
             // to make this App instance aware of the route to be rendered at
             // the current location.
-            super._navigate(route);
+
+            // XXX Refer to the super's _navigate for an explanation why a
+            // Promise is returned.
+            promise = super._navigate(route);
         } else {
             // The browser must go to the specified location. Once the specified
             // location becomes current, the App will be made aware of the route
             // to be rendered at it.
             windowLocation.pathname = path;
         }
+
+        return promise || Promise.resolve();
     }
 
     /**
