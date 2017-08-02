@@ -9,12 +9,6 @@ import {
 } from '../../../react/features/notifications';
 
 /**
- * Flag for enable/disable of the notifications.
- * @type {boolean}
- */
-let notificationsEnabled = true;
-
-/**
  * Flag for enabling/disabling popups.
  * @type {boolean}
  */
@@ -456,11 +450,6 @@ var messageHandler = {
      */
     participantNotification: function(displayName, displayNameKey, cls,
                     messageKey, messageArguments, timeout = 2500) {
-        // If we're in ringing state we skip all notifications.
-        if (!notificationsEnabled || APP.UI.isOverlayVisible()) {
-            return;
-        }
-
         APP.store.dispatch(
             showNotification(
                 Notification,
@@ -485,20 +474,8 @@ var messageHandler = {
      * @returns {void}
      */
     notify: function(titleKey, messageKey, messageArguments) {
-
-        // If we're in ringing state we skip all notifications.
-        if(!notificationsEnabled || APP.UI.isOverlayVisible())
-            return;
-
         this.participantNotification(
             null, titleKey, null, messageKey, messageArguments);
-    },
-
-    /**
-     * Enables / disables notifications.
-     */
-    enableNotifications: function (enable) {
-        notificationsEnabled = enable;
     },
 
     enablePopups: function (enable) {

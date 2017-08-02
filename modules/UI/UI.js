@@ -40,7 +40,8 @@ import {
     showToolbox
 } from '../../react/features/toolbox';
 import {
-    maybeShowNotificationWithDoNotDisplay
+    maybeShowNotificationWithDoNotDisplay,
+    setNotificationsEnabled
 } from '../../react/features/notifications';
 
 var EventEmitter = require("events");
@@ -50,17 +51,6 @@ import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
-
-/**
- * Whether an overlay is visible or not.
- *
- * FIXME: This is temporary solution. Don't use this variable!
- * Should be removed when all the code is move to react.
- *
- * @type {boolean}
- * @public
- */
-UI.overlayVisible = false;
 
 let etherpadManager;
 let sharedVideoManager;
@@ -335,7 +325,7 @@ UI.start = function () {
         $("body").addClass("filmstrip-only");
         UI.showToolbar();
         Filmstrip.setFilmstripOnly();
-        messageHandler.enableNotifications(false);
+        APP.store.dispatch(setNotificationsEnabled(false));
         JitsiPopover.enabled = false;
     }
 
@@ -1305,19 +1295,6 @@ UI.onSharedVideoUpdate = function (id, url, attributes) {
 UI.onSharedVideoStop = function (id, attributes) {
     if (sharedVideoManager)
         sharedVideoManager.onSharedVideoStop(id, attributes);
-};
-
-/**
- * Indicates if any the "top" overlays are currently visible. The check includes
- * the call/ring overlay, the suspended overlay, the GUM permissions overlay,
- * and the page-reload overlay.
- *
- * @returns {*|boolean} {true} if an overlay is visible; {false}, otherwise
- */
-UI.isOverlayVisible = function () {
-    return (
-        this.overlayVisible
-            || APP.store.getState()['features/jwt'].callOverlayVisible);
 };
 
 /**

@@ -1,4 +1,4 @@
-/*
+/**
  * The type of (redux) action which signals that a specific notification should
  * not be displayed anymore.
  *
@@ -9,7 +9,7 @@
  */
 export const HIDE_NOTIFICATION = Symbol('HIDE_NOTIFICATION');
 
-/*
+/**
  * The type of (redux) action which signals that a notification component should
  * be displayed.
  *
@@ -22,3 +22,14 @@ export const HIDE_NOTIFICATION = Symbol('HIDE_NOTIFICATION');
  * }
  */
 export const SHOW_NOTIFICATION = Symbol('SHOW_NOTIFICATION');
+
+/**
+ * The type of (redux) action which signals that notifications should not
+ * display.
+ *
+ * {
+ *     type: SET_NOTIFICATIONS_ENABLED,
+ *     enabled: Boolean
+ * }
+ */
+export const SET_NOTIFICATIONS_ENABLED = Symbol('SET_NOTIFICATIONS_ENABLED');

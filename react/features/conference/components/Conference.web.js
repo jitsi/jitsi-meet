@@ -79,7 +79,7 @@ class Conference extends Component {
                 { filmStripOnly ? null : <Toolbox /> }
 
                 <DialogContainer />
-                { filmStripOnly ? null : <NotificationsContainer /> }
+                <NotificationsContainer />
                 <OverlayContainer />
 
                 {/*

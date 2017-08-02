@@ -2,6 +2,7 @@ import jitsiLocalStorage from '../../../modules/util/JitsiLocalStorage';
 
 import {
     HIDE_NOTIFICATION,
+    SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
 import { NotificationWithToggle } from './components';
@@ -20,6 +21,22 @@ export function hideNotification(uid) {
     return {
         type: HIDE_NOTIFICATION,
         uid
+    };
+}
+
+/**
+ * Stops notifications from being displayed.
+ *
+ * @param {boolean} enabled - Whether or not notifications should display.
+ * @returns {{
+ *     type: SET_NOTIFICATIONS_ENABLED,
+ *     enabled: boolean
+ * }}
+ */
+export function setNotificationsEnabled(enabled) {
+    return {
+        type: SET_NOTIFICATIONS_ENABLED,
+        enabled
     };
 }
 

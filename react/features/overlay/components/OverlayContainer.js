@@ -11,7 +11,6 @@ import UserMediaPermissionsFilmstripOnlyOverlay
     from './UserMediaPermissionsFilmstripOnlyOverlay';
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -131,23 +130,6 @@ class OverlayContainer extends Component {
                 typeof interfaceConfig === 'object'
                     && interfaceConfig.filmStripOnly
         };
-    }
-
-    /**
-     * React Component method that executes once component is updated.
-     *
-     * @inheritdoc
-     * @returns {void}
-     * @protected
-     */
-    componentDidUpdate() {
-        if (typeof APP === 'object') {
-            APP.UI.overlayVisible
-                = (this.props._connectionEstablished
-                        && this.props._haveToReload)
-                    || this.props._suspendDetected
-                    || this.props._isMediaPermissionPromptVisible;
-        }
     }
 
     /**
