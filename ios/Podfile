@@ -17,8 +17,12 @@ target 'JitsiMeet' do
   ]
   pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
 
-  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
-  pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
+  pod 'react-native-background-timer',
+    :path => '../node_modules/react-native-background-timer'
+  pod 'react-native-fetch-blob',
+    :path => '../node_modules/react-native-fetch-blob'
+  pod 'react-native-keep-awake',
+    :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 end

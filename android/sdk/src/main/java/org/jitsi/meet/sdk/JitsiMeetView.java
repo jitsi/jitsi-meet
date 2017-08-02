@@ -84,10 +84,11 @@ public class JitsiMeetView extends FrameLayout {
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
                 .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
+                .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
                 .addPackage(new com.rnimmersive.RNImmersivePackage())
                 .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
                 .addPackage(
-                        new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
+                    new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
                 .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
@@ -245,8 +246,8 @@ public class JitsiMeetView extends FrameLayout {
      * Releases the React resources (specifically the {@link ReactRootView})
      * associated with this view.
      *
-     * This method MUST be called when the Activity holding this view is destroyed, typically in the
-     * {@code onDestroy} method.
+     * This method MUST be called when the Activity holding this view is
+     * destroyed, typically in the {@code onDestroy} method.
      */
     public void dispose() {
         if (reactRootView != null) {
