@@ -5,14 +5,6 @@ import { connect } from 'react-redux';
 import { hideNotification } from '../actions';
 
 /**
- * The duration for which a notification should be displayed before being
- * dismissed automatically.
- *
- * @type {number}
- */
-const DEFAULT_NOTIFICATION_TIMEOUT = 2500;
-
-/**
  * Implements a React {@link Component} which displays notifications and handles
  * automatic dismissmal after a notification is shown for a defined timeout
  * period.
@@ -31,6 +23,12 @@ class NotificationsContainer extends Component {
          * notification at the top and the rest shown below it in order.
          */
         _notifications: React.PropTypes.array,
+
+        /**
+         * Whether or not notifications should be displayed at all. If not,
+         * notifications will be dismissed immediately.
+         */
+        _showNotifications: React.PropTypes.bool,
 
         /**
          * Invoked to update the redux store in order to remove notifications.
@@ -67,15 +65,27 @@ class NotificationsContainer extends Component {
      * returns {void}
      */
     componentDidUpdate() {
-        const { _notifications } = this.props;
+        const { _notifications, _showNotifications } = this.props;
 
-        if (_notifications.length && !this._notificationDismissTimeout) {
+        if (_notifications.length) {
             const notification = _notifications[0];
-            const { timeout, uid } = notification;
 
-            this._notificationDismissTimeout = setTimeout(() => {
-                this._onDismissed(uid);
-            }, timeout || DEFAULT_NOTIFICATION_TIMEOUT);
+            if (!_showNotifications) {
+                this._onDismissed(notification.uid);
+            } else if (this._notificationDismissTimeout) {
+
+                // No-op because there should already be a notification that
+                // is waiting for dismissal.
+            } else {
+                const { timeout, uid } = notification;
+
+                this._notificationDismissTimeout = setTimeout(() => {
+                    // Perform a no-op if a timeout is not specified.
+                    if (Number.isInteger(timeout)) {
+                        this._onDismissed(uid);
+                    }
+                }, timeout);
+            }
         }
     }
 
@@ -96,28 +106,9 @@ class NotificationsContainer extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _notifications } = this.props;
-
-        const flags = _notifications.map(notification => {
-            const Notification = notification.component;
-            const { props, uid } = notification;
-
-            // The id attribute is necessary as {@code FlagGroup} looks for
-            // either id or key to set a key on notifications, but accessing
-            // props.key will cause React to print an error.
-            return (
-                <Notification
-                    { ...props }
-                    id = { uid }
-                    key = { uid }
-                    uid = { uid } />
-
-            );
-        });
-
         return (
             <FlagGroup onDismissed = { this._onDismissed }>
-                { flags }
+                { this._renderFlags() }
             </FlagGroup>
         );
     }
@@ -136,6 +127,38 @@ class NotificationsContainer extends Component {
 
         this.props.dispatch(hideNotification(flagUid));
     }
+
+    /**
+     * Renders notifications to display as ReactElements. An empty array will
+     * be returned if notifications are disabled.
+     *
+     * @private
+     * @returns {ReactElement[]}
+     */
+    _renderFlags() {
+        const { _notifications, _showNotifications } = this.props;
+
+        if (!_showNotifications) {
+            return [];
+        }
+
+        return _notifications.map(notification => {
+            const Notification = notification.component;
+            const { props, uid } = notification;
+
+            // The id attribute is necessary as {@code FlagGroup} looks for
+            // either id or key to set a key on notifications, but accessing
+            // props.key will cause React to print an error.
+            return (
+                <Notification
+                    { ...props }
+                    id = { uid }
+                    key = { uid }
+                    uid = { uid } />
+
+            );
+        });
+    }
 }
 
 /**
@@ -149,8 +172,25 @@ class NotificationsContainer extends Component {
  * }}
  */
 function _mapStateToProps(state) {
+    // TODO: Per existing behavior, notifications should not display when an
+    // overlay is visible. This logic for checking overlay display can likely be
+    // simplified.
+    const {
+        connectionEstablished,
+        haveToReload,
+        isMediaPermissionPromptVisible,
+        suspendDetected
+    } = state['features/overlay'];
+    const isAnyOverlayVisible = (connectionEstablished && haveToReload)
+        || isMediaPermissionPromptVisible
+        || suspendDetected
+        || state['features/jwt'].callOverlayVisible;
+
+    const { enabled, notifications } = state['features/notifications'];
+
     return {
-        _notifications: state['features/notifications']
+        _notifications: notifications,
+        _showNotifications: enabled && !isAnyOverlayVisible
     };
 }
 

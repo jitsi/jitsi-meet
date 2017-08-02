@@ -22,6 +22,7 @@ import VideoLayout from '../videolayout/VideoLayout';
 import Feedback from '../feedback/Feedback.js';
 
 import { setToolboxEnabled } from '../../../react/features/toolbox';
+import { setNotificationsEnabled } from '../../../react/features/notifications';
 
 /**
  * The dialog for user input.
@@ -309,7 +310,7 @@ var Recording = {
             VideoLayout.setLocalVideoVisible(false);
             Feedback.enableFeedback(false);
             APP.store.dispatch(setToolboxEnabled(false));
-            APP.UI.messageHandler.enableNotifications(false);
+            APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);
         }
 
