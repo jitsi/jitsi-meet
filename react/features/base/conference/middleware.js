@@ -2,6 +2,7 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { CONNECTION_ESTABLISHED } from '../connection';
+import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -12,10 +13,16 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
     createConference,
-    _setAudioOnlyVideoMuted,
+    setAudioOnly,
     setLastN
 } from './actions';
-import { CONFERENCE_JOINED, SET_AUDIO_ONLY, SET_LASTN } from './actionTypes';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
+    SET_AUDIO_ONLY,
+    SET_LASTN
+} from './actionTypes';
 import {
     _addLocalTracksToConference,
     _handleParticipantError,
@@ -35,6 +42,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+
+    case CONFERENCE_FAILED:
+    case CONFERENCE_LEFT:
+        return _conferenceFailedOrLeft(store, next, action);
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
@@ -75,6 +86,29 @@ function _connectionEstablished(store, next, action) {
     if (typeof APP === 'undefined') {
         store.dispatch(createConference());
     }
+
+    return result;
+}
+
+/**
+ * Does extra sync up on properties that may need to be updated, after
+ * the conference failed or was left.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action {@link CONFERENCE_FAILED} or
+ * {@link CONFERENCE_LEFT} which is being dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _conferenceFailedOrLeft(store, next, action) {
+    const result = next(action);
+    const { audioOnly } = store.getState()['features/base/conference'];
+
+    audioOnly && store.dispatch(setAudioOnly(false));
 
     return result;
 }
@@ -171,17 +205,17 @@ function _pinParticipant(store, next, action) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setAudioOnly(store, next, action) {
+function _setAudioOnly({ dispatch }, next, action) {
     const result = next(action);
 
     const { audioOnly } = action;
 
     // Set lastN to 0 in case audio-only is desired; leave it as undefined,
     // otherwise, and the default lastN value will be chosen automatically.
-    store.dispatch(setLastN(audioOnly ? 0 : undefined));
+    dispatch(setLastN(audioOnly ? 0 : undefined));
 
-    // Mute local video
-    store.dispatch(_setAudioOnlyVideoMuted(audioOnly));
+    // Mute the local video.
+    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
 
     if (typeof APP !== 'undefined') {
         // TODO This should be a temporary solution that lasts only until

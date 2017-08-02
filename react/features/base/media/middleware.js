@@ -80,7 +80,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     (audio.muted !== audioMuted) && dispatch(setAudioMuted(audioMuted));
     (video.facingMode !== CAMERA_FACING_MODE.USER)
         && dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    (video.muted !== videoMuted) && dispatch(setVideoMuted(videoMuted));
+    (Boolean(video.muted) !== videoMuted)
+        && dispatch(setVideoMuted(videoMuted));
 
     return next(action);
 }
@@ -95,7 +96,7 @@ function _setRoom({ dispatch, getState }, next, action) {
  */
 function _syncTrackMutedState({ dispatch, getState }, track) {
     const state = getState()['features/base/media'];
-    const muted = state[track.mediaType].muted;
+    const muted = Boolean(state[track.mediaType].muted);
 
     // XXX If muted state of track when it was added is different from our media
     // muted state, we need to mute track and explicitly modify 'muted' property

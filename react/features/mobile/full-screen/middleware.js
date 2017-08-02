@@ -61,9 +61,12 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_AUDIO_ONLY:
-        fullScreen = !action.audioOnly;
+    case SET_AUDIO_ONLY: {
+        const { conference } = store.getState()['features/base/conference'];
+
+        fullScreen = conference ? !action.audioOnly : false;
         break;
+    }
     }
 
     if (fullScreen !== null) {

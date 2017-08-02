@@ -39,12 +39,20 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        case SET_AUDIO_ONLY:
-            mode
-                = action.audioOnly
+        case SET_AUDIO_ONLY: {
+            const { conference } = store.getState()['features/base/conference'];
+
+            if (conference) {
+                mode
+                    = action.audioOnly
                     ? AudioMode.AUDIO_CALL
                     : AudioMode.VIDEO_CALL;
+            } else {
+                mode = null;
+            }
+
             break;
+        }
 
         default:
             mode = null;

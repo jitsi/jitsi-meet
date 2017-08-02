@@ -31,9 +31,12 @@ MiddlewareRegistry.register(store => next => action => {
         _setProximityEnabled(false);
         break;
 
-    case SET_AUDIO_ONLY:
-        _setProximityEnabled(action.audioOnly);
+    case SET_AUDIO_ONLY: {
+        const { conference } = store.getState()['features/base/conference'];
+
+        conference && _setProximityEnabled(action.audioOnly);
         break;
+    }
     }
 
     return next(action);

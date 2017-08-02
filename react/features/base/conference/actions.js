@@ -1,5 +1,5 @@
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { setVideoMuted } from '../media';
+import { setAudioMuted, setVideoMuted } from '../media';
 import {
     dominantSpeakerChanged,
     getLocalParticipant,
@@ -19,7 +19,6 @@ import {
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     SET_AUDIO_ONLY,
-    _SET_AUDIO_ONLY_VIDEO_MUTED,
     SET_LARGE_VIDEO_HD_STATUS,
     SET_LASTN,
     SET_PASSWORD,
@@ -60,6 +59,19 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
         (...args) => dispatch(lockStateChanged(conference, ...args)));
+
+    // Dispatches into features/base/media follow:
+
+    // FIXME: This is needed because when Jicofo tells us to start muted
+    // lib-jitsi-meet does the actual muting. Perhaps this should be refactored
+    // so applications are hinted to start muted, but lib-jitsi-meet doesn't
+    // take action.
+    conference.on(
+        JitsiConferenceEvents.STARTED_MUTED,
+        () => {
+            dispatch(setAudioMuted(Boolean(conference.startAudioMuted)));
+            dispatch(setVideoMuted(Boolean(conference.startVideoMuted)));
+        });
 
     // Dispatches into features/base/tracks follow:
 
@@ -296,55 +308,15 @@ export function lockStateChanged(conference, locked) {
  *
  * @param {boolean} audioOnly - True if the conference should be audio only;
  * false, otherwise.
- * @private
  * @returns {{
  *     type: SET_AUDIO_ONLY,
  *     audioOnly: boolean
  * }}
  */
-function _setAudioOnly(audioOnly) {
+export function setAudioOnly(audioOnly) {
     return {
         type: SET_AUDIO_ONLY,
         audioOnly
-    };
-}
-
-/**
- * Signals that the app should mute video because it's now in audio-only mode,
- * or unmute it because it no longer is. If video was already muted, nothing
- * will happen; otherwise, it will be muted. When audio-only mode is disabled,
- * the previous state will be restored.
- *
- * @param {boolean} muted - True if video should be muted; false, otherwise.
- * @protected
- * @returns {Function}
- */
-export function _setAudioOnlyVideoMuted(muted: boolean) {
-    return (dispatch, getState) => {
-        if (muted) {
-            const { video } = getState()['features/base/media'];
-
-            if (video.muted) {
-                // Video is already muted, do nothing.
-                return;
-            }
-        } else {
-            const { audioOnlyVideoMuted }
-                = getState()['features/base/conference'];
-
-            if (!audioOnlyVideoMuted) {
-                // We didn't mute video, do nothing.
-                return;
-            }
-        }
-
-        // Remember that local video was muted due to the audio-only mode
-        // vs user's choice.
-        dispatch({
-            type: _SET_AUDIO_ONLY_VIDEO_MUTED,
-            muted
-        });
-        dispatch(setVideoMuted(muted));
     };
 }
 
@@ -488,6 +460,6 @@ export function toggleAudioOnly() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const { audioOnly } = getState()['features/base/conference'];
 
-        return dispatch(_setAudioOnly(!audioOnly));
+        return dispatch(setAudioOnly(!audioOnly));
     };
 }

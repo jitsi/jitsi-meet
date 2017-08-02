@@ -123,9 +123,15 @@ MiddlewareRegistry.register(store => next => action => {
             } else {
                 APP.UI.setAudioMuted(participantID, isMuted);
             }
+
+            // XXX This function synchronizes track states with media states.
+            // This is not required in React, because media is the source of
+            // truth, synchronization should always happen in the media -> track
+            // direction. The old web, however, does the opposite, hence the
+            // need for this.
+            return _trackUpdated(store, next, action);
         }
 
-        return _trackUpdated(store, next, action);
     }
 
     return next(action);

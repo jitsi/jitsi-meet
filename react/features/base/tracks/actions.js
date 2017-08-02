@@ -358,12 +358,17 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
  */
 export function setTrackMuted(track, muted) {
     return dispatch => {
+        muted = Boolean(muted); // eslint-disable-line no-param-reassign
+
         if (track.isMuted() === muted) {
             return Promise.resolve();
         }
 
         const f = muted ? 'mute' : 'unmute';
 
+        // FIXME: This operation disregards the authority. It is not a problem
+        // (on mobile) at the moment, but it will be once we start not creating
+        // tracks early. Refactor this then.
         return track[f]().catch(error => {
             console.error(`set track ${f} failed`, error);
 
