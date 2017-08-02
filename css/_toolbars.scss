@@ -190,6 +190,7 @@
      * Styles the toolbar in filmstrip-only mode.
      */
     &_filmstrip-only {
+        background-color: $toolbarBackground;
         border-radius: 3px;
         display: inline-block;
         height: auto;
