@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
+import { prefetch } from '../../../mobile/image-cache';
 import {
     MEDIA_TYPE,
     shouldRenderVideoTrack,
@@ -209,6 +210,10 @@ function _mapStateToProps(state, ownProps) {
         // runtime which means that, if their old and new avatar URLs fail to
         // download, Avatar will change their automatically-generated colors.
         avatar || participant.local || (avatar = `#${participant.id}`);
+
+        // ParticipantView knows before Avatar that an avatar URL will be used
+        // so it's advisable to prefetch here.
+        avatar && prefetch({ uri: avatar });
     }
 
     return {
