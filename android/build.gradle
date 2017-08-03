@@ -34,7 +34,7 @@ ext {
     compileSdkVersion = 25
     buildToolsVersion = "25.0.3"
     minSdkVersion    = 16
-    targetSdkVersion = 23
+    targetSdkVersion = 25
 }
 
 // Force the version of the Android build tools we have chosen on all
