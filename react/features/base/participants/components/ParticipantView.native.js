@@ -198,6 +198,17 @@ function _mapStateToProps(state, ownProps) {
     if (participant) {
         avatar = getAvatarURL(participant);
         connectionStatus = participant.connectionStatus;
+
+        // Avatar (on React Native) now has the ability to generate an
+        // automatically-colored default image when no URI/URL is specified or
+        // when it fails to load. In order to make the coloring permanent(ish)
+        // per participant, Avatar will need something permanent(ish) per
+        // perticipant, obviously. A participant's ID is such a piece of data.
+        // But the local participant changes her ID as she joins, leaves.
+        // TODO @lyubomir: The participants may change their avatar URLs at
+        // runtime which means that, if their old and new avatar URLs fail to
+        // download, Avatar will change their automatically-generated colors.
+        avatar || participant.local || (avatar = `#${participant.id}`);
     }
 
     return {
