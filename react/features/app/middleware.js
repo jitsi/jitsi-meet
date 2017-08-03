@@ -103,7 +103,7 @@ function _navigate({ dispatch, getState }) {
         }
     }
 
-    app._navigate(routeToRender);
+    return app._navigate(routeToRender);
 }
 
 /**
@@ -121,11 +121,9 @@ function _navigate({ dispatch, getState }) {
  * specified {@code action}.
  */
 function _setLocationURL({ getState }, next, action) {
-    const result = next(action);
-
-    getState()['features/app'].app._navigate(undefined);
-
-    return result;
+    return (
+        getState()['features/app'].app._navigate(undefined)
+            .then(() => next(action)));
 }
 
 /**

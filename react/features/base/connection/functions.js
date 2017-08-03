@@ -13,7 +13,10 @@ export function getInviteURL(stateOrGetState: Function | Object): ?string {
         = typeof stateOrGetState === 'function'
             ? stateOrGetState()
             : stateOrGetState;
-    const { locationURL } = state['features/base/connection'];
+    const locationURL
+        = state instanceof URL
+            ? state
+            : state['features/base/connection'].locationURL;
     let inviteURL;
 
     if (locationURL) {
@@ -35,10 +38,21 @@ export function getURLWithoutParams(url: URL): URL {
     const { hash, search } = url;
 
     if ((hash && hash.length > 1) || (search && search.length > 1)) {
-        // eslint-disable-next-line no-param-reassign
-        url = new URL(url.href);
+        url = new URL(url.href); // eslint-disable-line no-param-reassign
         url.hash = '';
         url.search = '';
+
+        // XXX The implementation of URL at least on React Native appends ? and
+        // # at the end of the href which is not desired.
+        let { href } = url;
+
+        if (href) {
+            href.endsWith('#') && (href = href.substring(0, href.length - 1));
+            href.endsWith('?') && (href = href.substring(0, href.length - 1));
+
+            // eslint-disable-next-line no-param-reassign
+            url.href === href || (url = new URL(href));
+        }
     }
 
     return url;

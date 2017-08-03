@@ -29,6 +29,7 @@
     "@atlaskit/multi-select": "6.2.0",
     "@atlaskit/spinner": "2.2.3",
     "@atlaskit/tabs": "2.0.0",
+    "@atlaskit/toggle": "2.0.4",
     "@atlassian/aui": "6.0.6",
     "async": "0.9.0",
     "autosize": "1.18.13",

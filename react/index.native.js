@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { AppRegistry, Linking } from 'react-native';
 
 import { App } from './features/app';
+import { equals } from './features/base/redux';
 
 /**
  * React Native doesn't support specifying props to the main/root component (in
@@ -21,7 +22,10 @@ class Root extends Component {
         /**
          * The URL, if any, with which the app was launched.
          */
-        url: React.PropTypes.string,
+        url: React.PropTypes.oneOfType([
+            React.PropTypes.object,
+            React.PropTypes.string
+        ]),
 
         /**
          * Whether the Welcome page is enabled. If {@code true}, the Welcome
@@ -44,14 +48,14 @@ class Root extends Component {
          * The initial state of this Component.
          *
          * @type {{
-         *     url: string
+         *     url: object|string
          * }}
          */
         this.state = {
             /**
              * The URL, if any, with which the app was launched.
              *
-             * @type {string}
+             * @type {object|string}
              */
             url: this.props.url
         };
@@ -86,7 +90,7 @@ class Root extends Component {
      * @inheritdoc
      */
     componentWillReceiveProps({ url }) {
-        if (this.props.url !== url) {
+        if (!equals(this.props.url, url)) {
             this.setState({ url: url || null });
         }
     }

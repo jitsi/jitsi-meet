@@ -184,7 +184,7 @@ export class AbstractApp extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const route = this.state.route;
+        const { route } = this.state;
 
         if (route) {
             return (
@@ -348,15 +348,14 @@ export class AbstractApp extends Component {
      * Navigates to a specific Route.
      *
      * @param {Route} route - The Route to which to navigate.
-     * @returns {void}
+     * @returns {Promise}
      */
     _navigate(route) {
         if (RouteRegistry.areRoutesEqual(this.state.route, route)) {
-            return;
+            return Promise.resolve();
         }
 
         let nextState = {
-            ...this.state,
             route
         };
 
@@ -375,7 +374,18 @@ export class AbstractApp extends Component {
             nextState = undefined;
         });
 
-        nextState && this.setState(nextState);
+        // XXX React's setState is asynchronous which means that the value of
+        // this.state.route above may not even be correct. If the check is
+        // performed before setState completes, the app may not navigate to the
+        // expected route. In order to mitigate the problem, _navigate was
+        // changed to return a Promise.
+        return new Promise(resolve => {
+            if (nextState) {
+                this.setState(nextState, resolve);
+            } else {
+                resolve();
+            }
+        });
     }
 
     /**

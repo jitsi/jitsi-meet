@@ -2,6 +2,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     HIDE_NOTIFICATION,
+    SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
 
@@ -10,7 +11,10 @@ import {
  *
  * @type {array}
  */
-const DEFAULT_STATE = [];
+const DEFAULT_STATE = {
+    enabled: true,
+    notifications: []
+};
 
 /**
  * Reduces redux actions which affect the display of notifications.
@@ -24,19 +28,31 @@ ReducerRegistry.register('features/notifications',
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case HIDE_NOTIFICATION:
-            return state.filter(
-                notification => notification.uid !== action.uid);
+            return {
+                ...state,
+                notifications: state.notifications.filter(
+                    notification => notification.uid !== action.uid)
+            };
+
+        case SET_NOTIFICATIONS_ENABLED:
+            return {
+                ...state,
+                enabled: action.enabled
+            };
 
         case SHOW_NOTIFICATION:
-            return [
+            return {
                 ...state,
-                {
-                    component: action.component,
-                    props: action.props,
-                    timeout: action.timeout,
-                    uid: action.uid
-                }
-            ];
+                notifications: [
+                    ...state.notifications,
+                    {
+                        component: action.component,
+                        props: action.props,
+                        timeout: action.timeout,
+                        uid: action.uid
+                    }
+                ]
+            };
         }
 
         return state;

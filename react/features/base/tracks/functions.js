@@ -155,24 +155,3 @@ export function getTrackByJitsiTrack(tracks, jitsiTrack) {
 export function getTracksByMediaType(tracks, mediaType) {
     return tracks.filter(t => t.mediaType === mediaType);
 }
-
-/**
- * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
- * the specified <tt>track</tt> is already in accord with the specified
- * <tt>muted</tt> value, then does nothing.
- *
- * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
- * unmute.
- * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
- * @returns {Promise}
- */
-export function setTrackMuted(track, muted) {
-    if (track.isMuted() === muted) {
-        return Promise.resolve();
-    }
-
-    const f = muted ? 'mute' : 'unmute';
-
-    return track[f]();
-}

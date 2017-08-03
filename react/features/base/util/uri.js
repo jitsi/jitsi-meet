@@ -356,7 +356,7 @@ export function toURLString(obj: ?(string | Object)): ?string {
  * {@code Object}.
  */
 export function urlObjectToString(o: Object): ?string {
-    const url = parseStandardURIString(o.url || '');
+    const url = parseStandardURIString(_fixURIStringScheme(o.url || ''));
 
     // protocol
     if (!url.protocol) {
@@ -378,18 +378,22 @@ export function urlObjectToString(o: Object): ?string {
         //
         // It may be host/hostname and pathname with the latter denoting the
         // tenant.
-        const { host, hostname, pathname: contextRoot, port }
-            = parseStandardURIString(o.domain || o.host || o.hostname);
+        const domain = o.domain || o.host || o.hostname;
 
-        // authority
-        if (host) {
-            url.host = host;
-            url.hostname = hostname;
-            url.port = port;
+        if (domain) {
+            const { host, hostname, pathname: contextRoot, port }
+                = parseStandardURIString(domain);
+
+            // authority
+            if (host) {
+                url.host = host;
+                url.hostname = hostname;
+                url.port = port;
+            }
+
+            // pathname
+            pathname === '/' && contextRoot !== '/' && (pathname = contextRoot);
         }
-
-        // pathname
-        pathname === '/' && contextRoot !== '/' && (pathname = contextRoot);
     }
 
     // pathname

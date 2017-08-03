@@ -6,7 +6,7 @@ import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
-import { CAMERA_FACING_MODE, MEDIA_TYPE } from './constants';
+import { CAMERA_FACING_MODE } from './constants';
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -93,8 +93,8 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _syncTrackMutedState(store, track) {
-    const state = store.getState()['features/base/media'];
+function _syncTrackMutedState({ dispatch, getState }, track) {
+    const state = getState()['features/base/media'];
     const muted = state[track.mediaType].muted;
 
     // XXX If muted state of track when it was added is different from our media
@@ -104,17 +104,6 @@ function _syncTrackMutedState(store, track) {
     // fired before track gets to state.
     if (track.muted !== muted) {
         track.muted = muted;
-        setTrackMuted(track.jitsiTrack, muted)
-            .catch(error => {
-                console.error(`setTrackMuted(${muted}) failed`, error);
-
-                const setMuted
-                    = track.mediaType === MEDIA_TYPE.AUDIO
-                        ? setAudioMuted
-                        : setVideoMuted;
-
-                // Failed to sync muted state - dispatch rollback action
-                store.dispatch(setMuted(!muted));
-            });
+        dispatch(setTrackMuted(track.jitsiTrack, muted));
     }
 }

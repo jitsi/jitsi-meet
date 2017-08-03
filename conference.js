@@ -44,6 +44,7 @@ import {
     participantConnectionStatusChanged,
     participantJoined,
     participantLeft,
+    participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
 } from './react/features/base/participants';
@@ -624,13 +625,13 @@ export default {
                         // If both requests for 'audio' + 'video' and 'audio'
                         // only failed, we assume that there are some problems
                         // with user's microphone and show corresponding dialog.
-                        APP.UI.showDeviceErrorDialog(
-                            audioOnlyError, videoOnlyError);
+                        APP.UI.showMicErrorNotification(audioOnlyError);
+                        APP.UI.showCameraErrorNotification(videoOnlyError);
                     } else {
                         // If request for 'audio' + 'video' failed, but request
                         // for 'audio' only was OK, we assume that we had
                         // problems with camera and show corresponding dialog.
-                        APP.UI.showDeviceErrorDialog(null, audioAndVideoError);
+                        APP.UI.showCameraErrorNotification(audioAndVideoError);
                     }
                 }
 
@@ -769,7 +770,7 @@ export default {
 
         const maybeShowErrorDialog = (error) => {
             if (showUI) {
-                APP.UI.showDeviceErrorDialog(error, null);
+                APP.UI.showMicErrorNotification(error);
             }
         };
 
@@ -829,7 +830,7 @@ export default {
 
         const maybeShowErrorDialog = (error) => {
             if (showUI) {
-                APP.UI.showDeviceErrorDialog(null, error);
+                APP.UI.showCameraErrorNotification(error);
             }
         };
 
@@ -1627,6 +1628,8 @@ export default {
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
+            APP.store.dispatch(participantPresenceChanged(id, status));
+
             let user = room.getParticipantById(id);
             if (user) {
                 APP.UI.updateUserStatus(user, status);
@@ -2025,7 +2028,7 @@ export default {
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
                 .catch((err) => {
-                    APP.UI.showDeviceErrorDialog(null, err);
+                    APP.UI.showCameraErrorNotification(err);
                 });
             }
         );
@@ -2046,7 +2049,7 @@ export default {
                     APP.settings.setMicDeviceId(micDeviceId, true);
                 })
                 .catch((err) => {
-                    APP.UI.showDeviceErrorDialog(err, null);
+                    APP.UI.showMicErrorNotification(err);
                 });
             }
         );

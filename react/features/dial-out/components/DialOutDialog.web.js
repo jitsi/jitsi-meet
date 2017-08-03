@@ -19,6 +19,11 @@ class DialOutDialog extends Component {
      */
     static propTypes = {
         /**
+         * The redux state representing the list of dial-out codes.
+         */
+        _dialOutCodes: React.PropTypes.array,
+
+        /**
          * Property indicating if a dial number is allowed.
          */
         _isDialNumberAllowed: React.PropTypes.bool,
@@ -176,15 +181,23 @@ class DialOutDialog extends Component {
      * @returns {void}
      */
     _onDialNumberChange(dialCode, dialInput) {
-        // We remove all starting zeros from the dial input before attaching it
-        // to the country code.
-        const formattedDialInput = dialInput.replace(/^(0+)/, '');
+        let formattedDialInput, formattedNumber;
 
-        const dialNumber = `${dialCode}${formattedDialInput}`;
+        // if there are no dial out codes it is possible they are disabled
+        // so we get the input as is, it can be just a sip address
+        if (this.props._dialOutCodes) {
+            // We remove all starting zeros from the dial input before attaching
+            // it to the country code.
+            formattedDialInput = dialInput.replace(/^(0+)/, '');
 
-        const formattedNumber = this._formatDialNumber(dialNumber);
+            const dialNumber = `${dialCode}${formattedDialInput}`;
 
-        this.props.checkDialNumber(formattedNumber);
+            formattedNumber = this._formatDialNumber(dialNumber);
+
+            this.props.checkDialNumber(formattedNumber);
+        } else {
+            formattedNumber = formattedDialInput = dialInput;
+        }
 
         this.setState({
             dialNumber: formattedNumber,
@@ -205,9 +218,17 @@ class DialOutDialog extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { isDialNumberAllowed } = state['features/dial-out'];
+    const { dialOutCodes, isDialNumberAllowed } = state['features/dial-out'];
 
     return {
+        /**
+         * List of dial-out codes.
+         *
+         * @private
+         * @type {array}
+         */
+        _dialOutCodes: dialOutCodes,
+
         /**
          * Property indicating if a dial number is allowed.
          *

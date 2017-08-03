@@ -20,7 +20,12 @@ ReducerRegistry.register(
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case DIAL_OUT_CANCELED: {
-            return DEFAULT_STATE;
+            // if we have already downloaded codes fill them in default state
+            // to skip another ajax query
+            return {
+                ...DEFAULT_STATE,
+                dialOutCodes: state.dialOutCodes
+            };
         }
         case DIAL_OUT_CODES_UPDATED: {
             return {

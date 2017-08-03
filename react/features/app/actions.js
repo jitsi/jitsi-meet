@@ -47,8 +47,8 @@ function _appNavigateToMandatoryLocation(
     const newHost = newLocation.host;
 
     if (oldHost === newHost) {
-        dispatchSetLocationURL();
-        dispatchSetRoom();
+        dispatchSetLocationURL()
+            .then(dispatchSetRoom);
     } else {
         // If the host has changed, we need to load the config of the new host
         // and set it, and only after that we can navigate to a different route.
@@ -80,8 +80,9 @@ function _appNavigateToMandatoryLocation(
             return;
         }
 
-        dispatchSetLocationURL();
-        dispatch(setConfig(config));
+        return (
+            dispatchSetLocationURL()
+                .then(() => dispatch(setConfig(config))));
     }
 
     /**
@@ -90,7 +91,7 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function dispatchSetLocationURL() {
-        dispatch(setLocationURL(new URL(newLocation.toString())));
+        return dispatch(setLocationURL(new URL(newLocation.toString())));
     }
 
     /**
@@ -99,7 +100,7 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function dispatchSetRoom() {
-        dispatch(setRoom(newLocation.room));
+        return dispatch(setRoom(newLocation.room));
     }
 }
 

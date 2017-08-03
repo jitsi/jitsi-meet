@@ -487,8 +487,8 @@
     filter: grayscale(100%);
 }
 
+#remotePresenceMessage,
 #remoteConnectionMessage {
-    display: none;
     position: absolute;
     width: auto;
     z-index: $zindex2;
@@ -496,6 +496,11 @@
     font-size: 14px;
     text-align: center;
     color: #FFF;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+#remotePresenceMessage .presence-label,
+#remoteConnectionMessage {
     opacity: .80;
     text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
                     0px 1px 1px rgba(0,0,0,0.3),
@@ -507,6 +512,10 @@
     padding: 5px;
     padding-left: 10px;
     padding-right: 10px;
+}
+#remotePresenceMessage .no-presence,
+#remoteConnectionMessage {
+    display: none;
 }
 
 #localConnectionMessage {

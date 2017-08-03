@@ -1,7 +1,11 @@
+import jitsiLocalStorage from '../../../modules/util/JitsiLocalStorage';
+
 import {
     HIDE_NOTIFICATION,
+    SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
+import { NotificationWithToggle } from './components';
 
 /**
  * Removes the notification with the passed in id.
@@ -10,13 +14,29 @@ import {
  * removed.
  * @returns {{
  *     type: HIDE_NOTIFICATION,
- *     uid: string
+ *     uid: number
  * }}
  */
 export function hideNotification(uid) {
     return {
         type: HIDE_NOTIFICATION,
         uid
+    };
+}
+
+/**
+ * Stops notifications from being displayed.
+ *
+ * @param {boolean} enabled - Whether or not notifications should display.
+ * @returns {{
+ *     type: SET_NOTIFICATIONS_ENABLED,
+ *     enabled: boolean
+ * }}
+ */
+export function setNotificationsEnabled(enabled) {
+    return {
+        type: SET_NOTIFICATIONS_ENABLED,
+        enabled
     };
 }
 
@@ -43,5 +63,35 @@ export function showNotification(component, props = {}, timeout) {
         props,
         timeout,
         uid: window.Date.now()
+    };
+}
+
+/**
+ * Displays a notification unless the passed in persistenceKey value exists in
+ * local storage and has been set to "true".
+ *
+ * @param {string} persistenceKey - The local storage key to look up for whether
+ * or not the notification should display.
+ * @param {Object} props - The props needed to show the notification component.
+ * @returns {Function}
+ */
+export function maybeShowNotificationWithDoNotDisplay(persistenceKey, props) {
+    return dispatch => {
+        if (jitsiLocalStorage.getItem(persistenceKey) === 'true') {
+            return;
+        }
+
+        const newProps = Object.assign({}, props, {
+            onToggleSubmit: isToggled => {
+                jitsiLocalStorage.setItem(persistenceKey, isToggled);
+            }
+        });
+
+        dispatch({
+            type: SHOW_NOTIFICATION,
+            component: NotificationWithToggle,
+            props: newProps,
+            uid: window.Date.now()
+        });
     };
 }

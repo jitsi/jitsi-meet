@@ -7,16 +7,17 @@
         <script src="https://meet.jit.si/external_api.js"></script>
         <script>
             var domain = "meet.jit.si";
-            var room = "JitsiMeetAPIExample";
-            var width = 700;
-            var height = 180;
-            var htmlElement = undefined;
-            var configOverwrite = {};
-            var interfaceConfigOverwrite = {
-                filmStripOnly: true
-            };
-            var api = new JitsiMeetExternalAPI(domain, room, width, height,
-                htmlElement, configOverwrite, interfaceConfigOverwrite);
+            var options = {
+                roomName: "JitsiMeetAPIExample",
+                width: 700,
+                height: 180,
+                parent: undefined,
+                configOverwrite: {},
+                interfaceConfigOverwrite: {
+                    filmStripOnly: true
+                }
+            }
+            var api = new JitsiMeetExternalAPI(domain, options);
         </script>
     </body>
 </html>

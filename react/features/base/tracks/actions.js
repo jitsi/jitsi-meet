@@ -345,6 +345,39 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
 }
 
 /**
+ * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
+ * the specified <tt>track</tt> is already in accord with the specified
+ * <tt>muted</tt> value, then does nothing. In case the actual muting/unmuting
+ * fails, a rollback action will be dispatched to undo the muting/unmuting.
+ *
+ * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
+ * unmute.
+ * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
+ * <tt>true</tt>; otherwise, <tt>false</tt>.
+ * @returns {Function}
+ */
+export function setTrackMuted(track, muted) {
+    return dispatch => {
+        if (track.isMuted() === muted) {
+            return Promise.resolve();
+        }
+
+        const f = muted ? 'mute' : 'unmute';
+
+        return track[f]().catch(error => {
+            console.error(`set track ${f} failed`, error);
+
+            const setMuted
+                = track.mediaType === MEDIA_TYPE.AUDIO
+                    ? setAudioMuted
+                    : setVideoMuted;
+
+            dispatch(setMuted(!muted));
+        });
+    };
+}
+
+/**
  * Returns true if the provided JitsiTrack should be rendered as a mirror.
  *
  * We only want to show a video in mirrored mode when:

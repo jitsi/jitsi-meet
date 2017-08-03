@@ -29,7 +29,8 @@ import {
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
-    EMAIL_COMMAND
+    EMAIL_COMMAND,
+    JITSI_CONFERENCE_URL_KEY
 } from './constants';
 import { _addLocalTracksToConference } from './functions';
 
@@ -239,7 +240,7 @@ export function conferenceWillLeave(conference) {
 export function createConference() {
     return (dispatch, getState) => {
         const state = getState();
-        const connection = state['features/base/connection'].connection;
+        const { connection, locationURL } = state['features/base/connection'];
 
         if (!connection) {
             throw new Error('Cannot create a conference without a connection!');
@@ -258,6 +259,7 @@ export function createConference() {
                 room.toLowerCase(),
                 state['features/base/config']);
 
+        conference[JITSI_CONFERENCE_URL_KEY] = locationURL;
         dispatch(_conferenceWillJoin(conference));
 
         _addConferenceListeners(conference, dispatch);
