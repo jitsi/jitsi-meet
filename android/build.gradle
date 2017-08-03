@@ -19,6 +19,10 @@ allprojects {
         mavenLocal()
         jcenter()
         maven {
+            // Google's maven repository, required for AppCompat
+            url "https://maven.google.com"
+        }
+        maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is
             // installed from npm.
             url "$rootDir/../node_modules/react-native/android"
