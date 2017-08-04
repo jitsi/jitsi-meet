@@ -76,24 +76,10 @@ class Toolbar extends Component {
      * @returns {ReactElement}
      */
     render(): ReactElement<*> {
-        const toolbarButtons = new Map();
-
-        this.props.toolbarButtons
-            .forEach((button, key) => {
-                const { onClick } = button;
-
-                toolbarButtons.set(key, {
-                    ...button,
-                    onClick: (...args) =>
-                        onClick && onClick(this.props.dispatch, ...args)
-                });
-            });
-
         const props = {
-            ...this.props,
+            className: this.props.className,
             onMouseOut: this._onMouseOut,
-            onMouseOver: this._onMouseOver,
-            toolbarButtons
+            onMouseOver: this._onMouseOver
         };
 
         return (
@@ -150,14 +136,15 @@ class Toolbar extends Component {
         }
 
         const { tooltipPosition } = this.props;
-
         const { onClick, onMount, onUnmount } = button;
+        const onClickWithDispatch = (...args) =>
+            onClick && onClick(this.props.dispatch, ...args);
 
         return (
             <ToolbarButton
                 button = { button }
                 key = { key }
-                onClick = { onClick }
+                onClick = { onClickWithDispatch }
                 onMount = { onMount }
                 onUnmount = { onUnmount }
                 tooltipPosition = { tooltipPosition } />

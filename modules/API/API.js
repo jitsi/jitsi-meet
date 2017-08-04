@@ -27,6 +27,20 @@ let initialScreenSharingState = false;
 const transport = getJitsiMeetTransport();
 
 /**
+ * The current audio availability.
+ *
+ * @type {boolean}
+ */
+let audioAvailable = true;
+
+/**
+ * The current video availability.
+ *
+ * @type {boolean}
+ */
+let videoAvailable = true;
+
+/**
  * Initializes supported commands.
  *
  * @returns {void}
@@ -57,6 +71,26 @@ function initCommands() {
         }
 
         return false;
+    });
+    transport.on('request', ({ data, name }, callback) => {
+        switch (name) {
+        case 'is-audio-muted':
+            callback(APP.conference.audioMuted);
+            break;
+        case 'is-video-muted':
+            callback(APP.conference.videoMuted);
+            break;
+        case 'is-audio-available':
+            callback(audioAvailable);
+            break;
+        case 'is-video-available':
+            callback(videoAvailable);
+            break;
+        default:
+            return false;
+        }
+
+        return true;
     });
 }
 
@@ -264,6 +298,65 @@ class API {
     notifyReadyToClose() {
         this._sendEvent({ name: 'video-ready-to-close' });
     }
+
+    /**
+     * Notify external application (if API is enabled) for audio muted status
+     * changed.
+     *
+     * @param {boolean} muted - The new muted status.
+     * @returns {void}
+     */
+    notifyAudioMutedStatusChanged(muted) {
+        this._sendEvent({
+            name: 'audio-mute-status-changed',
+            muted
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) for video muted status
+     * changed.
+     *
+     * @param {boolean} muted - The new muted status.
+     * @returns {void}
+     */
+    notifyVideoMutedStatusChanged(muted) {
+        this._sendEvent({
+            name: 'video-mute-status-changed',
+            muted
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) for audio availability
+     * changed.
+     *
+     * @param {boolean} available - True if available and false otherwise.
+     * @returns {void}
+     */
+    notifyAudioAvailabilityChanged(available) {
+        audioAvailable = available;
+        this._sendEvent({
+            name: 'audio-availability-changed',
+            available
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) for video available
+     * status changed.
+     *
+     * @param {boolean} available - True if available and false otherwise.
+     * @returns {void}
+     */
+    notifyVideoAvailabilityChanged(available) {
+        videoAvailable = available;
+        this._sendEvent({
+            name: 'video-availability-changed',
+            available
+        });
+    }
+
 
     /**
      * Disposes the allocated resources.

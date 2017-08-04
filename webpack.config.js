@@ -176,6 +176,9 @@ module.exports = [
             'device_selection_popup_bundle':
                 './react/features/device-selection/popup.js',
 
+            'alwaysontop':
+                './react/features/always-on-top/index.js',
+
             'do_external_connect':
                 './connection_optimization/do_external_connect.js'
         }

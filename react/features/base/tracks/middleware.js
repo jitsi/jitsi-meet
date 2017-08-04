@@ -110,9 +110,9 @@ MiddlewareRegistry.register(store => next => action => {
 
             if (jitsiTrack.isLocal()) {
                 if (isVideoTrack) {
-                    APP.conference.videoMuted = muted;
+                    APP.conference.setVideoMuteStatus(muted);
                 } else {
-                    APP.conference.audioMuted = muted;
+                    APP.conference.setAudioMuteStatus(muted);
                 }
             }
 

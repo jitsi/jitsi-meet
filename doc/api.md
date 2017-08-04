@@ -25,7 +25,7 @@ Its constructor gets a number of options:
     * **parentNode**: (optional) HTML DOM Element where the iframe will be added as a child.
     * **configOverwrite**: (optional) JS object with overrides for options defined in [config.js].
     * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
-    * **noSsl**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
+    * **noSSL**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
 
 Example:
@@ -141,6 +141,20 @@ The `listener` parameter is a Function object with one argument that will be not
 
 The following events are currently supported:
 
+* **audioAvailabilityChanged** - event notifications about audio availability status changes. The listener will receive an object with the following structure:
+```javascript
+{
+"available": available   // new available status - boolean
+}
+```
+
+* **audioMuteStatusChanged** - event notifications about audio mute status changes. The listener will receive an object with the following structure:
+```javascript
+{
+"muted": muted   // new muted status - boolean
+}
+```
+
 * **incomingMessage** - Event notifications about incoming
 messages. The listener will receive an object with the following structure:
 ```javascript
@@ -196,6 +210,20 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **videoAvailabilityChanged** - event notifications about video availability status changes. The listener will receive an object with the following structure:
+```javascript
+{
+"available": available   // new available status - boolean
+}
+```
+
+* **videoMuteStatusChanged** - event notifications about video mute status changes. The listener will receive an object with the following structure:
+```javascript
+{
+"muted": muted   // new muted status - boolean
+}
+```
+
 * **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
 
 You can also add multiple event listeners by using `addEventListeners`.
@@ -239,6 +267,34 @@ var numberOfParticipants = api.getNumberOfParticipants();
 You can get the iframe HTML element where Jitsi Meet is loaded with the following API function:
 ```javascript
 var iframe = api.getIFrame();
+```
+
+You can check whether the audio is muted with the following API function:
+```javascript
+isAudioMuted().then(function(muted) {
+    ...
+});
+```
+
+You can check whether the video is muted with the following API function:
+```javascript
+isVideoMuted().then(function(muted) {
+    ...
+});
+```
+
+You can check whether the audio is available with the following API function:
+```javascript
+isAudioAvailable().then(function(available) {
+    ...
+});
+```
+
+You can check whether the video is available with the following API function:
+```javascript
+isVideoAvailable().then(function(available) {
+    ...
+});
 ```
 
 You can remove the embedded Jitsi Meet Conference with the following API function:
