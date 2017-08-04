@@ -4,7 +4,6 @@ import {
 
 import {
     CANCEL_FEEDBACK,
-    SET_SHOULD_SHOW_POST_CALL_FEEDBACK,
     SUBMIT_FEEDBACK
 } from './actionTypes';
 
@@ -14,8 +13,7 @@ const DEFAULT_STATE = {
     // The sentinel value -1 is used to denote no rating has been set and to
     // preserve pre-redux behavior.
     score: -1,
-    submitted: false,
-    shouldShowPostCallFeedbackDialog: true
+    submitted: false
 };
 
 /**
@@ -30,13 +28,6 @@ ReducerRegistry.register(
                 ...state,
                 message: action.message,
                 score: action.score
-            };
-        }
-
-        case SET_SHOULD_SHOW_POST_CALL_FEEDBACK: {
-            return {
-                ...state,
-                shouldShowPostCallFeedbackDialog: action.shouldShow
             };
         }
 

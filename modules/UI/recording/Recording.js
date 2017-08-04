@@ -20,9 +20,6 @@ import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
 
-import {
-    shouldShowPostCallFeedbackDialog
-} from '../../../react/features/feedback';
 import { setToolboxEnabled } from '../../../react/features/toolbox';
 import { setNotificationsEnabled } from '../../../react/features/notifications';
 
@@ -310,7 +307,6 @@ var Recording = {
             VideoLayout.enableDeviceAvailabilityIcons(
                 APP.conference.getMyUserId(), false);
             VideoLayout.setLocalVideoVisible(false);
-            APP.store.dispatch(shouldShowPostCallFeedbackDialog(false));
             APP.store.dispatch(setToolboxEnabled(false));
             APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);

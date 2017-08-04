@@ -29,9 +29,6 @@ import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
 import {
-    shouldShowPostCallFeedbackDialog
-} from '../../react/features/feedback';
-import {
     checkAutoEnableDesktopSharing,
     dockToolbox,
     setToolbarButton,
@@ -227,10 +224,6 @@ UI.initConference = function () {
     }
 
     APP.store.dispatch(checkAutoEnableDesktopSharing());
-
-    if (interfaceConfig.filmStripOnly) {
-        APP.store.dispatch(shouldShowPostCallFeedbackDialog(false));
-    }
 
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
     // other participants' UI. Consequently, it needs (1) read and write access

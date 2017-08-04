@@ -4,10 +4,12 @@ import { openDialog } from '../../features/base/dialog';
 
 import {
     CANCEL_FEEDBACK,
-    SET_SHOULD_SHOW_POST_CALL_FEEDBACK,
     SUBMIT_FEEDBACK
 } from './actionTypes';
 import { FeedbackDialog } from './components';
+
+declare var config: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Caches the passed in feedback in the redux store.
@@ -44,7 +46,10 @@ export function maybeOpenFeedbackDialog(conference) {
     return (dispatch, getState) => {
         const state = getState();
 
-        if (state['features/base/dialog'].component === FeedbackDialog) {
+        if (interfaceConfig.filmStripOnly || config.iAmRecorder) {
+            // Intentionally fall through the if chain to prevent further action
+            // from being taken with regards to showing feedback.
+        } else if (state['features/base/dialog'].component === FeedbackDialog) {
             // Feedback is currently being displayed.
 
             return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
@@ -55,8 +60,7 @@ export function maybeOpenFeedbackDialog(conference) {
                 thankYouDialogVisible: true,
                 feedbackSubmitted: true
             });
-        } else if (state['features/feedback'].shouldShowPostCallFeedbackDialog
-            && conference.isCallstatsEnabled()) {
+        } else if (conference.isCallstatsEnabled()) {
             return new Promise(resolve => {
                 dispatch(openFeedbackDialog(conference, () => {
                     const { submitted } = getState()['features/feedback'];
@@ -94,24 +98,6 @@ export function openFeedbackDialog(conference, onClose) {
         conference,
         onClose
     });
-}
-
-/**
- * Sets whether or not feedback should display automatically at the end of the
- * conference.
- *
- * @param {boolean} shouldShow - Whether or not feedback should display at the
- * end of the conference.
- * @returns {{
- *     type: SET_SHOULD_SHOW_POST_CALL_FEEDBACK,
- *     shouldShow: boolean
- * }}
- */
-export function shouldShowPostCallFeedbackDialog(shouldShow) {
-    return {
-        type: SET_SHOULD_SHOW_POST_CALL_FEEDBACK,
-        shouldShow
-    };
 }
 
 /**
