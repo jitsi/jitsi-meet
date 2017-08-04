@@ -158,7 +158,7 @@ export default class PostMessageTransportBackend {
             // Transport class. That's why we are passing only the original
             // object passed by the consumer of the Transport class which is
             // message.data.
-            this._sendLegacyMessage(message.data);
+            this._sendLegacyMessage(message.data || {});
         }
     }
 
