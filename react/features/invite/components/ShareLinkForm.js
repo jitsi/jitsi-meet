@@ -1,3 +1,6 @@
+import Button from '@atlaskit/button';
+import { FieldText } from '@atlaskit/field-text';
+import { noop as _onNoop } from 'lodash';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -36,14 +39,13 @@ class ShareLinkForm extends Component {
         super(props);
 
         /**
-         * The internal reference to the DOM/HTML element backing the React
-         * {@code Component} input with id {@code inviteLinkRef}. It is
-         * necessary for the implementation of copying to the clipboard.
+         * The internal reference to the React {@code component} for display
+         * the meeting link in an input element.
          *
          * @private
-         * @type {HTMLInputElement}
+         * @type {ReactComponent}
          */
-        this._inputElement = null;
+        this._inputComponent = null;
 
         // Bind event handlers so they are only bound once for every instance.
         this._onClick = this._onClick.bind(this);
@@ -68,20 +70,26 @@ class ShareLinkForm extends Component {
                     { t('dialog.shareLink') }
                 </label>
                 <div className = 'form-control__container'>
-                    <input
-                        className = 'input-control inviteLink'
-                        id = 'inviteLinkRef'
-                        readOnly = { true }
-                        ref = { this._setInput }
-                        type = 'text'
-                        value = { inputValue } />
-                    <button
-                        className =
-                            'button-control button-control_light copyInviteLink'
+                    <div className = 'form-control__input-container'>
+                        <FieldText
+                            compact = { true }
+                            id = 'inviteLinkRef'
+                            isLabelHidden = { true }
+                            isReadOnly = { true }
+                            label = 'invite link'
+                            onChange = { _onNoop }
+                            ref = { this._setInput }
+                            shouldFitContainer = { true }
+                            type = 'text'
+                            value = { inputValue } />
+                    </div>
+                    <Button
+                        appearance = 'default'
                         onClick = { this._onClick }
+                        shouldFitContainer = { true }
                         type = 'button'>
                         { t('dialog.copy') }
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -95,25 +103,27 @@ class ShareLinkForm extends Component {
      */
     _onClick() {
         try {
-            this._inputElement.select();
+            const { input } = this._inputComponent;
+
+            input.select();
             document.execCommand('copy');
-            this._inputElement.blur();
+            input.blur();
         } catch (err) {
             logger.error('error when copying the text', err);
         }
     }
 
     /**
-     * Sets the internal reference to the DOM/HTML element backing the React
-     * {@code Component} input with id {@code inviteLinkRef}.
+     * Sets the internal reference to the React Component wrapping the input
+     * with id {@code inviteLinkRef}.
      *
-     * @param {HTMLInputElement} element - The DOM/HTML element for this
-     * {@code Component}'s input.
+     * @param {ReactComponent} inputComponent - React Component for displaying
+     * an input for displaying the meeting link.
      * @private
      * @returns {void}
      */
-    _setInput(element) {
-        this._inputElement = element;
+    _setInput(inputComponent) {
+        this._inputComponent = inputComponent;
     }
 }
 

@@ -1,5 +1,8 @@
+import Button from '@atlaskit/button';
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
+import { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import { noop as _onNoop } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -154,12 +157,13 @@ class DialInNumbersForm extends Component {
                 </label>
                 <div className = 'form-control__container'>
                     { this._createDropdownMenu(items, selectedNumber.content) }
-                    <button
-                        className = 'button-control button-control_light'
+                    <Button
+                        appearance = 'default'
                         onClick = { this._onCopyClick }
+                        shouldFitContainer = { true }
                         type = 'button'>
-                        Copy
-                    </button>
+                        { t('dialog.copy') }
+                    </Button>
                 </div>
                 <textarea
                     className = 'dial-in-numbers-copy'
@@ -204,11 +208,18 @@ class DialInNumbersForm extends Component {
     _createDropdownTrigger(triggerText) {
         return (
             <div className = 'dial-in-numbers-trigger'>
-                <input
-                    className = 'input-control'
-                    readOnly = { true }
-                    type = 'text'
-                    value = { triggerText || '' } />
+                <div className = 'form-control__input-container'>
+                    <FieldText
+                        compact = { true }
+                        isLabelHidden = { true }
+                        isReadOnly = { true }
+                        label = 'Select Dial-In Number'
+                        onChange = { _onNoop }
+                        ref = { this._setInput }
+                        shouldFitContainer = { true }
+                        type = 'text'
+                        value = { triggerText || '' } />
+                </div>
                 <span className = 'dial-in-numbers-trigger-icon'>
                     <ExpandIcon
                         label = 'expand'
