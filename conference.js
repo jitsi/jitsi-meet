@@ -727,12 +727,12 @@ export default {
                 // so that the user can try unmute later on and add audio/video
                 // to the conference
                 if (!tracks.find((t) => t.isAudioTrack())) {
-                    this.audioMuted = true;
+                    this.setAudioMuteStatus(true);
                     APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
                 }
 
                 if (!tracks.find((t) => t.isVideoTrack())) {
-                    this.videoMuted = true;
+                    this.setVideoMuteStatus(true);
                     APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
                 }
 
@@ -765,7 +765,7 @@ export default {
     muteAudio(mute, showUI = true) {
         // Not ready to modify track's state yet
         if (!this._localTracksInitialized) {
-            this.audioMuted = mute;
+            this.setAudioMuteStatus(mute);
             return;
         } else if (localAudio && localAudio.isMuted() === mute) {
             // NO-OP
@@ -794,7 +794,7 @@ export default {
             muteLocalAudio(mute)
                 .catch(error => {
                     maybeShowErrorDialog(error);
-                    this.audioMuted = oldMutedStatus;
+                    this.setAudioMuteStatus(oldMutedStatus);
                     APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
                 });
         }
@@ -824,7 +824,7 @@ export default {
     muteVideo(mute, showUI = true) {
         // Not ready to modify track's state yet
         if (!this._localTracksInitialized) {
-            this.videoMuted = mute;
+            this.setVideoMuteStatus(mute);
 
             return;
         } else if (localVideo && localVideo.isMuted() === mute) {
@@ -863,7 +863,7 @@ export default {
             muteLocalVideo(mute)
                 .catch(error => {
                     maybeShowErrorDialog(error);
-                    this.videoMuted = oldMutedStatus;
+                    this.setVideoMuteStatus(oldMutedStatus);
                     APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
                 });
         }
@@ -1220,13 +1220,13 @@ export default {
             .then(() => {
                 localVideo = newStream;
                 if (newStream) {
-                    this.videoMuted = newStream.isMuted();
+                    this.setVideoMuteStatus(newStream.isMuted());
                     this.isSharingScreen = newStream.videoType === 'desktop';
 
                     APP.UI.addLocalStream(newStream);
                 } else {
                     // No video is treated the same way as being video muted
-                    this.videoMuted = true;
+                    this.setVideoMuteStatus(true);
                     this.isSharingScreen = false;
                 }
                 APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
@@ -1245,12 +1245,13 @@ export default {
             replaceLocalTrack(localAudio, newStream, room))
             .then(() => {
                 localAudio = newStream;
+
                 if (newStream) {
-                    this.audioMuted = newStream.isMuted();
+                    this.setAudioMuteStatus(newStream.isMuted());
                     APP.UI.addLocalStream(newStream);
                 } else {
                     // No audio is treated the same way as being audio muted
-                    this.audioMuted = true;
+                    this.setAudioMuteStatus(true);
                 }
                 APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
             });
@@ -2310,6 +2311,7 @@ export default {
             'device count: ' + audioDeviceCount);
 
         APP.store.dispatch(setAudioAvailable(available));
+        APP.API.notifyAudioAvailabilityChanged(available);
     },
 
     /**
@@ -2334,6 +2336,7 @@ export default {
             'device count: ' + videoDeviceCount);
 
         APP.store.dispatch(setVideoAvailable(available));
+        APP.API.notifyVideoAvailabilityChanged(available);
     },
 
     /**
@@ -2541,5 +2544,29 @@ export default {
      */
     getDesktopSharingSourceType() {
         return localVideo.sourceType;
-    }
+    },
+
+    /**
+     * Sets the video muted status.
+     *
+     * @param {boolean} muted - New muted status.
+     */
+    setVideoMuteStatus(muted) {
+        if (this.videoMuted !== muted) {
+            this.videoMuted = muted;
+            APP.API.notifyVideoMutedStatusChanged(muted);
+        }
+    },
+
+    /**
+     * Sets the audio muted status.
+     *
+     * @param {boolean} muted - New muted status.
+     */
+    setAudioMuteStatus(muted) {
+        if (this.audioMuted !== muted) {
+            this.audioMuted = muted;
+            APP.API.notifyAudioMutedStatusChanged(muted);
+        }
+    },
 };

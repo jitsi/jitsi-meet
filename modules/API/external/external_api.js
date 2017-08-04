@@ -9,7 +9,7 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const ALWAYS_ON_TOP_FILENAMES = [
-    'css/alwaysontop.css', 'libs/alwaysontop.bundle.min.js'
+    'css/all.css', 'libs/alwaysontop.min.js'
 ];
 
 /**
@@ -34,6 +34,8 @@ const commands = {
  * events expected by jitsi-meet
  */
 const events = {
+    'audio-availability-changed': 'audioAvailabilityChanged',
+    'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
@@ -41,7 +43,9 @@ const events = {
     'participant-left': 'participantLeft',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
-    'video-conference-left': 'videoConferenceLeft'
+    'video-conference-left': 'videoConferenceLeft',
+    'video-availability-changed': 'videoAvailabilityChanged',
+    'video-mute-status-changed': 'videoMuteStatusChanged'
 };
 
 /**
@@ -211,9 +215,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL,
             roomName
         });
-        this._baseUrl = generateURL(domain, {
-            noSSL
-        });
+        this._baseUrl = `${noSSL ? 'http' : 'https'}://${domain}/`;
         this._createIFrame(height, width);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
@@ -449,6 +451,30 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Check if the audio is available.
+     *
+     * @returns {Promise} - Resolves with true if the audio available, with
+     * false if not and rejects on failure.
+     */
+    isAudioAvailable() {
+        return this._transport.sendRequest({
+            name: 'is-audio-available'
+        });
+    }
+
+    /**
+     * Returns the audio mute status.
+     *
+     * @returns {Promise} - Resolves with the audio mute status and rejects on
+     * failure.
+     */
+    isAudioMuted() {
+        return this._transport.sendRequest({
+            name: 'is-audio-muted'
+        });
+    }
+
+    /**
      * Returns the iframe that loads Jitsi Meet.
      *
      * @returns {HTMLElement} The iframe.
@@ -465,6 +491,30 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     getNumberOfParticipants() {
         return this._numberOfParticipants;
+    }
+
+    /**
+     * Check if the video is available.
+     *
+     * @returns {Promise} - Resolves with true if the video available, with
+     * false if not and rejects on failure.
+     */
+    isVideoAvailable() {
+        return this._transport.sendRequest({
+            name: 'is-video-available'
+        });
+    }
+
+    /**
+     * Returns the audio mute status.
+     *
+     * @returns {Promise} - Resolves with the audio mute status and rejects on
+     * failure.
+     */
+    isVideoMuted() {
+        return this._transport.sendRequest({
+            name: 'is-video-muted'
+        });
     }
 
     /**

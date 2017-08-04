@@ -4,10 +4,9 @@ import React, { Component } from 'react';
 
 /**
  * Implements a toolbar in React/Web. It is a strip that contains a set of
- * toolbar items such as buttons. Toolbar is commonly placed inside of a
- * Toolbox.
+ * toolbar items such as buttons.
  *
- * @class Toolbar
+ * @class StatelessToolbar
  * @extends Component
  */
 export default class StatelessToolbar extends Component {
