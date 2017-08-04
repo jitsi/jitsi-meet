@@ -259,7 +259,11 @@ function _visitNode(node, callback) {
     // location
     if (typeof global.location === 'undefined') {
         global.location = {
-            href: ''
+            href: '',
+
+            // Required by:
+            // - lib-jitsi-meet/modules/xmpp/xmpp.js
+            search: ''
         };
     }
 
