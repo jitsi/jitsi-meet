@@ -55,7 +55,9 @@ class FeedbackDialog extends Component {
         _score: React.PropTypes.number,
 
         /**
-         * The JitsiConference for which the feedback will be about.
+         * The JitsiConference that is being rated. The conference is passed in
+         * because feedback can occur after a conference has been left, so
+         * references to it may no longer exist in redux.
          *
          * @type {JitsiConference}
          */
@@ -265,7 +267,6 @@ class FeedbackDialog extends Component {
     _onScoreSelect(score) {
         this.setState({ score });
     }
-
 
     /**
      * Sets the currently hovered score to null to indicate no hover is

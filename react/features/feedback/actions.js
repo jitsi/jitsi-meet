@@ -1,3 +1,5 @@
+import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
+
 import { openDialog } from '../../features/base/dialog';
 
 import {
@@ -6,8 +8,6 @@ import {
     SUBMIT_FEEDBACK
 } from './actionTypes';
 import { FeedbackDialog } from './components';
-
-declare var APP: Object;
 
 /**
  * Caches the passed in feedback in the redux store.
@@ -30,11 +30,61 @@ export function cancelFeedback(score, message) {
 }
 
 /**
+ * Potentially open the {@code FeedbackDialog}. It will not be opened if it is
+ * already open or feedback has already been submitted.
+ *
+ * @param {JistiConference} conference - The conference for which the feedback
+ * would be about. The conference is passed in because feedback can occur after
+ * a conference has been left, so references to it may no longer exist in redux.
+ * @returns {Promise} Resolved with value - false if the dialog is enabled and
+ * resolved with true if the dialog is disabled or the feedback was already
+ * submitted. Rejected if another dialog is already displayed.
+ */
+export function maybeOpenFeedbackDialog(conference) {
+    return (dispatch, getState) => {
+        const state = getState();
+
+        if (state['features/base/dialog'].component === FeedbackDialog) {
+            // Feedback is currently being displayed.
+
+            return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
+        } else if (state['features/feedback'].submitted) {
+            // Feedback has been submitted already.
+
+            return Promise.resolve({
+                thankYouDialogVisible: true,
+                feedbackSubmitted: true
+            });
+        } else if (state['features/feedback'].shouldShowPostCallFeedbackDialog
+            && conference.isCallstatsEnabled()) {
+            return new Promise(resolve => {
+                dispatch(openFeedbackDialog(conference, () => {
+                    const { submitted } = getState()['features/feedback'];
+
+                    resolve({
+                        feedbackSubmitted: submitted,
+                        thankYouDialogVisible: false
+                    });
+                }));
+            });
+        }
+
+        // If the feedback functionality isn't enabled we show a thank
+        // you dialog. Signaling it (true), so the caller
+        // of requestFeedback can act on it
+        return Promise.resolve({
+            thankYouDialogVisible: true,
+            feedbackSubmitted: false
+        });
+    };
+}
+
+/**
  * Opens {@code FeedbackDialog}.
  *
  * @param {JitsiConference} conference - The JitsiConference that is being
  * rated. The conference is passed in because feedback can occur after a
- * onference has been left, so references to it may no longer exist in redux.
+ * conference has been left, so references to it may no longer exist in redux.
  * @param {Function} [onClose] - An optional callback to invoke when the dialog
  * is closed.
  * @returns {Object}

@@ -46,6 +46,16 @@
 }
 
 .feedback-dialog {
+    .details {
+        margin-top: 20px;
+        padding-left: 60px;
+        padding-right: 60px;
+
+        textarea {
+            min-height: 100px;
+        }
+    }
+
     .input-control {
         background-color: $feedbackInputBg;
         color: $feedbackInputTextColor;
@@ -63,39 +73,31 @@
 
     .rating {
         line-height: 1.2;
-        text-align: center;
         margin-top: 10px;
+        text-align: center;
 
         .star-label {
-            height: 16px;
-            font-size: 14px;
             color: $rateStarLabelColor;
+            font-size: 14px;
+            height: 16px;
         }
+
         .star-btn {
-            display: inline-block;
             color: $rateStarDefault;
-            font-size: $rateStarSize;
-            position: relative;
             cursor: pointer;
+            display: inline-block;
+            font-size: $rateStarSize;
             outline: none;
+            position: relative;
             text-decoration: none;
             @include transition(all .2s ease);
 
-            &.starHover,
             &.active,
-            &:hover {
+            &:hover,
+            &.starHover {
                 color: $rateStarActivity;
             };
 
-        }
-    }
-
-    .details {
-        padding-left: 60px;
-        padding-right: 60px;
-        margin-top: 20px;
-        textarea {
-            min-height: 100px;
         }
     }
 }
