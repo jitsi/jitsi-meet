@@ -3,7 +3,6 @@
 import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../app';
-import { toggleAudioMuted, toggleVideoMuted } from '../base/media';
 import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
 
 /**
@@ -19,6 +18,11 @@ import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
  */
 export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
     return {
+        // Inject {@code dispatch} into the React Component's props in case it
+        // needs to dispatch an action in the redux store without
+        // {@code mapDispatchToProps}.
+        dispatch,
+
         /**
          * Dispatches action to leave the current conference.
          *
@@ -33,29 +37,6 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
             // expression of (1) the lack of knowledge & (2) the desire to no
             // longer have a valid room name to join.
             dispatch(appNavigate(undefined));
-        },
-
-        /**
-         * Dispatches an action to toggle the mute state of the
-         * audio/microphone.
-         *
-         * @private
-         * @returns {Object} - Dispatched action.
-         * @type {Function}
-         */
-        _onToggleAudio() {
-            dispatch(toggleAudioMuted());
-        },
-
-        /**
-         * Dispatches an action to toggle the mute state of the video/camera.
-         *
-         * @private
-         * @returns {Object} - Dispatched action.
-         * @type {Function}
-         */
-        _onToggleVideo() {
-            dispatch(toggleVideoMuted());
         }
     };
 }

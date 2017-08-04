@@ -1,10 +1,7 @@
 import { setLastN } from '../../base/conference';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../../base/media';
 
-import {
-    _SET_APP_STATE_LISTENER,
-    APP_STATE_CHANGED
-} from './actionTypes';
+import { _SET_APP_STATE_LISTENER, APP_STATE_CHANGED } from './actionTypes';
 
 /**
  * Sets the listener to be used with React Native's AppState API.
@@ -41,7 +38,7 @@ export function _setBackgroundVideoMuted(muted: boolean) {
         // for last N will be chosen automatically.
         const { audioOnly } = getState()['features/base/conference'];
 
-        !audioOnly && dispatch(setLastN(muted ? 0 : undefined));
+        audioOnly || dispatch(setLastN(muted ? 0 : undefined));
         dispatch(setVideoMuted(muted, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
     };
 }

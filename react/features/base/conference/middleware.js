@@ -32,7 +32,7 @@ import {
 /**
  * Implements the middleware of the feature base/conference.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
@@ -40,12 +40,12 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
 
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
-
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         return _conferenceFailedOrLeft(store, next, action);
+
+    case CONFERENCE_JOINED:
+        return _conferenceJoined(store, next, action);
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
@@ -66,13 +66,13 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Notifies the feature base/conference that the action CONNECTION_ESTABLISHED
- * is being dispatched within a specific Redux store.
+ * is being dispatched within a specific redux store.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action CONNECTION_ESTABLISHED which is
+ * @param {Action} action - The redux action CONNECTION_ESTABLISHED which is
  * being dispatched in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
@@ -91,37 +91,37 @@ function _connectionEstablished(store, next, action) {
 }
 
 /**
- * Does extra sync up on properties that may need to be updated, after
- * the conference failed or was left.
+ * Does extra sync up on properties that may need to be updated after the
+ * conference failed or was left.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action {@link CONFERENCE_FAILED} or
+ * @param {Action} action - The redux action {@link CONFERENCE_FAILED} or
  * {@link CONFERENCE_LEFT} which is being dispatched in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _conferenceFailedOrLeft(store, next, action) {
+function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
-    const { audioOnly } = store.getState()['features/base/conference'];
 
-    audioOnly && store.dispatch(setAudioOnly(false));
+    getState()['features/base/conference'].audioOnly
+        && dispatch(setAudioOnly(false));
 
     return result;
 }
 
 /**
- * Does extra sync up on properties that may need to be updated, after
- * the conference was joined.
+ * Does extra sync up on properties that may need to be updated after the
+ * conference was joined.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action CONFERENCE_JOINED which is being
+ * @param {Action} action - The redux action CONFERENCE_JOINED which is being
  * dispatched in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
@@ -144,14 +144,14 @@ function _conferenceJoined(store, next, action) {
 
 /**
  * Notifies the feature base/conference that the action PIN_PARTICIPANT is being
- * dispatched within a specific Redux store. Pins the specified remote
+ * dispatched within a specific redux store. Pins the specified remote
  * participant in the associated conference, ignores the local participant.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action PIN_PARTICIPANT which is being
+ * @param {Action} action - The redux action PIN_PARTICIPANT which is being
  * dispatched in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
@@ -195,26 +195,26 @@ function _pinParticipant(store, next, action) {
  * Sets the audio-only flag for the current conference. When audio-only is set,
  * local video is muted and last N is set to 0 to avoid receiving remote video.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action SET_AUDIO_ONLY which is being
+ * @param {Action} action - The redux action SET_AUDIO_ONLY which is being
  * dispatched in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setAudioOnly({ dispatch }, next, action) {
+function _setAudioOnly({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    const { audioOnly } = action;
+    const { audioOnly } = getState()['features/base/conference'];
 
     // Set lastN to 0 in case audio-only is desired; leave it as undefined,
     // otherwise, and the default lastN value will be chosen automatically.
     dispatch(setLastN(audioOnly ? 0 : undefined));
 
-    // Mute the local video.
+    // Mute/unmute the local video.
     dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
 
     if (typeof APP !== 'undefined') {
@@ -229,11 +229,11 @@ function _setAudioOnly({ dispatch }, next, action) {
 /**
  * Sets the last N (value) of the video channel in the conference.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action SET_LASTN which is being dispatched
+ * @param {Action} action - The redux action SET_LASTN which is being dispatched
  * in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the
@@ -257,7 +257,7 @@ function _setLastN(store, next, action) {
  * Synchronizes local tracks from state with local tracks in JitsiConference
  * instance.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @param {Object} action - Action object.
  * @private
  * @returns {Promise}
@@ -284,13 +284,13 @@ function _syncConferenceLocalTracksWithState(store, action) {
 
 /**
  * Notifies the feature base/conference that the action TRACK_ADDED
- * or TRACK_REMOVED is being dispatched within a specific Redux store.
+ * or TRACK_REMOVED is being dispatched within a specific redux store.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action TRACK_ADDED or TRACK_REMOVED which
+ * @param {Action} action - The redux action TRACK_ADDED or TRACK_REMOVED which
  * is being dispatched in the specified store.
  * @private
  * @returns {Object} The new state that is the result of the reduction of the

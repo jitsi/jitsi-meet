@@ -62,13 +62,17 @@ function _addConferenceListeners(conference, dispatch) {
 
     // Dispatches into features/base/media follow:
 
-    // FIXME: This is needed because when Jicofo tells us to start muted
-    // lib-jitsi-meet does the actual muting. Perhaps this should be refactored
-    // so applications are hinted to start muted, but lib-jitsi-meet doesn't
-    // take action.
     conference.on(
         JitsiConferenceEvents.STARTED_MUTED,
         () => {
+            // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
+            // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
+            // Jicofo's intent into reality by actually muting the respective
+            // tracks. The reality is expressed in base/tracks already so what
+            // is left is to express Jicofo's intent in base/media.
+            // TODO Maybe the app needs to learn about Jicofo's intent and
+            // transfer that intent to lib-jitsi-meet instead of lib-jitsi-meet
+            // acting on Jicofo's intent without the app's knowledge.
             dispatch(setAudioMuted(Boolean(conference.startAudioMuted)));
             dispatch(setVideoMuted(Boolean(conference.startVideoMuted)));
         });

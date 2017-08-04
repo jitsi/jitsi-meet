@@ -87,19 +87,21 @@ export function destroyLocalTracks() {
  */
 export function replaceLocalTrack(oldTrack, newTrack, conference) {
     return (dispatch, getState) => {
-        const currentConference = conference
-            || getState()['features/base/conference'].conference;
+        conference
 
-        return currentConference.replaceTrack(oldTrack, newTrack)
+            // eslint-disable-next-line no-param-reassign
+            || (conference = getState()['features/base/conference'].conference);
+
+        return conference.replaceTrack(oldTrack, newTrack)
             .then(() => {
-                // We call dispose after doing the replace because
-                //  dispose will try and do a new o/a after the
-                //  track removes itself.  Doing it after means
-                //  the JitsiLocalTrack::conference member is already
-                //  cleared, so it won't try and do the o/a
-                const disposePromise = oldTrack
-                    ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
-                    : Promise.resolve();
+                // We call dispose after doing the replace because dispose will
+                // try and do a new o/a after the track removes itself. Doing it
+                // after means the JitsiLocalTrack.conference is already
+                // cleared, so it won't try and do the o/a.
+                const disposePromise
+                    = oldTrack
+                        ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
+                        : Promise.resolve();
 
                 return disposePromise
                     .then(() => {
@@ -113,10 +115,12 @@ export function replaceLocalTrack(oldTrack, newTrack, conference) {
                             // track's mute state. If this is not done, the
                             // current mute state of the app will be reflected
                             // on the track, not vice-versa.
-                            const muteAction = newTrack.isVideoTrack()
-                                ? setVideoMuted : setAudioMuted;
+                            const setMuted
+                                = newTrack.isVideoTrack()
+                                    ? setVideoMuted
+                                    : setAudioMuted;
 
-                            return dispatch(muteAction(newTrack.isMuted()));
+                            return dispatch(setMuted(newTrack.isMuted()));
                         }
                     })
                     .then(() => {
@@ -366,17 +370,26 @@ export function setTrackMuted(track, muted) {
 
         const f = muted ? 'mute' : 'unmute';
 
-        // FIXME: This operation disregards the authority. It is not a problem
-        // (on mobile) at the moment, but it will be once we start not creating
-        // tracks early. Refactor this then.
         return track[f]().catch(error => {
             console.error(`set track ${f} failed`, error);
+
+            if (navigator.product === 'ReactNative') {
+                // Synchronizing the state of base/tracks into the state of
+                // base/media is not required in React (and, respectively, React
+                // Native) because base/media expresses the app's and the user's
+                // desires/expectations/intents and base/tracks expresses
+                // practice/reality. Unfortunately, the old Web does not comply
+                // and/or does the opposite.
+                return;
+            }
 
             const setMuted
                 = track.mediaType === MEDIA_TYPE.AUDIO
                     ? setAudioMuted
                     : setVideoMuted;
 
+            // FIXME The following disregards VIDEO_MUTISM_AUTHORITY (in the
+            // case of setVideoMuted, of course).
             dispatch(setMuted(!muted));
         });
     };

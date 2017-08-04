@@ -100,35 +100,37 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case TRACK_UPDATED:
-        // TODO Remove the below calls to APP.UI once components interested in
-        // track mute changes are moved into react.
+        // TODO Remove the following calls to APP.UI once components interested
+        // in track mute changes are moved into React and/or redux.
         if (typeof APP !== 'undefined') {
             const { jitsiTrack } = action.track;
-            const isMuted = jitsiTrack.isMuted();
+            const muted = jitsiTrack.isMuted();
             const participantID = jitsiTrack.getParticipantId();
             const isVideoTrack = jitsiTrack.isVideoTrack();
 
             if (jitsiTrack.isLocal()) {
                 if (isVideoTrack) {
-                    APP.conference.videoMuted = isMuted;
+                    APP.conference.videoMuted = muted;
                 } else {
-                    APP.conference.audioMuted = isMuted;
+                    APP.conference.audioMuted = muted;
                 }
             }
 
             if (isVideoTrack) {
-                APP.UI.setVideoMuted(participantID, isMuted);
+                APP.UI.setVideoMuted(participantID, muted);
                 APP.UI.onPeerVideoTypeChanged(
-                    participantID, jitsiTrack.videoType);
+                    participantID,
+                    jitsiTrack.videoType);
             } else {
-                APP.UI.setAudioMuted(participantID, isMuted);
+                APP.UI.setAudioMuted(participantID, muted);
             }
 
-            // XXX This function synchronizes track states with media states.
-            // This is not required in React, because media is the source of
-            // truth, synchronization should always happen in the media -> track
-            // direction. The old web, however, does the opposite, hence the
-            // need for this.
+            // XXX The following synchronizes the state of base/tracks into the
+            // state of base/media. Which is not required in React (and,
+            // respectively, React Native) because base/media expresses the
+            // app's and the user's desires/expectations/intents and base/tracks
+            // expresses practice/reality. Unfortunately, the old Web does not
+            // comply and/or does the opposite. Hence, the following:
             return _trackUpdated(store, next, action);
         }
 
@@ -149,8 +151,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Track} The local <tt>Track</tt> associated with the specified
  * <tt>mediaType</tt> in the specified <tt>store</tt>.
  */
-function _getLocalTrack(store, mediaType: MEDIA_TYPE) {
-    return getLocalTrack(store.getState()['features/base/tracks'], mediaType);
+function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
+    return getLocalTrack(getState()['features/base/tracks'], mediaType);
 }
 
 /**

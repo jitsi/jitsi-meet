@@ -72,16 +72,15 @@ function _setRoom({ dispatch, getState }, next, action) {
         && (videoMuted = config.startWithVideoMuted);
 
     // Apply startWithAudioMuted and startWithVideoMuted.
-    const { audio, video } = state['features/base/media'];
-
     audioMuted = Boolean(audioMuted);
     videoMuted = Boolean(videoMuted);
 
-    (audio.muted !== audioMuted) && dispatch(setAudioMuted(audioMuted));
-    (video.facingMode !== CAMERA_FACING_MODE.USER)
-        && dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    (Boolean(video.muted) !== videoMuted)
-        && dispatch(setVideoMuted(videoMuted));
+    // Unconditionally express the desires/expectations/intents of the app and
+    // the user i.e. the state of base/media. Eventually, practice/reality i.e.
+    // the state of base/tracks will or will not agree with the desires.
+    dispatch(setAudioMuted(audioMuted));
+    dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+    dispatch(setVideoMuted(videoMuted));
 
     return next(action);
 }

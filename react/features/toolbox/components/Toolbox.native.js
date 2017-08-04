@@ -3,7 +3,12 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { toggleAudioOnly } from '../../base/conference';
-import { MEDIA_TYPE, toggleCameraFacingMode } from '../../base/media';
+import {
+    MEDIA_TYPE,
+    setAudioMuted,
+    setVideoMuted,
+    toggleCameraFacingMode
+} from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 import { beginRoomLockRequest } from '../../room-lock';
@@ -57,11 +62,6 @@ class Toolbox extends Component {
         _onShareRoom: React.PropTypes.func,
 
         /**
-         * Handler for toggle audio.
-         */
-        _onToggleAudio: React.PropTypes.func,
-
-        /**
          * Toggles the audio-only flag of the conference.
          */
         _onToggleAudioOnly: React.PropTypes.func,
@@ -73,11 +73,6 @@ class Toolbox extends Component {
         _onToggleCameraFacingMode: React.PropTypes.func,
 
         /**
-         * Handler for toggling video.
-         */
-        _onToggleVideo: React.PropTypes.func,
-
-        /**
          * Flag showing whether video is muted.
          */
         _videoMuted: React.PropTypes.bool,
@@ -85,8 +80,24 @@ class Toolbox extends Component {
         /**
          * Flag showing whether toolbar is visible.
          */
-        _visible: React.PropTypes.bool
+        _visible: React.PropTypes.bool,
+
+        dispatch: React.PropTypes.func
     };
+
+    /**
+     * Initializes a new {@code Toolbox} instance.
+     *
+     * @param {Object} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onToggleAudio = this._onToggleAudio.bind(this);
+        this._onToggleVideo = this._onToggleVideo.bind(this);
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -145,6 +156,36 @@ class Toolbox extends Component {
     }
 
     /**
+     * Dispatches an action to toggle the mute state of the audio/microphone.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToggleAudio() {
+        // The user sees the reality i.e. the state of base/tracks and intends
+        // to change reality by tapping on the respective button i.e. the user
+        // sets the state of base/media. Whether the user's intention will turn
+        // into reality is a whole different story which is of no concern to the
+        // tapping.
+        this.props.dispatch(setAudioMuted(!this.props._audioMuted));
+    }
+
+    /**
+     * Dispatches an action to toggle the mute state of the video/camera.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToggleVideo() {
+        // The user sees the reality i.e. the state of base/tracks and intends
+        // to change reality by tapping on the respective button i.e. the user
+        // sets the state of base/media. Whether the user's intention will turn
+        // into reality is a whole different story which is of no concern to the
+        // tapping.
+        this.props.dispatch(setVideoMuted(!this.props._videoMuted));
+    }
+
+    /**
      * Renders the toolbar which contains the primary buttons such as hangup,
      * audio and video mute.
      *
@@ -162,7 +203,7 @@ class Toolbox extends Component {
                 <ToolbarButton
                     iconName = { audioButtonStyles.iconName }
                     iconStyle = { audioButtonStyles.iconStyle }
-                    onClick = { this.props._onToggleAudio }
+                    onClick = { this._onToggleAudio }
                     style = { audioButtonStyles.style } />
                 <ToolbarButton
                     iconName = 'hangup'
@@ -174,7 +215,7 @@ class Toolbox extends Component {
                     disabled = { this.props._audioOnly }
                     iconName = { videoButtonStyles.iconName }
                     iconStyle = { videoButtonStyles.iconStyle }
-                    onClick = { this.props._onToggleVideo }
+                    onClick = { this._onToggleVideo }
                     style = { videoButtonStyles.style } />
             </View>
         );
