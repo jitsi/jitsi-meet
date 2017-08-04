@@ -2,9 +2,9 @@ import AKInlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { VideoQualityDialog } from '../../../video-quality';
+import { VideoQualityDialog } from './';
 
-import ToolbarButton from '../ToolbarButton';
+import { ToolbarButton } from '../../toolbox';
 
 const DEFAULT_BUTTON_CONFIGURATION = {
     buttonName: 'videoquality',
@@ -59,12 +59,16 @@ class VideoQualityButton extends Component {
         super(props);
 
         this.state = {
-            showVideoMenu: false
+            /**
+             * Whether or not the inline dialog for adjusting received video
+             * quality is displayed.
+             */
+            showVideoQualityDialog: false
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onMenuClose = this._onMenuClose.bind(this);
-        this._onMenuOpen = this._onMenuOpen.bind(this);
+        this._onDialogClose = this._onDialogClose.bind(this);
+        this._onDialogOpen = this._onDialogOpen.bind(this);
     }
 
     /**
@@ -75,7 +79,7 @@ class VideoQualityButton extends Component {
      */
     componentWillReceiveProps(nextProps) {
         if (!nextProps._visible) {
-            this._onMenuClose();
+            this._onDialogClose();
         }
     }
 
@@ -91,19 +95,19 @@ class VideoQualityButton extends Component {
             ...DEFAULT_BUTTON_CONFIGURATION,
             classNames: [
                 ...DEFAULT_BUTTON_CONFIGURATION.classNames,
-                this.state.showVideoMenu ? 'toggled button-active' : ''
+                this.state.showVideoQualityDialog ? 'toggled button-active' : ''
             ]
         };
 
         return (
             <AKInlineDialog
                 content = { <VideoQualityDialog /> }
-                isOpen = { _visible && this.state.showVideoMenu }
-                onClose = { this._onMenuClose }
+                isOpen = { _visible && this.state.showVideoQualityDialog }
+                onClose = { this._onDialogClose }
                 position = { TOOLTIP_TO_DIALOG_POSITION[tooltipPosition] }>
                 <ToolbarButton
                     button = { buttonConfiguration }
-                    onClick = { this._onMenuOpen }
+                    onClick = { this._onDialogOpen }
                     tooltipPosition = { tooltipPosition } />
             </AKInlineDialog>
         );
@@ -115,8 +119,8 @@ class VideoQualityButton extends Component {
      * @private
      * @returns {void}
      */
-    _onMenuOpen() {
-        this.setState({ showVideoMenu: true });
+    _onDialogOpen() {
+        this.setState({ showVideoQualityDialog: true });
     }
 
     /**
@@ -125,8 +129,8 @@ class VideoQualityButton extends Component {
      * @private
      * @returns {void}
      */
-    _onMenuClose() {
-        this.setState({ showVideoMenu: false });
+    _onDialogClose() {
+        this.setState({ showVideoQualityDialog: false });
     }
 }
 

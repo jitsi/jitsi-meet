@@ -12,7 +12,7 @@ import { translate } from '../../base/i18n';
 
 const {
     HIGH,
-    MEDIUM,
+    STANDARD,
     LOW
 } = VIDEO_QUALITY_LEVELS;
 
@@ -69,7 +69,7 @@ class VideoQualityDialog extends Component {
         this._enableAudioOnly = this._enableAudioOnly.bind(this);
         this._enableHighQuality = this._enableHighQuality.bind(this);
         this._enableLowQuality = this._enableLowQuality.bind(this);
-        this._enableMediumQuality = this._enableMediumQuality.bind(this);
+        this._enableStandardQuality = this._enableStandardQuality.bind(this);
         this._onSliderChange = this._onSliderChange.bind(this);
 
         this.state = {
@@ -85,9 +85,9 @@ class VideoQualityDialog extends Component {
                     videoQuality: LOW
                 },
                 {
-                    onClick: this._enableMediumQuality,
+                    onClick: this._enableStandardQuality,
                     textKey: 'videoStatus.standardQuality',
-                    videoQuality: MEDIUM
+                    videoQuality: STANDARD
                 },
                 {
                     onClick: this._enableHighQuality,
@@ -111,7 +111,10 @@ class VideoQualityDialog extends Component {
 
         return (
             <div className = 'video-quality-dialog'>
-                <h3>{ t('videoStatus.callQuality') }</h3>
+                <h3 className = 'video-quality-dialog-title'>
+                    { t('videoStatus.callQuality') }
+                </h3>
+                { _p2p ? this._renderP2PMessage() : null }
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
                         { /* FIXME: onChange and onMouseUp are both used for
@@ -134,7 +137,6 @@ class VideoQualityDialog extends Component {
                         { this._createLabels(activeSliderOption) }
                     </div>
                 </div>
-                { _p2p ? this._renderP2PMessage() : null }
             </div>
         );
     }
@@ -192,6 +194,16 @@ class VideoQualityDialog extends Component {
     }
 
     /**
+     * Dispatches an action to enable audio only mode.
+     *
+     * @private
+     * @returns {void}
+     */
+    _enableAudioOnly() {
+        this.props.dispatch(setAudioOnly(true));
+    }
+
+    /**
      * Dispatches an action to receive high quality video from remote
      * participants.
      *
@@ -220,22 +232,12 @@ class VideoQualityDialog extends Component {
      * @private
      * @returns {void}
      */
-    _enableMediumQuality() {
-        this.props.dispatch(setReceiveVideoQuality(MEDIUM));
+    _enableStandardQuality() {
+        this.props.dispatch(setReceiveVideoQuality(STANDARD));
     }
 
     /**
-     * Dispatches an action to enable audio only mode.
-     *
-     * @private
-     * @returns {void}
-     */
-    _enableAudioOnly() {
-        this.props.dispatch(setAudioOnly(true));
-    }
-
-    /**
-     * Matches the current video quality state with correspinding index of the
+     * Matches the current video quality state with corresponding index of the
      * component's slider options.
      *
      * @private

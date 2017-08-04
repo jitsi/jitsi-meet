@@ -7,7 +7,7 @@ import { openDialOutDialog } from '../dial-out';
 import { openAddPeopleDialog, openInviteDialog } from '../invite';
 import UIEvents from '../../../service/UI/UIEvents';
 
-import { VideoQualityButton } from './components';
+import { VideoQualityButton } from '../video-quality';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;

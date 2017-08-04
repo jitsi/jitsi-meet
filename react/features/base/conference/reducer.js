@@ -12,7 +12,6 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
-    SET_LARGE_VIDEO_HD_STATUS,
     SET_PASSWORD,
     SET_RECEIVE_VIDEO_QUALITY,
     SET_ROOM
@@ -51,9 +50,6 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(state, action);
-
-    case SET_LARGE_VIDEO_HD_STATUS:
-        return _setLargeVideoHDStatus(state, action);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
@@ -273,21 +269,6 @@ function _p2pStatusChanged(state, action) {
  */
 function _setAudioOnly(state, action) {
     return set(state, 'audioOnly', action.audioOnly);
-}
-
-/**
- * Reduces a specific Redux action SET_LARGE_VIDEO_HD_STATUS of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_LARGE_VIDEO_HD_STATUS to
- * reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setLargeVideoHDStatus(state, action) {
-    return set(state, 'isLargeVideoHD', action.isLargeVideoHD);
 }
 
 /**

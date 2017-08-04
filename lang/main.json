@@ -451,15 +451,16 @@
     },
     "videoStatus": {
         "callQuality": "Call Quality",
-        "changeVideoTip": "Video quality can be changed in the menus.",
+        "changeVideoTip": "Change your video quality from the left toolbar.",
         "hd": "HD",
-        "highQuality": "High",
-        "lowQuality": "Low",
+        "highQuality": "High definition",
+        "ld": "LD",
+        "lowQuality": "Low definition",
         "p2pEnabled": "Peer to Peer Enabled",
         "p2pVideoQualityDescription": "In peer to peer mode, video quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
         "recHighQualityOnly": "Will prefer high quality.",
         "sd": "SD",
-        "standardQuality": "standard",
+        "standardQuality": "Standard definition",
         "qualityButtonTip": "Change received video quality"
     },
     "dialOut": {

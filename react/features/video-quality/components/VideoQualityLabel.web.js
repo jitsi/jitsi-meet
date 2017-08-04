@@ -1,20 +1,20 @@
-import { Tooltip } from '@atlaskit/tooltip';
+import AKInlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 
-declare var interfaceConfig: Object;
+import { VideoQualityDialog } from './';
 
-/**
- * Whether or not the video quality button is displayed in a menu.
- *
- * @private
- * @type {boolean}
- */
-const HAS_VIDEO_QUALITY_BUTTON
-    = (interfaceConfig.TOOLBAR_BUTTONS || [])
-        .find(button => button === 'videoquality');
+import {
+    VIDEO_QUALITY_LEVELS
+} from '../../base/conference';
+
+const VIDEO_QUALTIY_TO_LABEL_KEY = {
+    HIGH: 'videoStatus.hd',
+    STANDARD: 'videoStatus.sd',
+    LOW: 'videoStatus.ld'
+};
 
 /**
  * React {@code Component} responsible for displaying a label that indicates
@@ -23,9 +23,9 @@ const HAS_VIDEO_QUALITY_BUTTON
  * will display if not in audio only mode and a high-definition large video is
  * being displayed.
  */
-export class VideoStatusLabel extends Component {
+export class VideoQualityLabel extends Component {
     /**
-     * {@code VideoStatusLabel}'s property types.
+     * {@code VideoQualityLabel}'s property types.
      *
      * @static
      */
@@ -47,15 +47,15 @@ export class VideoStatusLabel extends Component {
         _filmstripVisible: React.PropTypes.bool,
 
         /**
-         * Whether or not a high-definition large video is displayed.
-         */
-        _largeVideoHD: React.PropTypes.bool,
-
-        /**
          * Whether or note remote videos are visible in the filmstrip,
          * regardless of count. Used to determine display classes to set.
          */
         _remoteVideosVisible: React.PropTypes.bool,
+
+        /**
+         * The current video resolution (height) to display a label for.
+         */
+        _resolution: React.PropTypes.number,
 
         /**
          * Invoked to obtain translated strings.
@@ -64,7 +64,7 @@ export class VideoStatusLabel extends Component {
     };
 
     /**
-     * Initializes a new {@code VideoStatusLabel} instance.
+     * Initializes a new {@code VideoQualityLabel} instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -73,14 +73,25 @@ export class VideoStatusLabel extends Component {
         super(props);
 
         this.state = {
-            // Whether or not the filmstrip is transitioning from not visible
-            // to visible. Used to set a transition class for animation.
+            /**
+             * Whether or not the {@code VideoQualityDialog} is displayed.
+             *
+             * @type {boolean}
+             */
+            showVideoQualityDialog: false,
+
+            /**
+             * Whether or not the filmstrip is transitioning from not visible
+             * to visible. Used to set a transition class for animation.
+             *
+             * @type {boolean}
+             */
             togglingToVisible: false
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onMouseOut = this._onMouseOut.bind(this);
-        this._onMouseOver = this._onMouseOver.bind(this);
+        this._onDialogClose = this._onDialogClose.bind(this);
+        this._onDialogOpen = this._onDialogOpen.bind(this);
     }
 
     /**
@@ -111,8 +122,7 @@ export class VideoStatusLabel extends Component {
             _conferenceStarted,
             _filmstripVisible,
             _remoteVideosVisible,
-            _largeVideoHD,
-            t
+            _resolution
         } = this.props;
 
         // FIXME The _conferenceStarted check is used to be defensive against
@@ -120,15 +130,6 @@ export class VideoStatusLabel extends Component {
         // need for error handling around audio only mode toggling.
         if (!_conferenceStarted) {
             return null;
-        }
-
-        let displayedLabel;
-
-        if (_audioOnly) {
-            displayedLabel = <i className = 'icon-visibility-off' />;
-        } else {
-            displayedLabel = _largeVideoHD
-                ? t('videoStatus.hd') : t('videoStatus.sd');
         }
 
         // Determine which classes should be set on the component. These classes
@@ -144,46 +145,64 @@ export class VideoStatusLabel extends Component {
             = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
 
         return (
-            <Tooltip
-                description = { t('videoStatus.changeVideoTip') }
-                onMouseOut = { this._onMouseOut }
-                onMouseOver = { this._onMouseOver }
-                position = 'left'
-                visible = { this.state.showTooltip }>
-                <div
-                    className = { classNames }
-                    id = 'videoResolutionLabel' >
-                    { displayedLabel }
-                </div>
-            </Tooltip>
+            <div
+                className = { classNames }
+                id = 'videoResolutionLabel'
+                onClick = { this._onDialogOpen }>
+                <AKInlineDialog
+                    content = { <VideoQualityDialog /> }
+                    isOpen = { this.state.showVideoQualityDialog }
+                    onClose = { this._onDialogClose }
+                    position = { 'left top' }>
+                    <div className = 'video-quality-label-status'>
+                        { _audioOnly
+                            ? <i className = 'icon-visibility-off' />
+                            : this._mapResolutionToTranslation(_resolution) }
+                    </div>
+                </AKInlineDialog>
+            </div>
         );
     }
 
     /**
-     * Hides the tooltip for explaining how to change received video quality.
+     * Matches the passed in resolution with a translation key for describing
+     * the resolution.
      *
+     * @param {number} resolution - The height find a translation label for.
      * @private
-     * @returns {void}
+     * @returns {string}
      */
-    _onMouseOut() {
-        this.setState({ showTooltip: false });
+    _mapResolutionToTranslation(resolution) {
+        const foundLabel = Object.keys(VIDEO_QUALITY_LEVELS)
+            .find(qualityValue =>
+                VIDEO_QUALITY_LEVELS[qualityValue] === resolution);
+
+        return this.props.t(VIDEO_QUALTIY_TO_LABEL_KEY[foundLabel]);
     }
 
     /**
-     * Displays a tooltip for explaining how to change received video quality.
+     * Shows the attached inline dialog.
      *
      * @private
      * @returns {void}
      */
-    _onMouseOver() {
-        if (HAS_VIDEO_QUALITY_BUTTON) {
-            this.setState({ showTooltip: true });
-        }
+    _onDialogOpen() {
+        this.setState({ showVideoQualityDialog: true });
+    }
+
+    /**
+     * Hides the attached inline dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onDialogClose() {
+        this.setState({ showVideoQualityDialog: false });
     }
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code VideoStatusLabel}'s
+ * Maps (parts of) the Redux state to the associated {@code VideoQualityLabel}'s
  * props.
  *
  * @param {Object} state - The Redux state.
@@ -192,28 +211,30 @@ export class VideoStatusLabel extends Component {
  *     _audioOnly: boolean,
  *     _conferenceStarted: boolean,
  *     _filmstripVisible: true,
- *     _largeVideoHD: (boolean|undefined),
- *     _remoteVideosVisible: boolean
+ *     _remoteVideosVisible: boolean,
+ *     _resolution: number
  * }}
  */
 function _mapStateToProps(state) {
     const {
         audioOnly,
-        conference,
-        isLargeVideoHD
+        conference
     } = state['features/base/conference'];
     const {
         remoteVideosVisible,
         visible
     } = state['features/filmstrip'];
+    const {
+        resolution
+    } = state['features/large-video'];
 
     return {
         _audioOnly: audioOnly,
         _conferenceStarted: Boolean(conference),
         _filmstripVisible: visible,
-        _largeVideoHD: isLargeVideoHD,
-        _remoteVideosVisible: remoteVideosVisible
+        _remoteVideosVisible: remoteVideosVisible,
+        _resolution: resolution
     };
 }
 
-export default translate(connect(_mapStateToProps)(VideoStatusLabel));
+export default translate(connect(_mapStateToProps)(VideoQualityLabel));

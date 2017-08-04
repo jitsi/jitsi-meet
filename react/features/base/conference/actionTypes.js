@@ -97,17 +97,6 @@ export const P2P_STATUS_CHANGED = Symbol('P2P_STATUS_CHANGED');
 export const SET_AUDIO_ONLY = Symbol('SET_AUDIO_ONLY');
 
 /**
- * The type of (redux) action to set whether or not the displayed large video is
- * in high-definition.
- *
- * {
- *     type: SET_LARGE_VIDEO_HD_STATUS,
- *     isLargeVideoHD: boolean
- * }
- */
-export const SET_LARGE_VIDEO_HD_STATUS = Symbol('SET_LARGE_VIDEO_HD_STATUS');
-
-/**
  * The type of (redux) action which sets the video channel's lastN (value).
  *
  * {
