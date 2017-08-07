@@ -8,8 +8,6 @@ import { ToolbarButton } from '../../toolbox';
 
 const DEFAULT_BUTTON_CONFIGURATION = {
     buttonName: 'videoquality',
-
-    // FIXME Temporary icon for use during development.
     classNames: [ 'button', 'icon-visibility' ],
     enabled: true,
     id: 'toolbar_button_videoquality',
