@@ -15,7 +15,7 @@ import {
     createConference,
     setAudioOnly,
     setLastN,
-    createConference
+    toggleAudioOnly
 } from './actions';
 import {
     CONFERENCE_FAILED,

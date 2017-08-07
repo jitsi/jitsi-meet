@@ -67,35 +67,43 @@ class VideoQualityDialog extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._enableAudioOnly = this._enableAudioOnly.bind(this);
-        this._enableHighQuality = this._enableHighQuality.bind(this);
-        this._enableLowQuality = this._enableLowQuality.bind(this);
-        this._enableStandardQuality = this._enableStandardQuality.bind(this);
+        this._enableHighDefinition = this._enableHighDefinition.bind(this);
+        this._enableLowDefinition = this._enableLowDefinition.bind(this);
+        this._enableStandardDefinition
+            = this._enableStandardDefinition.bind(this);
         this._onSliderChange = this._onSliderChange.bind(this);
 
-        this.state = {
-            sliderOptions: [
-                {
-                    audioOnly: true,
-                    onClick: this._enableAudioOnly,
-                    textKey: 'audioOnly.audioOnly'
-                },
-                {
-                    onClick: this._enableLowQuality,
-                    textKey: 'videoStatus.lowQuality',
-                    videoQuality: LOW
-                },
-                {
-                    onClick: this._enableStandardQuality,
-                    textKey: 'videoStatus.standardQuality',
-                    videoQuality: STANDARD
-                },
-                {
-                    onClick: this._enableHighQuality,
-                    textKey: 'videoStatus.highQuality',
-                    videoQuality: HIGH
-                }
-            ]
-        };
+        /**
+         * An array of configuration options for displaying a choice in the
+         * input. The onSelect callback will be invoked when the option is
+         * selected and videoQuality helps determine which choice matches with
+         * the currently active quality level.
+         *
+         * @private
+         * @type {Object[]}
+         */
+        this._sliderOptions = [
+            {
+                audioOnly: true,
+                onSelect: this._enableAudioOnly,
+                textKey: 'audioOnly.audioOnly'
+            },
+            {
+                onSelect: this._enableLowDefinition,
+                textKey: 'videoStatus.lowDefinition',
+                videoQuality: LOW
+            },
+            {
+                onSelect: this._enableStandardDefinition,
+                textKey: 'videoStatus.standardDefinition',
+                videoQuality: STANDARD
+            },
+            {
+                onSelect: this._enableHighDefinition,
+                textKey: 'videoStatus.highDefinition',
+                videoQuality: HIGH
+            }
+        ];
     }
 
     /**
@@ -106,7 +114,6 @@ class VideoQualityDialog extends Component {
      */
     render() {
         const { t, _p2p } = this.props;
-        const { sliderOptions } = this.state;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
         return (
@@ -123,7 +130,7 @@ class VideoQualityDialog extends Component {
                            */ }
                         <input
                             className = 'video-quality-dialog-slider'
-                            max = { sliderOptions.length - 1 }
+                            max = { this._sliderOptions.length - 1 }
                             min = '0'
                             onChange = { this._onSliderChange }
                             onMouseUp = { this._onSliderChange }
@@ -152,7 +159,7 @@ class VideoQualityDialog extends Component {
 
         return (
             <InlineMessage
-                secondaryText = { t('videoStatus.recHighQualityOnly') }
+                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
                 title = { t('videoStatus.p2pEnabled') }>
                 { t('videoStatus.p2pVideoQualityDescription') }
             </InlineMessage>
@@ -168,26 +175,27 @@ class VideoQualityDialog extends Component {
      * @returns {ReactElement[]}
      */
     _createLabels(activeLabelIndex) {
-        const { sliderOptions } = this.state;
-        const labelsCount = sliderOptions.length;
+        const labelsCount = this._sliderOptions.length;
         const maxWidthOfLabel = `${100 / labelsCount}%`;
 
-        return sliderOptions.map((sliderOption, index) => {
+        return this._sliderOptions.map((sliderOption, index) => {
             const style = {
                 maxWidth: maxWidthOfLabel,
                 left: `${(index * 100) / (labelsCount - 1)}%`
             };
 
-            const isActive = activeLabelIndex === index;
+            const isActiveClass = activeLabelIndex === index ? 'active' : '';
             const className
-                = `video-quality-dialog-label ${isActive ? 'active' : ''}`;
+                = `video-quality-dialog-label-container ${isActiveClass}`;
 
             return (
                 <div
                     className = { className }
                     key = { index }
                     style = { style }>
-                    { this.props.t(sliderOption.textKey) }
+                    <div className = 'video-quality-dialog-label'>
+                        { this.props.t(sliderOption.textKey) }
+                    </div>
                 </div>
             );
         });
@@ -210,7 +218,7 @@ class VideoQualityDialog extends Component {
      * @private
      * @returns {void}
      */
-    _enableHighQuality() {
+    _enableHighDefinition() {
         this.props.dispatch(setReceiveVideoQuality(HIGH));
     }
 
@@ -221,18 +229,18 @@ class VideoQualityDialog extends Component {
      * @private
      * @returns {void}
      */
-    _enableLowQuality() {
+    _enableLowDefinition() {
         this.props.dispatch(setReceiveVideoQuality(LOW));
     }
 
     /**
-     * Dispatches an action to receive medium quality video from remote
+     * Dispatches an action to receive standard quality video from remote
      * participants.
      *
      * @private
      * @returns {void}
      */
-    _enableStandardQuality() {
+    _enableStandardDefinition() {
         this.props.dispatch(setReceiveVideoQuality(STANDARD));
     }
 
@@ -245,19 +253,19 @@ class VideoQualityDialog extends Component {
      */
     _mapCurrentQualityToSliderValue() {
         const { _audioOnly, _receiveVideoQuality } = this.props;
-        const { sliderOptions } = this.state;
+        const { _sliderOptions } = this;
 
         if (_audioOnly) {
-            const audioOnlyOption = sliderOptions.find(
+            const audioOnlyOption = _sliderOptions.find(
                 ({ audioOnly }) => audioOnly);
 
-            return sliderOptions.indexOf(audioOnlyOption);
+            return _sliderOptions.indexOf(audioOnlyOption);
         }
 
-        const matchingOption = sliderOptions.find(
+        const matchingOption = _sliderOptions.find(
             ({ videoQuality }) => videoQuality === _receiveVideoQuality);
 
-        return sliderOptions.indexOf(matchingOption);
+        return _sliderOptions.indexOf(matchingOption);
     }
 
     /**
@@ -268,9 +276,21 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _onSliderChange(event) {
-        const chosenOption = this.state.sliderOptions[event.target.value];
+        const { _audioOnly, _receiveVideoQuality } = this.props;
+        const {
+            audioOnly,
+            onSelect,
+            videoQuality
+        } = this._sliderOptions[event.target.value];
 
-        chosenOption.onClick();
+        // Take no action if the newly chosen option does not change audio only
+        // or video quality state.
+        if ((_audioOnly && audioOnly)
+            || (!_audioOnly && videoQuality === _receiveVideoQuality)) {
+            return;
+        }
+
+        onSelect();
     }
 }
 

@@ -1,4 +1,6 @@
 .video-quality-dialog {
+    color: $modalTextColor;
+
     .video-quality-dialog-title {
         margin-bottom: 10px;
     }
@@ -66,7 +68,7 @@
             width: 90%;
         }
 
-        .video-quality-dialog-label {
+        .video-quality-dialog-label-container {
             position: absolute;
             text-align: center;
             transform: translate(-50%, 0%);
@@ -86,7 +88,7 @@
             }
         }
 
-        .video-quality-dialog-label.active {
+        .video-quality-dialog-label-container.active {
             color: $toolbarToggleBackground;
 
             &::before {
@@ -97,8 +99,13 @@
             }
         }
 
-        .video-quality-dialog-label:first-child {
+        .video-quality-dialog-label-container:first-child {
             position: relative;
+        }
+
+        .video-quality-dialog-label {
+            display: table-caption;
+            word-spacing: unset;
         }
     }
 }
