@@ -102,10 +102,6 @@
             &.icon-microphone {
                 @extend .icon-mic-disabled;
             }
-
-            &.icon-visibility {
-                @extend .icon-visibility-off;
-            }
         }
 
         &.unclickable {
