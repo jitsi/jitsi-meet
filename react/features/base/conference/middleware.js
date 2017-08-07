@@ -21,7 +21,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
-    DATA_CHANNEL_OPEN,
+    DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
     SET_RECEIVE_VIDEO_QUALITY
@@ -50,7 +50,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
 
-    case DATA_CHANNEL_OPEN:
+    case DATA_CHANNEL_OPENED:
         return _syncReceiveVideoQuality(store, next, action);
 
     case PIN_PARTICIPANT:

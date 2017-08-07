@@ -57,10 +57,10 @@ export const CONFERENCE_WILL_LEAVE = Symbol('CONFERENCE_WILL_LEAVE');
  * bridge has been established.
  *
  * {
- *     type: DATA_CHANNEL_OPEN
+ *     type: DATA_CHANNEL_OPENED
  * }
  */
-export const DATA_CHANNEL_OPEN = Symbol('DATA_CHANNEL_OPEN');
+export const DATA_CHANNEL_OPENED = Symbol('DATA_CHANNEL_OPENED');
 
 /**
  * The type of (redux) action which signals that the lock state of a specific

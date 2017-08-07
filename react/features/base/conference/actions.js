@@ -17,7 +17,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
-    DATA_CHANNEL_OPEN,
+    DATA_CHANNEL_OPENED,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
@@ -292,12 +292,12 @@ export function createConference() {
  * Signals the data channel with the bridge has successfully opened.
  *
  * @returns {{
- *     type: DATA_CHANNEL_OPEN
+ *     type: DATA_CHANNEL_OPENED
  * }}
  */
 export function dataChannelOpened() {
     return {
-        type: DATA_CHANNEL_OPEN
+        type: DATA_CHANNEL_OPENED
     };
 }
 

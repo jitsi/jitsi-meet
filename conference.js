@@ -1954,7 +1954,7 @@ export default {
         );
 
         room.on(
-            ConferenceEvents.DATA_CHANNEL_OPEN, () => {
+            ConferenceEvents.DATA_CHANNEL_OPENED, () => {
                 APP.store.dispatch(dataChannelOpened());
             }
         );
