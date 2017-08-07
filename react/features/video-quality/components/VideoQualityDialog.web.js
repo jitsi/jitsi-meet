@@ -113,7 +113,7 @@ class VideoQualityDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { t, _p2p } = this.props;
+        const { _audioOnly, _p2p, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
         return (
@@ -121,7 +121,7 @@ class VideoQualityDialog extends Component {
                 <h3 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
                 </h3>
-                { _p2p ? this._renderP2PMessage() : null }
+                { !_audioOnly && _p2p ? this._renderP2PMessage() : null }
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
                         { /* FIXME: onChange and onMouseUp are both used for
