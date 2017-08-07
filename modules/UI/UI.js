@@ -21,7 +21,6 @@ import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
-import { FEEDBACK_REQUEST_IN_PROGRESS } from './UIErrors';
 import { debounce } from "../util/helpers";
 
 import { updateDeviceList } from '../../react/features/base/devices';
@@ -47,7 +46,6 @@ import {
 
 var EventEmitter = require("events");
 UI.messageHandler = messageHandler;
-import Feedback from "./feedback/Feedback";
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -227,10 +225,6 @@ UI.initConference = function () {
     }
 
     APP.store.dispatch(checkAutoEnableDesktopSharing());
-
-    if(!interfaceConfig.filmStripOnly) {
-        Feedback.init(eventEmitter);
-    }
 
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
     // other participants' UI. Consequently, it needs (1) read and write access
@@ -921,43 +915,6 @@ UI.addMessage = function (from, displayName, message, stamp) {
 
 UI.updateDTMFSupport
     = isDTMFSupported => APP.store.dispatch(showDialPadButton(isDTMFSupported));
-
-/**
- * Show user feedback dialog if its required and enabled after pressing the
- * hangup button.
- * @returns {Promise} Resolved with value - false if the dialog is enabled and
- * resolved with true if the dialog is disabled or the feedback was already
- * submitted. Rejected if another dialog is already displayed. This values are
- * used to display or not display the thank you dialog from
- * conference.maybeRedirectToWelcomePage method.
- */
-UI.requestFeedbackOnHangup = function () {
-    if (Feedback.isVisible())
-        return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
-    // Feedback has been submitted already.
-    else if (Feedback.isEnabled() && Feedback.isSubmitted()) {
-        return Promise.resolve({
-            thankYouDialogVisible : true,
-            feedbackSubmitted: true
-        });
-    }
-    else
-        return new Promise(function (resolve) {
-            if (Feedback.isEnabled()) {
-                Feedback.openFeedbackWindow(
-                    (options) => {
-                        options.thankYouDialogVisible = false;
-                        resolve(options);
-                    });
-            } else {
-                // If the feedback functionality isn't enabled we show a thank
-                // you dialog. Signaling it (true), so the caller
-                // of requestFeedback can act on it
-                resolve(
-                    {thankYouDialogVisible : true, feedbackSubmitted: false});
-            }
-        });
-};
 
 UI.updateRecordingState = function (state) {
     Recording.updateRecordingState(state);

@@ -1,15 +1,23 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-declare var config: Object;
+import { openFeedbackDialog } from '../actions';
 
 /**
  * Implements a Web/React Component which renders a feedback button.
  */
-export class FeedbackButton extends Component {
-    state = {
-        callStatsID: String
+class FeedbackButton extends Component {
+    _onClick: Function;
+
+    static propTypes = {
+        /**
+         * The JitsiConference for which the feedback will be about.
+         *
+         * @type {JitsiConference}
+         */
+        _conference: React.PropTypes.object
     };
 
     /**
@@ -21,9 +29,8 @@ export class FeedbackButton extends Component {
     constructor(props: Object) {
         super(props);
 
-        this.state = {
-            callStatsID: config.callStatsID
-        };
+        // Bind event handlers so they are only bound once for every instance.
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -33,15 +40,46 @@ export class FeedbackButton extends Component {
      * @returns {ReactElement}
      */
     render() {
-        // If callstats.io-support is not configured, skip rendering.
-        if (!this.state.callStatsID) {
-            return null;
-        }
-
         return (
             <a
                 className = 'button icon-feedback'
-                id = 'feedbackButton' />
+                id = 'feedbackButton'
+                onClick = { this._onClick } />
         );
     }
+
+    /**
+     * Dispatches an action to open a dialog requesting call feedback.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClick() {
+        const { _conference, dispatch } = this.props;
+
+        dispatch(openFeedbackDialog(_conference));
+    }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated Conference's props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _toolboxVisible: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        /**
+         * The JitsiConference for which the feedback will be about.
+         *
+         * @private
+         * @type {JitsiConference}
+         */
+        _conference: state['features/base/conference'].conference
+    };
+}
+
+export default connect(_mapStateToProps)(FeedbackButton);

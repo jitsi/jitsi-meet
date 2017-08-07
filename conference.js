@@ -57,6 +57,7 @@ import {
 import { getLocationContextRoot } from './react/features/base/util';
 import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from  './react/features/desktop-picker';
+import { maybeOpenFeedbackDialog } from './react/features/feedback';
 import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
@@ -2398,12 +2399,17 @@ export default {
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
 
-        let requestFeedbackPromise = requestFeedback
-                ? APP.UI.requestFeedbackOnHangup()
-                // false - because the thank you dialog shouldn't be displayed
-                    .catch(() => Promise.resolve(false))
-                : Promise.resolve(true);// true - because the thank you dialog
-                //should be displayed
+        let requestFeedbackPromise;
+
+        if (requestFeedback) {
+            requestFeedbackPromise
+                = APP.store.dispatch(maybeOpenFeedbackDialog(room))
+                    // false because the thank you dialog shouldn't be displayed
+                    .catch(() => Promise.resolve(false));
+        } else {
+            requestFeedbackPromise = Promise.resolve(true);
+        }
+
         // All promises are returning Promise.resolve to make Promise.all to
         // be resolved when both Promises are finished. Otherwise Promise.all
         // will reject on first rejected Promise and we can redirect the page
