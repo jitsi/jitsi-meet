@@ -18,7 +18,6 @@
 #include <mach/mach_time.h>
 
 #import <React/RCTAssert.h>
-#import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
 #import "JitsiMeetView+Private.h"
@@ -133,48 +132,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     return YES;
 }
 
-#pragma mark Linking delegate helpers
-// https://facebook.github.io/react-native/docs/linking.html
-
-+    (BOOL)application:(UIApplication *)application
-  continueUserActivity:(NSUserActivity *)userActivity
-    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
-{
-    // XXX At least twice we received bug reports about malfunctioning loadURL
-    // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
-    // expected in our testing. But that was to be expected because the app does
-    // not exercise loadURL. In order to increase the test coverage of loadURL,
-    // channel Universal linking through loadURL.
-    if ([userActivity.activityType
-                isEqualToString:NSUserActivityTypeBrowsingWeb]
-            && [JitsiMeetView loadURLInViews:userActivity.webpageURL]) {
-        return YES;
-    }
-
-    return [RCTLinkingManager application:application
-                     continueUserActivity:userActivity
-                       restorationHandler:restorationHandler];
-}
-
-+ (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    // XXX At least twice we received bug reports about malfunctioning loadURL
-    // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
-    // expected in our testing. But that was to be expected because the app does
-    // not exercise loadURL. In order to increase the test coverage of loadURL,
-    // channel Universal linking through loadURL.
-    if ([JitsiMeetView loadURLInViews:url]) {
-        return YES;
-    }
-
-    return [RCTLinkingManager application:application
-                                  openURL:url
-                        sourceApplication:sourceApplication
-                               annotation:annotation];
-}
-
 #pragma mark Initializers
 
 - (instancetype)init {
@@ -280,32 +237,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 }
 
 #pragma mark Private methods
-
-/**
- * Loads a specific {@link NSURL} in all existing {@code JitsiMeetView}s.
- *
- * @param url - The {@code NSURL} to load in all existing
- * {@code JitsiMeetView}s.
- * @return {@code YES} if the specified {@code url} was submitted for loading in
- * at least one {@code JitsiMeetView}; otherwise, {@code NO}.
- */
-+ (BOOL)loadURLInViews:(NSURL *)url {
-    BOOL handled = NO;
-
-    if (views) {
-        for (NSString *externalAPIScope in views) {
-            JitsiMeetView *view
-                = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
-
-            if (view) {
-                [view loadURL:url];
-                handled = YES;
-            }
-        }
-    }
-
-    return handled;
-}
 
 + (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
     return [views objectForKey:externalAPIScope];

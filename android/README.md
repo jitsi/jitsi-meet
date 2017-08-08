@@ -191,14 +191,6 @@ Helper method which should be called from the activity's `onResume` method.
 
 This is a static method.
 
-#### onNewIntent(intent)
-
-Helper method for integrating the *deep linking* functionality. If your app's
-activity is launched in "singleTask" mode this method should be called from the
-activity's `onNewIntent` method.
-
-This is a static method.
-
 #### JitsiMeetViewListener
 
 `JitsiMeetViewListener` provides an interface apps can implement to listen to
