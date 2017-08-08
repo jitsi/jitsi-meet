@@ -58,7 +58,12 @@ end
 function provider.get_sasl_handler(session)
 
 	local function get_username_from_token(self, message)
-        local res = token_util:process_and_verify_token(session);
+        local res, error, reason = token_util:process_and_verify_token(session);
+
+        if (res == false) then
+            log("warn",
+                "Error verifying token err:%s, reason:%s", error, reason);
+        end
 
         local customUsername
             = prosody.events.fire_event("pre-jitsi-authentication", session);
