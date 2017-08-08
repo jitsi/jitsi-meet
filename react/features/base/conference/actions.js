@@ -157,7 +157,7 @@ export function conferenceFailed(conference, error) {
  * @param {JitsiConference} conference - The JitsiConference instance which was
  * joined by the local participant.
  * @returns {{
- *     type: CONFERENCE_LEFT,
+ *     type: CONFERENCE_JOINED,
  *     conference: JitsiConference
  * }}
  */
@@ -188,8 +188,7 @@ export function conferenceLeft(conference) {
 /**
  * Attaches any pre-existing local media to the conference, before
  * the conference will be joined. Then signals the intention of the application
- * to have the local participant join a specific conference. Similar in fashion
- * to {@code CONFERENCE_JOINED}.
+ * to have the local participant join a specific conference.
  *
  * @param {JitsiConference} conference - The JitsiConference instance the
  * local participant will (try to) join.
