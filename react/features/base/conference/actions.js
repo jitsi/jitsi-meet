@@ -168,28 +168,19 @@ export function conferenceFailed(conference, error) {
 }
 
 /**
- * Attach any pre-existing local media to the conference once the conference has
- * been joined.
+ * Signals that a specific conference has been joined.
  *
  * @param {JitsiConference} conference - The JitsiConference instance which was
  * joined by the local participant.
- * @returns {Function}
+ * @returns {{
+ *     type: CONFERENCE_JOINED,
+ *     conference: JitsiConference
+ * }}
  */
 export function conferenceJoined(conference) {
-    return (dispatch, getState) => {
-        const localTracks
-            = getState()['features/base/tracks']
-                .filter(t => t.local)
-                .map(t => t.jitsiTrack);
-
-        if (localTracks.length) {
-            _addLocalTracksToConference(conference, localTracks);
-        }
-
-        dispatch({
-            type: CONFERENCE_JOINED,
-            conference
-        });
+    return {
+        type: CONFERENCE_JOINED,
+        conference
     };
 }
 
@@ -211,20 +202,29 @@ export function conferenceLeft(conference) {
 }
 
 /**
- * Signals the intention of the application to have the local participant join a
- * specific conference. Similar in fashion to {@code CONFERENCE_JOINED}.
+ * Attaches any pre-existing local media to the conference, before
+ * the conference will be joined. Then signals the intention of the application
+ * to have the local participant join a specific conference.
  *
  * @param {JitsiConference} conference - The JitsiConference instance the
  * local participant will (try to) join.
- * @returns {{
- *     type: CONFERENCE_WILL_JOIN,
- *     conference: JitsiConference
- * }}
+ * @returns {Function}
  */
 function _conferenceWillJoin(conference) {
-    return {
-        type: CONFERENCE_WILL_JOIN,
-        conference
+    return (dispatch, getState) => {
+        const localTracks
+            = getState()['features/base/tracks']
+                .filter(t => t.local)
+                .map(t => t.jitsiTrack);
+
+        if (localTracks.length) {
+            _addLocalTracksToConference(conference, localTracks);
+        }
+
+        dispatch({
+            type: CONFERENCE_WILL_JOIN,
+            conference
+        });
     };
 }
 
