@@ -10,10 +10,26 @@ import {
     VIDEO_QUALITY_LEVELS
 } from '../../base/conference';
 
-const VIDEO_QUALTIY_TO_LABEL_KEY = {
-    HIGH: 'videoStatus.hd',
-    STANDARD: 'videoStatus.sd',
-    LOW: 'videoStatus.ld'
+const { HIGH, STANDARD, LOW } = VIDEO_QUALITY_LEVELS;
+
+/**
+ * Expected video resolutions placed into an array, sorted from lowest to
+ * highest resolution.
+ *
+ * @type {number[]}
+ */
+const RESOLUTIONS
+    = Object.values(VIDEO_QUALITY_LEVELS).sort((a, b) => a - b);
+
+/**
+ * A map of video resolution (number) to translation key.
+ *
+ * @type {Object}
+ */
+const RESOLUTION_TO_TRANSLATION_KEY = {
+    [HIGH]: 'videoStatus.hd',
+    [STANDARD]: 'videoStatus.sd',
+    [LOW]: 'videoStatus.ld'
 };
 
 /**
@@ -166,18 +182,31 @@ export class VideoQualityLabel extends Component {
 
     /**
      * Matches the passed in resolution with a translation key for describing
-     * the resolution.
+     * the resolution. The passed in resolution will be matched with a known
+     * resolution that it is at least greater than or equal to.
      *
-     * @param {number} resolution - The height find a translation label for.
+     * @param {number} resolution - The video height to match with a
+     * translation.
      * @private
      * @returns {string}
      */
     _mapResolutionToTranslation(resolution) {
-        const foundLabel = Object.keys(VIDEO_QUALITY_LEVELS)
-            .find(qualityValue =>
-                VIDEO_QUALITY_LEVELS[qualityValue] === resolution);
+        // Set the default matching resolution of the lowest just in case a
+        // match is not found.
+        let highestMatchingResolution = RESOLUTIONS[0];
 
-        return this.props.t(VIDEO_QUALTIY_TO_LABEL_KEY[foundLabel]);
+        for (let i = 0; i < RESOLUTIONS.length; i++) {
+            const knownResolution = RESOLUTIONS[i];
+
+            if (resolution >= knownResolution) {
+                highestMatchingResolution = knownResolution;
+            } else {
+                break;
+            }
+        }
+
+        return this.props.t(
+            RESOLUTION_TO_TRANSLATION_KEY[highestMatchingResolution]);
     }
 
     /**
