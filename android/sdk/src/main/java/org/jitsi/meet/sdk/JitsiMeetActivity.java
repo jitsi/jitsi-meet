@@ -216,7 +216,12 @@ public class JitsiMeetActivity
      */
     @Override
     public void onNewIntent(Intent intent) {
-        JitsiMeetView.onNewIntent(intent);
+        Uri uri;
+
+        if (Intent.ACTION_VIEW.equals(intent.getAction())
+            && (uri = intent.getData()) != null) {
+            view.loadURLString(uri.toString());
+        }
     }
 
     /**
