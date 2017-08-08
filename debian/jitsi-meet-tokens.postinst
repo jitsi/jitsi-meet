@@ -64,6 +64,11 @@ case "$1" in
                    echo "Failed to install luajwtjitsi - try installing it manually"
                 fi
 
+                # Install basexx
+                if ! luarocks install basexx; then
+                   echo "Failed to install basexx - try installing it manually"
+                fi
+
                 if [ -x "/etc/init.d/prosody" ]; then
                     invoke-rc.d prosody restart
                 fi
