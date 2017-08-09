@@ -43,6 +43,14 @@
     z-index: $toolbarZ;
 
     /**
+     * Ensure nested elements that don't have a button class, maybe because they
+     * are wrapped in a React Element, still display in a line.
+     */
+    > div {
+        display: inline-block;
+    }
+
+    /**
      * Toolbar button styles.
      */
     .button {
@@ -93,10 +101,6 @@
 
             &.icon-microphone {
                 @extend .icon-mic-disabled;
-            }
-
-            &.icon-visibility {
-                @extend .icon-visibility-off;
             }
         }
 

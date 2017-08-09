@@ -14,14 +14,17 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 import {
     createConference,
     setAudioOnly,
-    setLastN
+    setLastN,
+    toggleAudioOnly
 } from './actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
-    SET_LASTN
+    SET_LASTN,
+    SET_RECEIVE_VIDEO_QUALITY
 } from './actionTypes';
 import {
     _addLocalTracksToConference,
@@ -47,6 +50,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
 
+    case DATA_CHANNEL_OPENED:
+        return _syncReceiveVideoQuality(store, next, action);
+
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
 
@@ -55,6 +61,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_LASTN:
         return _setLastN(store, next, action);
+
+    case SET_RECEIVE_VIDEO_QUALITY:
+        return _setReceiveVideoQuality(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -254,6 +263,33 @@ function _setLastN(store, next, action) {
 }
 
 /**
+ * Sets the maximum receive video quality and will turn off audio only mode if
+ * enabled.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action SET_RECEIVE_VIDEO_QUALITY which is
+ * being dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _setReceiveVideoQuality(store, next, action) {
+    const { audioOnly, conference }
+        = store.getState()['features/base/conference'];
+
+    conference.setReceiverVideoConstraint(action.receiveVideoQuality);
+
+    if (audioOnly) {
+        store.dispatch(toggleAudioOnly());
+    }
+
+    return next(action);
+}
+
+/**
  * Synchronizes local tracks from state with local tracks in JitsiConference
  * instance.
  *
@@ -280,6 +316,27 @@ function _syncConferenceLocalTracksWithState(store, action) {
     }
 
     return promise || Promise.resolve();
+}
+
+/**
+ * Sets the maximum receive video quality.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action DATA_CHANNEL_STATUS_CHANGED which
+ * is being dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _syncReceiveVideoQuality(store, next, action) {
+    const state = store.getState()['features/base/conference'];
+
+    state.conference.setReceiverVideoConstraint(state.receiveVideoQuality);
+
+    return next(action);
 }
 
 /**

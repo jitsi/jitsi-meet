@@ -10,11 +10,15 @@ import {
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
+    P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
-    SET_LARGE_VIDEO_HD_STATUS,
     SET_PASSWORD,
+    SET_RECEIVE_VIDEO_QUALITY,
     SET_ROOM
 } from './actionTypes';
+import {
+    VIDEO_QUALITY_LEVELS
+} from './constants';
 import { isRoomValid } from './functions';
 
 /**
@@ -41,14 +45,17 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
     case LOCK_STATE_CHANGED:
         return _lockStateChanged(state, action);
 
+    case P2P_STATUS_CHANGED:
+        return _p2pStatusChanged(state, action);
+
     case SET_AUDIO_ONLY:
         return _setAudioOnly(state, action);
 
-    case SET_LARGE_VIDEO_HD_STATUS:
-        return _setLargeVideoHDStatus(state, action);
-
     case SET_PASSWORD:
         return _setPassword(state, action);
+
+    case SET_RECEIVE_VIDEO_QUALITY:
+        return _setReceiveVideoQuality(state, action);
 
     case SET_ROOM:
         return _setRoom(state, action);
@@ -135,7 +142,15 @@ function _conferenceJoined(state, { conference }) {
          * @type {boolean}
          */
         locked,
-        passwordRequired: undefined
+        passwordRequired: undefined,
+
+        /**
+         * The current resolution restraint on receiving remote video. By
+         * default the conference will send the highest level possible.
+         *
+         * @type number
+         */
+        receiveVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
     });
 }
 
@@ -229,6 +244,20 @@ function _lockStateChanged(state, { conference, locked }) {
 }
 
 /**
+ * Reduces a specific Redux action P2P_STATUS_CHANGED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action P2P_STATUS_CHANGED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _p2pStatusChanged(state, action) {
+    return set(state, 'p2p', action.p2p);
+}
+
+/**
  * Reduces a specific Redux action SET_AUDIO_ONLY of the feature
  * base/conference.
  *
@@ -240,21 +269,6 @@ function _lockStateChanged(state, { conference, locked }) {
  */
 function _setAudioOnly(state, action) {
     return set(state, 'audioOnly', action.audioOnly);
-}
-
-/**
- * Reduces a specific Redux action SET_LARGE_VIDEO_HD_STATUS of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_LARGE_VIDEO_HD_STATUS to
- * reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setLargeVideoHDStatus(state, action) {
-    return set(state, 'isLargeVideoHD', action.isLargeVideoHD);
 }
 
 /**
@@ -292,6 +306,21 @@ function _setPassword(state, { conference, method, password }) {
     }
 
     return state;
+}
+
+/**
+ * Reduces a specific Redux action SET_RECEIVE_VIDEO_QUALITY of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_RECEIVE_VIDEO_QUALITY to
+ * reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setReceiveVideoQuality(state, action) {
+    return set(state, 'receiveVideoQuality', action.receiveVideoQuality);
 }
 
 /**

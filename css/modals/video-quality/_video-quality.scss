@@ -1,0 +1,166 @@
+.video-quality-dialog {
+    color: $modalTextColor;
+
+    .video-quality-dialog-title {
+        margin-bottom: 10px;
+    }
+
+    .video-quality-dialog-contents {
+        align-items: center;
+        color: $modalTextColor;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        min-width: 250px;
+
+        .video-quality-dialog-slider-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .video-quality-dialog-slider {
+            width: calc(100% - 5px);
+
+            @mixin sliderTrackStyles() {
+                height: 15px;
+                border-radius: 10px;
+                background: black;
+            }
+
+            &::-ms-track {
+                @include sliderTrackStyles();
+            }
+
+            &::-moz-range-track {
+                @include sliderTrackStyles();
+            }
+
+            &::-webkit-slider-runnable-track {
+                @include sliderTrackStyles();
+            }
+
+            @mixin sliderThumbStyles() {
+                top: 50%;
+                border: none;
+                position: relative;
+                opacity: 0;
+            }
+
+            &::-ms-thumb {
+                @include sliderThumbStyles();
+            }
+
+            &::-moz-range-thumb {
+                @include sliderThumbStyles();
+
+            }
+
+            &::-webkit-slider-thumb {
+                @include sliderThumbStyles();
+            }
+        }
+
+        .video-quality-dialog-labels {
+            box-sizing: border-box;
+            display: flex;
+            margin-top: 5px;
+            position: relative;
+            width: 90%;
+        }
+
+        .video-quality-dialog-label-container {
+            position: absolute;
+            text-align: center;
+            transform: translate(-50%, 0%);
+
+            &::before {
+                background: rgb(140, 156, 189);
+                content: '';
+                border-radius: 50%;
+                left: 0;
+                height: 6px;
+                margin: 0 auto;
+                pointer-events: none;
+                position: absolute;
+                right: 0;
+                top: -16px;
+                width: 6px;
+            }
+        }
+
+        .video-quality-dialog-label-container.active {
+            color: $toolbarToggleBackground;
+
+            &::before {
+                background: $toolbarToggleBackground;
+                height: 12px;
+                top: -19px;
+                width: 12px;
+            }
+        }
+
+        .video-quality-dialog-label-container:first-child {
+            position: relative;
+        }
+
+        .video-quality-dialog-label {
+            display: table-caption;
+            word-spacing: unset;
+        }
+    }
+}
+
+.video-state-indicator {
+    background: $videoStateIndicatorBackground;
+    color: $videoStateIndicatorColor;
+    cursor: default;
+    font-size: 13px;
+    height: 40px;
+    line-height: 20px;
+    text-align: left;
+    min-width: 40px;
+    border-radius: 50%;
+    position: absolute;
+    box-sizing: border-box;
+
+    i {
+        cursor: pointer;
+    }
+
+    /**
+     * Give the label padding so it has more volume and can be easily clicked.
+     */
+    .video-quality-label-status {
+        cursor: pointer;
+        padding: 10px 5px;
+        text-align: center;
+    }
+}
+
+#videoResolutionLabel,
+.centeredVideoLabel.moveToCorner {
+    z-index: $tooltipsZ;
+}
+
+.centeredVideoLabel {
+    bottom: 45%;
+    border-radius: 2px;
+    display: none;
+    -webkit-transition: all 2s 2s linear;
+    transition: all 2s 2s linear;
+    z-index: $centeredVideoLabelZ;
+
+    &.moveToCorner {
+        bottom: auto;
+    }
+}
+
+.moveToCorner {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+
+.moveToCorner + .moveToCorner {
+    right: 80px;
+}
