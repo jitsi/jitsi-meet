@@ -16,7 +16,7 @@ wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 
 ### Ensure you have apt-transport-https installed
 
-Before to make an update you should ensure you have the apt-transport-https installed
+Before making an update you should ensure you have the apt-transport-https installed.
 
 ```sh
 apt-get install apt-transport-https
