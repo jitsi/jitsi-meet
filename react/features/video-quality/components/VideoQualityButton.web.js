@@ -66,7 +66,7 @@ class VideoQualityButton extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
-        this._onDialogOpen = this._onDialogOpen.bind(this);
+        this._onToggleDialog = this._onToggleDialog.bind(this);
     }
 
     /**
@@ -105,20 +105,22 @@ class VideoQualityButton extends Component {
                 position = { TOOLTIP_TO_DIALOG_POSITION[tooltipPosition] }>
                 <ToolbarButton
                     button = { buttonConfiguration }
-                    onClick = { this._onDialogOpen }
+                    onClick = { this._onToggleDialog }
                     tooltipPosition = { tooltipPosition } />
             </AKInlineDialog>
         );
     }
 
     /**
-     * Shows the attached inline dialog.
+     * Toggles the display of the dialog.
      *
      * @private
      * @returns {void}
      */
-    _onDialogOpen() {
-        this.setState({ showVideoQualityDialog: true });
+    _onToggleDialog() {
+        this.setState({
+            showVideoQualityDialog: !this.state.showVideoQualityDialog
+        });
     }
 
     /**
