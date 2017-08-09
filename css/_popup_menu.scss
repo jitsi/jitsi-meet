@@ -5,7 +5,11 @@
 .popupmenu {
     text-align: left;
     padding: 0;
-    margin: 2px 0;
+    /**
+     * Set negative margin to reduce the visibility of padding on AtlasKit
+     * InlineDialogs.
+     */
+    margin: -10px;
     white-space: nowrap;
 
     &__item {
@@ -83,6 +87,13 @@
     .icon-kick {
         font-size: 8pt;
     }
+}
+
+/**
+ * Override reset css styling modifying all lists.
+ */
+ul.popupmenu {
+    margin-top: -10px;
 }
 
 span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {

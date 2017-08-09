@@ -125,7 +125,7 @@ class ConnectionIndicator extends Component {
         // Bind event handlers so they are only bound once for every instance.
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onStatsClose = this._onStatsClose.bind(this);
-        this._onStatsOpen = this._onStatsOpen.bind(this);
+        this._onStatsToggle = this._onStatsToggle.bind(this);
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
     }
@@ -182,7 +182,7 @@ class ConnectionIndicator extends Component {
                 position = { this.props.statsPopoverPosition }>
                 <div
                     className = 'popover-trigger connection-indicator indicator'
-                    onClick = { this._onStatsOpen }>
+                    onClick = { this._onStatsToggle }>
                     <div className = 'connection indicatoricon'>
                         { this._renderIcon() }
                     </div>
@@ -202,14 +202,14 @@ class ConnectionIndicator extends Component {
     }
 
     /**
-     * Sets the state to show the Statistics Table popover.
+     * Sets the state to show or hide the Statistics Table popover.
      *
      * @private
      * @returns {void}
      */
-    _onStatsOpen() {
+    _onStatsToggle() {
         if (this.props.enableStatsDisplay) {
-            this.setState({ showStats: true });
+            this.setState({ showStats: !this.state.showStats });
         }
     }
 

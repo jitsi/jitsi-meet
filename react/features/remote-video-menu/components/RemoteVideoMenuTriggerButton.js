@@ -89,7 +89,7 @@ class RemoteVideoMenuTriggerButton extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onRemoteMenuClose = this._onRemoteMenuClose.bind(this);
-        this._onRemoteMenuOpen = this._onRemoteMenuOpen.bind(this);
+        this._onRemoteMenuToggle = this._onRemoteMenuToggle.bind(this);
     }
 
     /**
@@ -109,7 +109,7 @@ class RemoteVideoMenuTriggerButton extends Component {
                 shouldFlip = { true }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'
-                    onClick = { this._onRemoteMenuOpen }>
+                    onClick = { this._onRemoteMenuToggle }>
                     <i
                         className = 'icon-thumb-menu'
                         title = 'Remote user controls' />
@@ -129,14 +129,19 @@ class RemoteVideoMenuTriggerButton extends Component {
     }
 
     /**
-     * Opens the {@code RemoteVideoMenu}.
+     * Opens or closes the {@code RemoteVideoMenu}.
      *
      * @private
      * @returns {void}
      */
-    _onRemoteMenuOpen() {
-        this.props.onMenuDisplay();
-        this.setState({ showRemoteMenu: true });
+    _onRemoteMenuToggle() {
+        const willShowRemoteMenu = !this.state.showRemoteMenu;
+
+        if (willShowRemoteMenu) {
+            this.props.onMenuDisplay();
+        }
+
+        this.setState({ showRemoteMenu: willShowRemoteMenu });
     }
 
     /**
