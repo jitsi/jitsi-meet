@@ -107,7 +107,7 @@ export class VideoQualityLabel extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
-        this._onDialogOpen = this._onDialogOpen.bind(this);
+        this._onDialogToggle = this._onDialogToggle.bind(this);
     }
 
     /**
@@ -164,7 +164,7 @@ export class VideoQualityLabel extends Component {
             <div
                 className = { classNames }
                 id = 'videoResolutionLabel'
-                onClick = { this._onDialogOpen }>
+                onClick = { this._onDialogToggle }>
                 <AKInlineDialog
                     content = { <VideoQualityDialog /> }
                     isOpen = { this.state.showVideoQualityDialog }
@@ -210,13 +210,15 @@ export class VideoQualityLabel extends Component {
     }
 
     /**
-     * Shows the attached inline dialog.
+     * Toggles the display of the {@code VideoQualityDialog}.
      *
      * @private
      * @returns {void}
      */
-    _onDialogOpen() {
-        this.setState({ showVideoQualityDialog: true });
+    _onDialogToggle() {
+        this.setState({
+            showVideoQualityDialog: !this.state.showVideoQualityDialog
+        });
     }
 
     /**
