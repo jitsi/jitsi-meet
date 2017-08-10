@@ -1,9 +1,12 @@
 /* @flow */
 
+import EventEmitter from 'events';
 import { getLogger } from 'jitsi-meet-logger';
 
 import { DISCO_REMOTE_CONTROL_FEATURE }
     from '../../service/remotecontrol/Constants';
+import * as RemoteControlEvents
+    from '../../service/remotecontrol/RemoteControlEvents';
 
 import Controller from './Controller';
 import Receiver from './Receiver';
@@ -16,7 +19,8 @@ declare var config: Object;
 /**
  * Implements the remote control functionality.
  */
-class RemoteControl {
+class RemoteControl extends EventEmitter {
+    _active: boolean;
     _initialized: boolean;
     controller: Controller;
     receiver: Receiver;
@@ -25,8 +29,36 @@ class RemoteControl {
      * Constructs new instance. Creates controller and receiver properties.
      */
     constructor() {
+        super();
         this.controller = new Controller();
+        this._active = false;
         this._initialized = false;
+
+        this.controller.on(RemoteControlEvents.ACTIVE_CHANGED, active => {
+            this.active = active;
+        });
+    }
+
+    /**
+     * Sets the remote control session active status.
+     *
+     * @param {boolean} isActive - True - if the controller or the receiver is
+     * currently in remote control session and false otherwise.
+     * @returns {void}
+     */
+    set active(isActive: boolean) {
+        this._active = isActive;
+        this.emit(RemoteControlEvents.ACTIVE_CHANGED, isActive);
+    }
+
+    /**
+     * Returns the remote control session active status.
+     *
+     * @returns {boolean} - True - if the controller or the receiver is
+     * currently in remote control session and false otherwise.
+     */
+    get active(): boolean {
+        return this._active;
     }
 
     /**
@@ -45,6 +77,10 @@ class RemoteControl {
         this._initialized = true;
         this.controller.enable(true);
         this.receiver = new Receiver();
+
+        this.receiver.on(RemoteControlEvents.ACTIVE_CHANGED, active => {
+            this.active = active;
+        });
     }
 
     /**

@@ -99,9 +99,15 @@ class RemoteVideoMenuTriggerButton extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const content = this._renderRemoteVideoMenu();
+
+        if (!content) {
+            return null;
+        }
+
         return (
             <AKInlineDialog
-                content = { this._renderRemoteVideoMenu() }
+                content = { content }
                 isOpen = { this.state.showRemoteMenu }
                 onClose = { this._onRemoteMenuClose }
                 position = { interfaceConfig.VERTICAL_FILMSTRIP
@@ -162,32 +168,52 @@ class RemoteVideoMenuTriggerButton extends Component {
             participantID
         } = this.props;
 
-        return (
-            <RemoteVideoMenu id = { participantID }>
-                { isModerator
-                    ? <MuteButton
-                        isAudioMuted = { isAudioMuted }
-                        onClick = { this._onRemoteMenuClose }
-                        participantID = { participantID } />
-                    : null }
-                { isModerator
-                    ? <KickButton
-                        onClick = { this._onRemoteMenuClose }
-                        participantID = { participantID } />
-                    : null }
-                { remoteControlState
-                    ? <RemoteControlButton
-                        onClick = { onRemoteControlToggle }
-                        participantID = { participantID }
-                        remoteControlState = { remoteControlState } />
-                    : null }
-                { onVolumeChange
-                    ? <VolumeSlider
-                        initialValue = { initialVolumeValue }
-                        onChange = { onVolumeChange } />
-                    : null }
-            </RemoteVideoMenu>
-        );
+        const buttons = [];
+
+        if (isModerator) {
+            buttons.push(
+                <MuteButton
+                    isAudioMuted = { isAudioMuted }
+                    key = 'mute'
+                    onClick = { this._onRemoteMenuClose }
+                    participantID = { participantID } />
+            );
+            buttons.push(
+                <KickButton
+                    key = 'kick'
+                    onClick = { this._onRemoteMenuClose }
+                    participantID = { participantID } />
+            );
+        }
+
+        if (remoteControlState) {
+            buttons.push(
+                <RemoteControlButton
+                    key = 'remote-control'
+                    onClick = { onRemoteControlToggle }
+                    participantID = { participantID }
+                    remoteControlState = { remoteControlState } />
+            );
+        }
+
+        if (onVolumeChange && isModerator) {
+            buttons.push(
+                <VolumeSlider
+                    initialValue = { initialVolumeValue }
+                    key = 'volume-slider'
+                    onChange = { onVolumeChange } />
+            );
+        }
+
+        if (buttons.length > 0) {
+            return (
+                <RemoteVideoMenu id = { participantID }>
+                    { buttons }
+                </RemoteVideoMenu>
+            );
+        }
+
+        return null;
     }
 }
 

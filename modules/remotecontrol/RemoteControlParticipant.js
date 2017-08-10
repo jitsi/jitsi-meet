@@ -1,5 +1,6 @@
 /* @flow */
 
+import EventEmitter from 'events';
 import { getLogger } from 'jitsi-meet-logger';
 
 import {
@@ -13,13 +14,14 @@ declare var APP: Object;
 /**
  * Implements common logic for Receiver class and Controller class.
  */
-export default class RemoteControlParticipant {
+export default class RemoteControlParticipant extends EventEmitter {
     _enabled: boolean;
 
     /**
      * Creates new instance.
      */
     constructor() {
+        super();
         this._enabled = false;
     }
 

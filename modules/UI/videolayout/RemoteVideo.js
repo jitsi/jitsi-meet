@@ -51,6 +51,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.flipX = false;
     this.isLocal = false;
     this.popupMenuIsHovered = false;
+    this._isRemoteControlSessionActive = false;
     /**
      * The flag is set to <tt>true</tt> after the 'onplay' event has been
      * triggered on the current video element. It goes back to <tt>false</tt>
@@ -87,9 +88,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 
     this.initBrowserSpecificProperties();
 
-    if (APP.conference.isModerator || this._supportsRemoteControl) {
-        this.addRemoteVideoMenu();
-    }
+    this.addRemoteVideoMenu();
 
     this.VideoLayout.resizeThumbnails(false, true);
 
@@ -135,7 +134,9 @@ RemoteVideo.prototype._generatePopupContent = function () {
     let remoteControlState = null;
     let onRemoteControlToggle;
 
-    if (this._supportsRemoteControl) {
+    if (this._supportsRemoteControl
+        && ((!APP.remoteControl.active && !this._isRemoteControlSessionActive)
+            || APP.remoteControl.controller.activeParticipant === this.id)) {
         if (controller.getRequestedParticipant() === this.id) {
             onRemoteControlToggle = () => {};
             remoteControlState = REMOTE_CONTROL_MENU_STATES.REQUESTING;
@@ -179,7 +180,18 @@ RemoteVideo.prototype._generatePopupContent = function () {
 };
 
 RemoteVideo.prototype._onRemoteVideoMenuDisplay = function () {
-    this.updateRemoteVideoMenu(this.isAudioMuted, true);
+    this.updateRemoteVideoMenu();
+};
+
+/**
+ * Sets the remote control active status for the remote video.
+ *
+ * @param {boolean} isActive - The new remote control active status.
+ * @returns {void}
+ */
+RemoteVideo.prototype.setRemoteControlActiveStatus = function(isActive) {
+    this._isRemoteControlSessionActive = isActive;
+    this.updateRemoteVideoMenu();
 };
 
 /**
@@ -192,18 +204,7 @@ RemoteVideo.prototype.setRemoteControlSupport = function(isSupported = false) {
         return;
     }
     this._supportsRemoteControl = isSupported;
-    if(!isSupported) {
-        return;
-    }
-
-    if(!this.hasRemoteVideoMenu) {
-        //create menu
-        this.addRemoteVideoMenu();
-    } else {
-        //update the content
-        this.updateRemoteVideoMenu(this.isAudioMuted, true);
-    }
-
+    this.updateRemoteVideoMenu();
 };
 
 /**
@@ -215,7 +216,7 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
         if(result === null) {
             return;
         }
-        this.updateRemoteVideoMenu(this.isAudioMuted, true);
+        this.updateRemoteVideoMenu();
         APP.UI.messageHandler.notify(
             "dialog.remoteControlTitle",
             (result === false) ? "dialog.remoteControlDeniedMessage"
@@ -232,7 +233,7 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
         }
     }, error => {
         logger.error(error);
-        this.updateRemoteVideoMenu(this.isAudioMuted, true);
+        this.updateRemoteVideoMenu();
         APP.UI.messageHandler.notify(
             "dialog.remoteControlTitle",
             "dialog.remoteControlErrorMessage",
@@ -240,7 +241,7 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
                 || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME}
         );
     });
-    this.updateRemoteVideoMenu(this.isAudioMuted, true);
+    this.updateRemoteVideoMenu();
 };
 
 /**
@@ -249,7 +250,7 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function () {
 RemoteVideo.prototype._stopRemoteControl = function () {
     // send message about stopping
     APP.remoteControl.controller.stop();
-    this.updateRemoteVideoMenu(this.isAudioMuted, true);
+    this.updateRemoteVideoMenu();
 };
 
 /**
@@ -286,9 +287,10 @@ RemoteVideo.prototype._setAudioVolume = function (newVal) {
  * Updates the remote video menu.
  *
  * @param isMuted the new muted state to update to
- * @param force to work even if popover is not visible
  */
-RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
+RemoteVideo.prototype.updateRemoteVideoMenu = function (
+    isMuted = this.isAudioMuted
+) {
     this.isAudioMuted = isMuted;
 
     this._generatePopupContent();
@@ -323,8 +325,6 @@ RemoteVideo.prototype._figureOutMutedWhileDisconnected = function() {
  * Adds the remote video menu element for the given <tt>id</tt> in the
  * given <tt>parentElement</tt>.
  *
- * @param id the id indicating the video for which we're adding a menu.
- * @param parentElement the parent element where this menu will be added
  */
 RemoteVideo.prototype.addRemoteVideoMenu = function () {
     if (interfaceConfig.filmStripOnly) {
@@ -576,6 +576,11 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     if (!isVideo) {
         this._audioStreamElement = streamElement;
+
+        // If the remote video menu was created before the audio stream was
+        // attached we need to update the menu in order to show the volume
+        // slider.
+        this.updateRemoteVideoMenu();
     }
 };
 
