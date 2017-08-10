@@ -163,14 +163,15 @@ export class VideoQualityLabel extends Component {
         return (
             <div
                 className = { classNames }
-                id = 'videoResolutionLabel'
-                onClick = { this._onDialogToggle }>
+                id = 'videoResolutionLabel'>
                 <AKInlineDialog
                     content = { <VideoQualityDialog /> }
                     isOpen = { this.state.showVideoQualityDialog }
                     onClose = { this._onDialogClose }
                     position = { 'left top' }>
-                    <div className = 'video-quality-label-status'>
+                    <div
+                        className = 'video-quality-label-status'
+                        onClick = { this._onDialogToggle }>
                         { _audioOnly
                             ? <i className = 'icon-visibility-off' />
                             : this._mapResolutionToTranslation(_resolution) }
