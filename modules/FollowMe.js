@@ -145,15 +145,9 @@ class FollowMe {
     _setFollowMeInitialState() {
         this._filmstripToggled.bind(this, this._UI.isFilmstripVisible());
 
-        var pinnedId = VideoLayout.getPinnedId();
-        var isPinned = false;
-        var smallVideo;
-        if (pinnedId) {
-            isPinned = true;
-            smallVideo = VideoLayout.getSmallVideo(pinnedId);
-        }
+        const pinnedId = VideoLayout.getPinnedId();
 
-        this._nextOnStage(smallVideo.getId(), isPinned);
+        this._nextOnStage(pinnedId, Boolean(pinnedId));
 
         // check whether shared document is enabled/initialized
         if(this._UI.getSharedDocumentManager())

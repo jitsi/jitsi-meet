@@ -176,9 +176,7 @@ function _pinParticipant(store, next, action) {
     const participantById = getParticipantById(participants, id);
     let pin;
 
-    const shouldEmitToLegacyApp = typeof APP !== 'undefined';
-
-    if (shouldEmitToLegacyApp) {
+    if (typeof APP !== 'undefined') {
         const pinnedParticipant = getPinnedParticipant(participants);
         const actionName = action.participant.id ? 'pinned' : 'unpinned';
         let videoType;
@@ -216,10 +214,6 @@ function _pinParticipant(store, next, action) {
         } catch (err) {
             _handleParticipantError(err);
         }
-    }
-
-    if (shouldEmitToLegacyApp) {
-        APP.UI.emitEvent(UIEvents.PINNED_ENDPOINT, id, Boolean(id));
     }
 
     return next(action);
