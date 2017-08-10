@@ -1,7 +1,10 @@
 /* global APP, $, interfaceConfig, JitsiMeetJS  */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import { pinParticipant } from '../../../react/features/base/participants';
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../../../react/features/base/participants';
 
 import Filmstrip from "./Filmstrip";
 import UIEvents from "../../../service/UI/UIEvents";
@@ -21,14 +24,6 @@ var localVideoThumbnail = null;
 var currentDominantSpeaker = null;
 
 var eventEmitter = null;
-
-// TODO Remove this private reference to pinnedId once other components
-// interested in its updates are moved to react/redux.
-/**
- * Currently focused video jid
- * @type {String}
- */
-var pinnedId = null;
 
 /**
  * flipX state of the localVideo
@@ -63,7 +58,7 @@ function onContactClicked (id) {
             // let the bridge adjust its lastN set for myjid and store
             // the pinned user in the lastNPickupId variable to be
             // picked up later by the lastN changed event handler.
-            APP.store.dispatch(pinParticipant(remoteVideo.id));
+            this.pinParticipant(remoteVideo.id);
         }
     }
 }
@@ -281,6 +276,7 @@ var VideoLayout = {
             return;
         }
 
+        const pinnedId = this.getPinnedId();
         let newId;
 
         if (pinnedId)
@@ -392,11 +388,25 @@ var VideoLayout = {
     },
 
     isPinned (id) {
-        return (pinnedId) ? (id === pinnedId) : false;
+        return id === this.getPinnedId();
     },
 
     getPinnedId () {
-        return pinnedId;
+        const { id } = getPinnedParticipant(APP.store.getState()) || {};
+
+        return id || null;
+    },
+
+    /**
+     * Updates the desired pinned participant and notifies web UI of the change.
+     *
+     * @param {string|null} id - The participant id of the participant to be
+     * pinned. Pass in null to unpin without pinning another participant.
+     * @returns {void}
+     */
+    pinParticipant(id) {
+        APP.store.dispatch(pinParticipant(id));
+        APP.UI.emitEvent(UIEvents.PINNED_ENDPOINT, id, Boolean(id));
     },
 
     /**
@@ -406,6 +416,8 @@ var VideoLayout = {
      */
     handleVideoThumbClicked (id) {
         var smallVideo = VideoLayout.getSmallVideo(id);
+        const pinnedId = this.getPinnedId();
+
         if(pinnedId) {
             var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly) {
@@ -416,9 +428,7 @@ var VideoLayout = {
         // Unpin if currently pinned.
         if (pinnedId === id)
         {
-            pinnedId = null;
-
-            APP.store.dispatch(pinParticipant(null));
+            this.pinParticipant(null);
 
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
@@ -436,14 +446,11 @@ var VideoLayout = {
             return;
         }
 
-        // Lock new video
-        pinnedId = id;
-
         // Update focused/pinned interface.
         if (id) {
             if (smallVideo && !interfaceConfig.filmStripOnly) {
                 smallVideo.focus(true);
-                APP.store.dispatch(pinParticipant(id));
+                this.pinParticipant(id);
             }
         }
 
@@ -530,6 +537,8 @@ var VideoLayout = {
      * @returns {void}
      */
     _maybePlaceParticipantOnLargeVideo(resourceJid) {
+        const pinnedId = this.getPinnedId();
+
         if ((!pinnedId &&
             !currentDominantSpeaker &&
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
@@ -727,7 +736,7 @@ var VideoLayout = {
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
         // FIXME: there is no "videoactive.jingle" event.
-        if (!interfaceConfig.filmStripOnly && !pinnedId
+        if (!interfaceConfig.filmStripOnly && !this.getPinnedId()
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
@@ -819,10 +828,9 @@ var VideoLayout = {
 
     removeParticipantContainer (id) {
         // Unlock large video
-        if (pinnedId === id) {
+        if (this.getPinnedId() === id) {
             logger.info("Focused video owner has left the conference");
-            pinnedId = null;
-            APP.store.dispatch(pinParticipant(null));
+            this.pinParticipant(null);
         }
 
         if (currentDominantSpeaker === id) {
@@ -1072,6 +1080,8 @@ var VideoLayout = {
         // (pinned remote video) use its video type,
         // if not then use default type - large video
         if (!show) {
+            const pinnedId = this.getPinnedId();
+
             if(pinnedId)
                 containerTypeToShow = this.getRemoteVideoType(pinnedId);
             else
