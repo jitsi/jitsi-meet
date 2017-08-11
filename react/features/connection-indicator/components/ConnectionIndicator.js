@@ -175,19 +175,23 @@ class ConnectionIndicator extends Component {
      */
     render() {
         return (
-            <AKInlineDialog
-                content = { this._renderStatisticsTable() }
-                isOpen = { this.state.showStats }
-                onClose = { this._onStatsClose }
-                position = { this.props.statsPopoverPosition }>
-                <div
-                    className = 'popover-trigger connection-indicator indicator'
-                    onClick = { this._onStatsToggle }>
-                    <div className = 'connection indicatoricon'>
-                        { this._renderIcon() }
+            <div className = 'connection-indicator-container'>
+                <AKInlineDialog
+                    content = { this._renderStatisticsTable() }
+                    isOpen = { this.state.showStats }
+                    onClose = { this._onStatsClose }
+                    position = { this.props.statsPopoverPosition }>
+                    <div
+                        className = 'popover-trigger'
+                        onClick = { this._onStatsToggle }>
+                        <div className = 'connection-indicator indicator'>
+                            <div className = 'connection indicatoricon'>
+                                { this._renderIcon() }
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </AKInlineDialog>
+                </AKInlineDialog>
+            </div>
         );
     }
 
