@@ -279,11 +279,15 @@ export default class Controller extends RemoteControlParticipant {
 
         // $FlowDisableNextLine: we are sure that this._area is not null.
         this._area[0].onmousewheel = event => {
+            event.preventDefault();
+            event.stopPropagation();
             this.sendRemoteControlEndpointMessage(this._controlledParticipant, {
                 type: EVENTS.mousescroll,
                 x: event.deltaX,
                 y: event.deltaY
             });
+
+            return false;
         };
         $(window).keydown(this._onKeyPessHandler.bind(this,
             EVENTS.keydown));
