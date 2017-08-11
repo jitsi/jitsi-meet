@@ -53,16 +53,20 @@
     }
 
     &__toptoolbar {
-        $toolbarPadding: 5px;
+        $toolbarIconMargin: 5px;
         top: 0;
         padding-bottom: 0;
 
+        /**
+         * Intentionally use margin on the icon itself as AtlasKit InlineDialog
+         * positioning depends on the trigger (indicator icon).
+         */
         .indicator {
-            margin-top: $toolbarPadding;
+            margin-top: $toolbarIconMargin;
         }
 
         .indicator:nth-child(1) {
-            margin-left: $toolbarPadding;
+            margin-left: $toolbarIconMargin;
         }
 
         .connection-indicator,
