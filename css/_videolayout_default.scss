@@ -55,8 +55,15 @@
     &__toptoolbar {
         $toolbarPadding: 5px;
         top: 0;
-        padding: $toolbarPadding;
         padding-bottom: 0;
+
+        .indicator {
+            margin-top: $toolbarPadding;
+        }
+
+        .indicator:nth-child(1) {
+            margin-left: $toolbarPadding;
+        }
 
         .connection-indicator,
         span.indicator {
@@ -310,14 +317,13 @@
   background: $connectionIndicatorBg;
 }
 
-.remotevideomenu,
-.remote-video-menu-trigger
+.remote-video-menu-trigger,
+.remotevideomenu
 {
     display: inline-block;
     position: absolute;
     top: 0px;
     right: 0;
-    margin-top: 7px;
     z-index: $zindex3;
     width: 18px;
     height: 13px;
@@ -327,6 +333,9 @@
     >i{
         cursor: hand;
     }
+}
+.remote-video-menu-trigger {
+    margin-top: 7px;
 }
 
 /**
