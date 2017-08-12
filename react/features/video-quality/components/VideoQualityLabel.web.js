@@ -252,6 +252,7 @@ function _mapStateToProps(state) {
         audioOnly,
         conference
     } = state['features/base/conference'];
+    const { disable1On1Mode } = state['features/base/config'];
     const {
         remoteVideosVisible,
         visible
@@ -264,7 +265,7 @@ function _mapStateToProps(state) {
         _audioOnly: audioOnly,
         _conferenceStarted: Boolean(conference),
         _filmstripVisible: visible,
-        _remoteVideosVisible: remoteVideosVisible,
+        _remoteVideosVisible: Boolean(remoteVideosVisible || disable1On1Mode),
         _resolution: resolution
     };
 }
