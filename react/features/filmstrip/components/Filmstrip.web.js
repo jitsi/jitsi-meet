@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { Toolbox } from '../../toolbox';
 
@@ -10,8 +11,14 @@ import { Toolbox } from '../../toolbox';
  *
  * @extends Component
  */
-export default class Filmstrip extends Component {
+class Filmstrip extends Component {
     static propTypes = {
+        /**
+         * Whether or not the remote videos should be visible. Will toggle
+         * a class for hiding the videos.
+         */
+        _remoteVideosVisible: React.PropTypes.bool,
+
         /**
          * Whether or not the toolbox should be displayed within the filmstrip.
          */
@@ -25,8 +32,20 @@ export default class Filmstrip extends Component {
      * @returns {ReactElement}
      */
     render() {
+        /**
+         * Note: Appending of {@code RemoteVideo} views is handled through
+         * VideoLayout. The views do not get blown away on render() because
+         * ReactDOMComponent is only aware of the given JSX and not new appended
+         * DOM. As such, when updateDOMProperties gets called, only attributes
+         * will get updated without replacing the DOM. If the known DOM gets
+         * modified, then the views will get blown away.
+         */
+
+        const filmstripClassNames = `filmstrip ${this.props._remoteVideosVisible
+            ? '' : 'hide-videos'}`;
+
         return (
-            <div className = 'filmstrip'>
+            <div className = { filmstripClassNames }>
                 { this.props.displayToolbox ? <Toolbox /> : null }
                 <div
                     className = 'filmstrip__videos'
@@ -53,7 +72,7 @@ export default class Filmstrip extends Component {
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripRemoteVideos'>
-                        {/*
+                        {/**
                           * This extra video container is needed for scrolling
                           * thumbnails in Firefox; otherwise, the flex
                           * thumbnails resize instead of causing overflow.
@@ -75,3 +94,23 @@ export default class Filmstrip extends Component {
         );
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated {@code Filmstrip}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _remoteVideosVisible: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    const { remoteVideosVisible } = state['features/filmstrip'];
+    const { disable1On1Mode } = state['features/base/config'];
+
+    return {
+        _remoteVideosVisible: Boolean(remoteVideosVisible || disable1On1Mode)
+    };
+}
+
+export default connect(_mapStateToProps)(Filmstrip);

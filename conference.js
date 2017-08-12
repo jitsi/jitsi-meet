@@ -62,6 +62,7 @@ import { getLocationContextRoot } from './react/features/base/util';
 import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from  './react/features/desktop-picker';
 import { maybeOpenFeedbackDialog } from './react/features/feedback';
+import { setFilmstripRemoteVideosVisibility } from './react/features/filmstrip';
 import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
@@ -2176,8 +2177,9 @@ export default {
                 || remoteVideosCount > 1
                 || remoteParticipantsCount !== remoteVideosCount;
 
-            APP.UI.setRemoteThumbnailsVisibility(
-                Boolean(shouldShowRemoteThumbnails));
+            APP.store.dispatch(
+                setFilmstripRemoteVideosVisibility(
+                    Boolean(shouldShowRemoteThumbnails)));
         }
     },
     /**

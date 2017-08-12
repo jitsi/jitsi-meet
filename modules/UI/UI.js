@@ -290,10 +290,6 @@ UI.start = function () {
     SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);
 
-    // By default start with remote videos hidden and rely on other logic to
-    // make them visible.
-    UI.setRemoteThumbnailsVisibility(false);
-
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo();
@@ -1219,16 +1215,6 @@ UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
  * @returns {number} The number of remote videos.
  */
 UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
-
-/**
- * Makes remote thumbnail videos visible or not visible.
- *
- * @param {boolean} shouldHide - True if remote thumbnails should be hidden,
- * false f they should be visible.
- * @returns {void}
- */
-UI.setRemoteThumbnailsVisibility
-    = shouldHide => Filmstrip.setRemoteVideoVisibility(shouldHide);
 
 /**
  * Sets the remote control active status for a remote participant.
