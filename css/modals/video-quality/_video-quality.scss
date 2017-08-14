@@ -1,8 +1,8 @@
 .video-quality-dialog {
     color: $modalTextColor;
 
-    .video-quality-dialog-title {
-        margin-bottom: 10px;
+    .hide-warning {
+        visibility: hidden;
     }
 
     .video-quality-dialog-contents {
@@ -10,7 +10,7 @@
         color: $modalTextColor;
         display: flex;
         flex-direction: column;
-        padding: 10px;
+        padding: 0 10px 10px;
         min-width: 250px;
 
         .video-quality-dialog-slider-container {

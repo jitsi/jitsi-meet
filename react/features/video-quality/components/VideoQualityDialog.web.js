@@ -115,13 +115,21 @@ class VideoQualityDialog extends Component {
     render() {
         const { _audioOnly, _p2p, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
+        const showP2PWarning = _p2p && !_audioOnly;
 
         return (
             <div className = 'video-quality-dialog'>
                 <h3 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
                 </h3>
-                { !_audioOnly && _p2p ? this._renderP2PMessage() : null }
+                <div className = { showP2PWarning ? '' : 'hide-warning' }>
+                    <InlineMessage
+                        secondaryText
+                            = { t('videoStatus.recHighDefinitionOnly') }
+                        title = { t('videoStatus.p2pEnabled') }>
+                        { t('videoStatus.p2pVideoQualityDescription') }
+                    </InlineMessage>
+                </div>
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
                         { /* FIXME: onChange and onMouseUp are both used for
@@ -145,24 +153,6 @@ class VideoQualityDialog extends Component {
                     </div>
                 </div>
             </div>
-        );
-    }
-
-    /**
-     * Creates React Elements for notifying that peer to peer is enabled.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderP2PMessage() {
-        const { t } = this.props;
-
-        return (
-            <InlineMessage
-                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
-                title = { t('videoStatus.p2pEnabled') }>
-                { t('videoStatus.p2pVideoQualityDescription') }
-            </InlineMessage>
         );
     }
 
