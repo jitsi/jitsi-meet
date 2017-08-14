@@ -157,8 +157,10 @@
 
     .remote-videos-container {
         transition: opacity 1s;
+    }
 
-        &.hide-videos {
+    &.hide-videos {
+        .remote-videos-container {
             opacity: 0;
             pointer-events: none;
         }

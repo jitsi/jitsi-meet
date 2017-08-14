@@ -15,7 +15,18 @@
          * any parent is also fixed.
          */
         position: fixed;
-        z-index: $tooltipsZ;
+
+        /**
+         * z-index adjusting is needed because the video state indicator has to
+         * display over the filmstrip when no videos are displayed but still be
+         * clickable but its inline dialogs must display over the video state
+         * indicator when videos are displayed.
+         */
+        z-index: calc(#{$tooltipsZ} + 1);
+
+        &.hide-videos {
+            z-index: calc(#{$tooltipsZ} - 1);
+        }
 
         /**
          * Hide videos by making them slight to the right.
@@ -27,6 +38,15 @@
             &.hidden {
                 bottom: auto;
                 right: -196px;
+            }
+
+            /**
+             * Remove horizontal filmstrip padding used to prevent videos from
+             * overlapping the left-side toolbar. An id selector is used to
+             * match id specificity with filmstrip styles.
+             */
+            &#remoteVideos {
+                padding-left: 0;
             }
         }
 

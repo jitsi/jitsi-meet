@@ -46,7 +46,8 @@ const Filmstrip = {
         }
 
         APP.store.dispatch(setFilmstripRemoteVideosVisibility(shouldShow));
-        this.filmstripRemoteVideos.toggleClass('hide-videos', !shouldShow);
+        $(`.${this.filmstripContainerClassName}`)
+            .toggleClass('hide-videos', !shouldShow);
     },
 
     /**
