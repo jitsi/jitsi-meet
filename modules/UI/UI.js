@@ -8,7 +8,6 @@ import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
-import JitsiPopover from "./util/JitsiPopover";
 import messageHandler from "./util/MessageHandler";
 import UIUtil from "./util/UIUtil";
 import { activateTooltips } from './util/Tooltip';
@@ -322,7 +321,6 @@ UI.start = function () {
         UI.showToolbar();
         Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
-        JitsiPopover.enabled = false;
     }
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {

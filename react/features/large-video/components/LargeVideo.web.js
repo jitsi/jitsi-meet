@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
+import { TranscriptionSubtitles } from '../../display-transcriptions/';
 
 declare var interfaceConfig: Object;
 
@@ -70,6 +71,7 @@ export default class LargeVideo extends Component {
 
                 { interfaceConfig.filmStripOnly ? null : <VideoQualityLabel /> }
 
+                <TranscriptionSubtitles />
                 <span
                     className = 'video-state-indicator centeredVideoLabel'
                     id = 'recordingLabel'>

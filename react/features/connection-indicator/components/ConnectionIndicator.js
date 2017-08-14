@@ -1,6 +1,5 @@
+import AKInlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
-
-import JitsiPopover from '../../../../modules/UI/util/JitsiPopover';
 
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
 import { ConnectionStatsTable } from '../../connection-stats';
@@ -68,20 +67,21 @@ class ConnectionIndicator extends Component {
         connectionStatus: React.PropTypes.string,
 
         /**
+         * Whether or not clicking the indicator should display a popover for
+         * more details.
+         */
+        enableStatsDisplay: React.PropTypes.bool,
+
+        /**
          * Whether or not the displays stats are for local video.
          */
         isLocalVideo: React.PropTypes.bool,
 
         /**
-         * The callback to invoke when the hover state over the popover changes.
+         * Relative to the icon from where the popover for more connection
+         * details should display.
          */
-        onHover: React.PropTypes.func,
-
-        /**
-         * Whether or not the popover should display a link that can toggle
-         * a more detailed view of the stats.
-         */
-        showMoreLink: React.PropTypes.bool,
+        statsPopoverPosition: React.PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
@@ -104,16 +104,6 @@ class ConnectionIndicator extends Component {
     constructor(props) {
         super(props);
 
-        /**
-         * The internal reference to topmost DOM/HTML element backing the React
-         * {@code Component}. Accessed directly for associating an element as
-         * the trigger for a popover.
-         *
-         * @private
-         * @type {HTMLDivElement}
-         */
-        this._rootElement = null;
-
         this.state = {
             /**
              * Whether or not the popover content should display additional
@@ -134,12 +124,14 @@ class ConnectionIndicator extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
+        this._onStatsClose = this._onStatsClose.bind(this);
+        this._onStatsToggle = this._onStatsToggle.bind(this);
+        this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
-        this._setRootElement = this._setRootElement.bind(this);
     }
 
     /**
-     * Creates a popover instance to display when the component is hovered.
+     * Starts listening for stat updates.
      *
      * @inheritdoc
      * returns {void}
@@ -147,20 +139,10 @@ class ConnectionIndicator extends Component {
     componentDidMount() {
         statsEmitter.subscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
-
-        this.popover = new JitsiPopover($(this._rootElement), {
-            content: this._renderStatisticsTable(),
-            skin: 'black',
-            position: interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top'
-        });
-
-        this.popover.addOnHoverPopover(this.props.onHover);
     }
 
     /**
-     * Updates the contents of the popover. This is done manually because the
-     * popover is not a React Component yet and so is not automatiucally aware
-     * of changed data.
+     * Updates which user's stats are being listened to.
      *
      * @inheritdoc
      * returns {void}
@@ -172,22 +154,17 @@ class ConnectionIndicator extends Component {
             statsEmitter.subscribeToClientStats(
                 this.props.userID, this._onStatsUpdated);
         }
-
-        this.popover.updateContent(this._renderStatisticsTable());
     }
 
     /**
-     * Cleans up any popover instance that is linked to the component.
+     * Sets the state to hide the Statistics Table popover.
      *
-     * @inheritdoc
-     * returns {void}
+     * @private
+     * @returns {void}
      */
     componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
-
-        this.popover.forceHide();
-        this.popover.remove();
     }
 
     /**
@@ -198,14 +175,46 @@ class ConnectionIndicator extends Component {
      */
     render() {
         return (
-            <div
-                className = 'connection-indicator indicator'
-                ref = { this._setRootElement }>
-                <div className = 'connection indicatoricon'>
-                    { this._renderIcon() }
-                </div>
+            <div className = 'connection-indicator-container'>
+                <AKInlineDialog
+                    content = { this._renderStatisticsTable() }
+                    isOpen = { this.state.showStats }
+                    onClose = { this._onStatsClose }
+                    position = { this.props.statsPopoverPosition }>
+                    <div
+                        className = 'popover-trigger'
+                        onClick = { this._onStatsToggle }>
+                        <div className = 'connection-indicator indicator'>
+                            <div className = 'connection indicatoricon'>
+                                { this._renderIcon() }
+                            </div>
+                        </div>
+                    </div>
+                </AKInlineDialog>
             </div>
         );
+    }
+
+    /**
+     * Sets the state not to show the Statistics Table popover.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onStatsClose() {
+        this.setState({ showStats: false });
+    }
+
+    /**
+     * Sets the state to show or hide the Statistics Table popover.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onStatsToggle() {
+        if (this.props.enableStatsDisplay) {
+            this.setState({ showStats: !this.state.showStats });
+        }
     }
 
     /**
@@ -313,17 +322,6 @@ class ConnectionIndicator extends Component {
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
         );
-    }
-
-    /**
-     * Sets an internal reference to the component's root element.
-     *
-     * @param {Object} element - The highest DOM element in the component.
-     * @private
-     * @returns {void}
-     */
-    _setRootElement(element) {
-        this._rootElement = element;
     }
 }
 

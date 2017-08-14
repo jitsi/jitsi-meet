@@ -4,15 +4,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { I18nextProvider } from 'react-i18next';
+
+import { i18next } from '../../../react/features/base/i18n';
 
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
-    MuteButton,
-    KickButton,
     REMOTE_CONTROL_MENU_STATES,
-    RemoteControlButton,
-    RemoteVideoMenu,
-    VolumeSlider
+    RemoteVideoMenuTriggerButton
 } from '../../../react/features/remote-video-menu';
 /* eslint-enable no-unused-vars */
 
@@ -21,13 +20,7 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import SmallVideo from "./SmallVideo";
 import UIUtils from "../util/UIUtil";
-import UIEvents from '../../../service/UI/UIEvents';
-import JitsiPopover from "../util/JitsiPopover";
 
-const MUTED_DIALOG_BUTTON_VALUES = {
-    cancel: 0,
-    muted: 1
-};
 const ParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
 
@@ -49,6 +42,8 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this._audioStreamElement = null;
     this.hasRemoteVideoMenu = false;
     this._supportsRemoteControl = false;
+    this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
+        ? 'left top' : 'top center';
     this.addRemoteVideoContainer();
     this.updateIndicators();
     this.setDisplayName();
@@ -78,8 +73,6 @@ function RemoteVideo(user, VideoLayout, emitter) {
     // Bind event handlers so they are only bound once for every instance.
     // TODO The event handlers should be turned into actions so changes can be
     // handled through reducers and middleware.
-    this._kickHandler = this._kickHandler.bind(this);
-    this._muteHandler = this._muteHandler.bind(this);
     this._requestRemoteControlPermissions
         = this._requestRemoteControlPermissions.bind(this);
     this._setAudioVolume = this._setAudioVolume.bind(this);
@@ -108,39 +101,6 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 };
 
 /**
- * Initializes the remote participant popup menu, by specifying previously
- * constructed popupMenuElement, containing all the menu items.
- *
- * @param popupMenuElement a pre-constructed element, containing the menu items
- * to display in the popup
- */
-RemoteVideo.prototype._initPopupMenu = function (popupMenuElement) {
-    let options = {
-        content: popupMenuElement.outerHTML,
-        skin: "black",
-        hasArrow: false,
-        position: interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top'
-    };
-    let element = $("#" + this.videoSpanId + " .remotevideomenu");
-    this.popover = new JitsiPopover(element, options);
-    this.popover.addOnHoverPopover(isHovered => {
-        this.popupMenuIsHovered = isHovered;
-        this.updateView();
-    });
-
-    // override popover show method to make sure we will update the content
-    // before showing the popover
-    let origShowFunc = this.popover.show;
-    this.popover.show = function () {
-        // update content by forcing it, to finish even if popover
-        // is not visible
-        this.updateRemoteVideoMenu(this.isAudioMuted, true);
-        // call the original show, passing its actual this
-        origShowFunc.call(this.popover);
-    }.bind(this);
-};
-
-/**
  * Checks whether current video is considered hovered. Currently it is hovered
  * if the mouse is over the video, or if the connection indicator or the popup
  * menu is shown(hovered).
@@ -160,6 +120,17 @@ RemoteVideo.prototype._isHovered = function () {
  * @private
  */
 RemoteVideo.prototype._generatePopupContent = function () {
+    if (interfaceConfig.filmStripOnly) {
+        return;
+    }
+
+    const remoteVideoMenuContainer
+        = this.container.querySelector('.remotevideomenu');
+
+    if (!remoteVideoMenuContainer) {
+        return;
+    }
+
     const { controller } = APP.remoteControl;
     let remoteControlState = null;
     let onRemoteControlToggle;
@@ -189,33 +160,26 @@ RemoteVideo.prototype._generatePopupContent = function () {
     const participantID = this.id;
 
     /* jshint ignore:start */
-    return (
-        <RemoteVideoMenu id = { participantID }>
-            { isModerator
-                ? <MuteButton
+    ReactDOM.render(
+        <Provider store = { APP.store }>
+            <I18nextProvider i18n = { i18next }>
+                <RemoteVideoMenuTriggerButton
+                    initialVolumeValue = { initialVolumeValue }
                     isAudioMuted = { this.isAudioMuted }
-                    onClick = { this._muteHandler }
-                    participantID = { participantID } />
-                : null }
-            { isModerator
-                ? <KickButton
-                    onClick = { this._kickHandler }
-                    participantID = { participantID } />
-                : null }
-            { remoteControlState
-                ? <RemoteControlButton
-                    onClick = { onRemoteControlToggle }
+                    isModerator = { isModerator }
+                    onMenuDisplay = { this._onRemoteVideoMenuDisplay.bind(this) }
+                    onRemoteControlToggle = { onRemoteControlToggle }
+                    onVolumeChange = { onVolumeChange }
                     participantID = { participantID }
                     remoteControlState = { remoteControlState } />
-                : null }
-            { onVolumeChange
-                ? <VolumeSlider
-                    initialValue = { initialVolumeValue }
-                    onChange = { onVolumeChange } />
-                : null }
-        </RemoteVideoMenu>
-    );
+            </I18nextProvider>
+        </Provider>,
+        remoteVideoMenuContainer);
     /* jshint ignore:end */
+};
+
+RemoteVideo.prototype._onRemoteVideoMenuDisplay = function () {
+    this.updateRemoteVideoMenu(this.isAudioMuted, true);
 };
 
 /**
@@ -288,27 +252,6 @@ RemoteVideo.prototype._stopRemoteControl = function () {
     this.updateRemoteVideoMenu(this.isAudioMuted, true);
 };
 
-RemoteVideo.prototype._muteHandler = function () {
-    if (this.isAudioMuted)
-        return;
-
-    RemoteVideo.showMuteParticipantDialog().then(reason => {
-        if(reason === MUTED_DIALOG_BUTTON_VALUES.muted) {
-            this.emitter.emit(UIEvents.REMOTE_AUDIO_MUTED, this.id);
-        }
-    }).catch(e => {
-        //currently shouldn't be called
-        logger.error(e);
-    });
-
-    this.popover.forceHide();
-};
-
-RemoteVideo.prototype._kickHandler = function () {
-    this.emitter.emit(UIEvents.USER_KICKED, this.id);
-    this.popover.forceHide();
-};
-
 /**
  * Get the remote participant's audio element.
  *
@@ -345,18 +288,10 @@ RemoteVideo.prototype._setAudioVolume = function (newVal) {
  * @param isMuted the new muted state to update to
  * @param force to work even if popover is not visible
  */
-RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted, force) {
+RemoteVideo.prototype.updateRemoteVideoMenu = function (isMuted) {
     this.isAudioMuted = isMuted;
 
-    if (!this.popover) {
-        return;
-    }
-
-    // generate content, translate it and add it to document only if
-    // popover is visible or we force to do so.
-    if(this.popover.popoverShown || force) {
-        this.popover.updateContent(this._generatePopupContent());
-    }
+    this._generatePopupContent();
 };
 
 /**
@@ -395,17 +330,9 @@ RemoteVideo.prototype.addRemoteVideoMenu = function () {
     if (interfaceConfig.filmStripOnly) {
         return;
     }
-    var spanElement = document.createElement('span');
-    spanElement.className = 'remotevideomenu';
 
-    this.container.appendChild(spanElement);
+    this._generatePopupContent();
 
-    var menuElement = document.createElement('i');
-    menuElement.className = 'icon-thumb-menu';
-    menuElement.title = 'Remote user controls';
-    spanElement.appendChild(menuElement);
-
-    this._initPopupMenu(this._generatePopupContent());
     this.hasRemoteVideoMenu = true;
 };
 
@@ -538,6 +465,8 @@ RemoteVideo.prototype.remove = function () {
 
     this._unmountIndicators();
 
+    this.removeRemoteVideoMenu();
+
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
     this.VideoLayout.updateAfterThumbRemoved(this.id);
@@ -591,17 +520,29 @@ RemoteVideo.prototype.addRemoteStreamElement = function (stream) {
 
     // Add click handler.
     let onClickHandler = (event) => {
-        let source = event.target || event.srcElement;
+        const $source = $(event.target || event.srcElement);
+        const { classList } = event.target;
 
-        // ignore click if it was done in popup menu
-        if ($(source).parents('.popupmenu').length === 0) {
+        const clickedOnPopover
+            = $source.parents('.connection-info').length > 0;
+        const clickedOnPopoverTrigger
+            = $source.parents('.popover-trigger').length > 0
+                || classList.contains('popover-trigger');
+        const clickedOnRemoteMenu
+            = $source.parents('.remotevideomenu').length > 0;
+
+        const ignoreClick = clickedOnPopoverTrigger
+            || clickedOnPopover
+            || clickedOnRemoteMenu;
+
+        if (!ignoreClick) {
             this.VideoLayout.handleVideoThumbClicked(this.id);
         }
 
         // On IE we need to populate this handler on video <object>
         // and it does not give event instance as an argument,
         // so we check here for methods.
-        if (event.stopPropagation && event.preventDefault) {
+        if (event.stopPropagation && event.preventDefault && !ignoreClick) {
             event.stopPropagation();
             event.preventDefault();
         }
@@ -665,8 +606,9 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
  */
 RemoteVideo.prototype.removeRemoteVideoMenu = function() {
     var menuSpan = $('#' + this.videoSpanId + '> .remotevideomenu');
+
     if (menuSpan.length) {
-        this.popover.forceHide();
+        ReactDOM.unmountComponentAtNode(menuSpan.get(0));
         menuSpan.remove();
         this.hasRemoteVideoMenu = false;
     }
@@ -740,30 +682,12 @@ RemoteVideo.createContainer = function (spanId) {
     presenceLabelContainer.className = 'presence-label-container';
     container.appendChild(presenceLabelContainer);
 
+    const remoteVideoMenuContainer = document.createElement('span');
+    remoteVideoMenuContainer.className = 'remotevideomenu';
+    container.appendChild(remoteVideoMenuContainer);
+
     var remotes = document.getElementById('filmstripRemoteVideosContainer');
     return remotes.appendChild(container);
-};
-
-/**
- * Shows 2 button dialog for confirmation from the user for muting remote
- * participant.
- */
-RemoteVideo.showMuteParticipantDialog = function () {
-    return new Promise(resolve => {
-        APP.UI.messageHandler.openTwoButtonDialog({
-            titleKey : "dialog.muteParticipantTitle",
-            msgString: "<div data-i18n='dialog.muteParticipantBody'></div>",
-            leftButtonKey: "dialog.muteParticipantButton",
-            dontShowAgain: {
-                id: "dontShowMuteParticipantDialog",
-                textKey: "dialog.doNotShowMessageAgain",
-                checked: true,
-                buttonValues: [true]
-            },
-            submitFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.muted),
-            closeFunction: () => resolve(MUTED_DIALOG_BUTTON_VALUES.cancel)
-        });
-    });
 };
 
 export default RemoteVideo;

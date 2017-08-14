@@ -292,7 +292,7 @@ class ConnectionStatsTable extends Component {
 
         return (
             <a
-                className = 'jitsipopover__showmore link'
+                className = 'showmore link'
                 onClick = { this.props.onShowMore } >
                 { this.props.t(translationKey) }
             </a>

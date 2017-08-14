@@ -27,7 +27,7 @@ class BaseIndicator extends Component {
         iconClassName: React.PropTypes.string,
 
         /**
-         * The front size for the icon.
+         * The font size for the icon.
          */
         iconSize: React.PropTypes.string,
 
