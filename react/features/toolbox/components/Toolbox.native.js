@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
+    VIDEO_MUTISM_AUTHORITY,
     setAudioMuted,
     setVideoMuted,
     toggleCameraFacingMode
@@ -167,7 +168,9 @@ class Toolbox extends Component {
         // sets the state of base/media. Whether the user's intention will turn
         // into reality is a whole different story which is of no concern to the
         // tapping.
-        this.props.dispatch(setAudioMuted(!this.props._audioMuted));
+        this.props.dispatch(setAudioMuted(!this.props._audioMuted,
+                                          VIDEO_MUTISM_AUTHORITY.USER,
+                                          /* ensureTrack */ true));
     }
 
     /**
@@ -182,7 +185,9 @@ class Toolbox extends Component {
         // sets the state of base/media. Whether the user's intention will turn
         // into reality is a whole different story which is of no concern to the
         // tapping.
-        this.props.dispatch(setVideoMuted(!this.props._videoMuted));
+        this.props.dispatch(setVideoMuted(!this.props._videoMuted,
+                                          VIDEO_MUTISM_AUTHORITY.USER,
+                                          /* ensureTrack */ true));
     }
 
     /**
