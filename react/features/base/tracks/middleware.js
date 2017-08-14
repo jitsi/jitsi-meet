@@ -11,6 +11,7 @@ import {
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
+import { createLocalTracksA } from './actions';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
@@ -153,8 +154,14 @@ function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
  * @private
  * @returns {void}
  */
-function _setMuted(store, { muted }, mediaType: MEDIA_TYPE) {
+function _setMuted(store, { ensureTrack, muted }, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
-    localTrack && setTrackMuted(localTrack.jitsiTrack, muted);
+    if (localTrack) {
+        setTrackMuted(localTrack.jitsiTrack, muted);
+    } else if (!muted && ensureTrack && typeof APP === 'undefined') {
+        // FIXME: This only runs on mobile now because web has its own way of
+        // creating local tracks. Adjust the check once they are unified.
+        store.dispatch(createLocalTracksA({ devices: [ mediaType ] }));
+    }
 }

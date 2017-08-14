@@ -7,7 +7,8 @@ import {
     MEDIA_TYPE,
     setAudioMuted,
     setVideoMuted,
-    toggleCameraFacingMode
+    toggleCameraFacingMode,
+    VIDEO_MUTISM_AUTHORITY
 } from '../../base/media';
 import { Container } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
@@ -167,7 +168,11 @@ class Toolbox extends Component {
         // sets the state of base/media. Whether the user's intention will turn
         // into reality is a whole different story which is of no concern to the
         // tapping.
-        this.props.dispatch(setAudioMuted(!this.props._audioMuted));
+        this.props.dispatch(
+            setAudioMuted(
+                !this.props._audioMuted,
+                VIDEO_MUTISM_AUTHORITY.USER,
+                /* ensureTrack */ true));
     }
 
     /**
@@ -182,7 +187,11 @@ class Toolbox extends Component {
         // sets the state of base/media. Whether the user's intention will turn
         // into reality is a whole different story which is of no concern to the
         // tapping.
-        this.props.dispatch(setVideoMuted(!this.props._videoMuted));
+        this.props.dispatch(
+            setVideoMuted(
+                !this.props._videoMuted,
+                VIDEO_MUTISM_AUTHORITY.USER,
+                /* ensureTrack */ true));
     }
 
     /**

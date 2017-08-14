@@ -243,7 +243,11 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
     dispatch(setLastN(audioOnly ? 0 : undefined));
 
     // Mute/unmute the local video.
-    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+    dispatch(
+        setVideoMuted(
+            audioOnly,
+            VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY,
+            /* ensureTrack */ true));
 
     if (typeof APP !== 'undefined') {
         // TODO This should be a temporary solution that lasts only until
