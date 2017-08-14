@@ -48,15 +48,30 @@
 
     &__toolbar {
         bottom: 0;
-        padding: 0 5px 0 5px;
         height: $thumbnailToolbarHeight;
+        padding: 0 5px 0 5px;
     }
 
     &__toptoolbar {
-        $toolbarPadding: 5px;
+        $toolbarIconMargin: 5px;
         top: 0;
-        padding: $toolbarPadding;
         padding-bottom: 0;
+        /**
+         * Override text-align center as icons need to be left justified.
+         */
+        text-align: left;
+
+        /**
+         * Intentionally use margin on the icon itself as AtlasKit InlineDialog
+         * positioning depends on the trigger (indicator icon).
+         */
+        .indicator {
+            margin-top: $toolbarIconMargin;
+        }
+
+        .indicator:nth-child(1) {
+            margin-left: $toolbarIconMargin;
+        }
 
         .connection-indicator,
         span.indicator {
@@ -71,6 +86,15 @@
             }
         }
 
+        .connection-indicator-container {
+            display: inline-block;
+            vertical-align: top;
+
+            .popover-trigger {
+                display: inline-block;
+            }
+        }
+
         .connection-indicator,
         span.indicator {
             position: relative;
@@ -78,7 +102,6 @@
             text-align: center;
             line-height: $thumbnailIndicatorSize;
             padding: 0;
-            float: left;
             @include circle($thumbnailIndicatorSize);
             box-sizing: border-box;
             z-index: $zindex3;
@@ -124,6 +147,7 @@
 
             .icon-connection,
             .icon-connection-lost {
+                cursor: pointer;
                 font-size: 1em;
             }
         }
@@ -309,13 +333,13 @@
   background: $connectionIndicatorBg;
 }
 
+.remote-video-menu-trigger,
 .remotevideomenu
 {
     display: inline-block;
     position: absolute;
     top: 0px;
     right: 0;
-    margin-top: 7px;
     z-index: $zindex3;
     width: 18px;
     height: 13px;
@@ -325,6 +349,9 @@
     >i{
         cursor: hand;
     }
+}
+.remote-video-menu-trigger {
+    margin-top: 7px;
 }
 
 /**

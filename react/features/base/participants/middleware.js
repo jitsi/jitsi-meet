@@ -7,7 +7,11 @@ import {
 import { MiddlewareRegistry } from '../redux';
 
 import { localParticipantIdChanged } from './actions';
-import { PARTICIPANT_DISPLAY_NAME_CHANGED } from './actionTypes';
+import {
+    KICK_PARTICIPANT,
+    MUTE_REMOTE_PARTICIPANT,
+    PARTICIPANT_DISPLAY_NAME_CHANGED
+} from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID } from './constants';
 import { getLocalParticipant } from './functions';
 
@@ -28,6 +32,32 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_LEFT:
         store.dispatch(localParticipantIdChanged(LOCAL_PARTICIPANT_DEFAULT_ID));
+        break;
+
+    case KICK_PARTICIPANT:
+        if (typeof APP !== 'undefined') {
+            APP.UI.emitEvent(UIEvents.USER_KICKED, action.id);
+        }
+        break;
+
+    case MUTE_REMOTE_PARTICIPANT:
+        if (typeof APP !== 'undefined') {
+            APP.UI.messageHandler.openTwoButtonDialog({
+                titleKey: 'dialog.muteParticipantTitle',
+                msgString:
+                    '<div data-i18n="dialog.muteParticipantBody"></div>',
+                leftButtonKey: 'dialog.muteParticipantButton',
+                dontShowAgain: {
+                    id: 'dontShowMuteParticipantDialog',
+                    textKey: 'dialog.doNotShowMessageAgain',
+                    checked: true,
+                    buttonValues: [ true ]
+                },
+                submitFunction: () => {
+                    APP.UI.emitEvent(UIEvents.REMOTE_AUDIO_MUTED, action.id);
+                }
+            });
+        }
         break;
 
     // TODO Remove this middleware when the local display name update flow is

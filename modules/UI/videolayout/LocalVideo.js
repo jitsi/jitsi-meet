@@ -24,6 +24,9 @@ function LocalVideo(VideoLayout, emitter) {
         this._buildContextMenu();
     this.isLocal = true;
     this.emitter = emitter;
+    this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
+        ? 'left bottom' : 'top center';
+
     Object.defineProperty(this, 'id', {
         get: function () {
             return APP.conference.getMyUserId();
@@ -67,23 +70,34 @@ LocalVideo.prototype.changeVideo = function (stream) {
     this.videoStream = stream;
 
     let localVideoClick = (event) => {
-        // TODO Checking the classList is a workround to allow events to bubble
+        // TODO Checking the classes is a workround to allow events to bubble
         // into the DisplayName component if it was clicked. React's synthetic
         // events will fire after jQuery handlers execute, so stop propogation
         // at this point will prevent DisplayName from getting click events.
         // This workaround should be removeable once LocalVideo is a React
         // Component because then the components share the same eventing system.
+        const $source = $(event.target || event.srcElement);
         const { classList } = event.target;
-        const clickedOnDisplayName = classList.contains('displayname')
-            || classList.contains('editdisplayname');
+
+        const clickedOnDisplayName
+            = $source.parents('.displayNameContainer').length > 0;
+        const clickedOnPopover
+            = $source.parents('.connection-info').length > 0;
+        const clickedOnPopoverTrigger
+            = $source.parents('.popover-trigger').length > 0
+                || classList.contains('popover-trigger');
+
+        const ignoreClick = clickedOnDisplayName
+            || clickedOnPopoverTrigger
+            || clickedOnPopover;
 
         // FIXME: with Temasys plugin event arg is not an event, but
         // the clicked object itself, so we have to skip this call
-        if (event.stopPropagation && !clickedOnDisplayName) {
+        if (event.stopPropagation && !ignoreClick) {
             event.stopPropagation();
         }
 
-        if (!clickedOnDisplayName) {
+        if (!ignoreClick) {
             this.VideoLayout.handleVideoThumbClicked(this.id);
         }
     };

@@ -747,21 +747,24 @@ SmallVideo.prototype.updateIndicators = function () {
 
     /* jshint ignore:start */
     ReactDOM.render(
-        <div>
-            { this._showConnectionIndicator
-                ? <ConnectionIndicator
-                    connectionStatus = { this._connectionStatus }
-                    iconSize = { iconSize }
-                    isLocalVideo = { this.isLocal }
-                    onHover = { this._onPopoverHover }
-                    showMoreLink = { this.isLocal }
-                    userID = { this.id } />
-                : null }
-            { this._showRaisedHand
-                ? <RaisedHandIndicator iconSize = { iconSize } /> : null }
-            { this._showDominantSpeaker
-                ? <DominantSpeakerIndicator iconSize = { iconSize } /> : null }
-        </div>,
+        <I18nextProvider i18n = { i18next }>
+            <div>
+                { this._showConnectionIndicator
+                    ? <ConnectionIndicator
+                        connectionStatus = { this._connectionStatus }
+                        isLocalVideo = { this.isLocal }
+                        enableStatsDisplay = { !interfaceConfig.filmStripOnly }
+                        statsPopoverPosition = { this.statsPopoverLocation }
+                        userID = { this.id } />
+                    : null }
+                { this._showRaisedHand
+                    ? <RaisedHandIndicator iconSize = { iconSize } />
+                    : null }
+                { this._showDominantSpeaker
+                    ? <DominantSpeakerIndicator iconSize = { iconSize } />
+                    : null }
+            </div>
+        </I18nextProvider>,
         indicatorToolbar
     );
     /* jshint ignore:end */
