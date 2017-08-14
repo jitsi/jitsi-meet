@@ -73,7 +73,7 @@ class AddPasswordForm extends Component {
     /**
      * Directly bind a handler to the input element. This is done in order to
      * intercept enter presses so any outer forms do not become submitted.
-     * Atlaskit Buttton does not expose a way to hook onto keydown events.
+     * Atlaskit Button does not expose a way to hook onto keydown events.
      *
      * @inheritdoc
      */

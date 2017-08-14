@@ -2,7 +2,6 @@ import Button from '@atlaskit/button';
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 import { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
-import { noop as _onNoop } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -95,6 +94,8 @@ class DialInNumbersForm extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onCopyClick = this._onCopyClick.bind(this);
+        this._onDropdownTriggerInputChange
+            = this._onDropdownTriggerInputChange.bind(this);
         this._onOpenChange = this._onOpenChange.bind(this);
         this._onSelect = this._onSelect.bind(this);
         this._setCopyElement = this._setCopyElement.bind(this);
@@ -214,7 +215,7 @@ class DialInNumbersForm extends Component {
                         isLabelHidden = { true }
                         isReadOnly = { true }
                         label = 'Select Dial-In Number'
-                        onChange = { _onNoop }
+                        onChange = { this._onDropdownTriggerInputChange }
                         ref = { this._setInput }
                         shouldFitContainer = { true }
                         type = 'text'
@@ -339,6 +340,18 @@ class DialInNumbersForm extends Component {
         } catch (err) {
             logger.error('error when copying the text', err);
         }
+    }
+
+    /**
+     * This is a no-op function used to stub out FieldText's onChange in order
+     * to prevent FieldText from printing prop type validation errors. FieldText
+     * is used as a trigger for the dropdown in {@code DialInNumbersForm} to
+     * get the desired AtlasKit input look for the UI.
+     *
+     * @returns {void}
+     */
+    _onDropdownTriggerInputChange() {
+        // Intentionally left empty.
     }
 
     /**

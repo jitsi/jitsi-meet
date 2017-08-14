@@ -1,6 +1,5 @@
 import Button from '@atlaskit/button';
 import { FieldText } from '@atlaskit/field-text';
-import { noop as _onNoop } from 'lodash';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -49,6 +48,8 @@ class ShareLinkForm extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onClick = this._onClick.bind(this);
+        this._onDropdownTriggerInputChange
+            = this._onDropdownTriggerInputChange.bind(this);
         this._setInput = this._setInput.bind(this);
     }
 
@@ -62,8 +63,6 @@ class ShareLinkForm extends Component {
         const { t } = this.props;
         const inputValue = this.props.toCopy || t('inviteUrlDefaultMsg');
 
-        // FIXME An input HTML element is used here instead of atlaskit's
-        // field-text because the latter does not currently support readOnly.
         return (
             <div className = 'form-control'>
                 <label className = 'form-control__label'>
@@ -77,7 +76,7 @@ class ShareLinkForm extends Component {
                             isLabelHidden = { true }
                             isReadOnly = { true }
                             label = 'invite link'
-                            onChange = { _onNoop }
+                            onChange = { this._onDropdownTriggerInputChange }
                             ref = { this._setInput }
                             shouldFitContainer = { true }
                             type = 'text'
@@ -111,6 +110,18 @@ class ShareLinkForm extends Component {
         } catch (err) {
             logger.error('error when copying the text', err);
         }
+    }
+
+    /**
+     * This is a no-op function used to stub out FieldText's onChange in order
+     * to prevent FieldText from printing prop type validation errors. FieldText
+     * is used as a trigger for the dropdown in {@code ShareLinkForm} to get the
+     * desired AtlasKit input look for the UI.
+     *
+     * @returns {void}
+     */
+    _onDropdownTriggerInputChange() {
+        // Intentionally left empty.
     }
 
     /**

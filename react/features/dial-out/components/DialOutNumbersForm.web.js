@@ -1,7 +1,6 @@
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 import AKFieldText, { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
-import { noop as _onNoop } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -96,6 +95,8 @@ class DialOutNumbersForm extends Component {
         this._dialInputElem = null;
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onDropdownTriggerInputChange
+            = this._onDropdownTriggerInputChange.bind(this);
         this._onInputChange = this._onInputChange.bind(this);
         this._onOpenChange = this._onOpenChange.bind(this);
         this._onSelect = this._onSelect.bind(this);
@@ -209,7 +210,7 @@ class DialOutNumbersForm extends Component {
                     isLabelHidden = { true }
                     isReadOnly = { true }
                     label = 'dial-out-code'
-                    onChange = { _onNoop }
+                    onChange = { this._onDropdownTriggerInputChange }
                     type = 'text'
                     value = { dialCode || '' } />
                 <span className = 'dropdown-trigger-icon'>
@@ -254,6 +255,18 @@ class DialOutNumbersForm extends Component {
         const { dialCode } = this.state.selectedCountry;
 
         this.props.onChange(dialCode, this.state.dialInput);
+    }
+
+    /**
+     * This is a no-op function used to stub out FieldText's onChange in order
+     * to prevent FieldText from printing prop type validation errors. FieldText
+     * is used as a trigger for the dropdown in {@code DialOutNumbersForm} to
+     * get the desired AtlasKit input look for the UI.
+     *
+     * @returns {void}
+     */
+    _onDropdownTriggerInputChange() {
+        // Intentionally left empty.
     }
 
     /**
