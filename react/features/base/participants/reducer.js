@@ -1,4 +1,4 @@
-import { ReducerRegistry, set } from '../redux';
+import { assign, ReducerRegistry, set } from '../redux';
 import { randomHexString } from '../util';
 
 import {
@@ -7,7 +7,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    RAISED_HAND_CHANGED
 } from './actionTypes';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
@@ -52,10 +53,19 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
  */
 function _participant(state, action) {
     switch (action.type) {
-    case DOMINANT_SPEAKER_CHANGED:
-        // Only one dominant speaker is allowed.
-        return (
-            set(state, 'dominantSpeaker', state.id === action.participant.id));
+    case DOMINANT_SPEAKER_CHANGED: {
+        const dominantSpeaker = state.id === action.participant.id;
+
+        return assign(state,
+            {
+                // Only one dominant speaker is allowed.
+                dominantSpeaker,
+
+                // Lower the hand if dominant speaker.
+                raisedHand: dominantSpeaker ? false : state.raisedHand
+
+            });
+    }
 
     case PARTICIPANT_ID_CHANGED:
         if (state.id === action.oldValue) {
@@ -76,6 +86,7 @@ function _participant(state, action) {
             isBot,
             local,
             pinned,
+            raisedHand,
             role
         } = participant;
         let { avatarID, id, name } = participant;
@@ -113,6 +124,7 @@ function _participant(state, action) {
             local: local || false,
             name,
             pinned: pinned || false,
+            raisedHand: raisedHand || false,
             role: role || PARTICIPANT_ROLE.NONE
         };
     }
@@ -145,6 +157,9 @@ function _participant(state, action) {
     case PIN_PARTICIPANT:
         // Currently, only one pinned participant is allowed.
         return set(state, 'pinned', state.id === action.participant.id);
+
+    case RAISED_HAND_CHANGED:
+        return set(state, 'raisedHand', action.participant.raisedHand);
     }
 
     return state;
@@ -174,6 +189,16 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PARTICIPANT_UPDATED:
     case PIN_PARTICIPANT:
         return state.map(p => _participant(p, action));
+
+    case RAISED_HAND_CHANGED: {
+        return state.map(p => {
+            if (p.id === action.participant.id) {
+                return _participant(p, action);
+            }
+
+            return p;
+        });
+    }
 
     default:
         return state;

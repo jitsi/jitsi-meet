@@ -40,6 +40,7 @@ import {
     setVideoAvailable
 } from './react/features/base/media';
 import {
+    dominantSpeakerChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
@@ -48,7 +49,8 @@ import {
     participantLeft,
     participantPresenceChanged,
     participantRoleChanged,
-    participantUpdated
+    participantUpdated,
+    raisedHandChanged
 } from './react/features/base/participants';
 import {
     createLocalTracks,
@@ -468,6 +470,7 @@ export default {
      * config.js for listed options).
      */
     isDesktopSharingEnabled: false,
+
     /**
      * Set to <tt>true</tt> if the desktop sharing functionality has been
      * explicitly disabled in the config.
@@ -479,14 +482,6 @@ export default {
      * {@link interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP}.
      */
     desktopSharingDisabledTooltip: null,
-    /*
-     * Whether the local "raisedHand" flag is on.
-     */
-    isHandRaised: false,
-    /*
-     * Whether the local participant is the dominant speaker in the conference.
-     */
-    isDominantSpeaker: false,
 
     /**
      * Creates local media tracks and connects to a room. Will show error
@@ -1723,17 +1718,7 @@ export default {
                 APP.UI.participantConnectionStatusChanged(id);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
-            if (this.isLocalId(id)) {
-                this.isDominantSpeaker = true;
-                this.setRaisedHand(false);
-            } else {
-                this.isDominantSpeaker = false;
-                var participant = room.getParticipantById(id);
-                if (participant) {
-                    APP.UI.setRaisedHandStatus(participant, false);
-                }
-            }
-            APP.UI.markDominantSpeaker(id);
+            APP.store.dispatch(dominantSpeakerChanged(id));
         });
 
         if (!interfaceConfig.filmStripOnly) {
@@ -1816,7 +1801,8 @@ export default {
         room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, name, oldValue, newValue) => {
             if (name === "raisedHand") {
-                APP.UI.setRaisedHandStatus(participant, newValue);
+                APP.store.dispatch(
+                    raisedHandChanged(participant.getId(), Boolean(newValue)));
             }
         });
 
@@ -2339,28 +2325,6 @@ export default {
         APP.API.notifyVideoAvailabilityChanged(available);
     },
 
-    /**
-     * Toggles the local "raised hand" status.
-     */
-    maybeToggleRaisedHand() {
-        this.setRaisedHand(!this.isHandRaised);
-    },
-
-    /**
-     * Sets the local "raised hand" status to a particular value.
-     */
-    setRaisedHand(raisedHand) {
-        if (raisedHand !== this.isHandRaised)
-        {
-            APP.UI.onLocalRaiseHandChanged(raisedHand);
-
-            this.isHandRaised = raisedHand;
-            // Advertise the updated status
-            room.setLocalParticipantProperty("raisedHand", raisedHand);
-            // Update the view
-            APP.UI.setLocalRaisedHandStatus(raisedHand);
-        }
-    },
     /**
      * Log event to callstats and analytics.
      * @param {string} name the event name

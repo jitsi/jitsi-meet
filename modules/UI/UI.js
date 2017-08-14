@@ -179,11 +179,11 @@ UI.showLocalConnectionInterrupted = function (isInterrupted) {
 /**
  * Sets the "raised hand" status for a participant.
  */
-UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
+UI.setRaisedHandStatus = (raisedHandStatus, id, name) => {
+    VideoLayout.setRaisedHandStatus(id, raisedHandStatus);
     if (raisedHandStatus) {
-        messageHandler.participantNotification(participant.getDisplayName(),
-            'notify.somebody', 'connected', 'notify.raisedHand');
+        messageHandler.participantNotification(
+            name, 'notify.somebody', 'connected', 'notify.raisedHand');
     }
 };
 
