@@ -23,7 +23,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-export function createLocalTracks(
+export function _createLocalTracks(
         options,
         firePermissionPromptIsShownEvent,
         store) {

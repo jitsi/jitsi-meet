@@ -51,7 +51,7 @@ import {
     participantUpdated
 } from './react/features/base/participants';
 import {
-    createLocalTracks,
+    _createLocalTracks,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
@@ -548,7 +548,7 @@ export default {
                         return [desktopStream];
                     }
 
-                    return createLocalTracks({ devices: ['audio'] }, true)
+                    return _createLocalTracks({ devices: ['audio'] }, true)
                         .then(([audioStream]) => {
                             return [desktopStream, audioStream];
                         })
@@ -560,7 +560,7 @@ export default {
                     logger.error('Failed to obtain desktop stream', error);
                     screenSharingError = error;
                     return requestedAudio
-                        ? createLocalTracks({ devices: ['audio'] }, true)
+                        ? _createLocalTracks({ devices: ['audio'] }, true)
                         : [];
                 }).catch(error => {
                     audioOnlyError = error;
@@ -570,7 +570,7 @@ export default {
             // Resolve with no tracks
             tryCreateLocalTracks = Promise.resolve([]);
         } else {
-            tryCreateLocalTracks = createLocalTracks(
+            tryCreateLocalTracks = _createLocalTracks(
                 { devices: initialDevices }, true)
                 .catch(err => {
                     if (requestedAudio && requestedVideo) {
@@ -578,7 +578,7 @@ export default {
                         // Try audio only...
                         audioAndVideoError = err;
 
-                        return createLocalTracks({devices: ['audio']}, true);
+                        return _createLocalTracks({devices: ['audio']}, true);
                     } else if (requestedAudio && !requestedVideo) {
                         audioOnlyError = err;
 
@@ -598,7 +598,7 @@ export default {
 
                     // Try video only...
                     return requestedVideo
-                        ? createLocalTracks({devices: ['video']}, true)
+                        ? _createLocalTracks({devices: ['video']}, true)
                         : [];
                 })
                 .catch(err => {
@@ -779,7 +779,7 @@ export default {
         };
 
         if (!localAudio && this.audioMuted && !mute) {
-            createLocalTracks({ devices: ['audio'] }, false)
+            _createLocalTracks({ devices: ['audio'] }, false)
                 .then(([audioTrack]) => audioTrack)
                 .catch(error => {
                     maybeShowErrorDialog(error);
@@ -847,7 +847,7 @@ export default {
             //
             // FIXME when local track creation is moved to react/redux
             // it should take care of the use case described above
-            createLocalTracks({ devices: ['video'] }, false)
+            _createLocalTracks({ devices: ['video'] }, false)
                 .then(([videoTrack]) => videoTrack)
                 .catch(error => {
                     // FIXME should send some feedback to the API on error ?
@@ -1330,7 +1330,7 @@ export default {
         let promise = null;
 
         if (didHaveVideo) {
-            promise = createLocalTracks({ devices: ['video'] })
+            promise = _createLocalTracks({ devices: ['video'] })
                 .then(([stream]) => this.useVideoStream(stream))
                 .then(() => {
                     JitsiMeetJS.analytics.sendEvent(
@@ -1416,7 +1416,7 @@ export default {
         const didHaveVideo = Boolean(localVideo);
         const wasVideoMuted = this.videoMuted;
 
-        return createLocalTracks({
+        return _createLocalTracks({
             desktopSharingSources: options.desktopSharingSources,
             devices: ['desktop'],
             desktopSharingExtensionExternalInstallation: {
@@ -2004,7 +2004,7 @@ export default {
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
                 JitsiMeetJS.analytics.sendEvent('settings.changeDevice.video');
-                createLocalTracks({
+                _createLocalTracks({
                     devices: ['video'],
                     cameraDeviceId: cameraDeviceId,
                     micDeviceId: null
@@ -2033,7 +2033,7 @@ export default {
             (micDeviceId) => {
                 JitsiMeetJS.analytics.sendEvent(
                     'settings.changeDevice.audioIn');
-                createLocalTracks({
+                _createLocalTracks({
                     devices: ['audio'],
                     cameraDeviceId: null,
                     micDeviceId: micDeviceId
@@ -2260,7 +2260,7 @@ export default {
 
         promises.push(
             mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
-                    createLocalTracks,
+                    _createLocalTracks,
                     newDevices.videoinput,
                     newDevices.audioinput)
                 .then(tracks =>
