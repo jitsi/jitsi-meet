@@ -8,7 +8,7 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
-import { createLocalTracks } from './functions';
+import { createLocalTracksF } from './functions';
 
 /**
  * Request to start capturing local audio and/or video. By default, the user
@@ -17,7 +17,7 @@ import { createLocalTracks } from './functions';
  * @param {Object} [options] - For info @see JitsiMeetJS.createLocalTracks.
  * @returns {Function}
  */
-export function createInitialLocalTracks(options = {}) {
+export function createLocalTracksA(options = {}) {
     return (dispatch, getState) => {
         const devices
             = options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ];
@@ -28,7 +28,7 @@ export function createInitialLocalTracks(options = {}) {
 
         // The following executes on React Native only at the time of this
         // writing. The effort to port Web's createInitialLocalTracksAndConnect
-        // is significant and that's where the function createLocalTracks got
+        // is significant and that's where the function createLocalTracksF got
         // born. I started with the idea a porting so that we could inherit the
         // ability to getUserMedia for audio only or video only if getUserMedia
         // for audio and video fails. Eventually though, I realized that on
@@ -37,7 +37,7 @@ export function createInitialLocalTracks(options = {}) {
         // to implement them) and the right thing to do is to ask for each
         // device separately.
         for (const device of devices) {
-            createLocalTracks(
+            createLocalTracksF(
                 {
                     cameraDeviceId: options.cameraDeviceId,
                     devices: [ device ],
@@ -48,7 +48,7 @@ export function createInitialLocalTracks(options = {}) {
                 store)
             .then(localTracks => dispatch(_updateLocalTracks(localTracks)));
 
-            // TODO The function createLocalTracks logs the rejection reason of
+            // TODO The function createLocalTracksF logs the rejection reason of
             // JitsiMeetJS.createLocalTracks so there is no real benefit to
             // logging it here as well. Technically though,
             // _updateLocalTracks may cause a rejection so it may be nice to log

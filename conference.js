@@ -57,7 +57,7 @@ import {
     participantUpdated
 } from './react/features/base/participants';
 import {
-    createLocalTracks,
+    createLocalTracksF,
     isLocalTrackMuted,
     replaceLocalTrack,
     trackAdded,
@@ -539,7 +539,7 @@ export default {
                         return [desktopStream];
                     }
 
-                    return createLocalTracks({ devices: ['audio'] }, true)
+                    return createLocalTracksF({ devices: ['audio'] }, true)
                         .then(([audioStream]) => {
                             return [desktopStream, audioStream];
                         })
@@ -551,7 +551,7 @@ export default {
                     logger.error('Failed to obtain desktop stream', error);
                     screenSharingError = error;
                     return requestedAudio
-                        ? createLocalTracks({ devices: ['audio'] }, true)
+                        ? createLocalTracksF({ devices: ['audio'] }, true)
                         : [];
                 }).catch(error => {
                     audioOnlyError = error;
@@ -561,7 +561,7 @@ export default {
             // Resolve with no tracks
             tryCreateLocalTracks = Promise.resolve([]);
         } else {
-            tryCreateLocalTracks = createLocalTracks(
+            tryCreateLocalTracks = createLocalTracksF(
                 { devices: initialDevices }, true)
                 .catch(err => {
                     if (requestedAudio && requestedVideo) {
@@ -569,7 +569,7 @@ export default {
                         // Try audio only...
                         audioAndVideoError = err;
 
-                        return createLocalTracks({devices: ['audio']}, true);
+                        return createLocalTracksF({devices: ['audio']}, true);
                     } else if (requestedAudio && !requestedVideo) {
                         audioOnlyError = err;
 
@@ -589,7 +589,7 @@ export default {
 
                     // Try video only...
                     return requestedVideo
-                        ? createLocalTracks({devices: ['video']}, true)
+                        ? createLocalTracksF({devices: ['video']}, true)
                         : [];
                 })
                 .catch(err => {
@@ -781,12 +781,14 @@ export default {
         }
 
         if (!this.localAudio && !mute) {
-            createLocalTracks({ devices: ['audio'] }, false)
+            const maybeShowErrorDialog = error => {
+                showUI && APP.UI.showMicErrorNotification(error);
+            };
+
+            createLocalTracksF({ devices: ['audio'] }, false)
                 .then(([audioTrack]) => audioTrack)
                 .catch(error => {
-                    if (showUI) {
-                        APP.UI.showMicErrorNotification(error);
-                    }
+                    maybeShowErrorDialog(error);
 
                     // Rollback the audio muted status by using null track
                     return null;
@@ -838,16 +840,14 @@ export default {
             return;
         }
 
-        const maybeShowErrorDialog = (error) => {
-            if (showUI) {
-                APP.UI.showCameraErrorNotification(error);
-            }
-        };
-
         // FIXME it is possible to queue this task twice, but it's not causing
         // any issues. Specifically this can happen when the previous
         // get user media call is blocked on "ask user for permissions" dialog.
         if (!this.localVideo && !mute) {
+            const maybeShowErrorDialog = error => {
+                showUI && APP.UI.showCameraErrorNotification(error);
+            };
+
             // Try to create local video if there wasn't any.
             // This handles the case when user joined with no video
             // (dismissed screen sharing screen or in audio only mode), but
@@ -856,7 +856,7 @@ export default {
             //
             // FIXME when local track creation is moved to react/redux
             // it should take care of the use case described above
-            createLocalTracks({ devices: ['video'] }, false)
+            createLocalTracksF({ devices: ['video'] }, false)
                 .then(([videoTrack]) => videoTrack)
                 .catch(error => {
                     // FIXME should send some feedback to the API on error ?
@@ -1326,7 +1326,7 @@ export default {
         let promise = null;
 
         if (didHaveVideo) {
-            promise = createLocalTracks({ devices: ['video'] })
+            promise = createLocalTracksF({ devices: ['video'] })
                 .then(([stream]) => this.useVideoStream(stream))
                 .then(() => {
                     JitsiMeetJS.analytics.sendEvent(
@@ -1412,7 +1412,7 @@ export default {
         const didHaveVideo = Boolean(this.localVideo);
         const wasVideoMuted = this.isLocalVideoMuted();
 
-        return createLocalTracks({
+        return createLocalTracksF({
             desktopSharingSources: options.desktopSharingSources,
             devices: ['desktop'],
             desktopSharingExtensionExternalInstallation: {
@@ -2021,7 +2021,7 @@ export default {
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
                 JitsiMeetJS.analytics.sendEvent('settings.changeDevice.video');
-                createLocalTracks({
+                createLocalTracksF({
                     devices: ['video'],
                     cameraDeviceId: cameraDeviceId,
                     micDeviceId: null
@@ -2050,7 +2050,7 @@ export default {
             (micDeviceId) => {
                 JitsiMeetJS.analytics.sendEvent(
                     'settings.changeDevice.audioIn');
-                createLocalTracks({
+                createLocalTracksF({
                     devices: ['audio'],
                     cameraDeviceId: null,
                     micDeviceId: micDeviceId
@@ -2281,7 +2281,7 @@ export default {
 
         promises.push(
             mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
-                    createLocalTracks,
+                    createLocalTracksF,
                     newDevices.videoinput,
                     newDevices.audioinput)
                 .then(tracks =>

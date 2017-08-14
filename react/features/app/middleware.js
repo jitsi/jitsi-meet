@@ -5,7 +5,7 @@ import {
     SET_LOCATION_URL
 } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
-import { createInitialLocalTracks, destroyLocalTracks } from '../base/tracks';
+import { createLocalTracksA, destroyLocalTracks } from '../base/tracks';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -99,7 +99,7 @@ function _navigate({ dispatch, getState }) {
         } else {
             // Create the local tracks if they haven't been created yet.
             state['features/base/tracks'].some(t => t.local)
-                || dispatch(createInitialLocalTracks());
+                || dispatch(createLocalTracksA());
         }
     }
 
