@@ -309,7 +309,7 @@ function _mapDispatchToProps(dispatch) {
          * Sets the lock i.e. password protection of the conference/room.
          *
          * @private
-         * @returns {Object} Dispatched action.
+         * @returns {void}
          * @type {Function}
          */
         _onRoomLock() {
@@ -320,7 +320,7 @@ function _mapDispatchToProps(dispatch) {
          * Begins the UI procedure to share the conference/room URL.
          *
          * @private
-         * @returns {void} Dispatched action.
+         * @returns {void}
          * @type {Function}
          */
         _onShareRoom() {
@@ -331,7 +331,7 @@ function _mapDispatchToProps(dispatch) {
          * Toggles the audio-only flag of the conference.
          *
          * @private
-         * @returns {Object} Dispatched action.
+         * @returns {void}
          * @type {Function}
          */
         _onToggleAudioOnly() {
@@ -343,7 +343,7 @@ function _mapDispatchToProps(dispatch) {
          * cameras.
          *
          * @private
-         * @returns {Object} Dispatched action.
+         * @returns {void}
          * @type {Function}
          */
         _onToggleCameraFacingMode() {
