@@ -351,17 +351,16 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
 /**
  * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
  * the specified <tt>track</tt> is already in accord with the specified
- * <tt>muted</tt> value, then does nothing. In case the actual muting/unmuting
- * fails, a rollback action will be dispatched to undo the muting/unmuting.
+ * <tt>muted</tt> value, then does nothing.
  *
  * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
  * unmute.
  * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
  * <tt>true</tt>; otherwise, <tt>false</tt>.
- * @returns {Function}
+ * @returns {Promise}
  */
 export function setTrackMuted(track, muted) {
-    return dispatch => {
+    return () => {
         muted = Boolean(muted); // eslint-disable-line no-param-reassign
 
         if (track.isMuted() === muted) {
@@ -371,26 +370,9 @@ export function setTrackMuted(track, muted) {
         const f = muted ? 'mute' : 'unmute';
 
         return track[f]().catch(error => {
+
+            // FIXME emit mute failed, so that the app can show error dialog
             console.error(`set track ${f} failed`, error);
-
-            if (navigator.product === 'ReactNative') {
-                // Synchronizing the state of base/tracks into the state of
-                // base/media is not required in React (and, respectively, React
-                // Native) because base/media expresses the app's and the user's
-                // desires/expectations/intents and base/tracks expresses
-                // practice/reality. Unfortunately, the old Web does not comply
-                // and/or does the opposite.
-                return;
-            }
-
-            const setMuted
-                = track.mediaType === MEDIA_TYPE.AUDIO
-                    ? setAudioMuted
-                    : setVideoMuted;
-
-            // FIXME The following disregards VIDEO_MUTISM_AUTHORITY (in the
-            // case of setVideoMuted, of course).
-            dispatch(setMuted(!muted));
         });
     };
 }

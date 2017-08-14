@@ -7,6 +7,7 @@ import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import Recorder from './modules/recorder/Recorder';
 
+import { isVideoMutedByUser, setVideoMuted } from "./react/features/base/media";
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import { reload, reportError } from './modules/util/helpers';
@@ -52,6 +53,7 @@ import {
 } from './react/features/base/participants';
 import {
     createLocalTracks,
+    isLocalVideoTrackMuted,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
@@ -84,7 +86,7 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
-let localAudio, localVideo;
+let localAudio;
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -215,13 +217,9 @@ function muteLocalMedia(localTrack, muted) {
  * Mute or unmute local video stream if it exists.
  * @param {boolean} muted if video stream should be muted or unmuted.
  *
- * @returns {Promise} resolved in case mute/unmute operations succeeds or
- * rejected with an error if something goes wrong. It is expected that often
- * the error will be of the {@link JitsiTrackError} type, but it's not
- * guaranteed.
  */
 function muteLocalVideo(muted) {
-    return muteLocalMedia(localVideo, muted);
+    APP.store.dispatch(setVideoMuted(muted));
 }
 
 /**
@@ -456,7 +454,6 @@ export default {
     _localTracksInitialized: false,
     isModerator: false,
     audioMuted: false,
-    videoMuted: false,
     isSharingScreen: false,
     /**
      * Indicates if the desktop sharing functionality has been enabled.
@@ -487,6 +484,14 @@ export default {
      * Whether the local participant is the dominant speaker in the conference.
      */
     isDominantSpeaker: false,
+
+    /**
+     * The local video track (if any).
+     * FIXME tracks from redux store should be the single source of truth, but
+     * more refactoring is required around screen sharing ('localVideo' usages).
+     * @type {JitsiLocalTrack|null}
+     */
+    localVideo: null,
 
     /**
      * Creates local media tracks and connects to a room. Will show error
@@ -686,10 +691,12 @@ export default {
                         startWithVideoMuted: config.startWithVideoMuted,
                     });
             }).then(([tracks, con]) => {
+                const isVideoMuted
+                    = APP.store.getState()['features/base/media'].video.muted;
                 tracks.forEach(track => {
                     if (track.isAudioTrack() && this.audioMuted) {
                         track.mute();
-                    } else if (track.isVideoTrack() && this.videoMuted) {
+                    } else if (track.isVideoTrack() && isVideoMuted) {
                         track.mute();
                     }
                 });
@@ -732,8 +739,11 @@ export default {
                 }
 
                 if (!tracks.find((t) => t.isVideoTrack())) {
+                    // FIXME get rid of that once thumbnail mute indicators are
+                    // moved to react
+                    APP.UI.setVideoMuted(this.getMyUserId(), true);
+                    // FIXME MERGE
                     this.setVideoMuteStatus(true);
-                    APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
                 }
 
                 this._initDeviceList();
@@ -756,6 +766,19 @@ export default {
     isLocalId(id) {
         return this.getMyUserId() === id;
     },
+
+    /**
+     * Tells whether the local video is muted or not.
+     * @return {boolean}
+     */
+    isVideoMuted() {
+        // If the tracks are not ready, read from base/media state
+        return this._localTracksInitialized
+            ? isLocalVideoTrackMuted(
+                APP.store.getState()['features/base/tracks'])
+            : isVideoMutedByUser(APP.store);
+    },
+
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
      * @param {boolean} mute true for mute and false for unmute.
@@ -822,12 +845,12 @@ export default {
      * dialogs in case of media permissions error.
      */
     muteVideo(mute, showUI = true) {
-        // Not ready to modify track's state yet
+        // If not ready to modify track's state yet adjust the base/media
         if (!this._localTracksInitialized) {
-            this.setVideoMuteStatus(mute);
+            muteLocalVideo(mute);
 
             return;
-        } else if (localVideo && localVideo.isMuted() === mute) {
+        } else if (this.isVideoMuted() === mute) {
             // NO-OP
             return;
         }
@@ -838,7 +861,10 @@ export default {
             }
         };
 
-        if (!localVideo && this.videoMuted && !mute) {
+        // FIXME it is possible to queue this task twice, but it's not causing
+        // any issues. Specifically this can happen when the previous
+        // get user media call is blocked on "ask user for permissions" dialog.
+        if (!this.localVideo && !mute) {
             // Try to create local video if there wasn't any.
             // This handles the case when user joined with no video
             // (dismissed screen sharing screen or in audio only mode), but
@@ -858,14 +884,8 @@ export default {
                 })
                 .then(videoTrack => this.useVideoStream(videoTrack));
         } else {
-            const oldMutedStatus = this.videoMuted;
-
-            muteLocalVideo(mute)
-                .catch(error => {
-                    maybeShowErrorDialog(error);
-                    this.setVideoMuteStatus(oldMutedStatus);
-                    APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
-                });
+            // FIXME show error dialog if it fails (should be handled by react)
+            muteLocalVideo(mute);
         }
     },
     /**
@@ -874,7 +894,7 @@ export default {
      * dialogs in case of media permissions error.
      */
     toggleVideoMuted(showUI = true) {
-        this.muteVideo(!this.videoMuted, showUI);
+        this.muteVideo(!this.isVideoMuted(), showUI);
     },
     /**
      * Retrieve list of conference participants (without local user).
@@ -1216,20 +1236,18 @@ export default {
      */
     useVideoStream(newStream) {
         return APP.store.dispatch(
-            replaceLocalTrack(localVideo, newStream, room))
+            replaceLocalTrack(this.localVideo, newStream, room))
             .then(() => {
-                localVideo = newStream;
+                this.localVideo = newStream;
+
                 if (newStream) {
-                    this.setVideoMuteStatus(newStream.isMuted());
                     this.isSharingScreen = newStream.videoType === 'desktop';
 
                     APP.UI.addLocalStream(newStream);
                 } else {
-                    // No video is treated the same way as being video muted
-                    this.setVideoMuteStatus(true);
                     this.isSharingScreen = false;
                 }
-                APP.UI.setVideoMuted(this.getMyUserId(), this.videoMuted);
+                this.setVideoMuteStatus(this.isVideoMuted());
                 APP.UI.updateDesktopSharingButtons();
             });
     },
@@ -1336,10 +1354,10 @@ export default {
                     JitsiMeetJS.analytics.sendEvent(
                         'conference.sharingDesktop.stop');
                     logger.log('switched back to local video');
-                    if (!localVideo && wasVideoMuted) {
+                    if (!this.localVideo && wasVideoMuted) {
                         return Promise.reject('No local video to be muted!');
-                    } else if (wasVideoMuted && localVideo) {
-                        return localVideo.mute();
+                    } else if (wasVideoMuted && this.localVideo) {
+                        return this.localVideo.mute();
                     }
                 })
                 .catch(error => {
@@ -1413,8 +1431,8 @@ export default {
     _createDesktopTrack(options = {}) {
         let externalInstallation = false;
         let DSExternalInstallationInProgress = false;
-        const didHaveVideo = Boolean(localVideo);
-        const wasVideoMuted = this.videoMuted;
+        const didHaveVideo = Boolean(this.localVideo);
+        const wasVideoMuted = this.isVideoMuted();
 
         return createLocalTracks({
             desktopSharingSources: options.desktopSharingSources,
@@ -1846,8 +1864,9 @@ export default {
                     this.deviceChangeListener);
 
             // stop local video
-            if (localVideo) {
-                localVideo.dispose();
+            if (this.localVideo) {
+                this.localVideo.dispose();
+                this.localVideo = null;
             }
             // stop local audio
             if (localAudio) {
@@ -2199,9 +2218,9 @@ export default {
                                 localAudio.getDeviceId(), false);
                         }
 
-                        if (localVideo) {
+                        if (this.localVideo) {
                             APP.settings.setCameraDeviceId(
-                                localVideo.getDeviceId(), false);
+                                this.localVideo.getDeviceId(), false);
                         }
 
                         mediaDeviceHelper.setCurrentMediaDevices(devices);
@@ -2242,10 +2261,10 @@ export default {
 
         let newDevices =
             mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
-                devices, this.isSharingScreen, localVideo, localAudio);
+                devices, this.isSharingScreen, this.localVideo, localAudio);
         let promises = [];
         let audioWasMuted = this.audioMuted;
-        let videoWasMuted = this.videoMuted;
+        let videoWasMuted = this.isVideoMuted();
         let availableAudioInputDevices =
             mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
         let availableVideoInputDevices =
@@ -2327,11 +2346,11 @@ export default {
         // active which could be either screensharing stream or a video track
         // created before the permissions were rejected (through browser
         // config).
-        const available = videoDeviceCount > 0 || Boolean(localVideo);
+        const available = videoDeviceCount > 0 || Boolean(this.localVideo);
 
         logger.debug(
             'Camera button enabled: ' + available,
-            'local video: ' + localVideo,
+            'local video: ' + this.localVideo,
             'video devices: ' + videoMediaDevices,
             'device count: ' + videoDeviceCount);
 
@@ -2531,7 +2550,7 @@ export default {
      * track or the source id is not available, undefined will be returned.
      */
     getDesktopSharingSourceId() {
-        return localVideo.sourceId;
+        return this.localVideo.sourceId;
     },
 
     /**
@@ -2543,7 +2562,7 @@ export default {
      * returned.
      */
     getDesktopSharingSourceType() {
-        return localVideo.sourceType;
+        return this.localVideo.sourceType;
     },
 
     /**
@@ -2552,10 +2571,8 @@ export default {
      * @param {boolean} muted - New muted status.
      */
     setVideoMuteStatus(muted) {
-        if (this.videoMuted !== muted) {
-            this.videoMuted = muted;
-            APP.API.notifyVideoMutedStatusChanged(muted);
-        }
+        APP.UI.setVideoMuted(this.getMyUserId(), muted);
+        APP.API.notifyVideoMutedStatusChanged(muted);
     },
 
     /**

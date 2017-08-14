@@ -3,9 +3,9 @@
 import {
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
-    SET_VIDEO_AVAILABLE,
-    SET_VIDEO_MUTED } from '../base/media';
+    SET_VIDEO_AVAILABLE } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
+import { isLocalVideoTrackMuted, TRACK_UPDATED } from '../base/tracks';
 
 import { setToolbarButton } from './actions';
 import { CLEAR_TOOLBOX_TIMEOUT, SET_TOOLBOX_TIMEOUT } from './actionTypes';
@@ -43,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_VIDEO_AVAILABLE:
-    case SET_VIDEO_MUTED:
+    case TRACK_UPDATED:
         return _setVideoAvailableOrMuted(store, next, action);
     }
 
@@ -82,15 +82,17 @@ function _setAudioAvailableOrMuted({ dispatch, getState }, next, action) {
  * @param {Function} next - The redux function to continue dispatching the
  * specified {@code action} in the specified {@code store}.
  * @param {Object} action - Either {@link SET_VIDEO_AVAILABLE} or
- * {@link SET_VIDEO_MUTED}.
+ * {@link TRACK_UPDATED}.
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
 function _setVideoAvailableOrMuted({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    const { available, muted } = getState()['features/base/media'].video;
+    const { available } = getState()['features/base/media'].video;
     const i18nKey = available ? 'videomute' : 'cameraDisabled';
+    const tracks = getState()['features/base/tracks'];
+    const muted = isLocalVideoTrackMuted(tracks);
 
     dispatch(setToolbarButton('camera', {
         enabled: available,

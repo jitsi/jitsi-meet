@@ -24,7 +24,7 @@ import Settings from "./../settings/Settings";
 import { debounce } from "../util/helpers";
 
 import { updateDeviceList } from '../../react/features/base/devices';
-import { setAudioMuted, setVideoMuted } from '../../react/features/base/media';
+import { setAudioMuted } from '../../react/features/base/media';
 import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
@@ -684,7 +684,6 @@ UI.setAudioMuted = function (id, muted) {
 UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        APP.store.dispatch(setVideoMuted(muted));
         APP.conference.updateVideoIconEnabled();
     }
 };

@@ -155,3 +155,16 @@ export function getTrackByJitsiTrack(tracks, jitsiTrack) {
 export function getTracksByMediaType(tracks, mediaType) {
     return tracks.filter(t => t.mediaType === mediaType);
 }
+
+/**
+ * Checks if the first local video track in the given tracks set is muted.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @returns {boolean} True if local video track is muted or false if there are
+ * no local video tracks in the given set of tracks.
+ */
+export function isLocalVideoTrackMuted(tracks) {
+    const videoTrack = getLocalVideoTrack(tracks);
+
+    return !videoTrack || videoTrack.muted;
+}

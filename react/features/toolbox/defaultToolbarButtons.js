@@ -39,13 +39,14 @@ const buttons: Object = {
         isDisplayed: () => true,
         id: 'toolbar_button_camera',
         onClick() {
-            if (APP.conference.videoMuted) {
+            const newState = !APP.conference.isVideoMuted();
+
+            if (newState) {
                 JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
-                APP.UI.emitEvent(UIEvents.VIDEO_MUTED, false);
             } else {
                 JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
-                APP.UI.emitEvent(UIEvents.VIDEO_MUTED, true);
             }
+            APP.UI.emitEvent(UIEvents.VIDEO_MUTED, newState);
         },
         popups: [
             {
