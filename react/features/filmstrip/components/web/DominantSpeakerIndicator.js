@@ -20,7 +20,12 @@ class DominantSpeakerIndicator extends Component {
          *
          * @type {number}
          */
-        iconSize: React.PropTypes.number
+        iconSize: React.PropTypes.number,
+
+        /**
+         * From which side of the indicator the tooltip should appear from.
+         */
+        tooltipPosition: React.PropTypes.string
     };
 
     /**
@@ -35,7 +40,8 @@ class DominantSpeakerIndicator extends Component {
                 iconClassName = 'indicatoricon fa fa-bullhorn'
                 iconSize = { `${this.props.iconSize}px` }
                 id = 'dominantspeakerindicator'
-                tooltipKey = 'speaker' />
+                tooltipKey = 'speaker'
+                tooltipPosition = { this.props.tooltipPosition } />
         );
     }
 }

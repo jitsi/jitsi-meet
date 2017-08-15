@@ -41,9 +41,30 @@
     &__toptoolbar {
         position: absolute;
         left: 0;
-        z-index: $zindex3;
+        pointer-events: none;
+        z-index: $zindex10;
         width: 100%;
         box-sizing: border-box; // Includes the padding in the 100% width.
+
+        /**
+         * FIXME (lenny): Disabling pointer-events is a pretty big sin that
+         * sidesteps the problems. There are z-index wars occurring within
+         * videocontainer and AtlasKit Tooltips rely on their parent z-indexe
+         * being higher than whatever they need to appear over. So set a higher
+         * z-index for the tooltip containers but make any empty space not block
+         * mouse overs for various mouseover triggers.
+         */
+        pointer-events: none;
+
+        * {
+            pointer-events: auto;
+        }
+
+        .indicator-container {
+            display: inline-block;
+            float: left;
+            pointer-events: all;
+        }
     }
 
     &__toolbar {
@@ -69,24 +90,21 @@
             margin-top: $toolbarIconMargin;
         }
 
-        .indicator:nth-child(1) {
+        .indicator-container:nth-child(1) .indicator {
             margin-left: $toolbarIconMargin;
         }
 
         .connection-indicator,
-        span.indicator {
-            margin-right: em(5, 8);
+        div.indicator-container,
+         {
+            margin-right: 4px;
         }
 
-        span.indicator {
-            display: none;
-
-            &:last-child {
-                margin-right: 0;
-            }
+        div.indicator:last-child {
+            margin-right: 0;
         }
 
-        .connection-indicator-container {
+        .indicator-container {
             display: inline-block;
             vertical-align: top;
 
@@ -96,7 +114,7 @@
         }
 
         .connection-indicator,
-        span.indicator {
+        .indicator {
             position: relative;
             font-size: 8px;
             text-align: center;
@@ -307,7 +325,6 @@
     padding: 0;
     border: 0;
     margin: 0px 5px 0px 0px;
-    float: left;
 }
 
 /**
@@ -320,9 +337,17 @@
 /**
  * Toolbar icons positioned on the right.
  */
-.toolbar-icon.right {
-  float: right;
-  margin: 0px 0px 0px 5px;
+.moderator-icon {
+    display: inline-block;
+
+    &.right {
+        float: right;
+        margin: 0px 0px 0px 5px;
+    }
+
+    .toolbar-icon {
+        margin: 0;
+    }
 }
 
 .raisehandindicator {
@@ -340,7 +365,7 @@
     position: absolute;
     top: 0px;
     right: 0;
-    z-index: $zindex3;
+    z-index: $zindex2;
     width: 18px;
     height: 13px;
     color: #FFF;
