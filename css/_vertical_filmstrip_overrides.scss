@@ -22,7 +22,7 @@
          * clickable but its inline dialogs must display over the video state
          * indicator when videos are displayed.
          */
-        z-index: calc(#{$tooltipsZ} + 1);
+        z-index: $tooltipsZ;
 
         &.hide-videos {
             z-index: calc(#{$tooltipsZ} - 1);
