@@ -47,6 +47,10 @@ export class AbstractApp extends Component {
          */
         store: PropTypes.object,
 
+        // XXX Refer to the implementation of loadURLObject: in
+        // ios/sdk/src/JitsiMeetView.m for further information.
+        timestamp: PropTypes.any,
+
         /**
          * The URL, if any, with which the app was launched.
          */
@@ -143,7 +147,11 @@ export class AbstractApp extends Component {
         let { url } = nextProps;
 
         url = toURLString(url);
-        if (toURLString(this.props.url) !== url) {
+        if (toURLString(this.props.url) !== url
+
+                // XXX Refer to the implementation of loadURLObject: in
+                // ios/sdk/src/JitsiMeetView.m for further information.
+                || this.props.timestamp !== nextProps.timestamp) {
             this._openURL(url || this._getDefaultURL());
         }
     }

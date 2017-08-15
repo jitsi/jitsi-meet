@@ -15,6 +15,7 @@
  */
 
 #import <CoreText/CoreText.h>
+#include <mach/mach_time.h>
 
 #import <React/RCTAssert.h>
 #import <React/RCTLinkingManager.h>
@@ -238,6 +239,17 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     if (urlObject) {
         props[@"url"] = urlObject;
     }
+
+    // XXX The method loadURLObject: is supposed to be imperative i.e. a second
+    // invocation with one and the same URL is expected to join the respective
+    // conference again if the first invocation was followed by leaving the
+    // conference. However, React and, respectively,
+    // appProperties/initialProperties are declarative expressions i.e. one and
+    // the same URL will not trigger componentWillReceiveProps in the JavaScript
+    // source code. The workaround implemented bellow introduces imperativeness
+    // in React Component props by defining a unique value per loadURLObject:
+    // invocation.
+    props[@"timestamp"] = @(mach_absolute_time());
 
     if (rootView) {
         // Update props with the new URL.
