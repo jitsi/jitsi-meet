@@ -51,6 +51,7 @@
     "lodash": "4.17.4",
     "nuclear-js": "1.4.0",
     "postis": "2.2.0",
+    "prop-types": "15.5.10",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-i18next": "4.8.0",
