@@ -1,6 +1,11 @@
 .video-quality-dialog {
     color: $modalTextColor;
 
+    .hide-warning {
+        height: 0;
+        visibility: hidden;
+    }
+
     .video-quality-dialog-title {
         margin-bottom: 10px;
     }

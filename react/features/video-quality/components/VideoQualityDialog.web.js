@@ -115,13 +115,16 @@ class VideoQualityDialog extends Component {
     render() {
         const { _audioOnly, _p2p, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
+        const showP2PWarning = _p2p && !_audioOnly;
 
         return (
             <div className = 'video-quality-dialog'>
                 <h3 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
                 </h3>
-                { !_audioOnly && _p2p ? this._renderP2PMessage() : null }
+                <div className = { showP2PWarning ? '' : 'hide-warning' }>
+                    { this._renderP2PMessage() }
+                </div>
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
                         { /* FIXME: onChange and onMouseUp are both used for
