@@ -316,16 +316,27 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
 SmallVideo.prototype.updateStatusBar = function () {
     const statusBarContainer
         = this.container.querySelector('.videocontainer__toolbar');
+    const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
 
     /* jshint ignore:start */
     ReactDOM.render(
-        <div>
-            { this.isAudioMuted ? <AudioMutedIndicator /> : null }
-            { this.isVideoMuted ? <VideoMutedIndicator /> : null }
-            { this._isModerator
-                && !interfaceConfig.DISABLE_FOCUS_INDICATOR
-                    ? <ModeratorIndicator /> : null }
-        </div>,
+        <I18nextProvider i18n = { i18next }>
+            <div>
+                { this.isAudioMuted
+                    ? <AudioMutedIndicator
+                        tooltipPosition = { tooltipPosition } />
+                    : null }
+                { this.isVideoMuted
+                    ? <VideoMutedIndicator
+                        tooltipPosition = { tooltipPosition } />
+                    : null }
+                { this._isModerator
+                    && !interfaceConfig.DISABLE_FOCUS_INDICATOR
+                        ? <ModeratorIndicator
+                             tooltipPosition = { tooltipPosition } />
+                        : null }
+            </div>
+        </I18nextProvider>,
         statusBarContainer);
     /* jshint ignore:end */
 };
@@ -744,6 +755,7 @@ SmallVideo.prototype.updateIndicators = function () {
         = this.container.querySelector('.videocontainer__toptoolbar');
 
     const iconSize = UIUtil.getIndicatorFontSize();
+    const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
 
     /* jshint ignore:start */
     ReactDOM.render(
@@ -758,10 +770,14 @@ SmallVideo.prototype.updateIndicators = function () {
                         userID = { this.id } />
                     : null }
                 { this._showRaisedHand
-                    ? <RaisedHandIndicator iconSize = { iconSize } />
+                    ? <RaisedHandIndicator
+                        iconSize = { iconSize }
+                        tooltipPosition = { tooltipPosition } />
                     : null }
                 { this._showDominantSpeaker
-                    ? <DominantSpeakerIndicator iconSize = { iconSize } />
+                    ? <DominantSpeakerIndicator
+                        iconSize = { iconSize }
+                        tooltipPosition = { tooltipPosition } />
                     : null }
             </div>
         </I18nextProvider>,

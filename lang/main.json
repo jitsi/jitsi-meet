@@ -168,9 +168,8 @@
     },
     "videothumbnail":
     {
-        "editnickname": "Click to edit your<br/>display name",
-        "moderator": "The owner of<br/>this conference",
-        "videomute": "Participant has<br/>stopped the camera",
+        "moderator": "Moderator",
+        "videomute": "Participant has stopped the camera",
         "mute": "Participant is muted",
         "kick": "Kick out",
         "muted": "Muted",

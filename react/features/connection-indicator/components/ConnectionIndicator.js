@@ -175,7 +175,7 @@ class ConnectionIndicator extends Component {
      */
     render() {
         return (
-            <div className = 'connection-indicator-container'>
+            <div className = 'indicator-container'>
                 <AKInlineDialog
                     content = { this._renderStatisticsTable() }
                     isOpen = { this.state.showStats }

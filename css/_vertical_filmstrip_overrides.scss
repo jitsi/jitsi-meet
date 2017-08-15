@@ -112,7 +112,7 @@
             &__toolbar {
                 text-align: right;
 
-                .toolbar-icon {
+                .right {
                     float: none;
                     margin: auto;
                 }
@@ -193,9 +193,28 @@
      */
     .connection-indicator,
     .remote-video-menu-trigger,
-    .videocontainer__toolbar,
-    .raisehandindicator,
-    #dominantspeakerindicator {
+    .indicator-icon-container {
         transform: translate3d(0, 0, 0);
+    }
+
+    .indicator-container {
+        float: none;
+    }
+
+    /**
+     * FIXME: disable pointer to allow any elements moved below to still be
+     * clickable. The real fix would to make sure those moved elements are
+     * actually part of the toolbar instead of positioning being faked.
+     */
+    .videocontainer__toolbar {
+        pointer-events: none;
+
+        > div {
+            pointer-events: none;
+        }
+
+        .toolbar-icon {
+            pointer-events: all;
+        }
     }
 }
