@@ -30,7 +30,9 @@ import {
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import {
     checkAutoEnableDesktopSharing,
+    clearButtonPopup,
     dockToolbox,
+    setButtonPopupTimeout,
     setToolbarButton,
     showDialPadButton,
     showEtherpadButton,
@@ -609,13 +611,21 @@ UI.inputDisplayNameHandler = function (newDisplayName) {
 
 /**
  * Show custom popup/tooltip for a specified button.
- * @param popupSelectorID the selector id of the popup to show
- * @param show true or false/show or hide the popup
- * @param timeout the time to show the popup
+ *
+ * @param {string} buttonName - The name of the button as specified in the
+ * button configurations for the toolbar.
+ * @param {string} popupSelectorID - The id of the popup to show as specified in
+ * the button configurations for the toolbar.
+ * @param {boolean} show - True or false/show or hide the popup
+ * @param {number} timeout - The time to show the popup
+ * @returns {void}
  */
-UI.showCustomToolbarPopup = function (popupSelectorID, show, timeout) {
-    eventEmitter.emit(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-        popupSelectorID, show, timeout);
+UI.showCustomToolbarPopup = function (buttonName, popupID, show, timeout) {
+    const action = show
+        ? setButtonPopupTimeout(buttonName, popupID, timeout)
+        : clearButtonPopup(buttonName);
+
+    APP.store.dispatch(action);
 };
 
 /**

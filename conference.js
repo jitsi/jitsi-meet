@@ -1263,21 +1263,24 @@ export default {
      * @returns {void}
      */
     _displayAudioOnlyTooltip(featureName) {
+        let buttonName = null;
         let tooltipElementId = null;
 
         switch (featureName) {
         case 'screenShare':
-            tooltipElementId = '#screenshareWhileAudioOnly';
+            buttonName = 'desktop';
+            tooltipElementId = 'screenshareWhileAudioOnly';
             break;
         case 'videoMute':
-            tooltipElementId = '#unmuteWhileAudioOnly';
+            buttonName = 'camera';
+            tooltipElementId = 'unmuteWhileAudioOnly';
             break;
         }
 
         if (tooltipElementId) {
             APP.UI.showToolbar(6000);
             APP.UI.showCustomToolbarPopup(
-                tooltipElementId, true, 5000);
+                buttonName, tooltipElementId, true, 5000);
         }
     },
 
@@ -1697,7 +1700,8 @@ export default {
         room.on(ConferenceEvents.TALK_WHILE_MUTED, () => {
             APP.UI.showToolbar(6000);
 
-            APP.UI.showCustomToolbarPopup('#talkWhileMutedPopup', true, 5000);
+            APP.UI.showCustomToolbarPopup(
+                'microphone', 'talkWhileMutedPopup', true, 5000);
         });
 
         room.on(

@@ -51,7 +51,6 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu',
                 dataAttr: 'audioOnly.featureToggleDisabled',
                 dataInterpolate: { feature: 'video mute' },
                 id: 'unmuteWhileAudioOnly'
@@ -143,7 +142,6 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu',
                 dataAttr: 'audioOnly.featureToggleDisabled',
                 dataInterpolate: { feature: 'screen sharing' },
                 id: 'screenshareWhileAudioOnly'
@@ -313,17 +311,14 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu',
                 dataAttr: 'toolbar.micMutedPopup',
                 id: 'micMutedPopup'
             },
             {
-                className: 'loginmenu',
                 dataAttr: 'toolbar.unableToUnmutePopup',
                 id: 'unableToUnmutePopup'
             },
             {
-                className: 'loginmenu',
                 dataAttr: 'toolbar.talkWhileMutedPopup',
                 id: 'talkWhileMutedPopup'
             }
@@ -419,9 +414,7 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu extendedToolbarPopup',
                 dataAttr: 'toolbar.sharedVideoMutedPopup',
-                dataAttrPosition: 'w',
                 id: 'sharedVideoMutedPopup'
             }
         ],
