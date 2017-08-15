@@ -1,13 +1,11 @@
 /* @flow */
 
+import { Tooltip } from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
-import {
-    setTooltip,
-    setTooltipText
-} from '../../../../modules/UI/util/Tooltip';
+import { isButtonEnabled } from '../functions';
 
 import StatelessToolbarButton from './StatelessToolbarButton';
 
@@ -22,6 +20,22 @@ declare var APP: Object;
 class ToolbarButton extends Component {
     button: Object;
     _createRefToButton: Function;
+
+    _onClick: Function;
+
+    _onMouseOut: Function;
+
+    _onMouseOver: Function;
+
+    state: {
+
+        /**
+         * Whether or not the tooltip for the button should be displayed.
+         *
+         * @type {boolean}
+         */
+        showTooltip: boolean
+    }
 
     /**
      * Toolbar button component's property types.
@@ -67,8 +81,15 @@ class ToolbarButton extends Component {
     constructor(props: Object) {
         super(props);
 
+        this.state = {
+            showTooltip: false
+        };
+
         // Bind methods to save the context
         this._createRefToButton = this._createRefToButton.bind(this);
+        this._onClick = this._onClick.bind(this);
+        this._onMouseOut = this._onMouseOut.bind(this);
+        this._onMouseOver = this._onMouseOver.bind(this);
     }
 
     /**
@@ -79,7 +100,7 @@ class ToolbarButton extends Component {
      * @returns {void}
      */
     componentDidMount(): void {
-        this._setShortcutAndTooltip();
+        this._setShortcut();
 
         if (this.props.onMount) {
             this.props.onMount();
@@ -105,19 +126,39 @@ class ToolbarButton extends Component {
      * @returns {ReactElement}
      */
     render(): ReactElement<*> {
-        const { button } = this.props;
+        const { button, t, tooltipPosition } = this.props;
         const popups = button.popups || [];
 
         const props = {
             ...this.props,
+            onClick: this._onClick,
             createRefToButton: this._createRefToButton
         };
 
         return (
-            <StatelessToolbarButton { ...props }>
-                { this._renderPopups(popups) }
-            </StatelessToolbarButton>
+            <Tooltip
+                description = { button.tooltipText || t(button.tooltipKey) }
+                onMouseOut = { this._onMouseOut }
+                onMouseOver = { this._onMouseOver }
+                position = { tooltipPosition }
+                visible = { this.state.showTooltip }>
+                <StatelessToolbarButton { ...props }>
+                    { this._renderPopups(popups) }
+                </StatelessToolbarButton>
+            </Tooltip>
         );
+    }
+
+    /**
+     * Wrapper on on click handler props for current button.
+     *
+     * @param {Event} event - Click event object.
+     * @returns {void}
+     * @private
+     */
+    _onClick(event) {
+        this.props.onClick(event);
+        this.setState({ showTooltip: false });
     }
 
     /**
@@ -176,25 +217,38 @@ class ToolbarButton extends Component {
     }
 
     /**
+     * Hides any displayed tooltip.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onMouseOut(): void {
+        this.setState({ showTooltip: false });
+    }
+
+    /**
+     * Hides any displayed tooltip.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onMouseOver(): void {
+        const { button } = this.props;
+
+        this.setState({
+            showTooltip: isButtonEnabled(button.buttonName)
+                && !button.unclickable
+        });
+    }
+
+    /**
      * Sets shortcut and tooltip for current toolbar button.
      *
      * @private
      * @returns {void}
      */
-    _setShortcutAndTooltip(): void {
-        const { button, tooltipPosition } = this.props;
-
-        if (!button.unclickable) {
-            if (button.tooltipText) {
-                setTooltipText(this.button,
-                    button.tooltipText,
-                    tooltipPosition);
-            } else {
-                setTooltip(this.button,
-                    button.tooltipKey,
-                    tooltipPosition);
-            }
-        }
+    _setShortcut(): void {
+        const { button } = this.props;
 
         if (button.shortcut && APP && APP.keyboardshortcut) {
             APP.keyboardshortcut.registerShortcut(
