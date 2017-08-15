@@ -7,7 +7,7 @@ declare var $: Function;
 declare var AJS: Object;
 declare var interfaceConfig: Object;
 
-export { abstractMapStateToProps } from './functions.native';
+export { abstractMapStateToProps, getButton } from './functions.native';
 
 /**
  * Returns an object which contains the default buttons for the primary and

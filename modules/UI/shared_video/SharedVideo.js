@@ -558,7 +558,8 @@ export default class SharedVideoManager {
         if(show)
             this.showSharedVideoMutedPopup(false);
 
-        APP.UI.showCustomToolbarPopup('#micMutedPopup', show, 5000);
+        APP.UI.showCustomToolbarPopup(
+            'microphone', 'micMutedPopup', show, 5000);
     }
 
     /**
@@ -571,7 +572,8 @@ export default class SharedVideoManager {
         if(show)
             this.showMicMutedPopup(false);
 
-        APP.UI.showCustomToolbarPopup('#sharedVideoMutedPopup', show, 5000);
+        APP.UI.showCustomToolbarPopup(
+            'sharedvideo', 'sharedVideoMutedPopup', show, 5000);
     }
 }
 

@@ -3,15 +3,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import UIEvents from '../../../../service/UI/UIEvents';
-
 import {
     setDefaultToolboxButtons,
     setToolboxAlwaysVisible
 } from '../actions';
 import {
-    abstractMapStateToProps,
-    showCustomToolbarPopup
+    abstractMapStateToProps
 } from '../functions';
 import Notice from './Notice';
 import PrimaryToolbar from './PrimaryToolbar';
@@ -71,10 +68,6 @@ class Toolbox extends Component {
     componentDidMount(): void {
         this.props._setToolboxAlwaysVisible();
 
-        APP.UI.addListener(
-            UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-            showCustomToolbarPopup);
-
         // FIXME The redux action SET_DEFAULT_TOOLBOX_BUTTONS and related source
         // code such as the redux action creator setDefaultToolboxButtons and
         // _setDefaultToolboxButtons were introduced to solve the following bug
@@ -87,17 +80,6 @@ class Toolbox extends Component {
         // all existing changes to interfaceConfig have been applied already in
         // our known execution paths.
         this.props._setDefaultToolboxButtons();
-    }
-
-    /**
-     *  Unregisters legacy UI listeners.
-     *
-     *  @returns {void}
-     */
-    componentWillUnmount(): void {
-        APP.UI.removeListener(
-            UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-            showCustomToolbarPopup);
     }
 
     /**

@@ -1,5 +1,6 @@
 /* @flow */
 
+import AKInlineDialog from '@atlaskit/inline-dialog';
 import { Tooltip } from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
@@ -10,6 +11,18 @@ import { isButtonEnabled } from '../functions';
 import StatelessToolbarButton from './StatelessToolbarButton';
 
 declare var APP: Object;
+
+/**
+ * Mapping of tooltip positions to equivalent {@code AKInlineDialog} positions.
+ *
+ * @private
+ */
+const TOOLTIP_TO_POPUP_POSITION = {
+    bottom: 'bottom center',
+    left: 'left middle',
+    top: 'top center',
+    right: 'right middle'
+};
 
 /**
  * Represents a button in Toolbar on React.
@@ -127,26 +140,39 @@ class ToolbarButton extends Component {
      */
     render(): ReactElement<*> {
         const { button, t, tooltipPosition } = this.props;
-        const popups = button.popups || [];
-
         const props = {
             ...this.props,
             onClick: this._onClick,
             createRefToButton: this._createRefToButton
         };
 
-        return (
+        const buttonComponent = ( // eslint-disable-line no-extra-parens
             <Tooltip
                 description = { button.tooltipText || t(button.tooltipKey) }
                 onMouseOut = { this._onMouseOut }
                 onMouseOver = { this._onMouseOver }
                 position = { tooltipPosition }
                 visible = { this.state.showTooltip }>
-                <StatelessToolbarButton { ...props }>
-                    { this._renderPopups(popups) }
-                </StatelessToolbarButton>
+                <StatelessToolbarButton { ...props } />
             </Tooltip>
         );
+
+        const popupConfig = this._getPopupDisplayConfiguration();
+
+        if (popupConfig) {
+            const { dataAttr, dataInterpolate, position } = popupConfig;
+
+            return (
+                <AKInlineDialog
+                    content = { t(dataAttr, dataInterpolate) }
+                    isOpen = { Boolean(popupConfig) }
+                    position = { position }>
+                    { buttonComponent }
+                </AKInlineDialog>
+            );
+        }
+
+        return buttonComponent;
     }
 
     /**
@@ -174,6 +200,32 @@ class ToolbarButton extends Component {
     }
 
     /**
+     * Parses the props and state to find any popup that should be displayed
+     * and returns an object describing how the popup should display.
+     *
+     * @private
+     * @returns {Object|null}
+     */
+    _getPopupDisplayConfiguration() {
+        const { button, tooltipPosition } = this.props;
+        const { popups, popupDisplay } = button;
+
+        if (!popups || !popupDisplay) {
+            return null;
+        }
+
+        const { popupID } = popupDisplay;
+        const currentPopup = popups.find(popup => popup.id === popupID);
+
+        return Object.assign(
+            {},
+            currentPopup || {},
+            {
+                position: TOOLTIP_TO_POPUP_POSITION[tooltipPosition]
+            });
+    }
+
+    /**
      * If toolbar button should contain children elements
      * renders them.
      *
@@ -186,34 +238,6 @@ class ToolbarButton extends Component {
         }
 
         return null;
-    }
-
-    /**
-     * Renders popup element for toolbar button.
-     *
-     * @param {Array} popups - Array of popup objects.
-     * @returns {Array}
-     * @private
-     */
-    _renderPopups(popups: Array<*> = []): Array<*> {
-        return popups.map(popup => {
-            let gravity = 'n';
-
-            if (popup.dataAttrPosition) {
-                gravity = popup.dataAttrPosition;
-            }
-
-            const title = this.props.t(popup.dataAttr, popup.dataInterpolate);
-
-            return (
-                <div
-                    className = { popup.className }
-                    data-popup = { gravity }
-                    id = { popup.id }
-                    key = { popup.id }
-                    title = { title } />
-            );
-        });
     }
 
     /**
