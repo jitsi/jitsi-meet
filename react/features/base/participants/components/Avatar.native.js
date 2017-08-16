@@ -16,7 +16,7 @@ import { ColorPalette } from '../../styles';
  * @private
  * @type {string}
  */
-const _DEFAULT_SOURCE = require('../../../../../images/avatar2.png');
+const _DEFAULT_SOURCE = require('../../../../../images/avatar.png');
 
 /**
  * Implements an avatar as a React Native/mobile {@link Component}.

@@ -342,7 +342,7 @@ const buttons: Object = {
         enabled: true,
         html: <img
             id = 'avatar'
-            src = 'images/avatar2.png' />,
+            src = 'images/avatar.png' />,
         id: 'toolbar_button_profile',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');

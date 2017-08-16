@@ -20,7 +20,7 @@ export function getAvatarURL(participant) {
     // If disableThirdPartyRequests disables third-party avatar services, we are
     // restricted to a stock image of ours.
     if (typeof config === 'object' && config.disableThirdPartyRequests) {
-        return 'images/avatar2.png';
+        return 'images/avatar.png';
     }
 
     const { avatarID, avatarURL, email, id } = participant;
