@@ -1,13 +1,12 @@
 /* global $, interfaceConfig */
-/* jshint -W101 */
 
 import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
-import UIEvents from "../../../service/UI/UIEvents";
-import UIUtil from "../util/UIUtil";
+import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../util/UIUtil';
 
 // FIXME should be 'video'
-export const VIDEO_CONTAINER_TYPE = "camera";
+export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
 
@@ -208,7 +207,7 @@ export class VideoContainer extends LargeContainer {
          */
         this.$wrapperParent = this.$wrapper.parent();
 
-        this.avatarHeight = $("#dominantSpeakerAvatar").height();
+        this.avatarHeight = $('#dominantSpeakerAvatar').height();
 
         var onPlayingCallback = function (event) {
             if (typeof resizeContainer === 'function') {
@@ -252,8 +251,8 @@ export class VideoContainer extends LargeContainer {
      * <tt>false</tt> otherwise.
      */
     enableLocalConnectionProblemFilter (enable) {
-        this.$video.toggleClass("videoProblemFilter", enable);
-        this.$videoBackground.toggleClass("videoProblemFilter", enable);
+        this.$video.toggleClass('videoProblemFilter', enable);
+        this.$videoBackground.toggleClass('videoProblemFilter', enable);
     }
 
     /**
@@ -343,7 +342,7 @@ export class VideoContainer extends LargeContainer {
      */
     _positionParticipantStatus($element) {
         if (this.avatarDisplayed) {
-            let $avatarImage = $("#dominantSpeakerAvatar");
+            let $avatarImage = $('#dominantSpeakerAvatar');
             $element.css(
                 'top',
                 $avatarImage.offset().top + $avatarImage.height() + 10);
@@ -368,8 +367,10 @@ export class VideoContainer extends LargeContainer {
 
         if ((containerWidth > width) || (containerHeight > height)) {
             this._showVideoBackground();
-            const css = containerWidth > width
-                ? {width: '100%', height: 'auto'} : {width: 'auto', height: '100%'};
+            const css
+                = containerWidth > width
+                    ? { width: '100%', height: 'auto' }
+                    : { width: 'auto', height: '100%' };
             this.$videoBackground.css(css);
         }
 
@@ -503,7 +504,7 @@ export class VideoContainer extends LargeContainer {
         // find a workaround for the video flickering.
         this.setLargeVideoBackground(show);
 
-        this.$avatar.css("visibility", show ? "visible" : "hidden");
+        this.$avatar.css('visibility', show ? 'visible' : 'hidden');
         this.avatarDisplayed = show;
 
         this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE, show);
@@ -517,10 +518,10 @@ export class VideoContainer extends LargeContainer {
      * the indication.
      */
     showRemoteConnectionProblemIndicator (show) {
-        this.$video.toggleClass("remoteVideoProblemFilter", show);
-        this.$videoBackground.toggleClass("remoteVideoProblemFilter", show);
+        this.$video.toggleClass('remoteVideoProblemFilter', show);
+        this.$videoBackground.toggleClass('remoteVideoProblemFilter', show);
 
-        this.$avatar.toggleClass("remoteVideoProblemFilter", show);
+        this.$avatar.toggleClass('remoteVideoProblemFilter', show);
     }
 
     // We are doing fadeOut/fadeIn animations on parent div which wraps
@@ -582,9 +583,9 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     setLargeVideoBackground (isAvatar) {
-        $("#largeVideoContainer").css("background",
+        $('#largeVideoContainer').css('background',
             (this.videoType === VIDEO_CONTAINER_TYPE && !isAvatar)
-                ? "#000" : interfaceConfig.DEFAULT_BACKGROUND);
+                ? '#000' : interfaceConfig.DEFAULT_BACKGROUND);
     }
 
     /**
