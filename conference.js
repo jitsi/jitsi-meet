@@ -766,6 +766,7 @@ export default {
         // Not ready to modify track's state yet
         if (!this._localTracksInitialized) {
             muteLocalAudio(mute);
+            this.setAudioMuteStatus(mute);
 
             return;
         } else if (this.isLocalAudioMuted() === mute) {
@@ -821,6 +822,7 @@ export default {
         // If not ready to modify track's state yet adjust the base/media
         if (!this._localTracksInitialized) {
             muteLocalVideo(mute);
+            this.setVideoMuteStatus(mute);
 
             return;
         } else if (this.isVideoMuted() === mute) {
