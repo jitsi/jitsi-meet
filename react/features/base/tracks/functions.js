@@ -157,14 +157,16 @@ export function getTracksByMediaType(tracks, mediaType) {
 }
 
 /**
- * Checks if the first local video track in the given tracks set is muted.
+ * Checks if the first local track in the given tracks set is muted.
  *
  * @param {Track[]} tracks - List of all tracks.
- * @returns {boolean} True if local video track is muted or false if there are
- * no local video tracks in the given set of tracks.
+ * @param {MEDIA_TYPE} mediaType - The media type of tracks to be checked.
+ * @returns {boolean} True if local track is muted or false if the track is
+ * unmuted or if there are no local tracks of the given media type in the given
+ * set of tracks.
  */
-export function isLocalVideoTrackMuted(tracks) {
-    const videoTrack = getLocalVideoTrack(tracks);
+export function isLocalTrackMuted(tracks, mediaType) {
+    const track = getLocalTrack(tracks, mediaType);
 
-    return !videoTrack || videoTrack.muted;
+    return !track || track.muted;
 }

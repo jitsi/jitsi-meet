@@ -290,7 +290,7 @@ const buttons: Object = {
         onClick() {
             const sharedVideoManager = APP.UI.getSharedVideoManager();
 
-            if (APP.conference.audioMuted) {
+            if (APP.conference.isLocalAudioMuted()) {
                 // If there's a shared video with the volume "on" and we aren't
                 // the video owner, we warn the user
                 // that currently it's not possible to unmute.

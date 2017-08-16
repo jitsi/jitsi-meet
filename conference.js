@@ -7,7 +7,6 @@ import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import Recorder from './modules/recorder/Recorder';
 
-import { isVideoMutedByUser, setVideoMuted } from "./react/features/base/media";
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import { reload, reportError } from './modules/util/helpers';
@@ -37,8 +36,12 @@ import {
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
+    isVideoMutedByUser,
+    MEDIA_TYPE,
     setAudioAvailable,
-    setVideoAvailable
+    setAudioMuted,
+    setVideoAvailable,
+    setVideoMuted
 } from './react/features/base/media';
 import {
     localParticipantConnectionStatusChanged,
@@ -53,7 +56,7 @@ import {
 } from './react/features/base/participants';
 import {
     createLocalTracks,
-    isLocalVideoTrackMuted,
+    isLocalTrackMuted,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
@@ -86,7 +89,6 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
-let localAudio;
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -183,34 +185,9 @@ function getDisplayName(id) {
 /**
  * Mute or unmute local audio stream if it exists.
  * @param {boolean} muted - if audio stream should be muted or unmuted.
- *
- * @returns {Promise} resolved in case mute/unmute operations succeeds or
- * rejected with an error if something goes wrong. It is expected that often
- * the error will be of the {@link JitsiTrackError} type, but it's not
- * guaranteed.
  */
 function muteLocalAudio(muted) {
-    return muteLocalMedia(localAudio, muted);
-}
-
-/**
- * Mute or unmute local media stream if it exists.
- * @param {JitsiLocalTrack} localTrack
- * @param {boolean} muted
- *
- * @returns {Promise} resolved in case mute/unmute operations succeeds or
- * rejected with an error if something goes wrong. It is expected that often
- * the error will be of the {@link JitsiTrackError} type, but it's not
- * guaranteed.
- */
-function muteLocalMedia(localTrack, muted) {
-    if (!localTrack) {
-        return Promise.resolve();
-    }
-
-    const method = muted ? 'mute' : 'unmute';
-
-    return localTrack[method]();
+    APP.store.dispatch(setAudioMuted(muted));
 }
 
 /**
@@ -453,7 +430,6 @@ export default {
      */
     _localTracksInitialized: false,
     isModerator: false,
-    audioMuted: false,
     isSharingScreen: false,
     /**
      * Indicates if the desktop sharing functionality has been enabled.
@@ -484,6 +460,13 @@ export default {
      * Whether the local participant is the dominant speaker in the conference.
      */
     isDominantSpeaker: false,
+
+    /**
+     * The local audio track (if any).
+     * FIXME tracks from redux store should be the single source of truth
+     * @type {JitsiLocalTrack|null}
+     */
+    localAudio: null,
 
     /**
      * The local video track (if any).
@@ -691,12 +674,10 @@ export default {
                         startWithVideoMuted: config.startWithVideoMuted,
                     });
             }).then(([tracks, con]) => {
-                const isVideoMuted
-                    = APP.store.getState()['features/base/media'].video.muted;
                 tracks.forEach(track => {
-                    if (track.isAudioTrack() && this.audioMuted) {
+                    if (track.isAudioTrack() && this.isLocalAudioMuted()) {
                         track.mute();
-                    } else if (track.isVideoTrack() && isVideoMuted) {
+                    } else if (track.isVideoTrack() && this.isVideoMuted()) {
                         track.mute();
                     }
                 });
@@ -735,14 +716,9 @@ export default {
                 // to the conference
                 if (!tracks.find((t) => t.isAudioTrack())) {
                     this.setAudioMuteStatus(true);
-                    APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
                 }
 
                 if (!tracks.find((t) => t.isVideoTrack())) {
-                    // FIXME get rid of that once thumbnail mute indicators are
-                    // moved to react
-                    APP.UI.setVideoMuted(this.getMyUserId(), true);
-                    // FIXME MERGE
                     this.setVideoMuteStatus(true);
                 }
 
@@ -774,8 +750,9 @@ export default {
     isVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalVideoTrackMuted(
-                APP.store.getState()['features/base/tracks'])
+            ? isLocalTrackMuted(
+                APP.store.getState()['features/base/tracks'],
+                MEDIA_TYPE.VIDEO)
             : isVideoMutedByUser(APP.store);
     },
 
@@ -788,38 +765,28 @@ export default {
     muteAudio(mute, showUI = true) {
         // Not ready to modify track's state yet
         if (!this._localTracksInitialized) {
-            this.setAudioMuteStatus(mute);
+            muteLocalAudio(mute);
+
             return;
-        } else if (localAudio && localAudio.isMuted() === mute) {
+        } else if (this.isLocalAudioMuted() === mute) {
             // NO-OP
             return;
         }
 
-        const maybeShowErrorDialog = (error) => {
-            if (showUI) {
-                APP.UI.showMicErrorNotification(error);
-            }
-        };
-
-        if (!localAudio && this.audioMuted && !mute) {
+        if (!this.localAudio && !mute) {
             createLocalTracks({ devices: ['audio'] }, false)
                 .then(([audioTrack]) => audioTrack)
                 .catch(error => {
-                    maybeShowErrorDialog(error);
+                    if (showUI) {
+                        APP.UI.showMicErrorNotification(error);
+                    }
 
                     // Rollback the audio muted status by using null track
                     return null;
                 })
                 .then(audioTrack => this.useAudioStream(audioTrack));
         } else {
-            const oldMutedStatus = this.audioMuted;
-
-            muteLocalAudio(mute)
-                .catch(error => {
-                    maybeShowErrorDialog(error);
-                    this.setAudioMuteStatus(oldMutedStatus);
-                    APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
-                });
+            muteLocalAudio(mute);
         }
     },
     /**
@@ -827,7 +794,13 @@ export default {
      * @returns {boolean}
      */
     isLocalAudioMuted() {
-        return this.audioMuted;
+        // If the tracks are not ready, read from base/media state
+        return this._localTracksInitialized
+            ? isLocalTrackMuted(
+                APP.store.getState()['features/base/tracks'],
+                MEDIA_TYPE.AUDIO)
+            : Boolean(
+                APP.store.getState()['features/base/media'].audio.muted);
     },
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts
@@ -836,7 +809,7 @@ export default {
      * dialogs in case of media permissions error.
      */
     toggleAudioMuted(showUI = true) {
-        this.muteAudio(!this.audioMuted, showUI);
+        this.muteAudio(!this.isLocalAudioMuted(), showUI);
     },
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
@@ -1260,18 +1233,13 @@ export default {
      */
     useAudioStream(newStream) {
         return APP.store.dispatch(
-            replaceLocalTrack(localAudio, newStream, room))
+            replaceLocalTrack(this.localAudio, newStream, room))
             .then(() => {
-                localAudio = newStream;
-
+                this.localAudio = newStream;
                 if (newStream) {
-                    this.setAudioMuteStatus(newStream.isMuted());
                     APP.UI.addLocalStream(newStream);
-                } else {
-                    // No audio is treated the same way as being audio muted
-                    this.setAudioMuteStatus(true);
                 }
-                APP.UI.setAudioMuted(this.getMyUserId(), this.audioMuted);
+                this.setAudioMuteStatus(this.isLocalAudioMuted());
             });
     },
 
@@ -1700,7 +1668,8 @@ export default {
         });
 
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
-            if(this.isLocalId(id) && localAudio && localAudio.isMuted()) {
+            if(this.isLocalId(id)
+                && this.localAudio && this.localAudio.isMuted()) {
                 lvl = 0;
             }
 
@@ -1869,8 +1838,9 @@ export default {
                 this.localVideo = null;
             }
             // stop local audio
-            if (localAudio) {
-                localAudio.dispose();
+            if (this.localAudio) {
+                this.localAudio.dispose();
+                this.localAudio = null;
             }
         });
 
@@ -2213,9 +2183,9 @@ export default {
                         // storage and settings menu. This is a workaround until
                         // getConstraints() method will be implemented
                         // in browsers.
-                        if (localAudio) {
+                        if (this.localAudio) {
                             APP.settings.setMicDeviceId(
-                                localAudio.getDeviceId(), false);
+                                this.localAudio.getDeviceId(), false);
                         }
 
                         if (this.localVideo) {
@@ -2261,9 +2231,12 @@ export default {
 
         let newDevices =
             mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
-                devices, this.isSharingScreen, this.localVideo, localAudio);
+                devices,
+                this.isSharingScreen,
+                this.localVideo,
+                this.localAudio);
         let promises = [];
-        let audioWasMuted = this.audioMuted;
+        let audioWasMuted = this.isLocalAudioMuted();
         let videoWasMuted = this.isVideoMuted();
         let availableAudioInputDevices =
             mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
@@ -2321,11 +2294,11 @@ export default {
 
         // The audio functionality is considered available if there are any
         // audio devices detected or if the local audio stream already exists.
-        const available = audioDeviceCount > 0 || Boolean(localAudio);
+        const available = audioDeviceCount > 0 || Boolean(this.localAudio);
 
         logger.debug(
             'Microphone button enabled: ' + available,
-            'local audio: ' + localAudio,
+            'local audio: ' + this.localAudio,
             'audio devices: ' + audioMediaDevices,
             'device count: ' + audioDeviceCount);
 
@@ -2581,9 +2554,7 @@ export default {
      * @param {boolean} muted - New muted status.
      */
     setAudioMuteStatus(muted) {
-        if (this.audioMuted !== muted) {
-            this.audioMuted = muted;
-            APP.API.notifyAudioMutedStatusChanged(muted);
-        }
-    },
+        APP.UI.setAudioMuted(this.getMyUserId(), muted);
+        APP.API.notifyAudioMutedStatusChanged(muted);
+    }
 };
