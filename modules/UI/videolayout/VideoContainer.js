@@ -10,6 +10,8 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
  * ratio and fits available area with it's larger dimension. This method
@@ -617,6 +619,15 @@ export class VideoContainer extends LargeContainer {
      */
     _showVideoBackground() {
         this.$videoBackground.css({ visibility: 'visible' });
-        this.$videoBackground[0].play();
+
+        // XXX HTMLMediaElement.play's Promise may be rejected. Certain
+        // environments such as Google Chrome and React Native will report the
+        // rejection as unhandled. And that may appear scary depending on how
+        // the environment words the report. To reduce the risk of scaring a
+        // developer, make sure that the rejection is handled. We cannot really
+        // do anything substantial about the rejection and, more importantly, we
+        // do not care.
+        this.$videoBackground[0].play()
+            .catch(reason => logger.error(reason));
     }
 }
