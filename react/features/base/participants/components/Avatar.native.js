@@ -5,13 +5,15 @@ import { CachedImage, ImageCache } from 'react-native-img-cache';
 import { Platform } from '../../react';
 import { ColorPalette } from '../../styles';
 
-// FIXME @lyubomir: The string images/avatar2.png appears three times in our
-// source code at the time of this writing. Firstly, it presents a maintenance
-// obstacle which increases the risks of inconsistency. Secondly, it is
-// repulsive (when enlarged, especially, on mobile/React Native, for example).
 /**
  * The default image/source to be used in case none is specified or the
  * specified one fails to load.
+ *
+ * XXX The relative path to the default/stock (image) file is defined by the
+ * <tt>const</tt> <tt>DEFAULT_AVATAR_RELATIVE_PATH</tt>. Unfortunately, the
+ * packager of React Native cannot deal with it early enough for the following
+ * <tt>require</tt> to succeed at runtime. Anyway, be sure to synchronize the
+ * relative path on Web and mobile for the purposes of consistency.
  *
  * @private
  * @type {string}

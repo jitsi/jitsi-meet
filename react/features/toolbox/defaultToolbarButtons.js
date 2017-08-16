@@ -2,12 +2,13 @@
 
 import React from 'react';
 
+import { DEFAULT_AVATAR_RELATIVE_PATH } from '../base/participants';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
 import { openAddPeopleDialog, openInviteDialog } from '../invite';
-import UIEvents from '../../../service/UI/UIEvents';
-
 import { VideoQualityButton } from '../video-quality';
+
+import UIEvents from '../../../service/UI/UIEvents';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -342,7 +343,7 @@ const buttons: Object = {
         enabled: true,
         html: <img
             id = 'avatar'
-            src = 'images/avatar.png' />,
+            src = { DEFAULT_AVATAR_RELATIVE_PATH } />,
         id: 'toolbar_button_profile',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');

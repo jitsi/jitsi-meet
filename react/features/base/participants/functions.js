@@ -1,3 +1,5 @@
+import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
+
 declare var config: Object;
 declare var interfaceConfig: Object;
 declare var MD5: Object;
@@ -20,7 +22,7 @@ export function getAvatarURL(participant) {
     // If disableThirdPartyRequests disables third-party avatar services, we are
     // restricted to a stock image of ours.
     if (typeof config === 'object' && config.disableThirdPartyRequests) {
-        return 'images/avatar.png';
+        return DEFAULT_AVATAR_RELATIVE_PATH;
     }
 
     const { avatarID, avatarURL, email, id } = participant;
