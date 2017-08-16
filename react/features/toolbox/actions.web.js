@@ -4,7 +4,6 @@ import Recording from '../../../modules/UI/recording/Recording';
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
 
-import { removeTooltip } from '../../../modules/UI/util/Tooltip';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import {
@@ -272,8 +271,6 @@ export function setProfileButtonUnclickable(unclickable: boolean): Function {
         dispatch(setToolbarButton(buttonName, {
             unclickable
         }));
-
-        removeTooltip(document.getElementById('toolbar_button_profile'));
     };
 }
 

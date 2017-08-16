@@ -10,7 +10,6 @@ import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
 import messageHandler from "./util/MessageHandler";
 import UIUtil from "./util/UIUtil";
-import { activateTooltips } from './util/Tooltip';
 import UIEvents from "../../service/UI/UIEvents";
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
@@ -232,8 +231,6 @@ UI.initConference = function () {
     // to the UI (depending on the moderator role of the local participant) and
     // (2) APP.conference as means of communication between the participants.
     followMeHandler = new FollowMe(APP.conference, UI);
-
-    activateTooltips();
 };
 
 UI.mucJoined = function () {
@@ -248,22 +245,6 @@ UI.mucJoined = function () {
  * Handler for toggling filmstrip
  */
 UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
-
-/**
- * Sets tooltip defaults.
- *
- * @private
- */
-function _setTooltipDefaults() {
-    $.fn.tooltip.defaults = {
-        opacity: 1, //defaults to 1
-        offset: 1,
-        delayIn: 0, //defaults to 500
-        hoverable: true,
-        hideOnClick: true,
-        aria: true
-    };
-}
 
 /**
  * Returns the shared document manager object.
@@ -285,8 +266,6 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
-    // Set the defaults for tooltips.
-    _setTooltipDefaults();
 
     SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);

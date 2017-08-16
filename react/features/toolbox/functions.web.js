@@ -3,8 +3,6 @@ import SideContainerToggler
 
 import defaultToolbarButtons from './defaultToolbarButtons';
 
-declare var $: Function;
-declare var AJS: Object;
 declare var interfaceConfig: Object;
 
 export { abstractMapStateToProps, getButton } from './functions.native';
@@ -105,39 +103,6 @@ export function getToolbarClassNames(props: Object) {
 export function isButtonEnabled(name) {
     return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
             || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
-}
-
-/**
- * Show custom popup/tooltip for a specified button.
- *
- * @param {string} popupSelectorID - The selector id of the popup to show.
- * @param {boolean} show - True or false/show or hide the popup.
- * @param {number} timeout - The time to show the popup.
- * @returns {void}
- */
-export function showCustomToolbarPopup(
-        popupSelectorID: string,
-        show: boolean,
-        timeout: number) {
-    AJS.$(popupSelectorID).tooltip({
-        gravity: $(popupSelectorID).attr('data-popup'),
-        html: true,
-        title: 'title',
-        trigger: 'manual'
-    });
-
-    if (show) {
-        AJS.$(popupSelectorID).tooltip('show');
-
-        setTimeout(
-            () => {
-                // hide the tooltip
-                AJS.$(popupSelectorID).tooltip('hide');
-            },
-            timeout);
-    } else {
-        AJS.$(popupSelectorID).tooltip('hide');
-    }
 }
 
 /**
