@@ -2,7 +2,7 @@
 
 import { RouteRegistry } from '../base/react';
 
-import { WelcomePage } from './components';
+import { BlankWelcomePage, WelcomePage } from './components';
 import { generateRoomWithoutSeparator } from './roomnameGenerator';
 
 declare var APP: Object;
@@ -46,3 +46,12 @@ function onEnter(nextState, replace) {
         replace(`/${room}`);
     }
 }
+
+/**
+ * Register route for BlankWelcomePage.
+ */
+RouteRegistry.register({
+    component: BlankWelcomePage,
+    undefined,
+    path: '/#blank'
+});
