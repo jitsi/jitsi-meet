@@ -4,6 +4,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Container } from '../../base/react';
+import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { OverlayContainer } from '../../overlay';
@@ -222,19 +223,21 @@ class Conference extends Component {
 function _mapDispatchToProps(dispatch) {
     return {
         /**
-         * Dispatched an action connecting to the conference.
+         * Dispatches actions to create the desired local tracks and for
+         * connecting to the conference.
          *
-         * @returns {Object} Dispatched action.
+         * @returns {void}
          * @private
          */
         _onConnect() {
+            dispatch(createDesiredLocalTracks());
             dispatch(connect());
         },
 
         /**
          * Dispatches an action disconnecting from the conference.
          *
-         * @returns {Object} Dispatched action.
+         * @returns {void}
          * @private
          */
         _onDisconnect() {
@@ -246,7 +249,7 @@ function _mapDispatchToProps(dispatch) {
          *
          * @param {boolean} visible - True to show the Toolbox or false to hide
          * it.
-         * @returns {Object} Dispatched action.
+         * @returns {void}
          * @private
          */
         _setToolboxVisible(visible: boolean) {
