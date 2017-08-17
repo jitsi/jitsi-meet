@@ -34,15 +34,20 @@ export function setAudioAvailable(available: boolean) {
  *
  * @param {boolean} muted - True if the local audio is to be muted or false if
  * the local audio is to be unmuted.
+ * @param {boolean} ensureTrack - True if we want to ensure that a new track is
+ * created if missing.
  * @returns {{
  *     type: SET_AUDIO_MUTED,
- *     muted: boolean
+ *     muted: boolean,
+ *     ensureTrack: boolean
  * }}
  */
-export function setAudioMuted(muted: boolean) {
+export function setAudioMuted(muted: boolean,
+                              ensureTrack: boolean = false) {
     return {
         type: SET_AUDIO_MUTED,
-        muted
+        muted,
+        ensureTrack
     };
 }
 
@@ -86,11 +91,14 @@ export function setVideoAvailable(available: boolean) {
  * the local video is to be unmuted.
  * @param {number} authority - The {@link VIDEO_MUTISM_AUTHORITY} which is
  * muting/unmuting the local video.
+ * @param {boolean} ensureTrack - True if we want to ensure that a new track is
+ * created if missing.
  * @returns {Function}
  */
 export function setVideoMuted(
         muted: boolean,
-        authority: number = VIDEO_MUTISM_AUTHORITY.USER) {
+        authority: number = VIDEO_MUTISM_AUTHORITY.USER,
+        ensureTrack: boolean = false) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const oldValue = getState()['features/base/media'].video.muted;
 
@@ -99,7 +107,8 @@ export function setVideoMuted(
 
         return dispatch({
             type: SET_VIDEO_MUTED,
-            muted: newValue
+            muted: newValue,
+            ensureTrack
         });
     };
 }
