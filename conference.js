@@ -135,7 +135,7 @@ function connect(roomName) {
  * @param {string} value new value
  */
 function sendData(command, value) {
-    if(!room) {
+    if (!room) {
         return;
     }
 
@@ -640,13 +640,13 @@ export default {
     init(options) {
         this.roomName = options.roomName;
         // attaches global error handler, if there is already one, respect it
-        if(JitsiMeetJS.getGlobalOnErrorHandler){
+        if (JitsiMeetJS.getGlobalOnErrorHandler){
             var oldOnErrorHandler = window.onerror;
             window.onerror = function (message, source, lineno, colno, error) {
                 JitsiMeetJS.getGlobalOnErrorHandler(
                     message, source, lineno, colno, error);
 
-                if(oldOnErrorHandler)
+                if (oldOnErrorHandler)
                     oldOnErrorHandler(message, source, lineno, colno, error);
             };
 
@@ -656,7 +656,7 @@ export default {
             JitsiMeetJS.getGlobalOnErrorHandler(
                     null, null, null, null, event.reason);
 
-                if(oldOnUnhandledRejection)
+                if (oldOnUnhandledRejection)
                     oldOnUnhandledRejection(event);
             };
         }
@@ -766,6 +766,8 @@ export default {
     muteAudio(mute, showUI = true) {
         // Not ready to modify track's state yet
         if (!this._localTracksInitialized) {
+            // This will only modify base/media.audio.muted which is then synced
+            // up with the track at the end of local tracks initialization.
             muteLocalAudio(mute);
             this.setAudioMuteStatus(mute);
 
@@ -822,6 +824,8 @@ export default {
     muteVideo(mute, showUI = true) {
         // If not ready to modify track's state yet adjust the base/media
         if (!this._localTracksInitialized) {
+            // This will only modify base/media.video.muted which is then synced
+            // up with the track at the end of local tracks initialization.
             muteLocalVideo(mute);
             this.setVideoMuteStatus(mute);
 
@@ -1195,7 +1199,7 @@ export default {
 
     _getConferenceOptions() {
         let options = config;
-        if(config.enableRecording && !config.recordingType) {
+        if (config.enableRecording && !config.recordingType) {
             options.recordingType = (config.hosts &&
                 (typeof config.hosts.jirecon != "undefined"))?
                 "jirecon" : "colibri";
@@ -1657,29 +1661,28 @@ export default {
         });
 
         room.on(ConferenceEvents.TRACK_ADDED, (track) => {
-            if(!track || track.isLocal())
+            if (!track || track.isLocal())
                 return;
 
             APP.store.dispatch(trackAdded(track));
         });
 
         room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
-            if(!track || track.isLocal())
+            if (!track || track.isLocal())
                 return;
 
             APP.store.dispatch(trackRemoved(track));
         });
 
         room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
-            if(this.isLocalId(id)
+            if (this.isLocalId(id)
                 && this.localAudio && this.localAudio.isMuted()) {
                 lvl = 0;
             }
 
-            if(config.debug)
-            {
+            if (config.debug) {
                 this.audioLevelsMap[id] = lvl;
-                if(config.debugAudioLevels)
+                if (config.debugAudioLevels)
                     logger.log("AudioLevel:" + id + "/" + lvl);
             }
 
@@ -2366,10 +2369,10 @@ export default {
      * NOTE: Should be used after conference.init
      */
     logEvent(name, value, label) {
-        if(JitsiMeetJS.analytics) {
+        if (JitsiMeetJS.analytics) {
             JitsiMeetJS.analytics.sendEvent(name, {value, label});
         }
-        if(room) {
+        if (room) {
             room.sendApplicationLog(JSON.stringify({name, value, label}));
         }
     },
