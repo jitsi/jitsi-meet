@@ -677,7 +677,8 @@ export default {
                 tracks.forEach(track => {
                     if (track.isAudioTrack() && this.isLocalAudioMuted()) {
                         track.mute();
-                    } else if (track.isVideoTrack() && this.isVideoMuted()) {
+                    } else if (track.isVideoTrack()
+                                    && this.isLocalVideoMuted()) {
                         track.mute();
                     }
                 });
@@ -747,7 +748,7 @@ export default {
      * Tells whether the local video is muted or not.
      * @return {boolean}
      */
-    isVideoMuted() {
+    isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
             ? isLocalTrackMuted(
@@ -825,7 +826,7 @@ export default {
             this.setVideoMuteStatus(mute);
 
             return;
-        } else if (this.isVideoMuted() === mute) {
+        } else if (this.isLocalVideoMuted() === mute) {
             // NO-OP
             return;
         }
@@ -869,7 +870,7 @@ export default {
      * dialogs in case of media permissions error.
      */
     toggleVideoMuted(showUI = true) {
-        this.muteVideo(!this.isVideoMuted(), showUI);
+        this.muteVideo(!this.isLocalVideoMuted(), showUI);
     },
     /**
      * Retrieve list of conference participants (without local user).
@@ -1222,7 +1223,7 @@ export default {
                 } else {
                     this.isSharingScreen = false;
                 }
-                this.setVideoMuteStatus(this.isVideoMuted());
+                this.setVideoMuteStatus(this.isLocalVideoMuted());
                 APP.UI.updateDesktopSharingButtons();
             });
     },
@@ -1402,7 +1403,7 @@ export default {
         let externalInstallation = false;
         let DSExternalInstallationInProgress = false;
         const didHaveVideo = Boolean(this.localVideo);
-        const wasVideoMuted = this.isVideoMuted();
+        const wasVideoMuted = this.isLocalVideoMuted();
 
         return createLocalTracks({
             desktopSharingSources: options.desktopSharingSources,
@@ -2239,7 +2240,7 @@ export default {
                 this.localAudio);
         let promises = [];
         let audioWasMuted = this.isLocalAudioMuted();
-        let videoWasMuted = this.isVideoMuted();
+        let videoWasMuted = this.isLocalVideoMuted();
         let availableAudioInputDevices =
             mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
         let availableVideoInputDevices =
