@@ -114,13 +114,10 @@ MiddlewareRegistry.register(store => next => action => {
                 APP.UI.onPeerVideoTypeChanged(
                     participantID,
                     jitsiTrack.videoType);
+            } else if (jitsiTrack.isLocal()) {
+                APP.conference.setAudioMuteStatus(muted);
             } else {
-                // eslint-disable-next-line no-lonely-if
-                if (jitsiTrack.isLocal()) {
-                    APP.conference.setAudioMuteStatus(muted);
-                } else {
-                    APP.UI.setAudioMuted(participantID, muted);
-                }
+                APP.UI.setAudioMuted(participantID, muted);
             }
         }
 
