@@ -11,9 +11,8 @@ import {
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import { setTrackMuted } from './actions';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
-import { getLocalTrack } from './functions';
+import { getLocalTrack, setTrackMuted } from './functions';
 
 declare var APP: Object;
 
@@ -160,5 +159,5 @@ function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
 function _setMuted(store, { muted }, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
-    localTrack && store.dispatch(setTrackMuted(localTrack.jitsiTrack, muted));
+    localTrack && setTrackMuted(localTrack.jitsiTrack, muted);
 }
