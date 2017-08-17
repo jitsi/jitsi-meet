@@ -1230,6 +1230,26 @@ UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
 UI.setRemoteThumbnailsVisibility
     = shouldHide => Filmstrip.setRemoteVideoVisibility(shouldHide);
 
+/**
+ * Sets the remote control active status for a remote participant.
+ *
+ * @param {string} participantID - The id of the remote participant.
+ * @param {boolean} isActive - The new remote control active status.
+ * @returns {void}
+ */
+UI.setRemoteControlActiveStatus = function(participantID, isActive) {
+    VideoLayout.setRemoteControlActiveStatus(participantID, isActive);
+};
+
+/**
+ * Sets the remote control active status for the local participant.
+ *
+ * @returns {void}
+ */
+UI.setLocalRemoteControlActiveChanged = function() {
+    VideoLayout.setLocalRemoteControlActiveChanged();
+};
+
 const UIListeners = new Map([
     [
         UIEvents.ETHERPAD_CLICKED,

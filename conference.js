@@ -11,6 +11,8 @@ import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
 import { reload, reportError } from './modules/util/helpers';
 
+import * as RemoteControlEvents
+    from './service/remotecontrol/RemoteControlEvents';
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
@@ -1813,10 +1815,27 @@ export default {
             ConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
 
+        APP.remoteControl.on(RemoteControlEvents.ACTIVE_CHANGED, isActive => {
+            room.setLocalParticipantProperty(
+                "remoteControlSessionStatus",
+                isActive
+            );
+            APP.UI.setLocalRemoteControlActiveChanged();
+        });
+
         room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, name, oldValue, newValue) => {
-            if (name === "raisedHand") {
+            switch (name) {
+            case 'raisedHand':
                 APP.UI.setRaisedHandStatus(participant, newValue);
+                break;
+            case 'remoteControlSessionStatus':
+                APP.UI.setRemoteControlActiveStatus(
+                    participant.getId(),
+                    newValue);
+                break;
+            default:
+            // ignore
             }
         });
 
@@ -2361,6 +2380,7 @@ export default {
             APP.UI.setLocalRaisedHandStatus(raisedHand);
         }
     },
+
     /**
      * Log event to callstats and analytics.
      * @param {string} name the event name

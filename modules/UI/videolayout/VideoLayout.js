@@ -642,9 +642,7 @@ var VideoLayout = {
                 return;
 
             remoteVideo.showAudioIndicator(isMuted);
-            if (APP.conference.isModerator) {
-                remoteVideo.updateRemoteVideoMenu(isMuted);
-            }
+            remoteVideo.updateRemoteVideoMenu(isMuted);
         }
     },
 
@@ -1165,6 +1163,27 @@ var VideoLayout = {
      */
     getRemoteVideosCount() {
         return Object.keys(remoteVideos).length;
+    },
+    /**
+     * Sets the remote control active status for a remote participant.
+     *
+     * @param {string} participantID - The id of the remote participant.
+     * @param {boolean} isActive - The new remote control active status.
+     * @returns {void}
+     */
+    setRemoteControlActiveStatus(participantID, isActive) {
+        remoteVideos[participantID].setRemoteControlActiveStatus(isActive);
+    },
+
+    /**
+     * Sets the remote control active status for the local participant.
+     *
+     * @returns {void}
+     */
+    setLocalRemoteControlActiveChanged() {
+        Object.values(remoteVideos).forEach(
+            remoteVideo => remoteVideo.updateRemoteVideoMenu()
+        );
     }
 };
 
