@@ -11,6 +11,38 @@ import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
 import { createLocalTracksF } from './functions';
 
 /**
+ * Requests the creating of the desired media type tracks. Desire is expressed
+ * by base/media. This function will dispatch a {@code createLocalTracksA}
+ * action for the "missing" types, that is, the ones which base/media would
+ * like to have (unmuted tracks) but are not present yet.
+ *
+ * @returns {Function}
+ */
+export function createDesiredLocalTracks() {
+    return (dispatch, getState) => {
+        const state = getState();
+        const desiredTypes = [];
+
+        state['features/base/media'].audio.muted
+            || desiredTypes.push(MEDIA_TYPE.AUDIO);
+        Boolean(state['features/base/media'].video.muted)
+            || desiredTypes.push(MEDIA_TYPE.VIDEO);
+
+        const availableTypes
+            = state['features/base/tracks']
+                .filter(t => t.local)
+                .map(t => t.mediaType);
+
+        // We need to create the desired tracks which are not already available.
+        const createTypes
+            = desiredTypes.filter(type => availableTypes.indexOf(type) === -1);
+
+        createTypes.length
+            && dispatch(createLocalTracksA({ devices: createTypes }));
+    };
+}
+
+/**
  * Request to start capturing local audio and/or video. By default, the user
  * facing camera will be selected.
  *

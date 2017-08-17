@@ -1,7 +1,7 @@
 import { isRoomValid } from '../base/conference';
 import { RouteRegistry } from '../base/react';
 import { Conference } from '../conference';
-import { WelcomePage } from '../welcome';
+import { BlankWelcomePage, WelcomePage } from '../welcome';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
@@ -28,7 +28,10 @@ export function _getRouteToRender(stateOrGetState) {
         // React-ive way anyway so it's all the same difference.
         const { app } = state['features/app'];
 
-        component = app && app.props.welcomePageEnabled ? WelcomePage : null;
+        component
+            = app && app.props.welcomePageEnabled
+                ? WelcomePage
+                : BlankWelcomePage;
     }
 
     return RouteRegistry.getRouteByComponent(component);
