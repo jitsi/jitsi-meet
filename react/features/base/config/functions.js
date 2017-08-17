@@ -175,9 +175,16 @@ export function overrideConfigJSON(
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
-                    `Extending ${configName} `
-                    + `with: ${JSON.stringify(configJSON)}`);
-                _.merge(configObj, configJSON);
+                    `Extending ${configName} with: ${
+                        JSON.stringify(configJSON)}`);
+
+                // eslint-disable-next-line arrow-body-style
+                _.mergeWith(configObj, configJSON, (oldValue, newValue) => {
+
+                    // XXX We don't want to merge the arrays, we want to
+                    // overwrite them.
+                    return Array.isArray(oldValue) ? newValue : undefined;
+                });
             }
         }
     }
