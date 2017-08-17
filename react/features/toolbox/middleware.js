@@ -38,23 +38,16 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_AUDIO_AVAILABLE: {
-        return _setMediaAvailableOrMuted(
-            store, next, action, MEDIA_TYPE.AUDIO);
+        return _setMediaAvailableOrMuted(store, next, action);
     }
 
     case SET_VIDEO_AVAILABLE: {
-        return _setMediaAvailableOrMuted(
-            store, next, action, MEDIA_TYPE.VIDEO);
+        return _setMediaAvailableOrMuted(store, next, action);
     }
 
     case TRACK_UPDATED: {
         if (action.track.jitsiTrack.isLocal()) {
-            return _setMediaAvailableOrMuted(
-                store,
-                next,
-                action,
-                action.track.jitsiTrack.isAudioTrack()
-                    ? MEDIA_TYPE.AUDIO : MEDIA_TYPE.VIDEO);
+            return _setMediaAvailableOrMuted(store, next, action);
         }
         break;
     }
@@ -64,8 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
-/* eslint-disable max-params */
-
 /**
  * Adjusts the state of toolbar's microphone or camera button.
  *
@@ -74,14 +65,37 @@ MiddlewareRegistry.register(store => next => action => {
  * specified {@code action} in the specified {@code store}.
  * @param {Object} action - SET_AUDIO_AVAILABLE, SET_VIDEO_AVAILABLE or
  * TRACK_UPDATED.
- * @param {MEDIA_TYPE} mediaType - The type of the media which tells whether
- * it's the microphone or the camera button to be updated.
  *
  * @returns {*}
  */
-function _setMediaAvailableOrMuted(
-    { dispatch, getState }, next, action, mediaType) {
+function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {
     const result = next(action);
+
+    let mediaType;
+
+    switch (action.type) {
+    case SET_AUDIO_AVAILABLE: {
+        mediaType = MEDIA_TYPE.AUDIO;
+        break;
+    }
+
+    case SET_VIDEO_AVAILABLE: {
+        mediaType = MEDIA_TYPE.VIDEO;
+        break;
+    }
+
+    case TRACK_UPDATED: {
+        mediaType
+            = action.track.jitsiTrack.isAudioTrack()
+                ? MEDIA_TYPE.AUDIO : MEDIA_TYPE.VIDEO;
+        break;
+    }
+
+    default: {
+        throw new Error(`Unsupported action ${action}`);
+    }
+
+    }
 
     const mediaState = getState()['features/base/media'];
     const { available }
@@ -104,5 +118,3 @@ function _setMediaAvailableOrMuted(
 
     return result;
 }
-
-/* eslint-enable max-params */
