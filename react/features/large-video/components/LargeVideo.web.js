@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
+import { RecordingLabel } from '../../recording';
 
 declare var interfaceConfig: Object;
 
@@ -67,18 +68,8 @@ export default class LargeVideo extends Component {
                     </div>
                 </div>
                 <span id = 'localConnectionMessage' />
-
                 { interfaceConfig.filmStripOnly ? null : <VideoQualityLabel /> }
-
-                <span
-                    className = 'video-state-indicator centeredVideoLabel'
-                    id = 'recordingLabel'>
-                    <span id = 'recordingLabelText' />
-                    <img
-                        className = 'recordingSpinner'
-                        id = 'recordingSpinner'
-                        src = 'images/spin.svg' />
-                </span>
+                <RecordingLabel />
             </div>
         );
     }

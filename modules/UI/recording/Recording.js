@@ -23,6 +23,39 @@ import VideoLayout from '../videolayout/VideoLayout';
 
 import { setToolboxEnabled } from '../../../react/features/toolbox';
 import { setNotificationsEnabled } from '../../../react/features/notifications';
+import {
+    hideRecordingLabel,
+    STATUS as Status,
+    updateRecordingState
+} from '../../../react/features/recording';
+
+/**
+ * Translation keys to use for display in the UI when recording the conference
+ * but not streaming live.
+ *
+ * @private
+ * @type {Object}
+ */
+export const RECORDING_TRANSLATION_KEYS = {
+    recordingBusy: 'liveStreaming.busy',
+    recordingButtonTooltip: 'recording.buttonTooltip',
+    recordingTitle: 'dialog.recording',
+    recordingUnavailable: 'recording.unavailable'
+};
+
+/**
+ * Translation keys to use for display in the UI when the recording mode is
+ * currently streaming live.
+ *
+ * @private
+ * @type {Object}
+ */
+export const STREAMING_TRANSLATION_KEYS = {
+    recordingBusy: 'liveStreaming.busy',
+    recordingButtonTooltip: 'liveStreaming.buttonTooltip',
+    recordingTitle: 'dialog.liveStreaming',
+    recordingUnavailable: 'liveStreaming.unavailable'
+};
 
 /**
  * The dialog for user input.
@@ -196,57 +229,6 @@ function _showStopRecordingPrompt(recordingType) {
 }
 
 /**
- * Moves the element given by {selector} to the top right corner of the screen.
- * Set additional classes that can be used to style the selector relative to the
- * state of the filmstrip.
- *
- * @param selector the selector for the element to move
- * @param move {true} to move the element, {false} to move it back to its intial
- * position
- */
-function moveToCorner(selector, move) {
-    let moveToCornerClass = "moveToCorner";
-    let containsClass = selector.hasClass(moveToCornerClass);
-
-    if (move && !containsClass)
-        selector.addClass(moveToCornerClass);
-    else if (!move && containsClass)
-        selector.removeClass(moveToCornerClass);
-
-    const {
-        remoteVideosVisible,
-        visible
-    } = APP.store.getState()['features/filmstrip'];
-    const filmstripWasHidden = selector.hasClass('without-filmstrip');
-    const filmstipIsOpening = filmstripWasHidden && visible;
-    selector.toggleClass('opening', filmstipIsOpening);
-
-    selector.toggleClass('with-filmstrip', visible);
-    selector.toggleClass('without-filmstrip', !visible);
-
-    selector.toggleClass('with-remote-videos', remoteVideosVisible);
-    selector.toggleClass('without-remote-videos', !remoteVideosVisible);
-}
-
-/**
- * The status of the recorder.
- * FIXME: Those constants should come from the library.
- * @type {{ON: string, OFF: string, AVAILABLE: string,
- * UNAVAILABLE: string, PENDING: string}}
- */
-var Status = {
-    ON: "on",
-    OFF: "off",
-    AVAILABLE: "available",
-    UNAVAILABLE: "unavailable",
-    PENDING: "pending",
-    RETRYING: "retrying",
-    ERROR: "error",
-    FAILED: "failed",
-    BUSY: "busy"
-};
-
-/**
  * Checks whether if the given status is either PENDING or RETRYING
  * @param status {Status} Jibri status to be checked
  * @returns {boolean} true if the condition is met or false otherwise.
@@ -272,27 +254,11 @@ var Recording = {
 
         if (recordingType === 'jibri') {
             this.baseClass = "fa fa-play-circle";
-            this.recordingTitle = "dialog.liveStreaming";
-            this.recordingOnKey = "liveStreaming.on";
-            this.recordingOffKey = "liveStreaming.off";
-            this.recordingPendingKey = "liveStreaming.pending";
-            this.failedToStartKey = "liveStreaming.failedToStart";
-            this.recordingErrorKey = "liveStreaming.error";
-            this.recordingButtonTooltip = "liveStreaming.buttonTooltip";
-            this.recordingUnavailable = "liveStreaming.unavailable";
-            this.recordingBusy = "liveStreaming.busy";
+            Object.assign(this, STREAMING_TRANSLATION_KEYS);
         }
         else {
             this.baseClass = "icon-recEnable";
-            this.recordingTitle = "dialog.recording";
-            this.recordingOnKey = "recording.on";
-            this.recordingOffKey = "recording.off";
-            this.recordingPendingKey = "recording.pending";
-            this.failedToStartKey = "recording.failedToStart";
-            this.recordingErrorKey = "recording.error";
-            this.recordingButtonTooltip = "recording.buttonTooltip";
-            this.recordingUnavailable = "recording.unavailable";
-            this.recordingBusy = "liveStreaming.busy";
+            Object.assign(this, RECORDING_TRANSLATION_KEYS);
         }
 
         // XXX Due to the React-ification of Toolbox, the HTMLElement with id
@@ -312,10 +278,6 @@ var Recording = {
             APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);
         }
-
-        this.eventEmitter.addListener(UIEvents.UPDATED_FILMSTRIP_DISPLAY, () =>{
-            this._updateStatusLabel();
-        });
     },
 
     /**
@@ -372,8 +334,6 @@ var Recording = {
             recordingState === Status.RETRYING) {
 
             this._setToolbarButtonToggled(true);
-
-            this._updateStatusLabel(this.recordingOnKey, false);
         }
         else if (recordingState === Status.OFF
                 || recordingState === Status.UNAVAILABLE
@@ -388,44 +348,18 @@ var Recording = {
 
             this._setToolbarButtonToggled(false);
 
-            let messageKey;
-            if (isStartingStatus(oldState))
-                messageKey = this.failedToStartKey;
-            else
-                messageKey = this.recordingOffKey;
-
-            this._updateStatusLabel(messageKey, true);
-
             setTimeout(function(){
-                $('#recordingLabel').css({display: "none"});
+                APP.store.dispatch(hideRecordingLabel());
             }, 5000);
         }
-        else if (recordingState === Status.PENDING) {
-
+        else if (recordingState === Status.PENDING
+            || recordingState === Status.ERROR) {
             this._setToolbarButtonToggled(false);
-
-            this._updateStatusLabel(this.recordingPendingKey, true);
-        }
-        else if (recordingState === Status.ERROR
-                    || recordingState === Status.FAILED) {
-
-            this._setToolbarButtonToggled(false);
-
-            this._updateStatusLabel(this.recordingErrorKey, true);
         }
 
-        let labelSelector = $('#recordingLabel');
-
-        // We don't show the label for available state.
-        if (recordingState !== Status.AVAILABLE
-            && !labelSelector.is(":visible"))
-            labelSelector.css({display: "inline-block"});
-
-        // Recording spinner
-        let spinnerId = 'recordingSpinner';
-        UIUtil.setVisible(
-            spinnerId, recordingState === Status.RETRYING);
+        APP.store.dispatch(updateRecordingState(recordingState));
     },
+
     // checks whether recording is enabled and whether we have params
     // to start automatically recording
     checkAutoRecord() {
@@ -434,21 +368,6 @@ var Recording = {
             this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED,
                                     this.predefinedToken);
         }
-    },
-    /**
-     * Updates the status label.
-     * @param textKey the text to show
-     * @param isCentered indicates if the label should be centered on the window
-     * or moved to the top right corner.
-     */
-    _updateStatusLabel(textKey, isCentered) {
-        let labelSelector = $('#recordingLabel');
-        let labelTextSelector = $('#recordingLabelText');
-
-        moveToCorner(labelSelector, !isCentered);
-
-        labelTextSelector.attr("data-i18n", textKey);
-        APP.translation.translateElement(labelSelector);
     },
 
     /**

@@ -66,11 +66,6 @@ export default {
      */
     TOGGLED_FILMSTRIP: "UI.toggled_filmstrip",
 
-    /**
-     * Notifies that the filmstrip has updated its appearance, such as by
-     * toggling or removing videos or adding videos.
-     */
-    UPDATED_FILMSTRIP_DISPLAY: "UI.updated_filmstrip_display",
     TOGGLE_SCREENSHARING: "UI.toggle_screensharing",
     TOGGLED_SHARED_DOCUMENT: "UI.toggled_shared_document",
     CONTACT_CLICKED: "UI.contact_clicked",
