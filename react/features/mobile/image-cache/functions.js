@@ -1,4 +1,4 @@
-import { ImageCache } from 'react-native-img-cache';
+import { ImageCache } from './';
 
 /**
  * Notifies about the successful download of an <tt>Image</tt> source. The name

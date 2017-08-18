@@ -1,7 +1,5 @@
 /* @flow */
 
-import { ImageCache } from 'react-native-img-cache';
-
 import { APP_WILL_MOUNT } from '../../app';
 import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../../base/conference';
 import {
@@ -13,7 +11,8 @@ import {
     PARTICIPANT_UPDATED
 } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
-import { prefetch } from '../../mobile/image-cache';
+
+import { ImageCache, prefetch } from './';
 
 /**
  * The indicator which determines whether avatar URLs are to be prefetched in

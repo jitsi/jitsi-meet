@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { CachedImage, ImageCache } from 'react-native-img-cache';
 
+import { CachedImage, ImageCache } from '../../../mobile/image-cache';
 import { Platform } from '../../react';
 import { ColorPalette } from '../../styles';
 
