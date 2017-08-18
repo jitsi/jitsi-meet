@@ -10,6 +10,17 @@
 export const TRACK_ADDED = Symbol('TRACK_ADDED');
 
 /**
+ * Action for when a track cannot be created because permissions have not been
+ * granted.
+ *
+ * {
+ *     type: TRACK_PERMISSION_ERROR,
+ *     trackType: string
+ * }
+ */
+export const TRACK_PERMISSION_ERROR = Symbol('TRACK_PERMISSION_ERROR');
+
+/**
  * Action for when a track has been removed from the conference,
  * local or remote.
  *

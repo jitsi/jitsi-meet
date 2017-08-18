@@ -7,7 +7,12 @@ import {
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
-import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
+import {
+    TRACK_ADDED,
+    TRACK_PERMISSION_ERROR,
+    TRACK_REMOVED,
+    TRACK_UPDATED
+} from './actionTypes';
 import { createLocalTracksF } from './functions';
 
 /**
@@ -78,14 +83,19 @@ export function createLocalTracksA(options = {}) {
                 },
                 /* firePermissionPromptIsShownEvent */ false,
                 store)
-            .then(localTracks => dispatch(_updateLocalTracks(localTracks)));
-
-            // TODO The function createLocalTracksF logs the rejection reason of
-            // JitsiMeetJS.createLocalTracks so there is no real benefit to
-            // logging it here as well. Technically though,
-            // _updateLocalTracks may cause a rejection so it may be nice to log
-            // it. It's not too big of a concern at the time of this writing
-            // because React Native warns on unhandled Promise rejections.
+            .then(localTracks => dispatch(_updateLocalTracks(localTracks)))
+            .catch(({ gum }) => {
+                // If permissions are not allowed, alert the user.
+                if (gum
+                        && gum.error
+                        && gum.error.name === 'DOMException'
+                        && gum.error.message === 'NotAllowedError') {
+                    dispatch({
+                        type: TRACK_PERMISSION_ERROR,
+                        trackType: device
+                    });
+                }
+            });
         }
     };
 }

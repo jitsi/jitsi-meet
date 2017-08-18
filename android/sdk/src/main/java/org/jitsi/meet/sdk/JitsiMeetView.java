@@ -59,6 +59,7 @@ public class JitsiMeetView extends FrameLayout {
     private static List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         return Arrays.<NativeModule>asList(
+            new AndroidSettingsModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
             new ProximityModule(reactContext)
