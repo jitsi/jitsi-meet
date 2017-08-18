@@ -3,7 +3,8 @@
 import {
     MEDIA_TYPE,
     SET_AUDIO_AVAILABLE,
-    SET_VIDEO_AVAILABLE } from '../base/media';
+    SET_VIDEO_AVAILABLE
+} from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { isLocalTrackMuted, TRACK_UPDATED } from '../base/tracks';
 
@@ -26,6 +27,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case SET_AUDIO_AVAILABLE:
+        return _setMediaAvailableOrMuted(store, next, action);
+
     case SET_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
         const { handler, timeoutMS } = action;
@@ -37,21 +41,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_AUDIO_AVAILABLE: {
+    case SET_VIDEO_AVAILABLE:
         return _setMediaAvailableOrMuted(store, next, action);
-    }
 
-    case SET_VIDEO_AVAILABLE: {
-        return _setMediaAvailableOrMuted(store, next, action);
-    }
-
-    case TRACK_UPDATED: {
+    case TRACK_UPDATED:
         if (action.track.jitsiTrack.isLocal()) {
             return _setMediaAvailableOrMuted(store, next, action);
         }
         break;
-    }
-
     }
 
     return next(action);
@@ -60,12 +57,11 @@ MiddlewareRegistry.register(store => next => action => {
 /**
  * Adjusts the state of toolbar's microphone or camera button.
  *
- * @param {Store} store - The Redux store instance.
+ * @param {Store} store - The redux store.
  * @param {Function} next - The redux function to continue dispatching the
  * specified {@code action} in the specified {@code store}.
- * @param {Object} action - SET_AUDIO_AVAILABLE, SET_VIDEO_AVAILABLE or
- * TRACK_UPDATED.
- *
+ * @param {Object} action - <tt>SET_AUDIO_AVAILABLE</tt>,
+ * <tt>SET_VIDEO_AVAILABLE</tt>, or <tt>TRACK_UPDATED</tt>.
  * @returns {*}
  */
 function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {
@@ -74,47 +70,43 @@ function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {
     let mediaType;
 
     switch (action.type) {
-    case SET_AUDIO_AVAILABLE: {
+    case SET_AUDIO_AVAILABLE:
         mediaType = MEDIA_TYPE.AUDIO;
         break;
-    }
 
-    case SET_VIDEO_AVAILABLE: {
+    case SET_VIDEO_AVAILABLE:
         mediaType = MEDIA_TYPE.VIDEO;
         break;
-    }
 
-    case TRACK_UPDATED: {
+    case TRACK_UPDATED:
         mediaType
             = action.track.jitsiTrack.isAudioTrack()
-                ? MEDIA_TYPE.AUDIO : MEDIA_TYPE.VIDEO;
+                ? MEDIA_TYPE.AUDIO
+                : MEDIA_TYPE.VIDEO;
         break;
-    }
 
-    default: {
+    default:
         throw new Error(`Unsupported action ${action}`);
     }
 
-    }
-
-    const mediaState = getState()['features/base/media'];
-    const { available }
-        = mediaType === MEDIA_TYPE.AUDIO
-            ? mediaState.audio : mediaState.video;
+    const state = getState();
+    const { audio, video } = state['features/base/media'];
+    const { available } = mediaType === MEDIA_TYPE.AUDIO ? audio : video;
     const i18nKey
         = mediaType === MEDIA_TYPE.AUDIO
             ? available ? 'mute' : 'micDisabled'
             : available ? 'videomute' : 'cameraDisabled';
-
-    const tracks = getState()['features/base/tracks'];
+    const tracks = state['features/base/tracks'];
     const muted = isLocalTrackMuted(tracks, mediaType);
 
-    dispatch(setToolbarButton(
-        mediaType === MEDIA_TYPE.AUDIO ? 'microphone' : 'camera', {
-            enabled: available,
-            i18n: `[content]toolbar.${i18nKey}`,
-            toggled: available ? muted : true
-        }));
+    dispatch(
+        setToolbarButton(
+            mediaType === MEDIA_TYPE.AUDIO ? 'microphone' : 'camera',
+            {
+                enabled: available,
+                i18n: `[content]toolbar.${i18nKey}`,
+                toggled: available ? muted : true
+            }));
 
     return result;
 }
