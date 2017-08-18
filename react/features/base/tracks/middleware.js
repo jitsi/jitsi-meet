@@ -6,16 +6,13 @@ import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_MUTED,
-    setAudioMuted,
-    setVideoMuted,
     TOGGLE_CAMERA_FACING_MODE,
     toggleCameraFacingMode
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
-import { setTrackMuted } from './actions';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
-import { getLocalTrack } from './functions';
+import { getLocalTrack, setTrackMuted } from './functions';
 
 declare var APP: Object;
 
@@ -108,30 +105,20 @@ MiddlewareRegistry.register(store => next => action => {
             const participantID = jitsiTrack.getParticipantId();
             const isVideoTrack = jitsiTrack.isVideoTrack();
 
-            if (jitsiTrack.isLocal()) {
-                if (isVideoTrack) {
+            if (isVideoTrack) {
+                if (jitsiTrack.isLocal()) {
                     APP.conference.setVideoMuteStatus(muted);
                 } else {
-                    APP.conference.setAudioMuteStatus(muted);
+                    APP.UI.setVideoMuted(participantID, muted);
                 }
-            }
-
-            if (isVideoTrack) {
-                APP.UI.setVideoMuted(participantID, muted);
                 APP.UI.onPeerVideoTypeChanged(
                     participantID,
                     jitsiTrack.videoType);
+            } else if (jitsiTrack.isLocal()) {
+                APP.conference.setAudioMuteStatus(muted);
             } else {
                 APP.UI.setAudioMuted(participantID, muted);
             }
-
-            // XXX The following synchronizes the state of base/tracks into the
-            // state of base/media. Which is not required in React (and,
-            // respectively, React Native) because base/media expresses the
-            // app's and the user's desires/expectations/intents and base/tracks
-            // expresses practice/reality. Unfortunately, the old Web does not
-            // comply and/or does the opposite. Hence, the following:
-            return _trackUpdated(store, next, action);
         }
 
     }
@@ -169,66 +156,5 @@ function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
 function _setMuted(store, { muted }, mediaType: MEDIA_TYPE) {
     const localTrack = _getLocalTrack(store, mediaType);
 
-    localTrack && store.dispatch(setTrackMuted(localTrack.jitsiTrack, muted));
-}
-
-/**
- * Intercepts the action <tt>TRACK_UPDATED</tt> in order to synchronize the
- * muted states of the local tracks of features/base/tracks with the muted
- * states of features/base/media.
- *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
- * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>TRACK_UPDATED</tt> which is
- * being dispatched in the specified <tt>store</tt>.
- * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified <tt>action</tt>.
- */
-function _trackUpdated(store, next, action) {
-    // Determine the muted state of the local track before the update.
-    const track = action.track;
-    let mediaType;
-    let oldMuted;
-
-    if ('muted' in track) {
-        // XXX The return value of JitsiTrack.getType() is of type MEDIA_TYPE
-        // that happens to be compatible with the type MEDIA_TYPE defined by
-        // jitsi-meet.
-        mediaType = track.jitsiTrack.getType();
-
-        const localTrack = _getLocalTrack(store, mediaType);
-
-        if (localTrack) {
-            oldMuted = localTrack.muted;
-        }
-    }
-
-    const result = next(action);
-
-    if (typeof oldMuted !== 'undefined') {
-        // Determine the muted state of the local track after the update. If the
-        // muted states before and after the update differ, then the respective
-        // media state should by synchronized.
-        const localTrack = _getLocalTrack(store, mediaType);
-
-        if (localTrack) {
-            const newMuted = localTrack.muted;
-
-            if (oldMuted !== newMuted) {
-                switch (mediaType) {
-                case MEDIA_TYPE.AUDIO:
-                    store.dispatch(setAudioMuted(newMuted));
-                    break;
-                case MEDIA_TYPE.VIDEO:
-                    store.dispatch(setVideoMuted(newMuted));
-                    break;
-                }
-            }
-        }
-    }
-
-    return result;
+    localTrack && setTrackMuted(localTrack.jitsiTrack, muted);
 }

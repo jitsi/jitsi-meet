@@ -3,7 +3,8 @@
 import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../app';
-import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
+import { MEDIA_TYPE } from '../base/media';
+import { isLocalTrackMuted } from '../base/tracks';
 
 /**
  * Maps redux actions to {@link Toolbox} (React {@code Component}) props.
@@ -58,9 +59,6 @@ export function abstractMapStateToProps(state: Object): Object {
     const tracks = state['features/base/tracks'];
     const { visible } = state['features/toolbox'];
 
-    const audioTrack = getLocalAudioTrack(tracks);
-    const videoTrack = getLocalVideoTrack(tracks);
-
     return {
         /**
          * Flag showing whether audio is muted.
@@ -68,7 +66,7 @@ export function abstractMapStateToProps(state: Object): Object {
          * @protected
          * @type {boolean}
          */
-        _audioMuted: !audioTrack || audioTrack.muted,
+        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
 
         /**
          * Flag showing whether video is muted.
@@ -76,7 +74,7 @@ export function abstractMapStateToProps(state: Object): Object {
          * @protected
          * @type {boolean}
          */
-        _videoMuted: !videoTrack || videoTrack.muted,
+        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO),
 
         /**
          * Flag showing whether toolbox is visible.

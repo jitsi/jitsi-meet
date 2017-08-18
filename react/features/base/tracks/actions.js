@@ -349,53 +349,6 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
 }
 
 /**
- * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
- * the specified <tt>track</tt> is already in accord with the specified
- * <tt>muted</tt> value, then does nothing. In case the actual muting/unmuting
- * fails, a rollback action will be dispatched to undo the muting/unmuting.
- *
- * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
- * unmute.
- * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
- * @returns {Function}
- */
-export function setTrackMuted(track, muted) {
-    return dispatch => {
-        muted = Boolean(muted); // eslint-disable-line no-param-reassign
-
-        if (track.isMuted() === muted) {
-            return Promise.resolve();
-        }
-
-        const f = muted ? 'mute' : 'unmute';
-
-        return track[f]().catch(error => {
-            console.error(`set track ${f} failed`, error);
-
-            if (navigator.product === 'ReactNative') {
-                // Synchronizing the state of base/tracks into the state of
-                // base/media is not required in React (and, respectively, React
-                // Native) because base/media expresses the app's and the user's
-                // desires/expectations/intents and base/tracks expresses
-                // practice/reality. Unfortunately, the old Web does not comply
-                // and/or does the opposite.
-                return;
-            }
-
-            const setMuted
-                = track.mediaType === MEDIA_TYPE.AUDIO
-                    ? setAudioMuted
-                    : setVideoMuted;
-
-            // FIXME The following disregards VIDEO_MUTISM_AUTHORITY (in the
-            // case of setVideoMuted, of course).
-            dispatch(setMuted(!muted));
-        });
-    };
-}
-
-/**
  * Returns true if the provided JitsiTrack should be rendered as a mirror.
  *
  * We only want to show a video in mirrored mode when:

@@ -40,13 +40,14 @@ const buttons: Object = {
         isDisplayed: () => true,
         id: 'toolbar_button_camera',
         onClick() {
-            if (APP.conference.videoMuted) {
+            const newVideoMutedState = !APP.conference.isLocalVideoMuted();
+
+            if (newVideoMutedState) {
                 JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
-                APP.UI.emitEvent(UIEvents.VIDEO_MUTED, false);
             } else {
                 JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
-                APP.UI.emitEvent(UIEvents.VIDEO_MUTED, true);
             }
+            APP.UI.emitEvent(UIEvents.VIDEO_MUTED, newVideoMutedState);
         },
         popups: [
             {
@@ -290,7 +291,7 @@ const buttons: Object = {
         onClick() {
             const sharedVideoManager = APP.UI.getSharedVideoManager();
 
-            if (APP.conference.audioMuted) {
+            if (APP.conference.isLocalAudioMuted()) {
                 // If there's a shared video with the volume "on" and we aren't
                 // the video owner, we warn the user
                 // that currently it's not possible to unmute.
