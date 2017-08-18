@@ -74,8 +74,9 @@ export default class Avatar extends Component {
         // uri
         const prevURI = this.props && this.props.uri;
         const nextURI = nextProps && nextProps.uri;
+        const assignState = !this.state;
 
-        if (prevURI !== nextURI || !this.state) {
+        if (prevURI !== nextURI || assignState) {
             const nextState = {
                 backgroundColor: this._getBackgroundColor(nextProps),
 
@@ -92,10 +93,10 @@ export default class Avatar extends Component {
                 source: _DEFAULT_SOURCE
             };
 
-            if (this.state) {
-                this.setState(nextState);
-            } else {
+            if (assignState) {
                 this.state = nextState;
+            } else {
+                this.setState(nextState);
             }
 
             // XXX @lyubomir: My logic for the character # bellow is as follows:
@@ -113,22 +114,32 @@ export default class Avatar extends Component {
             // an image retrieval action.
             if (nextURI && !nextURI.startsWith('#')) {
                 const nextSource = { uri: nextURI };
+                const observer = () => {
+                    this._unmounted || this.setState((prevState, props) => {
+                        if (props.uri === nextURI
+                                && (!prevState.source
+                                    || prevState.source.uri !== nextURI)) {
+                            return { source: nextSource };
+                        }
+
+                        return {};
+                    });
+                };
 
                 // Wait for the source/URI to load.
-                ImageCache.get().on(
-                    nextSource,
-                    /* observer */ () => {
-                        this._unmounted || this.setState((prevState, props) => {
-                            if (props.uri === nextURI
-                                    && (!prevState.source
-                                        || prevState.source.uri !== nextURI)) {
-                                return { source: nextSource };
-                            }
-
-                            return {};
-                        });
-                    },
-                    /* immutable */ true);
+                if (ImageCache) {
+                    ImageCache.get().on(
+                        nextSource,
+                        observer,
+                        /* immutable */ true);
+                } else if (assignState) {
+                    this.state = {
+                        ...this.state,
+                        source: nextSource
+                    };
+                } else {
+                    observer();
+                }
             }
         }
     }

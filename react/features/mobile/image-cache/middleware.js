@@ -39,7 +39,7 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
     case APP_WILL_MOUNT:
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
-        ImageCache.get().clear();
+        ImageCache && ImageCache.get().clear();
         break;
 
     case PARTICIPANT_ID_CHANGED:

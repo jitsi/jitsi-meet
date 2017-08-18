@@ -27,5 +27,5 @@ function _onLoad() {
  * @returns {void}
  */
 export function prefetch(source) {
-    ImageCache.get().on(source, /* observer */ _onLoad, /* immutable */ true);
+    ImageCache && ImageCache.get().on(source, _onLoad, /* immutable */ true);
 }
