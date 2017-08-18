@@ -8,7 +8,6 @@ import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/external-api';
 import '../../mobile/full-screen';
-import '../../mobile/image-cache';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
