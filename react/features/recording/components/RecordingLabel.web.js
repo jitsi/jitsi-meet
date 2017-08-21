@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 
-import { STATUS } from '../constants';
-
-const LIVE_STREAMING_RECORDING_TYPE = 'jibri';
+const { recordingStatus, recordingTypes } = JitsiMeetJS.constants;
 
 /**
  * Translation keys to use for display in the UI when recording the conference
@@ -60,7 +59,7 @@ class RecordingLabel extends Component {
 
         /**
          * The current state of the recording feature. The state should
-         * correspond to one enumerated in {@code STATUS}.
+         * correspond to one enumerated in the constant recordingStatus.
          */
         _recordingState: React.PropTypes.string,
 
@@ -186,22 +185,22 @@ class RecordingLabel extends Component {
      */
     _getDisplayConfiguration() {
         const { _recordingState, _recordingType } = this.props;
-        const translationKeys = _recordingType === LIVE_STREAMING_RECORDING_TYPE
+        const translationKeys = _recordingType === recordingTypes.JIBRI
             ? STREAMING_TRANSLATION_KEYS : RECORDING_TRANSLATION_KEYS;
 
         switch (_recordingState) {
-        case STATUS.ON:
-        case STATUS.RETRYING:
+        case recordingStatus.ON:
+        case recordingStatus.RETRYING:
             return {
                 centered: false,
                 key: translationKeys.recordingOnKey,
-                showSpinner: _recordingState === STATUS.RETRYING
+                showSpinner: _recordingState === recordingStatus.RETRYING
             };
 
-        case STATUS.OFF:
-        case STATUS.UNAVAILABLE:
-        case STATUS.BUSY:
-        case STATUS.FAILED:
+        case recordingStatus.OFF:
+        case recordingStatus.UNAVAILABLE:
+        case recordingStatus.BUSY:
+        case recordingStatus.FAILED:
             return {
                 centered: true,
                 key: this._wasInStartingState()
@@ -209,13 +208,13 @@ class RecordingLabel extends Component {
                     : translationKeys.recordingOffKey
             };
 
-        case STATUS.PENDING:
+        case recordingStatus.PENDING:
             return {
                 centered: true,
                 key: translationKeys.recordingPendingKey
             };
 
-        case STATUS.ERROR:
+        case recordingStatus.ERROR:
             return {
                 centered: true,
                 key: translationKeys.recordingErrorKey
@@ -223,7 +222,7 @@ class RecordingLabel extends Component {
 
         // Return an empty configuration to indicate {@code RecordingLabel}
         // should not be displayed.
-        case STATUS.AVAILABLE:
+        case recordingStatus.AVAILABLE:
         default:
             return {};
         }
@@ -238,8 +237,8 @@ class RecordingLabel extends Component {
     _wasInStartingState() {
         const { previousRecordingState } = this.state;
 
-        return previousRecordingState === STATUS.PENDING
-            || previousRecordingState === STATUS.RETRYING;
+        return previousRecordingState === recordingStatus.PENDING
+            || previousRecordingState === recordingStatus.RETRYING;
     }
 }
 

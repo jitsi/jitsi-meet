@@ -25,9 +25,10 @@ import { setToolboxEnabled } from '../../../react/features/toolbox';
 import { setNotificationsEnabled } from '../../../react/features/notifications';
 import {
     hideRecordingLabel,
-    STATUS as Status,
     updateRecordingState
 } from '../../../react/features/recording';
+
+const Status = JitsiMeetJS.constants.recordingStatus;
 
 /**
  * Translation keys to use for display in the UI when recording the conference
