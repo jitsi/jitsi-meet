@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet.sdk.audiomode;
+package org.jitsi.meet.sdk;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothHeadset;
@@ -33,7 +33,7 @@ import android.util.Log;
  * Bluetooth headsets being connected / disconnected and notifies the module
  * about device changes when this occurs.
  */
-public class BluetoothHeadsetMonitor {
+class BluetoothHeadsetMonitor {
     /**
      * {@link AudioModeModule} where this monitor reports.
      */

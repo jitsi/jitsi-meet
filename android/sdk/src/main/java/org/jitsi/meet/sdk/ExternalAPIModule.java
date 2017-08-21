@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet.sdk.externalapi;
+package org.jitsi.meet.sdk;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -32,7 +32,7 @@ import java.util.HashMap;
  * object it will dim the screen and disable touch controls. The functionality
  * is used with the conference audio-only mode.
  */
-public class ExternalAPIModule extends ReactContextBaseJavaModule {
+class ExternalAPIModule extends ReactContextBaseJavaModule {
     /**
      * React Native module name.
      */

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet.sdk.audiomode;
+package org.jitsi.meet.sdk;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -51,7 +51,7 @@ import java.util.Map;
  * Before a call has started and after it has ended the
  * <tt>AudioModeModule.DEFAULT</tt> mode should be used.
  */
-public class AudioModeModule extends ReactContextBaseJavaModule {
+class AudioModeModule extends ReactContextBaseJavaModule {
     /**
      * Constants representing the audio mode.
      * - DEFAULT: Used before and after every call. It represents the default

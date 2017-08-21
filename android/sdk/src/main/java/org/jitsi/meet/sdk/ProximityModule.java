@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet.sdk.proximity;
+package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.os.PowerManager;
@@ -31,7 +31,7 @@ import com.facebook.react.bridge.UiThreadUtil;
  * object it will dim the screen and disable touch controls. The functionality
  * is used with the conference audio-only mode.
  */
-public class ProximityModule extends ReactContextBaseJavaModule {
+class ProximityModule extends ReactContextBaseJavaModule {
     /**
      * React Native module name.
      */

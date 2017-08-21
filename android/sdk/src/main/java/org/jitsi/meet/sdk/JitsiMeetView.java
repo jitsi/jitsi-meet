@@ -28,10 +28,14 @@ import android.widget.FrameLayout;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -51,6 +55,15 @@ public class JitsiMeetView extends FrameLayout {
 
     private static final Set<JitsiMeetView> views
         = Collections.newSetFromMap(new WeakHashMap<JitsiMeetView, Boolean>());
+
+    private static List<NativeModule> createNativeModules(
+            ReactApplicationContext reactContext) {
+        return Arrays.<NativeModule>asList(
+            new AudioModeModule(reactContext),
+            new ExternalAPIModule(reactContext),
+            new ProximityModule(reactContext)
+        );
+    }
 
     public static JitsiMeetView findViewByExternalAPIScope(
             String externalAPIScope) {
@@ -86,10 +99,13 @@ public class JitsiMeetView extends FrameLayout {
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
                 .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
                 .addPackage(new com.rnimmersive.RNImmersivePackage())
-                .addPackage(new org.jitsi.meet.sdk.audiomode.AudioModePackage())
-                .addPackage(
-                    new org.jitsi.meet.sdk.externalapi.ExternalAPIPackage())
-                .addPackage(new org.jitsi.meet.sdk.proximity.ProximityPackage())
+                .addPackage(new ReactPackageAdapter() {
+                    @Override
+                    public List<NativeModule> createNativeModules(
+                            ReactApplicationContext reactContext) {
+                        return JitsiMeetView.createNativeModules(reactContext);
+                    }
+                })
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
