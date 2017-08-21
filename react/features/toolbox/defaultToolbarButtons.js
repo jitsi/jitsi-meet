@@ -153,7 +153,9 @@ const buttons: Object = {
         shortcutAttr: 'toggleDesktopSharingPopover',
         shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
-            APP.conference.toggleScreenSharing();
+
+            // eslint-disable-next-line no-empty-function
+            APP.conference.toggleScreenSharing().catch(() => {});
         },
         shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
         tooltipKey: 'toolbar.sharescreen'
