@@ -1520,6 +1520,8 @@ export default {
             // asynchronous, but does not return a Promise and is not part of
             // the current Promise chain.
             this._handleScreenSharingError(error);
+
+            return Promise.reject(error);
         });
     },
 
@@ -1548,7 +1550,7 @@ export default {
             // again switching to the screen sharing.
             APP.UI.showExtensionInlineInstallationDialog(
                 () => {
-                    this.toggleScreenSharing();
+                    this.toggleScreenSharing().catch(() => {});
                 }
             );
 

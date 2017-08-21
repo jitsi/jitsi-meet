@@ -131,7 +131,9 @@ function shouldBeEnabled() {
  */
 function toggleScreenSharing() {
     if (APP.conference.isDesktopSharingEnabled) {
-        APP.conference.toggleScreenSharing();
+
+        // eslint-disable-next-line no-empty-function
+        APP.conference.toggleScreenSharing().catch(() => {});
     } else {
         initialScreenSharingState = !initialScreenSharingState;
     }
