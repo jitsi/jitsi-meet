@@ -5,16 +5,16 @@ import { connect } from 'react-redux';
 import { destroyLocalTracks } from '../../base/tracks';
 
 /**
- * Component for rendering a blank welcome page. It renders absolutely nothing
- * and destroys local tracks upon being mounted, since no media is desired when
+ * A React <tt>Component<tt> which represents a blank page. It renders nothing
+ * and destroys local tracks upon being mounted since no media is desired when
  * this component is rendered.
  *
- * The use case is mainly mobile, where SDK users probably disable the welcome
- * page, but using it on the web in the future is not out of the question.
+ * The use case which prompted the introduction of this component is mobile
+ * where SDK users probably disable the Welcome page.
  */
-class BlankWelcomePage extends Component {
+class BlankPage extends Component {
     /**
-     * {@code BlankWelcomePage} component's property types.
+     * {@code BlankPage} component's property types.
      *
      * @static
      */
@@ -46,4 +46,4 @@ class BlankWelcomePage extends Component {
     }
 }
 
-export default connect()(BlankWelcomePage);
+export default connect()(BlankPage);

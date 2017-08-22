@@ -2,26 +2,17 @@
 
 import { RouteRegistry } from '../base/react';
 
-import { BlankWelcomePage, WelcomePage } from './components';
+import { Entryway } from './components';
 import { generateRoomWithoutSeparator } from './roomnameGenerator';
 
 declare var APP: Object;
 declare var config: Object;
 
 /**
- * Register route for BlankWelcomePage.
+ * Register route for Entryway.
  */
 RouteRegistry.register({
-    component: BlankWelcomePage,
-    undefined,
-    path: '/#blank'
-});
-
-/**
- * Register route for WelcomePage.
- */
-RouteRegistry.register({
-    component: WelcomePage,
+    component: Entryway,
     onEnter,
     path: '/'
 });

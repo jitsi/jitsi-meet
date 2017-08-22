@@ -1,15 +1,17 @@
 /* @flow */
 
-import { isRoomValid } from '../base/conference';
-import { Platform, RouteRegistry } from '../base/react';
-import { Conference } from '../conference';
+import { Platform } from '../base/react';
 import {
     NoMobileApp,
     PluginRequiredBrowser,
     UnsupportedDesktopBrowser,
     UnsupportedMobileBrowser
 } from '../unsupported-browser';
-import { WelcomePage } from '../welcome';
+
+import {
+    // eslint-disable-next-line camelcase
+    _getRouteToRender as _super_getRouteToRender
+} from './functions.native';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -61,8 +63,7 @@ const _INTERCEPT_COMPONENT_RULES = [
             break;
 
         case 'undefined':
-            // If webRTCReady is not set, then we cannot use it to take a
-            // decision.
+            // If webRTCReady is not set, then we cannot base a decision on it.
             break;
 
         default:
@@ -80,19 +81,11 @@ const _INTERCEPT_COMPONENT_RULES = [
  * @returns {Route}
  */
 export function _getRouteToRender(stateOrGetState: Object | Function) {
-    const state
-        = typeof stateOrGetState === 'function'
-            ? stateOrGetState()
-            : stateOrGetState;
+    const route = _super_getRouteToRender(stateOrGetState);
 
-    // If mobile browser page was shown, there is no need to show it again.
-    const { room } = state['features/base/conference'];
-    const component = isRoomValid(room) ? Conference : WelcomePage;
-    const route = RouteRegistry.getRouteByComponent(component);
-
-    // Intercepts route components if any of component interceptor rules
-    // is satisfied.
-    route.component = _interceptComponent(state, component);
+    // Intercepts route components if any of component interceptor rules is
+    // satisfied.
+    route.component = _interceptComponent(stateOrGetState, route.component);
 
     return route;
 }
