@@ -1,12 +1,19 @@
 {
-    "contactlist": "",
+    "contactlist": "Участници (__pcount__)",
     "addParticipants": "",
     "roomLocked": "",
     "roomUnlocked": "",
     "passwordSetRemotely": "",
     "connectionsettings": "Настройки на връзката",
     "poweredby": "powered by",
-    "feedback": "Кажете ни как върви",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "Конференцията се създава...",
     "me": "аз",
     "speaker": "Говорител",
@@ -14,6 +21,10 @@
     "defaultNickname": "Яна Розова",
     "defaultLink": "например __url__",
     "callingName": "",
+    "audioOnly": {
+        "audioOnly": "",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
         "react-nativeGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -22,58 +33,66 @@
         "operaGrantPermissions": "",
         "iexplorerGrantPermissions": "",
         "safariGrantPermissions": "",
-        "nwjsGrantPermissions": ""
+        "nwjsGrantPermissions": "",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "",
+        "keyboardShortcuts": "Клавишни комбинации:",
         "raiseHand": "",
-        "pushToTalk": "",
-        "toggleScreensharing": "",
+        "pushToTalk": "Push to talk.",
+        "toggleScreensharing": "Смяна между камера и споделен екран.",
         "toggleFilmstrip": "",
-        "toggleShortcuts": "",
+        "toggleShortcuts": "Показване/скриване на това меню.",
         "focusLocal": "",
         "focusRemote": "",
-        "toggleChat": "",
-        "mute": "",
-        "fullScreen": "",
-        "videoMute": ""
+        "toggleChat": "Отваряне/скриване на чат панела.",
+        "mute": "Спиране/пускане на микрофона.",
+        "fullScreen": "Влез / Излез от Пълен екран",
+        "videoMute": "",
+        "showSpeakerStats": ""
     },
+    "\u0005keyboardShortcuts": {},
     "welcomepage": {
-        "go": "Влез",
-        "roomname": "Въведете име на стаята",
         "disable": "Не показвай повече тази страница",
         "feature1": {
-            "title": "Лесен за употреба",
-            "content": "Не е необходимо да сваляте нищо. _app_ работи директно във вашия браузър. Просто споделете адреса на вашата конференция с другите за да започнете."
+            "content": "Не е необходимо да сваляте нищо. __app__ работи директно във вашия браузър. Просто споделете адреса на вашата конференция с другите за да започнете.",
+            "title": "Лесен за употреба"
         },
         "feature2": {
-            "title": "Нисък дебит",
-            "content": "Видео конференциите могат да работят с по-малко от 128Kbps, а аудио конференциите и конференциите с споделен екран дори с по-малко."
+            "content": "Видео конференциите могат да работят с по-малко от 128Kbps, а аудио конференциите и конференциите с споделен екран дори с по-малко.",
+            "title": "Нисък дебит"
         },
         "feature3": {
-            "title": "Отворен код",
-            "content": "__app__ се разпространява под лицензе Apache. Свободни сте да го сваляте ползвате, променяте и споделяте спрямо правилата на лиценза."
+            "content": "__app__ се разпространява под лицензе Apache. Свободни сте да го сваляте ползвате, променяте и споделяте спрямо правилата на лиценза.",
+            "title": "Отворен код"
         },
         "feature4": {
-            "title": "Неограничен брой потребители",
-            "content": "Няма изкуствени ограничения за броя на потребителите или участниците в конференция. Единствените ограничения са мощността на вашия сървър и качеството на интернет връзката му."
+            "content": "Няма изкуствени ограничения за броя на потребителите или участниците в конференция. Единствените ограничения са мощността на вашия сървър и качеството на интернет връзката му.",
+            "title": "Неограничен брой потребители"
         },
         "feature5": {
-            "title": "Споделяне на екрана",
-            "content": "Лесно е да споделите екрана си с другите. __app__ е идеален за онлайн презентации, лекции и техническа подръжка."
+            "content": "Лесно е да споделите екрана си с другите. __app__ е идеален за онлайн презентации, лекции и техническа подръжка.",
+            "title": "Споделяне на екрана"
         },
         "feature6": {
-            "title": "Сигурни стаи",
-            "content": "Нуждаете се от уединение? _app__ конферентните стай могат да бъдат защитени от парола за да се препазите от нежелани гости или прекъсвания."
+            "content": "Нуждаете се от уединение? __app__ конферентните стай могат да бъдат защитени от парола за да се препазите от нежелани гости или прекъсвания.",
+            "title": "Сигурни стаи"
         },
         "feature7": {
-            "title": "Споделени бележки",
-            "content": "__app__ използва Etherpad, с който можете да редактирате текст в реално време заедно."
+            "content": "__app__ използва Etherpad, с който можете да редактирате текст в реално време заедно.",
+            "title": "Споделени бележки"
         },
         "feature8": {
-            "title": "Статистики за използване",
-            "content": "Научете повече за своите потребители като интегрирате лесно Piwik, Google Analytics и други статистики за изполването."
-        }
+            "content": "Научете повече за своите потребители като интегрирате лесно Piwik, Google Analytics и други статистики за изполването.",
+            "title": "Статистики за използване"
+        },
+        "go": "Влез",
+        "join": "",
+        "privacy": "",
+        "roomname": "Въведете име на стаята",
+        "roomnamePlaceHolder": "",
+        "sendFeedback": "",
+        "terms": ""
     },
     "startupoverlay": {
         "policyText": "",
@@ -81,19 +100,22 @@
     },
     "suspendedoverlay": {
         "title": "",
+        "text": "",
         "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Включи / Изключи микрофона",
-        "videomute": "",
+        "videomute": "Включи / Изключи камерата",
         "authenticate": "Идентификация",
-        "lock": "",
+        "lock": "Заключи / отключи стаята",
         "invite": "",
-        "chat": "",
+        "chat": "Отвори / затвори чат",
         "etherpad": "",
         "sharedvideo": "Сподели YouTube видео",
         "sharescreen": "",
-        "fullscreen": "",
+        "fullscreen": "Влез / Излез от Пълен екран",
         "sip": "Обади се на SIP номер",
         "Settings": "Настройки",
         "hangup": "",
@@ -109,6 +131,14 @@
         "filmstrip": "",
         "profile": "",
         "raiseHand": ""
+    },
+    "\u0005toolbar": {},
+    "unsupportedBrowser": {
+        "appInstalled": "",
+        "appNotInstalled": "",
+        "downloadApp": "",
+        "joinConversation": "",
+        "startConference": ""
     },
     "bottomtoolbar": {
         "chat": "Отвори / затвори чат",
@@ -133,12 +163,10 @@
         "selectAudioOutput": "",
         "followMe": "",
         "noDevice": "Няма",
-        "noPermission": "Не е разрешен достъп до устройството",
         "cameraAndMic": "",
         "moderator": "",
         "password": "",
-        "audioVideo": "",
-        "setPasswordLabel": ""
+        "audioVideo": ""
     },
     "profile": {
         "title": "",
@@ -149,18 +177,21 @@
     "videothumbnail": {
         "editnickname": "Натиснете за да<br/>промените името",
         "moderator": "Създателя на<br/>конференцията",
-        "videomute": "",
+        "videomute": "Учасника е спрял<br/>камерата си.",
         "mute": "Учасника е с изключен микрофон",
         "kick": "Изгони",
         "muted": "Изключен микрофон",
         "domute": "Изключи микрофона",
-        "flip": "Огледално"
+        "flip": "Огледално",
+        "remoteControl": ""
     },
+    "\u0005videothumbnail": {},
     "connectionindicator": {
         "header": "",
         "bitrate": "Дебит:",
         "packetloss": "Загуба на пакети:",
         "resolution": "Резолюция:",
+        "framerate": "",
         "less": "Скрий",
         "more": "Покажи",
         "address": "Адрес:",
@@ -174,7 +205,8 @@
         "remoteaddress_plural": "Отдалечени адреси:",
         "transport": "Транспорт:",
         "bandwidth": "Оценка макс. дебит:",
-        "na": "Върнете се тук за информацията относно вашата връзка, когато започне конференцията"
+        "na": "Върнете се тук за информацията относно вашата връзка, когато започне конференцията",
+        "turn": ""
     },
     "notify": {
         "disconnected": "връзката е прекъсната",
@@ -190,8 +222,10 @@
         "mutedTitle": "Звукът ви е спрян!",
         "raisedHand": ""
     },
+    "\u0005notify": {},
     "dialog": {
         "add": "",
+        "allow": "",
         "kickMessage": "Бяхте изгонен от срещата!",
         "popupError": "Навигаторът ви блокира попъите. Молим ви да премахнете забраната и да опитате отново.",
         "passwordErrorTitle": "",
@@ -203,8 +237,6 @@
         "connecting": "Свързване",
         "copy": "",
         "error": "Грешка",
-        "roomLocked": "",
-        "addPassword": "",
         "createPassword": "",
         "detectext": "Възникна грешка при опит да бъде намерено разширението за споделяне на екран.",
         "failtoinstall": "Неуспешна инсталация на разширението за споделяне на екрана.",
@@ -213,8 +245,7 @@
         "conferenceReloadMsg": "",
         "conferenceDisconnectTitle": "",
         "conferenceDisconnectMsg": "",
-        "reconnectNow": "",
-        "conferenceReloadTimeLeft": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "Конференцията е пълна. Моля, опитайте по-късно!",
         "lockTitle": "Неуспешно заключване",
         "lockMessage": "Неуспешно заключване на конференцията.",
@@ -231,7 +262,7 @@
         "defaultError": "Възникна грешка",
         "passwordRequired": "Изисква се парола",
         "Ok": "ОК",
-        "done": "",
+        "done": "Няма",
         "Remove": "DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE ",
         "removePassword": "",
         "shareVideoTitle": "Сподели видео",
@@ -254,31 +285,28 @@
         "Save": "Запазване",
         "recording": "Запис",
         "recordingToken": "Въведете код за достъп за запис на конференцията",
-        "Dial": "Набиране",
-        "sipMsg": "Въведете SIP номер",
         "passwordCheck": "Сигурни ли сте, че искате да махнете паролата?",
         "passwordMsg": "Въведете парола, за да заключите стаята",
         "shareLink": "",
         "settings1": "Конфигурирай конференцията",
         "settings2": "Участниците се присъединиха с изключен микрофон.",
         "settings3": "Изисквай имена<br/><br/>Въведете парола за да заключите стаята:",
-        "yourPassword": "",
+        "yourPassword": "потребителска парола",
         "Back": "Назад",
         "serviceUnavailable": "Услугата не е налична",
         "gracefulShutdown": "Услугата временно не е достъпна поради профилактика. Моля опитайте по-късно.",
         "Yes": "Да",
         "reservationError": "Грешка в системата за резервации",
         "reservationErrorMsg": "Грешка номер: __code__, съобщение: __msg__",
-        "password": "",
+        "password": "потребителска парола",
         "userPassword": "потребителска парола",
         "token": "код за достъп",
-        "tokenAuthFailedTitle": "",
+        "tokenAuthFailedTitle": "Неуспешна идентификация",
         "tokenAuthFailed": "",
         "displayNameRequired": "",
         "enterDisplayName": "Въведете името си:",
         "extensionRequired": "Изисква се разширение: ",
         "firefoxExtensionPrompt": "За да споделите екрана си, трябва да инсталирате Firefox разширение. <a href='__url__'>свалете го тук</a> и пробвайте пак!",
-        "rateExperience": "",
         "feedbackHelp": "",
         "feedbackQuestion": "",
         "thankYou": "Благодарим, че използвахте __appName__!",
@@ -291,7 +319,7 @@
         "stopLiveStreaming": "Край на прякото предаване",
         "stopRecording": "Край на записа",
         "doNotShowWarningAgain": "Занапред не ме предупреждавай пак",
-        "doNotShowMessageAgain": "",
+        "doNotShowMessageAgain": "Не показвай повече тази страница",
         "permissionDenied": "Достъпът е отказан",
         "screenSharingPermissionDeniedError": "Не сте дали права за споделяне на екран",
         "micErrorPresent": "Грешка при достъп до микрофона",
@@ -308,12 +336,27 @@
         "micNotSendingData": "",
         "cameraNotSendingData": "",
         "goToStore": "",
-        "externalInstallationTitle": "",
-        "externalInstallationMsg": "",
+        "externalInstallationTitle": "Изисква се разширение: ",
+        "externalInstallationMsg": "Неуспешна инсталация на разширението за споделяне на екрана.",
+        "inlineInstallationMsg": "Неуспешна инсталация на разширението за споделяне на екрана.",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "",
         "muteParticipantBody": "",
-        "muteParticipantButton": "Изключи микрофона"
+        "muteParticipantButton": "Изключи микрофона",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "",
+        "remoteControlAllowedMessage": "",
+        "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
+    "\u0005dialog": {},
     "email": {
         "sharedKey": [
             "Стаята е защитена с парола. Моля използвайте следния пин при влизане:",
@@ -356,19 +399,87 @@
         "on": "Запис",
         "off": "Записът спрян",
         "failedToStart": "Неуспешен опит за записване",
-        "buttonTooltip": "",
+        "buttonTooltip": "Пускане / спиране на запис",
         "error": "Грешка при опит за запис. Моля опитайте отново.",
         "unavailable": "Записите са временно невъзможни. Моля опитайте по-късно."
     },
+    "\u0005recording": {},
     "liveStreaming": {
         "pending": "Започва пряко предаване...",
         "on": "Пряко предаване",
         "off": "Край на прякото предаване",
         "unavailable": "Услугата за пряко предаване е временно недостъпна. Опитайте по-късно.",
         "failedToStart": "Неуспешен опит за пряко предаване",
-        "buttonTooltip": "",
+        "buttonTooltip": "Начало / край на пряко предаване",
         "streamIdRequired": "Моля попълнете името на потока, за да можем да започнем прякото предаване.",
+        "streamIdHelp": "",
         "error": "Неуспешно  пряко предаване. Опитайте пак.",
         "busy": "Всички записвачки са временно заети. Опитайте отново по-късно."
+    },
+    "\u0005liveStreaming": {},
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Име",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Набиране",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
