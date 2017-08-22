@@ -3,32 +3,38 @@
     "addParticipants": "Partager le lien",
     "roomLocked": "Les appelants doivent saisir un mot de passe",
     "roomUnlocked": "N'importe qui avec le lien peut rejoindre",
-    "passwordSetRemotely": "défini par un quelqu'un d'autre",
+    "passwordSetRemotely": "défini par un autre participant",
     "connectionsettings": "Paramètres de connexion",
     "poweredby": "Produit par",
-    "feedback": "Donnez-nous votre avis",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "Veuillez évaluer votre réunion.",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "Votre conférence est en cours de création...",
     "me": "moi",
     "speaker": "Haut-parleur",
-    "raisedHand": "Aimerais prendre la parole",
+    "raisedHand": "Aimerait prendre la parole",
     "defaultNickname": "ex. Jean Dupont",
     "defaultLink": "ex. __url__",
     "callingName": "__name__",
     "audioOnly": {
-        "audioOnly": "Audio seulement",
-        "featureToggleDisabled": "Le basculement de __feature__ est désactivé en mode audio uniquement",
-        "howToDisable": "Le mode audio uniquement est actuellement activé. Cliquez sur le bouton audio uniquement dans la barre d'outils pour désactiver la fonction."
+        "audioOnly": "Audio uniquement",
+        "featureToggleDisabled": "Le basculement de __feature__ est désactivé en mode audio uniquement"
     },
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
-        "firefoxGrantPermissions": "Sélectionnez<b><i>Partager le périphérique sélectionné</i></b>lorsque votre navigateur demande des autorisations.",
-        "operaGrantPermissions": "Sélectionner <b><i>Autoriser</i></b> Lorsque votre navigateur demande des autorisations.",
-        "iexplorerGrantPermissions": "",
-        "safariGrantPermissions": "Sélectionner <b><i>OK</i></b> quand le navigateur demande les permissions.",
+        "react-nativeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
+        "chromeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
+        "androidGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
+        "firefoxGrantPermissions": "Sélectionnez <b><i>Partager le périphérique sélectionné</i></b> lorsque votre navigateur demande des autorisations.",
+        "operaGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
+        "iexplorerGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande les permissions.",
+        "safariGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande les permissions.",
         "nwjsGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone",
-        "edgeGrantPermissions": "Sélectionner <b><i>Oui</i></b> quand le navigateur demande les permissions."
+        "edgeGrantPermissions": "Sélectionnez <b><i>Oui</i></b> quand le navigateur demande les permissions."
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Raccourcis clavier",
@@ -92,11 +98,12 @@
         "title": " "
     },
     "suspendedoverlay": {
-        "title": "Votre vidéo-conférence a été arrêté parce que votre ordinateur s'est mis en veille.",
-        "text": "Appuyez sur <i>Rejoindre</i> pour vous reconnecter à la conversation",
+        "title": "",
+        "text": "",
         "rejoinKeyTitle": "Rejoindre"
     },
     "toolbar": {
+        "addPeople": "",
         "audioonly": "Activer / Désactiver le mode audio uniquement (économiser de la bande passante)",
         "mute": "Muet / Actif",
         "videomute": "Démarrer / Arrêter la caméra",
@@ -172,7 +179,7 @@
         "mute": "Un participant a coupé son micro",
         "kick": "Exclure",
         "muted": "Muet",
-        "domute": "Vous ne pourrez plus réactiver leurs micros, mais ils peuvent l'activer par eux-même à tout moment.",
+        "domute": "Couper le micro",
         "flip": "Contrôle à distance",
         "remoteControl": "Contrôle à distance"
     },
@@ -195,7 +202,8 @@
         "remoteaddress_plural": "Adresses distantes :",
         "transport": "Transport :",
         "bandwidth": "Bande passante estimée :",
-        "na": "Revenez ici pour afficher les informations de connexion une fois la conférence démarrée"
+        "na": "Revenez ici pour afficher les informations de connexion une fois la conférence démarrée",
+        "turn": ""
     },
     "notify": {
         "disconnected": "déconnecté",
@@ -273,8 +281,6 @@
         "Save": "Sauvegarder",
         "recording": "Enregistrement",
         "recordingToken": "Saisissez un jeton d'enregistrement",
-        "Dial": "Composer",
-        "sipMsg": "Saisissez un numéro SIP",
         "passwordCheck": "Voulez-vous vraiment supprimer votre mot de passe ?",
         "passwordMsg": "Saisissez un mot de passe pour verrouiller la conférence",
         "shareLink": "Partager le lien de la conférence",
@@ -297,7 +303,6 @@
         "enterDisplayName": "Veuillez saisir votre nom",
         "extensionRequired": "Extension requise :",
         "firefoxExtensionPrompt": "Vous devez installer une extension Firefox pour utiliser le partage d'écran. Merci d'essayer de nouveau après l'installation <a href='__url__'>depuis ce lien</a> !",
-        "rateExperience": "Veuillez évaluer votre réunion.",
         "feedbackHelp": "Vos retours nous permettrons d'améliorer notre expérience vidéo.",
         "feedbackQuestion": "Informez-nous à propos de votre appel !",
         "thankYou": "Merci d'avoir utilisé __appName__ !",
@@ -329,6 +334,8 @@
         "goToStore": "Aller sur le webstore",
         "externalInstallationTitle": "Extension requise : ",
         "externalInstallationMsg": "Vous devez installer notre extension de partage de bureau.",
+        "inlineInstallationMsg": "Vous devez installer notre extension de partage de bureau.",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "Couper le micro de ce participant?",
         "muteParticipantBody": "Vous ne pourrez plus réactiver leurs micros, mais ils peuvent l'activer par eux-même à tout moment.",
         "muteParticipantButton": "Couper le micro",
@@ -338,6 +345,7 @@
         "remoteControlDeniedMessage": "__user__ a refusé votre demande de prise en main à distance!",
         "remoteControlAllowedMessage": "Une erreur s'est produite lors de la demande d’autorisation de prise en main à distance avec __user__!",
         "remoteControlErrorMessage": "Une erreur s'est produite lors de la demande d’autorisation de prise en main à distance avec __user__!",
+        "startRemoteControlErrorMessage": "",
         "remoteControlStopMessage": "La prise en main à distance est terminée!",
         "close": "Fermer",
         "shareYourScreen": "Partagez votre écran",
@@ -422,15 +430,52 @@
     },
     "invite": {
         "addPassword": "Ajouter un mot de passe",
-        "dialInNumbers": "Numéros de téléphone à composer",
-        "errorFetchingNumbers": "Échec d'obtention des numéros",
+        "callNumber": "Appeler le __number__",
+        "enterID": "Saisissez l'identifiant: __conferenceID__ suivi de # pour rejoindre avec un téléphone",
+        "howToDialIn": "Pour rejoindre avec un téléphone, utilisez un des des numéros suivants et l'identifiant de la conférence",
         "hidePassword": "Cacher le mot de passe",
         "inviteTo": "inviter des participants à __conferenceName__",
-        "loadingNumbers": "Chargement…",
+        "invitedYouTo": "__userName__ vous a invité(e) à la conférence __inviteURL__",
         "locked": "Cet appel est verrouillé. les nouveaux interlocuteurs devraient avoir le lien et saisir le mot de passe pour rejoindre.",
-        "noNumbers": "Aucun numéro disponible",
-        "numbersDisabled": "La numérotation a été désactivée",
         "showPassword": "Afficher le mot de passe",
         "unlocked": "Cet appel est verrouillé. Tout nouveau participant avec un lien peut rejoindre l'appel."
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "HD",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "SD",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Composer",
+        "dialOut": "Appeler un numéro de téléphone",
+        "statusMessage": "est maintenant __status__",
+        "enterPhone": "Saisissez un numéro de téléphone",
+        "phoneNotAllowed": "Désolé, nous ne supportons pas encore cette destination!"
+    },
+    "addPeople": {
+        "add": "Ajouter",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
