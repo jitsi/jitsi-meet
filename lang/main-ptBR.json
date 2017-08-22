@@ -6,7 +6,14 @@
     "passwordSetRemotely": "Definido por outro participante",
     "connectionsettings": "Configurações de conexão",
     "poweredby": "distribuído por",
-    "feedback": "Dê seus comentários",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "Por favor, avalie sua experiência na reunião.",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "Sua conferência está sendo criado...",
     "me": "eu",
     "speaker": "Orador",
@@ -14,15 +21,20 @@
     "defaultNickname": "ex. João Pedro",
     "defaultLink": "i.e. __url__",
     "callingName": "__name__",
+    "audioOnly": {
+        "audioOnly": "Somente áudio",
+        "featureToggleDisabled": "A alternância de __feature__ é desativada enquanto estiver no modo somente de áudio"
+    },
     "userMedia": {
-        "react-nativeGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
-        "chromeGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
-        "androidGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
-        "firefoxGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Compartilhar Dispositivos Selecionados</i> </b>",
-        "operaGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>Permitir</i> </b>",
-        "iexplorerGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>OK</i> </b>",
-        "safariGrantPermissions": "Dê as permissões para usar sua câmera e microfone pressionando o botão <b> <i>OK</i> </b>",
-        "nwjsGrantPermissions": "Dê as permissões para usar sua câmera e microfone"
+        "react-nativeGrantPermissions": "Selecione <b><i>Permitir</i></b>  quando seu navegador perguntar pelas permissões.",
+        "chromeGrantPermissions": "Selecione <b><i>Permitir</i></b>  quando seu navegador perguntar pelas permissões.",
+        "androidGrantPermissions": "Selecione <b><i>Permitir</i></b>  quando seu navegador perguntar pelas permissões.",
+        "firefoxGrantPermissions": "Selecione <b><i>Compartilhar Dispositivos Selecionados</i></b> quando seu navegador perguntar pelas permissões.",
+        "operaGrantPermissions": "Selecione <b><i>Permitir</i></b>  quando seu navegador perguntar pelas permissões.",
+        "iexplorerGrantPermissions": "Selecione <b><i>OK</i></b> quando seu navegador perguntar pelas permissões.",
+        "safariGrantPermissions": "Selecione <b><i>OK</i></b> quando seu navegador perguntar pelas permissões.",
+        "nwjsGrantPermissions": "Dê as permissões para usar sua câmera e microfone",
+        "edgeGrantPermissions": "Selecione <b><i>Sim</i></b> quando seu navegador perguntar pelas permissões."
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Atalhos de teclado",
@@ -36,7 +48,8 @@
         "toggleChat": "Abrir ou fechar o painel de bate-papo",
         "mute": "Deixar mudo ou não o microfone",
         "fullScreen": "Entrar ou sair da tela cheia",
-        "videoMute": "Iniciar ou parar sua câmera"
+        "videoMute": "Iniciar ou parar sua câmera",
+        "showSpeakerStats": "Mostrar estatísticas do alto falante"
     },
     "welcomepage": {
         "disable": "Não mostre esta página novamente",
@@ -81,14 +94,17 @@
         "terms": "Termos"
     },
     "startupoverlay": {
-        "policyText": "&nbsp;",
+        "policyText": " ",
         "title": "O __app__ precisa usar seu microfone e câmera."
     },
     "suspendedoverlay": {
-        "title": "Sua chamada de vídeo foi interrompida, porque seu computador foi dormir.",
+        "title": "",
+        "text": "",
         "rejoinKeyTitle": "Reentrar"
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "Ativar / desativar modo somente áudio (economiza banda)",
         "mute": "Mudo / Não mudo",
         "videomute": "Iniciar ou parar a câmera",
         "authenticate": "Autenticar",
@@ -117,9 +133,9 @@
     },
     "unsupportedBrowser": {
         "appInstalled": "ou se você já tenha isso<br /> <strong>então</strong>",
-        "appNotInstalled": "Você precisa do <strong>__app__</strong> para começar um bate-papo no seu celular",
+        "appNotInstalled": "Você precisa do <strong>__app__</strong> para começar uma conversa no seu celular",
         "downloadApp": "Baixe o Aplicativo",
-        "joinConversation": "Entre no bate-papo",
+        "joinConversation": "Entrar na conversa",
         "startConference": "Comece uma conferência"
     },
     "bottomtoolbar": {
@@ -145,12 +161,10 @@
         "selectAudioOutput": "Saída de áudio",
         "followMe": "Todos me seguem",
         "noDevice": "Nenhum",
-        "noPermission": "Permissão para usar o dispositivo não concedida",
         "cameraAndMic": "Câmera e microfone",
         "moderator": "MODERADOR",
         "password": "DEFINIR SENHA",
-        "audioVideo": "ÁUDIO E VÍDEO",
-        "setPasswordLabel": "Trancar sua sala com uma senha."
+        "audioVideo": "ÁUDIO E VÍDEO"
     },
     "profile": {
         "title": "Perfil",
@@ -174,6 +188,7 @@
         "bitrate": "Taxa de bits:",
         "packetloss": "Perda de pacote:",
         "resolution": "Resolução:",
+        "framerate": "Taxa de quadros:",
         "less": "Mostrar menos",
         "more": "Mostrar mais",
         "address": "Endereço:",
@@ -187,7 +202,8 @@
         "remoteaddress_plural": "Endereços remotos:",
         "transport": "Transporte:",
         "bandwidth": "Largura de banda estimada:",
-        "na": "Volte aqui para informações de conexão uma vez que a conferência inicie"
+        "na": "Volte aqui para informações de conexão uma vez que a conferência inicie",
+        "turn": ""
     },
     "notify": {
         "disconnected": "desconectado",
@@ -198,36 +214,34 @@
         "focus": "Foco da conferência",
         "focusFail": "__component__ não disponĩvel - tente em __ms__ seg.",
         "grantedTo": "Direitos de moderador concedido para __to__!",
-        "grantedToUnknown": "Direitos de moderador concedido para $t(somebody)!",
-        "muted": "Você iniciou uma conversa muda.",
+        "grantedToUnknown": "Direitos de moderador concedido para $t(notify.somebody)!",
+        "muted": "Você iniciou uma conversa em mudo.",
         "mutedTitle": "Você está mudo!",
         "raisedHand": "Gostaria de falar."
     },
     "dialog": {
         "add": "Adicionar",
+        "allow": "Permitir",
         "kickMessage": "Ouch! Você o chutou para fora da reunião!",
-        "popupError": "Seu navegador está bloqueando janelas popup deste site. Por favor, habilite popups nas configurações de segurança do seu navegador e tente novamente.",
+        "popupError": "Seu navegador está bloqueando janelas popup deste site. Por favor, ative popups nas configurações de segurança do seu navegador e tente novamente.",
         "passwordErrorTitle": "Erro na senha",
         "passwordError": "Esta conversa está protegida atualmente por uma senha. Somente o dono da conferência pode definir a senha.",
-        "passwordError2": "Esta reunião não está protegida por senha atualmente. Somente o dono da conferência pode definir a senha.",
+        "passwordError2": "Esta conversa não está protegida por senha atualmente. Somente o dono da conferência pode definir a senha.",
         "connectError": "Oops! Alguma coisa está errada e nós não pudemos conectar à conferência.",
         "connectErrorWithMsg": "Oops! Alguma coisa está errada e não podemos conectar à conferência: __msg__",
         "incorrectPassword": "A senha está incorreta",
         "connecting": "Conectando",
         "copy": "Copiar",
         "error": "Erro",
-        "roomLocked": "Esta chamada está fechada. Novos visitantes precisam ter o link e digitar a senha para entrar",
-        "addPassword": "Adicionar uma senha",
         "createPassword": "Criar uma senha",
         "detectext": "Erro enquanto tenta detectar a extensão de compartilhamento de tela.",
         "failtoinstall": "Falhou a instalação da extensão de compartilhamento de tela",
         "failedpermissions": "Falha ao obter permissões para usar o microfone e/ou câmera local.",
-        "conferenceReloadTitle": "Infelizmente, algo deu errado",
-        "conferenceReloadMsg": "Estamos tentando concertar isso",
-        "conferenceDisconnectTitle": "Você foi desconectado. Verifique sua conexão de rede.",
-        "conferenceDisconnectMsg": "Reconectando em...",
-        "reconnectNow": "Reconecte agora",
-        "conferenceReloadTimeLeft": "__seconds__ s.",
+        "conferenceReloadTitle": "Infelizmente, algo deu errado.",
+        "conferenceReloadMsg": "Estamos tentando consertar isto. Reconectando em __seconds__ segundos...",
+        "conferenceDisconnectTitle": "Você foi desconectado.",
+        "conferenceDisconnectMsg": "Você pode querer verificar sua conexão de rede. Reconectando em __seconds__ segundos ...",
+        "rejoinNow": "Voltar agora",
         "maxUsersLimitReached": "O limite para o número máximo de participantes na conferência foi atingida. A conferência está cheia. Por favor, tente mais tarde!",
         "lockTitle": "Bloqueio falhou",
         "lockMessage": "Falha ao travar a conferência.",
@@ -267,8 +281,6 @@
         "Save": "Salvar",
         "recording": "Gravando",
         "recordingToken": "Digite o token de gravação",
-        "Dial": "Discar",
-        "sipMsg": "Digite o número SIP",
         "passwordCheck": "Você tem certeza que deseja remover sua senha?",
         "passwordMsg": "Definir uma senha para trancar sua sala",
         "shareLink": "Compartilhar o link para a chamada",
@@ -291,7 +303,6 @@
         "enterDisplayName": "Digite seu nome de exibição",
         "extensionRequired": "Extensão requerida:",
         "firefoxExtensionPrompt": "Você precisa instalar uma extensão do Firefox para compartilhar a tela. Tente novamente depois que você <a href='__url__'>pegá-lo aqui</a>!",
-        "rateExperience": "Por favor, avalie sua experiência na reunião.",
         "feedbackHelp": "Seu retorno nos ajudará a melhorar nossa experiência de vídeo.",
         "feedbackQuestion": "Nos conte sobre sua chamada!",
         "thankYou": "Obrigado por usar o __appName__!",
@@ -313,24 +324,33 @@
         "cameraUnknownError": "Não pode usar a câmera por uma razão desconhecida.",
         "cameraPermissionDeniedError": "Você não tem permissão para usar sua câmera. Você ainda pode entrar na conferência, mas os outros não verão você. Use o botão da câmera na barra de endereço para fixar isto.",
         "cameraNotFoundError": "A câmera não foi encontrada.",
-        "cameraConstraintFailedError": "Sua câmera não satisfaz algumas condições requeridas.",
+        "cameraConstraintFailedError": "Sua câmera não satisfaz algumas condições necessárias.",
         "micUnknownError": "Não pode usar o microfone por uma razão desconhecida.",
         "micPermissionDeniedError": "Você não tem permissão para usar seu microfone. Você ainda pode entrar na conferência, mas os outros não ouvirão você. Use o botão da câmera na barra de endereço para fixar isto.",
         "micNotFoundError": "O microfone não foi encontrado.",
-        "micConstraintFailedError": "Seu microfone não satisfaz algumas condições requeridas.",
+        "micConstraintFailedError": "Seu microfone não satisfaz algumas condições necessárias.",
         "micNotSendingData": "Seu microfone está inacessível. Selecione outro dispositivo do menu de configurações ou tente reiniciar a aplicação.",
         "cameraNotSendingData": "Sua câmera está inacessível. Verifique se outra aplicação está usando este dispositivo, selecione outro dispositivo do menu de configurações ou tente reiniciar a aplicação.",
         "goToStore": "Vá para a loja virtual",
         "externalInstallationTitle": "Extensão requerida",
         "externalInstallationMsg": "Você precisa instalar nossa extensão de compartilhamento de tela.",
+        "inlineInstallationMsg": "Você precisa instalar nossa extensão de compartilhamento de tela.",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "Deixar mudo este participante?",
         "muteParticipantBody": "Você não está habilitado para tirar o mudo deles, mas eles podem tirar o mudo deles mesmos a qualquer tempo.",
         "muteParticipantButton": "Mudo",
-        "remoteControlTitle": "Controle remoto",
+        "remoteControlTitle": "Conexão de área de trabalho remota",
+        "remoteControlRequestMessage": "Permitirá __user__ controlar remotamente sua área de trabalho?",
+        "remoteControlShareScreenWarning": "Note que se você pressionar \"Permitir\" você vai compartilhar sua tela!",
         "remoteControlDeniedMessage": "__user__ rejeitou sua requisição de controle remoto!",
         "remoteControlAllowedMessage": "__user__ aceitou sua requisição de controle remoto!",
         "remoteControlErrorMessage": "Um erro ocorreu enquanto tentava requerer a permissão de controle remoto de __user__!",
-        "remoteControlStopMessage": "A sessão de controle remoto terminou!"
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "A sessão de controle remoto terminou!",
+        "close": "Fechar",
+        "shareYourScreen": "Compartilhar sua tela",
+        "yourEntireScreen": "Toda sua tela",
+        "applicationWindow": "Janela de aplicativo"
     },
     "email": {
         "sharedKey": [
@@ -392,5 +412,70 @@
         "streamIdHelp": "Aonde eu encontro isto?",
         "error": "Falha na transmissão ao vivo. Tente novamente",
         "busy": "Todos os gravadores estão ocupados no momento. Por favor, tente mais tarde."
+    },
+    "speakerStats": {
+        "hours": "__count__h",
+        "minutes": "__count__m",
+        "name": "Nome",
+        "seconds": "__count__s",
+        "speakerStats": "Estatísticas do Apresentador",
+        "speakerTime": "Tempo do Apresentador"
+    },
+    "deviceSelection": {
+        "deviceSettings": "Configurações do dispositivo",
+        "noPermission": "Permissão não concedida",
+        "previewUnavailable": "Visualização indisponível",
+        "selectADevice": "Selecione um dispositivo",
+        "testAudio": "Testar o som"
+    },
+    "invite": {
+        "addPassword": "Adicionar uma senha",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "Esconder a senha",
+        "inviteTo": "Convidar pessoas para __conferenceName__",
+        "invitedYouTo": "",
+        "locked": "Esta chamada está travada. Novos participantes precisam ter o link e digitar a senha para entrar.",
+        "showPassword": "Mostrar senha",
+        "unlocked": "Esta chamada está destravada. Qualquer novo participante com o link pode participar."
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Discar",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "Adicionar",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
