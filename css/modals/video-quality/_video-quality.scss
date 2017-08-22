@@ -142,9 +142,12 @@
     }
 }
 
-#videoResolutionLabel,
 .centeredVideoLabel.moveToCorner {
     z-index: $tooltipsZ;
+}
+
+#videoResolutionLabel {
+    z-index: #{$tooltipsZ + 1};
 }
 
 .centeredVideoLabel {
