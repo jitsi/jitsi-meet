@@ -231,6 +231,10 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 - (void)loadURLObject:(NSDictionary *)urlObject {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
+    if (self.defaultURL) {
+        props[@"defaultURL"] = [self.defaultURL absoluteString];
+    }
+
     props[@"externalAPIScope"] = externalAPIScope;
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
 

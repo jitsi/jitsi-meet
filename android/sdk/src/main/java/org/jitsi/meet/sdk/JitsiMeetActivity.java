@@ -61,6 +61,12 @@ public class JitsiMeetActivity
     private JitsiMeetView view;
 
     /**
+     * Default URL to be used when joining a conference. The value is used only
+     * while {@link #view} equals {@code null}.
+     */
+    private URL defaultURL;
+
+    /**
      * Whether the Welcome page is enabled. The value is used only while
      * {@link #view} equals {@code null}.
      */
@@ -72,6 +78,14 @@ public class JitsiMeetActivity
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && getApplicationInfo().targetSdkVersion
                     >= Build.VERSION_CODES.M;
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#getDefaultURL
+     */
+    public URL getDefaultURL() {
+        return view == null ? defaultURL : view.getDefaultURL();
     }
 
     /**
@@ -104,8 +118,10 @@ public class JitsiMeetActivity
         JitsiMeetView view = new JitsiMeetView(this);
 
         // In order to have the desired effect
-        // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
+        // JitsiMeetView#setWelcomePageEnabled(boolean) or
+        // JitsiMeetView#setDefaultURL(URL) must be invoked before
         // JitsiMeetView#loadURL(URL).
+        view.setDefaultURL(defaultURL);
         view.setWelcomePageEnabled(welcomePageEnabled);
         view.loadURL(null);
 
@@ -223,6 +239,18 @@ public class JitsiMeetActivity
 
         defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
         JitsiMeetView.onHostResume(this, defaultBackButtonImpl);
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#setDefaultURL
+     */
+    public void setDefaultURL(URL url) {
+        if (view == null) {
+            defaultURL = url;
+        } else {
+            view.setDefaultURL(url);
+        }
     }
 
     /**

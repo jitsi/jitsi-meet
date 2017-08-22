@@ -23,6 +23,8 @@
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
 
+@property (copy, nonatomic) NSURL *defaultURL;
+
 @property (nonatomic) BOOL welcomePageEnabled;
 
 +             (BOOL)application:(UIApplication *_Nonnull)application

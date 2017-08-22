@@ -105,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
 This class encapsulates a high level API in the form of an Android `Activity`
 which displays a single `JitsiMeetView`.
 
+#### getDefaultURL()
+
+See JitsiMeetView.getDefaultURL.
+
 #### getWelcomePageEnabled()
 
 See JitsiMeetView.getWelcomePageEnabled.
@@ -112,6 +116,10 @@ See JitsiMeetView.getWelcomePageEnabled.
 #### loadURL(URL)
 
 See JitsiMeetView.loadURL.
+
+#### setDefaultURL(URL)
+
+See JitsiMeetView.setDefaultURL.
 
 #### setWelcomePageEnabled(boolean)
 
@@ -127,6 +135,12 @@ display a Jitsi Meet conference (or a welcome page).
 Releases all resources associated with this view. This method MUST be called
 when the Activity holding this view is going to be destroyed, usually in the
 `onDestroy()` method.
+
+#### getDefaultURL()
+
+Returns the default URL for joining a conference when a non-full URL is given,
+or null if it's not set. If not set, the builtin default (in JavaScript) is
+used: https://meet.jit.si.
 
 #### getListener()
 
@@ -168,6 +182,12 @@ urlBundle.putBundle("configOverwrite", configOverwrite);
 urlBundle.putString("url", "https://meet.jit.si/Test123");
 view.loadURLObject(urlBundle);
 ```
+
+#### setDefaultURL(URL)
+
+Sets the default URL. See `getDefaultURL` for more information.
+
+NOTE: Must be called before `loadURL`/`loadURLString` for it to take effect.
 
 #### setListener(listener)
 

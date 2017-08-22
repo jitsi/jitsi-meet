@@ -237,6 +237,11 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Default base URL to use when joining a conference without a full URL.
+     */
+    private URL defaultURL;
+
+    /**
      * The unique identifier of this {@code JitsiMeetView} within the process
      * for the purposes of {@link ExternalAPI}. The name scope was inspired by
      * postis which we use on Web for the similar purposes of the iframe-based
@@ -292,6 +297,17 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Gets the default base URL. If set, it will be preferred over the builtin
+     * default (https://meet.jit.si) in JavaScript. When set, it will be used
+     * to compose the full URL for a conference, when no full URL is provided.
+     *
+     * @return {@URL} the default URL or {@null} if none was set.
+     */
+    public URL getDefaultURL() {
+        return defaultURL;
+    }
+
+    /**
      * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
      *
      * @return The {@code JitsiMeetViewListener} set on this
@@ -338,6 +354,10 @@ public class JitsiMeetView extends FrameLayout {
     public void loadURLObject(@Nullable Bundle urlObject) {
         Bundle props = new Bundle();
 
+        // defaultURL
+        if (defaultURL != null) {
+            props.putString("defaultURL", defaultURL.toString());
+        }
         // externalAPIScope
         props.putString("externalAPIScope", externalAPIScope);
         // url
@@ -375,6 +395,16 @@ public class JitsiMeetView extends FrameLayout {
             urlObject.putString("url", urlString);
         }
         loadURLObject(urlObject);
+    }
+
+    /**
+     * Sets the default base URL. Must be called before {@link #loadURL(URL)}
+     * for it to take effect.
+     *
+     * @param url - The {@URL} to be set as the new default URL.
+     */
+    public void setDefaultURL(URL url) {
+        defaultURL = url;
     }
 
     /**

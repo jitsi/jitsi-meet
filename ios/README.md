@@ -46,6 +46,14 @@ The `JitsiMeetView` class is the entry point to the SDK. It a subclass of
 
 Property for getting / setting the `JitsiMeetViewDelegate` on `JitsiMeetView`.
 
+#### defaultURL
+
+Property for getting / setting the base default URL. The default URL is used for
+joining a conference when a non-full URL is given. If not set (or nil), the
+builtin default (in JavaScript) is used: https://meet.jit.si.
+
+NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
+
 #### welcomePageEnabled
 
 Property for getting / setting whether the Welcome page is enabled. If NO, a
