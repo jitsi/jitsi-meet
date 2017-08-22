@@ -8,17 +8,12 @@ import { Watermarks } from '../../base/react';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
-/* eslint-disable require-jsdoc */
-
 /**
  * The Web container rendering the welcome page.
  *
  * @extends AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage {
-
-/* eslint-enable require-jsdoc */
-
     /**
      * Initializes a new WelcomePage instance.
      *
