@@ -6,7 +6,14 @@
     "passwordSetRemotely": "causit per qualqu'un mai",
     "connectionsettings": "Paramètres de connexion",
     "poweredby": "produit per",
-    "feedback": "Donatz-nos lo vòstre vejaire",
+    "feedback": {
+        "average": "Mejana",
+        "bad": "Marrida",
+        "good": "Bona",
+        "rateExperience": "Mercés de donar una nòta a vòstra experiéncia.",
+        "veryBad": "Fòrça marrida",
+        "veryGood": "Fòrça bona"
+    },
     "inviteUrlDefaultMsg": "Vòstra conferéncia es en cors de creacion...",
     "me": "ieu",
     "speaker": "Nautparlaire",
@@ -14,29 +21,35 @@
     "defaultNickname": "ex. Joan Delpuèch",
     "defaultLink": "ex. __url__",
     "callingName": "__name__",
+    "audioOnly": {
+        "audioOnly": "Àudio solament",
+        "featureToggleDisabled": "Lo cambiament de __feature__ es desactivat en mòde àudio solament"
+    },
     "userMedia": {
-        "react-nativeGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>Autorizar</i></b>",
-        "chromeGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>Autorizar</i></b>",
-        "androidGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>Autorizar</i></b>",
-        "firefoxGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>Partejar l'aparelh seleccionat</i></b>",
-        "operaGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>Autorizar</i></b>",
-        "iexplorerGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>OK</i></b>",
-        "safariGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn en butant sul boton <b><i>OK</i></b>",
-        "nwjsGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn"
+        "react-nativeGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "chromeGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "androidGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "firefoxGrantPermissions": "Causissètz <b><i>Partejar l'aparelh seleccionat</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "operaGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "iexplorerGrantPermissions": "Causissètz <b><i>OK</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "safariGrantPermissions": "Causissètz <b><i>OK</i></b> quand vòstre navigador vos demanda l'autorizacion.",
+        "nwjsGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camerà e vòstre microfòn",
+        "edgeGrantPermissions": "Causissètz <b><i>Òc</i></b> quand vòstre navigador vos demanda l'autorizacion."
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Acorchis de clavièr",
         "raiseHand": "Demandar o pas la paraula",
         "pushToTalk": "Butar per parlar",
         "toggleScreensharing": "Caplevar entre camerà e partatge d'ecran",
-        "toggleFilmstrip": "Mostrar o escondre la vidèo",
+        "toggleFilmstrip": "Mostrar o rescondre la vidèo",
         "toggleShortcuts": "Afichar o amagar aiceste menú d'ajuda",
         "focusLocal": "Centrar sus vòstra vidèo",
         "focusRemote": "Centrar sus la vidèo de qualqu'un mai",
         "toggleChat": "Dubrir o tampar lo panèl de conversacion",
         "mute": "Activar o desactivar lo microfòn",
         "fullScreen": "Activar / Desactivar l'ecran complet",
-        "videoMute": "Aviar o arrestar vòstra camerà"
+        "videoMute": "Aviar o arrestar vòstra camerà",
+        "showSpeakerStats": "Mostrar las estadistica del microfòn"
     },
     "welcomepage": {
         "disable": "Afichar pas mai aquesta pagina",
@@ -81,14 +94,17 @@
         "terms": "Tèrmes"
     },
     "startupoverlay": {
-        "policyText": "&nbsp;",
+        "policyText": " ",
         "title": "__app__ a besonh d'utilizar vòstre microfòn e camerà."
     },
     "suspendedoverlay": {
-        "title": "Vòstra conferéncia vidèo es estada arrestada perque vòstre ordinador se botèt en velha.",
+        "title": "Vòstra conferéncia vidèo es estada arrestada perque vòstre ordenador se botèt en velha.",
+        "text": "Quichatz lo boton <i>Tornar participar</i>.",
         "rejoinKeyTitle": "Tornar participar"
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "Activar / Desactivar lo mòde àudio solament (emplega mens de debit)",
         "mute": "Mut / Actiu",
         "videomute": "Aviar / Arrestar la camerà",
         "authenticate": "Autentificatz-vos",
@@ -111,12 +127,12 @@
         "unableToUnmutePopup": "Podètz pas reactivar vòstre microfòn pendent que la vidèo partejada es activada.",
         "cameraDisabled": "La camerà es pas disponibla",
         "micDisabled": "Lo microfòn es pas disponible",
-        "filmstrip": "Mostrar / escondre vidèos",
+        "filmstrip": "Mostrar / Rescondre vidèos",
         "profile": "Modificar vòstre perfil",
-        "raiseHand": "o se l'avètz ja<br /><strong>alara</strong>"
+        "raiseHand": "Demandar / Daissar la paraula"
     },
     "unsupportedBrowser": {
-        "appInstalled": "o se ja l'avètz<br /><strong>alara</strong>",
+        "appInstalled": "o se l'avètz ja installat<br /><strong>alara</strong>",
         "appNotInstalled": "Vos cal <strong>__app__</strong> per participar a la conversacion a partir de vòstre mobil",
         "downloadApp": "Telecargar l'aplicacion",
         "joinConversation": "Participar a la conversacion",
@@ -124,7 +140,7 @@
     },
     "bottomtoolbar": {
         "chat": "Dobrir / tampar lo chat",
-        "filmstrip": "Mostrar / escondre vidèos",
+        "filmstrip": "Mostrar / rescondre vidèos",
         "contactlist": "Veire e convidar de participants"
     },
     "chat": {
@@ -145,12 +161,10 @@
         "selectAudioOutput": "Sortida àudio",
         "followMe": "Tot lo mond me sèc",
         "noDevice": "Pas cap",
-        "noPermission": "La permission d'utilizar l'aparelh es pas estada donada",
         "cameraAndMic": "Camerà e microfòn",
         "moderator": "MODERATOR",
         "password": "DEFINIR UN SENHAL",
-        "audioVideo": "ÀUDIO E VIDÈO",
-        "setPasswordLabel": "Verrolhar vòstra sala amb un senhal"
+        "audioVideo": "ÀUDIO E VIDÈO"
     },
     "profile": {
         "title": "Perfil",
@@ -174,6 +188,7 @@
         "bitrate": "Debit :",
         "packetloss": "Pèrda de paquets :",
         "resolution": "Resolucion :",
+        "framerate": "Frequéncia imatge :",
         "less": "Amagar lo detalh",
         "more": "Ne veire mai",
         "address": "Adreça :",
@@ -187,7 +202,8 @@
         "remoteaddress_plural": "Adreças distantas :",
         "transport": "Transpòrt :",
         "bandwidth": "Benda passanta estimada :",
-        "na": "Tornatz aicí per afichar las informacions de connexion un còp la conferéncia aviada"
+        "na": "Tornatz aicí per afichar las informacions de connexion un còp la conferéncia aviada",
+        "turn": ""
     },
     "notify": {
         "disconnected": "desconnectat",
@@ -198,13 +214,14 @@
         "focus": "Focus de conferéncia",
         "focusFail": "__component__ es pas disponible - ensajatz tornamai dins __ms__ sec",
         "grantedTo": "Dreits moderator acordats a __to__ !",
-        "grantedToUnknown": "Dreits moderator acordats a $t(somebody) !",
+        "grantedToUnknown": "Drechs moderator acordats a $t(notify.somebody) !",
         "muted": "Avètz començat la conversacion en mut.",
         "mutedTitle": "Sètz en mut !",
         "raisedHand": "Volriá parlar."
     },
     "dialog": {
         "add": "Apondre",
+        "allow": "Autorizar",
         "kickMessage": "Ops! Sètz estat bandit de la reünion !",
         "popupError": "Vòstre navigador blòca las fenèstras popup d'aqueste site. Mercé d'activar las popups dins los paramètres de seguretat de vòstre navigador e d'ensajar tornamai.",
         "passwordErrorTitle": "Error de senhal",
@@ -216,18 +233,15 @@
         "connecting": "Connexion en cors",
         "copy": "Copiar",
         "error": "Error",
-        "roomLocked": "Aquesta conversacion es verrolhada. Lo nòu-venguts devon aver lo ligam e lo senhal per participar.",
-        "addPassword": "Apondre un senhal",
         "createPassword": "Crear un senhal",
         "detectext": "Una error s'es produita pendent la deteccion de l'extension de partiment d'ecran.",
         "failtoinstall": "Fracàs de l'installacion de l'extension de partiment d'ecran",
         "failedpermissions": "Fracàs d'obtencion de las permissions per utilizar lo micro e/o la camerà.",
-        "conferenceReloadTitle": "Malurosament, quicòm truquèt",
-        "conferenceReloadMsg": "Sèm a trobar una solucion per aquò",
-        "conferenceDisconnectTitle": "Sètz estat desconnectat. Vos cal benlèu verificar vòstra connexion.",
-        "conferenceDisconnectMsg": "Se tòrna connectar dins...",
-        "reconnectNow": "Es a se tornar connectar ara",
-        "conferenceReloadTimeLeft": "__seconds__ segondas.",
+        "conferenceReloadTitle": "Malurosament, quicòm truquèt.",
+        "conferenceReloadMsg": "Sèm a reglar aquò ! Nòva connexion dins __seconds__ segondas...",
+        "conferenceDisconnectTitle": "Sètz estat desconnectat.",
+        "conferenceDisconnectMsg": "Vos cal benlèu verificar vòstra connexion al malhum. Nòva connexion dins __seconds__ segondas...",
+        "rejoinNow": "Participar ara",
         "maxUsersLimitReached": "Lo limit pel nombre maximum de participants a la conferéncia es estat atent. La conferéncia es plena. Ensajatz tornamai pus tard !",
         "lockTitle": "Fracàs del verrolhatge",
         "lockMessage": "Impossible de verrolhar la conferéncia.",
@@ -267,8 +281,6 @@
         "Save": "Salvar",
         "recording": "Enregistrament",
         "recordingToken": "Sasissètz un geton d'enregistrament",
-        "Dial": "Compausar",
-        "sipMsg": "Sasissètz un numèro SIP",
         "passwordCheck": "Sètz segur que volètz suprimir vòstre senhal ?",
         "passwordMsg": "Sasissètz un senhal per verrolhar la conferéncia",
         "shareLink": "Partejatz lo ligam de la conversacion",
@@ -291,7 +303,6 @@
         "enterDisplayName": "Sasissètz vòstre nom",
         "extensionRequired": "Extension requesida :",
         "firefoxExtensionPrompt": "Vos cal installar una extension Firefox per utilizar lo partiment d'ecran. Mercé ensajar tornamai aprèp l'installacion <a href='__url__'>dempuèi aqueste ligam</a> !",
-        "rateExperience": "Mercés de donar una nota à vòstra experiéncia.",
         "feedbackHelp": "Vòstres comentaris nos ajudaràn a milhorar l'experiéncia vidèo",
         "feedbackQuestion": "Contatz-nos cossí èra vòstre apèl !",
         "thankYou": "Mercé d'aver utilizat __appName__ !",
@@ -323,14 +334,23 @@
         "goToStore": "Anar sul webstore",
         "externalInstallationTitle": "Extension requesida :",
         "externalInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran.",
+        "inlineInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran.",
+        "inlineInstallExtension": "Installar ara",
         "muteParticipantTitle": "Copar lo micro als participants ?",
         "muteParticipantBody": "Poiretz pas lo tornar activar lo microfòn, mai eles pòdon o far quand vòlon.",
         "muteParticipantButton": "Copar lo son",
-        "remoteControlTitle": "Contraròtle alonhat",
+        "remoteControlTitle": "Contraròtle a distància",
+        "remoteControlRequestMessage": "Volètz autorizar __user__ a contrarotlar vòstre ordinador ?",
+        "remoteControlShareScreenWarning": "Remarcatz que se botatz « Autorizar » partejaretz vòstre ecran !",
         "remoteControlDeniedMessage": "__user__ a refusat vòstra demanda de contraròtle alonhat !",
         "remoteControlAllowedMessage": "__user__ a acceptat vòstra demanda de contraròtle alonhat !",
         "remoteControlErrorMessage": "Error al moment de demandar lo contraròtle alonhat a __user__ !",
-        "remoteControlStopMessage": "La session de contraròtle alonhat es acabada !"
+        "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar  la session de contraròtle a distància !",
+        "remoteControlStopMessage": "La session de contraròtle alonhat es acabada !",
+        "close": "Tampar",
+        "shareYourScreen": "Partejar vòstre ecran",
+        "yourEntireScreen": "Vòstre ecran complet",
+        "applicationWindow": "Fenèstra de l'aplicacion"
     },
     "email": {
         "sharedKey": [
@@ -392,5 +412,70 @@
         "streamIdHelp": "Ont tròbi aquò ?",
         "error": "Fracàs de la transmission en dirècte. Mercés de tornar ensajar.",
         "busy": "Tots los enresgistraires son ocupats. Mercés de tornar ensajar mai tard."
+    },
+    "speakerStats": {
+        "hours": "__count__ oras",
+        "minutes": "__count__ minutas",
+        "name": "Nom",
+        "seconds": "__count__ segondas",
+        "speakerStats": "Estatisticas parladors",
+        "speakerTime": "Temps de paraula"
+    },
+    "deviceSelection": {
+        "deviceSettings": "Paramètres de l'aparelh",
+        "noPermission": "Autorizacion pas acordada",
+        "previewUnavailable": "Apercebut pas disponible",
+        "selectADevice": "Seleccionatz un aparelh",
+        "testAudio": "Ensag son"
+    },
+    "invite": {
+        "addPassword": "Ajustar un senhal",
+        "callNumber": "Sonar lo __numerò__",
+        "enterID": "Picatz l’identificant de la conferéncia :  __conferenceID__ seguit per # per sonar dempuèi un telefòn",
+        "howToDialIn": "Per sonar, utilizatz un dels numeròs seguents e identificants de conferéncia",
+        "hidePassword": "Rescondre lo senhal",
+        "inviteTo": "Convidar de mond a __conferenceName__",
+        "invitedYouTo": "__userName__ vos a convidat a la conferéncia __inviteURL__",
+        "locked": "Aquesta conversacion es clavada. Los nòu-venguts devon aver lo ligam e picar lo senhal per participar.",
+        "showPassword": "Mostrar lo senhal",
+        "unlocked": "Aquesta conversacion es pas clavada. Tot lo mond amb lo ligam pòdon participar."
+    },
+    "videoStatus": {
+        "callQuality": "Qualitat àudio",
+        "changeVideoTip": "Cambiatz la qualitat vidèo amb la barra d'aisina a man esquèrra.",
+        "hd": "HD",
+        "highDefinition": "Nauta definicion",
+        "ld": "Bassa definicion",
+        "lowDefinition": "Bassa definicion",
+        "p2pEnabled": "Connexion par a par activada",
+        "p2pVideoQualityDescription": "Amb lo mòde par a par, la qualitat de las sonadas recebudas pòt pas qu'èsser cambiada entre nauta e son solament. La rèsta dels paramètres seràn ignorats fins que lo mòde par a par s'acabe.",
+        "recHighDefinitionOnly": "Nauta definicion preferida.",
+        "sd": "SD",
+        "standardDefinition": "Definicion estandarda",
+        "qualityButtonTip": "Cambiar la qualitat de la vidèo recebuda"
+    },
+    "dialOut": {
+        "dial": "Compausar",
+        "dialOut": "Sonar una numerò de telefòn",
+        "statusMessage": "ara es __status__",
+        "enterPhone": "Picatz un numerò de telefòn",
+        "phoneNotAllowed": "Malaürosament suportem pas encara aquela destinacion !"
+    },
+    "addPeople": {
+        "add": "Apondre",
+        "noResults": "Pas cap de resultat trobat",
+        "searchPlaceholder": "Cercar de monde e salas a apondre",
+        "title": "Ajustatz de monde a vòstra sonada",
+        "failedToAdd": "Fracàs de l'ajust de participants"
+    },
+    "inlineDialogFailure": {
+        "msg": "Avèm un pauc patit a manténer la connexion.",
+        "retry": "Ensajar tornarmai",
+        "support": "Assisténcia",
+        "supportMsg": "Se ten d'arribat, contactatz l'"
+    },
+    "deviceError": {
+        "cameraPermission": "Error d'obtencion de la permission per la camerà",
+        "microphonePermission": "Error d'obtencion de la permission pel microfòn"
     }
 }
