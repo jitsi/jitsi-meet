@@ -1,12 +1,19 @@
 {
-    "contactlist": "",
+    "contactlist": "Účastníci (__pcount__)",
     "addParticipants": "",
     "roomLocked": "",
     "roomUnlocked": "",
     "passwordSetRemotely": "",
     "connectionsettings": "",
     "poweredby": "",
-    "feedback": "",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "",
     "me": "",
     "speaker": "",
@@ -16,8 +23,7 @@
     "callingName": "",
     "audioOnly": {
         "audioOnly": "",
-        "featureToggleDisabled": "",
-        "howToDisable": ""
+        "featureToggleDisabled": ""
     },
     "userMedia": {
         "react-nativeGrantPermissions": "",
@@ -97,6 +103,7 @@
         "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
         "audioonly": "",
         "mute": "",
         "videomute": "",
@@ -187,16 +194,22 @@
         "address": "",
         "remoteport": "",
         "remoteport_plural_2": "",
+        "remoteport_plural_5": "",
         "localport": "",
         "localport_plural_2": "",
+        "localport_plural_5": "",
         "localaddress": "",
         "localaddress_plural_2": "",
+        "localaddress_plural_5": "",
         "remoteaddress": "",
         "remoteaddress_plural_2": "",
+        "remoteaddress_plural_5": "",
         "transport": "",
         "transport_plural_2": "",
+        "transport_plural_5": "",
         "bandwidth": "",
-        "na": ""
+        "na": "",
+        "turn": ""
     },
     "notify": {
         "disconnected": "",
@@ -274,8 +287,6 @@
         "Save": "",
         "recording": "",
         "recordingToken": "",
-        "Dial": "",
-        "sipMsg": "",
         "passwordCheck": "",
         "passwordMsg": "",
         "shareLink": "",
@@ -298,7 +309,6 @@
         "enterDisplayName": "",
         "extensionRequired": "",
         "firefoxExtensionPrompt": "",
-        "rateExperience": "",
         "feedbackHelp": "",
         "feedbackQuestion": "",
         "thankYou": "",
@@ -330,6 +340,8 @@
         "goToStore": "",
         "externalInstallationTitle": "",
         "externalInstallationMsg": "",
+        "inlineInstallationMsg": "",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "",
         "muteParticipantBody": "",
         "muteParticipantButton": "",
@@ -339,6 +351,7 @@
         "remoteControlDeniedMessage": "",
         "remoteControlAllowedMessage": "",
         "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
         "remoteControlStopMessage": "",
         "close": "",
         "shareYourScreen": "",
@@ -401,15 +414,52 @@
     },
     "invite": {
         "addPassword": "",
-        "dialInNumbers": "",
-        "errorFetchingNumbers": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
         "hidePassword": "",
         "inviteTo": "",
-        "loadingNumbers": "",
+        "invitedYouTo": "",
         "locked": "",
-        "noNumbers": "",
-        "numbersDisabled": "",
         "showPassword": "",
         "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
