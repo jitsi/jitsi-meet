@@ -1,4 +1,3 @@
-import { default as Popover } from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import {
@@ -8,6 +7,8 @@ import {
     RemoteVideoMenu,
     VolumeSlider
 } from './';
+
+import { Popover } from '../../base/popover';
 
 declare var $: Object;
 declare var interfaceConfig: Object;
@@ -73,10 +74,6 @@ class RemoteVideoMenuTriggerButton extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            showRemoteMenu: false
-        };
-
         /**
          * The internal reference to topmost DOM/HTML element backing the React
          * {@code Component}. Accessed directly for associating an element as
@@ -87,8 +84,7 @@ class RemoteVideoMenuTriggerButton extends Component {
          */
         this._rootElement = null;
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onHideRemoteMenu = this._onHideRemoteMenu.bind(this);
+        // Bind event handler so it is only bound once for every instance.
         this._onShowRemoteMenu = this._onShowRemoteMenu.bind(this);
     }
 
@@ -106,33 +102,19 @@ class RemoteVideoMenuTriggerButton extends Component {
         }
 
         return (
-            <div
-                onMouseEnter = { this._onShowRemoteMenu }
-                onMouseLeave = { this._onHideRemoteMenu }>
-                <Popover
-                    content = { content }
-                    isOpen = { this.state.showRemoteMenu }
-                    position = { interfaceConfig.VERTICAL_FILMSTRIP
-                        ? 'left middle' : 'top center' }>
-                    <span
-                        className = 'popover-trigger remote-video-menu-trigger'>
-                        <i
-                            className = 'icon-thumb-menu'
-                            title = 'Remote user controls' />
-                    </span>
-                </Popover>
-            </div>
+            <Popover
+                content = { content }
+                onPopoverOpen = { this._onShowRemoteMenu }
+                position = { interfaceConfig.VERTICAL_FILMSTRIP
+                    ? 'left middle' : 'top center' }>
+                <span
+                    className = 'popover-trigger remote-video-menu-trigger'>
+                    <i
+                        className = 'icon-thumb-menu'
+                        title = 'Remote user controls' />
+                </span>
+            </Popover>
         );
-    }
-
-    /**
-     * Closes the {@code RemoteVideoMenu}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onHideRemoteMenu() {
-        this.setState({ showRemoteMenu: false });
     }
 
     /**
@@ -143,8 +125,6 @@ class RemoteVideoMenuTriggerButton extends Component {
      */
     _onShowRemoteMenu() {
         this.props.onMenuDisplay();
-
-        this.setState({ showRemoteMenu: true });
     }
 
     /**
@@ -172,13 +152,11 @@ class RemoteVideoMenuTriggerButton extends Component {
                 <MuteButton
                     isAudioMuted = { isAudioMuted }
                     key = 'mute'
-                    onClick = { this._onHideRemoteMenu }
                     participantID = { participantID } />
             );
             buttons.push(
                 <KickButton
                     key = 'kick'
-                    onClick = { this._onHideRemoteMenu }
                     participantID = { participantID } />
             );
         }
@@ -204,15 +182,9 @@ class RemoteVideoMenuTriggerButton extends Component {
 
         if (buttons.length > 0) {
             return (
-                <div>
-                    <RemoteVideoMenu id = { participantID }>
-                        { buttons }
-                    </RemoteVideoMenu>
-                    <div
-                        className = { interfaceConfig.VERTICAL_FILMSTRIP
-                            ? 'popover-mousemove-padding-right'
-                            : 'popover-mousemove-padding-bottom' } />
-                </div>
+                <RemoteVideoMenu id = { participantID }>
+                    { buttons }
+                </RemoteVideoMenu>
             );
         }
 

@@ -1,9 +1,8 @@
-import { default as Popover } from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-
+import { Popover } from '../../base/popover';
 import { VideoQualityDialog } from './';
 
 import {
@@ -90,13 +89,6 @@ export class VideoQualityLabel extends Component {
 
         this.state = {
             /**
-             * Whether or not the {@code VideoQualityDialog} is displayed.
-             *
-             * @type {boolean}
-             */
-            showVideoQualityDialog: false,
-
-            /**
              * Whether or not the filmstrip is transitioning from not visible
              * to visible. Used to set a transition class for animation.
              *
@@ -104,10 +96,6 @@ export class VideoQualityLabel extends Component {
              */
             togglingToVisible: false
         };
-
-        // Bind event handlers so they are only bound once for every instance.
-        this._onHideQualityDialog = this._onHideQualityDialog.bind(this);
-        this._onShowQualityDialog = this._onShowQualityDialog.bind(this);
     }
 
     /**
@@ -161,23 +149,18 @@ export class VideoQualityLabel extends Component {
             = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
 
         return (
-            <div
+            <Popover
                 className = { classNames }
+                content = { <VideoQualityDialog /> }
                 id = 'videoResolutionLabel'
-                onMouseEnter = { this._onShowQualityDialog }
-                onMouseLeave = { this._onHideQualityDialog }>
-                <Popover
-                    content = { this._renderQualityDialog() }
-                    isOpen = { this.state.showVideoQualityDialog }
-                    position = { 'left top' }>
-                    <div
-                        className = 'video-quality-label-status'>
-                        { _audioOnly
-                            ? <i className = 'icon-visibility-off' />
-                            : this._mapResolutionToTranslation(_resolution) }
-                    </div>
-                </Popover>
-            </div>
+                position = { 'left top' }>
+                <div
+                    className = 'video-quality-label-status'>
+                    { _audioOnly
+                        ? <i className = 'icon-visibility-off' />
+                        : this._mapResolutionToTranslation(_resolution) }
+                </div>
+            </Popover>
         );
     }
 
@@ -208,41 +191,6 @@ export class VideoQualityLabel extends Component {
 
         return this.props.t(
             RESOLUTION_TO_TRANSLATION_KEY[highestMatchingResolution]);
-    }
-
-    /**
-     * Shows the {@code VideoQualityDialog}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onShowQualityDialog() {
-        this.setState({ showVideoQualityDialog: true });
-    }
-
-    /**
-     * Hides the {@code VideoQualityDialog}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onHideQualityDialog() {
-        this.setState({ showVideoQualityDialog: false });
-    }
-
-    /**
-     * Returns a React Element for choosing a maximum receive video quality.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderQualityDialog() {
-        return (
-            <div>
-                <VideoQualityDialog />
-                <div className = 'popover-mousemove-padding-right' />
-            </div>
-        );
     }
 }
 

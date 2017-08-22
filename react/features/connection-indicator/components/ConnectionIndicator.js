@@ -1,7 +1,7 @@
-import { default as Popover } from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
+import { Popover } from '../../base/popover';
 import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
@@ -123,8 +123,6 @@ class ConnectionIndicator extends Component {
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onHideStats = this._onHideStats.bind(this);
-        this._onShowStats = this._onShowStats.bind(this);
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
     }
@@ -174,46 +172,19 @@ class ConnectionIndicator extends Component {
      */
     render() {
         return (
-            <div
+            <Popover
                 className = 'indicator-container'
-                onMouseEnter = { this._onShowStats }
-                onMouseLeave = { this._onHideStats }>
-                <Popover
-                    content = { this._renderStatisticsTable() }
-                    isOpen = { this.state.showStats }
-                    position = { this.props.statsPopoverPosition }>
-                    <div className = 'popover-trigger'>
-                        <div className = 'connection-indicator indicator'>
-                            <div className = 'connection indicatoricon'>
-                                { this._renderIcon() }
-                            </div>
+                content = { this._renderStatisticsTable() }
+                position = { this.props.statsPopoverPosition }>
+                <div className = 'popover-trigger'>
+                    <div className = 'connection-indicator indicator'>
+                        <div className = 'connection indicatoricon'>
+                            { this._renderIcon() }
                         </div>
                     </div>
-                </Popover>
-            </div>
+                </div>
+            </Popover>
         );
-    }
-
-    /**
-     * Sets the state not to show the Statistics Table popover.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onHideStats() {
-        this.setState({ showStats: false });
-    }
-
-    /**
-     * Sets the state to show the Statistics Table popover.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onShowStats() {
-        if (this.props.enableStatsDisplay) {
-            this.setState({ showStats: true });
-        }
     }
 
     /**
@@ -295,9 +266,7 @@ class ConnectionIndicator extends Component {
     }
 
     /**
-     * Creates a {@code ConnectionStatisticsTable} instance and an empty div
-     * for preventing mouseleave events when moving from the icon to the
-     * popover.
+     * Creates a {@code ConnectionStatisticsTable} instance.
      *
      * @returns {ReactElement}
      */
@@ -312,23 +281,16 @@ class ConnectionIndicator extends Component {
         } = this.state.stats;
 
         return (
-            <div>
-                <ConnectionStatsTable
-                    bandwidth = { bandwidth }
-                    bitrate = { bitrate }
-                    framerate = { framerate }
-                    isLocalVideo = { this.props.isLocalVideo }
-                    onShowMore = { this._onToggleShowMore }
-                    packetLoss = { packetLoss }
-                    resolution = { resolution }
-                    shouldShowMore = { this.state.showMoreStats }
-                    transport = { transport } />
-                <div className = 'popover-mouse-top-padding' />
-                <div
-                    className = { interfaceConfig.VERTICAL_FILMSTRIP
-                        ? 'popover-mousemove-padding-right'
-                        : 'popover-mousemove-padding-bottom' } />
-            </div>
+            <ConnectionStatsTable
+                bandwidth = { bandwidth }
+                bitrate = { bitrate }
+                framerate = { framerate }
+                isLocalVideo = { this.props.isLocalVideo }
+                onShowMore = { this._onToggleShowMore }
+                packetLoss = { packetLoss }
+                resolution = { resolution }
+                shouldShowMore = { this.state.showMoreStats }
+                transport = { transport } />
         );
     }
 }
