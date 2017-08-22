@@ -72,15 +72,15 @@ function _setRoom({ dispatch, getState }, next, action) {
         && (videoMuted = config.startWithVideoMuted);
 
     // Apply startWithAudioMuted and startWithVideoMuted.
-    const { audio, video } = state['features/base/media'];
-
     audioMuted = Boolean(audioMuted);
     videoMuted = Boolean(videoMuted);
 
-    (audio.muted !== audioMuted) && dispatch(setAudioMuted(audioMuted));
-    (video.facingMode !== CAMERA_FACING_MODE.USER)
-        && dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    (video.muted !== videoMuted) && dispatch(setVideoMuted(videoMuted));
+    // Unconditionally express the desires/expectations/intents of the app and
+    // the user i.e. the state of base/media. Eventually, practice/reality i.e.
+    // the state of base/tracks will or will not agree with the desires.
+    dispatch(setAudioMuted(audioMuted));
+    dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+    dispatch(setVideoMuted(videoMuted));
 
     return next(action);
 }
@@ -93,9 +93,9 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _syncTrackMutedState({ dispatch, getState }, track) {
+function _syncTrackMutedState({ getState }, track) {
     const state = getState()['features/base/media'];
-    const muted = state[track.mediaType].muted;
+    const muted = Boolean(state[track.mediaType].muted);
 
     // XXX If muted state of track when it was added is different from our media
     // muted state, we need to mute track and explicitly modify 'muted' property
@@ -104,6 +104,6 @@ function _syncTrackMutedState({ dispatch, getState }, track) {
     // fired before track gets to state.
     if (track.muted !== muted) {
         track.muted = muted;
-        dispatch(setTrackMuted(track.jitsiTrack, muted));
+        setTrackMuted(track.jitsiTrack, muted);
     }
 }

@@ -2,9 +2,12 @@
 
 import React from 'react';
 
+import { DEFAULT_AVATAR_RELATIVE_PATH } from '../base/participants';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
 import { openAddPeopleDialog, openInviteDialog } from '../invite';
+import { VideoQualityButton } from '../video-quality';
+
 import UIEvents from '../../../service/UI/UIEvents';
 
 declare var APP: Object;
@@ -20,10 +23,10 @@ const buttons: Object = {
         enabled: true,
         id: 'toolbar_button_add',
         isDisplayed: () => !APP.store.getState()['features/jwt'].isGuest,
-        onClick() {
+        onClick(dispatch) {
             JitsiMeetJS.analytics.sendEvent('toolbar.add.clicked');
 
-            return openAddPeopleDialog();
+            dispatch(openAddPeopleDialog());
         },
         tooltipKey: 'toolbar.addPeople'
     },
@@ -37,17 +40,17 @@ const buttons: Object = {
         isDisplayed: () => true,
         id: 'toolbar_button_camera',
         onClick() {
-            if (APP.conference.videoMuted) {
+            const newVideoMutedState = !APP.conference.isLocalVideoMuted();
+
+            if (newVideoMutedState) {
                 JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
-                APP.UI.emitEvent(UIEvents.VIDEO_MUTED, false);
             } else {
                 JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
-                APP.UI.emitEvent(UIEvents.VIDEO_MUTED, true);
             }
+            APP.UI.emitEvent(UIEvents.VIDEO_MUTED, newVideoMutedState);
         },
         popups: [
             {
-                className: 'loginmenu',
                 dataAttr: 'audioOnly.featureToggleDisabled',
                 dataInterpolate: { feature: 'video mute' },
                 id: 'unmuteWhileAudioOnly'
@@ -139,7 +142,6 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu',
                 dataAttr: 'audioOnly.featureToggleDisabled',
                 dataInterpolate: { feature: 'screen sharing' },
                 id: 'screenshareWhileAudioOnly'
@@ -149,7 +151,9 @@ const buttons: Object = {
         shortcutAttr: 'toggleDesktopSharingPopover',
         shortcutFunc() {
             JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
-            APP.conference.toggleScreenSharing();
+
+            // eslint-disable-next-line no-empty-function
+            APP.conference.toggleScreenSharing().catch(() => {});
         },
         shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
         tooltipKey: 'toolbar.sharescreen'
@@ -165,10 +169,10 @@ const buttons: Object = {
         // Will be displayed once the SIP calls functionality is detected.
         hidden: true,
         id: 'toolbar_button_dial_out',
-        onClick() {
+        onClick(dispatch) {
             JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
 
-            return openDialOutDialog();
+            dispatch(openDialOutDialog());
         },
         tooltipKey: 'dialOut.dialOut'
     },
@@ -183,11 +187,11 @@ const buttons: Object = {
             return interfaceConfig.filmStripOnly;
         },
         id: 'toolbar_button_fodeviceselection',
-        onClick() {
+        onClick(dispatch) {
             JitsiMeetJS.analytics.sendEvent(
                 'toolbar.fodeviceselection.toggled');
 
-            return openDeviceSelectionDialog();
+            dispatch(openDeviceSelectionDialog());
         },
         sideContainerId: 'settings_container',
         tooltipKey: 'toolbar.Settings'
@@ -268,10 +272,10 @@ const buttons: Object = {
         classNames: [ 'button', 'icon-link' ],
         enabled: true,
         id: 'toolbar_button_link',
-        onClick() {
+        onClick(dispatch) {
             JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
 
-            return openInviteDialog();
+            dispatch(openInviteDialog());
         },
         tooltipKey: 'toolbar.invite'
     },
@@ -287,7 +291,7 @@ const buttons: Object = {
         onClick() {
             const sharedVideoManager = APP.UI.getSharedVideoManager();
 
-            if (APP.conference.audioMuted) {
+            if (APP.conference.isLocalAudioMuted()) {
                 // If there's a shared video with the volume "on" and we aren't
                 // the video owner, we warn the user
                 // that currently it's not possible to unmute.
@@ -307,17 +311,14 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu',
                 dataAttr: 'toolbar.micMutedPopup',
                 id: 'micMutedPopup'
             },
             {
-                className: 'loginmenu',
                 dataAttr: 'toolbar.unableToUnmutePopup',
                 id: 'unableToUnmutePopup'
             },
             {
-                className: 'loginmenu',
                 dataAttr: 'toolbar.talkWhileMutedPopup',
                 id: 'talkWhileMutedPopup'
             }
@@ -340,7 +341,7 @@ const buttons: Object = {
         enabled: true,
         html: <img
             id = 'avatar'
-            src = 'images/avatar2.png' />,
+            src = { DEFAULT_AVATAR_RELATIVE_PATH } />,
         id: 'toolbar_button_profile',
         onClick() {
             JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
@@ -413,13 +414,15 @@ const buttons: Object = {
         },
         popups: [
             {
-                className: 'loginmenu extendedToolbarPopup',
                 dataAttr: 'toolbar.sharedVideoMutedPopup',
-                dataAttrPosition: 'w',
                 id: 'sharedVideoMutedPopup'
             }
         ],
         tooltipKey: 'toolbar.sharedvideo'
+    },
+
+    videoquality: {
+        component: VideoQualityButton
     }
 };
 

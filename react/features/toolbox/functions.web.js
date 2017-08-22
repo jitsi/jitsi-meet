@@ -3,54 +3,9 @@ import SideContainerToggler
 
 import defaultToolbarButtons from './defaultToolbarButtons';
 
-type MapOfAttributes = { [key: string]: * };
-
-declare var $: Function;
-declare var AJS: Object;
 declare var interfaceConfig: Object;
 
-export { abstractMapStateToProps } from './functions.native';
-
-/* eslint-disable flowtype/space-before-type-colon */
-
-/**
- * Takes toolbar button props and maps them to HTML attributes to set.
- *
- * @param {Object} props - Props set to the React component.
- * @returns {MapOfAttributes}
- */
-export function getButtonAttributesByProps(props: Object = {})
-        : MapOfAttributes {
-    // XXX Make sure to not modify props.classNames because that'd be bad
-    // practice.
-    const classNames = (props.classNames && [ ...props.classNames ]) || [];
-
-    props.toggled && classNames.push('toggled');
-    props.unclickable && classNames.push('unclickable');
-
-    const result: MapOfAttributes = {
-        className: classNames.join(' '),
-        'data-container': 'body',
-        'data-placement': 'bottom',
-        id: props.id
-    };
-
-    if (!props.enabled) {
-        result.disabled = 'disabled';
-    }
-
-    if (props.hidden) {
-        result.style = { display: 'none' };
-    }
-
-    if (props.tooltipText) {
-        result.content = props.tooltipText;
-    }
-
-    return result;
-}
-
-/* eslint-enable flowtype/space-before-type-colon */
+export { abstractMapStateToProps, getButton } from './functions.native';
 
 /**
  * Returns an object which contains the default buttons for the primary and
@@ -138,36 +93,16 @@ export function getToolbarClassNames(props: Object) {
 }
 
 /**
- * Show custom popup/tooltip for a specified button.
+ * Indicates if a toolbar button is enabled.
  *
- * @param {string} popupSelectorID - The selector id of the popup to show.
- * @param {boolean} show - True or false/show or hide the popup.
- * @param {number} timeout - The time to show the popup.
- * @returns {void}
+ * @param {string} name - The name of the setting section as defined in
+ * interface_config.js.
+ * @returns {boolean} - True to indicate that the given toolbar button
+ * is enabled, false - otherwise.
  */
-export function showCustomToolbarPopup(
-        popupSelectorID: string,
-        show: boolean,
-        timeout: number) {
-    AJS.$(popupSelectorID).tooltip({
-        gravity: $(popupSelectorID).attr('data-popup'),
-        html: true,
-        title: 'title',
-        trigger: 'manual'
-    });
-
-    if (show) {
-        AJS.$(popupSelectorID).tooltip('show');
-
-        setTimeout(
-            () => {
-                // hide the tooltip
-                AJS.$(popupSelectorID).tooltip('hide');
-            },
-            timeout);
-    } else {
-        AJS.$(popupSelectorID).tooltip('hide');
-    }
+export function isButtonEnabled(name) {
+    return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
+            || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
 }
 
 /**

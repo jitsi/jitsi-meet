@@ -9,7 +9,11 @@ import {
 import { SET_CONFIG } from '../base/config';
 import { SET_LOCATION_URL } from '../base/connection';
 import { LIB_INIT_ERROR } from '../base/lib-jitsi-meet';
-import { PARTICIPANT_JOINED } from '../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantCount,
+    PARTICIPANT_JOINED
+} from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { setCallOverlayVisible, setJWT } from './actions';
@@ -96,13 +100,8 @@ function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
             default: {
                 // The CallOverlay it to no longer be displayed/visible as soon
                 // as another participant joins.
-                const participants = state['features/base/participants'];
-
-                callOverlayVisible
-                    = Boolean(
-                        participants
-                            && participants.length === 1
-                            && participants[0].local);
+                callOverlayVisible = getParticipantCount(state) === 1
+                    && Boolean(getLocalParticipant(state));
 
                 // However, the CallDialog is not to be displayed/visible again
                 // after all remote participants leave.

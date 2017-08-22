@@ -3,8 +3,8 @@
 import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../app';
-import { toggleAudioMuted, toggleVideoMuted } from '../base/media';
-import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
+import { MEDIA_TYPE } from '../base/media';
+import { isLocalTrackMuted } from '../base/tracks';
 
 /**
  * Maps redux actions to {@link Toolbox} (React {@code Component}) props.
@@ -19,6 +19,11 @@ import { getLocalAudioTrack, getLocalVideoTrack } from '../base/tracks';
  */
 export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
     return {
+        // Inject {@code dispatch} into the React Component's props in case it
+        // needs to dispatch an action in the redux store without
+        // {@code mapDispatchToProps}.
+        dispatch,
+
         /**
          * Dispatches action to leave the current conference.
          *
@@ -33,29 +38,6 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
             // expression of (1) the lack of knowledge & (2) the desire to no
             // longer have a valid room name to join.
             dispatch(appNavigate(undefined));
-        },
-
-        /**
-         * Dispatches an action to toggle the mute state of the
-         * audio/microphone.
-         *
-         * @private
-         * @returns {Object} - Dispatched action.
-         * @type {Function}
-         */
-        _onToggleAudio() {
-            dispatch(toggleAudioMuted());
-        },
-
-        /**
-         * Dispatches an action to toggle the mute state of the video/camera.
-         *
-         * @private
-         * @returns {Object} - Dispatched action.
-         * @type {Function}
-         */
-        _onToggleVideo() {
-            dispatch(toggleVideoMuted());
         }
     };
 }
@@ -77,9 +59,6 @@ export function abstractMapStateToProps(state: Object): Object {
     const tracks = state['features/base/tracks'];
     const { visible } = state['features/toolbox'];
 
-    const audioTrack = getLocalAudioTrack(tracks);
-    const videoTrack = getLocalVideoTrack(tracks);
-
     return {
         /**
          * Flag showing whether audio is muted.
@@ -87,7 +66,7 @@ export function abstractMapStateToProps(state: Object): Object {
          * @protected
          * @type {boolean}
          */
-        _audioMuted: !audioTrack || audioTrack.muted,
+        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
 
         /**
          * Flag showing whether video is muted.
@@ -95,7 +74,7 @@ export function abstractMapStateToProps(state: Object): Object {
          * @protected
          * @type {boolean}
          */
-        _videoMuted: !videoTrack || videoTrack.muted,
+        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO),
 
         /**
          * Flag showing whether toolbox is visible.

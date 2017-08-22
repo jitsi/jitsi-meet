@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 
 import { addFaceTracker, FacePrompt } from '../../face-tracking';
 import { Watermarks } from '../../base/react';
-import { VideoStatusLabel } from '../../video-status-label';
+import { VideoQualityLabel } from '../../video-quality';
+
+declare var interfaceConfig: Object;
 
 const LARGE_VIDEO_TRACKING_DELAY = 5000;
 const LARGE_VIDEO_PROMPT_DURATION = 500;
@@ -134,7 +136,7 @@ class LargeVideo extends Component {
                 </div>
                 <span id = 'localConnectionMessage' />
 
-                <VideoStatusLabel />
+                { interfaceConfig.filmStripOnly ? null : <VideoQualityLabel /> }
 
                 <span
                     className = 'video-state-indicator centeredVideoLabel'

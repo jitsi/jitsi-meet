@@ -14,29 +14,29 @@ import { MiddlewareRegistry } from '../../base/redux';
  * the screen and disable touch controls when an object is nearby. The
  * functionality is  enabled when a conference is in audio-only mode.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register(({ getState }) => next => action => {
+    const result = next(action);
+
     switch (action.type) {
-    case CONFERENCE_JOINED: {
-        const { audioOnly } = store.getState()['features/base/conference'];
-
-        _setProximityEnabled(audioOnly);
-        break;
-    }
-
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         _setProximityEnabled(false);
         break;
 
-    case SET_AUDIO_ONLY:
-        _setProximityEnabled(action.audioOnly);
+    case CONFERENCE_JOINED:
+    case SET_AUDIO_ONLY: {
+        const { audioOnly, conference }
+            = getState()['features/base/conference'];
+
+        conference && _setProximityEnabled(audioOnly);
         break;
     }
+    }
 
-    return next(action);
+    return result;
 });
 
 /**

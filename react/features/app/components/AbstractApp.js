@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
@@ -39,19 +40,23 @@ export class AbstractApp extends Component {
          * The default URL {@code AbstractApp} is to open when not in any
          * conference/room.
          */
-        defaultURL: React.PropTypes.string,
+        defaultURL: PropTypes.string,
 
         /**
          * (Optional) redux store for this app.
          */
-        store: React.PropTypes.object,
+        store: PropTypes.object,
+
+        // XXX Refer to the implementation of loadURLObject: in
+        // ios/sdk/src/JitsiMeetView.m for further information.
+        timestamp: PropTypes.any,
 
         /**
          * The URL, if any, with which the app was launched.
          */
-        url: React.PropTypes.oneOfType([
-            React.PropTypes.object,
-            React.PropTypes.string
+        url: PropTypes.oneOfType([
+            PropTypes.object,
+            PropTypes.string
         ])
     };
 
@@ -142,7 +147,11 @@ export class AbstractApp extends Component {
         let { url } = nextProps;
 
         url = toURLString(url);
-        if (toURLString(this.props.url) !== url) {
+        if (toURLString(this.props.url) !== url
+
+                // XXX Refer to the implementation of loadURLObject: in
+                // ios/sdk/src/JitsiMeetView.m for further information.
+                || this.props.timestamp !== nextProps.timestamp) {
             this._openURL(url || this._getDefaultURL());
         }
     }

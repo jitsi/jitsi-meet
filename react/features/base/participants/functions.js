@@ -1,3 +1,5 @@
+import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
+
 declare var config: Object;
 declare var interfaceConfig: Object;
 declare var MD5: Object;
@@ -20,7 +22,7 @@ export function getAvatarURL(participant) {
     // If disableThirdPartyRequests disables third-party avatar services, we are
     // restricted to a stock image of ours.
     if (typeof config === 'object' && config.disableThirdPartyRequests) {
-        return 'images/avatar2.png';
+        return DEFAULT_AVATAR_RELATIVE_PATH;
     }
 
     const { avatarID, avatarURL, email, id } = participant;
@@ -96,6 +98,38 @@ export function getParticipantById(stateOrGetState, id) {
     const participants = _getParticipants(stateOrGetState);
 
     return participants.find(p => p.id === id);
+}
+
+/**
+ * Returns a count of the known participants in the passed in redux state,
+ * excluding any fake participants.
+ *
+ * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the
+ * features/base/participants state.
+ * @returns {number}
+ */
+export function getParticipantCount(stateOrGetState) {
+    const participants = _getParticipants(stateOrGetState);
+    const realParticipants = participants.filter(p => !p.isBot);
+
+    return realParticipants.length;
+}
+
+/**
+ * Returns the participant which has its pinned state set to truthy.
+ *
+ * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the
+ * features/base/participants state.
+ * @returns {(Participant|undefined)}
+ */
+export function getPinnedParticipant(stateOrGetState) {
+    const participants = _getParticipants(stateOrGetState);
+
+    return participants.find(p => p.pinned);
 }
 
 /**

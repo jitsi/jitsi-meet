@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
+import { prefetch } from '../../../mobile/image-cache';
 import {
     MEDIA_TYPE,
     shouldRenderVideoTrack,
@@ -198,6 +199,21 @@ function _mapStateToProps(state, ownProps) {
     if (participant) {
         avatar = getAvatarURL(participant);
         connectionStatus = participant.connectionStatus;
+
+        // Avatar (on React Native) now has the ability to generate an
+        // automatically-colored default image when no URI/URL is specified or
+        // when it fails to load. In order to make the coloring permanent(ish)
+        // per participant, Avatar will need something permanent(ish) per
+        // perticipant, obviously. A participant's ID is such a piece of data.
+        // But the local participant changes her ID as she joins, leaves.
+        // TODO @lyubomir: The participants may change their avatar URLs at
+        // runtime which means that, if their old and new avatar URLs fail to
+        // download, Avatar will change their automatically-generated colors.
+        avatar || participant.local || (avatar = `#${participant.id}`);
+
+        // ParticipantView knows before Avatar that an avatar URL will be used
+        // so it's advisable to prefetch here.
+        avatar && prefetch({ uri: avatar });
     }
 
     return {

@@ -19,7 +19,6 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
-import Feedback from '../feedback/Feedback.js';
 
 import { setToolboxEnabled } from '../../../react/features/toolbox';
 import { setNotificationsEnabled } from '../../../react/features/notifications';
@@ -308,7 +307,6 @@ var Recording = {
             VideoLayout.enableDeviceAvailabilityIcons(
                 APP.conference.getMyUserId(), false);
             VideoLayout.setLocalVideoVisible(false);
-            Feedback.enableFeedback(false);
             APP.store.dispatch(setToolboxEnabled(false));
             APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);
@@ -324,8 +322,6 @@ var Recording = {
      */
     initRecordingButton() {
         const selector = $('#toolbar_button_record');
-
-        UIUtil.setTooltip(selector, 'liveStreaming.buttonTooltip', 'right');
 
         selector.addClass(this.baseClass);
         selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);

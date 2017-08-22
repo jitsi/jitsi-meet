@@ -145,15 +145,9 @@ class FollowMe {
     _setFollowMeInitialState() {
         this._filmstripToggled.bind(this, this._UI.isFilmstripVisible());
 
-        var pinnedId = VideoLayout.getPinnedId();
-        var isPinned = false;
-        var smallVideo;
-        if (pinnedId) {
-            isPinned = true;
-            smallVideo = VideoLayout.getSmallVideo(pinnedId);
-        }
+        const pinnedId = VideoLayout.getPinnedId();
 
-        this._nextOnStage(smallVideo, isPinned);
+        this._nextOnStage(pinnedId, Boolean(pinnedId));
 
         // check whether shared document is enabled/initialized
         if(this._UI.getSharedDocumentManager())
@@ -174,8 +168,8 @@ class FollowMe {
                             this.filmstripEventHandler);
 
         var self = this;
-        this.pinnedEndpointEventHandler = function (smallVideo, isPinned) {
-            self._nextOnStage(smallVideo, isPinned);
+        this.pinnedEndpointEventHandler = function (videoId, isPinned) {
+            self._nextOnStage(videoId, isPinned);
         };
         this._UI.addListener(UIEvents.PINNED_ENDPOINT,
                             this.pinnedEndpointEventHandler);
@@ -243,13 +237,13 @@ class FollowMe {
      * unpinned
      * @private
      */
-    _nextOnStage (smallVideo, isPinned) {
+    _nextOnStage (videoId, isPinned) {
         if (!this._conference.isModerator)
             return;
 
         var nextOnStage = null;
         if(isPinned)
-            nextOnStage = smallVideo.getId();
+            nextOnStage = videoId;
 
         this._local.nextOnStage = nextOnStage;
     }

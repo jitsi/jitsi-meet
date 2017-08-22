@@ -7,7 +7,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        publishNonDefault true
     }
 
     buildTypes {
@@ -22,10 +21,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:appcompat-v7:25.4.0'
     compile 'com.facebook.react:react-native:+'
 
     compile project(':react-native-background-timer')
+    compile project(':react-native-fetch-blob')
     compile project(':react-native-immersive')
     compile project(':react-native-keep-awake')
     compile project(':react-native-vector-icons')

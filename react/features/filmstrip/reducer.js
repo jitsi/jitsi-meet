@@ -5,7 +5,12 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-    remoteVideosVisible: true,
+    /**
+     * By default start with remote videos hidden for 1-on-1 mode and rely on
+     * other logic to invoke an action to make them visible when needed.
+     */
+    remoteVideosVisible: false,
+
     visible: true
 };
 

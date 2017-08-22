@@ -1,6 +1,11 @@
 /* global APP, $, interfaceConfig, JitsiMeetJS  */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../../../react/features/base/participants';
+
 import Filmstrip from "./Filmstrip";
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -19,12 +24,6 @@ var localVideoThumbnail = null;
 var currentDominantSpeaker = null;
 
 var eventEmitter = null;
-
-/**
- * Currently focused video jid
- * @type {String}
- */
-var pinnedId = null;
 
 /**
  * flipX state of the localVideo
@@ -59,7 +58,7 @@ function onContactClicked (id) {
             // let the bridge adjust its lastN set for myjid and store
             // the pinned user in the lastNPickupId variable to be
             // picked up later by the lastN changed event handler.
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, remoteVideo, true);
+            this.pinParticipant(remoteVideo.id);
         }
     }
 }
@@ -277,6 +276,7 @@ var VideoLayout = {
             return;
         }
 
+        const pinnedId = this.getPinnedId();
         let newId;
 
         if (pinnedId)
@@ -388,11 +388,25 @@ var VideoLayout = {
     },
 
     isPinned (id) {
-        return (pinnedId) ? (id === pinnedId) : false;
+        return id === this.getPinnedId();
     },
 
     getPinnedId () {
-        return pinnedId;
+        const { id } = getPinnedParticipant(APP.store.getState()) || {};
+
+        return id || null;
+    },
+
+    /**
+     * Updates the desired pinned participant and notifies web UI of the change.
+     *
+     * @param {string|null} id - The participant id of the participant to be
+     * pinned. Pass in null to unpin without pinning another participant.
+     * @returns {void}
+     */
+    pinParticipant(id) {
+        APP.store.dispatch(pinParticipant(id));
+        APP.UI.emitEvent(UIEvents.PINNED_ENDPOINT, id, Boolean(id));
     },
 
     /**
@@ -402,23 +416,20 @@ var VideoLayout = {
      */
     handleVideoThumbClicked (id) {
         var smallVideo = VideoLayout.getSmallVideo(id);
+        const pinnedId = this.getPinnedId();
+
         if(pinnedId) {
             var oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
             if (oldSmallVideo && !interfaceConfig.filmStripOnly) {
                 oldSmallVideo.focus(false);
-                // as no pinned event will be sent for local video
-                // and we will unpin old one, lets signal it
-                // otherwise we will just send the new pinned one
-                if (smallVideo.isLocal)
-                    eventEmitter.emit(
-                        UIEvents.PINNED_ENDPOINT, oldSmallVideo, false);
             }
         }
 
         // Unpin if currently pinned.
         if (pinnedId === id)
         {
-            pinnedId = null;
+            this.pinParticipant(null);
+
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
                 if(smallVideo && smallVideo.hasVideo()) {
@@ -432,20 +443,15 @@ var VideoLayout = {
                 this.updateLargeVideo(this.electLastVisibleVideo());
             }
 
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, false);
-
             return;
         }
 
-        // Lock new video
-        pinnedId = id;
-
         // Update focused/pinned interface.
         if (id) {
-            if (smallVideo && !interfaceConfig.filmStripOnly)
+            if (smallVideo && !interfaceConfig.filmStripOnly) {
                 smallVideo.focus(true);
-
-            eventEmitter.emit(UIEvents.PINNED_ENDPOINT, smallVideo, true);
+                this.pinParticipant(id);
+            }
         }
 
         this.updateLargeVideo(id);
@@ -531,6 +537,8 @@ var VideoLayout = {
      * @returns {void}
      */
     _maybePlaceParticipantOnLargeVideo(resourceJid) {
+        const pinnedId = this.getPinnedId();
+
         if ((!pinnedId &&
             !currentDominantSpeaker &&
             this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE)) ||
@@ -634,9 +642,7 @@ var VideoLayout = {
                 return;
 
             remoteVideo.showAudioIndicator(isMuted);
-            if (APP.conference.isModerator) {
-                remoteVideo.updateRemoteVideoMenu(isMuted);
-            }
+            remoteVideo.updateRemoteVideoMenu(isMuted);
         }
     },
 
@@ -728,7 +734,7 @@ var VideoLayout = {
         // Update the large video if the video source is already available,
         // otherwise wait for the "videoactive.jingle" event.
         // FIXME: there is no "videoactive.jingle" event.
-        if (!interfaceConfig.filmStripOnly && !pinnedId
+        if (!interfaceConfig.filmStripOnly && !this.getPinnedId()
             && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
@@ -820,9 +826,9 @@ var VideoLayout = {
 
     removeParticipantContainer (id) {
         // Unlock large video
-        if (pinnedId === id) {
+        if (this.getPinnedId() === id) {
             logger.info("Focused video owner has left the conference");
-            pinnedId = null;
+            this.pinParticipant(null);
         }
 
         if (currentDominantSpeaker === id) {
@@ -1072,6 +1078,8 @@ var VideoLayout = {
         // (pinned remote video) use its video type,
         // if not then use default type - large video
         if (!show) {
+            const pinnedId = this.getPinnedId();
+
             if(pinnedId)
                 containerTypeToShow = this.getRemoteVideoType(pinnedId);
             else
@@ -1155,6 +1163,27 @@ var VideoLayout = {
      */
     getRemoteVideosCount() {
         return Object.keys(remoteVideos).length;
+    },
+    /**
+     * Sets the remote control active status for a remote participant.
+     *
+     * @param {string} participantID - The id of the remote participant.
+     * @param {boolean} isActive - The new remote control active status.
+     * @returns {void}
+     */
+    setRemoteControlActiveStatus(participantID, isActive) {
+        remoteVideos[participantID].setRemoteControlActiveStatus(isActive);
+    },
+
+    /**
+     * Sets the remote control active status for the local participant.
+     *
+     * @returns {void}
+     */
+    setLocalRemoteControlActiveChanged() {
+        Object.values(remoteVideos).forEach(
+            remoteVideo => remoteVideo.updateRemoteVideoMenu()
+        );
     }
 };
 

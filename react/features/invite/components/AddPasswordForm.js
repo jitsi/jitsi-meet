@@ -1,3 +1,5 @@
+import Button from '@atlaskit/button';
+import { FieldText } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -52,10 +54,40 @@ class AddPasswordForm extends Component {
             password: ''
         };
 
+        /**
+         * The internal reference to the React {@code component} for entering a
+         * password.
+         *
+         * @private
+         * @type {ReactComponent}
+         */
+        this._inputComponent = null;
+
         // Bind event handlers so they are only bound once for every instance.
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onPasswordChange = this._onPasswordChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._setInput = this._setInput.bind(this);
+    }
+
+    /**
+     * Directly bind a handler to the input element. This is done in order to
+     * intercept enter presses so any outer forms do not become submitted.
+     * Atlaskit Button does not expose a way to hook onto keydown events.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this._inputComponent.input.onkeydown = this._onKeyDown;
+    }
+
+    /**
+     * Remove any handlers set directly on DOM elements.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this._inputComponent.input.onkeydown = null;
     }
 
     /**
@@ -72,22 +104,28 @@ class AddPasswordForm extends Component {
                 className = 'form-control'
                 onSubmit = { this._onSubmit } >
                 <div className = 'form-control__container'>
-                    <input
-                        autoFocus = { true }
-                        className = 'input-control'
-                        id = 'newPasswordInput'
-                        onChange = { this._onPasswordChange }
-                        onKeyDown = { this._onKeyDown }
-                        placeholder = { t('dialog.createPassword') }
-                        type = 'text' />
-                    <button
-                        className = 'button-control button-control_light'
-                        disabled = { !this.state.password }
+                    <div className = 'form-control__input-container'>
+                        <FieldText
+                            autoFocus = { true }
+                            compact = { true }
+                            id = 'newPasswordInput'
+                            isLabelHidden = { true }
+                            label = 'Enter Password'
+                            onChange = { this._onPasswordChange }
+                            onKeyDown = { this._onKeyDown }
+                            placeholder = { t('dialog.createPassword') }
+                            ref = { this._setInput }
+                            shouldFitContainer = { true }
+                            type = 'text' />
+                    </div>
+                    <Button
                         id = 'addPasswordBtn'
+                        isDisabled = { !this.state.password }
                         onClick = { this._onSubmit }
+                        shouldFitContainer = { true }
                         type = 'button'>
                         { t('dialog.add') }
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -140,6 +178,21 @@ class AddPasswordForm extends Component {
         ));
 
         this.setState({ password: '' });
+    }
+
+    /**
+     * Sets the instance variable for the React Component used for entering a
+     * password.
+     *
+     * @param {Object} inputComponent - The React Component for the input
+     * field.
+     * @private
+     * @returns {void}
+     */
+    _setInput(inputComponent) {
+        if (inputComponent !== this._inputComponent) {
+            this._inputComponent = inputComponent;
+        }
     }
 }
 

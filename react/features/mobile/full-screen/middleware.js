@@ -22,47 +22,37 @@ import { MiddlewareRegistry } from '../../base/redux';
  * In immersive mode the status and navigation bars are hidden and thus the
  * entire screen will be covered by our application.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register(({ getState }) => next => action => {
+    const result = next(action);
+
     let fullScreen = null;
 
     switch (action.type) {
-    case APP_STATE_CHANGED: {
-        // Check if we just came back from the background and reenable full
+    case APP_STATE_CHANGED:
+    case CONFERENCE_WILL_JOIN:
+    case HIDE_DIALOG:
+    case SET_AUDIO_ONLY: {
+        // Check if we just came back from the background and re-enable full
         // screen mode if necessary.
-        if (action.appState === 'active') {
-            const { audioOnly, conference }
-                = store.getState()['features/base/conference'];
+        const { appState } = action;
 
-            fullScreen = conference ? !audioOnly : false;
+        if (typeof appState !== 'undefined' && appState !== 'active') {
+            break;
         }
-        break;
-    }
 
-    case CONFERENCE_WILL_JOIN: {
-        const { audioOnly } = store.getState()['features/base/conference'];
+        const { audioOnly, conference }
+            = getState()['features/base/conference'];
 
-        fullScreen = !audioOnly;
+        fullScreen = conference || action.conference ? !audioOnly : false;
         break;
     }
 
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         fullScreen = false;
-        break;
-
-    case HIDE_DIALOG: {
-        const { audioOnly, conference }
-            = store.getState()['features/base/conference'];
-
-        fullScreen = conference ? !audioOnly : false;
-        break;
-    }
-
-    case SET_AUDIO_ONLY:
-        fullScreen = !action.audioOnly;
         break;
     }
 
@@ -72,7 +62,7 @@ MiddlewareRegistry.register(store => next => action => {
                 console.warn(`Failed to set full screen mode: ${err}`));
     }
 
-    return next(action);
+    return result;
 });
 
 /**

@@ -1,8 +1,6 @@
 -- Prosody IM
 -- Copyright (C) 2017 Atlassian
 --
--- This module requires net-url module
--- Install it using #luarocks install net-url
 
 local jid = require "util.jid";
 local it = require "util.iterators";

@@ -1,3 +1,5 @@
+import { VIDEO_MUTISM_AUTHORITY } from './constants';
+
 /**
  * Determines whether a specific videoTrack should be rendered.
  *
@@ -13,4 +15,16 @@ export function shouldRenderVideoTrack(videoTrack, waitForVideoStarted) {
         videoTrack
             && !videoTrack.muted
             && (!waitForVideoStarted || videoTrack.videoStarted));
+}
+
+/**
+ * Checks if video is currently muted by the user authority.
+ *
+ * @param {Object} store - The redux store instance.
+ * @returns {boolean}
+ */
+export function isVideoMutedByUser({ getState }) {
+    return Boolean(
+        getState()['features/base/media'] // eslint-disable-line no-bitwise
+            .video.muted & VIDEO_MUTISM_AUTHORITY.USER);
 }

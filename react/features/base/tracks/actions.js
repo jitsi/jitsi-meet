@@ -7,8 +7,45 @@ import {
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
-import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
-import { createLocalTracks } from './functions';
+import {
+    TRACK_ADDED,
+    TRACK_PERMISSION_ERROR,
+    TRACK_REMOVED,
+    TRACK_UPDATED
+} from './actionTypes';
+import { createLocalTracksF } from './functions';
+
+/**
+ * Requests the creating of the desired media type tracks. Desire is expressed
+ * by base/media. This function will dispatch a {@code createLocalTracksA}
+ * action for the "missing" types, that is, the ones which base/media would
+ * like to have (unmuted tracks) but are not present yet.
+ *
+ * @returns {Function}
+ */
+export function createDesiredLocalTracks() {
+    return (dispatch, getState) => {
+        const state = getState();
+        const desiredTypes = [];
+
+        state['features/base/media'].audio.muted
+            || desiredTypes.push(MEDIA_TYPE.AUDIO);
+        Boolean(state['features/base/media'].video.muted)
+            || desiredTypes.push(MEDIA_TYPE.VIDEO);
+
+        const availableTypes
+            = state['features/base/tracks']
+                .filter(t => t.local)
+                .map(t => t.mediaType);
+
+        // We need to create the desired tracks which are not already available.
+        const createTypes
+            = desiredTypes.filter(type => availableTypes.indexOf(type) === -1);
+
+        createTypes.length
+            && dispatch(createLocalTracksA({ devices: createTypes }));
+    };
+}
 
 /**
  * Request to start capturing local audio and/or video. By default, the user
@@ -17,7 +54,7 @@ import { createLocalTracks } from './functions';
  * @param {Object} [options] - For info @see JitsiMeetJS.createLocalTracks.
  * @returns {Function}
  */
-export function createInitialLocalTracks(options = {}) {
+export function createLocalTracksA(options = {}) {
     return (dispatch, getState) => {
         const devices
             = options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ];
@@ -28,7 +65,7 @@ export function createInitialLocalTracks(options = {}) {
 
         // The following executes on React Native only at the time of this
         // writing. The effort to port Web's createInitialLocalTracksAndConnect
-        // is significant and that's where the function createLocalTracks got
+        // is significant and that's where the function createLocalTracksF got
         // born. I started with the idea a porting so that we could inherit the
         // ability to getUserMedia for audio only or video only if getUserMedia
         // for audio and video fails. Eventually though, I realized that on
@@ -37,7 +74,7 @@ export function createInitialLocalTracks(options = {}) {
         // to implement them) and the right thing to do is to ask for each
         // device separately.
         for (const device of devices) {
-            createLocalTracks(
+            createLocalTracksF(
                 {
                     cameraDeviceId: options.cameraDeviceId,
                     devices: [ device ],
@@ -46,14 +83,19 @@ export function createInitialLocalTracks(options = {}) {
                 },
                 /* firePermissionPromptIsShownEvent */ false,
                 store)
-            .then(localTracks => dispatch(_updateLocalTracks(localTracks)));
-
-            // TODO The function createLocalTracks logs the rejection reason of
-            // JitsiMeetJS.createLocalTracks so there is no real benefit to
-            // logging it here as well. Technically though,
-            // _updateLocalTracks may cause a rejection so it may be nice to log
-            // it. It's not too big of a concern at the time of this writing
-            // because React Native warns on unhandled Promise rejections.
+            .then(localTracks => dispatch(_updateLocalTracks(localTracks)))
+            .catch(({ gum }) => {
+                // If permissions are not allowed, alert the user.
+                if (gum
+                        && gum.error
+                        && gum.error.name === 'DOMException'
+                        && gum.error.message === 'NotAllowedError') {
+                    dispatch({
+                        type: TRACK_PERMISSION_ERROR,
+                        trackType: device
+                    });
+                }
+            });
         }
     };
 }
@@ -87,19 +129,21 @@ export function destroyLocalTracks() {
  */
 export function replaceLocalTrack(oldTrack, newTrack, conference) {
     return (dispatch, getState) => {
-        const currentConference = conference
-            || getState()['features/base/conference'].conference;
+        conference
 
-        return currentConference.replaceTrack(oldTrack, newTrack)
+            // eslint-disable-next-line no-param-reassign
+            || (conference = getState()['features/base/conference'].conference);
+
+        return conference.replaceTrack(oldTrack, newTrack)
             .then(() => {
-                // We call dispose after doing the replace because
-                //  dispose will try and do a new o/a after the
-                //  track removes itself.  Doing it after means
-                //  the JitsiLocalTrack::conference member is already
-                //  cleared, so it won't try and do the o/a
-                const disposePromise = oldTrack
-                    ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
-                    : Promise.resolve();
+                // We call dispose after doing the replace because dispose will
+                // try and do a new o/a after the track removes itself. Doing it
+                // after means the JitsiLocalTrack.conference is already
+                // cleared, so it won't try and do the o/a.
+                const disposePromise
+                    = oldTrack
+                        ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
+                        : Promise.resolve();
 
                 return disposePromise
                     .then(() => {
@@ -113,10 +157,12 @@ export function replaceLocalTrack(oldTrack, newTrack, conference) {
                             // track's mute state. If this is not done, the
                             // current mute state of the app will be reflected
                             // on the track, not vice-versa.
-                            const muteAction = newTrack.isVideoTrack()
-                                ? setVideoMuted : setAudioMuted;
+                            const setMuted
+                                = newTrack.isVideoTrack()
+                                    ? setVideoMuted
+                                    : setAudioMuted;
 
-                            return dispatch(muteAction(newTrack.isMuted()));
+                            return dispatch(setMuted(newTrack.isMuted()));
                         }
                     })
                     .then(() => {
@@ -341,39 +387,6 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
     return {
         tracksToAdd,
         tracksToRemove
-    };
-}
-
-/**
- * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
- * the specified <tt>track</tt> is already in accord with the specified
- * <tt>muted</tt> value, then does nothing. In case the actual muting/unmuting
- * fails, a rollback action will be dispatched to undo the muting/unmuting.
- *
- * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
- * unmute.
- * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
- * @returns {Function}
- */
-export function setTrackMuted(track, muted) {
-    return dispatch => {
-        if (track.isMuted() === muted) {
-            return Promise.resolve();
-        }
-
-        const f = muted ? 'mute' : 'unmute';
-
-        return track[f]().catch(error => {
-            console.error(`set track ${f} failed`, error);
-
-            const setMuted
-                = track.mediaType === MEDIA_TYPE.AUDIO
-                    ? setAudioMuted
-                    : setVideoMuted;
-
-            dispatch(setMuted(!muted));
-        });
     };
 }
 

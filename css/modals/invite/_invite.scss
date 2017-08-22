@@ -32,7 +32,7 @@
 
             .dial-in-numbers-trigger-icon {
                 position: absolute;
-                right: 0;
+                right: 10px;
                 top: 4px;
             }
         }
@@ -47,6 +47,22 @@
 
     .form-control {
         padding: 0;
+
+        &__container {
+            /**
+             * Ensure contents display in a line and vertically centered.
+             */
+            align-items: center;
+
+            button {
+                font-size: $modalButtonFontSize;
+            }
+        }
+
+        &__input-container {
+            flex: 1;
+            margin-right: 10px;
+        }
     }
 
     .inviteLink {

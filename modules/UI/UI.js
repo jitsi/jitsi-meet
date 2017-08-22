@@ -8,7 +8,6 @@ import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
 import SideContainerToggler from "./side_pannels/SideContainerToggler";
-import JitsiPopover from "./util/JitsiPopover";
 import messageHandler from "./util/MessageHandler";
 import UIUtil from "./util/UIUtil";
 import UIEvents from "../../service/UI/UIEvents";
@@ -21,17 +20,18 @@ import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
-import { FEEDBACK_REQUEST_IN_PROGRESS } from './UIErrors';
 import { debounce } from "../util/helpers";
 
 import { updateDeviceList } from '../../react/features/base/devices';
-import { setAudioMuted, setVideoMuted } from '../../react/features/base/media';
 import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
+import { openDisplayNamePrompt } from '../../react/features/display-name';
 import {
     checkAutoEnableDesktopSharing,
+    clearButtonPopup,
     dockToolbox,
+    setButtonPopupTimeout,
     setToolbarButton,
     showDialPadButton,
     showEtherpadButton,
@@ -46,7 +46,6 @@ import {
 
 var EventEmitter = require("events");
 UI.messageHandler = messageHandler;
-import Feedback from "./feedback/Feedback";
 import FollowMe from "../FollowMe";
 
 var eventEmitter = new EventEmitter();
@@ -227,17 +226,11 @@ UI.initConference = function () {
 
     APP.store.dispatch(checkAutoEnableDesktopSharing());
 
-    if(!interfaceConfig.filmStripOnly) {
-        Feedback.init(eventEmitter);
-    }
-
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
     // other participants' UI. Consequently, it needs (1) read and write access
     // to the UI (depending on the moderator role of the local participant) and
     // (2) APP.conference as means of communication between the participants.
     followMeHandler = new FollowMe(APP.conference, UI);
-
-    UIUtil.activateTooltips();
 };
 
 UI.mucJoined = function () {
@@ -252,22 +245,6 @@ UI.mucJoined = function () {
  * Handler for toggling filmstrip
  */
 UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
-
-/**
- * Sets tooltip defaults.
- *
- * @private
- */
-function _setTooltipDefaults() {
-    $.fn.tooltip.defaults = {
-        opacity: 1, //defaults to 1
-        offset: 1,
-        delayIn: 0, //defaults to 500
-        hoverable: true,
-        hideOnClick: true,
-        aria: true
-    };
-}
 
 /**
  * Returns the shared document manager object.
@@ -289,15 +266,9 @@ UI.start = function () {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({persistent: false});
 
-    // Set the defaults for tooltips.
-    _setTooltipDefaults();
 
     SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);
-
-    // By default start with remote videos hidden and rely on other logic to
-    // make them visible.
-    UI.setRemoteThumbnailsVisibility(false);
 
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
@@ -326,7 +297,6 @@ UI.start = function () {
         UI.showToolbar();
         Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
-        JitsiPopover.enabled = false;
     }
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
@@ -620,13 +590,21 @@ UI.inputDisplayNameHandler = function (newDisplayName) {
 
 /**
  * Show custom popup/tooltip for a specified button.
- * @param popupSelectorID the selector id of the popup to show
- * @param show true or false/show or hide the popup
- * @param timeout the time to show the popup
+ *
+ * @param {string} buttonName - The name of the button as specified in the
+ * button configurations for the toolbar.
+ * @param {string} popupSelectorID - The id of the popup to show as specified in
+ * the button configurations for the toolbar.
+ * @param {boolean} show - True or false/show or hide the popup
+ * @param {number} timeout - The time to show the popup
+ * @returns {void}
  */
-UI.showCustomToolbarPopup = function (popupSelectorID, show, timeout) {
-    eventEmitter.emit(UIEvents.SHOW_CUSTOM_TOOLBAR_BUTTON_POPUP,
-        popupSelectorID, show, timeout);
+UI.showCustomToolbarPopup = function (buttonName, popupID, show, timeout) {
+    const action = show
+        ? setButtonPopupTimeout(buttonName, popupID, timeout)
+        : clearButtonPopup(buttonName);
+
+    APP.store.dispatch(action);
 };
 
 /**
@@ -679,7 +657,6 @@ UI.askForNickname = function () {
 UI.setAudioMuted = function (id, muted) {
     VideoLayout.onAudioMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        APP.store.dispatch(setAudioMuted(muted));
         APP.conference.updateAudioIconEnabled();
     }
 };
@@ -690,7 +667,6 @@ UI.setAudioMuted = function (id, muted) {
 UI.setVideoMuted = function (id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
-        APP.store.dispatch(setVideoMuted(muted));
         APP.conference.updateVideoIconEnabled();
     }
 };
@@ -867,53 +843,7 @@ UI.participantConnectionStatusChanged = function (id) {
  * Prompt user for nickname.
  */
 UI.promptDisplayName = () => {
-    const labelKey = 'dialog.enterDisplayName';
-    const message = (
-        `<div class="form-control">
-            <label data-i18n="${labelKey}" class="form-control__label"></label>
-            <input name="displayName" type="text"
-               data-i18n="[placeholder]defaultNickname"
-               class="input-control" autofocus>
-         </div>`
-    );
-
-    // Don't use a translation string, because we're too early in the call and
-    // the translation may not be initialised.
-    const buttons = { Ok: true };
-
-    const dialog = messageHandler.openDialog(
-        'dialog.displayNameRequired',
-        message,
-        true,
-        buttons,
-        (e, v, m, f) => {
-            e.preventDefault();
-            if (v) {
-                const displayName = f.displayName;
-
-                if (displayName) {
-                    UI.inputDisplayNameHandler(displayName);
-                    dialog.close();
-                    return;
-                }
-            }
-        },
-        () => {
-            const form  = $.prompt.getPrompt();
-            const input = form.find("input[name='displayName']");
-            const button = form.find("button");
-
-            input.focus();
-            button.attr("disabled", "disabled");
-            input.keyup(() => {
-                if (input.val()) {
-                    button.removeAttr("disabled");
-                } else {
-                    button.attr("disabled", "disabled");
-                }
-            });
-        }
-    );
+    APP.store.dispatch(openDisplayNamePrompt());
 };
 
 /**
@@ -966,43 +896,6 @@ UI.addMessage = function (from, displayName, message, stamp) {
 
 UI.updateDTMFSupport
     = isDTMFSupported => APP.store.dispatch(showDialPadButton(isDTMFSupported));
-
-/**
- * Show user feedback dialog if its required and enabled after pressing the
- * hangup button.
- * @returns {Promise} Resolved with value - false if the dialog is enabled and
- * resolved with true if the dialog is disabled or the feedback was already
- * submitted. Rejected if another dialog is already displayed. This values are
- * used to display or not display the thank you dialog from
- * conference.maybeRedirectToWelcomePage method.
- */
-UI.requestFeedbackOnHangup = function () {
-    if (Feedback.isVisible())
-        return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
-    // Feedback has been submitted already.
-    else if (Feedback.isEnabled() && Feedback.isSubmitted()) {
-        return Promise.resolve({
-            thankYouDialogVisible : true,
-            feedbackSubmitted: true
-        });
-    }
-    else
-        return new Promise(function (resolve) {
-            if (Feedback.isEnabled()) {
-                Feedback.openFeedbackWindow(
-                    (options) => {
-                        options.thankYouDialogVisible = false;
-                        resolve(options);
-                    });
-            } else {
-                // If the feedback functionality isn't enabled we show a thank
-                // you dialog. Signaling it (true), so the caller
-                // of requestFeedback can act on it
-                resolve(
-                    {thankYouDialogVisible : true, feedbackSubmitted: false});
-            }
-        });
-};
 
 UI.updateRecordingState = function (state) {
     Recording.updateRecordingState(state);
@@ -1310,14 +1203,24 @@ UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
 UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
 
 /**
- * Makes remote thumbnail videos visible or not visible.
+ * Sets the remote control active status for a remote participant.
  *
- * @param {boolean} shouldHide - True if remote thumbnails should be hidden,
- * false f they should be visible.
+ * @param {string} participantID - The id of the remote participant.
+ * @param {boolean} isActive - The new remote control active status.
  * @returns {void}
  */
-UI.setRemoteThumbnailsVisibility
-    = shouldHide => Filmstrip.setRemoteVideoVisibility(shouldHide);
+UI.setRemoteControlActiveStatus = function(participantID, isActive) {
+    VideoLayout.setRemoteControlActiveStatus(participantID, isActive);
+};
+
+/**
+ * Sets the remote control active status for the local participant.
+ *
+ * @returns {void}
+ */
+UI.setLocalRemoteControlActiveChanged = function() {
+    VideoLayout.setLocalRemoteControlActiveChanged();
+};
 
 const UIListeners = new Map([
     [

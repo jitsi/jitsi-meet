@@ -13,6 +13,7 @@ import { getToolbarClassNames } from '../functions';
 import Toolbar from './Toolbar';
 
 declare var APP: Object;
+declare var config: Object;
 
 /**
  * Implementation of secondary toolbar React component.
@@ -29,6 +30,12 @@ class SecondaryToolbar extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * Application ID for callstats.io API. The {@code FeedbackButton} will
+         * display if defined.
+         */
+        _callStatsID: React.PropTypes.string,
+
         /**
          * The indicator which determines whether the local participant is a
          * guest in the conference.
@@ -79,7 +86,7 @@ class SecondaryToolbar extends Component {
      * @returns {ReactElement}
      */
     render(): ReactElement<*> | null {
-        const { _secondaryToolbarButtons } = this.props;
+        const { _callStatsID, _secondaryToolbarButtons } = this.props;
 
         // The number of buttons to show in the toolbar isn't fixed, it depends
         // on the availability of features and configuration parameters. So
@@ -95,7 +102,7 @@ class SecondaryToolbar extends Component {
                 className = { secondaryToolbarClassName }
                 toolbarButtons = { _secondaryToolbarButtons }
                 tooltipPosition = { 'right' }>
-                <FeedbackButton />
+                { _callStatsID ? <FeedbackButton /> : null }
             </Toolbar>
         );
     }
@@ -140,8 +147,14 @@ function _mapDispatchToProps(dispatch: Function): Object {
 function _mapStateToProps(state: Object): Object {
     const { isGuest } = state['features/jwt'];
     const { secondaryToolbarButtons, visible } = state['features/toolbox'];
+    const { callStatsID } = state['features/base/config'];
 
     return {
+        /**
+         * Application ID for callstats.io API.
+         */
+        _callStatsID: callStatsID,
+
         /**
          * The indicator which determines whether the local participant is a
          * guest in the conference.

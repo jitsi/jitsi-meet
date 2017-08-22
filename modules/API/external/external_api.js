@@ -8,6 +8,10 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+const ALWAYS_ON_TOP_FILENAMES = [
+    'css/all.css', 'libs/alwaysontop.min.js'
+];
+
 /**
  * Maps the names of the commands expected by the API with the name of the
  * commands expected by jitsi-meet
@@ -30,6 +34,8 @@ const commands = {
  * events expected by jitsi-meet
  */
 const events = {
+    'audio-availability-changed': 'audioAvailabilityChanged',
+    'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
@@ -37,7 +43,9 @@ const events = {
     'participant-left': 'participantLeft',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
-    'video-conference-left': 'videoConferenceLeft'
+    'video-conference-left': 'videoConferenceLeft',
+    'video-availability-changed': 'videoAvailabilityChanged',
+    'video-mute-status-changed': 'videoMuteStatusChanged'
 };
 
 /**
@@ -207,6 +215,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL,
             roomName
         });
+        this._baseUrl = `${noSSL ? 'http' : 'https'}://${domain}/`;
         this._createIFrame(height, width);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
@@ -243,6 +252,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._frame.setAttribute('allowFullScreen', 'true');
         this._frame.style.border = 0;
         this._frame = this._parentNode.appendChild(this._frame);
+    }
+
+    /**
+     * Returns arrays with the all resources for the always on top feature.
+     *
+     * @returns {Array<string>}
+     */
+    _getAlwaysOnTopResources() {
+        return ALWAYS_ON_TOP_FILENAMES.map(
+            filename => this._baseUrl + filename
+        );
     }
 
     /**
@@ -431,6 +451,30 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Check if the audio is available.
+     *
+     * @returns {Promise} - Resolves with true if the audio available, with
+     * false if not and rejects on failure.
+     */
+    isAudioAvailable() {
+        return this._transport.sendRequest({
+            name: 'is-audio-available'
+        });
+    }
+
+    /**
+     * Returns the audio mute status.
+     *
+     * @returns {Promise} - Resolves with the audio mute status and rejects on
+     * failure.
+     */
+    isAudioMuted() {
+        return this._transport.sendRequest({
+            name: 'is-audio-muted'
+        });
+    }
+
+    /**
      * Returns the iframe that loads Jitsi Meet.
      *
      * @returns {HTMLElement} The iframe.
@@ -447,6 +491,30 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     getNumberOfParticipants() {
         return this._numberOfParticipants;
+    }
+
+    /**
+     * Check if the video is available.
+     *
+     * @returns {Promise} - Resolves with true if the video available, with
+     * false if not and rejects on failure.
+     */
+    isVideoAvailable() {
+        return this._transport.sendRequest({
+            name: 'is-video-available'
+        });
+    }
+
+    /**
+     * Returns the audio mute status.
+     *
+     * @returns {Promise} - Resolves with the audio mute status and rejects on
+     * failure.
+     */
+    isVideoMuted() {
+        return this._transport.sendRequest({
+            name: 'is-video-muted'
+        });
     }
 
     /**

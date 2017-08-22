@@ -5,7 +5,10 @@ import {
     getTrackByMediaTypeAndParticipant
 } from '../base/tracks';
 
-import { SELECT_LARGE_VIDEO_PARTICIPANT } from './actionTypes';
+import {
+    SELECT_LARGE_VIDEO_PARTICIPANT,
+    UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
+} from './actionTypes';
 
 /**
  * Signals conference to select a participant.
@@ -61,6 +64,22 @@ export function selectParticipantInLargeVideo() {
 
             dispatch(selectParticipant());
         }
+    };
+}
+
+/**
+ * Updates the currently seen resolution of the video displayed on large video.
+ *
+ * @param {number} resolution - The current resolution (height) of the video.
+ * @returns {{
+ *     type: UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
+ *     resolution: number
+ * }}
+ */
+export function updateKnownLargeVideoResolution(resolution) {
+    return {
+        type: UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
+        resolution
     };
 }
 

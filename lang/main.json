@@ -114,8 +114,8 @@
         "login": "Login",
         "logout": "Logout",
         "dialpad": "Open / Close dialpad",
-        "sharedVideoMutedPopup": "Your shared video has been muted so<br/>that you can talk to the other participants.",
-        "micMutedPopup": "Your microphone has been muted so that you<br/>would fully enjoy your shared video.",
+        "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other participants.",
+        "micMutedPopup": "Your microphone has been muted so that you would fully enjoy your shared video.",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
         "cameraDisabled": "Camera is not available",
@@ -170,9 +170,8 @@
     },
     "videothumbnail":
     {
-        "editnickname": "Click to edit your<br/>display name",
-        "moderator": "The owner of<br/>this conference",
-        "videomute": "Participant has<br/>stopped the camera",
+        "moderator": "Moderator",
+        "videomute": "Participant has stopped the camera",
         "mute": "Participant is muted",
         "kick": "Kick out",
         "muted": "Muted",
@@ -303,7 +302,6 @@
         "enterDisplayName": "Please enter your display name",
         "extensionRequired": "Extension required:",
         "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
-        "rateExperience": "Please rate your meeting experience.",
         "feedbackHelp": "Your feedback will help us to improve our video experience.",
         "feedbackQuestion": "Tell us about your call!",
         "thankYou": "Thank you for using __appName__!",
@@ -452,10 +450,18 @@
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {
-      "hd": "HD",
-      "hdVideo": "HD video",
-      "sd": "SD",
-      "sdVideo": "SD video"
+        "callQuality": "Call Quality",
+        "changeVideoTip": "Change your video quality from the left toolbar.",
+        "hd": "HD",
+        "highDefinition": "High definition",
+        "ld": "LD",
+        "lowDefinition": "Low definition",
+        "p2pEnabled": "Peer to Peer Enabled",
+        "p2pVideoQualityDescription": "In peer to peer mode, received call quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
+        "recHighDefinitionOnly": "Will prefer high definition.",
+        "sd": "SD",
+        "standardDefinition": "Standard definition",
+        "qualityButtonTip": "Change received video quality"
     },
     "dialOut": {
         "dial": "Dial",
@@ -483,5 +489,13 @@
     },
     "faceTracking": {
         "warning": "Make sure you are in the center."
+    },
+    "feedback": {
+        "average": "Average",
+        "bad": "Bad",
+        "good": "Good",
+        "rateExperience": "Please rate your meeting experience.",
+        "veryBad": "Very Bad",
+        "veryGood": "Very Good"
     }
 }

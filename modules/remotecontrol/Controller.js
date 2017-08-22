@@ -8,6 +8,8 @@ import {
     PERMISSIONS_ACTIONS,
     REMOTE_CONTROL_MESSAGE_NAME
 } from '../../service/remotecontrol/Constants';
+import * as RemoteControlEvents
+    from '../../service/remotecontrol/RemoteControlEvents';
 import UIEvents from '../../service/UI/UIEvents';
 
 import RemoteControlParticipant from './RemoteControlParticipant';
@@ -87,6 +89,15 @@ export default class Controller extends RemoteControlParticipant {
     }
 
     /**
+     * Returns the current active participant's id.
+     *
+     * @returns {string|null} - The id of the current active participant.
+     */
+    get activeParticipant(): string | null {
+        return this._requestedParticipant || this._controlledParticipant;
+    }
+
+    /**
      * Requests permissions from the remote control receiver side.
      *
      * @param {string} userId - The user id of the participant that will be
@@ -100,7 +111,7 @@ export default class Controller extends RemoteControlParticipant {
         if (!this._enabled) {
             return Promise.reject(new Error('Remote control is disabled!'));
         }
-
+        this.emit(RemoteControlEvents.ACTIVE_CHANGED, true);
         this._area = eventCaptureArea;// $("#largeVideoWrapper")
         logger.log(`Requsting remote control permissions from: ${userId}`);
 
@@ -125,16 +136,21 @@ export default class Controller extends RemoteControlParticipant {
                     result = this._handleReply(participant, event);
                 } catch (e) {
                     clearRequest();
+                    this.emit(RemoteControlEvents.ACTIVE_CHANGED, false);
                     reject(e);
                 }
                 if (result !== null) {
                     clearRequest();
+                    if (result === false) {
+                        this.emit(RemoteControlEvents.ACTIVE_CHANGED, false);
+                    }
                     resolve(result);
                 }
             };
             onUserLeft = id => {
                 if (id === this._requestedParticipant) {
                     clearRequest();
+                    this.emit(RemoteControlEvents.ACTIVE_CHANGED, false);
                     resolve(null);
                 }
             };
@@ -279,11 +295,15 @@ export default class Controller extends RemoteControlParticipant {
 
         // $FlowDisableNextLine: we are sure that this._area is not null.
         this._area[0].onmousewheel = event => {
+            event.preventDefault();
+            event.stopPropagation();
             this.sendRemoteControlEndpointMessage(this._controlledParticipant, {
                 type: EVENTS.mousescroll,
                 x: event.deltaX,
                 y: event.deltaY
             });
+
+            return false;
         };
         $(window).keydown(this._onKeyPessHandler.bind(this,
             EVENTS.keydown));
@@ -312,6 +332,7 @@ export default class Controller extends RemoteControlParticipant {
         this.pause();
         this._controlledParticipant = null;
         this._area = undefined;
+        this.emit(RemoteControlEvents.ACTIVE_CHANGED, false);
         APP.UI.messageHandler.notify(
             'dialog.remoteControlTitle',
             'dialog.remoteControlStopMessage'

@@ -10,6 +10,10 @@ import LargeContainer from '../videolayout/LargeContainer';
 import SmallVideo from '../videolayout/SmallVideo';
 import Filmstrip from '../videolayout/Filmstrip';
 
+import {
+    participantJoined,
+    participantLeft
+} from '../../../react/features/base/participants';
 import { dockToolbox, showToolbox } from '../../../react/features/toolbox';
 
 export const SHARED_VIDEO_CONTAINER_TYPE = "sharedvideo";
@@ -267,6 +271,13 @@ export default class SharedVideoManager {
 
             VideoLayout.addLargeVideoContainer(
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
+
+            APP.store.dispatch(participantJoined({
+                id: self.url,
+                isBot: true,
+                name: player.getVideoData().title
+            }));
+
             VideoLayout.handleVideoThumbClicked(self.url);
 
             // If we are sending the command and we are starting the player
@@ -461,6 +472,8 @@ export default class SharedVideoManager {
                     UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
         });
 
+        APP.store.dispatch(participantLeft(this.url));
+
         this.url = null;
         this.isSharedVideoShown = false;
         this.initialAttributes = null;
@@ -545,7 +558,8 @@ export default class SharedVideoManager {
         if(show)
             this.showSharedVideoMutedPopup(false);
 
-        APP.UI.showCustomToolbarPopup('#micMutedPopup', show, 5000);
+        APP.UI.showCustomToolbarPopup(
+            'microphone', 'micMutedPopup', show, 5000);
     }
 
     /**
@@ -558,7 +572,8 @@ export default class SharedVideoManager {
         if(show)
             this.showMicMutedPopup(false);
 
-        APP.UI.showCustomToolbarPopup('#sharedVideoMutedPopup', show, 5000);
+        APP.UI.showCustomToolbarPopup(
+            'sharedvideo', 'sharedVideoMutedPopup', show, 5000);
     }
 }
 

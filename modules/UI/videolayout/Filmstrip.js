@@ -1,9 +1,6 @@
-/* global $, APP, config, JitsiMeetJS, interfaceConfig */
+/* global $, APP, JitsiMeetJS, interfaceConfig */
 
-import {
-    setFilmstripRemoteVideosVisibility,
-    setFilmstripVisibility
-} from '../../../react/features/filmstrip';
+import { setFilmstripVisibility } from '../../../react/features/filmstrip';
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
@@ -28,25 +25,6 @@ const Filmstrip = {
             this._initFilmstripToolbar();
             this.registerListeners();
         }
-    },
-
-    /**
-     * Sets a class on the remote videos container for CSS to adjust visibility
-     * of the remote videos. Will no-op if config.debug is truthy, as should be
-     * the case with torture tests.
-     *
-     * @param {boolean} shouldHide - True if remote videos should be hidden,
-     * false if they should be visible.
-     * @returns {void}
-     */
-    setRemoteVideoVisibility(shouldShow) {
-        // Allow disabling on 1-on-1 UI mode. Used by torture tests.
-        if (config.disable1On1Mode) {
-            return;
-        }
-
-        APP.store.dispatch(setFilmstripRemoteVideosVisibility(shouldShow));
-        this.filmstripRemoteVideos.toggleClass('hide-videos', !shouldShow);
     },
 
     /**

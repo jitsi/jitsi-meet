@@ -1,11 +1,7 @@
 import { setLastN } from '../../base/conference';
-import { setVideoMuted } from '../../base/media';
+import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../../base/media';
 
-import {
-    _SET_APP_STATE_LISTENER,
-    _SET_BACKGROUND_VIDEO_MUTED,
-    APP_STATE_CHANGED
-} from './actionTypes';
+import { _SET_APP_STATE_LISTENER, APP_STATE_CHANGED } from './actionTypes';
 
 /**
  * Sets the listener to be used with React Native's AppState API.
@@ -42,35 +38,8 @@ export function _setBackgroundVideoMuted(muted: boolean) {
         // for last N will be chosen automatically.
         const { audioOnly } = getState()['features/base/conference'];
 
-        if (audioOnly) {
-            return;
-        }
-
-        dispatch(setLastN(muted ? 0 : undefined));
-
-        if (muted) {
-            const { video } = getState()['features/base/media'];
-
-            if (video.muted) {
-                // Video is already muted, do nothing.
-                return;
-            }
-        } else {
-            const { videoMuted } = getState()['features/background'];
-
-            if (!videoMuted) {
-                // We didn't mute video, do nothing.
-                return;
-            }
-        }
-
-        // Remember that local video was muted due to the app going to the
-        // background vs user's choice.
-        dispatch({
-            type: _SET_BACKGROUND_VIDEO_MUTED,
-            muted
-        });
-        dispatch(setVideoMuted(muted));
+        audioOnly || dispatch(setLastN(muted ? 0 : undefined));
+        dispatch(setVideoMuted(muted, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
     };
 }
 

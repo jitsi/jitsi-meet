@@ -11,13 +11,13 @@
     right: 0;
     padding: 10px 5px;
     @extend %align-right;
+    z-index: $filmstripVideosZ;
 
     &__toolbar {
         @include flex();
         flex-direction: column-reverse;
         flex-wrap: nowrap;
         position: relative;
-        z-index: $zindex1; // Set z-index to make element visible.
         width: $filmstripToggleButtonWidth;
 
         button {
@@ -53,7 +53,6 @@
         /* The filmstrip should not be covered by the left toolbar. */
         bottom: 0;
         width:auto;
-        z-index: $filmstripVideosZ;
         transition: bottom 2s;
         overflow: visible !important;
         /*!!! Removes the gap between the local video container and the remote
@@ -157,8 +156,10 @@
 
     .remote-videos-container {
         transition: opacity 1s;
+    }
 
-        &.hide-videos {
+    &.hide-videos {
+        .remote-videos-container {
             opacity: 0;
             pointer-events: none;
         }

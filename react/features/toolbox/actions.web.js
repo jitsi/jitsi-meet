@@ -3,7 +3,7 @@
 import Recording from '../../../modules/UI/recording/Recording';
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
-import UIUtil from '../../../modules/UI/util/UIUtil';
+
 import UIEvents from '../../../service/UI/UIEvents';
 
 import {
@@ -18,7 +18,11 @@ import {
     toggleToolbarButton
 } from './actions.native';
 import { SET_DEFAULT_TOOLBOX_BUTTONS } from './actionTypes';
-import { getDefaultToolboxButtons } from './functions';
+import {
+    getButton,
+    getDefaultToolboxButtons,
+    isButtonEnabled
+} from './functions';
 
 declare var $: Function;
 declare var APP: Object;
@@ -37,10 +41,27 @@ export function checkAutoEnableDesktopSharing(): Function {
     return () => {
         // XXX Should use dispatcher to toggle screensharing but screensharing
         // hasn't been React-ified yet.
-        if (UIUtil.isButtonEnabled('desktop')
+        if (isButtonEnabled('desktop')
                 && config.autoEnableDesktopSharing) {
             APP.UI.eventEmitter.emit(UIEvents.TOGGLE_SCREENSHARING);
         }
+    };
+}
+
+/**
+ * Dispatches an action to hide any popups displayed by the associated button.
+ *
+ * @param {string} buttonName - The name of the button as specified in the
+ * button configurations for the toolbar.
+ * @returns {Function}
+ */
+export function clearButtonPopup(buttonName) {
+    return (dispatch, getState) => {
+        _clearPopupTimeout(buttonName, getState());
+
+        dispatch(setToolbarButton(buttonName, {
+            popupDisplay: null
+        }));
     };
 }
 
@@ -192,6 +213,34 @@ export function hideToolbox(force: boolean = false): Function {
 }
 
 /**
+ * Dispatches an action to show the popup associated with a button. Sets a
+ * timeout to be fired which will dismiss the popup.
+ *
+ * @param {string} buttonName - The name of the button as specified in the
+ * button configurations for the toolbar.
+ * @param {string} popupName - The id of the popup to show as specified in
+ * the button configurations for the toolbar.
+ * @param {number} timeout - The time in milliseconds to show the popup.
+ * @returns {Function}
+ */
+export function setButtonPopupTimeout(buttonName, popupName, timeout) {
+    return (dispatch, getState) => {
+        _clearPopupTimeout(buttonName, getState());
+
+        const newTimeoutId = setTimeout(() => {
+            dispatch(clearButtonPopup(buttonName));
+        }, timeout);
+
+        dispatch(setToolbarButton(buttonName, {
+            popupDisplay: {
+                popupID: popupName,
+                timeoutID: newTimeoutId
+            }
+        }));
+    };
+}
+
+/**
  * Sets the default toolbar buttons of the Toolbox.
  *
  * @returns {Function}
@@ -222,8 +271,6 @@ export function setProfileButtonUnclickable(unclickable: boolean): Function {
         dispatch(setToolbarButton(buttonName, {
             unclickable
         }));
-
-        UIUtil.removeTooltip(document.getElementById('toolbar_button_profile'));
     };
 }
 
@@ -241,7 +288,7 @@ export function showDesktopSharingButton(): Function {
             = disabledTooltipText
                 && APP.conference.isDesktopSharingDisabledByConfig;
         const visible
-            = UIUtil.isButtonEnabled(buttonName)
+            = isButtonEnabled(buttonName)
                 && (APP.conference.isDesktopSharingEnabled || showTooltip);
 
         const newState = {
@@ -264,7 +311,7 @@ export function showDialPadButton(show: boolean): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'dialpad';
 
-        if (show && UIUtil.isButtonEnabled(buttonName)) {
+        if (show && isButtonEnabled(buttonName)) {
             dispatch(setToolbarButton(buttonName, {
                 hidden: false
             }));
@@ -296,7 +343,7 @@ export function showSharedVideoButton(): Function {
     return (dispatch: Dispatch<*>) => {
         const buttonName = 'sharedvideo';
 
-        if (UIUtil.isButtonEnabled(buttonName)
+        if (isButtonEnabled(buttonName)
                 && !config.disableThirdPartyRequests) {
             dispatch(setToolbarButton(buttonName, {
                 hidden: false
@@ -318,7 +365,7 @@ export function showDialOutButton(show: boolean): Function {
 
         if (show
                 && APP.conference.sipGatewayEnabled()
-                && UIUtil.isButtonEnabled(buttonName)
+                && isButtonEnabled(buttonName)
                 && (!config.enableUserRolesBasedOnToken
                     || !getState()['features/jwt'].isGuest)) {
             dispatch(setToolbarButton(buttonName, {
@@ -372,10 +419,9 @@ export function toggleSideToolbarContainer(containerId: string): Function {
         const { secondaryToolbarButtons } = getState()['features/toolbox'];
 
         for (const key of secondaryToolbarButtons.keys()) {
-            const isButtonEnabled = UIUtil.isButtonEnabled(key);
             const button = secondaryToolbarButtons.get(key);
 
-            if (isButtonEnabled
+            if (isButtonEnabled(key)
                     && button.sideContainerId
                     && button.sideContainerId === containerId) {
                 dispatch(toggleToolbarButton(key));
@@ -383,4 +429,21 @@ export function toggleSideToolbarContainer(containerId: string): Function {
             }
         }
     };
+}
+
+/**
+ * Clears the timeout set for hiding a button popup.
+ *
+ * @param {string} buttonName - The name of the button as specified in the
+ * button configurations for the toolbar.
+ * @param {Object} state - The redux state in which the button is expected to
+ * be defined.
+ * @private
+ * @returns {void}
+ */
+function _clearPopupTimeout(buttonName, state) {
+    const { popupDisplay } = getButton(buttonName, state);
+    const { timeoutID } = popupDisplay || {};
+
+    clearTimeout(timeoutID);
 }

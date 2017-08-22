@@ -1,4 +1,4 @@
-/* global $, APP, config, JitsiMeetJS */
+/* global $, APP, JitsiMeetJS */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -9,7 +9,9 @@ import { PresenceLabel } from '../../../react/features/presence-status';
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
-import { setLargeVideoHDStatus } from '../../../react/features/base/conference';
+import {
+    updateKnownLargeVideoResolution
+} from '../../../react/features/large-video';
 
 import Avatar from "../avatar/Avatar";
 import {createDeferred} from '../../util/helpers';
@@ -659,10 +661,13 @@ export default class LargeVideoManager {
      */
     _onVideoResolutionUpdate() {
         const { height, width } = this.videoContainer.getStreamSize();
-        const currentAspectRatio = width/ height;
-        const isCurrentlyHD = Math.min(height, width) >= config.minHDHeight;
+        const { resolution } = APP.store.getState()['features/large-video'];
 
-        APP.store.dispatch(setLargeVideoHDStatus(isCurrentlyHD));
+        if (height !== resolution) {
+            APP.store.dispatch(updateKnownLargeVideoResolution(height));
+        }
+
+        const currentAspectRatio = width / height;
 
         if (this._videoAspectRatio !== currentAspectRatio) {
             this._videoAspectRatio = currentAspectRatio;

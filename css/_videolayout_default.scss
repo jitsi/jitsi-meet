@@ -41,44 +41,85 @@
     &__toptoolbar {
         position: absolute;
         left: 0;
-        z-index: $zindex3;
+        pointer-events: none;
+        z-index: $zindex10;
         width: 100%;
         box-sizing: border-box; // Includes the padding in the 100% width.
+
+        /**
+         * FIXME (lenny): Disabling pointer-events is a pretty big sin that
+         * sidesteps the problems. There are z-index wars occurring within
+         * videocontainer and AtlasKit Tooltips rely on their parent z-indexe
+         * being higher than whatever they need to appear over. So set a higher
+         * z-index for the tooltip containers but make any empty space not block
+         * mouse overs for various mouseover triggers.
+         */
+        pointer-events: none;
+
+        * {
+            pointer-events: auto;
+        }
+
+        .indicator-container {
+            display: inline-block;
+            float: left;
+            pointer-events: all;
+        }
     }
 
     &__toolbar {
         bottom: 0;
-        padding: 0 5px 0 5px;
         height: $thumbnailToolbarHeight;
+        padding: 0 5px 0 5px;
     }
 
     &__toptoolbar {
-        $toolbarPadding: 5px;
+        $toolbarIconMargin: 5px;
         top: 0;
-        padding: $toolbarPadding;
         padding-bottom: 0;
+        /**
+         * Override text-align center as icons need to be left justified.
+         */
+        text-align: left;
 
-        .connection-indicator,
-        span.indicator {
-            margin-right: em(5, 8);
+        /**
+         * Intentionally use margin on the icon itself as AtlasKit InlineDialog
+         * positioning depends on the trigger (indicator icon).
+         */
+        .indicator {
+            margin-top: $toolbarIconMargin;
         }
 
-        span.indicator {
-            display: none;
+        .indicator-container:nth-child(1) .indicator {
+            margin-left: $toolbarIconMargin;
+        }
 
-            &:last-child {
-                margin-right: 0;
+        .connection-indicator,
+        div.indicator-container,
+         {
+            margin-right: 4px;
+        }
+
+        div.indicator:last-child {
+            margin-right: 0;
+        }
+
+        .indicator-container {
+            display: inline-block;
+            vertical-align: top;
+
+            .popover-trigger {
+                display: inline-block;
             }
         }
 
         .connection-indicator,
-        span.indicator {
+        .indicator {
             position: relative;
             font-size: 8px;
             text-align: center;
             line-height: $thumbnailIndicatorSize;
             padding: 0;
-            float: left;
             @include circle($thumbnailIndicatorSize);
             box-sizing: border-box;
             z-index: $zindex3;
@@ -124,6 +165,7 @@
 
             .icon-connection,
             .icon-connection-lost {
+                cursor: pointer;
                 font-size: 1em;
             }
         }
@@ -283,7 +325,6 @@
     padding: 0;
     border: 0;
     margin: 0px 5px 0px 0px;
-    float: left;
 }
 
 /**
@@ -296,9 +337,17 @@
 /**
  * Toolbar icons positioned on the right.
  */
-.toolbar-icon.right {
-  float: right;
-  margin: 0px 0px 0px 5px;
+.moderator-icon {
+    display: inline-block;
+
+    &.right {
+        float: right;
+        margin: 0px 0px 0px 5px;
+    }
+
+    .toolbar-icon {
+        margin: 0;
+    }
 }
 
 .raisehandindicator {
@@ -309,14 +358,14 @@
   background: $connectionIndicatorBg;
 }
 
+.remote-video-menu-trigger,
 .remotevideomenu
 {
     display: inline-block;
     position: absolute;
     top: 0px;
     right: 0;
-    margin-top: 7px;
-    z-index: $zindex3;
+    z-index: $zindex2;
     width: 18px;
     height: 13px;
     color: #FFF;
@@ -325,6 +374,9 @@
     >i{
         cursor: hand;
     }
+}
+.remote-video-menu-trigger {
+    margin-top: 7px;
 }
 
 /**
@@ -534,112 +586,4 @@
                     0px 1px 1px rgba(0,0,0,0.3),
                     1px 0px 1px rgba(0,0,0,0.3),
                     0px 0px 1px rgba(0,0,0,0.3);
-}
-
-.filmstrip-only {
-    #videoResolutionLabel {
-        display: none;
-    }
-}
-.video-state-indicator {
-    background: $videoStateIndicatorBackground;
-    color: $videoStateIndicatorColor;
-    cursor: pointer;
-    font-size: 13px;
-    height: 40px;
-    line-height: 20px;
-    text-align: center;
-    min-width: 40px;
-    padding: 10px 5px;
-    border-radius: 50%;
-    position: absolute;
-    box-sizing: border-box;
-
-    i {
-        cursor: pointer;
-    }
-}
-
-#videoResolutionLabel,
-.centeredVideoLabel.moveToCorner {
-    z-index: $tooltipsZ;
-}
-
-.centeredVideoLabel {
-    bottom: 45%;
-    border-radius: 2px;
-    display: none;
-    -webkit-transition: all 2s 2s linear;
-    transition: all 2s 2s linear;
-    z-index: $centeredVideoLabelZ;
-
-    &.moveToCorner {
-        bottom: auto;
-    }
-}
-
-.moveToCorner {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-}
-
-.moveToCorner + .moveToCorner {
-    right: 80px;
-}
-
-.video-state-indicator-menu {
-    display: none;
-    padding: 10px;
-    position: absolute;
-    right: -10px;
-    top: 20px;
-
-    .video-state-indicator-menu-options {
-        background: $popoverBg;
-        border-radius: 3px;
-        color: $popoverFontColor;
-        margin-top: 20px;
-        padding: 5px 0;
-        position: relative;
-
-        div {
-            cursor: pointer;
-            padding: 10px;
-            padding-right: 30px;
-            text-align: left;
-            white-space: nowrap;
-
-            &.active {
-                background: $toolbarToggleBackground;
-            }
-            &:hover:not(.active) {
-                background: $popupMenuSelectedItemBackground;
-            }
-
-            i {
-                margin-right: 5px;
-                vertical-align: middle;
-            }
-        }
-    }
-
-    .video-state-indicator-menu-options::after {
-        content: " ";
-        border-color: transparent transparent $popoverBg transparent;
-        border-style: solid;
-        border-width: 5px;
-        position: absolute;
-        right: 15px;
-        top: -10px;
-    }
-}
-
-.video-state-indicator:hover,
-.video-state-indicator *:hover {
-    background: $toolbarSelectBackground;
-
-    .video-state-indicator-menu {
-        display: block;
-    }
 }

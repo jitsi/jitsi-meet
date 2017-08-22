@@ -73,7 +73,7 @@ function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
 const VIDEO_INITIAL_MEDIA_STATE = {
     available: true,
     facingMode: CAMERA_FACING_MODE.USER,
-    muted: false
+    muted: 0
 };
 
 /**

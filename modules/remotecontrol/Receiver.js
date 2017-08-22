@@ -13,6 +13,8 @@ import {
     REMOTE_CONTROL_MESSAGE_NAME,
     REQUESTS
 } from '../../service/remotecontrol/Constants';
+import * as RemoteControlEvents
+    from '../../service/remotecontrol/RemoteControlEvents';
 import {
     Transport,
     PostMessageTransportBackend
@@ -132,6 +134,7 @@ export default class Receiver extends RemoteControlParticipant {
             name: REMOTE_CONTROL_MESSAGE_NAME,
             type: EVENTS.stop
         });
+        this.emit(RemoteControlEvents.ACTIVE_CHANGED, false);
         if (!dontNotify) {
             APP.UI.messageHandler.notify(
                 'dialog.remoteControlTitle',
@@ -177,6 +180,7 @@ export default class Receiver extends RemoteControlParticipant {
                     && message.action === PERMISSIONS_ACTIONS.request) {
                 const userId = participant.getId();
 
+                this.emit(RemoteControlEvents.ACTIVE_CHANGED, true);
                 APP.store.dispatch(
                     openRemoteControlAuthorizationDialog(userId));
             } else if (this._controller === participant.getId()) {
@@ -200,6 +204,7 @@ export default class Receiver extends RemoteControlParticipant {
      * @returns {void}
      */
     deny(userId: string) {
+        this.emit(RemoteControlEvents.ACTIVE_CHANGED, false);
         this.sendRemoteControlEndpointMessage(userId, {
             type: EVENTS.permissions,
             action: PERMISSIONS_ACTIONS.deny

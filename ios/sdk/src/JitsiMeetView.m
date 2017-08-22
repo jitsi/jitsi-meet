@@ -15,6 +15,7 @@
  */
 
 #import <CoreText/CoreText.h>
+#include <mach/mach_time.h>
 
 #import <React/RCTAssert.h>
 #import <React/RCTLinkingManager.h>
@@ -83,10 +84,10 @@ void loadCustomFonts(Class clazz) {
  */
 void registerFatalErrorHandler() {
 #if !DEBUG
-    // In the Release configuration, React Native will (intentionally) raise
-    // an unhandled NSException for an unhandled JavaScript error. This will
-    // effectively kill the application. In accord with the Web, do not kill
-    // the application.
+    // In the Release configuration, React Native will (intentionally) raise an
+    // unhandled NSException for an unhandled JavaScript error. This will
+    // effectively kill the application. In accord with the Web, do not kill the
+    // application.
     if (!RCTGetFatalHandler()) {
         RCTSetFatalHandler(_RCTFatal);
     }
@@ -230,28 +231,39 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 - (void)loadURLObject:(NSDictionary *)urlObject {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
-    [props setObject:externalAPIScope forKey:@"externalAPIScope"];
-    [props setObject:@(self.welcomePageEnabled) forKey:@"welcomePageEnabled"];
+    props[@"externalAPIScope"] = externalAPIScope;
+    props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
 
-    // XXX url must not be set when nil, so it appears as undefined in JS and we
-    // check the launch parameters.
+    // XXX If urlObject is nil, then it must appear as undefined in the
+    // JavaScript source code so that we check the launchOptions there.
     if (urlObject) {
-        [props setObject:urlObject forKey:@"url"];
+        props[@"url"] = urlObject;
     }
 
-    if (rootView == nil) {
+    // XXX The method loadURLObject: is supposed to be imperative i.e. a second
+    // invocation with one and the same URL is expected to join the respective
+    // conference again if the first invocation was followed by leaving the
+    // conference. However, React and, respectively,
+    // appProperties/initialProperties are declarative expressions i.e. one and
+    // the same URL will not trigger componentWillReceiveProps in the JavaScript
+    // source code. The workaround implemented bellow introduces imperativeness
+    // in React Component props by defining a unique value per loadURLObject:
+    // invocation.
+    props[@"timestamp"] = @(mach_absolute_time());
+
+    if (rootView) {
+        // Update props with the new URL.
+        rootView.appProperties = props;
+    } else {
         rootView
             = [[RCTRootView alloc] initWithBridge:bridgeWrapper.bridge
                                        moduleName:@"App"
                                 initialProperties:props];
         rootView.backgroundColor = self.backgroundColor;
 
-        // Add React's root view as a subview which completely covers this one.
+        // Add rootView as a subview which completely covers this one.
         [rootView setFrame:[self bounds]];
         [self addSubview:rootView];
-    } else {
-        // Update props with the new URL.
-        rootView.appProperties = props;
     }
 }
 
@@ -274,8 +286,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  *
  * @param url - The {@code NSURL} to load in all existing
  * {@code JitsiMeetView}s.
- * @return {@code YES} if the specified {@code url} was submitted for loading
- * in at least one {@code JitsiMeetView}; otherwise, {@code NO}.
+ * @return {@code YES} if the specified {@code url} was submitted for loading in
+ * at least one {@code JitsiMeetView}; otherwise, {@code NO}.
  */
 + (BOOL)loadURLInViews:(NSURL *)url {
     BOOL handled = NO;
@@ -329,9 +341,9 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         [views setObject:self forKey:externalAPIScope];
     }
 
-    // Set a background color which is in accord with the JavaScript and
-    // Android parts of the application and causes less perceived visual
-    // flicker than the default background color.
+    // Set a background color which is in accord with the JavaScript and Android
+    // parts of the application and causes less perceived visual flicker than
+    // the default background color.
     self.backgroundColor
         = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
 }

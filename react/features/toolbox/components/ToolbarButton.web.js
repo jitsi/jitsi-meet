@@ -1,17 +1,28 @@
 /* @flow */
 
-import React from 'react';
-import { connect } from 'react-redux';
+import AKInlineDialog from '@atlaskit/inline-dialog';
+import { Tooltip } from '@atlaskit/tooltip';
+import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
-import UIUtil from '../../../../modules/UI/util/UIUtil';
+import { isButtonEnabled } from '../functions';
 
-import AbstractToolbarButton from './AbstractToolbarButton';
-import { getButtonAttributesByProps } from '../functions';
+import StatelessToolbarButton from './StatelessToolbarButton';
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
+
+/**
+ * Mapping of tooltip positions to equivalent {@code AKInlineDialog} positions.
+ *
+ * @private
+ */
+const TOOLTIP_TO_POPUP_POSITION = {
+    bottom: 'bottom center',
+    left: 'left middle',
+    top: 'top center',
+    right: 'right middle'
+};
 
 /**
  * Represents a button in Toolbar on React.
@@ -19,10 +30,25 @@ declare var interfaceConfig: Object;
  * @class ToolbarButton
  * @extends AbstractToolbarButton
  */
-class ToolbarButton extends AbstractToolbarButton {
+class ToolbarButton extends Component {
+    button: Object;
     _createRefToButton: Function;
 
     _onClick: Function;
+
+    _onMouseOut: Function;
+
+    _onMouseOver: Function;
+
+    state: {
+
+        /**
+         * Whether or not the tooltip for the button should be displayed.
+         *
+         * @type {boolean}
+         */
+        showTooltip: boolean
+    }
 
     /**
      * Toolbar button component's property types.
@@ -30,17 +56,12 @@ class ToolbarButton extends AbstractToolbarButton {
      * @static
      */
     static propTypes = {
-        ...AbstractToolbarButton.propTypes,
+        ...StatelessToolbarButton.propTypes,
 
         /**
          * Object describing button.
          */
         button: React.PropTypes.object.isRequired,
-
-        /**
-         * Used to dispatch an action when the button is clicked.
-         */
-        dispatch: React.PropTypes.func,
 
         /**
          * Handler for component mount.
@@ -73,9 +94,15 @@ class ToolbarButton extends AbstractToolbarButton {
     constructor(props: Object) {
         super(props);
 
+        this.state = {
+            showTooltip: false
+        };
+
         // Bind methods to save the context
         this._createRefToButton = this._createRefToButton.bind(this);
         this._onClick = this._onClick.bind(this);
+        this._onMouseOut = this._onMouseOut.bind(this);
+        this._onMouseOver = this._onMouseOver.bind(this);
     }
 
     /**
@@ -86,7 +113,7 @@ class ToolbarButton extends AbstractToolbarButton {
      * @returns {void}
      */
     componentDidMount(): void {
-        this._setShortcutAndTooltip();
+        this._setShortcut();
 
         if (this.props.onMount) {
             this.props.onMount();
@@ -112,19 +139,52 @@ class ToolbarButton extends AbstractToolbarButton {
      * @returns {ReactElement}
      */
     render(): ReactElement<*> {
-        const { button } = this.props;
-        const attributes = getButtonAttributesByProps(button);
-        const popups = button.popups || [];
+        const { button, t, tooltipPosition } = this.props;
+        const props = {
+            ...this.props,
+            onClick: this._onClick,
+            createRefToButton: this._createRefToButton
+        };
 
-        return (
-            <a
-                { ...attributes }
-                onClick = { this._onClick }
-                ref = { this._createRefToButton }>
-                { this._renderInnerElementsIfRequired() }
-                { this._renderPopups(popups) }
-            </a>
+        const buttonComponent = ( // eslint-disable-line no-extra-parens
+            <Tooltip
+                description = { button.tooltipText || t(button.tooltipKey) }
+                onMouseOut = { this._onMouseOut }
+                onMouseOver = { this._onMouseOver }
+                position = { tooltipPosition }
+                visible = { this.state.showTooltip }>
+                <StatelessToolbarButton { ...props } />
+            </Tooltip>
         );
+
+        const popupConfig = this._getPopupDisplayConfiguration();
+
+        if (popupConfig) {
+            const { dataAttr, dataInterpolate, position } = popupConfig;
+
+            return (
+                <AKInlineDialog
+                    content = { t(dataAttr, dataInterpolate) }
+                    isOpen = { Boolean(popupConfig) }
+                    position = { position }>
+                    { buttonComponent }
+                </AKInlineDialog>
+            );
+        }
+
+        return buttonComponent;
+    }
+
+    /**
+     * Wrapper on on click handler props for current button.
+     *
+     * @param {Event} event - Click event object.
+     * @returns {void}
+     * @private
+     */
+    _onClick(event) {
+        this.props.onClick(event);
+        this.setState({ showTooltip: false });
     }
 
     /**
@@ -140,29 +200,29 @@ class ToolbarButton extends AbstractToolbarButton {
     }
 
     /**
-     * Wrapper on on click handler props for current button.
+     * Parses the props and state to find any popup that should be displayed
+     * and returns an object describing how the popup should display.
      *
-     * @param {Event} event - Click event object.
-     * @returns {void}
      * @private
+     * @returns {Object|null}
      */
-    _onClick(event: Event): void {
-        const {
-            button,
-            onClick
-        } = this.props;
-        const {
-            enabled,
-            unclickable
-        } = button;
+    _getPopupDisplayConfiguration() {
+        const { button, tooltipPosition } = this.props;
+        const { popups, popupDisplay } = button;
 
-        if (enabled && !unclickable && onClick) {
-            const action = onClick(event);
-
-            if (action) {
-                this.props.dispatch(action);
-            }
+        if (!popups || !popupDisplay) {
+            return null;
         }
+
+        const { popupID } = popupDisplay;
+        const currentPopup = popups.find(popup => popup.id === popupID);
+
+        return Object.assign(
+            {},
+            currentPopup || {},
+            {
+                position: TOOLTIP_TO_POPUP_POSITION[tooltipPosition]
+            });
     }
 
     /**
@@ -181,30 +241,27 @@ class ToolbarButton extends AbstractToolbarButton {
     }
 
     /**
-     * Renders popup element for toolbar button.
+     * Hides any displayed tooltip.
      *
-     * @param {Array} popups - Array of popup objects.
-     * @returns {Array}
      * @private
+     * @returns {void}
      */
-    _renderPopups(popups: Array<*> = []): Array<*> {
-        return popups.map(popup => {
-            let gravity = 'n';
+    _onMouseOut(): void {
+        this.setState({ showTooltip: false });
+    }
 
-            if (popup.dataAttrPosition) {
-                gravity = popup.dataAttrPosition;
-            }
+    /**
+     * Hides any displayed tooltip.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onMouseOver(): void {
+        const { button } = this.props;
 
-            const title = this.props.t(popup.dataAttr, popup.dataInterpolate);
-
-            return (
-                <div
-                    className = { popup.className }
-                    data-popup = { gravity }
-                    id = { popup.id }
-                    key = { popup.id }
-                    title = { title } />
-            );
+        this.setState({
+            showTooltip: isButtonEnabled(button.buttonName)
+                && !button.unclickable
         });
     }
 
@@ -214,34 +271,18 @@ class ToolbarButton extends AbstractToolbarButton {
      * @private
      * @returns {void}
      */
-    _setShortcutAndTooltip(): void {
-        const { button, tooltipPosition } = this.props;
-        const name = button.buttonName;
+    _setShortcut(): void {
+        const { button } = this.props;
 
-        if (UIUtil.isButtonEnabled(name)) {
-
-            if (!button.unclickable) {
-                if (button.tooltipText) {
-                    UIUtil.setTooltipText(this.button,
-                        button.tooltipText,
-                        tooltipPosition);
-                } else {
-                    UIUtil.setTooltip(this.button,
-                        button.tooltipKey,
-                        tooltipPosition);
-                }
-            }
-
-            if (button.shortcut) {
-                APP.keyboardshortcut.registerShortcut(
-                    button.shortcut,
-                    button.shortcutAttr,
-                    button.shortcutFunc,
-                    button.shortcutDescription
-                );
-            }
+        if (button.shortcut && APP && APP.keyboardshortcut) {
+            APP.keyboardshortcut.registerShortcut(
+                button.shortcut,
+                button.shortcutAttr,
+                button.shortcutFunc,
+                button.shortcutDescription
+            );
         }
     }
 }
 
-export default translate(connect()(ToolbarButton));
+export default translate(ToolbarButton);

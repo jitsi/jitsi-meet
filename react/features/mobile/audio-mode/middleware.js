@@ -16,10 +16,10 @@ import { MiddlewareRegistry } from '../../base/redux';
  * based on the type of conference. Audio-only conferences don't use the speaker
  * by default, and video conferences do.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register(({ getState }) => next => action => {
     const AudioMode = NativeModules.AudioMode;
 
     if (AudioMode) {
@@ -32,26 +32,20 @@ MiddlewareRegistry.register(store => next => action => {
             mode = AudioMode.DEFAULT;
             break;
 
-        case CONFERENCE_WILL_JOIN: {
-            const { audioOnly } = store.getState()['features/base/conference'];
-
-            mode = audioOnly ? AudioMode.AUDIO_CALL : AudioMode.VIDEO_CALL;
+        case CONFERENCE_WILL_JOIN:
+        case SET_AUDIO_ONLY: {
+            if (getState()['features/base/conference'].conference
+                    || action.conference) {
+                mode
+                    = action.audioOnly
+                        ? AudioMode.AUDIO_CALL
+                        : AudioMode.VIDEO_CALL;
+            }
             break;
         }
-
-        case SET_AUDIO_ONLY:
-            mode
-                = action.audioOnly
-                    ? AudioMode.AUDIO_CALL
-                    : AudioMode.VIDEO_CALL;
-            break;
-
-        default:
-            mode = null;
-            break;
         }
 
-        if (mode !== null) {
+        if (typeof mode !== 'undefined') {
             AudioMode.setMode(mode)
                 .catch(err =>
                     console.error(
