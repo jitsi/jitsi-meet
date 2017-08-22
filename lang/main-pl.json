@@ -6,7 +6,14 @@
     "passwordSetRemotely": "",
     "connectionsettings": "ustawienia połączenia",
     "poweredby": "Uruchomiono",
-    "feedback": "jaka jest twoja opinia ?",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "Oceń proszę swoje doświadczenia z konferencji.",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "otwarto twoją konferencję",
     "me": "to ja",
     "speaker": "głośnik",
@@ -14,66 +21,78 @@
     "defaultNickname": "np. Ziutek Kowalski",
     "defaultLink": "np. _url_",
     "callingName": "_nazwa_",
+    "audioOnly": {
+        "audioOnly": "",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
-        "react-nativeGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>Allow</i></b> przycisk",
-        "chromeGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>Allow</i></b> przycisk",
-        "androidGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>Allow</i></b> przycisk",
-        "firefoxGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>Share Selected Device</i></b> przycisk",
-        "operaGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>Allow</i></b> przycisk",
-        "iexplorerGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>OK</i></b> przycisk",
-        "safariGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu naciskając <b><i>OK</i></b> przycisk",
-        "nwjsGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu"
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "",
+        "operaGrantPermissions": "",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "",
+        "nwjsGrantPermissions": "wyraź zgodę na użycie kamery i mikrofonu",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "",
+        "keyboardShortcuts": "Skróty klawiaturowe:",
         "raiseHand": "",
-        "pushToTalk": "",
-        "toggleScreensharing": "",
-        "toggleFilmstrip": "",
-        "toggleShortcuts": "",
+        "pushToTalk": "naciśnij i mów",
+        "toggleScreensharing": "Przełączanie pomiędzy kamerą i wspóldzieleniem ekranu",
+        "toggleFilmstrip": "Pokaż lub ukryj klipy wideo",
+        "toggleShortcuts": "Pokaż lub ukryj pasek pomocy.",
         "focusLocal": "",
         "focusRemote": "",
-        "toggleChat": "",
-        "mute": "",
-        "fullScreen": "",
-        "videoMute": ""
+        "toggleChat": "Otwórz lub zamknij panel czat.",
+        "mute": "Wyłącz lub włącz mikrofon.",
+        "fullScreen": "Otwórz / Zamknij pełny ekran",
+        "videoMute": "",
+        "showSpeakerStats": ""
     },
+    "\u0005keyboardShortcuts": {},
     "welcomepage": {
-        "go": "IDŹ",
-        "roomname": "Podaj nazwę sali konferencyjnej",
         "disable": "nie pokazuj ponownie",
         "feature1": {
-            "title": "użyj",
-            "content": "nie musisz nic pobierać. _app_ jest gotowa do użycia bezpośrednio w przeglądarce. Zaproś innych do udziału w konferencji podając adres URL"
+            "content": "nie musisz nic pobierać. _app_ jest gotowa do użycia bezpośrednio w przeglądarce. Zaproś innych do udziału w konferencji podając adres URL",
+            "title": "użyj"
         },
         "feature2": {
-            "title": "za mała przepustowość",
-            "content": "Dla konferencji video potrzeba nie więcej niż 128 kbit/sek. Konferencje dzielenia ekranu lub tylko audio są możliwe przy mniejszej przepustowości. "
+            "content": "Dla konferencji video potrzeba nie więcej niż 128 kbit/sek. Konferencje dzielenia ekranu lub tylko audio są możliwe przy mniejszej przepustowości. ",
+            "title": "za mała przepustowość"
         },
         "feature3": {
-            "title": "Open source",
-            "content": "_app_ oparta jest na Apache License. Możesz swobodnie pobierać ją, używać, modyfikować i dzielić się nią."
+            "content": "_app_ oparta jest na Apache License. Możesz swobodnie pobierać ją, używać, modyfikować i dzielić się nią.",
+            "title": "Open source"
         },
         "feature4": {
-            "title": "Nieograniczona liczba użytkowników",
-            "content": "Liczba użytkowników czy uczestników konferencji nie jest ograniczona.  Determinuje ją moc serwera i dostępna przepustowość lącza."
+            "content": "Liczba użytkowników czy uczestników konferencji nie jest ograniczona.  Determinuje ją moc serwera i dostępna przepustowość lącza.",
+            "title": "Nieograniczona liczba użytkowników"
         },
         "feature5": {
-            "title": "Współdzielenie ekranu",
-            "content": "Z łatwością podzielisz się ekranem z innymi. _app_ jest idealnym narzędziem do prezentacji, nauczania i udzielania zdalnej pomocy technicznej."
+            "content": "Z łatwością podzielisz się ekranem z innymi. _app_ jest idealnym narzędziem do prezentacji, nauczania i udzielania zdalnej pomocy technicznej.",
+            "title": "Współdzielenie ekranu"
         },
         "feature6": {
-            "title": "Sale bezpieczne.",
-            "content": "Potrzebujesz prywatności? _app_ sale konferencyjne mogą być zabezpieczone hasłami niedopuszczającymi niezaproszonych uczestników czy też osoby chcące zakłócić konferencję."
+            "content": "Potrzebujesz prywatności? _app_ sale konferencyjne mogą być zabezpieczone hasłami niedopuszczającymi niezaproszonych uczestników czy też osoby chcące zakłócić konferencję.",
+            "title": "Sale bezpieczne."
         },
         "feature7": {
-            "title": "Współdzielenie uwag.",
-            "content": "_app_ zawiera Etherpad, współdzielony edytor tekstu doskonały dla redakcji zespołowych artykułów czy komentarzy."
+            "content": "_app_ zawiera Etherpad, współdzielony edytor tekstu doskonały dla redakcji zespołowych artykułów czy komentarzy.",
+            "title": "Współdzielenie uwag."
         },
         "feature8": {
-            "title": "Statystyki użycia.",
-            "content": "Analizuj uczestników konferencji z łatwościa integrując dane z Piwik i Google Analitics i innymi systemami monitorującymi."
-        }
+            "content": "Analizuj uczestników konferencji z łatwościa integrując dane z Piwik i Google Analitics i innymi systemami monitorującymi.",
+            "title": "Statystyki użycia."
+        },
+        "go": "IDŹ",
+        "join": "",
+        "privacy": "",
+        "roomname": "Podaj nazwę sali konferencyjnej",
+        "roomnamePlaceHolder": "",
+        "sendFeedback": "",
+        "terms": ""
     },
     "startupoverlay": {
         "policyText": "",
@@ -81,19 +100,22 @@
     },
     "suspendedoverlay": {
         "title": "",
+        "text": "",
         "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Wycisz / Pogłośnij",
-        "videomute": "",
+        "videomute": "Kamera start / stop ",
         "authenticate": "Uwierzytelnianie",
-        "lock": "",
+        "lock": "Zamknij / Otwórz salę",
         "invite": "",
-        "chat": "",
+        "chat": "Otwórz / Zamknij Czat",
         "etherpad": "",
         "sharedvideo": "Udostępniaj wideo w Youtube",
         "sharescreen": "",
-        "fullscreen": "",
+        "fullscreen": "Otwórz / Zamknij pełny ekran",
         "sip": "Wykręć numer SIP",
         "Settings": "Ustawienia",
         "hangup": "",
@@ -106,9 +128,17 @@
         "unableToUnmutePopup": "Nie możesz pogłośnić audio podczas współużytkowania wideo",
         "cameraDisabled": "Kamera nie jest dostępna",
         "micDisabled": "Mikrofon nie jest dostępny",
-        "filmstrip": "",
+        "filmstrip": "Pokaż / Ukryj klipy wideo",
         "profile": "",
         "raiseHand": ""
+    },
+    "\u0005toolbar": {},
+    "unsupportedBrowser": {
+        "appInstalled": "",
+        "appNotInstalled": "",
+        "downloadApp": "",
+        "joinConversation": "",
+        "startConference": ""
     },
     "bottomtoolbar": {
         "chat": "Otwórz / Zamknij Czat",
@@ -133,12 +163,10 @@
         "selectAudioOutput": "Wyjście audio",
         "followMe": "Wszyscy za mną",
         "noDevice": "Brak",
-        "noPermission": "Nie ma zgody na użycie urządzenia",
         "cameraAndMic": "Kamera i Mikrofon",
         "moderator": "MODERATOR",
         "password": "USTAW HASŁO",
-        "audioVideo": "AUDIO I WIDEO",
-        "setPasswordLabel": "Zamknij salę konferencyjną z hasłem"
+        "audioVideo": "AUDIO I WIDEO"
     },
     "profile": {
         "title": "",
@@ -154,13 +182,15 @@
         "kick": "Spadaj!",
         "muted": "Wyciszony",
         "domute": "Wyciszenie",
-        "flip": "Odwrócenie"
+        "flip": "Odwrócenie",
+        "remoteControl": ""
     },
     "connectionindicator": {
         "header": "",
         "bitrate": "Szybkość transmisji:",
         "packetloss": "Strata pakietów:",
         "resolution": "Rozdzielczość:",
+        "framerate": "",
         "less": "Pokaż mniej",
         "more": "Pokaż więcej",
         "address": "Adres:",
@@ -178,7 +208,8 @@
         "remoteaddress_plural_5": "",
         "transport": "Przekazywanie:",
         "bandwidth": "Zakładana przepustowość:",
-        "na": "Po informację o połączeniu wróć gdy wystartuje konferencja"
+        "na": "Po informację o połączeniu wróć gdy wystartuje konferencja",
+        "turn": ""
     },
     "notify": {
         "disconnected": "rozłączone",
@@ -194,8 +225,10 @@
         "mutedTitle": "Jesteś wyciszony!",
         "raisedHand": "Możesz mówić."
     },
+    "\u0005notify": {},
     "dialog": {
         "add": "",
+        "allow": "",
         "kickMessage": "Ocho! Zostałeś wyproszony z konferencji!",
         "popupError": "Twoja przeglądarka blokuje wyskakujące okienka z tej witryny. Proszę, zmień w ustawieniach przeglądarki.",
         "passwordErrorTitle": "",
@@ -207,8 +240,6 @@
         "connecting": "Nawiązywanie połączenia",
         "copy": "Kopiuj",
         "error": "Błąd",
-        "roomLocked": "",
-        "addPassword": "",
         "createPassword": "",
         "detectext": "Błąd podczas rozpoznania rozszerzenia wspóldzielenia ekranu.",
         "failtoinstall": "Instalacja współdzielenia ekranu nie powiodła się.",
@@ -217,8 +248,7 @@
         "conferenceReloadMsg": "",
         "conferenceDisconnectTitle": "",
         "conferenceDisconnectMsg": "",
-        "reconnectNow": "",
-        "conferenceReloadTimeLeft": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "Osiągnięto max liczbę uczestników konferencji. Proszę spróbuj później! ",
         "lockTitle": "Nie powiodło się zabezpieczenie konferencji",
         "lockMessage": "Zabezpieczenie konferencji nie powiodło się.",
@@ -235,7 +265,7 @@
         "defaultError": "Wystąpił jakiś błąd",
         "passwordRequired": "Wymagane hasło",
         "Ok": "Ok",
-        "done": "",
+        "done": "Brak",
         "Remove": "Usuń",
         "removePassword": "",
         "shareVideoTitle": "Współdziel wideo",
@@ -258,8 +288,6 @@
         "Save": "Zapisz",
         "recording": "Nagrywanie",
         "recordingToken": "Proszę podać token nagrywania",
-        "Dial": "Dzwoń",
-        "sipMsg": "Podaj numer SIP",
         "passwordCheck": "Czy na pewno chcesz usunąć swoje hasło ?",
         "passwordMsg": "Podaj hasło aby zabezpieczyć salę konferencyjną",
         "shareLink": "",
@@ -282,7 +310,6 @@
         "enterDisplayName": "Wprowadź swoją nazwę użytkownika",
         "extensionRequired": "Wymagane jest rozszerzenie:",
         "firefoxExtensionPrompt": "Potrzebujesz zainstalować rozszerzenie firefox aby móc współdzielić ekran. Spróbuj ponownie później <a href='__url__'>weź z</a>!",
-        "rateExperience": "Oceń proszę swoje doświadczenia z konferencji.",
         "feedbackHelp": "Twoja opinia będzie pomocna w usprawnieniu naszego serwisu.",
         "feedbackQuestion": "Powiedz nam o twoim połączeniu!",
         "thankYou": "Dziękujemy Ci za używanie _appName_!",
@@ -295,7 +322,7 @@
         "stopLiveStreaming": "Zatrzymaj transmisję live",
         "stopRecording": "Zatrzymaj nagrywanie",
         "doNotShowWarningAgain": "Nie pokazuj tego ostrzeżenia ponownie",
-        "doNotShowMessageAgain": "",
+        "doNotShowMessageAgain": "nie pokazuj ponownie",
         "permissionDenied": "Brak uprawnień",
         "screenSharingPermissionDeniedError": "Nie posiadasz uprawnień do współdzielenia ekranu.",
         "micErrorPresent": "Wystąpił błąd w dostępie do mikrofonu.",
@@ -314,10 +341,25 @@
         "goToStore": "Idź do sklepu",
         "externalInstallationTitle": "Wymagane rozszerzenie",
         "externalInstallationMsg": "Zainstaluj rozszerzenie naszego współdzielenia ekranu.",
+        "inlineInstallationMsg": "Zainstaluj rozszerzenie naszego współdzielenia ekranu.",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "",
         "muteParticipantBody": "",
-        "muteParticipantButton": "Wyciszenie"
+        "muteParticipantButton": "Wyciszenie",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "",
+        "remoteControlAllowedMessage": "",
+        "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
+    "\u0005dialog": {},
     "email": {
         "sharedKey": [
             "Ta konferencja jest zabezpieczona hasłem. Aby się podłączyć proszę zastosuj następujący pin:",
@@ -363,19 +405,87 @@
         "on": "Nagrywanie",
         "off": "Nagrywanie zatrzymane",
         "failedToStart": "Nagrywanie nie jest możliwe",
-        "buttonTooltip": "",
+        "buttonTooltip": "Nagrywanie start / stop",
         "error": "Nagranie się nie powiodło. Proszę, spróbuj ponownie.",
         "unavailable": "Serwis nagrywania jest aktualnie niedostępny. Proszę, spróbować później."
     },
+    "\u0005recording": {},
     "liveStreaming": {
         "pending": "Start strumieniowania live...",
         "on": "Strumień live",
         "off": "Strumieniowanie live zastopowane",
         "unavailable": "Strumieniowanie live aktualnie jest niedostepne. Proszę spróbować później.",
         "failedToStart": "Strumieniowanie live nie powiodło się",
-        "buttonTooltip": "",
+        "buttonTooltip": "Strumieniowanie live start / stop",
         "streamIdRequired": "Proszę podaj id strumieniowania aby uruchomić live.",
+        "streamIdHelp": "",
         "error": "Strumieniowanie live nie powiodło się. Spróbuj później.",
         "busy": "Wszystkie nagrywarki są zajęte. Proszę, sprawdź ponownie później."
+    },
+    "\u0005liveStreaming": {},
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Nazwa",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Dzwoń",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
