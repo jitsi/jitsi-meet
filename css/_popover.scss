@@ -1,0 +1,33 @@
+/**
+ * Mousemove padding styles are used to add invisible elements to the popover
+ * to allow mouse movement from the popover trigger to the popover itself
+ * without triggering a mouseleave event.
+ */
+.popover-mousemove-padding-bottom {
+    bottom: -15px;
+    height: 20px;
+    position: absolute;
+    right: 0;
+    width: 100%;
+}
+.popover-mousemove-padding-right {
+    height: 100%;
+    position: absolute;
+    right: -20;
+    top: 0;
+    width: 40px;
+}
+
+/**
+ * An invisible element is added to the top of the popover to ensure the mouse
+ * stays over the popover when the popover's height is shrunk, which would then
+ * normally leave the mouse outside of the popover itself and cause a mouseleave
+ * event.
+ */
+.popover-mouse-padding-top {
+    height: 30px;
+    position: absolute;
+    right: 0;
+    top: -25px;
+    width: 100%;
+}
