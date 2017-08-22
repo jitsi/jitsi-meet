@@ -6,7 +6,14 @@
     "passwordSetRemotely": "",
     "connectionsettings": "Nastavenie spojenia",
     "poweredby": "založené na",
-    "feedback": "",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "Vaša konferencia bola práve vytvorená...",
     "me": "ja",
     "speaker": "Rečník",
@@ -14,6 +21,10 @@
     "defaultNickname": "",
     "defaultLink": "napr. __url__",
     "callingName": "",
+    "audioOnly": {
+        "audioOnly": "",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
         "react-nativeGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -22,7 +33,8 @@
         "operaGrantPermissions": "",
         "iexplorerGrantPermissions": "",
         "safariGrantPermissions": "",
-        "nwjsGrantPermissions": ""
+        "nwjsGrantPermissions": "",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "",
@@ -36,44 +48,50 @@
         "toggleChat": "",
         "mute": "",
         "fullScreen": "",
-        "videoMute": ""
+        "videoMute": "",
+        "showSpeakerStats": ""
     },
     "welcomepage": {
-        "go": "Pripojiť",
-        "roomname": "Zadajte názov miestnosti",
         "disable": "",
         "feature1": {
-            "title": "Jednoduché na používanie",
-            "content": "Nie je potrebne nič sťahovať. __app_ funguje priamo vo Vašom prehliadači. Jednoducho zdieľajte URL adresu konferenčnej miestnosti a možete začať."
+            "content": "Nie je potrebne nič sťahovať. __app_ funguje priamo vo Vašom prehliadači. Jednoducho zdieľajte URL adresu konferenčnej miestnosti a možete začať.",
+            "title": "Jednoduché na používanie"
         },
         "feature2": {
-            "title": "Nízka náročnosť na prenos",
-            "content": "Viacuživateľská video konferencia s prenosovou rychlosťou iba 128Kbps. Konferencie iba so zdieľaním plochy alebo audia."
+            "content": "Viacuživateľská video konferencia s prenosovou rychlosťou iba 128Kbps. Konferencie iba so zdieľaním plochy alebo audia.",
+            "title": "Nízka náročnosť na prenos"
         },
         "feature3": {
-            "title": "Open source",
-            "content": "__app__ je licencované pod Apache licenciou. Možete ho voľne sťahovať, užívať, modifikovať a zdieľat podľa tejto licencie."
+            "content": "__app__ je licencované pod Apache licenciou. Možete ho voľne sťahovať, užívať, modifikovať a zdieľat podľa tejto licencie.",
+            "title": "Open source"
         },
         "feature4": {
-            "title": "Neobmedzený počet uživateľov",
-            "content": "Nie ste obmedzený počtom pripojených uživateľov. Jediným obmedzením su zdroje servera a internetového pripojenia."
+            "content": "Nie ste obmedzený počtom pripojených uživateľov. Jediným obmedzením su zdroje servera a internetového pripojenia.",
+            "title": "Neobmedzený počet uživateľov"
         },
         "feature5": {
-            "title": "Zdieľanie prac. plochy",
-            "content": "Je jednoducho možné zdieľať Vašu prac. plochu. __app__ je ideálne pre on-line prezentácie, školenia a technickú podporu."
+            "content": "Je jednoducho možné zdieľať Vašu prac. plochu. __app__ je ideálne pre on-line prezentácie, školenia a technickú podporu.",
+            "title": "Zdieľanie prac. plochy"
         },
         "feature6": {
-            "title": "Zabezpečené miestnosti",
-            "content": "Potrebujete súkromie? __app_ konferenčné miestosti možu byť zabezpečené heslom, aby ste predišli neželaným hosťom a vyrušovaniu."
+            "content": "Potrebujete súkromie? __app_ konferenčné miestosti možu byť zabezpečené heslom, aby ste predišli neželaným hosťom a vyrušovaniu.",
+            "title": "Zabezpečené miestnosti"
         },
         "feature7": {
-            "title": "Zdieľané poznámky",
-            "content": "__app_ poskytuje Etherpad, kooperatívny editor v reálnom čase, ideálny pre zapis zo stretnutia, písanie článkov a veľa iného."
+            "content": "__app_ poskytuje Etherpad, kooperatívny editor v reálnom čase, ideálny pre zapis zo stretnutia, písanie článkov a veľa iného.",
+            "title": "Zdieľané poznámky"
         },
         "feature8": {
-            "title": "Štatistiky používania",
-            "content": "Zistite o Vašich uživateľoch viac ľahko cez integráciu s Piwik, Google Analytics a inych monitorovacích a štatistických nástrojov."
-        }
+            "content": "Zistite o Vašich uživateľoch viac ľahko cez integráciu s Piwik, Google Analytics a inych monitorovacích a štatistických nástrojov.",
+            "title": "Štatistiky používania"
+        },
+        "go": "Pripojiť",
+        "join": "",
+        "privacy": "",
+        "roomname": "Zadajte názov miestnosti",
+        "roomnamePlaceHolder": "",
+        "sendFeedback": "",
+        "terms": ""
     },
     "startupoverlay": {
         "policyText": "",
@@ -81,9 +99,12 @@
     },
     "suspendedoverlay": {
         "title": "",
+        "text": "",
         "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Vypnúť / Zapnúť mikrofón",
         "videomute": "",
         "authenticate": "Overiť",
@@ -110,6 +131,13 @@
         "profile": "",
         "raiseHand": ""
     },
+    "unsupportedBrowser": {
+        "appInstalled": "",
+        "appNotInstalled": "",
+        "downloadApp": "",
+        "joinConversation": "",
+        "startConference": ""
+    },
     "bottomtoolbar": {
         "chat": "Otvoriť / zatvoriť chat",
         "filmstrip": "",
@@ -133,12 +161,10 @@
         "selectAudioOutput": "",
         "followMe": "",
         "noDevice": "",
-        "noPermission": "",
         "cameraAndMic": "",
         "moderator": "",
         "password": "",
-        "audioVideo": "",
-        "setPasswordLabel": ""
+        "audioVideo": ""
     },
     "profile": {
         "title": "",
@@ -154,13 +180,15 @@
         "kick": "Vyhodiť",
         "muted": "Vypnutý mikrofón",
         "domute": "Vypnút mikrofón",
-        "flip": ""
+        "flip": "",
+        "remoteControl": ""
     },
     "connectionindicator": {
         "header": "",
         "bitrate": "Prenos. rýchlosť",
         "packetloss": "Strata packetov:",
         "resolution": "Rozlíšenie:",
+        "framerate": "",
         "less": "Zobraz menej",
         "more": "Zobraz viac",
         "address": "Adresa:",
@@ -178,7 +206,8 @@
         "remoteaddress_plural_5": "",
         "transport": "Prenos:",
         "bandwidth": "Predpokladaný dat. tok:",
-        "na": "Vrať sa sem pre informácie o spojení hňed ked začne konferencia"
+        "na": "Vrať sa sem pre informácie o spojení hňed ked začne konferencia",
+        "turn": ""
     },
     "notify": {
         "disconnected": "odpojený",
@@ -189,13 +218,14 @@
         "focus": "Konferenčny focus",
         "focusFail": "__component__ je nedostupný - skúste znova za __ms__ sek",
         "grantedTo": "Práva moderátora boli udelené __to__!",
-        "grantedToUnknown": "Práva moderátora boli udelené $t(somebody)!",
+        "grantedToUnknown": "",
         "muted": "Začali ste rozhovor s vypnutým mikrofónom.",
         "mutedTitle": "Boli ste stíšený!",
         "raisedHand": ""
     },
     "dialog": {
         "add": "",
+        "allow": "",
         "kickMessage": "Boli ste vyhodený z konferencie!",
         "popupError": "Váš prehliadač blokuje vyskakovacie okná pre túto stránku. Prosím, povoľte si vyskakovacie okná a skúste to znova.",
         "passwordErrorTitle": "",
@@ -207,8 +237,6 @@
         "connecting": "Pripájam",
         "copy": "",
         "error": "Chyba",
-        "roomLocked": "",
-        "addPassword": "",
         "createPassword": "",
         "detectext": "Chyba pri pokuse najsť rozšírenie pre zdieľanie prac. plochy",
         "failtoinstall": "Zlyhanie pri inštalácií rozšírenia pre zdieľanie prac. plochy",
@@ -217,8 +245,7 @@
         "conferenceReloadMsg": "",
         "conferenceDisconnectTitle": "",
         "conferenceDisconnectMsg": "",
-        "reconnectNow": "",
-        "conferenceReloadTimeLeft": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "",
         "lockTitle": "Zabezpečenie zlyhalo",
         "lockMessage": "Zlyhanie pri pokuse o zabezpečenie konferencie.",
@@ -258,8 +285,6 @@
         "Save": "Uložiť",
         "recording": "",
         "recordingToken": "Zadajte názov nahrávky",
-        "Dial": "Volať",
-        "sipMsg": "Vložte SIP číslo",
         "passwordCheck": "Ste si istý, že chcete odstrániť heslo?",
         "passwordMsg": "Zadajte heslo pre zabezpečenie miestnosti",
         "shareLink": "",
@@ -282,7 +307,6 @@
         "enterDisplayName": "",
         "extensionRequired": "Potrebné rozšírenie:",
         "firefoxExtensionPrompt": "Potrebujete nainštalovať rozšírenie do Firefoxu pre možnosť zdieľať prac. plochu. Prosím, skúste znovu po nainštalovaní z: <a href='__url__'>",
-        "rateExperience": "",
         "feedbackHelp": "",
         "feedbackQuestion": "",
         "thankYou": "",
@@ -314,9 +338,23 @@
         "goToStore": "",
         "externalInstallationTitle": "",
         "externalInstallationMsg": "",
+        "inlineInstallationMsg": "",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "",
         "muteParticipantBody": "",
-        "muteParticipantButton": "Vypnút mikrofón"
+        "muteParticipantButton": "Vypnút mikrofón",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "",
+        "remoteControlAllowedMessage": "",
+        "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
     "email": {
         "sharedKey": [
@@ -379,7 +417,73 @@
         "failedToStart": "",
         "buttonTooltip": "",
         "streamIdRequired": "",
+        "streamIdHelp": "",
         "error": "",
         "busy": ""
+    },
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Meno",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Volať",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
