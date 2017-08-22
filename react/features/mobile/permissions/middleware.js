@@ -1,9 +1,11 @@
 /* @flow */
 
+import { Alert, Linking, NativeModules } from 'react-native';
+
+import { isRoomValid } from '../../base/conference';
+import { Platform } from '../../base/react';
 import { MiddlewareRegistry } from '../../base/redux';
 import { TRACK_PERMISSION_ERROR } from '../../base/tracks';
-
-import { alertPermissionErrorWithSettings } from './functions';
 
 /**
  * Middleware that captures track permission errors and alerts the user so they
@@ -12,14 +14,68 @@ import { alertPermissionErrorWithSettings } from './functions';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(() => next => action => {
+MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
     case TRACK_PERMISSION_ERROR:
-        alertPermissionErrorWithSettings(action.trackType);
+        // XXX We do not currently have user interface outside of a conference
+        // which the user may tap and cause a permission-related error. If we
+        // alert whenever we (intend to) ask for a permission, the scenario of
+        // entering the WelcomePage, being asked for the camera permission, me
+        // denying it, and being alerted that there is an error is overwhelming
+        // me.
+        if (isRoomValid(store.getState()['features/base/conference'].room)) {
+            _alertPermissionErrorWithSettings(action.trackType);
+        }
         break;
     }
 
     return result;
 });
+
+/**
+ * Shows an alert panel which tells the user they have to manually grant some
+ * permissions by opening Settings. A button which opens Settings is provided.
+ *
+ * @param {string} trackType - Type of track that failed with a permission
+ * error.
+ * @private
+ * @returns {void}
+ */
+function _alertPermissionErrorWithSettings(trackType) {
+    // TODO i18n
+    const deviceType = trackType === 'video' ? 'Camera' : 'Microphone';
+
+    Alert.alert(
+        'Permission required',
+        `${deviceType
+            } permission is required to participate in conferences with ${
+            trackType}. Please grant it in Settings.`,
+        [
+            { text: 'Cancel' },
+            {
+                onPress: _openSettings,
+                text: 'Settings'
+            }
+        ],
+        { cancelable: false });
+}
+
+/**
+ * Opens the settings panel for the current platform.
+ *
+ * @private
+ * @returns {void}
+ */
+function _openSettings() {
+    switch (Platform.OS) {
+    case 'android':
+        NativeModules.AndroidSettings.open();
+        break;
+
+    case 'ios':
+        Linking.openURL('app-settings:');
+        break;
+    }
+}

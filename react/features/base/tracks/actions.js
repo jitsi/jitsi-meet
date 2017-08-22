@@ -83,19 +83,10 @@ export function createLocalTracksA(options = {}) {
                 },
                 /* firePermissionPromptIsShownEvent */ false,
                 store)
-            .then(localTracks => dispatch(_updateLocalTracks(localTracks)))
-            .catch(({ gum }) => {
-                // If permissions are not allowed, alert the user.
-                if (gum
-                        && gum.error
-                        && gum.error.name === 'DOMException'
-                        && gum.error.message === 'NotAllowedError') {
-                    dispatch({
-                        type: TRACK_PERMISSION_ERROR,
-                        trackType: device
-                    });
-                }
-            });
+            .then(
+                localTracks => dispatch(_updateLocalTracks(localTracks)),
+                reason =>
+                    dispatch(_onCreateLocalTracksRejected(reason, device)));
         }
     };
 }
@@ -387,6 +378,52 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
     return {
         tracksToAdd,
         tracksToRemove
+    };
+}
+
+/**
+ * Implements the <tt>Promise</tt> rejection handler of
+ * <tt>createLocalTracksA</tt> and <tt>createLocalTracksF</tt>.
+ *
+ * @param {Object} reason - The <tt>Promise</tt> rejection reason.
+ * @param {string} device - The device/<tt>MEDIA_TYPE</tt> associated with the
+ * rejection.
+ * @private
+ * @returns {Function}
+ */
+function _onCreateLocalTracksRejected({ gum }, device) {
+    return dispatch => {
+        // If permissions are not allowed, alert the user.
+        if (gum) {
+            const { error } = gum;
+
+            if (error) {
+                // FIXME For whatever reason (which is probably an
+                // implementation fault), react-native-webrtc will give the
+                // error in one of the following formats depending on whether it
+                // is attached to a remote debugger or not. (The remote debugger
+                // scenario suggests that react-native-webrtc is at fault
+                // because the remote debugger is Google Chrome and then its
+                // JavaScript engine will define DOMException. I suspect I wrote
+                // react-native-webrtc to return the error in the alternative
+                // format if DOMException is not defined.)
+                let trackPermissionError;
+
+                switch (error.name) {
+                case 'DOMException':
+                    trackPermissionError = error.message === 'NotAllowedError';
+                    break;
+
+                case 'NotAllowedError':
+                    trackPermissionError = error instanceof DOMException;
+                    break;
+                }
+                trackPermissionError && dispatch({
+                    type: TRACK_PERMISSION_ERROR,
+                    trackType: device
+                });
+            }
+        }
     };
 }
 
