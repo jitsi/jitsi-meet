@@ -6,7 +6,14 @@
     "passwordSetRemotely": "von einem anderen Teilnehmer gesetzt",
     "connectionsettings": "Verbindungseinstellungen",
     "poweredby": "Betrieben von",
-    "feedback": "Wir freuen uns auf Ihr Feedback!",
+    "feedback": {
+        "average": "Durschnittlich",
+        "bad": "Schlecht",
+        "good": "Gut",
+        "rateExperience": "Bitte bewerten Sie diese Konferenz.",
+        "veryBad": "Sehr schlecht",
+        "veryGood": "Sehr gut"
+    },
     "inviteUrlDefaultMsg": "Die Konferenz wird erstellt...",
     "me": "ich",
     "speaker": "Sprecher",
@@ -19,12 +26,12 @@
         "featureToggleDisabled": "Umschalten zwischen __feature__ ist im Audio-Modus deaktiviert"
     },
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
+        "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
+        "chromeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
+        "androidGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
         "firefoxGrantPermissions": "Wählen Sie <b><i>Markiertes Gerät teilen</i></b> wenn der Browser um Berechtigungen bittet.",
         "operaGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
-        "iexplorerGrantPermissions": "",
+        "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b> wenn der Browser um Berechtigungen bittet.",
         "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b> wenn der Browser um Berechtigungen bittet.",
         "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
         "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b> wenn der Browser um Berechtigungen bittet."
@@ -91,11 +98,12 @@
         "title": "__app__ benötigt Kamera und Mikrofon."
     },
     "suspendedoverlay": {
-        "title": "Die Konferenz wurde unterbrochen weil der Computer den Standbymodus aktivierte.",
-        "text": "Klicken Sie auf die <i>Erneut teilnehmen</i> Schaltfläche um die Verbindung wieder herzustellen.",
+        "title": "Die Konferenz wurde unterbrochen weil der Standbymodus aktiviert wurde.",
+        "text": "<i>Erneut teilnehmen</i> Schaltfläche betätigen um erneut zu verbinden.",
         "rejoinKeyTitle": "Erneut teilnehmen"
     },
     "toolbar": {
+        "addPeople": "",
         "audioonly": "Nur-Audio-Modus aktivieren/deaktivieren (spart Bandbreite)",
         "mute": "Stummschaltung aktivieren / deaktivieren",
         "videomute": "Kamera starten / stoppen",
@@ -194,7 +202,8 @@
         "remoteaddress_plural": "Entfernte Adressen:",
         "transport": "Protokoll:",
         "bandwidth": "Geschätzte Bandbreite:",
-        "na": "Verbindungsdaten erneut anzeigen wenn die Konferenz begonnen hat"
+        "na": "Verbindungsdaten erneut anzeigen wenn die Konferenz begonnen hat",
+        "turn": " (TURN)"
     },
     "notify": {
         "disconnected": "getrennt",
@@ -294,7 +303,6 @@
         "enterDisplayName": "Geben Sie Ihren Anzeigenamen ein",
         "extensionRequired": "Erweiterung erforderlich:",
         "firefoxExtensionPrompt": "Um die Bildschirmfreigabe nutzen zu können, muss eine Firefox-Erweiterung installiert werden. Bitte versuchen Sie es erneut nachdem die <a href='__url__'>Erweiterung installiert</a> wurde.",
-        "rateExperience": "Bitte bewerten Sie diese Konferenz.",
         "feedbackHelp": "Ihr Feedback hilft uns die Qualität der Konferenzen zu verbessern.",
         "feedbackQuestion": "Anmerkungen zur Konferenz.",
         "thankYou": "Danke für die Verwendung von __appName__!",
@@ -326,6 +334,8 @@
         "goToStore": "Zum Store",
         "externalInstallationTitle": "Erweiterung erforderlich",
         "externalInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden.",
+        "inlineInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden.",
+        "inlineInstallExtension": "Jetzt installieren",
         "muteParticipantTitle": "Teilnehmer stummschalten?",
         "muteParticipantBody": "Sie können die Stummschaltung anderer Teilnehmer nicht aufheben, aber ein Teilnehmer kann seine eigene Stummschaltung jederzeit beenden.",
         "muteParticipantButton": "Stummschalten",
@@ -335,6 +345,7 @@
         "remoteControlDeniedMessage": "__user__ hat die Anfrage zur Fernsteuerung verweigert.",
         "remoteControlAllowedMessage": "__user__ hat die Anfrage zur Fernsteuerung angenommen.",
         "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von __user__ ist ein Fehler aufgetreten.",
+        "startRemoteControlErrorMessage": "Beim Versuch die Fernsteuerung zu starten ist ein Fehler aufgetreten.",
         "remoteControlStopMessage": "Die Fernsteuerung wurde beendet.",
         "close": "Schliessen",
         "shareYourScreen": "Bildschirm freigeben",
@@ -434,10 +445,18 @@
         "unlocked": "Die Konferenz ist nicht geschützt. Jeder mit dem Link kann der Konferenz beitreten."
     },
     "videoStatus": {
+        "callQuality": "Konferenzqualität",
+        "changeVideoTip": "Die Videoqualität kann über die linke Werkzeugleiste geändert werden.",
         "hd": "HD",
-        "hdVideo": "HD video",
+        "highDefinition": "Hohe Auflösung",
+        "ld": "LD",
+        "lowDefinition": "Niedrige Auflösung",
+        "p2pEnabled": "Ende-zu-Ende aktiviert",
+        "p2pVideoQualityDescription": "Im Ende-zu-Ende Modus kann die Konferenzqualität nur zwischen hoch und nur-Audio gewählt werden. Andere Einstellungen werden nicht beachtet.",
+        "recHighDefinitionOnly": "Hohe Qualität wird bevorzugt.",
         "sd": "SD",
-        "sdVideo": "SD video"
+        "standardDefinition": "Standardauflösung",
+        "qualityButtonTip": "Empfangene Videoqualität ändern"
     },
     "dialOut": {
         "dial": "Wählen",
@@ -445,5 +464,22 @@
         "statusMessage": "ist jetzt __status__",
         "enterPhone": "Telefonnummer eingeben",
         "phoneNotAllowed": "Diese Telefonnummer wird leider noch nicht unterstützt!"
+    },
+    "addPeople": {
+        "add": "Hinzufügen",
+        "noResults": "Keine passenden Ergebnisse",
+        "searchPlaceholder": "Nach Teilnehmern und Konferenzen suchen",
+        "title": "Teilnehmer zur Konferenz hinzufügen",
+        "failedToAdd": "Fehler beim Hinzufügen von Teilnehmern"
+    },
+    "inlineDialogFailure": {
+        "msg": "Es ist ein Fehler aufgetreten.",
+        "retry": "Erneut versuchen",
+        "support": "Support",
+        "supportMsg": "Wenn der Fehler erneut auftritt, bitte kontaktieren sie"
+    },
+    "deviceError": {
+        "cameraPermission": "Fehler beim Bezug der Kamera-Zugriffsberechtigungen",
+        "microphonePermission": "Fehler beim Bezug der Mikrofon-Zugriffsberechtigungen"
     }
 }
