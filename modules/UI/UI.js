@@ -4,6 +4,8 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
 
+import _ from 'lodash';
+
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
@@ -20,7 +22,6 @@ import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
-import { debounce } from "../util/helpers";
 
 import { updateDeviceList } from '../../react/features/base/devices';
 import {
@@ -278,13 +279,13 @@ UI.start = function () {
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        let debouncedShowToolbar
-            = debounce(
+        let throttledShowToolbar
+            = _.throttle(
                     () => UI.showToolbar(),
                     100,
                     { leading: true, trailing: false });
 
-        $("#videoconference_page").mousemove(debouncedShowToolbar);
+        $("#videoconference_page").mousemove(throttledShowToolbar);
 
         // Initialise the recording module.
         if (config.enableRecording) {
