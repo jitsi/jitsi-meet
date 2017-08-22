@@ -1,12 +1,19 @@
 {
     "contactlist": "Người tham gia (__pcount__)",
-    "addParticipants": "",
+    "addParticipants": "Chia sẻ đường dẫn",
     "roomLocked": "Người gọi phải nhập mật khẩu",
     "roomUnlocked": "Bất kỳ ai có đường dẫn có thể tham gia",
     "passwordSetRemotely": "được thiết lập bởi một người khác",
     "connectionsettings": "Cài đặt kết nối",
     "poweredby": "Được hỗ trợ bởi",
-    "feedback": "Góp ý cho chúng tôi",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "Vui lòng đánh giá trải nghiệm cuộc họp của bạn.",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "Hội nghị của bạn hiện đang được tạo...",
     "me": "Tôi",
     "speaker": "Diễn giả",
@@ -16,16 +23,15 @@
     "callingName": "__name__",
     "audioOnly": {
         "audioOnly": "Chỉ âm thanh",
-        "featureToggleDisabled": "Việc chuyển đổi __feature__ bị vô hiệu hóa khi đang ở chế độ chỉ âm thanh",
-        "howToDisable": "Chế độ chỉ âm thanh đang được kích hoạt. Nhấp vào nút chỉ âm thanh ở thanh công cụ để vô hiệu hóa tính năng này"
+        "featureToggleDisabled": "Việc chuyển đổi __feature__ bị vô hiệu hóa khi đang ở chế độ chỉ âm thanh"
     },
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
+        "react-nativeGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
+        "chromeGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
+        "androidGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
         "firefoxGrantPermissions": "Chọn <b><i>Chia sẻ thiết bị đã chọn</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
         "operaGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "iexplorerGrantPermissions": "",
+        "iexplorerGrantPermissions": "Chọn <b><i>Có</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
         "safariGrantPermissions": "Chọn <b><i>Có</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
         "nwjsGrantPermissions": "Vui lòng cấp quyền sử dụng camera và microphone của bạn",
         "edgeGrantPermissions": "Chọn <b><i>Có</i></b> khi trình duyệt của bạn yêu cầu cấp phép."
@@ -92,11 +98,12 @@
         "title": "__app__ cần sử dụng microphone và camera của bạn."
     },
     "suspendedoverlay": {
-        "title": "Cuộc gọi video của bạn đã bị gián đoạn vì máy tính này đã chuyển sang trạng thái ngủ.",
-        "text": "Bấm nút <i>Tham gia lại</i> để kết nối trở lại cuộc trò chuyện của bạn.",
+        "title": "",
+        "text": "",
         "rejoinKeyTitle": "Tham gia lại"
     },
     "toolbar": {
+        "addPeople": "",
         "audioonly": "Bật / Tắt chế độ chỉ âm thanh (tiết kiệm băng thông)",
         "mute": "Tắt tiếng / Bật tiếng",
         "videomute": "Bật / Tắt camera",
@@ -109,10 +116,10 @@
         "sharescreen": "Bắt đầu / Kết thúc chia sẻ màn hình",
         "fullscreen": "Bật / Tắt chế độ toàn màn hình",
         "sip": "Gọi số SIP",
-        "Settings": "",
+        "Settings": "Cài đặt",
         "hangup": "Thoát",
         "login": "Đăng nhập",
-        "logout": "",
+        "logout": "Đăng xuất",
         "dialpad": "Mở / Đóng bàn phím số",
         "sharedVideoMutedPopup": "Video chia sẻ của bạn đã bị tắt tiếng <br/> để bạn có thể nói chuyện với những người tham gia khác.",
         "micMutedPopup": "Microphone của bạn đã bị tắt tiếng để bạn <br/> có thể thưởng thức video đã chia sẻ của bạn.",
@@ -146,7 +153,7 @@
     "settings": {
         "title": "Cài đặt",
         "update": "Cập nhật",
-        "name": "",
+        "name": "Tên",
         "startAudioMuted": "Mọi người bắt đầu đều bị tắt tiếng",
         "startVideoMuted": "Mọi người bắt đầu đều bị ẩn",
         "selectCamera": "Camera",
@@ -172,7 +179,7 @@
         "mute": "Người tham gia bị tắt tiếng",
         "kick": "Đẩy ra",
         "muted": "Đã tắt tiếng",
-        "domute": "",
+        "domute": "Tắt tiếng",
         "flip": "Lật",
         "remoteControl": "Điều khiển từ xa"
     },
@@ -196,7 +203,8 @@
         "transport": "Vận chuyển:",
         "transport_plural_undefined": "Các vận chuyển:",
         "bandwidth": "Băng thông ước tính:",
-        "na": "Hãy quay trở lại đây để biết thông tin kết nối khi hội nghị bắt đầu"
+        "na": "Hãy quay trở lại đây để biết thông tin kết nối khi hội nghị bắt đầu",
+        "turn": ""
     },
     "notify": {
         "disconnected": "đã ngắt kết nối",
@@ -223,9 +231,9 @@
         "connectError": "Rất tiếc! Đã xảy ra sự cố và chúng tôi không thể kết nối với hội nghị.",
         "connectErrorWithMsg": "Rất tiếc! Đã xảy ra sự cố và chúng tôi không thể kết nối với hội nghị: __msg__",
         "incorrectPassword": "Sai mật khẩu",
-        "connecting": "",
+        "connecting": "Đang kết nối",
         "copy": "Sao chép",
-        "error": "",
+        "error": "Lỗi",
         "createPassword": "Tạo mật khẩu",
         "detectext": "Lỗi khi cố gắng phát hiện tiện ích mở rộng chia sẻ máy tính.",
         "failtoinstall": "Không thể cài đặt tiện ích mở rộng chia sẻ máy tính",
@@ -272,10 +280,8 @@
         "joinAgain": "Tham gia lại",
         "Share": "Chia sẻ",
         "Save": "Lưu",
-        "recording": "",
+        "recording": "Đang ghi âm",
         "recordingToken": "Nhập mã thông báo ghi âm",
-        "Dial": "Quay số",
-        "sipMsg": "Nhập số SIP",
         "passwordCheck": "Bạn có chắc chắn muốn xóa mật khẩu của mình không?",
         "passwordMsg": "Đặt mật khẩu để khóa phòng của bạn",
         "shareLink": "Chia sẻ liên kết đến cuộc gọi",
@@ -298,12 +304,11 @@
         "enterDisplayName": "Vui lòng nhập tên hiển thị của bạn",
         "extensionRequired": "Yêu cầu tiện ích mở rộng:",
         "firefoxExtensionPrompt": "Bạn cần phải cài đặt một tiện ích mở rộng của Firefox để chia sẻ màn hình. Vui lòng thử lại sau khi bạn <a href='__url__'>tải nó từ đây</a>!",
-        "rateExperience": "Vui lòng đánh giá trải nghiệm cuộc họp của bạn.",
         "feedbackHelp": "Phản hồi của bạn sẽ giúp chúng tôi cải thiện trải nghiệm video.",
         "feedbackQuestion": "Hãy cho chúng tôi biết về cuộc gọi của bạn!",
         "thankYou": "Cám ơn bạn đã sử dụng __appName__!",
         "sorryFeedback": "Chúng tôi rất tiếc khi nghe điều đó. Bạn có thể nói với chúng tôi thêm nữa không?",
-        "liveStreaming": "",
+        "liveStreaming": "Phát trực tuyến",
         "streamKey": "Tên/khóa phát trực tuyến",
         "startLiveStreaming": "Bắt đầu phát trực tuyến",
         "stopStreamingWarning": "Bạn có chắc chắn muốn dừng phát trực tuyến?",
@@ -330,6 +335,8 @@
         "goToStore": "Đi tới cửa hàng trên mạng",
         "externalInstallationTitle": "Yêu cầu tiện ích mở rộng",
         "externalInstallationMsg": "Bạn cần cài đặt tiện ích mở rộng chia sẻ máy tính của chúng tôi.",
+        "inlineInstallationMsg": "Bạn cần cài đặt tiện ích mở rộng chia sẻ máy tính của chúng tôi.",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "Tắt tiếng của người tham dự này?",
         "muteParticipantBody": "Bạn không thể tắt tiếng của họ, nhưng họ có thể tự tắt tiếng bất cứ lúc nào.",
         "muteParticipantButton": "Tắt tiếng",
@@ -339,6 +346,7 @@
         "remoteControlDeniedMessage": "__user__ đã từ chối yêu cầu điều khiển từ xa của bạn!",
         "remoteControlAllowedMessage": "__user__ đã chấp nhận yêu cầu điều khiển từ xa của bạn!",
         "remoteControlErrorMessage": "Đã xảy ra lỗi khi cố gắng yêu cầu quyền điều khiển từ xa từ __user__!",
+        "startRemoteControlErrorMessage": "",
         "remoteControlStopMessage": "Phiên điều khiển từ xa đã kết thúc!",
         "close": "Đóng",
         "shareYourScreen": "Chia sẻ màn hình của bạn",
@@ -423,15 +431,52 @@
     },
     "invite": {
         "addPassword": "Thêm mật khẩu",
-        "dialInNumbers": "Số điện thoại quay số",
-        "errorFetchingNumbers": "Lấy số quay số thất bại",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
         "hidePassword": "Ẩn mật khẩu",
         "inviteTo": "Mời mọi người tới __conferenceName__",
-        "loadingNumbers": "Đang tải...",
+        "invitedYouTo": "",
         "locked": "Cuộc gọi này đã bị khóa. Bất kỳ người gọi mới nào đều phải có đường dẫn và nhập mật khẩu mới có thể tham gia.",
-        "noNumbers": "Không có số khả dụng",
-        "numbersDisabled": "Quay số đang bị vô hiệu hóa",
         "showPassword": "Hiện mật khẩu",
         "unlocked": "Cuộc gọi này đã được mở khóa. Bất kỳ người gọi mới nào có đường dẫn đều có thể tham gia."
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Quay số",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "Thêm mới",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
