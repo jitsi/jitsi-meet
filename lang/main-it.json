@@ -6,14 +6,25 @@
     "passwordSetRemotely": "",
     "connectionsettings": "Impostazioni Connessione",
     "poweredby": "powered by",
-    "feedback": "",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "La tua conferenza sta per essere creata...",
     "me": "io",
     "speaker": "Relatore",
-    "raisedHand": "",
+    "raisedHand": "Vorrei intervenire",
     "defaultNickname": "",
     "defaultLink": "es. __url__",
     "callingName": "",
+    "audioOnly": {
+        "audioOnly": "Solo audio",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
         "react-nativeGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -22,7 +33,8 @@
         "operaGrantPermissions": "",
         "iexplorerGrantPermissions": "",
         "safariGrantPermissions": "",
-        "nwjsGrantPermissions": ""
+        "nwjsGrantPermissions": "",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "",
@@ -35,45 +47,52 @@
         "focusRemote": "",
         "toggleChat": "",
         "mute": "",
-        "fullScreen": "",
-        "videoMute": ""
+        "fullScreen": "Entra / Esci da schermo intero",
+        "videoMute": "",
+        "showSpeakerStats": ""
     },
+    "\u0005keyboardShortcuts": {},
     "welcomepage": {
-        "go": "VAI",
-        "roomname": "Inserisci Nome Stanza",
         "disable": "",
         "feature1": {
-            "title": "Semplice da usare",
-            "content": "Nessun download richiesto. __app__ funziona direttamente nel tuo browser. Condividi semplicemente l'URL della tua conferenza con altri per iniziare."
+            "content": "Nessun download richiesto. __app__ funziona direttamente nel tuo browser. Condividi semplicemente l'URL della tua conferenza con altri per iniziare.",
+            "title": "Semplice da usare"
         },
         "feature2": {
-            "title": "Poca banda",
-            "content": "Conferenze video multi utente funzionano con appena 128Kbps. La condivisione dello schermo ed conferenze solo audio sono possibili con molto meno."
+            "content": "Conferenze video multi utente funzionano con appena 128Kbps. La condivisione dello schermo ed conferenze solo audio sono possibili con molto meno.",
+            "title": "Poca banda"
         },
         "feature3": {
-            "title": "Open source",
-            "content": ""
+            "content": "",
+            "title": "Open source"
         },
         "feature4": {
-            "title": "Utenti illimitati",
-            "content": "Non ci sono restrizioni sul numero di utenti per una conferenza. La potenza del server e la banda a disposizione sono gli unici fattori limitanti."
+            "content": "Non ci sono restrizioni sul numero di utenti per una conferenza. La potenza del server e la banda a disposizione sono gli unici fattori limitanti.",
+            "title": "Utenti illimitati"
         },
         "feature5": {
-            "title": "Condivisione Schermo",
-            "content": "è facile condividere il tuo schermo con altri. __app__ è l'ideale per presentazioni online, letture, e sessioni di supporto tecnico."
+            "content": "è facile condividere il tuo schermo con altri. __app__ è l'ideale per presentazioni online, letture, e sessioni di supporto tecnico.",
+            "title": "Condivisione Schermo"
         },
         "feature6": {
-            "title": "Stanze sicure",
-            "content": "Hai bisogno di più privacy? Le conferenze di __app__ possono essere rese sicure con una password per escludere ospiti non desiderati e prevenire interruzioni."
+            "content": "Hai bisogno di più privacy? Le conferenze di __app__ possono essere rese sicure con una password per escludere ospiti non desiderati e prevenire interruzioni.",
+            "title": "Stanze sicure"
         },
         "feature7": {
-            "title": "Note condivise",
-            "content": "__app__ utilizza Etherpad, un editor di testo real-time e collaborativo che è ottimo per meeting, scrivere articoli e tanto altro."
+            "content": "__app__ utilizza Etherpad, un editor di testo real-time e collaborativo che è ottimo per meeting, scrivere articoli e tanto altro.",
+            "title": "Note condivise"
         },
         "feature8": {
-            "title": "Statistiche di utilizzo",
-            "content": "Impara come i tuoi utenti lo utilizzano con la facile integrazione con PiWik, Google Analytics, e altri sistemi di statistica e monitor dell'utilizzo."
-        }
+            "content": "Impara come i tuoi utenti lo utilizzano con la facile integrazione con PiWik, Google Analytics, e altri sistemi di statistica e monitor dell'utilizzo.",
+            "title": "Statistiche di utilizzo"
+        },
+        "go": "VAI",
+        "join": "",
+        "privacy": "",
+        "roomname": "Inserisci Nome Stanza",
+        "roomnamePlaceHolder": "",
+        "sendFeedback": "",
+        "terms": ""
     },
     "startupoverlay": {
         "policyText": "",
@@ -81,19 +100,22 @@
     },
     "suspendedoverlay": {
         "title": "",
+        "text": "",
         "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Microfono Attiva / Disattiva",
-        "videomute": "",
+        "videomute": "Abilita / Disabilita video",
         "authenticate": "Autenticazione",
-        "lock": "",
+        "lock": "Blocca / Sblocca Stanza",
         "invite": "",
-        "chat": "",
+        "chat": "Apri / Chiudi chat",
         "etherpad": "",
         "sharedvideo": "",
         "sharescreen": "",
-        "fullscreen": "",
+        "fullscreen": "Entra / Esci da schermo intero",
         "sip": "Chiama numero SIP",
         "Settings": "Impostazioni",
         "hangup": "",
@@ -109,6 +131,14 @@
         "filmstrip": "",
         "profile": "",
         "raiseHand": ""
+    },
+    "\u0005toolbar": {},
+    "unsupportedBrowser": {
+        "appInstalled": "",
+        "appNotInstalled": "",
+        "downloadApp": "",
+        "joinConversation": "",
+        "startConference": ""
     },
     "bottomtoolbar": {
         "chat": "Apri / Chiudi chat",
@@ -133,12 +163,10 @@
         "selectAudioOutput": "",
         "followMe": "",
         "noDevice": "",
-        "noPermission": "",
         "cameraAndMic": "",
         "moderator": "",
         "password": "",
-        "audioVideo": "",
-        "setPasswordLabel": ""
+        "audioVideo": ""
     },
     "profile": {
         "title": "",
@@ -149,18 +177,21 @@
     "videothumbnail": {
         "editnickname": "Clicca per modificare il tuo<br/>nome visualizzato",
         "moderator": "Il proprietario<br/>della conferenza",
-        "videomute": "",
+        "videomute": "Il partecipante ha<br/>fermato il video.",
         "mute": "Il partecipante è in muto",
         "kick": "Espelli",
         "muted": "Audio disattivato",
         "domute": "Disattiva audio",
-        "flip": ""
+        "flip": "",
+        "remoteControl": ""
     },
+    "\u0005videothumbnail": {},
     "connectionindicator": {
         "header": "",
         "bitrate": "Bitrate:",
         "packetloss": "Perdita pacchetti:",
         "resolution": "Risoluzione:",
+        "framerate": "",
         "less": "Mostra meno",
         "more": "Mostra di più",
         "address": "Indirizzo:",
@@ -174,7 +205,8 @@
         "remoteaddress_plural": "Indirizzi remoti:",
         "transport": "Trasporto:",
         "bandwidth": "Banda stimata:",
-        "na": "Ritorna qui per informazioni sulla connessione una volta che la conferenza inizia"
+        "na": "Ritorna qui per informazioni sulla connessione una volta che la conferenza inizia",
+        "turn": ""
     },
     "notify": {
         "disconnected": "disconnesso",
@@ -190,8 +222,10 @@
         "mutedTitle": "Hai l'audio disattivato!",
         "raisedHand": ""
     },
+    "\u0005notify": {},
     "dialog": {
         "add": "",
+        "allow": "",
         "kickMessage": "Accidenti! Sei stato espulso dalla conferenza !",
         "popupError": "",
         "passwordErrorTitle": "",
@@ -203,8 +237,6 @@
         "connecting": "Connessione",
         "copy": "",
         "error": "Errore",
-        "roomLocked": "",
-        "addPassword": "",
         "createPassword": "",
         "detectext": "Errore durante il rilevamento dell'estensione per il desktopsharing.",
         "failtoinstall": "Impossibile installare l'estensione per il desktop sharing",
@@ -213,8 +245,7 @@
         "conferenceReloadMsg": "",
         "conferenceDisconnectTitle": "",
         "conferenceDisconnectMsg": "",
-        "reconnectNow": "",
-        "conferenceReloadTimeLeft": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "",
         "lockTitle": "Blocco fallito",
         "lockMessage": "Impossibile bloccare la conferenza.",
@@ -254,31 +285,28 @@
         "Save": "Salva",
         "recording": "",
         "recordingToken": "Inserire token di registrazione",
-        "Dial": "Componi",
-        "sipMsg": "Inserire numero SIP",
         "passwordCheck": "Confermi la rimozione della password?",
         "passwordMsg": "Imposta una password per bloccare la stanza",
         "shareLink": "",
         "settings1": "Configura la tua conferenza",
         "settings2": "Partecipanti connessi in muto",
         "settings3": "Richiedi nicknames<br/><br/>Imposta una password per bloccare la tua stanza:",
-        "yourPassword": "",
+        "yourPassword": "password utente",
         "Back": "Indietro",
         "serviceUnavailable": "Servizio non disponibile",
         "gracefulShutdown": "Il nostro servizio è al momento spento per manutenzione. Si prega di riprovare più tardi.",
         "Yes": "Sì",
         "reservationError": "Errore di sistema in prenotazione",
         "reservationErrorMsg": "Codice di errore: __code__, messaggio: __msg__",
-        "password": "",
+        "password": "password utente",
         "userPassword": "password utente",
         "token": "token",
-        "tokenAuthFailedTitle": "",
+        "tokenAuthFailedTitle": "Autenticazione fallita",
         "tokenAuthFailed": "",
         "displayNameRequired": "",
         "enterDisplayName": "Per favore, inserisci il tuo nome utente:",
         "extensionRequired": "",
         "firefoxExtensionPrompt": "",
-        "rateExperience": "",
         "feedbackHelp": "",
         "feedbackQuestion": "",
         "thankYou": "",
@@ -309,10 +337,24 @@
         "cameraNotSendingData": "",
         "goToStore": "",
         "externalInstallationTitle": "",
-        "externalInstallationMsg": "",
+        "externalInstallationMsg": "Impossibile installare l'estensione per il desktop sharing",
+        "inlineInstallationMsg": "Impossibile installare l'estensione per il desktop sharing",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "",
         "muteParticipantBody": "",
-        "muteParticipantButton": "Disattiva audio"
+        "muteParticipantButton": "Disattiva audio",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "",
+        "remoteControlAllowedMessage": "",
+        "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
     "\u0005dialog": {},
     "email": {
@@ -365,7 +407,73 @@
         "failedToStart": "",
         "buttonTooltip": "",
         "streamIdRequired": "",
+        "streamIdHelp": "",
         "error": "",
         "busy": ""
+    },
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Nome",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Componi",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
