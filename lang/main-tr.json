@@ -1,19 +1,30 @@
 {
-    "contactlist": "",
+    "contactlist": "Katılımcılar (__pcount__)",
     "addParticipants": "",
-    "roomLocked": "",
-    "roomUnlocked": "",
-    "passwordSetRemotely": "",
+    "roomLocked": "Katılımcı şifresi zorunludur",
+    "roomUnlocked": "Bağlantı ile herkes katılabilir.",
+    "passwordSetRemotely": "Diğer katılımcı tarafından ayarlandı",
     "connectionsettings": "Bağlantı Ayarları",
     "poweredby": "Gücünün kaynağı",
-    "feedback": "",
-    "inviteUrlDefaultMsg": "",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "",
+        "veryBad": "",
+        "veryGood": ""
+    },
+    "inviteUrlDefaultMsg": "Konferans başlatılıyor...",
     "me": "",
     "speaker": "",
     "raisedHand": "",
     "defaultNickname": "",
     "defaultLink": "",
     "callingName": "",
+    "audioOnly": {
+        "audioOnly": "",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
         "react-nativeGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -22,7 +33,8 @@
         "operaGrantPermissions": "",
         "iexplorerGrantPermissions": "",
         "safariGrantPermissions": "",
-        "nwjsGrantPermissions": ""
+        "nwjsGrantPermissions": "",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "",
@@ -35,45 +47,52 @@
         "focusRemote": "",
         "toggleChat": "",
         "mute": "",
-        "fullScreen": "",
-        "videoMute": ""
+        "fullScreen": "Tam Ekrana Gir / Çık",
+        "videoMute": "",
+        "showSpeakerStats": ""
     },
+    "\u0005keyboardShortcuts": {},
     "welcomepage": {
-        "go": "GİT",
-        "roomname": "Oda adı girin",
         "disable": "",
         "feature1": {
-            "title": "Kullanımı kolay",
-            "content": "İndirmeye gerek yok. __app__ tarayıcınızda doğrudan çalışır. Başlamak için görüşme bağlantısını URL diğerleri ile paylaşın."
+            "content": "İndirmeye gerek yok. __app__ tarayıcınızda doğrudan çalışır. Başlamak için görüşme bağlantısını URL diğerleri ile paylaşın.",
+            "title": "Kullanımı kolay"
         },
         "feature2": {
-            "title": "Düşük bant genişliği ihtiyacı",
-            "content": "Ekran paylaşımı ve sadece ses ile çok katılımcılı video görüşmeleri, 128Kbps bağlantı ile mümkündür."
+            "content": "Ekran paylaşımı ve sadece ses ile çok katılımcılı video görüşmeleri, 128Kbps bağlantı ile mümkündür.",
+            "title": "Düşük bant genişliği ihtiyacı"
         },
         "feature3": {
-            "title": "Açık kaynak kodlu",
-            "content": ""
+            "content": "",
+            "title": "Açık kaynak kodlu"
         },
         "feature4": {
-            "title": "Sınırsız sayıda kullanıcı",
-            "content": "Kullanıcılar veya konferans katılımcılarının sayısında hiçbir yapay kısıtlama yoktur. Sadece sunucun güç ve bant genişliği, sınırlayıcı unsurdur."
+            "content": "Kullanıcılar veya konferans katılımcılarının sayısında hiçbir yapay kısıtlama yoktur. Sadece sunucun güç ve bant genişliği, sınırlayıcı unsurdur.",
+            "title": "Sınırsız sayıda kullanıcı"
         },
         "feature5": {
-            "title": "Ekran paylaşımı",
-            "content": "Diğerlerinle ekranınızı kolayca paylaşın. __app__ çevrimiçi sunumlar, dersler ve teknik destek oturumları için idealdir."
+            "content": "Diğerlerinle ekranınızı kolayca paylaşın. __app__ çevrimiçi sunumlar, dersler ve teknik destek oturumları için idealdir.",
+            "title": "Ekran paylaşımı"
         },
         "feature6": {
-            "title": "Güvenli odalar",
-            "content": "Biraz gizliliğe ihtiyacınız var? __app__ görüşme odaları, istemeyen misafirleri uzak tutmak ve kesinleri önlemek için bir parola ile güvence altına alınabilir."
+            "content": "Biraz gizliliğe ihtiyacınız var? __app__ görüşme odaları, istemeyen misafirleri uzak tutmak ve kesinleri önlemek için bir parola ile güvence altına alınabilir.",
+            "title": "Güvenli odalar"
         },
         "feature7": {
-            "title": "Paylaşımlı notlar",
-            "content": "__app__ Etherpad içerir, gerçek zamanlı bir ortak çalışma metin düzenleyicisidir. Görüşme tutanakları, makale yazımı ve daha fazlası için biçilmiş kaftandır."
+            "content": "__app__ Etherpad içerir, gerçek zamanlı bir ortak çalışma metin düzenleyicisidir. Görüşme tutanakları, makale yazımı ve daha fazlası için biçilmiş kaftandır.",
+            "title": "Paylaşımlı notlar"
         },
         "feature8": {
-            "title": "Kullanım istatistikleri",
-            "content": "Piwik, Google Analytics ve diğer kullanım izleme ve istatistik sistemleri ile kolay tümleştirmeyle kullanıcılar hakkında bilgi edinin."
-        }
+            "content": "Piwik, Google Analytics ve diğer kullanım izleme ve istatistik sistemleri ile kolay tümleştirmeyle kullanıcılar hakkında bilgi edinin.",
+            "title": "Kullanım istatistikleri"
+        },
+        "go": "GİT",
+        "join": "",
+        "privacy": "",
+        "roomname": "Oda adı girin",
+        "roomnamePlaceHolder": "",
+        "sendFeedback": "",
+        "terms": ""
     },
     "startupoverlay": {
         "policyText": "",
@@ -81,19 +100,22 @@
     },
     "suspendedoverlay": {
         "title": "",
+        "text": "",
         "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Sessiz / Sesli",
-        "videomute": "",
+        "videomute": "Kamera başlat / durdur",
         "authenticate": "Kimlik doğrula",
-        "lock": "",
+        "lock": "Odayı kilitle / kilit aç",
         "invite": "",
-        "chat": "",
+        "chat": "Sohbeti aç / kapa",
         "etherpad": "",
         "sharedvideo": "",
         "sharescreen": "",
-        "fullscreen": "",
+        "fullscreen": "Tam Ekrana Gir / Çık",
         "sip": "SIP numara ara",
         "Settings": "Ayarlar",
         "hangup": "",
@@ -109,6 +131,14 @@
         "filmstrip": "",
         "profile": "",
         "raiseHand": ""
+    },
+    "\u0005toolbar": {},
+    "unsupportedBrowser": {
+        "appInstalled": "",
+        "appNotInstalled": "",
+        "downloadApp": "",
+        "joinConversation": "",
+        "startConference": ""
     },
     "bottomtoolbar": {
         "chat": "Sohbeti aç / kapa",
@@ -133,12 +163,10 @@
         "selectAudioOutput": "",
         "followMe": "",
         "noDevice": "",
-        "noPermission": "",
         "cameraAndMic": "",
         "moderator": "",
         "password": "",
-        "audioVideo": "",
-        "setPasswordLabel": ""
+        "audioVideo": ""
     },
     "profile": {
         "title": "",
@@ -149,18 +177,21 @@
     "videothumbnail": {
         "editnickname": "Görünür adınızı değiştirmek<br/>için tıkla",
         "moderator": "Bu görüşmenin<br/>sahibi",
-        "videomute": "",
+        "videomute": "Katılımcı<br/>kamera durdurdu.",
         "mute": "Katılımcı sessiz",
         "kick": "Kovuldu",
         "muted": "Sessiz",
         "domute": "Sustur",
-        "flip": ""
+        "flip": "",
+        "remoteControl": ""
     },
+    "\u0005videothumbnail": {},
     "connectionindicator": {
         "header": "",
         "bitrate": "Bit hızı:",
         "packetloss": "Paket kaybı:",
         "resolution": "Çözünürlük:",
+        "framerate": "",
         "less": "Daha az göster",
         "more": "Daha fazla göster",
         "address": "Adres:",
@@ -170,7 +201,8 @@
         "remoteaddress": "Uzak adres:Uzak adresler:",
         "transport": "Transport:",
         "bandwidth": "Tahmini bant genişliği:",
-        "na": "Görüşme başladıktan sonra bağlantı bilgileri için buraya gel"
+        "na": "Görüşme başladıktan sonra bağlantı bilgileri için buraya gel",
+        "turn": ""
     },
     "notify": {
         "disconnected": "bağlantı kesildi",
@@ -186,8 +218,10 @@
         "mutedTitle": "",
         "raisedHand": ""
     },
+    "\u0005notify": {},
     "dialog": {
         "add": "",
+        "allow": "",
         "kickMessage": "Ahhh! Görüşmeden, kavuldun!",
         "popupError": "",
         "passwordErrorTitle": "",
@@ -199,8 +233,6 @@
         "connecting": "",
         "copy": "",
         "error": "Hata",
-        "roomLocked": "",
-        "addPassword": "",
         "createPassword": "",
         "detectext": "Ekran paylaşımı eklentisi tespit edilirken hata.",
         "failtoinstall": "Masaüstü paylaşım eklentisi yüklenemedi",
@@ -209,8 +241,7 @@
         "conferenceReloadMsg": "",
         "conferenceDisconnectTitle": "",
         "conferenceDisconnectMsg": "",
-        "reconnectNow": "",
-        "conferenceReloadTimeLeft": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "",
         "lockTitle": "Kilitlenemedi",
         "lockMessage": "Görüşme kilitlenemedi.",
@@ -231,9 +262,9 @@
         "Remove": "Kaldır",
         "removePassword": "",
         "shareVideoTitle": "",
-        "shareVideoLinkError": "",
+        "shareVideoLinkError": "Lütfen doğru prezi bağlantısı verin.",
         "removeSharedVideoTitle": "",
-        "removeSharedVideoMsg": "",
+        "removeSharedVideoMsg": "Prezi kaldırmak istediğinizden emin misiniz?",
         "alreadySharedVideoMsg": "",
         "WaitingForHost": "",
         "WaitForHostMsg": "",
@@ -250,22 +281,20 @@
         "Save": "Kaydet",
         "recording": "",
         "recordingToken": "Kayıt jetonu girin",
-        "Dial": "Ara",
-        "sipMsg": "SIP numarası gir",
         "passwordCheck": "Parolanızı kaldırmak istediğinizden emin misiniz?",
         "passwordMsg": "Odanızı kilitlemek için bir parola koyun",
         "shareLink": "",
         "settings1": "Görüşmenizi yapılandır",
         "settings2": "Katılımcılar sessiz katılsın",
         "settings3": "Takma adlar gerekli<br/><br/>Odanızı kitlemek için bir parola ayarlayın:",
-        "yourPassword": "",
+        "yourPassword": "parolanız",
         "Back": "Geri",
         "serviceUnavailable": "Hizmet kullanım dışı",
         "gracefulShutdown": "Hizmetimiz bakıp için durduruldu. Daha sonra tekrar deneyiniz.",
         "Yes": "Evet",
         "reservationError": "Rezervasyon sistemi hatası",
         "reservationErrorMsg": "Hata kodu: __code__, mesaj: __msg__",
-        "password": "",
+        "password": "parolanız",
         "userPassword": "parolanız",
         "token": "",
         "tokenAuthFailedTitle": "",
@@ -274,7 +303,6 @@
         "enterDisplayName": "",
         "extensionRequired": "",
         "firefoxExtensionPrompt": "",
-        "rateExperience": "",
         "feedbackHelp": "",
         "feedbackQuestion": "",
         "thankYou": "",
@@ -305,10 +333,24 @@
         "cameraNotSendingData": "",
         "goToStore": "",
         "externalInstallationTitle": "",
-        "externalInstallationMsg": "",
+        "externalInstallationMsg": "Masaüstü paylaşım eklentisi yüklenemedi",
+        "inlineInstallationMsg": "Masaüstü paylaşım eklentisi yüklenemedi",
+        "inlineInstallExtension": "",
         "muteParticipantTitle": "",
         "muteParticipantBody": "",
-        "muteParticipantButton": "Sustur"
+        "muteParticipantButton": "Sustur",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "",
+        "remoteControlAllowedMessage": "",
+        "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
     "\u0005dialog": {},
     "email": {
@@ -347,7 +389,73 @@
         "failedToStart": "",
         "buttonTooltip": "",
         "streamIdRequired": "",
+        "streamIdHelp": "",
         "error": "",
         "busy": ""
+    },
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Ad",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Ara",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
