@@ -1,4 +1,4 @@
-import AKInlineDialog from '@atlaskit/inline-dialog';
+import { default as Popover } from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -106,8 +106,8 @@ export class VideoQualityLabel extends Component {
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onDialogClose = this._onDialogClose.bind(this);
-        this._onDialogToggle = this._onDialogToggle.bind(this);
+        this._onHideQualityDialog = this._onHideQualityDialog.bind(this);
+        this._onShowQualityDialog = this._onShowQualityDialog.bind(this);
     }
 
     /**
@@ -163,20 +163,20 @@ export class VideoQualityLabel extends Component {
         return (
             <div
                 className = { classNames }
-                id = 'videoResolutionLabel'>
-                <AKInlineDialog
-                    content = { <VideoQualityDialog /> }
+                id = 'videoResolutionLabel'
+                onMouseEnter = { this._onShowQualityDialog }
+                onMouseLeave = { this._onHideQualityDialog }>
+                <Popover
+                    content = { this._renderQualityDialog() }
                     isOpen = { this.state.showVideoQualityDialog }
-                    onClose = { this._onDialogClose }
                     position = { 'left top' }>
                     <div
-                        className = 'video-quality-label-status'
-                        onClick = { this._onDialogToggle }>
+                        className = 'video-quality-label-status'>
                         { _audioOnly
                             ? <i className = 'icon-visibility-off' />
                             : this._mapResolutionToTranslation(_resolution) }
                     </div>
-                </AKInlineDialog>
+                </Popover>
             </div>
         );
     }
@@ -211,25 +211,38 @@ export class VideoQualityLabel extends Component {
     }
 
     /**
-     * Toggles the display of the {@code VideoQualityDialog}.
+     * Shows the {@code VideoQualityDialog}.
      *
      * @private
      * @returns {void}
      */
-    _onDialogToggle() {
-        this.setState({
-            showVideoQualityDialog: !this.state.showVideoQualityDialog
-        });
+    _onShowQualityDialog() {
+        this.setState({ showVideoQualityDialog: true });
     }
 
     /**
-     * Hides the attached inline dialog.
+     * Hides the {@code VideoQualityDialog}.
      *
      * @private
      * @returns {void}
      */
-    _onDialogClose() {
+    _onHideQualityDialog() {
         this.setState({ showVideoQualityDialog: false });
+    }
+
+    /**
+     * Returns a React Element for choosing a maximum receive video quality.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderQualityDialog() {
+        return (
+            <div>
+                <VideoQualityDialog />
+                <div className = 'popover-mousemove-padding-right' />
+            </div>
+        );
     }
 }
 

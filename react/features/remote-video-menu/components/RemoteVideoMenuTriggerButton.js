@@ -1,4 +1,4 @@
-import AKInlineDialog from '@atlaskit/inline-dialog';
+import { default as Popover } from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import {
@@ -88,8 +88,8 @@ class RemoteVideoMenuTriggerButton extends Component {
         this._rootElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onRemoteMenuClose = this._onRemoteMenuClose.bind(this);
-        this._onRemoteMenuToggle = this._onRemoteMenuToggle.bind(this);
+        this._onHideRemoteMenu = this._onHideRemoteMenu.bind(this);
+        this._onShowRemoteMenu = this._onShowRemoteMenu.bind(this);
     }
 
     /**
@@ -106,21 +106,22 @@ class RemoteVideoMenuTriggerButton extends Component {
         }
 
         return (
-            <AKInlineDialog
-                content = { content }
-                isOpen = { this.state.showRemoteMenu }
-                onClose = { this._onRemoteMenuClose }
-                position = { interfaceConfig.VERTICAL_FILMSTRIP
-                    ? 'left middle' : 'top center' }
-                shouldFlip = { true }>
-                <span
-                    className = 'popover-trigger remote-video-menu-trigger'
-                    onClick = { this._onRemoteMenuToggle }>
-                    <i
-                        className = 'icon-thumb-menu'
-                        title = 'Remote user controls' />
-                </span>
-            </AKInlineDialog>
+            <div
+                onMouseEnter = { this._onShowRemoteMenu }
+                onMouseLeave = { this._onHideRemoteMenu }>
+                <Popover
+                    content = { content }
+                    isOpen = { this.state.showRemoteMenu }
+                    position = { interfaceConfig.VERTICAL_FILMSTRIP
+                        ? 'left middle' : 'top center' }>
+                    <span
+                        className = 'popover-trigger remote-video-menu-trigger'>
+                        <i
+                            className = 'icon-thumb-menu'
+                            title = 'Remote user controls' />
+                    </span>
+                </Popover>
+            </div>
         );
     }
 
@@ -130,24 +131,20 @@ class RemoteVideoMenuTriggerButton extends Component {
      * @private
      * @returns {void}
      */
-    _onRemoteMenuClose() {
+    _onHideRemoteMenu() {
         this.setState({ showRemoteMenu: false });
     }
 
     /**
-     * Opens or closes the {@code RemoteVideoMenu}.
+     * Opens the {@code RemoteVideoMenu}.
      *
      * @private
      * @returns {void}
      */
-    _onRemoteMenuToggle() {
-        const willShowRemoteMenu = !this.state.showRemoteMenu;
+    _onShowRemoteMenu() {
+        this.props.onMenuDisplay();
 
-        if (willShowRemoteMenu) {
-            this.props.onMenuDisplay();
-        }
-
-        this.setState({ showRemoteMenu: willShowRemoteMenu });
+        this.setState({ showRemoteMenu: true });
     }
 
     /**
@@ -175,13 +172,13 @@ class RemoteVideoMenuTriggerButton extends Component {
                 <MuteButton
                     isAudioMuted = { isAudioMuted }
                     key = 'mute'
-                    onClick = { this._onRemoteMenuClose }
+                    onClick = { this._onHideRemoteMenu }
                     participantID = { participantID } />
             );
             buttons.push(
                 <KickButton
                     key = 'kick'
-                    onClick = { this._onRemoteMenuClose }
+                    onClick = { this._onHideRemoteMenu }
                     participantID = { participantID } />
             );
         }
@@ -207,9 +204,15 @@ class RemoteVideoMenuTriggerButton extends Component {
 
         if (buttons.length > 0) {
             return (
-                <RemoteVideoMenu id = { participantID }>
-                    { buttons }
-                </RemoteVideoMenu>
+                <div>
+                    <RemoteVideoMenu id = { participantID }>
+                        { buttons }
+                    </RemoteVideoMenu>
+                    <div
+                        className = { interfaceConfig.VERTICAL_FILMSTRIP
+                            ? 'popover-mousemove-padding-right'
+                            : 'popover-mousemove-padding-bottom' } />
+                </div>
             );
         }
 
