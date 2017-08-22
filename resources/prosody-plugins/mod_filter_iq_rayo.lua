@@ -1,6 +1,7 @@
 local st = require "util.stanza";
 
 local token_util = module:require "token/util".new(module);
+local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
 
 -- no token configuration but required
 if token_util == nil then
@@ -30,7 +31,8 @@ module:hook("pre-iq/full", function(event)
 
             if token == nil
                 or roomName == nil
-                or not token_util:verify_room(session, roomName) then
+                or not token_util:verify_room(
+                            session, room_jid_match_rewrite(roomName)) then
                 module:log("info",
                     "Filtering stanza dial, stanza:%s", tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
