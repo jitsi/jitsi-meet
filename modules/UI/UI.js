@@ -366,7 +366,8 @@ UI.unbindEvents = () => {
 UI.addLocalStream = track => {
     switch (track.getType()) {
     case 'audio':
-        VideoLayout.changeLocalAudio(track);
+        // Local audio is not rendered so no further action is needed at this
+        // point.
         break;
     case 'video':
         VideoLayout.changeLocalVideo(track);

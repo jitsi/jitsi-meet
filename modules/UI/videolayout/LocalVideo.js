@@ -17,7 +17,11 @@ const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
-    this.container = $("#localVideoContainer").get(0);
+
+    this.container = this.createContainer();
+    this.$container = $(this.container);
+    $("#filmstripLocalVideo").append(this.container);
+
     this.localVideoId = null;
     this.bindHoverHandler();
     if(config.enableLocalVideoFlip)
@@ -45,6 +49,23 @@ function LocalVideo(VideoLayout, emitter) {
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
 LocalVideo.prototype.constructor = LocalVideo;
+
+LocalVideo.prototype.createContainer = function () {
+    const containerSpan = document.createElement('span');
+    containerSpan.classList.add('videocontainer');
+    containerSpan.id = this.videoSpanId;
+
+    containerSpan.innerHTML = `
+        <div class = 'videocontainer__background'></div>
+        <span id = 'localVideoWrapper'></span>
+        <div class = 'videocontainer__toolbar'></div>
+        <div class = 'videocontainer__toptoolbar'></div>
+        <div class = 'videocontainer__hoverOverlay'></div>
+        <div class = 'displayNameContainer'></div>
+        <div class = 'avatar-container'></div>`;
+
+    return containerSpan;
+};
 
 /**
  * Sets the display name for the given video span id.
@@ -102,9 +123,8 @@ LocalVideo.prototype.changeVideo = function (stream) {
         }
     };
 
-    let localVideoContainerSelector = $('#localVideoContainer');
-    localVideoContainerSelector.off('click');
-    localVideoContainerSelector.on('click', localVideoClick);
+    this.$container.off('click');
+    this.$container.on('click', localVideoClick);
 
     this.localVideoId = 'localVideo_' + stream.getId();
 
@@ -153,16 +173,16 @@ LocalVideo.prototype.setVisible = function(visible) {
 
     // We toggle the hidden class as an indication to other interested parties
     // that this container has been hidden on purpose.
-    $("#localVideoContainer").toggleClass("hidden");
+    this.$container.toggleClass("hidden");
 
     // We still show/hide it as we need to overwrite the style property if we
     // want our action to take effect. Toggling the display property through
     // the above css class didn't succeed in overwriting the style.
     if (visible) {
-        $("#localVideoContainer").show();
+        this.$container.show();
     }
     else {
-        $("#localVideoContainer").hide();
+        this.$container.hide();
     }
 };
 
@@ -213,8 +233,8 @@ LocalVideo.prototype._buildContextMenu = function () {
  * @param enable {boolean} true for enable, false for disable
  */
 LocalVideo.prototype._enableDisableContextMenu = function (enable) {
-    if($('#' + this.videoSpanId).contextMenu)
-        $('#' + this.videoSpanId).contextMenu(enable);
+    if(this.$container.contextMenu)
+        this.$container.contextMenu(enable);
 };
 
 export default LocalVideo;
