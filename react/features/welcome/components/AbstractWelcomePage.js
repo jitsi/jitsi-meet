@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { appNavigate } from '../../app';
@@ -19,9 +20,9 @@ export class AbstractWelcomePage extends Component {
      * @static
      */
     static propTypes = {
-        _localVideoTrack: React.PropTypes.object,
-        _room: React.PropTypes.string,
-        dispatch: React.PropTypes.func
+        _localVideoTrack: PropTypes.object,
+        _room: PropTypes.string,
+        dispatch: PropTypes.func
     };
 
     /**
