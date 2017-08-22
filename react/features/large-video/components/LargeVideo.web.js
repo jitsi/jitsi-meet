@@ -48,6 +48,13 @@ class LargeVideo extends Component {
          */
         this._videoElement = null;
 
+        /**
+         * The internal reference to the wrapper element of the video.
+         * The wrapper element is used for monitoring resizing event.
+         *
+         * @private
+         * @type {HTMLDivElement}
+         */
         this._wrapperElement = null;
 
         this.state = {

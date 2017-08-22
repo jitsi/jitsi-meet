@@ -261,10 +261,6 @@ class FaceTracker {
         }
 
         for (const rect of faceData) {
-            console.warn(this._faceRect.x, this._faceRect.y,
-              this._faceRect.width, this._faceRect.height);
-            console.warn(rect.x, rect.y, rect.width, rect.height);
-
             if (rect.x > this._faceRect.x
                 && rect.y > this._faceRect.y
                 && rect.x + rect.width

@@ -15,7 +15,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (type) {
     case ADD_FACE_TRACKER:
-        console.warn(ADD_FACE_TRACKER);
         if (faceTrackerFactory.hasFaceTracker(action.videoElement)) {
             break;
         }
@@ -23,7 +22,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case ENABLE_FACE_TRACKING:
-        console.warn(ENABLE_FACE_TRACKING);
         faceTrackerFactory
             .getFaceTracker(action.videoElement)
             .attachFaceTracking(
@@ -32,7 +30,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case DISABLE_FACE_TRACKING:
-        console.warn(DISABLE_FACE_TRACKING);
         faceTrackerFactory
             .getFaceTracker(action.videoElement)
             .detachFaceTracking();
