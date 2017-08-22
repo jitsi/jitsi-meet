@@ -1,12 +1,19 @@
 {
-    "contactlist": "",
-    "addParticipants": "",
-    "roomLocked": "",
-    "roomUnlocked": "",
-    "passwordSetRemotely": "",
+    "contactlist": "Մասնակիցներ (__pcount__)",
+    "addParticipants": "Կիսվել URL -ով",
+    "roomLocked": "Զանգողները պետք է ներմուծեն գաղտնաբառը",
+    "roomUnlocked": "Յուրաքանչյուրը ով ունի URL կարող է միանալ",
+    "passwordSetRemotely": "Սահմանվել է մեկ այլ մասնակցի կողմից",
     "connectionsettings": "Միացման կարգավորումներ",
     "poweredby": "Հիմնված է",
-    "feedback": "Հայտնեք ձեր կարծիքը",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "Խնդրում ենք ներկայացրեք Ձեր հանդիպման փորձը",
+        "veryBad": "",
+        "veryGood": ""
+    },
     "inviteUrlDefaultMsg": "Ձեր կոնֆերանսը այժմ ստեղծվում է...",
     "me": "ես",
     "speaker": "Հռետոր",
@@ -14,106 +21,127 @@
     "defaultNickname": "օրինակ՝ Պողոս Պողոսյան",
     "defaultLink": "օրինակ՝ __url__",
     "callingName": "__անուն__",
+    "audioOnly": {
+        "audioOnly": "",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
-        "react-nativeGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ <b> <i>ընդունել</ i> </ b> կոճակը",
-        "chromeGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ <b> <i>ընդունել</ i> </ b> կոճակը",
-        "androidGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ <b> <i>ընդունել</ i> </ b> կոճակը",
-        "firefoxGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու   թույլտվություններ  <b> <i> տարածել նշված սարքը </ i> </ b> կոճակը",
-        "operaGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ <b> <i>ընդունել</ i> </ b> կոճակը",
-        "iexplorerGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ <b> <i>Այո</ i> </ b> կոճակը",
-        "safariGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ <b> <i>Այո</ i> </ b> կոճակը",
-        "nwjsGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ"
+        "react-nativeGrantPermissions": "",
+        "chromeGrantPermissions": "",
+        "androidGrantPermissions": "",
+        "firefoxGrantPermissions": "",
+        "operaGrantPermissions": "",
+        "iexplorerGrantPermissions": "",
+        "safariGrantPermissions": "",
+        "nwjsGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
-        "keyboardShortcuts": "",
-        "raiseHand": "",
-        "pushToTalk": "",
-        "toggleScreensharing": "",
-        "toggleFilmstrip": "",
-        "toggleShortcuts": "",
-        "focusLocal": "",
-        "focusRemote": "",
-        "toggleChat": "",
-        "mute": "",
-        "fullScreen": "",
-        "videoMute": ""
+        "keyboardShortcuts": "Ստեղնաշարի դյուրանցումներ (shortcuts)",
+        "raiseHand": "Բարձրացնել կամ իջեցնել ձեր ձեռքը",
+        "pushToTalk": "Սեղմեք խոսելու համար",
+        "toggleScreensharing": "Անցնել ֆոտոխցիկի և էկրանի փոխանակման միջև",
+        "toggleFilmstrip": "Ցույց տալ կամ թաքցնել տեսանյութերը",
+        "toggleShortcuts": "Ցույց տալ կամ թաքցնել այս օգնության մենյուն",
+        "focusLocal": "Կենտրոնանալ Ձեր տեսանյութի վրա",
+        "focusRemote": "Կենտրոնանալ մյուս մասնակցի տեսանյութի վրա",
+        "toggleChat": "Բացել կամ փակել չատի պանելը",
+        "mute": "Անջատել կամ միացնել խոսափողը",
+        "fullScreen": "Ամբողջ Էկրանի ռեժիմը միացնել/անջատել",
+        "videoMute": "Անջատել կամ միացնել տեսախցիկը",
+        "showSpeakerStats": ""
     },
     "welcomepage": {
-        "go": "ՄՈՒՏՔ",
-        "roomname": "Մուտքագրեք սենյակի անունը",
         "disable": "Այլևս ցույց չտալ այս էջը",
         "feature1": {
-            "title": "Հեշտ է օգտվել",
-            "content": "Ոչ մի լրացուցիչ ներբեռնումներ: __apple__ աշխատում է անմիջապես Ձեր բրաուզերում: Պարզապես հայտնեք ձեր կոնֆերանսի URL հասցեն ուրիշներին և դուք կապի մեջ էք:"
+            "content": "Ոչ մի լրացուցիչ ներբեռնումներ: __apple__ աշխատում է անմիջապես Ձեր բրաուզերում: Պարզապես հայտնեք ձեր կոնֆերանսի URL հասցեն ուրիշներին և դուք կապի մեջ էք:",
+            "title": "Հեշտ է օգտվել"
         },
         "feature2": {
-            "title": "Պետք չէ արագ կապ",
-            "content": "Բազմամասնակից վիդեո կոնֆերանսները աշխատում են ընդամենը 128 Կբ/վ թողունակությամբ: Իսկ միայն ձայնի կամ էկրանի ցուցադրման դեպքում՝ ավելի քիչ:"
+            "content": "Բազմամասնակից վիդեո կոնֆերանսները աշխատում են ընդամենը 128 Կբ/վ թողունակությամբ: Իսկ միայն ձայնի կամ էկրանի ցուցադրման դեպքում՝ ավելի քիչ:",
+            "title": "Պետք չէ արագ կապ"
         },
         "feature3": {
-            "title": "Բաց կոդ",
-            "content": "_app_ լիցենզավորված է Apache լիցենզիայով: Կարող էք ազատորեն ներբեռնել, օգտագործել, ձևափոխել և կիսվել դրանով այդ լիցենզիայի համապատասխան:"
+            "content": "_app_ լիցենզավորված է Apache լիցենզիայով: Կարող էք ազատորեն ներբեռնել, օգտագործել, ձևափոխել և կիսվել դրանով այդ լիցենզիայի համապատասխան:",
+            "title": "Բաց կոդ"
         },
         "feature4": {
-            "title": "Օգտվողների թիվը սահմանափակ չէ",
-            "content": "Չկան արհեստական սահմանափակումներ օգտագործողների կամ կոնֆերանսի մասնակիցների թվի համար: Սահմանափակող գործոնները՝ միայն սերվերի հզորությունն ու թողունակությունն են:"
+            "content": "Չկան արհեստական սահմանափակումներ օգտագործողների կամ կոնֆերանսի մասնակիցների թվի համար: Սահմանափակող գործոնները՝ միայն սերվերի հզորությունն ու թողունակությունն են:",
+            "title": "Օգտվողների թիվը սահմանափակ չէ"
         },
         "feature5": {
-            "title": "Էկրանի ցուցադրում",
-            "content": "Շատ հեշտ է ցուցադրել Ձեր էկրանը ուրիշներին: __app__ իդեալական է օնլայն ներկայացումների, դասախոսությունների և տեխնիկական սպասարկման համար:"
+            "content": "Շատ հեշտ է ցուցադրել Ձեր էկրանը ուրիշներին: __app__ իդեալական է օնլայն ներկայացումների, դասախոսությունների և տեխնիկական սպասարկման համար:",
+            "title": "Էկրանի ցուցադրում"
         },
         "feature6": {
-            "title": "Փակ սենյակներ",
-            "content": "Պե՞տք է առանձնանալ: __app__ կոնֆերանսում կարող էք փակվել սենյակը գաղտնաբառով, որպեսզի անսպասելի հյուրեր կամ ընդհատումներ չունենաք:"
+            "content": "Պե՞տք է առանձնանալ: __app__ կոնֆերանսում կարող էք փակվել սենյակը գաղտնաբառով, որպեսզի անսպասելի հյուրեր կամ ընդհատումներ չունենաք:",
+            "title": "Փակ սենյակներ"
         },
         "feature7": {
-            "title": "Համատեղ նշումներ",
-            "content": "Շնորհիվ __app__ -ում ընդգրկված Etherpad տեքստային խմբագրի, իրական ժամանակում կարող էք համատեղ նշումներ կատարել, ինչը շատ հարմար է հանդիպումն արձանագրելու, հոդվածներ գրելու և այլ նպատակների համար:"
+            "content": "Շնորհիվ __app__ -ում ընդգրկված Etherpad տեքստային խմբագրի, իրական ժամանակում կարող էք համատեղ նշումներ կատարել, ինչը շատ հարմար է հանդիպումն արձանագրելու, հոդվածներ գրելու և այլ նպատակների համար:",
+            "title": "Համատեղ նշումներ"
         },
         "feature8": {
-            "title": "Օգտագործման վիճակագրություն",
-            "content": "Օգտագործման վիճակագրություն կարելի է ստանալ հեշտ ինտեգրվող Piwik, Google Analytics կամ այլ մոնիտորինգի համակարգերի միջոցով:"
-        }
+            "content": "Օգտագործման վիճակագրություն կարելի է ստանալ հեշտ ինտեգրվող Piwik, Google Analytics կամ այլ մոնիտորինգի համակարգերի միջոցով:",
+            "title": "Օգտագործման վիճակագրություն"
+        },
+        "go": "ՄՈՒՏՔ",
+        "join": "Միանալ",
+        "privacy": "Գաղտնիություն",
+        "roomname": "Մուտքագրեք սենյակի անունը",
+        "roomnamePlaceHolder": "սենյակի անուն",
+        "sendFeedback": "Ուղարկել կարծիք",
+        "terms": "Տերմիններ"
     },
     "startupoverlay": {
         "policyText": "",
-        "title": ""
+        "title": "__app__ ցանկանում է օգտագործել Ձեր խոսափողը և տեսախցիկը."
     },
     "suspendedoverlay": {
         "title": "",
-        "rejoinKeyTitle": ""
+        "text": "",
+        "rejoinKeyTitle": "Միանալ կրկին"
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Ձայնը Միացնել/Անջատել ",
-        "videomute": "",
+        "videomute": "Տեսախցիկը Միացնել/Անջատել",
         "authenticate": "Վավերացում",
-        "lock": "",
-        "invite": "",
-        "chat": "",
-        "etherpad": "",
+        "lock": "Փակել/բացել սենյակը",
+        "invite": "Կիսվել URL -ով",
+        "chat": "Բացել/փակել չատը",
+        "etherpad": "Բացել/փակել տարածված փաստաթուղթը",
         "sharedvideo": "Կիսվել YouTube-ի նյութով",
-        "sharescreen": "",
-        "fullscreen": "",
+        "sharescreen": "Միացնել/ անջատել էկրանի տարածումը",
+        "fullscreen": "Ամբողջ Էկրանի ռեժիմը միացնել/անջատել",
         "sip": "Զանգել SIP համարով",
         "Settings": "Կարգավորումներ",
-        "hangup": "",
+        "hangup": "Դուրս գալ",
         "login": "Մուտք",
         "logout": "Ելք",
-        "dialpad": "",
+        "dialpad": "Բացել/փակել զանգի պատուհանը",
         "sharedVideoMutedPopup": "Ձեր ցուցադրված տեսանյութի ձայնը անջատված է, այնպես որ <br />, կարող եք խոսել մյուս մասնակիցների հետ:",
         "micMutedPopup": "Ձեր խոսափողը անջատված է՝<br/> կարող եք լիովին վայելել ձեր ցուցադրված տեսանյութը:",
-        "talkWhileMutedPopup": "",
+        "talkWhileMutedPopup": "Փորձու՞մ եք խոսել: Ձեր ձայնը անջատված է:",
         "unableToUnmutePopup": "Դուք չեք կարող միացնել ձայնը, քանի դեռ միանցված է ցուցադրվող տեսանյութը:",
         "cameraDisabled": "Տեսախցիկը հասանելի չէ",
         "micDisabled": "Խոսափողը հասանելի չէ",
-        "filmstrip": "",
-        "profile": "",
-        "raiseHand": ""
+        "filmstrip": "Ցույց տալ/թաքցնել տեսանյութները",
+        "profile": "Փոխել քո Էջը",
+        "raiseHand": "Բարձրացնել կամ իջեցնել քո ձեռքը"
+    },
+    "unsupportedBrowser": {
+        "appInstalled": "կամ եթե դուք արդեն ունեք դա<br /><strong>ապա</strong>",
+        "appNotInstalled": "Ձեզ պետք է <strong>__app__</strong> այս հանդիպմանը Ձեր հեռախոսից  միանալու համար:",
+        "downloadApp": "Բեռնել հավելվածը",
+        "joinConversation": "Միանալ հանդիպմանը",
+        "startConference": "Սկսել հանդիպումը"
     },
     "bottomtoolbar": {
         "chat": "Բացել/փակել չատը",
         "filmstrip": "Ցույց տալ/թաքցնել տեսանյութները",
-        "contactlist": ""
+        "contactlist": "Դիտել և հրավիրել մասնակիցների"
     },
     "chat": {
         "nickname": {
@@ -133,18 +161,16 @@
         "selectAudioOutput": "Ձայնային ելք",
         "followMe": "Բոլորը հետևում են ինձ",
         "noDevice": "Ոչինչ",
-        "noPermission": "Սարքը օգտագործելու թույլտվությունը տրված չէ",
         "cameraAndMic": "Տեսախցիկ և խոսափող",
         "moderator": "MODERATOR",
         "password": "Դնել գաղտնաբառ",
-        "audioVideo": "ձայն և տեսանյութ",
-        "setPasswordLabel": "Փակել սենյակը գաղտնաբառով"
+        "audioVideo": "ձայն և տեսանյութ"
     },
     "profile": {
-        "title": "",
+        "title": "Պրոֆայլ",
         "setDisplayNameLabel": "Դնել Ձեր երևացող անունը",
         "setEmailLabel": "Սահմանեք Ձեր gravatar էլ.փոստը",
-        "setEmailInput": ""
+        "setEmailInput": "Մուտքագրեք էլ.հասցե"
     },
     "videothumbnail": {
         "editnickname": "Սեղմեք Ձեր անունը <br/>փոխելու համար",
@@ -154,13 +180,15 @@
         "kick": "Դուրս հանել",
         "muted": "Ձայնը անջատված է",
         "domute": "Անջատել ձայնը",
-        "flip": "Շրջել"
+        "flip": "Շրջել",
+        "remoteControl": "հեռահար կառավարում"
     },
     "connectionindicator": {
-        "header": "",
+        "header": "Կապի տվյալներ",
         "bitrate": "Բիթրեյթ",
         "packetloss": "Փաթեթների կորուստ՝",
         "resolution": "Որակ՝",
+        "framerate": "",
         "less": "Ցույց տալ ավելի քիչ",
         "more": "Ցույց տալ ավելի շատ",
         "address": "Հասցե՝",
@@ -170,7 +198,8 @@
         "remoteaddress": "Հեռակա հասցե՝Հեռակա հասցեներ՝",
         "transport": "Տրանսպորտ՝",
         "bandwidth": "Մոտավոր թողունակություն՝",
-        "na": "Միացման տվյալները հասանելի կլինեն այստեղ կոնֆերանսի մեկնարկից հետո:"
+        "na": "Միացման տվյալները հասանելի կլինեն այստեղ կոնֆերանսի մեկնարկից հետո:",
+        "turn": ""
     },
     "notify": {
         "disconnected": "անջատված է",
@@ -181,27 +210,26 @@
         "focus": "Կոնֆերանսի կենտրոնացումը",
         "focusFail": "__component__ հասանելի չէ - փորձեք կրկին __ms__ վայրկյանից",
         "grantedTo": "Կարգավորիչի իրավունքները տրամադրված է  __to__-ին",
-        "grantedToUnknown": "Կարգավորիչի իրավունքները տրամադրված է $t(somebody)! -ին",
+        "grantedToUnknown": "",
         "muted": "Դուք խոսակցությունը սկսեցիք անջատած ձայնով:",
         "mutedTitle": "Ձեր ձայնը անջատվա'ծ է",
         "raisedHand": "Ցանկանում է խոսել"
     },
     "dialog": {
-        "add": "",
+        "add": "Ավելացնել",
+        "allow": "",
         "kickMessage": "Վա՜յ: Ձեզ դուրս հանեցին հանդիպումից:",
         "popupError": "Ձեր բրաուզերը արգելափակել է թռուցիկ(popup) պատուհանները այս կայքում: Խնդրում ենք միացրեք թռուցիկները Ձեր բրաուզերի անվտանգության կարգավորումներում և կրկին փորձեք:",
-        "passwordErrorTitle": "",
+        "passwordErrorTitle": "Գաղտնաբառի սխալ",
         "passwordError": "Այս խոսակցությունը այս պահին պաշտպանված է գաղտնաբառով:Միայն կոնֆերանսի սեփականատերը կարող է սահմանել գաղտնաբառ:",
         "passwordError2": "Այս խոսակցությունը այս պահին պաշտպանված չէ գաղտնաբառով:Միայն կոնֆերանսի սեփականատերը կարող է սահմանել գաղտնաբառ:",
         "connectError": "Ու՜պս! Ինչոր բան այն չէ և մենք չկարողացանք միանալ կոնֆերանսին:",
         "connectErrorWithMsg": "Ու՜պս! Ինչոր բան այն չէ և մենք չկարողացանք միանալ կոնֆերանսին: __msg__",
-        "incorrectPassword": "",
+        "incorrectPassword": "Գաղտնաբառը սխալ է",
         "connecting": "Միանում է...",
         "copy": "Պատճենել",
         "error": "Սխալ",
-        "roomLocked": "",
-        "addPassword": "",
-        "createPassword": "",
+        "createPassword": "Ստեղծել գաղտնաբառ։",
         "detectext": "Սխալ, երբ փորձում է հայտնաբերել էկրանի ցուցադրման ընդլայնումը:",
         "failtoinstall": "Չհաջողվեց տեղադրել էկրանի ցուցադրման ընդլայնումը",
         "failedpermissions": "Չհաջողվեց ստանալ թույլտվություն օգտագործելու տեղի խոսափողը և/ կամ տեսախցիկը:",
@@ -209,8 +237,7 @@
         "conferenceReloadMsg": "",
         "conferenceDisconnectTitle": "",
         "conferenceDisconnectMsg": "",
-        "reconnectNow": "",
-        "conferenceReloadTimeLeft": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "Մասնակիցների առավելագույն թիվը արդեն լրացել է: Մասնակիցները արդեն հավաքվել են: Խնդրում ենք փորձեք ավելի ուշ:",
         "lockTitle": "Փակումը ձախողվեց",
         "lockMessage": "Ձախողվեց արգելափակել կոնֆերանսը:",
@@ -221,15 +248,15 @@
         "unableToSwitch": "Անհնար է անցնել վիդեո հոսքին:",
         "SLDFailure": "Ու՜պս: Ինչ-որ բան գնաց սխալ, և մենք չկարողացանք անջատել ձայնը (SLD Failure)",
         "SRDFailure": "Ու՜պս: Ինչ-որ բան գնաց սխալ, և մենք չկարողացանք անջատել տեսահոսքը (SRD Failure)",
-        "oops": "Ու՜պս:",
-        "currentPassword": "",
-        "passwordLabel": "",
+        "oops": "Գաղտնաբառ",
+        "currentPassword": "Վերջին գաղտնաբառն է",
+        "passwordLabel": "Գաղտնաբառ",
         "defaultError": "Առկա էր որոշակի սխալ",
         "passwordRequired": "Պահանջվում է գաղտնաբառ",
         "Ok": "Ok",
-        "done": "",
+        "done": "Կատարված է",
         "Remove": "Հեռացնել",
-        "removePassword": "",
+        "removePassword": "Ջնջել գաղտնաբառը",
         "shareVideoTitle": "Տարածել տեսանյութը",
         "shareVideoLinkError": "Խնդրում ենք ներկայացնել ճիշտ Youtube հղում:",
         "removeSharedVideoTitle": "Հեռացնել տարածված տեսանյութը",
@@ -239,7 +266,7 @@
         "WaitForHostMsg": "Կոնֆերանսը <b> __ root__ </ b> դեռ չի սկսվել. Եթե դուք են հյուրընկալող եք ապա խնդրում ենք հաստատել իսկությունը: Հակառակ դեպքում, խնդրում ենք սպասել հյուրընկալող կժամանի.",
         "IamHost": "Ես եմ ընդունողը",
         "Cancel": "Չեղարկել",
-        "Submit": "",
+        "Submit": "Ներմուծել",
         "retry": "Կրկին փորձել",
         "logoutTitle": "Ելք",
         "logoutQuestion": "Համոզված եք, որ ցանկանում եք դուրս գալ, եւ դադարեցնել կոնֆերանսը:",
@@ -250,11 +277,9 @@
         "Save": "Պահպանել",
         "recording": "Գրանցում",
         "recordingToken": "Մուտքագրեք ձայնագրման կոդանշանը",
-        "Dial": "Զանգ",
-        "sipMsg": "Նշեք SIP համարը",
         "passwordCheck": "Դուք վստա՞հ էք որ ցանկանում էք ջնջել Ձեր գաղտնաբառը։",
         "passwordMsg": "Սահմանել գաղտնաբառ ձեր սենյակը կողպելու համար",
-        "shareLink": "",
+        "shareLink": "Տարածեք URL -ը որպեսզի զանգեք",
         "settings1": "Կարգավորել Ձեր կոնֆերանսը",
         "settings2": "Մասնակիցները միացան  անջատվախ ձայնով",
         "settings3": "Պահանջվում է մականունը<br/><br/>Դրեք գաղտնաբառ Ձեր սենյակը արգելափակելու համար",
@@ -270,11 +295,10 @@
         "token": "սիմվոլ",
         "tokenAuthFailedTitle": "Վավերացումը չի ստացվել",
         "tokenAuthFailed": "Ներողություն,Դուք ընդունված չեք այս զանգին միանալու համար",
-        "displayNameRequired": "",
+        "displayNameRequired": "Ցուցադրվող անունը պարտադիր է",
         "enterDisplayName": "Խնդրում ենք մուտքագրել Ձեր ցուցադրման անունը",
         "extensionRequired": "Ընդլայնում է պահանջվում:",
         "firefoxExtensionPrompt": "Դուք պետք է տեղադրեք Firefox ընդլայնում, որպեսզի օգտագործել էկրանի փոխանակման ռեժիմը: Խնդրում ենք փորձեք կրկին՝ այն <a href='__url__'> այստեղից ձեռք բերելուց հետո</a>:",
-        "rateExperience": "Խնդրում ենք ներկայացրեք Ձեր հանդիպման փորձը",
         "feedbackHelp": "Ձեր կարծիքը կօգնի մեզ բարելավել ձեր տեսափորձը",
         "feedbackQuestion": "Պատմեք մեզ Ձեր զանգի մասին",
         "thankYou": "Շնորհակալություն __appName__ -ից օգտվելու համար:",
@@ -287,7 +311,7 @@
         "stopLiveStreaming": "Կանգնացնել ուղիղ հեռարձակումը:",
         "stopRecording": "Կանգնացնել ձայնագրումը",
         "doNotShowWarningAgain": "Այլևս ցույց չտալ այս նախազգուշական էջը",
-        "doNotShowMessageAgain": "",
+        "doNotShowMessageAgain": "Այլևս ցույց չտալ այս հաղորդագրությունը",
         "permissionDenied": "Թույլատվությունը արգելված է",
         "screenSharingPermissionDeniedError": "Դուք չունեք թույլտվություն կիսվել Ձեր էկրանով",
         "micErrorPresent": "Տեղի է ունեցել սխալ Ձեր խոսափողին միանալիս",
@@ -296,19 +320,33 @@
         "cameraUnknownError": "Չի կարող օգտագործվել տեսախցիկը անհայտ պատճառով",
         "cameraPermissionDeniedError": "Ձեզ թույլտվրված չէ օգտագործել Ձեր տեսախցիկը: Դուք կարող եք միացած մնալ համաժողովին, սակայն մյուսները չեն տեսնի ձեզ. Օգտագործեք տեսախցիկի կոճակը խնդիրը կարգավորելու համար",
         "cameraNotFoundError": "Տեսախցիկ չի գտնվել",
-        "cameraConstraintFailedError": "Ձեր տեսախցիկը չի համապատասխանում որոշ խոչընդոտների",
+        "cameraConstraintFailedError": "",
         "micUnknownError": "Չի կարող օգտագործվել տեսախցիկը անհայտ պատճառով",
         "micPermissionDeniedError": "Ձեզ թույլտվրված չէ օգտագործել Ձեր խոսափողը: Դուք կարող եք միացած մնալ համաժողովին, սակայն մյուսները չեն լսի ձեզ. Օգտագործեք խոսափողի կոճակը խնդիրը կարգավորելու համար",
         "micNotFoundError": "Խոսափող չի գտնվել",
-        "micConstraintFailedError": "Ձեր խոսափողը չի բավարարել պահանջվող խոչընդոտներից մի քանիսը ",
+        "micConstraintFailedError": "",
         "micNotSendingData": "Մենք չեն կարողանում միանալ Ձեր խոսափողին: Խնդրում ենք ընտրել մեկ այլ սարք կարգավորումների ցանկից կամ փորձեք վերսկսել ծրագիրը",
         "cameraNotSendingData": "Մենք չեն կարողանում միանալ Ձեր տեսախցիկին: Խնդրում ենք ստուգեք թե արդյոք մեկ ուրիշ սարք չի օգտագործում այն կամ ընտրեք մեկ այլ սարք կարգավորումների ցանկից կամ փորձեք վերսկսել ծրագիրը:",
         "goToStore": "Գնալ դեպի վեբ խանութ",
         "externalInstallationTitle": "Ընդլայնում է պահանջվում:",
         "externalInstallationMsg": "Չհաջողվեց տեղադրել էկրանի ցուցադրման ընդլայնումը",
-        "muteParticipantTitle": "",
-        "muteParticipantBody": "",
-        "muteParticipantButton": "Անջատել ձայնը"
+        "inlineInstallationMsg": "Չհաջողվեց տեղադրել էկրանի ցուցադրման ընդլայնումը",
+        "inlineInstallExtension": "",
+        "muteParticipantTitle": "Անջատե՞լ այս մասնակցի ձայնը:",
+        "muteParticipantBody": "Դուք չեք կարող անջատել նրանց ձայնը, բայց նրանք կարող են անջատել իրենց ձայնը ամեն ժամանակ:",
+        "muteParticipantButton": "Անջատել ձայնը",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "__user__ մերժել է Ձեր հեռահար կառավարման հրավերը",
+        "remoteControlAllowedMessage": "__user__ ընդունել է Ձեր հեռահար կառավարման հրավերը",
+        "remoteControlErrorMessage": "Որոշակի սխալ է տեղի ունեցել հեռահար կառավարման հրավերը ընդունելու ժամանակ __user__ -ից",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "հեռահար կառավարման ընթացքը ավարտվեց",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
     "email": {
         "sharedKey": [
@@ -351,7 +389,7 @@
         "on": "Գրանցում",
         "off": "Ձայնագրությունը կանգնացված է",
         "failedToStart": "Ձայնագրությունը ստացվեց սկսել",
-        "buttonTooltip": "",
+        "buttonTooltip": "Սկսել / կանգնացնել ձայնագրությունը",
         "error": "Ձայնագրությյունը չստացվեց: Փորձեք կրկին",
         "unavailable": "Ձայնագրության ծառայությունը ներկայումս անհասանելի է: Խնդրում եմ փորձեք մի փոքր ուշ:"
     },
@@ -361,9 +399,75 @@
         "off": "Ուղիղ Հեռարձակումը կանգնեցված է",
         "unavailable": "Ուղիղ հեռարձակման ծառայությունը ներկայումս հասանելի չէ: Խնդրում եք փորձեք ավելի ուշ:",
         "failedToStart": "Ուղիղ հեռարձակումը չստացվեց սկսել",
-        "buttonTooltip": "",
+        "buttonTooltip": "Սկսել / կանգնեցնել ուղիղ հեռարձակումը",
         "streamIdRequired": "Խնդրում ենք լրացնել հոսքի ID-ն, որպեսզի կսկսի հեռարձակումը:",
+        "streamIdHelp": "Ո՞րտեղից կարող եմ գտնել սա:",
         "error": "Ուղիղ հեռարձակումը չստացվեց: Փորձեք կրկին",
         "busy": "Բոլոր ձայնագրիչները ներկայումս զբաղված են: Խնդրում ենք փորձեք մի փոքր ուշ:"
+    },
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Անուն",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Զանգ",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "Ավելացնել",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }
