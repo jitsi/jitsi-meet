@@ -1,181 +1,18 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
-import { setFilmstripVisibility } from '../../../react/features/filmstrip';
-
-import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
 
 const Filmstrip = {
     /**
-     *
-     * @param eventEmitter the {EventEmitter} through which {Filmstrip} is to
-     * emit/fire {UIEvents} (such as {UIEvents.TOGGLED_FILMSTRIP}).
+     * Sets instances variables for access by the {@code Filmstrip} singleton's
+     * methods.
      */
-    init (eventEmitter) {
+    init () {
         this.iconMenuDownClassName = 'icon-menu-down';
         this.iconMenuUpClassName = 'icon-menu-up';
         this.filmstripContainerClassName = 'filmstrip';
         this.filmstrip = $('#remoteVideos');
         this.filmstripRemoteVideos = $('#filmstripRemoteVideosContainer');
-        this.eventEmitter = eventEmitter;
-
-        // Show the toggle button and add event listeners only when out of
-        // filmstrip only mode.
-        if (!interfaceConfig.filmStripOnly) {
-            this._initFilmstripToolbar();
-            this.registerListeners();
-        }
-    },
-
-    /**
-     * Initializes the filmstrip toolbar.
-     */
-    _initFilmstripToolbar() {
-        let toolbarContainerHTML = this._generateToolbarHTML();
-        let className = this.filmstripContainerClassName;
-        let container = document.querySelector(`.${className}`);
-
-        UIUtil.prependChild(container, toolbarContainerHTML);
-
-        let iconSelector = '#toggleFilmstripButton i';
-        this.toggleFilmstripIcon = document.querySelector(iconSelector);
-    },
-
-    /**
-     * Generates HTML layout for filmstrip toggle button and wrapping container.
-     * @returns {HTMLElement}
-     * @private
-     */
-    _generateToolbarHTML() {
-        let container = document.createElement('div');
-        let isVisible = this.isFilmstripVisible();
-        container.className = 'filmstrip__toolbar';
-        container.innerHTML = `
-            <button id="toggleFilmstripButton">
-                <i class="icon-menu-${isVisible ? 'down' : 'up'}">
-                </i>
-            </button>
-        `;
-
-        return container;
-    },
-
-    /**
-     * Attach 'click' listener to "hide filmstrip" button
-     */
-    registerListeners() {
-        // Important:
-        // Firing the event instead of executing toggleFilmstrip method because
-        // it's important to hide the filmstrip by UI.toggleFilmstrip in order
-        // to correctly resize the video area.
-        $('#toggleFilmstripButton').on('click',
-            () => this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP));
-
-        this._registerToggleFilmstripShortcut();
-    },
-
-    /**
-     * Registering toggle filmstrip shortcut
-     * @private
-     */
-    _registerToggleFilmstripShortcut() {
-        let shortcut = 'F';
-        let shortcutAttr = 'filmstripPopover';
-        let description = 'keyboardShortcuts.toggleFilmstrip';
-        // Important:
-        // Firing the event instead of executing toggleFilmstrip method because
-        // it's important to hide the filmstrip by UI.toggleFilmstrip in order
-        // to correctly resize the video area.
-        let handler = () => this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
-
-        APP.keyboardshortcut.registerShortcut(
-            shortcut,
-            shortcutAttr,
-            handler,
-            description
-        );
-    },
-
-    /**
-     * Changes classes of icon for showing down state
-     */
-    showMenuDownIcon() {
-        let icon = this.toggleFilmstripIcon;
-        if(icon) {
-            icon.classList.add(this.iconMenuDownClassName);
-            icon.classList.remove(this.iconMenuUpClassName);
-        }
-    },
-
-    /**
-     * Changes classes of icon for showing up state
-     */
-    showMenuUpIcon() {
-        let icon = this.toggleFilmstripIcon;
-        if(icon) {
-            icon.classList.add(this.iconMenuUpClassName);
-            icon.classList.remove(this.iconMenuDownClassName);
-        }
-    },
-
-    /**
-     * Toggles the visibility of the filmstrip.
-     *
-     * @param visible optional {Boolean} which specifies the desired visibility
-     * of the filmstrip. If not specified, the visibility will be flipped
-     * (i.e. toggled); otherwise, the visibility will be set to the specified
-     * value.
-     * @param {Boolean} sendAnalytics - True to send an analytics event. The
-     * default value is true.
-     *
-     * Note:
-     * This method shouldn't be executed directly to hide the filmstrip.
-     * It's important to hide the filmstrip with UI.toggleFilmstrip in order
-     * to correctly resize the video area.
-     */
-    toggleFilmstrip(visible, sendAnalytics = true) {
-        const isVisibleDefined = typeof visible === 'boolean';
-        if (!isVisibleDefined) {
-            visible = this.isFilmstripVisible();
-        } else if (this.isFilmstripVisible() === visible) {
-            return;
-        }
-        if (sendAnalytics) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
-        }
-        this.filmstrip.toggleClass("hidden");
-
-        if (visible) {
-            this.showMenuUpIcon();
-        } else {
-            this.showMenuDownIcon();
-        }
-
-        // Emit/fire UIEvents.TOGGLED_FILMSTRIP.
-        const eventEmitter = this.eventEmitter;
-        const isFilmstripVisible = this.isFilmstripVisible();
-
-        if (eventEmitter) {
-            eventEmitter.emit(
-                UIEvents.TOGGLED_FILMSTRIP,
-                this.isFilmstripVisible());
-        }
-        APP.store.dispatch(setFilmstripVisibility(isFilmstripVisible));
-    },
-
-    /**
-     * Shows if filmstrip is visible
-     * @returns {boolean}
-     */
-    isFilmstripVisible() {
-        return !this.filmstrip.hasClass('hidden');
-    },
-
-    /**
-     * Adjusts styles for filmstrip-only mode.
-     */
-    setFilmstripOnly() {
-        this.filmstrip.addClass('filmstrip__videos-filmstripOnly');
     },
 
     /**
@@ -183,10 +20,12 @@ const Filmstrip = {
      * @returns {number} height
      */
     getFilmstripHeight() {
+        const { visible } = APP.store.getState()['features/filmstrip'];
+
         // FIXME Make it more clear the getFilmstripHeight check is used in
         // horizontal film strip mode for calculating how tall large video
         // display should be.
-        if (this.isFilmstripVisible() && !interfaceConfig.VERTICAL_FILMSTRIP) {
+        if (visible && !interfaceConfig.VERTICAL_FILMSTRIP) {
             return $(`.${this.filmstripContainerClassName}`).outerHeight();
         } else {
             return 0;

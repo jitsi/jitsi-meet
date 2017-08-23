@@ -3,9 +3,9 @@
 import { MiddlewareRegistry } from '../base/redux';
 import { SET_CALL_OVERLAY_VISIBLE } from '../jwt';
 
-import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import UIEvents from '../../../service/UI/UIEvents';
 
+import { setFilmstripVisibility } from './actions';
 import {
     SET_FILMSTRIP_REMOTE_VIDEOS_VISIBLITY,
     SET_FILMSTRIP_VISIBILITY
@@ -13,26 +13,14 @@ import {
 
 declare var APP: Object;
 
-// eslint-disable-next-line no-unused-vars
-MiddlewareRegistry.register(({ getState }) => next => action => {
+MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_CALL_OVERLAY_VISIBLE:
         if (typeof APP !== 'undefined') {
-            const oldValue
-                = Boolean(getState()['features/jwt'].callOverlayVisible);
             const result = next(action);
-            const newValue
-                = Boolean(getState()['features/jwt'].callOverlayVisible);
+            const { callOverlayVisible } = store.getState()['features/jwt'];
 
-            oldValue === newValue
-
-                // FIXME The following accesses the private state filmstrip of
-                // Filmstrip. It is written with the understanding that
-                // Filmstrip will be rewritten in React and, consequently, will
-                // not need the middleware implemented here, Filmstrip.init, and
-                // UI.start.
-                || (Filmstrip.filmstrip
-                    && Filmstrip.toggleFilmstrip(!newValue, false));
+            store.dispatch(setFilmstripVisibility(!callOverlayVisible));
 
             return result;
         }

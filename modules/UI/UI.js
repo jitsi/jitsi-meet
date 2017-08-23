@@ -27,6 +27,7 @@ import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
+import { setFilmstripVisibility } from '../../react/features/filmstrip';
 import {
     checkAutoEnableDesktopSharing,
     clearButtonPopup,
@@ -244,7 +245,7 @@ UI.mucJoined = function () {
 /***
  * Handler for toggling filmstrip
  */
-UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
+UI.handleToggleFilmstrip = () => VideoLayout.resizeVideoArea(true, false);
 
 /**
  * Returns the shared document manager object.
@@ -295,7 +296,6 @@ UI.start = function () {
     } else {
         $("body").addClass("filmstrip-only");
         UI.showToolbar();
-        Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
     }
 
@@ -553,16 +553,11 @@ UI.toggleSmileys = () => Chat.toggleSmileys();
  * Toggles filmstrip.
  */
 UI.toggleFilmstrip = function () {
-    var self = Filmstrip;
-    self.toggleFilmstrip.apply(self, arguments);
-    VideoLayout.resizeVideoArea(true, false);
-};
+    const { visible } = APP.store.getState()['features/filmstrip'];
 
-/**
- * Indicates if the filmstrip is currently visible or not.
- * @returns {true} if the filmstrip is currently visible, otherwise
- */
-UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
+    APP.store.dispatch(setFilmstripVisibility(!visible));
+    UI.handleToggleFilmstrip();
+};
 
 /**
  * Toggles chat panel.
@@ -1263,7 +1258,7 @@ const UIListeners = new Map([
             isGuest && UI.toggleSidePanel('profile_container');
         }
     ], [
-        UIEvents.TOGGLE_FILMSTRIP,
+        UIEvents.TOGGLED_FILMSTRIP,
         UI.handleToggleFilmstrip
     ], [
         UIEvents.FOLLOW_ME_ENABLED,
