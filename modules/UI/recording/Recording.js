@@ -38,8 +38,13 @@ const Status = JitsiMeetJS.constants.recordingStatus;
  * @type {Object}
  */
 export const RECORDING_TRANSLATION_KEYS = {
+    failedToStartKey: 'recording.failedToStart',
     recordingBusy: 'liveStreaming.busy',
     recordingButtonTooltip: 'recording.buttonTooltip',
+    recordingErrorKey: 'recording.error',
+    recordingOffKey: 'recording.off',
+    recordingOnKey: 'recording.on',
+    recordingPendingKey: 'recording.pending',
     recordingTitle: 'dialog.recording',
     recordingUnavailable: 'recording.unavailable'
 };
@@ -52,8 +57,13 @@ export const RECORDING_TRANSLATION_KEYS = {
  * @type {Object}
  */
 export const STREAMING_TRANSLATION_KEYS = {
+    failedToStartKey: 'liveStreaming.failedToStart',
     recordingBusy: 'liveStreaming.busy',
     recordingButtonTooltip: 'liveStreaming.buttonTooltip',
+    recordingErrorKey: 'liveStreaming.error',
+    recordingOffKey: 'liveStreaming.off',
+    recordingOnKey: 'liveStreaming.on',
+    recordingPendingKey: 'liveStreaming.pending',
     recordingTitle: 'dialog.liveStreaming',
     recordingUnavailable: 'liveStreaming.unavailable'
 };
@@ -330,35 +340,83 @@ var Recording = {
         let oldState = this.currentState;
         this.currentState = recordingState;
 
-        // TODO: handle recording state=available
-        if (recordingState === Status.ON ||
-            recordingState === Status.RETRYING) {
+        let labelDisplayConfiguration;
+
+        switch (recordingState) {
+        case Status.ON:
+        case Status.RETRYING: {
+            labelDisplayConfiguration = {
+                centered: false,
+                key: this.recordingOnKey,
+                showSpinner: recordingState === Status.RETRYING
+            };
 
             this._setToolbarButtonToggled(true);
-        }
-        else if (recordingState === Status.OFF
-                || recordingState === Status.UNAVAILABLE
-                || recordingState === Status.BUSY
-                || recordingState === Status.FAILED) {
 
-            // We don't want to do any changes if this is
-            // an availability change.
-            if (oldState !== Status.ON
-                && !isStartingStatus(oldState))
+            break;
+        }
+
+        case Status.OFF:
+        case Status.BUSY:
+        case Status.FAILED:
+        case Status.UNAVAILABLE: {
+            const wasInStartingStatus = isStartingStatus(oldState);
+
+            // We don't want UI changes if this is an availability change.
+            if (oldState !== Status.ON && !wasInStartingStatus) {
+                APP.store.dispatch(updateRecordingState({ recordingState }));
                 return;
+            }
+
+            labelDisplayConfiguration = {
+                centered: true,
+                key: wasInStartingStatus
+                    ? this.failedToStartKey
+                    : this.recordingOffKey
+            };
 
             this._setToolbarButtonToggled(false);
 
             setTimeout(function(){
                 APP.store.dispatch(hideRecordingLabel());
             }, 5000);
-        }
-        else if (recordingState === Status.PENDING
-            || recordingState === Status.ERROR) {
-            this._setToolbarButtonToggled(false);
+
+            break;
         }
 
-        APP.store.dispatch(updateRecordingState(recordingState));
+        case Status.PENDING: {
+            labelDisplayConfiguration = {
+                centered: true,
+                key: this.recordingPendingKey
+            };
+
+            this._setToolbarButtonToggled(false);
+
+            break;
+        }
+
+        case Status.ERROR: {
+            labelDisplayConfiguration = {
+                centered: true,
+                key: this.recordingErrorKey
+            };
+
+            this._setToolbarButtonToggled(false);
+
+            break;
+        }
+
+        // Return an empty label display configuration to indicate no label
+        // should be displayed. The Status.AVAIABLE case is handled here.
+        default: {
+            labelDisplayConfiguration = null;
+        }
+        }
+
+        APP.store.dispatch(updateRecordingState({
+            labelDisplayConfiguration,
+            recordingState
+        }));
     },
 
     // checks whether recording is enabled and whether we have params

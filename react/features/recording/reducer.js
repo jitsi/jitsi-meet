@@ -9,14 +9,13 @@ ReducerRegistry.register('features/recording', (state = {}, action) => {
     case HIDE_RECORDING_LABEL:
         return {
             ...state,
-            displayRecordingLabel: false
+            labelDisplayConfiguration: null
         };
 
     case RECORDING_STATE_UPDATED:
         return {
             ...state,
-            displayRecordingLabel: true,
-            recordingState: action.recordingState
+            ...action.recordingState
         };
 
     default:

@@ -14,15 +14,16 @@ export function hideRecordingLabel() {
 }
 
 /**
- * Updates the redux store about the current state of the recording feature.
+ * Updates the redux state for the recording feature.
  *
- * @param {string} recordingState - The current state of the recording feature.
+ * @param {Object} recordingState - The new state to merge with the existing
+ * state in redux.
  * @returns {{
  *     type: RECORDING_STATE_UPDATED,
- *     recordingState: string
+ *     recordingState: Object
  * }}
  */
-export function updateRecordingState(recordingState) {
+export function updateRecordingState(recordingState = {}) {
     return {
         type: RECORDING_STATE_UPDATED,
         recordingState
