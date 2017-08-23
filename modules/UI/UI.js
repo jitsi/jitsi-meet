@@ -536,6 +536,10 @@ UI.updateUserRole = user => {
  * @param {string} status - The new status.
  */
 UI.updateUserStatus = (user, status) => {
+    if (!status) {
+        return;
+    }
+
     let displayName = user.getDisplayName();
     messageHandler.participantNotification(
         displayName, '', 'connected', "dialOut.statusMessage",
