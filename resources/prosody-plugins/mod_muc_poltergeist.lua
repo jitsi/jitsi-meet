@@ -181,6 +181,9 @@ prosody.events.add_handler("pre-jitsi-authentication", function(session)
         -- we will mark it with ignore tag
         local nick = string.sub(username, 0, 8);
         if (have_poltergeist_occupant(room, nick)) then
+            -- notify that user connected using the poltergeist
+            update_poltergeist_occupant_status(
+                room, nick, "connected");
             remove_poltergeist_occupant(room, nick, true);
         end
 
