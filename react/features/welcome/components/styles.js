@@ -11,9 +11,21 @@ import {
 const TEXT_COLOR = ColorPalette.white;
 
 /**
- * The styles of WelcomePage.
+ * The styles of the React <tt>Components</tt> of the feature welcome including
+ * <tt>WelcomePage</tt> and <tt>BlankPage</tt>.
  */
 export default createStyleSheet({
+    /**
+     * The style of <tt>BlankPage</tt>.
+     */
+    blankPage: {
+        alignItems: 'center',
+        backgroundColor: 'transparent',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+
     /**
      * Join button style.
      */
