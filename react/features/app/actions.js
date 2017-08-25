@@ -168,6 +168,14 @@ export function appWillUnmount(app) {
  * @returns {Promise<Object>}
  */
 function _loadConfig({ contextRoot, host, protocol, room }) {
+    // XXX As the mobile/React Native app does not employ config on the
+    // WelcomePage, do not download config.js from the deployment when
+    // navigating to the WelcomePage - the perceived/visible navigation will be
+    // faster.
+    if (!room && typeof APP === 'undefined') {
+        return Promise.resolve();
+    }
+
     /* eslint-disable no-param-reassign */
 
     protocol = protocol.toLowerCase();

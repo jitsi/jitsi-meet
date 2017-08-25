@@ -14,7 +14,7 @@ import { SET_CONFIG } from './actionTypes';
  *     config: Object
  * }}
  */
-export function setConfig(config: Object) {
+export function setConfig(config: Object = {}) {
     return {
         type: SET_CONFIG,
         config
