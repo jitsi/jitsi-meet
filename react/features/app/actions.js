@@ -37,11 +37,6 @@ export function appNavigate(uri: ?string) {
 function _appNavigateToMandatoryLocation(
         dispatch: Dispatch<*>, getState: Function,
         newLocation: Object) {
-    // TODO Kostiantyn Tsaregradskyi: We should probably detect if user is
-    // currently in a conference and ask her if she wants to close the
-    // current conference and start a new one with the new room name or
-    // domain.
-
     const oldLocationURL = getState()['features/base/connection'].locationURL;
     const oldHost = oldLocationURL ? oldLocationURL.host : undefined;
     const newHost = newLocation.host;
