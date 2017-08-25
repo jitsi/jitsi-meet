@@ -5,6 +5,10 @@ import { connect } from 'react-redux';
 
 import { Toolbox } from '../../toolbox';
 
+import { setFilmstripVisibility } from '../actions';
+
+declare var APP: Object;
+
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
@@ -12,6 +16,13 @@ import { Toolbox } from '../../toolbox';
  * @extends Component
  */
 class Filmstrip extends Component {
+    _onToggleFilmstripVisibility: Function;
+
+    /**
+     * {@code Filmstrip} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         /**
          * Whether or not the remote videos should be visible. Will toggle
@@ -20,10 +31,54 @@ class Filmstrip extends Component {
         _remoteVideosVisible: React.PropTypes.bool,
 
         /**
-         * Whether or not the toolbox should be displayed within the filmstrip.
+         * Whether or not the filmstrip is currently set to be visible.
          */
-        displayToolbox: React.PropTypes.bool
+        _visible: React.PropTypes.bool,
+
+        /**
+         * Invoked to notify the store of filmstrip visibility changes.
+         */
+        dispatch: React.PropTypes.func,
+
+        /**
+         * Whether or not the app is in filmstrip only mode. If true, the
+         * toolbox will also be displayed. If false, a visibility toggle will
+         * display.
+         */
+        filmstripOnly: React.PropTypes.bool
     };
+
+    /**
+     * Initializes a new {@code Filmstrip} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        this._onToggleFilmstripVisibility
+            = this._onToggleFilmstripVisibility.bind(this);
+    }
+
+    /**
+     * Sets a keyboard shortcut for toggling filmstrip visibility if not in
+     * filmstrip only mode, which should have no visibility toggling
+     * functionality.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        if (!this.props.filmstripOnly) {
+            APP.keyboardshortcut.registerShortcut(
+                'F',
+                'filmstripPopover',
+                this._onToggleFilmstripVisibility,
+                'keyboardShortcuts.toggleFilmstrip'
+            );
+        }
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -41,14 +96,18 @@ class Filmstrip extends Component {
          * modified, then the views will get blown away.
          */
 
-        const filmstripClassNames = `filmstrip ${this.props._remoteVideosVisible
-            ? '' : 'hide-videos'}`;
+        const { _remoteVideosVisible, _visible, filmstripOnly } = this.props;
+        const filmstripClassNames = `filmstrip${_remoteVideosVisible ? ''
+            : ' hide-videos'}`;
+        const remoteVideosClassNames = `filmstrip__videos${_visible ? ''
+            : ' hidden'}${filmstripOnly ? ' filmstrip__videos-filmstripOnly'
+            : ''}`;
 
         return (
             <div className = { filmstripClassNames }>
-                { this.props.displayToolbox ? <Toolbox /> : null }
+                { filmstripOnly ? <Toolbox /> : this._renderToggle() }
                 <div
-                    className = 'filmstrip__videos'
+                    className = { remoteVideosClassNames }
                     id = 'remoteVideos'>
                     <div
                         className = 'filmstrip__videos'
@@ -77,6 +136,39 @@ class Filmstrip extends Component {
             </div>
         );
     }
+
+    /**
+     * Dispatches an action to change the visibility of the filmstrip.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToggleFilmstripVisibility() {
+        const { _visible, dispatch } = this.props;
+
+        dispatch(setFilmstripVisibility(!_visible));
+    }
+
+    /**
+     * Creates a React Element for changing the visibility of the filmstrip when
+     * clicked.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderToggle() {
+        const iconDirection = this.props._visible ? 'down' : 'up';
+
+        return (
+            <div className = 'filmstrip__toolbar'>
+                <button
+                    id = 'toggleFilmstripButton'
+                    onClick = { this._onToggleFilmstripVisibility }>
+                    <i className = { `icon-menu-${iconDirection}` } />
+                </button>
+            </div>
+        );
+    }
 }
 
 /**
@@ -85,15 +177,17 @@ class Filmstrip extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _remoteVideosVisible: boolean
+ *     _remoteVideosVisible: boolean,
+ *     _visible: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const { remoteVideosVisible } = state['features/filmstrip'];
+    const { remoteVideosVisible, visible } = state['features/filmstrip'];
     const { disable1On1Mode } = state['features/base/config'];
 
     return {
-        _remoteVideosVisible: Boolean(remoteVideosVisible || disable1On1Mode)
+        _remoteVideosVisible: Boolean(remoteVideosVisible || disable1On1Mode),
+        _visible: visible
     };
 }
 

@@ -1,3 +1,4 @@
+/* global APP */
 /*
  * Copyright @ 2015 Atlassian Pty Ltd
  *
@@ -14,6 +15,8 @@
  * limitations under the License.
  */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
+
+import { setFilmstripVisibility } from '../react/features/filmstrip';
 
 import UIEvents from '../service/UI/UIEvents';
 import VideoLayout from './UI/videolayout/VideoLayout';
@@ -143,7 +146,9 @@ class FollowMe {
      * @private
      */
     _setFollowMeInitialState() {
-        this._filmstripToggled.bind(this, this._UI.isFilmstripVisible());
+        const { visible } = APP.store.getState()['features/filmstrip'];
+
+        this._filmstripToggled.bind(this, visible);
 
         const pinnedId = VideoLayout.getPinnedId();
 
@@ -330,12 +335,7 @@ class FollowMe {
             // receipt.
             filmstripVisible = (filmstripVisible == 'true');
 
-            // FIXME The UI (module) very likely doesn't (want to) expose its
-            // eventEmitter as a public field. I'm not sure at the time of this
-            // writing whether calling UI.toggleFilmstrip() is acceptable (from
-            // a design standpoint) either.
-            if (filmstripVisible !== this._UI.isFilmstripVisible())
-                this._UI.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+            APP.store.dispatch(setFilmstripVisibility(filmstripVisible));
         }
     }
 

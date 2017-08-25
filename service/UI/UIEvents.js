@@ -45,18 +45,7 @@ export default {
      * Notifies that the profile toolbar button has been clicked.
      */
     TOGGLE_PROFILE: "UI.toggle_profile",
-    /**
-     * Notifies that a command to toggle the filmstrip has been issued. The
-     * event may optionally specify a {Boolean} (primitive) value to assign to
-     * the visibility of the filmstrip (i.e. the event may act as a setter).
-     * The very toggling of the filmstrip may or may not occurred at the time
-     * of the receipt of the event depending on the position of the receiving
-     * event listener in relation to the event listener which carries out the
-     * command to toggle the filmstrip.
-     *
-     * @see {TOGGLED_FILMSTRIP}
-     */
-    TOGGLE_FILMSTRIP: "UI.toggle_filmstrip",
+
     /**
      * Notifies that the filmstrip was (actually) toggled. The event supplies a
      * {Boolean} (primitive) value indicating the visibility of the filmstrip
