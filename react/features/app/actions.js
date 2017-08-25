@@ -30,32 +30,22 @@ export function appNavigate(uri: ?string) {
  * state.
  * @param {Object} newLocation - The location URI to navigate to. The value
  * cannot be undefined and is assumed to have all properties such as
- * {@code host} and {@code room} defined values.
+ * {@code host} and {@code room} defined. The values for these properties, may
+ * be undefined.
  * @private
  * @returns {void}
  */
 function _appNavigateToMandatoryLocation(
         dispatch: Dispatch<*>, getState: Function,
         newLocation: Object) {
-    const oldLocationURL = getState()['features/base/connection'].locationURL;
-    const oldHost = oldLocationURL ? oldLocationURL.host : undefined;
-    const newHost = newLocation.host;
-
-    if (oldHost === newHost) {
-        dispatchSetLocationURL()
-            .then(dispatchSetRoom);
-    } else {
-        // If the host has changed, we need to load the config of the new host
-        // and set it, and only after that we can navigate to a different route.
-        _loadConfig(newLocation)
-            .then(
-                config => configLoaded(/* err */ undefined, config),
-                err => configLoaded(err, /* config */ undefined))
-            .then(dispatchSetRoom);
-    }
+    _loadConfig(newLocation)
+        .then(
+            config => configLoaded(/* err */ undefined, config),
+            err => configLoaded(err, /* config */ undefined))
+        .then(dispatchSetRoom);
 
     /**
-     * Notifies that an attempt to load the config(uration) of domain has
+     * Notifies that an attempt to load the required configuration has
      * completed.
      *
      * @param {string|undefined} err - If the loading has failed, the error
@@ -189,6 +179,15 @@ export function appWillUnmount(app) {
  * @returns {Promise<Object>}
  */
 function _loadConfig(location: Object) {
+    // Here we 'fake' a configuration when the room is undefined. We cannot
+    // load a configuration from the server, but we need lib-jitsi-meet to be
+    // initialized in order to be able to create some local tracks for the
+    // welcome page.
+
+    if (typeof location.room === 'undefined') {
+        return Promise.resolve({});
+    }
+
     let protocol = location.protocol.toLowerCase();
 
     // The React Native app supports an app-specific scheme which is sure to not
@@ -199,5 +198,6 @@ function _loadConfig(location: Object) {
 
     return (
         loadConfig(
-            `${protocol}//${location.host}${location.contextRoot || '/'}`));
+            `${protocol}//${location.host}${location.contextRoot || '/'}`,
+            location.room));
 }
