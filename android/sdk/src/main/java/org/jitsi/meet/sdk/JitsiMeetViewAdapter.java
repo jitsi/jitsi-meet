@@ -57,4 +57,11 @@ public abstract class JitsiMeetViewAdapter implements JitsiMeetViewListener {
     @Override
     public void onConferenceWillLeave(Map<String, Object> data) {
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoadConfigError(Map<String, Object> data) {
+    }
 }

@@ -1,6 +1,6 @@
 import { setRoom } from '../base/conference';
 import { setLocationURL } from '../base/connection';
-import { setConfig } from '../base/config';
+import { loadConfigError, setConfig } from '../base/config';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { parseURIString } from '../base/util';
 
@@ -66,8 +66,12 @@ function _appNavigateToMandatoryLocation(
             // certificate-related error. In which case the connection will
             // fail later in Strophe anyway even if we use the default
             // config here.
+            dispatch(loadConfigError(error));
 
-            // The function loadConfig will log the err.
+            // We cannot go to the requested room if we weren't able to load
+            // the configuration. Go back to the entryway.
+            newLocation.room = undefined;
+
             return;
         }
 

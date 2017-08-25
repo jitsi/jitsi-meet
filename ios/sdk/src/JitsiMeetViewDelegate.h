@@ -59,4 +59,11 @@
  */
 - (void) conferenceWillLeave:(NSDictionary *)data;
 
+/**
+ * Called when loading the main configuration file fails.
+ *
+ * The {@code data} dictionary contains a {@code error} key with the error.
+ */
+- (void) loadConfigError:(NSDictionary *)data;
+
 @end

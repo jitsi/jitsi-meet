@@ -1,6 +1,22 @@
 /* @flow */
 
-import { SET_CONFIG } from './actionTypes';
+import { LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+
+/**
+ * Signals an error when loading the configuration.
+ *
+ * @param {Error} error - The error which caused the config to not be loaded.
+ * @returns {{
+ *      type: LOAD_CONFIG_ERROR,
+ *      error: Error
+ * }}
+ */
+export function loadConfigError(error: Error) {
+    return {
+        type: LOAD_CONFIG_ERROR,
+        error
+    };
+}
 
 /**
  * Sets the configuration represented by the feature base/config. The

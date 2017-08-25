@@ -150,3 +150,9 @@ The `data` dictionary contains a "url" key with the conference URL.
 Called before a conference is left.
 
 The `data` dictionary contains a "url" key with the conference URL.
+
+#### loadConfigError
+
+Called when loading the main configuration fails.
+
+The `data` dictionary contains a "error" key with the error.

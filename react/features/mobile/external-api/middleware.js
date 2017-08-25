@@ -10,6 +10,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     JITSI_CONFERENCE_URL_KEY
 } from '../../base/conference';
+import { LOAD_CONFIG_ERROR } from '../../base/config';
 import { MiddlewareRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 
@@ -43,6 +44,16 @@ MiddlewareRegistry.register(store => next => action => {
         const name = _getSymbolDescription(type);
 
         _sendEvent(store, name, data);
+        break;
+    }
+
+    case LOAD_CONFIG_ERROR: {
+        const { type, error } = action;
+
+        _sendEvent(
+            store,
+            _getSymbolDescription(type),
+            { error: String(error) });
         break;
     }
     }
