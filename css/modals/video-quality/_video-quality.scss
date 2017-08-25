@@ -154,12 +154,15 @@
     bottom: 45%;
     border-radius: 2px;
     display: none;
-    -webkit-transition: all 2s 2s linear;
-    transition: all 2s 2s linear;
+    padding: 10px;
+    transform: translate(-50%, 0);
     z-index: $centeredVideoLabelZ;
 
     &.moveToCorner {
         bottom: auto;
+        transform: none;
+        -webkit-transition: all 2s 2s linear;
+        transition: all 2s 2s linear;
     }
 }
 
