@@ -251,7 +251,8 @@ export default class AlwaysOnTop extends Component {
      */
     render() {
         const className
-            = `toolbar_primary ${this.state.visible ? 'fadeIn' : 'fadeOut'}`;
+            = `toolbar_primary always-on-top ${
+                this.state.visible ? 'fadeIn' : 'fadeOut'}`;
 
         return (
             <StatelessToolbar
