@@ -51,6 +51,21 @@
     }
 
     /**
+     * Always on top overrides.
+     */
+    &.always-on-top {
+        /**
+         * Toolbar button styles for always on top.
+         */
+        > .button {
+            font-size: $alwaysOnTopToolbarFontSize;
+            height: $alwaysOnTopToolbarSize;
+            line-height: $alwaysOnTopToolbarSize;
+            width: $alwaysOnTopToolbarSize;
+        }
+    }
+
+    /**
      * Toolbar button styles.
      */
     .button {
@@ -127,6 +142,11 @@
         height: $defaultToolbarSize;
         border-radius: 3px;
         opacity: 0;
+
+        &.always-on-top {
+            height: $alwaysOnTopToolbarSize;
+            top: 10px;
+        }
 
         @include transform(translateX(-50%));
 
