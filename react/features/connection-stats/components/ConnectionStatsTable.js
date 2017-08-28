@@ -476,6 +476,10 @@ class ConnectionStatsTable extends Component {
  * @returns {string}
  */
 function getIP(value) {
+    if (!value) {
+        return '';
+    }
+
     return value.substring(0, value.lastIndexOf(':'));
 }
 
@@ -488,6 +492,10 @@ function getIP(value) {
  * @returns {string}
  */
 function getPort(value) {
+    if (!value) {
+        return '';
+    }
+
     return value.substring(value.lastIndexOf(':') + 1, value.length);
 }
 
