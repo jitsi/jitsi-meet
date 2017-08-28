@@ -75,10 +75,10 @@ function initCommands() {
     transport.on('request', ({ data, name }, callback) => {
         switch (name) {
         case 'is-audio-muted':
-            callback(APP.conference.audioMuted);
+            callback(APP.conference.isLocalAudioMuted());
             break;
         case 'is-video-muted':
-            callback(APP.conference.videoMuted);
+            callback(APP.conference.isLocalVideoMuted());
             break;
         case 'is-audio-available':
             callback(audioAvailable);
