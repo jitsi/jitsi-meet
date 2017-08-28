@@ -186,12 +186,49 @@ function _loadConfig({ contextRoot, host, protocol, room }) {
 
     // TDOO userinfo
 
-    let url = `${protocol}//${host}${contextRoot || '/'}config.js`;
+    const rootUrl = `${protocol}//${host}${contextRoot || '/'}`;
+    let url = `${rootUrl}config.js`;
 
     // XXX In order to support multiple shards, tell the room to the deployment.
     room && (url += `?room=${room.toLowerCase()}`);
 
     /* eslint-enable no-param-reassign */
 
-    return loadConfig(url);
+    const key = `config/${rootUrl}`;
+
+    return (
+        loadConfig(url)
+            .then(config => {
+                // Try to store the configuration in localStorage. If the
+                // deployment specified the 'getroom' option as a function, for
+                // example, we cannot store it, so don't.
+                try {
+                    window.localStorage.setItem(key, JSON.stringify(config));
+                } catch (e) {
+
+                    // Ignore the error, we won't cache this config.
+                }
+
+                return config;
+            })
+            .catch(error => {
+                // We failed to load the requested config, try to use the last
+                // one which was fetched for that deployment. It may not match
+                // the shard, but it's probably better than nothing.
+                const config = window.localStorage.getItem(key);
+
+                if (config) {
+                    try {
+                        return JSON.parse(config);
+                    } catch (e) {
+
+                        // Somehow incorrect data ended up in the storage. Clean
+                        // up.
+                        window.localStorage.removeItem(key);
+                    }
+                }
+
+                throw error;
+            })
+    );
 }
