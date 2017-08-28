@@ -626,8 +626,11 @@ export class VideoContainer extends LargeContainer {
         // the environment words the report. To reduce the risk of scaring a
         // developer, make sure that the rejection is handled. We cannot really
         // do anything substantial about the rejection and, more importantly, we
-        // do not care.
-        this.$videoBackground[0].play()
-            .catch(reason => logger.error(reason));
+        // do not care. Some browsers (at this time, only Edge is known) don't
+        // return a promise from .play(), so check before trying to catch.
+        const res = this.$videoBackground[0].play();
+        if (typeof res !== 'undefined') {
+            res.catch(reason => logger.error(reason));
+        }
     }
 }
