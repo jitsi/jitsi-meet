@@ -59,9 +59,9 @@ export function getAvatarURL(participant) {
         if (urlPrefix) {
             urlSuffix = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
         } else {
-            // Otherwise, use a default (of course).
-            urlPrefix = 'https://api.adorable.io/avatars/200/';
-            urlSuffix = '.png';
+            // Otherwise, use a default (meeples, of course).
+            urlPrefix = 'https://abotars.jitsi.net/meeple/';
+            urlSuffix = '';
         }
     }
 
