@@ -1,7 +1,10 @@
 /* @flow */
 
+import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
+import { translate } from '../../base/i18n';
 
 import { openFeedbackDialog } from '../actions';
 
@@ -17,7 +20,17 @@ class FeedbackButton extends Component {
          *
          * @type {JitsiConference}
          */
-        _conference: React.PropTypes.object
+        _conference: React.PropTypes.object,
+
+        /**
+         * Invoked to obtain translated strings.
+         */
+        t: React.PropTypes.func,
+
+        /**
+         * From which side of the button the tooltip should appear from.
+         */
+        tooltipPosition: React.PropTypes.string
     };
 
     /**
@@ -41,10 +54,15 @@ class FeedbackButton extends Component {
      */
     render() {
         return (
-            <a
-                className = 'button icon-feedback'
-                id = 'feedbackButton'
-                onClick = { this._onClick } />
+            <div id = 'feedbackButton'>
+                <Tooltip
+                    description = { this.props.t('welcomepage.sendFeedback') }
+                    position = { this.props.tooltipPosition } >
+                    <a
+                        className = 'button icon-feedback'
+                        onClick = { this._onClick } />
+                </Tooltip>
+            </div>
         );
     }
 
@@ -82,4 +100,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(FeedbackButton);
+export default translate(connect(_mapStateToProps)(FeedbackButton));

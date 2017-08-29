@@ -101,8 +101,9 @@ class SecondaryToolbar extends Component {
             <Toolbar
                 className = { secondaryToolbarClassName }
                 toolbarButtons = { _secondaryToolbarButtons }
-                tooltipPosition = { 'right' }>
-                { _callStatsID ? <FeedbackButton /> : null }
+                tooltipPosition = 'right'>
+                { _callStatsID
+                    ? <FeedbackButton tooltipPosition = 'right' /> : null }
             </Toolbar>
         );
     }

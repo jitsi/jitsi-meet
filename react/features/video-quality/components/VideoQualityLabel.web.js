@@ -1,3 +1,4 @@
+import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -125,7 +126,8 @@ export class VideoQualityLabel extends Component {
             _conferenceStarted,
             _filmstripVisible,
             _remoteVideosVisible,
-            _resolution
+            _resolution,
+            t
         } = this.props;
 
         // FIXME The _conferenceStarted check is used to be defensive against
@@ -151,12 +153,15 @@ export class VideoQualityLabel extends Component {
             <div
                 className = { classNames }
                 id = 'videoResolutionLabel'>
-                <div
-                    className = 'video-quality-label-status'>
-                    { _audioOnly
-                        ? <i className = 'icon-visibility-off' />
-                        : this._mapResolutionToTranslation(_resolution) }
-                </div>
+                <Tooltip
+                    description = { t('videoStatus.labelTooltip') }
+                    position = { 'left' }>
+                    <div className = 'video-quality-label-status'>
+                        { _audioOnly
+                            ? <i className = 'icon-visibility-off' />
+                            : this._mapResolutionToTranslation(_resolution) }
+                    </div>
+                </Tooltip>
             </div>
         );
     }

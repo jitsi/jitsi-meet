@@ -446,9 +446,9 @@
     },
     "videoStatus": {
         "callQuality": "Call Quality",
-        "changeVideoTip": "Change your video quality from the left toolbar.",
         "hd": "HD",
         "highDefinition": "High definition",
+        "labelTooltip": "Current video quality",
         "ld": "LD",
         "lowDefinition": "Low definition",
         "p2pEnabled": "Peer to Peer Enabled",
