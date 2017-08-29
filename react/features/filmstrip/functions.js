@@ -14,29 +14,25 @@ import {
  */
 export function shouldRemoteVideosBeVisible(state) {
     const participants = state['features/base/participants'];
+    const participantsCount = participants.length;
 
     const shouldShowVideos
-        = state['features/base/config'].disable1On1Mode
+        = participantsCount > 2
 
-        // Always show the filmstrip when moused over the filmstrip.
-        || state['features/filmstrip'].hovered
-
-        // Always show remote videos when in filmstrip only mode.
-        || interfaceConfig.filmStripOnly
-
-        // This is not a 1-on-1 call.
-        || participants.length > 2
-
-        // Display videos whenever the toolbars are displayed.
-        || (participants.length > 1
-            && state['features/toolbox'].visible)
-
-        // There is another participant and the local participant is pinned.
-        || (participants.length > 1
-            && getLocalParticipant(state) === getPinnedParticipant(state))
+        // Always show the filmstrip when there is another participant to show
+        // and the filmstrip is hovered, or local video is pinned, or the
+        // toolbar is displayed.
+        || (participantsCount > 1
+            && (state['features/filmstrip'].hovered
+                || state['features/toolbox'].visible
+                || getLocalParticipant(state) === getPinnedParticipant(state)))
 
         // There is any non-person participant, like a shared video.
-        || participants.find(participant => participant.isBot);
+        || participants.find(participant => participant.isBot)
+
+        || interfaceConfig.filmStripOnly
+
+        || state['features/base/config'].disable1On1Mode;
 
     return Boolean(shouldShowVideos);
 }
