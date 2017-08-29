@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { Popover } from '../../base/popover';
-import { shouldShowRemoteVideos } from '../../filmstrip';
+import { shouldRemoteVideosBeVisible } from '../../filmstrip';
 
 import { VideoQualityDialog } from './';
 
@@ -219,7 +219,7 @@ function _mapStateToProps(state) {
         _audioOnly: audioOnly,
         _conferenceStarted: Boolean(conference),
         _filmstripVisible: visible,
-        _remoteVideosVisible: shouldShowRemoteVideos(state),
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
         _resolution: resolution
     };
 }

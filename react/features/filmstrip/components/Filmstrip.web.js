@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { Toolbox } from '../../toolbox';
 
-import { shouldShowRemoteVideos } from '../functions';
+import { shouldRemoteVideosBeVisible } from '../functions';
 
 /**
  * Implements a React {@link Component} which represents the filmstrip on
@@ -92,7 +92,7 @@ class Filmstrip extends Component {
  */
 function _mapStateToProps(state) {
     return {
-        _remoteVideosVisible: shouldShowRemoteVideos(state)
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
     };
 }
 

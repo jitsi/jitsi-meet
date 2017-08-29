@@ -12,7 +12,7 @@ import {
  * @param {Object} state - The full redux state.
  * @returns {boolean} - True if remote video thumbnails should be displayed.
  */
-export function shouldShowRemoteVideos(state) {
+export function shouldRemoteVideosBeVisible(state) {
     const participants = state['features/base/participants'];
 
     const shouldShowVideos

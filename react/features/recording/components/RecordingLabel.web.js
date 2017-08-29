@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { shouldShowRemoteVideos } from '../../filmstrip';
+import { shouldRemoteVideosBeVisible } from '../../filmstrip';
 
 /**
  * Implements a React {@link Component} which displays the current state of
@@ -165,7 +165,7 @@ function _mapStateToProps(state) {
          *
          * @type {boolean}
          */
-        _remoteVideosVisible: shouldShowRemoteVideos(state)
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
     };
 }
 
