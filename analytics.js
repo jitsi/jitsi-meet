@@ -27,7 +27,13 @@
         action + '.' + data.browserName, label, value);
   };
 
-  if(typeof ctx.analyticsHandlers === "undefined")
-    ctx.analyticsHandlers = [];
-  ctx.analyticsHandlers.push(Analytics);
+  if (typeof ctx.JitsiMeetJS === "undefined")
+    ctx.JitsiMeetJS = {};
+
+  if (typeof ctx.JitsiMeetJS.app === "undefined")
+    ctx.JitsiMeetJS.app = {};
+
+  if (typeof ctx.JitsiMeetJS.app.analyticsHandlers === "undefined")
+    ctx.JitsiMeetJS.app.analyticsHandlers = [];
+  ctx.JitsiMeetJS.app.analyticsHandlers.push(Analytics);
 }(window));

@@ -17,7 +17,7 @@ import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
-import analytics from './modules/analytics/analytics';
+import { initAnalytics } from './react/features/analytics';
 
 import EventEmitter from "events";
 
@@ -35,6 +35,7 @@ import {
 } from './react/features/base/conference';
 import { updateDeviceList } from './react/features/base/devices';
 import {
+    isAnalyticsEnabled,
     isFatalJitsiConnectionError
 } from './react/features/base/lib-jitsi-meet';
 import {
@@ -662,12 +663,13 @@ export default {
                     oldOnUnhandledRejection(event);
             };
         }
-
         return JitsiMeetJS.init(
-            Object.assign(
-                {enableAnalyticsLogging: analytics.isEnabled()}, config)
+            Object.assign({
+                    enableAnalyticsLogging: isAnalyticsEnabled(APP.store)
+                },
+                config)
             ).then(() => {
-                analytics.init();
+                initAnalytics(APP.store);
                 return this.createInitialLocalTracksAndConnect(
                     options.roomName, {
                         startAudioOnly: config.startAudioOnly,

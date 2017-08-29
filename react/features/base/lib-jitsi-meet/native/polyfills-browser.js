@@ -132,6 +132,14 @@ function _visitNode(node, callback) {
             document.addEventListener = () => {};
         }
 
+        // document.cookie
+        //
+        // Required by:
+        // - herment
+        if (typeof document.cookie === 'undefined') {
+            document.cookie = '';
+        }
+
         // Document.querySelector
         //
         // Required by:
@@ -317,14 +325,23 @@ function _visitNode(node, callback) {
     //
     // Required by:
     // - Strophe
+    // - herment - requires a working sessionStorage, no empty impl. functions
     if (typeof global.sessionStorage === 'undefined') {
-        global.sessionStorage = {
-            /* eslint-disable no-empty-function */
-            getItem() {},
-            removeItem() {},
-            setItem() {}
+        let internalStorage = {};
 
-            /* eslint-enable no-empty-function */
+        global.sessionStorage = {
+            clear() {
+                internalStorage = {};
+            },
+            getItem(key) {
+                return internalStorage[key];
+            },
+            removeItem(key) {
+                delete internalStorage[key];
+            },
+            setItem(key, value) {
+                internalStorage[key] = value;
+            }
         };
     }
 
