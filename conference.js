@@ -67,7 +67,6 @@ import { getLocationContextRoot } from './react/features/base/util';
 import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from  './react/features/desktop-picker';
 import { maybeOpenFeedbackDialog } from './react/features/feedback';
-import { setFilmstripRemoteVideosVisibility } from './react/features/filmstrip';
 import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
@@ -1626,17 +1625,14 @@ export default {
 
             // check the roles for the new user and reflect them
             APP.UI.updateUserRole(user);
-
-            updateRemoteThumbnailsVisibility();
         });
+
         room.on(ConferenceEvents.USER_LEFT, (id, user) => {
             APP.store.dispatch(participantLeft(id, user));
             logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());
             APP.UI.onSharedVideoStop(id);
-
-            updateRemoteThumbnailsVisibility();
         });
 
         room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
@@ -1780,10 +1776,6 @@ export default {
             APP.UI.addListener(
                 UIEvents.VIDEO_UNMUTING_WHILE_AUDIO_ONLY,
                 () => this._displayAudioOnlyTooltip('videoMute'));
-
-            APP.UI.addListener(
-                UIEvents.PINNED_ENDPOINT,
-                updateRemoteThumbnailsVisibility);
         }
 
         room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
@@ -2147,8 +2139,6 @@ export default {
                     }
                 });
             }
-
-            updateRemoteThumbnailsVisibility();
         });
         room.addCommandListener(
             this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
@@ -2164,24 +2154,6 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
-
-        function updateRemoteThumbnailsVisibility() {
-            const localUserId = APP.conference.getMyUserId();
-            const remoteParticipantsCount = room.getParticipantCount() - 1;
-
-            // Get the remote thumbnail count for cases where there are
-            // non-participants displaying video, such as with video sharing.
-            const remoteVideosCount = APP.UI.getRemoteVideosCount();
-
-            const shouldShowRemoteThumbnails = interfaceConfig.filmStripOnly
-                || (APP.UI.isPinned(localUserId) && remoteVideosCount)
-                || remoteVideosCount > 1
-                || remoteParticipantsCount !== remoteVideosCount;
-
-            APP.store.dispatch(
-                setFilmstripRemoteVideosVisibility(
-                    Boolean(shouldShowRemoteThumbnails)));
-        }
     },
     /**
     * Adds any room listener.

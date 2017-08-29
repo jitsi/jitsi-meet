@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import { shouldRemoteVideosBeVisible } from '../../filmstrip';
 
 /**
  * Implements a React {@link Component} which displays the current state of
@@ -140,7 +141,7 @@ class RecordingLabel extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { remoteVideosVisible, visible } = state['features/filmstrip'];
+    const { visible } = state['features/filmstrip'];
     const { labelDisplayConfiguration } = state['features/recording'];
 
     return {
@@ -164,7 +165,7 @@ function _mapStateToProps(state) {
          *
          * @type {boolean}
          */
-        _remoteVideosVisible: remoteVideosVisible
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
     };
 }
 

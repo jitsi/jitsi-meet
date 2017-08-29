@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { Popover } from '../../base/popover';
+import { shouldRemoteVideosBeVisible } from '../../filmstrip';
+
 import { VideoQualityDialog } from './';
 
 import {
@@ -209,24 +211,15 @@ export class VideoQualityLabel extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const {
-        audioOnly,
-        conference
-    } = state['features/base/conference'];
-    const { disable1On1Mode } = state['features/base/config'];
-    const {
-        remoteVideosVisible,
-        visible
-    } = state['features/filmstrip'];
-    const {
-        resolution
-    } = state['features/large-video'];
+    const { audioOnly, conference } = state['features/base/conference'];
+    const { visible } = state['features/filmstrip'];
+    const { resolution } = state['features/large-video'];
 
     return {
         _audioOnly: audioOnly,
         _conferenceStarted: Boolean(conference),
         _filmstripVisible: visible,
-        _remoteVideosVisible: Boolean(remoteVideosVisible || disable1On1Mode),
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
         _resolution: resolution
     };
 }

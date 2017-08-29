@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import { Toolbox } from '../../toolbox';
 
+import { shouldRemoteVideosBeVisible } from '../functions';
+
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
@@ -89,11 +91,8 @@ class Filmstrip extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { remoteVideosVisible } = state['features/filmstrip'];
-    const { disable1On1Mode } = state['features/base/config'];
-
     return {
-        _remoteVideosVisible: Boolean(remoteVideosVisible || disable1On1Mode)
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
     };
 }
 
