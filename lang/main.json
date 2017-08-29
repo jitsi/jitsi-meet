@@ -1,9 +1,9 @@
 {
-    "contactlist": "Participants (__pcount__)",
+    "contactlist": "Members (__pcount__)",
     "addParticipants": "Share the link",
     "roomLocked": "Callers must enter a password",
     "roomUnlocked": "Anyone with the link can join",
-    "passwordSetRemotely": "set by another participant",
+    "passwordSetRemotely": "set by another member",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
     "feedback": "Give us your feedback",
@@ -59,7 +59,7 @@
             "title": "Open source"
         },
         "feature4": {
-            "content": "There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors.",
+            "content": "There are no artificial restrictions on the number of users or conference members. Server power and bandwidth are the only limiting factors.",
             "title": "Unlimited users"
         },
         "feature5": {
@@ -114,7 +114,7 @@
         "login": "Login",
         "logout": "Logout",
         "dialpad": "Open / Close dialpad",
-        "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other participants.",
+        "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other members.",
         "micMutedPopup": "Your microphone has been muted so that you would fully enjoy your shared video.",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
@@ -134,7 +134,7 @@
     "bottomtoolbar": {
         "chat": "Open / close chat",
         "filmstrip": "Show / hide videos",
-        "contactlist": "View and invite participants"
+        "contactlist": "View and invite members"
     },
     "chat":{
         "nickname": {
@@ -169,8 +169,8 @@
     "videothumbnail":
     {
         "moderator": "Moderator",
-        "videomute": "Participant has stopped the camera",
-        "mute": "Participant is muted",
+        "videomute": "Member has stopped the camera",
+        "mute": "Member is muted",
         "kick": "Kick out",
         "muted": "Muted",
         "domute": "Mute",
@@ -239,7 +239,7 @@
         "conferenceDisconnectTitle": "You have been disconnected.",
         "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in __seconds__ sec...",
         "rejoinNow": "Rejoin now",
-        "maxUsersLimitReached": "The limit for maximum number of participants in the conference has been reached. The conference is full. Please try again later!",
+        "maxUsersLimitReached": "The limit for maximum number of members in the conference has been reached. The conference is full. Please try again later!",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",
@@ -262,7 +262,7 @@
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "removeSharedVideoTitle": "Remove shared video",
         "removeSharedVideoMsg": "Are you sure you would like to remove your shared video?",
-        "alreadySharedVideoMsg": "Another participant is already sharing video. This conference allows only one shared video at a time.",
+        "alreadySharedVideoMsg": "Another member is already sharing video. This conference allows only one shared video at a time.",
         "WaitingForHost": "Waiting for the host ...",
         "WaitForHostMsg": "The conference <b>__room__ </b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "IamHost": "I am the host",
@@ -281,9 +281,6 @@
         "passwordCheck": "Are you sure you would like to remove your password?",
         "passwordMsg": "Set a password to lock your room",
         "shareLink": "Share the link to the call",
-        "settings1": "Configure your conference",
-        "settings2": "Participants join muted",
-        "settings3": "Require nicknames<br/><br/>Set a password to lock your room:",
         "yourPassword": "Enter new password",
         "Back": "Back",
         "serviceUnavailable": "Service unavailable",
@@ -333,7 +330,7 @@
         "externalInstallationMsg": "You need to install our desktop sharing extension.",
         "inlineInstallationMsg": "You need to install our desktop sharing extension.",
         "inlineInstallExtension": "Install now",
-        "muteParticipantTitle": "Mute this participant?",
+        "muteParticipantTitle": "Mute this member?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
         "remoteControlTitle": "Remote desktop control",
@@ -398,7 +395,7 @@
     },
     "recording":
     {
-        "pending": "Recording waiting for a participant to join...",
+        "pending": "Recording waiting for a member to join...",
         "on": "Recording",
         "off": "Recording stopped",
         "failedToStart": "Recording failed to start",
@@ -473,7 +470,7 @@
         "noResults": "No matching search results",
         "searchPlaceholder": "Search for people and rooms to add",
         "title": "Add people to your call",
-        "failedToAdd": "Failed to add participants"
+        "failedToAdd": "Failed to add members"
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
