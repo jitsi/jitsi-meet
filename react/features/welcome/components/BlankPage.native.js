@@ -1,3 +1,5 @@
+/* @flow */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
@@ -61,10 +63,11 @@ class BlankPage extends AbstractBlankPage {
  * }}
  */
 function _mapStateToProps(state) {
-    const { requests } = state['features/net-interceptor'];
+    const { requests } = state['features/network-activity'];
 
     return {
-        _networkActivity: Boolean(requests && Object.keys(requests).length)
+        _networkActivity:
+            Boolean(requests && (requests.length || requests.size))
     };
 }
 
