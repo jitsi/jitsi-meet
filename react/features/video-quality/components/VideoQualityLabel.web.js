@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { Popover } from '../../base/popover';
 import { shouldRemoteVideosBeVisible } from '../../filmstrip';
-
-import { VideoQualityDialog } from './';
 
 import {
     VIDEO_QUALITY_LEVELS
@@ -151,18 +148,16 @@ export class VideoQualityLabel extends Component {
             = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
 
         return (
-            <Popover
+            <div
                 className = { classNames }
-                content = { <VideoQualityDialog /> }
-                id = 'videoResolutionLabel'
-                position = { 'left top' }>
+                id = 'videoResolutionLabel'>
                 <div
                     className = 'video-quality-label-status'>
                     { _audioOnly
                         ? <i className = 'icon-visibility-off' />
                         : this._mapResolutionToTranslation(_resolution) }
                 </div>
-            </Popover>
+            </div>
         );
     }
 
