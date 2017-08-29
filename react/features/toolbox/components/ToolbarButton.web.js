@@ -156,13 +156,14 @@ class ToolbarButton extends Component {
                 <StatelessToolbarButton { ...props } />
             </Tooltip>
         );
+        let children = buttonComponent;
 
         const popupConfig = this._getPopupDisplayConfiguration();
 
         if (popupConfig) {
             const { dataAttr, dataInterpolate, position } = popupConfig;
 
-            return (
+            children = ( // eslint-disable-line no-extra-parens
                 <AKInlineDialog
                     content = { t(dataAttr, dataInterpolate) }
                     isOpen = { Boolean(popupConfig) }
@@ -172,7 +173,11 @@ class ToolbarButton extends Component {
             );
         }
 
-        return buttonComponent;
+        return (
+            <div className = { `toolbar-button-wrapper ${button.id}-wrapper` }>
+                { children }
+            </div>
+        );
     }
 
     /**
