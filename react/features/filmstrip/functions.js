@@ -18,10 +18,18 @@ export function shouldRemoteVideosBeVisible(state) {
     const shouldShowVideos
         = state['features/base/config'].disable1On1Mode
 
+        // Always show the filmstrip when moused over the filmstrip.
+        || state['features/filmstrip'].hovered
+
+        // Always show remote videos when in filmstrip only mode.
         || interfaceConfig.filmStripOnly
 
         // This is not a 1-on-1 call.
         || participants.length > 2
+
+        // Display videos whenever the toolbars are displayed.
+        || (participants.length > 1
+            && state['features/toolbox'].visible)
 
         // There is another participant and the local participant is pinned.
         || (participants.length > 1
