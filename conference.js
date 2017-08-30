@@ -2,7 +2,6 @@
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import {openConnection} from './connection';
-import ContactList from './modules/UI/side_pannels/contactlist/ContactList';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import Recorder from './modules/recorder/Recorder';
@@ -72,10 +71,7 @@ import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
-import {
-    isButtonEnabled,
-    showDesktopSharingButton
-} from './react/features/toolbox';
+import { showDesktopSharingButton } from './react/features/toolbox';
 
 const { participantConnectionStatus } = JitsiMeetJS.constants;
 
@@ -709,11 +705,6 @@ export default {
 
                 this._createRoom(tracks);
                 APP.remoteControl.init();
-
-                if (isButtonEnabled('contacts')
-                    && !interfaceConfig.filmStripOnly) {
-                    APP.UI.ContactList = new ContactList(room);
-                }
 
                 // if user didn't give access to mic or camera or doesn't have
                 // them at all, we mark corresponding toolbar buttons as muted,

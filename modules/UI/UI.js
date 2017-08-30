@@ -155,8 +155,6 @@ UI.showChatError = function (err, msg) {
  * @param {string} displayName new nickname
  */
 UI.changeDisplayName = function (id, displayName) {
-    if (UI.ContactList)
-        UI.ContactList.onDisplayNameChange(id, displayName);
     VideoLayout.onDisplayNameChanged(id, displayName);
 
     if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
@@ -201,9 +199,6 @@ UI.setLocalRaisedHandStatus
  */
 UI.initConference = function () {
     let id = APP.conference.getMyUserId();
-    // Add myself to the contact list.
-    if (UI.ContactList)
-        UI.ContactList.addContact(id, true);
 
     // Update default button states before showing the toolbar
     // if local role changes buttons state will be again updated.
@@ -427,9 +422,6 @@ UI.addUser = function (user) {
     var id = user.getId();
     var displayName = user.getDisplayName();
 
-    if (UI.ContactList)
-        UI.ContactList.addContact(id);
-
     messageHandler.participantNotification(
         displayName,'notify.somebody', 'connected', 'notify.connected'
     );
@@ -455,9 +447,6 @@ UI.addUser = function (user) {
  * @param {string} displayName user nickname
  */
 UI.removeUser = function (id, displayName) {
-    if (UI.ContactList)
-        UI.ContactList.removeContact(id);
-
     messageHandler.participantNotification(
         displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
     );
@@ -737,8 +726,6 @@ UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
  */
 function changeAvatar(id, avatarUrl) {
     VideoLayout.changeUserAvatar(id, avatarUrl);
-    if (UI.ContactList)
-        UI.ContactList.changeUserAvatar(id, avatarUrl);
     if (APP.conference.isLocalId(id)) {
         Profile.changeAvatar(avatarUrl);
     }

@@ -105,6 +105,7 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
                 onClick = { this._onClick }
                 ref = { this.props.createRefToButton }>
                 { this._renderInnerElementsIfRequired() }
+                { this._renderChildComponentIfRequired() }
             </a>
         );
     }
@@ -129,6 +130,22 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
         if (enabled && !unclickable && onClick) {
             onClick(event);
         }
+    }
+
+    /**
+     * Render any configured child component for the toolbar button.
+     *
+     * @returns {ReactElement|null}
+     * @private
+     */
+    _renderChildComponentIfRequired(): ReactElement<*> | null {
+        if (this.props.button.childComponent) {
+            const Child = this.props.button.childComponent;
+
+            return <Child />;
+        }
+
+        return null;
     }
 
     /**

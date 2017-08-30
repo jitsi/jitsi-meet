@@ -27,12 +27,6 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference, error } = action;
 
         if (conference && error === JitsiConferenceErrors.PASSWORD_REQUIRED) {
-            // XXX Temporary solution while some components are not listening
-            // for lock state updates in redux.
-            if (typeof APP !== 'undefined') {
-                APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK, true);
-            }
-
             store.dispatch(_showPasswordDialog(conference));
         }
         break;

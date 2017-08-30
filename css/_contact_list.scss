@@ -1,7 +1,19 @@
 #contacts_container {
     cursor: default;
 
-    > ul#contacts {
+    /**
+     * Override generic side toolbar styles to compensate for AtlasKit Button
+     * being used instead of custom button styling.
+     */
+    .sideToolbarBlock {
+        .contact-list-panel-invite-button {
+            font-size: $modalButtonFontSize;
+            justify-content: center;
+            margin: 9px 0;
+        }
+    }
+
+    #contacts {
         font-size: 12px;
         bottom: 0px;
         margin: 0;
@@ -21,8 +33,7 @@
 }
 
 #contacts {
-
-    >li {
+    .contact-list-item {
         align-items: center;
         border-radius: 3px;
         color: $baseLight;
@@ -39,7 +50,7 @@
             background: $toolbarSelectBackground;
         }
 
-        > p {
+        .contact-list-item-name {
             overflow: hidden;
             text-overflow: ellipsis;
         }
