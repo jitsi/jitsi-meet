@@ -55,15 +55,21 @@ export function isFatalJitsiConnectionError(error: string) {
  * Loads config.js from a specific remote server.
  *
  * @param {string} host - Host where config.js is hosted.
- * @param {string} path='config.js' - Relative pah to config.js file.
+ * @param {string} room - Room for which the configuration is being loaded.
  * @returns {Promise<Object>}
  */
-export function loadConfig(host: string, path: string = 'config.js') {
+export function loadConfig(host: string, room: string) {
     let promise;
 
     if (typeof APP === 'undefined') {
+        const url = new URL('config.js', host);
+
+        // XXX React Native doesn't support URLSearchParams
+        // https://github.com/facebook/react-native/issues/9596
+        const urlString = `${url.toString()}?room=${room}`;
+
         promise
-            = loadScript(new URL(path, host).toString())
+            = loadScript(urlString)
                 .then(() => {
                     const { config } = window;
 
@@ -77,7 +83,7 @@ export function loadConfig(host: string, path: string = 'config.js') {
                     return config;
                 })
                 .catch(err => {
-                    console.error(`Failed to load ${path} from ${host}`, err);
+                    console.error(`Failed to load config.js from ${host}`, err);
 
                     throw err;
                 });
