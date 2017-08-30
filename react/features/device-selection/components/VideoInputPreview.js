@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { VideoTrack } from '../../base/media';
+import { Video } from '../../base/media';
 
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
 
@@ -42,7 +42,7 @@ class VideoInputPreview extends Component {
 
         return (
             <div className = { className }>
-                <VideoTrack
+                <Video
                     className = 'video-input-preview-display flipVideoX'
                     triggerOnPlayingUpdate = { false }
                     videoTrack = {{ jitsiTrack: this.props.track }} />
