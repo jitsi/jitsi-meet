@@ -80,8 +80,8 @@ form {
     display: block;
     position: absolute;
     top: 15;
-    width: 186px;
-    height: 74px;
+    width: $watermarkWidth;
+    height: $watermarkHeight;
     background-size: contain;
     background-repeat: no-repeat;
     z-index: $zindex2;
