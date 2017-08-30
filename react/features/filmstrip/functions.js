@@ -27,9 +27,6 @@ export function shouldRemoteVideosBeVisible(state) {
                 || state['features/toolbox'].visible
                 || getLocalParticipant(state) === getPinnedParticipant(state)))
 
-        // There is any non-person participant, like a shared video.
-        || participants.find(participant => participant.isBot)
-
         || interfaceConfig.filmStripOnly
 
         || state['features/base/config'].disable1On1Mode;
