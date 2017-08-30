@@ -14,6 +14,8 @@ import { invitePeople, searchPeople } from '../functions';
 
 declare var interfaceConfig: Object;
 
+const { PropTypes } = React;
+
 /**
  * The dialog that allows to invite people to the call.
  */
@@ -27,32 +29,37 @@ class AddPeopleDialog extends Component {
         /**
          * The URL pointing to the service allowing for people invite.
          */
-        _inviteServiceUrl: React.PropTypes.string,
+        _inviteServiceUrl: PropTypes.string,
 
         /**
          * The url of the conference to invite people to.
          */
-        _inviteUrl: React.PropTypes.string,
+        _inviteUrl: PropTypes.string,
 
         /**
          * The JWT token.
          */
-        _jwt: React.PropTypes.string,
+        _jwt: PropTypes.string,
+
+        /**
+         * The query types used when searching people.
+         */
+        _peopleSearchQueryTypes: PropTypes.arrayOf(PropTypes.string),
 
         /**
          * The URL pointing to the service allowing for people search.
          */
-        _peopleSearchUrl: React.PropTypes.string,
+        _peopleSearchUrl: PropTypes.string,
 
         /**
          * The function closing the dialog.
          */
-        hideDialog: React.PropTypes.func,
+        hideDialog: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**
@@ -84,8 +91,20 @@ class AddPeopleDialog extends Component {
 
         this._multiselect = null;
         this._resourceClient = {
-            makeQuery: text => searchPeople(
-                this.props._peopleSearchUrl, this.props._jwt, text),
+            makeQuery: text => {
+                const {
+                    _jwt,
+                    _peopleSearchQueryTypes,
+                    _peopleSearchUrl
+                } = this.props;
+
+                return searchPeople(
+                    _peopleSearchUrl,
+                    _jwt,
+                    text,
+                    _peopleSearchQueryTypes
+                );
+            },
             parseResults: response => response.map(user => {
                 const avatar = ( // eslint-disable-line no-extra-parens
                     <Avatar
@@ -299,12 +318,17 @@ class AddPeopleDialog extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { peopleSearchUrl, inviteServiceUrl } = state['features/base/config'];
+    const {
+        inviteServiceUrl,
+        peopleSearchQueryTypes,
+        peopleSearchUrl
+     } = state['features/base/config'];
 
     return {
         _jwt: state['features/jwt'].jwt,
         _inviteUrl: getInviteURL(state),
         _inviteServiceUrl: inviteServiceUrl,
+        _peopleSearchQueryTypes: peopleSearchQueryTypes,
         _peopleSearchUrl: peopleSearchUrl
     };
 }

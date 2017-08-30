@@ -6,14 +6,21 @@ declare var $: Function;
  * @param {string} serviceUrl - The service to query.
  * @param {string} jwt - The jwt token to pass to the search service.
  * @param {string} text - Text to search.
+ * @param {Array<string>} queryTypes - Array with the query types that will be
+ * executed - "conferenceRooms" | "user" | "room".
  * @returns {Promise} - The promise created by the request.
  */
-export function searchPeople(serviceUrl, jwt, text) {
-    const queryTypes = '["conferenceRooms","user","room"]';
+export function searchPeople(// eslint-disable-line max-params
+    serviceUrl,
+    jwt,
+    text,
+    queryTypes = [ 'conferenceRooms', 'user', 'room' ]
+) {
+    const queryTypesString = JSON.stringify(queryTypes);
 
     return new Promise((resolve, reject) => {
         $.getJSON(`${serviceUrl}?query=${encodeURIComponent(text)}`
-            + `&queryTypes=${queryTypes}&jwt=${jwt}`,
+            + `&queryTypes=${queryTypesString}&jwt=${jwt}`,
         response => resolve(response)
         ).fail((jqxhr, textStatus, error) =>
             reject(error)
