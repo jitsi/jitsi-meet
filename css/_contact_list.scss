@@ -23,14 +23,16 @@
 #contacts {
 
     >li {
-        display: block;
+        align-items: center;
+        border-radius: 3px;
+        color: $baseLight;
+        display: flex;
+        font-size: 14px;
+        height: 36px;
         list-style-type: none;
+        padding: 0 10%;
         text-align: left;
         white-space: nowrap;
-        color: $baseLight;
-        font-size: 16px;
-        padding: 0 10%;
-        height: 27px;
 
         &:hover,
         &:active {
@@ -38,13 +40,15 @@
         }
 
         > p {
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0px;
-            width: 100%;
-            line-height: 1.5em;
-            text-overflow: ellipsis;
             overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .avatar {
+            cursor: pointer;
+            height: 24px;
+            margin: 0 8px 0 4px;
+            width: 24px;
         }
     }
 }
