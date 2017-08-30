@@ -124,4 +124,9 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * @type {number}
      */
     CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000
+
+    /**
+     * The name of the application connected to the "Add people" search service.
+     */
+    // APP_PEOPLE_APP_NAME: ""
 };

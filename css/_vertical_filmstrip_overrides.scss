@@ -50,9 +50,16 @@
             }
         }
 
+        .filmstrip__invite {
+            display: inline-block;
+            height: 40px;
+            width: 120px;
+            z-index: $dropdownZ;
+        }
+
         #filmstripLocalVideo {
             height: auto;
-            justify-content: flex-end;
+            justify-content: flex-start;
         }
 
         /**
@@ -101,7 +108,7 @@
         }
 
         #remoteVideos {
-            flex-direction: column-reverse;
+            flex-direction: column;
             flex-grow: 1;
         }
 
@@ -161,7 +168,7 @@
     .video-state-indicator.moveToCorner {
         transition: right 0.5s;
 
-        &.with-filmstrip.with-remote-videos {
+        &.with-filmstrip {
             &#recordingLabel {
                 right: 200px;
             }
@@ -171,11 +178,7 @@
             }
         }
 
-        &.with-filmstrip.without-remote-videos {
-            transition-delay: 0.5s;
-        }
-
-        &.with-filmstrip.with-remote-videos.opening {
+        &.with-filmstrip.opening {
             transition: 0.9s;
             transition-timing-function: ease-in-out;
         }

@@ -446,8 +446,10 @@
         "hidePassword": "Hide password",
         "inviteTo": "Invite people to __conferenceName__",
         "invitedYouTo": "__userName__ has invited you to the __inviteURL__ conference",
+        "invitePeople": "Invite people",
         "locked": "This call is locked. New callers must have the link and enter the password to join.",
         "showPassword": "Show password",
+        "shareTheLink": "Share the link",
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {
@@ -467,7 +469,7 @@
     },
     "dialOut": {
         "dial": "Dial",
-        "dialOut": "Call a phone number",
+        "dialOut": "Call a #",
         "statusMessage": "is now __status__",
         "enterPhone": "Enter phone number",
         "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"

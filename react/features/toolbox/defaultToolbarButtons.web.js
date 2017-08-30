@@ -4,6 +4,7 @@ import React from 'react';
 
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
+
 import { openDialOutDialog } from '../dial-out';
 
 import {
@@ -11,6 +12,7 @@ import {
     openAddPeopleDialog,
     openInviteDialog
 } from '../invite';
+
 import { VideoQualityButton } from '../video-quality';
 
 import UIEvents from '../../../service/UI/UIEvents';
@@ -25,19 +27,6 @@ declare var JitsiMeetJS: Object;
  * All toolbar buttons' descriptors.
  */
 const buttons: Object = {
-    addtocall: {
-        classNames: [ 'button', 'icon-add' ],
-        enabled: true,
-        id: 'toolbar_button_add',
-        isDisplayed: () => !APP.store.getState()['features/jwt'].isGuest,
-        onClick(dispatch) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.add.clicked');
-
-            dispatch(openAddPeopleDialog());
-        },
-        tooltipKey: 'toolbar.addPeople'
-    },
-
     /**
      * The descriptor of the camera toolbar button.
      */
@@ -153,24 +142,6 @@ const buttons: Object = {
         },
         shortcutDescription: 'keyboardShortcuts.toggleScreensharing',
         tooltipKey: 'toolbar.sharescreen'
-    },
-
-    /**
-     * The descriptor of the dial out toolbar button.
-     */
-    dialout: {
-        classNames: [ 'button', 'icon-telephone' ],
-        enabled: true,
-
-        // Will be displayed once the SIP calls functionality is detected.
-        hidden: true,
-        id: 'toolbar_button_dial_out',
-        onClick(dispatch) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.sip.clicked');
-
-            dispatch(openDialOutDialog());
-        },
-        tooltipKey: 'dialOut.dialOut'
     },
 
     /**

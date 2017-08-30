@@ -1,13 +1,9 @@
-import { openDialog } from '../../features/base/dialog';
-
 import {
     DIAL_OUT_CANCELED,
     DIAL_OUT_CODES_UPDATED,
     DIAL_OUT_SERVICE_FAILED,
     PHONE_NUMBER_CHECKED
 } from './actionTypes';
-
-import { DialOutDialog } from './components';
 
 declare var $: Function;
 declare var config: Object;
@@ -74,16 +70,6 @@ export function checkDialNumber(dialNumber) {
                     error
                 }));
     };
-}
-
-
-/**
- * Opens the dial-out dialog.
- *
- * @returns {Function}
- */
-export function openDialOutDialog() {
-    return openDialog(DialOutDialog);
 }
 
 /**

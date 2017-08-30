@@ -151,3 +151,14 @@ export const SET_RECEIVE_VIDEO_QUALITY = Symbol('SET_RECEIVE_VIDEO_QUALITY');
  * }
  */
 export const SET_ROOM = Symbol('SET_ROOM');
+
+/**
+ * The type of (redux) action, which indicates if a SIP gateway is enabled on
+ * the server.
+ *
+ * {
+ *     type: SET_SIP_GATEWAY_ENABLED
+ *     isSIPGatewayEnabled: boolean
+ * }
+ */
+export const SET_SIP_GATEWAY_ENABLED = Symbol('SET_SIP_GATEWAY_ENABLED');

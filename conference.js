@@ -899,13 +899,6 @@ export default {
         let user = room.getParticipantById(id);
         return user && user.isModerator();
     },
-    /**
-     * Check if SIP is supported.
-     * @returns {boolean}
-     */
-    sipGatewayEnabled() {
-        return room.isSIPCallingSupported();
-    },
     get membersCount() {
         return room.getParticipants().length + 1;
     },

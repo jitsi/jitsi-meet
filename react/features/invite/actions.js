@@ -5,7 +5,7 @@ import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
-import { AddPeopleDialog, InviteDialog } from './components';
+import { InviteDialog } from './components';
 
 declare var $: Function;
 
@@ -16,15 +16,6 @@ declare var $: Function;
  */
 export function openInviteDialog() {
     return openDialog(InviteDialog);
-}
-
-/**
- * Opens the Add People Dialog.
- *
- * @returns {Function}
- */
-export function openAddPeopleDialog() {
-    return openDialog(AddPeopleDialog);
 }
 
 /**

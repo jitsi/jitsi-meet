@@ -55,9 +55,6 @@
         width:auto;
         transition: bottom 2s;
         overflow: visible !important;
-        /*!!! Removes the gap between the local video container and the remote
-        videos. */
-        font-size: 0pt;
 
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
