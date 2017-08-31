@@ -6,7 +6,8 @@ import AbstractVideoTrack from '../AbstractVideoTrack';
 import Video from './Video';
 
 /**
- * Component that renders a video element for a passed in video track.
+ * Component that renders a video element for a passed in video track and
+ * notifies the store when the video has started playing.
  *
  * @extends AbstractVideoTrack
  */
