@@ -44,7 +44,6 @@ class VideoInputPreview extends Component {
             <div className = { className }>
                 <Video
                     className = 'video-input-preview-display flipVideoX'
-                    triggerOnPlayingUpdate = { false }
                     videoTrack = {{ jitsiTrack: this.props.track }} />
                 <div className = 'video-input-preview-error'>
                     { error || '' }
