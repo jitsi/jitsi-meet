@@ -39,22 +39,11 @@ export function appNavigate(uri: ?string) {
 function _appNavigateToMandatoryLocation(
         dispatch: Dispatch<*>, getState: Function,
         newLocation: Object) {
-    const oldLocationURL = getState()['features/base/connection'].locationURL;
-    const oldHost = oldLocationURL ? oldLocationURL.host : undefined;
-    const newHost = newLocation.host;
-
-    if (oldHost === newHost) {
-        dispatchSetLocationURL()
-            .then(dispatchSetRoom);
-    } else {
-        // If the host has changed, we need to load the config of the new host
-        // and set it, and only after that we can navigate to a different route.
-        _loadConfig(newLocation)
-            .then(
-                config => configLoaded(/* err */ undefined, config),
-                err => configLoaded(err, /* config */ undefined))
-            .then(dispatchSetRoom);
-    }
+    _loadConfig(newLocation)
+        .then(
+            config => configLoaded(/* err */ undefined, config),
+            err => configLoaded(err, /* config */ undefined))
+        .then(() => dispatch(setRoom(newLocation.room)));
 
     /**
      * Notifies that an attempt to load a config(uration) has completed. Due to
@@ -83,26 +72,8 @@ function _appNavigateToMandatoryLocation(
         }
 
         return (
-            dispatchSetLocationURL()
+            dispatch(setLocationURL(new URL(newLocation.toString())))
                 .then(() => dispatch(setConfig(config))));
-    }
-
-    /**
-     * Dispatches {@link setLocationURL} in the redux store.
-     *
-     * @returns {void}
-     */
-    function dispatchSetLocationURL() {
-        return dispatch(setLocationURL(new URL(newLocation.toString())));
-    }
-
-    /**
-     * Dispatches {@link _setRoomAndNavigate} in the redux store.
-     *
-     * @returns {void}
-     */
-    function dispatchSetRoom() {
-        return dispatch(setRoom(newLocation.room));
     }
 }
 
@@ -196,8 +167,10 @@ export function appWillUnmount(app) {
  * @private
  * @returns {Promise<Object>}
  */
-function _loadConfig(location: Object) {
-    let protocol = location.protocol.toLowerCase();
+function _loadConfig({ contextRoot, host, protocol, room }) {
+    /* eslint-disable no-param-reassign */
+
+    protocol = protocol.toLowerCase();
 
     // The React Native app supports an app-specific scheme which is sure to not
     // be supported by fetch (or whatever loadConfig utilizes).
@@ -205,7 +178,12 @@ function _loadConfig(location: Object) {
 
     // TDOO userinfo
 
-    return (
-        loadConfig(
-            `${protocol}//${location.host}${location.contextRoot || '/'}`));
+    let url = `${protocol}//${host}${contextRoot || '/'}config.js`;
+
+    // XXX In order to support multiple shards, tell the room to the deployment.
+    room && (url += `?room=${room.toLowerCase()}`);
+
+    /* eslint-enable no-param-reassign */
+
+    return loadConfig(url);
 }
