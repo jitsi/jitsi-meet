@@ -102,12 +102,12 @@ class Filmstrip extends Component {
                 { this.props.displayToolbox ? <Toolbox /> : null }
                 <div
                     className = 'filmstrip__videos'
-                    id = 'remoteVideos'
-                    onMouseOut = { this._onMouseOut }
-                    onMouseOver = { this._onMouseOver }>
+                    id = 'remoteVideos'>
                     <div
                         className = 'filmstrip__videos'
-                        id = 'filmstripLocalVideo' />
+                        id = 'filmstripLocalVideo'
+                        onMouseOut = { this._onMouseOut }
+                        onMouseOver = { this._onMouseOver } />
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripRemoteVideos'>
@@ -118,7 +118,9 @@ class Filmstrip extends Component {
                           */}
                         <div
                             className = 'remote-videos-container'
-                            id = 'filmstripRemoteVideosContainer' />
+                            id = 'filmstripRemoteVideosContainer'
+                            onMouseOut = { this._onMouseOut }
+                            onMouseOver = { this._onMouseOver } />
                     </div>
                     <audio
                         id = 'userJoined'
