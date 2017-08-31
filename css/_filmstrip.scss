@@ -59,7 +59,44 @@
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
             padding-left: $defaultToolbarSize + 5;
-       }
+        }
+
+        /**
+         * The local video identifier.
+         */
+        &#filmstripLocalVideo {
+            bottom: 32px;
+            flex-direction: column;
+
+            /**
+             * The invite button style.
+             */
+            .filmstrip__invite {
+                padding-bottom: 5px;
+                z-index: $dropdownZ;
+            }
+
+            /**
+             * The invite button group style.
+             * TOFIX: use AtlasKit.ButtonGroup if it starts supporting different
+             * flex grow options for the buttons.
+             */
+            .invite-button-group {
+                display: inline-flex;
+                justify-content: space-between;
+                width: 100%;
+
+                & > button {
+                    flex-grow: 1;
+                }
+
+                & > * {
+                    flex-grow: 0;
+                    flex-shrink: 1;
+                    margin: 0 2px;
+                }
+            }
+        }
 
         &.hidden {
             bottom: -196px;

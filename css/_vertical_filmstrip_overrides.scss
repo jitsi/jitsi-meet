@@ -50,16 +50,20 @@
             }
         }
 
-        .filmstrip__invite {
-            display: inline-block;
-            height: 40px;
-            width: 120px;
-            z-index: $dropdownZ;
-        }
-
+        /**
+         * Re-styles the local Video and invite button to better fit the
+         * vertical filmstrip layout.
+         */
         #filmstripLocalVideo {
+            bottom: 5px;
+            flex-direction: column-reverse;
             height: auto;
             justify-content: flex-start;
+
+            .filmstrip__invite {
+                padding-bottom: 0px;
+                padding-top: 5px;
+            }
         }
 
         /**

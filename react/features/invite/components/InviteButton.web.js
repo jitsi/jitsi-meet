@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Button from '@atlaskit/button';
-import ButtonGroup from '@atlaskit/button-group';
 import DropdownMenu from '@atlaskit/dropdown-menu';
 
 import { translate } from '../../base/i18n';
@@ -87,20 +86,25 @@ class InviteButton extends Component {
     render() {
         const { t } = this.props;
 
+        const { VERTICAL_FILMSTRIP } = interfaceConfig;
+
         return (
             <div className = 'filmstrip__invite'>
-                <ButtonGroup>
+                <div className = 'invite-button-group'>
                     <Button
-                        onClick = { this._onInviteClick }>
+                        onClick = { this._onInviteClick }
+                        shouldFitContainer = { true }>
                         { t('invite.invitePeople') }
                     </Button>
                     <DropdownMenu
                         items = { this.state.inviteOptions }
                         onItemActivated = { this._onInviteOptionSelected }
-                        position = 'bottom right'
+                        position = { VERTICAL_FILMSTRIP
+                            ? 'bottom right'
+                            : 'top right' }
                         shouldFlip = { true }
                         triggerType = 'button' />
-                </ButtonGroup>
+                </div>
             </div>
         );
     }
