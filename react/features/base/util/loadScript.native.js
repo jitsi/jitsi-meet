@@ -1,11 +1,10 @@
 /**
  * Loads a script from a specific URL. React Native cannot load a JS
  * file/resource/URL via a <script> HTML element, so the implementation
- * fetches the specified src as plain text using fetch() and then
- * evaluates the fetched string as JavaScript code (i.e. via the {@link eval}
- * function).
+ * fetches the specified <tt>url</tt> as plain text using {@link fetch()} and
+ * then evaluates the fetched string as JavaScript code (using {@link eval()}).
  *
- * @param {string} url - The absolute URL from the which the script is to be
+ * @param {string} url - The absolute URL from which the script is to be
  * (down)loaded.
  * @returns {void}
  */
@@ -20,7 +19,6 @@ export function loadScript(url) {
                 default:
                     throw response.statusText;
                 }
-
             })
             .then(responseText => {
                 eval.call(window, responseText); // eslint-disable-line no-eval

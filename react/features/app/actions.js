@@ -30,7 +30,9 @@ export function appNavigate(uri: ?string) {
  * state.
  * @param {Object} newLocation - The location URI to navigate to. The value
  * cannot be undefined and is assumed to have all properties such as
- * {@code host} and {@code room} defined values.
+ * {@code host}, {@code contextRoot}, and {@code room} defined. Depending on the
+ * property, it may have a value equal to {@code undefined} and that may be
+ * acceptable.
  * @private
  * @returns {void}
  */
@@ -55,8 +57,9 @@ function _appNavigateToMandatoryLocation(
     }
 
     /**
-     * Notifies that an attempt to load the config(uration) of domain has
-     * completed.
+     * Notifies that an attempt to load a config(uration) has completed. Due to
+     * the asynchronous native of the loading, the specified <tt>config</tt> may
+     * or may not be required by the time the notification arrives.
      *
      * @param {string|undefined} err - If the loading has failed, the error
      * detailing the cause of the failure.
@@ -65,6 +68,10 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function configLoaded(err, config) {
+        // FIXME Due to the asynchronous native of the loading, the specified
+        // config may or may not be required by the time the notification
+        // arrives.
+
         if (err) {
             // XXX The failure could be, for example, because of a
             // certificate-related error. In which case the connection will
@@ -186,6 +193,7 @@ export function appWillUnmount(app) {
  *
  * @param {Object} location - The location URI which specifies the host to load
  * the config.js from.
+ * @private
  * @returns {Promise<Object>}
  */
 function _loadConfig(location: Object) {

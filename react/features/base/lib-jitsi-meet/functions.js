@@ -67,7 +67,7 @@ export function loadConfig(host: string, path: string = 'config.js') {
                 .then(() => {
                     const { config } = window;
 
-                    // We don't want to pollute global scope.
+                    // We don't want to pollute the global scope.
                     window.config = undefined;
 
                     if (typeof config !== 'object') {
@@ -82,9 +82,9 @@ export function loadConfig(host: string, path: string = 'config.js') {
                     throw err;
                 });
     } else {
-        // Return config.js file from global scope. We can't use the version
-        // that's being used for the React Native app because the old/current
-        // Web app uses config from the global scope.
+        // Return "the config.js file" from the global scope - that is how the
+        // Web app on both the client and the server was implemented before the
+        // React Native app was even conceived.
         promise = Promise.resolve(window.config);
     }
 
