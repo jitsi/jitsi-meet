@@ -13,6 +13,7 @@ import {
 import { RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
+import { BlankPage } from '../../welcome';
 
 import { appNavigate, appWillMount, appWillUnmount } from '../actions';
 
@@ -194,13 +195,14 @@ export class AbstractApp extends Component {
      */
     render() {
         const { route } = this.state;
+        const component = (route && route.component) || BlankPage;
 
-        if (route) {
+        if (component) {
             return (
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { this._getStore() }>
                         {
-                            this._createElement(route.component)
+                            this._createElement(component)
                         }
                     </Provider>
                 </I18nextProvider>
@@ -372,15 +374,20 @@ export class AbstractApp extends Component {
         // onEnter. During the removal of react-router, modifications were
         // minimized by preserving the onEnter interface:
         // (1) Router would provide its nextState to the Route's onEnter. As the
-        // role of Router is now this AbstractApp, provide its nextState.
+        // role of Router is now this AbstractApp and we use redux, provide the
+        // redux store instead.
         // (2) A replace function would be provided to the Route in case it
         // chose to redirect to another path.
-        route && this._onRouteEnter(route, nextState, pathname => {
-            this._openURL(pathname);
+        route && this._onRouteEnter(route, this._getStore(), pathname => {
+            if (pathname) {
+                this._openURL(pathname);
 
-            // Do not proceed with the route because it chose to redirect to
-            // another path.
-            nextState = undefined;
+                // Do not proceed with the route because it chose to redirect to
+                // another path.
+                nextState = undefined;
+            } else {
+                nextState.route = undefined;
+            }
         });
 
         // XXX React's setState is asynchronous which means that the value of

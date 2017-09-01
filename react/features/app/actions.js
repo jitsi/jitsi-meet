@@ -46,22 +46,22 @@ function _appNavigateToMandatoryLocation(
         .then(() => dispatch(setRoom(newLocation.room)));
 
     /**
-     * Notifies that an attempt to load a config(uration) has completed. Due to
-     * the asynchronous native of the loading, the specified <tt>config</tt> may
+     * Notifies that an attempt to load a configuration has completed. Due to
+     * the asynchronous nature of the loading, the specified <tt>config</tt> may
      * or may not be required by the time the notification arrives.
      *
-     * @param {string|undefined} err - If the loading has failed, the error
+     * @param {string|undefined} error - If the loading has failed, the error
      * detailing the cause of the failure.
      * @param {Object|undefined} config - If the loading has succeeded, the
-     * loaded config(uration).
+     * loaded configuration.
      * @returns {void}
      */
-    function configLoaded(err, config) {
-        // FIXME Due to the asynchronous native of the loading, the specified
+    function configLoaded(error, config) {
+        // FIXME Due to the asynchronous nature of the loading, the specified
         // config may or may not be required by the time the notification
         // arrives.
 
-        if (err) {
+        if (error) {
             // XXX The failure could be, for example, because of a
             // certificate-related error. In which case the connection will
             // fail later in Strophe anyway even if we use the default

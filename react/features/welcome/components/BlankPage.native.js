@@ -1,38 +1,57 @@
 /* @flow */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import AbstractBlankPage from './AbstractBlankPage';
+import { destroyLocalTracks } from '../../base/tracks';
+
+import { isWelcomePageAppEnabled } from '../functions';
 import styles from './styles';
 
 /**
- * Mobile/React Native implementation of <tt>AbstractBlankPage</tt>. Since this
- * is the <tt>Component</tt> rendered when there is no <tt>WelcomePage</tt>,
- * it will show a progress indicator when there are ongoing network requests
- * (notably, the loading of config.js before joining a conference). The use case
- * which prompted the introduction of this <tt>Component</tt> is mobile where
- * SDK users probably disable the <tt>WelcomePage</tt>.
+ * The React <tt>Component</tt> displayed by <tt>AbstractApp</tt> when it has no
+ * <tt>Route</tt> to render. Renders a progress indicator when there are ongoing
+ * network requests.
  */
-class BlankPage extends AbstractBlankPage {
+class BlankPage extends Component {
     /**
      * <tt>BlankPage</tt> React <tt>Component</tt>'s prop types.
      *
      * @static
      */
     static propTypes = {
-        ...AbstractBlankPage.propTypes,
-
         /**
          * Indicates whether there is network activity i.e. ongoing network
          * requests.
          *
          * @private
          */
-        _networkActivity: PropTypes.bool
+        _networkActivity: PropTypes.bool,
+
+        /**
+         * The indicator which determines whether <tt>WelcomePage</tt> is (to
+         * be) rendered.
+         *
+         * @private
+         */
+        _welcomePageEnabled: PropTypes.bool,
+
+        dispatch: PropTypes.func
     };
+
+    /**
+     * Destroys the local tracks (if any) since no media is desired when this
+     * component is rendered.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillMount() {
+        this.props._welcomePageEnabled
+            || this.props.dispatch(destroyLocalTracks());
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -59,7 +78,8 @@ class BlankPage extends AbstractBlankPage {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     networkActivity: boolean
+ *     _networkActivity: boolean,
+ *     _welcomePageEnabled: boolean
  * }}
  */
 function _mapStateToProps(state) {
@@ -67,7 +87,8 @@ function _mapStateToProps(state) {
 
     return {
         _networkActivity:
-            Boolean(requests && (requests.length || requests.size))
+            Boolean(requests && (requests.length || requests.size)),
+        _welcomePageEnabled: isWelcomePageAppEnabled(state)
     };
 }
 
