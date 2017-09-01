@@ -79,7 +79,7 @@ function _obtainConfigAndInit() {
                 .catch(err => {
                     // Show obtain config error.
                     APP.UI.messageHandler.openReportDialog(
-                        null,
+                        'connection.CONNFAIL',
                         'dialog.connectError',
                         err);
                 });

@@ -513,25 +513,17 @@ const Recording = {
             break;
         }
         case JitsiRecordingStatus.BUSY: {
-            dialog = APP.UI.messageHandler.openMessageDialog(
-                this.recordingTitle,
-                this.recordingBusy,
-                null,
-                () => {
-                    dialog = null;
-                }
-            );
+            APP.UI.messageHandler.showWarning({
+                descriptionKey: this.recordingBusy,
+                titleKey: this.recordingTitle
+            });
             break;
         }
         default: {
-            dialog = APP.UI.messageHandler.openMessageDialog(
-                this.recordingTitle,
-                this.recordingUnavailable,
-                null,
-                () => {
-                    dialog = null;
-                }
-            );
+            APP.UI.messageHandler.showWarning({
+                descriptionKey: this.recordingUnavailable,
+                titleKey: this.recordingTitle
+            });
         }
         }
     },

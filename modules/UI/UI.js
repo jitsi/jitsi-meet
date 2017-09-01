@@ -143,36 +143,34 @@ UI.toggleFullScreen = function() {
 /**
  * Notify user that server has shut down.
  */
-UI.notifyGracefulShutdown = function() {
-    messageHandler.openMessageDialog(
-        'dialog.serviceUnavailable',
-        'dialog.gracefulShutdown'
-    );
+UI.notifyGracefulShutdown = function () {
+    messageHandler.showError({
+        descriptionKey: 'dialog.gracefulShutdown',
+        titleKey: 'dialog.serviceUnavailable'
+    });
 };
 
 /**
  * Notify user that reservation error happened.
  */
-UI.notifyReservationError = function(code, msg) {
-    const message
-        = APP.translation.generateTranslationHTML(
-            'dialog.reservationErrorMsg',
-            {
-                code,
-                msg
-            });
-
-    messageHandler.openDialog(
-        'dialog.reservationError', message, true, {}, () => false);
+UI.notifyReservationError = function (code, msg) {
+    messageHandler.showError({
+        descriptionArguments: {
+            code,
+            msg },
+        descriptionKey: 'dialog.reservationErrorMsg',
+        titleKey: 'dialog.reservationError'
+    });
 };
 
 /**
  * Notify user that he has been kicked from the server.
  */
 UI.notifyKicked = function() {
-    messageHandler.openMessageDialog(
-        'dialog.sessTerminated',
-        'dialog.kickMessage');
+    messageHandler.showWarning({
+        descriptionKey: 'dialog.kickMessage',
+        titleKey: 'dialog.sessTerminated'
+    });
 };
 
 /**
@@ -182,8 +180,10 @@ UI.notifyKicked = function() {
 UI.notifyConferenceDestroyed = function(reason) {
     // FIXME: use Session Terminated from translation, but
     // 'reason' text comes from XMPP packet and is not translated
-    messageHandler.openDialog(
-        'dialog.sessTerminated', reason, true, {}, () => false);
+    messageHandler.showError({
+        description: reason,
+        titleKey: 'dialog.sessTerminated'
+    });
 };
 
 /**
@@ -832,29 +832,33 @@ UI.setUserAvatarUrl = function(id, url) {
  * Notify user that connection failed.
  * @param {string} stropheErrorMsg raw Strophe error message
  */
-UI.notifyConnectionFailed = function(stropheErrorMsg) {
-    let message;
+UI.notifyConnectionFailed = function (stropheErrorMsg) {
+    let descriptionKey;
+    let descriptionArguments;
 
     if (stropheErrorMsg) {
-        message = APP.translation.generateTranslationHTML(
-            'dialog.connectErrorWithMsg', { msg: stropheErrorMsg });
+        descriptionKey = 'dialog.connectErrorWithMsg';
+        descriptionArguments = { msg: stropheErrorMsg };
     } else {
-        message = APP.translation.generateTranslationHTML(
-            'dialog.connectError');
+        descriptionKey = 'dialog.connectError';
     }
 
-    messageHandler.openDialog('dialog.error', message, true, {}, () => false);
+    messageHandler.showError({
+        descriptionArguments,
+        descriptionKey,
+        titleKey: 'dialog.error'
+    });
 };
 
 
 /**
  * Notify user that maximum users limit has been reached.
  */
-UI.notifyMaxUsersLimitReached = function() {
-    const message = APP.translation.generateTranslationHTML(
-            'dialog.maxUsersLimitReached');
-
-    messageHandler.openDialog('dialog.error', message, true, {}, () => false);
+UI.notifyMaxUsersLimitReached = function () {
+    messageHandler.showError({
+        descriptionKey: 'dialog.maxUsersLimitReached',
+        titleKey: 'dialog.error'
+    });
 };
 
 /**
@@ -954,14 +958,18 @@ UI.updateRecordingState = function(state) {
     Recording.updateRecordingState(state);
 };
 
-UI.notifyTokenAuthFailed = function() {
-    messageHandler.showError('dialog.tokenAuthFailedTitle',
-                                'dialog.tokenAuthFailed');
+UI.notifyTokenAuthFailed = function () {
+    messageHandler.showError({
+        descriptionKey: 'dialog.tokenAuthFailed',
+        titleKey: 'dialog.tokenAuthFailedTitle'
+    });
 };
 
-UI.notifyInternalError = function() {
-    messageHandler.showError('dialog.internalErrorTitle',
-                                'dialog.internalError');
+UI.notifyInternalError = function () {
+    messageHandler.showError({
+        descriptionKey: 'dialog.internalError',
+        titleKey: 'dialog.internalErrorTitle'
+    });
 };
 
 UI.notifyFocusDisconnected = function(focus, retrySec) {
@@ -1203,11 +1211,12 @@ UI.showCameraErrorNotification = function(cameraError) {
  * Shows error dialog that informs the user that no data is received from the
  * device.
  */
-UI.showTrackNotWorkingDialog = function(stream) {
-    messageHandler.openMessageDialog(
-        'dialog.error',
-        stream.isAudioTrack() ? 'dialog.micNotSendingData'
-            : 'dialog.cameraNotSendingData');
+UI.showTrackNotWorkingDialog = function (stream) {
+    messageHandler.showError({
+        descriptionKey: stream.isAudioTrack()
+            ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',
+        titleKey: 'dialog.error'
+    });
 };
 
 UI.updateDevicesAvailability = function(id, devices) {

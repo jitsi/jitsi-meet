@@ -5,7 +5,10 @@ import {
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
-import { NotificationWithToggle } from './components';
+import {
+    Notification,
+    NotificationWithToggle
+} from './components';
 
 /**
  * Removes the notification with the passed in id.
@@ -41,6 +44,19 @@ export function setNotificationsEnabled(enabled) {
 }
 
 /**
+ * Queues an error notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @returns {Object}
+ */
+export function showErrorNotification(props) {
+    return showNotification(Notification, {
+        ...props,
+        appearance: 'error'
+    });
+}
+
+/**
  * Queues a notification for display.
  *
  * @param {ReactComponent} component - The notification component to be
@@ -64,6 +80,19 @@ export function showNotification(component, props = {}, timeout) {
         timeout,
         uid: window.Date.now()
     };
+}
+
+/**
+ * Queues a warning notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @returns {Object}
+ */
+export function showWarningNotification(props) {
+    return showNotification(Notification, {
+        ...props,
+        appearance: 'warning'
+    });
 }
 
 /**

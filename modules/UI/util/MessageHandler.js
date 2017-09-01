@@ -5,7 +5,9 @@ import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 import {
     Notification,
-    showNotification
+    showErrorNotification,
+    showNotification,
+    showWarningNotification
 } from '../../../react/features/notifications';
 
 /**
@@ -456,14 +458,16 @@ const messageHandler = {
      * Shows a dialog prompting the user to send an error report.
      *
      * @param titleKey the title of the message
-     * @param msgKey the text of the message
+     * @param descriptionKey the text of the message
      * @param error the error that is being reported
      */
-    openReportDialog(titleKey, msgKey, error) {
-        this.openMessageDialog(titleKey, msgKey);
+    openReportDialog: function(titleKey, descriptionKey, error) {
         logger.log(error);
-
-        // FIXME send the error to the server
+        APP.store.dispatch(showErrorNotification({
+            descriptionKey,
+            titleKey
+        }));
+        //FIXME send the error to the server
     },
 
     /**
@@ -471,9 +475,14 @@ const messageHandler = {
      * @param titleKey the title of the message.
      * @param msgKey the text of the message.
      */
-    showError(titleKey = 'dialog.oops', msgKey = 'dialog.defaultError') {
-        messageHandler.openMessageDialog(titleKey, msgKey);
+    showError: function(props) {
+        APP.store.dispatch(showErrorNotification(props));
     },
+
+    showWarning: function(props) {
+        APP.store.dispatch(showWarningNotification(props));
+    },
+
 
     /**
      * Displays a notification about participant action.
@@ -498,9 +507,9 @@ const messageHandler = {
             showNotification(
                 Notification,
                 {
-                    defaultTitleKey: displayNameKey,
                     descriptionArguments: messageArguments,
                     descriptionKey: messageKey,
+                    titleKey: displayNameKey,
                     title: displayName
                 },
                 timeout));
