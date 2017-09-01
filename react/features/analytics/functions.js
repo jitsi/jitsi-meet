@@ -16,6 +16,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 export function initAnalytics({ getState }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
 
+    // legacy support for old analytics location
+    window.analyticsHandlers = [];
+
     const { analytics } = JitsiMeetJS;
 
     if (!isAnalyticsEnabled({ getState }) || !analytics) {
@@ -102,12 +105,23 @@ function _loadHandlers(scriptURLs, handlerConstructorOptions) {
             }
         }
 
-        if (getJitsiMeetGlobalNS().analyticsHandlers.length === 0) {
+        // analyticsHandlers is the handlers we want to use
+        // we search for them in the JitsiMeetGlobalNS, but also
+        // check the old location to provide legacy support
+        let analyticsHandlers = [];
+
+        analyticsHandlers = analyticsHandlers.concat(
+            getJitsiMeetGlobalNS().analyticsHandlers);
+
+        // legacy support for old analytics location
+        analyticsHandlers = analyticsHandlers.concat(window.analyticsHandlers);
+
+        if (analyticsHandlers.length === 0) {
             throw new Error('No analytics handlers available');
         } else {
             const handlers = [];
 
-            for (const Handler of getJitsiMeetGlobalNS().analyticsHandlers) {
+            for (const Handler of analyticsHandlers) {
                 // catch any error while loading to avoid
                 // skipping analytics in case of multiple scripts
                 try {
