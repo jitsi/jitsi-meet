@@ -99,3 +99,23 @@ export function loadConfig(host: string, path: string = 'config.js') {
 
     return promise;
 }
+
+/**
+ * Evaluates whether analytics is enabled or not based on
+ * the redux {@code store}.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @returns {boolean} True if analytics is enabled, false otherwise.
+ */
+export function isAnalyticsEnabled({ getState }: { getState: Function }) {
+    const {
+        analyticsScriptUrls,
+        disableThirdPartyRequests
+    } = getState()['features/base/config'];
+
+    const scriptURLs = Array.isArray(analyticsScriptUrls)
+        ? analyticsScriptUrls : [];
+
+    return Boolean(scriptURLs.length) && !disableThirdPartyRequests;
+}

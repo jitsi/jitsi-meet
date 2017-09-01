@@ -1,7 +1,7 @@
 // FIXME: change to '../API' when we update to webpack2. If we do this now all
 // files from API modules will be included in external_api.js.
 import { API_ID } from '../API/constants';
-import { getJitsiMeetGlobalNS } from '../util/helpers';
+import { getJitsiMeetGlobalNS } from '../../react/features/base/util';
 
 import PostMessageTransportBackend from './PostMessageTransportBackend';
 import Transport from './Transport';

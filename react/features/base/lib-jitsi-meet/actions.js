@@ -9,6 +9,7 @@ import {
     LIB_WILL_INIT,
     SET_WEBRTC_READY
 } from './actionTypes';
+import { isAnalyticsEnabled } from './functions';
 
 declare var APP: Object;
 
@@ -50,7 +51,11 @@ export function initLib() {
         dispatch({ type: LIB_WILL_INIT });
 
         return (
-            JitsiMeetJS.init(config)
+            JitsiMeetJS.init(
+                    Object.assign({
+                        enableAnalyticsLogging: isAnalyticsEnabled({ getState })
+                    },
+                    config))
                 .then(() => dispatch({ type: LIB_DID_INIT }))
                 .catch(error => {
                     dispatch(libInitError(error));
