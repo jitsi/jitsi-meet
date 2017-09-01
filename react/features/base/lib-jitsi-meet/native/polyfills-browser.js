@@ -219,7 +219,7 @@ function _visitNode(node, callback) {
                 // then it doesn't sound like what expected.
                 && nodePrototype !== Object.getPrototypeOf({})) {
             // Override console.log.
-            const console = global.console;
+            const { console } = global;
 
             if (console) {
                 const loggerLevels = require('jitsi-meet-logger').levels;

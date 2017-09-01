@@ -90,9 +90,7 @@ class Root extends Component {
      * @inheritdoc
      */
     componentWillReceiveProps({ url }) {
-        if (!equals(this.props.url, url)) {
-            this.setState({ url: url || null });
-        }
+        equals(this.props.url, url) || this.setState({ url: url || null });
     }
 
     /**

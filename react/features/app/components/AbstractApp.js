@@ -93,7 +93,7 @@ export class AbstractApp extends Component {
      * @inheritdoc
      */
     componentWillMount() {
-        const dispatch = this._getStore().dispatch;
+        const { dispatch } = this._getStore();
 
         dispatch(appWillMount(this));
 
@@ -163,7 +163,7 @@ export class AbstractApp extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        const dispatch = this._getStore().dispatch;
+        const { dispatch } = this._getStore();
 
         dispatch(localParticipantLeft());
 

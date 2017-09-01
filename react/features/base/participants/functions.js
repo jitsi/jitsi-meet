@@ -1,3 +1,7 @@
+/* @flow */
+
+import { toState } from '../redux';
+
 import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
 
 declare var config: Object;
@@ -13,19 +17,21 @@ declare var MD5: Object;
  * @param {string} [participant.avatarURL] - Participant's avatar URL.
  * @param {string} [participant.email] - Participant's e-mail address.
  * @param {string} [participant.id] - Participant's ID.
+ * @public
  * @returns {string} The URL of the image for the avatar of the specified
  * participant.
- *
- * @public
  */
-export function getAvatarURL(participant) {
+export function getAvatarURL({ avatarID, avatarURL, email, id }: {
+        avatarID: string,
+        avatarURL: string,
+        email: string,
+        id: string
+}) {
     // If disableThirdPartyRequests disables third-party avatar services, we are
     // restricted to a stock image of ours.
     if (typeof config === 'object' && config.disableThirdPartyRequests) {
         return DEFAULT_AVATAR_RELATIVE_PATH;
     }
-
-    const { avatarID, avatarURL, email, id } = participant;
 
     // If an avatarURL is specified, then obviously there's nothing to generate.
     if (avatarURL) {
@@ -77,7 +83,7 @@ export function getAvatarURL(participant) {
  * features/base/participants state.
  * @returns {(Participant|undefined)}
  */
-export function getLocalParticipant(stateOrGetState) {
+export function getLocalParticipant(stateOrGetState: Object | Function) {
     const participants = _getParticipants(stateOrGetState);
 
     return participants.find(p => p.local);
@@ -94,7 +100,9 @@ export function getLocalParticipant(stateOrGetState) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(stateOrGetState, id) {
+export function getParticipantById(
+        stateOrGetState: Object | Function,
+        id: string) {
     const participants = _getParticipants(stateOrGetState);
 
     return participants.find(p => p.id === id);
@@ -110,7 +118,7 @@ export function getParticipantById(stateOrGetState, id) {
  * features/base/participants state.
  * @returns {number}
  */
-export function getParticipantCount(stateOrGetState) {
+export function getParticipantCount(stateOrGetState: Object | Function) {
     const participants = _getParticipants(stateOrGetState);
     const realParticipants = participants.filter(p => !p.isBot);
 
@@ -126,7 +134,7 @@ export function getParticipantCount(stateOrGetState) {
  * features/base/participants state.
  * @returns {(Participant|undefined)}
  */
-export function getPinnedParticipant(stateOrGetState) {
+export function getPinnedParticipant(stateOrGetState: Object | Function) {
     const participants = _getParticipants(stateOrGetState);
 
     return participants.find(p => p.pinned);
@@ -143,14 +151,8 @@ export function getPinnedParticipant(stateOrGetState) {
  * @returns {Participant[]}
  */
 function _getParticipants(stateOrGetState) {
-    if (Array.isArray(stateOrGetState)) {
-        return stateOrGetState;
-    }
-
-    const state
-        = typeof stateOrGetState === 'function'
-            ? stateOrGetState()
-            : stateOrGetState;
-
-    return state['features/base/participants'] || [];
+    return (
+        Array.isArray(stateOrGetState)
+            ? stateOrGetState
+            : toState(stateOrGetState)['features/base/participants'] || []);
 }

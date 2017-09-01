@@ -2,6 +2,7 @@
 
 import { isRoomValid } from '../base/conference';
 import { RouteRegistry } from '../base/react';
+import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { Entryway } from '../welcome';
 
@@ -14,12 +15,8 @@ import { Entryway } from '../welcome';
  * @returns {Route}
  */
 export function _getRouteToRender(stateOrGetState: Object | Function) {
-    const state
-        = typeof stateOrGetState === 'function'
-            ? stateOrGetState()
-            : stateOrGetState;
-    const { room } = state['features/base/conference'];
-    const component = isRoomValid(room) ? Conference : Entryway;
+    const { room } = toState(stateOrGetState)['features/base/conference'];
+    const component = isRoomValid(room) ? Conference : WelcomePage;
 
     return RouteRegistry.getRouteByComponent(component);
 }

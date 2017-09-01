@@ -1,5 +1,7 @@
 /* @flow */
 
+import { toState } from '../redux';
+
 /**
  * Retrieves a simplified version of the conference/location URL stripped of URL
  * params (i.e. query/search and hash) which should be used for sending invites.
@@ -9,21 +11,13 @@
  * @returns {string|undefined}
  */
 export function getInviteURL(stateOrGetState: Function | Object): ?string {
-    const state
-        = typeof stateOrGetState === 'function'
-            ? stateOrGetState()
-            : stateOrGetState;
+    const state = toState(stateOrGetState);
     const locationURL
         = state instanceof URL
             ? state
             : state['features/base/connection'].locationURL;
-    let inviteURL;
 
-    if (locationURL) {
-        inviteURL = getURLWithoutParams(locationURL).href;
-    }
-
-    return inviteURL;
+    return locationURL ? getURLWithoutParams(locationURL).href : undefined;
 }
 
 /**

@@ -1,3 +1,5 @@
+/* @flow */
+
 import _ from 'lodash';
 
 /**
@@ -13,7 +15,7 @@ import _ from 'lodash';
  * from the specified target by setting the specified properties to the
  * specified values.
  */
-export function assign(target, source) {
+export function assign(target: Object, source: Object) {
     let t = target;
 
     for (const property in source) { // eslint-disable-line guard-for-in
@@ -32,7 +34,7 @@ export function assign(target, source) {
  * @returns {boolean} True if {@code a} equals {@code b} (according to deep
  * comparison); false, otherwise.
  */
-export function equals(a, b) {
+export function equals(a: any, b: any) {
     return _.isEqual(a, b);
 }
 
@@ -52,7 +54,7 @@ export function equals(a, b) {
  * constructed from the specified <tt>state</tt> by setting the specified
  * <tt>property</tt> to the specified <tt>value</tt>.
  */
-export function set(state, property, value) {
+export function set(state: Object, property: string, value: any) {
     return _set(state, property, value, /* copyOnWrite */ true);
 }
 
@@ -77,7 +79,11 @@ export function set(state, property, value) {
  * <tt>state</tt> by setting the specified <tt>property</tt> to the specified
  * <tt>value</tt>.
  */
-function _set(state, property, value, copyOnWrite) {
+function _set(
+        state: Object,
+        property: string,
+        value: any,
+        copyOnWrite: boolean) {
     // Delete state properties that are to be set to undefined. (It is a matter
     // of personal preference, mostly.)
     if (typeof value === 'undefined'
@@ -104,3 +110,20 @@ function _set(state, property, value, copyOnWrite) {
 }
 
 /* eslint-enable max-params */
+
+/**
+ * If the specified <tt>stateOrGetState</tt> is a function, it is presumed to be
+ * the redux {@link getState} function, it is invoked, and its return value is
+ * returned; otherwise, <tt>stateOrGetState</tt> is presumed to be the redux
+ * state and is returned.
+ *
+ * @param {Object|Function} stateOrGetState - The redux state or
+ * {@link getState} function.
+ * @returns {Object} The redux state.
+ */
+export function toState(stateOrGetState: Object | Function) {
+    return (
+        typeof stateOrGetState === 'function'
+            ? stateOrGetState()
+            : stateOrGetState);
+}
