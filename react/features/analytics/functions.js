@@ -108,13 +108,10 @@ function _loadHandlers(scriptURLs, handlerConstructorOptions) {
         // analyticsHandlers is the handlers we want to use
         // we search for them in the JitsiMeetGlobalNS, but also
         // check the old location to provide legacy support
-        let analyticsHandlers = [];
-
-        analyticsHandlers = analyticsHandlers.concat(
-            getJitsiMeetGlobalNS().analyticsHandlers);
-
-        // legacy support for old analytics location
-        analyticsHandlers = analyticsHandlers.concat(window.analyticsHandlers);
+        const analyticsHandlers = [
+            ...getJitsiMeetGlobalNS().analyticsHandlers,
+            ...window.analyticsHandlers
+        ];
 
         if (analyticsHandlers.length === 0) {
             throw new Error('No analytics handlers available');
