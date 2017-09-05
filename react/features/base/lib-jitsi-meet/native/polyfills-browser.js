@@ -2,7 +2,7 @@ import Iterator from 'es6-iterator';
 import BackgroundTimer from 'react-native-background-timer';
 import 'url-polyfill'; // Polyfill for URL constructor
 
-import LocalStorage from './LocalStorage';
+import Storage from './Storage';
 
 /**
  * Gets the first common prototype of two specified Objects (treating the
@@ -267,7 +267,9 @@ function _visitNode(node, callback) {
     }
 
     // localStorage
-    global.localStorage = new LocalStorage();
+    if (typeof global.localStorage === 'undefined') {
+        global.localStorage = new Storage('@jitsi-meet/');
+    }
 
     // location
     if (typeof global.location === 'undefined') {
