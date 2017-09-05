@@ -186,49 +186,53 @@ function _loadConfig({ contextRoot, host, protocol, room }) {
 
     // TDOO userinfo
 
-    const rootUrl = `${protocol}//${host}${contextRoot || '/'}`;
-    let url = `${rootUrl}config.js`;
+    const baseURL = `${protocol}//${host}${contextRoot || '/'}`;
+    let url = `${baseURL}config.js`;
 
     // XXX In order to support multiple shards, tell the room to the deployment.
     room && (url += `?room=${room.toLowerCase()}`);
 
     /* eslint-enable no-param-reassign */
 
-    const key = `config/${rootUrl}`;
+    const key = `config.js/${baseURL}`;
 
-    return (
-        loadConfig(url)
-            .then(config => {
-                // Try to store the configuration in localStorage. If the
-                // deployment specified the 'getroom' option as a function, for
-                // example, we cannot store it, so don't.
-                try {
+    return loadConfig(url).then(
+        /* onFulfilled */ config => {
+            // Try to store the configuration in localStorage. If the deployment
+            // specified 'getroom' as a function, for example, it does not make
+            // sense to and it will not be stored.
+            try {
+                if (typeof window.config === 'undefined'
+                        || window.config !== config) {
                     window.localStorage.setItem(key, JSON.stringify(config));
-                } catch (e) {
-
-                    // Ignore the error, we won't cache this config.
                 }
+            } catch (e) {
+                // Ignore the error because the caching is optional.
+            }
 
-                return config;
-            })
-            .catch(error => {
-                // We failed to load the requested config, try to use the last
-                // one which was fetched for that deployment. It may not match
-                // the shard, but it's probably better than nothing.
-                const config = window.localStorage.getItem(key);
+            return config;
+        },
+        /* onRejected */ error => {
+            // XXX The (down)loading of config failed. Try to use the last
+            // successfully fetched for that deployment. It may not match the
+            // shard.
+            let storage;
+
+            try {
+                // XXX Even reading the property localStorage of window may
+                // throw an error (which is user agent-specific behavior).
+                storage = window.localStorage;
+
+                const config = storage.getItem(key);
 
                 if (config) {
-                    try {
-                        return JSON.parse(config);
-                    } catch (e) {
-
-                        // Somehow incorrect data ended up in the storage. Clean
-                        // up.
-                        window.localStorage.removeItem(key);
-                    }
+                    return JSON.parse(config);
                 }
+            } catch (e) {
+                // Somehow incorrect data ended up in the storage. Clean it up.
+                storage && storage.removeItem(key);
+            }
 
-                throw error;
-            })
-    );
+            throw error;
+        });
 }
