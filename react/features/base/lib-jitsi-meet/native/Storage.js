@@ -1,5 +1,3 @@
-/* @flow */
-
 import { AsyncStorage } from 'react-native';
 
 /**
@@ -13,10 +11,6 @@ import { AsyncStorage } from 'react-native';
  * asynchronously. If an asynchronous operation produces an error, it's ignored.
  */
 export default class Storage {
-    _items: Map<string, string>;
-
-    _keyPrefix: ?string;
-
     /**
      * Initializes a new <tt>Storage</tt> instance. Loads all previously
      * persisted data items from React Native's <tt>AsyncStorage</tt> if
@@ -25,15 +19,7 @@ export default class Storage {
      * @param {string|undefined} keyPrefix - The prefix of the
      * <tt>AsyncStorage</tt> keys to be persisted by this storage.
      */
-    constructor(keyPrefix: ?string) {
-        /**
-         * The data items stored in this storage.
-         *
-         * @private
-         * @type {Map}
-         */
-        this._items = new Map();
-
+    constructor(keyPrefix) {
         /**
          * The prefix of the <tt>AsyncStorage</tt> keys persisted by this
          * storage. If <tt>undefined</tt>, then the data items stored in this
@@ -71,8 +57,8 @@ export default class Storage {
                         // that it is technically possible to invoke setItem
                         // with a key before the key is loaded from
                         // AsyncStorage.
-                        if (!this._items.has(key)) {
-                            this._items.set(key, value);
+                        if (!this.hasOwnProperty(key)) {
+                            this[key] = value;
                         }
                     }
                 });
@@ -86,7 +72,7 @@ export default class Storage {
      * @returns {void}
      */
     clear() {
-        for (const key of this._items.keys()) {
+        for (const key of Object.keys(this)) {
             this.removeItem(key);
         }
     }
@@ -98,8 +84,8 @@ export default class Storage {
      * @returns {string|null} The value associated with <tt>key</tt> or
      * <tt>null</tt>.
      */
-    getItem(key: string) {
-        return this._items.has(key) ? this._items.get(key) : null;
+    getItem(key) {
+        return this.hasOwnProperty(key) ? this[key] : null;
     }
 
     /**
@@ -109,14 +95,10 @@ export default class Storage {
      * name of.
      * @returns {string} The name of the nth key in this storage.
      */
-    key(n: number) {
-        let i = 0;
+    key(n) {
+        const keys = Object.keys(this);
 
-        for (const key in this._items.keys()) {
-            if (i++ === n) {
-                return key;
-            }
-        }
+        return n < keys.length ? keys[n] : null;
     }
 
     /**
@@ -125,8 +107,8 @@ export default class Storage {
      *
      * @returns {number}
      */
-    get length(): number {
-        return this._items.size;
+    get length() {
+        return Object.keys(this).length;
     }
 
     /**
@@ -135,8 +117,8 @@ export default class Storage {
      * @param {string} key - The name of the key to remove.
      * @returns {void}
      */
-    removeItem(key: string) {
-        this._items.delete(key);
+    removeItem(key) {
+        delete this[key];
         typeof this._keyPrefix === 'undefined'
             || AsyncStorage.removeItem(`${String(this._keyPrefix)}${key}`);
     }
@@ -149,9 +131,9 @@ export default class Storage {
      * @param {string} value - The value to associate with <tt>key</tt>.
      * @returns {void}
      */
-    setItem(key: string, value: string) {
+    setItem(key, value) {
         value = String(value); // eslint-disable-line no-param-reassign
-        this._items.set(key, value);
+        this[key] = value;
         typeof this._keyPrefix === 'undefined'
             || AsyncStorage.setItem(`${String(this._keyPrefix)}${key}`, value);
     }
