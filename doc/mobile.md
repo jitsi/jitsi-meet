@@ -26,6 +26,12 @@ work properly with the native plugins we require.
 
     You may need to add ```--unsafe-perm=true``` if you are running on [Mac OS 10.11 or greater](https://github.com/phonegap/ios-deploy#os-x-1011-el-capitan-or-greater).
 
+  - Install main dependencies:
+
+    ```bash
+    npm install
+    ```
+
   - Install the required pods (CocoaPods must be installled first, it can
     be done with Homebrew: `brew install cocoapods`)
 
