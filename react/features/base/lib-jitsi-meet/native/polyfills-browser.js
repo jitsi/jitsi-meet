@@ -2,6 +2,8 @@ import Iterator from 'es6-iterator';
 import BackgroundTimer from 'react-native-background-timer';
 import 'url-polyfill'; // Polyfill for URL constructor
 
+import LocalStorage from './LocalStorage';
+
 /**
  * Gets the first common prototype of two specified Objects (treating the
  * objects themselves as prototypes as well).
@@ -263,6 +265,9 @@ function _visitNode(node, callback) {
 
         global.document = document;
     }
+
+    // localStorage
+    global.localStorage = new LocalStorage();
 
     // location
     if (typeof global.location === 'undefined') {
