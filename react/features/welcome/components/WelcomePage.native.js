@@ -6,7 +6,7 @@ import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
 import { Link, Text } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
-import { createLocalTracksA } from '../../base/tracks';
+import { createDesiredLocalTracks } from '../../base/tracks';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import styles from './styles';
@@ -46,10 +46,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentWillMount() {
-        const { dispatch, _localVideoTrack } = this.props;
-
-        (typeof _localVideoTrack === 'undefined')
-            && dispatch(createLocalTracksA({ devices: [ MEDIA_TYPE.VIDEO ] }));
+        this.props.dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
     }
 
     /**

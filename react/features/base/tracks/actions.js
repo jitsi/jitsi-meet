@@ -17,21 +17,23 @@ import { createLocalTracksF } from './functions';
 
 /**
  * Requests the creating of the desired media type tracks. Desire is expressed
- * by base/media. This function will dispatch a {@code createLocalTracksA}
- * action for the "missing" types, that is, the ones which base/media would
- * like to have (unmuted tracks) but are not present yet.
+ * by base/media unless the function caller specifies desired media types
+ * explicitly and thus override base/media. Dispatches a
+ * {@code createLocalTracksA} action for the desired media types for which there
+ * are no existing tracks yet.
  *
  * @returns {Function}
  */
-export function createDesiredLocalTracks() {
+export function createDesiredLocalTracks(...desiredTypes) {
     return (dispatch, getState) => {
         const state = getState();
-        const desiredTypes = [];
 
-        state['features/base/media'].audio.muted
-            || desiredTypes.push(MEDIA_TYPE.AUDIO);
-        Boolean(state['features/base/media'].video.muted)
-            || desiredTypes.push(MEDIA_TYPE.VIDEO);
+        if (desiredTypes.length === 0) {
+            const { audio, video } = state['features/base/media'];
+
+            audio.muted || desiredTypes.push(MEDIA_TYPE.AUDIO);
+            Boolean(video.muted) || desiredTypes.push(MEDIA_TYPE.VIDEO);
+        }
 
         const availableTypes
             = state['features/base/tracks']
