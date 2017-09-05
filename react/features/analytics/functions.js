@@ -124,7 +124,7 @@ function _loadHandlers(scriptURLs, handlerConstructorOptions) {
                 try {
                     handlers.push(new Handler(handlerConstructorOptions));
                 } catch (error) {
-                    logger.error('error instantiating analytics impl', error);
+                    logger.warn(`Error creating analytics handler: ${error}`);
                 }
             }
 
