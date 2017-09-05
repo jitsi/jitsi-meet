@@ -16,14 +16,9 @@ const TEXT_COLOR = ColorPalette.white;
  */
 export default createStyleSheet({
     /**
-     * The style of <tt>BlankPage</tt>.
+     * The style of the top-level container of <tt>BlankPage</tt>.
      */
     blankPage: {
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center'
     },
 
     /**
@@ -50,15 +45,6 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the top-level container of WelcomePage.
-     */
-    container: fixAndroidViewClipping({
-        alignSelf: 'stretch',
-        backgroundColor: ColorPalette.blue,
-        flex: 1
-    }),
-
-    /**
      * The style of the legal-related content such as (hyper)links to Privacy
      * Policy and Terms of Service displayed on the WelcomePage.
      */
@@ -80,26 +66,34 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the View displayed over the local video. The latter is
-     * thought of as the background (content) of WelcomePage. The former is
-     * thought of as the foreground (content) of WelcomePage.
+     * The style of the <tt>View</tt> displayed over the local video by
+     * <tt>LocalVideoTrackUnderlay</tt>. The latter is thought of as the
+     * background (content). The former is thought of as the foreground
+     * (content).
      */
-    localVideoOverlay: {
-        // Since (1) the top-level container of WelcomePage is not transparent
-        // and, more importantly, (2) this View is displayed over the local
-        // video, this View would better not have a background color.
-        // Otherwise, Views within this View will inherit its background color
-        // and Text, for example, will display non-transparent rectangles over
-        // the local video.
+    localVideoTrackOverlay: {
         backgroundColor: 'transparent',
         bottom: 0,
         flex: 1,
         flexDirection: 'column',
+        justifyContent: 'center',
         left: 0,
         position: 'absolute',
         right: 0,
         top: 0
     },
+
+    /**
+     * The style of the top-level container/<tt>View</tt> of
+     * <tt>LocalVideoTrackUnderlay</tt>.
+     */
+    localVideoTrackUnderlay: fixAndroidViewClipping({
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        backgroundColor: 'transparent',
+        flex: 1,
+        justifyContent: 'center'
+    }),
 
     /**
      * Container for room name input box and 'join' button.
@@ -134,5 +128,12 @@ export default createStyleSheet({
         fontSize: 25,
         marginBottom: 2 * BoxModel.margin,
         textAlign: 'center'
+    },
+
+    /**
+     * The style of the top-level container of <tt>WelcomePage</tt>.
+     */
+    welcomePage: {
+        backgroundColor: ColorPalette.blue
     }
 });

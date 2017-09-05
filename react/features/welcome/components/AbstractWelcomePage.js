@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
-import { VideoTrack } from '../../base/media';
-import { getLocalVideoTrack } from '../../base/tracks';
 
-import { generateRoomWithoutSeparator } from '../roomnameGenerator';
+import { generateRoomWithoutSeparator } from '../functions';
 
 /**
  * Base (abstract) class for container component rendering the welcome page.
@@ -15,12 +13,11 @@ import { generateRoomWithoutSeparator } from '../roomnameGenerator';
  */
 export class AbstractWelcomePage extends Component {
     /**
-     * {@code AbstractWelcomePage} component's property types.
+     * {@code AbstractWelcomePage}'s React {@code Component} prop types.
      *
      * @static
      */
     static propTypes = {
-        _localVideoTrack: PropTypes.object,
         _room: PropTypes.string,
         dispatch: PropTypes.func
     };
@@ -160,18 +157,6 @@ export class AbstractWelcomePage extends Component {
     }
 
     /**
-     * Renders a local video if any.
-     *
-     * @protected
-     * @returns {(ReactElement|null)}
-     */
-    _renderLocalVideo() {
-        return (
-            <VideoTrack videoTrack = { this.props._localVideoTrack } />
-        );
-    }
-
-    /**
      * Triggers the generation of a new room name and initiates an animation of
      * its changing.
      *
@@ -195,24 +180,17 @@ export class AbstractWelcomePage extends Component {
 }
 
 /**
- * Selects local video track from tracks in state, local participant and room
- * and maps them to component props. It seems it's not possible to 'connect'
- * base component and then extend from it. So we export this function in order
- * to be used in child classes for 'connect'.
+ * Maps (parts of) the redux state to the React {@code Component} props of
+ * {@code AbstractWelcomePage}.
  *
- * @param {Object} state - Redux state.
+ * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _localVideoTrack: (Track|undefined),
  *     _room: string
  * }}
  */
 export function _mapStateToProps(state) {
-    const conference = state['features/base/conference'];
-    const tracks = state['features/base/tracks'];
-
     return {
-        _localVideoTrack: getLocalVideoTrack(tracks),
-        _room: conference.room
+        _room: state['features/base/conference'].room
     };
 }

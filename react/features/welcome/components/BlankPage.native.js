@@ -2,12 +2,13 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { destroyLocalTracks } from '../../base/tracks';
 
 import { isWelcomePageAppEnabled } from '../functions';
+import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 import styles from './styles';
 
 /**
@@ -62,11 +63,11 @@ class BlankPage extends Component {
      */
     render() {
         return (
-            <View style = { styles.blankPage }>
+            <LocalVideoTrackUnderlay style = { styles.blankPage }>
                 <ActivityIndicator
                     animating = { this.props._networkActivity }
                     size = { 'large' } />
-            </View>
+            </LocalVideoTrackUnderlay>
         );
     }
 }
