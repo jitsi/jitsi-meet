@@ -52,26 +52,33 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
         return;
     }
 
-    if ([name isEqualToString:@"CONFERENCE_FAILED"]
-            && [delegate respondsToSelector:@selector(conferenceFailed:)]) {
-        [delegate conferenceFailed:data];
+    SEL sel = NSSelectorFromString([self methodNameFromEventName:name]);
 
-    } else if ([name isEqualToString:@"CONFERENCE_JOINED"]
-            && [delegate respondsToSelector:@selector(conferenceJoined:)]) {
-        [delegate conferenceJoined:data];
-
-    } else if ([name isEqualToString:@"CONFERENCE_LEFT"]
-            && [delegate respondsToSelector:@selector(conferenceLeft:)]) {
-        [delegate conferenceLeft:data];
-
-    } else if ([name isEqualToString:@"CONFERENCE_WILL_JOIN"]
-            && [delegate respondsToSelector:@selector(conferenceWillJoin:)]) {
-        [delegate conferenceWillJoin:data];
-
-    } else if ([name isEqualToString:@"CONFERENCE_WILL_LEAVE"]
-            && [delegate respondsToSelector:@selector(conferenceWillLeave:)]) {
-        [delegate conferenceWillLeave:data];
+    if (sel && [delegate respondsToSelector:sel]) {
+        [delegate performSelector:sel withObject:data];
     }
+}
+
+/**
+ * Converts a specific event name i.e. redux action type description to a
+ * method name.
+ *
+ * @param eventName The event name to convert to a method name.
+ * @return A method name constructed from the specified {@code eventName}.
+ */
+- (NSString *)methodNameFromEventName:(NSString *)eventName {
+   NSMutableString *methodName
+       = [NSMutableString stringWithCapacity:eventName.length];
+
+   for (NSString *c in [eventName componentsSeparatedByString:@"_"]) {
+       if (c.length) {
+           [methodName appendString:
+               methodName.length ? c.capitalizedString : c.lowercaseString];
+       }
+   }
+   [methodName appendString:@":"];
+
+   return methodName;
 }
 
 @end

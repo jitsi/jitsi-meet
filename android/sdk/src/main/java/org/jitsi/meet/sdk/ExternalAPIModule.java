@@ -25,7 +25,12 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.JitsiMeetViewListener;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Module implementing a simple API to enable a proximity sensor-controlled
@@ -35,9 +40,59 @@ import java.util.HashMap;
  */
 class ExternalAPIModule extends ReactContextBaseJavaModule {
     /**
-     * React Native module name.
+     * The {@code Method}s of {@code JitsiMeetViewListener} by event name i.e.
+     * redux action types.
+     */
+    private static final Map<String, Method> JITSI_MEET_VIEW_LISTENER_METHODS
+        = new HashMap<>();
+
+    /**
+     * The name of this module to be used in the React Native bridge.
      */
     private static final String MODULE_NAME = "ExternalAPI";
+
+    static {
+        // Figure out the mapping between the JitsiMeetViewListener methods
+        // and the events i.e. redux action types.
+        Pattern onPattern = Pattern.compile("^on[A-Z]+");
+        Pattern camelcasePattern = Pattern.compile("([a-z0-9]+)([A-Z0-9]+)");
+
+        for (Method method : JitsiMeetViewListener.class.getDeclaredMethods()) {
+            // * The method must be public (because it is declared by an
+            //   interface).
+            // * The method must be/return void.
+            if (!Modifier.isPublic(method.getModifiers())
+                    || !Void.TYPE.equals(method.getReturnType())) {
+                continue;
+            }
+
+            // * The method name must start with "on" followed by a
+            //   capital/uppercase letter (in agreement with the camelcase
+            //   coding style customary to Java in general and the projects of
+            //   the Jitsi community in particular).
+            String name = method.getName();
+
+            if (!onPattern.matcher(name).find()) {
+                continue;
+            }
+
+            // * The method must accept/have exactly 1 parameter of a type
+            //   assignable from HashMap.
+            Class<?>[] parameterTypes = method.getParameterTypes();
+
+            if (parameterTypes.length != 1
+                    || !parameterTypes[0].isAssignableFrom(HashMap.class)) {
+                continue;
+            }
+
+            // Convert the method name to an event name.
+            name
+                = camelcasePattern.matcher(name.substring(2))
+                    .replaceAll("$1_$2")
+                    .toUpperCase(Locale.ROOT);
+            JITSI_MEET_VIEW_LISTENER_METHODS.put(name, method);
+        }
+    }
 
     /**
      * Initializes a new module instance. There shall be a single instance of
@@ -85,26 +140,14 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        switch (name) {
-        case "CONFERENCE_FAILED":
-            listener.onConferenceFailed(toHashMap(data));
-            break;
+        Method method = JITSI_MEET_VIEW_LISTENER_METHODS.get(name);
 
-        case "CONFERENCE_JOINED":
-            listener.onConferenceJoined(toHashMap(data));
-            break;
-
-        case "CONFERENCE_LEFT":
-            listener.onConferenceLeft(toHashMap(data));
-            break;
-
-        case "CONFERENCE_WILL_JOIN":
-            listener.onConferenceWillJoin(toHashMap(data));
-            break;
-
-        case "CONFERENCE_WILL_LEAVE":
-            listener.onConferenceWillLeave(toHashMap(data));
-            break;
+        if (method != null) {
+            try {
+                method.invoke(listener, toHashMap(data));
+            } catch (ReflectiveOperationException roe) {
+                throw new RuntimeException(roe);
+            }
         }
     }
 
