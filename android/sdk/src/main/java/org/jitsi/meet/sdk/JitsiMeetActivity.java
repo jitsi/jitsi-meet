@@ -76,8 +76,22 @@ public class JitsiMeetActivity extends AppCompatActivity {
      * Initializes the {@link #view} of this {@code JitsiMeetActivity} with a
      * new {@link JitsiMeetView} instance.
      */
-    private void initializeView() {
-        view = new JitsiMeetView(this);
+    private void initializeContentView() {
+        JitsiMeetView view = initializeView();
+
+        if (view != null) {
+            this.view = view;
+            setContentView(this.view);
+        }
+    }
+
+    /**
+     * Initializes a new {@link JitsiMeetView} instance.
+     *
+     * @return a new {@code JitsiMeetView} instance.
+     */
+    protected JitsiMeetView initializeView() {
+        JitsiMeetView view = new JitsiMeetView(this);
 
         // In order to have the desired effect
         // JitsiMeetView#setWelcomePageEnabled(boolean) must be invoked before
@@ -85,7 +99,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
         view.setWelcomePageEnabled(welcomePageEnabled);
         view.loadURL(null);
 
-        setContentView(view);
+        return view;
     }
 
     /**
@@ -109,7 +123,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
         if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
                 && canRequestOverlayPermission()) {
             if (Settings.canDrawOverlays(this)) {
-                initializeView();
+                initializeContentView();
             }
         }
     }
@@ -144,7 +158,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
             return;
         }
 
-        initializeView();
+        initializeContentView();
     }
 
     /**

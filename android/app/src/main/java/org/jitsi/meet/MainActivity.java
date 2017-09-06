@@ -17,8 +17,13 @@
 package org.jitsi.meet;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import org.jitsi.meet.sdk.JitsiMeetActivity;
+import org.jitsi.meet.sdk.JitsiMeetView;
+import org.jitsi.meet.sdk.JitsiMeetViewListener;
+
+import java.util.Map;
 
 /**
  * The one and only {@link Activity} that the Jitsi Meet app needs. The
@@ -33,6 +38,80 @@ import org.jitsi.meet.sdk.JitsiMeetActivity;
  * {@code react-native run-android}.
  */
 public class MainActivity extends JitsiMeetActivity {
+    /**
+     * {@inheritDoc}
+     */
+    protected JitsiMeetView initializeView() {
+        JitsiMeetView view = super.initializeView();
+
+        // XXX In order to increase (1) awareness of API breakages and (2) API
+        // coverage, utilize JitsiMeetViewListener in the Debug configuration of
+        // the app.
+        if (BuildConfig.DEBUG && view != null) {
+            view.setListener(new JitsiMeetViewListener() {
+                private void on(String name, Map<String, Object> data) {
+                    // Log with the tag "ReactNative" in order to have the log
+                    // visible in react-native log-android as well.
+                    Log.d(
+                        "ReactNative",
+                        JitsiMeetViewListener.class.getSimpleName() + " "
+                            + name + " "
+                            + data);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onConferenceFailed(Map<String, Object> data) {
+                    on("CONFERENCE_FAILED", data);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onConferenceJoined(Map<String, Object> data) {
+                    on("CONFERENCE_JOINED", data);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onConferenceLeft(Map<String, Object> data) {
+                    on("CONFERENCE_LEFT", data);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onConferenceWillJoin(Map<String, Object> data) {
+                    on("CONFERENCE_WILL_JOIN", data);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onConferenceWillLeave(Map<String, Object> data) {
+                    on("CONFERENCE_WILL_LEAVE", data);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onLoadConfigError(Map<String, Object> data) {
+                    on("LOAD_CONFIG_ERROR", data);
+                }
+            });
+        }
+
+        return view;
+    }
+
     /**
      * {@inheritDoc}
      */

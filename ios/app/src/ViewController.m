@@ -40,4 +40,38 @@
     [view loadURL:nil];
 }
 
+#if DEBUG
+
+void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
+    NSLog(
+        @"[%s:%d] JitsiMeetViewDelegate %@ %@",
+        __FILE__, __LINE__, name, data);
+}
+
+- (void)conferenceFailed:(NSDictionary *)data {
+    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_FAILED", data);
+}
+
+- (void)conferenceJoined:(NSDictionary *)data {
+    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_JOINED", data);
+}
+
+- (void)conferenceLeft:(NSDictionary *)data {
+    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_LEFT", data);
+}
+
+- (void)conferenceWillJoin:(NSDictionary *)data {
+    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_WILL_JOIN", data);
+}
+
+- (void)conferenceWillLeave:(NSDictionary *)data {
+    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_WILL_LEAVE", data);
+}
+
+- (void)loadConfigError:(NSDictionary *)data {
+    _onJitsiMeetViewDelegateEvent(@"LOAD_CONFIG_ERROR", data);
+}
+
+#endif
+
 @end
