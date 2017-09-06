@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { equals, ReducerRegistry, set } from '../redux';
 
-import { SET_CONFIG } from './actionTypes';
+import { LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -46,6 +46,11 @@ ReducerRegistry.register(
     'features/base/config',
     (state = _getInitialState(), action) => {
         switch (action.type) {
+        case LOAD_CONFIG_ERROR:
+            return {
+                configError: action.error
+            };
+
         case SET_CONFIG:
             return _setConfig(state, action);
 
@@ -80,20 +85,20 @@ function _getInitialState() {
  * @returns {Object} The new state of the feature base/lib-jitsi-meet after the
  * reduction of the specified action.
  */
-function _setConfig(state, action) {
-    let { config } = action;
-
+function _setConfig(state, { config }) {
     // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
     // does not download them at runtime from the deployment on which it will
     // join a conference. The downloading is planned for implementation in the
     // future (later rather than sooner) but is not implemented yet at the time
     // of this writing and, consequently, we must provide legacy support in the
     // meantime.
+    // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
     const newState = _.merge(
         {},
         config,
+        { configError: undefined },
 
         // The config of _getInitialState() is meant to override the config
         // downloaded from the Jitsi Meet deployment because the former contains
