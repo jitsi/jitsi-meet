@@ -20,6 +20,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.JitsiMeetViewListener;
@@ -84,36 +85,49 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        // TODO Converting a ReadableMap to a HashMap is not supported until
-        // React Native 0.46.
-        HashMap<String, Object> dataMap = new HashMap<>();
-
         switch (name) {
         case "CONFERENCE_FAILED":
-            dataMap.put("error", data.getString("error"));
-            dataMap.put("url", data.getString("url"));
-            listener.onConferenceFailed(dataMap);
+            listener.onConferenceFailed(toHashMap(data));
             break;
 
         case "CONFERENCE_JOINED":
-            dataMap.put("url", data.getString("url"));
-            listener.onConferenceJoined(dataMap);
+            listener.onConferenceJoined(toHashMap(data));
             break;
 
         case "CONFERENCE_LEFT":
-            dataMap.put("url", data.getString("url"));
-            listener.onConferenceLeft(dataMap);
+            listener.onConferenceLeft(toHashMap(data));
             break;
 
         case "CONFERENCE_WILL_JOIN":
-            dataMap.put("url", data.getString("url"));
-            listener.onConferenceWillJoin(dataMap);
+            listener.onConferenceWillJoin(toHashMap(data));
             break;
 
         case "CONFERENCE_WILL_LEAVE":
-            dataMap.put("url", data.getString("url"));
-            listener.onConferenceWillLeave(dataMap);
+            listener.onConferenceWillLeave(toHashMap(data));
             break;
         }
+    }
+
+    /**
+     * Initializes a new {@code HashMap} instance with the key-value
+     * associations of a specific {@code ReadableMap}.
+     *
+     * @param readableMap the {@code ReadableMap} specifying the key-value
+     * associations with which the new {@code HashMap} instance is to be
+     * initialized.
+     * @return a new {@code HashMap} instance initialized with the key-value
+     * associations of the specified {@code readableMap}.
+     */
+    private HashMap<String, Object> toHashMap(ReadableMap readableMap) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+
+        for (ReadableMapKeySetIterator i = readableMap.keySetIterator();
+                i.hasNextKey();) {
+            String key = i.nextKey();
+
+            hashMap.put(key, readableMap.getString(key));
+        }
+
+        return hashMap;
     }
 }
