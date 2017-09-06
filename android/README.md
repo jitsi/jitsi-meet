@@ -244,6 +244,8 @@ The `data` `Map` contains a "url" key with the conference URL.
 
 #### onLoadConfigError
 
-Called when loading the main configuration fails.
+Called when loading the main configuration file from the Jitsi Meet deployment
+fails.
 
-The `data` `Map` contains an "error" key with the error.
+The `data` `Map` contains an "error" key with the error and a "url" key with the
+conference URL which necessitated the loading of the configuration file.

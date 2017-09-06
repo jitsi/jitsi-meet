@@ -60,9 +60,12 @@ public interface JitsiMeetViewListener {
     void onConferenceWillLeave(Map<String, Object> data);
 
     /**
-     * Called when loading the main configuration fails.
+     * Called when loading the main configuration file from the Jitsi Meet
+     * deployment fails.
      *
-     * @param data - Map with an "error" key with the error.
+     * @param data - Map with an "error" key with the error and a "url" key with
+     * the conference URL which necessitated the loading of the configuration
+     * file.
      */
     void onLoadConfigError(Map<String, Object> data);
 }

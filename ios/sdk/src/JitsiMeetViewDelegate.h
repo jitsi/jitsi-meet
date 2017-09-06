@@ -60,9 +60,12 @@
 - (void)conferenceWillLeave:(NSDictionary *)data;
 
 /**
- * Called when loading the main configuration file fails.
+ * Called when loading the main configuration file from the Jitsi Meet
+ * deployment file.
  *
- * The {@code data} dictionary contains an {@code error} key with the error.
+ * The {@code data} dictionary contains an {@code error} key with the error and
+ * a {@code url} key with the conference URL which necessitated the loading of
+ * the configuration file.
  */
 - (void)loadConfigError:(NSDictionary *)data;
 

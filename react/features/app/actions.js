@@ -1,6 +1,6 @@
 import { setRoom } from '../base/conference';
-import { setLocationURL } from '../base/connection';
 import { loadConfigError, setConfig } from '../base/config';
+import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { parseURIString } from '../base/util';
 
@@ -39,11 +39,14 @@ export function appNavigate(uri: ?string) {
 function _appNavigateToMandatoryLocation(
         dispatch: Dispatch<*>, getState: Function,
         newLocation: Object) {
-    _loadConfig(newLocation)
-        .then(
-            config => configLoaded(/* err */ undefined, config),
-            err => configLoaded(err, /* config */ undefined))
-        .then(() => dispatch(setRoom(newLocation.room)));
+    const { room } = newLocation;
+
+    return (
+        _loadConfig(newLocation)
+            .then(
+                config => loadConfigSettled(/* error */ undefined, config),
+                error => loadConfigSettled(error, /* config */ undefined))
+            .then(() => dispatch(setRoom(room))));
 
     /**
      * Notifies that an attempt to load a configuration has completed. Due to
@@ -56,7 +59,7 @@ function _appNavigateToMandatoryLocation(
      * loaded configuration.
      * @returns {void}
      */
-    function configLoaded(error, config) {
+    function loadConfigSettled(error, config) {
         // FIXME Due to the asynchronous nature of the loading, the specified
         // config may or may not be required by the time the notification
         // arrives.
@@ -64,15 +67,15 @@ function _appNavigateToMandatoryLocation(
         if (error) {
             // XXX The failure could be, for example, because of a
             // certificate-related error. In which case the connection will
-            // fail later in Strophe anyway even if we use the default
-            // config here.
-            dispatch(loadConfigError(error));
+            // fail later in Strophe anyway.
+            dispatch(loadConfigError(error, newLocation));
 
-            // We cannot go to the requested room if we weren't able to load
-            // the configuration. Go back to the entryway.
-            newLocation.room = undefined;
+            // Cannot go to a room if its configuration failed to load.
+            if (room) {
+                dispatch(appNavigate(undefined));
 
-            return;
+                throw error;
+            }
         }
 
         return (
@@ -117,7 +120,7 @@ function _appNavigateToOptionalLocation(
 
     location.protocol || (location.protocol = 'https:');
 
-    _appNavigateToMandatoryLocation(dispatch, getState, location);
+    return _appNavigateToMandatoryLocation(dispatch, getState, location);
 }
 
 /**

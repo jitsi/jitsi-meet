@@ -1,10 +1,11 @@
 /**
- * The redux action which signals the configuration couldn't be loaded due to an
- * error.
+ * The redux action which signals that a configuration could not be loaded due
+ * to a specific error.
  *
  * {
  *     type: LOAD_CONFIG_ERROR,
- *     error: Error
+ *     error: Error,
+ *     locationURL: string | URL
  * }
  */
 export const LOAD_CONFIG_ERROR = Symbol('LOAD_CONFIG_ERROR');

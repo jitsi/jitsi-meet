@@ -39,21 +39,17 @@ MiddlewareRegistry.register(store => next => action => {
             data.url = toURLString(conference[JITSI_CONFERENCE_URL_KEY]);
         }
 
-        // The (externa API) event's name is the string representation of the
-        // (redux) action's type.
-        const name = _getSymbolDescription(type);
-
-        _sendEvent(store, name, data);
+        _sendEvent(store, _getSymbolDescription(type), data);
         break;
     }
 
     case LOAD_CONFIG_ERROR: {
-        const { type, error } = action;
+        const { error, locationURL, type } = action;
 
-        _sendEvent(
-            store,
-            _getSymbolDescription(type),
-            { error: String(error) });
+        _sendEvent(store, _getSymbolDescription(type), {
+            error: String(error),
+            url: toURLString(locationURL)
+        });
         break;
     }
     }

@@ -382,7 +382,12 @@ export function urlObjectToString(o: Object): ?string {
 
         if (domain) {
             const { host, hostname, pathname: contextRoot, port }
-                = parseStandardURIString(domain);
+                = parseStandardURIString(
+
+                    // XXX The value of domain in supposed to be host/hostname
+                    // and, optionally, pathname. Make sure it is not taken for
+                    // a pathname only.
+                    _fixURIStringScheme(`org.jitsi.meet://${domain}`));
 
             // authority
             if (host) {
