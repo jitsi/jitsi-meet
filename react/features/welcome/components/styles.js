@@ -88,11 +88,9 @@ export default createStyleSheet({
      * <tt>LocalVideoTrackUnderlay</tt>.
      */
     localVideoTrackUnderlay: fixAndroidViewClipping({
-        alignItems: 'center',
         alignSelf: 'stretch',
         backgroundColor: 'transparent',
-        flex: 1,
-        justifyContent: 'center'
+        flex: 1
     }),
 
     /**
