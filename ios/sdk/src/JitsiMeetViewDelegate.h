@@ -62,7 +62,7 @@
 /**
  * Called when loading the main configuration file fails.
  *
- * The {@code data} dictionary contains a {@code error} key with the error.
+ * The {@code data} dictionary contains an {@code error} key with the error.
  */
 - (void) loadConfigError:(NSDictionary *)data;
 

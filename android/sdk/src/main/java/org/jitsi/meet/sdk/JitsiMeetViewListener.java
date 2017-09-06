@@ -62,7 +62,7 @@ public interface JitsiMeetViewListener {
     /**
      * Called when loading the main configuration fails.
      *
-     * @param data - Map with a "error" key with the error.
+     * @param data - Map with an "error" key with the error.
      */
     void onLoadConfigError(Map<String, Object> data);
 }

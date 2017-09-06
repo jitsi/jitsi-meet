@@ -215,35 +215,35 @@ boilerplate.
 Called when a joining a conference was unsuccessful or when there was an error
 while in a conference.
 
-The `data` HashMap contains an "error" key describing the error and a "url"
-key with the conference URL.
+The `data` `Map` contains an "error" key describing the error and a "url" key
+with the conference URL.
 
 #### onConferenceJoined
 
 Called when a conference was joined.
 
-The `data` HashMap contains a "url" key with the conference URL.
+The `data` `Map` contains a "url" key with the conference URL.
 
 #### onConferenceLeft
 
 Called when a conference was left.
 
-The `data` HashMap contains a "url" key with the conference URL.
+The `data` `Map` contains a "url" key with the conference URL.
 
 #### onConferenceWillJoin
 
 Called before a conference is joined.
 
-The `data` HashMap contains a "url" key with the conference URL.
+The `data` `Map` contains a "url" key with the conference URL.
 
 #### onConferenceWillLeave
 
 Called before a conference is left.
 
-The `data` HashMap contains a "url" key with the conference URL.
+The `data` `Map` contains a "url" key with the conference URL.
 
 #### onLoadConfigError
 
 Called when loading the main configuration fails.
 
-The `data` HashMap contains a "error" key with the error.
+The `data` `Map` contains an "error" key with the error.

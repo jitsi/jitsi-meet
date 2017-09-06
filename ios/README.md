@@ -155,4 +155,4 @@ The `data` dictionary contains a "url" key with the conference URL.
 
 Called when loading the main configuration fails.
 
-The `data` dictionary contains a "error" key with the error.
+The `data` dictionary contains an "error" key with the error.
