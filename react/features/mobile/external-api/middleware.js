@@ -40,20 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         // The (externa API) event's name is the string representation of the
         // (redux) action's type.
-        let name = type.toString();
-
-        // XXX We are using Symbol for (redux) action types at the time of this
-        // writing so the Symbol's description should be used.
-        if (name.startsWith('Symbol(') && name.endsWith(')')) {
-            name = name.slice(7, -1);
-        }
-
-        // The polyfill es6-symbol that we use does not appear to comply with
-        // the Symbol standard and, merely, adds @@ at the beginning of the
-        // description.
-        if (name.startsWith('@@')) {
-            name = name.slice(2);
-        }
+        const name = _getSymbolDescription(type);
 
         _sendEvent(store, name, data);
         break;
@@ -62,6 +49,29 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+/**
+ * Gets the description of a specific <tt>Symbol</tt>.
+ *
+ * @param {Symbol} symbol - The <tt>Symbol</tt> to retrieve the description of.
+ * @private
+ * @returns {string} The description of <tt>symbol</tt>.
+ */
+function _getSymbolDescription(symbol: Symbol) {
+    let description = symbol.toString();
+
+    if (description.startsWith('Symbol(') && description.endsWith(')')) {
+        description = description.slice(7, -1);
+    }
+
+    // The polyfill es6-symbol that we use does not appear to comply with the
+    // Symbol standard and, merely, adds @@ at the beginning of the description.
+    if (description.startsWith('@@')) {
+        description = description.slice(2);
+    }
+
+    return description;
+}
 
 /**
  * Sends a specific event to the native counterpart of the External API. Native
