@@ -164,10 +164,6 @@
      * be hidden.
      * The class opening is for when the filmstrip is transitioning from hidden
      * to visible.
-     * The class with-remote-videos is for when the filmstrip has remote videos
-     * displayed, as opposed to 1-on-1 mode where they might be hidden.
-     * The class without-remote-videos is for when the filmstrip is visible
-     * but it has no videos to display.
      */
     .video-state-indicator.moveToCorner {
         transition: right 0.5s;

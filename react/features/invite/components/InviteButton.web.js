@@ -9,6 +9,7 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 import { openDialog } from '../../base/dialog';
 import { AddPeopleDialog, InviteDialog } from '.';
 import { DialOutDialog } from '../../dial-out';
+import { isButtonEnabled } from '../../toolbox';
 
 declare var interfaceConfig: Object;
 
@@ -36,7 +37,7 @@ class InviteButton extends Component {
         _isDialOutAvailable: React.PropTypes.bool,
 
         /**
-         * The function closing the dialog.
+         * The function opening the dialog.
          */
         openDialog: React.PropTypes.func,
 
@@ -128,14 +129,10 @@ class InviteButton extends Component {
      * @returns {void}
      */
     _onInviteOptionSelected(option) {
-        this.state.inviteOptions[0].items.map(item => {
+        this.state.inviteOptions[0].items.forEach(item => {
             if (item.content === option.item.content) {
                 item.action();
-
-                return true;
             }
-
-            return false;
         });
     }
 
@@ -200,10 +197,6 @@ function _mapStateToProps(state) {
 
     const { conference } = state['features/base/conference'];
 
-    const isDialOutButtonEnabled
-        = interfaceConfig.TOOLBAR_BUTTONS.indexOf(DIAL_OUT_NAME) !== -1
-        || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(DIAL_OUT_NAME) !== -1;
-
     const { isGuest } = state['features/jwt'];
 
     return {
@@ -211,7 +204,7 @@ function _mapStateToProps(state) {
         _isDialOutAvailable:
             getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
             && conference && conference.isSIPCallingSupported()
-            && isDialOutButtonEnabled
+            && isButtonEnabled(DIAL_OUT_NAME)
             && (!enableUserRolesBasedOnToken || !isGuest)
     };
 }
