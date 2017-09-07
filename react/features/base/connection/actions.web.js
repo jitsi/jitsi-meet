@@ -19,7 +19,7 @@ export {
     connectionEstablished,
     connectionFailed,
     setLocationURL
-} from './actions.native.js';
+} from './actions.native';
 
 /**
  * Opens new connection.
