@@ -47,7 +47,7 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio.
     VIDEO_LAYOUT_FIT: 'both',
-    SHOW_CONTACTLIST_AVATARS: false,
+    SHOW_CONTACTLIST_AVATARS: true,
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
      */
