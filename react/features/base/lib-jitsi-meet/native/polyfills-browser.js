@@ -333,22 +333,7 @@ function _visitNode(node, callback) {
     // - herment
     // - Strophe
     if (typeof global.sessionStorage === 'undefined') {
-        let internalStorage = {};
-
-        global.sessionStorage = {
-            clear() {
-                internalStorage = {};
-            },
-            getItem(key) {
-                return internalStorage[key];
-            },
-            removeItem(key) {
-                delete internalStorage[key];
-            },
-            setItem(key, value) {
-                internalStorage[key] = value;
-            }
-        };
+        global.sessionStorage = new Storage();
     }
 
     // WebRTC
