@@ -207,8 +207,7 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    // Use local files from the css and libs directories.
-    if (path.startsWith('/css/')) {
+    if (path.startsWith('/css/') || path.startsWith('/doc/')) {
         return path;
     }
 
