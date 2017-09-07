@@ -22,10 +22,9 @@ function _getCommonPrototype(a, b) {
 
     let p;
 
-    if ((p = Object.getPrototypeOf(a)) && (p = _getCommonPrototype(b, p))) {
-        return p;
-    }
-    if ((p = Object.getPrototypeOf(b)) && (p = _getCommonPrototype(a, p))) {
+    if (((p = Object.getPrototypeOf(a)) && (p = _getCommonPrototype(b, p)))
+            || ((p = Object.getPrototypeOf(b))
+                && (p = _getCommonPrototype(a, p)))) {
         return p;
     }
 
@@ -90,7 +89,7 @@ function _visitNode(node, callback) {
 }
 
 (global => {
-    const DOMParser = require('xmldom').DOMParser;
+    const { DOMParser } = require('xmldom');
 
     // addEventListener
     //
@@ -234,7 +233,7 @@ function _visitNode(node, callback) {
 
                     if (typeof consoleLog === 'function') {
                         console[level] = function(...args) {
-                            const length = args.length;
+                            const { length } = args;
 
                             for (let i = 0; i < length; ++i) {
                                 let arg = args[i];
@@ -331,8 +330,8 @@ function _visitNode(node, callback) {
     // sessionStorage
     //
     // Required by:
+    // - herment
     // - Strophe
-    // - herment - requires a working sessionStorage, no empty impl. functions
     if (typeof global.sessionStorage === 'undefined') {
         let internalStorage = {};
 
@@ -358,7 +357,7 @@ function _visitNode(node, callback) {
 
     // XMLHttpRequest
     if (global.XMLHttpRequest) {
-        const prototype = global.XMLHttpRequest.prototype;
+        const { prototype } = global.XMLHttpRequest;
 
         // XMLHttpRequest.responseXML
         //
@@ -367,17 +366,13 @@ function _visitNode(node, callback) {
         if (prototype && !prototype.hasOwnProperty('responseXML')) {
             Object.defineProperty(prototype, 'responseXML', {
                 get() {
-                    const responseText = this.responseText;
-                    let responseXML;
+                    const { responseText } = this;
 
-                    if (responseText) {
-                        responseXML
-                            = new DOMParser().parseFromString(
+                    return (
+                        responseText
+                            && new DOMParser().parseFromString(
                                 responseText,
-                                'text/xml');
-                    }
-
-                    return responseXML;
+                                'text/xml'));
                 }
             });
         }
@@ -392,17 +387,9 @@ function _visitNode(node, callback) {
     // Required by:
     // - lib-jitsi-meet
     // - Strophe
-    global.clearTimeout
-        = window.clearTimeout
-        = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
-    global.clearInterval
-        = window.clearInterval
-        = BackgroundTimer.clearInterval.bind(BackgroundTimer);
-    global.setInterval
-        = window.setInterval
-        = BackgroundTimer.setInterval.bind(BackgroundTimer);
-    global.setTimeout
-        = window.setTimeout
-        = BackgroundTimer.setTimeout.bind(BackgroundTimer);
+    global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
+    global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);
+    global.setInterval = BackgroundTimer.setInterval.bind(BackgroundTimer);
+    global.setTimeout = BackgroundTimer.setTimeout.bind(BackgroundTimer);
 
 })(global || window || this); // eslint-disable-line no-invalid-this
