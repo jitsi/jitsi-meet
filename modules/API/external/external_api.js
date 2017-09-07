@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-import { urlObjectToString } from '../../../react/features/base/util';
+import { urlObjectToString } from '../../../react/features/base/util/uri.js';
 import {
     PostMessageTransportBackend,
     Transport

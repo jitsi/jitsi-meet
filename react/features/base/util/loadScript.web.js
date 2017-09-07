@@ -1,4 +1,6 @@
-import JitsiMeetJS from '../lib-jitsi-meet';
+/* @flow */
+
+declare var JitsiMeetJS: Object;
 
 /**
  * Loads a script from a specific URL. The script will be interpreted upon load.
@@ -7,13 +9,13 @@ import JitsiMeetJS from '../lib-jitsi-meet';
  * @returns {Promise} Resolved with no arguments when the script is loaded and
  * rejected with the error from JitsiMeetJS.ScriptUtil.loadScript method.
  */
-export function loadScript(url) {
+export function loadScript(url: string) {
     return new Promise((resolve, reject) =>
         JitsiMeetJS.util.ScriptUtil.loadScript(
             url,
             /* async */ true,
             /* prepend */ false,
             /* relativeURL */ false,
-            /* loadCallback */ () => resolve(),
-            /* errorCallback */ error => reject(error)));
+            /* loadCallback */ resolve,
+            /* errorCallback */ reject));
 }
