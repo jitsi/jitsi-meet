@@ -18,6 +18,18 @@ export function shouldRenderVideoTrack(videoTrack, waitForVideoStarted) {
 }
 
 /**
+ * Checks if video is currently muted by the audio-only authority.
+ *
+ * @param {Object} store - The redux store instance.
+ * @returns {boolean}
+ */
+export function isVideoMutedByAudioOnly({ getState }) {
+    return Boolean(
+        getState()['features/base/media'] // eslint-disable-line no-bitwise
+            .video.muted & VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY);
+}
+
+/**
  * Checks if video is currently muted by the user authority.
  *
  * @param {Object} store - The redux store instance.
