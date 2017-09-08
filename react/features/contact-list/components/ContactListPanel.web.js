@@ -2,10 +2,8 @@ import Button from '@atlaskit/button';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Avatar from '../../../../modules/UI/avatar/Avatar';
-
 import { translate } from '../../base/i18n';
-import { getParticipants } from '../../base/participants';
+import { getAvatarURL, getParticipants } from '../../base/participants';
 import { openInviteDialog } from '../../invite';
 
 import ContactListItem from './ContactListItem';
@@ -114,15 +112,18 @@ class ContactListPanel extends Component {
      * @returns {ReactElement[]}
      */
     _renderContacts() {
-        return this.props._participants.map(({ avatarId, id, name }) =>
-            ( // eslint-disable-line no-extra-parens
+        return this.props._participants.map(participant => {
+            const { id, name } = participant;
+
+            return (
                 <ContactListItem
                     avatarURI = { interfaceConfig.SHOW_CONTACTLIST_AVATARS
-                        ? Avatar.getAvatarUrl(avatarId) : null }
+                        ? getAvatarURL(participant) : null }
                     id = { id }
                     key = { id }
                     name = { name } />
-            ));
+            );
+        });
     }
 
     /**
