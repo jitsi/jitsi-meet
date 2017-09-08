@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Share } from 'react-native';
+import { NativeModules, Share } from 'react-native';
 
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -37,7 +37,7 @@ function _shareRoom(roomURL: string, dispatch: Function) {
     // review before i18n was introduces in react/. However, I reviewed it
     // afterwards. Translate the display/human-readable strings.
     const message = `Click the following link to join the meeting: ${roomURL}`;
-    const title = 'Jitsi Meet Conference';
+    const title = `${NativeModules.AppInfo.name} Conference`;
     const onFulfilled
         = (shared: boolean) => dispatch(endShareRoom(roomURL, shared));
 
