@@ -16,7 +16,21 @@
 
 #import "AppDelegate.h"
 
+#include <Availability.h>
+#import <Foundation/Foundation.h>
+
 #import <JitsiMeet/JitsiMeet.h>
+
+// Weakly load the Intents framework since it's not available on iOS 9.
+@import Intents;
+
+// Constant describing iOS 10.0.0
+static const NSOperatingSystemVersion ios10 = {
+  .majorVersion = 10,
+  .minorVersion = 0,
+  .patchVersion = 0
+};
+
 
 @implementation AppDelegate
 
@@ -32,12 +46,51 @@
  continueUserActivity:(NSUserActivity *)userActivity
    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
 
+  JitsiMeetView *view = (JitsiMeetView *) self.window.rootViewController.view;
+  if (!view) {
+      return NO;
+  }
+
   if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-      JitsiMeetView *view
-          = (JitsiMeetView *) self.window.rootViewController.view;
       [view loadURL:userActivity.webpageURL];
 
       return YES;
+  }
+
+  // Check for CallKit intents only on iOS >= 10
+  if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:ios10]) {
+      if ([userActivity.activityType isEqualToString:@"INStartAudioCallIntent"]
+          || [userActivity.activityType isEqualToString:@"INStartVideoCallIntent"]) {
+          INInteraction *interaction = [userActivity interaction];
+          INIntent *intent = interaction.intent;
+          NSString *handle;
+          BOOL isAudio = NO;
+
+          if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
+              INStartAudioCallIntent *startCallIntent
+                  = (INStartAudioCallIntent *)intent;
+              handle = startCallIntent.contacts.firstObject.personHandle.value;
+              isAudio = YES;
+          } else {
+              INStartVideoCallIntent *startCallIntent
+                  = (INStartVideoCallIntent *)intent;
+              handle = startCallIntent.contacts.firstObject.personHandle.value;
+          }
+
+          if (!handle) {
+              return NO;
+          }
+
+          // Load the URL contained in the handle
+          [view loadURLObject:@{
+                                @"url": handle,
+                                @"configOverwrite": @{
+                                    @"startAudioOnly": @(isAudio)
+                                }
+                                }];
+
+          return YES;
+      }
   }
 
   return NO;
