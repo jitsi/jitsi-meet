@@ -1,6 +1,6 @@
 /* @flow */
 
-import { SET_ROOM } from '../conference';
+import { SET_ROOM, setAudioOnly } from '../conference';
 import { parseURLParams } from '../config';
 import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
@@ -48,31 +48,38 @@ MiddlewareRegistry.register(store => next => action => {
 function _setRoom({ dispatch, getState }, next, action) {
     const state = getState();
     let audioMuted;
+    let audioOnly;
     let videoMuted;
 
     if (action.room) {
         // The Jitsi Meet client may override the Jitsi Meet deployment on the
-        // subject of startWithAudioMuted and/or startWithVideoMuted in the
-        // (location) URL.
+        // subject of these:
+        //  - startAudioOnly
+        //  - startWithAudioMuted
+        //  - startWithVideoMuted
+        // in the (location) URL.
         const urlParams
             = parseURLParams(state['features/base/connection'].locationURL);
 
         audioMuted = urlParams['config.startWithAudioMuted'];
+        audioOnly = urlParams['config.startAudioOnly'];
         videoMuted = urlParams['config.startWithVideoMuted'];
     }
 
-    // Of course, the Jitsi Meet deployment may define startWithAudioMuted
-    // and/or startWithVideoMuted through config.js which should be respected if
-    // the client did not override it.
+    // Of course, the Jitsi Meet deployment may define those options through
+    // config.js which should be respected if the client did not override it.
     const config = state['features/base/config'];
 
     typeof audioMuted === 'undefined'
         && (audioMuted = config.startWithAudioMuted);
+    typeof audioOnly === 'undefined'
+        && (audioOnly = config.startAudioOnly);
     typeof videoMuted === 'undefined'
         && (videoMuted = config.startWithVideoMuted);
 
-    // Apply startWithAudioMuted and startWithVideoMuted.
+    // Apply options.
     audioMuted = Boolean(audioMuted);
+    audioOnly = Boolean(audioOnly);
     videoMuted = Boolean(videoMuted);
 
     // Unconditionally express the desires/expectations/intents of the app and
@@ -81,6 +88,11 @@ function _setRoom({ dispatch, getState }, next, action) {
     dispatch(setAudioMuted(audioMuted));
     dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
     dispatch(setVideoMuted(videoMuted));
+
+    // Apply starAudioOnly if we are joining a conference
+    if (action.room) {
+        dispatch(setAudioOnly(audioOnly));
+    }
 
     return next(action);
 }
