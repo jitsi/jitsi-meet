@@ -84,7 +84,13 @@ function _conferenceFailed(state, { conference, error }) {
             ? conference
             : undefined;
 
+    const authRequired
+        = JitsiConferenceErrors.AUTHENTICATION_REQUIRED === error
+            ? conference
+            : undefined;
+
     return assign(state, {
+        authRequired,
         conference: undefined,
         joining: undefined,
         leaving: undefined,
@@ -126,6 +132,8 @@ function _conferenceJoined(state, { conference }) {
     const locked = conference.room.locked ? LOCKED_REMOTELY : undefined;
 
     return assign(state, {
+        authRequired: undefined,
+
         /**
          * The JitsiConference instance represented by the Redux state of the
          * feature base/conference.
@@ -170,6 +178,7 @@ function _conferenceLeft(state, { conference }) {
     }
 
     return assign(state, {
+        authRequired: undefined,
         conference: undefined,
         joining: undefined,
         leaving: undefined,
@@ -209,6 +218,7 @@ function _conferenceWillLeave(state, { conference }) {
     }
 
     return assign(state, {
+        authRequired: undefined,
         joining: undefined,
 
         /**

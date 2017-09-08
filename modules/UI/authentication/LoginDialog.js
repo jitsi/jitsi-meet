@@ -1,4 +1,6 @@
 /* global $, APP, config, JitsiMeetJS */
+import { toJid } from '../../../react/features/base/connection';
+
 const ConnectionErrors = JitsiMeetJS.errors.connection;
 
 /**
@@ -17,26 +19,6 @@ function getPasswordInputHtml() {
         <input name="password" type="password"
                class="input-control"
                data-i18n="[placeholder]dialog.userPassword">`;
-}
-
-/**
- * Convert provided id to jid if it's not jid yet.
- * @param {string} id user id or jid
- * @returns {string} jid
- */
-function toJid(id) {
-    if (id.indexOf("@") >= 0) {
-        return id;
-    }
-
-    let jid = id.concat('@');
-    if (config.hosts.authdomain) {
-        jid += config.hosts.authdomain;
-    } else {
-        jid += config.hosts.domain;
-    }
-
-    return jid;
 }
 
 /**
@@ -90,7 +72,7 @@ function LoginDialog(successCallback, cancelCallback) {
                     let password = f.password;
                     if (jid && password) {
                         connDialog.goToState('connecting');
-                        successCallback(toJid(jid), password);
+                        successCallback(toJid(jid, config.hosts), password);
                     }
                 } else {
                     // User cancelled
@@ -223,7 +205,7 @@ export default {
      */
     showAuthRequiredDialog: function (roomName, onAuthNow) {
         var msg = APP.translation.generateTranslationHTML(
-            "[html]dialog.WaitForHostMsg", {room: roomName}
+            "dialog.WaitForHostMsg", {room: roomName}
         );
 
         var buttonTxt = APP.translation.generateTranslationHTML(

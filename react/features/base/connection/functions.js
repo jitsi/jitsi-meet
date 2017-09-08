@@ -51,3 +51,26 @@ export function getURLWithoutParams(url: URL): URL {
 
     return url;
 }
+
+/**
+ * Convert provided id to jid if it's not jid yet.
+ *
+ * @param {string} id - User id or jid.
+ * @param {Object} configHosts - The 'hosts' part of the config object.
+ * @returns {string} jid - A string in the form of user@server.com.
+ */
+export function toJid(id: string, configHosts: Object): string {
+    if (id.indexOf('@') >= 0) {
+        return id;
+    }
+
+    let jid = id.concat('@');
+
+    if (configHosts.authdomain) {
+        jid += configHosts.authdomain;
+    } else {
+        jid += configHosts.domain;
+    }
+
+    return jid;
+}

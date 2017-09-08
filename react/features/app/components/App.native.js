@@ -15,6 +15,7 @@ import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
+import '../../authentication';
 
 /**
  * Root application component.

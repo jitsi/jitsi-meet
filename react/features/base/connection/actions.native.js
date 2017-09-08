@@ -18,9 +18,12 @@ import {
 /**
  * Opens new connection.
  *
+ * @param {string} [username] - The XMPP user id eg. user@server.com.
+ * @param {string} [password] - The user's password.
+ *
  * @returns {Function}
  */
-export function connect() {
+export function connect(username: ?string, password: ?string) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const options = _constructOptions(state);
@@ -43,7 +46,10 @@ export function connect() {
             JitsiConnectionEvents.CONNECTION_FAILED,
             _onConnectionFailed);
 
-        connection.connect();
+        connection.connect({
+            id: username,
+            password
+        });
 
         /**
          * Dispatches CONNECTION_DISCONNECTED action when connection is

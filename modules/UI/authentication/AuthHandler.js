@@ -140,44 +140,35 @@ function initJWTTokenListener(room) {
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function doXmppAuth (room, lockPassword) {
-    let loginDialog = LoginDialog.showAuthDialog(function (id, password) {
-        // auth "on the fly":
-        // 1. open new connection with proper id and password
-        // 2. connect to the room
-        // (this will store sessionId in the localStorage)
-        // 3. close new connection
-        // 4. reallocate focus in current room
-        openConnection({id, password, roomName: room.getName()}).then(
-        function (connection) {
-            // open room
-            let newRoom = connection.initJitsiConference(
-                room.getName(), APP.conference._getConferenceOptions()
-            );
+    const loginDialog = LoginDialog.showAuthDialog(function (id, password) {
+        const authConnection = room.createAuthenticationConnection();
 
-            loginDialog.displayConnectionStatus('connection.FETCH_SESSION_ID');
-
-            newRoom.room.moderator.authenticate().then(function () {
-                connection.disconnect();
-
+        authConnection.authenticateAndUpgradeRole({
+                id,
+                password,
+                roomPassword: lockPassword,
+                onLoginSuccessful: () => { /* Called when XMPP login succeeds */
+                    loginDialog.displayConnectionStatus(
+                        'connection.FETCH_SESSION_ID');
+                }
+            })
+            .then(() => {
                 loginDialog.displayConnectionStatus(
                     'connection.GOT_SESSION_ID');
-
-                // authenticate conference on the fly
-                room.join(lockPassword);
-
                 loginDialog.close();
-            }).catch(function (error, code) {
-                connection.disconnect();
-
-                logger.error('Auth on the fly failed', error);
-
-                loginDialog.displayError(
-                    'connection.GET_SESSION_ID_ERROR', {code: code});
+            })
+            .catch(error => {
+                logger.error('authenticateAndUpgradeRole failed', error);
+                if (error.authenticationError) {
+                    loginDialog.displayError(
+                        'connection.GET_SESSION_ID_ERROR', {
+                            msg: error.authenticationError
+                        });
+                } else {
+                    loginDialog.displayError(error.connectionError);
+                }
             });
-        }, function (err) {
-            loginDialog.displayError(err);
-        });
-    }, function () { // user canceled
+    }, function () {
         loginDialog.close();
     });
 }
