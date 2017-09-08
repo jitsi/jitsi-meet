@@ -61,6 +61,7 @@ public class JitsiMeetView extends FrameLayout {
             ReactApplicationContext reactContext) {
         return Arrays.<NativeModule>asList(
             new AndroidSettingsModule(reactContext),
+            new AppInfoModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
             new ProximityModule(reactContext)
