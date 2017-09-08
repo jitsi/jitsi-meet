@@ -8,6 +8,7 @@ import '../../authentication';
 import { Platform } from '../../base/react';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
+import '../../mobile/callkit';
 import '../../mobile/external-api';
 import '../../mobile/full-screen';
 import '../../mobile/permissions';
