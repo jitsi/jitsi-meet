@@ -1,9 +1,26 @@
 # Jitsi Meet SDK for Android
 
-This directory contains the source code of the Jitsi Meet app and the Jitsi Meet
-SDK for Android.
+## Build
 
-## Jitsi Meet SDK
+1. Install all required [dependencies](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
+
+2. ```bash
+   cd android/
+   ./gradlew :sdk:assembleRelease
+   ```
+
+3. ```bash
+   ./gradlew :sdk:publish
+   cd ../
+   ```
+
+## Install
+
+Add the Maven repository
+`https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
+dependency `org.jitsi.react:jitsi-meet-sdk:1.9.0` into your `build.gradle`.
+
+## API
 
 Jitsi Meet SDK is an Android library which embodies the whole Jitsi Meet
 experience and makes it reusable by third-party apps.

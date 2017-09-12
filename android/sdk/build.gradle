@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -53,7 +54,6 @@ gradle.projectsEvaluated {
         def currentFontTask = tasks.create(
                 name: "copy${buildNameCapitalized}Fonts",
                 type: Copy) {
-
             from("${projectDir}/../../fonts/jitsi.ttf")
             from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
             into("${bundlePath}/assets/fonts")
@@ -82,7 +82,6 @@ gradle.projectsEvaluated {
         def currentBundleTask = tasks.create(
                 name: bundleJsAndAssetsTaskName,
                 type: Exec) {
-
             // Set up inputs and outputs so gradle can cache the result.
             def reactRoot = file("${projectDir}/../../")
             inputs.files fileTree(dir: reactRoot, excludes: ['android/**', 'ios/**'])
@@ -117,5 +116,48 @@ gradle.projectsEvaluated {
         runBefore("processX86${buildNameCapitalized}Resources", currentBundleTask)
         runBefore("processUniversal${buildNameCapitalized}Resources", currentBundleTask)
         runBefore("process${buildNameCapitalized}Resources", currentBundleTask)
+    }
+}
+
+publishing {
+    publications {
+        aarArchive(MavenPublication) {
+            groupId 'org.jitsi.react'
+            artifactId 'jitsi-meet-sdk'
+            version '1.9.0'
+
+            artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
+                extension "aar"
+            }
+            pom.withXml {
+                def pomXml = asNode()
+                pomXml.appendNode('name', 'jitsi-meet-sdk')
+                pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
+                def dependencies = pomXml.appendNode('dependencies')
+                configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                    // The (third-party) React Native modules that we depend on
+                    // are in source code form and do not have groupId. That is
+                    // why we have a dedicated groupId for them. But the other
+                    // dependencies come through Maven and, consequently, have
+                    // groupId.
+                    def groupId = it.moduleGroup
+                    def artifactId = it.moduleName
+
+                    if (artifactId.startsWith('react-native-')
+                            && groupId.equals('jitsi-meet')) {
+                        groupId = rootProject.ext.moduleGroupId
+                    }
+
+                    def dependency = dependencies.appendNode('dependency')
+                    dependency.appendNode('groupId', groupId)
+                    dependency.appendNode('artifactId', artifactId)
+                    dependency.appendNode('version', it.moduleVersion)
+                }
+            }
+        }
+
+    }
+    repositories {
+        maven { url "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases" }
     }
 }

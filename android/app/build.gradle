@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId 'org.jitsi.meet'
         versionCode Integer.parseInt("${version}")
-        versionName "1.4.${version}"
+        versionName "1.9.${version}"
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

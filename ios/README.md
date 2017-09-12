@@ -1,9 +1,19 @@
 # Jitsi Meet SDK for iOS
 
-This directory contains the source code of the Jitsi Meet app and the Jitsi Meet
-SDK for iOS.
+## Build
 
-## Jitsi Meet SDK
+1. Install all required [dependencies](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
+
+2. `xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive`
+
+## Install
+
+After successfully building Jitsi Meet SDK for iOS, copy
+`ios/sdk/JitsiMeet.framework` (if the path points to a symbolic link, follow the
+symbolic link) and
+`node_modules/react-native-webrtc/ios/WebRTC.framework` into your project.
+
+## API
 
 JitsiMeet is an iOS framework which embodies the whole Jitsi Meet experience and
 makes it reusable by third-party apps.

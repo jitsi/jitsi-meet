@@ -99,8 +99,8 @@ see our [guidelines for contributing](CONTRIBUTING.md).
 Jitsi Meet provides a very flexible way of embedding it in external applications by using the [Jitsi Meet API](doc/api.md).
 
 ## Mobile app
-Jitsi Meet is also available as a React Native application for Android and iOS.
-Instructions on how to build it can be  found [here](doc/mobile.md).
+Jitsi Meet is also available as a React Native app for Android and iOS.
+Instructions on how to build it can be found [here](doc/mobile.md).
 
 ## Acknowledgements
 
