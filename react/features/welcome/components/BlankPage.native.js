@@ -2,10 +2,10 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { destroyLocalTracks } from '../../base/tracks';
+import { NetworkActivityIndicator } from '../../mobile/network-activity';
 
 import { isWelcomePageAppEnabled } from '../functions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
@@ -23,14 +23,6 @@ class BlankPage extends Component {
      * @static
      */
     static propTypes = {
-        /**
-         * Indicates whether there is network activity i.e. ongoing network
-         * requests.
-         *
-         * @private
-         */
-        _networkActivity: PropTypes.bool,
-
         /**
          * The indicator which determines whether <tt>WelcomePage</tt> is (to
          * be) rendered.
@@ -58,15 +50,12 @@ class BlankPage extends Component {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @override
      * @returns {ReactElement}
      */
     render() {
         return (
             <LocalVideoTrackUnderlay style = { styles.blankPage }>
-                <ActivityIndicator
-                    animating = { this.props._networkActivity }
-                    size = { 'large' } />
+                <NetworkActivityIndicator />
             </LocalVideoTrackUnderlay>
         );
     }
@@ -79,16 +68,11 @@ class BlankPage extends Component {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _networkActivity: boolean,
  *     _welcomePageEnabled: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const { requests } = state['features/network-activity'];
-
     return {
-        _networkActivity:
-            Boolean(requests && (requests.length || requests.size)),
         _welcomePageEnabled: isWelcomePageAppEnabled(state)
     };
 }
