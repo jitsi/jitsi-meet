@@ -25,6 +25,7 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.JitsiMeetViewListener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -145,8 +146,8 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
         if (method != null) {
             try {
                 method.invoke(listener, toHashMap(data));
-            } catch (ReflectiveOperationException roe) {
-                throw new RuntimeException(roe);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
             }
         }
     }
