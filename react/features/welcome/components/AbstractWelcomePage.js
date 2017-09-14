@@ -48,6 +48,7 @@ export class AbstractWelcomePage extends Component {
         this.state = {
             animateTimeoutId: null,
             generatedRoomname: '',
+            joining: false,
             room: '',
             roomPlaceholder: '',
             updateTimeoutId: null
@@ -62,7 +63,18 @@ export class AbstractWelcomePage extends Component {
     }
 
     /**
-     * This method is executed when component receives new properties.
+     * Implements React's {@link Component#componentWillMount()}. Invoked
+     * immediately before mounting occurs.
+     *
+     * @inheritdoc
+     */
+    componentWillMount() {
+        this._mounted = true;
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillReceiveProps()}. Invoked
+     * before this mounted component receives new props.
      *
      * @inheritdoc
      * @param {Object} nextProps - New props component will receive.
@@ -72,12 +84,14 @@ export class AbstractWelcomePage extends Component {
     }
 
     /**
-     * This method is executed when method will be unmounted from DOM.
+     * Implements React's {@link Component#componentWillUnmount()}. Invoked
+     * immediately before this component is unmounted and destroyed.
      *
      * @inheritdoc
      */
     componentWillUnmount() {
         this._clearTimeouts();
+        this._mounted = false;
     }
 
     /**
@@ -128,7 +142,7 @@ export class AbstractWelcomePage extends Component {
      * otherwise, false.
      */
     _isJoinDisabled() {
-        return !isRoomValid(this.state.room);
+        return this.state.joining || !isRoomValid(this.state.room);
     }
 
     /**
@@ -141,7 +155,18 @@ export class AbstractWelcomePage extends Component {
     _onJoin() {
         const room = this.state.room || this.state.generatedRoomname;
 
-        room && this.props.dispatch(appNavigate(room));
+        if (room) {
+            this.setState({ joining: true });
+
+            // By the time the Promise of appNavigate settles, this component
+            // may have already been unmounted.
+            const onAppNavigateSettled = () => {
+                this._mounted && this.setState({ joining: false });
+            };
+
+            this.props.dispatch(appNavigate(room))
+                .then(onAppNavigateSettled, onAppNavigateSettled);
+        }
     }
 
     /**

@@ -38,7 +38,8 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * This method is executed when comonent is mounted.
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
      *
      * @inheritdoc
      * @returns {void}
