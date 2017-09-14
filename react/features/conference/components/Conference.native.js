@@ -1,9 +1,11 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
-import { Container } from '../../base/react';
+import { Container, LoadingIndicator } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
@@ -31,37 +33,43 @@ class Conference extends Component {
      */
     static propTypes = {
         /**
+         * The indicator which determines that we are still connecting to the
+         * conference which includes establishing the XMPP connection and then
+         * joining the room. If truthy, then an activity/loading indicator will
+         * be rendered.
+         *
+         * @private
+         */
+        _connecting: PropTypes.bool,
+
+        /**
          * The handler which dispatches the (redux) action connect.
          *
          * @private
-         * @type {Function}
          */
-        _onConnect: React.PropTypes.func,
+        _onConnect: PropTypes.func,
 
         /**
          * The handler which dispatches the (redux) action disconnect.
          *
          * @private
-         * @type {Function}
          */
-        _onDisconnect: React.PropTypes.func,
+        _onDisconnect: PropTypes.func,
 
         /**
          * The handler which dispatches the (redux) action setToolboxVisible to
          * show/hide the Toolbox.
          *
          * @private
-         * @type {boolean}
          */
-        _setToolboxVisible: React.PropTypes.func,
+        _setToolboxVisible: PropTypes.func,
 
         /**
          * The indicator which determines whether the Toolbox is visible.
          *
          * @private
-         * @type {boolean}
          */
-        _toolboxVisible: React.PropTypes.bool
+        _toolboxVisible: PropTypes.bool
     };
 
     /**
@@ -151,6 +159,16 @@ class Conference extends Component {
                   * may tap the ToolbarButtons.
                   */}
                 <OverlayContainer />
+
+                {/*
+                  * The activity/loading indicator goes above everything, except
+                  * the toolbox/toolbars and the dialogs.
+                  */
+                  this.props._connecting
+                      && <View style = { styles.connectingIndicator }>
+                          <LoadingIndicator />
+                      </View>
+                }
 
                 {/*
                   * The Toolbox is in a stacking layer above the Filmstrip.
@@ -264,11 +282,38 @@ function _mapDispatchToProps(dispatch) {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _connecting: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
+    const { connecting, connection } = state['features/base/connection'];
+    const { conference, joining, leaving } = state['features/base/conference'];
+
+    // XXX There is a window of time between the successful establishment of the
+    // XMPP connection and the subsequent commencement of joining the MUC during
+    // which the app does not appear to be doing anything according to the redux
+    // state. In order to not toggle the _connecting props during the window of
+    // time in question, define _connecting as follows:
+    // - the XMPP connection is connecting, or
+    // - the XMPP connection is connected and the conference is joining, or
+    // - the XMPP connection is connected and we have no conference yet, nor we
+    //   are leaving one.
+    const connecting_
+        = connecting || (connection && (joining || (!conference && !leaving)));
+
     return {
+        /**
+         * The indicator which determines that we are still connecting to the
+         * conference which includes establishing the XMPP connection and then
+         * joining the room. If truthy, then an activity/loading indicator will
+         * be rendered.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _connecting: Boolean(connecting_),
+
         /**
          * The indicator which determines whether the Toolbox is visible.
          *
