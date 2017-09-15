@@ -1,5 +1,5 @@
 import AKDropdownMenu from '@atlaskit/dropdown-menu';
-import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import ExpandIcon from '@atlaskit/icon/glyph/editor/expand';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
