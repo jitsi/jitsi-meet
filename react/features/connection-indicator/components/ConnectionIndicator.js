@@ -1,3 +1,4 @@
+import ConnectionIcon from '@atlaskit/icon/glyph/vid-connection-circle';
 import React, { Component } from 'react';
 
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
@@ -9,40 +10,25 @@ import statsEmitter from '../statsEmitter';
 declare var $: Object;
 declare var interfaceConfig: Object;
 
-// Converts the percent for connection quality into a string recognized for CSS.
-const QUALITY_TO_WIDTH = [
+const DEFAULT_INDICATOR_COLOR = 'springgreen';
 
-    // Full (5 bars)
+// Converts the percent for connection quality into a color to show for the
+// connection indicator.
+const QUALITY_TO_COLOR = [
     {
         percent: 80,
-        width: '100%'
+        color: DEFAULT_INDICATOR_COLOR
     },
 
-    // 4 bars
     {
         percent: 60,
-        width: '80%'
+        color: '#f2f735' // bright yellow
     },
 
-    // 3 bars
-    {
-        percent: 40,
-        width: '55%'
-    },
-
-    // 2 bars
-    {
-        percent: 20,
-        width: '40%'
-    },
-
-    // 1 bar
     {
         percent: 0,
-        width: '20%'
+        color: 'red'
     }
-
-    // Note: we never show 0 bars.
 ];
 
 /**
@@ -244,23 +230,20 @@ class ConnectionIndicator extends Component {
             );
         default: {
             const { percent } = this.state.stats;
-            const width = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
-            const iconWidth = width && width.width
-                ? { width: width && width.width } : {};
+            const colorConfig
+                = QUALITY_TO_COLOR.find(x => percent >= x.percent) || {};
 
-            return [
-                <span
-                    className = 'connection_empty'
-                    key = 'icon-empty'>
-                    <i className = 'icon-connection' />
-                </span>,
-                <span
-                    className = 'connection_full'
-                    key = 'icon-full'
-                    style = { iconWidth }>
-                    <i className = 'icon-connection' />
+            // The primaryColor prop is not set so the icon's background can
+            // blend in with the wrapper around the icon.
+            return (
+                <span className = 'connection_bars'>
+                    <ConnectionIcon
+                        label = 'connection'
+                        secondaryColor
+                            = { colorConfig.color || DEFAULT_INDICATOR_COLOR }
+                        size = 'small' />
                 </span>
-            ];
+            );
         }
         }
     }

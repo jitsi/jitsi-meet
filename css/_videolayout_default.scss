@@ -138,9 +138,9 @@
                 left: 0;
                 @include transform(translate(0, -50%));
 
-                &_empty
+                &_bars
                 {
-                    color: #8B8B8B;/*#FFFFFF*/
+                    color: $dominantSpeakerBg;
                     overflow: hidden;
                 }
 
@@ -150,20 +150,12 @@
                     overflow: visible;
                 }
 
-                &_full
-                {
-                    @include topLeft();
-                    color: #FFFFFF;/*#15A1ED*/
-                    overflow: hidden;
-                }
-
                 &_ninja
                 {
                     font-size: 1.5em;
                 }
             }
 
-            .icon-connection,
             .icon-connection-lost {
                 cursor: pointer;
                 font-size: 1em;
