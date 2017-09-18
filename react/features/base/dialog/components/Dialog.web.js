@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -8,7 +9,6 @@ import StatelessDialog from './StatelessDialog';
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
 class Dialog extends AbstractDialog {
-
     /**
      * Web dialog component's property types.
      *
@@ -18,20 +18,15 @@ class Dialog extends AbstractDialog {
         ...AbstractDialog.propTypes,
 
         /**
-         * This is the body of the dialog, the component children.
-         */
-        children: React.PropTypes.node,
-
-        /**
          * Whether the dialog is modal. This means clicking on the blanket will
          * leave the dialog open. No cancel button.
          */
-        isModal: React.PropTypes.bool,
+        isModal: PropTypes.bool,
 
         /**
          * Disables rendering of the submit button.
          */
-        submitDisabled: React.PropTypes.bool,
+        submitDisabled: PropTypes.bool,
 
         /**
          * Width of the dialog, can be:
@@ -40,7 +35,7 @@ class Dialog extends AbstractDialog {
          * - integer value for pixel width
          * - string value for percentage
          */
-        width: React.PropTypes.string
+        width: PropTypes.string
     };
 
     /**
@@ -65,8 +60,8 @@ class Dialog extends AbstractDialog {
     render() {
         const props = {
             ...this.props,
-            onSubmit: this._onSubmit,
-            onCancel: this._onCancel
+            onCancel: this._onCancel,
+            onSubmit: this._onSubmit
         };
 
         delete props.dispatch;
@@ -80,11 +75,7 @@ class Dialog extends AbstractDialog {
      * @returns {void}
      */
     _onCancel() {
-        if (this.props.isModal) {
-            return;
-        }
-
-        super._onCancel();
+        this.props.isModal || super._onCancel();
     }
 }
 

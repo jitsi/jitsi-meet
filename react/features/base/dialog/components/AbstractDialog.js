@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 import { hideDialog } from '../actions';
 import { DIALOG_PROP_TYPES } from '../constants';
 
 /**
- * Abstract dialog to display dialogs.
+ * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
 export default class AbstractDialog extends Component {
-
     /**
-     * Abstract Dialog component's property types.
+     * <tt>AbstractDialog</tt> React <tt>Component</tt>'s prop types.
      *
      * @static
      */
@@ -17,16 +17,22 @@ export default class AbstractDialog extends Component {
         ...DIALOG_PROP_TYPES,
 
         /**
+         * The React <tt>Component</tt> children of <tt>AbstractDialog</tt>
+         * which represents the dialog's body.
+         */
+        children: PropTypes.node,
+
+        /**
          * Used to show/hide the dialog on cancel.
          */
-        dispatch: React.PropTypes.func
+        dispatch: PropTypes.func
     };
 
     /**
-     * Initializes a new Dialog instance.
+     * Initializes a new <tt>AbstractDialog</tt> instance.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @param {Object} props - The read-only React <tt>Component</tt> props with
+     * which the new instance is to be initialized.
      */
     constructor(props) {
         super(props);
@@ -36,37 +42,30 @@ export default class AbstractDialog extends Component {
     }
 
     /**
-     * Dispatches action to hide the dialog.
+     * Dispatches a redux action to hide this dialog when it's canceled.
      *
+     * @protected
      * @returns {void}
      */
     _onCancel() {
-        let hide = true;
+        const { onCancel } = this.props;
 
-        if (this.props.onCancel) {
-            hide = this.props.onCancel();
-        }
-
-        if (hide) {
+        if (!onCancel || onCancel()) {
             this.props.dispatch(hideDialog());
         }
     }
 
     /**
-     * Dispatches the action when submitting the dialog.
+     * Dispatches a redux action to hide this dialog when it's submitted.
      *
      * @private
      * @param {string} value - The submitted value if any.
      * @returns {void}
      */
     _onSubmit(value) {
-        let hide = true;
+        const { onSubmit } = this.props;
 
-        if (this.props.onSubmit) {
-            hide = this.props.onSubmit(value);
-        }
-
-        if (hide) {
+        if (!onSubmit || onSubmit(value)) {
             this.props.dispatch(hideDialog());
         }
     }
