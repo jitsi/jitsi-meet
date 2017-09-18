@@ -42,7 +42,9 @@ export default class OverlayFrame extends Component {
              *
              * @type {boolean}
              */
-            filmstripOnly: interfaceConfig.filmStripOnly
+            filmstripOnly:
+                typeof interfaceConfig !== 'undefined'
+                    && interfaceConfig.filmStripOnly
         };
     }
 
