@@ -1,15 +1,24 @@
+/* @flow */
+
 import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
+import { isDialogOpen } from './functions';
 
 /**
  * Signals Dialog to close its dialog.
  *
+ * @param {Object} [component] - The <tt>Dialog</tt> component to close/hide. If
+ * <tt>undefined</tt>, closes/hides <tt>Dialog</tt> regardless of which
+ * component it's rendering; otherwise, closes/hides <tt>Dialog</tt> only if
+ * it's rendering the specified <tt>component</tt>.
  * @returns {{
- *     type: HIDE_DIALOG
+ *     type: HIDE_DIALOG,
+ *     component: (React.Component | undefined)
  * }}
  */
-export function hideDialog() {
+export function hideDialog(component: ?Object) {
     return {
-        type: HIDE_DIALOG
+        type: HIDE_DIALOG,
+        component
     };
 }
 
@@ -19,9 +28,13 @@ export function hideDialog() {
  * @param {Object} component - The component to display as dialog.
  * @param {Object} [componentProps] - The React <tt>Component</tt> props of the
  * specified <tt>component</tt>.
- * @returns {Object}
+ * @returns {{
+ *     type: OPEN_DIALOG,
+ *     component: React.Component,
+ *     componentProps: (Object | undefined)
+ * }}
  */
-export function openDialog(component, componentProps) {
+export function openDialog(component: Object, componentProps: ?Object) {
     return {
         type: OPEN_DIALOG,
         component,
@@ -37,12 +50,12 @@ export function openDialog(component, componentProps) {
  * @param {Object} component - The component to display as dialog.
  * @param {Object} [componentProps] - The React <tt>Component</tt> props of the
  * specified <tt>component</tt>.
- * @returns {Object}
+ * @returns {Function}
  */
-export function toggleDialog(component, componentProps) {
-    return (dispatch, getState) => {
-        if (getState()['features/base/dialog'].component === component) {
-            dispatch(hideDialog());
+export function toggleDialog(component: Object, componentProps: ?Object) {
+    return (dispatch: Dispatch, getState: Function) => {
+        if (isDialogOpen(getState, component)) {
+            dispatch(hideDialog(component));
         } else {
             dispatch(openDialog(component, componentProps));
         }

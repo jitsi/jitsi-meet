@@ -112,18 +112,28 @@ function _set(
 /* eslint-enable max-params */
 
 /**
- * If the specified <tt>stateOrGetState</tt> is a function, it is presumed to be
- * the redux {@link getState} function, it is invoked, and its return value is
- * returned; otherwise, <tt>stateOrGetState</tt> is presumed to be the redux
- * state and is returned.
+ * Returns redux state from the specified <tt>stateful</tt> which is presumed to
+ * be related to the redux state (e.g. the redux store, the redux
+ * <tt>getState</tt> function).
  *
- * @param {Object|Function} stateOrGetState - The redux state or
- * {@link getState} function.
+ * @param {Function|Object} stateful - The entity such as the redux store or the
+ * redux <tt>getState</tt> function from which the redux state is to be
+ * returned.
  * @returns {Object} The redux state.
  */
-export function toState(stateOrGetState: Object | Function) {
-    return (
-        typeof stateOrGetState === 'function'
-            ? stateOrGetState()
-            : stateOrGetState);
+export function toState(stateful: Function | Object) {
+    if (stateful) {
+        if (typeof stateful === 'function') {
+            return stateful();
+        }
+
+        const { getState } = stateful;
+
+        if (typeof getState === 'function'
+                && typeof stateful.dispatch === 'function') {
+            return getState();
+        }
+    }
+
+    return stateful;
 }
