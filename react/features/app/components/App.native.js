@@ -4,6 +4,7 @@ import React from 'react';
 import { Linking } from 'react-native';
 
 import '../../analytics';
+import '../../authentication';
 import { Platform } from '../../base/react';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
@@ -15,7 +16,6 @@ import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
-import '../../authentication';
 
 /**
  * Root application component.

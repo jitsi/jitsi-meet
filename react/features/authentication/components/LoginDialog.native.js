@@ -1,22 +1,14 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { Text, TextInput, View } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
-import {
-    Button,
-    Modal,
-    Text,
-    TextInput,
-    View
-} from 'react-native';
-import {
-    authenticateAndUpgradeRole,
-    cancelLogin
-} from '../actions';
-import {
-    connect,
-    toJid
-} from '../../base/connection';
+
+import { connect, toJid } from '../../base/connection';
+import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
+
+import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 import styles from './styles';
 
 /**
@@ -36,15 +28,15 @@ import styles from './styles';
  * yet, Jicofo will not allow to start new conference. This will trigger
  * 'CONFERENCE_FAILED' action with JitsiConferenceErrors.AUTHENTICATION_REQUIRED
  * error and 'authRequired' value of 'features/base/conference' will hold
- * the {@link JitsiConference} instance. If user decides to authenticate a new
- * {@link JitsiAuthConnection} will be created from which separate XMPP
- * connection is established and authentication is performed. In case it
- * succeeds Jicofo will assign new session ID which then can be used from
- * the anonymous domain connection to create and join the room. This part is
- * done by {@link JitsiAuthConnection} from lib-jitsi-meet.
+ * the {@link JitsiConference} instance. If user decides to authenticate, a
+ * new/separate XMPP connection is established and authentication is performed.
+ * In case it succeeds, Jicofo will assign new session ID which then can be used
+ * from the anonymous domain connection to create and join the room. This part
+ * is done by {@link JitsiConference#authenticateAndUpgradeRole} in
+ * lib-jitsi-meet.
  *
- * See https://github.com/jitsi/jicofo#secure-domain for configuration
- * parameters description.
+ * See {@link https://github.com/jitsi/jicofo#secure-domain} for a description
+ * of the configuration parameters.
  */
 class LoginDialog extends Component {
     /**
@@ -57,37 +49,37 @@ class LoginDialog extends Component {
          * {@link JitsiConference} that needs authentication - will hold a valid
          * value in XMPP login + guest access mode.
          */
-        conference: React.PropTypes.object,
+        _conference: PropTypes.object,
 
         /**
          *
          */
-        configHosts: React.PropTypes.object,
+        _configHosts: PropTypes.object,
 
         /**
          * Indicates if the dialog should display "connecting" status message.
          */
-        connecting: React.PropTypes.bool,
-
-        /**
-         * Redux store dispatch method.
-         */
-        dispatch: React.PropTypes.func,
+        _connecting: PropTypes.bool,
 
         /**
          * The error which occurred during login/authentication.
          */
-        error: React.PropTypes.string,
+        _error: PropTypes.string,
 
         /**
          * Any extra details about the error provided by lib-jitsi-meet.
          */
-        errorDetails: React.PropTypes.string,
+        _errorDetails: PropTypes.string,
+
+        /**
+         * Redux store dispatch method.
+         */
+        dispatch: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**
@@ -99,16 +91,16 @@ class LoginDialog extends Component {
     constructor(props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onCancel = this._onCancel.bind(this);
-        this._onLogin = this._onLogin.bind(this);
-        this._onUsernameChange = this._onUsernameChange.bind(this);
-        this._onPasswordChange = this._onPasswordChange.bind(this);
-
         this.state = {
             username: '',
             password: ''
         };
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onCancel = this._onCancel.bind(this);
+        this._onLogin = this._onLogin.bind(this);
+        this._onPasswordChange = this._onPasswordChange.bind(this);
+        this._onUsernameChange = this._onUsernameChange.bind(this);
     }
 
     /**
@@ -119,56 +111,51 @@ class LoginDialog extends Component {
      */
     render() {
         const {
-            error,
-            errorDetails,
-            connecting,
+            _connecting: connecting,
+            _error: error,
+            _errorDetails: errorDetails,
             t
         } = this.props;
 
         let messageKey = '';
-        const messageOptions = { };
+        const messageOptions = {};
 
         if (error === JitsiConnectionErrors.PASSWORD_REQUIRED) {
             messageKey = 'dialog.incorrectPassword';
         } else if (error) {
             messageKey = 'dialog.connectErrorWithMsg';
-
             messageOptions.msg = `${error} ${errorDetails}`;
         }
 
         return (
-            <Modal
-                onRequestClose = { this._onCancel }
-                style = { styles.outerArea }
-                transparent = { true } >
-                <View style = { styles.dialogBox }>
-                    <Text>Username:</Text>
+            <Dialog
+                okDisabled = { connecting }
+                onCancel = { this._onCancel }
+                onSubmit = { this._onLogin }
+                titleKey = 'dialog.passwordRequired'>
+                <View style = { styles.loginDialog }>
                     <TextInput
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
-                        style = { styles.textInput }
+                        style = { styles.loginDialogTextInput }
                         value = { this.state.username } />
-                    <Text>Password:</Text>
                     <TextInput
                         onChangeText = { this._onPasswordChange }
                         placeholder = { t('dialog.userPassword') }
                         secureTextEntry = { true }
-                        style = { styles.textInput }
+                        style = { styles.loginDialogTextInput }
                         value = { this.state.password } />
-                    <Text>
-                        {error ? t(messageKey, messageOptions) : ''}
-                        {connecting && !error
-                            ? t('connection.CONNECTING') : ''}
+                    <Text style = { styles.loginDialogText }>
+                        {
+                            error
+                                ? t(messageKey, messageOptions)
+                                : connecting
+                                    ? t('connection.CONNECTING')
+                                    : ''
+                        }
                     </Text>
-                    <Button
-                        disabled = { connecting }
-                        onPress = { this._onLogin }
-                        title = { t('dialog.Ok') } />
-                    <Button
-                        onPress = { this._onCancel }
-                        title = { t('dialog.Cancel') } />
                 </View>
-            </Modal>
+            </Dialog>
         );
     }
 
@@ -216,9 +203,9 @@ class LoginDialog extends Component {
      * @returns {void}
      */
     _onLogin() {
-        const conference = this.props.conference;
+        const { _conference: conference } = this.props;
         const { username, password } = this.state;
-        const jid = toJid(username, this.props.configHosts);
+        const jid = toJid(username, this.props._configHosts);
 
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
@@ -238,42 +225,45 @@ class LoginDialog extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     configHosts: Object,
- *     connecting: boolean,
- *     error: string,
- *     errorDetails: string,
- *     conference: JitsiConference
+ *     _conference: JitsiConference,
+ *     _configHosts: Object,
+ *     _connecting: boolean,
+ *     _error: string,
+ *     _errorDetails: string
  * }}
  */
 function _mapStateToProps(state) {
+    const {
+        upgradeRoleError,
+        upgradeRoleInProgress
+    } = state['features/authentication'];
+    const { authRequired } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
     const {
         connecting,
         error: connectionError,
         errorMessage: connectionErrorMessage
     } = state['features/base/connection'];
-    const {
-        authRequired
-    } = state['features/base/conference'];
-    const {
-        upgradeRoleError,
-        upgradeRoleInProgress
-    } = state['features/authentication'];
 
-    const error
-        = connectionError
-            || (upgradeRoleError
-                && (upgradeRoleError.connectionError
-                        || upgradeRoleError.authenticationError));
+    let error;
+    let errorDetails;
+
+    if (connectionError) {
+        error = connectionError;
+        errorDetails = connectionErrorMessage;
+    } else if (upgradeRoleError) {
+        error
+            = upgradeRoleError.connectionError
+                || upgradeRoleError.authenticationError;
+        errorDetails = upgradeRoleError.message;
+    }
 
     return {
-        configHosts,
-        connecting: Boolean(connecting) || Boolean(upgradeRoleInProgress),
-        error,
-        errorDetails:
-            (connectionError && connectionErrorMessage)
-                || (upgradeRoleError && upgradeRoleError.message),
-        conference: authRequired
+        _conference: authRequired,
+        _configHosts: configHosts,
+        _connecting: Boolean(connecting) || Boolean(upgradeRoleInProgress),
+        _error: error,
+        _errorDetails: errorDetails
     };
 }
 

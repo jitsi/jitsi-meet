@@ -1,53 +1,57 @@
-import { openDialog } from '../base/dialog/actions';
-import { checkIfCanJoin } from '../base/conference/actions';
+/* @flow */
+
+import { checkIfCanJoin } from '../base/conference';
+import { openDialog } from '../base/dialog';
+
 import {
     CANCEL_LOGIN,
     CANCEL_WAIT_FOR_OWNER,
     STOP_WAIT_FOR_OWNER,
-    UPGRADE_ROLE_FAILED,
+    UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
-    UPGRADE_ROLE_SUCCESS,
     WAIT_FOR_OWNER
 } from './actionTypes';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
- * Instantiates new {@link JitsiAuthConnection} and uses it to authenticate and
- * upgrade role of the current conference user to moderator which will allow to
- * create and join new conference on XMPP password + guest access configuration.
- * See {@link LoginDialog} description for more info.
+ * Initiates authenticating and upgrading the role of the local participant to
+ * moderator which will allow to create and join a new conference on an XMPP
+ * password + guest access configuration. Refer to {@link LoginDialog} for more
+ * info.
  *
- * @param {string} id - XMPP user's id eg. user@domain.com.
- * @param {string} userPassword - The user's password.
- * @param {JitsiConference} conference - The conference for which user's role
- * will be upgraded.
- * @returns {function({dispatch: Function, getState: Function})}
+ * @param {string} id - The XMPP user's ID (e.g. user@domain.com).
+ * @param {string} password - The XMPP user's password.
+ * @param {JitsiConference} conference - The conference for which the local
+ * participant's role will be upgraded.
+ * @returns {function({ dispatch: Dispatch, getState: Function })}
  */
-export function authenticateAndUpgradeRole(id, userPassword, conference) {
-    return (dispatch, getState) => {
-        const authConnection = conference.createAuthenticationConnection();
-
-        dispatch(_upgradeRoleStarted(authConnection));
-
+export function authenticateAndUpgradeRole(
+        id: string,
+        password: string,
+        conference: Object) {
+    return (dispatch: Dispatch, getState: Function) => {
         const { password: roomPassword }
             = getState()['features/base/conference'];
+        const process
+            = conference.authenticateAndUpgradeRole({
+                id,
+                password,
+                roomPassword
+            });
 
-        authConnection.authenticateAndUpgradeRole({
-            id,
-            password: userPassword,
-            roomPassword
-        })
-        .then(() => {
-            dispatch(_upgradeRoleSuccess());
-        })
-        .catch(error => {
-            // Lack of error means the operation was canceled, so no need to log
-            // that on error level.
-            if (error.error) {
-                console.error('upgradeRoleFailed', error);
-            }
-            dispatch(_upgradeRoleFailed(error));
-        });
+        dispatch(_upgradeRoleStarted(process));
+        process.then(
+            /* onFulfilled */ () => dispatch(_upgradeRoleFinished()),
+            /* onRejected */ error => {
+                // The lack of an error signals a cancellation.
+                if (error.authenticationError || error.connectionError) {
+                    logger.error('authenticateAndUpgradeRole failed', error);
+                }
+
+                dispatch(_upgradeRoleFinished(error));
+            });
     };
 }
 
@@ -55,7 +59,7 @@ export function authenticateAndUpgradeRole(id, userPassword, conference) {
  * Cancels {@ink LoginDialog}.
  *
  * @returns {{
- *      type: CANCEL_LOGIN
+ *     type: CANCEL_LOGIN
  * }}
  */
 export function cancelLogin() {
@@ -68,7 +72,7 @@ export function cancelLogin() {
  * Cancels {@link WaitForOwnerDialog}. Will navigate back to the welcome page.
  *
  * @returns {{
- *      type: CANCEL_WAIT_FOR_OWNER
+ *     type: CANCEL_WAIT_FOR_OWNER
  * }}
  */
 export function cancelWaitForOwner() {
@@ -78,118 +82,77 @@ export function cancelWaitForOwner() {
 }
 
 /**
- * Stops waiting for conference owner and clears any pending timeout.
+ * Opens {@link LoginDialog} which will ask to enter username and password
+ * for the current conference.
+ *
+ * @protected
+ * @returns {Action}
+ */
+export function _openLoginDialog() {
+    return openDialog(LoginDialog);
+}
+
+/**
+ * Opens {@link WaitForOnwerDialog}.
+ *
+ * @protected
+ * @returns {Action}
+ */
+export function _openWaitForOwnerDialog() {
+    return openDialog(WaitForOwnerDialog);
+}
+
+/**
+ * Stops waiting for the conference owner.
  *
  * @returns {{
- *      type: STOP_WAIT_FOR_OWNER
+ *     type: STOP_WAIT_FOR_OWNER
  * }}
  */
-export function clearWaitForOwnerTimeout() {
+export function stopWaitForOwner() {
     return {
         type: STOP_WAIT_FOR_OWNER
     };
 }
 
 /**
- * Sets a delayed "wait for owner" handler function.
+ * Signals that the process of authenticating and upgrading the local
+ * participant's role has finished either with success or with a specific error.
  *
- * @param {Function} handler - The "wait for owner" handler function.
- * @param {number} waitMs - The delay in milliseconds.
- *
+ * @param {Object} error - If <tt>undefined</tt>, then the process of
+ * authenticating and upgrading the local participant's role has succeeded;
+ * otherwise, it has failed with the specified error. Refer to
+ * {@link JitsiConference#authenticateAndUpgradeRole} in lib-jitsi-meet for the
+ * error details.
  * @private
  * @returns {{
- *      type: WAIT_FOR_OWNER,
- *      handler: Function,
- *      timeoutMs: number
+ *     type: UPGRADE_ROLE_FINISHED,
+ *     error: Object
  * }}
  */
-function _setWaitForOwnerTimeout(handler, waitMs) {
+function _upgradeRoleFinished(error) {
     return {
-        type: WAIT_FOR_OWNER,
-        handler,
-        timeoutMs: waitMs
-    };
-}
-
-/**
- * Displays {@link LoginDialog} which will ask to enter username and password
- * for the current conference.
- *
- * @protected
- * @returns {{
- *     type: OPEN_DIALOG,
- *     component: LoginDialog,
- *     props: React.PropTypes
- * }}
- */
-export function _showLoginDialog() {
-    return openDialog(LoginDialog, { });
-}
-
-/**
- * Displays {@link WaitForOnwerDialog}.
- *
- * @protected
- * @returns {{
- *     type: OPEN_DIALOG,
- *     component: WaitForOwnerDialog,
- *     props: React.PropTypes
- * }}
- */
-export function _showWaitForOwnerDialog() {
-    return openDialog(WaitForOwnerDialog, { });
-}
-
-/**
- * Emits an error which occurred during {@link authenticateAndUpgradeRole}.
- *
- * @param {Object} error - Check the docs of {@link JitsiAuthConnection} in
- * lib-jitsi-meet for more details about the error's structure.
- *
- * @private
- * @returns {{
- *      type: UPGRADE_ROLE_FAILED,
- *      error: Object
- * }}
- */
-function _upgradeRoleFailed(error) {
-    return {
-        type: UPGRADE_ROLE_FAILED,
+        type: UPGRADE_ROLE_FINISHED,
         error
     };
 }
 
 /**
- * Signals that the role upgrade process has been started using given
- * {@link JitsiAuthConnection} instance.
+ * Signals that a process of authenticating and upgrading the local
+ * participant's role has started.
  *
- * @param {JitsiAuthConnection} authenticationConnection - The authentication
- * connection instance that can be used to cancel the process.
- *
+ * @param {Object} thenableWithCancel - The process of authenticating and
+ * upgrading the local participant's role.
  * @private
  * @returns {{
- *      type: UPGRADE_ROLE_STARTED,
- *      authConnection: JitsiAuthConnection
+ *     type: UPGRADE_ROLE_STARTED,
+ *     thenableWithCancel: Object
  * }}
  */
-function _upgradeRoleStarted(authenticationConnection) {
+function _upgradeRoleStarted(thenableWithCancel) {
     return {
         type: UPGRADE_ROLE_STARTED,
-        authConnection: authenticationConnection
-    };
-}
-
-/**
- * Signals that the role upgrade process has been completed successfully.
- *
- * @private
- * @returns {{
- *      type: UPGRADE_ROLE_SUCCESS
- * }}
- */
-function _upgradeRoleSuccess() {
-    return {
-        type: UPGRADE_ROLE_SUCCESS
+        thenableWithCancel
     };
 }
 
@@ -198,13 +161,13 @@ function _upgradeRoleSuccess() {
  * start the process of "waiting for the owner" by periodically trying to join
  * the room every five seconds.
  *
- * @returns {function({ dispatch: Function})}
+ * @returns {function({ dispatch: Dispatch })}
  */
 export function waitForOwner() {
-    return dispatch => {
-        dispatch(
-            _setWaitForOwnerTimeout(
-                () => dispatch(checkIfCanJoin()),
-                5000));
-    };
+    return (dispatch: Dispatch) =>
+        dispatch({
+            type: WAIT_FOR_OWNER,
+            handler: () => dispatch(checkIfCanJoin()),
+            timeoutMs: 5000
+        });
 }

@@ -264,7 +264,7 @@
         "removeSharedVideoMsg": "Are you sure you would like to remove your shared video?",
         "alreadySharedVideoMsg": "Another member is already sharing video. This conference allows only one shared video at a time.",
         "WaitingForHost": "Waiting for the host ...",
-        "WaitForHostMsg": "The conference '__room__' has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference <b>__room__ </b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "IamHost": "I am the host",
         "Cancel": "Cancel",
         "Submit": "Submit",

@@ -298,12 +298,10 @@ export function createConference() {
  */
 export function checkIfCanJoin() {
     return (dispatch, getState) => {
-        const { password, authRequired }
+        const { authRequired, password }
             = getState()['features/base/conference'];
 
-        if (authRequired) {
-            authRequired.join(password);
-        }
+        authRequired && authRequired.join(password);
     };
 }
 

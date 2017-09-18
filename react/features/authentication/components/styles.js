@@ -1,23 +1,55 @@
-import {
-    ColorPalette,
-    createStyleSheet
-} from '../../base/styles';
+import { BoxModel, createStyleSheet } from '../../base/styles';
+
+/**
+ * The style common to <tt>LoginDialog</tt> and <tt>WaitForOwnerDialog</tt>.
+ */
+const dialog = {
+    marginBottom: BoxModel.margin,
+    marginTop: BoxModel.margin
+};
+
+/**
+ * The style common to <tt>Text</tt> rendered by <tt>LoginDialog</tt> and
+ * <tt>WaitForOwnerDialog</tt>.
+ */
+const text = {
+};
 
 /**
  * The styles of the authentication feature.
  */
 export default createStyleSheet({
-    outerArea: {
-        flex: 1
+    /**
+     * The style of <tt>LoginDialog</tt>.
+     */
+    loginDialog: {
+        ...dialog,
+        flex: 0,
+        flexDirection: 'column'
     },
-    dialogBox: {
-        marginLeft: '10%',
-        marginRight: '10%',
-        marginTop: '10%',
-        backgroundColor: ColorPalette.white
+
+    /**
+     * The style of <tt>Text</tt> rendered by <tt>LoginDialog</tt>.
+     */
+    loginDialogText: {
+        ...text
     },
-    textInput: {
-        height: 25,
-        fontSize: 16
+
+    /**
+     * The style of <tt>TextInput</tt> rendered by <tt>LoginDialog</tt>.
+     */
+    loginDialogTextInput: {
+        // XXX Matches react-native-prompt's dialogInput because base/dialog's
+        // Dialog is implemented using react-native-prompt.
+        fontSize: 18,
+        height: 50
+    },
+
+    /**
+     * The style of <tt>WaitForOwnerDialog</tt>.
+     */
+    waitForOwnerDialog: {
+        ...dialog,
+        ...text
     }
 });

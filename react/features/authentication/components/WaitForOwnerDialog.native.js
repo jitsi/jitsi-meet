@@ -1,9 +1,12 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { Text } from 'react-native';
 import { connect } from 'react-redux';
-import { Button, Modal, Text, View } from 'react-native';
 
+import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { _showLoginDialog, cancelWaitForOwner } from '../actions';
+
+import { cancelWaitForOwner, _openLoginDialog } from '../actions';
 import styles from './styles';
 
 /**
@@ -20,19 +23,19 @@ class WaitForOwnerDialog extends Component {
      */
     static propTypes = {
         /**
-         * Redux store dispatch function.
-         */
-        dispatch: React.PropTypes.func,
-
-        /**
          * The name of the conference room (without the domain part).
          */
-        roomName: React.PropTypes.string,
+        _room: PropTypes.string,
+
+        /**
+         * Redux store dispatch function.
+         */
+        dispatch: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**
@@ -44,8 +47,9 @@ class WaitForOwnerDialog extends Component {
     constructor(props) {
         super(props);
 
-        this._onLogin = this._onLogin.bind(this);
+        // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
+        this._onLogin = this._onLogin.bind(this);
     }
 
     /**
@@ -56,41 +60,23 @@ class WaitForOwnerDialog extends Component {
      */
     render() {
         const {
-            roomName,
+            _room: room,
             t
         } = this.props;
 
         return (
-            <Modal
-                onRequestClose = { this._onCancel }
-                style = { styles.outerArea }
-                transparent = { true } >
-                <View style = { styles.dialogBox } >
-                    <Text>
-                        { t(
-                            'dialog.WaitForHostMsg',
-                            { room: roomName })
-                        }
-                    </Text>
-                    <Button
-                        onPress = { this._onLogin }
-                        title = { t('dialog.IamHost') } />
-                    <Button
-                        onPress = { this._onCancel }
-                        title = { t('dialog.Cancel') } />
-                </View>
-            </Modal>
+            <Dialog
+                okTitleKey = { 'dialog.IamHost' }
+                onCancel = { this._onCancel }
+                onSubmit = { this._onLogin }
+                titleKey = 'dialog.WaitingForHost'>
+                <Text style = { styles.waitForOwnerDialog }>
+                    {
+                        this.renderHTML(t('dialog.WaitForHostMsg', { room }))
+                    }
+                </Text>
+            </Dialog>
         );
-    }
-
-    /**
-     * Called when the OK button is clicked.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onLogin() {
-        this.props.dispatch(_showLoginDialog());
     }
 
     /**
@@ -102,6 +88,33 @@ class WaitForOwnerDialog extends Component {
     _onCancel() {
         this.props.dispatch(cancelWaitForOwner());
     }
+
+    /**
+     * Called when the OK button is clicked.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onLogin() {
+        this.props.dispatch(_openLoginDialog());
+    }
+
+    /**
+     * Renders a specific <tt>string</tt> which may contain HTML.
+     *
+     * @param {string} html - The <tt>string</tt> which may contain HTML to
+     * render.
+     * @returns {string}
+     */
+    _renderHTML(html) {
+        if (typeof html === 'string') {
+            // TODO Limited styling may easily be provided by utilizing Text
+            // with style.
+            return html.replace(/<\\?b>/gi, '');
+        }
+
+        return html;
+    }
 }
 
 /**
@@ -111,7 +124,7 @@ class WaitForOwnerDialog extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     roomName: string
+ *     _room: string
  * }}
  */
 function _mapStateToProps(state) {
@@ -120,7 +133,7 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
 
     return {
-        roomName: authRequired && authRequired.getName()
+        _room: authRequired && authRequired.getName()
     };
 }
 

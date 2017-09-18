@@ -18,12 +18,11 @@ import {
 /**
  * Opens new connection.
  *
- * @param {string} [username] - The XMPP user id eg. user@server.com.
- * @param {string} [password] - The user's password.
- *
+ * @param {string} [id] - The XMPP user's ID (e.g. user@server.com).
+ * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */
-export function connect(username: ?string, password: ?string) {
+export function connect(id: ?string, password: ?string) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const options = _constructOptions(state);
@@ -47,7 +46,7 @@ export function connect(username: ?string, password: ?string) {
             _onConnectionFailed);
 
         connection.connect({
-            id: username,
+            id,
             password
         });
 
