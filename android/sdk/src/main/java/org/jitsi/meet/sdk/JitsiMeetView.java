@@ -27,10 +27,12 @@ import android.support.annotation.Nullable;
 import android.widget.FrameLayout;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -184,10 +186,14 @@ public class JitsiMeetView extends FrameLayout {
      * <tt>Activity.onResume</tt> so we can do the required internal processing.
      *
      * @param activity - <tt>Activity</tt> being resumed.
+     * @param backHandler - a <tt>DefaultHardwareBackBtnHandler</tt> which
+     * will handle the back button press in case there's nothing to handle on
+     * the JS side.
      */
-    public static void onHostResume(Activity activity) {
+    public static void onHostResume(Activity activity,
+                                    DefaultHardwareBackBtnHandler backHandler) {
         if (reactInstanceManager != null) {
-            reactInstanceManager.onHostResume(activity, null);
+            reactInstanceManager.onHostResume(activity, backHandler);
         }
     }
 

@@ -26,6 +26,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.net.URL;
 
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+
 /**
  * Base Activity for applications integrating Jitsi Meet at a higher level. It
  * contains all the required wiring between the <tt>JKConferenceView</tt> and
@@ -37,10 +39,13 @@ import java.net.URL;
  * hooked to the React Native subsystem via proxy calls through the
  * <tt>JKConferenceView</tt> static methods.
  */
-public class JitsiMeetActivity extends AppCompatActivity {
+public class JitsiMeetActivity
+    extends AppCompatActivity
+    implements DefaultHardwareBackBtnHandler {
+
     /**
      * The request code identifying requests for the permission to draw on top
-     * of other apps. The value must be 16-bit and is arbitrarily chosen here. 
+     * of other apps. The value must be 16-bit and is arbitrarily chosen here.
      */
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
@@ -129,6 +134,15 @@ public class JitsiMeetActivity extends AppCompatActivity {
     }
 
     /**
+     * This method is called if the JS part does not handle the physical back
+     * button press.
+     */
+    @Override
+    public void invokeDefaultOnBackPressed() {
+        super.onBackPressed();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -201,7 +215,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        JitsiMeetView.onHostResume(this);
+        JitsiMeetView.onHostResume(this, this);
     }
 
     /**
