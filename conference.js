@@ -46,6 +46,7 @@ import {
     setVideoMuted
 } from './react/features/base/media';
 import {
+    dominantSpeakerChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
@@ -1714,6 +1715,8 @@ export default {
                 APP.UI.participantConnectionStatusChanged(id);
         });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
+            APP.store.dispatch(dominantSpeakerChanged(id));
+
             if (this.isLocalId(id)) {
                 this.isDominantSpeaker = true;
                 this.setRaisedHand(false);
