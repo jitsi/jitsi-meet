@@ -1,13 +1,13 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Implements a DialogContainer that will be responsible for
- * showing all dialogs. We will need a separate container so we can handle
- * multiple dialogs, showing them simultaneously or queueing them.
+ * Implements a DialogContainer responsible for showing all dialogs. We will
+ * need a separate container so we can handle multiple dialogs by showing them
+ * simultaneously or queuing them.
  */
 export class DialogContainer extends Component {
-
     /**
      * DialogContainer component's property types.
      *
@@ -17,12 +17,12 @@ export class DialogContainer extends Component {
         /**
          * The component to render.
          */
-        _component: React.PropTypes.func,
+        _component: PropTypes.func,
 
         /**
          * The props to pass to the component that will be rendered.
          */
-        _componentProps: React.PropTypes.object
+        _componentProps: PropTypes.object
     };
 
     /**
@@ -32,29 +32,32 @@ export class DialogContainer extends Component {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props._component) {
-            return null;
-        }
+        const { _component: component } = this.props;
 
-        return React.createElement(
-            this.props._component, this.props._componentProps);
+        return (
+            component
+                ? React.createElement(component, this.props._componentProps)
+                : null);
     }
 }
 
 /**
- * Maps (parts of) the Redux state to the associated Dialog's props.
+ * Maps (parts of) the redux state to the associated <tt>DialogContainer</tt>'s
+ * props.
  *
- * @param {Object} state - The Redux state.
+ * @param {Object} state - The redux state.
  * @private
  * @returns {{
  *     _component: React.Component,
- *     _props: React.PropTypes.object
+ *     _componentProps: Object
  * }}
  */
 function _mapStateToProps(state) {
+    const stateFeaturesBaseDialog = state['features/base/dialog'];
+
     return {
-        _component: state['features/base/dialog'].component,
-        _componentProps: state['features/base/dialog'].componentProps
+        _component: stateFeaturesBaseDialog.component,
+        _componentProps: stateFeaturesBaseDialog.componentProps
     };
 }
 

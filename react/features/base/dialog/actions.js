@@ -1,7 +1,4 @@
-import {
-    HIDE_DIALOG,
-    OPEN_DIALOG
-} from './actionTypes';
+import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
 
 /**
  * Signals Dialog to close its dialog.
@@ -20,7 +17,8 @@ export function hideDialog() {
  * Signals Dialog to open dialog.
  *
  * @param {Object} component - The component to display as dialog.
- * @param {Object} componentProps - The properties needed for that component.
+ * @param {Object} [componentProps] - The React <tt>Component</tt> props of the
+ * specified <tt>component</tt>.
  * @returns {Object}
  */
 export function openDialog(component, componentProps) {
@@ -33,19 +31,17 @@ export function openDialog(component, componentProps) {
 
 /**
  * Signals Dialog to open a dialog with the specified component if the component
- * is not already open. If it is open, then Dialog is signaled to close
- * its dialog.
+ * is not already open. If it is open, then Dialog is signaled to close its
+ * dialog.
  *
  * @param {Object} component - The component to display as dialog.
- * @param {Object} componentProps - The properties needed for that component.
+ * @param {Object} [componentProps] - The React <tt>Component</tt> props of the
+ * specified <tt>component</tt>.
  * @returns {Object}
  */
 export function toggleDialog(component, componentProps) {
     return (dispatch, getState) => {
-        const state = getState();
-        const dialogState = state['features/base/dialog'];
-
-        if (dialogState.component === component) {
+        if (getState()['features/base/dialog'].component === component) {
             dispatch(hideDialog());
         } else {
             dispatch(openDialog(component, componentProps));
