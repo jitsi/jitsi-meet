@@ -72,7 +72,10 @@ import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
-import { showDesktopSharingButton } from './react/features/toolbox';
+import {
+    isButtonEnabled,
+    showDesktopSharingButton
+} from './react/features/toolbox';
 
 const { participantConnectionStatus } = JitsiMeetJS.constants;
 
@@ -366,7 +369,8 @@ class ConferenceConnector {
         logger.error('CONFERENCE Error:', err, params);
         switch (err) {
         case ConferenceErrors.CHAT_ERROR:
-            {
+            logger.error("Chat error.", err);
+            if (isButtonEnabled('chat')) {
                 let [code, msg] = params;
                 APP.UI.showChatError(code, msg);
             }
@@ -1737,20 +1741,23 @@ export default {
             room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
                 APP.UI.markVideoInterrupted(false);
             });
-            room.on(ConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
-                let nick = getDisplayName(id);
-                APP.API.notifyReceivedChatMessage({
-                    id,
-                    nick,
-                    body,
-                    ts
+
+            if (isButtonEnabled('chat')) {
+                room.on(ConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
+                    let nick = getDisplayName(id);
+                    APP.API.notifyReceivedChatMessage({
+                        id,
+                        nick,
+                        body,
+                        ts
+                    });
+                    APP.UI.addMessage(id, nick, body, ts);
                 });
-                APP.UI.addMessage(id, nick, body, ts);
-            });
-            APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
-                APP.API.notifySendingChatMessage(message);
-                room.sendTextMessage(message);
-            });
+                APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
+                    APP.API.notifySendingChatMessage(message);
+                    room.sendTextMessage(message);
+                });
+            }
 
             APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
                 try {
