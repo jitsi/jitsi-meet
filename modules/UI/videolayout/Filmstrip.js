@@ -444,7 +444,7 @@ const Filmstrip = {
 
             promises.push(new Promise(() => {
                 let { localThumb } = this.getThumbs();
-                let height = localThumb.height();
+                let height = localThumb ? localThumb.height() : 0;
                 let fontSize = UIUtil.getIndicatorFontSize(height);
                 this.filmstrip.find('.indicator').animate({
                     fontSize
