@@ -1,3 +1,41 @@
+/**
+ * The recording spinner style.
+ */
 .recordingSpinner {
     vertical-align: top;
+}
+
+/**
+ * The recording button popup style.
+ */
+.recording-popup-dialog {
+    width: 140px;
+
+    /**
+     * The popup item style.
+     */
+    .recording-popup-item {
+        font-size: 12px;
+        position: relative;
+        top: -5px;
+    }
+
+    /**
+     * The popup title style.
+     */
+    .recording-popup-title {
+        margin-bottom: 10px;
+    }
+}
+
+/**
+ * The transcription label style.
+ */
+#transcriptionLabel {
+    border-radius: 3px;
+
+    > span {
+        line-height: 40px;
+        padding-left: 12px;
+    }
 }

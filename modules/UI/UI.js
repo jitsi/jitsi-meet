@@ -477,7 +477,6 @@ UI.updateLocalRole = isModerator => {
     APP.store.dispatch(showDialOutButton(isModerator));
     APP.store.dispatch(showSharedVideoButton());
 
-    Recording.showRecordingButton(isModerator);
     SettingsMenu.showStartMutedOptions(isModerator);
     SettingsMenu.showFollowMeOptions(isModerator);
 

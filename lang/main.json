@@ -401,7 +401,10 @@
         "failedToStart": "Recording failed to start",
         "buttonTooltip": "Start / Stop recording",
         "error": "Recording failed. Please try again.",
-        "unavailable": "The recording service is currently unavailable. Please try again later."
+        "unavailable": "The recording service is currently unavailable. Please try again later.",
+        "recordingPopupTitle": "Recording options",
+        "videoRecordingLabel": "Video",
+        "transcriptionLabel": "Transcription"
     },
     "liveStreaming":
     {

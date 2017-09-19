@@ -6,6 +6,7 @@ import { DEFAULT_AVATAR_RELATIVE_PATH } from '../base/participants';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
 import { openAddPeopleDialog, openInviteDialog } from '../invite';
+import { RecordingButton } from '../recording';
 import { VideoQualityButton } from '../video-quality';
 
 import UIEvents from '../../../service/UI/UIEvents';
@@ -368,13 +369,7 @@ const buttons: Object = {
      * initialization in the recording module.
      */
     recording: {
-        classNames: [ 'button' ],
-        enabled: true,
-
-        // will be displayed once the recording functionality is detected
-        hidden: true,
-        id: 'toolbar_button_record',
-        tooltipKey: 'liveStreaming.buttonTooltip'
+        component: RecordingButton
     },
 
     /**

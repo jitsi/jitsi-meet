@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig, JitsiMeetJS */
+/* global APP, config, interfaceConfig, JitsiMeetJS */
 /*
  * Copyright @ 2015 Atlassian Pty Ltd
  *
@@ -249,8 +249,7 @@ function isStartingStatus(status) {
 
 /**
  * Manages the recording user interface and user experience.
- * @type {{init, initRecordingButton, showRecordingButton, updateRecordingState,
- * updateRecordingUI, checkAutoRecord}}
+ * @type {{init, updateRecordingState, updateRecordingUI, checkAutoRecord}}
  */
 var Recording = {
     /**
@@ -271,13 +270,6 @@ var Recording = {
             Object.assign(this, RECORDING_TRANSLATION_KEYS);
         }
 
-        // XXX Due to the React-ification of Toolbox, the HTMLElement with id
-        // toolbar_button_record may not exist yet.
-        $(document).on(
-            'click',
-            '#toolbar_button_record',
-            ev => this._onToolbarButtonClick(ev));
-
         // If I am a recorder then I publish my recorder custom role to notify
         // everyone.
         if (config.iAmRecorder) {
@@ -288,28 +280,6 @@ var Recording = {
             APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);
         }
-    },
-
-    /**
-     * Initialise the recording button.
-     */
-    initRecordingButton() {
-        const selector = $('#toolbar_button_record');
-
-        selector.addClass(this.baseClass);
-        selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);
-        APP.translation.translateElement(selector);
-    },
-
-    /**
-     * Shows or hides the 'recording' button.
-     * @param show {true} to show the recording button, {false} to hide it
-     */
-    showRecordingButton(show) {
-        let shouldShow = show && _isRecordingButtonEnabled();
-        let id = 'toolbar_button_record';
-
-        UIUtil.setVisible(id, shouldShow);
     },
 
     /**
@@ -338,6 +308,7 @@ var Recording = {
         this.currentState = recordingState;
 
         let labelDisplayConfiguration;
+        let recordingButtonToggled;
 
         switch (recordingState) {
         case Status.ON:
@@ -348,7 +319,7 @@ var Recording = {
                 showSpinner: recordingState === Status.RETRYING
             };
 
-            this._setToolbarButtonToggled(true);
+            recordingButtonToggled = true;
 
             break;
         }
@@ -372,7 +343,7 @@ var Recording = {
                     : this.recordingOffKey
             };
 
-            this._setToolbarButtonToggled(false);
+            recordingButtonToggled = false;
 
             setTimeout(function(){
                 APP.store.dispatch(hideRecordingLabel());
@@ -387,8 +358,6 @@ var Recording = {
                 key: this.recordingPendingKey
             };
 
-            this._setToolbarButtonToggled(false);
-
             break;
         }
 
@@ -398,7 +367,7 @@ var Recording = {
                 key: this.recordingErrorKey
             };
 
-            this._setToolbarButtonToggled(false);
+            recordingButtonToggled = false;
 
             break;
         }
@@ -412,6 +381,7 @@ var Recording = {
 
         APP.store.dispatch(updateRecordingState({
             labelDisplayConfiguration,
+            recordingButtonToggled,
             recordingState
         }));
     },
@@ -431,7 +401,7 @@ var Recording = {
      *
      * @returns {void}
      */
-    _onToolbarButtonClick() {
+    toggleRecording() {
         if (dialog) {
             return;
         }
@@ -451,7 +421,12 @@ var Recording = {
         }
         case Status.AVAILABLE:
         case Status.OFF: {
-            if (this.recordingType === 'jibri')
+            if (this.recordingType === 'jibri_file') {
+                this.eventEmitter.emit(
+                    UIEvents.RECORDING_TOGGLED);
+                JitsiMeetJS.analytics.sendEvent('recording.started');
+            }
+            else if (this.recordingType === 'jibri')
                 _requestLiveStreamId().then(streamId => {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
@@ -508,16 +483,6 @@ var Recording = {
             );
         }
         }
-    },
-
-    /**
-     * Sets the toggled state of the recording toolbar button.
-     *
-     * @param {boolean} isToggled indicates if the button should be toggled
-     * or not
-     */
-    _setToolbarButtonToggled(isToggled) {
-        $("#toolbar_button_record").toggleClass("toggled", isToggled);
     }
 };
 

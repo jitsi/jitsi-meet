@@ -152,7 +152,7 @@ var config = { // eslint-disable-line no-unused-vars
     // Whether to enable recording or not.
     //enableRecording: false,
 
-    // Type for recording: one of jibri or jirecon.
+    // Type for recording: one of jibri, jibri_file or jirecon.
     //recordingType: 'jibri',
 
     // Misc
