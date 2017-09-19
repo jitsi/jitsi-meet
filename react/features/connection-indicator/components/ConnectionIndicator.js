@@ -7,29 +7,42 @@ import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
 
-declare var $: Object;
 declare var interfaceConfig: Object;
 
-const DEFAULT_INDICATOR_COLOR = 'springgreen';
+/**
+ * The connection quality percentage that must be reached to be considered
+ * of good quality and can result in the connection indicator being hidden.
+ *
+ * @type {number}
+ */
+const INDICATOR_DISPLAY_THRESHOLD = 64;
 
-// Converts the percent for connection quality into a color to show for the
-// connection indicator.
-const QUALITY_TO_COLOR = [
-    {
-        percent: 80,
-        color: DEFAULT_INDICATOR_COLOR
-    },
+/**
+ * A map of connection quality percentages and corresponding colors to display
+ * when the current connection quality meets or exceeds the percentage.
+ *
+ * @type {Object}
+ */
+const CONNECTION_TO_COLOR_MAP = {
+    0: 'crimson',
+    30: 'indianred',
+    47: 'yellow',
+    [INDICATOR_DISPLAY_THRESHOLD]: 'greenyellow',
+    81: 'lawngreen',
+    98: 'springgreen'
+};
 
-    {
-        percent: 60,
-        color: '#f2f735' // bright yellow
-    },
-
-    {
-        percent: 0,
-        color: 'red'
-    }
-];
+/**
+ * The connection quality percentages from {@code CONNECTION_TO_COLOR_MAP},
+ * ordered from biggest to smallest.
+ *
+ * @type {Number[]}
+ */
+const PERCENTAGE_THRESHOLDS
+    = Object.keys(CONNECTION_TO_COLOR_MAP)
+        .map(percentage => Number(percentage))
+        .sort((a, b) => a - b)
+        .reverse();
 
 /**
  * Implements a React {@link Component} which displays the current connection
@@ -92,6 +105,21 @@ class ConnectionIndicator extends Component {
 
         this.state = {
             /**
+             * The timeout for automatically hiding the indicator.
+             *
+             * @type {timeoutID}
+             */
+            autohideTimeout: null,
+
+            /**
+             * Whether or not a CSS class should be applied to the root for
+             * hiding the connection indicator.
+             *
+             * @type {boolean}
+             */
+            hideIndicator: false,
+
+            /**
              * Whether or not the popover content should display additional
              * statistics.
              *
@@ -120,6 +148,8 @@ class ConnectionIndicator extends Component {
      * returns {void}
      */
     componentDidMount() {
+        this._updateIndicatorAutohide();
+
         statsEmitter.subscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
     }
@@ -157,9 +187,12 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const className = `indicator-container ${
+            this._getIndicatorVisibilityClass()}`;
+
         return (
             <Popover
-                className = 'indicator-container'
+                className = { className }
                 content = { this._renderStatisticsTable() }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
@@ -171,6 +204,40 @@ class ConnectionIndicator extends Component {
                 </div>
             </Popover>
         );
+    }
+
+    /**
+     * Matches the connection quality percentage to a configured color. If no
+     * strength is passed in, then by default the color matched to 100% will be
+     * returned.
+     *
+     * @param {number} percent - A number between 0 and 100 to match with a
+     * connection strength color.
+     * @private
+     * @returns {string}
+     */
+    _getIndicatorColor(percent = 100) {
+        const matchingThreshold
+            = PERCENTAGE_THRESHOLDS.find(threshold => percent >= threshold);
+
+        return CONNECTION_TO_COLOR_MAP[matchingThreshold];
+    }
+
+    /**
+     * Returns additional class names to add to the root of the component. The
+     * class names are intended to be used for hiding or showing the indicator.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getIndicatorVisibilityClass() {
+        const { connectionStatus } = this.props;
+
+        return !interfaceConfig.CONNECTION_INDICATOR_AUTOHIDE_ENABLED
+            || !this.state.hideIndicator
+            || connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED
+            || connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
+            ? 'show-indicator' : 'hide-indicator';
     }
 
     /**
@@ -195,6 +262,9 @@ class ConnectionIndicator extends Component {
         this.setState({
             stats: newStats
         });
+
+        // Rely on React to batch setState actions.
+        this._updateIndicatorAutohide(newStats.percent);
     }
 
     /**
@@ -222,25 +292,24 @@ class ConnectionIndicator extends Component {
                     <i className = 'icon-connection-lost' />
                 </span>
             );
+
         case JitsiParticipantConnectionStatus.INACTIVE:
             return (
                 <span className = 'connection_ninja'>
                     <i className = 'icon-ninja' />
                 </span>
             );
+
         default: {
             const { percent } = this.state.stats;
-            const colorConfig
-                = QUALITY_TO_COLOR.find(x => percent >= x.percent) || {};
 
-            // The primaryColor prop is not set so the icon's background can
-            // blend in with the wrapper around the icon.
+            // The primaryColor prop is not set for ConnectionIcon so the icon's
+            // background can blend in with the icon's parent.
             return (
                 <span className = 'connection_bars'>
                     <ConnectionIcon
                         label = 'connection'
-                        secondaryColor
-                            = { colorConfig.color || DEFAULT_INDICATOR_COLOR }
+                        secondaryColor = { this._getIndicatorColor(percent) }
                         size = 'small' />
                 </span>
             );
@@ -275,6 +344,38 @@ class ConnectionIndicator extends Component {
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
         );
+    }
+
+    /**
+     * Updates the internal state for automatically hiding the indicator. If
+     * undefined is passed in for the connection strength percent then the
+     * indicator will be queued for hiding.
+     *
+     * @param {number|undefined} percent - The current connection quality
+     * percentage, between the values 0 and 100.
+     * @private
+     * @returns {void}
+     */
+    _updateIndicatorAutohide(percent) {
+        if (!interfaceConfig.CONNECTION_INDICATOR_AUTOHIDE_ENABLED) {
+            return;
+        }
+
+        if (percent < INDICATOR_DISPLAY_THRESHOLD) {
+            clearTimeout(this.state.autohideTimeout);
+            this.setState({
+                autohideTimeout: null,
+                hideIndicator: false
+            });
+        } else if (!this.state.autohideTimeout || !percent) {
+            this.setState({
+                autohideTimeout: setTimeout(() => {
+                    this.setState({
+                        hideIndicator: true
+                    });
+                }, interfaceConfig.CONNECTION_INDICATOR_HIDE_TIMEOUT)
+            });
+        }
     }
 }
 

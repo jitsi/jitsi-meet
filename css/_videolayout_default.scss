@@ -88,21 +88,13 @@
          */
         .indicator {
             margin-top: $toolbarIconMargin;
+            margin-left: 4px;
         }
 
         .indicator-container:nth-child(1) .indicator {
             margin-left: $toolbarIconMargin;
         }
 
-        .connection-indicator,
-        div.indicator-container,
-         {
-            margin-right: 4px;
-        }
-
-        div.indicator:last-child {
-            margin-right: 0;
-        }
 
         .indicator-container {
             display: inline-block;
@@ -111,6 +103,10 @@
             .popover-trigger {
                 display: inline-block;
             }
+        }
+
+        .hide-indicator {
+            display: none;
         }
 
         .connection-indicator,
