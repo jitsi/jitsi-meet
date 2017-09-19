@@ -1,6 +1,6 @@
 /* @flow */
 
-import { assign, ReducerRegistry, set } from '../redux';
+import { assign, ReducerRegistry } from '../redux';
 import { parseURIString } from '../util';
 
 import {
@@ -75,7 +75,9 @@ function _connectionEstablished(
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: undefined,
-        connection
+        connection,
+        error: undefined,
+        errorMessage: undefined
     });
 }
 
@@ -91,14 +93,20 @@ function _connectionEstablished(
  */
 function _connectionFailed(
         state: Object,
-        { connection }: { connection: Object }) {
+        { connection, error, message }: {
+            connection: Object,
+            error: string,
+            message: ?string
+        }) {
     if (state.connection && state.connection !== connection) {
         return state;
     }
 
     return assign(state, {
         connecting: undefined,
-        connection: undefined
+        connection: undefined,
+        error,
+        errorMessage: message
     });
 }
 
@@ -115,7 +123,11 @@ function _connectionFailed(
 function _connectionWillConnect(
         state: Object,
         { connection }: { connection: Object }) {
-    return set(state, 'connecting', connection);
+    return assign(state, {
+        connecting: connection,
+        error: undefined,
+        errorMessage: undefined
+    });
 }
 
 /**

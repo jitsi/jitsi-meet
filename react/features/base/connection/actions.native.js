@@ -76,13 +76,14 @@ export function connect() {
          * Rejects external promise when connection fails.
          *
          * @param {JitsiConnectionErrors} err - Connection error.
+         * @param {string} msg - Error message supplied by lib-jitsi-meet.
          * @returns {void}
          * @private
          */
-        function _onConnectionFailed(err) {
+        function _onConnectionFailed(err, msg) {
             unsubscribe();
-            console.error('CONNECTION FAILED:', err);
-            dispatch(connectionFailed(connection, err));
+            console.error('CONNECTION FAILED:', err, msg);
+            dispatch(connectionFailed(connection, err, msg));
         }
 
         /**
