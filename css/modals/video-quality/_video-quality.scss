@@ -127,6 +127,7 @@
     border-radius: 50%;
     position: absolute;
     box-sizing: border-box;
+    z-index: #{$tooltipsZ + 1};
 
     i {
         cursor: pointer;
@@ -145,13 +146,9 @@
     z-index: $tooltipsZ;
 }
 
-#videoResolutionLabel {
-    z-index: #{$tooltipsZ + 1};
-}
-
 .centeredVideoLabel {
     bottom: 45%;
-    border-radius: 2px;
+    border-radius: 3px;
     display: none;
     padding: 10px;
     transform: translate(-50%, 0);

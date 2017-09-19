@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { translate } from '../../base/i18n';
 import { shouldRemoteVideosBeVisible } from '../../filmstrip';
 
@@ -44,6 +45,11 @@ class RecordingLabel extends Component {
          * {@code RecordingLabel} positioning.
          */
         _remoteVideosVisible: React.PropTypes.bool,
+
+        /**
+         * Indicates if the transcription label is currently visible.
+         */
+        _transcriptionLabelVisible: React.PropTypes.bool,
 
         /**
          * Invoked to obtain translated string.
@@ -110,10 +116,26 @@ class RecordingLabel extends Component {
                 ? 'with-remote-videos' : 'without-remote-videos'
         ].join(' ');
 
+        let rightIndent = {};
+
+        if (this.props._filmstripVisible
+            && this.props._remoteVideosVisible) {
+            rightIndent
+                = this.props._transcriptionLabelVisible ? '243px' : '200px';
+        } else {
+            rightIndent
+                = this.props._transcriptionLabelVisible ? '123px' : '80px';
+        }
+
+        const inlineStyle = {
+            right: rightIndent
+        };
+
         return (
             <span
                 className = { rootClassName }
-                id = 'recordingLabel'>
+                id = 'recordingLabel'
+                style = { inlineStyle }>
                 <span id = 'recordingLabelText'>
                     { this.props.t(key) }
                 </span>
@@ -143,6 +165,7 @@ class RecordingLabel extends Component {
 function _mapStateToProps(state) {
     const { visible } = state['features/filmstrip'];
     const { labelDisplayConfiguration } = state['features/recording'];
+    const { transcriptionState } = state['features/transcription'];
 
     return {
         /**
@@ -165,7 +188,10 @@ function _mapStateToProps(state) {
          *
          * @type {boolean}
          */
-        _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
+
+        _transcriptionLabelVisible: transcriptionState
+            === JitsiMeetJS.constants.transcriptionStatus.ON
     };
 }
 

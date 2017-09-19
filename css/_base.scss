@@ -26,6 +26,13 @@ p {
     margin: 0;
 }
 
+h4 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.006em;
+    line-height: 16px;
+}
+
 body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
 }

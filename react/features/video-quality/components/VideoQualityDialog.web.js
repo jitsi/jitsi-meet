@@ -119,9 +119,9 @@ class VideoQualityDialog extends Component {
 
         return (
             <div className = 'video-quality-dialog'>
-                <h3 className = 'video-quality-dialog-title'>
+                <h4 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
-                </h3>
+                </h4>
                 <div className = { showP2PWarning ? '' : 'hide-warning' }>
                     { this._renderP2PMessage() }
                 </div>
