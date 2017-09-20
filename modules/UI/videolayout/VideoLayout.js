@@ -110,6 +110,8 @@ var VideoLayout = {
         // the local video thumb maybe one pixel
         this.resizeThumbnails(false, true);
 
+        this._onContactClicked = onContactClicked.bind(this);
+
         this.registerListeners();
     },
 
@@ -133,7 +135,8 @@ var VideoLayout = {
     registerListeners() {
         eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED,
             onLocalFlipXChanged);
-        eventEmitter.addListener(UIEvents.CONTACT_CLICKED, onContactClicked);
+        eventEmitter.addListener(UIEvents.CONTACT_CLICKED,
+            this._onContactClicked);
     },
 
     /**
@@ -142,7 +145,10 @@ var VideoLayout = {
      * @returns {void}
      */
     unregisterListeners() {
-        eventEmitter.removeListener(UIEvents.CONTACT_CLICKED, onContactClicked);
+        if (this._onContactClicked) {
+            eventEmitter.removeListener(UIEvents.CONTACT_CLICKED,
+                this._onContactClicked);
+        }
     },
 
     initLargeVideo () {
