@@ -170,7 +170,8 @@ class ConnectionIndicator extends Component {
     }
 
     /**
-     * Sets the state to hide the Statistics Table popover.
+     * Cleans up any queues processes, which includes listening for new stats
+     * and clearing any timeout to hide the indicator.
      *
      * @private
      * @returns {void}
@@ -178,6 +179,8 @@ class ConnectionIndicator extends Component {
     componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
+
+        clearTimeout(this.state.autohideTimeout);
     }
 
     /**
