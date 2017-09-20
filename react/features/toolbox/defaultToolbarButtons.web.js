@@ -5,9 +5,15 @@ import React from 'react';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
-import { openAddPeopleDialog, openInviteDialog } from '../invite';
-import UIEvents from '../../../service/UI/UIEvents';
+
+import {
+    InfoDialogButton,
+    openAddPeopleDialog,
+    openInviteDialog
+} from '../invite';
 import { VideoQualityButton } from '../video-quality';
+
+import UIEvents from '../../../service/UI/UIEvents';
 
 import ProfileButton from './components/ProfileButton';
 
@@ -253,6 +259,14 @@ const buttons: Object = {
             APP.UI.emitEvent(UIEvents.HANGUP);
         },
         tooltipKey: 'toolbar.hangup'
+    },
+
+    /**
+     * The descriptor of the toolbar button which opens a dialog for the
+     * conference URL and inviting others.
+     */
+    info: {
+        component: InfoDialogButton
     },
 
     /**

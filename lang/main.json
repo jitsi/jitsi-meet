@@ -490,5 +490,11 @@
         "rateExperience": "Please rate your meeting experience.",
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
+    },
+    "info": {
+        "copy": "Copy link",
+        "invite": "Invite in __app__",
+        "title": "Call access info",
+        "tooltip": "Get access info about the meeting"
     }
 }
