@@ -2,6 +2,8 @@ import Iterator from 'es6-iterator';
 import BackgroundTimer from 'react-native-background-timer';
 import 'url-polyfill'; // Polyfill for URL constructor
 
+import { Platform } from '../../react';
+
 import Storage from './Storage';
 
 /**
@@ -323,7 +325,8 @@ function _visitNode(node, callback) {
                 }
             }
 
-            navigator.userAgent = userAgent;
+            navigator.userAgent
+                = `${userAgent} (${Platform.OS} ${Platform.Version})`;
         })();
     }
 
