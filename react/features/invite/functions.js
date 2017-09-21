@@ -35,14 +35,14 @@ export function searchPeople(// eslint-disable-line max-params
  * invitation.
  * @param {string} inviteUrl - The url to the conference.
  * @param {string} jwt - The jwt token to pass to the search service.
- * @param {Immutable.List} inviteItems - The list of items to invite.
+ * @param {Immutable.List} people - The list of the "user" type items to invite.
  * @returns {Promise} - The promise created by the request.
  */
-export function invitePeople(inviteServiceUrl, inviteUrl, jwt, inviteItems) { // eslint-disable-line max-params, max-len
+export function invitePeople(inviteServiceUrl, inviteUrl, jwt, people) { // eslint-disable-line max-params, max-len
     return new Promise((resolve, reject) => {
         $.post(`${inviteServiceUrl}?token=${jwt}`,
             JSON.stringify({
-                'invited': inviteItems,
+                'invited': people,
                 'url': inviteUrl }),
             response => resolve(response),
             'json')
@@ -50,4 +50,30 @@ export function invitePeople(inviteServiceUrl, inviteUrl, jwt, inviteItems) { //
                 reject(error)
             );
     });
+}
+
+/**
+ * Invites room participants to the conference through the SIP Jibri service.
+ *
+ * @param {JitsiMeetConference} conference - The conference to which the rooms
+ * will be invited to.
+ * @param {Immutable.List} rooms - The list of the "videosipgw" type items to
+ * invite.
+ * @returns {void}
+ */
+export function inviteRooms(conference, rooms) {
+    for (const room of rooms) {
+        const sipAddress = room.id;
+        const displayName = room.name;
+
+        if (sipAddress && displayName) {
+            const newSession
+                = conference.createVideoSIPGWSession(sipAddress, displayName);
+
+            newSession.start();
+        } else {
+            console.error(
+                `No display name or sip number for ${JSON.stringify(room)}`);
+        }
+    }
 }
