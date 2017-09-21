@@ -10,7 +10,7 @@ import { translate } from '../../base/i18n';
 import MultiSelectAutocomplete
     from '../../base/react/components/web/MultiSelectAutocomplete';
 
-import { invitePeople, searchPeople } from '../functions';
+import { invitePeople, inviteRooms, searchPeople } from '../functions';
 
 declare var interfaceConfig: Object;
 
@@ -26,6 +26,12 @@ class AddPeopleDialog extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * The {@link JitsiMeetConference} which will be used to invite "room"
+         * participants through the SIP Jibri (Video SIP gateway).
+         */
+        _conference: PropTypes.object,
+
         /**
          * The URL pointing to the service allowing for people invite.
          */
@@ -229,11 +235,17 @@ class AddPeopleDialog extends Component {
                 addToCallInProgress: true
             });
 
+            this.props._conference
+                && inviteRooms(
+                    this.props._conference,
+                    this.state.inviteItems.filter(
+                        i => i.type === 'videosipgw'));
+
             invitePeople(
                 this.props._inviteServiceUrl,
                 this.props._inviteUrl,
                 this.props._jwt,
-                this.state.inviteItems)
+                this.state.inviteItems.filter(i => i.type === 'user'))
             .then(() => {
                 this.setState({
                     addToCallInProgress: false
@@ -318,6 +330,7 @@ class AddPeopleDialog extends Component {
  * }}
  */
 function _mapStateToProps(state) {
+    const { conference } = state['features/base/conference'];
     const {
         inviteServiceUrl,
         peopleSearchQueryTypes,
@@ -325,6 +338,7 @@ function _mapStateToProps(state) {
      } = state['features/base/config'];
 
     return {
+        _conference: conference,
         _jwt: state['features/jwt'].jwt,
         _inviteUrl: getInviteURL(state),
         _inviteServiceUrl: inviteServiceUrl,
