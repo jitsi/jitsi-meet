@@ -15,5 +15,20 @@ export default createStyleSheet({
         alignSelf: 'stretch',
         backgroundColor: ColorPalette.appBackground,
         flex: 1
-    })
+    }),
+
+    /**
+     * Style for the connecting indicator.
+     */
+    connectingIndicator: {
+        alignItems: 'center',
+        backgroundColor: ColorPalette.white,
+        bottom: 0,
+        justifyContent: 'center',
+        left: 0,
+        opacity: 0.6,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    }
 });

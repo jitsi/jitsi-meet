@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
-import { Container } from '../../base/react';
+import { Container, LoadingIndicator } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
@@ -30,6 +31,17 @@ class Conference extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * The indicator which determines that we are still connecting to the
+         * conference. Here "connecting" implies both making the XMPP connection
+         * and then joining the room. When set a network activity indicator will
+         * be displayed.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _connecting: React.PropTypes.bool,
+
         /**
          * The handler which dispatches the (redux) action connect.
          *
@@ -153,6 +165,16 @@ class Conference extends Component {
                 <OverlayContainer />
 
                 {/*
+                  * The network activity indicator goes above everything, except
+                  * toolbars and dialogs.
+                  */
+                  this.props._connecting
+                      && <View style = { styles.connectingIndicator }>
+                          <LoadingIndicator />
+                      </View>
+                }
+
+                {/*
                   * The Toolbox is in a stacking layer above the Filmstrip.
                   */}
                 <Toolbox />
@@ -264,11 +286,37 @@ function _mapDispatchToProps(dispatch) {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _connecting: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
+    const { connecting, connection } = state['features/base/connection'];
+    const { joining, conference, leaving } = state['features/base/conference'];
+
+    // The logic here looks a bit twisted. We try to avoid flapping of our flag,
+    // because there is a time window between the XMPP connection being
+    // established and the MUC join from happening. We are "connecting" iff:
+    //
+    // - the XMPP connection is in connecting state
+    // - the conference is in joining state
+    // - the XMPP connection is connected but we have no conference yet, nor we
+    //   are leaving one
+    const connecting_
+        = connecting || (connection && (joining || (!conference && !leaving)));
+
     return {
+        /**
+         * The indicator which determines that we are still connecting to the
+         * conference. Here "connecting" implies both making the XMPP connection
+         * and then joining the room. When set a network activity indicator will
+         * be displayed.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _connecting: Boolean(connecting_),
+
         /**
          * The indicator which determines whether the Toolbox is visible.
          *
