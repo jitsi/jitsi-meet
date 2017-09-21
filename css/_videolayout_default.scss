@@ -88,21 +88,13 @@
          */
         .indicator {
             margin-top: $toolbarIconMargin;
+            margin-left: 4px;
         }
 
         .indicator-container:nth-child(1) .indicator {
             margin-left: $toolbarIconMargin;
         }
 
-        .connection-indicator,
-        div.indicator-container,
-         {
-            margin-right: 4px;
-        }
-
-        div.indicator:last-child {
-            margin-right: 0;
-        }
 
         .indicator-container {
             display: inline-block;
@@ -111,6 +103,10 @@
             .popover-trigger {
                 display: inline-block;
             }
+        }
+
+        .hide-indicator {
+            display: none;
         }
 
         .connection-indicator,
@@ -138,9 +134,9 @@
                 left: 0;
                 @include transform(translate(0, -50%));
 
-                &_empty
+                &_bars
                 {
-                    color: #8B8B8B;/*#FFFFFF*/
+                    color: $dominantSpeakerBg;
                     overflow: hidden;
                 }
 
@@ -150,20 +146,12 @@
                     overflow: visible;
                 }
 
-                &_full
-                {
-                    @include topLeft();
-                    color: #FFFFFF;/*#15A1ED*/
-                    overflow: hidden;
-                }
-
                 &_ninja
                 {
                     font-size: 1.5em;
                 }
             }
 
-            .icon-connection,
             .icon-connection-lost {
                 cursor: pointer;
                 font-size: 1em;

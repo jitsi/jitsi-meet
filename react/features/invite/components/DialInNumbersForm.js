@@ -1,7 +1,7 @@
 import Button from '@atlaskit/button';
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 import { FieldText } from '@atlaskit/field-text';
-import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import ExpandIcon from '@atlaskit/icon/glyph/editor/expand';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
