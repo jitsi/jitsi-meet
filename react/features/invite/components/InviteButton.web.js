@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Button from '@atlaskit/button';
@@ -19,7 +20,6 @@ const DIAL_OUT_NAME = 'dialout';
  * The button that provides different invite options.
  */
 class InviteButton extends Component {
-
     /**
      * {@code InviteButton}'s property types.
      *
@@ -29,22 +29,22 @@ class InviteButton extends Component {
         /**
          * Indicates if the "Add to call" feature is available.
          */
-        _isAddToCallAvailable: React.PropTypes.bool,
+        _isAddToCallAvailable: PropTypes.bool,
 
         /**
          * Indicates if the "Dial out" feature is available.
          */
-        _isDialOutAvailable: React.PropTypes.bool,
+        _isDialOutAvailable: PropTypes.bool,
 
         /**
          * The function opening the dialog.
          */
-        openDialog: React.PropTypes.func,
+        openDialog: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**
@@ -149,7 +149,7 @@ class InviteButton extends Component {
 
         const inviteItems = [
             {
-                content: t('invite.shareTheLink'),
+                content: t('toolbar.invite'),
                 action: () => this.props.openDialog(InviteDialog)
             }
         ];
@@ -163,7 +163,7 @@ class InviteButton extends Component {
 
         if (props._isAddToCallAvailable) {
             inviteItems.splice(0, 0, {
-                content: interfaceConfig.APP_PEOPLE_APP_NAME,
+                content: interfaceConfig.ADD_PEOPLE_APP_NAME,
                 action: () => this.props.openDialog(AddPeopleDialog)
             });
         }

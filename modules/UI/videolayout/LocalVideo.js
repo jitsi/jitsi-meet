@@ -29,7 +29,7 @@ function LocalVideo(VideoLayout, emitter) {
     this.isLocal = true;
     this.emitter = emitter;
     this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
-        ? 'left bottom' : 'top center';
+        ? 'left top' : 'top center';
 
     Object.defineProperty(this, 'id', {
         get: function () {

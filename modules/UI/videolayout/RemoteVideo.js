@@ -43,7 +43,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.hasRemoteVideoMenu = false;
     this._supportsRemoteControl = false;
     this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
-        ? 'left top' : 'top center';
+        ? 'left bottom' : 'top center';
     this.addRemoteVideoContainer();
     this.updateIndicators();
     this.setDisplayName();

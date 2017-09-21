@@ -449,7 +449,6 @@
         "invitePeople": "Invite people",
         "locked": "This call is locked. New callers must have the link and enter the password to join.",
         "showPassword": "Show password",
-        "shareTheLink": "Share the link",
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {

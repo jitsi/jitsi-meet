@@ -48,7 +48,6 @@
     &__videos {
         @extend %align-right;
         position:relative;
-        height:196px;
         padding: 0;
         /* The filmstrip should not be covered by the left toolbar. */
         bottom: 0;
