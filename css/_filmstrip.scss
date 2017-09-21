@@ -85,14 +85,24 @@
                 justify-content: space-between;
                 width: 100%;
 
-                & > button {
+                & button {
+                    background: $toolbarBackground;
                     flex-grow: 1;
                 }
 
                 & > * {
+                    color: $toolbarButtonColor;
                     flex-grow: 0;
                     flex-shrink: 1;
                     margin: 0 2px;
+                }
+
+                /**
+                 * Making sure any svg-s in an invite button group will be
+                 * colored the way we want.
+                 */
+                & path {
+                    fill: $toolbarButtonColor;
                 }
             }
         }
