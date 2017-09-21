@@ -27,7 +27,7 @@ class AddPeopleDialog extends Component {
      */
     static propTypes = {
         /**
-         * The {@link JitsiMeetConference} whcih will be used to invite "room"
+         * The {@link JitsiMeetConference} which will be used to invite "room"
          * participants through the SIP Jibri (Video SIP gateway).
          */
         _conference: PropTypes.object,
