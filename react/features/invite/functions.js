@@ -1,4 +1,5 @@
 declare var $: Function;
+declare var interfaceConfig: Object;
 
 /**
  * Sends an ajax request to a directory service.
@@ -76,4 +77,28 @@ export function inviteRooms(conference, rooms) {
                 `No display name or sip number for ${JSON.stringify(room)}`);
         }
     }
+}
+
+/**
+ * Indicates if an invite option is enabled in the configuration.
+ *
+ * @param {string} name - The name of the option defined in
+ * interfaceConfig.INVITE_OPTIONS.
+ * @returns {boolean} - True to indicate that the given invite option is
+ * enabled, false - otherwise.
+ */
+export function isInviteOptionEnabled(name) {
+    return interfaceConfig.INVITE_OPTIONS.indexOf(name) !== -1;
+}
+
+/**
+ * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
+ * list.
+ *
+ * @param {string} optionName - The invite option name.
+ * @private
+ * @returns {number} - The position of the option in the list.
+ */
+export function getInviteOptionPosition(optionName) {
+    return interfaceConfig.INVITE_OPTIONS.indexOf(optionName);
 }

@@ -10,11 +10,13 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 import { openDialog } from '../../base/dialog';
 import { AddPeopleDialog, InviteDialog } from '.';
 import { DialOutDialog } from '../../dial-out';
-import { isButtonEnabled } from '../../toolbox';
+import { isInviteOptionEnabled, getInviteOptionPosition } from '../functions';
 
 declare var interfaceConfig: Object;
 
-const DIAL_OUT_NAME = 'dialout';
+const SHARE_LINK_OPTION = 'invite';
+const DIAL_OUT_OPTION = 'dialout';
+const ADD_TO_CALL_OPTION = 'addtocall';
 
 /**
  * The button that provides different invite options.
@@ -147,25 +149,37 @@ class InviteButton extends Component {
     _updateInviteItems(props) {
         const { t } = this.props;
 
-        const inviteItems = [
+        const inviteItems = [];
+
+        inviteItems.splice(
+            getInviteOptionPosition(SHARE_LINK_OPTION),
+            0,
             {
                 content: t('toolbar.invite'),
                 action: () => this.props.openDialog(InviteDialog)
             }
-        ];
+        );
 
         if (props._isDialOutAvailable) {
-            inviteItems.splice(0, 0, {
-                content: t('dialOut.dialOut'),
-                action: () => this.props.openDialog(DialOutDialog)
-            });
+            inviteItems.splice(
+                getInviteOptionPosition(DIAL_OUT_OPTION),
+                0,
+                {
+                    content: t('dialOut.dialOut'),
+                    action: () => this.props.openDialog(DialOutDialog)
+                }
+            );
         }
 
         if (props._isAddToCallAvailable) {
-            inviteItems.splice(0, 0, {
-                content: interfaceConfig.ADD_PEOPLE_APP_NAME,
-                action: () => this.props.openDialog(AddPeopleDialog)
-            });
+            inviteItems.splice(
+                getInviteOptionPosition(ADD_TO_CALL_OPTION),
+                0,
+                {
+                    content: interfaceConfig.ADD_PEOPLE_APP_NAME,
+                    action: () => this.props.openDialog(AddPeopleDialog)
+                }
+            );
         }
 
         this.state = {
@@ -200,11 +214,12 @@ function _mapStateToProps(state) {
     const { isGuest } = state['features/jwt'];
 
     return {
-        _isAddToCallAvailable: !isGuest,
+        _isAddToCallAvailable: !isGuest
+            && isInviteOptionEnabled(ADD_TO_CALL_OPTION),
         _isDialOutAvailable:
             getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
             && conference && conference.isSIPCallingSupported()
-            && isButtonEnabled(DIAL_OUT_NAME)
+            && isInviteOptionEnabled(DIAL_OUT_OPTION)
             && (!enableUserRolesBasedOnToken || !isGuest)
     };
 }
