@@ -78,12 +78,13 @@
         #filmstripRemoteVideos {
             display: flex;
             flex: 1;
-            flex-direction: column-reverse;
+            flex-direction: column;
             height: auto;
-            overflow-x: hidden !important;
+            justify-content: flex-end;
 
             .remote-videos-container {
-                flex-direction: column;
+                flex-direction: column-reverse;
+                overflow-x: hidden !important;
             }
         }
 
