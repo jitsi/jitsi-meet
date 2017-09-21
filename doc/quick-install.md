@@ -32,6 +32,14 @@ During the installation, you will be asked to enter the hostname of the Jitsi Me
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
+### Generate a Let's Encrypt certificate 
+
+Simply run the following in your shell
+
+```sh
+/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+```
+
 #### Advanced configuration
 If installation is on a machine behind NAT further configuration of jitsi-videobridge is needed in order for it to be accessible.
 Provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000).
