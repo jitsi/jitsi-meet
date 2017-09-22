@@ -148,13 +148,15 @@ export class VideoQualityLabel extends Component {
         const opening = this.state.togglingToVisible ? 'opening' : '';
         const classNames
             = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
+        const tooltipKey
+            = `videoStatus.labelTooltip${_audioOnly ? 'AudioOnly' : 'Video'}`;
 
         return (
             <div
                 className = { classNames }
                 id = 'videoResolutionLabel'>
                 <Tooltip
-                    description = { t('videoStatus.labelTooltip') }
+                    description = { t(tooltipKey) }
                     position = { 'left' }>
                     <div className = 'video-quality-label-status'>
                         { _audioOnly
