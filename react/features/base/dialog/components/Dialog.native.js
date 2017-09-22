@@ -1,12 +1,31 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
 import { translate } from '../../i18n';
+import { LoadingIndicator } from '../../react';
+import { set } from '../../redux';
 
 import AbstractDialog from './AbstractDialog';
+import styles from './styles';
+
+/**
+ * The value of the style property {@link _TAG_KEY} which identifies the
+ * OK/submit button of <tt>Prompt</tt>.
+ */
+const _SUBMIT_TEXT_TAG_VALUE = '_SUBMIT_TEXT_TAG_VALUE';
+
+/**
+ * The name of the style property which identifies ancestors of <tt>Prompt</tt>
+ * such as its OK/submit button for the purposes of workarounds implemented by
+ * <tt>Dialog</tt>.
+ *
+ * XXX The value may trigger a react-native warning in the Debug configuration
+ * but, unfortunately, I couldn't find a value that wouldn't.
+ */
+const _TAG_KEY = '_TAG_KEY';
 
 /**
  * Implements <tt>AbstractDialog</tt> on react-native using <tt>Prompt</tt>.
@@ -37,7 +56,6 @@ class Dialog extends AbstractDialog {
             bodyKey,
             cancelDisabled,
             cancelTitleKey = 'dialog.Cancel',
-            children,
             okDisabled,
             okTitleKey = 'dialog.Ok',
             t,
@@ -45,30 +63,82 @@ class Dialog extends AbstractDialog {
             titleString
         } = this.props;
 
-        /* eslint-disable react/jsx-wrap-multilines */
+        const cancelButtonTextStyle
+            = cancelDisabled ? styles.disabledButtonText : styles.buttonText;
+        let submitButtonTextStyle
+            = okDisabled ? styles.disabledButtonText : styles.buttonText;
 
-        let element
-            = <Prompt
-                cancelText = { cancelDisabled ? undefined : t(cancelTitleKey) }
+        submitButtonTextStyle = {
+            ...submitButtonTextStyle,
+            [_TAG_KEY]: _SUBMIT_TEXT_TAG_VALUE
+        };
+
+        // eslint-disable-next-line no-extra-parens
+        let element = (
+            <Prompt
+                cancelButtonTextStyle = { cancelButtonTextStyle }
+                cancelText = { t(cancelTitleKey) }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 placeholder = { t(bodyKey) }
-                submitText = { okDisabled ? undefined : t(okTitleKey) }
+                submitButtonTextStyle = { submitButtonTextStyle }
+                submitText = { t(okTitleKey) }
                 title = { titleString || t(titleKey) }
-                visible = { true } />;
+                visible = { true } />
+        );
 
-        /* eslint-enable react/jsx-wrap-multilines */
+        // XXX The following implements workarounds with knowledge of
+        // react-native-prompt/Prompt's implementation.
 
-        if (React.Children.count(children)) {
-            // XXX The following implements a workaround with knowledge of the
-            // implementation of react-native-prompt.
-            element
-                = this._replaceFirstElementOfType(
-                    // eslint-disable-next-line no-extra-parens, new-cap
-                    (new (element.type)(element.props)).render(),
-                    TextInput,
-                    children);
-        }
+        // eslint-disable-next-line no-extra-parens, new-cap
+        element = (new (element.type)(element.props)).render();
+
+        let { children } = this.props;
+
+        children = React.Children.count(children) ? children : undefined;
+
+        // eslint-disable-next-line no-shadow
+        element = this._mapReactElement(element, element => {
+            // * If this Dialog has children, they are to be rendered instead of
+            //   Prompt's TextInput.
+            if (element.type === TextInput) {
+                if (children) {
+                    element = children; // eslint-disable-line no-param-reassign
+                    children = undefined;
+                }
+            } else {
+                let { style } = element.props;
+
+                if (style
+                        && (style = StyleSheet.flatten(style))
+                        && _TAG_KEY in style) {
+                    switch (style[_TAG_KEY]) {
+                    case _SUBMIT_TEXT_TAG_VALUE:
+                        if (this.state.submitting) {
+                            // * If this Dialog is submitting, render a
+                            //   LoadingIndicator.
+                            return (
+                                <LoadingIndicator
+                                    color = { submitButtonTextStyle.color }
+                                    size = { 'small' } />
+                            );
+                        }
+                        break;
+                    }
+
+                    // eslint-disable-next-line no-param-reassign
+                    element
+                        = React.cloneElement(
+                            element,
+                            /* props */ {
+                                style: set(style, _TAG_KEY, undefined)
+                            },
+                            ...React.Children.toArray(element.props.children));
+                }
+            }
+
+            return element;
+        });
 
         return element;
     }
@@ -107,36 +177,6 @@ class Dialog extends AbstractDialog {
         }
 
         return mapped;
-    }
-
-    /**
-     * Replaces the first <tt>ReactElement</tt> of a specific type found in a
-     * specific <tt>ReactElement</tt> tree with a specific replacement
-     * <tt>ReactElement</tt>.
-     *
-     * @param {ReactElement} element - The <tt>ReactElement</tt> tree to search
-     * through and replace in.
-     * @param {*} type - The type of the <tt>ReactElement</tt> to be replaced.
-     * @param {ReactElement} replacement - The <tt>ReactElement</tt> to replace
-     * the first <tt>ReactElement</tt> in <tt>element</tt> of the specified
-     * <tt>type</tt>.
-     * @private
-     * @returns {ReactElement}
-     */
-    _replaceFirstElementOfType(element, type, replacement) {
-        // eslint-disable-next-line no-shadow
-        return this._mapReactElement(element, element => {
-            if (replacement && element.type === type) {
-                /* eslint-disable no-param-reassign */
-
-                element = replacement;
-                replacement = undefined;
-
-                /* eslint-enable no-param-reassign */
-            }
-
-            return element;
-        });
     }
 }
 
