@@ -110,6 +110,11 @@ class ConnectionIndicator extends Component {
         enableStatsDisplay: PropTypes.bool,
 
         /**
+         * The font-size for the icon.
+         */
+        iconSize: PropTypes.number,
+
+        /**
          * Whether or not the displays stats are for local video.
          */
         isLocalVideo: PropTypes.bool,
@@ -241,7 +246,9 @@ class ConnectionIndicator extends Component {
                 content = { this._renderStatisticsTable() }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
-                    <div className = { indicatorContainerClassNames }>
+                    <div
+                        className = { indicatorContainerClassNames }
+                        style = {{ fontSize: this.props.iconSize }}>
                         <div className = 'connection indicatoricon'>
                             { this._renderIcon() }
                         </div>

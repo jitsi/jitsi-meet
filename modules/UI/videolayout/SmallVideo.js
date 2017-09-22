@@ -767,6 +767,7 @@ SmallVideo.prototype.updateIndicators = function () {
                     ? <ConnectionIndicator
                         alwaysVisible = { this.videoIsHovered }
                         connectionStatus = { this._connectionStatus }
+                        iconSize = { iconSize }
                         isLocalVideo = { this.isLocal }
                         enableStatsDisplay = { !interfaceConfig.filmStripOnly }
                         statsPopoverPosition = { this.statsPopoverLocation }
