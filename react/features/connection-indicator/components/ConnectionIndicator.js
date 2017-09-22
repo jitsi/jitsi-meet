@@ -273,40 +273,41 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     _renderIcon() {
-        switch (this.props.connectionStatus) {
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
-            return (
-                <span className = 'connection_lost'>
-                    <i className = 'icon-connection-lost' />
-                </span>
-            );
-        case JitsiParticipantConnectionStatus.INACTIVE:
+        if (this.props.connectionStatus
+            === JitsiParticipantConnectionStatus.INACTIVE) {
             return (
                 <span className = 'connection_ninja'>
                     <i className = 'icon-ninja' />
                 </span>
             );
-        default: {
-            const { percent } = this.state.stats;
-            const width = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
-            const iconWidth = width && width.width
-                ? { width: width && width.width } : {};
+        }
 
-            return [
-                <span
-                    className = 'connection_empty'
-                    key = 'icon-empty'>
-                    <i className = 'icon-connection' />
-                </span>,
-                <span
-                    className = 'connection_full'
-                    key = 'icon-full'
-                    style = { iconWidth }>
-                    <i className = 'icon-connection' />
-                </span>
-            ];
+        let iconWidth;
+
+        if (this.props.connectionStatus
+            === JitsiParticipantConnectionStatus.INTERRUPTED) {
+            iconWidth = '0%';
+        } else if (typeof this.state.stats.percent === 'undefined') {
+            iconWidth = '100%';
+        } else {
+            const { percent } = this.state.stats;
+
+            iconWidth = QUALITY_TO_WIDTH.find(x => percent >= x.percent).width;
         }
-        }
+
+        return [
+            <span
+                className = 'connection_empty'
+                key = 'icon-empty'>
+                <i className = 'icon-connection' />
+            </span>,
+            <span
+                className = 'connection_full'
+                key = 'icon-full'
+                style = {{ width: iconWidth }}>
+                <i className = 'icon-connection' />
+            </span>
+        ];
     }
 
     /**
