@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 
+import { ColorPalette } from '../../../styles';
+
 /**
  * An animated, large react-native {@link ActivityIndicator} which is considered
  * a suitable visualization of long-running processes with indeterminate amounts
@@ -19,7 +21,9 @@ export default class LoadingIndicator extends Component {
         return (
             <ActivityIndicator
                 animating = { true }
-                size = { 'large' } />
+                color = { ColorPalette.white }
+                size = { 'large' }
+                { ...this.props } />
         );
     }
 }

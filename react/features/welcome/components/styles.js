@@ -40,7 +40,7 @@ export default createStyleSheet({
      */
     buttonText: {
         alignSelf: 'center',
-        color: '#00ccff',
+        color: ColorPalette.blue,
         fontSize: 18
     },
 

@@ -109,7 +109,7 @@ class WelcomePage extends AbstractWelcomePage {
             // modify non-native children.
             children = (
                 <View>
-                    <LoadingIndicator />
+                    <LoadingIndicator color = { styles.buttonText.color } />
                 </View>
             );
         } else {
