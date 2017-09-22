@@ -16,7 +16,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement|null}
+     * @returns {ReactElement}
      */
     render() {
         const { isNetworkFailure, t } = this.props;

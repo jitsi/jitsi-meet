@@ -4,8 +4,9 @@ import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 /**
- * Simple wrapper around React Native's {@code ActivityIndicator}, which
- * displays an animated (large) loading indicator.
+ * An animated, large react-native {@link ActivityIndicator} which is considered
+ * a suitable visualization of long-running processes with indeterminate amounts
+ * of work to be done.
  */
 export default class LoadingIndicator extends Component {
     /**

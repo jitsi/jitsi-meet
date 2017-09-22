@@ -16,7 +16,7 @@ class PageReloadFilmstripOnlyOverlay extends AbstractPageReloadOverlay {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement|null}
+     * @returns {ReactElement}
      */
     render() {
         const { t } = this.props;
