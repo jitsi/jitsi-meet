@@ -72,7 +72,7 @@ class WaitForOwnerDialog extends Component {
                 titleKey = 'dialog.WaitingForHost'>
                 <Text style = { styles.waitForOwnerDialog }>
                     {
-                        this.renderHTML(t('dialog.WaitForHostMsg', { room }))
+                        this._renderHTML(t('dialog.WaitForHostMsg', { room }))
                     }
                 </Text>
             </Dialog>
@@ -110,7 +110,7 @@ class WaitForOwnerDialog extends Component {
         if (typeof html === 'string') {
             // TODO Limited styling may easily be provided by utilizing Text
             // with style.
-            return html.replace(/<\\?b>/gi, '');
+            return html.replace(/<\/?b>/gi, '');
         }
 
         return html;
