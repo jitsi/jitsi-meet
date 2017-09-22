@@ -67,6 +67,13 @@ class LoginDialog extends Component {
         _error: PropTypes.object,
 
         /**
+         * Flag indicates that during the "upgrade role and authenticate"
+         * process the login part was successful and the next step is to obtain
+         * a session ID from Jicofo.
+         */
+        _upgradeRoleLoginOk: PropTypes.bool,
+
+        /**
          * Redux store dispatch method.
          */
         dispatch: PropTypes.func,
@@ -108,13 +115,16 @@ class LoginDialog extends Component {
         const {
             _connecting: connecting,
             _error: error,
+            _upgradeRoleLoginOk: upgradeRoleLoginOk,
             t
         } = this.props;
 
         let messageKey;
         let messageOptions;
 
-        if (error) {
+        if (upgradeRoleLoginOk) {
+            messageKey = 'connection.FETCH_SESSION_ID';
+        } else if (error) {
             const { name } = error;
 
             if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
@@ -243,13 +253,15 @@ class LoginDialog extends Component {
  *     _conference: JitsiConference,
  *     _configHosts: Object,
  *     _connecting: boolean,
- *     _error: Object
+ *     _error: Object,
+ *     _upgradeRoleLoginOk: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const {
         upgradeRoleError,
-        upgradeRoleInProgress
+        upgradeRoleInProgress,
+        upgradeRoleLoginOk
     } = state['features/authentication'];
     const { authRequired } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
@@ -262,7 +274,8 @@ function _mapStateToProps(state) {
         _conference: authRequired,
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(upgradeRoleInProgress),
-        _error: connectionError || upgradeRoleError
+        _error: connectionError || upgradeRoleError,
+        _upgradeRoleLoginOk: upgradeRoleLoginOk
     };
 }
 

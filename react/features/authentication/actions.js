@@ -8,6 +8,7 @@ import {
     CANCEL_WAIT_FOR_OWNER,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
+    UPGRADE_ROLE_LOGIN_OK,
     UPGRADE_ROLE_STARTED,
     WAIT_FOR_OWNER
 } from './actionTypes';
@@ -38,7 +39,11 @@ export function authenticateAndUpgradeRole(
             = conference.authenticateAndUpgradeRole({
                 id,
                 password,
-                roomPassword
+                roomPassword,
+
+                onLoginSuccessful() {
+                    return dispatch({ type: UPGRADE_ROLE_LOGIN_OK });
+                }
             });
 
         dispatch(_upgradeRoleStarted(process));
