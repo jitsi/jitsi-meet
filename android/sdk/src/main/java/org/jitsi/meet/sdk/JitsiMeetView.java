@@ -27,7 +27,6 @@ import android.support.annotation.Nullable;
 import android.widget.FrameLayout;
 
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -148,11 +147,11 @@ public class JitsiMeetView extends FrameLayout {
      * implementation.
      */
     public static boolean onBackPressed() {
-        if (reactInstanceManager != null) {
+        if (reactInstanceManager == null) {
+            return false;
+        } else {
             reactInstanceManager.onBackPressed();
             return true;
-        } else {
-            return false;
         }
     }
 
@@ -186,14 +185,25 @@ public class JitsiMeetView extends FrameLayout {
      * <tt>Activity.onResume</tt> so we can do the required internal processing.
      *
      * @param activity - <tt>Activity</tt> being resumed.
-     * @param backHandler - a <tt>DefaultHardwareBackBtnHandler</tt> which
-     * will handle the back button press in case there's nothing to handle on
-     * the JS side.
      */
-    public static void onHostResume(Activity activity,
-                                    DefaultHardwareBackBtnHandler backHandler) {
+    public static void onHostResume(Activity activity) {
+        onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
+    }
+
+    /**
+     * Activity lifecycle method which should be called from
+     * <tt>Activity.onResume</tt> so we can do the required internal processing.
+     *
+     * @param activity - <tt>Activity</tt> being resumed.
+     * @param defaultBackButtonImpl - a <tt>DefaultHardwareBackBtnHandler</tt>
+     * to handle invoking the back button if no <tt>JitsiMeetView</tt> handles
+     * it.
+     */
+    public static void onHostResume(
+            Activity activity,
+            DefaultHardwareBackBtnHandler defaultBackButtonImpl) {
         if (reactInstanceManager != null) {
-            reactInstanceManager.onHostResume(activity, backHandler);
+            reactInstanceManager.onHostResume(activity, defaultBackButtonImpl);
         }
     }
 

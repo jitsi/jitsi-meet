@@ -40,8 +40,7 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
  * <tt>JKConferenceView</tt> static methods.
  */
 public class JitsiMeetActivity
-    extends AppCompatActivity
-    implements DefaultHardwareBackBtnHandler {
+    extends AppCompatActivity {
 
     /**
      * The request code identifying requests for the permission to draw on top
@@ -49,6 +48,12 @@ public class JitsiMeetActivity
      */
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
+
+    /**
+     * The default behavior of this <tt>JitsiMeetActivity</tt> upon invoking the
+     * back button if {@link #view} does not handle the invocation.
+     */
+    private DefaultHardwareBackBtnHandler defaultBackButtonImpl;
 
     /**
      * Instance of the {@link JitsiMeetView} which this activity will display.
@@ -134,22 +139,22 @@ public class JitsiMeetActivity
     }
 
     /**
-     * This method is called if the JS part does not handle the physical back
-     * button press.
-     */
-    @Override
-    public void invokeDefaultOnBackPressed() {
-        super.onBackPressed();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void onBackPressed() {
         if (!JitsiMeetView.onBackPressed()) {
-            // Invoke the default handler if it wasn't handled by React.
-            super.onBackPressed();
+            // JitsiMeetView didn't handle the invocation of the back button.
+            // Generally, an Activity extender would very likely want to invoke
+            // Activity#onBackPressed(). For the sake of consistency with
+            // JitsiMeetView and within the Jitsi Meet SDK for Android though,
+            // JitsiMeetActivity does what JitsiMeetView would've done if it
+            // were able to handle the invocation.
+            if (defaultBackButtonImpl == null) {
+                super.onBackPressed();
+            } else {
+                defaultBackButtonImpl.invokeDefaultOnBackPressed();
+            }
         }
     }
 
@@ -206,6 +211,7 @@ public class JitsiMeetActivity
         super.onPause();
 
         JitsiMeetView.onHostPause(this);
+        defaultBackButtonImpl = null;
     }
 
     /**
@@ -215,7 +221,8 @@ public class JitsiMeetActivity
     protected void onResume() {
         super.onResume();
 
-        JitsiMeetView.onHostResume(this, this);
+        defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
+        JitsiMeetView.onHostResume(this, defaultBackButtonImpl);
     }
 
     /**
