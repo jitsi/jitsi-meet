@@ -16,6 +16,7 @@ const QUALITY_TO_WIDTH = [
 
     // Full (5 bars)
     {
+        colorClass: 'status-high',
         percent: 80,
         tip: 'connectionindicator.quality.strong',
         width: '100%'
@@ -23,6 +24,7 @@ const QUALITY_TO_WIDTH = [
 
     // 4 bars
     {
+        colorClass: 'status-med',
         percent: 60,
         tip: 'connectionindicator.quality.good',
         width: '80%'
@@ -30,6 +32,7 @@ const QUALITY_TO_WIDTH = [
 
     // 3 bars
     {
+        colorClass: 'status-med',
         percent: 40,
         tip: 'connectionindicator.quality.unstable',
         width: '55%'
@@ -37,6 +40,7 @@ const QUALITY_TO_WIDTH = [
 
     // 2 bars
     {
+        colorClass: 'status-low',
         percent: 20,
         tip: 'connectionindicator.quality.weak',
         width: '40%'
@@ -44,6 +48,7 @@ const QUALITY_TO_WIDTH = [
 
     // 1 bar
     {
+        colorClass: 'status-low',
         percent: 0,
         tip: 'connectionindicator.quality.weak',
         width: '20%'
@@ -178,13 +183,16 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const indicatorContainerClassName = `connection-indicator indicator ${
+            this._getConnectionColorClass()}`;
+
         return (
             <Popover
                 className = 'indicator-container'
                 content = { this._renderStatisticsTable() }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
-                    <div className = 'connection-indicator indicator'>
+                    <div className = { indicatorContainerClassName }>
                         <div className = 'connection indicatoricon'>
                             { this._renderIcon() }
                         </div>
@@ -192,6 +200,29 @@ class ConnectionIndicator extends Component {
                 </div>
             </Popover>
         );
+    }
+
+    /**
+     * Returns a CSS class that interprets the current connection status as a
+     * color.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getConnectionColorClass() {
+        const { connectionStatus } = this.props;
+        const { percent } = this.state.stats;
+        const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
+
+        if (connectionStatus === INACTIVE) {
+            return 'status-other';
+        } else if (connectionStatus === INTERRUPTED) {
+            return 'status-low';
+        } else if (typeof percent === 'undefined') {
+            return 'status-high';
+        }
+
+        return QUALITY_TO_WIDTH.find(x => percent >= x.percent).colorClass;
     }
 
     /**

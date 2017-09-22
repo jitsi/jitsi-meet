@@ -355,7 +355,23 @@
 }
 
 .connection-indicator {
-  background: $connectionIndicatorBg;
+    background: $connectionIndicatorBg;
+
+    &.status-high {
+        background: green;
+    }
+
+    &.status-med {
+        background: #FFD740;
+    }
+
+    &.status-low {
+        background: #BF2117;
+    }
+
+    &.status-other {
+        background: $connectionIndicatorBg;
+    }
 }
 
 .remote-video-menu-trigger,
