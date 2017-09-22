@@ -1248,11 +1248,7 @@ const UIListeners = new Map([
     ], [
         UIEvents.TOGGLE_PROFILE,
         () => {
-            const {
-                isGuest
-            } = APP.store.getState()['features/jwt'];
-
-            isGuest && UI.toggleSidePanel('profile_container');
+            UI.toggleSidePanel('profile_container');
         }
     ], [
         UIEvents.TOGGLE_FILMSTRIP,

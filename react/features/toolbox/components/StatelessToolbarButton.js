@@ -68,12 +68,7 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
         /**
          * Object describing button.
          */
-        button: React.PropTypes.object.isRequired,
-
-        /**
-         * Handler for button's reference.
-         */
-        createRefToButton: React.PropTypes.func
+        button: React.PropTypes.object.isRequired
     };
 
     /**
@@ -102,10 +97,8 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
         return (
             <a
                 { ...attributes }
-                onClick = { this._onClick }
-                ref = { this.props.createRefToButton }>
-                { this._renderInnerElementsIfRequired() }
-                { this._renderChildComponentIfRequired() }
+                onClick = { this._onClick }>
+                { this.props.children }
             </a>
         );
     }
@@ -130,36 +123,5 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
         if (enabled && !unclickable && onClick) {
             onClick(event);
         }
-    }
-
-    /**
-     * Render any configured child component for the toolbar button.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderChildComponentIfRequired(): ReactElement<*> | null {
-        if (this.props.button.childComponent) {
-            const Child = this.props.button.childComponent;
-
-            return <Child />;
-        }
-
-        return null;
-    }
-
-    /**
-     * If toolbar button should contain children elements
-     * renders them.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderInnerElementsIfRequired(): ReactElement<*> | null {
-        if (this.props.button.html) {
-            return this.props.button.html;
-        }
-
-        return null;
     }
 }
