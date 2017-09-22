@@ -216,18 +216,20 @@ class LoginDialog extends Component {
      * @returns {void}
      */
     _onLogin() {
-        const { _conference: conference } = this.props;
+        const { _conference: conference, dispatch } = this.props;
         const { username, password } = this.state;
         const jid = toJid(username, this.props._configHosts);
+        let r;
 
         // If there's a conference it means that the connection has succeeded,
         // but authentication is required in order to join the room.
         if (conference) {
-            this.props.dispatch(
-                authenticateAndUpgradeRole(jid, password, conference));
+            r = dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            this.props.dispatch(connect(jid, password));
+            r = dispatch(connect(jid, password));
         }
+
+        return r;
     }
 }
 

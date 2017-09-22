@@ -52,6 +52,8 @@ export function authenticateAndUpgradeRole(
 
                 dispatch(_upgradeRoleFinished(error));
             });
+
+        return process;
     };
 }
 

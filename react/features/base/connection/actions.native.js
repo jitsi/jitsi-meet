@@ -45,7 +45,7 @@ export function connect(id: ?string, password: ?string) {
             JitsiConnectionEvents.CONNECTION_FAILED,
             _onConnectionFailed);
 
-        connection.connect({
+        return connection.connect({
             id,
             password
         });
