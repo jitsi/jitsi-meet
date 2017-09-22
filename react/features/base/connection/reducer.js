@@ -93,8 +93,9 @@ function _connectionEstablished(
  */
 function _connectionFailed(
         state: Object,
-        { connection, error, message }: {
+        { connection, credentials, error, message }: {
             connection: Object,
+            credentials: ?Object,
             error: string,
             message: ?string
         }) {
@@ -105,6 +106,7 @@ function _connectionFailed(
     return assign(state, {
         connecting: undefined,
         connection: undefined,
+        credentials,
         error,
         errorMessage: message
     });
@@ -125,6 +127,7 @@ function _connectionWillConnect(
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: connection,
+        credentials: undefined,
         error: undefined,
         errorMessage: undefined
     });
