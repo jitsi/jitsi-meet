@@ -238,4 +238,4 @@ You are now all set and ready to have your first meet by going to http://jitsi.e
 
 
 ## Enabling recording
-[Jibri](https://github.com/jitsi/jibri)is a set of tools for recording and/or streaming a Jitsi Meet conference.
+[Jibri](https://github.com/jitsi/jibri) is a set of tools for recording and/or streaming a Jitsi Meet conference.
