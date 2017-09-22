@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
@@ -64,35 +65,35 @@ class ConnectionIndicator extends Component {
          *
          * @type {JitsiParticipantConnectionStatus}
          */
-        connectionStatus: React.PropTypes.string,
+        connectionStatus: PropTypes.string,
 
         /**
          * Whether or not clicking the indicator should display a popover for
          * more details.
          */
-        enableStatsDisplay: React.PropTypes.bool,
+        enableStatsDisplay: PropTypes.bool,
 
         /**
          * Whether or not the displays stats are for local video.
          */
-        isLocalVideo: React.PropTypes.bool,
+        isLocalVideo: PropTypes.bool,
 
         /**
          * Relative to the icon from where the popover for more connection
          * details should display.
          */
-        statsPopoverPosition: React.PropTypes.string,
+        statsPopoverPosition: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The user ID associated with the displayed connection indication and
          * stats.
          */
-        userID: React.PropTypes.string
+        userID: PropTypes.string
     };
 
     /**

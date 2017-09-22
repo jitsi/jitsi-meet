@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -21,7 +22,7 @@ class ConnectionStatsTable extends Component {
          *     upload: Number
          * }}
          */
-        bandwidth: React.PropTypes.object,
+        bandwidth: PropTypes.object,
 
         /**
          * Statistics related to bitrate.
@@ -30,7 +31,7 @@ class ConnectionStatsTable extends Component {
          *     upload: Number
          * }}
          */
-        bitrate: React.PropTypes.object,
+        bitrate: PropTypes.object,
 
         /**
          * Statistics related to framerates for each ssrc.
@@ -38,17 +39,17 @@ class ConnectionStatsTable extends Component {
          *     [ ssrc ]: Number
          * }}
          */
-        framerate: React.PropTypes.object,
+        framerate: PropTypes.object,
 
         /**
          * Whether or not the statitics are for local video.
          */
-        isLocalVideo: React.PropTypes.bool,
+        isLocalVideo: PropTypes.bool,
 
         /**
          * Callback to invoke when the show additional stats link is clicked.
          */
-        onShowMore: React.PropTypes.func,
+        onShowMore: PropTypes.func,
 
         /**
          * Statistics related to packet loss.
@@ -57,7 +58,7 @@ class ConnectionStatsTable extends Component {
          *     upload: Number
          * }}
          */
-        packetLoss: React.PropTypes.object,
+        packetLoss: PropTypes.object,
 
         /**
          * Statistics related to display resolutions for each ssrc.
@@ -68,23 +69,23 @@ class ConnectionStatsTable extends Component {
          *     }
          * }}
          */
-        resolution: React.PropTypes.object,
+        resolution: PropTypes.object,
 
         /**
          * Whether or not additional stats about bandwidth and transport should
          * be displayed. Will not display even if true for remote participants.
          */
-        shouldShowMore: React.PropTypes.bool,
+        shouldShowMore: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * Statistics related to transports.
          */
-        transport: React.PropTypes.array
+        transport: PropTypes.array
     };
 
     /**
