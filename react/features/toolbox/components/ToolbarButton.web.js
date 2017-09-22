@@ -32,7 +32,6 @@ const TOOLTIP_TO_POPUP_POSITION = {
  */
 class ToolbarButton extends Component {
     button: Object;
-    _createRefToButton: Function;
 
     _onClick: Function;
 
@@ -99,7 +98,6 @@ class ToolbarButton extends Component {
         };
 
         // Bind methods to save the context
-        this._createRefToButton = this._createRefToButton.bind(this);
         this._onClick = this._onClick.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
@@ -142,8 +140,7 @@ class ToolbarButton extends Component {
         const { button, t, tooltipPosition } = this.props;
         const props = {
             ...this.props,
-            onClick: this._onClick,
-            createRefToButton: this._createRefToButton
+            onClick: this._onClick
         };
 
         const buttonComponent = ( // eslint-disable-line no-extra-parens
@@ -153,7 +150,9 @@ class ToolbarButton extends Component {
                 onMouseOver = { this._onMouseOver }
                 position = { tooltipPosition }
                 visible = { this.state.showTooltip }>
-                <StatelessToolbarButton { ...props } />
+                <StatelessToolbarButton { ...props }>
+                    { this.props.children }
+                </StatelessToolbarButton>
             </Tooltip>
         );
         let children = buttonComponent;
@@ -193,18 +192,6 @@ class ToolbarButton extends Component {
     }
 
     /**
-     * Creates reference to current toolbar button.
-     *
-     * @param {HTMLElement} element - HTMLElement representing the toolbar
-     * button.
-     * @returns {void}
-     * @private
-     */
-    _createRefToButton(element: HTMLElement): void {
-        this.button = element;
-    }
-
-    /**
      * Parses the props and state to find any popup that should be displayed
      * and returns an object describing how the popup should display.
      *
@@ -228,21 +215,6 @@ class ToolbarButton extends Component {
             {
                 position: TOOLTIP_TO_POPUP_POSITION[tooltipPosition]
             });
-    }
-
-    /**
-     * If toolbar button should contain children elements
-     * renders them.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderInnerElementsIfRequired(): ReactElement<*> | null {
-        if (this.props.button.html) {
-            return this.props.button.html;
-        }
-
-        return null;
     }
 
     /**

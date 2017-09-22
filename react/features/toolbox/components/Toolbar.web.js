@@ -128,15 +128,22 @@ class Toolbar extends Component {
         const [ key, button ] = keyValuePair;
 
         if (button.component) {
+
             return (
                 <button.component
                     key = { key }
+                    toggled = { button.toggled }
                     tooltipPosition = { this.props.tooltipPosition } />
             );
         }
 
         const { tooltipPosition } = this.props;
-        const { onClick, onMount, onUnmount } = button;
+        const {
+            childComponent: ChildComponent,
+            onClick,
+            onMount,
+            onUnmount
+        } = button;
         const onClickWithDispatch = (...args) =>
             onClick && onClick(this.props.dispatch, ...args);
 
@@ -147,7 +154,10 @@ class Toolbar extends Component {
                 onClick = { onClickWithDispatch }
                 onMount = { onMount }
                 onUnmount = { onUnmount }
-                tooltipPosition = { tooltipPosition } />
+                tooltipPosition = { tooltipPosition }>
+                { button.html || null }
+                { ChildComponent ? <ChildComponent /> : null }
+            </ToolbarButton>
         );
     }
 }

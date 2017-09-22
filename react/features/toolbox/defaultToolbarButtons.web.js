@@ -2,15 +2,14 @@
 
 import React from 'react';
 
-import { DEFAULT_AVATAR_RELATIVE_PATH } from '../base/participants';
+import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { openDialOutDialog } from '../dial-out';
 import { openAddPeopleDialog, openInviteDialog } from '../invite';
+import UIEvents from '../../../service/UI/UIEvents';
 import { VideoQualityButton } from '../video-quality';
 
-import UIEvents from '../../../service/UI/UIEvents';
-
-import { ParticipantCounter } from '../contact-list';
+import ProfileButton from './components/ProfileButton';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -328,18 +327,8 @@ const buttons: Object = {
      * The descriptor of the profile toolbar button.
      */
     profile: {
-        classNames: [ 'button' ],
-        enabled: true,
-        html: <img
-            id = 'avatar'
-            src = { DEFAULT_AVATAR_RELATIVE_PATH } />,
-        id: 'toolbar_button_profile',
-        onClick() {
-            JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
-            APP.UI.emitEvent(UIEvents.TOGGLE_PROFILE);
-        },
-        sideContainerId: 'profile_container',
-        tooltipKey: 'profile.setDisplayNameLabel'
+        component: ProfileButton,
+        sideContainerId: 'profile_container'
     },
 
     /**

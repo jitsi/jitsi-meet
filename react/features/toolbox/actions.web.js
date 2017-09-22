@@ -100,11 +100,10 @@ export function dockToolbox(dock: boolean): Function {
  * closure.
  *
  * @param {Function} dispatch - Redux action dispatcher.
- * @param {Function} getState - The function fetching the Redux state.
  * @returns {Object} Button on mount/unmount handlers.
  * @private
  */
-function _getButtonHandlers(dispatch, getState) {
+function _getButtonHandlers(dispatch) {
     const localRaiseHandHandler
         = (...args) => dispatch(changeLocalRaiseHand(...args));
     const toggleFullScreenHandler
@@ -134,17 +133,6 @@ function _getButtonHandlers(dispatch, getState) {
                 APP.UI.removeListener(
                     UIEvents.FULLSCREEN_TOGGLED,
                     toggleFullScreenHandler)
-        },
-
-        /**
-         * Mount handler for profile button.
-         *
-         * @type {Object}
-         */
-        profile: {
-            onMount: () =>
-                getState()['features/jwt']
-                    || dispatch(setProfileButtonUnclickable(true))
         },
 
         /**
@@ -246,31 +234,15 @@ export function setButtonPopupTimeout(buttonName, popupName, timeout) {
  * @returns {Function}
  */
 export function setDefaultToolboxButtons(): Function {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: Dispatch) => {
         // Save dispatch function in closure.
-        const buttonHandlers = _getButtonHandlers(dispatch, getState);
+        const buttonHandlers = _getButtonHandlers(dispatch);
         const toolboxButtons = getDefaultToolboxButtons(buttonHandlers);
 
         dispatch({
             type: SET_DEFAULT_TOOLBOX_BUTTONS,
             ...toolboxButtons
         });
-    };
-}
-
-/**
- * Signals that unclickable property of profile button should change its value.
- *
- * @param {boolean} unclickable - Shows whether button is unclickable.
- * @returns {Function}
- */
-export function setProfileButtonUnclickable(unclickable: boolean): Function {
-    return (dispatch: Dispatch<*>) => {
-        const buttonName = 'profile';
-
-        dispatch(setToolbarButton(buttonName, {
-            unclickable
-        }));
     };
 }
 
