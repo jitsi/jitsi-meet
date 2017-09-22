@@ -253,10 +253,12 @@ SmallVideo.prototype.bindHoverHandler = function () {
         () => {
             this.videoIsHovered = true;
             this.updateView();
+            this.updateIndicators();
         },
         () => {
             this.videoIsHovered = false;
             this.updateView();
+            this.updateIndicators();
         }
     );
 };
@@ -763,6 +765,7 @@ SmallVideo.prototype.updateIndicators = function () {
             <div>
                 { this._showConnectionIndicator
                     ? <ConnectionIndicator
+                        alwaysVisible = { this.videoIsHovered }
                         connectionStatus = { this._connectionStatus }
                         isLocalVideo = { this.isLocal }
                         enableStatsDisplay = { !interfaceConfig.filmStripOnly }

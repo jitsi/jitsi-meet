@@ -87,21 +87,12 @@
          * positioning depends on the trigger (indicator icon).
          */
         .indicator {
+            margin-left: 5px;
             margin-top: $toolbarIconMargin;
         }
 
         .indicator-container:nth-child(1) .indicator {
             margin-left: $toolbarIconMargin;
-        }
-
-        .connection-indicator,
-        div.indicator-container,
-         {
-            margin-right: 4px;
-        }
-
-        div.indicator:last-child {
-            margin-right: 0;
         }
 
         .indicator-container {
@@ -168,6 +159,10 @@
                 cursor: pointer;
                 font-size: 1em;
             }
+        }
+
+        .hide-connection-indicator {
+            display: none;
         }
     }
 

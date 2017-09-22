@@ -8,16 +8,35 @@ import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
 
-declare var $: Object;
-declare var interfaceConfig: Object;
+/**
+ * How long, in milliseconds, the connection indicator should display when the
+ * connection goes from a non-good to a good connection.
+ *
+ * @type {number}
+ */
+const CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT = 5000;
 
-// Converts the percent for connection quality into a string recognized for CSS.
+/**
+ * The connection quality percentage that must be reached to be considered of
+ * good quality and can result in the connection indicator being hidden.
+ *
+ * @type {number}
+ */
+const INDICATOR_DISPLAY_THRESHOLD = 80;
+
+/**
+ * An array of display configurations for the connection indicator and its bars.
+ * The ordering is done specifically for faster iteration to find a matching
+ * configuration to the current connection strength percentage.
+ *
+ * @type {Object[]}
+ */
 const QUALITY_TO_WIDTH = [
 
     // Full (5 bars)
     {
         colorClass: 'status-high',
-        percent: 80,
+        percent: INDICATOR_DISPLAY_THRESHOLD,
         tip: 'connectionindicator.quality.strong',
         width: '100%'
     },
@@ -71,6 +90,12 @@ class ConnectionIndicator extends Component {
      */
     static propTypes = {
         /**
+         * Whether or not the component should ignore setting a visibility class
+         * for hiding the component when the connection quality is not strong.
+         */
+        alwaysVisible: PropTypes.bool,
+
+        /**
          * The current condition of the user's connection, matching one of the
          * enumerated values in the library.
          *
@@ -117,6 +142,23 @@ class ConnectionIndicator extends Component {
         super(props);
 
         this.state = {
+            /**
+             * The timeout for automatically hiding the indicator.
+             *
+             * @type {timeoutID}
+             */
+            autoHideTimeout: null,
+
+            /**
+             * Whether or not a CSS class should be applied to the root for
+             * hiding the connection indicator. By default the indicator should
+             * start out hidden because the current connection status is not
+             * known at mount.
+             *
+             * @type {boolean}
+             */
+            showIndicator: false,
+
             /**
              * Whether or not the popover content should display additional
              * statistics.
@@ -166,7 +208,8 @@ class ConnectionIndicator extends Component {
     }
 
     /**
-     * Sets the state to hide the Statistics Table popover.
+     * Cleans up any queued processes, which includes listening for new stats
+     * and clearing any timeout to hide the indicator.
      *
      * @private
      * @returns {void}
@@ -174,6 +217,8 @@ class ConnectionIndicator extends Component {
     componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
+
+        clearTimeout(this.state.autoHideTimeout);
     }
 
     /**
@@ -183,16 +228,20 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const indicatorContainerClassName = `connection-indicator indicator ${
-            this._getConnectionColorClass()}`;
+        const visibilityClass = this._getVisibilityClass();
+        const rootClassNames = `indicator-container ${visibilityClass}`;
+
+        const colorClass = this._getConnectionColorClass();
+        const indicatorContainerClassNames
+            = `connection-indicator indicator ${colorClass}`;
 
         return (
             <Popover
-                className = 'indicator-container'
+                className = { rootClassNames }
                 content = { this._renderStatisticsTable() }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
-                    <div className = { indicatorContainerClassName }>
+                    <div className = { indicatorContainerClassNames }>
                         <div className = 'connection indicatoricon'>
                             { this._renderIcon() }
                         </div>
@@ -263,6 +312,23 @@ class ConnectionIndicator extends Component {
     }
 
     /**
+     * Returns additional class names to add to the root of the component. The
+     * class names are intended to be used for hiding or showing the indicator.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getVisibilityClass() {
+        const { connectionStatus } = this.props;
+
+        return this.state.showIndicator
+            || this.props.alwaysVisible
+            || connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED
+            || connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
+            ? 'show-connection-indicator' : 'hide-connection-indicator';
+    }
+
+    /**
      * Callback invoked when new connection stats associated with the passed in
      * user ID are available. Will update the component's display of current
      * statistics.
@@ -284,6 +350,9 @@ class ConnectionIndicator extends Component {
         this.setState({
             stats: newStats
         });
+
+        // Rely on React to batch setState actions.
+        this._updateIndicatorAutoHide(newStats.percent);
     }
 
     /**
@@ -369,6 +438,36 @@ class ConnectionIndicator extends Component {
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
         );
+    }
+
+    /**
+     * Updates the internal state for automatically hiding the indicator.
+     *
+     * @param {number} percent - The current connection quality percentage
+     * between the values 0 and 100.
+     * @private
+     * @returns {void}
+     */
+    _updateIndicatorAutoHide(percent) {
+        if (percent < INDICATOR_DISPLAY_THRESHOLD) {
+            clearTimeout(this.state.autoHideTimeout);
+            this.setState({
+                autoHideTimeout: null,
+                showIndicator: true
+            });
+        } else if (this.state.autoHideTimeout) {
+            // This clause is intentionally left blank because no further action
+            // is needed if the percent is below the threshold and there is an
+            // autoHideTimeout set.
+        } else {
+            this.setState({
+                autoHideTimeout: setTimeout(() => {
+                    this.setState({
+                        showIndicator: false
+                    });
+                }, CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT)
+            });
+        }
     }
 }
 
