@@ -1,7 +1,7 @@
-import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
-
+import { CONNECTION_WILL_CONNECT } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 
 import {
     CONFERENCE_FAILED,
@@ -42,6 +42,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
     case CONFERENCE_WILL_LEAVE:
         return _conferenceWillLeave(state, action);
 
+    case CONNECTION_WILL_CONNECT:
+        return set(state, 'authRequired', undefined);
+
     case LOCK_STATE_CHANGED:
         return _lockStateChanged(state, action);
 
@@ -79,15 +82,18 @@ function _conferenceFailed(state, { conference, error }) {
         return state;
     }
 
-    const passwordRequired
-        = JitsiConferenceErrors.PASSWORD_REQUIRED === error
-            ? conference
-            : undefined;
+    let authRequired;
+    let passwordRequired;
 
-    const authRequired
-        = JitsiConferenceErrors.AUTHENTICATION_REQUIRED === error
-            ? conference
-            : undefined;
+    switch (error) {
+    case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
+        authRequired = conference;
+        break;
+
+    case JitsiConferenceErrors.PASSWORD_REQUIRED:
+        passwordRequired = conference;
+        break;
+    }
 
     return assign(state, {
         authRequired,
