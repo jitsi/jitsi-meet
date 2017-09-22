@@ -53,7 +53,7 @@ const QUALITY_TO_WIDTH = [
     {
         colorClass: 'status-med',
         percent: 40,
-        tip: 'connectionindicator.quality.unstable',
+        tip: 'connectionindicator.quality.nonoptimal',
         width: '55%'
     },
 
@@ -61,7 +61,7 @@ const QUALITY_TO_WIDTH = [
     {
         colorClass: 'status-low',
         percent: 20,
-        tip: 'connectionindicator.quality.weak',
+        tip: 'connectionindicator.quality.poor',
         width: '40%'
     },
 
@@ -69,7 +69,7 @@ const QUALITY_TO_WIDTH = [
     {
         colorClass: 'status-low',
         percent: 0,
-        tip: 'connectionindicator.quality.weak',
+        tip: 'connectionindicator.quality.poor',
         width: '20%'
     }
 
@@ -292,7 +292,7 @@ class ConnectionIndicator extends Component {
 
         switch (this.props.connectionStatus) {
         case JitsiParticipantConnectionStatus.INTERRUPTED:
-            tipKey = 'connectionindicator.quality.interrupted';
+            tipKey = 'connectionindicator.quality.lost';
             break;
 
         case JitsiParticipantConnectionStatus.INACTIVE:

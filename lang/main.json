@@ -202,14 +202,14 @@
         "peer_to_peer": " (p2p)",
         "turn": " (turn)",
         "quality": {
-            "inactive": "Inactive",
-            "interrupted": "Interrupted",
             "good": "Good",
-            "strong": "Strong",
-            "unstable": "Unstable",
-            "weak": "Weak"
+            "inactive": "Inactive",
+            "lost": "Lost",
+            "nonoptimal": "Nonoptimal",
+            "poor": "Poor",
+            "strong": "Strong"
         },
-        "status": "Status:"
+        "status": "Connection:"
     },
     "notify": {
         "disconnected": "disconnected",
