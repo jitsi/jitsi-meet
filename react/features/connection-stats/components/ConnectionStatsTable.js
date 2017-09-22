@@ -34,6 +34,11 @@ class ConnectionStatsTable extends Component {
         bitrate: PropTypes.object,
 
         /**
+         * A message describing the connection quality.
+         */
+        connectionSummary: PropTypes.string,
+
+        /**
          * Statistics related to framerates for each ssrc.
          * {{
          *     [ ssrc ]: Number
@@ -186,6 +191,24 @@ class ConnectionStatsTable extends Component {
     }
 
     /**
+     * Creates a table row as a ReactElement for displaying a summary message
+     * about the current connection status.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderConnectionSummary() {
+        return (
+            <tr>
+                <td>
+                    <span>{ this.props.t('connectionindicator.status') }</span>
+                </td>
+                <td>{ this.props.connectionSummary }</td>
+            </tr>
+        );
+    }
+
+    /**
      * Creates a table row as a ReactElement for displaying frame rate related
      * statistics.
      *
@@ -310,6 +333,7 @@ class ConnectionStatsTable extends Component {
         return (
             <table className = 'connection-info__container'>
                 <tbody>
+                    { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
                     { this._renderResolution() }

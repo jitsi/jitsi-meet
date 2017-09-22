@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import { translate } from '../../base/i18n';
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
 import { Popover } from '../../base/popover';
 import { ConnectionStatsTable } from '../../connection-stats';
@@ -16,30 +17,35 @@ const QUALITY_TO_WIDTH = [
     // Full (5 bars)
     {
         percent: 80,
+        tip: 'connectionindicator.quality.strong',
         width: '100%'
     },
 
     // 4 bars
     {
         percent: 60,
+        tip: 'connectionindicator.quality.good',
         width: '80%'
     },
 
     // 3 bars
     {
         percent: 40,
+        tip: 'connectionindicator.quality.unstable',
         width: '55%'
     },
 
     // 2 bars
     {
         percent: 20,
+        tip: 'connectionindicator.quality.weak',
         width: '40%'
     },
 
     // 1 bar
     {
         percent: 0,
+        tip: 'connectionindicator.quality.weak',
         width: '20%'
     }
 
@@ -189,6 +195,43 @@ class ConnectionIndicator extends Component {
     }
 
     /**
+     * Returns a string that describes the current connection status.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getConnectionStatusTip() {
+        let tipKey;
+
+        switch (this.props.connectionStatus) {
+        case JitsiParticipantConnectionStatus.INTERRUPTED:
+            tipKey = 'connectionindicator.quality.interrupted';
+            break;
+
+        case JitsiParticipantConnectionStatus.INACTIVE:
+            tipKey = 'connectionindicator.quality.inactive';
+            break;
+
+        default: {
+            const { percent } = this.state.stats;
+
+            if (typeof percent === 'undefined') {
+                // If percentage is undefined then there are no stats available
+                // yet, likely because only a local connection has been
+                // established so far. Assume a strong connection to start.
+                tipKey = 'connectionindicator.quality.strong';
+            } else {
+                const config = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
+
+                tipKey = config.tip;
+            }
+        }
+        }
+
+        return this.props.t(tipKey);
+    }
+
+    /**
      * Callback invoked when new connection stats associated with the passed in
      * user ID are available. Will update the component's display of current
      * statistics.
@@ -285,6 +328,7 @@ class ConnectionIndicator extends Component {
             <ConnectionStatsTable
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
+                connectionSummary = { this._getConnectionStatusTip() }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 onShowMore = { this._onToggleShowMore }
@@ -296,4 +340,4 @@ class ConnectionIndicator extends Component {
     }
 }
 
-export default ConnectionIndicator;
+export default translate(ConnectionIndicator);
