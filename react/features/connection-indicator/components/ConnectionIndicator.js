@@ -384,9 +384,14 @@ class ConnectionIndicator extends Component {
         }
 
         let iconWidth;
+        let emptyIconWrapperClassName = 'connection_empty';
 
         if (this.props.connectionStatus
             === JitsiParticipantConnectionStatus.INTERRUPTED) {
+
+            // emptyIconWrapperClassName is used by the torture tests to
+            // identify lost connection status handling.
+            emptyIconWrapperClassName = 'connection_lost';
             iconWidth = '0%';
         } else if (typeof this.state.stats.percent === 'undefined') {
             iconWidth = '100%';
@@ -398,7 +403,7 @@ class ConnectionIndicator extends Component {
 
         return [
             <span
-                className = 'connection_empty'
+                className = { emptyIconWrapperClassName }
                 key = 'icon-empty'>
                 <i className = 'icon-connection' />
             </span>,

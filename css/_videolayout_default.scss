@@ -129,16 +129,11 @@
                 left: 0;
                 @include transform(translate(0, -50%));
 
-                &_empty
+                &_empty,
+                &_lost
                 {
                     color: #8B8B8B;/*#FFFFFF*/
                     overflow: hidden;
-                }
-
-                &_lost
-                {
-                    color: #8B8B8B;
-                    overflow: visible;
                 }
 
                 &_full
