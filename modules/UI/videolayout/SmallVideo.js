@@ -757,6 +757,8 @@ SmallVideo.prototype.updateIndicators = function () {
         = this.container.querySelector('.videocontainer__toptoolbar');
 
     const iconSize = UIUtil.getIndicatorFontSize();
+    const showConnectionIndicator = this.videoIsHovered
+        || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
     const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
 
     /* jshint ignore:start */
@@ -765,7 +767,7 @@ SmallVideo.prototype.updateIndicators = function () {
             <div>
                 { this._showConnectionIndicator
                     ? <ConnectionIndicator
-                        alwaysVisible = { this.videoIsHovered }
+                        alwaysVisible = { showConnectionIndicator }
                         connectionStatus = { this._connectionStatus }
                         iconSize = { iconSize }
                         isLocalVideo = { this.isLocal }

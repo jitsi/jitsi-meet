@@ -8,13 +8,7 @@ import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
 
-/**
- * How long, in milliseconds, the connection indicator should display when the
- * connection goes from a non-good to a good connection.
- *
- * @type {number}
- */
-const CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT = 5000;
+declare var interfaceConfig: Object;
 
 /**
  * The connection quality percentage that must be reached to be considered of
@@ -472,7 +466,7 @@ class ConnectionIndicator extends Component {
                     this.setState({
                         showIndicator: false
                     });
-                }, CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT)
+                }, interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT)
             });
         }
     }
