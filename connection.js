@@ -83,8 +83,9 @@ function connect(id, password, roomName) {
             ConnectionEvents.CONNECTION_FAILED,
             connectionFailedHandler);
 
-        function connectionFailedHandler(error, errMsg) {
-            APP.store.dispatch(connectionFailed(connection, error, errMsg));
+        function connectionFailedHandler(error, message, credentials) {
+            APP.store.dispatch(
+                connectionFailed(connection, error, message, credentials));
 
             if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(

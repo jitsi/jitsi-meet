@@ -95,10 +95,14 @@ MiddlewareRegistry.register(store => next => action => {
         _hideLoginDialog(store);
         break;
 
-    case CONNECTION_FAILED:
-        action.error === JitsiConnectionErrors.PASSWORD_REQUIRED
+    case CONNECTION_FAILED: {
+        const { error } = action;
+
+        error
+            && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
             && store.dispatch(_openLoginDialog());
         break;
+    }
 
     case STOP_WAIT_FOR_OWNER:
         _clearExistingWaitForOwnerTimeout(store);

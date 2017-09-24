@@ -39,12 +39,16 @@ export function createLocalTrack(type: string, deviceId: string) {
  * that category. I've currently named the category fatal because it appears to
  * be used in the cases of unrecoverable errors that necessitate a reload.
  *
- * @param {string} error - The JitsiConnectionErrors instance to
- * categorize/classify.
+ * @param {Object|string} error - The JitsiConnectionErrors instance to
+ * categorize/classify or an Error-like object.
  * @returns {boolean} True if the specified JitsiConnectionErrors instance
  * indicates a fatal JitsiConnection error; otherwise, false.
  */
-export function isFatalJitsiConnectionError(error: string) {
+export function isFatalJitsiConnectionError(error: Object | string) {
+    if (typeof error !== 'string') {
+        error = error.name; // eslint-disable-line no-param-reassign
+    }
+
     return (
         error === JitsiConnectionErrors.CONNECTION_DROPPED_ERROR
             || error === JitsiConnectionErrors.OTHER_ERROR

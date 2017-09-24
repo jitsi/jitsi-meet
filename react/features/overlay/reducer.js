@@ -89,8 +89,10 @@ function _connectionEstablished(state) {
  * @returns {Object} The new state of the feature overlay after the reduction of
  * the specified action.
  */
-function _connectionFailed(state, { error, message }) {
+function _connectionFailed(state, { error }) {
     if (isFatalJitsiConnectionError(error)) {
+        const { message } = error;
+
         logger.error(`FATAL XMPP connection error: ${message}`);
 
         return assign(state, {
@@ -99,7 +101,7 @@ function _connectionFailed(state, { error, message }) {
             // From all of the cases above only CONNECTION_DROPPED_ERROR is
             // considered a network type of failure.
             isNetworkFailure:
-                error === JitsiConnectionErrors.CONNECTION_DROPPED_ERROR,
+                error.name === JitsiConnectionErrors.CONNECTION_DROPPED_ERROR,
             reason: `xmpp-conn-dropped: ${message}`
         });
     }

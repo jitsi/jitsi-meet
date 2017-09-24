@@ -26,8 +26,7 @@ export const CONNECTION_ESTABLISHED = Symbol('CONNECTION_ESTABLISHED');
  * {
  *     type: CONNECTION_FAILED,
  *     connection: JitsiConnection,
- *     error: string,
- *     message: string
+ *     error: Object | string
  * }
  */
 export const CONNECTION_FAILED = Symbol('CONNECTION_FAILED');

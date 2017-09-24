@@ -127,10 +127,25 @@ export function stopWaitForOwner() {
  * @private
  * @returns {{
  *     type: UPGRADE_ROLE_FINISHED,
- *     error: Object
+ *     error: ?Object
  * }}
  */
-function _upgradeRoleFinished(error) {
+function _upgradeRoleFinished(error: ?Object) {
+    if (error) {
+        // Make the specified error object resemble an Error instance (to the
+        // extent that jitsi-meet needs it).
+        const {
+            authenticationError,
+            connectionError,
+            ...other
+        } = error;
+
+        error = { // eslint-disable-line no-param-reassign
+            name: authenticationError || connectionError,
+            ...other
+        };
+    }
+
     return {
         type: UPGRADE_ROLE_FINISHED,
         error

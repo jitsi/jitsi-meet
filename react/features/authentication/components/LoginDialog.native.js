@@ -64,17 +64,7 @@ class LoginDialog extends Component {
         /**
          * The error which occurred during login/authentication.
          */
-        _error: PropTypes.string,
-
-        /**
-         * The credential that the user has failed to authenticate with.
-         */
-        _errorCredentials: PropTypes.object,
-
-        /**
-         * Any extra details about the error provided by lib-jitsi-meet.
-         */
-        _errorDetails: PropTypes.string,
+        _error: PropTypes.object,
 
         /**
          * Redux store dispatch method.
@@ -118,24 +108,34 @@ class LoginDialog extends Component {
         const {
             _connecting: connecting,
             _error: error,
-            _errorCredentials: errorCredentials,
-            _errorDetails: errorDetails,
             t
         } = this.props;
 
-        let messageKey = '';
-        const messageOptions = {};
+        let messageKey;
+        let messageOptions;
 
-        if (error === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-            // Show the message if there's been a user ID or password provided.
-            messageKey
-                = errorCredentials
-                        && (errorCredentials.jid || errorCredentials.password)
-                    ? 'dialog.incorrectPassword'
-                    : null;
-        } else if (error) {
-            messageKey = 'dialog.connectErrorWithMsg';
-            messageOptions.msg = `${error} ${errorDetails}`;
+        if (error) {
+            const { name } = error;
+
+            if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+                // Show a message that the credentials are incorrect only if the
+                // credentials which have caused the connection to fail are the
+                // ones which the user sees.
+                const { credentials } = error;
+
+                if (credentials
+                        && credentials.jid
+                            === toJid(
+                                this.state.username,
+                                this.props._configHosts)
+                        && credentials.password === this.state.password) {
+                    messageKey = 'dialog.incorrectPassword';
+                }
+            } else if (name) {
+                messageKey = 'dialog.connectErrorWithMsg';
+                messageOptions || (messageOptions = {});
+                messageOptions.msg = `${name} ${error.message}`;
+            }
         }
 
         return (
@@ -146,6 +146,8 @@ class LoginDialog extends Component {
                 titleKey = 'dialog.passwordRequired'>
                 <View style = { styles.loginDialog }>
                     <TextInput
+                        autoCapitalize = { 'none' }
+                        autoCorrect = { false }
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
                         style = { styles.loginDialogTextInput }
@@ -159,7 +161,7 @@ class LoginDialog extends Component {
                     <Text style = { styles.loginDialogText }>
                         {
                             messageKey
-                                ? t(messageKey, messageOptions)
+                                ? t(messageKey, messageOptions || {})
                                 : connecting
                                     ? t('connection.CONNECTING')
                                     : ''
@@ -239,9 +241,7 @@ class LoginDialog extends Component {
  *     _conference: JitsiConference,
  *     _configHosts: Object,
  *     _connecting: boolean,
- *     _error: string,
- *     _errorCredentials: Object,
- *     _errorDetails: string
+ *     _error: Object
  * }}
  */
 function _mapStateToProps(state) {
@@ -253,34 +253,14 @@ function _mapStateToProps(state) {
     const { hosts: configHosts } = state['features/base/config'];
     const {
         connecting,
-        credentials,
-        error: connectionError,
-        errorMessage: connectionErrorMessage
+        error: connectionError
     } = state['features/base/connection'];
-
-    let error;
-    let errorCredentials;
-    let errorDetails;
-
-    if (connectionError) {
-        error = connectionError;
-        errorCredentials = credentials;
-        errorDetails = connectionErrorMessage;
-    } else if (upgradeRoleError) {
-        error
-            = upgradeRoleError.connectionError
-                || upgradeRoleError.authenticationError;
-        errorCredentials = upgradeRoleError.credentials;
-        errorDetails = upgradeRoleError.message;
-    }
 
     return {
         _conference: authRequired,
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(upgradeRoleInProgress),
-        _error: error,
-        _errorCredentials: errorCredentials,
-        _errorDetails: errorDetails
+        _error: connectionError || upgradeRoleError
     };
 }
 

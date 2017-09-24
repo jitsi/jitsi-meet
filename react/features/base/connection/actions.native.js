@@ -55,8 +55,8 @@ export function connect(id: ?string, password: ?string) {
          * disconnected.
          *
          * @param {string} message - Disconnect reason.
-         * @returns {void}
          * @private
+         * @returns {void}
          */
         function _onConnectionDisconnected(message: string) {
             connection.removeEventListener(
@@ -69,8 +69,8 @@ export function connect(id: ?string, password: ?string) {
         /**
          * Resolves external promise when connection is established.
          *
-         * @returns {void}
          * @private
+         * @returns {void}
          */
         function _onConnectionEstablished() {
             unsubscribe();
@@ -86,8 +86,8 @@ export function connect(id: ?string, password: ?string) {
          * used to authenticate and the authentication failed.
          * @param {string} [credentials.jid] - The XMPP user's ID.
          * @param {string} [credentials.password] - The XMPP user's password.
-         * @returns {void}
          * @private
+         * @returns {void}
          */
         function _onConnectionFailed(err, msg, credentials) {
             unsubscribe();
@@ -181,9 +181,7 @@ export function connectionEstablished(connection: Object) {
  * @returns {{
  *     type: CONNECTION_FAILED,
  *     connection: JitsiConnection,
- *     credentials: Object,
- *     error: string,
- *     message: string
+ *     error: Object
  * }}
  */
 export function connectionFailed(
@@ -194,9 +192,17 @@ export function connectionFailed(
     return {
         type: CONNECTION_FAILED,
         connection,
-        credentials,
-        error,
-        message
+
+        // Make the error resemble an Error instance (to the extent that
+        // jitsi-meet needs it).
+        error: {
+            credentials:
+                credentials && Object.keys(credentials).length
+                    ? credentials
+                    : undefined,
+            message,
+            name: error
+        }
     };
 }
 
