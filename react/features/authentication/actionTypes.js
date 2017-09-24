@@ -38,21 +38,12 @@ export const STOP_WAIT_FOR_OWNER = Symbol('STOP_WAIT_FOR_OWNER');
  *
  * {
  *     type: UPGRADE_ROLE_FINISHED,
- *     error: Object
+ *     error: Object,
+ *     progress: number,
+ *     thenableWithCancel: Object
  * }
  */
 export const UPGRADE_ROLE_FINISHED = Symbol('UPGRADE_ROLE_FINISHED');
-
-/**
- * The type of (redux) action which informs that the authentication and role
- * upgrade process has finished the XMPP authentication part of the process
- * (which means that the XMPP credentials are OK).
- *
- * {
- *     type: UPGRADE_ROLE_LOGIN_ON
- * }
- */
-export const UPGRADE_ROLE_LOGIN_OK = Symbol('UPGRADE_ROLE_LOGIN_OK');
 
 /**
  * The type of (redux) action which signals that the process of authenticating

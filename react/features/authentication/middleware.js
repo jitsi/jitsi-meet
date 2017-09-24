@@ -38,10 +38,10 @@ import { LoginDialog, WaitForOwnerDialog } from './components';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CANCEL_LOGIN: {
-        const { upgradeRoleInProgress }
+        const { thenableWithCancel }
             = store.getState()['features/authentication'];
 
-        upgradeRoleInProgress && upgradeRoleInProgress.cancel();
+        thenableWithCancel && thenableWithCancel.cancel();
 
         // The LoginDialog can be opened on top of "wait for owner". The app
         // should navigate only if LoginDialog was open without the
@@ -117,7 +117,7 @@ MiddlewareRegistry.register(store => next => action => {
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
         // The WAIT_FOR_OWNER action is cyclic and we don't want to hide the
-        // login dialog every few seconds...
+        // login dialog every few seconds.
         isDialogOpen(store, LoginDialog)
             || store.dispatch(_openWaitForOwnerDialog());
         break;

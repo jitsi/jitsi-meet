@@ -8,7 +8,6 @@ import {
     CANCEL_WAIT_FOR_OWNER,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
-    UPGRADE_ROLE_LOGIN_OK,
     UPGRADE_ROLE_STARTED,
     WAIT_FOR_OWNER
 } from './actionTypes';
@@ -42,20 +41,22 @@ export function authenticateAndUpgradeRole(
                 roomPassword,
 
                 onLoginSuccessful() {
-                    return dispatch({ type: UPGRADE_ROLE_LOGIN_OK });
+                    // When the login succeeds, the process has completed half
+                    // of its job (i.e. 0.5).
+                    return dispatch(_upgradeRoleFinished(process, 0.5));
                 }
             });
 
         dispatch(_upgradeRoleStarted(process));
         process.then(
-            /* onFulfilled */ () => dispatch(_upgradeRoleFinished()),
+            /* onFulfilled */ () => dispatch(_upgradeRoleFinished(process, 1)),
             /* onRejected */ error => {
                 // The lack of an error signals a cancellation.
                 if (error.authenticationError || error.connectionError) {
                     logger.error('authenticateAndUpgradeRole failed', error);
                 }
 
-                dispatch(_upgradeRoleFinished(error));
+                dispatch(_upgradeRoleFinished(process, error));
             });
 
         return process;
@@ -126,36 +127,49 @@ export function stopWaitForOwner() {
  * Signals that the process of authenticating and upgrading the local
  * participant's role has finished either with success or with a specific error.
  *
- * @param {Object} error - If <tt>undefined</tt>, then the process of
- * authenticating and upgrading the local participant's role has succeeded;
- * otherwise, it has failed with the specified error. Refer to
- * {@link JitsiConference#authenticateAndUpgradeRole} in lib-jitsi-meet for the
- * error details.
+ * @param {Object} thenableWithCancel - The process of authenticating and
+ * upgrading the local participant's role.
+ * @param {Object} progressOrError - If the value is a <tt>number</tt>, then the
+ * process of authenticating and upgrading the local participant's role has
+ * succeeded in one of its two/multiple steps; otherwise, it has failed with the
+ * specified error. Refer to {@link JitsiConference#authenticateAndUpgradeRole}
+ * in lib-jitsi-meet for the error details.
  * @private
  * @returns {{
  *     type: UPGRADE_ROLE_FINISHED,
- *     error: ?Object
+ *     error: ?Object,
+ *     progress: number
  * }}
  */
-function _upgradeRoleFinished(error: ?Object) {
-    if (error) {
+function _upgradeRoleFinished(
+        thenableWithCancel,
+        progressOrError: number | Object) {
+    let error;
+    let progress;
+
+    if (typeof progressOrError === 'number') {
+        progress = progressOrError;
+    } else {
         // Make the specified error object resemble an Error instance (to the
         // extent that jitsi-meet needs it).
         const {
             authenticationError,
             connectionError,
             ...other
-        } = error;
+        } = progressOrError;
 
-        error = { // eslint-disable-line no-param-reassign
+        error = {
             name: authenticationError || connectionError,
             ...other
         };
+        progress = authenticationError ? 0.5 : 0;
     }
 
     return {
         type: UPGRADE_ROLE_FINISHED,
-        error
+        error,
+        progress,
+        thenableWithCancel
     };
 }
 

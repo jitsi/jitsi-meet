@@ -67,11 +67,10 @@ class LoginDialog extends Component {
         _error: PropTypes.object,
 
         /**
-         * Flag indicates that during the "upgrade role and authenticate"
-         * process the login part was successful and the next step is to obtain
-         * a session ID from Jicofo.
+         * The progress in the floating range between 0 and 1 of the
+         * authenticating and upgrading the role of the local participant/user.
          */
-        _upgradeRoleLoginOk: PropTypes.bool,
+        _progress: PropTypes.number,
 
         /**
          * Redux store dispatch method.
@@ -115,14 +114,14 @@ class LoginDialog extends Component {
         const {
             _connecting: connecting,
             _error: error,
-            _upgradeRoleLoginOk: upgradeRoleLoginOk,
+            _progress: progress,
             t
         } = this.props;
 
         let messageKey;
         let messageOptions;
 
-        if (upgradeRoleLoginOk) {
+        if (progress && progress < 1) {
             messageKey = 'connection.FETCH_SESSION_ID';
         } else if (error) {
             const { name } = error;
@@ -254,14 +253,14 @@ class LoginDialog extends Component {
  *     _configHosts: Object,
  *     _connecting: boolean,
  *     _error: Object,
- *     _upgradeRoleLoginOk: boolean
+ *     _progress: number
  * }}
  */
 function _mapStateToProps(state) {
     const {
-        upgradeRoleError,
-        upgradeRoleInProgress,
-        upgradeRoleLoginOk
+        error: authenticateAndUpgradeRoleError,
+        progress,
+        thenableWithCancel
     } = state['features/authentication'];
     const { authRequired } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
@@ -273,9 +272,9 @@ function _mapStateToProps(state) {
     return {
         _conference: authRequired,
         _configHosts: configHosts,
-        _connecting: Boolean(connecting) || Boolean(upgradeRoleInProgress),
-        _error: connectionError || upgradeRoleError,
-        _upgradeRoleLoginOk: upgradeRoleLoginOk
+        _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
+        _error: connectionError || authenticateAndUpgradeRoleError,
+        _progress: progress
     };
 }
 
