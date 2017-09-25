@@ -75,7 +75,8 @@ export function createLocalTracksF(
                 tracks.forEach(track =>
                     track.on(
                         JitsiTrackEvents.NO_DATA_FROM_SOURCE,
-                        APP.UI.showTrackNotWorkingDialog.bind(null, track)));
+                        APP.UI.showTrackNotWorkingDialog.bind(
+                            null, track.isAudioTrack())));
             }
 
             return tracks;

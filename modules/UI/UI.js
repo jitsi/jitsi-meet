@@ -1210,10 +1210,14 @@ UI.showCameraErrorNotification = function(cameraError) {
 /**
  * Shows error dialog that informs the user that no data is received from the
  * device.
+ *
+ * @param {boolean} isAudioTrack - Whether or not the dialog is for an audio
+ * track error.
+ * @returns {void}
  */
-UI.showTrackNotWorkingDialog = function (stream) {
+UI.showTrackNotWorkingDialog = function (isAudioTrack) {
     messageHandler.showError({
-        descriptionKey: stream.isAudioTrack()
+        descriptionKey: isAudioTrack
             ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',
         titleKey: 'dialog.error'
     });
