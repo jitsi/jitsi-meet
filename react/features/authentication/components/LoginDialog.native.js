@@ -159,15 +159,15 @@ class LoginDialog extends Component {
                         autoCorrect = { false }
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
-                        style = { styles.loginDialogTextInput }
+                        style = { styles.dialogTextInput }
                         value = { this.state.username } />
                     <TextInput
                         onChangeText = { this._onPasswordChange }
                         placeholder = { t('dialog.userPassword') }
                         secureTextEntry = { true }
-                        style = { styles.loginDialogTextInput }
+                        style = { styles.dialogTextInput }
                         value = { this.state.password } />
-                    <Text style = { styles.loginDialogText }>
+                    <Text style = { styles.dialogText }>
                         {
                             messageKey
                                 ? t(messageKey, messageOptions || {})
