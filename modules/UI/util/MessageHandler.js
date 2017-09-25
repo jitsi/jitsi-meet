@@ -455,22 +455,6 @@ const messageHandler = {
     },
 
     /**
-     * Shows a dialog prompting the user to send an error report.
-     *
-     * @param titleKey the title of the message
-     * @param descriptionKey the text of the message
-     * @param error the error that is being reported
-     */
-    openReportDialog: function(titleKey, descriptionKey, error) {
-        logger.log(error);
-        APP.store.dispatch(showErrorNotification({
-            descriptionKey,
-            titleKey
-        }));
-        //FIXME send the error to the server
-    },
-
-    /**
      *  Shows an error dialog to the user.
      * @param titleKey the title of the message.
      * @param msgKey the text of the message.
