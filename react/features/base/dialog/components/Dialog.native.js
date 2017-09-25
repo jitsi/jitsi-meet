@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { Modal, StyleSheet, TextInput } from 'react-native';
 import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
@@ -99,13 +99,33 @@ class Dialog extends AbstractDialog {
 
         // eslint-disable-next-line no-shadow
         element = this._mapReactElement(element, element => {
-            // * If this Dialog has children, they are to be rendered instead of
-            //   Prompt's TextInput.
-            if (element.type === TextInput) {
+            const { type } = element;
+
+            if (type === Modal) {
+                // * Modal handles hardware button presses for back navigation.
+                //   Firstly, we don't want Prompt's default behavior to merely
+                //   hide the Modal - we want this Dialog to be canceled.
+                //   Secondly, we cannot get Prompt's default behavior anyway
+                //   because we've removed Prompt and we're preserving whatever
+                //   it's rendered only.
+                return (
+                    React.cloneElement(
+                        element,
+                        /* props */ {
+                            onRequestClose: this._onCancel
+                        },
+                        ...React.Children.toArray(element.props.children))
+                );
+            }
+
+            if (type === TextInput) {
+                // * If this Dialog has children, they are to be rendered
+                //   instead of Prompt's TextInput.
                 if (children) {
                     element = children; // eslint-disable-line no-param-reassign
                     children = undefined;
                 }
+
             } else {
                 let { style } = element.props;
 
@@ -126,14 +146,14 @@ class Dialog extends AbstractDialog {
                         break;
                     }
 
-                    // eslint-disable-next-line no-param-reassign
-                    element
-                        = React.cloneElement(
+                    return (
+                        React.cloneElement(
                             element,
                             /* props */ {
                                 style: set(style, _TAG_KEY, undefined)
                             },
-                            ...React.Children.toArray(element.props.children));
+                            ...React.Children.toArray(element.props.children))
+                    );
                 }
             }
 
@@ -162,18 +182,22 @@ class Dialog extends AbstractDialog {
 
         let mapped = f(element);
 
-        if (mapped === element) {
-            mapped
-                = React.cloneElement(
-                    element,
-                    /* props */ undefined,
-                    ...React.Children.toArray(React.Children.map(
-                        element.props.children,
-                        function(element) { // eslint-disable-line no-shadow
-                            // eslint-disable-next-line no-invalid-this
-                            return this._mapReactElement(element, f);
-                        },
-                        this)));
+        if (mapped) {
+            const { children } = mapped.props;
+
+            if (mapped === element || React.Children.count(children)) {
+                mapped
+                    = React.cloneElement(
+                        mapped,
+                        /* props */ undefined,
+                        ...React.Children.toArray(React.Children.map(
+                            children,
+                            function(element) { // eslint-disable-line no-shadow
+                                // eslint-disable-next-line no-invalid-this
+                                return this._mapReactElement(element, f);
+                            },
+                            this)));
+            }
         }
 
         return mapped;

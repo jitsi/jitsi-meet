@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { View } from 'react-native';
+
+// eslint-disable-next-line react-native/split-platform-components
+import { BackAndroid, BackHandler, View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
+import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Container, LoadingIndicator } from '../../base/react';
@@ -57,6 +60,17 @@ class Conference extends Component {
         _onDisconnect: PropTypes.func,
 
         /**
+         * Handles a hardware button press for back navigation. Leaves the
+         * associated <tt>Conference</tt>.
+         *
+         * @private
+         * @returns {boolean} As the associated conference is unconditionally
+         * left and exiting the app while it renders a <tt>Conference</tt> is
+         * undesired, <tt>true</tt> is always returned.
+         */
+        _onHardwareBackPress: PropTypes.func,
+
+        /**
          * The handler which dispatches the (redux) action setToolboxVisible to
          * show/hide the Toolbox.
          *
@@ -90,22 +104,36 @@ class Conference extends Component {
          */
         this._toolboxTimeout = undefined;
 
-        // Bind event handlers so they are only bound once for every instance.
+        // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
+        this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
     }
 
     /**
-     * Inits the Toolbox timeout after the component is initially rendered.
+     * Implements {@link Component#componentDidMount()}. Invoked immediately
+     * after this component is mounted.
      *
      * @inheritdoc
      * returns {void}
      */
     componentDidMount() {
+        // Set handling any hardware button presses for back navigation up.
+        const backHandler = BackHandler || BackAndroid;
+
+        if (backHandler) {
+            this._backHandler = backHandler;
+            backHandler.addEventListener(
+                'hardwareBackPress',
+                this._onHardwareBackPress);
+        }
+
         this._setToolboxTimeout(this.props._toolboxVisible);
     }
 
     /**
-     * Inits new connection and conference when conference screen is entered.
+     * Implements {@link Component#componentWillMount()}. Invoked immediately
+     * before mounting occurs. Connects the conference described by the redux
+     * store/state.
      *
      * @inheritdoc
      * @returns {void}
@@ -115,13 +143,24 @@ class Conference extends Component {
     }
 
     /**
-     * Destroys connection, conference and local tracks when conference screen
-     * is left. Clears {@link #_toolboxTimeout} before the component unmounts.
+     * Implements {@link Component#componentWillUnmount()}. Invoked immediately
+     * before this component is unmounted and destroyed. Disconnects the
+     * conference described by the redux store/state.
      *
      * @inheritdoc
      * @returns {void}
      */
     componentWillUnmount() {
+        // Tear handling any hardware button presses for back navigation down.
+        const backHandler = this._backHandler;
+
+        if (backHandler) {
+            this._backHandler = undefined;
+            backHandler.removeEventListener(
+                'hardwareBackPress',
+                this._onHardwareBackPress);
+        }
+
         this._clearToolboxTimeout();
 
         this.props._onDisconnect();
@@ -211,6 +250,17 @@ class Conference extends Component {
     }
 
     /**
+     * Handles a hardware button press for back navigation.
+     *
+     * @returns {boolean} If the hardware button press for back navigation was
+     * handled by this <tt>Conference</tt>, then <tt>true</tt>; otherwise,
+     * <tt>false</tt>.
+     */
+    _onHardwareBackPress() {
+        return this._backHandler && this.props._onHardwareBackPress();
+    }
+
+    /**
      * Triggers the default Toolbox timeout.
      *
      * @param {boolean} toolboxVisible - Indicates whether the Toolbox is
@@ -263,7 +313,21 @@ function _mapDispatchToProps(dispatch) {
         },
 
         /**
-         * Dispatches an action changing the visiblity of the Toolbox.
+         * Handles a hardware button press for back navigation. Leaves the
+         * associated <tt>Conference</tt>.
+         *
+         * @returns {boolean} As the associated conference is unconditionally
+         * left and exiting the app while it renders a <tt>Conference</tt> is
+         * undesired, <tt>true</tt> is always returned.
+         */
+        _onHardwareBackPress() {
+            dispatch(appNavigate(undefined));
+
+            return true;
+        },
+
+        /**
+         * Dispatches an action changing the visibility of the Toolbox.
          *
          * @param {boolean} visible - True to show the Toolbox or false to hide
          * it.
