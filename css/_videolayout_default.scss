@@ -355,6 +355,10 @@
         background: #FFD740;
     }
 
+    &.status-lost {
+        background: gray;
+    }
+
     &.status-low {
         background: #BF2117;
     }

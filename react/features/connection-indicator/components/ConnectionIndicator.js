@@ -267,7 +267,7 @@ class ConnectionIndicator extends Component {
         if (connectionStatus === INACTIVE) {
             return 'status-other';
         } else if (connectionStatus === INTERRUPTED) {
-            return 'status-low';
+            return 'status-lost';
         } else if (typeof percent === 'undefined') {
             return 'status-high';
         }
