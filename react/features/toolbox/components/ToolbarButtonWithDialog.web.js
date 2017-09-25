@@ -48,7 +48,7 @@ class ToolbarButtonWithDialog extends Component {
         /**
          * The React Component to show within {@code InlineDialog}.
          */
-        content: PropTypes.object,
+        content: PropTypes.func,
 
         /**
          * From which side tooltips should display. Will be re-used for
