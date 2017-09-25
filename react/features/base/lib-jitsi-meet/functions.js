@@ -1,6 +1,7 @@
 /* @flow */
 
 import { setConfigFromURLParams } from '../../base/config';
+import { toState } from '../../base/redux';
 import { loadScript } from '../../base/util';
 
 import JitsiMeetJS from './_';
@@ -29,6 +30,26 @@ export function createLocalTrack(type: string, deviceId: string) {
             micDeviceId: deviceId
         })
             .then(([ jitsiLocalTrack ]) => jitsiLocalTrack));
+}
+
+/**
+ * Determines whether analytics is enabled in a specific redux {@code store}.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {boolean} If analytics is enabled, {@code true}; {@code false},
+ * otherwise.
+ */
+export function isAnalyticsEnabled(stateful: Function | Object) {
+    const {
+        analyticsScriptUrls,
+        disableThirdPartyRequests
+    } = toState(stateful)['features/base/config'];
+
+    return (
+        !disableThirdPartyRequests
+            && Array.isArray(analyticsScriptUrls)
+            && Boolean(analyticsScriptUrls.length));
 }
 
 /**
@@ -101,24 +122,4 @@ export function loadConfig(url: string) {
     });
 
     return promise;
-}
-
-/**
- * Evaluates whether analytics is enabled or not based on
- * the redux {@code store}.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @returns {boolean} True if analytics is enabled, false otherwise.
- */
-export function isAnalyticsEnabled({ getState }: { getState: Function }) {
-    const {
-        analyticsScriptUrls,
-        disableThirdPartyRequests
-    } = getState()['features/base/config'];
-
-    const scriptURLs = Array.isArray(analyticsScriptUrls)
-        ? analyticsScriptUrls : [];
-
-    return Boolean(scriptURLs.length) && !disableThirdPartyRequests;
 }

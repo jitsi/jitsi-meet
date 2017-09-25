@@ -15,13 +15,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 export function initAnalytics({ getState }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
-
-    // legacy support for old analytics location
-    window.analyticsHandlers = [];
+    window.analyticsHandlers = []; // Legacy support.
 
     const { analytics } = JitsiMeetJS;
 
-    if (!isAnalyticsEnabled({ getState }) || !analytics) {
+    if (!analytics || !isAnalyticsEnabled(getState)) {
         return;
     }
 

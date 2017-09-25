@@ -129,8 +129,7 @@ export function toState(stateful: Function | Object) {
 
         const { getState } = stateful;
 
-        if (typeof getState === 'function'
-                && typeof stateful.dispatch === 'function') {
+        if (typeof getState === 'function') {
             return getState();
         }
     }

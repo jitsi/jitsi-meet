@@ -51,11 +51,10 @@ export function initLib() {
         dispatch({ type: LIB_WILL_INIT });
 
         return (
-            JitsiMeetJS.init(
-                    Object.assign({
-                        enableAnalyticsLogging: isAnalyticsEnabled({ getState })
-                    },
-                    config))
+            JitsiMeetJS.init({
+                enableAnalyticsLogging: isAnalyticsEnabled(getState),
+                ...config
+            })
                 .then(() => dispatch({ type: LIB_DID_INIT }))
                 .catch(error => {
                     dispatch(libInitError(error));
