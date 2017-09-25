@@ -202,7 +202,6 @@
         "peer_to_peer": " (p2p)",
         "turn": " (turn)",
         "quality": {
-            "good": "Good",
             "inactive": "Inactive",
             "lost": "Lost",
             "nonoptimal": "Nonoptimal",

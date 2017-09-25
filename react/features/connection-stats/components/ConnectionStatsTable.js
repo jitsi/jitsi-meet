@@ -199,7 +199,7 @@ class ConnectionStatsTable extends Component {
      */
     _renderConnectionSummary() {
         return (
-            <tr>
+            <tr className = 'connection-info__status'>
                 <td>
                     <span>{ this.props.t('connectionindicator.status') }</span>
                 </td>

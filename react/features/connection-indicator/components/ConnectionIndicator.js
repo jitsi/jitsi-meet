@@ -39,7 +39,7 @@ const QUALITY_TO_WIDTH = [
     {
         colorClass: 'status-med',
         percent: 60,
-        tip: 'connectionindicator.quality.good',
+        tip: 'connectionindicator.quality.nonoptimal',
         width: '80%'
     },
 

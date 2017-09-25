@@ -37,6 +37,11 @@
         color: $downloadConnectionIconColor;
     }
 
+    &__status
+    {
+        font-weight: bold;
+    }
+
     &__upload
     {
         @extend .connection-info__icon;
