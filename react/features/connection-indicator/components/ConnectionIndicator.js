@@ -16,7 +16,7 @@ declare var interfaceConfig: Object;
  *
  * @type {number}
  */
-const INDICATOR_DISPLAY_THRESHOLD = 80;
+const INDICATOR_DISPLAY_THRESHOLD = 70;
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -27,36 +27,20 @@ const INDICATOR_DISPLAY_THRESHOLD = 80;
  */
 const QUALITY_TO_WIDTH = [
 
-    // Full (5 bars)
+    // Full (3 bars)
     {
         colorClass: 'status-high',
         percent: INDICATOR_DISPLAY_THRESHOLD,
-        tip: 'connectionindicator.quality.strong',
+        tip: 'connectionindicator.quality.good',
         width: '100%'
-    },
-
-    // 4 bars
-    {
-        colorClass: 'status-med',
-        percent: 60,
-        tip: 'connectionindicator.quality.nonoptimal',
-        width: '80%'
-    },
-
-    // 3 bars
-    {
-        colorClass: 'status-med',
-        percent: 40,
-        tip: 'connectionindicator.quality.nonoptimal',
-        width: '55%'
     },
 
     // 2 bars
     {
-        colorClass: 'status-low',
-        percent: 20,
-        tip: 'connectionindicator.quality.poor',
-        width: '40%'
+        colorClass: 'status-med',
+        percent: 40,
+        tip: 'connectionindicator.quality.nonoptimal',
+        width: '66%'
     },
 
     // 1 bar
@@ -64,10 +48,10 @@ const QUALITY_TO_WIDTH = [
         colorClass: 'status-low',
         percent: 0,
         tip: 'connectionindicator.quality.poor',
-        width: '20%'
+        width: '33%'
     }
 
-    // Note: we never show 0 bars.
+    // Note: we never show 0 bars as long as there is a connection.
 ];
 
 /**
@@ -300,7 +284,7 @@ class ConnectionIndicator extends Component {
                 // If percentage is undefined then there are no stats available
                 // yet, likely because only a local connection has been
                 // established so far. Assume a strong connection to start.
-                tipKey = 'connectionindicator.quality.strong';
+                tipKey = 'connectionindicator.quality.good';
             } else {
                 const config = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
 
@@ -405,13 +389,13 @@ class ConnectionIndicator extends Component {
             <span
                 className = { emptyIconWrapperClassName }
                 key = 'icon-empty'>
-                <i className = 'icon-connection' />
+                <i className = 'icon-gsm-bars' />
             </span>,
             <span
                 className = 'connection_full'
                 key = 'icon-full'
                 style = {{ width: iconWidth }}>
-                <i className = 'icon-connection' />
+                <i className = 'icon-gsm-bars' />
             </span>
         ];
     }
