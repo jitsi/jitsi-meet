@@ -9,7 +9,23 @@
  * @returns {void}
  */
 export function loadScript(url) {
-    return (
+    return new Promise((resolve, reject) => {
+        // XXX The implementation of fetch on Android will throw an Exception on
+        // the Java side which will break the app if the URL is invalid (which
+        // the implementation of fetch on Android calls 'unexpected url'). In
+        // order to try to prevent the breakage of the app, try to fail on an
+        // invalid URL as soon as possible.
+        const { hostname, pathname, protocol } = new URL(url);
+
+        // XXX The standard URL implementation should throw an Error if the
+        // specified URL is relative. Unfortunately, the polyfill used on
+        // react-native does not.
+        if (!hostname || !pathname || !protocol) {
+            reject(`unexpected url: ${url}`);
+
+            return;
+        }
+
         fetch(url, { method: 'GET' })
             .then(response => {
                 switch (response.status) {
@@ -22,5 +38,7 @@ export function loadScript(url) {
             })
             .then(responseText => {
                 eval.call(window, responseText); // eslint-disable-line no-eval
-            }));
+            })
+            .then(resolve, reject);
+    });
 }
