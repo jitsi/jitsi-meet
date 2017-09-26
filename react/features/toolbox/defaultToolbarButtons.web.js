@@ -5,11 +5,8 @@ import React from 'react';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 
-import { openDialOutDialog } from '../dial-out';
-
 import {
     InfoDialogButton,
-    openAddPeopleDialog,
     openInviteDialog
 } from '../invite';
 

@@ -99,14 +99,17 @@ class InviteButton extends Component {
                         shouldFitContainer = { true }>
                         { t('invite.invitePeople') }
                     </Button>
-                    <DropdownMenu
-                        items = { this.state.inviteOptions }
-                        onItemActivated = { this._onInviteOptionSelected }
-                        position = { VERTICAL_FILMSTRIP
-                            ? 'bottom right'
-                            : 'top right' }
-                        shouldFlip = { true }
-                        triggerType = 'button' />
+                    { this.props._isDialOutAvailable
+                        || this.props._isAddToCallAvailable
+                        ? <DropdownMenu
+                            items = { this.state.inviteOptions }
+                            onItemActivated = { this._onInviteOptionSelected }
+                            position = { VERTICAL_FILMSTRIP
+                                ? 'bottom right'
+                                : 'top right' }
+                            shouldFlip = { true }
+                            triggerType = 'button' />
+                        : null }
                 </div>
             </div>
         );
