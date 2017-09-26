@@ -11,6 +11,8 @@ import { Toolbox } from '../../toolbox';
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
 
+declare var interfaceConfig: Object;
+
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
@@ -110,7 +112,10 @@ class Filmstrip extends Component {
                         id = 'filmstripLocalVideo'
                         onMouseOut = { this._onMouseOut }
                         onMouseOver = { this._onMouseOver }>
-                        <InviteButton />
+                        {
+                            interfaceConfig.filmStripOnly
+                                ? null : <InviteButton />
+                        }
                     </div>
                     <div
                         className = 'filmstrip__videos'
