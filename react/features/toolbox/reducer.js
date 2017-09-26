@@ -15,7 +15,7 @@ import {
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE
 } from './actionTypes';
-import defaultToolbarButtons from './defaultToolbarButtons';
+import getDefaultButtons from './defaultToolbarButtons';
 
 declare var interfaceConfig: Object;
 
@@ -209,7 +209,8 @@ ReducerRegistry.register(
  * @returns {Object}
  */
 function _setButton(state, { button, buttonName }): Object {
-    const buttonDefinition = defaultToolbarButtons[buttonName];
+    const buttons = getDefaultButtons();
+    const buttonDefinition = buttons ? buttons[buttonName] : null;
 
     // We don't need to update if the button shouldn't be displayed
     if (!buttonDefinition || !buttonDefinition.isDisplayed()) {
