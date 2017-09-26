@@ -127,12 +127,6 @@
 .icon-volume:before {
     content: "\e91a";
 }
-.icon-connection-lost:before {
-    content: "\e900";
-}
-.icon-connection:before {
-    content: "\e61a";
-}
 .icon-recDisable:before {
     content: "\e613";
 }
@@ -159,4 +153,7 @@
 }
 .icon-info:before {
     content: "\e922";
+}
+.icon-gsm-bars:before {
+    content: "\e926";
 }

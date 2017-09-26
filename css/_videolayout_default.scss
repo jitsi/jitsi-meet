@@ -87,21 +87,12 @@
          * positioning depends on the trigger (indicator icon).
          */
         .indicator {
+            margin-left: 5px;
             margin-top: $toolbarIconMargin;
         }
 
         .indicator-container:nth-child(1) .indicator {
             margin-left: $toolbarIconMargin;
-        }
-
-        .connection-indicator,
-        div.indicator-container,
-         {
-            margin-right: 4px;
-        }
-
-        div.indicator:last-child {
-            margin-right: 0;
         }
 
         .indicator-container {
@@ -138,16 +129,11 @@
                 left: 0;
                 @include transform(translate(0, -50%));
 
-                &_empty
+                &_empty,
+                &_lost
                 {
                     color: #8B8B8B;/*#FFFFFF*/
                     overflow: hidden;
-                }
-
-                &_lost
-                {
-                    color: #8B8B8B;
-                    overflow: visible;
                 }
 
                 &_full
@@ -163,11 +149,14 @@
                 }
             }
 
-            .icon-connection,
-            .icon-connection-lost {
+            .icon-gsm-bars {
                 cursor: pointer;
                 font-size: 1em;
             }
+        }
+
+        .hide-connection-indicator {
+            display: none;
         }
     }
 
@@ -355,7 +344,27 @@
 }
 
 .connection-indicator {
-  background: $connectionIndicatorBg;
+    background: $connectionIndicatorBg;
+
+    &.status-high {
+        background: green;
+    }
+
+    &.status-med {
+        background: #FFD740;
+    }
+
+    &.status-lost {
+        background: gray;
+    }
+
+    &.status-low {
+        background: #BF2117;
+    }
+
+    &.status-other {
+        background: $connectionIndicatorBg;
+    }
 }
 
 .remote-video-menu-trigger,

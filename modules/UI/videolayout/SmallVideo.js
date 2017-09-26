@@ -253,10 +253,12 @@ SmallVideo.prototype.bindHoverHandler = function () {
         () => {
             this.videoIsHovered = true;
             this.updateView();
+            this.updateIndicators();
         },
         () => {
             this.videoIsHovered = false;
             this.updateView();
+            this.updateIndicators();
         }
     );
 };
@@ -755,6 +757,8 @@ SmallVideo.prototype.updateIndicators = function () {
         = this.container.querySelector('.videocontainer__toptoolbar');
 
     const iconSize = UIUtil.getIndicatorFontSize();
+    const showConnectionIndicator = this.videoIsHovered
+        || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
     const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
 
     /* jshint ignore:start */
@@ -763,7 +767,9 @@ SmallVideo.prototype.updateIndicators = function () {
             <div>
                 { this._showConnectionIndicator
                     ? <ConnectionIndicator
+                        alwaysVisible = { showConnectionIndicator }
                         connectionStatus = { this._connectionStatus }
+                        iconSize = { iconSize }
                         isLocalVideo = { this.isLocal }
                         enableStatsDisplay = { !interfaceConfig.filmStripOnly }
                         statsPopoverPosition = { this.statsPopoverLocation }

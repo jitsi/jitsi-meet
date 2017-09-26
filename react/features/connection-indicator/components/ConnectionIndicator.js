@@ -1,48 +1,57 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import { translate } from '../../base/i18n';
 import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
 import { Popover } from '../../base/popover';
 import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
 
-declare var $: Object;
 declare var interfaceConfig: Object;
 
-// Converts the percent for connection quality into a string recognized for CSS.
+/**
+ * The connection quality percentage that must be reached to be considered of
+ * good quality and can result in the connection indicator being hidden.
+ *
+ * @type {number}
+ */
+const INDICATOR_DISPLAY_THRESHOLD = 70;
+
+/**
+ * An array of display configurations for the connection indicator and its bars.
+ * The ordering is done specifically for faster iteration to find a matching
+ * configuration to the current connection strength percentage.
+ *
+ * @type {Object[]}
+ */
 const QUALITY_TO_WIDTH = [
 
-    // Full (5 bars)
+    // Full (3 bars)
     {
-        percent: 80,
+        colorClass: 'status-high',
+        percent: INDICATOR_DISPLAY_THRESHOLD,
+        tip: 'connectionindicator.quality.good',
         width: '100%'
-    },
-
-    // 4 bars
-    {
-        percent: 60,
-        width: '80%'
-    },
-
-    // 3 bars
-    {
-        percent: 40,
-        width: '55%'
     },
 
     // 2 bars
     {
-        percent: 20,
-        width: '40%'
+        colorClass: 'status-med',
+        percent: 40,
+        tip: 'connectionindicator.quality.nonoptimal',
+        width: '66%'
     },
 
     // 1 bar
     {
+        colorClass: 'status-low',
         percent: 0,
-        width: '20%'
+        tip: 'connectionindicator.quality.poor',
+        width: '33%'
     }
 
-    // Note: we never show 0 bars.
+    // Note: we never show 0 bars as long as there is a connection.
 ];
 
 /**
@@ -59,40 +68,51 @@ class ConnectionIndicator extends Component {
      */
     static propTypes = {
         /**
+         * Whether or not the component should ignore setting a visibility class
+         * for hiding the component when the connection quality is not strong.
+         */
+        alwaysVisible: PropTypes.bool,
+
+        /**
          * The current condition of the user's connection, matching one of the
          * enumerated values in the library.
          *
          * @type {JitsiParticipantConnectionStatus}
          */
-        connectionStatus: React.PropTypes.string,
+        connectionStatus: PropTypes.string,
 
         /**
          * Whether or not clicking the indicator should display a popover for
          * more details.
          */
-        enableStatsDisplay: React.PropTypes.bool,
+        enableStatsDisplay: PropTypes.bool,
+
+        /**
+         * The font-size for the icon.
+         */
+        iconSize: PropTypes.number,
 
         /**
          * Whether or not the displays stats are for local video.
          */
-        isLocalVideo: React.PropTypes.bool,
+        isLocalVideo: PropTypes.bool,
 
         /**
          * Relative to the icon from where the popover for more connection
          * details should display.
          */
-        statsPopoverPosition: React.PropTypes.string,
+        statsPopoverPosition: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The user ID associated with the displayed connection indication and
          * stats.
          */
-        userID: React.PropTypes.string
+        userID: PropTypes.string
     };
 
     /**
@@ -105,6 +125,23 @@ class ConnectionIndicator extends Component {
         super(props);
 
         this.state = {
+            /**
+             * The timeout for automatically hiding the indicator.
+             *
+             * @type {timeoutID}
+             */
+            autoHideTimeout: null,
+
+            /**
+             * Whether or not a CSS class should be applied to the root for
+             * hiding the connection indicator. By default the indicator should
+             * start out hidden because the current connection status is not
+             * known at mount.
+             *
+             * @type {boolean}
+             */
+            showIndicator: false,
+
             /**
              * Whether or not the popover content should display additional
              * statistics.
@@ -154,7 +191,8 @@ class ConnectionIndicator extends Component {
     }
 
     /**
-     * Sets the state to hide the Statistics Table popover.
+     * Cleans up any queued processes, which includes listening for new stats
+     * and clearing any timeout to hide the indicator.
      *
      * @private
      * @returns {void}
@@ -162,6 +200,8 @@ class ConnectionIndicator extends Component {
     componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
+
+        clearTimeout(this.state.autoHideTimeout);
     }
 
     /**
@@ -171,13 +211,22 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const visibilityClass = this._getVisibilityClass();
+        const rootClassNames = `indicator-container ${visibilityClass}`;
+
+        const colorClass = this._getConnectionColorClass();
+        const indicatorContainerClassNames
+            = `connection-indicator indicator ${colorClass}`;
+
         return (
             <Popover
-                className = 'indicator-container'
+                className = { rootClassNames }
                 content = { this._renderStatisticsTable() }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
-                    <div className = 'connection-indicator indicator'>
+                    <div
+                        className = { indicatorContainerClassNames }
+                        style = {{ fontSize: this.props.iconSize }}>
                         <div className = 'connection indicatoricon'>
                             { this._renderIcon() }
                         </div>
@@ -185,6 +234,83 @@ class ConnectionIndicator extends Component {
                 </div>
             </Popover>
         );
+    }
+
+    /**
+     * Returns a CSS class that interprets the current connection status as a
+     * color.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getConnectionColorClass() {
+        const { connectionStatus } = this.props;
+        const { percent } = this.state.stats;
+        const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
+
+        if (connectionStatus === INACTIVE) {
+            return 'status-other';
+        } else if (connectionStatus === INTERRUPTED) {
+            return 'status-lost';
+        } else if (typeof percent === 'undefined') {
+            return 'status-high';
+        }
+
+        return QUALITY_TO_WIDTH.find(x => percent >= x.percent).colorClass;
+    }
+
+    /**
+     * Returns a string that describes the current connection status.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getConnectionStatusTip() {
+        let tipKey;
+
+        switch (this.props.connectionStatus) {
+        case JitsiParticipantConnectionStatus.INTERRUPTED:
+            tipKey = 'connectionindicator.quality.lost';
+            break;
+
+        case JitsiParticipantConnectionStatus.INACTIVE:
+            tipKey = 'connectionindicator.quality.inactive';
+            break;
+
+        default: {
+            const { percent } = this.state.stats;
+
+            if (typeof percent === 'undefined') {
+                // If percentage is undefined then there are no stats available
+                // yet, likely because only a local connection has been
+                // established so far. Assume a strong connection to start.
+                tipKey = 'connectionindicator.quality.good';
+            } else {
+                const config = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
+
+                tipKey = config.tip;
+            }
+        }
+        }
+
+        return this.props.t(tipKey);
+    }
+
+    /**
+     * Returns additional class names to add to the root of the component. The
+     * class names are intended to be used for hiding or showing the indicator.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getVisibilityClass() {
+        const { connectionStatus } = this.props;
+
+        return this.state.showIndicator
+            || this.props.alwaysVisible
+            || connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED
+            || connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
+            ? 'show-connection-indicator' : 'hide-connection-indicator';
     }
 
     /**
@@ -209,6 +335,9 @@ class ConnectionIndicator extends Component {
         this.setState({
             stats: newStats
         });
+
+        // Rely on React to batch setState actions.
+        this._updateIndicatorAutoHide(newStats.percent);
     }
 
     /**
@@ -229,40 +358,46 @@ class ConnectionIndicator extends Component {
      * @returns {ReactElement}
      */
     _renderIcon() {
-        switch (this.props.connectionStatus) {
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
-            return (
-                <span className = 'connection_lost'>
-                    <i className = 'icon-connection-lost' />
-                </span>
-            );
-        case JitsiParticipantConnectionStatus.INACTIVE:
+        if (this.props.connectionStatus
+            === JitsiParticipantConnectionStatus.INACTIVE) {
             return (
                 <span className = 'connection_ninja'>
                     <i className = 'icon-ninja' />
                 </span>
             );
-        default: {
-            const { percent } = this.state.stats;
-            const width = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
-            const iconWidth = width && width.width
-                ? { width: width && width.width } : {};
+        }
 
-            return [
-                <span
-                    className = 'connection_empty'
-                    key = 'icon-empty'>
-                    <i className = 'icon-connection' />
-                </span>,
-                <span
-                    className = 'connection_full'
-                    key = 'icon-full'
-                    style = { iconWidth }>
-                    <i className = 'icon-connection' />
-                </span>
-            ];
+        let iconWidth;
+        let emptyIconWrapperClassName = 'connection_empty';
+
+        if (this.props.connectionStatus
+            === JitsiParticipantConnectionStatus.INTERRUPTED) {
+
+            // emptyIconWrapperClassName is used by the torture tests to
+            // identify lost connection status handling.
+            emptyIconWrapperClassName = 'connection_lost';
+            iconWidth = '0%';
+        } else if (typeof this.state.stats.percent === 'undefined') {
+            iconWidth = '100%';
+        } else {
+            const { percent } = this.state.stats;
+
+            iconWidth = QUALITY_TO_WIDTH.find(x => percent >= x.percent).width;
         }
-        }
+
+        return [
+            <span
+                className = { emptyIconWrapperClassName }
+                key = 'icon-empty'>
+                <i className = 'icon-gsm-bars' />
+            </span>,
+            <span
+                className = 'connection_full'
+                key = 'icon-full'
+                style = {{ width: iconWidth }}>
+                <i className = 'icon-gsm-bars' />
+            </span>
+        ];
     }
 
     /**
@@ -284,6 +419,7 @@ class ConnectionIndicator extends Component {
             <ConnectionStatsTable
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
+                connectionSummary = { this._getConnectionStatusTip() }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 onShowMore = { this._onToggleShowMore }
@@ -293,6 +429,36 @@ class ConnectionIndicator extends Component {
                 transport = { transport } />
         );
     }
+
+    /**
+     * Updates the internal state for automatically hiding the indicator.
+     *
+     * @param {number} percent - The current connection quality percentage
+     * between the values 0 and 100.
+     * @private
+     * @returns {void}
+     */
+    _updateIndicatorAutoHide(percent) {
+        if (percent < INDICATOR_DISPLAY_THRESHOLD) {
+            clearTimeout(this.state.autoHideTimeout);
+            this.setState({
+                autoHideTimeout: null,
+                showIndicator: true
+            });
+        } else if (this.state.autoHideTimeout) {
+            // This clause is intentionally left blank because no further action
+            // is needed if the percent is below the threshold and there is an
+            // autoHideTimeout set.
+        } else {
+            this.setState({
+                autoHideTimeout: setTimeout(() => {
+                    this.setState({
+                        showIndicator: false
+                    });
+                }, interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT)
+            });
+        }
+    }
 }
 
-export default ConnectionIndicator;
+export default translate(ConnectionIndicator);

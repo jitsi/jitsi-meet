@@ -200,7 +200,15 @@
         "bandwidth": "Estimated bandwidth:",
         "na": "Come back here for connection information once the conference starts",
         "peer_to_peer": " (p2p)",
-        "turn": " (turn)"
+        "turn": " (turn)",
+        "quality": {
+            "good": "Good",
+            "inactive": "Inactive",
+            "lost": "Lost",
+            "nonoptimal": "Nonoptimal",
+            "poor": "Poor"
+        },
+        "status": "Connection:"
     },
     "notify": {
         "disconnected": "disconnected",
