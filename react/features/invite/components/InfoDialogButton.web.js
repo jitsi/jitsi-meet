@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { ToolbarButton, TOOLTIP_TO_POPUP_POSITION } from '../../toolbox';
+import { getParticipantCount } from '../../base/participants';
 
 import { setInfoDialogVisibility } from '../actions';
 
@@ -24,6 +25,12 @@ const DEFAULT_BUTTON_CONFIGURATION = {
 };
 
 /**
+ * The amount of time, in milliseconds, to wait until automatically showing
+ * the {@code InfoDialog}
+ */
+const INFO_DIALOG_AUTO_SHOW_TIME = 3000;
+
+/**
  * A React Component for displaying a button which opens a dialog with
  * information about the conference and with ways to invite people.
  *
@@ -36,6 +43,12 @@ class InfoDialogButton extends Component {
      * @static
      */
     static propTypes = {
+        /**
+         * The number of real participants in the call. If in a lonely call,
+         * the {@code InfoDialog} will be automatically shown.
+         */
+        _participantCount: PropTypes.number,
+
         /**
          * Whether or not {@code InfoDialog} should be displayed.
          */
@@ -68,9 +81,56 @@ class InfoDialogButton extends Component {
     constructor(props) {
         super(props);
 
+        /**
+         * The timeout to automatically show the {@code InfoDialog} if it has
+         * not been shown yet in a lonely call.
+         *
+         * @type {timeoutID}
+         */
+        this._autoShowTimeout = null;
+
+        this.state = {
+            /**
+             * Whether or not the dialog has displayed at least once.
+             */
+            hasToggled: false
+        };
+
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
         this._onDialogToggle = this._onDialogToggle.bind(this);
+    }
+
+    /**
+     * Set a timeout to automatically show the {@code InfoDialog}.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this._autoShowTimeout = setTimeout(() => {
+            this._maybeAutoShowDialog();
+        }, INFO_DIALOG_AUTO_SHOW_TIME);
+    }
+
+    /**
+     * Update the state when the {@code InfoDialog} has been seen for the first
+     * time.
+     *
+     * @inheritdoc
+     */
+    componentWillReceiveProps(nextProps) {
+        if (!this.state.hasToggled && nextProps._showDialog) {
+            this.setState({ hasToggled: true });
+        }
+    }
+
+    /**
+     * Clear the timeout to automatically show the {@code InfoDialog}.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        clearTimeout(this._autoShowTimeout);
     }
 
     /**
@@ -104,6 +164,19 @@ class InfoDialogButton extends Component {
     }
 
     /**
+     * Callback invoked after a timeout to trigger display of the
+     * {@code InfoDialog} if certain conditions are met.
+     *
+     * @private
+     * @returns {void}
+     */
+    _maybeAutoShowDialog() {
+        if (this.props._participantCount < 2 && !this.state.hasToggled) {
+            this._onDialogToggle();
+        }
+    }
+
+    /**
      * Hides {@code InfoDialog}.
      *
      * @private
@@ -131,12 +204,15 @@ class InfoDialogButton extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _participantsCount: number,
  *     _showDialog: boolean,
  *     _visible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
+        _participantCount:
+            getParticipantCount(state['features/base/participants']),
         _showDialog: state['features/invite'].infoDialogVisible,
         _visible: state['features/toolbox'].visible
     };
