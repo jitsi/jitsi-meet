@@ -131,5 +131,24 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
     /**
      * The name of the application connected to the "Add people" search service.
      */
-    // ADD_PEOPLE_APP_NAME: ""
+    // ADD_PEOPLE_APP_NAME: "",
+
+    /**
+     * Whether the connection indicator icon should hide itself based on
+     * connection strength. If true, the connection indicator will remain
+     * displayed while the participant has a weak connection and will hide
+     * itself after the CONNECTION_INDICATOR_HIDE_TIMEOUT when the connection is
+     * strong.
+     *
+     * @type {boolean}
+     */
+    CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: false,
+
+    /**
+     * How long the connection indicator should remain displayed before hiding.
+     * Used in conjunction with CONNECTION_INDICATOR_AUTOHIDE_ENABLED.
+     *
+     * @type {number}
+     */
+    CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000
 };
