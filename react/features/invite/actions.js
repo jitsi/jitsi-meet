@@ -1,13 +1,13 @@
 import { openDialog } from '../../features/base/dialog';
 
 import {
+    SET_INFO_DIALOG_VISIBILITY,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
 import { AddPeopleDialog, InviteDialog } from './components';
 
 declare var $: Function;
-declare var APP: Object;
 
 /**
  * Opens the Invite Dialog.
@@ -25,6 +25,22 @@ export function openInviteDialog() {
  */
 export function openAddPeopleDialog() {
     return openDialog(AddPeopleDialog);
+}
+
+/**
+ * Opens the inline conference info dialog.
+ *
+ * @param {boolean} visible - Whether or not the dialog should be displayed.
+ * @returns {{
+ *     type: SET_INFO_DIALOG_VISIBILITY,
+ *     visible: boolean
+ * }}
+ */
+export function setInfoDialogVisibility(visible) {
+    return {
+        type: SET_INFO_DIALOG_VISIBILITY,
+        visible
+    };
 }
 
 /**
