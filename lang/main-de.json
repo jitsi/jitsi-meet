@@ -1,5 +1,5 @@
 {
-    "contactlist": "Teilnehmer (__pcount__)",
+    "contactlist": "__pcount__ Teilnehmer",
     "addParticipants": "Link teilen",
     "roomLocked": "Teilnehmer müssen ein Passwort eingeben",
     "roomUnlocked": "Jeder mit Zugriff auf den Link kann beitreten",
@@ -66,7 +66,7 @@
             "title": "Open Source"
         },
         "feature4": {
-            "content": "Es gibt keine künstliche Beschränkung der Anzahl der Benutzer oder Konferenzteilnehmer. Die Leistung des Servers und die Bandbreite sind die einzigen limitierenden Faktoren.",
+            "content": "Es gibt keine künstlichen Begrenzungen der Anzahl der Konferenz-Teilnehmer. Die Bandbreite und Rechenleistung des Server sind die einzigen Limitierungen.",
             "title": "Unbegrenzte Anzahl Benutzer"
         },
         "feature5": {
@@ -103,7 +103,7 @@
         "rejoinKeyTitle": "Erneut teilnehmen"
     },
     "toolbar": {
-        "addPeople": "",
+        "addPeople": "Teilnehmer zur Konferenz hinzufügen",
         "audioonly": "Nur-Audio-Modus aktivieren/deaktivieren (spart Bandbreite)",
         "mute": "Stummschaltung aktivieren / deaktivieren",
         "videomute": "Kamera starten / stoppen",
@@ -121,8 +121,8 @@
         "login": "Anmelden",
         "logout": "Abmelden",
         "dialpad": "Wähltastatur öffnen / schliessen",
-        "sharedVideoMutedPopup": "Das geteilte Video wurde stumm geschaltet damit mit <br/>den anderen Teilnehmern gesprochen werden kann.",
-        "micMutedPopup": "Ihr Mikrofon wurde stumm geschaltet damit das<br/>geteilte Video genossen werden kann.",
+        "sharedVideoMutedPopup": "Das freigegebene Video wurde stumm geschaltet um mit den anderen Teilnehmern zu sprechen.",
+        "micMutedPopup": "Das Mikrofon wurde stumm geschaltet um das freigegebene Video geniessen zu können.",
         "talkWhileMutedPopup": "Versuchen sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "unableToUnmutePopup": "Die Stummschaltung kann nicht aufgehoben werden während das geteilte Video abgespielt wird.",
         "cameraDisabled": "Keine Kamera verfügbar",
@@ -141,7 +141,7 @@
     "bottomtoolbar": {
         "chat": "Chat öffnen / schliessen",
         "filmstrip": "Videos anzeigen / verbergen",
-        "contactlist": "Teilnehmer anzeigen und einladen"
+        "contactlist": "Teilnehmerliste und neue Teilnehmer einladen"
     },
     "chat": {
         "nickname": {
@@ -173,9 +173,8 @@
         "setEmailInput": "E-Mail eingeben"
     },
     "videothumbnail": {
-        "editnickname": "Klicken, um den Anzeigenamen zu bearbeiten",
-        "moderator": "Besitzer dieser Konferenz",
-        "videomute": "Teilnehmer hat die Kamera pausiert",
+        "moderator": "Moderator",
+        "videomute": "Teilnehmer hat die Kamera ausgeschaltet",
         "mute": "Teilnehmer ist stumm geschaltet",
         "kick": "Hinauswerfen",
         "muted": "Stummgeschaltet",
@@ -203,7 +202,15 @@
         "transport": "Protokoll:",
         "bandwidth": "Geschätzte Bandbreite:",
         "na": "Verbindungsdaten erneut anzeigen wenn die Konferenz begonnen hat",
-        "turn": " (TURN)"
+        "turn": " (TURN)",
+        "quality": {
+            "good": "Gut",
+            "inactive": "Inaktiv",
+            "lost": "Verloren",
+            "nonoptimal": "Nicht optimal",
+            "poor": "Dürftig"
+        },
+        "status": "Verbindung:"
     },
     "notify": {
         "disconnected": "getrennt",
@@ -242,7 +249,7 @@
         "conferenceDisconnectTitle": "Ihre Verbindung ist getrennt worden.",
         "conferenceDisconnectMsg": "Prüfen Sie allenfalls Ihre Netzwerkverbindung. Verbinde in __seconds__ Sekunden...",
         "rejoinNow": "Jetzt erneut beitreten",
-        "maxUsersLimitReached": "Die maximale Teilnehmerzahl dieser Konferenz ist erreicht. Die Konferenz ist voll. Bitte versuchen Sie es später noch einmal.",
+        "maxUsersLimitReached": "Die maximale Anzahl Teilnehmer in der Konferenz ist erreicht, die Konferenz ist voll. Bitte versuchen Sie es später noch einmal.",
         "lockTitle": "Sperren fehlgeschlagen",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
         "warning": "Warnung",
@@ -265,7 +272,7 @@
         "shareVideoLinkError": "Bitte einen gültigen YouTube-Link angeben.",
         "removeSharedVideoTitle": "Freigegebenes Video entfernen",
         "removeSharedVideoMsg": "Sind Sie sicher dass Sie das geteilte Video entfernen möchten?",
-        "alreadySharedVideoMsg": "Ein anderer Teilnehmer teilt bereits ein Video. Diese Konferenz ermöglicht nur ein freigegebenes Video auf einmal.",
+        "alreadySharedVideoMsg": "Ein anderer Teilnehmer teilt bereits ein Video. Pro Konferenz kann nur ein Video auf einmal geteilt werden.",
         "WaitingForHost": "Warten auf den Organisator...",
         "WaitForHostMsg": "Die Konferenz <b>__room__</b> hat noch nicht begonnen. Wenn Sie der Organisator sind, melden Sie sich bitte an. Anderenfalls warten Sie bitte, bis der Organisator beigetreten ist.",
         "IamHost": "Ich bin der Organisator",
@@ -284,9 +291,6 @@
         "passwordCheck": "Sind Sie sicher, dass Sie das Passwort entfernen möchten?",
         "passwordMsg": "Passwort setzen um die Konferenz zu schützen",
         "shareLink": "Link zu dieser Konferenz teilen",
-        "settings1": "Konferenz einrichten",
-        "settings2": "Teilnehmer treten stummgeschaltet bei",
-        "settings3": "Name erforderlich<br/><br/>Setzen Sie ein Passwort, um die Konferenz zu schützen:",
         "yourPassword": "Neues Passwort eingeben",
         "Back": "Zurück",
         "serviceUnavailable": "Dienst nicht verfügbar",
@@ -336,7 +340,7 @@
         "externalInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden.",
         "inlineInstallationMsg": "Die Bildschirmfreigabeerweiterung muss installiert werden.",
         "inlineInstallExtension": "Jetzt installieren",
-        "muteParticipantTitle": "Teilnehmer stummschalten?",
+        "muteParticipantTitle": "Diesen Teilnehmer stummschalten?",
         "muteParticipantBody": "Sie können die Stummschaltung anderer Teilnehmer nicht aufheben, aber ein Teilnehmer kann seine eigene Stummschaltung jederzeit beenden.",
         "muteParticipantButton": "Stummschalten",
         "remoteControlTitle": "Fernsteuerung",
@@ -446,9 +450,10 @@
     },
     "videoStatus": {
         "callQuality": "Konferenzqualität",
-        "changeVideoTip": "Die Videoqualität kann über die linke Werkzeugleiste geändert werden.",
         "hd": "HD",
         "highDefinition": "Hohe Auflösung",
+        "labelTooltipVideo": "Aktuelle Videoqualität",
+        "labelTooltipAudioOnly": "Nur-Audio Modus aktiv",
         "ld": "LD",
         "lowDefinition": "Niedrige Auflösung",
         "p2pEnabled": "Ende-zu-Ende aktiviert",
@@ -470,7 +475,7 @@
         "noResults": "Keine passenden Ergebnisse",
         "searchPlaceholder": "Nach Teilnehmern und Konferenzen suchen",
         "title": "Teilnehmer zur Konferenz hinzufügen",
-        "failedToAdd": "Fehler beim Hinzufügen von Teilnehmern"
+        "failedToAdd": "Teilnehmer konnte nicht hinzugefügt werden"
     },
     "inlineDialogFailure": {
         "msg": "Es ist ein Fehler aufgetreten.",
@@ -481,5 +486,11 @@
     "deviceError": {
         "cameraPermission": "Fehler beim Bezug der Kamera-Zugriffsberechtigungen",
         "microphonePermission": "Fehler beim Bezug der Mikrofon-Zugriffsberechtigungen"
+    },
+    "info": {
+        "copy": "Link kopieren",
+        "invite": "In __app__ einladen",
+        "title": "Konferenz-Zugriffsinformationen",
+        "tooltip": "Zugriffsinformationen über die Konferenz abrufen"
     }
 }
