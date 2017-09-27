@@ -28,22 +28,29 @@
 
 #pragma mark Linking delegate methods
 
--    (BOOL)application:(UIApplication *)application
-  continueUserActivity:(NSUserActivity *)userActivity
-    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
-    return [JitsiMeetView application:application
-                 continueUserActivity:userActivity
-                   restorationHandler:restorationHandler];
+-   (BOOL)application:(UIApplication *)application
+ continueUserActivity:(NSUserActivity *)userActivity
+   restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+
+  if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+      JitsiMeetView *view
+          = (JitsiMeetView *) self.window.rootViewController.view;
+      [view loadURL:userActivity.webpageURL];
+
+      return YES;
+  }
+
+  return NO;
 }
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    return [JitsiMeetView application:application
-                              openURL:url
-                    sourceApplication:sourceApplication
-                           annotation:annotation];
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+
+    JitsiMeetView *view = (JitsiMeetView *) self.window.rootViewController.view;
+    [view loadURL:url];
+
+    return YES;
 }
 
 @end
