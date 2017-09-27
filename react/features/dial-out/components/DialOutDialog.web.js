@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -21,32 +22,32 @@ class DialOutDialog extends Component {
         /**
          * The redux state representing the list of dial-out codes.
          */
-        _dialOutCodes: React.PropTypes.array,
+        _dialOutCodes: PropTypes.array,
 
         /**
          * Property indicating if a dial number is allowed.
          */
-        _isDialNumberAllowed: React.PropTypes.bool,
+        _isDialNumberAllowed: PropTypes.bool,
 
         /**
          * The function performing the cancel action.
          */
-        cancel: React.PropTypes.func,
+        cancel: PropTypes.func,
 
         /**
          * The function performing the phone number validity check.
          */
-        checkDialNumber: React.PropTypes.func,
+        checkDialNumber: PropTypes.func,
 
         /**
          * The function performing the dial action.
          */
-        dial: React.PropTypes.func,
+        dial: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**
@@ -214,7 +215,7 @@ class DialOutDialog extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _isDialNumberAllowed: React.PropTypes.bool
+ *     _isDialNumberAllowed: boolean
  * }}
  */
 function _mapStateToProps(state) {

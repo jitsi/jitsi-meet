@@ -1,5 +1,6 @@
 import Button from '@atlaskit/button';
 import { FieldText } from '@atlaskit/field-text';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -20,12 +21,12 @@ class ShareLinkForm extends Component {
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The value to be displayed and copied into the clipboard.
          */
-        toCopy: React.PropTypes.string
+        toCopy: PropTypes.string
     };
 
     /**

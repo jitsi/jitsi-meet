@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
@@ -15,7 +16,7 @@ class AudioInputPreview extends PureComponent {
         /*
          * The JitsiLocalTrack to show an audio level meter for.
          */
-        track: React.PropTypes.object
+        track: PropTypes.object
     };
 
     /**

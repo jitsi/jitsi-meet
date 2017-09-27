@@ -1,4 +1,5 @@
 import AKButton from '@atlaskit/button';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
@@ -18,12 +19,12 @@ class InlineDialogFailure extends Component {
         /**
          * Allows to retry the call that previously didn't succeed.
          */
-        onRetry: React.PropTypes.func,
+        onRetry: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

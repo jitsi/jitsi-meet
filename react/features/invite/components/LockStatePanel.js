@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -15,12 +16,12 @@ class LockStatePanel extends Component {
         /**
          * Whether or not the conference is currently locked.
          */
-        locked: React.PropTypes.bool,
+        locked: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

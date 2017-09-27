@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -34,7 +35,7 @@ class ParticipantView extends Component {
          *
          * @private
          */
-        _audioOnly: React.PropTypes.bool,
+        _audioOnly: PropTypes.bool,
 
         /**
          * The source (e.g. URI, URL) of the avatar image of the participant
@@ -42,7 +43,7 @@ class ParticipantView extends Component {
          *
          * @private
          */
-        _avatar: React.PropTypes.string,
+        _avatar: PropTypes.string,
 
         /**
          * The connection status of the participant. Her video will only be
@@ -51,50 +52,50 @@ class ParticipantView extends Component {
          *
          * @private
          */
-        _connectionStatus: React.PropTypes.string,
+        _connectionStatus: PropTypes.string,
 
         /**
          * The video Track of the participant with {@link #participantId}.
          */
-        _videoTrack: React.PropTypes.object,
+        _videoTrack: PropTypes.object,
 
         /**
          * The style, if any, of the avatar in addition to the default style.
          */
-        avatarStyle: React.PropTypes.object,
+        avatarStyle: PropTypes.object,
 
         /**
          * The ID of the participant (to be) depicted by ParticipantView.
          *
          * @public
          */
-        participantId: React.PropTypes.string,
+        participantId: PropTypes.string,
 
         /**
          * True if the avatar of the depicted participant is to be shown should
          * the avatar be available and the video of the participant is not to be
          * shown; otherwise, false. If undefined, defaults to true.
          */
-        showAvatar: React.PropTypes.bool,
+        showAvatar: PropTypes.bool,
 
         /**
          * True if the video of the depicted participant is to be shown should
          * the video be available. If undefined, defaults to true.
          */
-        showVideo: React.PropTypes.bool,
+        showVideo: PropTypes.bool,
 
         /**
          * The style, if any, to apply to ParticipantView in addition to its
          * default style.
          */
-        style: React.PropTypes.object,
+        style: PropTypes.object,
 
         /**
          * The z-order of the Video of ParticipantView in the stacking space of
          * all Videos. For more details, refer to the zOrder property of the
          * Video class for React Native.
          */
-        zOrder: React.PropTypes.number
+        zOrder: PropTypes.number
     };
 
     /**

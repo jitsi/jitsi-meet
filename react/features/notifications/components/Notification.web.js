@@ -1,5 +1,6 @@
 import Flag from '@atlaskit/flag';
 import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -20,46 +21,46 @@ class Notification extends Component {
          * The translation key to display as the title of the notification if
          * no title is provided.
          */
-        defaultTitleKey: React.PropTypes.string,
+        defaultTitleKey: PropTypes.string,
 
         /**
          * The translation arguments that may be necessary for the description.
          */
-        descriptionArguments: React.PropTypes.object,
+        descriptionArguments: PropTypes.object,
 
         /**
          * The translation key to use as the body of the notification.
          */
-        descriptionKey: React.PropTypes.string,
+        descriptionKey: PropTypes.string,
 
         /**
          * Whether or not the dismiss button should be displayed. This is passed
          * in by {@code FlagGroup}.
          */
-        isDismissAllowed: React.PropTypes.bool,
+        isDismissAllowed: PropTypes.bool,
 
         /**
          * Callback invoked when the user clicks to dismiss the notification.
          * this is passed in by {@code FlagGroup}.
          */
-        onDismissed: React.PropTypes.func,
+        onDismissed: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The text to display at the top of the notification. If not passed in,
          * the passed in defaultTitleKey will be used.
          */
-        title: React.PropTypes.string,
+        title: PropTypes.string,
 
         /**
          * The unique identifier for the notification. Passed back by the
          * {@code Flag} component in the onDismissed callback.
          */
-        uid: React.PropTypes.number
+        uid: PropTypes.number
     };
 
     /**

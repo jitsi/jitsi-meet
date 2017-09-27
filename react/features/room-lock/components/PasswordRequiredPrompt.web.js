@@ -1,4 +1,5 @@
 import AKFieldText from '@atlaskit/field-text';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -22,9 +23,9 @@ class PasswordRequiredPrompt extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func,
-        t: React.PropTypes.func
+        conference: PropTypes.object,
+        dispatch: PropTypes.func,
+        t: PropTypes.func
     };
 
     /**

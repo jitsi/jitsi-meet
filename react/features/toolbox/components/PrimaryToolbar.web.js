@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -20,12 +21,12 @@ class PrimaryToolbar extends Component {
         /**
          * Contains toolbar buttons for primary toolbar.
          */
-        _primaryToolbarButtons: React.PropTypes.instanceOf(Map),
+        _primaryToolbarButtons: PropTypes.instanceOf(Map),
 
         /**
          * Shows whether toolbox is visible.
          */
-        _visible: React.PropTypes.bool
+        _visible: PropTypes.bool
     };
 
     state: Object;

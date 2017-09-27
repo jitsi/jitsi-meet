@@ -13,7 +13,7 @@ export const HIDE_DIALOG = Symbol('HIDE_DIALOG');
  * {
  *     type: OPEN_DIALOG,
  *     component: React.Component,
- *     props: React.PropTypes.object
+ *     props: PropTypes
  * }
  *
  */

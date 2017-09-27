@@ -1,4 +1,5 @@
 import { FlagGroup } from '@atlaskit/flag';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -22,18 +23,18 @@ class NotificationsContainer extends Component {
          * The notifications to be displayed, with the first index being the
          * notification at the top and the rest shown below it in order.
          */
-        _notifications: React.PropTypes.array,
+        _notifications: PropTypes.array,
 
         /**
          * Whether or not notifications should be displayed at all. If not,
          * notifications will be dismissed immediately.
          */
-        _showNotifications: React.PropTypes.bool,
+        _showNotifications: PropTypes.bool,
 
         /**
          * Invoked to update the redux store in order to remove notifications.
          */
-        dispatch: React.PropTypes.func
+        dispatch: PropTypes.func
     };
 
     /**
@@ -168,7 +169,7 @@ class NotificationsContainer extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _notifications: React.PropTypes.array
+ *     _notifications: Array
  * }}
  */
 function _mapStateToProps(state) {

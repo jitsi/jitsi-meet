@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -31,32 +32,32 @@ class Toolbox extends Component {
         /**
          * Indicates if the toolbox should always be visible.
          */
-        _alwaysVisible: React.PropTypes.bool,
+        _alwaysVisible: PropTypes.bool,
 
         /**
          * Handler dispatching setting default buttons action.
          */
-        _setDefaultToolboxButtons: React.PropTypes.func,
+        _setDefaultToolboxButtons: PropTypes.func,
 
         /**
          * Handler dispatching reset always visible toolbox action.
          */
-        _setToolboxAlwaysVisible: React.PropTypes.func,
+        _setToolboxAlwaysVisible: PropTypes.func,
 
         /**
          * Represents conference subject.
          */
-        _subject: React.PropTypes.string,
+        _subject: PropTypes.string,
 
         /**
          * Flag showing whether to set subject slide in animation.
          */
-        _subjectSlideIn: React.PropTypes.bool,
+        _subjectSlideIn: PropTypes.bool,
 
         /**
          * Property containing toolbox timeout id.
          */
-        _timeoutID: React.PropTypes.number
+        _timeoutID: PropTypes.number
     };
 
     /**

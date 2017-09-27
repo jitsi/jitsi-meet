@@ -1,9 +1,11 @@
 /* global APP, interfaceConfig */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 
@@ -22,12 +24,12 @@ class SpeakerStats extends Component {
         /**
          * The JitsiConference from which stats will be pulled.
          */
-        conference: React.PropTypes.object,
+        conference: PropTypes.object,
 
         /**
          * The function to translate human-readable text.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

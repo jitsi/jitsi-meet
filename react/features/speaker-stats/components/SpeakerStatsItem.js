@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import TimeElapsed from './TimeElapsed';
@@ -17,22 +18,22 @@ class SpeakerStatsItem extends Component {
         /**
          * The name of the participant.
          */
-        displayName: React.PropTypes.string,
+        displayName: PropTypes.string,
 
         /**
          * The total milliseconds the participant has been dominant speaker.
          */
-        dominantSpeakerTime: React.PropTypes.number,
+        dominantSpeakerTime: PropTypes.number,
 
         /**
          * True if the participant is no longer in the meeting.
          */
-        hasLeft: React.PropTypes.bool,
+        hasLeft: PropTypes.bool,
 
         /**
          * True if the participant is currently the dominant speaker.
          */
-        isDominantSpeaker: React.PropTypes.bool
+        isDominantSpeaker: PropTypes.bool
     };
 
     /**

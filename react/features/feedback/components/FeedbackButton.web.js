@@ -1,6 +1,7 @@
 /* @flow */
 
 import Tooltip from '@atlaskit/tooltip';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -20,17 +21,17 @@ class FeedbackButton extends Component {
          *
          * @type {JitsiConference}
          */
-        _conference: React.PropTypes.object,
+        _conference: PropTypes.object,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * From which side of the button the tooltip should appear from.
          */
-        tooltipPosition: React.PropTypes.string
+        tooltipPosition: PropTypes.string
     };
 
     /**

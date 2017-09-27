@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
@@ -28,7 +29,7 @@ class Filmstrip extends Component {
          * @private
          * @type {Participant[]}
          */
-        _participants: React.PropTypes.array,
+        _participants: PropTypes.array,
 
         /**
          * The indicator which determines whether the filmstrip is visible.
@@ -36,7 +37,7 @@ class Filmstrip extends Component {
          * @private
          * @type {boolean}
          */
-        _visible: React.PropTypes.bool.isRequired
+        _visible: PropTypes.bool.isRequired
     };
 
     /**

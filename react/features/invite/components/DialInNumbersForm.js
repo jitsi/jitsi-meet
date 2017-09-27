@@ -2,6 +2,7 @@ import Button from '@atlaskit/button';
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 import { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -29,28 +30,28 @@ class DialInNumbersForm extends Component {
         /**
          * The redux state representing the dial-in numbers feature.
          */
-        _dialIn: React.PropTypes.object,
+        _dialIn: PropTypes.object,
 
         /**
          * The display name of the local user.
          */
-        _localUserDisplayName: React.PropTypes.string,
+        _localUserDisplayName: PropTypes.string,
 
         /**
          * Invoked to send an ajax request for dial-in numbers.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * The URL of the conference into which this {@code DialInNumbersForm}
          * is inviting the local participant.
          */
-        inviteURL: React.PropTypes.string,
+        inviteURL: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**
@@ -420,8 +421,8 @@ class DialInNumbersForm extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _localUserDisplayName: React.PropTypes.string,
- *     _dialIn: React.PropTypes.object
+ *     _dialIn: Object,
+ *     _localUserDisplayName: string
  * }}
  */
 function _mapStateToProps(state) {

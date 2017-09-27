@@ -56,7 +56,7 @@ export function endRoomLockRequest(conference, password) {
  * @returns {{
  *     type: OPEN_DIALOG,
  *     component: Component,
- *     props: React.PropTypes
+ *     props: PropTypes
  * }}
  */
 export function _showPasswordDialog(conference) {

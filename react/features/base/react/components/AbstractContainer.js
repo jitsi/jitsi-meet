@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -15,7 +16,7 @@ export default class AbstractContainer extends Component {
      * @static
      */
     static propTypes = {
-        children: React.PropTypes.node,
+        children: PropTypes.node,
 
         /**
          * The event handler/listener to be invoked when this
@@ -24,13 +25,13 @@ export default class AbstractContainer extends Component {
          * undefined, {@code touchFeedback} is considered defined as
          * {@code true}.
          */
-        onClick: React.PropTypes.func,
+        onClick: PropTypes.func,
 
         /**
          * The style (as in stylesheet) to be applied to this
          * {@code AbstractContainer}.
          */
-        style: React.PropTypes.object,
+        style: PropTypes.object,
 
         /**
          * If this instance is to provide visual feedback when touched, then
@@ -38,14 +39,14 @@ export default class AbstractContainer extends Component {
          * undefined and {@link onClick} is defined, {@code touchFeedback} is
          * considered defined as {@code true}.
          */
-        touchFeedback: React.PropTypes.bool,
+        touchFeedback: PropTypes.bool,
 
         /**
          * If this {@code AbstractContainer} is to be visible, then {@code true}
          * or {@code false} if this instance is to be hidden or not rendered at
          * all.
          */
-        visible: React.PropTypes.bool
+        visible: PropTypes.bool
     };
 
     /**

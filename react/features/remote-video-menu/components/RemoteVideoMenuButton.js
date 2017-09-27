@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -16,28 +17,28 @@ export default class RemoteVideoMenuButton extends Component {
          * Text to display within the component that describes the onClick
          * action.
          */
-        buttonText: React.PropTypes.string,
+        buttonText: PropTypes.string,
 
         /**
          * Additional CSS classes to add to the component.
          */
-        displayClass: React.PropTypes.string,
+        displayClass: PropTypes.string,
 
         /**
          * The CSS classes for the icon that will display within the component.
          */
-        iconClass: React.PropTypes.string,
+        iconClass: PropTypes.string,
 
         /**
          * The id attribute to be added to the component's DOM for retrieval
          * when querying the DOM. Not used directly by the component.
          */
-        id: React.PropTypes.string,
+        id: PropTypes.string,
 
         /**
          * Callback to invoke when the component is clicked.
          */
-        onClick: React.PropTypes.func
+        onClick: PropTypes.func
     };
 
     /**

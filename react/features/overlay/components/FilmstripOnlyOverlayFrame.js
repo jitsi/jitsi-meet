@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -26,7 +27,7 @@ class FilmstripOnlyOverlayFrame extends Component {
          *
          * @private
          */
-        _avatar: React.PropTypes.string,
+        _avatar: PropTypes.string,
 
         /**
          * The children components to be displayed into the overlay frame for
@@ -34,7 +35,7 @@ class FilmstripOnlyOverlayFrame extends Component {
          *
          * @type {ReactElement}
          */
-        children: React.PropTypes.node.isRequired,
+        children: PropTypes.node.isRequired,
 
         /**
          * The css class name for the icon that will be displayed over the
@@ -42,7 +43,7 @@ class FilmstripOnlyOverlayFrame extends Component {
          *
          * @type {string}
          */
-        icon: React.PropTypes.string,
+        icon: PropTypes.string,
 
         /**
          * Indicates the css style of the overlay. If true, then lighter;
@@ -50,7 +51,7 @@ class FilmstripOnlyOverlayFrame extends Component {
          *
          * @type {boolean}
          */
-        isLightOverlay: React.PropTypes.bool
+        isLightOverlay: PropTypes.bool
     };
 
     /**

@@ -1,6 +1,7 @@
 /* @flow */
 
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -33,23 +34,23 @@ class Filmstrip extends Component {
         /**
          * Whether or not remote videos are currently being hovered over.
          */
-        _hovered: React.PropTypes.bool,
+        _hovered: PropTypes.bool,
 
         /**
          * Whether or not the remote videos should be visible. Will toggle
          * a class for hiding the videos.
          */
-        _remoteVideosVisible: React.PropTypes.bool,
+        _remoteVideosVisible: PropTypes.bool,
 
         /**
          * Updates the redux store with filmstrip hover changes.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Whether or not the toolbox should be displayed within the filmstrip.
          */
-        displayToolbox: React.PropTypes.bool
+        displayToolbox: PropTypes.bool
     };
 
     /**

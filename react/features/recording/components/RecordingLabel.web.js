@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -23,7 +24,7 @@ class RecordingLabel extends Component {
          * hidden. Depending on the filmstrip state, different CSS classes will
          * be set to allow for adjusting of {@code RecordingLabel} positioning.
          */
-        _filmstripVisible: React.PropTypes.bool,
+        _filmstripVisible: PropTypes.bool,
 
         /**
          * An object to describe the {@code RecordingLabel} content. If no
@@ -35,7 +36,7 @@ class RecordingLabel extends Component {
          *     showSpinner: boolean
          * }}
          */
-        _labelDisplayConfiguration: React.PropTypes.object,
+        _labelDisplayConfiguration: PropTypes.object,
 
         /**
          * Whether or not remote videos within the filmstrip are currently
@@ -43,12 +44,12 @@ class RecordingLabel extends Component {
          * visibility, CSS classes will be set to allow for adjusting of
          * {@code RecordingLabel} positioning.
          */
-        _remoteVideosVisible: React.PropTypes.bool,
+        _remoteVideosVisible: PropTypes.bool,
 
         /**
          * Invoked to obtain translated string.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

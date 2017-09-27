@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -16,30 +17,30 @@ class DesktopSourcePreview extends Component {
          * The callback to invoke when the component is clicked. The id of
          * the DesktopCapturerSource will be passed in.
          */
-        onClick: React.PropTypes.func,
+        onClick: PropTypes.func,
 
         /**
          * The callback to invoke when the component is double clicked. The id
          * of the DesktopCapturerSource will be passed in.
          */
-        onDoubleClick: React.PropTypes.func,
+        onDoubleClick: PropTypes.func,
 
         /**
          * The indicator which determines whether this DesktopSourcePreview is
          * selected. If true, the 'is-selected' CSS class will be added to the
          * Component.
          */
-        selected: React.PropTypes.bool,
+        selected: PropTypes.bool,
 
         /**
          * The DesktopCapturerSource to display.
          */
-        source: React.PropTypes.object,
+        source: PropTypes.object,
 
         /**
          * The source type of the DesktopCapturerSources to display.
          */
-        type: React.PropTypes.string
+        type: PropTypes.string
     };
 
     /**

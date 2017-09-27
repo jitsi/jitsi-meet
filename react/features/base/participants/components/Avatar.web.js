@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -15,7 +16,7 @@ export default class Avatar extends Component {
          *
          * @type {string}
          */
-        uri: React.PropTypes.string
+        uri: PropTypes.string
     };
 
     /**

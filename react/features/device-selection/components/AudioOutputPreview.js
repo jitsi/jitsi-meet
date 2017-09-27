@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -19,12 +20,12 @@ class AudioOutputPreview extends Component {
         /**
          * The device id of the audio output device to use.
          */
-        deviceId: React.PropTypes.string,
+        deviceId: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

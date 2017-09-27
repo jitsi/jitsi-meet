@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -16,13 +17,13 @@ export default class RemoteVideoMenu extends Component {
         /**
          * The components to place as the body of the {@code RemoteVideoMenu}.
          */
-        children: React.PropTypes.node,
+        children: PropTypes.node,
 
         /**
          * The id attribute to be added to the component's DOM for retrieval
          * when querying the DOM. Not used directly by the component.
          */
-        id: React.PropTypes.string
+        id: PropTypes.string
     };
 
     /**

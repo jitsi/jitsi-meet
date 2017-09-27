@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -19,12 +20,12 @@ class TimeElapsed extends Component {
         /**
          * The function to translate human-readable text.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The milliseconds to be converted into a human-readable format.
          */
-        time: React.PropTypes.number
+        time: PropTypes.number
     };
 
     /**

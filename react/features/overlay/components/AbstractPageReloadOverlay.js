@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { randomInt } from '../../base/util';
@@ -22,7 +23,7 @@ export default class AbstractPageReloadOverlay extends Component {
      * @static
      */
     static propTypes = {
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * The indicator which determines whether the reload was caused by
@@ -31,7 +32,7 @@ export default class AbstractPageReloadOverlay extends Component {
          * @public
          * @type {boolean}
          */
-        isNetworkFailure: React.PropTypes.bool,
+        isNetworkFailure: PropTypes.bool,
 
         /**
          * The reason for the error that will cause the reload.
@@ -40,7 +41,7 @@ export default class AbstractPageReloadOverlay extends Component {
          * @public
          * @type {string}
          */
-        reason: React.PropTypes.string,
+        reason: PropTypes.string,
 
         /**
          * The function to translate human-readable text.
@@ -48,7 +49,7 @@ export default class AbstractPageReloadOverlay extends Component {
          * @public
          * @type {Function}
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     _interval: ?number

@@ -1,4 +1,5 @@
 import Button from '@atlaskit/button';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -7,8 +8,6 @@ import { getAvatarURL, getParticipants } from '../../base/participants';
 import { openInviteDialog } from '../../invite';
 
 import ContactListItem from './ContactListItem';
-
-const { PropTypes } = React;
 
 declare var interfaceConfig: Object;
 

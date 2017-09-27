@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -19,7 +20,7 @@ class ParticipantCounter extends Component {
         /**
          * The number of participants in the conference.
          */
-        _count: React.PropTypes.number
+        _count: PropTypes.number
     };
 
     /**

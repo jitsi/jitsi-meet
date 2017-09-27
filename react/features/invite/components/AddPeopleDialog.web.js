@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import { Immutable } from 'nuclear-js';
-import { connect } from 'react-redux';
 import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
+import { Immutable } from 'nuclear-js';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { getInviteURL } from '../../base/connection';
 import { Dialog, hideDialog } from '../../base/dialog';
@@ -13,8 +14,6 @@ import MultiSelectAutocomplete
 import { invitePeople, inviteRooms, searchPeople } from '../functions';
 
 declare var interfaceConfig: Object;
-
-const { PropTypes } = React;
 
 /**
  * The dialog that allows to invite people to the call.
@@ -325,8 +324,8 @@ class AddPeopleDialog extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _peopleSearchUrl: React.PropTypes.string,
- *     _jwt: React.PropTypes.string
+ *     _jwt: string,
+ *     _peopleSearchUrl: string
  * }}
  */
 function _mapStateToProps(state) {

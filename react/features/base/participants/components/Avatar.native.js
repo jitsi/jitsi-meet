@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
@@ -34,14 +35,14 @@ export default class Avatar extends Component {
          * The optional style to add to the {@link Avatar} in order to customize
          * its base look (and feel).
          */
-        style: React.PropTypes.object,
+        style: PropTypes.object,
 
         /**
          * The URI of the {@link Avatar}.
          *
          * @type {string}
          */
-        uri: React.PropTypes.string
+        uri: PropTypes.string
     };
 
     /**

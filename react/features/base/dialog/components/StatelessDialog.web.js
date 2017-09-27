@@ -1,6 +1,7 @@
 import AKButton from '@atlaskit/button';
 import AKButtonGroup from '@atlaskit/button-group';
 import ModalDialog from '@atlaskit/modal-dialog';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../i18n';
@@ -34,24 +35,24 @@ class StatelessDialog extends Component {
         /**
          * This is the body of the dialog, the component children.
          */
-        children: React.PropTypes.node,
+        children: PropTypes.node,
 
         /**
          * Disables dismissing the dialog when the blanket is clicked. Enabled
          * by default.
          */
-        disableBlanketClickDismiss: React.PropTypes.bool,
+        disableBlanketClickDismiss: PropTypes.bool,
 
         /**
          * Whether the dialog is modal. This means clicking on the blanket will
          * leave the dialog open. No cancel button.
          */
-        isModal: React.PropTypes.bool,
+        isModal: PropTypes.bool,
 
         /**
          * Disables rendering of the submit button.
          */
-        submitDisabled: React.PropTypes.bool,
+        submitDisabled: PropTypes.bool,
 
         /**
          * Width of the dialog, can be:
@@ -60,7 +61,7 @@ class StatelessDialog extends Component {
          * - integer value for pixel width
          * - string value for percentage
          */
-        width: React.PropTypes.string
+        width: PropTypes.string
     };
 
     /**

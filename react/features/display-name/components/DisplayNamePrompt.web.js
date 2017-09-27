@@ -1,4 +1,5 @@
 import AKFieldText from '@atlaskit/field-text';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -26,17 +27,17 @@ class DisplayNamePrompt extends Component {
          * The current ID for the local participant. Used for setting the
          * display name on the associated participant.
          */
-        _localParticipantID: React.PropTypes.string,
+        _localParticipantID: PropTypes.string,
 
         /**
          * Invoked to update the local participant's display name.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -41,18 +42,18 @@ class ProfileButton extends Component {
         /**
          * Whether the button support clicking or not.
          */
-        _unclickable: React.PropTypes.bool,
+        _unclickable: PropTypes.bool,
 
         /**
          * Whether the side panel is opened or not.
          */
-        toggled: React.PropTypes.bool,
+        toggled: PropTypes.bool,
 
         /**
          * From which side tooltips should display. Will be re-used for
          * displaying the inline dialog for video quality adjustment.
          */
-        tooltipPosition: React.PropTypes.string
+        tooltipPosition: PropTypes.string
     };
 
     /**

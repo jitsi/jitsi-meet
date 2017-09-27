@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
@@ -17,28 +18,28 @@ class DesktopPickerPane extends Component {
         /**
          * The handler to be invoked when a DesktopSourcePreview is clicked.
          */
-        onClick: React.PropTypes.func,
+        onClick: PropTypes.func,
 
         /**
          * The handler to be invoked when a DesktopSourcePreview is double
          * clicked.
          */
-        onDoubleClick: React.PropTypes.func,
+        onDoubleClick: PropTypes.func,
 
         /**
          * The id of the DesktopCapturerSource that is currently selected.
          */
-        selectedSourceId: React.PropTypes.string,
+        selectedSourceId: PropTypes.string,
 
         /**
          * An array of DesktopCapturerSources.
          */
-        sources: React.PropTypes.array,
+        sources: PropTypes.array,
 
         /**
          * The source type of the DesktopCapturerSources to display.
          */
-        type: React.PropTypes.string
+        type: PropTypes.string
     };
 
     /**

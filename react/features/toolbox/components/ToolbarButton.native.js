@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
@@ -23,7 +24,7 @@ class ToolbarButton extends AbstractToolbarButton {
         /**
          * Indicates whether this {@code ToolbarButton} is disabled.
          */
-        disabled: React.PropTypes.bool
+        disabled: PropTypes.bool
     };
 
     /**

@@ -1,5 +1,6 @@
 /* global interfaceConfig */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate, translateToHTML } from '../../base/i18n';
@@ -24,7 +25,7 @@ class UserMediaPermissionsOverlay extends Component {
          * @public
          * @type {string}
          */
-        browser: React.PropTypes.string,
+        browser: PropTypes.string,
 
         /**
          * The function to translate human-readable text.
@@ -32,7 +33,7 @@ class UserMediaPermissionsOverlay extends Component {
          * @public
          * @type {Function}
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

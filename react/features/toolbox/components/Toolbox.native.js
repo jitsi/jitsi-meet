@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
@@ -45,55 +46,55 @@ class Toolbox extends Component {
         /**
          * Flag showing that audio is muted.
          */
-        _audioMuted: React.PropTypes.bool,
+        _audioMuted: PropTypes.bool,
 
         /**
          * Flag showing whether the audio-only mode is in use.
          */
-        _audioOnly: React.PropTypes.bool,
+        _audioOnly: PropTypes.bool,
 
         /**
          * Flag showing whether room is locked.
          */
-        _locked: React.PropTypes.bool,
+        _locked: PropTypes.bool,
 
         /**
          * Handler for hangup.
          */
-        _onHangup: React.PropTypes.func,
+        _onHangup: PropTypes.func,
 
         /**
          * Sets the lock i.e. password protection of the conference/room.
          */
-        _onRoomLock: React.PropTypes.func,
+        _onRoomLock: PropTypes.func,
 
         /**
          * Begins the UI procedure to share the conference/room URL.
          */
-        _onShareRoom: React.PropTypes.func,
+        _onShareRoom: PropTypes.func,
 
         /**
          * Toggles the audio-only flag of the conference.
          */
-        _onToggleAudioOnly: React.PropTypes.func,
+        _onToggleAudioOnly: PropTypes.func,
 
         /**
          * Switches between the front/user-facing and back/environment-facing
          * cameras.
          */
-        _onToggleCameraFacingMode: React.PropTypes.func,
+        _onToggleCameraFacingMode: PropTypes.func,
 
         /**
          * Flag showing whether video is muted.
          */
-        _videoMuted: React.PropTypes.bool,
+        _videoMuted: PropTypes.bool,
 
         /**
          * Flag showing whether toolbar is visible.
          */
-        _visible: React.PropTypes.bool,
+        _visible: PropTypes.bool,
 
-        dispatch: React.PropTypes.func
+        dispatch: PropTypes.func
     };
 
     /**

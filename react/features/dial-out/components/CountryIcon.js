@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -13,12 +14,12 @@ export default class CountryIcon extends Component {
         /**
          * The css style class name.
          */
-        className: React.PropTypes.string,
+        className: PropTypes.string,
 
         /**
          * The 2-letter country code.
          */
-        countryCode: React.PropTypes.string
+        countryCode: PropTypes.string
     };
 
     /**

@@ -1,6 +1,7 @@
 import Flag from '@atlaskit/flag';
 import WarningIcon from '@atlaskit/icon/glyph/warning';
 import { ToggleStateless } from '@atlaskit/toggle';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -21,63 +22,63 @@ class NotificationWithToggle extends Component {
          * Any additional text to display at the end of the notification message
          * body.
          */
-        additionalMessage: React.PropTypes.string,
+        additionalMessage: PropTypes.string,
 
         /**
          * Whether or not the dismiss button should be displayed. This is passed
          * in by {@code FlagGroup}.
          */
-        isDismissAllowed: React.PropTypes.bool,
+        isDismissAllowed: PropTypes.bool,
 
         /**
          * The translation key to be used as the main body of the notification.
          */
-        messageKey: React.PropTypes.string,
+        messageKey: PropTypes.string,
 
         /**
          * Callback invoked when the user clicks to dismiss the notification.
          * This is passed in by {@code FlagGroup}.
          */
-        onDismissed: React.PropTypes.func,
+        onDismissed: PropTypes.func,
 
         /**
          * Optional callback to invoke when the notification is dismissed. The
          * current value of the toggle element will be passed in.
          */
-        onToggleSubmit: React.PropTypes.func,
+        onToggleSubmit: PropTypes.func,
 
         /**
          * Whether or not the toggle element should be displayed.
          */
-        showToggle: React.PropTypes.bool,
+        showToggle: PropTypes.bool,
 
         /**
          * Translation key for a message to display at the top of the
          * notification body.
          */
-        subtitleKey: React.PropTypes.string,
+        subtitleKey: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The translation key to be used as the title of the notification.
          */
-        titleKey: React.PropTypes.string,
+        titleKey: PropTypes.string,
 
         /*
          * The translation key to be used as a label describing what setting the
          * toggle will change.
          */
-        toggleLabelKey: React.PropTypes.string,
+        toggleLabelKey: PropTypes.string,
 
         /**
          * The unique identifier for the notification. Passed back by the
          * {@code Flag} component in the onDismissed callback.
          */
-        uid: React.PropTypes.number
+        uid: PropTypes.number
     };
 
     /**

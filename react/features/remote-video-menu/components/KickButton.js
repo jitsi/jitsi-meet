@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -23,22 +24,22 @@ class KickButton extends Component {
          * Invoked to signal the participant with the passed in participantID
          * should be removed from the conference.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Callback to invoke when {@code KickButton} is clicked.
          */
-        onClick: React.PropTypes.func,
+        onClick: PropTypes.func,
 
         /**
          * The ID of the participant linked to the onClick callback.
          */
-        participantID: React.PropTypes.string,
+        participantID: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

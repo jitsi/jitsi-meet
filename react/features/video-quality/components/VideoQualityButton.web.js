@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { VideoQualityDialog } from './';
-
 import { ToolbarButtonWithDialog } from '../../toolbox';
+
+import { VideoQualityDialog } from './';
 
 /**
  * A configuration object to describe how {@code ToolbarButton} should render
@@ -35,7 +36,7 @@ class VideoQualityButton extends Component {
          * From which side tooltips should display. Will be re-used for
          * displaying the inline dialog for video quality adjustment.
          */
-        tooltipPosition: React.PropTypes.string
+        tooltipPosition: PropTypes.string
     };
 
     /**

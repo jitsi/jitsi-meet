@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -30,29 +31,28 @@ class Toolbar extends Component {
         /**
          * Children of current React component.
          */
-        children: React.PropTypes.element,
+        children: PropTypes.element,
 
         /**
          * Toolbar's class name.
          */
-        className: React.PropTypes.string,
+        className: PropTypes.string,
 
         /**
          * Used to dispatch an action when a button is clicked or on mouse
          * out/in event.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Map with toolbar buttons.
          */
-        toolbarButtons: React.PropTypes.instanceOf(Map),
+        toolbarButtons: PropTypes.instanceOf(Map),
 
         /**
          * Indicates the position of the tooltip.
          */
-        tooltipPosition:
-            React.PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
+        tooltipPosition: PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
     };
 
     /**

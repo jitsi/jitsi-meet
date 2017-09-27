@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -19,22 +20,22 @@ export default class StatelessToolbar extends Component {
         /**
          * Children of current React component.
          */
-        children: React.PropTypes.node,
+        children: PropTypes.node,
 
         /**
          * Toolbar's class name.
          */
-        className: React.PropTypes.string,
+        className: PropTypes.string,
 
         /**
          *  Handler for mouse out event.
          */
-        onMouseOut: React.PropTypes.func,
+        onMouseOut: PropTypes.func,
 
         /**
          * Handler for mouse over event.
          */
-        onMouseOver: React.PropTypes.func
+        onMouseOver: PropTypes.func
     };
 
     /**

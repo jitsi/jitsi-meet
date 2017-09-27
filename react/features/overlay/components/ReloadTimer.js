@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -24,7 +25,7 @@ class ReloadTimer extends Component {
          * @public
          * @type {number}
          */
-        end: React.PropTypes.number,
+        end: PropTypes.number,
 
         /**
          * The interval in sec for adding this.state.step to this.state.current.
@@ -32,13 +33,13 @@ class ReloadTimer extends Component {
          * @public
          * @type {number}
          */
-        interval: React.PropTypes.number,
+        interval: PropTypes.number,
 
         /**
          * The function that will be executed when timer finish (when
          * this.state.current === this.props.end)
          */
-        onFinish: React.PropTypes.func,
+        onFinish: PropTypes.func,
 
         /**
          * The start of the timer. The initial value for this.state.current.
@@ -46,7 +47,7 @@ class ReloadTimer extends Component {
          * @public
          * @type {number}
          */
-        start: React.PropTypes.number,
+        start: PropTypes.number,
 
         /**
          * The value which will be added to this.state.current on every step.
@@ -54,7 +55,7 @@ class ReloadTimer extends Component {
          * @public
          * @type {number}
          */
-        step: React.PropTypes.number,
+        step: PropTypes.number,
 
         /**
          * The function to translate human-readable text.
@@ -62,7 +63,7 @@ class ReloadTimer extends Component {
          * @public
          * @type {Function}
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

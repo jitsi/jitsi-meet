@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -17,7 +18,7 @@ class SpeakerStatsLabels extends Component {
         /**
          * The function to translate human-readable text.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

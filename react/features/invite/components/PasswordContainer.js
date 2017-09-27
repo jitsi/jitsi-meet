@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -24,28 +25,28 @@ class PasswordContainer extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
+        conference: PropTypes.object,
 
         /**
          * The value for how the conference is locked (or undefined if not
          * locked) as defined by room-lock constants.
          */
-        locked: React.PropTypes.string,
+        locked: PropTypes.string,
 
         /**
          * The current known password for the JitsiConference.
          */
-        password: React.PropTypes.string,
+        password: PropTypes.string,
 
         /**
          * Whether or not the password editing components should be displayed.
          */
-        showPasswordEdit: React.PropTypes.bool,
+        showPasswordEdit: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

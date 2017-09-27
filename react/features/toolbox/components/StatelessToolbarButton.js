@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
@@ -68,7 +69,7 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
         /**
          * Object describing button.
          */
-        button: React.PropTypes.object.isRequired
+        button: PropTypes.object.isRequired
     };
 
     /**

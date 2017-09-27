@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import BaseIndicator from './BaseIndicator';
@@ -17,7 +18,7 @@ class ModeratorIndicator extends Component {
         /**
          * From which side of the indicator the tooltip should appear from.
          */
-        tooltipPosition: React.PropTypes.string
+        tooltipPosition: PropTypes.string
     };
 
     /**

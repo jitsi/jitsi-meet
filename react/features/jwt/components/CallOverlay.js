@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -73,7 +74,7 @@ class CallOverlay extends Component {
      * @static
      */
     static propTypes = {
-        _callee: React.PropTypes.object
+        _callee: PropTypes.object
     };
 
     /**

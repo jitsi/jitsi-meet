@@ -1,5 +1,6 @@
 import Button from '@atlaskit/button';
 import { FieldText } from '@atlaskit/field-text';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -21,17 +22,17 @@ class AddPasswordForm extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
+        conference: PropTypes.object,
 
         /**
          * Invoked to set a password on the conference.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

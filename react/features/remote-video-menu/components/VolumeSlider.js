@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -25,12 +26,12 @@ class VolumeSlider extends Component {
          * first mounts. Changes will be stored in state. The value should be a
          * number between 0 and 1.
          */
-        initialValue: React.PropTypes.number,
+        initialValue: PropTypes.number,
 
         /**
          * The callback to invoke when the audio slider value changes.
          */
-        onChange: React.PropTypes.func
+        onChange: PropTypes.func
     };
 
     /**

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -26,12 +27,12 @@ class RemoteControlAuthorizationDialog extends Component {
          *
          * @private
          */
-        _displayName: React.PropTypes.string,
+        _displayName: PropTypes.string,
 
         /**
          * Used to show/hide the dialog on cancel.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * The ID of the participant who is requesting authorization for remote
@@ -39,12 +40,12 @@ class RemoteControlAuthorizationDialog extends Component {
          *
          * @public
          */
-        participantId: React.PropTypes.string,
+        participantId: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -22,8 +23,8 @@ export default class AbstractAudio extends Component {
          *
          * @type {string}
          */
-        src: React.PropTypes.string,
-        stream: React.PropTypes.object
+        src: PropTypes.string,
+        stream: PropTypes.object
     };
 
     /**

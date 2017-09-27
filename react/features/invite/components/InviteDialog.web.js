@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -26,22 +27,22 @@ class InviteDialog extends Component {
         /**
          * The redux store representation of the JitsiConference.
          */
-        _conference: React.PropTypes.object,
+        _conference: PropTypes.object,
 
         /**
          * The url for the JitsiConference.
          */
-        _inviteURL: React.PropTypes.string,
+        _inviteURL: PropTypes.string,
 
         /**
          * Whether or not the current user is a conference moderator.
          */
-        _isModerator: React.PropTypes.bool,
+        _isModerator: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

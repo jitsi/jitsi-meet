@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -25,7 +26,7 @@ class LargeVideo extends Component {
          *
          * @private
          */
-        _participantId: React.PropTypes.string
+        _participantId: PropTypes.string
     };
 
     /**

@@ -1,5 +1,6 @@
 /* global APP */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -22,18 +23,18 @@ class ContactListItem extends Component {
         /**
          * The link to the participant's avatar image.
          */
-        avatarURI: React.PropTypes.string,
+        avatarURI: PropTypes.string,
 
         /**
          * An id attribute to set on the root of {@code ContactListItem}. Used
          * by the torture tests.
          */
-        id: React.PropTypes.string,
+        id: PropTypes.string,
 
         /**
          * The participant's display name.
          */
-        name: React.PropTypes.string
+        name: PropTypes.string
     };
 
     /**

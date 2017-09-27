@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
@@ -27,7 +28,7 @@ class Conference extends Component {
      * @static
      */
     static propTypes = {
-        dispatch: React.PropTypes.func
+        dispatch: PropTypes.func
     };
 
     /**

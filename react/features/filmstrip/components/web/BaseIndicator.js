@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Tooltip from '@atlaskit/tooltip';
 
@@ -31,39 +32,39 @@ class BaseIndicator extends Component {
         /**
          * Additional CSS class names to set on the icon container.
          */
-        className: React.PropTypes.string,
+        className: PropTypes.string,
 
         /**
          * The CSS classnames to set on the icon element of the component.
          */
-        iconClassName: React.PropTypes.string,
+        iconClassName: PropTypes.string,
 
         /**
          * The font size for the icon.
          */
-        iconSize: React.PropTypes.string,
+        iconSize: PropTypes.string,
 
         /**
          * The ID attribue to set on the root element of the component.
          */
-        id: React.PropTypes.string,
+        id: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * The translation key to use for displaying a tooltip when hovering
          * over the component.
          */
-        tooltipKey: React.PropTypes.string,
+        tooltipKey: PropTypes.string,
 
         /**
          * From which side of the indicator the tooltip should appear from.
          * Defaults to "top".
          */
-        tooltipPosition: React.PropTypes.string
+        tooltipPosition: PropTypes.string
     };
 
     /**

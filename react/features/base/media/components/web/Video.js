@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -26,23 +27,23 @@ class Video extends Component {
         /**
          * CSS classes to add to the video element.
          */
-        className: React.PropTypes.string,
+        className: PropTypes.string,
 
         /**
          * The value of the id attribute of the video. Used by the torture tests
          * to locate video elements.
          */
-        id: React.PropTypes.string,
+        id: PropTypes.string,
 
         /**
          * Optional callback to invoke once the video starts playing.
          */
-        onVideoPlaying: React.PropTypes.func,
+        onVideoPlaying: PropTypes.func,
 
         /**
          * The JitsiLocalTrack to display.
          */
-        videoTrack: React.PropTypes.object
+        videoTrack: PropTypes.object
     };
 
     /**

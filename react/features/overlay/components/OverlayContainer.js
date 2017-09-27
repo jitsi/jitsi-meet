@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -32,7 +33,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {string}
          */
-        _browser: React.PropTypes.string,
+        _browser: PropTypes.string,
 
         /**
          * The indicator which determines whether the {@link CallOverlay} is
@@ -41,7 +42,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {boolean}
          */
-        _callOverlayVisible: React.PropTypes.bool,
+        _callOverlayVisible: PropTypes.bool,
 
         /**
          * The indicator which determines whether the status of the
@@ -52,7 +53,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {boolean}
          */
-        _connectionEstablished: React.PropTypes.bool,
+        _connectionEstablished: PropTypes.bool,
 
         /**
          * The indicator which determines whether a critical error for reload
@@ -63,7 +64,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {boolean}
          */
-        _haveToReload: React.PropTypes.bool,
+        _haveToReload: PropTypes.bool,
 
         /**
          * The indicator which determines whether the GUM permissions prompt is
@@ -74,7 +75,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {boolean}
          */
-        _isMediaPermissionPromptVisible: React.PropTypes.bool,
+        _isMediaPermissionPromptVisible: PropTypes.bool,
 
         /**
          * The indicator which determines whether the reload was caused by
@@ -85,7 +86,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {boolean}
          */
-        _isNetworkFailure: React.PropTypes.bool,
+        _isNetworkFailure: PropTypes.bool,
 
         /**
          * The reason for the error that will cause the reload.
@@ -95,7 +96,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {string}
          */
-        _reason: React.PropTypes.string,
+        _reason: PropTypes.string,
 
         /**
          * The indicator which determines whether the GUM permissions prompt is
@@ -106,7 +107,7 @@ class OverlayContainer extends Component {
          * @private
          * @type {string}
          */
-        _suspendDetected: React.PropTypes.bool
+        _suspendDetected: PropTypes.bool
     };
 
     /**

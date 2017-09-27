@@ -1,6 +1,7 @@
 import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
 import AKFieldText, { FieldText } from '@atlaskit/field-text';
 import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -40,22 +41,22 @@ class DialOutNumbersForm extends Component {
         /**
          * The redux state representing the list of dial-out codes.
          */
-        _dialOutCodes: React.PropTypes.array,
+        _dialOutCodes: PropTypes.array,
 
         /**
          * The function called on every dial input change.
          */
-        onChange: React.PropTypes.func,
+        onChange: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * Invoked to send an ajax request for dial-out codes.
          */
-        updateDialOutCodes: React.PropTypes.func
+        updateDialOutCodes: PropTypes.func
     };
 
     /**
@@ -353,7 +354,7 @@ class DialOutNumbersForm extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _dialOutCodes: React.PropTypes.object
+ *     _dialOutCodes: Object
  * }}
  */
 function _mapStateToProps(state) {

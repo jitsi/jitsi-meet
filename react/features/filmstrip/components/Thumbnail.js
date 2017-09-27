@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -29,11 +30,11 @@ class Thumbnail extends Component {
      * @static
      */
     static propTypes = {
-        _audioTrack: React.PropTypes.object,
-        _largeVideo: React.PropTypes.object,
-        _videoTrack: React.PropTypes.object,
-        dispatch: React.PropTypes.func,
-        participant: React.PropTypes.object
+        _audioTrack: PropTypes.object,
+        _largeVideo: PropTypes.object,
+        _videoTrack: PropTypes.object,
+        dispatch: PropTypes.func,
+        participant: PropTypes.object
     };
 
     /**

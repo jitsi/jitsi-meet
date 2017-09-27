@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 declare var interfaceConfig: Object;
@@ -15,7 +16,7 @@ export default class OverlayFrame extends Component {
         /**
          * The children components to be displayed into the overlay frame.
          */
-        children: React.PropTypes.node.isRequired,
+        children: PropTypes.node.isRequired,
 
         /**
          * Indicates the css style of the overlay. If true, then lighter;
@@ -23,7 +24,7 @@ export default class OverlayFrame extends Component {
          *
          * @type {boolean}
          */
-        isLightOverlay: React.PropTypes.bool
+        isLightOverlay: PropTypes.bool
     };
 
     /**

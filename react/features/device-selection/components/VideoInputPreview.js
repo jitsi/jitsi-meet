@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Video } from '../../base/media';
@@ -21,12 +22,12 @@ class VideoInputPreview extends Component {
          * An error message to display instead of a preview. Displaying an error
          * will take priority over displaying a video preview.
          */
-        error: React.PropTypes.string,
+        error: PropTypes.string,
 
         /**
          * The JitsiLocalTrack to display.
          */
-        track: React.PropTypes.object
+        track: PropTypes.object
     };
 
     /**

@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -57,7 +58,7 @@ class UnsupportedMobileBrowser extends Component {
          * @private
          * @type {string}
          */
-        _room: React.PropTypes.string,
+        _room: PropTypes.string,
 
         /**
          * The function to translate human-readable text.
@@ -65,7 +66,7 @@ class UnsupportedMobileBrowser extends Component {
          * @public
          * @type {Function}
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

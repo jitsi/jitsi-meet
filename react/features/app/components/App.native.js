@@ -1,6 +1,6 @@
 /* global __DEV__ */
 
-import React from 'react';
+import PropTypes from 'prop-types';
 import { Linking } from 'react-native';
 
 import '../../analytics';
@@ -35,7 +35,7 @@ export class App extends AbstractApp {
          * page is rendered when the {@link App} is not at a location (URL)
          * identifying a Jitsi Meet conference/room.
          */
-        welcomePageEnabled: React.PropTypes.bool
+        welcomePageEnabled: PropTypes.bool
     };
 
     /**

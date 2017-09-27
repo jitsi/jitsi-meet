@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -30,7 +31,7 @@ class AudioLevelIndicator extends Component {
          *
          * @type {number}
          */
-        audioLevel: React.PropTypes.number
+        audioLevel: PropTypes.number
     };
 
     /**

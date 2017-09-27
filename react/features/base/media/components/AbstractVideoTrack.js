@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { trackVideoStarted } from '../../tracks';
@@ -18,18 +19,18 @@ export default class AbstractVideoTrack extends Component {
      * @static
      */
     static propTypes = {
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
-        videoTrack: React.PropTypes.object,
+        videoTrack: PropTypes.object,
 
-        waitForVideoStarted: React.PropTypes.bool,
+        waitForVideoStarted: PropTypes.bool,
 
         /**
          * The z-order of the Video of AbstractVideoTrack in the stacking space
          * of all Videos. For more details, refer to the zOrder property of the
          * Video class for React Native.
          */
-        zOrder: React.PropTypes.number
+        zOrder: PropTypes.number
     };
 
     /**

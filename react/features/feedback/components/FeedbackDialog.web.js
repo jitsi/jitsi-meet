@@ -1,5 +1,6 @@
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -46,13 +47,13 @@ class FeedbackDialog extends Component {
          * The cached feedback message, if any, that was set when closing a
          * previous instance of {@code FeedbackDialog}.
          */
-        _message: React.PropTypes.string,
+        _message: PropTypes.string,
 
         /**
          * The cached feedback score, if any, that was set when closing a
          * previous instance of {@code FeedbackDialog}.
          */
-        _score: React.PropTypes.number,
+        _score: PropTypes.number,
 
         /**
          * The JitsiConference that is being rated. The conference is passed in
@@ -61,22 +62,22 @@ class FeedbackDialog extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
+        conference: PropTypes.object,
 
         /**
          * Invoked to signal feedback submission or canceling.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Callback invoked when {@code FeedbackDialog} is unmounted.
          */
-        onClose: React.PropTypes.func,
+        onClose: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

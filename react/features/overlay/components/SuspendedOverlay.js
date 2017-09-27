@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate, translateToHTML } from '../../base/i18n';
@@ -22,7 +23,7 @@ class SuspendedOverlay extends Component {
          * @public
          * @type {Function}
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

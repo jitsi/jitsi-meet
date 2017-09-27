@@ -1,5 +1,7 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import { Dialog } from '../../base/dialog';
 
 import { endRoomLockRequest } from '../actions';
@@ -20,8 +22,8 @@ class RoomLockPrompt extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func
+        conference: PropTypes.object,
+        dispatch: PropTypes.func
     };
 
     /**

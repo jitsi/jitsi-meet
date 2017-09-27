@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -26,25 +27,25 @@ class DeviceSelectionDialog extends Component {
          * All known audio and video devices split by type. This prop comes from
          * the app state.
          */
-        _availableDevices: React.PropTypes.object,
+        _availableDevices: PropTypes.object,
 
         /**
          * Device id for the current audio input device. This device will be set
          * as the default audio input device to preview.
          */
-        currentAudioInputId: React.PropTypes.string,
+        currentAudioInputId: PropTypes.string,
 
         /**
          * Device id for the current audio output device. This device will be
          * set as the default audio output device to preview.
          */
-        currentAudioOutputId: React.PropTypes.string,
+        currentAudioOutputId: PropTypes.string,
 
         /**
          * Device id for the current video input device. This device will be set
          * as the default video input device to preview.
          */
-        currentVideoInputId: React.PropTypes.string,
+        currentVideoInputId: PropTypes.string,
 
         /**
          * Whether or not the audio selector can be interacted with. If true,
@@ -52,37 +53,37 @@ class DeviceSelectionDialog extends Component {
          * specifically used to prevent audio device changing in Firefox, which
          * currently does not work due to a browser-side regression.
          */
-        disableAudioInputChange: React.PropTypes.bool,
+        disableAudioInputChange: PropTypes.bool,
 
         /**
          * True if device changing is configured to be disallowed. Selectors
          * will display as disabled.
          */
-        disableDeviceChange: React.PropTypes.bool,
+        disableDeviceChange: PropTypes.bool,
 
         /**
          * Invoked to notify the store of app state changes.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Function that checks whether or not a new audio input source can be
          * selected.
          */
-        hasAudioPermission: React.PropTypes.func,
+        hasAudioPermission: PropTypes.func,
 
         /**
          * Function that checks whether or not a new video input sources can be
          * selected.
          */
-        hasVideoPermission: React.PropTypes.func,
+        hasVideoPermission: PropTypes.func,
 
         /**
          * If true, the audio meter will not display. Necessary for browsers or
          * configurations that do not support local stats to prevent a
          * non-responsive mic preview from displaying.
          */
-        hideAudioInputPreview: React.PropTypes.bool,
+        hideAudioInputPreview: PropTypes.bool,
 
         /**
          * Whether or not the audio output source selector should display. If
@@ -90,7 +91,7 @@ class DeviceSelectionDialog extends Component {
          * rendered. This is specifically used for hiding audio output on
          * temasys browsers which do not support such change.
          */
-        hideAudioOutputSelect: React.PropTypes.bool
+        hideAudioOutputSelect: PropTypes.bool
     };
 
     /**

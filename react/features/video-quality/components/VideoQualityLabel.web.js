@@ -1,13 +1,11 @@
 import Tooltip from '@atlaskit/tooltip';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { VIDEO_QUALITY_LEVELS } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { shouldRemoteVideosBeVisible } from '../../filmstrip';
-
-import {
-    VIDEO_QUALITY_LEVELS
-} from '../../base/conference';
 
 const { HIGH, STANDARD, LOW } = VIDEO_QUALITY_LEVELS;
 
@@ -48,34 +46,34 @@ export class VideoQualityLabel extends Component {
         /**
          * Whether or not the conference is in audio only mode.
          */
-        _audioOnly: React.PropTypes.bool,
+        _audioOnly: PropTypes.bool,
 
         /**
          * Whether or not a connection to a conference has been established.
          */
-        _conferenceStarted: React.PropTypes.bool,
+        _conferenceStarted: PropTypes.bool,
 
         /**
          * Whether or not the filmstrip is displayed with remote videos. Used to
          * determine display classes to set.
          */
-        _filmstripVisible: React.PropTypes.bool,
+        _filmstripVisible: PropTypes.bool,
 
         /**
          * Whether or note remote videos are visible in the filmstrip,
          * regardless of count. Used to determine display classes to set.
          */
-        _remoteVideosVisible: React.PropTypes.bool,
+        _remoteVideosVisible: PropTypes.bool,
 
         /**
          * The current video resolution (height) to display a label for.
          */
-        _resolution: React.PropTypes.number,
+        _resolution: PropTypes.number,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

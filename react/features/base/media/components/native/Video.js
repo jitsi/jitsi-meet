@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
@@ -17,9 +18,9 @@ export default class Video extends Component {
      * @static
      */
     static propTypes = {
-        mirror: React.PropTypes.bool,
-        onPlaying: React.PropTypes.func,
-        stream: React.PropTypes.object,
+        mirror: PropTypes.bool,
+        onPlaying: PropTypes.func,
+        stream: PropTypes.object,
 
         /**
          * Similarly to the CSS property z-index, specifies the z-order of this
@@ -44,7 +45,7 @@ export default class Video extends Component {
          * values: 0 for the remote video(s) which appear in the background, and
          * 1 for the local video(s) which appear above the remote video(s).
          */
-        zOrder: React.PropTypes.number
+        zOrder: PropTypes.number
     };
 
     /**

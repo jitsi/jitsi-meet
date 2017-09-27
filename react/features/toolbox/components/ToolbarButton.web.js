@@ -2,12 +2,12 @@
 
 import AKInlineDialog from '@atlaskit/inline-dialog';
 import { Tooltip } from '@atlaskit/tooltip';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
 import { isButtonEnabled } from '../functions';
-
 import StatelessToolbarButton from './StatelessToolbarButton';
 
 declare var APP: Object;
@@ -60,28 +60,27 @@ class ToolbarButton extends Component {
         /**
          * Object describing button.
          */
-        button: React.PropTypes.object.isRequired,
+        button: PropTypes.object.isRequired,
 
         /**
          * Handler for component mount.
          */
-        onMount: React.PropTypes.func,
+        onMount: PropTypes.func,
 
         /**
          * Handler for component unmount.
          */
-        onUnmount: React.PropTypes.func,
+        onUnmount: PropTypes.func,
 
         /**
          * Translation helper function.
          */
-        t: React.PropTypes.func,
+        t: PropTypes.func,
 
         /**
          * Indicates the position of the tooltip.
          */
-        tooltipPosition:
-            React.PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
+        tooltipPosition: PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
     };
 
     /**

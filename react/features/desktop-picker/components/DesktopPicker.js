@@ -1,4 +1,5 @@
 import Tabs from '@atlaskit/tabs';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -57,29 +58,29 @@ class DesktopPicker extends Component {
         /**
          * Used to request DesktopCapturerSources.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * The callback to be invoked when the component is closed or when
          * a DesktopCapturerSource has been chosen.
          */
-        onSourceChoose: React.PropTypes.func,
+        onSourceChoose: PropTypes.func,
 
         /**
          * An object with options related to desktop sharing.
          */
-        options: React.PropTypes.object,
+        options: PropTypes.object,
 
         /**
          * An object with arrays of DesktopCapturerSources. The key should be
          * the source type.
          */
-        sources: React.PropTypes.object,
+        sources: PropTypes.object,
 
         /**
          * Used to obtain translations.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

@@ -2,6 +2,7 @@ import { MultiSelectStateless } from '@atlaskit/multi-select';
 import AKInlineDialog from '@atlaskit/inline-dialog';
 import Spinner from '@atlaskit/spinner';
 import _debounce from 'lodash/debounce';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import InlineDialogFailure from './InlineDialogFailure';
@@ -20,45 +21,45 @@ class MultiSelectAutocomplete extends Component {
         /**
          * The default value of the selected item.
          */
-        defaultValue: React.PropTypes.array,
+        defaultValue: PropTypes.array,
 
         /**
          * Indicates if the component is disabled.
          */
-        isDisabled: React.PropTypes.bool,
+        isDisabled: PropTypes.bool,
 
         /**
          * The text to show when no matches are found.
          */
-        noMatchesFound: React.PropTypes.string,
+        noMatchesFound: PropTypes.string,
 
         /**
          * The function called when the selection changes.
          */
-        onSelectionChange: React.PropTypes.func,
+        onSelectionChange: PropTypes.func,
 
         /**
          * The placeholder text of the input component.
          */
-        placeholder: React.PropTypes.string,
+        placeholder: PropTypes.string,
 
         /**
          * The service providing the search.
          */
-        resourceClient: React.PropTypes.shape({
-            makeQuery: React.PropTypes.func,
-            parseResults: React.PropTypes.func
+        resourceClient: PropTypes.shape({
+            makeQuery: PropTypes.func,
+            parseResults: PropTypes.func
         }).isRequired,
 
         /**
          * Indicates if the component should fit the container.
          */
-        shouldFitContainer: React.PropTypes.bool,
+        shouldFitContainer: PropTypes.bool,
 
         /**
          * Indicates if we should focus.
          */
-        shouldFocus: React.PropTypes.bool
+        shouldFocus: PropTypes.bool
     };
 
     /**

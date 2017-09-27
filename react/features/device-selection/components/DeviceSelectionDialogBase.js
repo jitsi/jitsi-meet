@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { StatelessDialog } from '../../base/dialog';
@@ -25,30 +26,30 @@ class DeviceSelectionDialogBase extends Component {
          * All known audio and video devices split by type. This prop comes from
          * the app state.
          */
-        availableDevices: React.PropTypes.object,
+        availableDevices: PropTypes.object,
 
         /**
          * Closes the dialog.
          */
-        closeModal: React.PropTypes.func,
+        closeModal: PropTypes.func,
 
         /**
          * Device id for the current audio input device. This device will be set
          * as the default audio input device to preview.
          */
-        currentAudioInputId: React.PropTypes.string,
+        currentAudioInputId: PropTypes.string,
 
         /**
          * Device id for the current audio output device. This device will be
          * set as the default audio output device to preview.
          */
-        currentAudioOutputId: React.PropTypes.string,
+        currentAudioOutputId: PropTypes.string,
 
         /**
          * Device id for the current video input device. This device will be set
          * as the default video input device to preview.
          */
-        currentVideoInputId: React.PropTypes.string,
+        currentVideoInputId: PropTypes.string,
 
         /**
          * Whether or not the audio selector can be interacted with. If true,
@@ -56,38 +57,38 @@ class DeviceSelectionDialogBase extends Component {
          * specifically used to prevent audio device changing in Firefox, which
          * currently does not work due to a browser-side regression.
          */
-        disableAudioInputChange: React.PropTypes.bool,
+        disableAudioInputChange: PropTypes.bool,
 
         /**
          * Disables dismissing the dialog when the blanket is clicked. Enabled
          * by default.
          */
-        disableBlanketClickDismiss: React.PropTypes.bool,
+        disableBlanketClickDismiss: PropTypes.bool,
 
         /**
          * True if device changing is configured to be disallowed. Selectors
          * will display as disabled.
          */
-        disableDeviceChange: React.PropTypes.bool,
+        disableDeviceChange: PropTypes.bool,
 
         /**
          * Function that checks whether or not a new audio input source can be
          * selected.
          */
-        hasAudioPermission: React.PropTypes.func,
+        hasAudioPermission: PropTypes.func,
 
         /**
          * Function that checks whether or not a new video input sources can be
          * selected.
          */
-        hasVideoPermission: React.PropTypes.func,
+        hasVideoPermission: PropTypes.func,
 
         /**
          * If true, the audio meter will not display. Necessary for browsers or
          * configurations that do not support local stats to prevent a
          * non-responsive mic preview from displaying.
          */
-        hideAudioInputPreview: React.PropTypes.bool,
+        hideAudioInputPreview: PropTypes.bool,
 
         /**
          * Whether or not the audio output source selector should display. If
@@ -95,27 +96,27 @@ class DeviceSelectionDialogBase extends Component {
          * rendered. This is specifically used for hiding audio output on
          * temasys browsers which do not support such change.
          */
-        hideAudioOutputSelect: React.PropTypes.bool,
+        hideAudioOutputSelect: PropTypes.bool,
 
         /**
          * Function that sets the audio input device.
          */
-        setAudioInputDevice: React.PropTypes.func,
+        setAudioInputDevice: PropTypes.func,
 
         /**
          * Function that sets the audio output device.
          */
-        setAudioOutputDevice: React.PropTypes.func,
+        setAudioOutputDevice: PropTypes.func,
 
         /**
          * Function that sets the video input device.
          */
-        setVideoInputDevice: React.PropTypes.func,
+        setVideoInputDevice: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

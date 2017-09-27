@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -23,27 +24,27 @@ class MuteButton extends Component {
          * Invoked to send a request for muting the participant with the passed
          * in participantID.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Whether or not the participant is currently audio muted.
          */
-        isAudioMuted: React.PropTypes.bool,
+        isAudioMuted: PropTypes.bool,
 
         /**
          * Callback to invoke when {@code MuteButton} is clicked.
          */
-        onClick: React.PropTypes.func,
+        onClick: PropTypes.func,
 
         /**
          * The ID of the participant linked to the onClick callback.
          */
-        participantID: React.PropTypes.string,
+        participantID: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

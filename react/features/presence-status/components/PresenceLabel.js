@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -29,12 +30,12 @@ class PresenceLabel extends Component {
          * The current present status associated with the passed in
          * participantID prop.
          */
-        _presence: React.PropTypes.string,
+        _presence: PropTypes.string,
 
         /**
          * The ID of the participant whose presence status shoul display.
          */
-        participantID: React.PropTypes.string
+        participantID: PropTypes.string
     };
 
     /**

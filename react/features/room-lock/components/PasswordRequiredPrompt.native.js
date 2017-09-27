@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Dialog } from '../../base/dialog';
 
 import { setPassword } from '../../base/conference';
+import { Dialog } from '../../base/dialog';
 
 /**
  * Implements a React Component which prompts the user when a password is
@@ -20,8 +21,8 @@ class PasswordRequiredPrompt extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
-        dispatch: React.PropTypes.func
+        conference: PropTypes.object,
+        dispatch: PropTypes.func
     };
 
     /**

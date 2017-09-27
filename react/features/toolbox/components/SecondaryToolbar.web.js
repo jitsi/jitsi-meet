@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -34,28 +35,28 @@ class SecondaryToolbar extends Component {
          * Application ID for callstats.io API. The {@code FeedbackButton} will
          * display if defined.
          */
-        _callStatsID: React.PropTypes.string,
+        _callStatsID: PropTypes.string,
 
         /**
          * The indicator which determines whether the local participant is a
          * guest in the conference.
          */
-        _isGuest: React.PropTypes.bool,
+        _isGuest: PropTypes.bool,
 
         /**
          * Handler dispatching toggle toolbar container.
          */
-        _onSideToolbarContainerToggled: React.PropTypes.func,
+        _onSideToolbarContainerToggled: PropTypes.func,
 
         /**
          * Contains map of secondary toolbar buttons.
          */
-        _secondaryToolbarButtons: React.PropTypes.instanceOf(Map),
+        _secondaryToolbarButtons: PropTypes.instanceOf(Map),
 
         /**
          * Shows whether toolbox is visible.
          */
-        _visible: React.PropTypes.bool
+        _visible: PropTypes.bool
     };
 
     /**

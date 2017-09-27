@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -19,27 +20,27 @@ class RemovePasswordForm extends Component {
          *
          * @type {JitsiConference}
          */
-        conference: React.PropTypes.object,
+        conference: PropTypes.object,
 
         /**
          * Invoked to send a password removal request.
          */
-        dispatch: React.PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Whether or not the room lock, if any, was set by the local user.
          */
-        lockedLocally: React.PropTypes.bool,
+        lockedLocally: PropTypes.bool,
 
         /**
          * The current known password for the JitsiConference.
          */
-        password: React.PropTypes.string,
+        password: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

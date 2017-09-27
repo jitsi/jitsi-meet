@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -30,23 +31,23 @@ class RemoteControlButton extends Component {
         /**
          * The callback to invoke when the component is clicked.
          */
-        onClick: React.PropTypes.func,
+        onClick: PropTypes.func,
 
         /**
          * The ID of the participant linked to the onClick callback.
          */
-        participantID: React.PropTypes.string,
+        participantID: PropTypes.string,
 
         /**
          * The current status of remote control. Should be a number listed in
          * the enum REMOTE_CONTROL_MENU_STATES.
          */
-        remoteControlState: React.PropTypes.number,
+        remoteControlState: PropTypes.number,
 
         /**
          * Invoked to obtain translated strings.
          */
-        t: React.PropTypes.func
+        t: PropTypes.func
     };
 
     /**

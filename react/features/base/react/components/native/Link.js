@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Linking } from 'react-native';
 
@@ -17,22 +18,22 @@ export default class Link extends Component {
         /**
          * The children to be displayed within this Link.
          */
-        children: React.PropTypes.node,
+        children: PropTypes.node,
 
         /**
          * Notifies that this Link failed to open the URL associated with it.
          */
-        onLinkingOpenURLRejected: React.PropTypes.func,
+        onLinkingOpenURLRejected: PropTypes.func,
 
         /**
          * The CSS style to be applied to this Link for the purposes of display.
          */
-        style: React.PropTypes.object,
+        style: PropTypes.object,
 
         /**
          * The URL to be opened when this Link is clicked/pressed.
          */
-        url: React.PropTypes.string
+        url: PropTypes.string
     };
 
     /**
