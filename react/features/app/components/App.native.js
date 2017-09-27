@@ -1,13 +1,13 @@
 /* global __DEV__ */
 
 import React from 'react';
-import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
 import { Platform } from '../../base/react';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
+import '../../mobile/callkit';
 import '../../mobile/external-api';
 import '../../mobile/full-screen';
 import '../../mobile/permissions';
@@ -47,42 +47,11 @@ export class App extends AbstractApp {
     constructor(props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onLinkingURL = this._onLinkingURL.bind(this);
-
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
         // This will effectively kill the application. In accord with the Web,
         // do not kill the application.
         this._maybeDisableExceptionsManager();
-    }
-
-    /**
-     * Subscribe to notifications about activating URLs registered to be handled
-     * by this app.
-     *
-     * @inheritdoc
-     * @returns {void}
-     * @see https://facebook.github.io/react-native/docs/linking.html
-     */
-    componentWillMount() {
-        super.componentWillMount();
-
-        Linking.addEventListener('url', this._onLinkingURL);
-    }
-
-    /**
-     * Unsubscribe from notifications about activating URLs registered to be
-     * handled by this app.
-     *
-     * @inheritdoc
-     * @returns {void}
-     * @see https://facebook.github.io/react-native/docs/linking.html
-     */
-    componentWillUnmount() {
-        Linking.removeEventListener('url', this._onLinkingURL);
-
-        super.componentWillUnmount();
     }
 
     /**
@@ -121,20 +90,6 @@ export class App extends AbstractApp {
             newHandler.next = oldHandler;
             global.ErrorUtils.setGlobalHandler(newHandler);
         }
-    }
-
-    /**
-     * Notified by React's Linking API that a specific URL registered to be
-     * handled by this App was activated.
-     *
-     * @param {Object} event - The details of the notification/event.
-     * @param {string} event.url - The URL registered to be handled by this App
-     * which was activated.
-     * @private
-     * @returns {void}
-     */
-    _onLinkingURL({ url }) {
-        this._openURL(url);
     }
 }
 

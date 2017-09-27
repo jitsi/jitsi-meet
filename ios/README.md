@@ -100,34 +100,6 @@ Loads a specific URL which may identify a conference to join. If the specified
 URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
 instead.
 
-#### Universal / deep linking
-
-In order to support Universal / deep linking, `JitsiMeetView` offers 2 class
-methods that you app's delegate should call in order for the app to follow those
-links.
-
-```objc
--  (BOOL)application:(UIApplication *)application
-continueUserActivity:(NSUserActivity *)userActivity
-  restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
-{
-  return [JitsiMeetView application:application
-               continueUserActivity:userActivity
-                 restorationHandler:restorationHandler];
-}
-
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation
-{
-  return [JitsiMeetView application:application
-                            openURL:url
-                  sourceApplication:sourceApplication
-                         annotation:annotation];
-}
-```
-
 ### JitsiMeetViewDelegate
 
 This delegate is optional, and can be set on the `JitsiMeetView` instance using
