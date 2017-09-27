@@ -5,6 +5,7 @@ import React from 'react';
 import '../../analytics';
 import '../../authentication';
 import { Platform } from '../../base/react';
+import '../../recent';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/callkit';
