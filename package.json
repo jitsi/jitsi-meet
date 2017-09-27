@@ -74,6 +74,7 @@
     "react-native-sound": "0.10.12",
     "react-native-swipeout": "2.3.6",
     "react-native-vector-icons": "6.0.2",
+    "react-native-watch-connectivity": "0.2.0",
     "react-native-webrtc": "github:jitsi/react-native-webrtc#659d2fe417b52356b1b706636de97e23bae3e9f5",
     "react-redux": "5.0.7",
     "react-transition-group": "2.4.0",

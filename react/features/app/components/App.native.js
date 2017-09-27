@@ -22,6 +22,7 @@ import '../../mobile/permissions';
 import '../../mobile/picture-in-picture';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
+import '../../mobile/watchos';
 
 import { AbstractApp } from './AbstractApp';
 import type { Props as AbstractAppProps } from './AbstractApp';

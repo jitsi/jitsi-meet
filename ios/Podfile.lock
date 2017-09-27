@@ -156,6 +156,8 @@ PODS:
     - React/Core
   - RNVectorIcons (6.0.2):
     - React
+  - RNWatch (0.2.0):
+    - React
   - SDWebImage/Core (4.4.6)
   - SDWebImage/GIF (4.4.6):
     - FLAnimatedImage (~> 1.0)
@@ -191,6 +193,7 @@ DEPENDENCIES:
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - RNWatch (from `../node_modules/react-native-watch-connectivity`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -242,6 +245,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sound"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  RNWatch:
+    :path: "../node_modules/react-native-watch-connectivity"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -277,9 +282,10 @@ SPEC CHECKSUMS:
   RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
+  RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: 2e571f113e8cbeb0eb752aeebc86c1bfe7a8200c
 
-PODFILE CHECKSUM: 4a11c3d66127a9845d4a5b2c7fad49f58a9c7a89
+PODFILE CHECKSUM: 8e6caba6dab554c16a3d89d1fa8b69c70c5452d0
 
 COCOAPODS: 1.6.1
