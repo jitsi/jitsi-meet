@@ -25,6 +25,7 @@ target 'JitsiMeet' do
     :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
 end
 
 post_install do |installer|
