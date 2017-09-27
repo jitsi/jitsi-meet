@@ -12,13 +12,27 @@ import Foundation
 
 
 class InterfaceController: WKInterfaceController {
-    @IBAction func testClicked() {
-        if WCSession.isSupported() {
-          let session = WCSession.default
-          session.sendMessage(["conference": "https://meet.jit.si/WatchyMcWatchFace"], replyHandler: nil, errorHandler: nil)
-        }
+  @IBOutlet var muteButton: WKInterfaceButton!
+  
+  @IBAction func muteClicked() {
+    sendMessage(["command": "toggleMute"])
+  }
+  
+  @IBAction func hangupClicked() {
+    sendMessage(["command": "hangup"])
+  }
+  
+  @IBAction func testClicked() {
+    sendMessage(["command" : "joinConference", "data" : "https://meet.jit.si/notrolex"])
+  }
+  
+  func sendMessage(_ message: [String : Any]) {
+    if WCSession.isSupported() {
+      let session = WCSession.default
+      session.sendMessage(message, replyHandler: nil, errorHandler: nil)
     }
-    
+  }
+  
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         

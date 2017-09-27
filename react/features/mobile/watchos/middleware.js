@@ -7,8 +7,11 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN,
+    CONFERENCE_WILL_JOIN
 } from '../../base/conference';
+import {
+    toggleAudioMuted
+} from '../../base/media';
 import { MiddlewareRegistry } from '../../base/redux';
 
 
@@ -37,16 +40,24 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             }
         });
 
-        watch.subscribeToMessages((err, message, reply) => {
-            if (!err) {
-                if (message.conference) {
-                    dispatch(appNavigate(message.conference));
-                }
-                //reply({text: "message received!"});
-            } else {
+        watch.subscribeToMessages((err, message) => {
+            if (err) {
                 console.log('ERROR getting watch message');
+            } else {
+                switch (message.command) {
+                case 'joinConference':
+                    dispatch(appNavigate(message.data));
+                    break;
+                case 'toggleMute':
+                    dispatch(toggleAudioMuted());
+                    break;
+                case 'hangup':
+                    dispatch(appNavigate(undefined));
+                    break;
+                }
             }
         });
+
         break;
     }
     case APP_WILL_UNMOUNT:

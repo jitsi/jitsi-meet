@@ -15,12 +15,25 @@
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JitsiMeetCompanion" customModuleProvider="target">
                     <items>
                         <label alignment="center" verticalAlignment="center" text="Hello Jitser!" id="fxp-ol-Hnn"/>
+                        <button width="1" alignment="left" verticalAlignment="center" title="Mute" id="cwU-hl-IxP">
+                            <connections>
+                                <action selector="muteClicked" destination="AgC-eL-Hgc" id="ypa-fw-9o2"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" verticalAlignment="center" title="Hangup" id="OjW-qU-iJl">
+                            <connections>
+                                <action selector="hangupClicked" destination="AgC-eL-Hgc" id="G2E-OF-Qls"/>
+                            </connections>
+                        </button>
                         <button width="1" alignment="left" verticalAlignment="bottom" title="Test" id="oL4-qG-LPp">
                             <connections>
                                 <action selector="testClicked" destination="AgC-eL-Hgc" id="xgt-e4-JKG"/>
                             </connections>
                         </button>
                     </items>
+                    <connections>
+                        <outlet property="muteButton" destination="cwU-hl-IxP" id="uGI-cV-qfG"/>
+                    </connections>
                 </controller>
             </objects>
         </scene>
