@@ -15,6 +15,11 @@
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JitsiMeetCompanion" customModuleProvider="target">
                     <items>
                         <label alignment="center" verticalAlignment="center" text="Hello Jitser!" id="fxp-ol-Hnn"/>
+                        <button width="1" alignment="left" verticalAlignment="bottom" title="Test" id="oL4-qG-LPp">
+                            <connections>
+                                <action selector="testClicked" destination="AgC-eL-Hgc" id="xgt-e4-JKG"/>
+                            </connections>
+                        </button>
                     </items>
                 </controller>
             </objects>

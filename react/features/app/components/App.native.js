@@ -13,6 +13,8 @@ import '../../mobile/full-screen';
 import '../../mobile/permissions';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
+import '../../mobile/watchos';
+
 
 import { AbstractApp } from './AbstractApp';
 

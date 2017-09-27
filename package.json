@@ -84,6 +84,8 @@
     "babel-polyfill": "6.26.0",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "6.24.1",
+    "babel-preset-react-native": "4.0.0",
+    "babel-preset-react-native-stage-0": "1.0.1",
     "babel-preset-stage-1": "6.24.1",
     "clean-css": "3.4.25",
     "css-loader": "0.28.5",

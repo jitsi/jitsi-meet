@@ -3,7 +3,7 @@
 import { Platform } from 'react-native';
 import * as watch from 'react-native-watch-connectivity';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
@@ -20,7 +20,7 @@ import { MiddlewareRegistry } from '../../base/redux';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
     if (Platform.OS !== 'ios') {
@@ -34,6 +34,17 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
                 console.log('watchState', watchState);
             } else {
                 console.log('ERROR getting watchState');
+            }
+        });
+
+        watch.subscribeToMessages((err, message, reply) => {
+            if (!err) {
+                if (message.conference) {
+                    dispatch(appNavigate(message.conference));
+                }
+                //reply({text: "message received!"});
+            } else {
+                console.log('ERROR getting watch message');
             }
         });
         break;

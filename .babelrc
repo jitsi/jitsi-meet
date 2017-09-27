@@ -1,0 +1,6 @@
+{
+  "presets": [
+    "react-native",
+    "react-native-stage-0"
+  ]
+}
