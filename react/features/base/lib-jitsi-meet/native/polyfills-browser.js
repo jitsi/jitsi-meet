@@ -235,6 +235,23 @@ function _visitNode(node, callback) {
 
                     if (typeof consoleLog === 'function') {
                         console[level] = function(...args) {
+                            // XXX If console's disableYellowBox is truthy, then
+                            // react-native will not automatically display the
+                            // yellow box for the warn level. However, it will
+                            // still display the red box for the error level.
+                            // But I disable the yellow box when I don't want to
+                            // have react-native automatically show me the
+                            // console's output just like in the Release build
+                            // configuration. Because I didn't find a way to
+                            // disable the red box, downgrade the error level to
+                            // warn. The red box will still be displayed but not
+                            // for the error level.
+                            if (console.disableYellowBox && level === 'error') {
+                                console.warn(...args);
+
+                                return;
+                            }
+
                             const { length } = args;
 
                             for (let i = 0; i < length; ++i) {
