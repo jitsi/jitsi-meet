@@ -1,5 +1,5 @@
-import { ReducerRegistry } from '../base/redux';
-import { ADD_RECENT_URL } from './actionTypes';
+import { ReducerRegistry, set } from '../base/redux';
+import { ADD_RECENT_URL, LOADED_RECENT_URLS } from './actionTypes';
 
 const MAX_LENGTH = 25;
 
@@ -12,6 +12,14 @@ const INITIAL_STATE = {
  */
 ReducerRegistry.register('features/recent', (state = INITIAL_STATE, action) => {
     switch (action.type) {
+    case LOADED_RECENT_URLS: {
+        // FIXME if that happens too late it may overwrite any recent URLs
+        const newState = set(state, 'entries', action.entries);
+
+        console.info('RECENT STATE ON LOAD: ', newState);
+
+        return newState;
+    }
     case ADD_RECENT_URL: {
         return _addRecentUrl(state, action);
     }
@@ -55,6 +63,8 @@ function _addRecentUrl(state, action) {
     }
 
     console.info('RECENT URLs', state);
+
+    window.localStorage.setItem('recentURLs', JSON.stringify(state.entries));
 
     return state;
 }

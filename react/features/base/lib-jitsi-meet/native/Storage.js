@@ -33,6 +33,7 @@ export default class Storage {
         if (typeof this._keyPrefix !== 'undefined') {
             // Load all previously persisted data items from React Native's
             // AsyncStorage.
+            console.info('LOAD STORAGE START');
             AsyncStorage.getAllKeys().then((...getAllKeysCallbackArgs) => {
                 // XXX The keys argument of getAllKeys' callback may or may not
                 // be preceded by an error argument.
@@ -61,8 +62,22 @@ export default class Storage {
                             this[key] = value;
                         }
                     }
+
+                    console.info('LOAD STORAGE DONE');
+                    this.loadingComplete = true;
+                    if (typeof this._loadingCompleteCallback === 'function') {
+                        console.info('LOAD STORAGE DONE - CALLING CALLBACK');
+                        this._loadingCompleteCallback();
+                    }
                 });
             });
+        }
+    }
+
+    setLoadingCompleteCb(callback) {
+        this._loadingCompleteCallback = callback;
+        if (this.loadingComplete) {
+            callback();
         }
     }
 

@@ -1,4 +1,14 @@
 /**
+ * The type of Redux action which signals that {@link JitsiMeetJS.init()} was
+ * invoked and completed successfully.
+ *
+ * {
+ *     type: LIB_LOAD_STORAGE_DONE
+ * }
+ */
+export const LIB_LOAD_STORAGE_DONE = Symbol('LIB_LOAD_STORAGE_DONE');
+
+/**
  * The type of Redux action which signals that {@link JitsiMeetJS} was disposed.
  *
  * {

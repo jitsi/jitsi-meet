@@ -6,7 +6,10 @@ import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { disposeLib, initLib, setWebRTCReady } from './actions';
-import { LIB_DID_INIT, LIB_INIT_ERROR } from './actionTypes';
+import {
+    LIB_DID_INIT, LIB_INIT_ERROR,
+    LIB_LOAD_STORAGE_DONE
+} from './actionTypes';
 import { WEBRTC_NOT_READY, WEBRTC_NOT_SUPPORTED } from './constants';
 
 /**
@@ -23,6 +26,15 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case LIB_DID_INIT:
         store.dispatch(setWebRTCReady(true));
+        if (window.localStorage.setLoadingCompleteCb) {
+            window.localStorage.setLoadingCompleteCb(() => {
+                store.dispatch({
+                    type: LIB_LOAD_STORAGE_DONE
+                });
+            });
+        } else {
+            console.error('No window.localStorage.setLoadingCompleteCb');
+        }
         break;
 
     case LIB_INIT_ERROR:
