@@ -56,15 +56,16 @@ public class JitsiMeetActivity
     private DefaultHardwareBackBtnHandler defaultBackButtonImpl;
 
     /**
+     * The default base {@code URL} used to join a conference when a partial URL
+     * (e.g. a room name only) is specified. The value is used only while
+     * {@link #view} equals {@code null}.
+     */
+    private URL defaultURL;
+
+    /**
      * Instance of the {@link JitsiMeetView} which this activity will display.
      */
     private JitsiMeetView view;
-
-    /**
-     * Default URL to be used when joining a conference. The value is used only
-     * while {@link #view} equals {@code null}.
-     */
-    private URL defaultURL;
 
     /**
      * Whether the Welcome page is enabled. The value is used only while
@@ -82,7 +83,7 @@ public class JitsiMeetActivity
 
     /**
      *
-     * @see JitsiMeetView#getDefaultURL
+     * @see JitsiMeetView#getDefaultURL()
      */
     public URL getDefaultURL() {
         return view == null ? defaultURL : view.getDefaultURL();
@@ -90,7 +91,7 @@ public class JitsiMeetActivity
 
     /**
      *
-     * @see JitsiMeetView#getWelcomePageEnabled
+     * @see JitsiMeetView#getWelcomePageEnabled()
      */
     public boolean getWelcomePageEnabled() {
         return view == null ? welcomePageEnabled : view.getWelcomePageEnabled();
@@ -117,12 +118,11 @@ public class JitsiMeetActivity
     protected JitsiMeetView initializeView() {
         JitsiMeetView view = new JitsiMeetView(this);
 
-        // In order to have the desired effect
-        // JitsiMeetView#setWelcomePageEnabled(boolean) or
-        // JitsiMeetView#setDefaultURL(URL) must be invoked before
-        // JitsiMeetView#loadURL(URL).
+        // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
+        // is documented to need such an order in order to take effect:
         view.setDefaultURL(defaultURL);
         view.setWelcomePageEnabled(welcomePageEnabled);
+
         view.loadURL(null);
 
         return view;
@@ -243,19 +243,19 @@ public class JitsiMeetActivity
 
     /**
      *
-     * @see JitsiMeetView#setDefaultURL
+     * @see JitsiMeetView#setDefaultURL(URL)
      */
-    public void setDefaultURL(URL url) {
+    public void setDefaultURL(URL defaultURL) {
         if (view == null) {
-            defaultURL = url;
+            this.defaultURL = defaultURL;
         } else {
-            view.setDefaultURL(url);
+            view.setDefaultURL(defaultURL);
         }
     }
 
     /**
      *
-     * @see JitsiMeetView#setWelcomePageEnabled
+     * @see JitsiMeetView#setWelcomePageEnabled(boolean)
      */
     public void setWelcomePageEnabled(boolean welcomePageEnabled) {
         if (view == null) {

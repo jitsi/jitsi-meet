@@ -237,7 +237,9 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Default base URL to use when joining a conference without a full URL.
+     * The default base {@code URL} used to join a conference when a partial URL
+     * (e.g. a room name only) is specified to {@link #loadURLString(String)} or
+     * {@link #loadURLObject(Bundle)}.
      */
     private URL defaultURL;
 
@@ -297,11 +299,13 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Gets the default base URL. If set, it will be preferred over the builtin
-     * default (https://meet.jit.si) in JavaScript. When set, it will be used
-     * to compose the full URL for a conference, when no full URL is provided.
+     * Gets the default base {@code URL} used to join a conference when a
+     * partial URL (e.g. a room name only) is specified to
+     * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle}. If not
+     * set or if set to {@code null}, the default built in JavaScript is used:
+     * {@link https://meet.jit.si}
      *
-     * @return {@URL} the default URL or {@null} if none was set.
+     * @return The default base {@code URL} or {@code null}.
      */
     public URL getDefaultURL() {
         return defaultURL;
@@ -398,13 +402,16 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Sets the default base URL. Must be called before {@link #loadURL(URL)}
-     * for it to take effect.
+     * Sets the default base {@code URL} used to join a conference when a
+     * partial URL (e.g. a room name only) is specified to
+     * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. Must be
+     * called before {@link #loadURL(URL)} for it to take effect.
      *
-     * @param url - The {@URL} to be set as the new default URL.
+     * @param defaultURL - The {@code URL} to be set as the default base URL.
+     * @see #getDefaultURL()
      */
-    public void setDefaultURL(URL url) {
-        defaultURL = url;
+    public void setDefaultURL(URL defaultURL) {
+        this.defaultURL = defaultURL;
     }
 
     /**

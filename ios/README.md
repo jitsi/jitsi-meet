@@ -44,20 +44,21 @@ The `JitsiMeetView` class is the entry point to the SDK. It a subclass of
 
 #### delegate
 
-Property for getting / setting the `JitsiMeetViewDelegate` on `JitsiMeetView`.
+Property to get/set the `JitsiMeetViewDelegate` on `JitsiMeetView`.
 
 #### defaultURL
 
-Property for getting / setting the base default URL. The default URL is used for
-joining a conference when a non-full URL is given. If not set (or nil), the
-builtin default (in JavaScript) is used: https://meet.jit.si.
+Property to get/set the default base URL used to join a conference when a
+partial URL (e.g. a room name only) is specified to
+`loadURLString:`/`loadURLObject:`. If not set or if set to `nil`, the default
+built in JavaScript is used: https://meet.jit.si.
 
 NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
 
 #### welcomePageEnabled
 
-Property for getting / setting whether the Welcome page is enabled. If NO, a
-black empty view will be rendered when not in a conference. Defaults to NO.
+Property to get/set whether the Welcome page is enabled. If `NO`, a black empty
+view will be rendered when not in a conference. Defaults to `NO`.
 
 NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
 

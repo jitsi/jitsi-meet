@@ -138,9 +138,9 @@ when the Activity holding this view is going to be destroyed, usually in the
 
 #### getDefaultURL()
 
-Returns the default URL for joining a conference when a non-full URL is given,
-or null if it's not set. If not set, the builtin default (in JavaScript) is
-used: https://meet.jit.si.
+Returns the default base URL used to join a conference when a partial URL (e.g.
+a room name only) is specified to `loadURLString`/`loadURLObject`. If not set or
+if set to `null`, the default built in JavaScript is used: https://meet.jit.si.
 
 #### getListener()
 
