@@ -194,16 +194,6 @@ const Filmstrip = {
     },
 
     /**
-     * Returns the width of filmstip
-     * @returns {number} width
-     */
-    getFilmstripWidth() {
-        return this.filmstrip.innerWidth()
-            - parseInt(this.filmstrip.css('paddingLeft'), 10)
-            - parseInt(this.filmstrip.css('paddingRight'), 10);
-    },
-
-    /**
      * Calculates the size for thumbnails: local and remote one
      * @returns {*|{localVideo, remoteVideo}}
      */
@@ -433,11 +423,14 @@ const Filmstrip = {
             promises.push(new Promise((resolve) => {
                 // Let CSS take care of height in vertical filmstrip mode.
                 if (interfaceConfig.VERTICAL_FILMSTRIP) {
-                    resolve();
+                    $('#filmstripLocalVideo').animate({
+                        // adds 4 px because of small video 2px border
+                        width: local.thumbWidth + 4
+                    }, this._getAnimateOptions(animate, resolve));
                 } else {
                     this.filmstrip.animate({
-                        // adds 2 px because of small video 1px border
-                        height: remote.thumbHeight + 2
+                        // adds 4 px because of small video 2px border
+                        height: remote.thumbHeight + 4
                     }, this._getAnimateOptions(animate, resolve));
                 }
             }));

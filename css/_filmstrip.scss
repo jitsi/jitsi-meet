@@ -73,6 +73,7 @@
             .filmstrip__invite {
                 padding-bottom: 5px;
                 z-index: $dropdownZ;
+                margin-left: 2px;
             }
 
             /**
@@ -88,13 +89,14 @@
                 & button {
                     background: $toolbarBackground;
                     flex-grow: 1;
+                    overflow: hidden;
                 }
 
                 & > * {
                     color: $toolbarButtonColor;
                     flex-grow: 0;
                     flex-shrink: 1;
-                    margin: 0 2px;
+                    margin-left: 2px;
                 }
 
                 /**
