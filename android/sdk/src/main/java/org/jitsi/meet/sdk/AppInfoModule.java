@@ -12,45 +12,53 @@ import java.util.HashMap;
 import java.util.Map;
 
 class AppInfoModule extends ReactContextBaseJavaModule {
-    /**
-     * React Native module name.
-     */
-    private static final String MODULE_NAME = "AppInfo";
-
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     /**
-     * Gets a mapping with the constants this module is exporting.
+     * Gets a <tt>Map</tt> of constants this module exports to JS. Supports JSON
+     * types.
      *
-     * @return a {@link Map} mapping the constants to be exported with their
-     * values.
+     * @return a {@link Map} of constants this module exports to JS
      */
     @Override
     public Map<String, Object> getConstants() {
-        Map<String, Object> constants = new HashMap<>();
         Context context = getReactApplicationContext();
-        PackageManager pm = context.getPackageManager();
-        ApplicationInfo appInfo;
+        PackageManager packageManager = context.getPackageManager();
+        ApplicationInfo applicationInfo;
         PackageInfo packageInfo;
 
         try {
-             appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
-             packageInfo = pm.getPackageInfo(context.getPackageName(), 0);
+             String packageName = context.getPackageName();
+
+             applicationInfo
+                 = packageManager.getApplicationInfo(packageName, 0);
+             packageInfo = packageManager.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
-            constants.put("name", "");
-            constants.put("version", "");
-            return constants;
+             applicationInfo = null;
+             packageInfo = null;
         }
 
-        constants.put("name", pm.getApplicationLabel(appInfo));
-        constants.put("version", packageInfo.versionName);
+        Map<String, Object> constants = new HashMap<>();
+
+        constants.put(
+            "name",
+            applicationInfo == null
+                ? ""
+                : packageManager.getApplicationLabel(applicationInfo));
+        constants.put(
+            "version",
+            packageInfo == null ? "" : packageInfo.versionName);
+
         return constants;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return "AppInfo";
     }
 }

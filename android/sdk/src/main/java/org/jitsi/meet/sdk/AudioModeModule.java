@@ -74,12 +74,13 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             : Intent.ACTION_HEADSET_PLUG;
 
     /**
-     * React Native module name.
+     * The name of <tt>AudioModeModule</tt> to be used in the React Native
+     * bridge.
      */
     private static final String MODULE_NAME = "AudioMode";
 
     /**
-     * Tag used when logging messages.
+     * The <tt>Log</tt> tag <tt>AudioModeModule</tt> is to log messages with.
      */
     static final String TAG = MODULE_NAME;
 
@@ -155,7 +156,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * Gets the name for this module, to be used in the React Native bridge.
+     * Gets the name for this module to be used in the React Native bridge.
      *
      * @return a string with the module name.
      */

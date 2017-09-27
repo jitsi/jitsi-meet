@@ -47,11 +47,6 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
     private static final Map<String, Method> JITSI_MEET_VIEW_LISTENER_METHODS
         = new HashMap<>();
 
-    /**
-     * The name of this module to be used in the React Native bridge.
-     */
-    private static final String MODULE_NAME = "ExternalAPI";
-
     static {
         // Figure out the mapping between the JitsiMeetViewListener methods
         // and the events i.e. redux action types.
@@ -113,7 +108,7 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
      */
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return "ExternalAPI";
     }
 
     /**

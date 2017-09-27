@@ -33,7 +33,8 @@ import com.facebook.react.bridge.UiThreadUtil;
  */
 class ProximityModule extends ReactContextBaseJavaModule {
     /**
-     * React Native module name.
+     * The name of <tt>ProximityModule</tt> to be used in the React Native
+     * bridge.
      */
     private static final String MODULE_NAME = "Proximity";
 

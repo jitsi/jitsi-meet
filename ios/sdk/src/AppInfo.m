@@ -27,16 +27,22 @@
 RCT_EXPORT_MODULE();
 
 - (NSDictionary *)constantsToExport {
-    NSString *name = [[[NSBundle mainBundle]infoDictionary]objectForKey :@"CFBundleDisplayName"];
-    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    NSDictionary<NSString *, id> *infoDictionary
+        = [[NSBundle mainBundle] infoDictionary];
+    NSString *name = infoDictionary[@"CFBundleDisplayName"];
+    NSString *version = infoDictionary[@"CFBundleShortVersionString"];
+
     if (version == nil) {
-        version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+        version = infoDictionary[@"CFBundleVersion"];
         if (version == nil) {
             version = @"";
         }
     }
 
-    return @{ @"name" : name, @"version" : version };
+    return @{
+        @"name": name,
+        @"version": version
+    };
 };
 
 @end

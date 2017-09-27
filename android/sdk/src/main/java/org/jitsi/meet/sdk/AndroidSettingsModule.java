@@ -15,18 +15,16 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 class AndroidSettingsModule extends ReactContextBaseJavaModule {
-    /**
-     * React Native module name.
-     */
-    private static final String MODULE_NAME = "AndroidSettings";
-
     public AndroidSettingsModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return "AndroidSettings";
     }
 
     @ReactMethod
