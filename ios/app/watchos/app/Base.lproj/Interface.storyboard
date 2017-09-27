@@ -9,33 +9,62 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="13051"/>
     </dependencies>
     <scenes>
-        <!--Interface Controller-->
+        <!--Meetings-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JitsiMeetCompanion" customModuleProvider="target">
+                <controller title="Meetings" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JitsiMeetCompanion" customModuleProvider="target">
                     <items>
-                        <label alignment="center" verticalAlignment="center" text="Hello Jitser!" id="fxp-ol-Hnn"/>
-                        <button width="1" alignment="left" verticalAlignment="center" title="Mute" id="cwU-hl-IxP">
-                            <connections>
-                                <action selector="muteClicked" destination="AgC-eL-Hgc" id="ypa-fw-9o2"/>
-                            </connections>
-                        </button>
-                        <button width="1" alignment="left" verticalAlignment="center" title="Hangup" id="OjW-qU-iJl">
-                            <connections>
-                                <action selector="hangupClicked" destination="AgC-eL-Hgc" id="G2E-OF-Qls"/>
-                            </connections>
-                        </button>
-                        <button width="1" alignment="left" verticalAlignment="bottom" title="Test" id="oL4-qG-LPp">
-                            <connections>
-                                <action selector="testClicked" destination="AgC-eL-Hgc" id="xgt-e4-JKG"/>
-                            </connections>
-                        </button>
+                        <table alignment="left" id="gpO-ql-Xsr">
+                            <items>
+                                <tableRow identifier="MeetingRowType" id="GGl-av-xeJ" customClass="MeetingRowController" customModule="JitsiMeetCompanion_Extension">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="5XE-gq-qzG">
+                                        <items>
+                                            <label alignment="left" text="Label" id="Sij-up-N4p"/>
+                                            <label alignment="left" text="Label" id="V5K-sm-jEH">
+                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
+                                            </label>
+                                        </items>
+                                        <connections>
+                                            <segue destination="9RD-qP-1Z0" kind="modal" id="Boa-6E-eZs"/>
+                                        </connections>
+                                    </group>
+                                    <connections>
+                                        <outlet property="roomLabel" destination="Sij-up-N4p" id="PdS-SO-ylc"/>
+                                        <outlet property="timeLabel" destination="V5K-sm-jEH" id="fWQ-kx-vE4"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
                     </items>
                     <connections>
-                        <outlet property="muteButton" destination="cwU-hl-IxP" id="uGI-cV-qfG"/>
+                        <outlet property="table" destination="gpO-ql-Xsr" id="aVV-iZ-z3l"/>
                     </connections>
                 </controller>
             </objects>
+            <point key="canvasLocation" x="-99" y="117"/>
+        </scene>
+        <!--Close-->
+        <scene sceneID="ns4-Kh-qqU">
+            <objects>
+                <controller identifier="InCallController" title="Close" hidesWhenLoading="NO" id="9RD-qP-1Z0" customClass="InCallController" customModule="JitsiMeetCompanion" customModuleProvider="target">
+                    <items>
+                        <label alignment="left" text="Label" id="vFt-lL-SNY"/>
+                        <button width="1" alignment="left" title="Hangup" id="8jF-SI-UHz">
+                            <color key="backgroundColor" red="1" green="0.13972080801548914" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="hangupClicked" destination="9RD-qP-1Z0" id="cXK-lw-tsd"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" title="Toggle mute" id="LmN-FI-aQq">
+                            <connections>
+                                <action selector="muteClicked" destination="9RD-qP-1Z0" id="dJg-kV-cqH"/>
+                            </connections>
+                        </button>
+                    </items>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="213" y="117"/>
         </scene>
     </scenes>
 </document>

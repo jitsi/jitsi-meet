@@ -14,33 +14,40 @@
  * limitations under the License.
  */
 
+import WatchConnectivity
 import WatchKit
 import Foundation
 
 
-class InterfaceController: WKInterfaceController {
+class InCallController: WKInterfaceController {
 
-    @IBOutlet var table: WKInterfaceTable!
+  @IBAction func hangupClicked() {
+      sendMessage(["command": "hangup"])
+      dismiss()
+  }
+
+  @IBAction func muteClicked() {
+      sendMessage(["command": "toggleMute"])
+  }
   
-    override func awake(withContext context: Any?) {
+  func sendMessage(_ message: [String : Any]) {
+      if WCSession.isSupported() {
+          let session = WCSession.default
+          session.sendMessage(message, replyHandler: nil, errorHandler: nil)
+      }
+  }
+  
+  override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-
-        // Some fake data for the table
-        table.setNumberOfRows(2, withRowType: "MeetingRowType")
-        var controller = table.rowController(at: 0) as! MeetingRowController
-        controller.roomLabel.setText("HCVideoStandup")
-        controller.timeLabel.setText("17:45")
-      
-        controller = table.rowController(at: 1) as! MeetingRowController
-        controller.roomLabel.setText("DoYouEvenWatch")
-        controller.timeLabel.setText("23:59")
+        
+        // Configure interface objects here.
     }
-    
+
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
     }
-    
+
     override func didDeactivate() {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
