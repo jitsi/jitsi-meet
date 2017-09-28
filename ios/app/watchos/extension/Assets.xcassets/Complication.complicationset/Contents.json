@@ -11,6 +11,9 @@
       "role" : "extra-large"
     },
     {
+      "filename" : "jitsi.imageset"
+    },
+    {
       "idiom" : "watch",
       "filename" : "Modular.imageset",
       "role" : "modular"
