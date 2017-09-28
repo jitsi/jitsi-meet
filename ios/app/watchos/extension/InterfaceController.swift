@@ -21,19 +21,33 @@ import Foundation
 class InterfaceController: WKInterfaceController {
 
     @IBOutlet var table: WKInterfaceTable!
+ 
+    func updateRecents(withRecents recents: NSArray) {
+        table.setNumberOfRows(recents.count, withRowType: "MeetingRowType")
+        for (index, entry) in recents.enumerated() {
+            // FIXME possible runtime exception
+            let entryDict = entry as! NSDictionary
+            let roomURL = entryDict["roomURL"] as! NSString
+            let timestamp = entryDict["timestamp"] as! NSNumber
+          
+            // Prepare values
+            let room = roomURL.components(separatedBy: "/").last
+            let date = Date(timeIntervalSince1970: timestamp.doubleValue / 1000)  // timestamp is taken with Date.now() in JS, which uses milliseconds  
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeZone = TimeZone.current
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "HH:mm yyyy-MM-dd"
+            let strDate = dateFormatter.string(from: date)
+          
+            // Update row controller
+            let controller = table.rowController(at: index) as! MeetingRowController
+            controller.roomLabel.setText(room)
+            controller.timeLabel.setText(strDate)
+      }
+    }
   
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-
-        // Some fake data for the table
-        table.setNumberOfRows(2, withRowType: "MeetingRowType")
-        var controller = table.rowController(at: 0) as! MeetingRowController
-        controller.roomLabel.setText("HCVideoStandup")
-        controller.timeLabel.setText("17:45")
-      
-        controller = table.rowController(at: 1) as! MeetingRowController
-        controller.roomLabel.setText("DoYouEvenWatch")
-        controller.timeLabel.setText("23:59")
     }
     
     override func willActivate() {
