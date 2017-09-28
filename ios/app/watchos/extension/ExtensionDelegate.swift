@@ -80,10 +80,26 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
       let micMuted = applicationContext["micMuted"] as? NSNumber ?? -1;
       print("MIC MUTED \(micMuted)");
 
+      // Update recent URLs
       let recentURLs = applicationContext["recentURLs"];
       if let recentURLsArray = recentURLs as? NSArray {
         let controller = WKExtension.shared().rootInterfaceController as! InterfaceController
         controller.updateRecents(withRecents: recentURLsArray)
+      }
+
+      // If the current controller is not the in-call controller and we have a
+      // conference URL, show the in-call controller
+      if let currentController = WKExtension.shared().visibleInterfaceController as? InterfaceController {
+          if conferenceURL != "NULL" {
+              let room = conferenceURL.components(separatedBy: "/").last
+              let context = ["room" : room, "roomUrl" : conferenceURL as String!, "skipJoin" : "yes"]
+              currentController.pushController(withName: "InCallController", context: context)
+          }
+      } else {
+          // This must be InCallController
+          if conferenceURL == "NULL" {
+              WKExtension.shared().visibleInterfaceController?.popToRootController()
+          }
       }
     }
 

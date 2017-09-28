@@ -43,8 +43,11 @@ class InCallController: WKInterfaceController {
       super.awake(withContext: context)
         
       if let data = context as? [String : String] {
-        sendMessage(["command": "joinConference", "data" : data["roomUrl"]!])
-        roomLabel.setText(data["room"]!)
+          if data["skipJoin"] != "yes" {
+              sendMessage(["command": "joinConference", "data" : data["roomUrl"]!])
+          }
+
+          roomLabel.setText(data["room"]!)
       }
   }
 
