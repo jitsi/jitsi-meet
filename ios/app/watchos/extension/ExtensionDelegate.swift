@@ -93,12 +93,16 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
           if conferenceURL != "NULL" {
               let room = conferenceURL.components(separatedBy: "/").last
               let context = ["room" : room, "roomUrl" : conferenceURL as String!, "skipJoin" : "yes"]
-              currentController.pushController(withName: "InCallController", context: context)
+              DispatchQueue.main.async {
+                   currentController.pushController(withName: "InCallController", context: context)
+              }
           }
       } else {
           // This must be InCallController
           if conferenceURL == "NULL" {
-              WKExtension.shared().visibleInterfaceController?.popToRootController()
+              DispatchQueue.main.async {
+                  WKExtension.shared().visibleInterfaceController?.popToRootController()
+              }
           }
       }
     }
