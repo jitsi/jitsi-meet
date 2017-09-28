@@ -1,11 +1,11 @@
 /**
- * The type of redux action to set the CallKit event listeners.
+ * The type of redux action to set CallKit's event subscriptions.
  *
  * {
- *     type: _SET_CALLKIT_LISTENERS,
- *     listeners: Map|null
+ *     type: _SET_CALLKIT_SUBSCRIPTIONS,
+ *     subscriptions: Array|undefined
  * }
  *
  * @protected
  */
-export const _SET_CALLKIT_LISTENERS = Symbol('_SET_CALLKIT_LISTENERS');
+export const _SET_CALLKIT_SUBSCRIPTIONS = Symbol('_SET_CALLKIT_SUBSCRIPTIONS');

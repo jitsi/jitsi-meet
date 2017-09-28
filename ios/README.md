@@ -76,11 +76,11 @@ instead.
 
 ```objc
 [jitsiMeetView loadURLObject:@{
-    @"url": @"https://meet.jit.si/test123",
-    @"configOverwrite": @{
+    @"config": @{
         @"startWithAudioMuted": @YES,
         @"startWithVideoMuted": @NO
-    }
+    },
+    @"url": @"https://meet.jit.si/test123"
 }];
 ```
 

@@ -1,17 +1,15 @@
-import { ReducerRegistry } from '../../base/redux';
+import { assign, ReducerRegistry } from '../../base/redux';
 
-import {
-    _SET_CALLKIT_LISTENERS
-} from './actionTypes';
+import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
+import CallKit from './CallKit';
 
-ReducerRegistry.register('features/callkit', (state = {}, action) => {
-    switch (action.type) {
-    case _SET_CALLKIT_LISTENERS:
-        return {
-            ...state,
-            listeners: action.listeners
-        };
-    }
+CallKit && ReducerRegistry.register(
+    'features/callkit',
+    (state = {}, action) => {
+        switch (action.type) {
+        case _SET_CALLKIT_SUBSCRIPTIONS:
+            return assign(state, 'subscriptions', action.subscriptions);
+        }
 
-    return state;
-});
+        return state;
+    });

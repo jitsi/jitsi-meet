@@ -17,25 +17,14 @@
 #import <CoreText/CoreText.h>
 #include <mach/mach_time.h>
 
+@import Intents;
+
 #import <React/RCTAssert.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
-#include <Availability.h>
-#import <Foundation/Foundation.h>
-
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
-
-// Weakly load the Intents framework since it's not available on iOS 9.
-@import Intents;
-
-// Constant describing iOS 10.0.0
-static const NSOperatingSystemVersion ios10 = {
-  .majorVersion = 10,
-  .minorVersion = 0,
-  .patchVersion = 0
-};
 
 /**
  * A <tt>RCTFatalHandler</tt> implementation which swallows JavaScript errors.
@@ -153,50 +142,45 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
+    NSString *activityType = userActivity.activityType;
+
     // XXX At least twice we received bug reports about malfunctioning loadURL
     // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
     // expected in our testing. But that was to be expected because the app does
     // not exercise loadURL. In order to increase the test coverage of loadURL,
     // channel Universal linking through loadURL.
-    if ([userActivity.activityType
-                isEqualToString:NSUserActivityTypeBrowsingWeb]
-            && [JitsiMeetView loadURLInViews:userActivity.webpageURL]) {
+    if ([activityType isEqualToString:NSUserActivityTypeBrowsingWeb]
+            && [self loadURLInViews:userActivity.webpageURL]) {
         return YES;
     }
 
-      // Check for CallKit intents only on iOS >= 10
-      if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:ios10]) {
-          if ([userActivity.activityType isEqualToString:@"INStartAudioCallIntent"]
-              || [userActivity.activityType isEqualToString:@"INStartVideoCallIntent"]) {
-              INInteraction *interaction = [userActivity interaction];
-              INIntent *intent = interaction.intent;
-              NSString *handle;
-              BOOL isAudio = NO;
+    // Check for a CallKit intent.
+    if ([activityType isEqualToString:@"INStartAudioCallIntent"]
+            || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
+        INIntent *intent = userActivity.interaction.intent;
+        NSArray<INPerson *> *contacts;
+        NSString *url;
+        BOOL startAudioOnly = NO;
 
-              if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
-                  INStartAudioCallIntent *startCallIntent
-                      = (INStartAudioCallIntent *)intent;
-                  handle = startCallIntent.contacts.firstObject.personHandle.value;
-                  isAudio = YES;
-              } else {
-                  INStartVideoCallIntent *startCallIntent
-                      = (INStartVideoCallIntent *)intent;
-                  handle = startCallIntent.contacts.firstObject.personHandle.value;
-              }
+        if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
+            contacts = ((INStartAudioCallIntent *) intent).contacts;
+            startAudioOnly = YES;
+        } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
+            contacts = ((INStartVideoCallIntent *) intent).contacts;
+        }
 
-              if (handle) {
-              // Load the URL contained in the handle
-              [view loadURLObject:@{
-                                    @"url": handle,
-                                    @"configOverwrite": @{
-                                        @"startAudioOnly": @(isAudio)
-                                    }
-                                    }];
+        if (contacts && (url = contacts.firstObject.personHandle.value)) {
+            // Load the URL contained in the handle.
+            [self loadURLObjectInViews:@{
+                @"config": @{
+                    @"startAudioOnly": @(startAudioOnly)
+                },
+                @"url": url
+            }];
 
-              return YES;
-              }
-          }
-      }
+            return YES;
+        }
+    }
 
     return [RCTLinkingManager application:application
                      continueUserActivity:userActivity
@@ -212,7 +196,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     // expected in our testing. But that was to be expected because the app does
     // not exercise loadURL. In order to increase the test coverage of loadURL,
     // channel Universal linking through loadURL.
-    if ([JitsiMeetView loadURLInViews:url]) {
+    if ([self loadURLInViews:url]) {
         return YES;
     }
 
@@ -341,15 +325,20 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  * at least one {@code JitsiMeetView}; otherwise, {@code NO}.
  */
 + (BOOL)loadURLInViews:(NSURL *)url {
+    return
+        [self loadURLObjectInViews:url ? @{ @"url": url.absoluteString } : nil];
+}
+
++ (BOOL)loadURLObjectInViews:(NSDictionary *)urlObject {
     BOOL handled = NO;
 
     if (views) {
         for (NSString *externalAPIScope in views) {
             JitsiMeetView *view
-                = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
+                = [self viewForExternalAPIScope:externalAPIScope];
 
             if (view) {
-                [view loadURL:url];
+                [view loadURLObject:urlObject];
                 handled = YES;
             }
         }

@@ -16,9 +16,7 @@ import {
     SET_RECEIVE_VIDEO_QUALITY,
     SET_ROOM
 } from './actionTypes';
-import {
-    VIDEO_QUALITY_LEVELS
-} from './constants';
+import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
 /**

@@ -174,13 +174,13 @@ null and the Welcome page is enabled, the Welcome page is displayed instead.
 Example:
 
 ```java
-Bundle configOverwrite = new Bundle();
-configOverwrite.putBoolean("startWithAudioMuted", true);
-configOverwrite.putBoolean("startWithVideoMuted", false);
-Bundle urlBundle = new Bundle();
-urlBundle.putBundle("configOverwrite", configOverwrite);
-urlBundle.putString("url", "https://meet.jit.si/Test123");
-view.loadURLObject(urlBundle);
+Bundle config = new Bundle();
+config.putBoolean("startWithAudioMuted", true);
+config.putBoolean("startWithVideoMuted", false);
+Bundle urlObject = new Bundle();
+urlObject.putBundle("config", config);
+urlObject.putString("url", "https://meet.jit.si/Test123");
+view.loadURLObject(urlObject);
 ```
 
 #### setDefaultURL(URL)

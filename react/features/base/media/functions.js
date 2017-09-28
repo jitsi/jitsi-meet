@@ -1,44 +1,50 @@
 /* @flow */
 
+import { toState } from '../redux';
+
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 
 /**
  * Determines whether video is currently muted by the audio-only authority.
  *
- * @param {Store} store - The redux store.
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
  * @returns {boolean}
  */
-export function isVideoMutedByAudioOnly(store: { getState: Function }) {
-    return _isVideoMutedByAuthority(store, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY);
+export function isVideoMutedByAudioOnly(stateful: Function | Object) {
+    return (
+        _isVideoMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
 }
 
 /**
  * Determines whether video is currently muted by a specific
  * <tt>VIDEO_MUTISM_AUTHORITY</tt>.
  *
- * @param {Store} store - The redux store.
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
  * @param {number} videoMutismAuthority - The <tt>VIDEO_MUTISM_AUTHORITY</tt>
  * which is to be checked whether it has muted video.
  * @returns {boolean} If video is currently muted by the specified
  * <tt>videoMutismAuthority</tt>, then <tt>true</tt>; otherwise, <tt>false</tt>.
  */
 function _isVideoMutedByAuthority(
-        { getState }: { getState: Function },
+        stateful: Function | Object,
         videoMutismAuthority: number) {
-    return Boolean(
+    const { muted } = toState(stateful)['features/base/media'].video;
 
-        // eslint-disable-next-line no-bitwise
-        getState()['features/base/media'].video.muted & videoMutismAuthority);
+    // eslint-disable-next-line no-bitwise
+    return Boolean(muted & videoMutismAuthority);
 }
 
 /**
  * Determines whether video is currently muted by the user authority.
  *
- * @param {Store} store - The redux store.
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
  * @returns {boolean}
  */
-export function isVideoMutedByUser(store: { getState: Function }) {
-    return _isVideoMutedByAuthority(store, VIDEO_MUTISM_AUTHORITY.USER);
+export function isVideoMutedByUser(stateful: Function | Object) {
+    return _isVideoMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.USER);
 }
 
 /**

@@ -1,12 +1,12 @@
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
+import { toState } from '../redux';
 
 /**
  * Attach a set of local tracks to a conference.
  *
- * NOTE The function is internal to this feature.
- *
  * @param {JitsiConference} conference - Conference instance.
  * @param {JitsiLocalTrack[]} localTracks - List of local media tracks.
+ * @protected
  * @returns {Promise}
  */
 export function _addLocalTracksToConference(conference, localTracks) {
@@ -30,13 +30,32 @@ export function _addLocalTracksToConference(conference, localTracks) {
 }
 
 /**
+ * Returns the current {@code JitsiConference} which is joining or joined and is
+ * not leaving. Please note the contrast with merely reading the
+ * {@code conference} state of the feature base/conference which is not joining
+ * but may be leaving already.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {JitsiConference|undefined}
+ */
+export function getCurrentConference(stateful) {
+    const { conference, joining, leaving }
+        = toState(stateful)['features/base/conference'];
+
+    return (
+        conference
+            ? conference === leaving ? undefined : conference
+            : joining);
+}
+
+/**
  * Handle an error thrown by the backend (i.e. lib-jitsi-meet) while
  * manipulating a conference participant (e.g. pin or select participant).
  *
- * NOTE The function is internal to this feature.
- *
  * @param {Error} err - The Error which was thrown by the backend while
  * manipulating a conference participant and which is to be handled.
+ * @protected
  * @returns {void}
  */
 export function _handleParticipantError(err) {
@@ -65,10 +84,9 @@ export function isRoomValid(room) {
 /**
  * Remove a set of local tracks from a conference.
  *
- * NOTE The function is internal to this feature.
- *
  * @param {JitsiConference} conference - Conference instance.
  * @param {JitsiLocalTrack[]} localTracks - List of local media tracks.
+ * @protected
  * @returns {Promise}
  */
 export function _removeLocalTracksFromConference(conference, localTracks) {
@@ -92,8 +110,6 @@ export function _removeLocalTracksFromConference(conference, localTracks) {
  * implementation merely logs the specified msg and err via the console at the
  * time of this writing, the intention of the function is to abstract the
  * reporting of errors and facilitate elaborating on it in the future.
- *
- * NOTE The function is internal to this feature.
  *
  * @param {string} msg - The error message to report.
  * @param {Error} err - The Error to report.
