@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { ReducerRegistry, set } from '../base/redux';
 import { ADD_RECENT_URL, LOADED_RECENT_URLS } from './actionTypes';
 
@@ -38,9 +40,10 @@ ReducerRegistry.register('features/recent', (state = INITIAL_STATE, action) => {
 function _addRecentUrl(state, action) {
     const { roomURL, timestamp } = action;
     let existingIdx = -1;
+    const entries = _.cloneDeep(state.entries);
 
-    for (let i = 0; i < state.entries.length; i++) {
-        if (state.entries[i].roomURL === roomURL) {
+    for (let i = 0; i < entries.length; i++) {
+        if (entries[i].roomURL === roomURL) {
             existingIdx = i;
             break;
         }
@@ -48,23 +51,25 @@ function _addRecentUrl(state, action) {
 
     if (existingIdx !== -1) {
         console.info('DELETED ALREADY EXISTING', roomURL);
-        state.entries.splice(existingIdx, 1);
+        entries.splice(existingIdx, 1);
     }
 
-    state.entries = new Array({
+    entries.unshift({
         roomURL,
         timestamp
-    }).concat(state.entries);
+    });
 
-    if (state.entries.length > MAX_LENGTH) {
-        const removed = state.entries.pop();
+    if (entries.length > MAX_LENGTH) {
+        const removed = entries.pop();
 
         console.info('SIZE LIMIT exceeded, removed:', removed);
     }
 
-    console.info('RECENT URLs', state);
+    const newState = set(state, 'entries', entries);
 
-    window.localStorage.setItem('recentURLs', JSON.stringify(state.entries));
+    console.info('RECENT URLs', newState);
 
-    return state;
+    window.localStorage.setItem('recentURLs', JSON.stringify(entries));
+
+    return newState;
 }
