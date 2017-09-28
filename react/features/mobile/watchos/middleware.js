@@ -3,6 +3,7 @@
 import { Platform } from 'react-native';
 import * as watch from 'react-native-watch-connectivity';
 
+import { setConferenceURL } from './actions';
 import {
     SET_CONFERENCE_URL,
     SET_MIC_MUTED,
@@ -16,20 +17,9 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
 } from '../../base/conference';
-import {
-    MEDIA_TYPE as MediaType,
-    toggleAudioMuted
-} from '../../base/media';
+import { SET_AUDIO_MUTED, toggleAudioMuted } from '../../base/media';
 import { MiddlewareRegistry } from '../../base/redux';
-import { getInviteURL } from '../../base/connection/functions';
-import {
-    isLocalTrackMuted,
-    TRACK_ADDED,
-    TRACK_REMOVED,
-    TRACK_UPDATED
-} from '../../base/tracks';
-
-import { setConferenceURL } from './actions';
+import { getInviteURL } from '../../base/connection';
 
 
 /**
@@ -106,17 +96,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         });
         break;
     }
-    case TRACK_ADDED:
-    case TRACK_REMOVED:
-    case TRACK_UPDATED: {
-        // FIXME Note sure how this will be accurate before the tracks are
-        // created. If no tracks I guess we should use /base/media state.
-        const tracks = getState()['features/base/tracks'];
-        const micMuted = isLocalTrackMuted(tracks, MediaType.AUDIO);
+    case SET_AUDIO_MUTED: {
+        const { audio } = getState()['features/base/media'];
 
         dispatch({
             type: SET_MIC_MUTED,
-            micMuted
+            micMuted: Boolean(audio.muted)
         });
         break;
     }
