@@ -79,9 +79,9 @@
             height: auto;
             justify-content: flex-end;
 
-            .remote-videos-container {
+            #filmstripRemoteVideosContainer {
                 flex-direction: column-reverse;
-                overflow-x: hidden !important;
+                overflow-x: hidden;
             }
         }
 

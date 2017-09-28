@@ -11,8 +11,6 @@ import { Toolbox } from '../../toolbox';
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
 
-declare var interfaceConfig: Object;
-
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
@@ -51,9 +49,9 @@ class Filmstrip extends Component {
         dispatch: PropTypes.func,
 
         /**
-         * Whether or not the toolbox should be displayed within the filmstrip.
+         * Whether or not the conference is in filmstripOnly mode.
          */
-        displayToolbox: PropTypes.bool
+        filmstripOnly: PropTypes.bool
     };
 
     /**
@@ -103,7 +101,7 @@ class Filmstrip extends Component {
 
         return (
             <div className = { filmstripClassNames }>
-                { this.props.displayToolbox ? <Toolbox /> : null }
+                { this.props.filmstripOnly ? <Toolbox /> : null }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -112,10 +110,7 @@ class Filmstrip extends Component {
                         id = 'filmstripLocalVideo'
                         onMouseOut = { this._onMouseOut }
                         onMouseOver = { this._onMouseOver }>
-                        {
-                            interfaceConfig.filmStripOnly
-                                ? null : <InviteButton />
-                        }
+                        { this.props.filmstripOnly ? null : <InviteButton /> }
                     </div>
                     <div
                         className = 'filmstrip__videos'

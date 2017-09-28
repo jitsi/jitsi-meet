@@ -74,7 +74,7 @@ class Conference extends Component {
             <div id = 'videoconference_page'>
                 <div id = 'videospace'>
                     <LargeVideo />
-                    <Filmstrip displayToolbox = { filmStripOnly } />
+                    <Filmstrip filmstripOnly = { filmStripOnly } />
                 </div>
 
                 { filmStripOnly ? null : <Toolbox /> }
