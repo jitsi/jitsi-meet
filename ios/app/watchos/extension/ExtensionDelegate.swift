@@ -97,9 +97,7 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
                    currentController.pushController(withName: "InCallController", context: context)
               }
           }
-      } else {
-          // This must be InCallController
-          let controller = WKExtension.shared().visibleInterfaceController as! InCallController
+      } else if let controller = WKExtension.shared().visibleInterfaceController as? InCallController {
           if conferenceURL == "NULL" {
               DispatchQueue.main.async {
                   controller.popToRootController()
@@ -107,7 +105,7 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
           } else {
             // Update muted state
             controller.updateMutedButton(withMuted: micMuted.boolValue)
-        }
+          }
       }
     }
 
