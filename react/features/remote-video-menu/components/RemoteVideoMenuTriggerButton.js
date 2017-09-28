@@ -107,7 +107,7 @@ class RemoteVideoMenuTriggerButton extends Component {
                 content = { content }
                 onPopoverOpen = { this._onShowRemoteMenu }
                 position = { interfaceConfig.VERTICAL_FILMSTRIP
-                    ? 'left middle' : 'top center' }>
+                    ? 'left bottom' : 'top center' }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
                     <i

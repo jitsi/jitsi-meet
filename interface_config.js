@@ -42,8 +42,6 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      */
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup'], // jshint ignore:line
     SETTINGS_SECTIONS: ['language', 'devices', 'moderator'],
-    // TODO: rename invite to sharelink, once the complete transition to the
-    // new invite UI is done.
     INVITE_OPTIONS: ['invite', 'dialout', 'addtocall'],
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
