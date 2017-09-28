@@ -24,10 +24,6 @@
          */
         z-index: #{$tooltipsZ + 1};
 
-        &.hide-videos {
-            z-index: #{$tooltipsZ - 1};
-        }
-
         /**
          * Hide videos by making them slight to the right.
          */
@@ -63,6 +59,7 @@
             .filmstrip__invite {
                 padding-bottom: 0px;
                 padding-top: 5px;
+                z-index: $dropdownZ;
             }
         }
 
