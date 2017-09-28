@@ -14,8 +14,9 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN
+    CONFERENCE_WILL_JOIN,
+    CONFERENCE_WILL_LEAVE,
+    JITSI_CONFERENCE_URL_KEY
 } from '../../base/conference';
 import { SET_AUDIO_MUTED, toggleAudioMuted } from '../../base/media';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -105,14 +106,51 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         });
         break;
     }
-    case CONFERENCE_WILL_JOIN:
-    case CONFERENCE_JOINED:
     case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT: {
+    case CONFERENCE_WILL_LEAVE: {
+        const conferenceURL = _getConferenceUrlFromBaseConf(getState);
+        const watchConferenceURL = _getWatchConferenceURL(getState);
+
+        // This may not be a real failure
+        if (action.type === CONFERENCE_FAILED) {
+            const conference = getState()['features/base/conference'];
+
+            if (conference.authRequired || conference.passwordRequired) {
+
+                break;
+            }
+        }
+
+        // FIXME I have bad feelings about this logic, but it aims to fix
+        // problem with setting NULL temporarily when selecting new conference
+        // on the watch while still in the previous room. It will first emit
+        // CONFERENCE_WILL_LEVE, before joining the new room and we don't want
+        // to send NULL.
+        if (watchConferenceURL !== 'NULL'
+                && watchConferenceURL !== conferenceURL) {
+            console.info(
+                'Ignored action',
+                action.type,
+                `possibly for the previous conference ?: ${conferenceURL}`);
+        } else if (action.type === CONFERENCE_WILL_LEAVE
+                && conferenceURL === watchConferenceURL) {
+            dispatch(setConferenceURL('NULL'));
+        } else if (conferenceURL !== watchConferenceURL) {
+            dispatch(setConferenceURL(conferenceURL));
+        } else {
+            console.info(
+                'Did nothing on',
+                action.type,
+                conferenceURL,
+                watchConferenceURL);
+        }
+        break;
+    }
+    case CONFERENCE_WILL_JOIN:
+    case CONFERENCE_JOINED: {
         // NOTE for some reason 'null' does not update context - must be string
         const conferenceURL = _getConferenceUrlFromBaseConf(getState);
-        const { conferenceURL: oldConferenceURL }
-            = getState()['features/mobile/watchos'];
+        const oldConferenceURL = _getWatchConferenceURL(getState);
 
         // NOTE Those updates are expensive!
         if (conferenceURL !== oldConferenceURL) {
@@ -136,11 +174,24 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     return result;
 });
 
+function _getWatchConferenceURL(getState) {
+    const { conferenceURL } = getState()['features/mobile/watchos'];
+
+    return conferenceURL;
+}
+
 function _getConferenceUrlFromBaseConf(getState) {
-    const { conference, joining } = getState()['features/base/conference'];
+
+    // FIXME probably authRequired and paswordRequired should be included
+    // as well...
+    const { conference, joining, leaving }
+        = getState()['features/base/conference'];
+    const theConference = conference || joining || leaving;
+    const conferenceURLObj
+        = theConference && theConference[JITSI_CONFERENCE_URL_KEY];
 
     // NOTE for some reason 'null' does not update context - must be string
-    return conference || joining ? getInviteURL(getState) : 'NULL';
+    return conferenceURLObj ? getInviteURL(conferenceURLObj) : 'NULL';
 }
 
 function _updateApplicationContext(getState, action) {
