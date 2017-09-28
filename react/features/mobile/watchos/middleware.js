@@ -13,7 +13,8 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT
+    CONFERENCE_LEFT,
+    CONFERENCE_WILL_JOIN
 } from '../../base/conference';
 import {
     MEDIA_TYPE as MediaType,
@@ -27,6 +28,8 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from '../../base/tracks';
+
+import { setConferenceURL } from './actions';
 
 
 /**
@@ -64,13 +67,29 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 console.log('ERROR getting watch message');
             } else {
                 switch (message.command) {
-                case 'joinConference':
-                    dispatch(appNavigate(message.data));
+                case 'joinConference': {
+                    const newConferenceURL = message.data;
+                    const oldConferenceURL
+                        = _getConferenceUrlFromBaseConf(getState);
+
+                    console.info(`WATCH - JOIN URL: ${newConferenceURL}`);
+                    if (oldConferenceURL === newConferenceURL) {
+                        console.info('No need to navigate');
+                    } else {
+                        // Set conference URL early to avoid NULL being sent as
+                        // part of other updates.
+                        // FIXME check if we'd go back to NULL on join failure.
+                        dispatch(setConferenceURL(newConferenceURL));
+                        dispatch(appNavigate(newConferenceURL));
+                    }
                     break;
+                }
                 case 'toggleMute':
+                    console.info('WATCH - TOGGLE MUTED');
                     dispatch(toggleAudioMuted());
                     break;
                 case 'hangup':
+                    console.info('WATCH - HANG UP');
                     dispatch(appNavigate(undefined));
                     break;
                 }
@@ -101,18 +120,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         });
         break;
     }
+    case CONFERENCE_WILL_JOIN:
     case CONFERENCE_JOINED:
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT: {
-        const { conference } = getState()['features/base/conference'];
-
         // NOTE for some reason 'null' does not update context - must be string
-        const conferenceURL = conference ? getInviteURL(getState) : 'NULL';
+        const conferenceURL = _getConferenceUrlFromBaseConf(getState);
+        const { conferenceURL: oldConferenceURL }
+            = getState()['features/mobile/watchos'];
 
-        dispatch({
-            type: SET_CONFERENCE_URL,
-            conferenceURL
-        });
+        // NOTE Those updates are expensive!
+        if (conferenceURL !== oldConferenceURL) {
+            dispatch(setConferenceURL(conferenceURL));
+        }
         break;
     }
 
@@ -121,7 +141,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case SET_CONFERENCE_URL:
     case SET_MIC_MUTED:
     case SET_RECENT_URLS: {
-        _updateApplicationContext(getState);
+        _updateApplicationContext(getState, action);
         break;
     }
     case APP_WILL_UNMOUNT:
@@ -131,9 +151,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     return result;
 });
 
-function _updateApplicationContext(getState) {
+function _getConferenceUrlFromBaseConf(getState) {
+    const { conference, joining } = getState()['features/base/conference'];
+
+    // NOTE for some reason 'null' does not update context - must be string
+    return conference || joining ? getInviteURL(getState) : 'NULL';
+}
+
+function _updateApplicationContext(getState, action) {
     const context = getState()['features/mobile/watchos'];
 
-    console.info('UPDATING WATCH CONTEXT', context);
+    console.info('UPDATING WATCH CONTEXT', context, action.type);
     watch.updateApplicationContext(context);
 }
