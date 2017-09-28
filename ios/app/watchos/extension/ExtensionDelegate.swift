@@ -68,6 +68,29 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
         return
       }
       print("WC Session activated with state: \(activationState.rawValue)")
-  }
+    }
+  
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+      
+      print("WC SESSION DID RECEIVE APP CONTEXT");
+      
+      let conferenceURL = applicationContext["conferenceURL"] as? NSString ?? "NULL";
+      print("CONFERENCE URL \(conferenceURL)");
+      
+      let micMuted = applicationContext["micMuted"] as? NSNumber ?? -1;
+      print("MIC MUTED \(micMuted)");
+
+      let recentURLs = applicationContext["recentURLs"];
+      if let recentURLsArray = recentURLs as? NSArray {
+        for entry in recentURLsArray {
+          // FIXME possible runtime exception
+          let entryDict = entry as! NSDictionary;
+          let roomURL = entryDict["roomURL"] as? NSString ?? "NULL";
+          let timestamp = entryDict["timestamp"] as? NSNumber ?? -1;
+          print("roomURL: \(roomURL) ts: \(timestamp)");
+          //print("entry \(type(of: entry)) \(type(of: roomURL)) \(type(of: timestamp))");
+        }
+      }
+    }
 
 }

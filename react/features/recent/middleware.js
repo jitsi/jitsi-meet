@@ -20,6 +20,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case LIB_LOAD_STORAGE_DONE: {
+        // FIXME this appears to be called when a conference is left
         let entries = [];
         const recentURLs = window.localStorage.getItem('recentURLs');
 
