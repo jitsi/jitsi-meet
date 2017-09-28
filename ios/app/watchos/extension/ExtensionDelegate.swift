@@ -77,7 +77,7 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
       let conferenceURL = applicationContext["conferenceURL"] as? NSString ?? "NULL";
       print("CONFERENCE URL \(conferenceURL)");
       
-      let micMuted = applicationContext["micMuted"] as? NSNumber ?? -1;
+      let micMuted = applicationContext["micMuted"] as? NSNumber ?? 0;
       print("MIC MUTED \(micMuted)");
 
       // Update recent URLs
@@ -92,18 +92,22 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
       if let currentController = WKExtension.shared().visibleInterfaceController as? InterfaceController {
           if conferenceURL != "NULL" {
               let room = conferenceURL.components(separatedBy: "/").last
-              let context = ["room" : room, "roomUrl" : conferenceURL as String!, "skipJoin" : "yes"]
+              let context = ["room" : room, "roomUrl" : conferenceURL as String!, "skipJoin" : "true", "muted" : micMuted.boolValue.description ]
               DispatchQueue.main.async {
                    currentController.pushController(withName: "InCallController", context: context)
               }
           }
       } else {
           // This must be InCallController
+          let controller = WKExtension.shared().visibleInterfaceController as! InCallController
           if conferenceURL == "NULL" {
               DispatchQueue.main.async {
-                  WKExtension.shared().visibleInterfaceController?.popToRootController()
+                  controller.popToRootController()
               }
-          }
+          } else {
+            // Update muted state
+            controller.updateMutedButton(withMuted: micMuted.boolValue)
+        }
       }
     }
 

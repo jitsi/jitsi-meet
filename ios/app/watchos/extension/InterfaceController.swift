@@ -64,6 +64,6 @@ class InterfaceController: WKInterfaceController {
 
   override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> Any? {
       let controller = table.rowController(at: rowIndex) as! MeetingRowController
-      return ["room" : controller.room, "roomUrl" : controller.roomUrl]
+      return ["room" : controller.room, "roomUrl" : controller.roomUrl, "muted" : "false"]
   }
 }

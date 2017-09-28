@@ -33,8 +33,7 @@ class InCallController: WKInterfaceController {
 
   @IBAction func muteClicked() {
       sendMessage(["command": "toggleMute"])
-      muted = !muted
-      updateMutedButton()
+      updateMutedButton(withMuted: !muted)
   }
   
   func sendMessage(_ message: [String : Any]) {
@@ -44,8 +43,9 @@ class InCallController: WKInterfaceController {
       }
   }
 
-  func updateMutedButton() {
-    if muted {
+  func updateMutedButton(withMuted isMuted: Bool) {
+    muted = isMuted
+    if isMuted {
         mutedButton.setBackgroundImageNamed("mute-on.png")
     } else {
         mutedButton.setBackgroundImageNamed("mute-off.png")
@@ -61,10 +61,7 @@ class InCallController: WKInterfaceController {
           }
 
           roomLabel.setText(data["room"]!)
-
-          // TODO read from data
-          muted = false;
-          updateMutedButton()
+          updateMutedButton(withMuted: data["muted"] == "true")
       }
   }
 
