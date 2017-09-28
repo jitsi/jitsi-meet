@@ -41,6 +41,8 @@ class InterfaceController: WKInterfaceController {
           
             // Update row controller
             let controller = table.rowController(at: index) as! MeetingRowController
+            controller.room = room
+            controller.roomUrl = roomURL as String!
             controller.roomLabel.setText(room)
             controller.timeLabel.setText(strDate)
       }
@@ -60,4 +62,8 @@ class InterfaceController: WKInterfaceController {
         super.didDeactivate()
     }
 
+  override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> Any? {
+      let controller = table.rowController(at: rowIndex) as! MeetingRowController
+      return ["room" : controller.room, "roomUrl" : controller.roomUrl]
+  }
 }

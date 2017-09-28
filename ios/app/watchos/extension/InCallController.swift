@@ -20,10 +20,12 @@ import Foundation
 
 
 class InCallController: WKInterfaceController {
-
+  @IBOutlet var roomLabel: WKInterfaceLabel!
+  @IBOutlet var timer: WKInterfaceTimer!
+  
   @IBAction func hangupClicked() {
       sendMessage(["command": "hangup"])
-      dismiss()
+      popToRootController()
   }
 
   @IBAction func muteClicked() {
@@ -38,16 +40,25 @@ class InCallController: WKInterfaceController {
   }
   
   override func awake(withContext context: Any?) {
-        super.awake(withContext: context)
+      super.awake(withContext: context)
         
-        // Configure interface objects here.
-    }
+      if let data = context as? [String : String] {
+        sendMessage(["command": "joinConference", "data" : data["roomUrl"]!])
+        roomLabel.setText(data["room"]!)
+      }
+  }
 
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
     }
 
+    override func didAppear() {
+        super.didAppear()
+      
+        timer.start()
+    }
+  
     override func didDeactivate() {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()

@@ -17,8 +17,9 @@
 import WatchKit
 
 class MeetingRowController: NSObject {
-
   @IBOutlet var roomLabel: WKInterfaceLabel!
   @IBOutlet var timeLabel: WKInterfaceLabel!
   
+  var room: String!
+  var roomUrl: String!
 }

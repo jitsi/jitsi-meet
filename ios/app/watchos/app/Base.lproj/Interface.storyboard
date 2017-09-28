@@ -26,7 +26,7 @@
                                             </label>
                                         </items>
                                         <connections>
-                                            <segue destination="9RD-qP-1Z0" kind="modal" id="Boa-6E-eZs"/>
+                                            <segue destination="9RD-qP-1Z0" kind="push" id="Boa-6E-eZs"/>
                                         </connections>
                                     </group>
                                     <connections>
@@ -44,24 +44,32 @@
             </objects>
             <point key="canvasLocation" x="-99" y="117"/>
         </scene>
-        <!--Close-->
+        <!--Meetings-->
         <scene sceneID="ns4-Kh-qqU">
             <objects>
-                <controller identifier="InCallController" title="Close" hidesWhenLoading="NO" id="9RD-qP-1Z0" customClass="InCallController" customModule="JitsiMeetCompanion" customModuleProvider="target">
+                <controller identifier="InCallController" title="Meetings" hidesWhenLoading="NO" id="9RD-qP-1Z0" customClass="InCallController" customModule="JitsiMeetCompanion" customModuleProvider="target">
                     <items>
-                        <label alignment="left" text="Label" id="vFt-lL-SNY"/>
-                        <button width="1" alignment="left" title="Hangup" id="8jF-SI-UHz">
+                        <label alignment="center" text="Label" id="vFt-lL-SNY"/>
+                        <timer alignment="center" textAlignment="center" previewedSeconds="0" id="W8S-uZ-MPm">
+                            <color key="textColor" red="0.024725984125768763" green="1" blue="0.24241188365329402" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                        </timer>
+                        <button width="1" alignment="left" verticalAlignment="bottom" title="Hangup" id="8jF-SI-UHz">
                             <color key="backgroundColor" red="1" green="0.13972080801548914" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="hangupClicked" destination="9RD-qP-1Z0" id="cXK-lw-tsd"/>
                             </connections>
                         </button>
-                        <button width="1" alignment="left" title="Toggle mute" id="LmN-FI-aQq">
+                        <button width="1" alignment="left" verticalAlignment="bottom" title="Toggle mute" id="LmN-FI-aQq">
                             <connections>
                                 <action selector="muteClicked" destination="9RD-qP-1Z0" id="dJg-kV-cqH"/>
                             </connections>
                         </button>
                     </items>
+                    <connections>
+                        <outlet property="roomLabel" destination="vFt-lL-SNY" id="cYB-Tf-Efz"/>
+                        <outlet property="timer" destination="W8S-uZ-MPm" id="r7T-j1-9VJ"/>
+                    </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="213" y="117"/>
