@@ -54,19 +54,23 @@
                             <color key="textColor" red="0.024725984125768763" green="1" blue="0.24241188365329402" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
                         </timer>
-                        <button width="1" alignment="left" verticalAlignment="bottom" title="Hangup" id="8jF-SI-UHz">
-                            <color key="backgroundColor" red="1" green="0.13972080801548914" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <connections>
-                                <action selector="hangupClicked" destination="9RD-qP-1Z0" id="cXK-lw-tsd"/>
-                            </connections>
-                        </button>
-                        <button width="1" alignment="left" verticalAlignment="bottom" title="Toggle mute" id="LmN-FI-aQq">
-                            <connections>
-                                <action selector="muteClicked" destination="9RD-qP-1Z0" id="dJg-kV-cqH"/>
-                            </connections>
-                        </button>
+                        <group alignment="center" verticalAlignment="bottom" spacing="10" id="Hfk-a0-uWj">
+                            <items>
+                                <button width="60" height="60" alignment="left" verticalAlignment="bottom" backgroundImage="hangup" id="8jF-SI-UHz">
+                                    <connections>
+                                        <action selector="hangupClicked" destination="9RD-qP-1Z0" id="cXK-lw-tsd"/>
+                                    </connections>
+                                </button>
+                                <button width="60" height="60" alignment="right" verticalAlignment="bottom" backgroundImage="mute-off" id="LmN-FI-aQq">
+                                    <connections>
+                                        <action selector="muteClicked" destination="9RD-qP-1Z0" id="dJg-kV-cqH"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
                     </items>
                     <connections>
+                        <outlet property="mutedButton" destination="LmN-FI-aQq" id="gfi-4T-gdN"/>
                         <outlet property="roomLabel" destination="vFt-lL-SNY" id="cYB-Tf-Efz"/>
                         <outlet property="timer" destination="W8S-uZ-MPm" id="r7T-j1-9VJ"/>
                     </connections>

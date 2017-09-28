@@ -20,8 +20,11 @@ import Foundation
 
 
 class InCallController: WKInterfaceController {
+  @IBOutlet var mutedButton: WKInterfaceButton!
   @IBOutlet var roomLabel: WKInterfaceLabel!
   @IBOutlet var timer: WKInterfaceTimer!
+
+  var muted: Bool!
   
   @IBAction func hangupClicked() {
       sendMessage(["command": "hangup"])
@@ -30,6 +33,8 @@ class InCallController: WKInterfaceController {
 
   @IBAction func muteClicked() {
       sendMessage(["command": "toggleMute"])
+      muted = !muted
+      updateMutedButton()
   }
   
   func sendMessage(_ message: [String : Any]) {
@@ -38,7 +43,15 @@ class InCallController: WKInterfaceController {
           session.sendMessage(message, replyHandler: nil, errorHandler: nil)
       }
   }
-  
+
+  func updateMutedButton() {
+    if muted {
+        mutedButton.setBackgroundImageNamed("mute-on.png")
+    } else {
+        mutedButton.setBackgroundImageNamed("mute-off.png")
+    }
+  }
+
   override func awake(withContext context: Any?) {
       super.awake(withContext: context)
         
@@ -48,6 +61,10 @@ class InCallController: WKInterfaceController {
           }
 
           roomLabel.setText(data["room"]!)
+
+          // TODO read from data
+          muted = false;
+          updateMutedButton()
       }
   }
 
