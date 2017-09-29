@@ -23,19 +23,6 @@
         color: $inputControlEmColor;
     }
 
-    &__hint {
-        margin-top: 0;
-        font-size: $hintFontSize;
-
-        span {
-            vertical-align: middle;
-        }
-
-        &_error {
-            color: $errorColor;
-        }
-    }
-
     &__container {
         position: relative;
         width: 100%;

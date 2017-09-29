@@ -1,19 +1,16 @@
-import Button from '@atlaskit/button';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { getAvatarURL, getParticipants } from '../../base/participants';
-import { openInviteDialog } from '../../invite';
 
 import ContactListItem from './ContactListItem';
 
 declare var interfaceConfig: Object;
 
 /**
- * React component for showing a list of current conference participants, the
- * current conference lock state, and a button to open the invite dialog.
+ * React component for showing a list of current conference participants.
  *
  * @extends Component
  */
@@ -25,19 +22,14 @@ class ContactListPanel extends Component {
      */
     static propTypes = {
         /**
-         * Whether or not the conference is currently locked with a password.
-         */
-        _locked: PropTypes.bool,
-
-        /**
          * The participants to show in the contact list.
          */
         _participants: PropTypes.array,
 
         /**
-         * Invoked to open an invite dialog.
+         * Whether or not participant avatars should be displayed.
          */
-        dispatch: PropTypes.func,
+        _showAvatars: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
@@ -46,61 +38,23 @@ class ContactListPanel extends Component {
     };
 
     /**
-     * Initializes a new {@code ContactListPanel} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        // Bind event handler so it is only bound once for every instance.
-        this._onOpenInviteDialog = this._onOpenInviteDialog.bind(this);
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     render() {
-        const { _locked, _participants, t } = this.props;
+        const { _participants, t } = this.props;
 
         return (
             <div className = 'contact-list-panel'>
                 <div className = 'title'>
-                    { t('contactlist', { pcount: _participants.length }) }
-                </div>
-                <div className = 'sideToolbarBlock first'>
-                    <Button
-                        appearance = 'primary'
-                        className = 'contact-list-panel-invite-button'
-                        id = 'addParticipantsBtn'
-                        onClick = { this._onOpenInviteDialog }
-                        type = 'button'>
-                        { t('addParticipants') }
-                    </Button>
-                    <div>
-                        { _locked
-                            ? this._renderLockedMessage()
-                            : this._renderUnlockedMessage() }
-                    </div>
+                    { t('contactlist', { count: _participants.length }) }
                 </div>
                 <ul id = 'contacts'>
                     { this._renderContacts() }
                 </ul>
             </div>
         );
-    }
-
-    /**
-     * Dispatches an action to open an invite dialog.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onOpenInviteDialog() {
-        this.props.dispatch(openInviteDialog());
     }
 
     /**
@@ -116,48 +70,13 @@ class ContactListPanel extends Component {
 
             return (
                 <ContactListItem
-                    avatarURI = { interfaceConfig.SHOW_CONTACTLIST_AVATARS
+                    avatarURI = { this.props._showAvatars
                         ? getAvatarURL(participant) : null }
                     id = { id }
                     key = { id }
                     name = { name } />
             );
         });
-    }
-
-    /**
-     * Renders a React Element for informing the conference is currently locked.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderLockedMessage() {
-        return (
-            <p
-                className = 'form-control__hint form-control_full-width'
-                id = 'contactListroomLocked'>
-                <span className = 'icon-security-locked' />
-                <span>{ this.props.t('roomLocked') }</span>
-            </p>
-        );
-    }
-
-    /**
-     * Renders a React Element for informing the conference is currently not
-     * locked.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderUnlockedMessage() {
-        return (
-            <p
-                className = 'form-control__hint form-control_full-width'
-                id = 'contactListroomUnlocked'>
-                <span className = 'icon-security' />
-                <span>{ this.props.t('roomUnlocked') }</span>
-            </p>
-        );
     }
 }
 
@@ -174,8 +93,8 @@ class ContactListPanel extends Component {
  */
 function _mapStateToProps(state) {
     return {
-        _locked: state['features/base/conference'].locked,
-        _participants: getParticipants(state)
+        _participants: getParticipants(state),
+        _showAvatars: interfaceConfig.SHOW_CONTACTLIST_AVATARS
     };
 }
 

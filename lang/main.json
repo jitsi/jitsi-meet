@@ -1,8 +1,6 @@
 {
-    "contactlist": "__pcount__ Members",
-    "addParticipants": "Share the link",
-    "roomLocked": "Callers must enter a password",
-    "roomUnlocked": "Anyone with the link can join",
+    "contactlist": "__count__ Member",
+    "contactlist_plural": "__count__ Members",
     "passwordSetRemotely": "set by another member",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
