@@ -46,10 +46,10 @@ class InfoDialogButton extends Component {
         _showDialog: PropTypes.bool,
 
         /**
-         * Whether or not the toolbars, in which this component exists, are
+         * Whether or not the toolbox, in which this component exists, are
          * visible.
          */
-        _visible: PropTypes.bool,
+        _toolboxVisible: PropTypes.bool,
 
         /**
          * Invoked to toggle display of the info dialog
@@ -107,8 +107,7 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Update the state when the {@code InfoDialog} visibility has been updated
-     * for the first time.
+     * Update the state when the {@code InfoDialog} visibility has been updated.
      *
      * @inheritdoc
      */
@@ -118,7 +117,7 @@ class InfoDialogButton extends Component {
             this.setState({ hasInteractedWithDialog: true });
         }
 
-        if (!nextProps._visible && this.props._visible) {
+        if (!nextProps._toolboxVisible && this.props._toolboxVisible) {
             this._onDialogClose();
         }
     }
@@ -139,7 +138,7 @@ class InfoDialogButton extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _showDialog, _visible, tooltipPosition } = this.props;
+        const { _showDialog, _toolboxVisible, tooltipPosition } = this.props;
         const buttonConfiguration = {
             ...DEFAULT_BUTTON_CONFIGURATION,
             classNames: [
@@ -153,7 +152,7 @@ class InfoDialogButton extends Component {
                 content = { <InfoDialog
                     onClose = { this._onDialogClose }
                     onMouseOver = { this._onDialogMouseOver } /> }
-                isOpen = { _visible && _showDialog }
+                isOpen = { _toolboxVisible && _showDialog }
                 onClose = { this._onDialogClose }
                 onContentClick = { this._onDialogInteract }
                 position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
@@ -221,13 +220,13 @@ class InfoDialogButton extends Component {
  * @private
  * @returns {{
  *     _showDialog: boolean,
- *     _visible: boolean
+ *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
         _showDialog: state['features/invite'].infoDialogVisible,
-        _visible: state['features/toolbox'].visible
+        _toolboxVisible: state['features/toolbox'].visible
     };
 }
 
