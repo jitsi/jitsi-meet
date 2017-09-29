@@ -14,8 +14,6 @@
 		0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */; };
 		0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */; };
 		0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */; };
-		0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD761F5EC6CE001C08DB /* CallKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD781F5EC6D7001C08DB /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */; };
 		0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB9AD7C1F60356D001C08DB /* AppInfo.m */; };
 		0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495C1EC4B6C600B793EE /* AudioMode.m */; };
@@ -35,8 +33,6 @@
 		0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeWrapper.h; sourceTree = "<group>"; };
 		0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBridgeWrapper.m; sourceTree = "<group>"; };
 		0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalAPI.m; sourceTree = "<group>"; };
-		0BB9AD761F5EC6CE001C08DB /* CallKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallKit.framework; path = System/Library/Frameworks/CallKit.framework; sourceTree = SDKROOT; };
-		0BB9AD781F5EC6D7001C08DB /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallKit.m; sourceTree = "<group>"; };
 		0BB9AD7C1F60356D001C08DB /* AppInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppInfo.m; sourceTree = "<group>"; };
 		0BCA495C1EC4B6C600B793EE /* AudioMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMode.m; sourceTree = "<group>"; };
@@ -56,8 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */,
-				0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */,
 				0B93EF7B1EC608550030D24D /* CoreText.framework in Frameworks */,
 				0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */,
 			);
@@ -116,8 +110,6 @@
 		9C3C6FA2341729836589B856 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0BB9AD781F5EC6D7001C08DB /* Intents.framework */,
-				0BB9AD761F5EC6CE001C08DB /* CallKit.framework */,
 				0B93EF7A1EC608550030D24D /* CoreText.framework */,
 				0BCA49631EC4B76D00B793EE /* WebRTC.framework */,
 				03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */,
