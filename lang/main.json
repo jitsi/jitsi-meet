@@ -1,5 +1,6 @@
 {
-    "contactlist": "__pcount__ Members",
+    "contactlist": "__count__ Member",
+    "contactlist_plural": "__count__ Members",
     "passwordSetRemotely": "set by another member",
     "connectionsettings": "Connection Settings",
     "poweredby": "powered by",

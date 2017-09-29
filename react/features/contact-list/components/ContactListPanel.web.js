@@ -48,7 +48,7 @@ class ContactListPanel extends Component {
         return (
             <div className = 'contact-list-panel'>
                 <div className = 'title'>
-                    { t('contactlist', { pcount: _participants.length }) }
+                    { t('contactlist', { count: _participants.length }) }
                 </div>
                 <ul id = 'contacts'>
                     { this._renderContacts() }
