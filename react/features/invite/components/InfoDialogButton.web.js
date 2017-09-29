@@ -4,11 +4,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { ToolbarButton, TOOLTIP_TO_POPUP_POSITION } from '../../toolbox';
-import { getParticipantCount } from '../../base/participants';
 
 import { setInfoDialogVisibility } from '../actions';
 
 import InfoDialog from './InfoDialog';
+
+declare var interfaceConfig: Object;
+
+const { INITIAL_TOOLBAR_TIMEOUT } = interfaceConfig;
 
 /**
  * A configuration object to describe how {@code ToolbarButton} should render
@@ -25,12 +28,6 @@ const DEFAULT_BUTTON_CONFIGURATION = {
 };
 
 /**
- * The amount of time, in milliseconds, to wait until automatically showing
- * the {@code InfoDialog}
- */
-const INFO_DIALOG_AUTO_SHOW_TIME = 3000;
-
-/**
  * A React Component for displaying a button which opens a dialog with
  * information about the conference and with ways to invite people.
  *
@@ -43,12 +40,6 @@ class InfoDialogButton extends Component {
      * @static
      */
     static propTypes = {
-        /**
-         * The number of real participants in the call. If in a lonely call,
-         * the {@code InfoDialog} will be automatically shown.
-         */
-        _participantCount: PropTypes.number,
-
         /**
          * Whether or not {@code InfoDialog} should be displayed.
          */
@@ -82,45 +73,53 @@ class InfoDialogButton extends Component {
         super(props);
 
         /**
-         * The timeout to automatically show the {@code InfoDialog} if it has
-         * not been shown yet in a lonely call.
+         * The timeout to automatically hide the {@code InfoDialog} if it has
+         * not been interacted with.
          *
          * @type {timeoutID}
          */
-        this._autoShowTimeout = null;
+        this._autoHideDialogTimeout = null;
 
         this.state = {
             /**
-             * Whether or not the dialog has displayed at least once.
+             * Whether or not the dialog has been interacted with somehow, such
+             * as clicking or toggle display. A value of true will prevent the
+             * dialog from being automatically hidden.
              */
-            hasToggled: false
+            hasInteractedWithDialog: false
         };
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
+        this._onDialogMouseOver = this._onDialogMouseOver.bind(this);
         this._onDialogToggle = this._onDialogToggle.bind(this);
     }
 
     /**
-     * Set a timeout to automatically show the {@code InfoDialog}.
+     * Set a timeout to automatically hide the {@code InfoDialog}.
      *
      * @inheritdoc
      */
     componentDidMount() {
-        this._autoShowTimeout = setTimeout(() => {
-            this._maybeAutoShowDialog();
-        }, INFO_DIALOG_AUTO_SHOW_TIME);
+        this._autoHideDialogTimeout = setTimeout(() => {
+            this._maybeHideDialog();
+        }, INITIAL_TOOLBAR_TIMEOUT);
     }
 
     /**
-     * Update the state when the {@code InfoDialog} has been seen for the first
-     * time.
+     * Update the state when the {@code InfoDialog} visibility has been updated
+     * for the first time.
      *
      * @inheritdoc
      */
     componentWillReceiveProps(nextProps) {
-        if (!this.state.hasToggled && nextProps._showDialog) {
-            this.setState({ hasToggled: true });
+        if (!this.state.hasInteractedWithDialog
+            && (nextProps._showDialog !== this.props._showDialog)) {
+            this.setState({ hasInteractedWithDialog: true });
+        }
+
+        if (!nextProps._visible && this.props._visible) {
+            this._onDialogClose();
         }
     }
 
@@ -130,7 +129,7 @@ class InfoDialogButton extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        clearTimeout(this._autoShowTimeout);
+        clearTimeout(this._autoHideDialogTimeout);
     }
 
     /**
@@ -151,9 +150,12 @@ class InfoDialogButton extends Component {
 
         return (
             <InlineDialog
-                content = { <InfoDialog onClose = { this._onDialogClose } /> }
+                content = { <InfoDialog
+                    onClose = { this._onDialogClose }
+                    onMouseOver = { this._onDialogMouseOver } /> }
                 isOpen = { _visible && _showDialog }
                 onClose = { this._onDialogClose }
+                onContentClick = { this._onDialogInteract }
                 position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
                 <ToolbarButton
                     button = { buttonConfiguration }
@@ -164,14 +166,15 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Callback invoked after a timeout to trigger display of the
-     * {@code InfoDialog} if certain conditions are met.
+     * Callback invoked after a timeout to trigger hiding of the
+     * {@code InfoDialog} if there has been no interaction with the dialog
+     * and the dialog is currently showing.
      *
      * @private
      * @returns {void}
      */
-    _maybeAutoShowDialog() {
-        if (this.props._participantCount < 2 && !this.state.hasToggled) {
+    _maybeHideDialog() {
+        if (!this.state.hasInteractedWithDialog && this.props._showDialog) {
             this._onDialogToggle();
         }
     }
@@ -184,6 +187,19 @@ class InfoDialogButton extends Component {
      */
     _onDialogClose() {
         this.props.dispatch(setInfoDialogVisibility(false));
+    }
+
+    /**
+     * Updates the internal state to mark the {@code InfoDialog} as having been
+     * interacted with.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onDialogMouseOver() {
+        if (!this.state.hasInteractedWithDialog) {
+            this.setState({ hasInteractedWithDialog: true });
+        }
     }
 
     /**
@@ -204,15 +220,12 @@ class InfoDialogButton extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _participantsCount: number,
  *     _showDialog: boolean,
  *     _visible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        _participantCount:
-            getParticipantCount(state['features/base/participants']),
         _showDialog: state['features/invite'].infoDialogVisible,
         _visible: state['features/toolbox'].visible
     };
