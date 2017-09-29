@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { muteRemoteParticipant } from '../../base/participants';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -95,6 +96,14 @@ class MuteButton extends Component {
      */
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
+
+        JitsiMeetJS.analytics.sendEvent(
+            'remotevideomenu.mute',
+            {
+                value: 1,
+                label: participantID
+            }
+        );
 
         dispatch(muteRemoteParticipant(participantID));
 
