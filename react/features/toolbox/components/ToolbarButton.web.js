@@ -7,22 +7,11 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
+import { TOOLTIP_TO_POPUP_POSITION } from '../constants';
 import { isButtonEnabled } from '../functions';
 import StatelessToolbarButton from './StatelessToolbarButton';
 
 declare var APP: Object;
-
-/**
- * Mapping of tooltip positions to equivalent {@code AKInlineDialog} positions.
- *
- * @private
- */
-const TOOLTIP_TO_POPUP_POSITION = {
-    bottom: 'bottom center',
-    left: 'left middle',
-    top: 'top center',
-    right: 'right middle'
-};
 
 /**
  * Represents a button in Toolbar on React.

@@ -46,6 +46,11 @@ class InfoDialog extends Component {
         onClose: PropTypes.func,
 
         /**
+         * Callback invoked when a mouse-related event has been detected.
+         */
+        onMouseOver: PropTypes.func,
+
+        /**
          * Invoked to obtain translated strings.
          */
         t: PropTypes.func
@@ -84,7 +89,9 @@ class InfoDialog extends Component {
      */
     render() {
         return (
-            <div className = 'info-dialog'>
+            <div
+                className = 'info-dialog'
+                onMouseOver = { this.props.onMouseOver } >
                 <div className = 'info-dialog-column'>
                     <h4 className = 'info-dialog-icon'>
                         <i className = 'icon-info' />

@@ -1,4 +1,15 @@
 /**
+ * The type of the action which signals a request to display the inline
+ * conference info dialog.
+ *
+ * {
+ *     type: SET_INFO_DIALOG_VISIBILITY,
+ *     visible: boolean
+ * }
+ */
+export const SET_INFO_DIALOG_VISIBILITY = Symbol('SET_INFO_DIALOG_VISIBILITY');
+
+/**
  * The type of the action which signals an error occurred while requesting dial-
  * in numbers.
  *

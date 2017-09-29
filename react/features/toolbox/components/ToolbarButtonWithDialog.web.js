@@ -3,20 +3,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { TOOLTIP_TO_POPUP_POSITION } from '../constants';
 import ToolbarButton from './ToolbarButton';
-
-/**
- * Maps AtlasKit {@code Tooltip} positions to equivalent {@code InlineDialog}
- * positions. The {@code InlineDialog} will appear from the the same side of
- * the button as the tooltip.
- *
- */
-const TOOLTIP_TO_DIALOG_POSITION = {
-    bottom: 'bottom center',
-    left: 'left middle',
-    right: 'right middle',
-    top: 'top center'
-};
 
 /**
  * React {@code Component} for displaying a button which will open an inline
@@ -113,7 +101,7 @@ class ToolbarButtonWithDialog extends Component {
                 content = { <Content onClose = { this._onDialogClose } /> }
                 isOpen = { _visible && this.state.showDialog }
                 onClose = { this._onDialogClose }
-                position = { TOOLTIP_TO_DIALOG_POSITION[tooltipPosition] }>
+                position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
                 <ToolbarButton
                     button = { buttonConfiguration }
                     onClick = { this._onDialogToggle }
