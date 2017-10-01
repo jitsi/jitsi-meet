@@ -5,7 +5,7 @@
  * XXX (1) Web/React utilizes relativity on the Jitsi Meet deployment.
  * (2) Mobile/React Native utilizes relativity on the local file system at build
  * time. Unfortunately, the packager of React Native cannot deal with the
- * <tt>const</tt> early enough for <tt>require</tt> to succeed at runtime.
+ * {@code const} early enough for {@code require} to succeed at runtime.
  * Anyway, be sure to synchronize the relative path on Web and mobile for the
  * purposes of consistency.
  *

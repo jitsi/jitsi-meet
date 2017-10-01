@@ -73,13 +73,13 @@ class Filmstrip extends Component {
     }
 
     /**
-     * Sorts a specific array of <tt>Participant</tt>s in display order.
+     * Sorts a specific array of {@code Participant}s in display order.
      *
-     * @param {Participant[]} participants - The array of <tt>Participant</tt>s
+     * @param {Participant[]} participants - The array of {@code Participant}s
      * to sort in display order.
      * @private
      * @returns {Participant[]} A new array containing the elements of the
-     * specified <tt>participants</tt> array sorted in display order.
+     * specified {@code participants} array sorted in display order.
      */
     _sort(participants) {
         // XXX Array.prototype.sort() is not appropriate because (1) it operates

@@ -31,7 +31,7 @@ RCT_EXPORT_MODULE();
  *
  * @param name The name of the event.
  * @param data The details/specifics of the event to send determined
- * by/associated with the specified {@code name}.
+ * by/associated with the specified `name`.
  * @param scope
  */
 RCT_EXPORT_METHOD(sendEvent:(NSString *)name
@@ -64,7 +64,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
  * method name.
  *
  * @param eventName The event name to convert to a method name.
- * @return A method name constructed from the specified {@code eventName}.
+ * @return A method name constructed from the specified `eventName`.
  */
 - (NSString *)methodNameFromEventName:(NSString *)eventName {
    NSMutableString *methodName

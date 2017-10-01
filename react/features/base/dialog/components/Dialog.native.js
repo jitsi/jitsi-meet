@@ -13,14 +13,14 @@ import styles from './styles';
 
 /**
  * The value of the style property {@link _TAG_KEY} which identifies the
- * OK/submit button of <tt>Prompt</tt>.
+ * OK/submit button of {@code Prompt}.
  */
 const _SUBMIT_TEXT_TAG_VALUE = '_SUBMIT_TEXT_TAG_VALUE';
 
 /**
- * The name of the style property which identifies ancestors of <tt>Prompt</tt>
+ * The name of the style property which identifies ancestors of {@code Prompt}
  * such as its OK/submit button for the purposes of workarounds implemented by
- * <tt>Dialog</tt>.
+ * {@code Dialog}.
  *
  * XXX The value may trigger a react-native warning in the Debug configuration
  * but, unfortunately, I couldn't find a value that wouldn't.
@@ -28,11 +28,11 @@ const _SUBMIT_TEXT_TAG_VALUE = '_SUBMIT_TEXT_TAG_VALUE';
 const _TAG_KEY = '_TAG_KEY';
 
 /**
- * Implements <tt>AbstractDialog</tt> on react-native using <tt>Prompt</tt>.
+ * Implements {@code AbstractDialog} on react-native using {@code Prompt}.
  */
 class Dialog extends AbstractDialog {
     /**
-     * <tt>AbstractDialog</tt>'s React <tt>Component</tt> prop types.
+     * {@code AbstractDialog}'s React {@code Component} prop types.
      *
      * @static
      */
@@ -164,14 +164,14 @@ class Dialog extends AbstractDialog {
     }
 
     /**
-     * Creates a deep clone of a specific <tt>ReactElement</tt> with the results
+     * Creates a deep clone of a specific {@code ReactElement} with the results
      * of calling a specific function on every node of a specific
-     * <tt>ReactElement</tt> tree.
+     * {@code ReactElement} tree.
      *
-     * @param {ReactElement} element - The <tt>ReactElement</tt> to clone and
-     * call the specified <tt>f</tt> on.
+     * @param {ReactElement} element - The {@code ReactElement} to clone and
+     * call the specified {@code f} on.
      * @param {Function} f - The function to call on every node of the
-     * <tt>ReactElement</tt> tree represented by the specified <tt>element</tt>.
+     * {@code ReactElement} tree represented by the specified {@code element}.
      * @private
      * @returns {ReactElement}
      */

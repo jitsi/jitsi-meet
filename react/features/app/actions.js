@@ -50,7 +50,7 @@ function _appNavigateToMandatoryLocation(
 
     /**
      * Notifies that an attempt to load a configuration has completed. Due to
-     * the asynchronous nature of the loading, the specified <tt>config</tt> may
+     * the asynchronous nature of the loading, the specified {@code config} may
      * or may not be required by the time the notification arrives.
      *
      * @param {string|undefined} error - If the loading has failed, the error

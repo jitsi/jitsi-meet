@@ -9,7 +9,7 @@ import { DIALOG_PROP_TYPES } from '../constants';
  */
 export default class AbstractDialog extends Component {
     /**
-     * <tt>AbstractDialog</tt> React <tt>Component</tt>'s prop types.
+     * {@code AbstractDialog} React {@code Component}'s prop types.
      *
      * @static
      */
@@ -17,7 +17,7 @@ export default class AbstractDialog extends Component {
         ...DIALOG_PROP_TYPES,
 
         /**
-         * The React <tt>Component</tt> children of <tt>AbstractDialog</tt>
+         * The React {@code Component} children of {@code AbstractDialog}
          * which represents the dialog's body.
          */
         children: PropTypes.node,
@@ -29,9 +29,9 @@ export default class AbstractDialog extends Component {
     };
 
     /**
-     * Initializes a new <tt>AbstractDialog</tt> instance.
+     * Initializes a new {@code AbstractDialog} instance.
      *
-     * @param {Object} props - The read-only React <tt>Component</tt> props with
+     * @param {Object} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
     constructor(props) {
@@ -82,10 +82,10 @@ export default class AbstractDialog extends Component {
     }
 
     /**
-     * Submits this dialog. If the React <tt>Component</tt> prop
-     * <tt>onSubmit</tt> is defined, the function that is the value of the prop
-     * is invoked. If the function returns a <tt>thenable</tt>, then the
-     * resolution of the <tt>thenable</tt> is awaited. If the submission
+     * Submits this dialog. If the React {@code Component} prop
+     * {@code onSubmit} is defined, the function that is the value of the prop
+     * is invoked. If the function returns a {@code thenable}, then the
+     * resolution of the {@code thenable} is awaited. If the submission
      * completes successfully, a redux action will be dispatched to hide this
      * dialog.
      *
@@ -126,7 +126,7 @@ export default class AbstractDialog extends Component {
     }
 
     /**
-     * Notifies this <tt>AbstractDialog</tt> that it has been submitted
+     * Notifies this {@code AbstractDialog} that it has been submitted
      * successfully. Dispatches a redux action to hide this dialog after it has
      * been submitted.
      *
@@ -140,7 +140,7 @@ export default class AbstractDialog extends Component {
     }
 
     /**
-     * Notifies this <tt>AbstractDialog</tt> that its submission has failed.
+     * Notifies this {@code AbstractDialog} that its submission has failed.
      *
      * @private
      * @returns {void}

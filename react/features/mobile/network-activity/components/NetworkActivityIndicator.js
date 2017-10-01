@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 import { LoadingIndicator } from '../../../base/react';
 
 /**
- * The React <tt>Component</tt> which renders a progress indicator when there
+ * The React {@code Component} which renders a progress indicator when there
  * are ongoing network requests.
  */
 class NetworkActivityIndicator extends Component {
     /**
-     * <tt>NetworkActivityIndicator</tt> React <tt>Component</tt>'s prop types.
+     * {@code NetworkActivityIndicator} React {@code Component}'s prop types.
      *
      * @static
      */
@@ -38,8 +38,8 @@ class NetworkActivityIndicator extends Component {
 }
 
 /**
- * Maps (parts of) the redux state to the React <tt>Component</tt> props of
- * <tt>NetworkActivityIndicator</tt>.
+ * Maps (parts of) the redux state to the React {@code Component} props of
+ * {@code NetworkActivityIndicator}.
  *
  * @param {Object} state - The redux state.
  * @private

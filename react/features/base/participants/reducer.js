@@ -25,8 +25,8 @@ import {
  * @property {boolean} pinned - If true, participant is currently a
  * "PINNED_ENDPOINT".
  * @property {boolean} dominantSpeaker - If this participant is the dominant
- * speaker in the (associated) conference, <tt>true</tt>; otherwise,
- * <tt>false</tt>.
+ * speaker in the (associated) conference, {@code true}; otherwise,
+ * {@code false}.
  * @property {string} email - Participant email.
  */
 

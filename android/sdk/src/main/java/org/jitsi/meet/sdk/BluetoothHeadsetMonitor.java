@@ -137,7 +137,8 @@ class BluetoothHeadsetMonitor {
     /**
      * Returns the current headset availability.
      *
-     * @return true if there is a Bluetooth headset connected, false otherwise.
+     * @return {@code true} if there is a Bluetooth headset connected;
+     * {@code false}, otherwise.
      */
     public boolean isHeadsetAvailable() {
         return headsetAvailable;

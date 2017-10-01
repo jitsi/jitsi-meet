@@ -17,7 +17,7 @@ class AppInfoModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * Gets a <tt>Map</tt> of constants this module exports to JS. Supports JSON
+     * Gets a {@code Map} of constants this module exports to JS. Supports JSON
      * types.
      *
      * @return a {@link Map} of constants this module exports to JS
@@ -54,9 +54,6 @@ class AppInfoModule extends ReactContextBaseJavaModule {
         return constants;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "AppInfo";

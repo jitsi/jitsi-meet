@@ -58,11 +58,11 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Gets the description of a specific <tt>Symbol</tt>.
+ * Gets the description of a specific {@code Symbol}.
  *
- * @param {Symbol} symbol - The <tt>Symbol</tt> to retrieve the description of.
+ * @param {Symbol} symbol - The {@code Symbol} to retrieve the description of.
  * @private
- * @returns {string} The description of <tt>symbol</tt>.
+ * @returns {string} The description of {@code symbol}.
  */
 function _getSymbolDescription(symbol: Symbol) {
     let description = symbol.toString();

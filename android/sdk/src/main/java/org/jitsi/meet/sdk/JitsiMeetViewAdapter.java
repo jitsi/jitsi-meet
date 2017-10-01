@@ -23,44 +23,26 @@ import java.util.Map;
  * all methods in the interface if they are only interested in some.
  */
 public abstract class JitsiMeetViewAdapter implements JitsiMeetViewListener {
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onConferenceFailed(Map<String, Object> data) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onConferenceJoined(Map<String, Object> data) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onConferenceLeft(Map<String, Object> data) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onConferenceWillJoin(Map<String, Object> data) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onConferenceWillLeave(Map<String, Object> data) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onLoadConfigError(Map<String, Object> data) {
     }

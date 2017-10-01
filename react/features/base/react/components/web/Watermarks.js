@@ -8,7 +8,7 @@ import { translate } from '../../../i18n';
 declare var interfaceConfig: Object;
 
 /**
- * The CSS style of the element with CSS class <tt>rightwatermark</tt>.
+ * The CSS style of the element with CSS class {@code rightwatermark}.
  *
  * @private
  */

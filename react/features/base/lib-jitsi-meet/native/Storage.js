@@ -2,27 +2,27 @@ import { AsyncStorage } from 'react-native';
 
 /**
  * A Web Sorage API implementation used for polyfilling
- * <tt>window.localStorage</tt> and/or <tt>window.sessionStorage</tt>.
+ * {@code window.localStorage} and/or {@code window.sessionStorage}.
  * <p>
  * The Web Storage API is synchronous whereas React Native's builtin generic
- * storage API <tt>AsyncStorage</tt> is asynchronous so the implementation with
+ * storage API {@code AsyncStorage} is asynchronous so the implementation with
  * persistence is optimistic: it will first store the value locally in memory so
  * that results can be served synchronously and then persist the value
  * asynchronously. If an asynchronous operation produces an error, it's ignored.
  */
 export default class Storage {
     /**
-     * Initializes a new <tt>Storage</tt> instance. Loads all previously
-     * persisted data items from React Native's <tt>AsyncStorage</tt> if
+     * Initializes a new {@code Storage} instance. Loads all previously
+     * persisted data items from React Native's {@code AsyncStorage} if
      * necessary.
      *
      * @param {string|undefined} keyPrefix - The prefix of the
-     * <tt>AsyncStorage</tt> keys to be persisted by this storage.
+     * {@code AsyncStorage} keys to be persisted by this storage.
      */
     constructor(keyPrefix) {
         /**
-         * The prefix of the <tt>AsyncStorage</tt> keys persisted by this
-         * storage. If <tt>undefined</tt>, then the data items stored in this
+         * The prefix of the {@code AsyncStorage} keys persisted by this
+         * storage. If {@code undefined}, then the data items stored in this
          * storage will not be persisted.
          *
          * @private
@@ -81,8 +81,8 @@ export default class Storage {
      * Returns the value associated with a specific key in this storage.
      *
      * @param {string} key - The name of the key to retrieve the value of.
-     * @returns {string|null} The value associated with <tt>key</tt> or
-     * <tt>null</tt>.
+     * @returns {string|null} The value associated with {@code key} or
+     * {@code null}.
      */
     getItem(key) {
         return this.hasOwnProperty(key) ? this[key] : null;
@@ -128,7 +128,7 @@ export default class Storage {
      * value. If the key exists already, updates its value.
      *
      * @param {string} key - The name of the key to add/update.
-     * @param {string} value - The value to associate with <tt>key</tt>.
+     * @param {string} value - The value to associate with {@code key}.
      * @returns {void}
      */
     setItem(key, value) {

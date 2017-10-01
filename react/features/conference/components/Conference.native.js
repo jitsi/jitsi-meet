@@ -61,12 +61,12 @@ class Conference extends Component {
 
         /**
          * Handles a hardware button press for back navigation. Leaves the
-         * associated <tt>Conference</tt>.
+         * associated {@code Conference}.
          *
          * @private
          * @returns {boolean} As the associated conference is unconditionally
-         * left and exiting the app while it renders a <tt>Conference</tt> is
-         * undesired, <tt>true</tt> is always returned.
+         * left and exiting the app while it renders a {@code Conference} is
+         * undesired, {@code true} is always returned.
          */
         _onHardwareBackPress: PropTypes.func,
 
@@ -253,8 +253,8 @@ class Conference extends Component {
      * Handles a hardware button press for back navigation.
      *
      * @returns {boolean} If the hardware button press for back navigation was
-     * handled by this <tt>Conference</tt>, then <tt>true</tt>; otherwise,
-     * <tt>false</tt>.
+     * handled by this {@code Conference}, then {@code true}; otherwise,
+     * {@code false}.
      */
     _onHardwareBackPress() {
         return this._backHandler && this.props._onHardwareBackPress();
@@ -314,11 +314,11 @@ function _mapDispatchToProps(dispatch) {
 
         /**
          * Handles a hardware button press for back navigation. Leaves the
-         * associated <tt>Conference</tt>.
+         * associated {@code Conference}.
          *
          * @returns {boolean} As the associated conference is unconditionally
-         * left and exiting the app while it renders a <tt>Conference</tt> is
-         * undesired, <tt>true</tt> is always returned.
+         * left and exiting the app while it renders a {@code Conference} is
+         * undesired, {@code true} is always returned.
          */
         _onHardwareBackPress() {
             dispatch(appNavigate(undefined));

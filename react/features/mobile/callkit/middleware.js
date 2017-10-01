@@ -68,14 +68,14 @@ CallKit && MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Notifies the feature jwt that the action {@link APP_WILL_MOUNT} is being
- * dispatched within a specific redux <tt>store</tt>.
+ * dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>APP_WILL_MOUNT</tt> which is
- * being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code APP_WILL_MOUNT} which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -120,14 +120,14 @@ function _appWillMount({ dispatch, getState }, next, action) {
 
 /**
  * Notifies the feature jwt that the action {@link CONFERENCE_FAILED} is being
- * dispatched within a specific redux <tt>store</tt>.
+ * dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>CONFERENCE_FAILED</tt> which is
- * being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_FAILED} which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -145,14 +145,14 @@ function _conferenceFailed(store, next, action) {
 
 /**
  * Notifies the feature jwt that the action {@link CONFERENCE_JOINED} is being
- * dispatched within a specific redux <tt>store</tt>.
+ * dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>CONFERENCE_JOINED</tt> which is
- * being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -170,14 +170,14 @@ function _conferenceJoined(store, next, action) {
 
 /**
  * Notifies the feature jwt that the action {@link CONFERENCE_LEFT} is being
- * dispatched within a specific redux <tt>store</tt>.
+ * dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>CONFERENCE_LEFT</tt> which is
- * being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_LEFT} which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -195,14 +195,14 @@ function _conferenceLeft(store, next, action) {
 
 /**
  * Notifies the feature jwt that the action {@link CONFERENCE_WILL_JOIN} is
- * being dispatched within a specific redux <tt>store</tt>.
+ * being dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>CONFERENCE_WILL_JOIN</tt> which
- * is being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_WILL_JOIN} which
+ * is being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -227,10 +227,10 @@ function _conferenceWillJoin({ getState }, next, action) {
 }
 
 /**
- * Handles CallKit's event <tt>performEndCallAction</tt>.
+ * Handles CallKit's event {@code performEndCallAction}.
  *
  * @param {Object} event - The details of the CallKit event
- * <tt>performEndCallAction</tt>.
+ * {@code performEndCallAction}.
  * @returns {void}
  */
 function _onPerformEndCallAction({ callUUID }) {
@@ -247,10 +247,10 @@ function _onPerformEndCallAction({ callUUID }) {
 }
 
 /**
- * Handles CallKit's event <tt>performSetMutedCallAction</tt>.
+ * Handles CallKit's event {@code performSetMutedCallAction}.
  *
  * @param {Object} event - The details of the CallKit event
- * <tt>performSetMutedCallAction</tt>.
+ * {@code performSetMutedCallAction}.
  * @returns {void}
  */
 function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
@@ -271,14 +271,14 @@ function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
 
 /**
  * Notifies the feature jwt that the action {@link SET_AUDIO_MUTED} is being
- * dispatched within a specific redux <tt>store</tt>.
+ * dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>SET_AUDIO_MUTED</tt> which is
- * being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SET_AUDIO_MUTED} which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -296,14 +296,14 @@ function _setAudioMuted({ getState }, next, action) {
 
 /**
  * Notifies the feature jwt that the action {@link _SET_CALLKIT_SUBSCRIPTIONS}
- * is being dispatched within a specific redux <tt>store</tt>.
+ * is being dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>_SET_CALLKIT_SUBSCRIPTIONS</tt>
- * which is being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code _SET_CALLKIT_SUBSCRIPTIONS}
+ * which is being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */
@@ -321,14 +321,14 @@ function _setCallKitSubscriptions({ getState }, next, action) {
 
 /**
  * Notifies the feature jwt that the action {@link SET_VIDEO_MUTED} is being
- * dispatched within a specific redux <tt>store</tt>.
+ * dispatched within a specific redux {@code store}.
  *
- * @param {Store} store - The redux store in which the specified <tt>action</tt>
+ * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified <tt>action</tt> to the specified <tt>store</tt>.
- * @param {Action} action - The redux action <tt>SET_VIDEO_MUTED</tt> which is
- * being dispatched in the specified <tt>store</tt>.
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SET_VIDEO_MUTED} which is
+ * being dispatched in the specified {@code store}.
  * @private
  * @returns {*}
  */

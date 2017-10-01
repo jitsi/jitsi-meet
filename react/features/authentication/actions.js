@@ -129,7 +129,7 @@ export function stopWaitForOwner() {
  *
  * @param {Object} thenableWithCancel - The process of authenticating and
  * upgrading the local participant's role.
- * @param {Object} progressOrError - If the value is a <tt>number</tt>, then the
+ * @param {Object} progressOrError - If the value is a {@code number}, then the
  * process of authenticating and upgrading the local participant's role has
  * succeeded in one of its two/multiple steps; otherwise, it has failed with the
  * specified error. Refer to {@link JitsiConference#authenticateAndUpgradeRole}

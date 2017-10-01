@@ -26,26 +26,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class ReactPackageAdapter implements ReactPackage {
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         return Collections.emptyList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<ViewManager> createViewManagers(
             ReactApplicationContext reactContext) {

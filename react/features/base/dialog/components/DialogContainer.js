@@ -42,7 +42,7 @@ export class DialogContainer extends Component {
 }
 
 /**
- * Maps (parts of) the redux state to the associated <tt>DialogContainer</tt>'s
+ * Maps (parts of) the redux state to the associated {@code DialogContainer}'s
  * props.
  *
  * @param {Object} state - The redux state.

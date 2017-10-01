@@ -18,14 +18,14 @@ export function isVideoMutedByAudioOnly(stateful: Function | Object) {
 
 /**
  * Determines whether video is currently muted by a specific
- * <tt>VIDEO_MUTISM_AUTHORITY</tt>.
+ * {@code VIDEO_MUTISM_AUTHORITY}.
  *
  * @param {Function|Object} stateful - The redux store, state, or
  * {@code getState} function.
- * @param {number} videoMutismAuthority - The <tt>VIDEO_MUTISM_AUTHORITY</tt>
+ * @param {number} videoMutismAuthority - The {@code VIDEO_MUTISM_AUTHORITY}
  * which is to be checked whether it has muted video.
  * @returns {boolean} If video is currently muted by the specified
- * <tt>videoMutismAuthority</tt>, then <tt>true</tt>; otherwise, <tt>false</tt>.
+ * {@code videoMutismAuthority}, then {@code true}; otherwise, {@code false}.
  */
 function _isVideoMutedByAuthority(
         stateful: Function | Object,

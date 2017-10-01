@@ -18,7 +18,7 @@ import { ImageCache, prefetch } from './';
  * The indicator which determines whether avatar URLs are to be prefetched in
  * the middleware here. Unless/until the implementation starts observing the
  * redux store instead of the respective redux actions, the value should very
- * likely be <tt>false</tt> because the middleware here is pretty much the last
+ * likely be {@code false} because the middleware here is pretty much the last
  * to get a chance to figure out that an avatar URL may be used. Besides, it is
  * somewhat uninformed to download just about anything that may eventually be
  * used or not.

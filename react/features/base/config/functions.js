@@ -83,7 +83,7 @@ export function chooseBOSHAddress(config: Object, roomName: string) {
 /* eslint-enable no-shadow */
 
 /**
- * Sends HTTP POST request to specified <tt>endpoint</tt>. In request the name
+ * Sends HTTP POST request to specified {@code endpoint}. In request the name
  * of the room is included in JSON format:
  * {
  *     "rooomName": "someroom12345"

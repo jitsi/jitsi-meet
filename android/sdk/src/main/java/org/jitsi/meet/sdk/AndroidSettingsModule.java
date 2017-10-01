@@ -19,9 +19,6 @@ class AndroidSettingsModule extends ReactContextBaseJavaModule {
         super(reactContext);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "AndroidSettings";

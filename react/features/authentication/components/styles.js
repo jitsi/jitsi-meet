@@ -1,7 +1,7 @@
 import { BoxModel, createStyleSheet } from '../../base/styles';
 
 /**
- * The style common to <tt>LoginDialog</tt> and <tt>WaitForOwnerDialog</tt>.
+ * The style common to {@code LoginDialog} and {@code WaitForOwnerDialog}.
  */
 const dialog = {
     marginBottom: BoxModel.margin,
@@ -9,8 +9,8 @@ const dialog = {
 };
 
 /**
- * The style common to <tt>Text</tt> rendered by <tt>LoginDialog</tt> and
- * <tt>WaitForOwnerDialog</tt>.
+ * The style common to {@code Text} rendered by {@code LoginDialog} and
+ * {@code WaitForOwnerDialog}.
  */
 const text = {
 };
@@ -20,7 +20,7 @@ const text = {
  */
 export default createStyleSheet({
     /**
-     * The style of bold <tt>Text</tt> rendered by the <tt>Dialog</tt>s of the
+     * The style of bold {@code Text} rendered by the {@code Dialog}s of the
      * feature authentication.
      */
     boldDialogText: {
@@ -29,7 +29,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of <tt>Text</tt> rendered by the <tt>Dialog</tt>s of the
+     * The style of {@code Text} rendered by the {@code Dialog}s of the
      * feature authentication.
      */
     dialogText: {
@@ -37,7 +37,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of <tt>TextInput</tt> rendered by the <tt>Dialog</tt>s of the
+     * The style of {@code TextInput} rendered by the {@code Dialog}s of the
      * feature authentication.
      */
     dialogTextInput: {
@@ -48,7 +48,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of <tt>LoginDialog</tt>.
+     * The style of {@code LoginDialog}.
      */
     loginDialog: {
         ...dialog,
@@ -57,7 +57,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of <tt>WaitForOwnerDialog</tt>.
+     * The style of {@code WaitForOwnerDialog}.
      */
     waitForOwnerDialog: {
         ...dialog,

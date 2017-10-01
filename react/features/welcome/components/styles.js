@@ -11,12 +11,12 @@ import {
 const TEXT_COLOR = ColorPalette.white;
 
 /**
- * The styles of the React <tt>Components</tt> of the feature welcome including
- * <tt>WelcomePage</tt> and <tt>BlankPage</tt>.
+ * The styles of the React {@code Components} of the feature welcome including
+ * {@code WelcomePage} and {@code BlankPage}.
  */
 export default createStyleSheet({
     /**
-     * The style of the top-level container of <tt>BlankPage</tt>.
+     * The style of the top-level container of {@code BlankPage}.
      */
     blankPage: {
     },
@@ -66,8 +66,8 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the <tt>View</tt> displayed over the local video by
-     * <tt>LocalVideoTrackUnderlay</tt>. The latter is thought of as the
+     * The style of the {@code View} displayed over the local video by
+     * {@code LocalVideoTrackUnderlay}. The latter is thought of as the
      * background (content). The former is thought of as the foreground
      * (content).
      */
@@ -84,8 +84,8 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the top-level container/<tt>View</tt> of
-     * <tt>LocalVideoTrackUnderlay</tt>.
+     * The style of the top-level container/{@code View} of
+     * {@code LocalVideoTrackUnderlay}.
      */
     localVideoTrackUnderlay: fixAndroidViewClipping({
         alignSelf: 'stretch',
@@ -129,7 +129,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the top-level container of <tt>WelcomePage</tt>.
+     * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
         backgroundColor: ColorPalette.blue

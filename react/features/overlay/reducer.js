@@ -117,7 +117,7 @@ function _connectionFailed(state, { error }) {
  * @param {Action} action - The redux action to reduce.
  * @private
  * @returns {Object} The new state of the feature overlay after reducing the
- * specified <tt>action</tt> in the feature overlay.
+ * specified {@code action} in the feature overlay.
  */
 function _connectionWillConnect(
         state,

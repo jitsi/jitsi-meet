@@ -107,10 +107,10 @@ function _electLastVisibleVideo(tracks) {
 
 /**
  * Returns the identifier of the participant who is to be on the stage i.e.
- * should be displayed in <tt>LargeVideo</tt>.
+ * should be displayed in {@code LargeVideo}.
  *
  * @param {Object} state - The Redux state from which the participant to be
- * displayed in <tt>LargeVideo</tt> is to be elected.
+ * displayed in {@code LargeVideo} is to be elected.
  * @private
  * @returns {(string|undefined)}
  */

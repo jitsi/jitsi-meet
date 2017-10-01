@@ -128,16 +128,16 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Gets the local track associated with a specific <tt>MEDIA_TYPE</tt> in a
+ * Gets the local track associated with a specific {@code MEDIA_TYPE} in a
  * specific redux store.
  *
  * @param {Store} store - The redux store from which the local track associated
- * with the specified <tt>mediaType</tt> is to be retrieved.
- * @param {MEDIA_TYPE} mediaType - The <tt>MEDIA_TYPE</tt> of the local track to
- * be retrieved from the specified <tt>store</tt>.
+ * with the specified {@code mediaType} is to be retrieved.
+ * @param {MEDIA_TYPE} mediaType - The {@code MEDIA_TYPE} of the local track to
+ * be retrieved from the specified {@code store}.
  * @private
- * @returns {Track} The local <tt>Track</tt> associated with the specified
- * <tt>mediaType</tt> in the specified <tt>store</tt>.
+ * @returns {Track} The local {@code Track} associated with the specified
+ * {@code mediaType} in the specified {@code store}.
  */
 function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
     return getLocalTrack(getState()['features/base/tracks'], mediaType);

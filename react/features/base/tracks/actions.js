@@ -329,16 +329,16 @@ export function _disposeAndRemoveTracks(tracks) {
 }
 
 /**
- * Finds the first <tt>JitsiLocalTrack</tt> in a specific array/list of
- * <tt>JitsiTrack</tt>s which is of a specific <tt>MEDIA_TYPE</tt>.
+ * Finds the first {@code JitsiLocalTrack} in a specific array/list of
+ * {@code JitsiTrack}s which is of a specific {@code MEDIA_TYPE}.
  *
- * @param {JitsiTrack[]} tracks - The array/list of <tt>JitsiTrack</tt>s to look
+ * @param {JitsiTrack[]} tracks - The array/list of {@code JitsiTrack}s to look
  * through.
- * @param {MEDIA_TYPE} mediaType - The <tt>MEDIA_TYPE</tt> of the first
- * <tt>JitsiLocalTrack</tt> to be returned.
+ * @param {MEDIA_TYPE} mediaType - The {@code MEDIA_TYPE} of the first
+ * {@code JitsiLocalTrack} to be returned.
  * @private
- * @returns {JitsiLocalTrack} The first <tt>JitsiLocalTrack</tt>, if any, in the
- * specified <tt>tracks</tt> of the specified <tt>mediaType</tt>.
+ * @returns {JitsiLocalTrack} The first {@code JitsiLocalTrack}, if any, in the
+ * specified {@code tracks} of the specified {@code mediaType}.
  */
 function _getLocalTrack(tracks, mediaType) {
     return tracks.find(track =>
@@ -384,11 +384,11 @@ function _getLocalTracksToChange(currentTracks, newTracks) {
 }
 
 /**
- * Implements the <tt>Promise</tt> rejection handler of
- * <tt>createLocalTracksA</tt> and <tt>createLocalTracksF</tt>.
+ * Implements the {@code Promise} rejection handler of
+ * {@code createLocalTracksA} and {@code createLocalTracksF}.
  *
- * @param {Object} reason - The <tt>Promise</tt> rejection reason.
- * @param {string} device - The device/<tt>MEDIA_TYPE</tt> associated with the
+ * @param {Object} reason - The {@code Promise} rejection reason.
+ * @param {string} device - The device/{@code MEDIA_TYPE} associated with the
  * rejection.
  * @private
  * @returns {Function}

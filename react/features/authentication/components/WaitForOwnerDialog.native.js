@@ -100,9 +100,9 @@ class WaitForOwnerDialog extends Component {
     }
 
     /**
-     * Renders a specific <tt>string</tt> which may contain HTML.
+     * Renders a specific {@code string} which may contain HTML.
      *
-     * @param {string} html - The <tt>string</tt> which may contain HTML to
+     * @param {string} html - The {@code string} which may contain HTML to
      * render.
      * @returns {ReactElement[]|string}
      */

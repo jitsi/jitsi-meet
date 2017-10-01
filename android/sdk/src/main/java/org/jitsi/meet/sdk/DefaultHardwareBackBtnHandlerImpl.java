@@ -21,10 +21,10 @@ import android.app.Activity;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 /**
- * Defines the default behavior of <tt>JitsiMeetActivity</tt> and
- * <tt>JitsiMeetView</tt> upon invoking the back button if no
- * <tt>JitsiMeetView</tt> handles the invocation. For example, a
- * <tt>JitsiMeetView</tt> may (1) handle the invocation of the back button
+ * Defines the default behavior of {@code JitsiMeetActivity} and
+ * {@code JitsiMeetView} upon invoking the back button if no
+ * {@code JitsiMeetView} handles the invocation. For example, a
+ * {@code JitsiMeetView} may (1) handle the invocation of the back button
  * during a conference by leaving the conference and (2) not handle the
  * invocation when not in a conference.
  */
@@ -32,17 +32,17 @@ public class DefaultHardwareBackBtnHandlerImpl
     implements DefaultHardwareBackBtnHandler {
 
     /**
-     * The <tt>Activity</tt> to which the default handling of the back button
+     * The {@code Activity} to which the default handling of the back button
      * is being provided by this instance.
      */
     private final Activity activity;
 
     /**
-     * Initializes a new <tt>DefaultHardwareBackBtnHandlerImpl</tt> instance to
+     * Initializes a new {@code DefaultHardwareBackBtnHandlerImpl} instance to
      * provide the default handling of the back button to a specific
-     * <tt>Activity</tt>.
+     * {@code Activity}.
      *
-     * @param activity - the <tt>Activity</tt> to which the new instance is to
+     * @param activity the {@code Activity} to which the new instance is to
      * provide the default behavior of the back button
      */
     public DefaultHardwareBackBtnHandlerImpl(Activity activity) {
@@ -52,7 +52,7 @@ public class DefaultHardwareBackBtnHandlerImpl
     /**
      * {@inheritDoc}
      *
-     * Finishes the associated <tt>Activity</tt>.
+     * Finishes the associated {@code Activity}.
      */
     @Override
     public void invokeDefaultOnBackPressed() {

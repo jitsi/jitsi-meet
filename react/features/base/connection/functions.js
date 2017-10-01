@@ -56,10 +56,10 @@ export function getURLWithoutParams(url: URL): URL {
  * Converts a specific id to jid if it's not jid yet.
  *
  * @param {string} id - User id or jid.
- * @param {Object} configHosts - The <tt>hosts</tt> part of the <tt>config</tt>
+ * @param {Object} configHosts - The {@code hosts} part of the {@code config}
  * object.
  * @returns {string} A string in the form of a JID (i.e.
- * <tt>user@server.com</tt>).
+ * {@code user@server.com}).
  */
 export function toJid(id: string, { authdomain, domain }: Object): string {
     return id.indexOf('@') >= 0 ? id : `${id}@${authdomain || domain}`;

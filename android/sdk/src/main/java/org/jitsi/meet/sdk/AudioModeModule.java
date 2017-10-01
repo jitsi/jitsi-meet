@@ -40,16 +40,16 @@ import java.util.Map;
  * Module implementing a simple API to select the appropriate audio device for a
  * conference call.
  *
- * Audio calls should use <tt>AudioModeModule.AUDIO_CALL</tt>, which uses the
+ * Audio calls should use {@code AudioModeModule.AUDIO_CALL}, which uses the
  * builtin earpiece, wired headset or bluetooth headset. The builtin earpiece is
  * the default audio device.
  *
- * Video calls should should use <tt>AudioModeModule.VIDEO_CALL</tt>, which uses
+ * Video calls should should use {@code AudioModeModule.VIDEO_CALL}, which uses
  * the builtin speaker, earpiece, wired headset or bluetooth headset. The
  * builtin speaker is the default audio device.
  *
  * Before a call has started and after it has ended the
- * <tt>AudioModeModule.DEFAULT</tt> mode should be used.
+ * {@code AudioModeModule.DEFAULT} mode should be used.
  */
 class AudioModeModule extends ReactContextBaseJavaModule {
     /**
@@ -74,13 +74,13 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             : Intent.ACTION_HEADSET_PLUG;
 
     /**
-     * The name of <tt>AudioModeModule</tt> to be used in the React Native
+     * The name of {@code AudioModeModule} to be used in the React Native
      * bridge.
      */
     private static final String MODULE_NAME = "AudioMode";
 
     /**
-     * The <tt>Log</tt> tag <tt>AudioModeModule</tt> is to log messages with.
+     * The {@code Log} tag {@code AudioModeModule} is to log messages with.
      */
     static final String TAG = MODULE_NAME;
 
@@ -291,8 +291,8 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * Updates the audio route for the given mode.
      *
      * @param mode the audio mode to be used when computing the audio route.
-     * @return true if the audio route was updated successfully, false
-     * otherwise.
+     * @return {@code true} if the audio route was updated successfully;
+     * {@code false}, otherwise.
      */
     private boolean updateAudioRoute(int mode) {
         Log.d(TAG, "Update audio route for mode: " + mode);

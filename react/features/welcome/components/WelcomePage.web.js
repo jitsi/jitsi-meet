@@ -85,7 +85,7 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Handles <tt>change</tt> event of the checkbox which allows specifying
+     * Handles {@code change} event of the checkbox which allows specifying
      * whether the WelcomePage is disabled.
      *
      * @param {Event} event - The (HTML) Event which details the change such as

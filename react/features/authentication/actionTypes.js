@@ -31,7 +31,7 @@ export const STOP_WAIT_FOR_OWNER = Symbol('STOP_WAIT_FOR_OWNER');
 /**
  * The type of (redux) action which informs that the authentication and role
  * upgrade process has finished either with success or with a specific error.
- * If <tt>error</tt> is <tt>undefined</tt>, then the process succeeded;
+ * If {@code error} is {@code undefined}, then the process succeeded;
  * otherwise, it failed. Refer to
  * {@link JitsiConference#authenticateAndUpgradeRole} in lib-jitsi-meet for the
  * error details.

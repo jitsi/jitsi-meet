@@ -3,13 +3,13 @@
 import { toState } from '../redux';
 
 /**
- * Checks if a <tt>Dialog</tt> with a specific <tt>component</tt> is currently
+ * Checks if a {@code Dialog} with a specific {@code component} is currently
  * open.
  *
  * @param {Function|Object} stateful - The redux store, the redux
- * <tt>getState</tt> function, or the redux state itself.
- * @param {React.Component} component - The <tt>component</tt> of a
- * <tt>Dialog</tt> to be checked.
+ * {@code getState} function, or the redux state itself.
+ * @param {React.Component} component - The {@code component} of a
+ * {@code Dialog} to be checked.
  * @returns {boolean}
  */
 export function isDialogOpen(stateful: Function | Object, component: Object) {

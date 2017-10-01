@@ -114,7 +114,7 @@ function _LOGE(...args) {
 /**
  * Adapts react-native-webrtc's {@link RTCPeerConnection#setRemoteDescription}
  * implementation which uses the deprecated, callback-based version to the
- * <tt>Promise</tt>-based version.
+ * {@code Promise}-based version.
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * which specifies the configuration of the remote end of the connection.

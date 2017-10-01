@@ -8,14 +8,14 @@ declare var config: Object;
 export * from './roomnameGenerator';
 
 /**
- * Determines whether the <tt>WelcomePage</tt> is enabled by the app itself
+ * Determines whether the {@code WelcomePage} is enabled by the app itself
  * (e.g. programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
  * confused with {@link isWelcomePageUserEnabled}.
  *
  * @param {Object|Function} stateOrGetState - The redux state or
  * {@link getState} function.
- * @returns {boolean} If the <tt>WelcomePage</tt> is enabled by the app, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
+ * @returns {boolean} If the {@code WelcomePage} is enabled by the app, then
+ * {@code true}; otherwise, {@code false}.
  */
 export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
     let b;
@@ -39,14 +39,14 @@ export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
 }
 
 /**
- * Determines whether the <tt>WelcomePage</tt> is enabled by the user either
+ * Determines whether the {@code WelcomePage} is enabled by the user either
  * herself or through her deployment config(uration). Not to be confused with
  * {@link isWelcomePageAppEnabled}.
  *
  * @param {Object|Function} stateOrGetState - The redux state or
  * {@link getState} function.
- * @returns {boolean} If the <tt>WelcomePage</tt> is enabled by the user, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
+ * @returns {boolean} If the {@code WelcomePage} is enabled by the user, then
+ * {@code true}; otherwise, {@code false}.
  */
 export function isWelcomePageUserEnabled(stateOrGetState: Object | Function) {
     return (

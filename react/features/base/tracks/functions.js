@@ -172,14 +172,14 @@ export function isLocalTrackMuted(tracks, mediaType) {
 }
 
 /**
- * Mutes or unmutes a specific <tt>JitsiLocalTrack</tt>. If the muted state of
- * the specified <tt>track</tt> is already in accord with the specified
- * <tt>muted</tt> value, then does nothing.
+ * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of
+ * the specified {@code track} is already in accord with the specified
+ * {@code muted} value, then does nothing.
  *
- * @param {JitsiLocalTrack} track - The <tt>JitsiLocalTrack</tt> to mute or
+ * @param {JitsiLocalTrack} track - The {@code JitsiLocalTrack} to mute or
  * unmute.
- * @param {boolean} muted - If the specified <tt>track</tt> is to be muted, then
- * <tt>true</tt>; otherwise, <tt>false</tt>.
+ * @param {boolean} muted - If the specified {@code track} is to be muted, then
+ * {@code true}; otherwise, {@code false}.
  * @returns {Promise}
  */
 export function setTrackMuted(track, muted) {

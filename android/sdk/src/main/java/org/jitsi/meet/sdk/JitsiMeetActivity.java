@@ -30,14 +30,14 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 /**
  * Base Activity for applications integrating Jitsi Meet at a higher level. It
- * contains all the required wiring between the <tt>JKConferenceView</tt> and
+ * contains all the required wiring between the {@code JKConferenceView} and
  * the Activity lifecycle methods already implemented.
  *
- * In this activity we use a single <tt>JKConferenceView</tt> instance. This
+ * In this activity we use a single {@code JKConferenceView} instance. This
  * instance gives us access to a view which displays the welcome page and the
  * conference itself. All lifetime methods associated with this Activity are
  * hooked to the React Native subsystem via proxy calls through the
- * <tt>JKConferenceView</tt> static methods.
+ * {@code JKConferenceView} static methods.
  */
 public class JitsiMeetActivity
     extends AppCompatActivity {
@@ -50,7 +50,7 @@ public class JitsiMeetActivity
         = (int) (Math.random() * Short.MAX_VALUE);
 
     /**
-     * The default behavior of this <tt>JitsiMeetActivity</tt> upon invoking the
+     * The default behavior of this {@code JitsiMeetActivity} upon invoking the
      * back button if {@link #view} does not handle the invocation.
      */
     private DefaultHardwareBackBtnHandler defaultBackButtonImpl;
@@ -132,15 +132,12 @@ public class JitsiMeetActivity
      * Loads the given URL and displays the conference. If the specified URL is
      * null, the welcome page is displayed instead.
      *
-     * @param url - The conference URL.
+     * @param url The conference URL.
      */
     public void loadURL(@Nullable URL url) {
         view.loadURL(url);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onActivityResult(
             int requestCode,
@@ -154,9 +151,6 @@ public class JitsiMeetActivity
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onBackPressed() {
         if (!JitsiMeetView.onBackPressed()) {
@@ -174,9 +168,6 @@ public class JitsiMeetActivity
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,9 +187,6 @@ public class JitsiMeetActivity
         initializeContentView();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -211,17 +199,11 @@ public class JitsiMeetActivity
         JitsiMeetView.onHostDestroy(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onNewIntent(Intent intent) {
         JitsiMeetView.onNewIntent(intent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -230,9 +212,6 @@ public class JitsiMeetActivity
         defaultBackButtonImpl = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onResume() {
         super.onResume();

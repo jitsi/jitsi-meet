@@ -30,8 +30,8 @@ RCT_EXPORT_MODULE();
  * proximity sensor automatically dims the screen and disables touch controls,
  * so there is nothing else to do (unlike on Android)!
  *
- * @param enabled {@code YES} to enable proximity (sensor) monitoring;
- * {@code NO}, otherwise.
+ * @param enabled `YES` to enable proximity (sensor) monitoring; `NO`,
+ * otherwise.
  */
 RCT_EXPORT_METHOD(setEnabled:(BOOL)enabled) {
     [[UIDevice currentDevice] setProximityMonitoringEnabled:enabled];

@@ -60,8 +60,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Store} store - The redux store.
  * @param {Function} next - The redux function to continue dispatching the
  * specified {@code action} in the specified {@code store}.
- * @param {Object} action - <tt>SET_AUDIO_AVAILABLE</tt>,
- * <tt>SET_VIDEO_AVAILABLE</tt>, or <tt>TRACK_UPDATED</tt>.
+ * @param {Object} action - {@code SET_AUDIO_AVAILABLE},
+ * {@code SET_VIDEO_AVAILABLE}, or {@code TRACK_UPDATED}.
  * @returns {*}
  */
 function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {

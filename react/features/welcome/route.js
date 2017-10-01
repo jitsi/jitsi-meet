@@ -10,7 +10,7 @@ import {
 } from './functions';
 
 /**
- * Register route for <tt>WelcomePage</tt>.
+ * Register route for {@code WelcomePage}.
  */
 RouteRegistry.register({
     component: WelcomePage,
@@ -19,7 +19,7 @@ RouteRegistry.register({
 });
 
 /**
- * Skips the <tt>WelcomePage</tt> if it is disabled (by the app or the user).
+ * Skips the {@code WelcomePage} if it is disabled (by the app or the user).
  *
  * @param {Object} store - The redux store.
  * @param {Function} replace - The function to redirect to another path.
