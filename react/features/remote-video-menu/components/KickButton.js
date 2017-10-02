@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { kickParticipant } from '../../base/participants';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -82,6 +83,13 @@ class KickButton extends Component {
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
 
+        JitsiMeetJS.analytics.sendEvent(
+            'remotevideomenu.kick',
+            {
+                value: 1,
+                label: participantID
+            }
+        );
         dispatch(kickParticipant(participantID));
 
         if (onClick) {

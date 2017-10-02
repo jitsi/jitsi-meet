@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { translate } from '../../base/i18n';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -51,6 +52,19 @@ class RemoteControlButton extends Component {
     };
 
     /**
+     * Initializes a new {@code RemoteControlButton} instance.
+     *
+     * @param {Object} props - The read-only React Component props with which
+     * the new instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind event handlers so they are only bound once for every instance.
+        this._onClick = this._onClick.bind(this);
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -58,7 +72,6 @@ class RemoteControlButton extends Component {
      */
     render() {
         const {
-            onClick,
             participantID,
             remoteControlState,
             t
@@ -92,8 +105,43 @@ class RemoteControlButton extends Component {
                 displayClass = { className }
                 iconClass = { icon }
                 id = { `remoteControl_${participantID}` }
-                onClick = { onClick } />
+                onClick = { this._onClick } />
         );
+    }
+
+    /**
+     * Sends analytics event for pressing the button and executes the passed
+     * onClick handler.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClick() {
+        const { onClick, participantID, remoteControlState } = this.props;
+
+        let eventName;
+
+        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED) {
+            eventName = 'stop';
+        }
+
+        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
+            eventName = 'start';
+        }
+
+        if (eventName) {
+            JitsiMeetJS.analytics.sendEvent(
+                `remotevideomenu.remotecontrol.${eventName}`,
+                {
+                    value: 1,
+                    label: participantID
+                }
+            );
+        }
+
+        if (onClick) {
+            onClick();
+        }
     }
 }
 
