@@ -62,6 +62,8 @@ class DesktopPickerPane extends Component {
         const previews
             = sources.map(
                 source =>
+
+                    // eslint-disable-next-line react/jsx-wrap-multilines
                     <DesktopSourcePreview
                         key = { source.id }
                         onClick = { onClick }

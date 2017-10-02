@@ -1,3 +1,5 @@
+/* @flow */
+
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import {

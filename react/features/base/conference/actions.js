@@ -256,7 +256,7 @@ export function conferenceWillLeave(conference) {
  * @returns {Function}
  */
 export function createConference() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const { connection, locationURL } = state['features/base/connection'];
 
@@ -297,7 +297,7 @@ export function createConference() {
  * @returns {Function}
  */
 export function checkIfCanJoin() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
@@ -412,8 +412,8 @@ export function setLastN(lastN: ?number) {
  * is to be joined or locked.
  * @returns {Function}
  */
-export function setPassword(conference, method, password) {
-    return (dispatch, getState) => {
+export function setPassword(conference, method: Function, password: string) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         switch (method) {
         case conference.join: {
             let state = getState()['features/base/conference'];
@@ -478,7 +478,7 @@ export function setPassword(conference, method, password) {
  *     receiveVideoQuality: number
  * }}
  */
-export function setReceiveVideoQuality(receiveVideoQuality) {
+export function setReceiveVideoQuality(receiveVideoQuality: number) {
     return {
         type: SET_RECEIVE_VIDEO_QUALITY,
         receiveVideoQuality
@@ -495,7 +495,7 @@ export function setReceiveVideoQuality(receiveVideoQuality) {
  *     room: string
  * }}
  */
-export function setRoom(room) {
+export function setRoom(room: ?string) {
     return {
         type: SET_ROOM,
         room

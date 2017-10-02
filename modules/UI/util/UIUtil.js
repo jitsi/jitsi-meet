@@ -31,7 +31,7 @@ const IndicatorFontSizes = {
 /**
  * Created by hristo on 12/22/14.
  */
- var UIUtil = {
+var UIUtil = {
 
     /**
      * Returns the available video width.
@@ -208,7 +208,7 @@ const IndicatorFontSizes = {
     },
 
     redirect(url) {
-         window.location.href = url;
+        window.location.href = url;
     },
 
     /**
@@ -262,11 +262,10 @@ const IndicatorFontSizes = {
       * @param {Object} attrs object with properties
       * @returns {String} string of html element attributes
       */
-     attrsToString(attrs) {
-         return Object.keys(attrs).map(
-             key => ` ${key}="${attrs[key]}"`
-         ).join(' ');
-     },
+    attrsToString(attrs) {
+        return (
+            Object.keys(attrs).map(key => ` ${key}="${attrs[key]}"`).join(' '));
+    },
 
     /**
      * Checks if the given DOM element is currently visible. The offsetParent
@@ -299,11 +298,12 @@ const IndicatorFontSizes = {
 
             if (hideDelay && hideDelay > 0)
                 setTimeout(
-                    function () {
-                        selector.fadeOut(300,
-                        () => {selector.css({opacity: 0});}
-                    );
-                }, hideDelay);
+                    () => {
+                        selector.fadeOut(
+                            300,
+                            () => { selector.css({opacity: 0}); });
+                    },
+                    hideDelay);
         }
         else {
             selector.fadeOut(300,

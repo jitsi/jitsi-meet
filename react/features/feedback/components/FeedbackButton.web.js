@@ -23,6 +23,8 @@ class FeedbackButton extends Component {
          */
         _conference: PropTypes.object,
 
+        dispatch: PropTypes.func,
+
         /**
          * Invoked to obtain translated strings.
          */

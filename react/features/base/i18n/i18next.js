@@ -1,3 +1,5 @@
+/* @flow */
+
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';
 

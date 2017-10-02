@@ -602,9 +602,10 @@ var VideoLayout = {
     /**
      * Resizes thumbnails.
      */
-    resizeThumbnails (  animate = false,
-                        forceUpdate = false,
-                        onComplete = null) {
+    resizeThumbnails(
+            animate = false,
+            forceUpdate = false,
+            onComplete = null) {
         const { localVideo, remoteVideo }
             = Filmstrip.calculateThumbnailSize();
 
@@ -870,10 +871,10 @@ var VideoLayout = {
      * @param completeFunction a function to be called when the video area is
      * resized.
      */
-    resizeVideoArea (forceUpdate = false,
-                    animate = false,
-                    completeFunction = null) {
-
+    resizeVideoArea(
+            forceUpdate = false,
+            animate = false,
+            completeFunction = null) {
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(animate);

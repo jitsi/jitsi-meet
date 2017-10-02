@@ -111,8 +111,7 @@ function initJWTTokenListener(room) {
                                 logger.error(
                                     "Authentication failed: ", err, errCode);
                                 unregister();
-                            }
-                        );
+                            });
                     }).catch(function (error, code) {
                         unregister();
                         connection.disconnect();

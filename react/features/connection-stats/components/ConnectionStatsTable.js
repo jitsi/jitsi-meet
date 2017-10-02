@@ -311,8 +311,8 @@ class ConnectionStatsTable extends Component {
     _renderShowMoreLink() {
         const translationKey
             = this.props.shouldShowMore
-            ? 'connectionindicator.less'
-            : 'connectionindicator.more';
+                ? 'connectionindicator.less'
+                : 'connectionindicator.more';
 
         return (
             <a

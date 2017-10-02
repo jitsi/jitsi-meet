@@ -10,7 +10,9 @@ export default class AbstractAudio extends Component {
      * The (reference to the) {@link ReactElement} which actually implements
      * this {@code AbstractAudio}.
      */
-    _ref: ?Object
+    _ref: ?Object;
+
+    _setRef: Function;
 
     /**
      * {@code AbstractAudio} component's property types.
@@ -33,7 +35,7 @@ export default class AbstractAudio extends Component {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Object) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.

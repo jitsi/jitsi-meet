@@ -144,10 +144,11 @@ const KeyboardShortcut = {
      * @param helpDescription the description of the shortcut that would appear
      * in the help menu
      */
-    registerShortcut: function( shortcutChar,
-                                shortcutAttr,
-                                exec,
-                                helpDescription) {
+    registerShortcut(
+            shortcutChar,
+            shortcutAttr,
+            exec,
+            helpDescription) {
         _shortcuts[shortcutChar] = {
             character: shortcutChar,
             shortcutAttr: shortcutAttr,
@@ -199,9 +200,9 @@ const KeyboardShortcut = {
         if (typeof e.key === "string") {
             return e.key;
         }
-        if (e.type === "keypress" && (
-                (e.which >= 32 && e.which <= 126) ||
-                (e.which >= 160 && e.which <= 255) )) {
+        if (e.type === "keypress"
+                && ((e.which >= 32 && e.which <= 126)
+                    || (e.which >= 160 && e.which <= 255) )) {
             return String.fromCharCode(e.which);
         }
         // try to fallback (0-9A-Za-z and QWERTY keyboard)

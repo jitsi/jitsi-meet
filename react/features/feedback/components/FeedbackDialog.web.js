@@ -12,8 +12,8 @@ import { cancelFeedback, submitFeedback } from '../actions';
 
 declare var interfaceConfig: Object;
 
-const scoreAnimationClass = interfaceConfig.ENABLE_FEEDBACK_ANIMATION
-    ? 'shake-rotate' : '';
+const scoreAnimationClass
+    = interfaceConfig.ENABLE_FEEDBACK_ANIMATION ? 'shake-rotate' : '';
 
 /**
  * The scores to display for selecting. The score is the index in the array and

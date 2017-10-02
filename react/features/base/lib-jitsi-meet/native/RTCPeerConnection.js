@@ -18,7 +18,7 @@ import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
  */
 export default function _RTCPeerConnection(...args) {
 
-    /* eslint-disable no-invalid-this */
+    /* eslint-disable indent, no-invalid-this */
 
     RTCPeerConnection.apply(this, args);
 
@@ -44,7 +44,7 @@ export default function _RTCPeerConnection(...args) {
         }
     });
 
-    /* eslint-enable no-invalid-this */
+    /* eslint-enable indent, no-invalid-this */
 }
 
 _RTCPeerConnection.prototype = Object.create(RTCPeerConnection.prototype);

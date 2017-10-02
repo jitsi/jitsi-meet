@@ -1,3 +1,5 @@
+/* @flow */
+
 import { setLastN } from '../../base/conference';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../../base/media';
 
@@ -31,7 +33,7 @@ export function _setAppStateListener(listener: ?Function) {
  * @returns {Function}
  */
 export function _setBackgroundVideoMuted(muted: boolean) {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         // Disable remote video when we mute by setting lastN to 0. Skip it if
         // the conference is in audio-only mode, as it's already configured to
         // have no video. Leave it as undefined when unmuting, the default value

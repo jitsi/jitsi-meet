@@ -293,9 +293,10 @@ export default class LargeVideoManager {
      *
      * @private
      */
-    updateParticipantConnStatusIndication (
-        id, showProblemsIndication, messageKey) {
-
+    updateParticipantConnStatusIndication(
+            id,
+            showProblemsIndication,
+            messageKey) {
         // Apply grey filter on the large video
         this.videoContainer.showRemoteConnectionProblemIndicator(
             showProblemsIndication);

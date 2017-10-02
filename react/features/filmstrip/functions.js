@@ -1,3 +1,5 @@
+/* @flow */
+
 declare var interfaceConfig: Object;
 
 import {
@@ -12,7 +14,7 @@ import {
  * @param {Object} state - The full redux state.
  * @returns {boolean} - True if remote video thumbnails should be displayed.
  */
-export function shouldRemoteVideosBeVisible(state) {
+export function shouldRemoteVideosBeVisible(state: Object) {
     const participants = state['features/base/participants'];
     const participantsCount = participants.length;
 

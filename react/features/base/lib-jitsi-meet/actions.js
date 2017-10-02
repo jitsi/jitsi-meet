@@ -1,3 +1,5 @@
+/* @flow */
+
 import type { Dispatch } from 'redux';
 
 import JitsiMeetJS from './_';
@@ -95,7 +97,7 @@ export function libInitError(error: Error) {
  * @returns {Function}
  */
 export function setWebRTCReady(webRTCReady: boolean | Promise<*>) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Function, getState: Function) => {
         if (getState()['features/base/lib-jitsi-meet'].webRTCReady
                 !== webRTCReady) {
             dispatch({

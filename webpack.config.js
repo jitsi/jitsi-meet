@@ -209,6 +209,8 @@ function devServerProxyBypass({ path }) {
 
     const configs = module.exports;
 
+    /* eslint-disable indent */
+
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
                 if (path.startsWith(c.output.publicPath)) {
                     if (!minimize) {
@@ -231,4 +233,6 @@ function devServerProxyBypass({ path }) {
             })) {
         return path;
     }
+
+    /* eslint-enable indent */
 }

@@ -23,11 +23,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @param videoSpaceHeight the height of the available space
  * @return an array with 2 elements, the video width and the video height
  */
-function computeDesktopVideoSize(videoWidth,
-                             videoHeight,
-                             videoSpaceWidth,
-                             videoSpaceHeight) {
-
+function computeDesktopVideoSize(
+        videoWidth,
+        videoHeight,
+        videoSpaceWidth,
+        videoSpaceHeight) {
     let aspectRatio = videoWidth / videoHeight;
 
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
@@ -60,11 +60,12 @@ function computeDesktopVideoSize(videoWidth,
  * @param videoSpaceHeight the height of the video space
  * @return an array with 2 elements, the video width and the video height
  */
-function computeCameraVideoSize(videoWidth,
-                            videoHeight,
-                            videoSpaceWidth,
-                            videoSpaceHeight,
-                            videoLayoutFit) {
+function computeCameraVideoSize(
+        videoWidth,
+        videoHeight,
+        videoSpaceWidth,
+        videoSpaceHeight,
+        videoLayoutFit) {
     const aspectRatio = videoWidth / videoHeight;
     switch (videoLayoutFit) {
     case 'height':
@@ -110,10 +111,11 @@ function computeCameraVideoSize(videoWidth,
  * @return an array with 2 elements, the horizontal indent and the vertical
  * indent
  */
-function getCameraVideoPosition(videoWidth,
-                                videoHeight,
-                                videoSpaceWidth,
-                                videoSpaceHeight) {
+function getCameraVideoPosition(
+        videoWidth,
+        videoHeight,
+        videoSpaceWidth,
+        videoSpaceHeight) {
     // Parent height isn't completely calculated when we position the video in
     // full screen mode and this is why we use the screen height in this case.
     // Need to think it further at some point and implement it properly.

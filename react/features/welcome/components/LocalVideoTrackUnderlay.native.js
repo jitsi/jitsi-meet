@@ -72,6 +72,7 @@ class LocalVideoTrackUnderlay extends Component {
             };
 
             if (assignState) {
+                // eslint-disable-next-line react/no-direct-mutation-state
                 this.state = nextState;
             } else {
                 this.setState(nextState);

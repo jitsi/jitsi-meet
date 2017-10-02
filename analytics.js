@@ -1,8 +1,9 @@
 /* global ga */
+/* eslint-disable indent */
 
 (function (ctx) {
   function Analytics() {
-    /* eslint-disable */
+    /* eslint-disable semi */
 
     /**
      * Google Analytics
@@ -13,7 +14,7 @@
     ga('create', 'UA-319188-14', 'jit.si');
     ga('send', 'pageview');
 
-    /* eslint-enable */
+    /* eslint-enable semi */
   }
 
   Analytics.prototype.sendEvent = function (action, data) {
@@ -29,10 +30,8 @@
 
   if (typeof ctx.JitsiMeetJS === "undefined")
     ctx.JitsiMeetJS = {};
-
   if (typeof ctx.JitsiMeetJS.app === "undefined")
     ctx.JitsiMeetJS.app = {};
-
   if (typeof ctx.JitsiMeetJS.app.analyticsHandlers === "undefined")
     ctx.JitsiMeetJS.app.analyticsHandlers = [];
   ctx.JitsiMeetJS.app.analyticsHandlers.push(Analytics);

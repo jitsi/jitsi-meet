@@ -87,8 +87,8 @@ function generateURL(domain, options = {}) {
     return urlObjectToString({
         ...options,
         url:
-            `${options.noSSL ? 'http' : 'https'}://${domain
-                }/#jitsi_meet_external_api_id=${id}`
+            `${options.noSSL ? 'http' : 'https'}://${
+                domain}/#jitsi_meet_external_api_id=${id}`
     });
 }
 

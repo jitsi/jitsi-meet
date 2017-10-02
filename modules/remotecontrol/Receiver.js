@@ -15,10 +15,7 @@ import {
 } from '../../service/remotecontrol/Constants';
 import * as RemoteControlEvents
     from '../../service/remotecontrol/RemoteControlEvents';
-import {
-    Transport,
-    PostMessageTransportBackend
- } from '../transport';
+import { Transport, PostMessageTransportBackend } from '../transport';
 
 import RemoteControlParticipant from './RemoteControlParticipant';
 

@@ -185,7 +185,6 @@ module.exports = {
         'id-blacklist': 0,
         'id-length': 0,
         'id-match': 0,
-        'indent': [ 'error', 4, { 'SwitchCase': 0 } ],
         'jsx-quotes': [ 'error', 'prefer-single' ],
         'key-spacing': 2,
         'keyword-spacing': 2,
@@ -387,7 +386,12 @@ module.exports = {
         'react/jsx-no-undef': 2,
         'react/jsx-pascal-case': 2,
         'react/jsx-sort-props': 2,
-        'react/jsx-space-before-closing': 2,
+        'react/jsx-tag-spacing': [
+            'error',
+            {
+                'beforeSelfClosing': 'always'
+            }
+        ],
         'react/jsx-uses-react': 2,
         'react/jsx-uses-vars': 2,
         'react/jsx-wrap-multilines': 2,

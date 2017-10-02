@@ -17,9 +17,9 @@ const AudioLevels = {
      * @param {number} opacity the opacity to set for the specified dot.
      */
     _setDotLevel(elementID, index, opacity) {
-
-        let audioSpan = document.getElementById(elementID)
-            .getElementsByClassName("audioindicator");
+        let audioSpan
+            = document.getElementById(elementID)
+                .getElementsByClassName("audioindicator");
 
         // Make sure the audio span is still around.
         if (audioSpan && audioSpan.length > 0)
@@ -72,17 +72,17 @@ const AudioLevels = {
     /**
      * Updates the large video shadow effect.
      */
-    _updateLargeVideoShadow (level) {
-        var scale = 2,
+    _updateLargeVideoShadow(level) {
+        const scale = 2;
 
         // Internal circle audio level.
-        int = {
+        const int = {
             level: level > 0.15 ? 20 : 0,
             color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR
-        },
+        };
 
         // External circle audio level.
-        ext = {
+        const ext = {
             level: (int.level * scale * level + int.level).toFixed(0),
             color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR
         };

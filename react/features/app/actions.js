@@ -1,3 +1,5 @@
+/* @flow */
+
 import { setRoom } from '../base/conference';
 import { loadConfigError, setConfig } from '../base/config';
 import { setLocationURL } from '../base/connection';
@@ -132,7 +134,7 @@ function _appNavigateToOptionalLocation(
  *     app: App
  * }}
  */
-export function appWillMount(app) {
+export function appWillMount(app: Object) {
     return (dispatch: Dispatch<*>) => {
         dispatch({
             type: APP_WILL_MOUNT,
@@ -159,7 +161,7 @@ export function appWillMount(app) {
  *     app: App
  * }}
  */
-export function appWillUnmount(app) {
+export function appWillUnmount(app: Object) {
     return {
         type: APP_WILL_UNMOUNT,
         app

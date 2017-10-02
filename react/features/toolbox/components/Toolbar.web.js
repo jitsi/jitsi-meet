@@ -123,8 +123,7 @@ class Toolbar extends Component {
      * @private
      * @returns {ReactElement} A toolbar button.
      */
-    _renderToolbarButton(
-                         keyValuePair: Array<*>): ReactElement<*> {
+    _renderToolbarButton(keyValuePair: Array<*>): ReactElement<*> {
         const [ key, button ] = keyValuePair;
 
         if (button.component) {

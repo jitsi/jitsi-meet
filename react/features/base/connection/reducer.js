@@ -158,8 +158,8 @@ function _constructOptions(locationURL: URL) {
 
     return {
         bosh:
-            `${String(protocol)}//${domain}${locationURI.contextRoot || '/'
-                }http-bind`,
+            `${String(protocol)}//${domain}${
+                locationURI.contextRoot || '/'}http-bind`,
         hosts: {
             domain,
 

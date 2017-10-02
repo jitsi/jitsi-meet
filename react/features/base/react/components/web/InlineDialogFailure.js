@@ -1,3 +1,5 @@
+/* @flow */
+
 import AKButton from '@atlaskit/button';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';

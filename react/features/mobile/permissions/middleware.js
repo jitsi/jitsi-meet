@@ -47,11 +47,18 @@ function _alertPermissionErrorWithSettings(trackType) {
     // TODO i18n
     const deviceType = trackType === 'video' ? 'Camera' : 'Microphone';
 
+    /* eslint-disable indent */
+
+    const message
+        = `${deviceType
+            } permission is required to participate in conferences with ${
+            trackType}. Please grant it in Settings.`;
+
+    /* eslint-ensable indent */
+
     Alert.alert(
         'Permission required',
-        `${deviceType
-            } permission is required to participate in conferences with ${
-            trackType}. Please grant it in Settings.`,
+        message,
         [
             { text: 'Cancel' },
             {

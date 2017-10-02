@@ -120,23 +120,22 @@ var messageHandler = {
      * the prompt is closed (optional)
      * @return the prompt that was created, or null
      */
-    openMessageDialog:
-        function(titleKey, messageKey, i18nOptions, closeFunction) {
+    openMessageDialog(titleKey, messageKey, i18nOptions, closeFunction) {
         if (!popupEnabled)
             return null;
 
         let dialog = $.prompt(
             APP.translation.generateTranslationHTML(messageKey, i18nOptions),
             {
-            title: this._getFormattedTitleString(titleKey),
-            persistent: false,
-            promptspeed: 0,
-            classes: this._getDialogClasses(),
-            close: function (e, v, m, f) {
-                if(closeFunction)
-                    closeFunction(e, v, m, f);
-            }
-        });
+                title: this._getFormattedTitleString(titleKey),
+                persistent: false,
+                promptspeed: 0,
+                classes: this._getDialogClasses(),
+                close(e, v, m, f) {
+                    if(closeFunction)
+                        closeFunction(e, v, m, f);
+                }
+            });
         APP.translation.translateElement(dialog, i18nOptions);
         return $.prompt.getApi();
     },
@@ -271,8 +270,15 @@ var messageHandler = {
      * @param {string} dontShowAgain.localStorageKey the key for the local
      * storage. if not provided dontShowAgain.id will be used.
      */
-    openDialog: function (titleKey, msgString, persistent, buttons,
-        submitFunction, loadedFunction, closeFunction, dontShowAgain) {
+    openDialog(
+            titleKey,
+            msgString,
+            persistent,
+            buttons,
+            submitFunction,
+            loadedFunction,
+            closeFunction,
+            dontShowAgain) {
         if (!popupEnabled)
             return;
 
@@ -448,8 +454,13 @@ var messageHandler = {
      * @param messageArguments object with the arguments for the message.
      * @param optional configurations for the notification (e.g. timeout)
      */
-    participantNotification: function(displayName, displayNameKey, cls,
-                    messageKey, messageArguments, timeout = 2500) {
+    participantNotification(
+            displayName,
+            displayNameKey,
+            cls,
+            messageKey,
+            messageArguments,
+            timeout = 2500) {
         APP.store.dispatch(
             showNotification(
                 Notification,

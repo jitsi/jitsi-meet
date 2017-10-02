@@ -30,8 +30,9 @@ export default class CountryIcon extends Component {
      */
     render() {
         const iconClassName
-            = `flag-icon flag-icon-${this.props.countryCode
-                } flag-icon-squared ${this.props.className}`;
+            = `flag-icon flag-icon-${
+                this.props.countryCode} flag-icon-squared ${
+                this.props.className}`;
 
         return <span className = { iconClassName } />;
     }

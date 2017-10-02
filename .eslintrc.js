@@ -26,6 +26,23 @@ module.exports = {
         'flowtype'
     ],
     'rules': {
+        'indent': [
+            'error',
+            4,
+            {
+                'CallExpression': {
+                    arguments: 'off'
+                },
+                'FunctionDeclaration': {
+                    parameters: 2
+                },
+                'FunctionExpression': {
+                    parameters: 2
+                },
+                'MemberExpression': 'off',
+                'SwitchCase': 0
+            }
+        ],
         'new-cap': [
             'error',
             {

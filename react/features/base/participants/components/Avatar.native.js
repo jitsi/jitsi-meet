@@ -95,6 +95,7 @@ export default class Avatar extends Component {
             };
 
             if (assignState) {
+                // eslint-disable-next-line react/no-direct-mutation-state
                 this.state = nextState;
             } else {
                 this.setState(nextState);
@@ -134,6 +135,7 @@ export default class Avatar extends Component {
                         observer,
                         /* immutable */ true);
                 } else if (assignState) {
+                    // eslint-disable-next-line react/no-direct-mutation-state
                     this.state = {
                         ...this.state,
                         source: nextSource
@@ -185,7 +187,7 @@ export default class Avatar extends Component {
 
             for (let i = 0; i < uri.length; i++) {
                 hash = uri.charCodeAt(i) + ((hash << 5) - hash);
-                hash |= 0;  // Convert to 32-bit integer
+                hash |= 0; // Convert to 32-bit integer
             }
 
             /* eslint-enable no-bitwise */

@@ -10,12 +10,11 @@ declare var $: Function;
  * executed - "conferenceRooms" | "user" | "room".
  * @returns {Promise} - The promise created by the request.
  */
-export function searchPeople(// eslint-disable-line max-params
-    serviceUrl,
-    jwt,
-    text,
-    queryTypes = [ 'conferenceRooms', 'user', 'room' ]
-) {
+export function searchPeople( // eslint-disable-line max-params
+        serviceUrl,
+        jwt,
+        text,
+        queryTypes = [ 'conferenceRooms', 'user', 'room' ]) {
     const queryTypesString = JSON.stringify(queryTypes);
 
     return new Promise((resolve, reject) => {

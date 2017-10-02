@@ -1,5 +1,6 @@
 /* @flow */
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -21,6 +22,11 @@ const _RIGHT_WATERMARK_STYLE = {
  * etc.
  */
 class Watermarks extends Component {
+    static propTypes = {
+        _isGuest: PropTypes.bool,
+        t: PropTypes.func
+    };
+
     state = {
         brandWatermarkLink: String,
         jitsiWatermarkLink: String,

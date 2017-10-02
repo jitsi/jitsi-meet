@@ -290,8 +290,7 @@ RemoteVideo.prototype._setAudioVolume = function (newVal) {
  * @param isMuted the new muted state to update to
  */
 RemoteVideo.prototype.updateRemoteVideoMenu = function (
-    isMuted = this.isAudioMuted
-) {
+        isMuted = this.isAudioMuted) {
     this.isAudioMuted = isMuted;
 
     this._generatePopupContent();

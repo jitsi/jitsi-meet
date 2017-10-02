@@ -156,7 +156,10 @@ export default {
      *  }}
      */
     getNewMediaDevicesAfterDeviceListChanged(
-        newDevices, isSharingScreen, localVideo, localAudio) {
+            newDevices,
+            isSharingScreen,
+            localVideo,
+            localAudio) {
         return {
             audioinput: getNewAudioInputDevice(newDevices, localAudio),
             videoinput: !isSharingScreen &&
@@ -173,7 +176,9 @@ export default {
      * @returns {Promise.<JitsiLocalTrack[]>}
      */
     createLocalTracksAfterDeviceListChanged(
-        createLocalTracks, cameraDeviceId, micDeviceId) {
+            createLocalTracks,
+            cameraDeviceId,
+            micDeviceId) {
         let audioTrackError;
         let videoTrackError;
         let audioRequested = !!micDeviceId;
@@ -181,27 +186,28 @@ export default {
 
         if (audioRequested && videoRequested) {
             // First we try to create both audio and video tracks together.
-            return createLocalTracks({
-                        devices: ['audio', 'video'],
-                        cameraDeviceId: cameraDeviceId,
-                        micDeviceId: micDeviceId
-                    })
-                    // If we fail to do this, try to create them separately.
-                    .catch(() => Promise.all([
-                        createAudioTrack(false).then(([stream]) => stream),
-                        createVideoTrack(false).then(([stream]) => stream)
-                    ]))
-                    .then(tracks => {
-                        if (audioTrackError) {
-                            APP.UI.showMicErrorNotification(audioTrackError);
-                        }
+            return (
+                createLocalTracks({
+                    devices: ['audio', 'video'],
+                    cameraDeviceId: cameraDeviceId,
+                    micDeviceId: micDeviceId
+                })
+                // If we fail to do this, try to create them separately.
+                .catch(() => Promise.all([
+                    createAudioTrack(false).then(([stream]) => stream),
+                    createVideoTrack(false).then(([stream]) => stream)
+                ]))
+                .then(tracks => {
+                    if (audioTrackError) {
+                        APP.UI.showMicErrorNotification(audioTrackError);
+                    }
 
-                        if (videoTrackError) {
-                            APP.UI.showCameraErrorNotification(videoTrackError);
-                        }
+                    if (videoTrackError) {
+                        APP.UI.showCameraErrorNotification(videoTrackError);
+                    }
 
-                        return tracks.filter(t => typeof t !== 'undefined');
-                    });
+                    return tracks.filter(t => typeof t !== 'undefined');
+                }));
         } else if (videoRequested && !audioRequested) {
             return createVideoTrack();
         } else if (audioRequested && !videoRequested) {
@@ -211,7 +217,8 @@ export default {
         }
 
         function createAudioTrack(showError) {
-            return createLocalTracks({
+            return (
+                createLocalTracks({
                     devices: ['audio'],
                     cameraDeviceId: null,
                     micDeviceId: micDeviceId
@@ -220,11 +227,12 @@ export default {
                     audioTrackError = err;
                     showError && APP.UI.showMicErrorNotification(err);
                     return [];
-                });
+                }));
         }
 
         function createVideoTrack(showError) {
-            return createLocalTracks({
+            return (
+                createLocalTracks({
                     devices: ['video'],
                     cameraDeviceId: cameraDeviceId,
                     micDeviceId: null
@@ -233,7 +241,7 @@ export default {
                     videoTrackError = err;
                     showError && APP.UI.showCameraErrorNotification(err);
                     return [];
-                });
+                }));
         }
     }
 };

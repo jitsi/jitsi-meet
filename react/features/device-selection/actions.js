@@ -81,7 +81,7 @@ function _openDeviceSelectionDialogInPopup() {
         const scope = `dialog_${API_ID}`;
         const url = `${
             window.location.origin}/static/deviceSelectionPopup.html#scope=${
-                encodeURIComponent(JSON.stringify(scope))}`;
+            encodeURIComponent(JSON.stringify(scope))}`;
         const popup
             = window.open(
                 url,

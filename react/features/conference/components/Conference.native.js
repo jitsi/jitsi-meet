@@ -203,10 +203,10 @@ class Conference extends Component {
                   * The activity/loading indicator goes above everything, except
                   * the toolbox/toolbars and the dialogs.
                   */
-                  this.props._connecting
-                      && <View style = { styles.connectingIndicator }>
-                          <LoadingIndicator />
-                      </View>
+                    this.props._connecting
+                        && <View style = { styles.connectingIndicator }>
+                            <LoadingIndicator />
+                        </View>
                 }
 
                 {/*

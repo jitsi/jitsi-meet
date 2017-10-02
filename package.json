@@ -72,13 +72,13 @@
     "strophe": "1.2.4",
     "strophejs-plugins": "0.0.7",
     "styled-components": "1.3.0",
-    "url-polyfill": "github/url-polyfill",
+    "url-polyfill": "github:github/url-polyfill",
     "uuid": "3.1.0",
     "xmldom": "0.1.27"
   },
   "devDependencies": {
     "babel-core": "6.26.0",
-    "babel-eslint": "7.2.3",
+    "babel-eslint": "8.0.1",
     "babel-loader": "7.1.2",
     "babel-polyfill": "6.26.0",
     "babel-preset-es2015": "6.24.1",
@@ -86,12 +86,12 @@
     "babel-preset-stage-1": "6.24.1",
     "clean-css": "3.4.25",
     "css-loader": "0.28.5",
-    "eslint": "3.19.0",
+    "eslint": "4.8.0",
     "eslint-plugin-flowtype": "2.30.4",
     "eslint-plugin-import": "2.7.0",
-    "eslint-plugin-jsdoc": "3.1.2",
-    "eslint-plugin-react": "6.10.3",
-    "eslint-plugin-react-native": "3.0.1",
+    "eslint-plugin-jsdoc": "3.1.3",
+    "eslint-plugin-react": "7.4.0",
+    "eslint-plugin-react-native": "3.1.0",
     "expose-loader": "0.7.3",
     "file-loader": "0.11.2",
     "flow-bin": "0.38.0",
@@ -109,7 +109,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "jshint . && eslint . && flow",
+    "lint": "eslint . && flow",
     "validate": "npm ls"
   },
   "pre-commit": [

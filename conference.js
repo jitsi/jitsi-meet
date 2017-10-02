@@ -123,13 +123,13 @@ const commands = {
 function connect(roomName) {
     return openConnection({retry: true, roomName: roomName})
             .catch(function (err) {
-        if (err === ConnectionErrors.PASSWORD_REQUIRED) {
-            APP.UI.notifyTokenAuthFailed();
-        } else {
-            APP.UI.notifyConnectionFailed(err);
-        }
-        throw err;
-    });
+                if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+                    APP.UI.notifyTokenAuthFailed();
+                } else {
+                    APP.UI.notifyConnectionFailed(err);
+                }
+                throw err;
+            });
 }
 
 /**
@@ -286,38 +286,36 @@ class ConferenceConnector {
         logger.error('CONFERENCE FAILED:', err, ...params);
 
         switch (err) {
-        case ConferenceErrors.CONNECTION_ERROR:
-            {
-                let [msg] = params;
-                APP.UI.notifyConnectionFailed(msg);
-            }
+        case ConferenceErrors.CONNECTION_ERROR: {
+            let [msg] = params;
+            APP.UI.notifyConnectionFailed(msg);
             break;
+        }
 
-        case ConferenceErrors.NOT_ALLOWED_ERROR:
-            {
-                // let's show some auth not allowed page
-                assignWindowLocationPathname('static/authError.html');
-            }
+        case ConferenceErrors.NOT_ALLOWED_ERROR: {
+            // let's show some auth not allowed page
+            assignWindowLocationPathname('static/authError.html');
             break;
+        }
 
-            // not enough rights to create conference
+        // not enough rights to create conference
         case ConferenceErrors.AUTHENTICATION_REQUIRED: {
-                // Schedule reconnect to check if someone else created the room.
-                this.reconnectTimeout = setTimeout(() => room.join(), 5000);
+            // Schedule reconnect to check if someone else created the room.
+            this.reconnectTimeout = setTimeout(() => room.join(), 5000);
 
-                const { password }
-                    = APP.store.getState()['features/base/conference'];
+            const { password }
+                = APP.store.getState()['features/base/conference'];
 
-                AuthHandler.requireAuth(room, password);
-            }
+            AuthHandler.requireAuth(room, password);
+
             break;
+        }
 
-        case ConferenceErrors.RESERVATION_ERROR:
-            {
-                let [code, msg] = params;
-                APP.UI.notifyReservationError(code, msg);
-            }
+        case ConferenceErrors.RESERVATION_ERROR: {
+            let [code, msg] = params;
+            APP.UI.notifyReservationError(code, msg);
             break;
+        }
 
         case ConferenceErrors.GRACEFUL_SHUTDOWN:
             APP.UI.notifyGracefulShutdown();
@@ -327,24 +325,22 @@ class ConferenceConnector {
             APP.UI.notifyInternalError();
             break;
 
-        case ConferenceErrors.CONFERENCE_DESTROYED:
-            {
-                let [reason] = params;
-                APP.UI.hideStats();
-                APP.UI.notifyConferenceDestroyed(reason);
-            }
+        case ConferenceErrors.CONFERENCE_DESTROYED: {
+            let [reason] = params;
+            APP.UI.hideStats();
+            APP.UI.notifyConferenceDestroyed(reason);
             break;
+        }
 
-            // FIXME FOCUS_DISCONNECTED is confusing event name.
-            // What really happens there is that the library is not ready yet,
-            // because Jicofo is not available, but it is going to give
-            // it another try.
-        case ConferenceErrors.FOCUS_DISCONNECTED:
-            {
-                let [focus, retrySec] = params;
-                APP.UI.notifyFocusDisconnected(focus, retrySec);
-            }
+        // FIXME FOCUS_DISCONNECTED is a confusing event name.
+        // What really happens there is that the library is not ready yet,
+        // because Jicofo is not available, but it is going to give it another
+        // try.
+        case ConferenceErrors.FOCUS_DISCONNECTED: {
+            let [focus, retrySec] = params;
+            APP.UI.notifyFocusDisconnected(focus, retrySec);
             break;
+        }
 
         case ConferenceErrors.FOCUS_LEFT:
         case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
@@ -358,9 +354,11 @@ class ConferenceConnector {
             connection.disconnect();
             APP.UI.notifyMaxUsersLimitReached();
             break;
+
         case ConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
             reload();
             break;
+
         default:
             this._handleConferenceFailed(err, ...params);
         }
@@ -644,7 +642,7 @@ export default {
     init(options) {
         this.roomName = options.roomName;
         // attaches global error handler, if there is already one, respect it
-        if (JitsiMeetJS.getGlobalOnErrorHandler){
+        if (JitsiMeetJS.getGlobalOnErrorHandler) {
             var oldOnErrorHandler = window.onerror;
             window.onerror = function (message, source, lineno, colno, error) {
                 JitsiMeetJS.getGlobalOnErrorHandler(
@@ -656,20 +654,18 @@ export default {
 
             var oldOnUnhandledRejection = window.onunhandledrejection;
             window.onunhandledrejection = function(event) {
-
-            JitsiMeetJS.getGlobalOnErrorHandler(
+                JitsiMeetJS.getGlobalOnErrorHandler(
                     null, null, null, null, event.reason);
 
                 if (oldOnUnhandledRejection)
                     oldOnUnhandledRejection(event);
             };
         }
-        return JitsiMeetJS.init(
-            Object.assign({
-                    enableAnalyticsLogging: isAnalyticsEnabled(APP.store)
-                },
-                config)
-            ).then(() => {
+        return (
+            JitsiMeetJS.init({
+                enableAnalyticsLogging: isAnalyticsEnabled(APP.store),
+                ...config
+            }).then(() => {
                 initAnalytics(APP.store);
                 return this.createInitialLocalTracksAndConnect(
                     options.roomName, {
@@ -733,7 +729,7 @@ export default {
                 return new Promise((resolve, reject) => {
                     (new ConferenceConnector(resolve, reject)).connect();
                 });
-        });
+            }));
     },
     /**
      * Check if id is id of the local user.
@@ -1700,15 +1696,12 @@ export default {
 
         room.on(
             ConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
-            (leavingIds, enteringIds) => {
-                APP.UI.handleLastNEndpoints(leavingIds, enteringIds);
-        });
+            (leavingIds, enteringIds) =>
+                APP.UI.handleLastNEndpoints(leavingIds, enteringIds));
 
         room.on(
             ConferenceEvents.P2P_STATUS,
-            (jitsiConference, p2p) => {
-                APP.store.dispatch(p2pStatusChanged(p2p));
-        });
+            (jitsiConference, p2p) => APP.store.dispatch(p2pStatusChanged(p2p)));
 
         room.on(
             ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
@@ -1717,7 +1710,7 @@ export default {
                     id, connectionStatus));
 
                 APP.UI.participantConnectionStatusChanged(id);
-        });
+            });
         room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
             APP.store.dispatch(dominantSpeakerChanged(id));
 
@@ -1818,21 +1811,22 @@ export default {
             APP.UI.setLocalRemoteControlActiveChanged();
         });
 
-        room.on(ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
-                (participant, name, oldValue, newValue) => {
-            switch (name) {
-            case 'raisedHand':
-                APP.UI.setRaisedHandStatus(participant, newValue);
-                break;
-            case 'remoteControlSessionStatus':
-                APP.UI.setRemoteControlActiveStatus(
-                    participant.getId(),
-                    newValue);
-                break;
-            default:
-            // ignore
-            }
-        });
+        room.on(
+            ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
+            (participant, name, oldValue, newValue) => {
+                switch (name) {
+                case 'raisedHand':
+                    APP.UI.setRaisedHandStatus(participant, newValue);
+                    break;
+                case 'remoteControlSessionStatus':
+                    APP.UI.setRemoteControlActiveStatus(
+                        participant.getId(),
+                        newValue);
+                    break;
+                default:
+                // ignore
+                }
+            });
 
         room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
             logger.log("Received recorder status change: ", status, error);
@@ -1910,7 +1904,7 @@ export default {
                         avatarURL: data.value
                     }));
                 APP.UI.setUserAvatarUrl(from, data.value);
-        });
+            });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
             (data, from) => {
@@ -1972,25 +1966,27 @@ export default {
             });
         });
 
-        APP.UI.addListener(UIEvents.RESOLUTION_CHANGED,
+        APP.UI.addListener(
+            UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-            var logObject = {
-                id: "resolution_change",
-                participant: id,
-                oldValue: oldResolution,
-                newValue: newResolution,
-                delay: delay
+                var logObject = {
+                    id: "resolution_change",
+                    participant: id,
+                    oldValue: oldResolution,
+                    newValue: newResolution,
+                    delay: delay
                 };
-            room.sendApplicationLog(JSON.stringify(logObject));
 
-            // We only care about the delay between simulcast streams.
-            // Longer delays will be caused by something else and will just
-            // poison the data.
-            if (delay < 2000) {
-                JitsiMeetJS.analytics.sendEvent('stream.switch.delay',
-                    {value: delay});
-            }
-        });
+                room.sendApplicationLog(JSON.stringify(logObject));
+
+                // We only care about the delay between simulcast streams.
+                // Longer delays will be caused by something else and will just
+                // poison the data.
+                if (delay < 2000) {
+                    JitsiMeetJS.analytics.sendEvent('stream.switch.delay',
+                        {value: delay});
+                }
+            });
 
         // Starts or stops the recording for the conference.
         APP.UI.addListener(UIEvents.RECORDING_TOGGLED, (options) => {
@@ -2112,37 +2108,40 @@ export default {
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
 
-        APP.UI.addListener(UIEvents.UPDATE_SHARED_VIDEO,
+        APP.UI.addListener(
+            UIEvents.UPDATE_SHARED_VIDEO,
             (url, state, time, isMuted, volume) => {
-            // send start and stop commands once, and remove any updates
-            // that had left
-            if (state === 'stop' || state === 'start' || state === 'playing') {
-                room.removeCommand(this.commands.defaults.SHARED_VIDEO);
-                room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
-                    value: url,
-                    attributes: {
-                        state: state,
-                        time: time,
-                        muted: isMuted,
-                        volume: volume
-                    }
-                });
-            }
-            else {
-                // in case of paused, in order to allow late users to join
-                // paused
-                room.removeCommand(this.commands.defaults.SHARED_VIDEO);
-                room.sendCommand(this.commands.defaults.SHARED_VIDEO, {
-                    value: url,
-                    attributes: {
-                        state: state,
-                        time: time,
-                        muted: isMuted,
-                        volume: volume
-                    }
-                });
-            }
-        });
+                // send start and stop commands once, and remove any updates
+                // that had left
+                if (state === 'stop'
+                        || state === 'start'
+                        || state === 'playing') {
+                    room.removeCommand(this.commands.defaults.SHARED_VIDEO);
+                    room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
+                        value: url,
+                        attributes: {
+                            state: state,
+                            time: time,
+                            muted: isMuted,
+                            volume: volume
+                        }
+                    });
+                }
+                else {
+                    // in case of paused, in order to allow late users to join
+                    // paused
+                    room.removeCommand(this.commands.defaults.SHARED_VIDEO);
+                    room.sendCommand(this.commands.defaults.SHARED_VIDEO, {
+                        value: url,
+                        attributes: {
+                            state: state,
+                            time: time,
+                            muted: isMuted,
+                            volume: volume
+                        }
+                    });
+                }
+            });
         room.addCommandListener(
             this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
 

@@ -74,7 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _appStateChanged(dispatch: Dispatch<*>, appState: string) {
+function _appStateChanged(dispatch: Function, appState: string) {
     let muted;
 
     switch (appState) {

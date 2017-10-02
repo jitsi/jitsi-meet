@@ -334,7 +334,7 @@ function _mapStateToProps(state) {
         inviteServiceUrl,
         peopleSearchQueryTypes,
         peopleSearchUrl
-     } = state['features/base/config'];
+    } = state['features/base/config'];
 
     return {
         _conference: conference,

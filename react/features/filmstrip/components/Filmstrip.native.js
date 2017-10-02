@@ -53,19 +53,22 @@ class Filmstrip extends Component {
                 visible = { this.props._visible }>
                 <ScrollView
 
-                    // eslint-disable-next-line react/jsx-curly-spacing
-                    contentContainerStyle = {
-                        styles.filmstripScrollViewContentContainer
-                    } // eslint-disable-line react/jsx-curly-spacing
+                    contentContainerStyle
+                        = { styles.filmstripScrollViewContentContainer }
                     horizontal = { true }
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }>
                     {
+
+                        /* eslint-disable react/jsx-wrap-multilines */
+
                         this._sort(this.props._participants)
                             .map(p =>
                                 <Thumbnail
                                     key = { p.id }
                                     participant = { p } />)
+
+                        /* eslint-enable react/jsx-wrap-multilines */
                     }
                 </ScrollView>
             </Container>

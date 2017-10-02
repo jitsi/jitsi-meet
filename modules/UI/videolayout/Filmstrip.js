@@ -249,18 +249,18 @@ const Filmstrip = {
         if(thumbs.localThumb) {
             availableWidth = Math.floor(
                 (videoAreaAvailableWidth - (
-                UIUtil.parseCssInt(
-                    localVideoContainer.css('borderLeftWidth'), 10)
-                + UIUtil.parseCssInt(
-                    localVideoContainer.css('borderRightWidth'), 10)
-                + UIUtil.parseCssInt(
-                    localVideoContainer.css('paddingLeft'), 10)
-                + UIUtil.parseCssInt(
-                    localVideoContainer.css('paddingRight'), 10)
-                + UIUtil.parseCssInt(
-                    localVideoContainer.css('marginLeft'), 10)
-                + UIUtil.parseCssInt(
-                    localVideoContainer.css('marginRight'), 10)))
+                    UIUtil.parseCssInt(
+                        localVideoContainer.css('borderLeftWidth'), 10)
+                    + UIUtil.parseCssInt(
+                        localVideoContainer.css('borderRightWidth'), 10)
+                    + UIUtil.parseCssInt(
+                        localVideoContainer.css('paddingLeft'), 10)
+                    + UIUtil.parseCssInt(
+                        localVideoContainer.css('paddingRight'), 10)
+                    + UIUtil.parseCssInt(
+                        localVideoContainer.css('marginLeft'), 10)
+                    + UIUtil.parseCssInt(
+                        localVideoContainer.css('marginRight'), 10)))
             );
         }
 
@@ -271,18 +271,18 @@ const Filmstrip = {
             let remoteVideoContainer = thumbs.remoteThumbs.eq(0);
             availableWidth = Math.floor(
                 (videoAreaAvailableWidth - numvids * (
-                UIUtil.parseCssInt(
-                    remoteVideoContainer.css('borderLeftWidth'), 10)
-                + UIUtil.parseCssInt(
-                    remoteVideoContainer.css('borderRightWidth'), 10)
-                + UIUtil.parseCssInt(
-                    remoteVideoContainer.css('paddingLeft'), 10)
-                + UIUtil.parseCssInt(
-                    remoteVideoContainer.css('paddingRight'), 10)
-                + UIUtil.parseCssInt(
-                    remoteVideoContainer.css('marginLeft'), 10)
-                + UIUtil.parseCssInt(
-                    remoteVideoContainer.css('marginRight'), 10)))
+                    UIUtil.parseCssInt(
+                        remoteVideoContainer.css('borderLeftWidth'), 10)
+                    + UIUtil.parseCssInt(
+                        remoteVideoContainer.css('borderRightWidth'), 10)
+                    + UIUtil.parseCssInt(
+                        remoteVideoContainer.css('paddingLeft'), 10)
+                    + UIUtil.parseCssInt(
+                        remoteVideoContainer.css('paddingRight'), 10)
+                    + UIUtil.parseCssInt(
+                        remoteVideoContainer.css('marginLeft'), 10)
+                    + UIUtil.parseCssInt(
+                        remoteVideoContainer.css('marginRight'), 10)))
             );
         }
 

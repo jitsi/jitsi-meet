@@ -72,7 +72,7 @@ function initCommands() {
 
         return false;
     });
-    transport.on('request', ({ data, name }, callback) => {
+    transport.on('request', ({ name }, callback) => {
         switch (name) {
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
@@ -145,6 +145,8 @@ function toggleScreenSharing() {
  * Jitsi Meet.
  */
 class API {
+    _enabled: boolean;
+
     /**
      * Initializes the API. Setups message event listeners that will receive
      * information from external applications that embed Jitsi Meet. It also
@@ -179,7 +181,7 @@ class API {
      * @param {Object} event - The event to be sent.
      * @returns {void}
      */
-    _sendEvent(event = {}) {
+    _sendEvent(event: Object = {}) {
         if (this._enabled) {
             transport.sendEvent(event);
         }
@@ -191,7 +193,7 @@ class API {
      * @param {string} message - Message body.
      * @returns {void}
      */
-    notifySendingChatMessage(message) {
+    notifySendingChatMessage(message: string) {
         this._sendEvent({
             name: 'outgoing-message',
             message
@@ -226,7 +228,7 @@ class API {
      * @param {string} id - User id.
      * @returns {void}
      */
-    notifyUserJoined(id) {
+    notifyUserJoined(id: string) {
         this._sendEvent({
             name: 'participant-joined',
             id
@@ -240,7 +242,7 @@ class API {
      * @param {string} id - User id.
      * @returns {void}
      */
-    notifyUserLeft(id) {
+    notifyUserLeft(id: string) {
         this._sendEvent({
             name: 'participant-left',
             id
@@ -255,7 +257,7 @@ class API {
      * @param {string} displayname - User nickname.
      * @returns {void}
      */
-    notifyDisplayNameChanged(id, displayname) {
+    notifyDisplayNameChanged(id: string, displayname: string) {
         this._sendEvent({
             name: 'display-name-change',
             displayname,
@@ -270,7 +272,7 @@ class API {
      * @param {string} roomName - The room name.
      * @returns {void}
      */
-    notifyConferenceJoined(roomName) {
+    notifyConferenceJoined(roomName: string) {
         this._sendEvent({
             name: 'video-conference-joined',
             roomName
@@ -284,7 +286,7 @@ class API {
      * @param {string} roomName - User id.
      * @returns {void}
      */
-    notifyConferenceLeft(roomName) {
+    notifyConferenceLeft(roomName: string) {
         this._sendEvent({
             name: 'video-conference-left',
             roomName
@@ -308,7 +310,7 @@ class API {
      * @param {boolean} muted - The new muted status.
      * @returns {void}
      */
-    notifyAudioMutedStatusChanged(muted) {
+    notifyAudioMutedStatusChanged(muted: boolean) {
         this._sendEvent({
             name: 'audio-mute-status-changed',
             muted
@@ -322,7 +324,7 @@ class API {
      * @param {boolean} muted - The new muted status.
      * @returns {void}
      */
-    notifyVideoMutedStatusChanged(muted) {
+    notifyVideoMutedStatusChanged(muted: boolean) {
         this._sendEvent({
             name: 'video-mute-status-changed',
             muted
@@ -336,7 +338,7 @@ class API {
      * @param {boolean} available - True if available and false otherwise.
      * @returns {void}
      */
-    notifyAudioAvailabilityChanged(available) {
+    notifyAudioAvailabilityChanged(available: boolean) {
         audioAvailable = available;
         this._sendEvent({
             name: 'audio-availability-changed',
@@ -351,7 +353,7 @@ class API {
      * @param {boolean} available - True if available and false otherwise.
      * @returns {void}
      */
-    notifyVideoAvailabilityChanged(available) {
+    notifyVideoAvailabilityChanged(available: boolean) {
         videoAvailable = available;
         this._sendEvent({
             name: 'video-availability-changed',
