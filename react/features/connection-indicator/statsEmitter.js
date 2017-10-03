@@ -108,20 +108,19 @@ const statsEmitter = {
      * @returns {void}
      */
     _onStatsUpdated(currentUserId, stats) {
-        const allUserFramerates = stats.framerate;
-        const allUserResolutions = stats.resolution;
-
-        const currentUserFramerate = allUserFramerates[currentUserId];
-        const currentUserResolution = allUserResolutions[currentUserId];
+        const allUserFramerates = stats.framerate || {};
+        const allUserResolutions = stats.resolution || {};
 
         // FIXME resolution and framerate are hashes keyed off of user ids with
         // stat values. Receivers of stats expect resolution and framerate to
         // be primatives, not hashes, so overwrites the 'lib-jitsi-meet' stats
         // objects.
-        stats.framerate = currentUserFramerate;
-        stats.resolution = currentUserResolution;
+        const modifiedLocalStats = Object.assign({}, stats, {
+            framerate: allUserFramerates[currentUserId],
+            resolution: allUserResolutions[currentUserId]
+        });
 
-        this._emitStatsUpdate(currentUserId, stats);
+        this._emitStatsUpdate(currentUserId, modifiedLocalStats);
 
         // Get all the unique user ids from the framerate and resolution stats
         // and update remote user stats as needed.
