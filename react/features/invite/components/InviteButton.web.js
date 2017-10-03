@@ -75,8 +75,8 @@ class InviteButton extends Component {
      */
     componentWillReceiveProps(nextProps) {
         if (this.props._isDialOutAvailable !== nextProps._isDialOutAvailable
-            || this.props._isAddToCallAvailable
-                !== nextProps._isAddToCallAvailable) {
+                || this.props._isAddToCallAvailable
+                    !== nextProps._isAddToCallAvailable) {
             this._updateInviteItems(nextProps);
         }
     }
@@ -185,7 +185,7 @@ class InviteButton extends Component {
             );
         }
 
-        this.state = {
+        const nextState = {
             /**
              * The list of invite options.
              */
@@ -195,6 +195,13 @@ class InviteButton extends Component {
                 }
             ]
         };
+
+        if (this.state) {
+            this.setState(nextState);
+        } else {
+            // eslint-disable-next-line react/no-direct-mutation-state
+            this.state = nextState;
+        }
     }
 }
 
@@ -210,22 +217,20 @@ class InviteButton extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { enableUserRolesBasedOnToken } = state['features/base/config'];
-
     const { conference } = state['features/base/conference'];
-
+    const { enableUserRolesBasedOnToken } = state['features/base/config'];
     const { isGuest } = state['features/jwt'];
 
     return {
-        _isAddToCallAvailable: !isGuest
-            && isInviteOptionEnabled(ADD_TO_CALL_OPTION),
+        _isAddToCallAvailable:
+            !isGuest && isInviteOptionEnabled(ADD_TO_CALL_OPTION),
         _isDialOutAvailable:
             getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
-            && conference && conference.isSIPCallingSupported()
-            && isInviteOptionEnabled(DIAL_OUT_OPTION)
-            && (!enableUserRolesBasedOnToken || !isGuest)
+                && conference && conference.isSIPCallingSupported()
+                && isInviteOptionEnabled(DIAL_OUT_OPTION)
+                && (!enableUserRolesBasedOnToken || !isGuest)
     };
 }
 
-export default translate(connect(
-    _mapStateToProps, { openDialog })(InviteButton));
+export default translate(connect(_mapStateToProps, { openDialog })(
+    InviteButton));
