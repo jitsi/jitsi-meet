@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { InviteButton } from '../../invite';
 import { Toolbox } from '../../toolbox';
 
 import { setFilmstripHovered } from '../actions';
@@ -48,9 +49,9 @@ class Filmstrip extends Component {
         dispatch: PropTypes.func,
 
         /**
-         * Whether or not the toolbox should be displayed within the filmstrip.
+         * Whether or not the conference is in filmstripOnly mode.
          */
-        displayToolbox: PropTypes.bool
+        filmstripOnly: PropTypes.bool
     };
 
     /**
@@ -100,7 +101,7 @@ class Filmstrip extends Component {
 
         return (
             <div className = { filmstripClassNames }>
-                { this.props.displayToolbox ? <Toolbox /> : null }
+                { this.props.filmstripOnly ? <Toolbox /> : null }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -108,7 +109,9 @@ class Filmstrip extends Component {
                         className = 'filmstrip__videos'
                         id = 'filmstripLocalVideo'
                         onMouseOut = { this._onMouseOut }
-                        onMouseOver = { this._onMouseOver } />
+                        onMouseOver = { this._onMouseOver }>
+                        { this.props.filmstripOnly ? null : <InviteButton /> }
+                    </div>
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripRemoteVideos'>

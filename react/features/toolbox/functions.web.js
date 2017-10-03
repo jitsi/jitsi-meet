@@ -1,7 +1,7 @@
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
 
-import defaultToolbarButtons from './defaultToolbarButtons';
+import getDefaultButtons from './defaultToolbarButtons';
 
 declare var interfaceConfig: Object;
 
@@ -27,7 +27,8 @@ export function getDefaultToolboxButtons(buttonHandlers: Object): Object {
         toolbarButtons
             = interfaceConfig.TOOLBAR_BUTTONS.reduce(
                 (acc, buttonName) => {
-                    let button = defaultToolbarButtons[buttonName];
+                    const buttons = getDefaultButtons();
+                    let button = buttons ? buttons[buttonName] : null;
                     const currentButtonHandlers = buttonHandlers[buttonName];
 
                     if (button) {

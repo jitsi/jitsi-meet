@@ -24,10 +24,6 @@
          */
         z-index: #{$tooltipsZ + 1};
 
-        &.hide-videos {
-            z-index: #{$tooltipsZ - 1};
-        }
-
         /**
          * Hide videos by making them slight to the right.
          */
@@ -50,9 +46,21 @@
             }
         }
 
+        /**
+         * Re-styles the local Video and invite button to better fit the
+         * vertical filmstrip layout.
+         */
         #filmstripLocalVideo {
+            bottom: 5px;
+            flex-direction: column-reverse;
             height: auto;
-            justify-content: flex-end;
+            justify-content: flex-start;
+
+            .filmstrip__invite {
+                padding-bottom: 0px;
+                padding-top: 5px;
+                z-index: $dropdownZ;
+            }
         }
 
         /**
@@ -69,10 +77,11 @@
             flex: 1;
             flex-direction: column;
             height: auto;
-            overflow-x: hidden !important;
+            justify-content: flex-end;
 
-            .remote-videos-container {
-                flex-direction: column;
+            #filmstripRemoteVideosContainer {
+                flex-direction: column-reverse;
+                overflow-x: hidden;
             }
         }
 
@@ -101,7 +110,7 @@
         }
 
         #remoteVideos {
-            flex-direction: column-reverse;
+            flex-direction: column;
             flex-grow: 1;
         }
 
@@ -153,15 +162,11 @@
      * be hidden.
      * The class opening is for when the filmstrip is transitioning from hidden
      * to visible.
-     * The class with-remote-videos is for when the filmstrip has remote videos
-     * displayed, as opposed to 1-on-1 mode where they might be hidden.
-     * The class without-remote-videos is for when the filmstrip is visible
-     * but it has no videos to display.
      */
     .video-state-indicator.moveToCorner {
         transition: right 0.5s;
 
-        &.with-filmstrip.with-remote-videos {
+        &.with-filmstrip {
             &#recordingLabel {
                 right: 200px;
             }
@@ -171,11 +176,7 @@
             }
         }
 
-        &.with-filmstrip.without-remote-videos {
-            transition-delay: 0.5s;
-        }
-
-        &.with-filmstrip.with-remote-videos.opening {
+        &.with-filmstrip.opening {
             transition: 0.9s;
             transition-timing-function: ease-in-out;
         }

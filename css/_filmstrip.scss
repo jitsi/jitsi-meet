@@ -48,21 +48,66 @@
     &__videos {
         @extend %align-right;
         position:relative;
-        height:196px;
         padding: 0;
         /* The filmstrip should not be covered by the left toolbar. */
         bottom: 0;
         width:auto;
         transition: bottom 2s;
         overflow: visible !important;
-        /*!!! Removes the gap between the local video container and the remote
-        videos. */
-        font-size: 0pt;
 
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
             padding-left: $defaultToolbarSize + 5;
-       }
+        }
+
+        /**
+         * The local video identifier.
+         */
+        &#filmstripLocalVideo {
+            bottom: 32px;
+            flex-direction: column;
+
+            /**
+             * The invite button style.
+             */
+            .filmstrip__invite {
+                padding-bottom: 5px;
+                margin-left: 2px;
+            }
+
+            /**
+             * The invite button group style.
+             * TOFIX: use AtlasKit.ButtonGroup if it starts supporting different
+             * flex grow options for the buttons.
+             */
+            .invite-button-group {
+                display: inline-flex;
+                justify-content: space-between;
+                width: 100%;
+
+                & button {
+                    background: $toolbarBackground;
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    overflow: hidden;
+                }
+
+                & > * {
+                    color: $toolbarButtonColor;
+                    flex-grow: 0;
+                    flex-shrink: 0;
+                    margin-left: 2px;
+                }
+
+                /**
+                 * Making sure any svg-s in an invite button group will be
+                 * colored the way we want.
+                 */
+                & path {
+                    fill: $toolbarButtonColor;
+                }
+            }
+        }
 
         &.hidden {
             bottom: -196px;

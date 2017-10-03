@@ -325,29 +325,6 @@ export function showSharedVideoButton(): Function {
 }
 
 /**
- * Shows the dial out button if it's required and appropriate
- * flag is passed.
- *
- * @param {boolean} show - Flag showing whether to show button or not.
- * @returns {Function}
- */
-export function showDialOutButton(show: boolean): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const buttonName = 'dialout';
-
-        if (show
-                && APP.conference.sipGatewayEnabled()
-                && isButtonEnabled(buttonName)
-                && (!config.enableUserRolesBasedOnToken
-                    || !getState()['features/jwt'].isGuest)) {
-            dispatch(setToolbarButton(buttonName, {
-                hidden: false
-            }));
-        }
-    };
-}
-
-/**
  * Shows the toolbox for specified timeout.
  *
  * @param {number} timeout - Timeout for showing the toolbox.

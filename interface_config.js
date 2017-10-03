@@ -35,13 +35,14 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
         //main toolbar
         'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup', // jshint ignore:line
         //extended toolbar
-        'profile', 'addtocall', 'contacts', 'info', 'chat', 'recording', 'etherpad', 'sharedvideo', 'dialout', 'settings', 'raisehand', 'videoquality', 'filmstrip'], // jshint ignore:line
+        'profile', 'contacts', 'info', 'chat', 'recording', 'etherpad', 'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip'], // jshint ignore:line
     /**
      * Main Toolbar Buttons
      * All of them should be in TOOLBAR_BUTTONS
      */
     MAIN_TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup'], // jshint ignore:line
     SETTINGS_SECTIONS: ['language', 'devices', 'moderator'],
+    INVITE_OPTIONS: ['invite', 'dialout', 'addtocall'],
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
@@ -124,4 +125,9 @@ var interfaceConfig = { // eslint-disable-line no-unused-vars
      * @type {number}
      */
     CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000
+
+    /**
+     * The name of the application connected to the "Add people" search service.
+     */
+    // ADD_PEOPLE_APP_NAME: ""
 };

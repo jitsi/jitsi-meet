@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import { VIDEO_QUALITY_LEVELS } from '../../base/conference';
 import { translate } from '../../base/i18n';
-import { shouldRemoteVideosBeVisible } from '../../filmstrip';
 
 const { HIGH, STANDARD, LOW } = VIDEO_QUALITY_LEVELS;
 
@@ -58,12 +57,6 @@ export class VideoQualityLabel extends Component {
          * determine display classes to set.
          */
         _filmstripVisible: PropTypes.bool,
-
-        /**
-         * Whether or note remote videos are visible in the filmstrip,
-         * regardless of count. Used to determine display classes to set.
-         */
-        _remoteVideosVisible: PropTypes.bool,
 
         /**
          * The current video resolution (height) to display a label for.
@@ -123,7 +116,6 @@ export class VideoQualityLabel extends Component {
             _audioOnly,
             _conferenceStarted,
             _filmstripVisible,
-            _remoteVideosVisible,
             _resolution,
             t
         } = this.props;
@@ -140,12 +132,9 @@ export class VideoQualityLabel extends Component {
         const baseClasses = 'video-state-indicator moveToCorner';
         const filmstrip
             = _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip';
-        const remoteVideosVisible = _remoteVideosVisible
-            ? 'with-remote-videos'
-            : 'without-remote-videos';
         const opening = this.state.togglingToVisible ? 'opening' : '';
         const classNames
-            = `${baseClasses} ${filmstrip} ${remoteVideosVisible} ${opening}`;
+            = `${baseClasses} ${filmstrip} ${opening}`;
         const tooltipKey
             = `videoStatus.labelTooltip${_audioOnly ? 'AudioOnly' : 'Video'}`;
 
@@ -206,7 +195,6 @@ export class VideoQualityLabel extends Component {
  *     _audioOnly: boolean,
  *     _conferenceStarted: boolean,
  *     _filmstripVisible: true,
- *     _remoteVideosVisible: boolean,
  *     _resolution: number
  * }}
  */
@@ -219,7 +207,6 @@ function _mapStateToProps(state) {
         _audioOnly: audioOnly,
         _conferenceStarted: Boolean(conference),
         _filmstripVisible: visible,
-        _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
         _resolution: resolution
     };
 }
