@@ -1,3 +1,5 @@
+// @flow
+
 import SideContainerToggler
     from '../../../modules/UI/side_pannels/SideContainerToggler';
 
@@ -101,7 +103,7 @@ export function getToolbarClassNames(props: Object) {
  * @returns {boolean} - True to indicate that the given toolbar button
  * is enabled, false - otherwise.
  */
-export function isButtonEnabled(name) {
+export function isButtonEnabled(name: string) {
     return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1
             || interfaceConfig.MAIN_TOOLBAR_BUTTONS.indexOf(name) !== -1;
 }

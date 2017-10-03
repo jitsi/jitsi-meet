@@ -1,3 +1,5 @@
+// @flow
+
 import { openDialog } from '../../features/base/dialog';
 
 import {
@@ -27,7 +29,7 @@ export function openInviteDialog() {
  *     visible: boolean
  * }}
  */
-export function setInfoDialogVisibility(visible) {
+export function setInfoDialogVisibility(visible: boolean) {
     return {
         type: SET_INFO_DIALOG_VISIBILITY,
         visible
@@ -40,7 +42,7 @@ export function setInfoDialogVisibility(visible) {
  * @returns {Function}
  */
 export function updateDialInNumbers() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
             = state['features/base/config'];

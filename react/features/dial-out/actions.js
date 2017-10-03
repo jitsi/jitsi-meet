@@ -1,3 +1,5 @@
+// @flow
+
 import {
     DIAL_OUT_CANCELED,
     DIAL_OUT_CODES_UPDATED,
@@ -25,8 +27,8 @@ export function cancel() {
  * @param {string} dialNumber - The number to dial.
  * @returns {Function}
  */
-export function dial(dialNumber) {
-    return (dispatch, getState) => {
+export function dial(dialNumber: string) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const { conference } = getState()['features/base/conference'];
 
         conference.dial(dialNumber);
@@ -39,8 +41,8 @@ export function dial(dialNumber) {
  * @param {string} dialNumber - The dial number to check for validity.
  * @returns {Function}
  */
-export function checkDialNumber(dialNumber) {
-    return (dispatch, getState) => {
+export function checkDialNumber(dialNumber: string) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const { dialOutAuthUrl } = getState()['features/base/config'];
 
         if (!dialOutAuthUrl) {
@@ -78,7 +80,7 @@ export function checkDialNumber(dialNumber) {
  * @returns {Function}
  */
 export function updateDialOutCodes() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const { dialOutCodesUrl } = getState()['features/base/config'];
 
         if (!dialOutCodesUrl) {

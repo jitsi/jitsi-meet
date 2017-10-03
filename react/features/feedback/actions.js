@@ -1,11 +1,9 @@
-import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
+// @flow
 
 import { openDialog } from '../../features/base/dialog';
+import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 
-import {
-    CANCEL_FEEDBACK,
-    SUBMIT_FEEDBACK
-} from './actionTypes';
+import { CANCEL_FEEDBACK, SUBMIT_FEEDBACK } from './actionTypes';
 import { FeedbackDialog } from './components';
 
 declare var config: Object;
@@ -23,7 +21,7 @@ declare var interfaceConfig: Object;
  *     score: number
  * }}
  */
-export function cancelFeedback(score, message) {
+export function cancelFeedback(score: number, message: string) {
     return {
         type: CANCEL_FEEDBACK,
         message,
@@ -42,8 +40,8 @@ export function cancelFeedback(score, message) {
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed.
  */
-export function maybeOpenFeedbackDialog(conference) {
-    return (dispatch, getState) => {
+export function maybeOpenFeedbackDialog(conference: Object) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
 
         if (interfaceConfig.filmStripOnly || config.iAmRecorder) {
@@ -93,7 +91,7 @@ export function maybeOpenFeedbackDialog(conference) {
  * is closed.
  * @returns {Object}
  */
-export function openFeedbackDialog(conference, onClose) {
+export function openFeedbackDialog(conference: Object, onClose: ?Function) {
     return openDialog(FeedbackDialog, {
         conference,
         onClose
@@ -113,7 +111,10 @@ export function openFeedbackDialog(conference, onClose) {
  *     type: SUBMIT_FEEDBACK
  * }}
  */
-export function submitFeedback(score, message, conference) {
+export function submitFeedback(
+        score: number,
+        message: string,
+        conference: Object) {
     conference.sendFeedback(score, message);
 
     return {

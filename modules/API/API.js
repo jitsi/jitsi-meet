@@ -1,3 +1,5 @@
+// @flow
+
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import { parseJWTFromURLParams } from '../../react/features/jwt';
 import { getJitsiMeetTransport } from '../transport';
@@ -207,7 +209,10 @@ class API {
      * @param {Object} options - Object with the message properties.
      * @returns {void}
      */
-    notifyReceivedChatMessage({ body, id, nick, ts } = {}) {
+    notifyReceivedChatMessage(
+            { body, id, nick, ts }: {
+                body: *, id: string, nick: string, ts: *
+            } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
         }

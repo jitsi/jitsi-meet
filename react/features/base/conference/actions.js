@@ -1,3 +1,5 @@
+// @flow
+
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
@@ -161,7 +163,7 @@ function _setLocalParticipantData(conference, state) {
  * }}
  * @public
  */
-export function conferenceFailed(conference, error) {
+export function conferenceFailed(conference: Object, error: string) {
     return {
         type: CONFERENCE_FAILED,
         conference,
@@ -179,7 +181,7 @@ export function conferenceFailed(conference, error) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceJoined(conference) {
+export function conferenceJoined(conference: Object) {
     return {
         type: CONFERENCE_JOINED,
         conference
@@ -196,7 +198,7 @@ export function conferenceJoined(conference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceLeft(conference) {
+export function conferenceLeft(conference: Object) {
     return {
         type: CONFERENCE_LEFT,
         conference
@@ -212,8 +214,8 @@ export function conferenceLeft(conference) {
  * local participant will (try to) join.
  * @returns {Function}
  */
-function _conferenceWillJoin(conference) {
-    return (dispatch, getState) => {
+function _conferenceWillJoin(conference: Object) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const localTracks
             = getState()['features/base/tracks']
                 .filter(t => t.local)
@@ -243,7 +245,7 @@ function _conferenceWillJoin(conference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceWillLeave(conference) {
+export function conferenceWillLeave(conference: Object) {
     return {
         type: CONFERENCE_WILL_LEAVE,
         conference
@@ -256,7 +258,7 @@ export function conferenceWillLeave(conference) {
  * @returns {Function}
  */
 export function createConference() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Function, getState: Function) => {
         const state = getState();
         const { connection, locationURL } = state['features/base/connection'];
 
@@ -331,7 +333,7 @@ export function dataChannelOpened() {
  *     locked: boolean
  * }}
  */
-export function lockStateChanged(conference, locked) {
+export function lockStateChanged(conference: Object, locked: boolean) {
     return {
         type: LOCK_STATE_CHANGED,
         conference,
@@ -348,7 +350,7 @@ export function lockStateChanged(conference, locked) {
  *     p2p: boolean
  * }}
  */
-export function p2pStatusChanged(p2p) {
+export function p2pStatusChanged(p2p: boolean) {
     return {
         type: P2P_STATUS_CHANGED,
         p2p
@@ -365,7 +367,7 @@ export function p2pStatusChanged(p2p) {
  *     audioOnly: boolean
  * }}
  */
-export function setAudioOnly(audioOnly) {
+export function setAudioOnly(audioOnly: boolean) {
     return {
         type: SET_AUDIO_ONLY,
         audioOnly
@@ -412,7 +414,10 @@ export function setLastN(lastN: ?number) {
  * is to be joined or locked.
  * @returns {Function}
  */
-export function setPassword(conference, method: Function, password: string) {
+export function setPassword(
+        conference: Object,
+        method: Function,
+        password: string) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         switch (method) {
         case conference.join: {

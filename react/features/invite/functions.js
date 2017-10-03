@@ -1,31 +1,18 @@
+// @flow
+
 declare var $: Function;
 declare var interfaceConfig: Object;
 
 /**
- * Sends an ajax request to a directory service.
+ * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
+ * list.
  *
- * @param {string} serviceUrl - The service to query.
- * @param {string} jwt - The jwt token to pass to the search service.
- * @param {string} text - Text to search.
- * @param {Array<string>} queryTypes - Array with the query types that will be
- * executed - "conferenceRooms" | "user" | "room".
- * @returns {Promise} - The promise created by the request.
+ * @param {string} name - The invite option name.
+ * @private
+ * @returns {number} - The position of the option in the list.
  */
-export function searchPeople( // eslint-disable-line max-params
-        serviceUrl,
-        jwt,
-        text,
-        queryTypes = [ 'conferenceRooms', 'user', 'room' ]) {
-    const queryTypesString = JSON.stringify(queryTypes);
-
-    return new Promise((resolve, reject) => {
-        $.getJSON(`${serviceUrl}?query=${encodeURIComponent(text)}`
-            + `&queryTypes=${queryTypesString}&jwt=${jwt}`,
-        response => resolve(response)
-        ).fail((jqxhr, textStatus, error) =>
-            reject(error)
-        );
-    });
+export function getInviteOptionPosition(name: string): number {
+    return interfaceConfig.INVITE_OPTIONS.indexOf(name);
 }
 
 /**
@@ -38,17 +25,21 @@ export function searchPeople( // eslint-disable-line max-params
  * @param {Immutable.List} people - The list of the "user" type items to invite.
  * @returns {Promise} - The promise created by the request.
  */
-export function invitePeople(inviteServiceUrl, inviteUrl, jwt, people) { // eslint-disable-line max-params, max-len
+export function invitePeople( // eslint-disable-line max-params
+        inviteServiceUrl: string,
+        inviteUrl: string,
+        jwt: string,
+        people: Object) {
     return new Promise((resolve, reject) => {
-        $.post(`${inviteServiceUrl}?token=${jwt}`,
-            JSON.stringify({
-                'invited': people,
-                'url': inviteUrl }),
-            response => resolve(response),
-            'json')
-            .fail((jqxhr, textStatus, error) =>
-                reject(error)
-            );
+        $.post(
+                `${inviteServiceUrl}?token=${jwt}`,
+                JSON.stringify({
+                    'invited': people,
+                    'url': inviteUrl
+                }),
+                resolve,
+                'json')
+            .fail((jqxhr, textStatus, error) => reject(error));
     });
 }
 
@@ -61,10 +52,11 @@ export function invitePeople(inviteServiceUrl, inviteUrl, jwt, people) { // esli
  * invite.
  * @returns {void}
  */
-export function inviteRooms(conference, rooms) {
+export function inviteRooms(
+        conference: { createVideoSIPGWSession: Function },
+        rooms: Object) {
     for (const room of rooms) {
-        const sipAddress = room.id;
-        const displayName = room.name;
+        const { id: sipAddress, name: displayName } = room;
 
         if (sipAddress && displayName) {
             const newSession
@@ -86,18 +78,32 @@ export function inviteRooms(conference, rooms) {
  * @returns {boolean} - True to indicate that the given invite option is
  * enabled, false - otherwise.
  */
-export function isInviteOptionEnabled(name) {
-    return interfaceConfig.INVITE_OPTIONS.indexOf(name) !== -1;
+export function isInviteOptionEnabled(name: string) {
+    return getInviteOptionPosition(name) !== -1;
 }
 
 /**
- * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
- * list.
+ * Sends an ajax request to a directory service.
  *
- * @param {string} optionName - The invite option name.
- * @private
- * @returns {number} - The position of the option in the list.
+ * @param {string} serviceUrl - The service to query.
+ * @param {string} jwt - The jwt token to pass to the search service.
+ * @param {string} text - Text to search.
+ * @param {Array<string>} queryTypes - Array with the query types that will be
+ * executed - "conferenceRooms" | "user" | "room".
+ * @returns {Promise} - The promise created by the request.
  */
-export function getInviteOptionPosition(optionName) {
-    return interfaceConfig.INVITE_OPTIONS.indexOf(optionName);
+export function searchPeople( // eslint-disable-line max-params
+        serviceUrl: string,
+        jwt: string,
+        text: string,
+        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]) {
+    const queryTypesString = JSON.stringify(queryTypes);
+
+    return new Promise((resolve, reject) => {
+        $.getJSON(
+                `${serviceUrl}?query=${encodeURIComponent(text)}&queryTypes=${
+                    queryTypesString}&jwt=${jwt}`,
+                resolve)
+            .fail((jqxhr, textStatus, error) => reject(error));
+    });
 }

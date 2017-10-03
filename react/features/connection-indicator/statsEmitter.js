@@ -1,3 +1,5 @@
+// @flow
+
 import _ from 'lodash';
 
 import JitsiMeetJS from '../base/lib-jitsi-meet';
@@ -25,7 +27,7 @@ const statsEmitter = {
      * {@code statsEmitter} should subscribe for stat updates.
      * @returns {void}
      */
-    startListeningForStats(conference) {
+    startListeningForStats(conference: Object) {
         const { connectionQuality } = JitsiMeetJS.events;
 
         conference.on(connectionQuality.LOCAL_STATS_UPDATED,
@@ -44,7 +46,7 @@ const statsEmitter = {
      * user have been updated.
      * @returns {void}
      */
-    subscribeToClientStats(id, callback) {
+    subscribeToClientStats(id: ?string, callback: Function) {
         if (!id) {
             return;
         }
@@ -66,7 +68,7 @@ const statsEmitter = {
      * stat updates for the specified user id.
      * @returns {void}
      */
-    unsubscribeToClientStats(id, callback) {
+    unsubscribeToClientStats(id: string, callback: Function) {
         if (!subscribers[id]) {
             return;
         }
@@ -89,7 +91,7 @@ const statsEmitter = {
      * @param {Object} stats - New connection stats for the user.
      * @returns {void}
      */
-    _emitStatsUpdate(id, stats = {}) {
+    _emitStatsUpdate(id: string, stats: Object = {}) {
         const callbacks = subscribers[id] || [];
 
         callbacks.forEach(callback => {
@@ -107,7 +109,7 @@ const statsEmitter = {
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(currentUserId, stats) {
+    _onStatsUpdated(currentUserId: string, stats: Object) {
         const allUserFramerates = stats.framerate || {};
         const allUserResolutions = stats.resolution || {};
 

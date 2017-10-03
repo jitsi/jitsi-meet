@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The {@link RegExp} pattern of the authority of a URI.
  *
@@ -41,7 +43,7 @@ function _fixURIStringHierPart(uri) {
         = new RegExp(
             `^${_URI_PROTOCOL_PATTERN}//hipchat\\.com/video/call/`,
             'gi');
-    let match = regex.exec(uri);
+    let match: Array<string> | null = regex.exec(uri);
 
     if (!match) {
         // enso.me
@@ -80,7 +82,7 @@ function _fixURIStringHierPart(uri) {
  */
 function _fixURIStringScheme(uri: string) {
     const regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}+`, 'gi');
-    const match = regex.exec(uri);
+    const match: Array<string> | null = regex.exec(uri);
 
     if (match) {
         // As an implementation convenience, pick up the last scheme and make
@@ -115,8 +117,7 @@ function _fixURIStringScheme(uri: string) {
  * @returns {string} - The (Web application) context root defined by the
  * specified {@code location} (URI).
  */
-export function getLocationContextRoot(location: Object) {
-    const pathname = location.pathname;
+export function getLocationContextRoot({ pathname }: { pathname: string }) {
     const contextRootEndIndex = pathname.lastIndexOf('/');
 
     return (
@@ -169,12 +170,12 @@ function _objectToURLParamsArray(obj = {}) {
 export function parseStandardURIString(str: string) {
     /* eslint-disable no-param-reassign */
 
-    const obj = {
+    const obj: Object = {
         toString: _standardURIToString
     };
 
     let regex;
-    let match;
+    let match: Array<string> | null;
 
     // protocol
     regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}`, 'gi');
@@ -188,7 +189,7 @@ export function parseStandardURIString(str: string) {
     regex = new RegExp(`^${_URI_AUTHORITY_PATTERN}`, 'gi');
     match = regex.exec(str);
     if (match) {
-        let authority = match[1].substring(/* // */ 2);
+        let authority: string = match[1].substring(/* // */ 2);
 
         str = str.substring(regex.lastIndex);
 
@@ -217,7 +218,7 @@ export function parseStandardURIString(str: string) {
     regex = new RegExp(`^${_URI_PATH_PATTERN}`, 'gi');
     match = regex.exec(str);
 
-    let pathname;
+    let pathname: ?string;
 
     if (match) {
         pathname = match[1];
@@ -360,7 +361,7 @@ export function urlObjectToString(o: Object): ?string {
 
     // protocol
     if (!url.protocol) {
-        let protocol = o.protocol || o.scheme;
+        let protocol: ?string = o.protocol || o.scheme;
 
         if (protocol) {
             // Protocol is supposed to be the scheme and the final ':'. Anyway,
@@ -378,7 +379,7 @@ export function urlObjectToString(o: Object): ?string {
         //
         // It may be host/hostname and pathname with the latter denoting the
         // tenant.
-        const domain = o.domain || o.host || o.hostname;
+        const domain: ?string = o.domain || o.host || o.hostname;
 
         if (domain) {
             const { host, hostname, pathname: contextRoot, port }
