@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { ReducerRegistry } from '../base/redux';
 
@@ -155,7 +155,7 @@ ReducerRegistry.register(
             };
 
         case SET_TOOLBAR_BUTTON:
-            return _setButton(state, action);
+            return _setToolbarButton(state, action);
 
         case SET_TOOLBAR_HOVERED:
             return {
@@ -199,24 +199,24 @@ ReducerRegistry.register(
     });
 
 /**
- * Sets new value of the button.
+ * Reduces the redux action {@code SET_TOOLBAR_BUTTON} in the feature toolbox.
  *
- * @param {Object} state - Redux state.
- * @param {Object} action - Dispatched action.
+ * @param {Object} state - The redux state.
+ * @param {Object} action - The redux action of type {@code SET_TOOLBAR_BUTTON}.
  * @param {Object} action.button - Object describing toolbar button.
  * @param {Object} action.buttonName - The name of the button.
  * @private
  * @returns {Object}
  */
-function _setButton(state, { button, buttonName }): Object {
-    const buttons = getDefaultButtons();
-    const buttonDefinition = buttons ? buttons[buttonName] : null;
+function _setToolbarButton(state, { button, buttonName }): Object {
+    // XXX getDefaultButtons, defaultToolbarButtons, SET_TOOLBAR_BUTTON are
+    // abstractions fully implemented on Web only.
+    const buttons = getDefaultButtons && getDefaultButtons();
+    const buttonDefinition = buttons && buttons[buttonName];
 
     // We don't need to update if the button shouldn't be displayed
     if (!buttonDefinition || !buttonDefinition.isDisplayed()) {
-        return {
-            ...state
-        };
+        return state;
     }
 
     const { primaryToolbarButtons, secondaryToolbarButtons } = state;

@@ -1,19 +1,12 @@
-/* @flow */
+// @flow
 
 import React from 'react';
-import _ from 'lodash';
 
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
-
-import {
-    InfoDialogButton,
-    openInviteDialog
-} from '../invite';
-
-import { VideoQualityButton } from '../video-quality';
-
+import { InfoDialogButton, openInviteDialog } from '../invite';
 import UIEvents from '../../../service/UI/UIEvents';
+import { VideoQualityButton } from '../video-quality';
 
 import ProfileButton from './components/ProfileButton';
 
@@ -21,19 +14,22 @@ declare var APP: Object;
 declare var interfaceConfig: Object;
 declare var JitsiMeetJS: Object;
 
-let buttons: Object = {};
+/**
+ * The cache of {@link getDefaultButtons()}.
+ */
+let defaultButtons: Object;
 
 /**
  * Returns a map of all button descriptors and according properties.
  *
- * @returns {*} - The maps of default button descriptors.
+ * @returns {Object} - The maps of default button descriptors.
  */
-function getDefaultButtons() {
-    if (!_.isEmpty(buttons)) {
-        return buttons;
+export default function getDefaultButtons() {
+    if (defaultButtons) {
+        return defaultButtons;
     }
 
-    buttons = {
+    defaultButtons = {
         /**
          * The descriptor of the camera toolbar button.
          */
@@ -400,15 +396,24 @@ function getDefaultButtons() {
         }
     };
 
-    Object.keys(buttons).forEach(name => {
-        const button = buttons[name];
+    Object.keys(defaultButtons).forEach(name => {
+        const button = defaultButtons[name];
 
         if (!button.isDisplayed) {
-            button.isDisplayed = () => !interfaceConfig.filmStripOnly;
+            button.isDisplayed = _isDisplayed;
         }
     });
 
-    return buttons;
+    return defaultButtons;
 }
 
-export default getDefaultButtons;
+/**
+ * The default implementation of the {@code isDisplayed} method of the toolbar
+ * button definition returned by {@link getDefaultButtons()}.
+ *
+ * @returns {boolean} If the user intarface is full i.e. not filmstrip-only,
+ * then {@code true}; otherwise, {@code false}.
+ */
+function _isDisplayed() {
+    return !interfaceConfig.filmStripOnly;
+}
