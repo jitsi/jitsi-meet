@@ -1,3 +1,5 @@
+// @flow
+
 import { CONFERENCE_FAILED } from '../base/conference';
 import {
     CONNECTION_ESTABLISHED,
@@ -140,10 +142,12 @@ function _connectionWillConnect(
  * @returns {Object} The new state of the feature overlay after the reduction of
  * the specified action.
  */
-function _mediaPermissionPromptVisibilityChanged(state, action) {
+function _mediaPermissionPromptVisibilityChanged(
+        state,
+        { browser, isVisible }) {
     return assign(state, {
-        browser: action.browser,
-        isMediaPermissionPromptVisible: action.isVisible
+        browser,
+        isMediaPermissionPromptVisible: isVisible
     });
 }
 

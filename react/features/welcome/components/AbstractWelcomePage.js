@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -5,6 +7,14 @@ import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
 
 import { generateRoomWithoutSeparator } from '../functions';
+
+/**
+ * {@code AbstractWelcomePage}'s React {@code Component} prop types.
+ */
+type Props = {
+    _room: string,
+    dispatch: Dispatch<*>
+};
 
 /**
  * Base (abstract) class for container component rendering the welcome page.
@@ -22,37 +32,38 @@ export class AbstractWelcomePage extends Component {
         dispatch: PropTypes.func
     };
 
+    _mounted: ?boolean;
+
+    /**
+     * Save room name into component's local state.
+     *
+     * @type {Object}
+     * @property {number|null} animateTimeoutId - Identifier of the letter
+     * animation timeout.
+     * @property {string} generatedRoomname - Automatically generated room name.
+     * @property {string} room - Room name.
+     * @property {string} roomPlaceholder - Room placeholder that's used as a
+     * placeholder for input.
+     * @property {nubmer|null} updateTimeoutId - Identifier of the timeout
+     * updating the generated room name.
+     */
+    state = {
+        animateTimeoutId: undefined,
+        generatedRoomname: '',
+        joining: false,
+        room: '',
+        roomPlaceholder: '',
+        updateTimeoutId: undefined
+    };
+
     /**
      * Initializes a new {@code AbstractWelcomePage} instance.
      *
-     * @param {Object} props - The React {@code Component} props to initialize
+     * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code AbstractWelcomePage} instance with.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
-
-        /**
-         * Save room name into component's local state.
-         *
-         * @type {Object}
-         * @property {number|null} animateTimeoutId - Identifier of the letter
-         * animation timeout.
-         * @property {string} generatedRoomname - Automatically generated
-         * room name.
-         * @property {string} room - Room name.
-         * @property {string} roomPlaceholder - Room placeholder
-         * that's used as a placeholder for input.
-         * @property {nubmer|null} updateTimeoutId - Identifier of the timeout
-         * updating the generated room name.
-         */
-        this.state = {
-            animateTimeoutId: null,
-            generatedRoomname: '',
-            joining: false,
-            room: '',
-            roomPlaceholder: '',
-            updateTimeoutId: null
-        };
 
         // Bind event handlers so they are only bound once per instance.
         this._animateRoomnameChanging
@@ -77,9 +88,9 @@ export class AbstractWelcomePage extends Component {
      * before this mounted component receives new props.
      *
      * @inheritdoc
-     * @param {Object} nextProps - New props component will receive.
+     * @param {Props} nextProps - New props component will receive.
      */
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         this.setState({ room: nextProps._room });
     }
 
@@ -94,6 +105,8 @@ export class AbstractWelcomePage extends Component {
         this._mounted = false;
     }
 
+    _animateRoomnameChanging: (string) => void;
+
     /**
      * Animates the changing of the room name.
      *
@@ -102,8 +115,8 @@ export class AbstractWelcomePage extends Component {
      * @private
      * @returns {void}
      */
-    _animateRoomnameChanging(word) {
-        let animateTimeoutId = null;
+    _animateRoomnameChanging(word: string) {
+        let animateTimeoutId;
         const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
 
         if (word.length > 1) {
@@ -115,7 +128,6 @@ export class AbstractWelcomePage extends Component {
                     },
                     70);
         }
-
         this.setState({
             animateTimeoutId,
             roomPlaceholder
@@ -145,6 +157,8 @@ export class AbstractWelcomePage extends Component {
         return this.state.joining || !isRoomValid(this.state.room);
     }
 
+    _onJoin: () => void;
+
     /**
      * Handles joining. Either by clicking on 'Join' button
      * or by pressing 'Enter' in room name input field.
@@ -160,14 +174,15 @@ export class AbstractWelcomePage extends Component {
 
             // By the time the Promise of appNavigate settles, this component
             // may have already been unmounted.
-            const onAppNavigateSettled = () => {
-                this._mounted && this.setState({ joining: false });
-            };
+            const onAppNavigateSettled
+                = () => this._mounted && this.setState({ joining: false });
 
             this.props.dispatch(appNavigate(room))
                 .then(onAppNavigateSettled, onAppNavigateSettled);
         }
     }
+
+    _onRoomChange: (string) => void;
 
     /**
      * Handles 'change' event for the room name text input field.
@@ -177,9 +192,11 @@ export class AbstractWelcomePage extends Component {
      * @protected
      * @returns {void}
      */
-    _onRoomChange(value) {
+    _onRoomChange(value: string) {
         this.setState({ room: value });
     }
+
+    _updateRoomname: () => void;
 
     /**
      * Triggers the generation of a new room name and initiates an animation of
@@ -214,7 +231,7 @@ export class AbstractWelcomePage extends Component {
  *     _room: string
  * }}
  */
-export function _mapStateToProps(state) {
+export function _mapStateToProps(state: Object) {
     return {
         _room: state['features/base/conference'].room
     };

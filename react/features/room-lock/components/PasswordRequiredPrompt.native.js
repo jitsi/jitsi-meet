@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -6,35 +8,44 @@ import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 
 /**
- * Implements a React Component which prompts the user when a password is
- * required to join a conference.
+ * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
+ */
+type Props = {
+
+    /**
+     * The {@code JitsiConference} which requires a password.
+     *
+     * @type {JitsiConference}
+     */
+    conference: { join: Function },
+    dispatch: Dispatch<*>
+};
+
+/**
+ * Implements a React {@code Component} which prompts the user when a password
+ * is required to join a conference.
  */
 class PasswordRequiredPrompt extends Component {
     /**
-     * PasswordRequiredPrompt component's property types.
+     * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
      *
      * @static
      */
     static propTypes = {
-        /**
-         * The JitsiConference which requires a password.
-         *
-         * @type {JitsiConference}
-         */
         conference: PropTypes.object,
         dispatch: PropTypes.func
     };
 
     /**
-     * Initializes a new PasswordRequiredPrompt instance.
+     * Initializes a new {@code PasswordRequiredPrompt} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @param {Props} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
+        // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
@@ -55,11 +66,14 @@ class PasswordRequiredPrompt extends Component {
         );
     }
 
+    _onCancel: () => boolean;
+
     /**
      * Notifies this prompt that it has been dismissed by cancel.
      *
      * @private
-     * @returns {boolean} True to hide this dialog/prompt; otherwise, false.
+     * @returns {boolean} If this prompt is to be closed/hidden, {@code true};
+     * otherwise, {@code false}.
      */
     _onCancel() {
         // XXX The user has canceled this prompt for a password so we are to
@@ -69,16 +83,19 @@ class PasswordRequiredPrompt extends Component {
         return this._onSubmit(undefined);
     }
 
+    _onSubmit: (?string) => boolean;
+
     /**
      * Notifies this prompt that it has been dismissed by submitting a specific
      * value.
      *
-     * @param {string} value - The submitted value.
+     * @param {string|undefined} value - The submitted value.
      * @private
-     * @returns {boolean} True to hide this dialog/prompt; otherwise, false.
+     * @returns {boolean} If this prompt is to be closed/hidden, {@code true};
+     * otherwise, {@code false}.
      */
-    _onSubmit(value) {
-        const conference = this.props.conference;
+    _onSubmit(value: ?string) {
+        const { conference }: { conference: { join: Function } } = this.props;
 
         this.props.dispatch(setPassword(conference, conference.join, value));
 

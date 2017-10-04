@@ -1,3 +1,5 @@
+// @flow
+
 import { appNavigate } from '../app';
 import {
     CONFERENCE_FAILED,
@@ -134,7 +136,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _clearExistingWaitForOwnerTimeout({ getState }) {
+function _clearExistingWaitForOwnerTimeout(
+        { getState }: { getState: Function }) {
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
@@ -146,7 +149,7 @@ function _clearExistingWaitForOwnerTimeout({ getState }) {
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _hideLoginDialog({ dispatch }) {
+function _hideLoginDialog({ dispatch }: { dispatch: Dispatch<*> }) {
     dispatch(hideDialog(LoginDialog));
 }
 
@@ -156,6 +159,6 @@ function _hideLoginDialog({ dispatch }) {
  * @param {Object} store - The redux store.
  * @returns {boolean}
  */
-function _isWaitingForOwner({ getState }) {
+function _isWaitingForOwner({ getState }: { getState: Function }) {
     return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
 }

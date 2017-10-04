@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -29,13 +31,13 @@ class RoomLockPrompt extends Component {
     /**
      * Initializes a new RoomLockPrompt instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
+        // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
@@ -56,6 +58,8 @@ class RoomLockPrompt extends Component {
         );
     }
 
+    _onCancel: () => boolean;
+
     /**
      * Notifies this prompt that it has been dismissed by cancel.
      *
@@ -68,17 +72,19 @@ class RoomLockPrompt extends Component {
         return this._onSubmit(undefined);
     }
 
+    _onSubmit: (?string) => boolean;
+
     /**
      * Notifies this prompt that it has been dismissed by submitting a specific
      * value.
      *
-     * @param {string} value - The submitted value.
+     * @param {string|undefined} value - The submitted value.
      * @private
      * @returns {boolean} False because we do not want to hide this
      * dialog/prompt as the hiding will be handled inside endRoomLockRequest
      * after setting the password is resolved.
      */
-    _onSubmit(value) {
+    _onSubmit(value: ?string) {
         this.props.dispatch(endRoomLockRequest(this.props.conference, value));
 
         return false; // Do not hide.

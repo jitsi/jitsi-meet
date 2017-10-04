@@ -1,4 +1,5 @@
-/* global APP */
+// @flow
+
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { CONNECTION_ESTABLISHED } from '../connection';
@@ -33,6 +34,8 @@ import {
     _handleParticipantError,
     _removeLocalTracksFromConference
 } from './functions';
+
+declare var APP: Object;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -299,14 +302,12 @@ function _setLastN(store, next, action) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setReceiveVideoQuality(store, next, action) {
-    const { audioOnly, conference }
-        = store.getState()['features/base/conference'];
+function _setReceiveVideoQuality({ dispatch, getState }, next, action) {
+    const { audioOnly, conference } = getState()['features/base/conference'];
 
     conference.setReceiverVideoConstraint(action.receiveVideoQuality);
-
     if (audioOnly) {
-        store.dispatch(toggleAudioOnly());
+        dispatch(toggleAudioOnly());
     }
 
     return next(action);
@@ -321,9 +322,9 @@ function _setReceiveVideoQuality(store, next, action) {
  * @private
  * @returns {Promise}
  */
-function _syncConferenceLocalTracksWithState(store, action) {
-    const state = store.getState()['features/base/conference'];
-    const conference = state.conference;
+function _syncConferenceLocalTracksWithState({ getState }, action) {
+    const state = getState()['features/base/conference'];
+    const { conference } = state;
     let promise;
 
     // XXX The conference may already be in the process of being left, that's
@@ -354,8 +355,8 @@ function _syncConferenceLocalTracksWithState(store, action) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _syncReceiveVideoQuality(store, next, action) {
-    const state = store.getState()['features/base/conference'];
+function _syncReceiveVideoQuality({ getState }, next, action) {
+    const state = getState()['features/base/conference'];
 
     state.conference.setReceiverVideoConstraint(state.receiveVideoQuality);
 

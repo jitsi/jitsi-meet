@@ -1,3 +1,5 @@
+// @flow
+
 import { CONNECTION_WILL_CONNECT } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
@@ -351,7 +353,7 @@ function _setReceiveVideoQuality(state, action) {
  * reduction of the specified action.
  */
 function _setRoom(state, action) {
-    let room = action.room;
+    let { room } = action;
 
     if (!isRoomValid(room)) {
         // Technically, there are multiple values which don't represent valid

@@ -85,20 +85,21 @@ function _getSymbolDescription(symbol: Symbol) {
  * apps may listen to such events via the mechanisms provided by the (native)
  * mobile Jitsi Meet SDK.
  *
- * @param {Object} store - The redux store associated with the need to send the
- * specified event.
+ * @param {Object} store - The redux store.
  * @param {string} name - The name of the event to send.
  * @param {Object} data - The details/specifics of the event to send determined
  * by/associated with the specified {@code name}.
  * @private
  * @returns {void}
  */
-function _sendEvent(store: Object, name: string, data: Object) {
+function _sendEvent(
+        { getState }: { getState: Function },
+        name: string,
+        data: Object) {
     // The JavaScript App needs to provide uniquely identifying information
     // to the native ExternalAPI module so that the latter may match the former
     // to the native JitsiMeetView which hosts it.
-    const state = store.getState();
-    const { app } = state['features/app'];
+    const { app } = getState()['features/app'];
 
     if (app) {
         const { externalAPIScope } = app.props;

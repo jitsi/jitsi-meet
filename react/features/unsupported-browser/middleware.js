@@ -1,3 +1,5 @@
+// @flow
+
 import { appNavigate } from '../app';
 import { SET_WEBRTC_READY } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
@@ -28,26 +30,25 @@ MiddlewareRegistry.register(store => next => action => {
  * specified action to the specified store.
  * @param {Action} action - The Redux action SET_WEBRTC_READY which is being
  * dispatched in the specified store.
+ * @private
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
- * @private
  */
-function _setWebRTCReady(store, next, action) {
-    const nextState = next(action);
+function _setWebRTCReady({ dispatch, getState }, next, action) {
+    const result = next(action);
 
     // FIXME The feature unsupported-browser needs to notify the app that it may
     // need to render a different Component at its current location because the
     // execution enviroment has changed. The current location is not necessarily
     // available through window.location (e.g. on mobile) but the following
     // works at the time of this writing.
-    const windowLocation
-        = store.getState()['features/app'].app.getWindowLocation();
+    const windowLocation = getState()['features/app'].app.getWindowLocation();
 
     if (windowLocation) {
-        const href = windowLocation.href;
+        const { href } = windowLocation;
 
-        href && store.dispatch(appNavigate(href));
+        href && dispatch(appNavigate(href));
     }
 
-    return nextState;
+    return result;
 }

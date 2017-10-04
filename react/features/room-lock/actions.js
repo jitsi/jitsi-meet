@@ -1,3 +1,5 @@
+// @flow
+
 import { setPassword } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
@@ -9,15 +11,12 @@ import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
  * if specified or undefined if the current JitsiConference is to be locked.
  * @returns {Function}
  */
-export function beginRoomLockRequest(conference) {
-    return (dispatch, getState) => {
+export function beginRoomLockRequest(conference: ?Object) {
+    return (dispatch: Function, getState: Function) => {
         if (typeof conference === 'undefined') {
-            const state = getState();
-
             // eslint-disable-next-line no-param-reassign
-            conference = state['features/base/conference'].conference;
+            conference = getState()['features/base/conference'].conference;
         }
-
         if (conference) {
             dispatch(openDialog(RoomLockPrompt, { conference }));
         }
@@ -33,15 +32,15 @@ export function beginRoomLockRequest(conference) {
  * the specified conference.
  * @returns {Function}
  */
-export function endRoomLockRequest(conference, password) {
-    return dispatch => {
+export function endRoomLockRequest(
+        conference: { lock: Function },
+        password: ?string) {
+    return (dispatch: Function) => {
         const setPassword_
             = password
                 ? dispatch(setPassword(conference, conference.lock, password))
                 : Promise.resolve();
-        const endRoomLockRequest_ = () => {
-            dispatch(hideDialog());
-        };
+        const endRoomLockRequest_ = () => dispatch(hideDialog(RoomLockPrompt));
 
         setPassword_.then(endRoomLockRequest_, endRoomLockRequest_);
     };
@@ -59,6 +58,6 @@ export function endRoomLockRequest(conference, password) {
  *     props: PropTypes
  * }}
  */
-export function _showPasswordDialog(conference) {
+export function _openPasswordRequiredPrompt(conference: Object) {
     return openDialog(PasswordRequiredPrompt, { conference });
 }

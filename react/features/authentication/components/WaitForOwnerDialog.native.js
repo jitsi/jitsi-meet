@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Text } from 'react-native';
@@ -79,6 +81,8 @@ class WaitForOwnerDialog extends Component {
         );
     }
 
+    _onCancel: () => void;
+
     /**
      * Called when the cancel button is clicked.
      *
@@ -88,6 +92,8 @@ class WaitForOwnerDialog extends Component {
     _onCancel() {
         this.props.dispatch(cancelWaitForOwner());
     }
+
+    _onLogin: () => void;
 
     /**
      * Called when the OK button is clicked.
@@ -102,11 +108,11 @@ class WaitForOwnerDialog extends Component {
     /**
      * Renders a specific {@code string} which may contain HTML.
      *
-     * @param {string} html - The {@code string} which may contain HTML to
-     * render.
+     * @param {string|undefined} html - The {@code string} which may
+     * contain HTML to render.
      * @returns {ReactElement[]|string}
      */
-    _renderHTML(html) {
+    _renderHTML(html: ?string) {
         if (typeof html === 'string') {
             // At the time of this writing, the specified HTML contains a couple
             // of spaces one after the other. They do not cause a visible
@@ -164,9 +170,7 @@ class WaitForOwnerDialog extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const {
-        authRequired
-    } = state['features/base/conference'];
+    const { authRequired } = state['features/base/conference'];
 
     return {
         _room: authRequired && authRequired.getName()

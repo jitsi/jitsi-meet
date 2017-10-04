@@ -1,3 +1,5 @@
+// @flow
+
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media';
 import {
@@ -16,9 +18,9 @@ import {
  * @returns {Function}
  */
 export function selectParticipant() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
-        const conference = state['features/base/conference'].conference;
+        const { conference } = state['features/base/conference'];
 
         if (conference) {
             const largeVideo = state['features/large-video'];
@@ -51,7 +53,7 @@ export function selectParticipant() {
  * @returns {Function}
  */
 export function selectParticipantInLargeVideo() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const participantId = _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];
@@ -76,7 +78,7 @@ export function selectParticipantInLargeVideo() {
  *     resolution: number
  * }}
  */
-export function updateKnownLargeVideoResolution(resolution) {
+export function updateKnownLargeVideoResolution(resolution: number) {
     return {
         type: UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
         resolution

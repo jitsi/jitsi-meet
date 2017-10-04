@@ -108,14 +108,9 @@ class Dialog extends AbstractDialog {
                 //   Secondly, we cannot get Prompt's default behavior anyway
                 //   because we've removed Prompt and we're preserving whatever
                 //   it's rendered only.
-                return (
-                    React.cloneElement(
-                        element,
-                        /* props */ {
-                            onRequestClose: this._onCancel
-                        },
-                        ...React.Children.toArray(element.props.children))
-                );
+                return this._cloneElement(element, /* props */ {
+                    onRequestClose: this._onCancel
+                });
             }
 
             if (type === TextInput) {
@@ -146,14 +141,9 @@ class Dialog extends AbstractDialog {
                         break;
                     }
 
-                    return (
-                        React.cloneElement(
-                            element,
-                            /* props */ {
-                                style: set(style, _TAG_KEY, undefined)
-                            },
-                            ...React.Children.toArray(element.props.children))
-                    );
+                    return this._cloneElement(element, /* props */ {
+                        style: set(style, _TAG_KEY, undefined)
+                    });
                 }
             }
 
@@ -161,6 +151,23 @@ class Dialog extends AbstractDialog {
         });
 
         return element;
+    }
+
+    /**
+     * Clones a specific {@code ReactElement} and adds/merges specific props
+     * into the clone.
+     *
+     * @param {ReactElement} element - The {@code ReactElement} to clone.
+     * @param {Object} props - The props to add/merge into the clone.
+     * @returns {ReactElement} The close of the specified {@code element} with
+     * the specified {@code props} added/merged.
+     */
+    _cloneElement(element, props) {
+        return (
+            React.cloneElement(
+                element,
+                props,
+                ...React.Children.toArray(element.props.children)));
     }
 
     /**
