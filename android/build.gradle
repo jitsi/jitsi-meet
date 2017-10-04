@@ -7,7 +7,7 @@ buildscript {
         maven { url 'https://maven.google.com' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta7'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files.
@@ -58,7 +58,9 @@ allprojects {
 
             project.android {
                 compileSdkVersion rootProject.ext.compileSdkVersion
-                buildToolsVersion rootProject.ext.buildToolsVersion
+                if (rootProject.ext.has('buildToolsVersion')) {
+                    buildToolsVersion rootProject.ext.buildToolsVersion
+                }
                 defaultConfig {
                     minSdkVersion rootProject.ext.minSdkVersion
                     targetSdkVersion rootProject.ext.targetSdkVersion
@@ -129,7 +131,6 @@ allprojects {
 
 ext {
     compileSdkVersion = 25
-    buildToolsVersion = "25.0.3"
     minSdkVersion    = 16
     targetSdkVersion = 25
 
@@ -145,8 +146,9 @@ ext {
 // modules that we utilize such as react-native-background-timer.
 subprojects { subproject ->
     afterEvaluate{
-        if (subproject.plugins.hasPlugin('android')
-                || subproject.plugins.hasPlugin('android-library')) {
+        if ((subproject.plugins.hasPlugin('android')
+                    || subproject.plugins.hasPlugin('android-library'))
+                && rootProject.ext.has('buildToolsVersion')) {
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
             }
