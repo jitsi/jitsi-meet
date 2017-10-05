@@ -9,6 +9,16 @@ import { Dialog } from '../../base/dialog';
 import { endRoomLockRequest } from '../actions';
 
 /**
+ * The style of the {@link TextInput} rendered by {@code RoomLockPrompt}. As it
+ * requests the entry of a password, {@code TextInput} automatically correcting
+ * the entry of the password is a pain to deal with as a user.
+ */
+const _TEXT_INPUT_PROPS = {
+    autoCapitalize: 'none',
+    autoCorrect: false
+};
+
+/**
  * Implements a React Component which prompts the user for a password to lock  a
  * conference/room.
  */
@@ -54,6 +64,7 @@ class RoomLockPrompt extends Component {
                 bodyKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
+                textInputProps = { _TEXT_INPUT_PROPS }
                 titleKey = 'toolbar.lock' />
         );
     }

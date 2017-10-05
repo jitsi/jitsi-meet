@@ -22,6 +22,15 @@ type Props = {
 };
 
 /**
+ * The style of the {@link TextInput} rendered by
+ * {@code PasswordRequiredPrompt}. As it requests the entry of a password, the
+ * entry should better be secure.
+ */
+const _TEXT_INPUT_PROPS = {
+    secureTextEntry: true
+};
+
+/**
  * Implements a React {@code Component} which prompts the user when a password
  * is required to join a conference.
  */
@@ -62,6 +71,7 @@ class PasswordRequiredPrompt extends Component {
                 bodyKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
+                textInputProps = { _TEXT_INPUT_PROPS }
                 titleKey = 'dialog.passwordRequired' />
         );
     }

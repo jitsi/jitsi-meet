@@ -112,6 +112,7 @@ class Dialog extends AbstractDialog {
                 placeholder = { t(bodyKey) }
                 submitButtonTextStyle = { submitButtonTextStyle }
                 submitText = { t(okTitleKey) }
+                textInputProps = { this.props.textInputProps }
                 title = { titleString || t(titleKey) }
                 visible = { true } />
         );
