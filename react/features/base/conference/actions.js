@@ -159,7 +159,7 @@ function _setLocalParticipantData(conference, state) {
  * @returns {{
  *     type: CONFERENCE_FAILED,
  *     conference: JitsiConference,
- *     error: string
+ *     error: Error
  * }}
  * @public
  */
@@ -167,7 +167,12 @@ export function conferenceFailed(conference: Object, error: string) {
     return {
         type: CONFERENCE_FAILED,
         conference,
-        error
+
+        // Make the error resemble an Error instance (to the extent that
+        // jitsi-meet needs it).
+        error: {
+            name: error
+        }
     };
 }
 

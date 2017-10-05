@@ -89,7 +89,7 @@ function _conferenceFailed(state, { conference, error }) {
     let authRequired;
     let passwordRequired;
 
-    switch (error) {
+    switch (error.name) {
     case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
         authRequired = conference;
         break;

@@ -27,7 +27,8 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED: {
         const { conference, error } = action;
 
-        if (conference && error === JitsiConferenceErrors.PASSWORD_REQUIRED) {
+        if (conference
+                && error.name === JitsiConferenceErrors.PASSWORD_REQUIRED) {
             store.dispatch(_openPasswordRequiredPrompt(conference));
         }
         break;

@@ -4,7 +4,7 @@
  * {
  *     type: CONFERENCE_FAILED,
  *     conference: JitsiConference,
- *     error: string
+ *     error: Error
  * }
  */
 export const CONFERENCE_FAILED = Symbol('CONFERENCE_FAILED');

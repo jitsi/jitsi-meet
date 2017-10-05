@@ -56,12 +56,20 @@ ReducerRegistry.register('features/overlay', (state = {}, action) => {
  * @returns {Object} The new state of the feature overlay after the reduction of
  * the specified action.
  */
-function _conferenceFailed(state, { error, message }) {
-    if (error === JitsiConferenceErrors.FOCUS_LEFT
-            || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE) {
+function _conferenceFailed(state, { error: { message, name } }) {
+    if (name === JitsiConferenceErrors.FOCUS_LEFT
+            || name === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE) {
         return assign(state, {
             haveToReload: true,
             isNetworkFailure: false,
+
+            // FIXME There is no message associated with CONFERENCE_FAILED at
+            // the time of this writing. In jitsi-meet the action creator
+            // conferenceFailed neither accepts an argument message nor defines
+            // a property message on the error. In lib-jitsi-meet
+            // CONFERENCE_FAILED emissions mostly do not provide a message with
+            // the exception of at least one which provides an Error, not a
+            // string.
             reason: message
         });
     }

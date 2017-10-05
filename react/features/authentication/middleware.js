@@ -75,7 +75,8 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_FAILED:
-        if (action.error === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+        if (action.error.name
+                === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
             store.dispatch(waitForOwner());
         } else {
             store.dispatch(stopWaitForOwner());
