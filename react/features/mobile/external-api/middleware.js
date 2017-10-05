@@ -25,29 +25,39 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_FAILED:
+    case CONFERENCE_FAILED: {
+        const { error, ...data } = action;
+
+        // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
+        // prevented the user from joining a specific conference but the app may
+        // be able to eventually join the conference. For example, the app will
+        // ask the user for a password upon
+        // JitsiConferenceErrors.PASSWORD_REQUIRED and will retry joining the
+        // conference afterwards. Such errors are to not reach the native
+        // counterpart of the External API (or at least not in the
+        // fatality/finality semantics attributed to
+        // conferenceFailed:/onConferenceFailed).
+        if (!error.recoverable) {
+            _sendConferenceEvent(store, /* action */ {
+                error: _toErrorString(error),
+                ...data
+            });
+        }
+        break;
+    }
+
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
-    case CONFERENCE_WILL_LEAVE: {
-        const { conference, type, ...data } = action;
-
-        // For the above (redux) actions, conference identifies a
-        // JitsiConference instance. The external API cannot transport such an
-        // object so we have to transport an "equivalent".
-        if (conference) {
-            data.url = toURLString(conference[JITSI_CONFERENCE_URL_KEY]);
-        }
-
-        _sendEvent(store, _getSymbolDescription(type), data);
+    case CONFERENCE_WILL_LEAVE:
+        _sendConferenceEvent(store, action);
         break;
-    }
 
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL, type } = action;
 
-        _sendEvent(store, _getSymbolDescription(type), {
-            error: String(error),
+        _sendEvent(store, _getSymbolDescription(type), /* data */ {
+            error: _toErrorString(error),
             url: toURLString(locationURL)
         });
         break;
@@ -56,6 +66,26 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+/**
+ * Returns a {@code String} representation of a specific error {@code Object}.
+ *
+ * @param {Error|Object|string} error - The error {@code Object} to return a
+ * {@code String} representation of.
+ * @returns {string} A {@code String} representation of the specified
+ * {@code error}.
+ */
+function _toErrorString(
+        error: Error | { message: ?string, name: ?string } | string) {
+    // XXX In lib-jitsi-meet and jitsi-meet we utilize errors in the form of
+    // strings, Error instances, and plain objects which resemble Error.
+    return (
+        error
+            ? typeof error === 'string'
+                ? error
+                : Error.prototype.toString(error)
+            : '');
+}
 
 /**
  * Gets the description of a specific {@code Symbol}.
@@ -78,6 +108,27 @@ function _getSymbolDescription(symbol: Symbol) {
     }
 
     return description;
+}
+
+/**
+ * Sends an event to the native counterpart of the External API for a specific
+ * conference-related redux action.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Action} action - The redux action.
+ * @returns {void}
+ */
+function _sendConferenceEvent(
+        store: Object,
+        { conference, type, ...data }: { conference: Object, type: Symbol }) {
+    // For these (redux) actions, conference identifies a JitsiConference
+    // instance. The external API cannot transport such an object so we have to
+    // transport an "equivalent".
+    if (conference) {
+        data.url = toURLString(conference[JITSI_CONFERENCE_URL_KEY]);
+    }
+
+    _sendEvent(store, _getSymbolDescription(type), data);
 }
 
 /**

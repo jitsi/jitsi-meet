@@ -29,7 +29,12 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (conference
                 && error.name === JitsiConferenceErrors.PASSWORD_REQUIRED) {
-            store.dispatch(_openPasswordRequiredPrompt(conference));
+            if (typeof error.recoverable === 'undefined') {
+                error.recoverable = true;
+            }
+            if (error.recoverable) {
+                store.dispatch(_openPasswordRequiredPrompt(conference));
+            }
         }
         break;
     }
