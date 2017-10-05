@@ -45,6 +45,33 @@ class Dialog extends AbstractDialog {
         bodyKey: PropTypes.string
     };
 
+    state = {
+        /**
+         * The text of the {@link TextInput} rendered by {@link Prompt} in
+         * general and by this {@code Dialog} in particular if no
+         * {@code children} are specified to it. It mimics/reimplements the
+         * functionality of {@code Prompt} because this {@code Dialog} does not
+         * really render the (whole) {@code Prompt}.
+         *
+         * @type {string}
+         */
+        text: ''
+    };
+
+    /**
+     * Initailizes a new {@code Dialog} instance.
+     *
+     * @param {Object} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
+     */
+    constructor(props: Object) {
+        super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onChangeText = this._onChangeText.bind(this);
+        this._onSubmit = this._onSubmit.bind(this);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -78,7 +105,9 @@ class Dialog extends AbstractDialog {
             <Prompt
                 cancelButtonTextStyle = { cancelButtonTextStyle }
                 cancelText = { t(cancelTitleKey) }
+                defaultValue = { this.state.text }
                 onCancel = { this._onCancel }
+                onChangeText = { this._onChangeText }
                 onSubmit = { this._onSubmit }
                 placeholder = { t(bodyKey) }
                 submitButtonTextStyle = { submitButtonTextStyle }
@@ -208,6 +237,32 @@ class Dialog extends AbstractDialog {
         }
 
         return mapped;
+    }
+
+    _onChangeText: (string) => void;
+
+    /**
+     * Notifies this {@code Dialog} that the text/value of the {@code TextInput}
+     * rendered by {@code Prompt} has changed.
+     *
+     * @param {string} text - The new text/value of the {@code TextInput}
+     * rendered by {@code Prompt}.
+     * @returns {void}
+     */
+    _onChangeText(text: string) {
+        this.setState({ text });
+    }
+
+    /**
+     * Submits this {@code Dialog} with the value of the {@link TextInput}
+     * rendered by {@link Prompt} unless a value is explicitly specified.
+     *
+     * @override
+     * @param {string} [value] - The submitted value if any.
+     * @returns {void}
+     */
+    _onSubmit(value: ?string) {
+        super._onSubmit(value || this.state.text);
     }
 }
 
