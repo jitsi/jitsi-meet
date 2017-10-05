@@ -15,7 +15,8 @@ import { SET_CALL_OVERLAY_VISIBLE, SET_JWT } from './actionTypes';
  */
 export function setCallOverlayVisible(callOverlayVisible: boolean) {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        getState()['features/jwt'].callOverlayVisible === callOverlayVisible
+        getState()['features/base/jwt']
+            .callOverlayVisible === callOverlayVisible
             || dispatch({
                 type: SET_CALL_OVERLAY_VISIBLE,
                 callOverlayVisible

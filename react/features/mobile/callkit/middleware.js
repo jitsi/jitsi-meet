@@ -220,7 +220,7 @@ function _conferenceWillJoin({ getState }, next, action) {
     CallKit.startCall(conference.callUUID, url.toString(), hasVideo)
         .then(() => {
             const { room } = state['features/base/conference'];
-            const { callee } = state['features/jwt'];
+            const { callee } = state['features/base/jwt'];
 
             CallKit.updateCall(
                 conference.callUUID,

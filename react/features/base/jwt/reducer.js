@@ -1,4 +1,4 @@
-import { equals, set, ReducerRegistry } from '../base/redux';
+import { equals, set, ReducerRegistry } from '../redux';
 
 import { SET_CALL_OVERLAY_VISIBLE, SET_JWT } from './actionTypes';
 
@@ -37,7 +37,8 @@ const _INITIAL_STATE = {
  * @returns {Object} The next redux state which is the result of reducing the
  * specified {@code action}.
  */
-ReducerRegistry.register('features/jwt', (state = _INITIAL_STATE, action) => {
+ReducerRegistry.register(
+'features/base/jwt', (state = _INITIAL_STATE, action) => {
     switch (action.type) {
     case SET_CALL_OVERLAY_VISIBLE:
         return set(state, 'callOverlayVisible', action.callOverlayVisible);

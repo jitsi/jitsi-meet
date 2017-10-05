@@ -192,7 +192,7 @@ class InfoDialog extends Component {
 function _mapStateToProps(state) {
     return {
         _inviteURL: getInviteURL(state),
-        _showAddPeople: !state['features/jwt'].isGuest
+        _showAddPeople: !state['features/base/jwt'].isGuest
     };
 }
 

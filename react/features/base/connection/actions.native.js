@@ -26,7 +26,7 @@ export function connect(id: ?string, password: ?string) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const state = getState();
         const options = _constructOptions(state);
-        const { issuer, jwt } = state['features/jwt'];
+        const { issuer, jwt } = state['features/base/jwt'];
         const connection
             = new JitsiMeetJS.JitsiConnection(
                 options.appId,

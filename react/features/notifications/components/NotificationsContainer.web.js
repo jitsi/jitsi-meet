@@ -185,7 +185,7 @@ function _mapStateToProps(state) {
     const isAnyOverlayVisible = (connectionEstablished && haveToReload)
         || isMediaPermissionPromptVisible
         || suspendDetected
-        || state['features/jwt'].callOverlayVisible;
+        || state['features/base/jwt'].callOverlayVisible;
 
     const { enabled, notifications } = state['features/notifications'];
 

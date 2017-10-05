@@ -120,7 +120,7 @@ class ProfileButton extends Component {
  */
 function _mapStateToProps(state) {
     return {
-        _unclickable: !state['features/jwt'].isGuest
+        _unclickable: !state['features/base/jwt'].isGuest
     };
 }
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { CallOverlay } from '../../jwt';
+import { CallOverlay } from '../../base/jwt';
 
 import PageReloadFilmstripOnlyOverlay from './PageReloadFilmstripOnlyOverlay';
 import PageReloadOverlay from './PageReloadOverlay';
@@ -214,7 +214,8 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _callOverlayVisible: Boolean(state['features/jwt'].callOverlayVisible),
+        _callOverlayVisible:
+            Boolean(state['features/base/jwt'].callOverlayVisible),
 
         /**
          * The indicator which determines whether the status of the

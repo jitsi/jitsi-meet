@@ -219,7 +219,7 @@ class InviteButton extends Component {
 function _mapStateToProps(state) {
     const { conference } = state['features/base/conference'];
     const { enableUserRolesBasedOnToken } = state['features/base/config'];
-    const { isGuest } = state['features/jwt'];
+    const { isGuest } = state['features/base/jwt'];
 
     return {
         _isAddToCallAvailable:

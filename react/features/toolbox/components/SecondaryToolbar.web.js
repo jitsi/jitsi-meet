@@ -147,7 +147,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
  * @private
  */
 function _mapStateToProps(state: Object): Object {
-    const { isGuest } = state['features/jwt'];
+    const { isGuest } = state['features/base/jwt'];
     const { secondaryToolbarButtons, visible } = state['features/toolbox'];
     const { callStatsID } = state['features/base/config'];
 

@@ -1,7 +1,7 @@
 /* global APP, config, JitsiMeetJS, Promise */
 
 import { openConnection } from '../../../connection';
-import { setJWT } from '../../../react/features/jwt';
+import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';

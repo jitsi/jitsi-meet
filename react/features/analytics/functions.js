@@ -43,7 +43,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
                 roomName: state['features/base/conference'].room,
                 userAgent: navigator.userAgent
             };
-            const { group, server } = state['features/jwt'];
+            const { group, server } = state['features/base/jwt'];
 
             if (server) {
                 permanentProperties.server = server;

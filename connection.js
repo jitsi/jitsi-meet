@@ -62,7 +62,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  */
 function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
-    const { issuer, jwt } = APP.store.getState()['features/jwt'];
+    const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
 
     connectionConfig.bosh += '?room=' + roomName;
 
@@ -147,7 +147,7 @@ export function openConnection({id, password, retry, roomName}) {
 
     return connect(id, password, roomName).catch(err => {
         if (retry) {
-            const { issuer, jwt } = APP.store.getState()['features/jwt'];
+            const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
 
             if (err === ConnectionErrors.PASSWORD_REQUIRED
                     && (!jwt || issuer === 'anonymous')) {

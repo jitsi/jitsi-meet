@@ -190,7 +190,7 @@ class Watermarks extends Component {
  * }}
  */
 function _mapStateToProps(state) {
-    const { isGuest } = state['features/jwt'];
+    const { isGuest } = state['features/base/jwt'];
 
     return {
         /**

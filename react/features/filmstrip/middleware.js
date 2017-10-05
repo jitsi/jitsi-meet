@@ -1,7 +1,7 @@
 /* @flow */
 
 import { MiddlewareRegistry } from '../base/redux';
-import { SET_CALL_OVERLAY_VISIBLE } from '../jwt';
+import { SET_CALL_OVERLAY_VISIBLE } from '../base/jwt';
 
 import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 
@@ -13,10 +13,10 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
     case SET_CALL_OVERLAY_VISIBLE:
         if (typeof APP !== 'undefined') {
             const oldValue
-                = Boolean(getState()['features/jwt'].callOverlayVisible);
+                = Boolean(getState()['features/base/jwt'].callOverlayVisible);
             const result = next(action);
             const newValue
-                = Boolean(getState()['features/jwt'].callOverlayVisible);
+                = Boolean(getState()['features/base/jwt'].callOverlayVisible);
 
             oldValue === newValue
 

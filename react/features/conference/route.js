@@ -111,7 +111,7 @@ function _obtainConfigHandler() {
  */
 function _setTokenData() {
     const state = APP.store.getState();
-    const { caller } = state['features/jwt'];
+    const { caller } = state['features/base/jwt'];
 
     if (caller) {
         const { avatarUrl, avatar, email, name } = caller;

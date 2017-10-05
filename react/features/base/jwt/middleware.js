@@ -5,16 +5,16 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE,
     SET_ROOM
-} from '../base/conference';
-import { SET_CONFIG } from '../base/config';
-import { SET_LOCATION_URL } from '../base/connection';
-import { LIB_INIT_ERROR } from '../base/lib-jitsi-meet';
+} from '../conference';
+import { SET_CONFIG } from '../config';
+import { SET_LOCATION_URL } from '../connection';
+import { LIB_INIT_ERROR } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipantCount,
     PARTICIPANT_JOINED
-} from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
+} from '../participants';
+import { MiddlewareRegistry } from '../redux';
 
 import { setCallOverlayVisible, setJWT } from './actions';
 import { SET_JWT } from './actionTypes';
@@ -72,7 +72,7 @@ function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
     const result = next(action);
 
     const state = getState();
-    const stateFeaturesJWT = state['features/jwt'];
+    const stateFeaturesJWT = state['features/base/jwt'];
     let callOverlayVisible;
 
     if (stateFeaturesJWT.callee) {

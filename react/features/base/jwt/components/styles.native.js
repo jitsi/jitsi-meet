@@ -1,4 +1,4 @@
-import { ColorPalette, createStyleSheet } from '../../base/styles';
+import { ColorPalette, createStyleSheet } from '../../styles';
 
 export default createStyleSheet({
     // XXX The names bellow were preserved for the purposes of compatibility

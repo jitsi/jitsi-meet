@@ -1,7 +1,7 @@
 // @flow
 
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
-import { parseJWTFromURLParams } from '../../react/features/jwt';
+import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
