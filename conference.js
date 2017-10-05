@@ -1291,6 +1291,12 @@ export default {
                     : 'colibri';
         }
 
+        const nick = APP.settings.getDisplayName();
+
+        if (nick) {
+            options.displayName = nick;
+        }
+
         return options;
     },
 
