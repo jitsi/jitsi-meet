@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { appNavigate } from '../../app';
 import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 
@@ -86,11 +87,9 @@ class PasswordRequiredPrompt extends Component {
      * otherwise, {@code false}.
      */
     _onCancel() {
-        // XXX The user has canceled this prompt for a password so we are to
-        // attempt joining the conference without a password. If the conference
-        // still requires a password to join, the user will be prompted again
-        // later.
-        return this._onSubmit(undefined);
+        this.props.dispatch(appNavigate(undefined));
+
+        return true;
     }
 
     _onSubmit: (?string) => boolean;
