@@ -1,3 +1,5 @@
+// @flow
+
 import Tabs from '@atlaskit/tabs';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -15,7 +17,12 @@ const THUMBNAIL_SIZE = {
 };
 const UPDATE_INTERVAL = 1000;
 
-const TAB_CONFIGURATIONS = [
+type TabConfiguration = {
+    defaultSelected?: boolean,
+    label: string,
+    type: string
+};
+const TAB_CONFIGURATIONS: Array<TabConfiguration> = [
     {
         /**
          * The indicator which determines whether this tab configuration is
@@ -83,6 +90,14 @@ class DesktopPicker extends Component {
         t: PropTypes.func
     };
 
+    _poller = null;
+
+    state = {
+        selectedSource: {},
+        tabsToPopulate: [],
+        typesToFetch: []
+    };
+
     /**
      * Initializes a new DesktopPicker instance.
      *
@@ -92,13 +107,7 @@ class DesktopPicker extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            selectedSource: {},
-            tabsToPopulate: [],
-            typesToFetch: []
-        };
-
-        this._poller = null;
+        // Bind event handlers so they are only bound once per instance.
         this._onCloseModal = this._onCloseModal.bind(this);
         this._onPreviewClick = this._onPreviewClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -175,12 +184,14 @@ class DesktopPicker extends Component {
         );
     }
 
+    _onCloseModal: (?string, string) => void;
+
     /**
      * Dispatches an action to hide the DesktopPicker and invokes the passed in
      * callback with a selectedSource, if any.
      *
-     * @param {string} id - The id of the DesktopCapturerSource to pass into the
-     * onSourceChoose callback.
+     * @param {string} [id] - The id of the DesktopCapturerSource to pass into
+     * the onSourceChoose callback.
      * @param {string} type - The type of the DesktopCapturerSource to pass into
      * the onSourceChoose callback.
      * @returns {void}
@@ -189,6 +200,8 @@ class DesktopPicker extends Component {
         this.props.onSourceChoose(id, type);
         this.props.dispatch(hideDialog());
     }
+
+    _onPreviewClick: (string, string) => void;
 
     /**
      * Sets the currently selected DesktopCapturerSource.
@@ -205,6 +218,27 @@ class DesktopPicker extends Component {
             }
         });
     }
+
+    /**
+     * Handles changing of allowed desktop sharing source types.
+     *
+     * @param {Array<string>} desktopSharingSourceTypes - The types that will be
+     * fetched and displayed.
+     * @returns {void}
+     */
+    _onSourceTypesConfigChanged(desktopSharingSourceTypes = []) {
+        const tabsToPopulate
+            = TAB_CONFIGURATIONS.filter(({ type }) =>
+                desktopSharingSourceTypes.includes(type)
+                    && VALID_TYPES.includes(type));
+
+        this.setState({
+            tabsToPopulate,
+            typesToFetch: tabsToPopulate.map(c => c.type)
+        });
+    }
+
+    _onSubmit: () => void;
 
     /**
      * Request to close the modal and execute callbacks with the selected source
@@ -268,24 +302,7 @@ class DesktopPicker extends Component {
         this._poller = null;
     }
 
-    /**
-     * Handles changing of allowed desktop sharing source types.
-     *
-     * @param {Array<string>} desktopSharingSourceTypes - The types that will be
-     * fetched and displayed.
-     * @returns {void}
-     */
-    _onSourceTypesConfigChanged(desktopSharingSourceTypes = []) {
-        const tabsToPopulate = TAB_CONFIGURATIONS.filter(
-            c => desktopSharingSourceTypes.includes(c.type)
-                && VALID_TYPES.includes(c.type)
-        );
-
-        this.setState({
-            tabsToPopulate,
-            typesToFetch: tabsToPopulate.map(c => c.type)
-        });
-    }
+    _updateSources: () => void;
 
     /**
      * Dispatches an action to get currently available DesktopCapturerSources.

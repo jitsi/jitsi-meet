@@ -22,7 +22,6 @@ import {
 } from './actions';
 import {
     CANCEL_LOGIN,
-    CANCEL_WAIT_FOR_OWNER,
     STOP_WAIT_FOR_OWNER,
     WAIT_FOR_OWNER
 } from './actionTypes';
@@ -40,8 +39,8 @@ import { LoginDialog, WaitForOwnerDialog } from './components';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CANCEL_LOGIN: {
-        const { thenableWithCancel }
-            = store.getState()['features/authentication'];
+        const { dispatch, getState } = store;
+        const { thenableWithCancel } = getState()['features/authentication'];
 
         thenableWithCancel && thenableWithCancel.cancel();
 
@@ -53,25 +52,16 @@ MiddlewareRegistry.register(store => next => action => {
                 // Instead of hiding show the new one.
                 const result = next(action);
 
-                store.dispatch(_openWaitForOwnerDialog());
+                dispatch(_openWaitForOwnerDialog());
 
                 return result;
             }
 
             // Go back to the app's entry point.
             _hideLoginDialog(store);
-            store.dispatch(appNavigate(undefined));
+            dispatch(appNavigate(undefined));
         }
         break;
-    }
-
-    case CANCEL_WAIT_FOR_OWNER: {
-        const result = next(action);
-
-        store.dispatch(stopWaitForOwner());
-        store.dispatch(appNavigate(undefined));
-
-        return result;
     }
 
     case CONFERENCE_FAILED:

@@ -71,6 +71,15 @@ export default class AbstractDialog extends Component {
         this._mounted = false;
     }
 
+    /**
+     * Dispatches a redux action to hide this dialog.
+     *
+     * @returns {*} The return value of {@link hideDialog}.
+     */
+    _hide() {
+        return this.props.dispatch(hideDialog());
+    }
+
     _onCancel: () => void;
 
     /**
@@ -84,7 +93,7 @@ export default class AbstractDialog extends Component {
 
         if ((typeof cancelDisabled === 'undefined' || !cancelDisabled)
                 && (!onCancel || onCancel())) {
-            this.props.dispatch(hideDialog());
+            this._hide();
         }
     }
 
@@ -147,7 +156,7 @@ export default class AbstractDialog extends Component {
     _onSubmitFulfilled() {
         this._mounted && this.setState({ submitting: false });
 
-        this.props.dispatch(hideDialog());
+        this._hide();
     }
 
     _onSubmitRejected: () => void;

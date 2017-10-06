@@ -1,11 +1,11 @@
-/* @flow */
+// @flow
 
+import { appNavigate } from '../app';
 import { checkIfCanJoin } from '../base/conference';
 import { openDialog } from '../base/dialog';
 
 import {
     CANCEL_LOGIN,
-    CANCEL_WAIT_FOR_OWNER,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
@@ -25,7 +25,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @param {string} password - The XMPP user's password.
  * @param {JitsiConference} conference - The conference for which the local
  * participant's role will be upgraded.
- * @returns {function({ dispatch: Dispatch, getState: Function })}
+ * @returns {Function}
  */
 export function authenticateAndUpgradeRole(
         id: string,
@@ -79,13 +79,12 @@ export function cancelLogin() {
 /**
  * Cancels {@link WaitForOwnerDialog}. Will navigate back to the welcome page.
  *
- * @returns {{
- *     type: CANCEL_WAIT_FOR_OWNER
- * }}
+ * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return {
-        type: CANCEL_WAIT_FOR_OWNER
+    return (dispatch: Dispatch<*>) => {
+        dispatch(stopWaitForOwner());
+        dispatch(appNavigate(undefined));
     };
 }
 
@@ -197,7 +196,7 @@ function _upgradeRoleStarted(thenableWithCancel) {
  * start the process of "waiting for the owner" by periodically trying to join
  * the room every five seconds.
  *
- * @returns {function({ dispatch: Dispatch })}
+ * @returns {Function}
  */
 export function waitForOwner() {
     return (dispatch: Dispatch) =>

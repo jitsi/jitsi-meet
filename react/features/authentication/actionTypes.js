@@ -9,16 +9,6 @@
 export const CANCEL_LOGIN = Symbol('CANCEL_LOGIN');
 
 /**
- * The type of (redux) action which signals that the {@link WaitForOwnerDialog}
- * has been canceled.
- *
- * {
- *     type: CANCEL_WAIT_FOR_OWNER
- * }
- */
-export const CANCEL_WAIT_FOR_OWNER = Symbol('CANCEL_WAIT_FOR_OWNER');
-
-/**
  * The type of (redux) action which signals that the cyclic operation of waiting
  * for conference owner has been aborted.
  *

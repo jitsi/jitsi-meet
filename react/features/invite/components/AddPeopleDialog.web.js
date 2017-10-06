@@ -1,3 +1,5 @@
+// @flow
+
 import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
 import { Immutable } from 'nuclear-js';
@@ -8,8 +10,7 @@ import { connect } from 'react-redux';
 import { getInviteURL } from '../../base/connection';
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import MultiSelectAutocomplete
-    from '../../base/react/components/web/MultiSelectAutocomplete';
+import { MultiSelectAutocomplete } from '../../base/react';
 
 import { invitePeople, inviteRooms, searchPeople } from '../functions';
 
@@ -67,6 +68,54 @@ class AddPeopleDialog extends Component {
         t: PropTypes.func
     };
 
+    _multiselect = null;
+
+    _resourceClient = {
+        makeQuery: text => {
+            const {
+                _jwt,
+                _peopleSearchQueryTypes,
+                _peopleSearchUrl
+            } = this.props; // eslint-disable-line no-invalid-this
+
+            return (
+                searchPeople(
+                    _peopleSearchUrl,
+                    _jwt,
+                    text,
+                    _peopleSearchQueryTypes));
+        },
+
+        parseResults: response => response.map(user => {
+            return {
+                content: user.name,
+                elemBefore: <Avatar
+                    size = 'medium'
+                    src = { user.avatar } />,
+                item: user,
+                value: user.id
+            };
+        })
+    };
+
+    state = {
+        /**
+         * Indicating that an error occurred when adding people to the call.
+         */
+        addToCallError: false,
+
+        /**
+         * Indicating that we're currently adding the new people to the
+         * call.
+         */
+        addToCallInProgress: false,
+
+        /**
+         * The list of invite items.
+         */
+        inviteItems: new Immutable.List()
+    };
+
     /**
      * Initializes a new {@code AddPeopleDialog} instance.
      *
@@ -76,56 +125,7 @@ class AddPeopleDialog extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            /**
-             * Indicating that an error occurred when adding people to the call.
-             */
-            addToCallError: false,
-
-            /**
-             * Indicating that we're currently adding the new people to the
-             * call.
-             */
-            addToCallInProgress: false,
-
-            /**
-             * The list of invite items.
-             */
-            inviteItems: new Immutable.List()
-        };
-
-        this._multiselect = null;
-        this._resourceClient = {
-            makeQuery: text => {
-                const {
-                    _jwt,
-                    _peopleSearchQueryTypes,
-                    _peopleSearchUrl
-                } = this.props;
-
-                return searchPeople(
-                    _peopleSearchUrl,
-                    _jwt,
-                    text,
-                    _peopleSearchQueryTypes
-                );
-            },
-            parseResults: response => response.map(user => {
-                const avatar = ( // eslint-disable-line no-extra-parens
-                    <Avatar
-                        size = 'medium'
-                        src = { user.avatar } />
-                );
-
-                return {
-                    content: user.name,
-                    value: user.id,
-                    elemBefore: avatar,
-                    item: user
-                };
-            })
-        };
-
+        // Bind event handlers so they are only bound once per instance.
         this._isAddDisabled = this._isAddDisabled.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -144,9 +144,9 @@ class AddPeopleDialog extends Component {
          * invite.
          */
         if (prevState.addToCallError
-            && !this.state.addToCallInProgress
-            && !this.state.addToCallError
-            && this._multiselect) {
+                && !this.state.addToCallInProgress
+                && !this.state.addToCallError
+                && this._multiselect) {
             this._multiselect.clear();
         }
     }
@@ -169,43 +169,21 @@ class AddPeopleDialog extends Component {
         );
     }
 
-    /**
-     * Renders the input form.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderUserInputForm() {
-        const { t } = this.props;
-
-        return (
-            <div className = 'add-people-form-wrap'>
-                { this._renderErrorMessage() }
-                <MultiSelectAutocomplete
-                    isDisabled
-                        = { this.state.addToCallInProgress || false }
-                    noMatchesFound = { t('addPeople.noResults') }
-                    onSelectionChange = { this._onSelectionChange }
-                    placeholder = { t('addPeople.searchPlaceholder') }
-                    ref = { this._setMultiSelectElement }
-                    resourceClient = { this._resourceClient }
-                    shouldFitContainer = { true }
-                    shouldFocus = { true } />
-            </div>
-        );
-    }
+    _isAddDisabled: () => boolean;
 
     /**
      * Indicates if the Add button should be disabled.
      *
+     * @private
      * @returns {boolean} - True to indicate that the Add button should
      * be disabled, false otherwise.
-     * @private
      */
     _isAddDisabled() {
         return !this.state.inviteItems.length
             || this.state.addToCallInProgress;
     }
+
+    _onSelectionChange: (Map<*, *>) => void;
 
     /**
      * Handles a selection change.
@@ -221,6 +199,8 @@ class AddPeopleDialog extends Component {
             inviteItems: selectedIds
         });
     }
+
+    _onSubmit: () => void;
 
     /**
      * Handles the submit button action.
@@ -245,27 +225,28 @@ class AddPeopleDialog extends Component {
                 this.props._inviteUrl,
                 this.props._jwt,
                 this.state.inviteItems.filter(i => i.type === 'user'))
-            .then(() => {
-                this.setState({
-                    addToCallInProgress: false
-                });
+            .then(
+                /* onFulfilled */ () => {
+                    this.setState({
+                        addToCallInProgress: false
+                    });
 
-                this.props.hideDialog();
-            })
-            .catch(() => {
-                this.setState({
-                    addToCallInProgress: false,
-                    addToCallError: true
+                    this.props.hideDialog();
+                },
+                /* onRejected */ () => {
+                    this.setState({
+                        addToCallInProgress: false,
+                        addToCallError: true
+                    });
                 });
-            });
         }
     }
 
     /**
      * Renders the error message if the add doesn't succeed.
      *
-     * @returns {ReactElement|null}
      * @private
+     * @returns {ReactElement|null}
      */
     _renderErrorMessage() {
         if (!this.state.addToCallError) {
@@ -305,6 +286,34 @@ class AddPeopleDialog extends Component {
     }
 
     /**
+     * Renders the input form.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderUserInputForm() {
+        const { t } = this.props;
+
+        return (
+            <div className = 'add-people-form-wrap'>
+                { this._renderErrorMessage() }
+                <MultiSelectAutocomplete
+                    isDisabled
+                        = { this.state.addToCallInProgress || false }
+                    noMatchesFound = { t('addPeople.noResults') }
+                    onSelectionChange = { this._onSelectionChange }
+                    placeholder = { t('addPeople.searchPlaceholder') }
+                    ref = { this._setMultiSelectElement }
+                    resourceClient = { this._resourceClient }
+                    shouldFitContainer = { true }
+                    shouldFocus = { true } />
+            </div>
+        );
+    }
+
+    _setMultiSelectElement: (Object) => void;
+
+    /**
      * Sets the instance variable for the multi select component
      * element so it can be accessed directly.
      *
@@ -338,13 +347,13 @@ function _mapStateToProps(state) {
 
     return {
         _conference: conference,
-        _jwt: state['features/jwt'].jwt,
-        _inviteUrl: getInviteURL(state),
         _inviteServiceUrl: inviteServiceUrl,
+        _inviteUrl: getInviteURL(state),
+        _jwt: state['features/jwt'].jwt,
         _peopleSearchQueryTypes: peopleSearchQueryTypes,
         _peopleSearchUrl: peopleSearchUrl
     };
 }
 
-export default translate(
-    connect(_mapStateToProps, { hideDialog })(AddPeopleDialog));
+export default translate(connect(_mapStateToProps, { hideDialog })(
+    AddPeopleDialog));

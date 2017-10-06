@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { NativeModules } from 'react-native';
 import uuid from 'uuid';
@@ -238,9 +238,9 @@ function _onPerformEndCallAction({ callUUID }) {
     const conference = getCurrentConference(getState);
 
     if (conference && conference.callUUID === callUUID) {
-        // We arrive here when a call is ended by the system, for
-        // example when another incoming call is received and the user
-        // selects "End & Accept".
+        // We arrive here when a call is ended by the system, for example, when
+        // another incoming call is received and the user selects "End &
+        // Accept".
         delete conference.callUUID;
         dispatch(appNavigate(undefined));
     }
