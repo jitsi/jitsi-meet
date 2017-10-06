@@ -1,9 +1,8 @@
 // @flow
-
-import AKFieldText from '@atlaskit/field-text';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 
 import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
@@ -75,7 +74,7 @@ class PasswordRequiredPrompt extends Component {
     _renderBody() {
         return (
             <div>
-                <AKFieldText
+                <TextField
                     autoFocus = { true }
                     compact = { true }
                     label = { this.props.t('dialog.passwordLabel') }

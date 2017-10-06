@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
 
 import { i18next } from '../../../react/features/base/i18n';
 import {
@@ -167,15 +168,18 @@ RemoteVideo.prototype._generatePopupContent = function() {
     ReactDOM.render(
         <Provider store = { APP.store }>
             <I18nextProvider i18n = { i18next }>
-                <RemoteVideoMenuTriggerButton
-                    initialVolumeValue = { initialVolumeValue }
-                    isAudioMuted = { this.isAudioMuted }
-                    isModerator = { isModerator }
-                    onMenuDisplay = {this._onRemoteVideoMenuDisplay.bind(this)}
-                    onRemoteControlToggle = { onRemoteControlToggle }
-                    onVolumeChange = { onVolumeChange }
-                    participantID = { participantID }
-                    remoteControlState = { remoteControlState } />
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <RemoteVideoMenuTriggerButton
+                        initialVolumeValue = { initialVolumeValue }
+                        isAudioMuted = { this.isAudioMuted }
+                        isModerator = { isModerator }
+                        onMenuDisplay
+                            = {this._onRemoteVideoMenuDisplay.bind(this)}
+                        onRemoteControlToggle = { onRemoteControlToggle }
+                        onVolumeChange = { onVolumeChange }
+                        participantID = { participantID }
+                        remoteControlState = { remoteControlState } />
+                </AtlasKitThemeProvider>
             </I18nextProvider>
         </Provider>,
         remoteVideoMenuContainer);

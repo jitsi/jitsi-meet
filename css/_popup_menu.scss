@@ -19,7 +19,6 @@
     // Link Appearance
     &__link,
     &__contents {
-        color: $modalTextColor;
         display: block;
         box-sizing: border-box;
         text-decoration: none;
@@ -30,7 +29,6 @@
         padding: 0 5px;
 
         &.disabled {
-            color: gray !important;
             pointer-events: none;
         }
     }

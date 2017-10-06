@@ -1,7 +1,6 @@
 import Button from '@atlaskit/button';
-import { StatelessDropdownMenu } from '@atlaskit/dropdown-menu';
-import { FieldText } from '@atlaskit/field-text';
-import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import DropdownMenu, {
+    DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -95,8 +94,6 @@ class DialInNumbersForm extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onCopyClick = this._onCopyClick.bind(this);
-        this._onDropdownTriggerInputChange
-            = this._onDropdownTriggerInputChange.bind(this);
         this._onOpenChange = this._onOpenChange.bind(this);
         this._onSelect = this._onSelect.bind(this);
         this._setCopyElement = this._setCopyElement.bind(this);
@@ -147,7 +144,7 @@ class DialInNumbersForm extends Component {
             return null;
         }
 
-        const items = this._formatNumbers(numbers);
+        const items = this._renderDropdownItems(numbers);
 
         return (
             <div className = 'form-control dial-in-numbers'>
@@ -158,11 +155,12 @@ class DialInNumbersForm extends Component {
                     </span>
                 </label>
                 <div className = 'form-control__container'>
-                    { this._createDropdownMenu(items, selectedNumber.content) }
+                    <div className = 'form-control__input-container'>
+                        { this._createDropdownMenu(items, selectedNumber) }
+                    </div>
                     <Button
                         appearance = 'default'
                         onClick = { this._onCopyClick }
-                        shouldFitContainer = { true }
                         type = 'button'>
                         { t('dialog.copy') }
                     </Button>
@@ -178,7 +176,7 @@ class DialInNumbersForm extends Component {
     }
 
     /**
-     * Creates a {@code StatelessDropdownMenu} instance.
+     * Creates a {@code DropdownMenu} instance.
      *
      * @param {Array} items - The content to display within the dropdown.
      * @param {string} triggerText - The text to display within the
@@ -187,116 +185,32 @@ class DialInNumbersForm extends Component {
      */
     _createDropdownMenu(items, triggerText) {
         return (
-            <StatelessDropdownMenu
+            <DropdownMenu
                 isOpen = { this.state.isDropdownOpen }
-                items = { [ { items } ] }
-                onItemActivated = { this._onSelect }
                 onOpenChange = { this._onOpenChange }
-                shouldFitContainer = { true }>
-                { this._createDropdownTrigger(triggerText) }
-            </StatelessDropdownMenu>
+                shouldFitContainer = { true }
+                trigger = { triggerText || '' }
+                triggerButtonProps = {{
+                    className: 'dropdown-button-trigger',
+                    shouldFitContainer: true }}
+                triggerType = 'button'>
+                <DropdownItemGroup>
+                    { items }
+                </DropdownItemGroup>
+            </DropdownMenu>
         );
     }
 
     /**
-     * Creates a React {@code Component} with a readonly HTMLInputElement as a
-     * trigger for displaying the dropdown menu. The {@code Component} will also
-     * display the currently selected number.
+     * Formats the region and number string.
      *
-     * @param {string} triggerText - Text to display in the HTMLInputElement.
+     * @param {string} region - The region string.
+     * @param {string} number - The number string.
+     * @returns {string} - The new formatted string.
      * @private
-     * @returns {ReactElement}
      */
-    _createDropdownTrigger(triggerText) {
-        return (
-            <div className = 'dial-in-numbers-trigger'>
-                <div className = 'form-control__input-container'>
-                    <FieldText
-                        compact = { true }
-                        isLabelHidden = { true }
-                        isReadOnly = { true }
-                        label = 'Select Dial-In Number'
-                        onChange = { this._onDropdownTriggerInputChange }
-                        ref = { this._setInput }
-                        shouldFitContainer = { true }
-                        type = 'text'
-                        value = { triggerText || '' } />
-                </div>
-                <span className = 'dial-in-numbers-trigger-icon'>
-                    <ExpandIcon
-                        label = 'expand'
-                        size = 'medium' />
-                </span>
-            </div>
-        );
-    }
-
-    /**
-     * Detects whether the response from dialInNumbersUrl returned an array or
-     * an object with dial-in numbers and calls the appropriate method to
-     * transform the numbers into the format expected by
-     * {@code StatelessDropdownMenu}.
-     *
-     * @param {Array<string>|Object} dialInNumbers - The numbers returned from
-     * requesting dialInNumbersUrl.
-     * @private
-     * @returns {Array<Object>}
-     */
-    _formatNumbers(dialInNumbers) {
-        if (Array.isArray(dialInNumbers)) {
-            return this._formatNumbersArray(dialInNumbers);
-        }
-
-        return this._formatNumbersObject(dialInNumbers);
-    }
-
-    /**
-     * Transforms the passed in numbers array into an array of objects that can
-     * be parsed by {@code StatelessDropdownMenu}.
-     *
-     * @param {Array<string>} dialInNumbers - An array with dial-in numbers to
-     * display and copy.
-     * @private
-     * @returns {Array<Object>}
-     */
-    _formatNumbersArray(dialInNumbers) {
-        return dialInNumbers.map(number => {
-            return {
-                content: number,
-                number
-            };
-        });
-    }
-
-    /**
-     * Transforms the passed in numbers object into an array of objects that can
-     * be parsed by {@code StatelessDropdownMenu}.
-     *
-     * @param {Object} dialInNumbers - The numbers object to parse. The
-     * expected format is an object with keys being the name of the country
-     * and the values being an array of numbers as strings.
-     * @private
-     * @returns {Array<Object>}
-     */
-    _formatNumbersObject(dialInNumbers) {
-        const phoneRegions = Object.keys(dialInNumbers);
-
-        if (!phoneRegions.length) {
-            return [];
-        }
-
-        const formattedNumbers = phoneRegions.map(region => {
-            const numbers = dialInNumbers[region];
-
-            return numbers.map(number => {
-                return {
-                    content: `${region}: ${number}`,
-                    number
-                };
-            });
-        });
-
-        return Array.prototype.concat(...formattedNumbers);
+    _formatRegionNumber(region, number) {
+        return `${region}: ${number}`;
     }
 
     /**
@@ -313,7 +227,7 @@ class DialInNumbersForm extends Component {
         });
 
         const callNumber = t('invite.callNumber', {
-            number: this.state.selectedNumber.number
+            number: this.state.selectedNumber
         });
         const stepOne = `1) ${callNumber}`;
 
@@ -344,18 +258,6 @@ class DialInNumbersForm extends Component {
     }
 
     /**
-     * This is a no-op function used to stub out FieldText's onChange in order
-     * to prevent FieldText from printing prop type validation errors. FieldText
-     * is used as a trigger for the dropdown in {@code DialInNumbersForm} to
-     * get the desired AtlasKit input look for the UI.
-     *
-     * @returns {void}
-     */
-    _onDropdownTriggerInputChange() {
-        // Intentionally left empty.
-    }
-
-    /**
      * Sets the internal state to either open or close the dropdown. If the
      * dropdown is disabled, the state will always be set to false.
      *
@@ -380,8 +282,69 @@ class DialInNumbersForm extends Component {
     _onSelect(selection) {
         this.setState({
             isDropdownOpen: false,
-            selectedNumber: selection.item
+            selectedNumber: selection
         });
+    }
+
+    /**
+     * Renders a DropDownItem for the given id and text.
+     *
+     * @param {string} id - The key identifier of the DropdownItem.
+     * @param {string} text - The text to display in the dropdown item.
+     * @returns {React.Component}
+     * @private
+     */
+    _renderDropDownItem(id, text) {
+        return (
+
+            /**
+             * Arrow functions are not allowed in props, but I leave this until
+             * I figure a better way to implement the same thing.
+             */
+            /* eslint-disable react/jsx-no-bind */
+            <DropdownItem
+                key = { id }
+                onClick = { () => this._onSelect(text || id) }>
+                { text }
+            </DropdownItem>
+            /* eslint-disable react/jsx-no-bind */
+        );
+    }
+
+    /**
+     * Detects whether the response from dialInNumbersUrl returned an array or
+     * an object with dial-in numbers and calls the appropriate method to
+     * transform the numbers into the format expected by
+     * {@code DropdownMenu}.
+     *
+     * @param {Array<string>|Object} dialInNumbers - The numbers returned from
+     * requesting dialInNumbersUrl.
+     * @private
+     * @returns {Array<Object>}
+     */
+    _renderDropdownItems(dialInNumbers) {
+        if (Array.isArray(dialInNumbers)) {
+            return dialInNumbers.map(number =>
+                this._renderDropDownItem(number)
+            );
+        }
+
+        const phoneRegions = Object.keys(dialInNumbers);
+
+        if (!phoneRegions.length) {
+            return [];
+        }
+
+        const dropdownItems = phoneRegions.map(region => {
+            const numbers = dialInNumbers[region];
+
+            return numbers.map(number =>
+                this._renderDropDownItem(number,
+                    this._formatRegionNumber(region, number))
+            );
+        });
+
+        return Array.prototype.concat(...dropdownItems);
     }
 
     /**
@@ -406,10 +369,18 @@ class DialInNumbersForm extends Component {
      * @returns {void}
      */
     _setDefaultNumber(dialInNumbers) {
-        const numbers = this._formatNumbers(dialInNumbers);
+        let number = '';
+
+        if (Array.isArray(dialInNumbers)) {
+            number = dialInNumbers[0];
+        } else if (Object.keys(dialInNumbers).length > 0) {
+            const region = Object.keys(dialInNumbers)[0];
+
+            number = this._formatRegionNumber(region, dialInNumbers[region]);
+        }
 
         this.setState({
-            selectedNumber: numbers[0]
+            selectedNumber: number
         });
     }
 }

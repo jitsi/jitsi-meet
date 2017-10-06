@@ -1,6 +1,7 @@
 import AKButton from '@atlaskit/button';
 import AKButtonGroup from '@atlaskit/button-group';
 import ModalDialog from '@atlaskit/modal-dialog';
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -114,25 +115,32 @@ class StatelessDialog extends Component {
      */
     render() {
         return (
-            <div
-                onKeyDown = { this._onKeyDown }
-                ref = { this._setDialogElement }>
-                <ModalDialog
-                    footer = { this._renderFooter() }
-                    header = { this._renderHeader() }
-                    isOpen = { true }
-                    onDialogDismissed = { this._onDialogDismissed }
-                    width = { this.props.width || 'medium' }>
-                    <div>
-                        <form
-                            className = 'modal-dialog-form'
-                            id = 'modal-dialog-form'
-                            onSubmit = { this._onSubmit }>
-                            { this.props.children }
-                        </form>
-                    </div>
-                </ModalDialog>
-            </div>
+
+            /**
+             * Enabled light theme for dialogs until all in-dialog components
+             * support dark theme.
+             */
+            <AtlasKitThemeProvider mode = 'light'>
+                <div
+                    onKeyDown = { this._onKeyDown }
+                    ref = { this._setDialogElement }>
+                    <ModalDialog
+                        footer = { this._renderFooter() }
+                        header = { this._renderHeader() }
+                        isOpen = { true }
+                        onDialogDismissed = { this._onDialogDismissed }
+                        width = { this.props.width || 'medium' }>
+                        <div>
+                            <form
+                                className = 'modal-dialog-form'
+                                id = 'modal-dialog-form'
+                                onSubmit = { this._onSubmit }>
+                                { this.props.children }
+                            </form>
+                        </div>
+                    </ModalDialog>
+                </div>
+            </AtlasKitThemeProvider>
         );
     }
 

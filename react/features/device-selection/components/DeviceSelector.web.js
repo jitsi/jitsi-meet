@@ -1,5 +1,5 @@
 import AKDropdownMenu from '@atlaskit/dropdown-menu';
-import ExpandIcon from '@atlaskit/icon/glyph/expand';
+import ChevronDownIcon from '@atlaskit/icon/glyph/chevron-down';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -116,7 +116,7 @@ class DeviceSelector extends Component {
                 <span className = 'device-selector-trigger-text'>
                     { triggerText }
                 </span>
-                <ExpandIcon
+                <ChevronDownIcon
                     label = 'expand'
                     size = 'large' />
             </div>
