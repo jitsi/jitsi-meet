@@ -1,5 +1,6 @@
 // @flow
 
+import { CONFERENCE_WILL_JOIN } from '../conference';
 import { ReducerRegistry, set } from '../redux';
 import { randomHexString } from '../util';
 
@@ -53,6 +54,10 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
  */
 function _participant(state: Object = {}, action) {
     switch (action.type) {
+    case CONFERENCE_WILL_JOIN:
+        // Make sure no participant is pinned.
+        return set(state, 'pinned', false);
+
     case DOMINANT_SPEAKER_CHANGED:
         // Only one dominant speaker is allowed.
         return (
@@ -159,6 +164,7 @@ function _participant(state: Object = {}, action) {
  */
 ReducerRegistry.register('features/base/participants', (state = [], action) => {
     switch (action.type) {
+    case CONFERENCE_WILL_JOIN:
     case DOMINANT_SPEAKER_CHANGED:
     case PARTICIPANT_ID_CHANGED:
     case PARTICIPANT_UPDATED:
