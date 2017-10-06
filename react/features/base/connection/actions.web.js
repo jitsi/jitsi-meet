@@ -72,7 +72,8 @@ export function connect() {
 
             APP.keyboardshortcut.init();
 
-            if (config.requireDisplayName && !APP.settings.getDisplayName()) {
+            if (config.requireDisplayName
+                    && !APP.conference.getLocalDisplayName()) {
                 APP.UI.promptDisplayName();
             }
         })

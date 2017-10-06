@@ -1,4 +1,10 @@
+import {
+    AVATAR_ID_COMMAND,
+    AVATAR_URL_COMMAND,
+    EMAIL_COMMAND
+} from './constants';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
+import { getLocalParticipant } from '../participants';
 import { toState } from '../redux';
 
 /**
@@ -120,4 +126,27 @@ function _reportError(msg, err) {
     // TODO This is a good point to call some global error handler when we have
     // one.
     console.error(msg, err);
+}
+
+/**
+ * Sets the data like avatar URL, email and display name for the local
+ * participant to the conference.
+ *
+ * @param {JitsiConference} conference - The JitsiConference instance.
+ * @param {Object} state - The whole Redux state.
+ * @returns {void}
+ */
+export function setLocalParticipantData(conference, state) {
+    const { avatarID, avatarURL, email, name } = getLocalParticipant(state);
+
+    avatarID && conference.sendCommand(AVATAR_ID_COMMAND, {
+        value: avatarID
+    });
+    avatarURL && conference.sendCommand(AVATAR_URL_COMMAND, {
+        value: avatarURL
+    });
+    email && conference.sendCommand(EMAIL_COMMAND, {
+        value: email
+    });
+    conference.setDisplayName(name);
 }

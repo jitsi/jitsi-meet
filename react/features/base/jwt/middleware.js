@@ -12,7 +12,9 @@ import { LIB_INIT_ERROR } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipantCount,
-    PARTICIPANT_JOINED
+    LOCAL_PARTICIPANT_DEFAULT_NAME,
+    PARTICIPANT_JOINED,
+    participantUpdated
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
@@ -120,6 +122,103 @@ function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
 }
 
 /**
+ * Converts 'context.user' JWT token structure to the format compatible with the
+ * corresponding fields overridden in base/participants.
+ *
+ * @param {Object} user - The 'jwt.context.user' structure parsed from the JWT
+ * token.
+ * @returns {({
+ *      avatarURL: string?,
+ *      email: string?,
+ *      name: string?
+ * })}
+ * @private
+ */
+function _normalizeCallerFields(user) {
+    const { avatar, avatarUrl, email, name } = user;
+    const caller = { };
+
+    if (typeof (avatarUrl || avatar) === 'string') {
+        caller.avatarURL = (avatarUrl || avatar).trim();
+    }
+    if (typeof email === 'string') {
+        caller.email = email.trim();
+    }
+    if (typeof name === 'string') {
+        caller.name = name.trim();
+    }
+
+    return Object.keys(caller).length ? caller : undefined;
+}
+
+/**
+ * Eventually overwrites 'avatarURL', 'email' and 'name' fields with the values
+ * from JWT token for the local participant stored in the 'base/participants'
+ * Redux store by dispatching the participant updated action.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Object} caller - The "caller" structure parsed from 'context.user'
+ * part of the JWT token and then normalized using
+ * {@link _normalizeCallerFields}.
+ * @returns {void}
+ * @private
+ */
+function _overwriteLocalParticipant({ dispatch, getState }, caller) {
+    const { avatarURL, email, name } = caller;
+    const localParticipant = getLocalParticipant(getState());
+
+    if (localParticipant && (avatarURL || email || name)) {
+        const newProperties = { id: localParticipant.id };
+
+        if (avatarURL) {
+            newProperties.avatarURL = avatarURL;
+        }
+        if (email) {
+            newProperties.email = email;
+        }
+        if (name) {
+            newProperties.name = name;
+        }
+        dispatch(participantUpdated(newProperties));
+    }
+}
+
+/**
+ * Will reset the values overridden by {@link _overwriteLocalParticipant}
+ * by either clearing them or setting to default values. Only the values that
+ * have not changed since the override happened will be restored.
+ *
+ * NOTE Once there is the possibility to edit and save participant properties,
+ * this method should restore values from the storage instead.
+ *
+ * @param {Store} store - The Redux store.
+ * @param {Object} caller - The 'caller' part of the JWT Redux state which tells
+ * which local participant's fields's been overridden when the JWT token was
+ * set.
+ * @returns {void}
+ * @private
+ */
+function _resetLocalParticipantOverrides({ dispatch, getState }, caller) {
+    const { avatarURL, name, email } = caller;
+    const localParticipant = getLocalParticipant(getState());
+
+    if (localParticipant && (avatarURL || name || email)) {
+        const newProperties = { id: localParticipant.id };
+
+        if (avatarURL === localParticipant.avatarURL) {
+            newProperties.avatarURL = undefined;
+        }
+        if (name === localParticipant.name) {
+            newProperties.name = LOCAL_PARTICIPANT_DEFAULT_NAME;
+        }
+        if (email === localParticipant.email) {
+            newProperties.email = undefined;
+        }
+        dispatch(participantUpdated(newProperties));
+    }
+}
+
+/**
  * Notifies the feature jwt that the action {@link SET_CONFIG} or
  * {@link SET_LOCATION_URL} is being dispatched within a specific redux
  * {@code store}.
@@ -183,10 +282,23 @@ function _setJWT(store, next, action) {
             action.issuer = iss;
             if (context) {
                 action.callee = context.callee;
-                action.caller = context.user;
+                action.caller = _normalizeCallerFields(context.user);
                 action.group = context.group;
                 action.server = context.server;
+
+                if (action.caller) {
+                    _overwriteLocalParticipant(store, action.caller);
+                }
             }
+        }
+    } else if (!jwt && !Object.keys(actionPayload).length) {
+        const jwtState = store.getState()['features/base/jwt'];
+
+        // The logic of restoring JWT overrides make sense only on mobile. On
+        // web it should eventually be restored from storage, but there's no
+        // such use case yet.
+        if (jwtState.caller && typeof APP === 'undefined') {
+            _resetLocalParticipantOverrides(store, jwtState.caller);
         }
     }
 

@@ -22,6 +22,13 @@ export const DEFAULT_AVATAR_RELATIVE_PATH = 'images/avatar.png';
 export const LOCAL_PARTICIPANT_DEFAULT_ID = 'local';
 
 /**
+ * The default display name for the local participant.
+ * TODO Get the from config and/or localized.
+ * @type {string}
+ */
+export const LOCAL_PARTICIPANT_DEFAULT_NAME = 'me';
+
+/**
  * Max length of the display names.
  *
  * @type {string}

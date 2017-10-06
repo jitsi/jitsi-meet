@@ -3,8 +3,7 @@
 declare var interfaceConfig: Object;
 
 import {
-    getPinnedParticipant,
-    getLocalParticipant
+    getPinnedParticipant
 } from '../base/participants';
 
 /**
@@ -17,6 +16,7 @@ import {
 export function shouldRemoteVideosBeVisible(state: Object) {
     const participants = state['features/base/participants'];
     const participantsCount = participants.length;
+    const pinnedParticipant = getPinnedParticipant(state);
 
     const shouldShowVideos
         = participantsCount > 2
@@ -27,7 +27,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         || (participantsCount > 1
             && (state['features/filmstrip'].hovered
                 || state['features/toolbox'].visible
-                || getLocalParticipant(state) === getPinnedParticipant(state)))
+                || (pinnedParticipant && pinnedParticipant.local)))
 
         || interfaceConfig.filmStripOnly
 

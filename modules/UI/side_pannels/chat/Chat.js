@@ -187,7 +187,7 @@ var Chat = {
      */
     init (eventEmitter) {
         initHTML();
-        if (APP.settings.getDisplayName()) {
+        if (APP.conference.getLocalDisplayName()) {
             Chat.setChatConversationMode(true);
         }
 
@@ -244,7 +244,7 @@ var Chat = {
 
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
-                if (APP.settings.getDisplayName())
+                if (APP.conference.getLocalDisplayName())
                     deferredFocus('usermsg');
                 else
                     deferredFocus('nickinput');

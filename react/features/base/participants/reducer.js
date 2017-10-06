@@ -11,6 +11,7 @@ import {
 } from './actionTypes';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
+    LOCAL_PARTICIPANT_DEFAULT_NAME,
     PARTICIPANT_ROLE
 } from './constants';
 
@@ -99,7 +100,12 @@ function _participant(state, action) {
         // name
         if (!name) {
             // TODO Get the from config and/or localized.
-            name = local ? 'me' : 'Fellow Jitster';
+            // On web default value is handled in:
+            // conference.js getParticipantDisplayName
+            if (typeof APP === 'undefined') {
+                name
+                    = local ? LOCAL_PARTICIPANT_DEFAULT_NAME : 'Fellow Jitster';
+            }
         }
 
         return {

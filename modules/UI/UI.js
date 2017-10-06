@@ -19,7 +19,6 @@ import VideoLayout from "./videolayout/VideoLayout";
 import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
-import Settings from "./../settings/Settings";
 
 import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
@@ -42,6 +41,7 @@ import {
     maybeShowNotificationWithDoNotDisplay,
     setNotificationsEnabled
 } from '../../react/features/notifications';
+import { getLocalParticipant } from '../../react/features/base/participants';
 
 var EventEmitter = require("events");
 UI.messageHandler = messageHandler;
@@ -199,7 +199,8 @@ UI.setLocalRaisedHandStatus
  * Initialize conference UI.
  */
 UI.initConference = function () {
-    let id = APP.conference.getMyUserId();
+    const { id, avatarID, email, name }
+        = getLocalParticipant(APP.store.getState());
 
     // Update default button states before showing the toolbar
     // if local role changes buttons state will be again updated.
@@ -207,18 +208,17 @@ UI.initConference = function () {
 
     UI.showToolbar();
 
-    let displayName = config.displayJids ? id : Settings.getDisplayName();
+    let displayName = config.displayJids ? id : name;
 
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
     }
 
     // Make sure we configure our avatar id, before creating avatar for us
-    let email = Settings.getEmail();
     if (email) {
         UI.setUserEmail(id, email);
     } else {
-        UI.setUserAvatarID(id, Settings.getAvatarId());
+        UI.setUserAvatarID(id, avatarID);
     }
 
     APP.store.dispatch(checkAutoEnableDesktopSharing());
@@ -235,7 +235,9 @@ UI.mucJoined = function () {
 
     // Update local video now that a conference is joined a user ID should be
     // set.
-    UI.changeDisplayName('localVideoContainer', APP.settings.getDisplayName());
+    UI.changeDisplayName(
+        'localVideoContainer',
+        APP.conference.getLocalDisplayName());
 };
 
 /***

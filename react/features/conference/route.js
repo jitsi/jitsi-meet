@@ -29,8 +29,6 @@ RouteRegistry.register({
  * @returns {void}
  */
 function _initConference() {
-    _setTokenData();
-
     // Initialize the conference URL handler
     APP.ConferenceUrl = new ConferenceUrl(window.location);
 }
@@ -101,23 +99,4 @@ function _obtainConfigHandler() {
 
     APP.connectionTimes['configuration.fetched'] = now;
     logger.log('(TIME) configuration fetched:\t', now);
-}
-
-/**
- * If JWT token data it will be used for local user settings.
- *
- * @private
- * @returns {void}
- */
-function _setTokenData() {
-    const state = APP.store.getState();
-    const { caller } = state['features/base/jwt'];
-
-    if (caller) {
-        const { avatarUrl, avatar, email, name } = caller;
-
-        APP.settings.setEmail((email || '').trim(), true);
-        APP.settings.setAvatarUrl((avatarUrl || avatar || '').trim());
-        APP.settings.setDisplayName((name || '').trim(), true);
-    }
 }
