@@ -278,7 +278,7 @@ export default function getDefaultButtons() {
                         && sharedVideoManager.isSharedVideoVolumeOn()
                         && !sharedVideoManager.isSharedVideoOwner()) {
                         APP.UI.showCustomToolbarPopup(
-                            '#unableToUnmutePopup', true, 5000);
+                            'microphone', 'unableToUnmutePopup', true, 5000);
                     } else {
                         JitsiMeetJS.analytics
                             .sendEvent('toolbar.audio.unmuted');
