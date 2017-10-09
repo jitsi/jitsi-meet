@@ -98,7 +98,7 @@ class MuteButton extends Component {
         const { dispatch, onClick, participantID } = this.props;
 
         sendEvent(
-            'remotevideomenu.mute',
+            'remotevideomenu.mute.clicked',
             {
                 value: 1,
                 label: participantID

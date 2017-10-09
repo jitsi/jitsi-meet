@@ -674,9 +674,13 @@ export default {
             }).then(([tracks, con]) => {
                 tracks.forEach(track => {
                     if (track.isAudioTrack() && this.isLocalAudioMuted()) {
+                        sendEvent('conference.audio.initiallyMuted');
+                        logger.log('Audio mute: initially muted');
                         track.mute();
                     } else if (track.isVideoTrack()
                                     && this.isLocalVideoMuted()) {
+                        sendEvent('conference.video.initiallyMuted');
+                        logger.log('Video mute: initially muted');
                         track.mute();
                     }
                 });
@@ -2260,6 +2264,8 @@ export default {
                     if (audioWasMuted ||
                         currentDevices.audioinput.length >
                         availableAudioInputDevices.length) {
+                        sendEvent('deviceListChanged.audio.muted');
+                        logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
                     }
 
@@ -2269,6 +2275,8 @@ export default {
                         (videoWasMuted ||
                             currentDevices.videoinput.length >
                                 availableVideoInputDevices.length)) {
+                        sendEvent('deviceListChanged.video.muted');
+                        logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
                     }
                 }));

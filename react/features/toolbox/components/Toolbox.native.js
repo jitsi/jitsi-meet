@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { sendEvent } from '../../analytics';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
@@ -174,6 +175,10 @@ class Toolbox extends Component {
      * @returns {void}
      */
     _onToggleAudio() {
+        const mute = !this.props._audioMuted;
+
+        sendEvent(`toolbar.audio.${mute ? 'muted' : 'unmuted'}`);
+
         // The user sees the reality i.e. the state of base/tracks and intends
         // to change reality by tapping on the respective button i.e. the user
         // sets the state of base/media. Whether the user's intention will turn
@@ -181,7 +186,7 @@ class Toolbox extends Component {
         // tapping.
         this.props.dispatch(
             setAudioMuted(
-                !this.props._audioMuted,
+                mute,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
     }
@@ -193,6 +198,10 @@ class Toolbox extends Component {
      * @returns {void}
      */
     _onToggleVideo() {
+        const mute = !this.props._videoMuted;
+
+        sendEvent(`toolbar.video.${mute ? 'muted' : 'unmuted'}`);
+
         // The user sees the reality i.e. the state of base/tracks and intends
         // to change reality by tapping on the respective button i.e. the user
         // sets the state of base/media. Whether the user's intention will turn

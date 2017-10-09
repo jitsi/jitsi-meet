@@ -4,6 +4,8 @@ import { toggleDialog } from '../../react/features/base/dialog';
 import { sendEvent } from '../../react/features/analytics';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * The reference to the shortcut dialogs when opened.
  */
@@ -28,6 +30,7 @@ function initGlobalShortcuts() {
     // register SPACE shortcut in two steps to insure visibility of help message
     KeyboardShortcut.registerShortcut(" ", null, function() {
         sendEvent("shortcut.talk.clicked");
+        logger.log('Talk shortcut pressed');
         APP.conference.muteAudio(true);
     });
     KeyboardShortcut._addShortcutToHelp("SPACE","keyboardShortcuts.pushToTalk");
@@ -119,8 +122,11 @@ const KeyboardShortcut = {
                 $(":focus").is("textarea"))) {
                 var key = self._getKeyboardKey(e).toUpperCase();
                 if(key === " ") {
-                    if(APP.conference.isLocalAudioMuted())
+                    if(APP.conference.isLocalAudioMuted()) {
+                        sendEvent("shortcut.talk.released");
+                        logger.log('Talk shortcut released');
                         APP.conference.muteAudio(false);
+                    }
                 }
             }
         };
