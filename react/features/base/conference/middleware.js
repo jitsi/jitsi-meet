@@ -35,6 +35,8 @@ import {
     _removeLocalTracksFromConference
 } from './functions';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 declare var APP: Object;
 
 /**
@@ -121,8 +123,11 @@ function _connectionEstablished(store, next, action) {
 function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    getState()['features/base/conference'].audioOnly
-        && dispatch(setAudioOnly(false));
+    if (getState()['features/base/conference'].audioOnly) {
+        sendEvent('audioonly.disabled');
+        logger.log('Audio only disabled');
+        dispatch(setAudioOnly(false));
+    }
 
     return result;
 }

@@ -1,5 +1,6 @@
 /* @flow */
 
+import { sendEvent } from '../../analytics';
 import { SET_ROOM, setAudioOnly } from '../conference';
 import { parseURLParams } from '../config';
 import { MiddlewareRegistry } from '../redux';
@@ -7,6 +8,8 @@ import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import { CAMERA_FACING_MODE } from './constants';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -77,14 +80,23 @@ function _setRoom({ dispatch, getState }, next, action) {
     typeof videoMuted === 'undefined'
         && (videoMuted = config.startWithVideoMuted);
 
+    audioMuted = Boolean(audioMuted);
+    videoMuted = Boolean(videoMuted);
+
     // Apply the config.
+
+    sendEvent(`startmuted.client.audio.${audioMuted ? 'muted' : 'unmuted'}`);
+    sendEvent(`startmuted.client.video.${videoMuted ? 'muted' : 'unmuted'}`);
+
+    logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${
+        videoMuted ? 'video' : ''}`);
 
     // Unconditionally express the desires/expectations/intents of the app and
     // the user i.e. the state of base/media. Eventually, practice/reality i.e.
     // the state of base/tracks will or will not agree with the desires.
-    dispatch(setAudioMuted(Boolean(audioMuted)));
+    dispatch(setAudioMuted(audioMuted));
     dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    dispatch(setVideoMuted(Boolean(videoMuted)));
+    dispatch(setVideoMuted(videoMuted));
 
     // config.startAudioOnly
     //
@@ -97,7 +109,10 @@ function _setRoom({ dispatch, getState }, next, action) {
         let audioOnly = urlParams && urlParams['config.startAudioOnly'];
 
         typeof audioOnly === 'undefined' && (audioOnly = config.startAudioOnly);
-        dispatch(setAudioOnly(Boolean(audioOnly)));
+        audioOnly = Boolean(audioOnly);
+        sendEvent(`startaudioonly.${audioOnly ? 'enabled' : 'disabled'}`);
+        logger.log(`Start audio only set to ${audioOnly.toString()}`);
+        dispatch(setAudioOnly(audioOnly));
     }
 
     return next(action);
@@ -121,6 +136,10 @@ function _syncTrackMutedState({ getState }, track) {
     // not yet in redux state and JitsiTrackEvents.TRACK_MUTE_CHANGED may be
     // fired before track gets to state.
     if (track.muted !== muted) {
+        sendEvent(
+            `synctrackstate.${track.mediaType}.${muted ? 'muted' : 'unmuted'}`);
+        logger.log(`Sync ${track.mediaType} track muted state to ${
+            muted ? 'muted' : 'unmuted'}`);
         track.muted = muted;
         setTrackMuted(track.jitsiTrack, muted);
     }

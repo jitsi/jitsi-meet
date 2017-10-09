@@ -1,5 +1,6 @@
 // @flow
 
+import { sendEvent } from '../../analytics';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
@@ -39,6 +40,8 @@ import { _addLocalTracksToConference } from './functions';
 
 import type { Dispatch } from 'redux';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Adds conference (event) listeners.
  *
@@ -69,6 +72,16 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.STARTED_MUTED,
         () => {
+            const audioMuted = Boolean(conference.startAudioMuted);
+            const videoMuted = Boolean(conference.startVideoMuted);
+
+            sendEvent(
+                `startmuted.server.audio.${audioMuted ? 'muted' : 'unmuted'}`);
+            sendEvent(
+                `startmuted.server.video.${videoMuted ? 'muted' : 'unmuted'}`);
+            logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${
+                videoMuted ? 'video' : ''}`);
+
             // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
             // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
             // Jicofo's intent into reality by actually muting the respective
@@ -77,8 +90,8 @@ function _addConferenceListeners(conference, dispatch) {
             // TODO Maybe the app needs to learn about Jicofo's intent and
             // transfer that intent to lib-jitsi-meet instead of lib-jitsi-meet
             // acting on Jicofo's intent without the app's knowledge.
-            dispatch(setAudioMuted(Boolean(conference.startAudioMuted)));
-            dispatch(setVideoMuted(Boolean(conference.startVideoMuted)));
+            dispatch(setAudioMuted(audioMuted));
+            dispatch(setVideoMuted(videoMuted));
         });
 
     // Dispatches into features/base/tracks follow:

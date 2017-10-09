@@ -533,7 +533,8 @@ export default class SharedVideoManager {
         if (APP.conference.isLocalAudioMuted()
             && !this.mutedWithUserInteraction
             && !this.isSharedVideoVolumeOn()) {
-
+            sendEvent("sharedvideo.audio.unmuted");
+            logger.log('Shared video: audio unmuted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
             this.showMicMutedPopup(false);
         }
@@ -546,7 +547,8 @@ export default class SharedVideoManager {
     smartAudioMute() {
         if (!APP.conference.isLocalAudioMuted()
             && this.isSharedVideoVolumeOn()) {
-
+            sendEvent("sharedvideo.audio.muted");
+            logger.log('Shared video: audio muted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
             this.showMicMutedPopup(true);
         }
