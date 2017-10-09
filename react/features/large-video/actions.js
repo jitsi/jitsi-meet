@@ -2,10 +2,7 @@
 
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media';
-import {
-    getLocalVideoTrack,
-    getTrackByMediaTypeAndParticipant
-} from '../base/tracks';
+import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -86,14 +83,13 @@ export function updateKnownLargeVideoResolution(resolution: number) {
 }
 
 /**
- * Returns the most recent existing video track. It can be local or remote
- * video.
+ * Returns the most recent existing remote video track.
  *
  * @param {Track[]} tracks - All current tracks.
  * @private
  * @returns {(Track|undefined)}
  */
-function _electLastVisibleVideo(tracks) {
+function _electLastVisibleRemoteVideo(tracks) {
     // First we try to get most recent remote video track.
     for (let i = tracks.length - 1; i >= 0; --i) {
         const track = tracks[i];
@@ -102,9 +98,6 @@ function _electLastVisibleVideo(tracks) {
             return track;
         }
     }
-
-    // And if no remote video tracks are available, we select the local one.
-    return getLocalVideoTrack(tracks);
 }
 
 /**
@@ -117,29 +110,36 @@ function _electLastVisibleVideo(tracks) {
  * @returns {(string|undefined)}
  */
 function _electParticipantInLargeVideo(state) {
-    // First get the pinned participant. If the local participant is pinned,
-    // he/she will be shown in LargeVideo.
+    // First get the pinned participant. If a participant is pinned, they will
+    // be shown in the LargeVideo.
     const participants = state['features/base/participants'];
     let participant = participants.find(p => p.pinned);
-    let id = participant ? participant.id : undefined;
+    let id = participant && participant.id;
 
     if (!id) {
         // No participant is pinned so get the dominant speaker. But the local
         // participant won't be displayed in LargeVideo even if he/she is the
         // dominant speaker.
         participant = participants.find(p => p.dominantSpeaker && !p.local);
-        if (participant) {
-            id = participant.id;
-        }
+        id = participant && participant.id;
 
         if (!id) {
-            // There is no dominant speaker so get the participant with the last
-            // visible video track. This may turn out to be the local
-            // participant.
+            // There is no dominant speaker so select the participant which last
+            // had visible video (excluding ourselves).
             const tracks = state['features/base/tracks'];
-            const videoTrack = _electLastVisibleVideo(tracks);
+            const videoTrack = _electLastVisibleRemoteVideo(tracks);
 
             id = videoTrack && videoTrack.participantId;
+
+            if (!id) {
+                // It's possible there is no participant with visible video,
+                // this can happen for a number or reasons:
+                //  - there is only one participant (the local user)
+                //  - other participants joined with video muted
+                // As a last resort, pick the last participant.
+                participant = participants[participants.length - 1];
+                id = participant && participant.id;
+            }
         }
     }
 
