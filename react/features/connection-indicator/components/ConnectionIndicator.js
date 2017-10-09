@@ -222,6 +222,7 @@ class ConnectionIndicator extends Component {
             <Popover
                 className = { rootClassNames }
                 content = { this._renderStatisticsTable() }
+                disablePopover = { !this.props.enableStatsDisplay }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
                     <div
