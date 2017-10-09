@@ -83,7 +83,7 @@ function _appWillMount({ dispatch, getState }, next, action) {
     const result = next(action);
 
     CallKit.setProviderConfiguration({
-        iconTemplateImageName: 'AppIcon40x40',
+        iconTemplateImageName: 'CallKitIcon',
         localizedName: NativeModules.AppInfo.name
     });
 

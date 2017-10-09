@@ -260,7 +260,10 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     // iconTemplateImageData
     NSString *iconTemplateImageName = dictionary[@"iconTemplateImageName"];
     if (iconTemplateImageName) {
-        UIImage *iconTemplateImage = [UIImage imageNamed:iconTemplateImageName];
+        UIImage *iconTemplateImage
+            = [UIImage imageNamed:iconTemplateImageName
+                         inBundle:[NSBundle bundleForClass:self.class]
+    compatibleWithTraitCollection:nil];
         if (iconTemplateImage) {
             providerConfiguration.iconTemplateImageData
                 = UIImagePNGRepresentation(iconTemplateImage);
