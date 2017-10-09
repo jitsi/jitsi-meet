@@ -113,19 +113,6 @@ export function setVideoMuted(
 }
 
 /**
- * Toggles the mute state of the local audio track(s).
- *
- * @returns {Function}
- */
-export function toggleAudioMuted() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const muted = getState()['features/base/media'].audio.muted;
-
-        return dispatch(setAudioMuted(!muted));
-    };
-}
-
-/**
  * Toggles the camera facing mode. Most commonly, for example, mobile devices
  * such as phones have a front/user-facing and a back/environment-facing
  * cameras. In contrast to setCameraFacingMode, allows the toggling to be
@@ -139,20 +126,5 @@ export function toggleAudioMuted() {
 export function toggleCameraFacingMode() {
     return {
         type: TOGGLE_CAMERA_FACING_MODE
-    };
-}
-
-/**
- * Toggles the mute state of the local video track(s).
- *
- * @returns {Function}
- */
-export function toggleVideoMuted() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const muted = getState()['features/base/media'].video.muted;
-
-        // XXX The following directly invokes the action creator in order to
-        // silence Flow.
-        return setVideoMuted(!muted)(dispatch, getState);
     };
 }
