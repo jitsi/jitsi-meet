@@ -67,6 +67,11 @@ class Popover extends Component {
         content: PropTypes.object,
 
         /**
+         * Whether displaying of the popover should be prevented.
+         */
+        disablePopover: PropTypes.bool,
+
+        /**
          * An id attribute to apply to the root of the {@code Popover}
          * component.
          */
@@ -148,12 +153,13 @@ class Popover extends Component {
      * @returns {void}
      */
     _onShowDialog() {
-        this.setState({ showDialog: true });
+        if (!this.props.disablePopover) {
+            this.setState({ showDialog: true });
 
-        if (this.props.onPopoverOpen) {
-            this.props.onPopoverOpen();
+            if (this.props.onPopoverOpen) {
+                this.props.onPopoverOpen();
+            }
         }
-
     }
 
     /**
