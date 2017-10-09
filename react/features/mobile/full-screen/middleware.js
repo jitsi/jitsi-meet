@@ -43,10 +43,10 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
             break;
         }
 
-        const { audioOnly, conference }
+        const { audioOnly, conference, joining }
             = getState()['features/base/conference'];
 
-        fullScreen = conference || action.conference ? !audioOnly : false;
+        fullScreen = conference || joining ? !audioOnly : false;
         break;
     }
 
