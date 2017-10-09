@@ -1,3 +1,5 @@
+// @flow
+
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -12,10 +14,7 @@ import {
     TRACK_UPDATED
 } from '../base/tracks';
 
-import {
-    selectParticipant,
-    selectParticipantInLargeVideo
-} from './actions';
+import { selectParticipant, selectParticipantInLargeVideo } from './actions';
 
 /**
  * Middleware that catches actions related to participants and tracks and
@@ -37,7 +36,7 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(selectParticipantInLargeVideo());
         break;
 
-    case TRACK_UPDATED: {
+    case TRACK_UPDATED:
         // In order to minimize re-calculations, we need to select participant
         // only if the videoType of the current participant rendered in
         // LargeVideo has changed.
@@ -53,7 +52,6 @@ MiddlewareRegistry.register(store => next => action => {
                 && store.dispatch(selectParticipant());
         }
         break;
-    }
     }
 
     return result;

@@ -1,3 +1,5 @@
+// @flow
+
 import { PARTICIPANT_ID_CHANGED } from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 

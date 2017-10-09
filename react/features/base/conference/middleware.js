@@ -185,7 +185,7 @@ function _pinParticipant(store, next, action) {
         let videoType;
 
         if ((participantById && participantById.local)
-            || (!id && pinnedParticipant && pinnedParticipant.local)) {
+                || (!id && pinnedParticipant && pinnedParticipant.local)) {
             videoType = 'local';
         } else {
             videoType = 'remote';

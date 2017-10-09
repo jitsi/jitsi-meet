@@ -33,6 +33,22 @@ export function dominantSpeakerChanged(id) {
 }
 
 /**
+ * Create an action for removing a participant from the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+ *     type: KICK_PARTICIPANT,
+ *     id: string
+ * }}
+ */
+export function kickParticipant(id) {
+    return {
+        type: KICK_PARTICIPANT,
+        id
+    };
+}
+
+/**
  * Creates an action to signal the connection status of the local participant
  * has changed.
  *
@@ -47,24 +63,9 @@ export function localParticipantConnectionStatusChanged(connectionStatus) {
 
         if (participant) {
             return dispatch(participantConnectionStatusChanged(
-                participant.id, connectionStatus));
+                participant.id,
+                connectionStatus));
         }
-    };
-}
-
-/**
- * Create an action for removing a participant from the conference.
- *
- * @param {string} id - Participant's ID.
- * @returns {{
- *     type: KICK_PARTICIPANT,
- *     id: string
- * }}
- */
-export function kickParticipant(id) {
-    return {
-        type: KICK_PARTICIPANT,
-        id
     };
 }
 
@@ -104,6 +105,21 @@ export function localParticipantJoined(participant = {}) {
         ...participant,
         local: true
     });
+}
+
+/**
+ * Action to remove a local participant.
+ *
+ * @returns {Function}
+ */
+export function localParticipantLeft() {
+    return (dispatch, getState) => {
+        const participant = getLocalParticipant(getState);
+
+        if (participant) {
+            return dispatch(participantLeft(participant.id));
+        }
+    };
 }
 
 /**
@@ -160,21 +176,6 @@ export function participantConnectionStatusChanged(id, connectionStatus) {
         participant: {
             connectionStatus,
             id
-        }
-    };
-}
-
-/**
- * Action to remove a local participant.
- *
- * @returns {Function}
- */
-export function localParticipantLeft() {
-    return (dispatch, getState) => {
-        const participant = getLocalParticipant(getState);
-
-        if (participant) {
-            return dispatch(participantLeft(participant.id));
         }
     };
 }
