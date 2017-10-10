@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Filmstrip } from '../../filmstrip';
+import { setInfoDialogVisibility } from '../../invite';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
 import { OverlayContainer } from '../../overlay';
@@ -69,6 +70,13 @@ class Conference extends Component {
         APP.UI.bindEvents();
 
         this.props.dispatch(connect());
+
+        // Automatically show the {@code InfoDialog} but do so after a timeout
+        // to better ensure the relevant components have been attached to the
+        // dom, otherwise the dialog may display misaligned.
+        setTimeout(() => {
+            this.props.dispatch(setInfoDialogVisibility(true));
+        });
     }
 
     /**
