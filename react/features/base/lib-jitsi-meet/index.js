@@ -10,8 +10,12 @@ export const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 export const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 export const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 export const JitsiConnectionEvents = JitsiMeetJS.events.connection;
+export const JitsiConnectionQualityEvents
+    = JitsiMeetJS.events.connectionQuality;
+export const JitsiMediaDevicesEvents = JitsiMeetJS.events.mediaDevices;
 export const JitsiParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
+export const JitsiRecordingStatus = JitsiMeetJS.constants.recordingStatus;
 export const JitsiTrackErrors = JitsiMeetJS.errors.track;
 export const JitsiTrackEvents = JitsiMeetJS.events.track;
 

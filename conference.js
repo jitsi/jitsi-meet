@@ -35,7 +35,15 @@ import {
 import { updateDeviceList } from './react/features/base/devices';
 import {
     isAnalyticsEnabled,
-    isFatalJitsiConnectionError
+    isFatalJitsiConnectionError,
+    JitsiConferenceErrors,
+    JitsiConferenceEvents,
+    JitsiConnectionErrors,
+    JitsiConnectionEvents,
+    JitsiMediaDevicesEvents,
+    JitsiParticipantConnectionStatus,
+    JitsiTrackErrors,
+    JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
 import {
     isVideoMutedByUser,
@@ -77,17 +85,6 @@ import {
     showDesktopSharingButton
 } from './react/features/toolbox';
 
-const { participantConnectionStatus } = JitsiMeetJS.constants;
-
-const ConnectionEvents = JitsiMeetJS.events.connection;
-const ConnectionErrors = JitsiMeetJS.errors.connection;
-
-const ConferenceEvents = JitsiMeetJS.events.conference;
-const ConferenceErrors = JitsiMeetJS.errors.conference;
-
-const TrackEvents = JitsiMeetJS.events.track;
-const TrackErrors = JitsiMeetJS.errors.track;
-
 const eventEmitter = new EventEmitter();
 
 let room;
@@ -123,7 +120,7 @@ const commands = {
 function connect(roomName) {
     return openConnection({retry: true, roomName: roomName})
             .catch(function (err) {
-                if (err === ConnectionErrors.PASSWORD_REQUIRED) {
+                if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
                     APP.UI.notifyTokenAuthFailed();
                 } else {
                     APP.UI.notifyConnectionFailed(err);
@@ -270,11 +267,11 @@ class ConferenceConnector {
         this._resolve = resolve;
         this._reject = reject;
         this.reconnectTimeout = null;
-        room.on(ConferenceEvents.CONFERENCE_JOINED,
+        room.on(JitsiConferenceEvents.CONFERENCE_JOINED,
             this._handleConferenceJoined.bind(this));
-        room.on(ConferenceEvents.CONFERENCE_FAILED,
+        room.on(JitsiConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
-        room.on(ConferenceEvents.CONFERENCE_ERROR,
+        room.on(JitsiConferenceEvents.CONFERENCE_ERROR,
             this._onConferenceError.bind(this));
     }
     _handleConferenceFailed(err) {
@@ -286,20 +283,20 @@ class ConferenceConnector {
         logger.error('CONFERENCE FAILED:', err, ...params);
 
         switch (err) {
-        case ConferenceErrors.CONNECTION_ERROR: {
+        case JitsiConferenceErrors.CONNECTION_ERROR: {
             let [msg] = params;
             APP.UI.notifyConnectionFailed(msg);
             break;
         }
 
-        case ConferenceErrors.NOT_ALLOWED_ERROR: {
+        case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
             // let's show some auth not allowed page
             assignWindowLocationPathname('static/authError.html');
             break;
         }
 
         // not enough rights to create conference
-        case ConferenceErrors.AUTHENTICATION_REQUIRED: {
+        case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
             // Schedule reconnect to check if someone else created the room.
             this.reconnectTimeout = setTimeout(() => room.join(), 5000);
 
@@ -311,21 +308,21 @@ class ConferenceConnector {
             break;
         }
 
-        case ConferenceErrors.RESERVATION_ERROR: {
+        case JitsiConferenceErrors.RESERVATION_ERROR: {
             let [code, msg] = params;
             APP.UI.notifyReservationError(code, msg);
             break;
         }
 
-        case ConferenceErrors.GRACEFUL_SHUTDOWN:
+        case JitsiConferenceErrors.GRACEFUL_SHUTDOWN:
             APP.UI.notifyGracefulShutdown();
             break;
 
-        case ConferenceErrors.JINGLE_FATAL_ERROR:
+        case JitsiConferenceErrors.JINGLE_FATAL_ERROR:
             APP.UI.notifyInternalError();
             break;
 
-        case ConferenceErrors.CONFERENCE_DESTROYED: {
+        case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
             let [reason] = params;
             APP.UI.hideStats();
             APP.UI.notifyConferenceDestroyed(reason);
@@ -336,26 +333,26 @@ class ConferenceConnector {
         // What really happens there is that the library is not ready yet,
         // because Jicofo is not available, but it is going to give it another
         // try.
-        case ConferenceErrors.FOCUS_DISCONNECTED: {
+        case JitsiConferenceErrors.FOCUS_DISCONNECTED: {
             let [focus, retrySec] = params;
             APP.UI.notifyFocusDisconnected(focus, retrySec);
             break;
         }
 
-        case ConferenceErrors.FOCUS_LEFT:
-        case ConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+        case JitsiConferenceErrors.FOCUS_LEFT:
+        case JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
             room.leave().then(() => connection.disconnect());
             break;
 
-        case ConferenceErrors.CONFERENCE_MAX_USERS:
+        case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
             connection.disconnect();
             APP.UI.notifyMaxUsersLimitReached();
             break;
 
-        case ConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
+        case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
             reload();
             break;
 
@@ -366,7 +363,7 @@ class ConferenceConnector {
     _onConferenceError(err, ...params) {
         logger.error('CONFERENCE Error:', err, params);
         switch (err) {
-        case ConferenceErrors.CHAT_ERROR:
+        case JitsiConferenceErrors.CHAT_ERROR:
             logger.error("Chat error.", err);
             if (isButtonEnabled('chat')) {
                 let [code, msg] = params;
@@ -379,9 +376,9 @@ class ConferenceConnector {
     }
     _unsubscribe() {
         room.off(
-            ConferenceEvents.CONFERENCE_JOINED, this._handleConferenceJoined);
+            JitsiConferenceEvents.CONFERENCE_JOINED, this._handleConferenceJoined);
         room.off(
-            ConferenceEvents.CONFERENCE_FAILED, this._onConferenceFailed);
+            JitsiConferenceEvents.CONFERENCE_FAILED, this._onConferenceFailed);
         if (this.reconnectTimeout !== null) {
             clearTimeout(this.reconnectTimeout);
         }
@@ -410,14 +407,14 @@ function disconnect() {
 /**
  * Handles CONNECTION_FAILED events from lib-jitsi-meet.
  *
- * @param {JitsiMeetJS.connection.error} error - The reported error.
+ * @param {JitsiConnectionError} error - The reported error.
  * @returns {void}
  * @private
  */
 function _connectionFailedHandler(error) {
     if (isFatalJitsiConnectionError(error)) {
         APP.connection.removeEventListener(
-            ConnectionEvents.CONNECTION_FAILED,
+            JitsiConnectionEvents.CONNECTION_FAILED,
             _connectionFailedHandler);
         if (room)
             room.leave();
@@ -517,7 +514,7 @@ export default {
         }
 
         JitsiMeetJS.mediaDevices.addEventListener(
-            JitsiMeetJS.events.mediaDevices.PERMISSION_PROMPT_IS_SHOWN,
+            JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
             browser =>
                 APP.store.dispatch(
                     mediaPermissionPromptVisibilityChanged(true, browser))
@@ -686,7 +683,7 @@ export default {
                 logger.log('initialized with %s local tracks', tracks.length);
                 this._localTracksInitialized = true;
                 con.addEventListener(
-                    ConnectionEvents.CONNECTION_FAILED,
+                    JitsiConnectionEvents.CONNECTION_FAILED,
                     _connectionFailedHandler);
                 APP.connection = connection = con;
 
@@ -1446,7 +1443,7 @@ export default {
                 = this._turnScreenSharingOff
                       .bind(this, didHaveVideo, wasVideoMuted);
             desktopStream.on(
-                TrackEvents.LOCAL_TRACK_STOPPED,
+                JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                 () => {
                     // If the stream was stopped during screen sharing
                     // session then we should switch back to video.
@@ -1526,13 +1523,13 @@ export default {
      * @private
      */
     _handleScreenSharingError(error) {
-        if (error.name === TrackErrors.CHROME_EXTENSION_USER_CANCELED) {
+        if (error.name === JitsiTrackErrors.CHROME_EXTENSION_USER_CANCELED) {
             return;
         }
 
         logger.error('failed to share local desktop', error);
 
-        if (error.name === TrackErrors.CHROME_EXTENSION_USER_GESTURE_REQUIRED) {
+        if (error.name === JitsiTrackErrors.CHROME_EXTENSION_USER_GESTURE_REQUIRED) {
             // If start with screen sharing the extension will fail to install
             // (if not found), because the request has been triggered by the
             // script. Show a dialog which asks user to click "install" and try
@@ -1544,7 +1541,7 @@ export default {
             );
 
             return;
-        } else if (error.name === TrackErrors.FIREFOX_EXTENSION_NEEDED) {
+        } else if (error.name === JitsiTrackErrors.FIREFOX_EXTENSION_NEEDED) {
             APP.UI.showExtensionRequiredDialog(
                 config.desktopSharingFirefoxExtensionURL
             );
@@ -1553,14 +1550,14 @@ export default {
         }
 
         // Handling:
-        // TrackErrors.PERMISSION_DENIED
-        // TrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
-        // TrackErrors.GENERAL
+        // JitsiTrackErrors.PERMISSION_DENIED
+        // JitsiTrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
+        // JitsiTrackErrors.GENERAL
         // and any other
         let dialogTxt;
         let dialogTitleKey;
 
-        if (error.name === TrackErrors.PERMISSION_DENIED) {
+        if (error.name === JitsiTrackErrors.PERMISSION_DENIED) {
             dialogTxt = APP.translation.generateTranslationHTML(
                 "dialog.screenSharingPermissionDeniedError");
             dialogTitleKey = "dialog.error";
@@ -1577,7 +1574,7 @@ export default {
      */
     _setupListeners() {
         // add local streams when joined to the conference
-        room.on(ConferenceEvents.CONFERENCE_JOINED, () => {
+        room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
             APP.store.dispatch(conferenceJoined(room));
 
             APP.UI.mucJoined();
@@ -1586,17 +1583,17 @@ export default {
         });
 
         room.on(
-            ConferenceEvents.CONFERENCE_LEFT,
+            JitsiConferenceEvents.CONFERENCE_LEFT,
             (...args) => APP.store.dispatch(conferenceLeft(room, ...args)));
 
         room.on(
-            ConferenceEvents.AUTH_STATUS_CHANGED,
+            JitsiConferenceEvents.AUTH_STATUS_CHANGED,
             (authEnabled, authLogin) =>
                 APP.UI.updateAuthInfo(authEnabled, authLogin));
 
-        room.on(ConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
+        room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
-        room.on(ConferenceEvents.USER_JOINED, (id, user) => {
+        room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
             if (user.isHidden())
                 return;
 
@@ -1614,7 +1611,7 @@ export default {
             APP.UI.updateUserRole(user);
         });
 
-        room.on(ConferenceEvents.USER_LEFT, (id, user) => {
+        room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
             APP.store.dispatch(participantLeft(id, user));
             logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
@@ -1622,7 +1619,7 @@ export default {
             APP.UI.onSharedVideoStop(id);
         });
 
-        room.on(ConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
+        room.on(JitsiConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
             APP.store.dispatch(participantPresenceChanged(id, status));
 
             let user = room.getParticipantById(id);
@@ -1631,7 +1628,7 @@ export default {
             }
         });
 
-        room.on(ConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
+        room.on(JitsiConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
                 logger.info(`My role changed, new role: ${role}`);
 
@@ -1651,21 +1648,21 @@ export default {
             }
         });
 
-        room.on(ConferenceEvents.TRACK_ADDED, (track) => {
+        room.on(JitsiConferenceEvents.TRACK_ADDED, (track) => {
             if (!track || track.isLocal())
                 return;
 
             APP.store.dispatch(trackAdded(track));
         });
 
-        room.on(ConferenceEvents.TRACK_REMOVED, (track) => {
+        room.on(JitsiConferenceEvents.TRACK_REMOVED, (track) => {
             if (!track || track.isLocal())
                 return;
 
             APP.store.dispatch(trackRemoved(track));
         });
 
-        room.on(ConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
+        room.on(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
             if (this.isLocalId(id)
                 && this.localAudio && this.localAudio.isMuted()) {
                 lvl = 0;
@@ -1680,7 +1677,7 @@ export default {
             APP.UI.setAudioLevel(id, lvl);
         });
 
-        room.on(ConferenceEvents.TALK_WHILE_MUTED, () => {
+        room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
             APP.UI.showToolbar(6000);
 
             APP.UI.showCustomToolbarPopup(
@@ -1688,23 +1685,23 @@ export default {
         });
 
         room.on(
-            ConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
+            JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
             (leavingIds, enteringIds) =>
                 APP.UI.handleLastNEndpoints(leavingIds, enteringIds));
 
         room.on(
-            ConferenceEvents.P2P_STATUS,
+            JitsiConferenceEvents.P2P_STATUS,
             (jitsiConference, p2p) => APP.store.dispatch(p2pStatusChanged(p2p)));
 
         room.on(
-            ConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
+            JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
             (id, connectionStatus) => {
                 APP.store.dispatch(participantConnectionStatusChanged(
                     id, connectionStatus));
 
                 APP.UI.participantConnectionStatusChanged(id);
             });
-        room.on(ConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
+        room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
             APP.store.dispatch(dominantSpeakerChanged(id));
 
             if (this.isLocalId(id)) {
@@ -1721,15 +1718,15 @@ export default {
         });
 
         if (!interfaceConfig.filmStripOnly) {
-            room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
+            room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
                 APP.UI.markVideoInterrupted(true);
             });
-            room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
+            room.on(JitsiConferenceEvents.CONNECTION_RESTORED, () => {
                 APP.UI.markVideoInterrupted(false);
             });
 
             if (isButtonEnabled('chat')) {
-                room.on(ConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
+                room.on(JitsiConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
                     let nick = getDisplayName(id);
                     APP.API.notifyReceivedChatMessage({
                         id,
@@ -1767,21 +1764,21 @@ export default {
                 () => this._displayAudioOnlyTooltip('videoMute'));
         }
 
-        room.on(ConferenceEvents.CONNECTION_INTERRUPTED, () => {
+        room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(
-                participantConnectionStatus.INTERRUPTED));
+                JitsiParticipantConnectionStatus.INTERRUPTED));
 
             APP.UI.showLocalConnectionInterrupted(true);
         });
 
-        room.on(ConferenceEvents.CONNECTION_RESTORED, () => {
+        room.on(JitsiConferenceEvents.CONNECTION_RESTORED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(
-                participantConnectionStatus.ACTIVE));
+                JitsiParticipantConnectionStatus.ACTIVE));
 
             APP.UI.showLocalConnectionInterrupted(false);
         });
 
-        room.on(ConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
+        room.on(JitsiConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
             const formattedDisplayName
                 = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
             APP.store.dispatch(participantUpdated({
@@ -1793,7 +1790,7 @@ export default {
         });
 
         room.on(
-            ConferenceEvents.LOCK_STATE_CHANGED,
+            JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
 
         APP.remoteControl.on(RemoteControlEvents.ACTIVE_CHANGED, isActive => {
@@ -1805,7 +1802,7 @@ export default {
         });
 
         room.on(
-            ConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
+            JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
             (participant, name, oldValue, newValue) => {
                 switch (name) {
                 case 'raisedHand':
@@ -1821,18 +1818,18 @@ export default {
                 }
             });
 
-        room.on(ConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
+        room.on(JitsiConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
             logger.log("Received recorder status change: ", status, error);
             APP.UI.updateRecordingState(status);
         });
 
-        room.on(ConferenceEvents.KICKED, () => {
+        room.on(JitsiConferenceEvents.KICKED, () => {
             APP.UI.hideStats();
             APP.UI.notifyKicked();
             // FIXME close
         });
 
-        room.on(ConferenceEvents.SUSPEND_DETECTED, () => {
+        room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
             // After wake up, we will be in a state where conference is left
             // there will be dialog shown to user.
@@ -1843,7 +1840,7 @@ export default {
             // on resume after suspending PC.
             if (this.deviceChangeListener)
                 JitsiMeetJS.mediaDevices.removeEventListener(
-                    JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
+                    JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                     this.deviceChangeListener);
 
             // stop local video
@@ -1858,7 +1855,7 @@ export default {
             }
         });
 
-        room.on(ConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
+        room.on(JitsiConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
             APP.UI.updateDTMFSupport(isDTMFSupported);
         });
 
@@ -1921,24 +1918,24 @@ export default {
             }
         );
         room.on(
-            ConferenceEvents.START_MUTED_POLICY_CHANGED,
+            JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
             ({ audio, video }) => {
                 APP.UI.onStartMutedChanged(audio, video);
             }
         );
-        room.on(ConferenceEvents.STARTED_MUTED, () => {
+        room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
             (room.isStartAudioMuted() || room.isStartVideoMuted())
                 && APP.UI.notifyInitiallyMuted();
         });
 
         room.on(
-            ConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
+            JitsiConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
                 APP.UI.updateDevicesAvailability(id, devices);
             }
         );
 
         room.on(
-            ConferenceEvents.DATA_CHANNEL_OPENED, () => {
+            JitsiConferenceEvents.DATA_CHANNEL_OPENED, () => {
                 APP.store.dispatch(dataChannelOpened());
             }
         );
@@ -1989,7 +1986,7 @@ export default {
         APP.UI.addListener(UIEvents.SUBJECT_CHANGED, (topic) => {
             room.setSubject(topic);
         });
-        room.on(ConferenceEvents.SUBJECT_CHANGED, function (subject) {
+        room.on(JitsiConferenceEvents.SUBJECT_CHANGED, function (subject) {
             APP.UI.setSubject(subject);
         });
 
@@ -2152,7 +2149,7 @@ export default {
     },
     /**
     * Adds any room listener.
-    * @param {string} eventName one of the ConferenceEvents
+    * @param {string} eventName one of the JitsiConferenceEvents
     * @param {Function} listener the function to be called when the event
     * occurs
     */
@@ -2162,7 +2159,7 @@ export default {
 
     /**
     * Removes any room listener.
-    * @param {string} eventName one of the ConferenceEvents
+    * @param {string} eventName one of the JitsiConferenceEvents
     * @param {Function} listener the listener to be removed.
     */
     removeConferenceListener(eventName, listener) {
@@ -2202,7 +2199,7 @@ export default {
                         window.setTimeout(
                             () => this._onDeviceListChanged(devices), 0);
                     JitsiMeetJS.mediaDevices.addEventListener(
-                        JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
+                        JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                         this.deviceChangeListener);
                 }
             })

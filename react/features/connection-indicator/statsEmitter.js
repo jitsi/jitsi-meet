@@ -2,7 +2,7 @@
 
 import _ from 'lodash';
 
-import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { JitsiConnectionQualityEvents } from '../base/lib-jitsi-meet';
 
 declare var APP: Object;
 
@@ -28,12 +28,10 @@ const statsEmitter = {
      * @returns {void}
      */
     startListeningForStats(conference: Object) {
-        const { connectionQuality } = JitsiMeetJS.events;
-
-        conference.on(connectionQuality.LOCAL_STATS_UPDATED,
+        conference.on(JitsiConnectionQualityEvents.LOCAL_STATS_UPDATED,
             stats => this._onStatsUpdated(conference.myUserId(), stats));
 
-        conference.on(connectionQuality.REMOTE_STATS_UPDATED,
+        conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
             (id, stats) => this._emitStatsUpdate(id, stats));
     },
 

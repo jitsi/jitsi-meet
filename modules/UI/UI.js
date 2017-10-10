@@ -1,4 +1,4 @@
-/* global APP, JitsiMeetJS, $, config, interfaceConfig */
+/* global APP, $, config, interfaceConfig */
 
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
@@ -22,6 +22,7 @@ import Profile from "./side_pannels/profile/Profile";
 import Settings from "./../settings/Settings";
 
 import { updateDeviceList } from '../../react/features/base/devices';
+import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
@@ -54,35 +55,38 @@ let sharedVideoManager;
 
 let followMeHandler;
 
-const TrackErrors = JitsiMeetJS.errors.track;
-
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {},
     camera: {}
 };
 
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.UNSUPPORTED_RESOLUTION]
-    = "dialog.cameraUnsupportedResolutionError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL]
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+    .camera[JitsiTrackErrors.UNSUPPORTED_RESOLUTION]
+        = "dialog.cameraUnsupportedResolutionError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.GENERAL]
     = "dialog.cameraUnknownError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.PERMISSION_DENIED]
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.PERMISSION_DENIED]
     = "dialog.cameraPermissionDeniedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NOT_FOUND]
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.NOT_FOUND]
     = "dialog.cameraNotFoundError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.CONSTRAINT_FAILED]
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.CONSTRAINT_FAILED]
     = "dialog.cameraConstraintFailedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.NO_DATA_FROM_SOURCE]
-    = "dialog.cameraNotSendingData";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL]
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+    .camera[JitsiTrackErrors.NO_DATA_FROM_SOURCE]
+        = "dialog.cameraNotSendingData";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiTrackErrors.GENERAL]
     = "dialog.micUnknownError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.PERMISSION_DENIED]
-    = "dialog.micPermissionDeniedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NOT_FOUND]
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+    .microphone[JitsiTrackErrors.PERMISSION_DENIED]
+        = "dialog.micPermissionDeniedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiTrackErrors.NOT_FOUND]
     = "dialog.micNotFoundError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.CONSTRAINT_FAILED]
-    = "dialog.micConstraintFailedError";
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.NO_DATA_FROM_SOURCE]
-    = "dialog.micNotSendingData";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+    .microphone[JitsiTrackErrors.CONSTRAINT_FAILED]
+        = "dialog.micConstraintFailedError";
+JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+    .microphone[JitsiTrackErrors.NO_DATA_FROM_SOURCE]
+        = "dialog.micNotSendingData";
 
 /**
  * Toggles the application in and out of full screen mode
@@ -1073,7 +1077,8 @@ UI.showMicErrorNotification = function (micError) {
     const micJitsiTrackErrorMsg
         = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[name];
     const micErrorMsg = micJitsiTrackErrorMsg
-        || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[TrackErrors.GENERAL];
+        || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+            .microphone[JitsiTrackErrors.GENERAL];
     const additionalMicErrorMsg = micJitsiTrackErrorMsg ? null : message;
 
     APP.store.dispatch(maybeShowNotificationWithDoNotDisplay(
@@ -1083,7 +1088,7 @@ UI.showMicErrorNotification = function (micError) {
             messageKey: micErrorMsg,
             showToggle: Boolean(micJitsiTrackErrorMsg),
             subtitleKey: 'dialog.micErrorPresent',
-            titleKey: name === TrackErrors.PERMISSION_DENIED
+            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
                 ? 'deviceError.microphonePermission' : 'dialog.error',
             toggleLabelKey: 'dialog.doNotShowWarningAgain'
         }));
@@ -1108,7 +1113,8 @@ UI.showCameraErrorNotification = function (cameraError) {
     const cameraJitsiTrackErrorMsg =
         JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[name];
     const cameraErrorMsg = cameraJitsiTrackErrorMsg
-        || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[TrackErrors.GENERAL];
+        || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+            .camera[JitsiTrackErrors.GENERAL];
     const additionalCameraErrorMsg = cameraJitsiTrackErrorMsg ? null : message;
 
     APP.store.dispatch(maybeShowNotificationWithDoNotDisplay(
@@ -1118,7 +1124,7 @@ UI.showCameraErrorNotification = function (cameraError) {
             messageKey: cameraErrorMsg,
             showToggle: Boolean(cameraJitsiTrackErrorMsg),
             subtitleKey: 'dialog.cameraErrorPresent',
-            titleKey: name === TrackErrors.PERMISSION_DENIED
+            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
                 ? 'deviceError.cameraPermission' : 'dialog.error',
             toggleLabelKey: 'dialog.doNotShowWarningAgain'
         }));

@@ -8,11 +8,11 @@ import {
     connectionFailed
 } from './react/features/base/connection';
 import {
-    isFatalJitsiConnectionError
+    isFatalJitsiConnectionError,
+    JitsiConnectionErrors,
+    JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
 
-const ConnectionEvents = JitsiMeetJS.events.connection;
-const ConnectionErrors = JitsiMeetJS.errors.connection;
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 /**
@@ -74,13 +74,13 @@ function connect(id, password, roomName) {
 
     return new Promise(function (resolve, reject) {
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_ESTABLISHED,
+            JitsiConnectionEvents.CONNECTION_ESTABLISHED,
             handleConnectionEstablished);
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_FAILED,
+            JitsiConnectionEvents.CONNECTION_FAILED,
             handleConnectionFailed);
         connection.addEventListener(
-            ConnectionEvents.CONNECTION_FAILED,
+            JitsiConnectionEvents.CONNECTION_FAILED,
             connectionFailedHandler);
 
         function connectionFailedHandler(error, message, credentials) {
@@ -89,17 +89,17 @@ function connect(id, password, roomName) {
 
             if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(
-                    ConnectionEvents.CONNECTION_FAILED,
+                    JitsiConnectionEvents.CONNECTION_FAILED,
                     connectionFailedHandler);
             }
         }
 
         function unsubscribe() {
             connection.removeEventListener(
-                ConnectionEvents.CONNECTION_ESTABLISHED,
+                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                 handleConnectionEstablished);
             connection.removeEventListener(
-                ConnectionEvents.CONNECTION_FAILED,
+                JitsiConnectionEvents.CONNECTION_FAILED,
                 handleConnectionFailed);
         }
 
@@ -149,7 +149,7 @@ export function openConnection({id, password, retry, roomName}) {
         if (retry) {
             const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
 
-            if (err === ConnectionErrors.PASSWORD_REQUIRED
+            if (err === JitsiConnectionErrors.PASSWORD_REQUIRED
                     && (!jwt || issuer === 'anonymous')) {
                 return AuthHandler.requestAuth(roomName, connect);
             }

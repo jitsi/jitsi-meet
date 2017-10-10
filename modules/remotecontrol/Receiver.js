@@ -4,6 +4,9 @@ import { getLogger } from 'jitsi-meet-logger';
 
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import {
+    JitsiConferenceEvents
+} from '../../react/features/base/lib-jitsi-meet';
+import {
     openRemoteControlAuthorizationDialog
 } from '../../react/features/remote-control';
 import {
@@ -22,9 +25,7 @@ import RemoteControlParticipant from './RemoteControlParticipant';
 declare var APP: Object;
 declare var config: Object;
 declare var interfaceConfig: Object;
-declare var JitsiMeetJS: Object;
 
-const ConferenceEvents = JitsiMeetJS.events.conference;
 const logger = getLogger(__filename);
 
 /**
@@ -92,7 +93,7 @@ export default class Receiver extends RemoteControlParticipant {
             // Announce remote control support.
             APP.connection.addFeature(DISCO_REMOTE_CONTROL_FEATURE, true);
             APP.conference.addConferenceListener(
-                ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 this._remoteControlEventsListener);
             APP.conference.addListener(JitsiMeetConferenceEvents.BEFORE_HANGUP,
                 this._hangupListener);
@@ -101,7 +102,7 @@ export default class Receiver extends RemoteControlParticipant {
             this._stop(true);
             APP.connection.removeFeature(DISCO_REMOTE_CONTROL_FEATURE);
             APP.conference.removeConferenceListener(
-                ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 this._remoteControlEventsListener);
             APP.conference.removeListener(
                 JitsiMeetConferenceEvents.BEFORE_HANGUP,
@@ -110,7 +111,7 @@ export default class Receiver extends RemoteControlParticipant {
     }
 
     /**
-     * Removes the listener for ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED
+     * Removes the listener for JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED
      * events. Sends stop message to the wrapper application. Optionally
      * displays dialog for informing the user that remote control session
      * ended.
@@ -125,7 +126,8 @@ export default class Receiver extends RemoteControlParticipant {
         }
         logger.log('Remote control receiver stop.');
         this._controller = null;
-        APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
+        APP.conference.removeConferenceListener(
+            JitsiConferenceEvents.USER_LEFT,
             this._userLeftListener);
         transport.sendEvent({
             name: REMOTE_CONTROL_MESSAGE_NAME,
@@ -216,7 +218,7 @@ export default class Receiver extends RemoteControlParticipant {
      * @returns {void}
      */
     grant(userId: string) {
-        APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+        APP.conference.addConferenceListener(JitsiConferenceEvents.USER_LEFT,
             this._userLeftListener);
         this._controller = userId;
         logger.log(`Remote control permissions granted to: ${userId}`);

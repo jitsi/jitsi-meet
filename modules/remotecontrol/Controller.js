@@ -2,6 +2,9 @@
 
 import { getLogger } from 'jitsi-meet-logger';
 
+import {
+    JitsiConferenceEvents
+} from '../../react/features/base/lib-jitsi-meet';
 import * as KeyCodes from '../keycode/keycode';
 import {
     EVENTS,
@@ -16,9 +19,7 @@ import RemoteControlParticipant from './RemoteControlParticipant';
 
 declare var $: Function;
 declare var APP: Object;
-declare var JitsiMeetJS: Object;
 
-const ConferenceEvents = JitsiMeetJS.events.conference;
 const logger = getLogger(__filename);
 
 /**
@@ -122,10 +123,10 @@ export default class Controller extends RemoteControlParticipant {
             const clearRequest = () => {
                 this._requestedParticipant = null;
                 APP.conference.removeConferenceListener(
-                    ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                    JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                     permissionsReplyListener);
                 APP.conference.removeConferenceListener(
-                    ConferenceEvents.USER_LEFT,
+                    JitsiConferenceEvents.USER_LEFT,
                     onUserLeft);
             };
 
@@ -156,9 +157,10 @@ export default class Controller extends RemoteControlParticipant {
             };
 
             APP.conference.addConferenceListener(
-                ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+                JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
                 permissionsReplyListener);
-            APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+            APP.conference.addConferenceListener(
+                JitsiConferenceEvents.USER_LEFT,
                 onUserLeft);
             this._requestedParticipant = userId;
             this.sendRemoteControlEndpointMessage(userId, {
@@ -240,9 +242,9 @@ export default class Controller extends RemoteControlParticipant {
         APP.UI.addListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.addConferenceListener(
-            ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+            JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             this._stopListener);
-        APP.conference.addConferenceListener(ConferenceEvents.USER_LEFT,
+        APP.conference.addConferenceListener(JitsiConferenceEvents.USER_LEFT,
             this._userLeftListener);
         this.resume();
     }
@@ -325,9 +327,9 @@ export default class Controller extends RemoteControlParticipant {
         APP.UI.removeListener(UIEvents.LARGE_VIDEO_ID_CHANGED,
             this._largeVideoChangedListener);
         APP.conference.removeConferenceListener(
-            ConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+            JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             this._stopListener);
-        APP.conference.removeConferenceListener(ConferenceEvents.USER_LEFT,
+        APP.conference.removeConferenceListener(JitsiConferenceEvents.USER_LEFT,
             this._userLeftListener);
         this.pause();
         this._controlledParticipant = null;

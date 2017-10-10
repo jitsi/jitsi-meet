@@ -1,8 +1,9 @@
-/* global $, APP, config, JitsiMeetJS */
+/* global $, APP, config */
 
 import { toJid } from '../../../react/features/base/connection';
-
-const ConnectionErrors = JitsiMeetJS.errors.connection;
+import {
+    JitsiConnectionErrors
+} from '../../../react/features/base/lib-jitsi-meet';
 
 /**
  * Build html for "password required" dialog.
@@ -14,7 +15,7 @@ function getPasswordInputHtml() {
         : "user@domain.net";
 
     return `
-        <input name="username" type="text" 
+        <input name="username" type="text"
                class="input-control"
                placeholder=${placeholder} autofocus>
         <input name="password" type="password"
@@ -121,7 +122,7 @@ function LoginDialog(successCallback, cancelCallback) {
         let errorMessageElem = finishedState.find('#errorMessage');
 
         let messageKey;
-        if (error === ConnectionErrors.PASSWORD_REQUIRED) {
+        if (error === JitsiConnectionErrors.PASSWORD_REQUIRED) {
             // this is a password required error, as login window was already
             // open once, this means username or password is wrong
             messageKey = 'dialog.incorrectPassword';
