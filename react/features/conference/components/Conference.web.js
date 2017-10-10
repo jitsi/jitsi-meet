@@ -3,10 +3,12 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
+import _ from 'lodash';
 
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { Filmstrip } from '../../filmstrip';
+import { setInfoDialogVisibility } from '../../invite';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
 import { OverlayContainer } from '../../overlay';
@@ -21,6 +23,8 @@ declare var interfaceConfig: Object;
  * The conference page of the Web application.
  */
 class Conference extends Component {
+    _onShowToolbar: Function;
+    _originalOnShowToolbar: Function;
 
     /**
      * Conference component's property types.
@@ -30,6 +34,27 @@ class Conference extends Component {
     static propTypes = {
         dispatch: PropTypes.func
     };
+
+    /**
+     * Initializes a new Conference instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Throttle and bind this component's mousemove handler to prevent it
+        // from firing too often.
+        this._originalOnShowToolbar = this._onShowToolbar;
+        this._onShowToolbar = _.throttle(
+            () => this._originalOnShowToolbar(),
+            100,
+            {
+                leading: true,
+                trailing: false
+            });
+    }
 
     /**
      * Until we don't rewrite UI using react components
@@ -45,6 +70,13 @@ class Conference extends Component {
         APP.UI.bindEvents();
 
         this.props.dispatch(connect());
+
+        // Automatically show the {@code InfoDialog} but do so after a timeout
+        // to better ensure the relevant components have been attached to the
+        // dom, otherwise the dialog may display misaligned.
+        setTimeout(() => {
+            this.props.dispatch(setInfoDialogVisibility(true));
+        });
     }
 
     /**
@@ -71,7 +103,9 @@ class Conference extends Component {
         const { filmStripOnly } = interfaceConfig;
 
         return (
-            <div id = 'videoconference_page'>
+            <div
+                id = 'videoconference_page'
+                onMouseMove = { this._onShowToolbar }>
                 <div id = 'videospace'>
                     <LargeVideo />
                     <Filmstrip filmstripOnly = { filmStripOnly } />
@@ -93,6 +127,16 @@ class Conference extends Component {
                 <HideNotificationBarStyle />
             </div>
         );
+    }
+
+    /**
+     * Displays the toolbar.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShowToolbar() {
+        APP.UI.showToolbar();
     }
 }
 
