@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { sendEvent } from '../../analytics';
 import { DEFAULT_AVATAR_RELATIVE_PATH } from '../../base/participants';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import ToolbarButton from './ToolbarButton';
 
 declare var APP: Object;
-declare var JitsiMeetJS: Object;
 
 /**
  * The default configuration for the button.
@@ -102,7 +102,7 @@ class ProfileButton extends Component {
      */
     _onClick() {
         if (!this.props._unclickable) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.profile.toggled');
+            sendEvent('toolbar.profile.toggled');
             APP.UI.emitEvent(UIEvents.TOGGLE_PROFILE);
         }
     }

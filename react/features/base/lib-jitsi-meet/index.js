@@ -19,6 +19,8 @@ export const JitsiRecordingStatus = JitsiMeetJS.constants.recordingStatus;
 export const JitsiTrackErrors = JitsiMeetJS.errors.track;
 export const JitsiTrackEvents = JitsiMeetJS.events.track;
 
+export const analytics = JitsiMeetJS.analytics;
+
 export * from './actions';
 export * from './actionTypes';
 export * from './constants';

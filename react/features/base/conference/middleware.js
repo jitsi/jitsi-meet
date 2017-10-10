@@ -2,8 +2,8 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
+import { sendEvent } from '../../analytics';
 import { CONNECTION_ESTABLISHED } from '../connection';
-import JitsiMeetJS from '../lib-jitsi-meet';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getLocalParticipant,
@@ -191,7 +191,7 @@ function _pinParticipant(store, next, action) {
             videoType = 'remote';
         }
 
-        JitsiMeetJS.analytics.sendEvent(
+        sendEvent(
                 `${actionName}.${videoType}`,
                 { value: conference.getParticipantCount() });
     }

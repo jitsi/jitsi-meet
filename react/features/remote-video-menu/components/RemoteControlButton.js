@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import JitsiMeetJS from '../../base/lib-jitsi-meet';
+import { sendEvent } from '../../analytics';
 import { translate } from '../../base/i18n';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -130,7 +130,7 @@ class RemoteControlButton extends Component {
         }
 
         if (eventName) {
-            JitsiMeetJS.analytics.sendEvent(
+            sendEvent(
                 `remotevideomenu.remotecontrol.${eventName}`,
                 {
                     value: 1,

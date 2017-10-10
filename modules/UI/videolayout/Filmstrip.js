@@ -1,9 +1,11 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 import { setFilmstripVisibility } from '../../../react/features/filmstrip';
 
 import UIEvents from "../../../service/UI/UIEvents";
 import UIUtil from "../util/UIUtil";
+
+import { sendEvent } from '../../../react/features/analytics';
 
 const Filmstrip = {
     /**
@@ -141,7 +143,7 @@ const Filmstrip = {
             return;
         }
         if (sendAnalytics) {
-            JitsiMeetJS.analytics.sendEvent('toolbar.filmstrip.toggled');
+            sendEvent('toolbar.filmstrip.toggled');
         }
         this.filmstrip.toggleClass("hidden");
 

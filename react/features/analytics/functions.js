@@ -1,9 +1,14 @@
 // @flow
 
-import JitsiMeetJS, { isAnalyticsEnabled } from '../base/lib-jitsi-meet';
+import JitsiMeetJS, {
+    analytics,
+    isAnalyticsEnabled
+} from '../base/lib-jitsi-meet';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+export const sendEvent = analytics.sendEvent.bind(analytics);
 
 /**
  * Loads the analytics scripts and inits JitsiMeetJS.analytics by setting
@@ -18,8 +23,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 export function initAnalytics({ getState }: { getState: Function }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
     window.analyticsHandlers = []; // Legacy support.
-
-    const { analytics } = JitsiMeetJS;
 
     if (!analytics || !isAnalyticsEnabled(getState)) {
         return;

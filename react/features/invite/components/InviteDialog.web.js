@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { sendEvent } from '../../analytics';
 import { getInviteURL } from '../../base/connection';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 
 import DialInNumbersForm from './DialInNumbersForm';
@@ -51,7 +51,7 @@ class InviteDialog extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        JitsiMeetJS.analytics.sendEvent('toolbar.invite.close');
+        sendEvent('toolbar.invite.close');
     }
 
     /**

@@ -16,7 +16,7 @@ import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
-import { initAnalytics } from './react/features/analytics';
+import { initAnalytics, sendEvent } from './react/features/analytics';
 
 import EventEmitter from "events";
 
@@ -1315,7 +1315,7 @@ export default {
             promise = createLocalTracksF({ devices: ['video'] })
                 .then(([stream]) => this.useVideoStream(stream))
                 .then(() => {
-                    JitsiMeetJS.analytics.sendEvent(
+                    sendEvent(
                         'conference.sharingDesktop.stop');
                     logger.log('switched back to local video');
                     if (!this.localVideo && wasVideoMuted) {
@@ -1486,7 +1486,7 @@ export default {
             return this.useVideoStream(stream);
         }).then(() => {
             this.videoSwitchInProgress = false;
-            JitsiMeetJS.analytics.sendEvent('conference.sharingDesktop.start');
+            sendEvent('conference.sharingDesktop.start');
             logger.log('sharing local desktop');
         }).catch(error => {
             this.videoSwitchInProgress = false;
@@ -1753,7 +1753,7 @@ export default {
 
                     room.selectParticipant(id);
                 } catch (e) {
-                    JitsiMeetJS.analytics.sendEvent(
+                    sendEvent(
                         'selectParticipant.failed');
                     reportError(e);
                 }
@@ -1973,7 +1973,7 @@ export default {
                 // Longer delays will be caused by something else and will just
                 // poison the data.
                 if (delay < 2000) {
-                    JitsiMeetJS.analytics.sendEvent('stream.switch.delay',
+                    sendEvent('stream.switch.delay',
                         {value: delay});
                 }
             });
@@ -2005,7 +2005,7 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             (cameraDeviceId) => {
-                JitsiMeetJS.analytics.sendEvent('settings.changeDevice.video');
+                sendEvent('settings.changeDevice.video');
                 createLocalTracksF({
                     devices: ['video'],
                     cameraDeviceId: cameraDeviceId,
@@ -2033,7 +2033,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             (micDeviceId) => {
-                JitsiMeetJS.analytics.sendEvent(
+                sendEvent(
                     'settings.changeDevice.audioIn');
                 createLocalTracksF({
                     devices: ['audio'],
@@ -2054,7 +2054,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             (audioOutputDeviceId) => {
-                JitsiMeetJS.analytics.sendEvent(
+                sendEvent(
                     'settings.changeDevice.audioOut');
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => logger.log('changed audio output device'))
@@ -2361,9 +2361,7 @@ export default {
      * NOTE: Should be used after conference.init
      */
     logEvent(name, value, label) {
-        if (JitsiMeetJS.analytics) {
-            JitsiMeetJS.analytics.sendEvent(name, {value, label});
-        }
+        sendEvent(name, {value, label});
         if (room) {
             room.sendApplicationLog(JSON.stringify({name, value, label}));
         }
