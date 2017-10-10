@@ -1,6 +1,7 @@
-/* global APP, $, JitsiMeetJS, interfaceConfig */
+/* global APP, $, interfaceConfig */
 
 import { toggleDialog } from '../../react/features/base/dialog';
+import { sendEvent } from '../../react/features/analytics';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
 /**
@@ -20,20 +21,20 @@ function initGlobalShortcuts() {
     });
 
     KeyboardShortcut.registerShortcut("?", null, function() {
-        JitsiMeetJS.analytics.sendEvent("shortcut.shortcut.help");
+        sendEvent("shortcut.shortcut.help");
         showKeyboardShortcutsPanel(true);
     }, "keyboardShortcuts.toggleShortcuts");
 
     // register SPACE shortcut in two steps to insure visibility of help message
     KeyboardShortcut.registerShortcut(" ", null, function() {
-        JitsiMeetJS.analytics.sendEvent("shortcut.talk.clicked");
+        sendEvent("shortcut.talk.clicked");
         APP.conference.muteAudio(true);
     });
     KeyboardShortcut._addShortcutToHelp("SPACE","keyboardShortcuts.pushToTalk");
 
     if(!interfaceConfig.filmStripOnly) {
         KeyboardShortcut.registerShortcut("T", null, () => {
-            JitsiMeetJS.analytics.sendEvent("shortcut.speakerStats.clicked");
+            sendEvent("shortcut.speakerStats.clicked");
             APP.store.dispatch(toggleDialog(SpeakerStats, {
                 conference: APP.conference
             }));

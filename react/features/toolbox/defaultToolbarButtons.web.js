@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { sendEvent } from '../analytics';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { InfoDialogButton, openInviteDialog } from '../invite';
@@ -12,7 +13,6 @@ import ProfileButton from './components/ProfileButton';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
-declare var JitsiMeetJS: Object;
 
 /**
  * The cache of {@link getDefaultButtons()}.
@@ -42,9 +42,9 @@ export default function getDefaultButtons() {
                 const newVideoMutedState = !APP.conference.isLocalVideoMuted();
 
                 if (newVideoMutedState) {
-                    JitsiMeetJS.analytics.sendEvent('toolbar.video.enabled');
+                    sendEvent('toolbar.video.enabled');
                 } else {
-                    JitsiMeetJS.analytics.sendEvent('toolbar.video.disabled');
+                    sendEvent('toolbar.video.disabled');
                 }
                 APP.UI.emitEvent(UIEvents.VIDEO_MUTED, newVideoMutedState);
             },
@@ -64,7 +64,7 @@ export default function getDefaultButtons() {
                     return;
                 }
 
-                JitsiMeetJS.analytics.sendEvent('shortcut.videomute.toggled');
+                sendEvent('shortcut.videomute.toggled');
                 APP.conference.toggleVideoMuted();
             },
             shortcutDescription: 'keyboardShortcuts.videoMute',
@@ -81,13 +81,13 @@ export default function getDefaultButtons() {
                 <span id = 'unreadMessages' /></span>,
             id: 'toolbar_button_chat',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.chat.toggled');
+                sendEvent('toolbar.chat.toggled');
                 APP.UI.emitEvent(UIEvents.TOGGLE_CHAT);
             },
             shortcut: 'C',
             shortcutAttr: 'toggleChatPopover',
             shortcutFunc() {
-                JitsiMeetJS.analytics.sendEvent('shortcut.chat.toggled');
+                sendEvent('shortcut.chat.toggled');
                 APP.UI.toggleChat();
             },
             shortcutDescription: 'keyboardShortcuts.toggleChat',
@@ -104,7 +104,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_contact_list',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent(
+                sendEvent(
                     'toolbar.contacts.toggled');
                 APP.UI.emitEvent(UIEvents.TOGGLE_CONTACT_LIST);
             },
@@ -121,9 +121,9 @@ export default function getDefaultButtons() {
             id: 'toolbar_button_desktopsharing',
             onClick() {
                 if (APP.conference.isSharingScreen) {
-                    JitsiMeetJS.analytics.sendEvent('toolbar.screen.disabled');
+                    sendEvent('toolbar.screen.disabled');
                 } else {
-                    JitsiMeetJS.analytics.sendEvent('toolbar.screen.enabled');
+                    sendEvent('toolbar.screen.enabled');
                 }
                 APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
             },
@@ -137,7 +137,7 @@ export default function getDefaultButtons() {
             shortcut: 'D',
             shortcutAttr: 'toggleDesktopSharingPopover',
             shortcutFunc() {
-                JitsiMeetJS.analytics.sendEvent('shortcut.screen.toggled');
+                sendEvent('shortcut.screen.toggled');
 
                 // eslint-disable-next-line no-empty-function
                 APP.conference.toggleScreenSharing().catch(() => {});
@@ -157,7 +157,7 @@ export default function getDefaultButtons() {
             },
             id: 'toolbar_button_fodeviceselection',
             onClick(dispatch: Function) {
-                JitsiMeetJS.analytics.sendEvent(
+                sendEvent(
                     'toolbar.fodeviceselection.toggled');
 
                 dispatch(openDeviceSelectionDialog());
@@ -177,7 +177,7 @@ export default function getDefaultButtons() {
             hidden: true,
             id: 'toolbar_button_dialpad',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.sip.dialpad.clicked');
+                sendEvent('toolbar.sip.dialpad.clicked');
             },
             tooltipKey: 'toolbar.dialpad'
         },
@@ -191,7 +191,7 @@ export default function getDefaultButtons() {
             hidden: true,
             id: 'toolbar_button_etherpad',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.etherpad.clicked');
+                sendEvent('toolbar.etherpad.clicked');
                 APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
             },
             tooltipKey: 'toolbar.etherpad'
@@ -205,7 +205,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_fullScreen',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.fullscreen.enabled');
+                sendEvent('toolbar.fullscreen.enabled');
 
                 APP.UI.emitEvent(UIEvents.TOGGLE_FULLSCREEN);
             },
@@ -213,7 +213,7 @@ export default function getDefaultButtons() {
             shortcutAttr: 'toggleFullscreenPopover',
             shortcutDescription: 'keyboardShortcuts.fullScreen',
             shortcutFunc() {
-                JitsiMeetJS.analytics.sendEvent('shortcut.fullscreen.toggled');
+                sendEvent('shortcut.fullscreen.toggled');
                 APP.UI.toggleFullScreen();
             },
             tooltipKey: 'toolbar.fullscreen'
@@ -229,7 +229,7 @@ export default function getDefaultButtons() {
             isDisplayed: () => true,
             id: 'toolbar_button_hangup',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.hangup');
+                sendEvent('toolbar.hangup');
                 APP.UI.emitEvent(UIEvents.HANGUP);
             },
             tooltipKey: 'toolbar.hangup'
@@ -252,7 +252,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_link',
             onClick(dispatch: Function) {
-                JitsiMeetJS.analytics.sendEvent('toolbar.invite.clicked');
+                sendEvent('toolbar.invite.clicked');
 
                 dispatch(openInviteDialog());
             },
@@ -280,12 +280,11 @@ export default function getDefaultButtons() {
                         APP.UI.showCustomToolbarPopup(
                             'microphone', 'unableToUnmutePopup', true, 5000);
                     } else {
-                        JitsiMeetJS.analytics
-                            .sendEvent('toolbar.audio.unmuted');
+                        sendEvent('toolbar.audio.unmuted');
                         APP.UI.emitEvent(UIEvents.AUDIO_MUTED, false, true);
                     }
                 } else {
-                    JitsiMeetJS.analytics.sendEvent('toolbar.audio.muted');
+                    sendEvent('toolbar.audio.muted');
                     APP.UI.emitEvent(UIEvents.AUDIO_MUTED, true, true);
                 }
             },
@@ -306,7 +305,7 @@ export default function getDefaultButtons() {
             shortcut: 'M',
             shortcutAttr: 'mutePopover',
             shortcutFunc() {
-                JitsiMeetJS.analytics.sendEvent('shortcut.audiomute.toggled');
+                sendEvent('shortcut.audiomute.toggled');
                 APP.conference.toggleAudioMuted();
             },
             shortcutDescription: 'keyboardShortcuts.mute',
@@ -329,14 +328,14 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_raisehand',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.raiseHand.clicked');
+                sendEvent('toolbar.raiseHand.clicked');
                 APP.conference.maybeToggleRaisedHand();
             },
             shortcut: 'R',
             shortcutAttr: 'raiseHandPopover',
             shortcutDescription: 'keyboardShortcuts.raiseHand',
             shortcutFunc() {
-                JitsiMeetJS.analytics.sendEvent('shortcut.raisehand.clicked');
+                sendEvent('shortcut.raisehand.clicked');
                 APP.conference.maybeToggleRaisedHand();
             },
             tooltipKey: 'toolbar.raiseHand'
@@ -364,7 +363,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_settings',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.settings.toggled');
+                sendEvent('toolbar.settings.toggled');
                 APP.UI.emitEvent(UIEvents.TOGGLE_SETTINGS);
             },
             sideContainerId: 'settings_container',
@@ -379,7 +378,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_sharedvideo',
             onClick() {
-                JitsiMeetJS.analytics.sendEvent('toolbar.sharedvideo.clicked');
+                sendEvent('toolbar.sharedvideo.clicked');
                 APP.UI.emitEvent(UIEvents.SHARED_VIDEO_CLICKED);
             },
             popups: [

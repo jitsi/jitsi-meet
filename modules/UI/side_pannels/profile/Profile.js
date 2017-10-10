@@ -1,7 +1,9 @@
-/* global $, APP, JitsiMeetJS */
+/* global $, APP */
 import UIUtil from "../../util/UIUtil";
 import UIEvents from "../../../../service/UI/UIEvents";
 import Settings from '../../../settings/Settings';
+
+import { sendEvent } from '../../../../react/features/analytics';
 
 const sidePanelsContainerId = 'sideToolbarContainer';
 const htmlStr = `
@@ -74,7 +76,7 @@ export default {
 
         // LOGIN
         function loginClicked () {
-            JitsiMeetJS.analytics.sendEvent('authenticate.login.clicked');
+            sendEvent('authenticate.login.clicked');
             emitter.emit(UIEvents.AUTH_CLICKED);
         }
 
@@ -84,7 +86,7 @@ export default {
         function logoutClicked () {
             let titleKey = "dialog.logoutTitle";
             let msgKey = "dialog.logoutQuestion";
-            JitsiMeetJS.analytics.sendEvent('authenticate.logout.clicked');
+            sendEvent('authenticate.logout.clicked');
             // Ask for confirmation
             APP.UI.messageHandler.openTwoButtonDialog({
                 titleKey: titleKey,

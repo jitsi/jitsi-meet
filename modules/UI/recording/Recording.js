@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig, JitsiMeetJS */
+/* global APP, $, config, interfaceConfig */
 /*
  * Copyright @ 2015 Atlassian Pty Ltd
  *
@@ -23,6 +23,9 @@ import VideoLayout from '../videolayout/VideoLayout';
 import {
     JitsiRecordingStatus
 } from '../../../react/features/base/lib-jitsi-meet';
+import {
+    sendEvent
+} from '../../../react/features/analytics';
 import { setToolboxEnabled } from '../../../react/features/toolbox';
 import { setNotificationsEnabled } from '../../../react/features/notifications';
 import {
@@ -437,7 +440,7 @@ var Recording = {
             return;
         }
 
-        JitsiMeetJS.analytics.sendEvent('recording.clicked');
+        sendEvent('recording.clicked');
         switch (this.currentState) {
         case JitsiRecordingStatus.ON:
         case JitsiRecordingStatus.RETRYING:
@@ -445,7 +448,7 @@ var Recording = {
             _showStopRecordingPrompt(this.recordingType).then(
                 () => {
                     this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED);
-                    JitsiMeetJS.analytics.sendEvent('recording.stopped');
+                    sendEvent('recording.stopped');
                 },
                 () => {});
             break;
@@ -457,19 +460,19 @@ var Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { streamId });
-                    JitsiMeetJS.analytics.sendEvent('recording.started');
+                    sendEvent('recording.started');
                 }).catch(reason => {
                     if (reason !== APP.UI.messageHandler.CANCEL)
                         logger.error(reason);
                     else
-                        JitsiMeetJS.analytics.sendEvent('recording.canceled');
+                        sendEvent('recording.canceled');
                 });
             else {
                 if (this.predefinedToken) {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token: this.predefinedToken });
-                    JitsiMeetJS.analytics.sendEvent('recording.started');
+                    sendEvent('recording.started');
                     return;
                 }
 
@@ -477,12 +480,12 @@ var Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token });
-                    JitsiMeetJS.analytics.sendEvent('recording.started');
+                    sendEvent('recording.started');
                 }).catch(reason => {
                     if (reason !== APP.UI.messageHandler.CANCEL)
                         logger.error(reason);
                     else
-                        JitsiMeetJS.analytics.sendEvent('recording.canceled');
+                        sendEvent('recording.canceled');
                 });
             }
             break;
