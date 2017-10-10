@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig, JitsiMeetJS */
+/* global $, APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
 import React from 'react';
@@ -7,6 +7,9 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 
 import { i18next } from '../../../react/features/base/i18n';
+import {
+    JitsiParticipantConnectionStatus
+} from '../../../react/features/base/lib-jitsi-meet';
 
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
@@ -20,9 +23,6 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import SmallVideo from "./SmallVideo";
 import UIUtils from "../util/UIUtil";
-
-const ParticipantConnectionStatus
-    = JitsiMeetJS.constants.participantConnectionStatus;
 
 /**
  * Creates new instance of the <tt>RemoteVideo</tt>.
@@ -379,14 +379,14 @@ RemoteVideo.prototype.removeRemoteStreamElement = function (stream) {
  */
 RemoteVideo.prototype.isConnectionActive = function() {
     return this.user.getConnectionStatus()
-        === ParticipantConnectionStatus.ACTIVE;
+        === JitsiParticipantConnectionStatus.ACTIVE;
 };
 
 /**
  * The remote video is considered "playable" once the stream has started
  * according to the {@link #hasVideoStarted} result.
  * It will be allowed to display video also in
- * {@link ParticipantConnectionStatus.INTERRUPTED} if the video was ever played
+ * {@link JitsiParticipantConnectionStatus.INTERRUPTED} if the video was ever played
  * and was not muted while not in ACTIVE state. This basically means that there
  * is stalled video image cached that could be displayed. It's used to show
  * "grey video image" in user's thumbnail when there are connectivity issues.
@@ -400,8 +400,8 @@ RemoteVideo.prototype.isVideoPlayable = function () {
 
     return SmallVideo.prototype.isVideoPlayable.call(this)
         && this.hasVideoStarted()
-        && (connectionState === ParticipantConnectionStatus.ACTIVE
-            || (connectionState === ParticipantConnectionStatus.INTERRUPTED
+        && (connectionState === JitsiParticipantConnectionStatus.ACTIVE
+            || (connectionState === JitsiParticipantConnectionStatus.INTERRUPTED
                     && !this.mutedWhileDisconnected));
 };
 
@@ -432,7 +432,7 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function () {
     this.updateConnectionStatus(connectionStatus);
 
     const isInterrupted
-        = connectionStatus === ParticipantConnectionStatus.INTERRUPTED;
+        = connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED;
     // Toggle thumbnail video problem filter
     this.selectVideoElement().toggleClass(
         "videoThumbnailProblemFilter", isInterrupted);

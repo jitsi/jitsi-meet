@@ -1,10 +1,11 @@
-/* global $, config, interfaceConfig, APP, JitsiMeetJS */
+/* global $, config, interfaceConfig, APP */
 
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
+import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VideoTrack } from '../../../react/features/base/media';
 /* eslint-enable no-unused-vars */
 
@@ -12,8 +13,6 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import UIEvents from "../../../service/UI/UIEvents";
 import SmallVideo from "./SmallVideo";
-
-const TrackEvents = JitsiMeetJS.events.track;
 
 function LocalVideo(VideoLayout, emitter) {
     this.videoSpanId = "localVideoContainer";
@@ -159,9 +158,9 @@ LocalVideo.prototype.changeVideo = function (stream) {
         if (this.isCurrentlyOnLargeVideo()) {
             this.VideoLayout.updateLargeVideo(this.id);
         }
-        stream.off(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+        stream.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
-    stream.on(TrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+    stream.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
 };
 
 /**

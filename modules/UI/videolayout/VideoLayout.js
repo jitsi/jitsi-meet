@@ -1,6 +1,9 @@
-/* global APP, $, interfaceConfig, JitsiMeetJS  */
+/* global APP, $, interfaceConfig  */
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
+import {
+    JitsiParticipantConnectionStatus
+} from '../../../react/features/base/lib-jitsi-meet';
 import {
     getPinnedParticipant,
     pinParticipant
@@ -14,9 +17,6 @@ import RemoteVideo from "./RemoteVideo";
 import LargeVideoManager  from "./LargeVideoManager";
 import {VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 import LocalVideo from "./LocalVideo";
-
-const ParticipantConnectionStatus
-    = JitsiMeetJS.constants.participantConnectionStatus;
 
 var remoteVideos = {};
 var localVideoThumbnail = null;
@@ -593,8 +593,8 @@ var VideoLayout = {
         // states.
         const status
             = isInterrupted
-                ? ParticipantConnectionStatus.INTERRUPTED
-                : ParticipantConnectionStatus.ACTIVE;
+                ? JitsiParticipantConnectionStatus.INTERRUPTED
+                : JitsiParticipantConnectionStatus.ACTIVE;
 
         localVideoThumbnail.updateConnectionStatus(status);
     },

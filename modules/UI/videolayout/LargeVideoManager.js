@@ -10,6 +10,9 @@ import { PresenceLabel } from '../../../react/features/presence-status';
 const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 import {
+    JitsiParticipantConnectionStatus
+} from '../../../react/features/base/lib-jitsi-meet';
+import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
 
@@ -21,8 +24,6 @@ import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
 
 import AudioLevels from "../audio_levels/AudioLevels";
 
-const ParticipantConnectionStatus
-    = JitsiMeetJS.constants.participantConnectionStatus;
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 /**
  * The time interval in milliseconds to check the video resolution of the video
@@ -211,7 +212,7 @@ export default class LargeVideoManager {
                 = !isVideoMuted
                     && (APP.conference.isLocalId(id)
                         || connectionStatus
-                                === ParticipantConnectionStatus.ACTIVE
+                                === JitsiParticipantConnectionStatus.ACTIVE
                         || wasUsersImageCached);
 
             let showAvatar
@@ -241,13 +242,13 @@ export default class LargeVideoManager {
 
             const isConnectionInterrupted
                 = APP.conference.getParticipantConnectionStatus(id)
-                    === ParticipantConnectionStatus.INTERRUPTED;
+                    === JitsiParticipantConnectionStatus.INTERRUPTED;
             let messageKey = null;
 
             if (isConnectionInterrupted) {
                 messageKey = "connection.USER_CONNECTION_INTERRUPTED";
             } else if (connectionStatus
-                    === ParticipantConnectionStatus.INACTIVE) {
+                    === JitsiParticipantConnectionStatus.INACTIVE) {
                 messageKey = "connection.LOW_BANDWIDTH";
             }
 
@@ -494,8 +495,9 @@ export default class LargeVideoManager {
                 = APP.conference.getParticipantConnectionStatus(this.id);
 
             show = !APP.conference.isLocalId(this.id)
-                && (connStatus === ParticipantConnectionStatus.INTERRUPTED
-                    || connStatus === ParticipantConnectionStatus.INACTIVE);
+                && (connStatus === JitsiParticipantConnectionStatus.INTERRUPTED
+                    || connStatus
+                        === JitsiParticipantConnectionStatus.INACTIVE);
         }
 
         if (show) {
