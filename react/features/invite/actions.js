@@ -24,14 +24,20 @@ export function openInviteDialog() {
  * Opens the inline conference info dialog.
  *
  * @param {boolean} visible - Whether or not the dialog should be displayed.
+ * @param {boolean} autoClose - Whether or not the dialog should automatically
+ * close after a set period of time.
  * @returns {{
  *     type: SET_INFO_DIALOG_VISIBILITY,
+ *     autoClose: boolean,
  *     visible: boolean
  * }}
  */
-export function setInfoDialogVisibility(visible: boolean) {
+export function setInfoDialogVisibility(
+        visible: boolean,
+        autoClose: boolean = false) {
     return {
         type: SET_INFO_DIALOG_VISIBILITY,
+        autoClose,
         visible
     };
 }
