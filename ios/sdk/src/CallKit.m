@@ -19,10 +19,9 @@
 //
 
 #import <AVFoundation/AVFoundation.h>
+#import <CallKit/CallKit.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-@import CallKit;
 
 #import <React/RCTBridge.h>
 #import <React/RCTConvert.h>

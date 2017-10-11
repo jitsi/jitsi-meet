@@ -15,9 +15,9 @@
  */
 
 #import <CoreText/CoreText.h>
-#include <mach/mach_time.h>
+#import <Intents/Intents.h>
 
-@import Intents;
+#include <mach/mach_time.h>
 
 #import <React/RCTAssert.h>
 #import <React/RCTLinkingManager.h>
