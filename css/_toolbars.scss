@@ -211,6 +211,35 @@
     }
 
     /**
+     * Ensure child inline dialogs are positioned relative to the buttons that
+     * trigger their opening and set the trigger dimensions so that the dialogs
+     * display a bit more closely to their intended locations even if displayed
+     * before the toolbar is ready.
+     */
+    &_primary {
+        .toolbar-button-with-dialog {
+            position: relative;
+        }
+
+        .toolbar-button-with-dialog,
+        .toolbar-button-with-dialog-button {
+            height: $defaultToolbarSize;
+            width: $defaultToolbarSize;
+        }
+    }
+
+    &_secondary {
+        .toolbar-button-with-dialog {
+            position: relative;
+        }
+
+        .toolbar-button-with-dialog {
+            height: $secToolbarLineHeight;
+            width: $defaultToolbarSize;
+        }
+    }
+
+    /**
      * Styles the toolbar in filmstrip-only mode.
      */
     &_filmstrip-only {

@@ -97,16 +97,18 @@ class ToolbarButtonWithDialog extends Component {
         const Content = content;
 
         return (
-            <InlineDialog
-                content = { <Content onClose = { this._onDialogClose } /> }
-                isOpen = { _visible && this.state.showDialog }
-                onClose = { this._onDialogClose }
-                position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
-                <ToolbarButton
-                    button = { buttonConfiguration }
-                    onClick = { this._onDialogToggle }
-                    tooltipPosition = { tooltipPosition } />
-            </InlineDialog>
+            <div className = 'toolbar-button-with-dialog'>
+                <InlineDialog
+                    content = { <Content onClose = { this._onDialogClose } /> }
+                    isOpen = { _visible && this.state.showDialog }
+                    onClose = { this._onDialogClose }
+                    position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
+                    <ToolbarButton
+                        button = { buttonConfiguration }
+                        onClick = { this._onDialogToggle }
+                        tooltipPosition = { tooltipPosition } />
+                </InlineDialog>
+            </div>
         );
     }
 
