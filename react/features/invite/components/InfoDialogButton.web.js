@@ -41,6 +41,12 @@ class InfoDialogButton extends Component {
      */
     static propTypes = {
         /**
+         * Whether or not the {@code InfoDialog} should close by itself after a
+         * a timeout.
+         */
+        _shouldAutoClose: PropTypes.bool,
+
+        /**
          * Whether or not {@code InfoDialog} should be displayed.
          */
         _showDialog: PropTypes.bool,
@@ -80,15 +86,6 @@ class InfoDialogButton extends Component {
          */
         this._autoHideDialogTimeout = null;
 
-        this.state = {
-            /**
-             * Whether or not the dialog has been interacted with somehow, such
-             * as clicking or toggle display. A value of true will prevent the
-             * dialog from being automatically hidden.
-             */
-            hasInteractedWithDialog: false
-        };
-
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
         this._onDialogMouseOver = this._onDialogMouseOver.bind(this);
@@ -101,23 +98,34 @@ class InfoDialogButton extends Component {
      * @inheritdoc
      */
     componentDidMount() {
-        this._autoHideDialogTimeout = setTimeout(() => {
-            this._maybeHideDialog();
-        }, INITIAL_TOOLBAR_TIMEOUT);
+        if (this.props._shouldAutoClose) {
+            this._setAutoCloseTimeout();
+        }
     }
 
     /**
-     * Update the state when the {@code InfoDialog} visibility has been updated.
+     * Set or clear the timeout to automatically hide the {@code InfoDialog}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        // If the _shouldAutoClose flag has been updated to be true then make
+        // sure to set _autoHideDialogTimeout.
+        if (this.props._shouldAutoClose && !prevProps._shouldAutoClose) {
+            this._setAutoCloseTimeout();
+        } else {
+            this._clearAutoCloseTimeout();
+        }
+    }
+
+    /**
+     * Update the visibility of the {@code InfoDialog}.
      *
      * @inheritdoc
      */
     componentWillReceiveProps(nextProps) {
-        if (!this.state.hasInteractedWithDialog
-            && (nextProps._showDialog !== this.props._showDialog)) {
-            this.setState({ hasInteractedWithDialog: true });
-        }
-
-        if (!nextProps._toolboxVisible && this.props._toolboxVisible) {
+        // Ensure the dialog is closed when the toolbox becomes hidden.
+        if (nextProps._showDialog && !nextProps._toolboxVisible) {
             this._onDialogClose();
         }
     }
@@ -128,7 +136,7 @@ class InfoDialogButton extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        clearTimeout(this._autoHideDialogTimeout);
+        this._clearAutoCloseTimeout();
     }
 
     /**
@@ -154,7 +162,6 @@ class InfoDialogButton extends Component {
                     onMouseOver = { this._onDialogMouseOver } /> }
                 isOpen = { _toolboxVisible && _showDialog }
                 onClose = { this._onDialogClose }
-                onContentClick = { this._onDialogInteract }
                 position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
                 <ToolbarButton
                     button = { buttonConfiguration }
@@ -165,17 +172,14 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Callback invoked after a timeout to trigger hiding of the
-     * {@code InfoDialog} if there has been no interaction with the dialog
-     * and the dialog is currently showing.
+     * Cancels the timeout to automatically hide the {@code InfoDialog}.
      *
      * @private
      * @returns {void}
      */
-    _maybeHideDialog() {
-        if (!this.state.hasInteractedWithDialog && this.props._showDialog) {
-            this._onDialogToggle();
-        }
+    _clearAutoCloseTimeout() {
+        clearTimeout(this._autoHideDialogTimeout);
+        this._autoHideDialogTimeout = null;
     }
 
     /**
@@ -189,16 +193,13 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Updates the internal state to mark the {@code InfoDialog} as having been
-     * interacted with.
+     * Cancels the timeout to automatically hide the {@code InfoDialog}.
      *
      * @private
      * @returns {void}
      */
     _onDialogMouseOver() {
-        if (!this.state.hasInteractedWithDialog) {
-            this.setState({ hasInteractedWithDialog: true });
-        }
+        this._clearAutoCloseTimeout();
     }
 
     /**
@@ -210,6 +211,22 @@ class InfoDialogButton extends Component {
     _onDialogToggle() {
         this.props.dispatch(setInfoDialogVisibility(!this.props._showDialog));
     }
+
+    /**
+     * Set a timeout to automatically hide the {@code InfoDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setAutoCloseTimeout() {
+        this._clearAutoCloseTimeout();
+
+        this._autoHideDialogTimeout = setTimeout(() => {
+            if (this.props._showDialog) {
+                this._onDialogClose();
+            }
+        }, INITIAL_TOOLBAR_TIMEOUT);
+    }
 }
 
 /**
@@ -219,13 +236,20 @@ class InfoDialogButton extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _shouldAutoClose: boolean,
  *     _showDialog: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
+    const {
+        infoDialogVisible,
+        infoDialogWillAutoClose
+    } = state['features/invite'];
+
     return {
-        _showDialog: state['features/invite'].infoDialogVisible,
+        _shouldAutoClose: infoDialogWillAutoClose,
+        _showDialog: infoDialogVisible,
         _toolboxVisible: state['features/toolbox'].visible
     };
 }

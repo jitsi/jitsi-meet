@@ -18,7 +18,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED:
-        store.dispatch(setInfoDialogVisibility(true));
+        store.dispatch(setInfoDialogVisibility(true, true));
         break;
 
     case UPDATE_DIAL_IN_NUMBERS_FAILED:

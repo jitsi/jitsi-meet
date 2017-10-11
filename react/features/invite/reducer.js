@@ -15,7 +15,8 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
     case SET_INFO_DIALOG_VISIBILITY:
         return {
             ...state,
-            infoDialogVisible: action.visible
+            infoDialogVisible: action.visible,
+            infoDialogWillAutoClose: action.autoClose
         };
 
     case UPDATE_DIAL_IN_NUMBERS_FAILED:
