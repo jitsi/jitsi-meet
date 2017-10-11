@@ -119,16 +119,22 @@ function _libWillInit({ getState }, next, action) {
  * specified {@code action}.
  */
 function _setLoggingConfig({ getState }, next, action) {
-    const oldValue = getState()['features/base/logging'].config;
+    // const oldValue = getState()['features/base/logging'].config;
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;
 
-    if (oldValue !== newValue) {
-        _setLogLevels(Logger, newValue);
-        _setLogLevels(JitsiMeetJS, newValue);
+    // we skip checking oldValue and newValue, whether something had changed
+    // as at the time of changing this, there is no way to detect whether
+    // logging had already been enabled and APP.logCollector will disappear,
+    // when it does and goes into redux we will be able to detect this and do
+    // the initial initialization when
+    // _setLoggingConfig is called the first time
+    // FIXME add check whether oldValue is not equals newValue
+    // or logging hasn't been initialized and only then call _initLogging
+    _setLogLevels(Logger, newValue);
+    _setLogLevels(JitsiMeetJS, newValue);
 
-        _initLogging(newValue);
-    }
+    _initLogging(newValue);
 
     return result;
 }
