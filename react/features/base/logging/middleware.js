@@ -119,16 +119,19 @@ function _libWillInit({ getState }, next, action) {
  * specified {@code action}.
  */
 function _setLoggingConfig({ getState }, next, action) {
-    const oldValue = getState()['features/base/logging'].config;
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;
 
-    if (oldValue !== newValue) {
-        _setLogLevels(Logger, newValue);
-        _setLogLevels(JitsiMeetJS, newValue);
+    // TODO Generally, we'll want to _setLogLevels and _initLogging only if the
+    // logging config values actually change.
+    // XXX Unfortunately, we don't currently have a (nice) way of determining
+    // whether _setLogLevels or _initLogging have been invoked so we have to
+    // invoke them unconditionally even if none of the values have actually
+    // changed.
+    _setLogLevels(Logger, newValue);
+    _setLogLevels(JitsiMeetJS, newValue);
 
-        _initLogging(newValue);
-    }
+    _initLogging(newValue);
 
     return result;
 }
