@@ -4,8 +4,6 @@ const logger = require("jitsi-meet-logger").getLogger(__filename);
 
 var UI = {};
 
-import _ from 'lodash';
-
 import Chat from "./side_pannels/chat/Chat";
 import SidePanels from "./side_pannels/SidePanels";
 import Avatar from "./avatar/Avatar";
@@ -273,14 +271,6 @@ UI.start = function () {
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
-        let throttledShowToolbar
-            = _.throttle(
-                    () => UI.showToolbar(),
-                    100,
-                    { leading: true, trailing: false });
-
-        $("#videoconference_page").mousemove(throttledShowToolbar);
-
         // Initialise the recording module.
         if (config.enableRecording) {
             Recording.init(eventEmitter, config.recordingType);
