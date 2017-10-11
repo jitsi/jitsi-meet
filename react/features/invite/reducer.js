@@ -7,10 +7,6 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-
-    // By default show the info dialog when joining the conference.
-    infoDialogVisible: true,
-
     numbersEnabled: true
 };
 
