@@ -74,10 +74,13 @@
         z-index: $zindex1;
         display: inline-block;
         font-size: $toolbarFontSize;
+        height: $defaultToolbarSize;
         line-height: $defaultToolbarSize;
+        position: relative;
         text-align: center;
         top:0px;
         vertical-align: middle;
+        width: $defaultToolbarSize;
 
         &_hangup {
             color: $hangupColor;
@@ -124,18 +127,6 @@
                 cursor: default;
             }
         }
-    }
-
-    /**
-     * Ensure child inline dialogs are positioned relative to the buttons that
-     * triggers their opening. Set dimensions so that the dialogs are positioned
-     * correctly even before the toolbar is ready for display.
-     */
-    .button,
-    .toolbar-button-with-dialog {
-        height: $defaultToolbarSize;
-        position: relative;
-        width: $defaultToolbarSize;
     }
 
     /**
@@ -216,6 +207,35 @@
                     cursor: default;
                 }
             }
+        }
+    }
+
+    /**
+     * Ensure child inline dialogs are positioned relative to the buttons that
+     * trigger their opening and set the trigger dimensions so that the dialogs
+     * display a bit more closely to their intended locations even if displayed
+     * before the toolbar is ready.
+     */
+    &_primary {
+        .toolbar-button-with-dialog {
+            position: relative;
+        }
+
+        .toolbar-button-with-dialog,
+        .toolbar-button-with-dialog-button {
+            height: $defaultToolbarSize;
+            width: $defaultToolbarSize;
+        }
+    }
+
+    &_secondary {
+        .toolbar-button-with-dialog {
+            position: relative;
+        }
+
+        .toolbar-button-with-dialog {
+            height: $secToolbarLineHeight;
+            width: $defaultToolbarSize;
         }
     }
 

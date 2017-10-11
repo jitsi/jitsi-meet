@@ -157,10 +157,12 @@ class InfoDialogButton extends Component {
                     onClose = { this._onDialogClose }
                     onContentClick = { this._onDialogInteract }
                     position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
-                    <ToolbarButton
-                        button = { buttonConfiguration }
-                        onClick = { this._onDialogToggle }
-                        tooltipPosition = { tooltipPosition } />
+                    <div className = 'toolbar-button-with-dialog-button'>
+                        <ToolbarButton
+                            button = { buttonConfiguration }
+                            onClick = { this._onDialogToggle }
+                            tooltipPosition = { tooltipPosition } />
+                    </div>
                 </InlineDialog>
             </div>
         );
