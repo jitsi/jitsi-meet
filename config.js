@@ -109,6 +109,10 @@ var config = { // eslint-disable-line no-unused-vars
     // default and can be toggled in the p2p section.
     //preferH264: true,
 
+    // If set to true, disable H.264 video codec by stripping it out of the
+    // SDP.
+    //disableH264: false,
+
     // Desktop sharing
 
     // Enable / disable desktop sharing
@@ -259,6 +263,10 @@ var config = { // eslint-disable-line no-unused-vars
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported).
         preferH264: true
+
+        // If set to true, disable H.264 video codec by stripping it out of the
+        // SDP.
+        //disableH264: false,
 
         // How long we're going to wait, before going back to P2P after the 3rd
         // participant has left the conference (to filter out page reload).
