@@ -5,74 +5,76 @@
  * @enum {string}
  */
 export const KEYS = {
-    BACKSPACE: "backspace" ,
-    DELETE : "delete",
-    RETURN : "enter",
-    TAB : "tab",
-    ESCAPE : "escape",
-    UP : "up",
-    DOWN : "down",
-    RIGHT : "right",
-    LEFT : "left",
-    HOME : "home",
-    END : "end",
-    PAGEUP : "pageup",
-    PAGEDOWN : "pagedown",
+    BACKSPACE: 'backspace',
+    DELETE: 'delete',
+    RETURN: 'enter',
+    TAB: 'tab',
+    ESCAPE: 'escape',
+    UP: 'up',
+    DOWN: 'down',
+    RIGHT: 'right',
+    LEFT: 'left',
+    HOME: 'home',
+    END: 'end',
+    PAGEUP: 'pageup',
+    PAGEDOWN: 'pagedown',
 
-    F1 : "f1",
-    F2 : "f2",
-    F3 : "f3",
-    F4 : "f4",
-    F5 : "f5",
-    F6 : "f6",
-    F7 : "f7",
-    F8 : "f8",
-    F9 : "f9",
-    F10 : "f10",
-    F11 : "f11",
-    F12 : "f12",
-    META : "command",
-    CMD_L: "command",
-    CMD_R: "command",
-    ALT : "alt",
-    CONTROL : "control",
-    SHIFT : "shift",
-    CAPS_LOCK: "caps_lock", //not supported by robotjs
-    SPACE : "space",
-    PRINTSCREEN : "printscreen",
-    INSERT : "insert",
+    F1: 'f1',
+    F2: 'f2',
+    F3: 'f3',
+    F4: 'f4',
+    F5: 'f5',
+    F6: 'f6',
+    F7: 'f7',
+    F8: 'f8',
+    F9: 'f9',
+    F10: 'f10',
+    F11: 'f11',
+    F12: 'f12',
+    META: 'command',
+    CMD_L: 'command',
+    CMD_R: 'command',
+    ALT: 'alt',
+    CONTROL: 'control',
+    SHIFT: 'shift',
+    CAPS_LOCK: 'caps_lock', // not supported by robotjs
+    SPACE: 'space',
+    PRINTSCREEN: 'printscreen',
+    INSERT: 'insert',
 
-    NUMPAD_0 : "numpad_0",
-    NUMPAD_1 : "numpad_1",
-    NUMPAD_2 : "numpad_2",
-    NUMPAD_3 : "numpad_3",
-    NUMPAD_4 : "numpad_4",
-    NUMPAD_5 : "numpad_5",
-    NUMPAD_6 : "numpad_6",
-    NUMPAD_7 : "numpad_7",
-    NUMPAD_8 : "numpad_8",
-    NUMPAD_9 : "numpad_9",
+    NUMPAD_0: 'numpad_0',
+    NUMPAD_1: 'numpad_1',
+    NUMPAD_2: 'numpad_2',
+    NUMPAD_3: 'numpad_3',
+    NUMPAD_4: 'numpad_4',
+    NUMPAD_5: 'numpad_5',
+    NUMPAD_6: 'numpad_6',
+    NUMPAD_7: 'numpad_7',
+    NUMPAD_8: 'numpad_8',
+    NUMPAD_9: 'numpad_9',
 
-    COMMA: ",",
+    COMMA: ',',
 
-    PERIOD: ".",
-    SEMICOLON: ";",
-    QUOTE: "'",
-    BRACKET_LEFT: "[",
-    BRACKET_RIGHT: "]",
-    BACKQUOTE: "`",
-    BACKSLASH: "\\",
-    MINUS: "-",
-    EQUAL: "=",
-    SLASH: "/"
+    PERIOD: '.',
+    SEMICOLON: ';',
+    QUOTE: '\'',
+    BRACKET_LEFT: '[',
+    BRACKET_RIGHT: ']',
+    BACKQUOTE: '`',
+    BACKSLASH: '\\',
+    MINUS: '-',
+    EQUAL: '=',
+    SLASH: '/'
 };
 
+/* eslint-disable max-len */
 /**
  * Mapping between the key codes and keys deined in KEYS.
  * The mappings are based on
  * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode#Specifications
  */
-let keyCodeToKey = {
+/* eslint-enable max-len */
+const keyCodeToKey = {
     8: KEYS.BACKSPACE,
     9: KEYS.TAB,
     13: KEYS.RETURN,
@@ -141,15 +143,16 @@ let keyCodeToKey = {
 /**
  * Generate codes for digit keys (0-9)
  */
-for(let i = 0; i < 10; i++) {
+for (let i = 0; i < 10; i++) {
     keyCodeToKey[i + 48] = `${i}`;
 }
 
 /**
  * Generate codes for letter keys (a-z)
  */
-for(let i = 0; i < 26; i++) {
-    let keyCode = i + 65;
+for (let i = 0; i < 26; i++) {
+    const keyCode = i + 65;
+
     keyCodeToKey[keyCode] = String.fromCharCode(keyCode).toLowerCase();
 }
 

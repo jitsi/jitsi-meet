@@ -1,8 +1,8 @@
 /* global APP, $ */
 
-import {processReplacements, linkify} from './Replacement';
+import { processReplacements, linkify } from './Replacement';
 import CommandsProcessor from './Commands';
-import VideoLayout from "../../videolayout/VideoLayout";
+import VideoLayout from '../../videolayout/VideoLayout';
 
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -36,6 +36,9 @@ const htmlStr = `
         </div>
     </div>`;
 
+/**
+ *
+ */
 function initHTML() {
     $(`#${sidePanelsContainerId}`)
         .append(htmlStr);
@@ -44,7 +47,7 @@ function initHTML() {
 /**
  * The container id, which is and the element id.
  */
-var CHAT_CONTAINER_ID = "chat_container";
+const CHAT_CONTAINER_ID = 'chat_container';
 
 /**
  *  Updates visual notification, indicating that a message has arrived.
@@ -66,19 +69,15 @@ function updateVisualNotification() {
             = document.getElementById('toolbar_button_chat');
         const leftIndent
             = (UIUtil.getTextWidth(chatButtonElement)
-                    - UIUtil.getTextWidth(unreadMsgElement))
-                / 2;
+                - UIUtil.getTextWidth(unreadMsgElement)) / 2;
         const topIndent
-            = (UIUtil.getTextHeight(chatButtonElement)
-                        - UIUtil.getTextHeight(unreadMsgElement))
-                    / 2
-                - 5;
+            = ((UIUtil.getTextHeight(chatButtonElement)
+                - UIUtil.getTextHeight(unreadMsgElement)) / 2) - 5;
 
         unreadMsgElement.setAttribute(
                 'style',
-                'top:' + topIndent + '; left:' + leftIndent + ';');
-    }
-    else {
+                `top:${topIndent}; left:${leftIndent};`);
+    } else {
         unreadMsgSelector.html('');
     }
 
@@ -93,37 +92,49 @@ function updateVisualNotification() {
  * @returns {string}
  */
 function getCurrentTime(stamp) {
-    var now     = (stamp? new Date(stamp): new Date());
-    var hour    = now.getHours();
-    var minute  = now.getMinutes();
-    var second  = now.getSeconds();
-    if(hour.toString().length === 1) {
-        hour = '0'+hour;
+    const now = stamp ? new Date(stamp) : new Date();
+    let hour = now.getHours();
+    let minute = now.getMinutes();
+    let second = now.getSeconds();
+
+    if (hour.toString().length === 1) {
+        hour = `0${hour}`;
     }
-    if(minute.toString().length === 1) {
-        minute = '0'+minute;
+    if (minute.toString().length === 1) {
+        minute = `0${minute}`;
     }
-    if(second.toString().length === 1) {
-        second = '0'+second;
+    if (second.toString().length === 1) {
+        second = `0${second}`;
     }
-    return hour+':'+minute+':'+second;
+
+    return `${hour}:${minute}:${second}`;
 }
 
+/**
+ *
+ */
 function toggleSmileys() {
-    var smileys = $('#smileysContainer');
-    if(!smileys.is(':visible')) {
-        smileys.show("slide", { direction: "down", duration: 300});
+    const smileys = $('#smileysContainer'); // eslint-disable-line no-shadow
+
+    if (smileys.is(':visible')) {
+        smileys.hide('slide', { direction: 'down',
+            duration: 300 });
     } else {
-        smileys.hide("slide", { direction: "down", duration: 300});
+        smileys.show('slide', { direction: 'down',
+            duration: 300 });
     }
     $('#usermsg').focus();
 }
 
+/**
+ *
+ */
 function addClickFunction(smiley, number) {
     smiley.onclick = function addSmileyToMessage() {
-        var usermsg = $('#usermsg');
-        var message = usermsg.val();
-        message += smileys['smiley' + number];
+        const usermsg = $('#usermsg');
+        let message = usermsg.val();
+
+        message += smileys[`smiley${number}`];
         usermsg.val(message);
         usermsg.get(0).setSelectionRange(message.length, message.length);
         toggleSmileys();
@@ -135,35 +146,38 @@ function addClickFunction(smiley, number) {
  * Adds the smileys container to the chat
  */
 function addSmileys() {
-    var smileysContainer = document.createElement('div');
+    const smileysContainer = document.createElement('div');
+
     smileysContainer.id = 'smileysContainer';
-    for(var i = 1; i <= 21; i++) {
-        var smileyContainer = document.createElement('div');
-        smileyContainer.id = 'smiley' + i;
+    for (let i = 1; i <= 21; i++) {
+        const smileyContainer = document.createElement('div');
+
+        smileyContainer.id = `smiley${i}`;
         smileyContainer.className = 'smileyContainer';
-        var smiley = document.createElement('img');
-        smiley.src = 'images/smileys/smiley' + i + '.svg';
-        smiley.className =  'smiley';
+        const smiley = document.createElement('img');
+
+        smiley.src = `images/smileys/smiley${i}.svg`;
+        smiley.className = 'smiley';
         addClickFunction(smiley, i);
         smileyContainer.appendChild(smiley);
         smileysContainer.appendChild(smileyContainer);
     }
 
-    $("#chat_container").append(smileysContainer);
+    $('#chat_container').append(smileysContainer);
 }
 
 /**
  * Resizes the chat conversation.
  */
 function resizeChatConversation() {
-    var msgareaHeight = $('#usermsg').outerHeight();
-    var chatspace = $('#' + CHAT_CONTAINER_ID);
-    var width = chatspace.width();
-    var chat = $('#chatconversation');
-    var smileys = $('#smileysarea');
+    const msgareaHeight = $('#usermsg').outerHeight();
+    const chatspace = $(`#${CHAT_CONTAINER_ID}`);
+    const width = chatspace.width();
+    const chat = $('#chatconversation');
+    const smileys = $('#smileysarea'); // eslint-disable-line no-shadow
 
     smileys.height(msgareaHeight);
-    $("#smileys").css('bottom', (msgareaHeight - 26) / 2);
+    $('#smileys').css('bottom', (msgareaHeight - 26) / 2);
     $('#smileysContainer').css('bottom', msgareaHeight);
     chat.width(width - 10);
     chat.height(window.innerHeight - 15 - msgareaHeight);
@@ -175,63 +189,71 @@ function resizeChatConversation() {
  *
  * @param id {string} input id
  */
-function deferredFocus(id){
+function deferredFocus(id) {
     setTimeout(() => $(`#${id}`).focus(), 400);
 }
+
 /**
  * Chat related user interface.
  */
-var Chat = {
+const Chat = {
     /**
      * Initializes chat related interface.
      */
-    init (eventEmitter) {
+    init(eventEmitter) {
         initHTML();
         if (APP.conference.getLocalDisplayName()) {
             Chat.setChatConversationMode(true);
         }
 
-        $("#smileys").click(function() {
+        $('#smileys').click(() => {
             Chat.toggleSmileys();
         });
 
-        $('#nickinput').keydown(function (event) {
+        $('#nickinput').keydown(function(event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                let val = this.value;
-                this.value = '';
+                const val = this.value; // eslint-disable-line no-invalid-this
+
+                this.value = '';// eslint-disable-line no-invalid-this
                 eventEmitter.emit(UIEvents.NICKNAME_CHANGED, val);
                 deferredFocus('usermsg');
             }
         });
 
-        var usermsg = $('#usermsg');
-        usermsg.keydown(function (event) {
+        const usermsg = $('#usermsg');
+
+        usermsg.keydown(function(event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                var value = this.value;
+                const value = this.value; // eslint-disable-line no-invalid-this
+
                 usermsg.val('').trigger('autosize.resize');
-                this.focus();
-                var command = new CommandsProcessor(value, eventEmitter);
+                this.focus();// eslint-disable-line no-invalid-this
+                const command = new CommandsProcessor(value, eventEmitter);
+
                 if (command.isCommand()) {
                     command.processCommand();
                 } else {
-                    var message = UIUtil.escapeHtml(value);
+                    const message = UIUtil.escapeHtml(value);
+
                     eventEmitter.emit(UIEvents.MESSAGE_CREATED, message);
                 }
             }
         });
 
-        var onTextAreaResize = function () {
+        const onTextAreaResize = function() {
             resizeChatConversation();
             Chat.scrollChatToBottom();
         };
-        usermsg.autosize({callback: onTextAreaResize});
+
+        usermsg.autosize({ callback: onTextAreaResize });
 
         eventEmitter.on(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
-            function(containerId, isVisible) {
-                if (containerId !== CHAT_CONTAINER_ID || !isVisible)
+            (containerId, isVisible) => {
+                if (containerId !== CHAT_CONTAINER_ID || !isVisible) {
                     return;
+                }
 
                 unreadMessages = 0;
                 updateVisualNotification();
@@ -257,13 +279,14 @@ var Chat = {
     /**
      * Appends the given message to the chat conversation.
      */
-    updateChatConversation (id, displayName, message, stamp) {
-        var divClassName = '';
+    // eslint-disable-next-line max-params
+    updateChatConversation(id, displayName, message, stamp) {
+        let divClassName = '';
 
         if (APP.conference.isLocalId(id)) {
-            divClassName = "localuser";
+            divClassName = 'localuser';
         } else {
-            divClassName = "remoteuser";
+            divClassName = 'remoteuser';
 
             if (!Chat.isVisible()) {
                 unreadMessages++;
@@ -275,22 +298,25 @@ var Chat = {
         // replace links and smileys
         // Strophe already escapes special symbols on sending,
         // so we escape here only tags to avoid double &amp;
-        var escMessage = message.replace(/</g, '&lt;').
-            replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
-        var escDisplayName = UIUtil.escapeHtml(displayName);
+        const escMessage = message.replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+.replace(/\n/g, '<br/>');
+        const escDisplayName = UIUtil.escapeHtml(displayName);
+
+        // eslint-disable-next-line no-param-reassign
         message = processReplacements(escMessage);
 
-        var messageContainer =
-            '<div class="chatmessage">'+
-                '<img src="images/chatArrow.svg" class="chatArrow">' +
-                '<div class="username ' + divClassName +'">' + escDisplayName +
-                '</div>' + '<div class="timestamp">' + getCurrentTime(stamp) +
-                '</div>' + '<div class="usermessage">' + message + '</div>' +
-            '</div>';
+        const messageContainer
+            = `${'<div class="chatmessage">'
+                + '<img src="images/chatArrow.svg" class="chatArrow">'
+                + '<div class="username '}${divClassName}">${escDisplayName
+            }</div><div class="timestamp">${getCurrentTime(stamp)
+            }</div><div class="usermessage">${message}</div>`
+            + '</div>';
 
         $('#chatconversation').append(messageContainer);
         $('#chatconversation').animate(
-                { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
+                { scrollTop: $('#chatconversation')[0].scrollHeight }, 1000);
     },
 
     /**
@@ -298,25 +324,28 @@ var Chat = {
      * @param errorMessage the received error message.
      * @param originalText the original message.
      */
-    chatAddError (errorMessage, originalText) {
+    chatAddError(errorMessage, originalText) {
+        // eslint-disable-next-line no-param-reassign
         errorMessage = UIUtil.escapeHtml(errorMessage);
+        // eslint-disable-next-line no-param-reassign
         originalText = UIUtil.escapeHtml(originalText);
 
         $('#chatconversation').append(
-            '<div class="errorMessage"><b>Error: </b>' + 'Your message' +
-            (originalText? (` "${originalText}"`) : "") +
-            ' was not sent.' +
-            (errorMessage? (' Reason: ' + errorMessage) : '') +  '</div>');
+            `${'<div class="errorMessage"><b>Error: </b>Your message'}${
+                originalText ? ` "${originalText}"` : ''
+            } was not sent.${
+                errorMessage ? ` Reason: ${errorMessage}` : ''}</div>`);
         $('#chatconversation').animate(
-            { scrollTop: $('#chatconversation')[0].scrollHeight}, 1000);
+            { scrollTop: $('#chatconversation')[0].scrollHeight }, 1000);
     },
 
     /**
      * Sets the subject to the UI
      * @param subject the subject
      */
-    setSubject (subject) {
+    setSubject(subject) {
         if (subject) {
+            // eslint-disable-next-line no-param-reassign
             subject = subject.trim();
         }
 
@@ -332,16 +361,17 @@ var Chat = {
      * @param {boolean} isConversationMode if chat should be in
      * conversation mode or not.
      */
-    setChatConversationMode (isConversationMode) {
-        $('#' + CHAT_CONTAINER_ID)
+    setChatConversationMode(isConversationMode) {
+        $(`#${CHAT_CONTAINER_ID}`)
             .toggleClass('is-conversation-mode', isConversationMode);
     },
 
     /**
      * Resizes the chat area.
      */
-    resizeChat (width, height) {
-        $('#' + CHAT_CONTAINER_ID).width(width).height(height);
+    resizeChat(width, height) {
+        $(`#${CHAT_CONTAINER_ID}`).width(width)
+.height(height);
 
         resizeChatConversation();
     },
@@ -349,10 +379,11 @@ var Chat = {
     /**
      * Indicates if the chat is currently visible.
      */
-    isVisible () {
+    isVisible() {
         return UIUtil.isVisible(
             document.getElementById(CHAT_CONTAINER_ID));
     },
+
     /**
      * Shows and hides the window with the smileys
      */
@@ -361,7 +392,7 @@ var Chat = {
     /**
      * Scrolls chat to the bottom.
      */
-    scrollChatToBottom () {
+    scrollChatToBottom() {
         setTimeout(
             () => {
                 const chatconversation = $('#chatconversation');

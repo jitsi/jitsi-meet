@@ -1,5 +1,5 @@
 /* global $, APP */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
@@ -31,12 +31,14 @@ let twoButtonDialog = null;
  * @returns {string}
  */
 function generateDontShowCheckbox(options) {
-    if(!isDontShowAgainEnabled(options)) {
-        return "";
+    if (!isDontShowAgainEnabled(options)) {
+        return '';
     }
 
-    let checked
-        = (options.checked === true) ? "checked" : "";
+    const checked
+        = options.checked === true ? 'checked' : '';
+
+
     return `<br />
         <label>
             <input type='checkbox' ${checked} id='${options.id}' />
@@ -54,12 +56,13 @@ function generateDontShowCheckbox(options) {
  * false otherwise.
  */
 function dontShowTheDialog(options) {
-    if(isDontShowAgainEnabled(options)) {
-        if(jitsiLocalStorage.getItem(options.localStorageKey || options.id)
-            === "true") {
+    if (isDontShowAgainEnabled(options)) {
+        if (jitsiLocalStorage.getItem(options.localStorageKey || options.id)
+            === 'true') {
             return true;
         }
     }
+
     return false;
 }
 
@@ -76,24 +79,27 @@ function dontShowTheDialog(options) {
  * @returns {Function} wrapped function
  */
 function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
-    if(isDontShowAgainEnabled(options)) {
+    if (isDontShowAgainEnabled(options)) {
         return (...args) => {
             logger.debug(args, options.buttonValues);
-            //args[1] is the value associated with the pressed button
-            if(!options.buttonValues || options.buttonValues.length === 0
-                || options.buttonValues.indexOf(args[1]) !== -1 ) {
-                let checkbox = $(`#${options.id}`);
+
+            // args[1] is the value associated with the pressed button
+            if (!options.buttonValues || options.buttonValues.length === 0
+                || options.buttonValues.indexOf(args[1]) !== -1) {
+                const checkbox = $(`#${options.id}`);
+
                 if (checkbox.length) {
                     jitsiLocalStorage.setItem(
                         options.localStorageKey || options.id,
-                        checkbox.prop("checked"));
+                        checkbox.prop('checked'));
                 }
             }
             submitFunction(...args);
         };
-    } else {
-        return submitFunction;
     }
+
+    return submitFunction;
+
 }
 
 /**
@@ -102,12 +108,12 @@ function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
  * @returns {boolean} true if enabled and false if not.
  */
 function isDontShowAgainEnabled(options) {
-    return typeof options === "object";
+    return typeof options === 'object';
 }
 
-var messageHandler = {
-    OK: "dialog.OK",
-    CANCEL: "dialog.Cancel",
+const messageHandler = {
+    OK: 'dialog.OK',
+    CANCEL: 'dialog.Cancel',
 
     /**
      * Shows a message to the user.
@@ -120,25 +126,32 @@ var messageHandler = {
      * the prompt is closed (optional)
      * @return the prompt that was created, or null
      */
+    // eslint-disable-next-line max-params
     openMessageDialog(titleKey, messageKey, i18nOptions, closeFunction) {
-        if (!popupEnabled)
+        if (!popupEnabled) {
             return null;
+        }
 
-        let dialog = $.prompt(
+        const dialog = $.prompt(
             APP.translation.generateTranslationHTML(messageKey, i18nOptions),
             {
                 title: this._getFormattedTitleString(titleKey),
                 persistent: false,
                 promptspeed: 0,
                 classes: this._getDialogClasses(),
+                // eslint-disable-next-line max-params
                 close(e, v, m, f) {
-                    if(closeFunction)
+                    if (closeFunction) {
                         closeFunction(e, v, m, f);
+                    }
                 }
             });
+
         APP.translation.translateElement(dialog, i18nOptions);
+
         return $.prompt.getApi();
     },
+
     /**
      * Shows a message to the user with two buttons: first is given as a
      * parameter and the second is Cancel.
@@ -169,8 +182,8 @@ var messageHandler = {
      * storage. if not provided dontShowAgain.id will be used.
      * @return the prompt that was created, or null
      */
-    openTwoButtonDialog: function(options) {
-        let {
+    openTwoButtonDialog(options) {
+        const {
             titleKey,
             msgKey,
             msgString,
@@ -182,32 +195,40 @@ var messageHandler = {
             size,
             defaultButton,
             wrapperClass,
-            classes,
             dontShowAgain
         } = options;
 
-        if (!popupEnabled || twoButtonDialog)
-            return null;
+        let { classes } = options;
 
-        if(dontShowTheDialog(dontShowAgain)) {
-            // Maybe we should pass some parameters here? I'm not sure
-            // and currently we don't need any parameters.
-            submitFunction();
+        if (!popupEnabled || twoButtonDialog) {
             return null;
         }
 
-        var buttons = [];
+        if (dontShowTheDialog(dontShowAgain)) {
+            // Maybe we should pass some parameters here? I'm not sure
+            // and currently we don't need any parameters.
+            submitFunction();
 
-        var leftButton = leftButtonKey ?
-            APP.translation.generateTranslationHTML(leftButtonKey) :
-            APP.translation.generateTranslationHTML('dialog.Submit');
-        buttons.push({ title: leftButton, value: true});
+            return null;
+        }
 
-        var cancelButton
-            = APP.translation.generateTranslationHTML("dialog.Cancel");
-        buttons.push({title: cancelButton, value: false});
+        const buttons = [];
 
-        var message = msgString;
+        const leftButton = leftButtonKey
+            ? APP.translation.generateTranslationHTML(leftButtonKey)
+            : APP.translation.generateTranslationHTML('dialog.Submit');
+
+        buttons.push({ title: leftButton,
+            value: true });
+
+        const cancelButton
+            = APP.translation.generateTranslationHTML('dialog.Cancel');
+
+        buttons.push({ title: cancelButton,
+            value: false });
+
+        let message = msgString;
+
         if (msgKey) {
             message = APP.translation.generateTranslationHTML(msgKey);
         }
@@ -220,20 +241,20 @@ var messageHandler = {
         twoButtonDialog = $.prompt(message, {
             title: this._getFormattedTitleString(titleKey),
             persistent: false,
-            buttons: buttons,
-            defaultButton: defaultButton,
-            focus: focus,
+            buttons,
+            defaultButton,
+            focus,
             loaded: loadedFunction,
             promptspeed: 0,
             classes,
             submit: dontShowAgainSubmitFunctionWrapper(dontShowAgain,
-                function (e, v, m, f) {
+                (e, v, m, f) => { // eslint-disable-line max-params
                     twoButtonDialog = null;
                     if (v && submitFunction) {
                         submitFunction(e, v, m, f);
                     }
                 }),
-            close: function (e, v, m, f) {
+            close(e, v, m, f) { // eslint-disable-line max-params
                 twoButtonDialog = null;
                 if (closeFunction) {
                     closeFunction(e, v, m, f);
@@ -241,6 +262,7 @@ var messageHandler = {
             }
         });
         APP.translation.translateElement(twoButtonDialog);
+
         return $.prompt.getApi();
     },
 
@@ -270,7 +292,7 @@ var messageHandler = {
      * @param {string} dontShowAgain.localStorageKey the key for the local
      * storage. if not provided dontShowAgain.id will be used.
      */
-    openDialog(
+    openDialog(// eslint-disable-line max-params
             titleKey,
             msgString,
             persistent,
@@ -279,29 +301,33 @@ var messageHandler = {
             loadedFunction,
             closeFunction,
             dontShowAgain) {
-        if (!popupEnabled)
-            return;
-
-        if(dontShowTheDialog(dontShowAgain)) {
-            // Maybe we should pass some parameters here? I'm not sure
-            // and currently we don't need any parameters.
-            submitFunction();
+        if (!popupEnabled) {
             return;
         }
 
-        let args = {
+        if (dontShowTheDialog(dontShowAgain)) {
+            // Maybe we should pass some parameters here? I'm not sure
+            // and currently we don't need any parameters.
+            submitFunction();
+
+            return;
+        }
+
+        const args = {
             title: this._getFormattedTitleString(titleKey),
-            persistent: persistent,
-            buttons: buttons,
+            persistent,
+            buttons,
             defaultButton: 1,
             promptspeed: 0,
-            loaded: function() {
+            loaded() {
                 if (loadedFunction) {
+                    // eslint-disable-next-line prefer-rest-params
                     loadedFunction.apply(this, arguments);
                 }
+
                 // Hide the close button
                 if (persistent) {
-                    $(".jqiclose", this).hide();
+                    $('.jqiclose', this).hide();
                 }
             },
             submit: dontShowAgainSubmitFunctionWrapper(
@@ -314,9 +340,11 @@ var messageHandler = {
             args.closeText = '';
         }
 
-        let dialog = $.prompt(
+        const dialog = $.prompt(
             msgString + generateDontShowCheckbox(dontShowAgain), args);
+
         APP.translation.translateElement(dialog);
+
         return $.prompt.getApi();
     },
 
@@ -326,10 +354,13 @@ var messageHandler = {
      * @return the title string formatted as a div.
      */
     _getFormattedTitleString(titleKey) {
-        let $titleString = $('<h2>');
+        const $titleString = $('<h2>');
+
         $titleString.addClass('aui-dialog2-header-main');
-        $titleString.attr('data-i18n',titleKey);
-        return $('<div>').append($titleString).html();
+        $titleString.attr('data-i18n', titleKey);
+
+        return $('<div>').append($titleString)
+.html();
     },
 
     /**
@@ -359,23 +390,28 @@ var messageHandler = {
      * @param options impromptu options
      * @param translateOptions options passed to translation
      */
-    openDialogWithStates: function (statesObject, options, translateOptions) {
-        if (!popupEnabled)
+    openDialogWithStates(statesObject, options, translateOptions) {
+        if (!popupEnabled) {
             return;
-        let { classes, size } = options;
-        let defaultClasses = this._getDialogClasses(size);
+        }
+        const { classes, size } = options;
+        const defaultClasses = this._getDialogClasses(size);
+
         options.classes = Object.assign({}, defaultClasses, classes);
         options.promptspeed = options.promptspeed || 0;
 
-        for (let state in statesObject) {
-            let currentState = statesObject[state];
-            if(currentState.titleKey) {
+        for (const state in statesObject) { // eslint-disable-line guard-for-in
+            const currentState = statesObject[state];
+
+            if (currentState.titleKey) {
                 currentState.title
                     = this._getFormattedTitleString(currentState.titleKey);
             }
         }
-        let dialog = $.prompt(statesObject, options);
+        const dialog = $.prompt(statesObject, options);
+
         APP.translation.translateElement(dialog, translateOptions);
+
         return $.prompt.getApi();
     },
 
@@ -392,17 +428,20 @@ var messageHandler = {
      * @returns {object} popup window object if opened successfully or undefined
      *          in case we failed to open it(popup blocked)
      */
-    openCenteredPopup: function (url, w, h, onPopupClosed) {
-        if (!popupEnabled)
+    // eslint-disable-next-line max-params
+    openCenteredPopup(url, w, h, onPopupClosed) {
+        if (!popupEnabled) {
             return;
+        }
 
-        var l = window.screenX + (window.innerWidth / 2) - (w / 2);
-        var t = window.screenY + (window.innerHeight / 2) - (h / 2);
-        var popup = window.open(
+        const l = window.screenX + (window.innerWidth / 2) - (w / 2);
+        const t = window.screenY + (window.innerHeight / 2) - (h / 2);
+        const popup = window.open(
             url, '_blank',
-            'top=' + t + ', left=' + l + ', width=' + w + ', height=' + h + '');
+            String(`top=${t}, left=${l}, width=${w}, height=${h}`));
+
         if (popup && onPopupClosed) {
-            var pollTimer = window.setInterval(function () {
+            const pollTimer = window.setInterval(() => {
                 if (popup.closed !== false) {
                     window.clearInterval(pollTimer);
                     onPopupClosed();
@@ -420,10 +459,11 @@ var messageHandler = {
      * @param msgKey the text of the message
      * @param error the error that is being reported
      */
-    openReportDialog: function(titleKey, msgKey, error) {
+    openReportDialog(titleKey, msgKey, error) {
         this.openMessageDialog(titleKey, msgKey);
         logger.log(error);
-        //FIXME send the error to the server
+
+        // FIXME send the error to the server
     },
 
     /**
@@ -431,14 +471,7 @@ var messageHandler = {
      * @param titleKey the title of the message.
      * @param msgKey the text of the message.
      */
-    showError: function(titleKey, msgKey) {
-
-        if (!titleKey) {
-            titleKey = "dialog.oops";
-        }
-        if (!msgKey) {
-            msgKey = "dialog.defaultError";
-        }
+    showError(titleKey = 'dialog.oops', msgKey = 'dialog.defaultError') {
         messageHandler.openMessageDialog(titleKey, msgKey);
     },
 
@@ -454,7 +487,7 @@ var messageHandler = {
      * @param messageArguments object with the arguments for the message.
      * @param optional configurations for the notification (e.g. timeout)
      */
-    participantNotification(
+    participantNotification( // eslint-disable-line max-params
             displayName,
             displayNameKey,
             cls,
@@ -484,12 +517,12 @@ var messageHandler = {
      * translation.
      * @returns {void}
      */
-    notify: function(titleKey, messageKey, messageArguments) {
+    notify(titleKey, messageKey, messageArguments) {
         this.participantNotification(
             null, titleKey, null, messageKey, messageArguments);
     },
 
-    enablePopups: function (enable) {
+    enablePopups(enable) {
         popupEnabled = enable;
     },
 
@@ -498,8 +531,8 @@ var messageHandler = {
      * false otherwise
      * @returns {boolean} isOpened
      */
-    isDialogOpened: function () {
-        return !!$.prompt.getCurrentStateName();
+    isDialogOpened() {
+        return Boolean($.prompt.getCurrentStateName());
     }
 };
 

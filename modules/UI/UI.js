@@ -1,24 +1,24 @@
 /* global APP, $, config, interfaceConfig */
 
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-var UI = {};
+const UI = {};
 
-import Chat from "./side_pannels/chat/Chat";
-import SidePanels from "./side_pannels/SidePanels";
-import Avatar from "./avatar/Avatar";
-import SideContainerToggler from "./side_pannels/SideContainerToggler";
-import messageHandler from "./util/MessageHandler";
-import UIUtil from "./util/UIUtil";
-import UIEvents from "../../service/UI/UIEvents";
+import Chat from './side_pannels/chat/Chat';
+import SidePanels from './side_pannels/SidePanels';
+import Avatar from './avatar/Avatar';
+import SideContainerToggler from './side_pannels/SideContainerToggler';
+import messageHandler from './util/MessageHandler';
+import UIUtil from './util/UIUtil';
+import UIEvents from '../../service/UI/UIEvents';
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
-import Recording from "./recording/Recording";
+import Recording from './recording/Recording';
 
-import VideoLayout from "./videolayout/VideoLayout";
-import Filmstrip from "./videolayout/Filmstrip";
-import SettingsMenu from "./side_pannels/settings/SettingsMenu";
-import Profile from "./side_pannels/profile/Profile";
+import VideoLayout from './videolayout/VideoLayout';
+import Filmstrip from './videolayout/Filmstrip';
+import SettingsMenu from './side_pannels/settings/SettingsMenu';
+import Profile from './side_pannels/profile/Profile';
 
 import {
     openDeviceSelectionDialog
@@ -43,11 +43,13 @@ import {
     showToolbox
 } from '../../react/features/toolbox';
 
-var EventEmitter = require("events");
-UI.messageHandler = messageHandler;
-import FollowMe from "../FollowMe";
+const EventEmitter = require('events');
 
-var eventEmitter = new EventEmitter();
+UI.messageHandler = messageHandler;
+import FollowMe from '../FollowMe';
+
+const eventEmitter = new EventEmitter();
+
 UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
@@ -62,38 +64,82 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
 
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
     .camera[JitsiTrackErrors.UNSUPPORTED_RESOLUTION]
-        = "dialog.cameraUnsupportedResolutionError";
+        = 'dialog.cameraUnsupportedResolutionError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.GENERAL]
-    = "dialog.cameraUnknownError";
+    = 'dialog.cameraUnknownError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.PERMISSION_DENIED]
-    = "dialog.cameraPermissionDeniedError";
+    = 'dialog.cameraPermissionDeniedError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.NOT_FOUND]
-    = "dialog.cameraNotFoundError";
+    = 'dialog.cameraNotFoundError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.CONSTRAINT_FAILED]
-    = "dialog.cameraConstraintFailedError";
+    = 'dialog.cameraConstraintFailedError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
     .camera[JitsiTrackErrors.NO_DATA_FROM_SOURCE]
-        = "dialog.cameraNotSendingData";
+        = 'dialog.cameraNotSendingData';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiTrackErrors.GENERAL]
-    = "dialog.micUnknownError";
+    = 'dialog.micUnknownError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
     .microphone[JitsiTrackErrors.PERMISSION_DENIED]
-        = "dialog.micPermissionDeniedError";
+        = 'dialog.micPermissionDeniedError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiTrackErrors.NOT_FOUND]
-    = "dialog.micNotFoundError";
+    = 'dialog.micNotFoundError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
     .microphone[JitsiTrackErrors.CONSTRAINT_FAILED]
-        = "dialog.micConstraintFailedError";
+        = 'dialog.micConstraintFailedError';
 JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
     .microphone[JitsiTrackErrors.NO_DATA_FROM_SOURCE]
-        = "dialog.micNotSendingData";
+        = 'dialog.micNotSendingData';
+
+const UIListeners = new Map([
+    [
+        UIEvents.ETHERPAD_CLICKED,
+        () => etherpadManager && etherpadManager.toggleEtherpad()
+    ], [
+        UIEvents.SHARED_VIDEO_CLICKED,
+        () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
+    ], [
+        UIEvents.TOGGLE_FULLSCREEN,
+        () => UI.toggleFullScreen()
+    ], [
+        UIEvents.TOGGLE_CHAT,
+        () => UI.toggleChat()
+    ], [
+        UIEvents.TOGGLE_SETTINGS,
+        () => {
+            // Opening of device selection is special-cased as it is a dialog
+            // opened through a button in settings and not directly displayed in
+            // settings itself. As it is not useful to only have a settings menu
+            // with a button to open a dialog, open the dialog directly instead.
+            if (interfaceConfig.SETTINGS_SECTIONS.length === 1
+                    && UIUtil.isSettingEnabled('devices')) {
+                APP.store.dispatch(openDeviceSelectionDialog());
+            } else {
+                UI.toggleSidePanel('settings_container');
+            }
+        }
+    ], [
+        UIEvents.TOGGLE_CONTACT_LIST,
+        () => UI.toggleContactList()
+    ], [
+        UIEvents.TOGGLE_PROFILE,
+        () => {
+            UI.toggleSidePanel('profile_container');
+        }
+    ], [
+        UIEvents.TOGGLE_FILMSTRIP,
+        () => UI.handleToggleFilmstrip()
+    ], [
+        UIEvents.FOLLOW_ME_ENABLED,
+        enabled => followMeHandler && followMeHandler.enableFollowMe(enabled)
+    ]
+]);
 
 /**
  * Toggles the application in and out of full screen mode
  * (a.k.a. presentation mode in Chrome).
  */
 UI.toggleFullScreen = function() {
-    (UIUtil.isFullScreen())
+    UIUtil.isFullScreen()
         ? UIUtil.exitFullScreen()
         : UIUtil.enterFullScreen();
 };
@@ -101,7 +147,7 @@ UI.toggleFullScreen = function() {
 /**
  * Notify user that server has shut down.
  */
-UI.notifyGracefulShutdown = function () {
+UI.notifyGracefulShutdown = function() {
     messageHandler.openMessageDialog(
         'dialog.serviceUnavailable',
         'dialog.gracefulShutdown'
@@ -111,31 +157,33 @@ UI.notifyGracefulShutdown = function () {
 /**
  * Notify user that reservation error happened.
  */
-UI.notifyReservationError = function (code, msg) {
-    var message = APP.translation.generateTranslationHTML(
-        "dialog.reservationErrorMsg", {code: code, msg: msg});
+UI.notifyReservationError = function(code, msg) {
+    const message = APP.translation.generateTranslationHTML(
+        'dialog.reservationErrorMsg', { code,
+            msg });
+
     messageHandler.openDialog(
-        "dialog.reservationError", message, true, {}, () => false);
+        'dialog.reservationError', message, true, {}, () => false);
 };
 
 /**
  * Notify user that he has been kicked from the server.
  */
-UI.notifyKicked = function () {
+UI.notifyKicked = function() {
     messageHandler.openMessageDialog(
-            "dialog.sessTerminated",
-            "dialog.kickMessage");
+            'dialog.sessTerminated',
+            'dialog.kickMessage');
 };
 
 /**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */
-UI.notifyConferenceDestroyed = function (reason) {
-    //FIXME: use Session Terminated from translation, but
+UI.notifyConferenceDestroyed = function(reason) {
+    // FIXME: use Session Terminated from translation, but
     // 'reason' text comes from XMPP packet and is not translated
     messageHandler.openDialog(
-        "dialog.sessTerminated", reason, true, {}, () => false);
+        'dialog.sessTerminated', reason, true, {}, () => false);
 };
 
 /**
@@ -143,7 +191,7 @@ UI.notifyConferenceDestroyed = function (reason) {
  * @param err the Error
  * @param msg
  */
-UI.showChatError = function (err, msg) {
+UI.showChatError = function(err, msg) {
     if (interfaceConfig.filmStripOnly) {
         return;
     }
@@ -155,12 +203,12 @@ UI.showChatError = function (err, msg) {
  * @param {string} id user id
  * @param {string} displayName new nickname
  */
-UI.changeDisplayName = function (id, displayName) {
+UI.changeDisplayName = function(id, displayName) {
     VideoLayout.onDisplayNameChanged(id, displayName);
 
     if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
         Profile.changeDisplayName(displayName);
-        Chat.setChatConversationMode(!!displayName);
+        Chat.setChatConversationMode(Boolean(displayName));
     }
 };
 
@@ -171,7 +219,7 @@ UI.changeDisplayName = function (id, displayName) {
  * currently in the interrupted state or <tt>false</tt> if the connection
  * is fine.
  */
-UI.showLocalConnectionInterrupted = function (isInterrupted) {
+UI.showLocalConnectionInterrupted = function(isInterrupted) {
     VideoLayout.showLocalConnectionInterrupted(isInterrupted);
 };
 
@@ -198,7 +246,7 @@ UI.setLocalRaisedHandStatus
 /**
  * Initialize conference UI.
  */
-UI.initConference = function () {
+UI.initConference = function() {
     const { dispatch, getState } = APP.store;
     const { avatarID, email, id, name } = getLocalParticipant(getState);
 
@@ -208,7 +256,7 @@ UI.initConference = function () {
 
     UI.showToolbar();
 
-    let displayName = config.displayJids ? id : name;
+    const displayName = config.displayJids ? id : name;
 
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
@@ -230,7 +278,7 @@ UI.initConference = function () {
     followMeHandler = new FollowMe(APP.conference, UI);
 };
 
-UI.mucJoined = function () {
+UI.mucJoined = function() {
     VideoLayout.mucJoined();
 
     // Update local video now that a conference is joined a user ID should be
@@ -240,7 +288,7 @@ UI.mucJoined = function () {
         APP.conference.getLocalDisplayName());
 };
 
-/***
+/** *
  * Handler for toggling filmstrip
  */
 UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
@@ -249,7 +297,7 @@ UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
  * Returns the shared document manager object.
  * @return {EtherpadManager} the shared document manager object
  */
-UI.getSharedVideoManager = function () {
+UI.getSharedVideoManager = function() {
     return sharedVideoManager;
 };
 
@@ -259,11 +307,11 @@ UI.getSharedVideoManager = function () {
  * @returns {boolean} true if the UI is ready and the conference should be
  * established, false - otherwise (for example in the case of welcome page)
  */
-UI.start = function () {
+UI.start = function() {
     document.title = interfaceConfig.APP_NAME;
 
     // Set the defaults for prompt dialogs.
-    $.prompt.setDefaults({persistent: false});
+    $.prompt.setDefaults({ persistent: false });
 
 
     SideContainerToggler.init(eventEmitter);
@@ -276,22 +324,24 @@ UI.start = function () {
     VideoLayout.resizeVideoArea(true, true);
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
+    // eslint-disable-next-line no-negated-condition
     if (!interfaceConfig.filmStripOnly) {
         // Initialise the recording module.
         if (config.enableRecording) {
             Recording.init(eventEmitter, config.recordingType);
         }
+
         // Initialize side panels
         SidePanels.init(eventEmitter);
     } else {
-        $("body").addClass("filmstrip-only");
+        $('body').addClass('filmstrip-only');
         UI.showToolbar();
         Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
     }
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        $("body").addClass("vertical-filmstrip");
+        $('body').addClass('vertical-filmstrip');
     }
 
     document.title = interfaceConfig.APP_NAME;
@@ -322,6 +372,9 @@ UI.unregisterListeners
  * Setup some DOM event listeners.
  */
 UI.bindEvents = () => {
+    /**
+     *
+     */
     function onResize() {
         SideContainerToggler.resize();
         VideoLayout.resizeVideoArea();
@@ -364,7 +417,7 @@ UI.addLocalStream = track => {
         VideoLayout.changeLocalVideo(track);
         break;
     default:
-        logger.error("Unknown stream type: " + track.getType());
+        logger.error(`Unknown stream type: ${track.getType()}`);
         break;
     }
 };
@@ -413,17 +466,18 @@ UI.getSharedDocumentManager = () => etherpadManager;
  * Show user on UI.
  * @param {JitsiParticipant} user
  */
-UI.addUser = function (user) {
-    var id = user.getId();
-    var displayName = user.getDisplayName();
+UI.addUser = function(user) {
+    const id = user.getId();
+    const displayName = user.getDisplayName();
 
     messageHandler.participantNotification(
-        displayName,'notify.somebody', 'connected', 'notify.connected'
+        displayName, 'notify.somebody', 'connected', 'notify.connected'
     );
 
-    if (!config.startAudioMuted ||
-        config.startAudioMuted > APP.conference.membersCount)
+    if (!config.startAudioMuted
+        || config.startAudioMuted > APP.conference.membersCount) {
         UIUtil.playSoundNotification('userJoined');
+    }
 
     // Add Peer's container
     VideoLayout.addParticipantContainer(user);
@@ -432,8 +486,9 @@ UI.addUser = function (user) {
     UI.setUserEmail(id);
 
     // set initial display name
-    if(displayName)
+    if (displayName) {
         UI.changeDisplayName(id, displayName);
+    }
 };
 
 /**
@@ -441,9 +496,9 @@ UI.addUser = function (user) {
  * @param {string} id   user id
  * @param {string} displayName user nickname
  */
-UI.removeUser = function (id, displayName) {
+UI.removeUser = function(id, displayName) {
     messageHandler.participantNotification(
-        displayName,'notify.somebody', 'disconnected', 'notify.disconnected'
+        displayName, 'notify.somebody', 'disconnected', 'notify.disconnected'
     );
 
     if (!config.startAudioMuted
@@ -476,9 +531,10 @@ UI.updateLocalRole = isModerator => {
     SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
-        if (!interfaceConfig.DISABLE_FOCUS_INDICATOR)
+        if (!interfaceConfig.DISABLE_FOCUS_INDICATOR) {
             messageHandler.participantNotification(
-                null, "notify.me", 'connected', "notify.moderator");
+                null, 'notify.me', 'connected', 'notify.moderator');
+        }
 
         Recording.checkAutoRecord();
     }
@@ -498,7 +554,8 @@ UI.updateUserRole = user => {
         return;
     }
 
-    var displayName = user.getDisplayName();
+    const displayName = user.getDisplayName();
+
     if (displayName) {
         messageHandler.participantNotification(
             displayName, 'notify.somebody',
@@ -524,9 +581,10 @@ UI.updateUserStatus = (user, status) => {
         return;
     }
 
-    let displayName = user.getDisplayName();
+    const displayName = user.getDisplayName();
+
     messageHandler.participantNotification(
-        displayName, '', 'connected', "dialOut.statusMessage",
+        displayName, '', 'connected', 'dialOut.statusMessage',
         {
             status: UIUtil.escapeHtml(status)
         });
@@ -540,9 +598,9 @@ UI.toggleSmileys = () => Chat.toggleSmileys();
 /**
  * Toggles filmstrip.
  */
-UI.toggleFilmstrip = function () {
-    var self = Filmstrip;
-    self.toggleFilmstrip.apply(self, arguments);
+UI.toggleFilmstrip = function() {
+    // eslint-disable-next-line prefer-rest-params
+    Filmstrip.toggleFilmstrip(...arguments);
     VideoLayout.resizeVideoArea(true, false);
 };
 
@@ -555,12 +613,12 @@ UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
 /**
  * Toggles chat panel.
  */
-UI.toggleChat = () => UI.toggleSidePanel("chat_container");
+UI.toggleChat = () => UI.toggleSidePanel('chat_container');
 
 /**
  * Toggles contact list panel.
  */
-UI.toggleContactList = () => UI.toggleSidePanel("contacts_container");
+UI.toggleContactList = () => UI.toggleSidePanel('contacts_container');
 
 /**
  * Toggles the given side panel.
@@ -573,7 +631,7 @@ UI.toggleSidePanel = sidePanelId => SideContainerToggler.toggle(sidePanelId);
 /**
  * Handle new user display name.
  */
-UI.inputDisplayNameHandler = function (newDisplayName) {
+UI.inputDisplayNameHandler = function(newDisplayName) {
     eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
 };
 
@@ -588,7 +646,8 @@ UI.inputDisplayNameHandler = function (newDisplayName) {
  * @param {number} timeout - The time to show the popup
  * @returns {void}
  */
-UI.showCustomToolbarPopup = function (buttonName, popupID, show, timeout) {
+// eslint-disable-next-line max-params
+UI.showCustomToolbarPopup = function(buttonName, popupID, show, timeout) {
     const action = show
         ? setButtonPopupTimeout(buttonName, popupID, timeout)
         : clearButtonPopup(buttonName);
@@ -601,7 +660,7 @@ UI.showCustomToolbarPopup = function (buttonName, popupID, show, timeout) {
  * @param jid the jid for the remote video
  * @returns the video type video or screen.
  */
-UI.getRemoteVideoType = function (jid) {
+UI.getRemoteVideoType = function(jid) {
     return VideoLayout.getRemoteVideoType(jid);
 };
 
@@ -609,17 +668,19 @@ UI.getRemoteVideoType = function (jid) {
 UI.showLoginPopup = function(callback) {
     logger.log('password is required');
 
-    let message = (
-        `<input name="username" type="text"
+    const message
+        = `<input name="username" type="text"
                 placeholder="user@domain.net"
                 class="input-control" autofocus>
          <input name="password" type="password"
                 data-i18n="[placeholder]dialog.userPassword"
                 class="input-control"
                 placeholder="user password">`
-    );
 
-    let submitFunction = (e, v, m, f) => {
+    ;
+
+    // eslint-disable-next-line max-params
+    const submitFunction = (e, v, m, f) => {
         if (v) {
             if (f.username && f.password) {
                 callback(f.username, f.password);
@@ -628,7 +689,7 @@ UI.showLoginPopup = function(callback) {
     };
 
     messageHandler.openTwoButtonDialog({
-        titleKey : "dialog.passwordRequired",
+        titleKey: 'dialog.passwordRequired',
         msgString: message,
         leftButtonKey: 'dialog.Ok',
         submitFunction,
@@ -636,14 +697,15 @@ UI.showLoginPopup = function(callback) {
     });
 };
 
-UI.askForNickname = function () {
+UI.askForNickname = function() {
+    // eslint-disable-next-line no-alert
     return window.prompt('Your nickname (optional)');
 };
 
 /**
  * Sets muted audio state for participant
  */
-UI.setAudioMuted = function (id, muted) {
+UI.setAudioMuted = function(id, muted) {
     VideoLayout.onAudioMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.conference.updateAudioIconEnabled();
@@ -653,7 +715,7 @@ UI.setAudioMuted = function (id, muted) {
 /**
  * Sets muted video state for participant
  */
-UI.setVideoMuted = function (id, muted) {
+UI.setVideoMuted = function(id, muted) {
     VideoLayout.onVideoMute(id, muted);
     if (APP.conference.isLocalId(id)) {
         APP.conference.updateVideoIconEnabled();
@@ -674,7 +736,7 @@ UI.updateAllVideos = () => VideoLayout.updateAllVideos();
  * @param type the type of the event we're listening for
  * @param listener a function that would be called when notified
  */
-UI.addListener = function (type, listener) {
+UI.addListener = function(type, listener) {
     eventEmitter.on(type, listener);
 };
 
@@ -684,7 +746,7 @@ UI.addListener = function (type, listener) {
  * @param type the type of the event we're listening for
  * @param listener the listener we want to remove
  */
-UI.removeListener = function (type, listener) {
+UI.removeListener = function(type, listener) {
     eventEmitter.removeListener(type, listener);
 };
 
@@ -696,14 +758,15 @@ UI.removeListener = function (type, listener) {
  */
 UI.emitEvent = (type, ...options) => eventEmitter.emit(type, ...options);
 
-UI.clickOnVideo = function (videoNumber) {
-    let videos = $("#remoteVideos .videocontainer:not(#mixedstream)");
-    let videosLength = videos.length;
+UI.clickOnVideo = function(videoNumber) {
+    const videos = $('#remoteVideos .videocontainer:not(#mixedstream)');
+    const videosLength = videos.length;
 
-    if(videosLength <= videoNumber) {
+    if (videosLength <= videoNumber) {
         return;
     }
-    let videoIndex = videoNumber === 0 ? 0 : videosLength - videoNumber;
+    const videoIndex = videoNumber === 0 ? 0 : videosLength - videoNumber;
+
     videos[videoIndex].click();
 };
 
@@ -730,7 +793,7 @@ function changeAvatar(id, avatarUrl) {
  * @param {string} id user id
  * @param {string} email user email
  */
-UI.setUserEmail = function (id, email) {
+UI.setUserEmail = function(id, email) {
     // update avatar
     Avatar.setUserEmail(id, email);
 
@@ -745,7 +808,7 @@ UI.setUserEmail = function (id, email) {
  * @param {string} id user id
  * @param {string} avatarId user's avatar id
  */
-UI.setUserAvatarID = function (id, avatarId) {
+UI.setUserAvatarID = function(id, avatarId) {
     // update avatar
     Avatar.setUserAvatarID(id, avatarId);
 
@@ -757,7 +820,7 @@ UI.setUserAvatarID = function (id, avatarId) {
  * @param {string} id user id
  * @param {string} url user avatar url
  */
-UI.setUserAvatarUrl = function (id, url) {
+UI.setUserAvatarUrl = function(id, url) {
     // update avatar
     Avatar.setUserAvatarUrl(id, url);
 
@@ -768,39 +831,40 @@ UI.setUserAvatarUrl = function (id, url) {
  * Notify user that connection failed.
  * @param {string} stropheErrorMsg raw Strophe error message
  */
-UI.notifyConnectionFailed = function (stropheErrorMsg) {
-    var message;
+UI.notifyConnectionFailed = function(stropheErrorMsg) {
+    let message;
+
     if (stropheErrorMsg) {
         message = APP.translation.generateTranslationHTML(
-            "dialog.connectErrorWithMsg", {msg: stropheErrorMsg});
+            'dialog.connectErrorWithMsg', { msg: stropheErrorMsg });
     } else {
         message = APP.translation.generateTranslationHTML(
-            "dialog.connectError");
+            'dialog.connectError');
     }
 
-    messageHandler.openDialog("dialog.error", message, true, {}, () => false);
+    messageHandler.openDialog('dialog.error', message, true, {}, () => false);
 };
 
 
 /**
  * Notify user that maximum users limit has been reached.
  */
-UI.notifyMaxUsersLimitReached = function () {
-    var message = APP.translation.generateTranslationHTML(
-            "dialog.maxUsersLimitReached");
+UI.notifyMaxUsersLimitReached = function() {
+    const message = APP.translation.generateTranslationHTML(
+            'dialog.maxUsersLimitReached');
 
-    messageHandler.openDialog("dialog.error", message, true, {}, () => false);
+    messageHandler.openDialog('dialog.error', message, true, {}, () => false);
 };
 
 /**
  * Notify user that he was automatically muted when joned the conference.
  */
-UI.notifyInitiallyMuted = function () {
+UI.notifyInitiallyMuted = function() {
     messageHandler.participantNotification(
         null,
-        "notify.mutedTitle",
-        "connected",
-        "notify.muted",
+        'notify.mutedTitle',
+        'connected',
+        'notify.muted',
         null,
         120000);
 };
@@ -809,11 +873,11 @@ UI.notifyInitiallyMuted = function () {
  * Mark user as dominant speaker.
  * @param {string} id user id
  */
-UI.markDominantSpeaker = function (id) {
+UI.markDominantSpeaker = function(id) {
     VideoLayout.onDominantSpeakerChanged(id);
 };
 
-UI.handleLastNEndpoints = function (leavingIds, enteringIds) {
+UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };
 
@@ -822,7 +886,7 @@ UI.handleLastNEndpoints = function (leavingIds, enteringIds) {
  *
  * @param {string} id the id of remote participant(MUC jid)
  */
-UI.participantConnectionStatusChanged = function (id) {
+UI.participantConnectionStatusChanged = function(id) {
     VideoLayout.onParticipantConnectionStatusChanged(id);
 };
 
@@ -854,7 +918,7 @@ UI.updateDesktopSharingButtons
 /**
  * Hide connection quality statistics from UI.
  */
-UI.hideStats = function () {
+UI.hideStats = function() {
     VideoLayout.hideStats();
 };
 
@@ -862,7 +926,7 @@ UI.hideStats = function () {
  * Mark video as interrupted or not.
  * @param {boolean} interrupted if video is interrupted
  */
-UI.markVideoInterrupted = function (interrupted) {
+UI.markVideoInterrupted = function(interrupted) {
     if (interrupted) {
         VideoLayout.onVideoInterrupted();
     } else {
@@ -877,32 +941,34 @@ UI.markVideoInterrupted = function (interrupted) {
  * @param {string} message message text
  * @param {number} stamp timestamp when message was created
  */
-UI.addMessage = function (from, displayName, message, stamp) {
+// eslint-disable-next-line max-params
+UI.addMessage = function(from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
 };
 
 UI.updateDTMFSupport
     = isDTMFSupported => APP.store.dispatch(showDialPadButton(isDTMFSupported));
 
-UI.updateRecordingState = function (state) {
+UI.updateRecordingState = function(state) {
     Recording.updateRecordingState(state);
 };
 
-UI.notifyTokenAuthFailed = function () {
-    messageHandler.showError(   "dialog.tokenAuthFailedTitle",
-                                "dialog.tokenAuthFailed");
+UI.notifyTokenAuthFailed = function() {
+    messageHandler.showError('dialog.tokenAuthFailedTitle',
+                                'dialog.tokenAuthFailed');
 };
 
-UI.notifyInternalError = function () {
-    messageHandler.showError(   "dialog.internalErrorTitle",
-                                "dialog.internalError");
+UI.notifyInternalError = function() {
+    messageHandler.showError('dialog.internalErrorTitle',
+                                'dialog.internalError');
 };
 
-UI.notifyFocusDisconnected = function (focus, retrySec) {
+UI.notifyFocusDisconnected = function(focus, retrySec) {
     messageHandler.participantNotification(
-        null, "notify.focus",
-        'disconnected', "notify.focusFail",
-        {component: focus, ms: retrySec}
+        null, 'notify.focus',
+        'disconnected', 'notify.focusFail',
+        { component: focus,
+            ms: retrySec }
     );
 };
 
@@ -911,9 +977,9 @@ UI.notifyFocusDisconnected = function (focus, retrySec) {
  * @param {boolean} isAuthEnabled if authentication is enabled
  * @param {string} [login] current login
  */
-UI.updateAuthInfo = function (isAuthEnabled, login) {
-    let showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
-    let loggedIn = !!login;
+UI.updateAuthInfo = function(isAuthEnabled, login) {
+    const showAuth = isAuthEnabled && UIUtil.isAuthenticationEnabled();
+    const loggedIn = Boolean(login);
 
     Profile.showAuthenticationButtons(showAuth);
 
@@ -925,7 +991,7 @@ UI.updateAuthInfo = function (isAuthEnabled, login) {
     }
 };
 
-UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
+UI.onStartMutedChanged = function(startAudioMuted, startVideoMuted) {
     SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
 
@@ -935,7 +1001,7 @@ UI.onStartMutedChanged = function (startAudioMuted, startVideoMuted) {
  * @param {boolean} isRaisedHand indicates the current state of the
  * "raised hand"
  */
-UI.onLocalRaiseHandChanged = function (isRaisedHand) {
+UI.onLocalRaiseHandChanged = function(isRaisedHand) {
     eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, isRaisedHand);
 };
 
@@ -943,7 +1009,7 @@ UI.onLocalRaiseHandChanged = function (isRaisedHand) {
  * Update list of available physical devices.
  * @param {object[]} devices new list of available devices
  */
-UI.onAvailableDevicesChanged = function (devices) {
+UI.onAvailableDevicesChanged = function(devices) {
     APP.store.dispatch(updateDeviceList(devices));
     APP.conference.updateAudioIconEnabled();
     APP.conference.updateVideoIconEnabled();
@@ -953,7 +1019,7 @@ UI.onAvailableDevicesChanged = function (devices) {
  * Returns the id of the current video shown on large.
  * Currently used by tests (torture).
  */
-UI.getLargeVideoID = function () {
+UI.getLargeVideoID = function() {
     return VideoLayout.getLargeVideoID();
 };
 
@@ -961,7 +1027,7 @@ UI.getLargeVideoID = function () {
  * Returns the current video shown on large.
  * Currently used by tests (torture).
  */
-UI.getLargeVideo = function () {
+UI.getLargeVideo = function() {
     return VideoLayout.getLargeVideo();
 };
 
@@ -977,11 +1043,11 @@ UI.isPinned = userId => VideoLayout.getPinnedId() === userId;
 /**
  * Shows dialog with a link to FF extension.
  */
-UI.showExtensionRequiredDialog = function (url) {
+UI.showExtensionRequiredDialog = function(url) {
     messageHandler.openMessageDialog(
-        "dialog.extensionRequired",
-        "[html]dialog.firefoxExtensionPrompt",
-        {url: url});
+        'dialog.extensionRequired',
+        '[html]dialog.firefoxExtensionPrompt',
+        { url });
 };
 
 /**
@@ -989,25 +1055,25 @@ UI.showExtensionRequiredDialog = function (url) {
  * 2 button dialog with buttons - cancel and go to web store.
  * @param url {string} the url of the extension.
  */
-UI.showExtensionExternalInstallationDialog = function (url) {
+UI.showExtensionExternalInstallationDialog = function(url) {
     let openedWindow = null;
 
-    let submitFunction = function(e,v){
+    const submitFunction = function(e, v) {
         if (v) {
             e.preventDefault();
             if (openedWindow === null || openedWindow.closed) {
                 openedWindow
                     = window.open(
                         url,
-                        "extension_store_window",
-                        "resizable,scrollbars=yes,status=1");
+                        'extension_store_window',
+                        'resizable,scrollbars=yes,status=1');
             } else {
                 openedWindow.focus();
             }
         }
     };
 
-    let closeFunction = function (e, v) {
+    const closeFunction = function(e, v) {
         if (openedWindow) {
             // Ideally we would close the popup, but this does not seem to work
             // on Chrome. Leaving it uncommented in case it could work
@@ -1037,14 +1103,14 @@ UI.showExtensionExternalInstallationDialog = function (url) {
  * @param callback {function} function to be executed after user clicks
  * the install button - it should make another attempt to install the extension.
  */
-UI.showExtensionInlineInstallationDialog = function (callback) {
-    let submitFunction = function(e,v){
+UI.showExtensionInlineInstallationDialog = function(callback) {
+    const submitFunction = function(e, v) {
         if (v) {
             callback();
         }
     };
 
-    let closeFunction = function (e, v) {
+    const closeFunction = function(e, v) {
         if (!v) {
             eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
         }
@@ -1067,7 +1133,7 @@ UI.showExtensionInlineInstallationDialog = function (callback) {
  * acquiring an audio stream.
  * @returns {void}
  */
-UI.showMicErrorNotification = function (micError) {
+UI.showMicErrorNotification = function(micError) {
     if (!micError) {
         return;
     }
@@ -1103,7 +1169,7 @@ UI.showMicErrorNotification = function (micError) {
  * acquiring a video stream.
  * @returns {void}
  */
-UI.showCameraErrorNotification = function (cameraError) {
+UI.showCameraErrorNotification = function(cameraError) {
     if (!cameraError) {
         return;
     }
@@ -1112,8 +1178,8 @@ UI.showCameraErrorNotification = function (cameraError) {
 
     const persistenceKey = `doNotShowErrorAgain-camera-${name}`;
 
-    const cameraJitsiTrackErrorMsg =
-        JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[name];
+    const cameraJitsiTrackErrorMsg
+        = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[name];
     const cameraErrorMsg = cameraJitsiTrackErrorMsg
         || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
             .camera[JitsiTrackErrors.GENERAL];
@@ -1136,14 +1202,14 @@ UI.showCameraErrorNotification = function (cameraError) {
  * Shows error dialog that informs the user that no data is received from the
  * device.
  */
-UI.showTrackNotWorkingDialog = function (stream) {
+UI.showTrackNotWorkingDialog = function(stream) {
     messageHandler.openMessageDialog(
-        "dialog.error",
-        stream.isAudioTrack()? "dialog.micNotSendingData" :
-            "dialog.cameraNotSendingData");
+        'dialog.error',
+        stream.isAudioTrack() ? 'dialog.micNotSendingData'
+            : 'dialog.cameraNotSendingData');
 };
 
-UI.updateDevicesAvailability = function (id, devices) {
+UI.updateDevicesAvailability = function(id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
 };
 
@@ -1153,9 +1219,10 @@ UI.updateDevicesAvailability = function (id, devices) {
  * @param {string} url video url
  * @param {string} attributes
 */
-UI.onSharedVideoStart = function (id, url, attributes) {
-    if (sharedVideoManager)
+UI.onSharedVideoStart = function(id, url, attributes) {
+    if (sharedVideoManager) {
         sharedVideoManager.onSharedVideoStart(id, url, attributes);
+    }
 };
 
 /**
@@ -1164,9 +1231,10 @@ UI.onSharedVideoStart = function (id, url, attributes) {
  * @param {string} url video url
  * @param {string} attributes
  */
-UI.onSharedVideoUpdate = function (id, url, attributes) {
-    if (sharedVideoManager)
+UI.onSharedVideoUpdate = function(id, url, attributes) {
+    if (sharedVideoManager) {
         sharedVideoManager.onSharedVideoUpdate(id, url, attributes);
+    }
 };
 
 /**
@@ -1174,9 +1242,10 @@ UI.onSharedVideoUpdate = function (id, url, attributes) {
  * @param {string} id the id of the sender of the command
  * @param {string} attributes
  */
-UI.onSharedVideoStop = function (id, attributes) {
-    if (sharedVideoManager)
+UI.onSharedVideoStop = function(id, attributes) {
+    if (sharedVideoManager) {
         sharedVideoManager.onSharedVideoStop(id, attributes);
+    }
 };
 
 /**
@@ -1210,50 +1279,6 @@ UI.setRemoteControlActiveStatus = function(participantID, isActive) {
 UI.setLocalRemoteControlActiveChanged = function() {
     VideoLayout.setLocalRemoteControlActiveChanged();
 };
-
-const UIListeners = new Map([
-    [
-        UIEvents.ETHERPAD_CLICKED,
-        () => etherpadManager && etherpadManager.toggleEtherpad()
-    ], [
-        UIEvents.SHARED_VIDEO_CLICKED,
-        () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
-    ], [
-        UIEvents.TOGGLE_FULLSCREEN,
-        UI.toggleFullScreen
-    ], [
-        UIEvents.TOGGLE_CHAT,
-        UI.toggleChat
-    ], [
-        UIEvents.TOGGLE_SETTINGS,
-        () => {
-            // Opening of device selection is special-cased as it is a dialog
-            // opened through a button in settings and not directly displayed in
-            // settings itself. As it is not useful to only have a settings menu
-            // with a button to open a dialog, open the dialog directly instead.
-            if (interfaceConfig.SETTINGS_SECTIONS.length === 1
-                    && UIUtil.isSettingEnabled('devices')) {
-                APP.store.dispatch(openDeviceSelectionDialog());
-            } else {
-                UI.toggleSidePanel("settings_container");
-            }
-        }
-    ], [
-        UIEvents.TOGGLE_CONTACT_LIST,
-        UI.toggleContactList
-    ], [
-        UIEvents.TOGGLE_PROFILE,
-        () => {
-            UI.toggleSidePanel('profile_container');
-        }
-    ], [
-        UIEvents.TOGGLE_FILMSTRIP,
-        UI.handleToggleFilmstrip
-    ], [
-        UIEvents.FOLLOW_ME_ENABLED,
-        enabled => (followMeHandler && followMeHandler.enableFollowMe(enabled))
-    ]
-]);
 
 // TODO: Export every function separately. For now there is no point of doing
 // this because we are importing everything.

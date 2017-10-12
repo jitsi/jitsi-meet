@@ -9,29 +9,33 @@ import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VideoTrack } from '../../../react/features/base/media';
 /* eslint-enable no-unused-vars */
 
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import UIEvents from "../../../service/UI/UIEvents";
-import SmallVideo from "./SmallVideo";
+import UIEvents from '../../../service/UI/UIEvents';
+import SmallVideo from './SmallVideo';
 
+/**
+ *
+ */
 function LocalVideo(VideoLayout, emitter) {
-    this.videoSpanId = "localVideoContainer";
+    this.videoSpanId = 'localVideoContainer';
 
     this.container = this.createContainer();
     this.$container = $(this.container);
-    $("#filmstripLocalVideo").append(this.container);
+    $('#filmstripLocalVideo').append(this.container);
 
     this.localVideoId = null;
     this.bindHoverHandler();
-    if(config.enableLocalVideoFlip)
+    if (config.enableLocalVideoFlip) {
         this._buildContextMenu();
+    }
     this.isLocal = true;
     this.emitter = emitter;
     this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
         ? 'left top' : 'top center';
 
     Object.defineProperty(this, 'id', {
-        get: function () {
+        get() {
             return APP.conference.getMyUserId();
         }
     });
@@ -49,8 +53,9 @@ function LocalVideo(VideoLayout, emitter) {
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
 LocalVideo.prototype.constructor = LocalVideo;
 
-LocalVideo.prototype.createContainer = function () {
+LocalVideo.prototype.createContainer = function() {
     const containerSpan = document.createElement('span');
+
     containerSpan.classList.add('videocontainer');
     containerSpan.id = this.videoSpanId;
 
@@ -72,24 +77,25 @@ LocalVideo.prototype.createContainer = function () {
 LocalVideo.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
         logger.warn(
-                "Unable to set displayName - " + this.videoSpanId +
-                " does not exist");
+                `Unable to set displayName - ${this.videoSpanId
+                } does not exist`);
+
         return;
     }
 
     this.updateDisplayName({
         allowEditing: true,
-        displayName: displayName,
+        displayName,
         displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         elementID: 'localDisplayName',
         participantID: this.id
     });
 };
 
-LocalVideo.prototype.changeVideo = function (stream) {
+LocalVideo.prototype.changeVideo = function(stream) {
     this.videoStream = stream;
 
-    let localVideoClick = (event) => {
+    const localVideoClick = event => {
         // TODO Checking the classes is a workround to allow events to bubble
         // into the DisplayName component if it was clicked. React's synthetic
         // events will fire after jQuery handlers execute, so stop propogation
@@ -125,11 +131,10 @@ LocalVideo.prototype.changeVideo = function (stream) {
     this.$container.off('click');
     this.$container.on('click', localVideoClick);
 
-    this.localVideoId = 'localVideo_' + stream.getId();
+    this.localVideoId = `localVideo_${stream.getId()}`;
 
-    var localVideoContainer = document.getElementById('localVideoWrapper');
+    const localVideoContainer = document.getElementById('localVideoWrapper');
 
-    /* jshint ignore:start */
     ReactDOM.render(
         <Provider store = { APP.store }>
             <VideoTrack
@@ -138,13 +143,15 @@ LocalVideo.prototype.changeVideo = function (stream) {
         </Provider>,
         localVideoContainer
     );
-    /* jshint ignore:end */
 
-    let isVideo = stream.videoType != "desktop";
+    // eslint-disable-next-line eqeqeq
+    const isVideo = stream.videoType != 'desktop';
+
     this._enableDisableContextMenu(isVideo);
-    this.setFlipX(isVideo? APP.settings.getLocalFlipX() : false);
+    this.setFlipX(isVideo ? APP.settings.getLocalFlipX() : false);
 
-    let endedHandler = () => {
+    const endedHandler = () => {
+
         // Only remove if there is no video and not a transition state.
         // Previous non-react logic created a new video element with each track
         // removal whereas react reuses the video component so it could be the
@@ -160,6 +167,7 @@ LocalVideo.prototype.changeVideo = function (stream) {
         }
         stream.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
+
     stream.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
 };
 
@@ -172,15 +180,14 @@ LocalVideo.prototype.setVisible = function(visible) {
 
     // We toggle the hidden class as an indication to other interested parties
     // that this container has been hidden on purpose.
-    this.$container.toggleClass("hidden");
+    this.$container.toggleClass('hidden');
 
     // We still show/hide it as we need to overwrite the style property if we
     // want our action to take effect. Toggling the display property through
     // the above css class didn't succeed in overwriting the style.
     if (visible) {
         this.$container.show();
-    }
-    else {
+    } else {
         this.$container.hide();
     }
 };
@@ -189,39 +196,41 @@ LocalVideo.prototype.setVisible = function(visible) {
  * Sets the flipX state of the video.
  * @param val {boolean} true for flipped otherwise false;
  */
-LocalVideo.prototype.setFlipX = function (val) {
+LocalVideo.prototype.setFlipX = function(val) {
     this.emitter.emit(UIEvents.LOCAL_FLIPX_CHANGED, val);
-    if(!this.localVideoId)
+    if (!this.localVideoId) {
         return;
-    if(val) {
-        this.selectVideoElement().addClass("flipVideoX");
+    }
+    if (val) {
+        this.selectVideoElement().addClass('flipVideoX');
     } else {
-        this.selectVideoElement().removeClass("flipVideoX");
+        this.selectVideoElement().removeClass('flipVideoX');
     }
 };
 
 /**
  * Builds the context menu for the local video.
  */
-LocalVideo.prototype._buildContextMenu = function () {
+LocalVideo.prototype._buildContextMenu = function() {
     $.contextMenu({
-        selector: '#' + this.videoSpanId,
+        selector: `#${this.videoSpanId}`,
         zIndex: 10000,
         items: {
             flip: {
-                name: "Flip",
+                name: 'Flip',
                 callback: () => {
-                    let val = !APP.settings.getLocalFlipX();
+                    const val = !APP.settings.getLocalFlipX();
+
                     this.setFlipX(val);
                     APP.settings.setLocalFlipX(val);
                 }
             }
         },
         events: {
-            show : function(options){
-                options.items.flip.name =
-                    APP.translation.generateTranslationHTML(
-                        "videothumbnail.flip");
+            show(options) {
+                options.items.flip.name
+                    = APP.translation.generateTranslationHTML(
+                        'videothumbnail.flip');
             }
         }
     });
@@ -231,9 +240,10 @@ LocalVideo.prototype._buildContextMenu = function () {
  * Enables or disables the context menu for the local video.
  * @param enable {boolean} true for enable, false for disable
  */
-LocalVideo.prototype._enableDisableContextMenu = function (enable) {
-    if(this.$container.contextMenu)
+LocalVideo.prototype._enableDisableContextMenu = function(enable) {
+    if (this.$container.contextMenu) {
         this.$container.contextMenu(enable);
+    }
 };
 
 export default LocalVideo;

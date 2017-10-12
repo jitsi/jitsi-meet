@@ -1,10 +1,10 @@
 /* global $, APP, AJS, interfaceConfig */
-import { LANGUAGES } from "../../../../react/features/base/i18n";
+import { LANGUAGES } from '../../../../react/features/base/i18n';
 import { openDeviceSelectionDialog }
     from '../../../../react/features/device-selection';
 
-import UIUtil from "../../util/UIUtil";
-import UIEvents from "../../../../service/UI/UIEvents";
+import UIUtil from '../../util/UIUtil';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 const sidePanelsContainerId = 'sideToolbarContainer';
 const deviceSelectionButtonClasses
@@ -13,12 +13,12 @@ const htmlStr = `
     <div id="settings_container" class="sideToolbarContainer__inner">
         <div class="title" data-i18n="settings.title"></div>
         <form class="aui">
-            <div id="languagesSelectWrapper" 
+            <div id="languagesSelectWrapper"
                 class="sideToolbarBlock first hide">
                 <select id="languagesSelect"></select>
             </div>
             <div id="deviceOptionsWrapper" class="hide">
-                <div id="deviceOptionsTitle" class="subTitle hide" 
+                <div id="deviceOptionsTitle" class="subTitle hide"
                     data-i18n="settings.audioVideo"></div>
                 <div class="sideToolbarBlock first">
                     <button
@@ -29,24 +29,24 @@ const htmlStr = `
                 </div>
             </div>
             <div id="moderatorOptionsWrapper" class="hide">
-                <div id="moderatorOptionsTitle" class="subTitle hide" 
+                <div id="moderatorOptionsTitle" class="subTitle hide"
                     data-i18n="settings.moderator"></div>
                 <div id="startMutedOptions" class="hide">
                     <div class="sideToolbarBlock first">
                         <input type="checkbox" id="startAudioMuted">
-                        <label class="startMutedLabel" for="startAudioMuted" 
+                        <label class="startMutedLabel" for="startAudioMuted"
                             data-i18n="settings.startAudioMuted"></label>
                     </div>
                     <div class="sideToolbarBlock">
                         <input type="checkbox" id="startVideoMuted">
-                        <label class="startMutedLabel" for="startVideoMuted" 
+                        <label class="startMutedLabel" for="startVideoMuted"
                             data-i18n="settings.startVideoMuted"></label>
                     </div>
                 </div>
                 <div id="followMeOptions" class="hide">
                     <div class="sideToolbarBlock">
                         <input type="checkbox" id="followMeCheckBox">
-                        <label class="followMeLabel" for="followMeCheckBox" 
+                        <label class="followMeLabel" for="followMeCheckBox"
                             data-i18n="settings.followMe"></label>
                     </div>
                 </div>
@@ -54,9 +54,13 @@ const htmlStr = `
         </form>
     </div>`;
 
+/**
+ *
+ */
 function initHTML() {
     $(`#${sidePanelsContainerId}`)
         .append(htmlStr);
+
     // make sure we translate the panel, as adding it can be after i18n
     // library had initialized and translated already present html
     APP.translation.translateElement($(`#${sidePanelsContainerId}`));
@@ -70,8 +74,8 @@ function initHTML() {
  * @returns {string}
  */
 function generateLanguagesOptions(items, currentLang) {
-    return items.map(function (lang) {
-        let attrs = {
+    return items.map(lang => {
+        const attrs = {
             value: lang,
             'data-i18n': `languages:${lang}`
         };
@@ -80,7 +84,9 @@ function generateLanguagesOptions(items, currentLang) {
             attrs.selected = 'selected';
         }
 
-        let attrsStr = UIUtil.attrsToString(attrs);
+        const attrsStr = UIUtil.attrsToString(attrs);
+
+
         return `<option ${attrsStr}></option>`;
     }).join('');
 }
@@ -101,14 +107,15 @@ function initSelect2($el, onSelectedCb) {
 }
 
 export default {
-    init (emitter) {
+    init(emitter) {
         initHTML();
-        //LANGUAGES BOX
+
+        // LANGUAGES BOX
         if (UIUtil.isSettingEnabled('language')) {
             const wrapperId = 'languagesSelectWrapper';
             const selectId = 'languagesSelect';
             const selectEl = AJS.$(`#${selectId}`);
-            let selectInput;
+            let selectInput; // eslint-disable-line prefer-const
 
             selectEl.html(generateLanguagesOptions(
                 LANGUAGES,
@@ -121,11 +128,13 @@ export default {
                 APP.translation.translateElement(selectInput);
                 emitter.emit(UIEvents.LANG_CHANGED, val);
             });
-            //find new selectInput element
+
+            // find new selectInput element
             selectInput = $(`#s2id_${selectId} .select2-chosen`);
-            //first select fix for languages options
-            selectInput[0].dataset.i18n =
-                `languages:${APP.translation.getCurrentLanguage()}`;
+
+            // first select fix for languages options
+            selectInput[0].dataset.i18n
+                = `languages:${APP.translation.getCurrentLanguage()}`;
 
             // translate selectInput, which is the currently selected language
             // otherwise there will be no selected option
@@ -133,10 +142,13 @@ export default {
             APP.translation.translateElement(selectEl);
 
             APP.translation.addLanguageChangedListener(
-                lng => selectInput[0].dataset.i18n = `languages:${lng}`);
+                lng => {
+                    selectInput[0].dataset.i18n = `languages:${lng}`;
+                });
 
             UIUtil.setVisible(wrapperId, true);
         }
+
         // DEVICES LIST
         if (UIUtil.isSettingEnabled('devices')) {
             const wrapperId = 'deviceOptionsWrapper';
@@ -145,19 +157,21 @@ export default {
                 APP.store.dispatch(openDeviceSelectionDialog()));
 
             // Only show the subtitle if this isn't the only setting section.
-            if (interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.setVisible("deviceOptionsTitle", true);
+            if (interfaceConfig.SETTINGS_SECTIONS.length > 1) {
+                UIUtil.setVisible('deviceOptionsTitle', true);
+            }
 
             UIUtil.setVisible(wrapperId, true);
         }
+
         // MODERATOR
         if (UIUtil.isSettingEnabled('moderator')) {
             const wrapperId = 'moderatorOptionsWrapper';
 
             // START MUTED
-            $("#startMutedOptions").change(function () {
-                let startAudioMuted = $("#startAudioMuted").is(":checked");
-                let startVideoMuted = $("#startVideoMuted").is(":checked");
+            $('#startMutedOptions').change(() => {
+                const startAudioMuted = $('#startAudioMuted').is(':checked');
+                const startVideoMuted = $('#startVideoMuted').is(':checked');
 
                 emitter.emit(
                     UIEvents.START_MUTED_CHANGED,
@@ -168,8 +182,10 @@ export default {
 
             // FOLLOW ME
             const followMeToggle = document.getElementById('followMeCheckBox');
+
             followMeToggle.addEventListener('change', () => {
                 const isFollowMeEnabled = followMeToggle.checked;
+
                 emitter.emit(UIEvents.FOLLOW_ME_ENABLED, isFollowMeEnabled);
             });
 
@@ -181,26 +197,28 @@ export default {
      * If start audio muted/start video muted options should be visible or not.
      * @param {boolean} show
      */
-    showStartMutedOptions (show) {
+    showStartMutedOptions(show) {
         if (show && UIUtil.isSettingEnabled('moderator')) {
             // Only show the subtitle if this isn't the only setting section.
-            if (!$("#moderatorOptionsTitle").is(":visible")
-                    && interfaceConfig.SETTINGS_SECTIONS.length > 1)
-                UIUtil.setVisible("moderatorOptionsTitle", true);
+            if (!$('#moderatorOptionsTitle').is(':visible')
+                    && interfaceConfig.SETTINGS_SECTIONS.length > 1) {
+                UIUtil.setVisible('moderatorOptionsTitle', true);
+            }
 
-            UIUtil.setVisible("startMutedOptions", true);
+            UIUtil.setVisible('startMutedOptions', true);
         } else {
             // Only show the subtitle if this isn't the only setting section.
-            if ($("#moderatorOptionsTitle").is(":visible"))
-                UIUtil.setVisible("moderatorOptionsTitle", false);
+            if ($('#moderatorOptionsTitle').is(':visible')) {
+                UIUtil.setVisible('moderatorOptionsTitle', false);
+            }
 
-            UIUtil.setVisible("startMutedOptions", false);
+            UIUtil.setVisible('startMutedOptions', false);
         }
     },
 
-    updateStartMutedBox (startAudioMuted, startVideoMuted) {
-        $("#startAudioMuted").attr("checked", startAudioMuted);
-        $("#startVideoMuted").attr("checked", startVideoMuted);
+    updateStartMutedBox(startAudioMuted, startVideoMuted) {
+        $('#startAudioMuted').attr('checked', startAudioMuted);
+        $('#startVideoMuted').attr('checked', startVideoMuted);
     },
 
     /**
@@ -208,9 +226,9 @@ export default {
      *
      * @param {boolean} show {true} to show those options, {false} to hide them
      */
-    showFollowMeOptions (show) {
+    showFollowMeOptions(show) {
         UIUtil.setVisible(
-            "followMeOptions",
+            'followMeOptions',
             show && UIUtil.isSettingEnabled('moderator'));
     },
 
@@ -218,7 +236,7 @@ export default {
      * Check if settings menu is visible or not.
      * @returns {boolean}
      */
-    isVisible () {
-        return UIUtil.isVisible(document.getElementById("settings_container"));
+    isVisible() {
+        return UIUtil.isVisible(document.getElementById('settings_container'));
     }
 };

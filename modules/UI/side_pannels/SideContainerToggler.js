@@ -1,5 +1,5 @@
 /* global $ */
-import UIEvents from "../../../service/UI/UIEvents";
+import UIEvents from '../../../service/UI/UIEvents';
 
 /**
  * Handles open and close of the extended toolbar side panel
@@ -19,22 +19,28 @@ const SideContainerToggler = {
         // We may not have a side toolbar container, for example, in
         // filmstrip-only mode.
         const sideToolbarContainer
-            = document.getElementById("sideToolbarContainer");
+            = document.getElementById('sideToolbarContainer');
 
-        if (!sideToolbarContainer)
+        if (!sideToolbarContainer) {
             return;
+        }
 
         // Adds a listener for the animationend event that would take care of
         // hiding all internal containers when the extendedToolbarPanel is
         // closed.
         sideToolbarContainer.addEventListener(
-            "animationend",
-            function(e) {
-                if (e.animationName === "slideOutExt")
-                    $("#sideToolbarContainer").children().each(function() {
-                        if ($(this).hasClass("show"))
+            'animationend',
+            e => {
+                if (e.animationName === 'slideOutExt') {
+                    $('#sideToolbarContainer').children()
+                    .each(function() {
+                        /* eslint-disable no-invalid-this */
+                        if ($(this).hasClass('show')) {
                             SideContainerToggler.hideInnerContainer($(this));
+                        }
+                        /* eslint-enable no-invalid-this */
                     });
+                }
             },
             false);
     },
@@ -46,21 +52,26 @@ const SideContainerToggler = {
      * toggle
      */
     toggle(elementId) {
-        let elementSelector = $(`#${elementId}`);
-        let isSelectorVisible = elementSelector.hasClass("show");
+        const elementSelector = $(`#${elementId}`);
+        const isSelectorVisible = elementSelector.hasClass('show');
 
         if (isSelectorVisible) {
             this.hide();
-        }
-        else {
-            if (this.isVisible())
-                $("#sideToolbarContainer").children().each(function() {
-                    if ($(this).id !== elementId && $(this).hasClass("show"))
+        } else {
+            if (this.isVisible()) {
+                $('#sideToolbarContainer').children()
+                .each(function() {
+                    /* eslint-disable no-invalid-this */
+                    if ($(this).id !== elementId && $(this).hasClass('show')) {
                         SideContainerToggler.hideInnerContainer($(this));
+                    }
+                    /* eslint-enable no-invalid-this */
                 });
+            }
 
-            if (!this.isVisible())
+            if (!this.isVisible()) {
                 this.show();
+            }
 
             this.showInnerContainer(elementSelector);
         }
@@ -71,7 +82,7 @@ const SideContainerToggler = {
      * otherwise returns {false}.
      */
     isVisible() {
-        return $("#sideToolbarContainer").hasClass("slideInExt");
+        return $('#sideToolbarContainer').hasClass('slideInExt');
     },
 
     /**
@@ -79,24 +90,27 @@ const SideContainerToggler = {
      * {false} otherwise.
      */
     isHovered() {
-        return $("#sideToolbarContainer:hover").length > 0;
+        return $('#sideToolbarContainer:hover').length > 0;
     },
 
     /**
      * Hides the side toolbar panel with a slide out animation.
      */
     hide() {
-        $("#sideToolbarContainer")
-            .removeClass("slideInExt").addClass("slideOutExt");
+        $('#sideToolbarContainer')
+            .removeClass('slideInExt')
+.addClass('slideOutExt');
     },
 
     /**
      * Shows the side toolbar panel with a slide in animation.
      */
     show() {
-        if (!this.isVisible())
-            $("#sideToolbarContainer")
-                .removeClass("slideOutExt").addClass("slideInExt");
+        if (!this.isVisible()) {
+            $('#sideToolbarContainer')
+                .removeClass('slideOutExt')
+.addClass('slideInExt');
+        }
     },
 
     /**
@@ -106,7 +120,7 @@ const SideContainerToggler = {
      * element to hide
      */
     hideInnerContainer(containerSelector) {
-        containerSelector.removeClass("show").addClass("hide");
+        containerSelector.removeClass('show').addClass('hide');
 
         this.eventEmitter.emit(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             containerSelector.attr('id'), false);
@@ -124,12 +138,16 @@ const SideContainerToggler = {
         // If we quickly show a container, while another one is animating
         // and animation never ends, so we do not really hide the first one and
         // we end up with to shown panels
-        $("#sideToolbarContainer").children().each(function() {
-            if ($(this).hasClass("show"))
+        $('#sideToolbarContainer').children()
+        .each(function() {
+            /* eslint-disable no-invalid-this */
+            if ($(this).hasClass('show')) {
                 SideContainerToggler.hideInnerContainer($(this));
+            }
+            /* eslint-enable no-invalid-this */
         });
 
-        containerSelector.removeClass("hide").addClass("show");
+        containerSelector.removeClass('hide').addClass('show');
 
         this.eventEmitter.emit(UIEvents.SIDE_TOOLBAR_CONTAINER_TOGGLED,
             containerSelector.attr('id'), true);
@@ -138,9 +156,9 @@ const SideContainerToggler = {
     /**
      * TO FIX: do we need to resize the chat?
      */
-    resize () {
-        //let [width, height] = UIUtil.getSidePanelSize();
-        //Chat.resizeChat(width, height);
+    resize() {
+        // let [width, height] = UIUtil.getSidePanelSize();
+        // Chat.resizeChat(width, height);
     }
 };
 

@@ -25,7 +25,7 @@
 
 import { getAvatarURL } from '../../../react/features/base/participants';
 
-let users = {};
+const users = {};
 
 export default {
     /**
@@ -34,17 +34,19 @@ export default {
      * @param prop {string} name of the prop
      * @param val {string} value to be set
      */
-    _setUserProp: function (id, prop, val) {
+    _setUserProp(id, prop, val) {
         // FIXME: Fixes the issue with not be able to return avatar for the
         // local user when the conference has been left. Maybe there is beter
         // way to solve it.
-        if(!id || APP.conference.isLocalId(id)) {
-            id = "local";
+        if (!id || APP.conference.isLocalId(id)) {
+            id = 'local';// eslint-disable-line no-param-reassign
         }
-        if(!val || (users[id] && users[id][prop] === val))
+        if (!val || (users[id] && users[id][prop] === val)) {
             return;
-        if(!users[id])
+        }
+        if (!users[id]) {
             users[id] = {};
+        }
         users[id][prop] = val;
     },
 
@@ -54,8 +56,8 @@ export default {
      * @param id id of the user
      * @param email email or nickname to be used as a hash
      */
-    setUserEmail: function (id, email) {
-        this._setUserProp(id, "email", email);
+    setUserEmail(id, email) {
+        this._setUserProp(id, 'email', email);
     },
 
     /**
@@ -64,8 +66,8 @@ export default {
      * @param id id of the user
      * @param url the url for the avatar
      */
-    setUserAvatarUrl: function (id, url) {
-        this._setUserProp(id, "avatarUrl", url);
+    setUserAvatarUrl(id, url) {
+        this._setUserProp(id, 'avatarUrl', url);
     },
 
     /**
@@ -73,8 +75,8 @@ export default {
      * @param id id of the user
      * @param avatarId an id to be used for the avatar
      */
-    setUserAvatarID: function (id, avatarId) {
-        this._setUserProp(id, "avatarId", avatarId);
+    setUserAvatarID(id, avatarId) {
+        this._setUserProp(id, 'avatarId', avatarId);
     },
 
     /**
@@ -82,10 +84,12 @@ export default {
      * identified by its id.
      * @param {string} userId user id
      */
-    getAvatarUrl: function (userId) {
+    getAvatarUrl(userId) {
         let user;
+
         if (!userId || APP.conference.isLocalId(userId)) {
             user = users.local;
+            // eslint-disable-next-line no-param-reassign
             userId = APP.conference.getMyUserId();
         } else {
             user = users[userId];

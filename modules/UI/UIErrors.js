@@ -7,4 +7,4 @@
  *
  * @type {{FEEDBACK_REQUEST_IN_PROGRESS: string}}
  */
-export const FEEDBACK_REQUEST_IN_PROGRESS = "FeedbackRequestInProgress";
+export const FEEDBACK_REQUEST_IN_PROGRESS = 'FeedbackRequestInProgress';

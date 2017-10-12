@@ -7,7 +7,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
  * @type {{String: function}}
  */
 const commands = {
-    "topic" : processTopic
+    'topic': processTopic
 };
 
 /**
@@ -16,13 +16,15 @@ const commands = {
  * @returns {string} the command
  */
 function getCommand(message) {
-    if(message) {
-        for(var command in commands) {
-            if(message.indexOf("/" + command) === 0)
+    if (message) {
+        for (const command in commands) {
+            if (message.indexOf(`/${command}`) === 0) {
                 return command;
+            }
         }
     }
-    return "";
+
+    return '';
 }
 
 /**
@@ -30,7 +32,8 @@ function getCommand(message) {
  * @param commandArguments the arguments of the topic command.
  */
 function processTopic(commandArguments, emitter) {
-    var topic = UIUtil.escapeHtml(commandArguments);
+    const topic = UIUtil.escapeHtml(commandArguments);
+
     emitter.emit(UIEvents.SUBJECT_CHANGED, topic);
 }
 
@@ -41,7 +44,7 @@ function processTopic(commandArguments, emitter) {
  * @constructor
  */
 function CommandsProcessor(message, emitter) {
-    var command = getCommand(message);
+    const command = getCommand(message);
 
     this.emitter = emitter;
 
@@ -54,7 +57,7 @@ function CommandsProcessor(message, emitter) {
     };
 
 
-    var messageArgument = message.substr(command.length + 2);
+    const messageArgument = message.substr(command.length + 2);
 
     /**
      * Returns the arguments of the command.
@@ -70,8 +73,10 @@ function CommandsProcessor(message, emitter) {
  * @returns {boolean}
  */
 CommandsProcessor.prototype.isCommand = function() {
-    if (this.getCommand())
+    if (this.getCommand()) {
         return true;
+    }
+
     return false;
 };
 
@@ -79,8 +84,9 @@ CommandsProcessor.prototype.isCommand = function() {
  * Processes the command.
  */
 CommandsProcessor.prototype.processCommand = function() {
-    if(!this.isCommand())
+    if (!this.isCommand()) {
         return;
+    }
 
     commands[this.getCommand()](this.getArgument(), this.emitter);
 };

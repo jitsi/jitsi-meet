@@ -6,6 +6,7 @@ const logger = Logger.getLogger(__filename);
  * Dummy implementation of Storage interface with empty methods.
  */
 class DummyLocalStorage {
+    /* eslint-disable no-empty-function */
     /**
      * Empty function
      */
@@ -20,6 +21,7 @@ class DummyLocalStorage {
      * Empty function
      */
     removeItem() { }
+    /* eslint-enable no-empty-function */
 }
 
 /**

@@ -65,6 +65,7 @@ export default class PostMessageTransportBackend {
      * transport.
      */
     constructor({ enableLegacyFormat, postisOptions } = {}) {
+        // eslint-disable-next-line new-cap
         this.postis = Postis({
             ...DEFAULT_POSTIS_OPTIONS,
             ...postisOptions

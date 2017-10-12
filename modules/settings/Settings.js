@@ -1,5 +1,5 @@
 /* global JitsiMeetJS */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import UIUtil from '../UI/util/UIUtil';
 import jitsiLocalStorage from '../util/JitsiLocalStorage';
@@ -7,34 +7,35 @@ import { randomHexString } from '../../react/features/base/util';
 
 let avatarUrl = '';
 
-let email = UIUtil.unescapeHtml(jitsiLocalStorage.getItem("email") || '');
-let avatarId = UIUtil.unescapeHtml(jitsiLocalStorage.getItem("avatarId") || '');
+let email = UIUtil.unescapeHtml(jitsiLocalStorage.getItem('email') || '');
+let avatarId = UIUtil.unescapeHtml(jitsiLocalStorage.getItem('avatarId') || '');
+
 if (!avatarId) {
     // if there is no avatar id, we generate a unique one and use it forever
     avatarId = randomHexString(32);
-    jitsiLocalStorage.setItem("avatarId", avatarId);
+    jitsiLocalStorage.setItem('avatarId', avatarId);
 }
 
-let localFlipX = JSON.parse(jitsiLocalStorage.getItem("localFlipX") || true);
+let localFlipX = JSON.parse(jitsiLocalStorage.getItem('localFlipX') || true);
 let displayName = UIUtil.unescapeHtml(
-    jitsiLocalStorage.getItem("displayname") || '');
-let cameraDeviceId = jitsiLocalStorage.getItem("cameraDeviceId") || '';
-let micDeviceId = jitsiLocalStorage.getItem("micDeviceId") || '';
+    jitsiLocalStorage.getItem('displayname') || '');
+let cameraDeviceId = jitsiLocalStorage.getItem('cameraDeviceId') || '';
+let micDeviceId = jitsiLocalStorage.getItem('micDeviceId') || '';
 let welcomePageDisabled = JSON.parse(
-    jitsiLocalStorage.getItem("welcomePageDisabled") || false);
+    jitsiLocalStorage.getItem('welcomePageDisabled') || false);
 
 // Currently audio output device change is supported only in Chrome and
 // default output always has 'default' device ID
-let audioOutputDeviceId = jitsiLocalStorage.getItem("audioOutputDeviceId")
+const audioOutputDeviceId = jitsiLocalStorage.getItem('audioOutputDeviceId')
     || 'default';
 
-if (audioOutputDeviceId !==
-    JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
+if (audioOutputDeviceId
+    !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
     JitsiMeetJS.mediaDevices.setAudioOutputDevice(audioOutputDeviceId)
-        .catch((ex) => {
-            logger.warn('Failed to set audio output device from local ' +
-                'storage. Default audio output device will be used' +
-                'instead.', ex);
+        .catch(ex => {
+            logger.warn('Failed to set audio output device from local '
+                + 'storage. Default audio output device will be used'
+                + 'instead.', ex);
         });
 }
 
@@ -46,19 +47,20 @@ export default {
      * @param {string} newDisplayName unescaped display name for the local user
      * @param {boolean} disableLocalStore disables local store the display name
      */
-    setDisplayName (newDisplayName, disableLocalStore) {
+    setDisplayName(newDisplayName, disableLocalStore) {
         displayName = newDisplayName;
 
-        if (!disableLocalStore)
-            jitsiLocalStorage.setItem("displayname",
+        if (!disableLocalStore) {
+            jitsiLocalStorage.setItem('displayname',
                 UIUtil.escapeHtml(displayName));
+        }
     },
 
     /**
      * Returns the escaped display name currently used by the user
      * @returns {string} currently valid user display name.
      */
-    getDisplayName: function () {
+    getDisplayName() {
         return displayName;
     },
 
@@ -67,18 +69,19 @@ export default {
      * @param {string} newEmail new email for the local user
      * @param {boolean} disableLocalStore disables local store the email
      */
-    setEmail: function (newEmail, disableLocalStore) {
+    setEmail(newEmail, disableLocalStore) {
         email = newEmail;
 
-        if (!disableLocalStore)
-            jitsiLocalStorage.setItem("email", UIUtil.escapeHtml(newEmail));
+        if (!disableLocalStore) {
+            jitsiLocalStorage.setItem('email', UIUtil.escapeHtml(newEmail));
+        }
     },
 
     /**
      * Returns email address of the local user.
      * @returns {string} email
      */
-    getEmail: function () {
+    getEmail() {
         return email;
     },
 
@@ -86,7 +89,7 @@ export default {
      * Returns avatar id of the local user.
      * @returns {string} avatar id
      */
-    getAvatarId: function () {
+    getAvatarId() {
         return avatarId;
     },
 
@@ -94,7 +97,7 @@ export default {
      * Sets new avatarUrl for local user and saves it to the local storage.
      * @param {string} newAvatarUrl new avatarUrl for the local user
      */
-    setAvatarUrl: function (newAvatarUrl) {
+    setAvatarUrl(newAvatarUrl) {
         avatarUrl = newAvatarUrl;
     },
 
@@ -102,7 +105,7 @@ export default {
      * Returns avatarUrl address of the local user.
      * @returns {string} avatarUrl
      */
-    getAvatarUrl: function () {
+    getAvatarUrl() {
         return avatarUrl;
     },
 
@@ -110,16 +113,16 @@ export default {
      * Sets new flipX state of local video and saves it to the local storage.
      * @param {string} val flipX state of local video
      */
-    setLocalFlipX: function (val) {
+    setLocalFlipX(val) {
         localFlipX = val;
-        jitsiLocalStorage.setItem("localFlipX", val);
+        jitsiLocalStorage.setItem('localFlipX', val);
     },
 
     /**
      * Returns flipX state of local video.
      * @returns {string} flipX
      */
-    getLocalFlipX: function () {
+    getLocalFlipX() {
         return localFlipX;
     },
 
@@ -128,19 +131,21 @@ export default {
      * Empty string stands for default device.
      * @returns {String}
      */
-    getCameraDeviceId: function () {
+    getCameraDeviceId() {
         return cameraDeviceId;
     },
+
     /**
      * Set device id of the camera which is currently in use.
      * Empty string stands for default device.
      * @param {string} newId new camera device id
      * @param {boolean} whether we need to store the value
      */
-    setCameraDeviceId: function (newId, store) {
+    setCameraDeviceId(newId, store) {
         cameraDeviceId = newId;
-        if (store)
-            jitsiLocalStorage.setItem("cameraDeviceId", newId);
+        if (store) {
+            jitsiLocalStorage.setItem('cameraDeviceId', newId);
+        }
     },
 
     /**
@@ -148,19 +153,21 @@ export default {
      * Empty string stands for default device.
      * @returns {String}
      */
-    getMicDeviceId: function () {
+    getMicDeviceId() {
         return micDeviceId;
     },
+
     /**
      * Set device id of the microphone which is currently in use.
      * Empty string stands for default device.
      * @param {string} newId new microphone device id
      * @param {boolean} whether we need to store the value
      */
-    setMicDeviceId: function (newId, store) {
+    setMicDeviceId(newId, store) {
         micDeviceId = newId;
-        if (store)
-            jitsiLocalStorage.setItem("micDeviceId", newId);
+        if (store) {
+            jitsiLocalStorage.setItem('micDeviceId', newId);
+        }
     },
 
     /**
@@ -168,26 +175,27 @@ export default {
      * Empty string stands for default device.
      * @returns {String}
      */
-    getAudioOutputDeviceId: function () {
+    getAudioOutputDeviceId() {
         return JitsiMeetJS.mediaDevices.getAudioOutputDevice();
     },
+
     /**
      * Set device id of the audio output device which is currently in use.
      * Empty string stands for default device.
      * @param {string} newId='default' - new audio output device id
      * @returns {Promise}
      */
-    setAudioOutputDeviceId: function (newId = 'default') {
+    setAudioOutputDeviceId(newId = 'default') {
         return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
             .then(() =>
-                jitsiLocalStorage.setItem("audioOutputDeviceId", newId));
+                jitsiLocalStorage.setItem('audioOutputDeviceId', newId));
     },
 
     /**
      * Check if welcome page is enabled or not.
      * @returns {boolean}
      */
-    isWelcomePageEnabled () {
+    isWelcomePageEnabled() {
         return !welcomePageDisabled;
     },
 
@@ -195,8 +203,8 @@ export default {
      * Enable or disable welcome page.
      * @param {boolean} enabled if welcome page should be enabled or not
      */
-    setWelcomePageEnabled (enabled) {
+    setWelcomePageEnabled(enabled) {
         welcomePageDisabled = !enabled;
-        jitsiLocalStorage.setItem("welcomePageDisabled", welcomePageDisabled);
+        jitsiLocalStorage.setItem('welcomePageDisabled', welcomePageDisabled);
     }
 };

@@ -1,15 +1,17 @@
 /* global $ */
 import SmallVideo from '../videolayout/SmallVideo';
 
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-export default function SharedVideoThumb (url, videoType, VideoLayout)
-{
+/**
+ *
+ */
+export default function SharedVideoThumb(url, videoType, VideoLayout) {
     this.id = url;
 
     this.url = url;
     this.setVideoType(videoType);
-    this.videoSpanId = "sharedVideoContainer";
+    this.videoSpanId = 'sharedVideoContainer';
     this.container = this.createContainer(this.videoSpanId);
     this.$container = $(this.container);
     this.container.onclick = this.videoClick.bind(this);
@@ -23,42 +25,48 @@ SharedVideoThumb.prototype.constructor = SharedVideoThumb;
 /**
  * hide display name
  */
+// eslint-disable-next-line no-empty-function
+SharedVideoThumb.prototype.setDeviceAvailabilityIcons = function() {};
 
-SharedVideoThumb.prototype.setDeviceAvailabilityIcons = function () {};
+// eslint-disable-next-line no-empty-function
+SharedVideoThumb.prototype.avatarChanged = function() {};
 
-SharedVideoThumb.prototype.avatarChanged = function () {};
+SharedVideoThumb.prototype.createContainer = function(spanId) {
+    const container = document.createElement('span');
 
-SharedVideoThumb.prototype.createContainer = function (spanId) {
-    var container = document.createElement('span');
     container.id = spanId;
     container.className = 'videocontainer';
 
     // add the avatar
-    var avatar = document.createElement('img');
+    const avatar = document.createElement('img');
+
     avatar.className = 'sharedVideoAvatar';
-    avatar.src = "https://img.youtube.com/vi/" + this.url + "/0.jpg";
+    avatar.src = `https://img.youtube.com/vi/${this.url}/0.jpg`;
     container.appendChild(avatar);
 
     const displayNameContainer = document.createElement('div');
+
     displayNameContainer.className = 'displayNameContainer';
     container.appendChild(displayNameContainer);
 
-    var remotes = document.getElementById('filmstripRemoteVideosContainer');
+    const remotes = document.getElementById('filmstripRemoteVideosContainer');
+
+
     return remotes.appendChild(container);
 };
 
 /**
  * The thumb click handler.
  */
-SharedVideoThumb.prototype.videoClick = function () {
+SharedVideoThumb.prototype.videoClick = function() {
     this.VideoLayout.handleVideoThumbClicked(this.url);
 };
 
 /**
  * Removes RemoteVideo from the page.
  */
-SharedVideoThumb.prototype.remove = function () {
-    logger.log("Remove shared video thumb", this.id);
+SharedVideoThumb.prototype.remove = function() {
+    logger.log('Remove shared video thumb', this.id);
 
     // Make sure that the large video is updated if are removing its
     // corresponding small video.
@@ -75,8 +83,9 @@ SharedVideoThumb.prototype.remove = function () {
  */
 SharedVideoThumb.prototype.setDisplayName = function(displayName) {
     if (!this.container) {
-        logger.warn( "Unable to set displayName - " + this.videoSpanId +
-            " does not exist");
+        logger.warn(`Unable to set displayName - ${this.videoSpanId
+        } does not exist`);
+
         return;
     }
 

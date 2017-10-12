@@ -1,7 +1,7 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import {openConnection} from './connection';
+import { openConnection } from './connection';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import Recorder from './modules/recorder/Recorder';
@@ -18,7 +18,7 @@ import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import { initAnalytics, sendEvent } from './react/features/analytics';
 
-import EventEmitter from "events";
+import EventEmitter from 'events';
 
 import {
     AVATAR_ID_COMMAND,
@@ -77,7 +77,7 @@ import {
 } from './react/features/base/tracks';
 import { getLocationContextRoot } from './react/features/base/util';
 import { statsEmitter } from './react/features/connection-indicator';
-import { showDesktopPicker } from  './react/features/desktop-picker';
+import { showDesktopPicker } from './react/features/desktop-picker';
 import { maybeOpenFeedbackDialog } from './react/features/feedback';
 import {
     mediaPermissionPromptVisibilityChanged,
@@ -109,10 +109,10 @@ window.JitsiMeetScreenObtainer = {
 const commands = {
     AVATAR_ID: AVATAR_ID_COMMAND,
     AVATAR_URL: AVATAR_URL_COMMAND,
-    CUSTOM_ROLE: "custom-role",
+    CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
-    ETHERPAD: "etherpad",
-    SHARED_VIDEO: "shared-video"
+    ETHERPAD: 'etherpad',
+    SHARED_VIDEO: 'shared-video'
 };
 
 /**
@@ -121,15 +121,18 @@ const commands = {
  * @returns Promise<JitsiConnection>
  */
 function connect(roomName) {
-    return openConnection({retry: true, roomName: roomName})
-            .catch(function (err) {
-                if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-                    APP.UI.notifyTokenAuthFailed();
-                } else {
-                    APP.UI.notifyConnectionFailed(err);
-                }
-                throw err;
-            });
+    return openConnection({
+        retry: true,
+        roomName
+    })
+    .catch(err => {
+        if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+            APP.UI.notifyTokenAuthFailed();
+        } else {
+            APP.UI.notifyConnectionFailed(err);
+        }
+        throw err;
+    });
 }
 
 /**
@@ -143,7 +146,7 @@ function sendData(command, value) {
     }
 
     room.removeCommand(command);
-    room.sendCommand(command, {value: value});
+    room.sendCommand(command, { value });
 }
 
 /**
@@ -194,15 +197,17 @@ function maybeRedirectToWelcomePage(options) {
         // save whether current user is guest or not, before navigating
         // to close page
         window.sessionStorage.setItem('guest', isGuest);
-        assignWindowLocationPathname('static/'
-                + (options.feedbackSubmitted ? "close.html" : "close2.html"));
+        assignWindowLocationPathname(`static/${
+            options.feedbackSubmitted ? 'close.html' : 'close2.html'}`);
+
         return;
     }
 
     // else: show thankYou dialog only if there is no feedback
-    if (options.thankYouDialogVisible)
+    if (options.thankYouDialogVisible) {
         APP.UI.messageHandler.openMessageDialog(
-            null, "dialog.thankYou", {appName:interfaceConfig.APP_NAME});
+            null, 'dialog.thankYou', { appName: interfaceConfig.APP_NAME });
+    }
 
     // if Welcome page is enabled redirect to welcome page after 3 sec.
     if (config.enableWelcomePage) {
@@ -225,19 +230,27 @@ function maybeRedirectToWelcomePage(options) {
  */
 function assignWindowLocationPathname(pathname) {
     const windowLocation = window.location;
+    let newPathname = pathname;
 
-    if (!pathname.startsWith('/')) {
+    if (!newPathname.startsWith('/')) {
         // A pathname equal to ./ specifies the current directory. It will be
         // fine but pointless to include it because contextRoot is the current
         // directory.
-        pathname.startsWith('./') && (pathname = pathname.substring(2));
-        pathname = getLocationContextRoot(windowLocation) + pathname;
+        newPathname.startsWith('./')
+            && (newPathname = newPathname.substring(2));
+        newPathname = getLocationContextRoot(windowLocation) + newPathname;
     }
 
-    windowLocation.pathname = pathname;
+    windowLocation.pathname = newPathname;
 }
 
+/**
+ *
+ */
 class ConferenceConnector {
+    /**
+     *
+     */
     constructor(resolve, reject) {
         this._resolve = resolve;
         this._reject = reject;
@@ -249,17 +262,26 @@ class ConferenceConnector {
         room.on(JitsiConferenceEvents.CONFERENCE_ERROR,
             this._onConferenceError.bind(this));
     }
+
+    /**
+     *
+     */
     _handleConferenceFailed(err) {
         this._unsubscribe();
         this._reject(err);
     }
+
+    /**
+     *
+     */
     _onConferenceFailed(err, ...params) {
         APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
 
         switch (err) {
         case JitsiConferenceErrors.CONNECTION_ERROR: {
-            let [msg] = params;
+            const [ msg ] = params;
+
             APP.UI.notifyConnectionFailed(msg);
             break;
         }
@@ -284,7 +306,8 @@ class ConferenceConnector {
         }
 
         case JitsiConferenceErrors.RESERVATION_ERROR: {
-            let [code, msg] = params;
+            const [ code, msg ] = params;
+
             APP.UI.notifyReservationError(code, msg);
             break;
         }
@@ -298,7 +321,8 @@ class ConferenceConnector {
             break;
 
         case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
-            let [reason] = params;
+            const [ reason ] = params;
+
             APP.UI.hideStats();
             APP.UI.notifyConferenceDestroyed(reason);
             break;
@@ -309,7 +333,8 @@ class ConferenceConnector {
         // because Jicofo is not available, but it is going to give it another
         // try.
         case JitsiConferenceErrors.FOCUS_DISCONNECTED: {
-            let [focus, retrySec] = params;
+            const [ focus, retrySec ] = params;
+
             APP.UI.notifyFocusDisconnected(focus, retrySec);
             break;
         }
@@ -335,34 +360,53 @@ class ConferenceConnector {
             this._handleConferenceFailed(err, ...params);
         }
     }
+
+    /**
+     *
+     */
     _onConferenceError(err, ...params) {
         logger.error('CONFERENCE Error:', err, params);
         switch (err) {
         case JitsiConferenceErrors.CHAT_ERROR:
-            logger.error("Chat error.", err);
+            logger.error('Chat error.', err);
             if (isButtonEnabled('chat')) {
-                let [code, msg] = params;
+                const [ code, msg ] = params;
+
                 APP.UI.showChatError(code, msg);
             }
             break;
         default:
-            logger.error("Unknown error.", err);
+            logger.error('Unknown error.', err);
         }
     }
+
+    /**
+     *
+     */
     _unsubscribe() {
         room.off(
-            JitsiConferenceEvents.CONFERENCE_JOINED, this._handleConferenceJoined);
+            JitsiConferenceEvents.CONFERENCE_JOINED,
+            this._handleConferenceJoined);
         room.off(
-            JitsiConferenceEvents.CONFERENCE_FAILED, this._onConferenceFailed);
+            JitsiConferenceEvents.CONFERENCE_FAILED,
+            this._onConferenceFailed);
         if (this.reconnectTimeout !== null) {
             clearTimeout(this.reconnectTimeout);
         }
         AuthHandler.closeAuth();
     }
+
+    /**
+     *
+     */
     _handleConferenceJoined() {
         this._unsubscribe();
         this._resolve();
     }
+
+    /**
+     *
+     */
     connect() {
         room.join();
     }
@@ -376,6 +420,7 @@ class ConferenceConnector {
 function disconnect() {
     connection.disconnect();
     APP.API.notifyConferenceLeft(APP.conference.roomName);
+
     return Promise.resolve();
 }
 
@@ -391,8 +436,9 @@ function _connectionFailedHandler(error) {
         APP.connection.removeEventListener(
             JitsiConnectionEvents.CONNECTION_FAILED,
             _connectionFailedHandler);
-        if (room)
+        if (room) {
             room.leave();
+        }
     }
 }
 
@@ -405,6 +451,7 @@ export default {
     _localTracksInitialized: false,
     isModerator: false,
     isSharingScreen: false,
+
     /**
      * Indicates if the desktop sharing functionality has been enabled.
      * It takes into consideration {@link isDesktopSharingDisabledByConfig}
@@ -415,21 +462,25 @@ export default {
      * config.js for listed options).
      */
     isDesktopSharingEnabled: false,
+
     /**
      * Set to <tt>true</tt> if the desktop sharing functionality has been
      * explicitly disabled in the config.
      */
     isDesktopSharingDisabledByConfig: false,
+
     /**
      * The text displayed when the desktop sharing button is disabled through
      * the config. The value is set through
      * {@link interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP}.
      */
     desktopSharingDisabledTooltip: null,
+
     /*
      * Whether the local "raisedHand" flag is on.
      */
     isHandRaised: false,
+
     /*
      * Whether the local participant is the dominant speaker in the conference.
      */
@@ -507,25 +558,29 @@ export default {
             tryCreateLocalTracks = this._createDesktopTrack()
                 .then(desktopStream => {
                     if (!requestedAudio) {
-                        return [desktopStream];
+                        return [ desktopStream ];
                     }
 
-                    return createLocalTracksF({ devices: ['audio'] }, true)
-                        .then(([audioStream]) => {
-                            return [desktopStream, audioStream];
-                        })
+                    return createLocalTracksF({ devices: [ 'audio' ] }, true)
+                        .then(([ audioStream ]) =>
+                            [ desktopStream, audioStream ])
                         .catch(error => {
                             audioOnlyError = error;
-                            return [desktopStream];
+
+                            return [ desktopStream ];
                         });
-                }).catch(error => {
+                })
+                .catch(error => {
                     logger.error('Failed to obtain desktop stream', error);
                     screenSharingError = error;
+
                     return requestedAudio
-                        ? createLocalTracksF({ devices: ['audio'] }, true)
+                        ? createLocalTracksF({ devices: [ 'audio' ] }, true)
                         : [];
-                }).catch(error => {
+                })
+                .catch(error => {
                     audioOnlyError = error;
+
                     return [];
                 });
         } else if (!requestedAudio && !requestedVideo) {
@@ -540,7 +595,10 @@ export default {
                         // Try audio only...
                         audioAndVideoError = err;
 
-                        return createLocalTracksF({devices: ['audio']}, true);
+                        return createLocalTracksF(
+                            { devices: [ 'audio' ] },
+                            true
+                        );
                     } else if (requestedAudio && !requestedVideo) {
                         audioOnlyError = err;
 
@@ -551,7 +609,8 @@ export default {
                         return [];
                     }
                     logger.error('Should never happen');
-                }).catch(err => {
+                })
+                .catch(err => {
                     // Log this just in case...
                     if (!requestedAudio) {
                         logger.error('The impossible just happened', err);
@@ -560,7 +619,7 @@ export default {
 
                     // Try video only...
                     return requestedVideo
-                        ? createLocalTracksF({devices: ['video']}, true)
+                        ? createLocalTracksF({ devices: [ 'video' ] }, true)
                         : [];
                 })
                 .catch(err => {
@@ -575,9 +634,10 @@ export default {
         }
 
         return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
-            .then(([tracks, con]) => {
+            .then(([ tracks, con ]) => {
                 APP.store.dispatch(
                     mediaPermissionPromptVisibilityChanged(false));
+
                 // FIXME If there will be microphone error it will cover any
                 // screensharing dialog, but it's still better than in
                 // the reverse order where the screensharing dialog will
@@ -601,7 +661,7 @@ export default {
                     }
                 }
 
-                return [tracks, con];
+                return [ tracks, con ];
             });
     },
 
@@ -613,40 +673,49 @@ export default {
      */
     init(options) {
         this.roomName = options.roomName;
+
         // attaches global error handler, if there is already one, respect it
         if (JitsiMeetJS.getGlobalOnErrorHandler) {
-            var oldOnErrorHandler = window.onerror;
-            window.onerror = function (message, source, lineno, colno, error) {
+            const oldOnErrorHandler = window.onerror;
+
+            // eslint-disable-next-line max-params
+            window.onerror = (message, source, lineno, colno, error) => {
                 JitsiMeetJS.getGlobalOnErrorHandler(
                     message, source, lineno, colno, error);
 
-                if (oldOnErrorHandler)
+                if (oldOnErrorHandler) {
                     oldOnErrorHandler(message, source, lineno, colno, error);
+                }
             };
 
-            var oldOnUnhandledRejection = window.onunhandledrejection;
+            const oldOnUnhandledRejection = window.onunhandledrejection;
+
             window.onunhandledrejection = function(event) {
                 JitsiMeetJS.getGlobalOnErrorHandler(
                     null, null, null, null, event.reason);
 
-                if (oldOnUnhandledRejection)
+                if (oldOnUnhandledRejection) {
                     oldOnUnhandledRejection(event);
+                }
             };
         }
+
         return (
             JitsiMeetJS.init({
                 enableAnalyticsLogging: isAnalyticsEnabled(APP.store),
                 ...config
             }).then(() => {
                 initAnalytics(APP.store);
+
                 return this.createInitialLocalTracksAndConnect(
                     options.roomName, {
                         startAudioOnly: config.startAudioOnly,
                         startScreenSharing: config.startScreenSharing,
                         startWithAudioMuted: config.startWithAudioMuted,
-                        startWithVideoMuted: config.startWithVideoMuted,
+                        startWithVideoMuted: config.startWithVideoMuted
                     });
-            }).then(([tracks, con]) => {
+            })
+            .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
                     if (track.isAudioTrack() && this.isLocalAudioMuted()) {
                         sendEvent('conference.audio.initiallyMuted');
@@ -687,26 +756,29 @@ export default {
                 // them at all, we mark corresponding toolbar buttons as muted,
                 // so that the user can try unmute later on and add audio/video
                 // to the conference
-                if (!tracks.find((t) => t.isAudioTrack())) {
+                if (!tracks.find(t => t.isAudioTrack())) {
                     this.setAudioMuteStatus(true);
                 }
 
-                if (!tracks.find((t) => t.isVideoTrack())) {
+                if (!tracks.find(t => t.isVideoTrack())) {
                     this.setVideoMuteStatus(true);
                 }
 
                 this._initDeviceList();
 
-                if (config.iAmRecorder)
+                if (config.iAmRecorder) {
                     this.recorder = new Recorder();
+                }
 
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
                     (new ConferenceConnector(resolve, reject)).connect();
                 });
-            }));
+            })
+        );
     },
+
     /**
      * Check if id is id of the local user.
      * @param {string} id id to check
@@ -754,8 +826,8 @@ export default {
                 showUI && APP.UI.showMicErrorNotification(error);
             };
 
-            createLocalTracksF({ devices: ['audio'] }, false)
-                .then(([audioTrack]) => audioTrack)
+            createLocalTracksF({ devices: [ 'audio' ] }, false)
+                .then(([ audioTrack ]) => audioTrack)
                 .catch(error => {
                     maybeShowErrorDialog(error);
 
@@ -767,6 +839,7 @@ export default {
             muteLocalAudio(mute);
         }
     },
+
     /**
      * Returns whether local audio is muted or not.
      * @returns {boolean}
@@ -780,6 +853,7 @@ export default {
             : Boolean(
                 APP.store.getState()['features/base/media'].audio.muted);
     },
+
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts
      * and API.
@@ -789,6 +863,7 @@ export default {
     toggleAudioMuted(showUI = true) {
         this.muteAudio(!this.isLocalAudioMuted(), showUI);
     },
+
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
@@ -825,8 +900,8 @@ export default {
             //
             // FIXME when local track creation is moved to react/redux
             // it should take care of the use case described above
-            createLocalTracksF({ devices: ['video'] }, false)
-                .then(([videoTrack]) => videoTrack)
+            createLocalTracksF({ devices: [ 'video' ] }, false)
+                .then(([ videoTrack ]) => videoTrack)
                 .catch(error => {
                     // FIXME should send some feedback to the API on error ?
                     maybeShowErrorDialog(error);
@@ -840,6 +915,7 @@ export default {
             muteLocalVideo(mute);
         }
     },
+
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param {boolean} [showUI] when set to false will not display any error
@@ -848,6 +924,7 @@ export default {
     toggleVideoMuted(showUI = true) {
         this.muteVideo(!this.isLocalVideoMuted(), showUI);
     },
+
     /**
      * Retrieve list of conference participants (without local user).
      * @returns {JitsiParticipant[]}
@@ -855,6 +932,7 @@ export default {
     listMembers() {
         return room.getParticipants();
     },
+
     /**
      * Retrieve list of ids of conference participants (without local user).
      * @returns {string[]}
@@ -862,18 +940,22 @@ export default {
     listMembersIds() {
         return room.getParticipants().map(p => p.getId());
     },
+
     /**
      * Checks whether the participant identified by id is a moderator.
      * @id id to search for participant
      * @return {boolean} whether the participant is moderator
      */
     isParticipantModerator(id) {
-        let user = room.getParticipantById(id);
+        const user = room.getParticipantById(id);
+
+
         return user && user.isModerator();
     },
     get membersCount() {
         return room.getParticipants().length + 1;
     },
+
     /**
      * Returns true if the callstats integration is enabled, otherwise returns
      * false.
@@ -884,6 +966,7 @@ export default {
     isCallstatsEnabled() {
         return room && room.isCallstatsEnabled();
     },
+
     /**
      * Sends the given feedback through CallStats if enabled.
      *
@@ -892,7 +975,7 @@ export default {
      * @param detailedFeedback detailed feedback from the user. Not yet used
      */
     sendFeedback(overallFeedback, detailedFeedback) {
-        return room.sendFeedback (overallFeedback, detailedFeedback);
+        return room.sendFeedback(overallFeedback, detailedFeedback);
     },
 
     /**
@@ -912,6 +995,7 @@ export default {
     getConnectionTimes() {
         return this._room.getConnectionTimes();
     },
+
     // used by torture currently
     isJoined() {
         return this._room
@@ -921,6 +1005,7 @@ export default {
         return this._room
             && this._room.getConnectionState();
     },
+
     /**
      * Obtains current P2P ICE connection state.
      * @return {string|null} ICE connection state or <tt>null</tt> if there's no
@@ -930,6 +1015,7 @@ export default {
         return this._room
             && this._room.getP2PConnectionState();
     },
+
     /**
      * Starts P2P (for tests only)
      * @private
@@ -938,10 +1024,11 @@ export default {
         try {
             this._room && this._room.startP2PSession();
         } catch (error) {
-            logger.error("Start P2P failed", error);
+            logger.error('Start P2P failed', error);
             throw error;
         }
     },
+
     /**
      * Stops P2P (for tests only)
      * @private
@@ -950,10 +1037,11 @@ export default {
         try {
             this._room && this._room.stopP2PSession();
         } catch (error) {
-            logger.error("Stop P2P failed", error);
+            logger.error('Stop P2P failed', error);
             throw error;
         }
     },
+
     /**
      * Checks whether or not our connection is currently in interrupted and
      * reconnect attempts are in progress.
@@ -964,6 +1052,7 @@ export default {
     isConnectionInterrupted() {
         return this._room.isConnectionInterrupted();
     },
+
     /**
      * Obtains the local display name.
      * @returns {string|undefined}
@@ -971,6 +1060,7 @@ export default {
     getLocalDisplayName() {
         return getDisplayName(this.getMyUserId());
     },
+
     /**
      * Finds JitsiParticipant for given id.
      *
@@ -982,6 +1072,7 @@ export default {
     getParticipantById(id) {
         return room ? room.getParticipantById(id) : null;
     },
+
     /**
      * Get participant connection status for the participant.
      *
@@ -991,9 +1082,12 @@ export default {
      * or null if no such participant is found or participant is the local user.
      */
     getParticipantConnectionStatus(id) {
-        let participant = this.getParticipantById(id);
+        const participant = this.getParticipantById(id);
+
+
         return participant ? participant.getConnectionStatus() : null;
     },
+
     /**
      * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
      * the given <tt>id</tt>.
@@ -1004,39 +1098,45 @@ export default {
      * absent.
      */
     getParticipantDisplayName(id) {
-        let displayName = getDisplayName(id);
+        const displayName = getDisplayName(id);
+
         if (displayName) {
             return displayName;
-        } else {
-            if (APP.conference.isLocalId(id)) {
-                return APP.translation.generateTranslationHTML(
-                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-            } else {
-                return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-            }
         }
+        if (APP.conference.isLocalId(id)) {
+            return APP.translation.generateTranslationHTML(
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
+        }
+
+        return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+
+
     },
     getMyUserId() {
         return this._room
             && this._room.myUserId();
     },
+
     /**
      * Indicates if recording is supported in this conference.
      */
     isRecordingSupported() {
         return this._room && this._room.isRecordingSupported();
     },
+
     /**
      * Returns the recording state or undefined if the room is not defined.
      */
     getRecordingState() {
-        return (this._room) ? this._room.getRecordingState() : undefined;
+        return this._room ? this._room.getRecordingState() : undefined;
     },
+
     /**
      * Will be filled with values only when config.debug is enabled.
      * Its used by torture to check audio levels.
      */
     audioLevelsMap: {},
+
     /**
      * Returns the stored audio level (stored only if config.debug is enabled)
      * @param id the id for the user audio level to return (the id value is
@@ -1045,21 +1145,24 @@ export default {
     getPeerSSRCAudioLevel(id) {
         return this.audioLevelsMap[id];
     },
+
     /**
      * @return {number} the number of participants in the conference with at
      * least one track.
      */
     getNumberOfParticipantsWithTracks() {
         return this._room.getParticipants()
-            .filter((p) => p.getTracks().length > 0)
+            .filter(p => p.getTracks().length > 0)
             .length;
     },
+
     /**
      * Returns the stats.
      */
     getStats() {
         return room.connectionQuality.getStats();
     },
+
     // end used by torture
 
     getLogs() {
@@ -1074,15 +1177,15 @@ export default {
     saveLogs(filename = 'meetlog.json') {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
-        let logs = APP.conference.getLogs();
-        let data = encodeURIComponent(JSON.stringify(logs, null, '  '));
+        const logs = APP.conference.getLogs();
+        const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
 
-        let elem = document.createElement('a');
+        const elem = document.createElement('a');
 
         elem.download = filename;
-        elem.href = 'data:application/json;charset=utf-8,\n' + data;
+        elem.href = `data:application/json;charset=utf-8,\n${data}`;
         elem.dataset.downloadurl
-            = ['text/json', elem.download, elem.href].join(':');
+            = [ 'text/json', elem.download, elem.href ].join(':');
         elem.dispatchEvent(new MouseEvent('click', {
             view: window,
             bubbles: true,
@@ -1104,37 +1207,45 @@ export default {
          * Known custom conference commands.
          */
         defaults: commands,
+
         /**
          * Receives notifications from other participants about commands aka
          * custom events (sent by sendCommand or sendCommandOnce methods).
          * @param command {String} the name of the command
          * @param handler {Function} handler for the command
          */
-        addCommandListener () {
-            room.addCommandListener.apply(room, arguments);
+        addCommandListener() {
+            // eslint-disable-next-line prefer-rest-params
+            room.addCommandListener(...arguments);
         },
+
         /**
          * Removes command.
          * @param name {String} the name of the command.
          */
-        removeCommand () {
-            room.removeCommand.apply(room, arguments);
+        removeCommand() {
+            // eslint-disable-next-line prefer-rest-params
+            room.removeCommand(...arguments);
         },
+
         /**
          * Sends command.
          * @param name {String} the name of the command.
          * @param values {Object} with keys and values that will be sent.
          */
-        sendCommand () {
-            room.sendCommand.apply(room, arguments);
+        sendCommand() {
+            // eslint-disable-next-line prefer-rest-params
+            room.sendCommand(...arguments);
         },
+
         /**
          * Sends command one time.
          * @param name {String} the name of the command.
          * @param values {Object} with keys and values that will be sent.
          */
-        sendCommandOnce () {
-            room.sendCommandOnce.apply(room, arguments);
+        sendCommandOnce() {
+            // eslint-disable-next-line prefer-rest-params
+            room.sendCommandOnce(...arguments);
         }
     },
 
@@ -1163,21 +1274,24 @@ export default {
                 return this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
                 return this.useVideoStream(track);
-            } else {
-                logger.error(
-                    "Ignored not an audio nor a video track: ", track);
-                return Promise.resolve();
             }
+            logger.error(
+                    'Ignored not an audio nor a video track: ', track);
+
+            return Promise.resolve();
+
         });
     },
 
     _getConferenceOptions() {
-        let options = config;
+        const options = config;
+
         if (config.enableRecording && !config.recordingType) {
-            options.recordingType = (config.hosts &&
-                (typeof config.hosts.jirecon != "undefined"))?
-                "jirecon" : "colibri";
+            options.recordingType = config.hosts
+                && (typeof config.hosts.jirecon !== 'undefined')
+                ? 'jirecon' : 'colibri';
         }
+
         return options;
     },
 
@@ -1300,8 +1414,8 @@ export default {
         let promise = null;
 
         if (didHaveVideo) {
-            promise = createLocalTracksF({ devices: ['video'] })
-                .then(([stream]) => this.useVideoStream(stream))
+            promise = createLocalTracksF({ devices: [ 'video' ] })
+                .then(([ stream ]) => this.useVideoStream(stream))
                 .then(() => {
                     sendEvent(
                         'conference.sharingDesktop.stop');
@@ -1314,14 +1428,17 @@ export default {
                 })
                 .catch(error => {
                     logger.error('failed to switch back to local video', error);
-                    return this.useVideoStream(null).then(() => {
+
+                    return this.useVideoStream(null).then(() =>
+
                         // Still fail with the original err
-                        return Promise.reject(error);
-                    });
+                        Promise.reject(error)
+                    );
                 });
         } else {
             promise = this.useVideoStream(null);
         }
+
         return promise.then(
             () => {
                 this.videoSwitchInProgress = false;
@@ -1364,9 +1481,10 @@ export default {
 
         if (toggle) {
             return this._switchToScreenSharing(options);
-        } else {
-            return this._untoggleScreenSharing();
         }
+
+        return this._untoggleScreenSharing();
+
     },
 
     /**
@@ -1388,13 +1506,13 @@ export default {
 
         return createLocalTracksF({
             desktopSharingSources: options.desktopSharingSources,
-            devices: ['desktop'],
+            devices: [ 'desktop' ],
             desktopSharingExtensionExternalInstallation: {
                 interval: 500,
                 checkAgain: () => DSExternalInstallationInProgress,
                 listener: (status, url) => {
-                    switch(status) {
-                    case "waitingForExtension": {
+                    switch (status) {
+                    case 'waitingForExtension': {
                         DSExternalInstallationInProgress = true;
                         externalInstallation = true;
                         const listener = () => {
@@ -1409,22 +1527,24 @@ export default {
                                 UIEvents.EXTERNAL_INSTALLATION_CANCELED,
                                 listener);
                         };
+
                         APP.UI.addListener(
                             UIEvents.EXTERNAL_INSTALLATION_CANCELED,
                             listener);
                         APP.UI.showExtensionExternalInstallationDialog(url);
                         break;
                     }
-                    case "extensionFound":
+                    case 'extensionFound':
                         // Close the dialog.
                         externalInstallation && $.prompt.close();
                         break;
                     default:
+
                         // Unknown status
                     }
                 }
             }
-        }).then(([desktopStream]) => {
+        }).then(([ desktopStream ]) => {
             // Stores the "untoggle" handler which remembers whether was
             // there any video before and whether was it muted.
             this._untoggleScreenSharing
@@ -1440,11 +1560,14 @@ export default {
                         && this._untoggleScreenSharing();
                 }
             );
+
             // close external installation dialog on success.
             externalInstallation && $.prompt.close();
+
             return desktopStream;
         }, error => {
             DSExternalInstallationInProgress = false;
+
             // close external installation dialog on success.
             externalInstallation && $.prompt.close();
             throw error;
@@ -1470,14 +1593,17 @@ export default {
         }
 
         this.videoSwitchInProgress = true;
-        return this._createDesktopTrack(options).then(stream => {
-            return this.useVideoStream(stream);
-        }).then(() => {
+
+        return this._createDesktopTrack(options)
+        .then(stream => this.useVideoStream(stream))
+        .then(() => {
             this.videoSwitchInProgress = false;
             sendEvent('conference.sharingDesktop.start');
             logger.log('sharing local desktop');
-        }).catch(error => {
+        })
+        .catch(error => {
             this.videoSwitchInProgress = false;
+
             // Pawel: With this call I'm trying to preserve the original
             // behaviour although it is not clear why would we "untoggle"
             // on failure. I suppose it was to restore video in case there
@@ -1491,8 +1617,8 @@ export default {
             }
 
             // FIXME the code inside of _handleScreenSharingError is
-            // asynchronous, but does not return a Promise and is not part of
-            // the current Promise chain.
+            // asynchronous, but does not return a Promise and is not part
+            // of the current Promise chain.
             this._handleScreenSharingError(error);
 
             return Promise.reject(error);
@@ -1517,13 +1643,15 @@ export default {
 
         logger.error('failed to share local desktop', error);
 
-        if (error.name === JitsiTrackErrors.CHROME_EXTENSION_USER_GESTURE_REQUIRED) {
+        if (error.name
+                === JitsiTrackErrors.CHROME_EXTENSION_USER_GESTURE_REQUIRED) {
             // If start with screen sharing the extension will fail to install
             // (if not found), because the request has been triggered by the
             // script. Show a dialog which asks user to click "install" and try
             // again switching to the screen sharing.
             APP.UI.showExtensionInlineInstallationDialog(
                 () => {
+                    // eslint-disable-next-line no-empty-function
                     this.toggleScreenSharing().catch(() => {});
                 }
             );
@@ -1547,16 +1675,17 @@ export default {
 
         if (error.name === JitsiTrackErrors.PERMISSION_DENIED) {
             dialogTxt = APP.translation.generateTranslationHTML(
-                "dialog.screenSharingPermissionDeniedError");
-            dialogTitleKey = "dialog.error";
+                'dialog.screenSharingPermissionDeniedError');
+            dialogTitleKey = 'dialog.error';
         } else {
             dialogTxt = APP.translation.generateTranslationHTML(
-                "dialog.failtoinstall");
-            dialogTitleKey = "dialog.permissionDenied";
+                'dialog.failtoinstall');
+            dialogTitleKey = 'dialog.permissionDenied';
         }
 
         APP.UI.messageHandler.openDialog(dialogTitleKey, dialogTxt, false);
     },
+
     /**
      * Setup interaction between conference and UI.
      */
@@ -1582,8 +1711,9 @@ export default {
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
-            if (user.isHidden())
+            if (user.isHidden()) {
                 return;
+            }
 
             APP.store.dispatch(participantJoined({
                 id,
@@ -1610,7 +1740,8 @@ export default {
         room.on(JitsiConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
             APP.store.dispatch(participantPresenceChanged(id, status));
 
-            let user = room.getParticipantById(id);
+            const user = room.getParticipantById(id);
+
             if (user) {
                 APP.UI.updateUserStatus(user, status);
             }
@@ -1629,40 +1760,46 @@ export default {
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
 
-                let user = room.getParticipantById(id);
+                const user = room.getParticipantById(id);
+
                 if (user) {
                     APP.UI.updateUserRole(user);
                 }
             }
         });
 
-        room.on(JitsiConferenceEvents.TRACK_ADDED, (track) => {
-            if (!track || track.isLocal())
+        room.on(JitsiConferenceEvents.TRACK_ADDED, track => {
+            if (!track || track.isLocal()) {
                 return;
+            }
 
             APP.store.dispatch(trackAdded(track));
         });
 
-        room.on(JitsiConferenceEvents.TRACK_REMOVED, (track) => {
-            if (!track || track.isLocal())
+        room.on(JitsiConferenceEvents.TRACK_REMOVED, track => {
+            if (!track || track.isLocal()) {
                 return;
+            }
 
             APP.store.dispatch(trackRemoved(track));
         });
 
         room.on(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
+            let newLvl = lvl;
+
             if (this.isLocalId(id)
                 && this.localAudio && this.localAudio.isMuted()) {
-                lvl = 0;
+                newLvl = 0;
             }
 
             if (config.debug) {
-                this.audioLevelsMap[id] = lvl;
-                if (config.debugAudioLevels)
-                    logger.log("AudioLevel:" + id + "/" + lvl);
+                this.audioLevelsMap[id] = newLvl;
+                if (config.debugAudioLevels) {
+                    logger.log(`AudioLevel:${id}/${newLvl}`);
+                }
             }
 
-            APP.UI.setAudioLevel(id, lvl);
+            APP.UI.setAudioLevel(id, newLvl);
         });
 
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
@@ -1679,7 +1816,8 @@ export default {
 
         room.on(
             JitsiConferenceEvents.P2P_STATUS,
-            (jitsiConference, p2p) => APP.store.dispatch(p2pStatusChanged(p2p)));
+            (jitsiConference, p2p) =>
+                APP.store.dispatch(p2pStatusChanged(p2p)));
 
         room.on(
             JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
@@ -1689,7 +1827,7 @@ export default {
 
                 APP.UI.participantConnectionStatusChanged(id);
             });
-        room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, (id) => {
+        room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id => {
             APP.store.dispatch(dominantSpeakerChanged(id));
 
             if (this.isLocalId(id)) {
@@ -1697,7 +1835,8 @@ export default {
                 this.setRaisedHand(false);
             } else {
                 this.isDominantSpeaker = false;
-                var participant = room.getParticipantById(id);
+                const participant = room.getParticipantById(id);
+
                 if (participant) {
                     APP.UI.setRaisedHandStatus(participant, false);
                 }
@@ -1714,37 +1853,41 @@ export default {
             });
 
             if (isButtonEnabled('chat')) {
-                room.on(JitsiConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
-                    let nick = getDisplayName(id);
+                room.on(
+                    JitsiConferenceEvents.MESSAGE_RECEIVED,
+                    (id, body, ts) => {
+                        let nick = getDisplayName(id);
 
-                    if (!nick) {
-                        nick =
-                            `${interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${
+                        if (!nick) {
+                            nick = `${
+                                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${
                                 id})`;
-                    }
+                        }
 
-                    APP.API.notifyReceivedChatMessage({
-                        id,
-                        nick,
-                        body,
-                        ts
-                    });
-                    APP.UI.addMessage(id, nick, body, ts);
-                });
-                APP.UI.addListener(UIEvents.MESSAGE_CREATED, (message) => {
+                        APP.API.notifyReceivedChatMessage({
+                            id,
+                            nick,
+                            body,
+                            ts
+                        });
+                        APP.UI.addMessage(id, nick, body, ts);
+                    }
+                );
+                APP.UI.addListener(UIEvents.MESSAGE_CREATED, message => {
                     APP.API.notifySendingChatMessage(message);
                     room.sendTextMessage(message);
                 });
             }
 
-            APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, (id) => {
+            APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, id => {
                 try {
                     // do not try to select participant if there is none (we
                     // are alone in the room), otherwise an error will be
                     // thrown cause reporting mechanism is not available
                     // (datachannels currently)
-                    if (room.getParticipants().length === 0)
+                    if (room.getParticipants().length === 0) {
                         return;
+                    }
 
                     room.selectParticipant(id);
                 } catch (e) {
@@ -1773,16 +1916,20 @@ export default {
             APP.UI.showLocalConnectionInterrupted(false);
         });
 
-        room.on(JitsiConferenceEvents.DISPLAY_NAME_CHANGED, (id, displayName) => {
-            const formattedDisplayName
-                = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
-            APP.store.dispatch(participantUpdated({
-                id,
-                name: formattedDisplayName
-            }));
-            APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
-            APP.UI.changeDisplayName(id, formattedDisplayName);
-        });
+        room.on(
+            JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
+            (id, displayName) => {
+                const formattedDisplayName
+                    = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
+
+                APP.store.dispatch(participantUpdated({
+                    id,
+                    name: formattedDisplayName
+                }));
+                APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
+                APP.UI.changeDisplayName(id, formattedDisplayName);
+            }
+        );
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -1790,12 +1937,13 @@ export default {
 
         APP.remoteControl.on(RemoteControlEvents.ACTIVE_CHANGED, isActive => {
             room.setLocalParticipantProperty(
-                "remoteControlSessionStatus",
+                'remoteControlSessionStatus',
                 isActive
             );
             APP.UI.setLocalRemoteControlActiveChanged();
         });
 
+        /* eslint-disable max-params */
         room.on(
             JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
             (participant, name, oldValue, newValue) => {
@@ -1809,23 +1957,31 @@ export default {
                         newValue);
                     break;
                 default:
+
                 // ignore
                 }
             });
 
-        room.on(JitsiConferenceEvents.RECORDER_STATE_CHANGED, (status, error) => {
-            logger.log("Received recorder status change: ", status, error);
-            APP.UI.updateRecordingState(status);
-        });
+        /* eslint-enable max-params */
+
+        room.on(
+            JitsiConferenceEvents.RECORDER_STATE_CHANGED,
+            (status, error) => {
+                logger.log('Received recorder status change: ', status, error);
+                APP.UI.updateRecordingState(status);
+            }
+        );
 
         room.on(JitsiConferenceEvents.KICKED, () => {
             APP.UI.hideStats();
             APP.UI.notifyKicked();
+
             // FIXME close
         });
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
+
             // After wake up, we will be in a state where conference is left
             // there will be dialog shown to user.
             // We do not want video/audio as we show an overlay and after it
@@ -1833,16 +1989,18 @@ export default {
             // camera wakeup as a problem with device.
             // We also do not care about device change, which happens
             // on resume after suspending PC.
-            if (this.deviceChangeListener)
+            if (this.deviceChangeListener) {
                 JitsiMeetJS.mediaDevices.removeEventListener(
                     JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                     this.deviceChangeListener);
+            }
 
             // stop local video
             if (this.localVideo) {
                 this.localVideo.dispose();
                 this.localVideo = null;
             }
+
             // stop local audio
             if (this.localAudio) {
                 this.localAudio.dispose();
@@ -1850,9 +2008,12 @@ export default {
             }
         });
 
-        room.on(JitsiConferenceEvents.DTMF_SUPPORT_CHANGED, (isDTMFSupported) => {
-            APP.UI.updateDTMFSupport(isDTMFSupported);
-        });
+        room.on(
+            JitsiConferenceEvents.DTMF_SUPPORT_CHANGED,
+            isDTMFSupported => {
+                APP.UI.updateDTMFSupport(isDTMFSupported);
+            }
+        );
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
             this.muteAudio(muted);
@@ -1867,9 +2028,11 @@ export default {
 
         statsEmitter.startListeningForStats(room);
 
-        room.addCommandListener(this.commands.defaults.ETHERPAD, ({value}) => {
-            APP.UI.initEtherpad(value);
-        });
+        room.addCommandListener(this.commands.defaults.ETHERPAD,
+            ({ value }) => {
+                APP.UI.initEtherpad(value);
+            }
+        );
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
@@ -1924,7 +2087,8 @@ export default {
         });
 
         room.on(
-            JitsiConferenceEvents.AVAILABLE_DEVICES_CHANGED, function (id, devices) {
+            JitsiConferenceEvents.AVAILABLE_DEVICES_CHANGED,
+            (id, devices) => {
                 APP.UI.updateDevicesAvailability(id, devices);
             }
         );
@@ -1951,15 +2115,16 @@ export default {
             });
         });
 
+        /* eslint-disable max-params */
         APP.UI.addListener(
             UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-                var logObject = {
-                    id: "resolution_change",
+                const logObject = {
+                    id: 'resolution_change',
                     participant: id,
                     oldValue: oldResolution,
                     newValue: newResolution,
-                    delay: delay
+                    delay
                 };
 
                 room.sendApplicationLog(JSON.stringify(logObject));
@@ -1968,28 +2133,29 @@ export default {
                 // Longer delays will be caused by something else and will just
                 // poison the data.
                 if (delay < 2000) {
-                    sendEvent('stream.switch.delay',
-                        {value: delay});
+                    sendEvent('stream.switch.delay', { value: delay });
                 }
             });
 
+        /* eslint-enable max-params */
+
         // Starts or stops the recording for the conference.
-        APP.UI.addListener(UIEvents.RECORDING_TOGGLED, (options) => {
+        APP.UI.addListener(UIEvents.RECORDING_TOGGLED, options => {
             room.toggleRecording(options);
         });
 
-        APP.UI.addListener(UIEvents.SUBJECT_CHANGED, (topic) => {
+        APP.UI.addListener(UIEvents.SUBJECT_CHANGED, topic => {
             room.setSubject(topic);
         });
-        room.on(JitsiConferenceEvents.SUBJECT_CHANGED, function (subject) {
+        room.on(JitsiConferenceEvents.SUBJECT_CHANGED, subject => {
             APP.UI.setSubject(subject);
         });
 
-        APP.UI.addListener(UIEvents.USER_KICKED, (id) => {
+        APP.UI.addListener(UIEvents.USER_KICKED, id => {
             room.kickParticipant(id);
         });
 
-        APP.UI.addListener(UIEvents.REMOTE_AUDIO_MUTED, (id) => {
+        APP.UI.addListener(UIEvents.REMOTE_AUDIO_MUTED, id => {
             room.muteParticipant(id);
         });
 
@@ -1999,14 +2165,14 @@ export default {
 
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
-            (cameraDeviceId) => {
+            cameraDeviceId => {
                 sendEvent('settings.changeDevice.video');
                 createLocalTracksF({
-                    devices: ['video'],
-                    cameraDeviceId: cameraDeviceId,
+                    devices: [ 'video' ],
+                    cameraDeviceId,
                     micDeviceId: null
                 })
-                .then(([stream]) => {
+                .then(([ stream ]) => {
                     if (this.isAudioOnly()) {
                         return stream.mute()
                             .then(() => stream);
@@ -2019,7 +2185,7 @@ export default {
                     logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
-                .catch((err) => {
+                .catch(err => {
                     APP.UI.showCameraErrorNotification(err);
                 });
             }
@@ -2027,20 +2193,20 @@ export default {
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
-            (micDeviceId) => {
+            micDeviceId => {
                 sendEvent(
                     'settings.changeDevice.audioIn');
                 createLocalTracksF({
-                    devices: ['audio'],
+                    devices: [ 'audio' ],
                     cameraDeviceId: null,
-                    micDeviceId: micDeviceId
+                    micDeviceId
                 })
-                .then(([stream]) => {
+                .then(([ stream ]) => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
                     APP.settings.setMicDeviceId(micDeviceId, true);
                 })
-                .catch((err) => {
+                .catch(err => {
                     APP.UI.showMicErrorNotification(err);
                 });
             }
@@ -2048,15 +2214,15 @@ export default {
 
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
-            (audioOutputDeviceId) => {
+            audioOutputDeviceId => {
                 sendEvent(
                     'settings.changeDevice.audioOut');
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => logger.log('changed audio output device'))
-                    .catch((err) => {
-                        logger.warn('Failed to change audio output device. ' +
-                            'Default or previously set audio output device ' +
-                            'will be used instead.', err);
+                    .catch(err => {
+                        logger.warn('Failed to change audio output device. '
+                            + 'Default or previously set audio output device '
+                            + 'will be used instead.', err);
                     });
             }
         );
@@ -2076,6 +2242,7 @@ export default {
                     tracks.find(
                         track => track.jitsiTrack
                             && track.jitsiTrack.getType() === 'video'));
+
             if (!isTrackInRedux) {
                 this.muteVideo(audioOnly);
             }
@@ -2093,9 +2260,11 @@ export default {
             UIEvents.TOGGLE_SCREENSHARING, this.toggleScreenSharing.bind(this)
         );
 
+        /* eslint-disable max-params */
         APP.UI.addListener(
             UIEvents.UPDATE_SHARED_VIDEO,
             (url, state, time, isMuted, volume) => {
+                /* eslint-enable max-params */
                 // send start and stop commands once, and remove any updates
                 // that had left
                 if (state === 'stop'
@@ -2105,43 +2274,41 @@ export default {
                     room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
                         value: url,
                         attributes: {
-                            state: state,
-                            time: time,
+                            state,
+                            time,
                             muted: isMuted,
-                            volume: volume
+                            volume
                         }
                     });
-                }
-                else {
+                } else {
                     // in case of paused, in order to allow late users to join
                     // paused
                     room.removeCommand(this.commands.defaults.SHARED_VIDEO);
                     room.sendCommand(this.commands.defaults.SHARED_VIDEO, {
                         value: url,
                         attributes: {
-                            state: state,
-                            time: time,
+                            state,
+                            time,
                             muted: isMuted,
-                            volume: volume
+                            volume
                         }
                     });
                 }
             });
         room.addCommandListener(
-            this.commands.defaults.SHARED_VIDEO, ({value, attributes}, id) => {
-
+            this.commands.defaults.SHARED_VIDEO,
+            ({ value, attributes }, id) => {
                 if (attributes.state === 'stop') {
                     APP.UI.onSharedVideoStop(id, attributes);
-                }
-                else if (attributes.state === 'start') {
+                } else if (attributes.state === 'start') {
                     APP.UI.onSharedVideoStart(id, value, attributes);
-                }
-                else if (attributes.state === 'playing'
+                } else if (attributes.state === 'playing'
                     || attributes.state === 'pause') {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
     },
+
     /**
     * Adds any room listener.
     * @param {string} eventName one of the JitsiConferenceEvents
@@ -2190,7 +2357,7 @@ export default {
                         APP.store.dispatch(updateDeviceList(devices));
                     });
 
-                    this.deviceChangeListener = (devices) =>
+                    this.deviceChangeListener = devices =>
                         window.setTimeout(
                             () => this._onDeviceListChanged(devices), 0);
                     JitsiMeetJS.mediaDevices.addEventListener(
@@ -2198,10 +2365,11 @@ export default {
                         this.deviceChangeListener);
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 logger.warn(`Error getting device list: ${error}`);
             });
     },
+
     /**
      * Event listener for JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED to
      * handle change of available media devices.
@@ -2214,26 +2382,26 @@ export default {
 
         // Event handler can be fired before direct
         // enumerateDevices() call, so handle this situation here.
-        if (!currentDevices.audioinput &&
-            !currentDevices.videoinput &&
-            !currentDevices.audiooutput) {
+        if (!currentDevices.audioinput
+            && !currentDevices.videoinput
+            && !currentDevices.audiooutput) {
             mediaDeviceHelper.setCurrentMediaDevices(devices);
             currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
         }
 
-        let newDevices =
-            mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
+        const newDevices
+            = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
                 devices,
                 this.isSharingScreen,
                 this.localVideo,
                 this.localAudio);
-        let promises = [];
-        let audioWasMuted = this.isLocalAudioMuted();
-        let videoWasMuted = this.isLocalVideoMuted();
-        let availableAudioInputDevices =
-            mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
-        let availableVideoInputDevices =
-            mediaDeviceHelper.getDevicesFromListByKind(devices, 'videoinput');
+        const promises = [];
+        const audioWasMuted = this.isLocalAudioMuted();
+        const videoWasMuted = this.isLocalVideoMuted();
+        const availableAudioInputDevices
+            = mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
+        const availableVideoInputDevices
+            = mediaDeviceHelper.getDevicesFromListByKind(devices, 'videoinput');
 
         if (typeof newDevices.audiooutput !== 'undefined') {
             // Just ignore any errors in catch block.
@@ -2252,9 +2420,9 @@ export default {
                 .then(() => {
                     // If audio was muted before, or we unplugged current device
                     // and selected new one, then mute new audio track.
-                    if (audioWasMuted ||
-                        currentDevices.audioinput.length >
-                        availableAudioInputDevices.length) {
+                    if (audioWasMuted
+                        || currentDevices.audioinput.length
+                        > availableAudioInputDevices.length) {
                         sendEvent('deviceListChanged.audio.muted');
                         logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
@@ -2262,10 +2430,10 @@ export default {
 
                     // If video was muted before, or we unplugged current device
                     // and selected new one, then mute new video track.
-                    if (!this.isSharingScreen &&
-                        (videoWasMuted ||
-                            currentDevices.videoinput.length >
-                                availableVideoInputDevices.length)) {
+                    if (!this.isSharingScreen
+                        && (videoWasMuted
+                            || currentDevices.videoinput.length
+                                > availableVideoInputDevices.length)) {
                         sendEvent('deviceListChanged.video.muted');
                         logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
@@ -2293,10 +2461,10 @@ export default {
         const available = audioDeviceCount > 0 || Boolean(this.localAudio);
 
         logger.debug(
-            'Microphone button enabled: ' + available,
-            'local audio: ' + this.localAudio,
-            'audio devices: ' + audioMediaDevices,
-            'device count: ' + audioDeviceCount);
+            `Microphone button enabled: ${available}`,
+            `local audio: ${this.localAudio}`,
+            `audio devices: ${audioMediaDevices}`,
+            `device count: ${audioDeviceCount}`);
 
         APP.store.dispatch(setAudioAvailable(available));
         APP.API.notifyAudioAvailabilityChanged(available);
@@ -2310,6 +2478,7 @@ export default {
             = mediaDeviceHelper.getCurrentMediaDevices().videoinput;
         const videoDeviceCount
             = videoMediaDevices ? videoMediaDevices.length : 0;
+
         // The video functionality is considered available if there are any
         // video devices detected or if there is local video stream already
         // active which could be either screensharing stream or a video track
@@ -2318,10 +2487,10 @@ export default {
         const available = videoDeviceCount > 0 || Boolean(this.localVideo);
 
         logger.debug(
-            'Camera button enabled: ' + available,
-            'local video: ' + this.localVideo,
-            'video devices: ' + videoMediaDevices,
-            'device count: ' + videoDeviceCount);
+            `Camera button enabled: ${available}`,
+            `local video: ${this.localVideo}`,
+            `video devices: ${videoMediaDevices}`,
+            `device count: ${videoDeviceCount}`);
 
         APP.store.dispatch(setVideoAvailable(available));
         APP.API.notifyVideoAvailabilityChanged(available);
@@ -2338,13 +2507,14 @@ export default {
      * Sets the local "raised hand" status to a particular value.
      */
     setRaisedHand(raisedHand) {
-        if (raisedHand !== this.isHandRaised)
-        {
+        if (raisedHand !== this.isHandRaised) {
             APP.UI.onLocalRaiseHandChanged(raisedHand);
 
             this.isHandRaised = raisedHand;
+
             // Advertise the updated status
-            room.setLocalParticipantProperty("raisedHand", raisedHand);
+            room.setLocalParticipantProperty('raisedHand', raisedHand);
+
             // Update the view
             APP.UI.setLocalRaisedHandStatus(raisedHand);
         }
@@ -2360,11 +2530,17 @@ export default {
      * NOTE: Should be used after conference.init
      */
     logEvent(name, value, label) {
-        sendEvent(name, {value, label});
+        sendEvent(name, {
+            value,
+            label
+        });
         if (room) {
-            room.sendApplicationLog(JSON.stringify({name, value, label}));
+            room.sendApplicationLog(JSON.stringify({ name,
+                value,
+                label }));
         }
     },
+
     /**
      * Methods logs an application event given in the JSON format.
      * @param {string} logJSON an event to be logged in JSON format
@@ -2374,6 +2550,7 @@ export default {
             room.sendApplicationLog(logJSON);
         }
     },
+
     /**
      * Disconnect from the conference and optionally request user feedback.
      * @param {boolean} [requestFeedback=false] if user feedback should be
@@ -2387,6 +2564,7 @@ export default {
         if (requestFeedback) {
             requestFeedbackPromise
                 = APP.store.dispatch(maybeOpenFeedbackDialog(room))
+
                     // false because the thank you dialog shouldn't be displayed
                     .catch(() => Promise.resolve(false));
         } else {
@@ -2413,9 +2591,9 @@ export default {
     changeLocalEmail(email = '') {
         const localParticipant = getLocalParticipant(APP.store.getState());
 
-        email = String(email).trim();
+        const formattedEmail = String(email).trim();
 
-        if (email === localParticipant.email) {
+        if (formattedEmail === localParticipant.email) {
             return;
         }
 
@@ -2424,12 +2602,12 @@ export default {
         APP.store.dispatch(participantUpdated({
             id: localId,
             local: true,
-            email
+            formattedEmail
         }));
 
-        APP.settings.setEmail(email);
-        APP.UI.setUserEmail(localId, email);
-        sendData(commands.EMAIL, email);
+        APP.settings.setEmail(formattedEmail);
+        APP.UI.setUserEmail(localId, formattedEmail);
+        sendData(commands.EMAIL, formattedEmail);
     },
 
     /**
@@ -2439,16 +2617,16 @@ export default {
     changeLocalAvatarUrl(url = '') {
         const { avatarURL, id } = getLocalParticipant(APP.store.getState());
 
-        url = String(url).trim();
+        const formattedUrl = String(url).trim();
 
-        if (url === avatarURL) {
+        if (formattedUrl === avatarURL) {
             return;
         }
 
         APP.store.dispatch(participantUpdated({
             id,
             local: true,
-            avatarURL: url
+            avatarURL: formattedUrl
         }));
 
         APP.settings.setAvatarUrl(url);

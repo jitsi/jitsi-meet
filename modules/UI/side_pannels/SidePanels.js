@@ -5,7 +5,7 @@ import ContactListView from './contactlist/ContactListView';
 import { isButtonEnabled } from '../../../react/features/toolbox';
 
 const SidePanels = {
-    init (eventEmitter) {
+    init(eventEmitter) {
         // Initialize chat
         if (isButtonEnabled('chat')) {
             Chat.init(eventEmitter);

@@ -2,7 +2,7 @@
  * The value for the "var" attribute of feature tag in disco-info packets.
  */
 export const DISCO_REMOTE_CONTROL_FEATURE
-    = "http://jitsi.org/meet/remotecontrol";
+    = 'http://jitsi.org/meet/remotecontrol';
 
 /**
  * Types of remote-control events.
@@ -10,17 +10,17 @@ export const DISCO_REMOTE_CONTROL_FEATURE
   * @enum {string}
  */
 export const EVENTS = {
-    mousemove: "mousemove",
-    mousedown: "mousedown",
-    mouseup: "mouseup",
-    mousedblclick: "mousedblclick",
-    mousescroll: "mousescroll",
-    keydown: "keydown",
-    keyup: "keyup",
-    permissions: "permissions",
-    start: "start",
-    stop: "stop",
-    supported: "supported"
+    mousemove: 'mousemove',
+    mousedown: 'mousedown',
+    mouseup: 'mouseup',
+    mousedblclick: 'mousedblclick',
+    mousescroll: 'mousescroll',
+    keydown: 'keydown',
+    keyup: 'keyup',
+    permissions: 'permissions',
+    start: 'start',
+    stop: 'stop',
+    supported: 'supported'
 };
 
 /**
@@ -29,7 +29,7 @@ export const EVENTS = {
   * @enum {string}
  */
 export const REQUESTS = {
-    start: "start"
+    start: 'start'
 };
 
 /**
@@ -38,16 +38,16 @@ export const REQUESTS = {
  * @enum {string}
  */
 export const PERMISSIONS_ACTIONS = {
-    request: "request",
-    grant: "grant",
-    deny: "deny",
-    error: "error"
+    request: 'request',
+    grant: 'grant',
+    deny: 'deny',
+    error: 'error'
 };
 
 /**
  * The type of remote control messages.
  */
-export const REMOTE_CONTROL_MESSAGE_NAME = "remote-control";
+export const REMOTE_CONTROL_MESSAGE_NAME = 'remote-control';
 
 /**
  * The remote control event.

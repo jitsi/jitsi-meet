@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { PresenceLabel } from '../../../react/features/presence-status';
 /* eslint-enable no-unused-vars */
 
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import {
     JitsiParticipantConnectionStatus
@@ -16,15 +16,16 @@ import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
 
-import Avatar from "../avatar/Avatar";
-import {createDeferred} from '../../util/helpers';
-import UIEvents from "../../../service/UI/UIEvents";
-import UIUtil from "../util/UIUtil";
-import {VideoContainer, VIDEO_CONTAINER_TYPE} from "./VideoContainer";
+import Avatar from '../avatar/Avatar';
+import { createDeferred } from '../../util/helpers';
+import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../util/UIUtil';
+import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import AudioLevels from "../audio_levels/AudioLevels";
+import AudioLevels from '../audio_levels/AudioLevels';
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
+
 /**
  * The time interval in milliseconds to check the video resolution of the video
  * being displayed.
@@ -49,7 +50,10 @@ export default class LargeVideoManager {
             || containerType === DESKTOP_CONTAINER_TYPE;
     }
 
-    constructor (emitter) {
+    /**
+     *
+     */
+    constructor(emitter) {
         /**
          * The map of <tt>LargeContainer</tt>s where the key is the video
          * container type.
@@ -59,6 +63,7 @@ export default class LargeVideoManager {
         this.eventEmitter = emitter;
 
         this.state = VIDEO_CONTAINER_TYPE;
+
         // FIXME: We are passing resizeContainer as parameter which is calling
         // Container.resize. Probably there's better way to implement this.
         this.videoContainer = new VideoContainer(
@@ -125,7 +130,10 @@ export default class LargeVideoManager {
         this.removePresenceLabel();
     }
 
-    onHoverIn (e) {
+    /**
+     *
+     */
+    onHoverIn(e) {
         if (!this.state) {
             return;
         }
@@ -134,7 +142,10 @@ export default class LargeVideoManager {
         container.onHoverIn(e);
     }
 
-    onHoverOut (e) {
+    /**
+     *
+     */
+    onHoverOut(e) {
         if (!this.state) {
             return;
         }
@@ -146,9 +157,10 @@ export default class LargeVideoManager {
     /**
      * Called when the media connection has been interrupted.
      */
-    onVideoInterrupted () {
+    onVideoInterrupted() {
         this.enableLocalConnectionProblemFilter(true);
-        this._setLocalConnectionMessage("connection.RECONNECTING");
+        this._setLocalConnectionMessage('connection.RECONNECTING');
+
         // Show the message only if the video is currently being displayed
         this.showLocalConnectionMessage(
             LargeVideoManager.isVideoContainer(this.state));
@@ -157,17 +169,25 @@ export default class LargeVideoManager {
     /**
      * Called when the media connection has been restored.
      */
-    onVideoRestored () {
+    onVideoRestored() {
         this.enableLocalConnectionProblemFilter(false);
         this.showLocalConnectionMessage(false);
     }
 
-    get id () {
+    /**
+     *
+     */
+    get id() {
         const container = this.getCurrentContainer();
+
+
         return container.id;
     }
 
-    scheduleLargeVideoUpdate () {
+    /**
+     *
+     */
+    scheduleLargeVideoUpdate() {
         if (this.updateInProcess || !this.newStreamData) {
             return;
         }
@@ -175,6 +195,7 @@ export default class LargeVideoManager {
         this.updateInProcess = true;
 
         // Include hide()/fadeOut only if we're switching between users
+        // eslint-disable-next-line eqeqeq
         const isUserSwitch = this.newStreamData.id != this.id;
         const container = this.getCurrentContainer();
         const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
@@ -190,9 +211,11 @@ export default class LargeVideoManager {
 
             this.newStreamData = null;
 
-            logger.info("hover in %s", id);
+            logger.info('hover in %s', id);
             this.state = videoType;
+            // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();
+
             container.setStream(id, stream, videoType);
 
             // change the avatar url on large
@@ -215,7 +238,7 @@ export default class LargeVideoManager {
                                 === JitsiParticipantConnectionStatus.ACTIVE
                         || wasUsersImageCached);
 
-            let showAvatar
+            const showAvatar
                 = isVideoContainer
                     && (APP.conference.isAudioOnly() || !isVideoRenderable);
 
@@ -225,6 +248,7 @@ export default class LargeVideoManager {
             // but we still should show watermark
             if (showAvatar) {
                 this.showWatermark(true);
+
                 // If the intention of this switch is to show the avatar
                 // we need to make sure that the video is hidden
                 promise = container.hide();
@@ -246,10 +270,10 @@ export default class LargeVideoManager {
             let messageKey = null;
 
             if (isConnectionInterrupted) {
-                messageKey = "connection.USER_CONNECTION_INTERRUPTED";
+                messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
             } else if (connectionStatus
                     === JitsiParticipantConnectionStatus.INACTIVE) {
-                messageKey = "connection.LOW_BANDWIDTH";
+                messageKey = 'connection.LOW_BANDWIDTH';
             }
 
             // Make sure no notification about remote failure is shown as
@@ -302,21 +326,23 @@ export default class LargeVideoManager {
         this.videoContainer.showRemoteConnectionProblemIndicator(
             showProblemsIndication);
 
-        if (!messageKey) {
-            // Hide the message
-            this.showRemoteConnectionMessage(false);
-        } else {
+        if (messageKey) {
             // Get user's display name
-            let displayName
+            const displayName
                 = APP.conference.getParticipantDisplayName(id);
+
             this._setRemoteConnectionMessage(
                 messageKey,
-                { displayName: displayName });
+                { displayName });
 
             // Show it now only if the VideoContainer is on top
             this.showRemoteConnectionMessage(
                 LargeVideoManager.isVideoContainer(this.state));
+        } else {
+            // Hide the message
+            this.showRemoteConnectionMessage(false);
         }
+
     }
 
     /**
@@ -327,7 +353,7 @@ export default class LargeVideoManager {
      * @param {string?} videoType new video type
      * @returns {Promise}
      */
-    updateLargeVideo (userID, stream, videoType) {
+    updateLargeVideo(userID, stream, videoType) {
         if (this.newStreamData) {
             this.newStreamData.reject();
         }
@@ -345,7 +371,7 @@ export default class LargeVideoManager {
     /**
      * Update container size.
      */
-    updateContainerSize () {
+    updateContainerSize() {
         this.width = UIUtil.getAvailableVideoWidth();
         this.height = window.innerHeight;
     }
@@ -355,8 +381,9 @@ export default class LargeVideoManager {
      * @param {string} type type of container which should be resized.
      * @param {boolean} [animate=false] if resize process should be animated.
      */
-    resizeContainer (type, animate = false) {
-        let container = this.getContainer(type);
+    resizeContainer(type, animate = false) {
+        const container = this.getContainer(type);
+
         container.resize(this.width, this.height, animate);
     }
 
@@ -364,7 +391,7 @@ export default class LargeVideoManager {
      * Resize all Large containers.
      * @param {boolean} animate if resize process should be animated.
      */
-    resize (animate) {
+    resize(animate) {
         // resize all containers
         Object.keys(this.containers)
             .forEach(type => this.resizeContainer(type, animate));
@@ -384,15 +411,15 @@ export default class LargeVideoManager {
      *
      * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
      */
-    enableLocalConnectionProblemFilter (enable) {
+    enableLocalConnectionProblemFilter(enable) {
         this.videoContainer.enableLocalConnectionProblemFilter(enable);
     }
 
     /**
      * Updates the src of the dominant speaker avatar
      */
-    updateAvatar (avatarUrl) {
-        $("#dominantSpeakerAvatar").attr('src', avatarUrl);
+    updateAvatar(avatarUrl) {
+        $('#dominantSpeakerAvatar').attr('src', avatarUrl);
     }
 
     /**
@@ -400,8 +427,8 @@ export default class LargeVideoManager {
      *
      * @param lvl the new audio level to set
      */
-    updateLargeVideoAudioLevel (lvl) {
-        AudioLevels.updateLargeVideoAudioLevel("dominantSpeaker", lvl);
+    updateLargeVideoAudioLevel(lvl) {
+        AudioLevels.updateLargeVideoAudioLevel('dominantSpeaker', lvl);
     }
 
     /**
@@ -418,19 +445,18 @@ export default class LargeVideoManager {
 
         if (isConnectionMessageVisible) {
             this.removePresenceLabel();
+
             return;
         }
 
         const presenceLabelContainer = $('#remotePresenceMessage');
 
         if (presenceLabelContainer.length) {
-            /* jshint ignore:start */
             ReactDOM.render(
                 <Provider store = { APP.store }>
                     <PresenceLabel participantID = { id } />
                 </Provider>,
                 presenceLabelContainer.get(0));
-            /* jshint ignore:end */
         }
     }
 
@@ -443,9 +469,7 @@ export default class LargeVideoManager {
         const presenceLabelContainer = $('#remotePresenceMessage');
 
         if (presenceLabelContainer.length) {
-            /* jshint ignore:start */
             ReactDOM.unmountComponentAtNode(presenceLabelContainer.get(0));
-            /* jshint ignore:end */
         }
     }
 
@@ -453,7 +477,7 @@ export default class LargeVideoManager {
      * Show or hide watermark.
      * @param {boolean} show
      */
-    showWatermark (show) {
+    showWatermark(show) {
         $('.watermark').css('visibility', show ? 'visible' : 'hidden');
     }
 
@@ -463,12 +487,13 @@ export default class LargeVideoManager {
      * displayed or not. If missing the condition will be based on the value
      * obtained from {@link APP.conference.isConnectionInterrupted}.
      */
-    showLocalConnectionMessage (show) {
+    showLocalConnectionMessage(show) {
         if (typeof show !== 'boolean') {
+            // eslint-disable-next-line no-param-reassign
             show = APP.conference.isConnectionInterrupted();
         }
 
-        let id = 'localConnectionMessage';
+        const id = 'localConnectionMessage';
 
         UIUtil.setVisible(id, show);
 
@@ -489,11 +514,12 @@ export default class LargeVideoManager {
      * obtained form "APP.conference" and the message will be displayed if
      * the user's connection is either interrupted or inactive.
      */
-    showRemoteConnectionMessage (show) {
+    showRemoteConnectionMessage(show) {
         if (typeof show !== 'boolean') {
             const connStatus
                 = APP.conference.getParticipantConnectionStatus(this.id);
 
+            // eslint-disable-next-line no-param-reassign
             show = !APP.conference.isLocalId(this.id)
                 && (connStatus === JitsiParticipantConnectionStatus.INTERRUPTED
                     || connStatus
@@ -501,7 +527,8 @@ export default class LargeVideoManager {
         }
 
         if (show) {
-            $('#remoteConnectionMessage').css({display: "block"});
+            $('#remoteConnectionMessage').css({ display: 'block' });
+
             // 'videoConnectionMessage' message conflicts with 'avatarMessage',
             // so it must be hidden
             this.showLocalConnectionMessage(false);
@@ -520,11 +547,11 @@ export default class LargeVideoManager {
      *
      * @private
      */
-    _setRemoteConnectionMessage (msgKey, msgOptions) {
+    _setRemoteConnectionMessage(msgKey, msgOptions) {
         if (msgKey) {
             $('#remoteConnectionMessage')
-                .attr("data-i18n", msgKey)
-                .attr("data-i18n-options", JSON.stringify(msgOptions));
+                .attr('data-i18n', msgKey)
+                .attr('data-i18n-options', JSON.stringify(msgOptions));
             APP.translation.translateElement(
                 $('#remoteConnectionMessage'), msgOptions);
         }
@@ -539,9 +566,9 @@ export default class LargeVideoManager {
      *
      * @private
      */
-    _setLocalConnectionMessage (msgKey) {
+    _setLocalConnectionMessage(msgKey) {
         $('#localConnectionMessage')
-            .attr("data-i18n", msgKey);
+            .attr('data-i18n', msgKey);
         APP.translation.translateElement($('#localConnectionMessage'));
     }
 
@@ -550,7 +577,7 @@ export default class LargeVideoManager {
      * @param {string} type container type
      * @param {LargeContainer} container container to add.
      */
-    addContainer (type, container) {
+    addContainer(type, container) {
         if (this.containers[type]) {
             throw new Error(`container of type ${type} already exist`);
         }
@@ -564,8 +591,8 @@ export default class LargeVideoManager {
      * @param {string} type container type.
      * @returns {LargeContainer}
      */
-    getContainer (type) {
-        let container = this.containers[type];
+    getContainer(type) {
+        const container = this.containers[type];
 
         if (!container) {
             throw new Error(`container of type ${type} doesn't exist`);
@@ -598,7 +625,7 @@ export default class LargeVideoManager {
      * Remove Large container of specified type.
      * @param {string} type container type.
      */
-    removeContainer (type) {
+    removeContainer(type) {
         if (!this.containers[type]) {
             throw new Error(`container of type ${type} doesn't exist`);
         }
@@ -612,15 +639,17 @@ export default class LargeVideoManager {
      * @param {string} type container type.
      * @returns {Promise}
      */
-    showContainer (type) {
+    showContainer(type) {
         if (this.state === type) {
             return Promise.resolve();
         }
 
-        let oldContainer = this.containers[this.state];
+        const oldContainer = this.containers[this.state];
+
         // FIXME when video is being replaced with other content we need to hide
         // companion icons/messages. It would be best if the container would
         // be taking care of it by itself, but that is a bigger refactoring
+
         if (LargeVideoManager.isVideoContainer(this.state)) {
             this.showWatermark(false);
             this.showLocalConnectionMessage(false);
@@ -629,7 +658,7 @@ export default class LargeVideoManager {
         oldContainer.hide();
 
         this.state = type;
-        let container = this.getContainer(type);
+        const container = this.getContainer(type);
 
         return container.show().then(() => {
             if (LargeVideoManager.isVideoContainer(type)) {
@@ -638,6 +667,7 @@ export default class LargeVideoManager {
                 // the container would be taking care of it by itself, but that
                 // is a bigger refactoring
                 this.showWatermark(true);
+
                 // "avatar" and "video connection" can not be displayed both
                 // at the same time, but the latter is of higher priority and it
                 // will hide the avatar one if will be displayed.

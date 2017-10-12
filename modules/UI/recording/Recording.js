@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import UIEvents from "../../../service/UI/UIEvents";
+import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 import VideoLayout from '../videolayout/VideoLayout';
 
@@ -84,7 +84,7 @@ let dialog = null;
  */
 function _isRecordingButtonEnabled() {
     return (
-        interfaceConfig.TOOLBAR_BUTTONS.indexOf("recording") !== -1
+        interfaceConfig.TOOLBAR_BUTTONS.indexOf('recording') !== -1
             && config.enableRecording
             && APP.conference.isRecordingSupported());
 }
@@ -95,69 +95,75 @@ function _isRecordingButtonEnabled() {
  */
 function _requestLiveStreamId() {
     const cancelButton
-        = APP.translation.generateTranslationHTML("dialog.Cancel");
-    const backButton = APP.translation.generateTranslationHTML("dialog.Back");
+        = APP.translation.generateTranslationHTML('dialog.Cancel');
+    const backButton = APP.translation.generateTranslationHTML('dialog.Back');
     const startStreamingButton
-        = APP.translation.generateTranslationHTML("dialog.startLiveStreaming");
+        = APP.translation.generateTranslationHTML('dialog.startLiveStreaming');
     const streamIdRequired
         = APP.translation.generateTranslationHTML(
-            "liveStreaming.streamIdRequired");
+            'liveStreaming.streamIdRequired');
     const streamIdHelp
         = APP.translation.generateTranslationHTML(
-            "liveStreaming.streamIdHelp");
+            'liveStreaming.streamIdHelp');
 
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         dialog = APP.UI.messageHandler.openDialogWithStates({
             state0: {
-                titleKey: "dialog.liveStreaming",
+                titleKey: 'dialog.liveStreaming',
                 html:
                     `<input  class="input-control"
                     name="streamId" type="text"
                     data-i18n="[placeholder]dialog.streamKey"
                     autofocus><div style="text-align: right">
                     <a class="helper-link" target="_new"
-                    href="${interfaceConfig.LIVE_STREAMING_HELP_LINK}">`
-                        + streamIdHelp
-                        + `</a></div>`,
+                    href="${interfaceConfig.LIVE_STREAMING_HELP_LINK}">${
+    streamIdHelp
+}</a></div>`,
                 persistent: false,
                 buttons: [
-                    {title: cancelButton, value: false},
-                    {title: startStreamingButton, value: true}
+                    { title: cancelButton,
+                        value: false },
+                    { title: startStreamingButton,
+                        value: true }
                 ],
                 focus: ':input:first',
                 defaultButton: 1,
-                submit: function (e, v, m, f) {
+                submit(e, v, m, f) { // eslint-disable-line max-params
                     e.preventDefault();
 
                     if (v) {
                         if (f.streamId && f.streamId.length > 0) {
                             resolve(UIUtil.escapeHtml(f.streamId));
                             dialog.close();
+
                             return;
                         }
-                        else {
-                            dialog.goToState('state1');
-                            return false;
-                        }
-                    } else {
-                        reject(APP.UI.messageHandler.CANCEL);
-                        dialog.close();
+                        dialog.goToState('state1');
+
                         return false;
+
                     }
+                    reject(APP.UI.messageHandler.CANCEL);
+                    dialog.close();
+
+                    return false;
+
                 }
             },
 
             state1: {
-                titleKey: "dialog.liveStreaming",
+                titleKey: 'dialog.liveStreaming',
                 html: streamIdRequired,
                 persistent: false,
                 buttons: [
-                    {title: cancelButton, value: false},
-                    {title: backButton, value: true}
+                    { title: cancelButton,
+                        value: false },
+                    { title: backButton,
+                        value: true }
                 ],
                 focus: ':input:first',
                 defaultButton: 1,
-                submit: function (e, v) {
+                submit(e, v) {
                     e.preventDefault();
                     if (v === 0) {
                         reject(APP.UI.messageHandler.CANCEL);
@@ -168,7 +174,7 @@ function _requestLiveStreamId() {
                 }
             }
         }, {
-            close: function () {
+            close() {
                 dialog = null;
             }
         });
@@ -180,26 +186,29 @@ function _requestLiveStreamId() {
  * @returns {Promise}
  */
 function _requestRecordingToken() {
-    let titleKey = "dialog.recordingToken";
-    let msgString = (
-        `<input name="recordingToken" type="text"
+    const titleKey = 'dialog.recordingToken';
+    const msgString
+        = `<input name="recordingToken" type="text"
                 data-i18n="[placeholder]dialog.token"
                 class="input-control"
                 autofocus>`
-    );
-    return new Promise(function (resolve, reject) {
+
+    ;
+
+
+    return new Promise((resolve, reject) => {
         dialog = APP.UI.messageHandler.openTwoButtonDialog({
             titleKey,
             msgString,
             leftButtonKey: 'dialog.Save',
-            submitFunction: function (e, v, m, f) {
+            submitFunction(e, v, m, f) { // eslint-disable-line max-params
                 if (v && f.recordingToken) {
                     resolve(UIUtil.escapeHtml(f.recordingToken));
                 } else {
                     reject(APP.UI.messageHandler.CANCEL);
                 }
             },
-            closeFunction: function () {
+            closeFunction() {
                 dialog = null;
             },
             focus: ':input:first'
@@ -215,18 +224,18 @@ function _requestRecordingToken() {
  * @private
  */
 function _showStopRecordingPrompt(recordingType) {
-    var title;
-    var message;
-    var buttonKey;
-    if (recordingType === "jibri") {
-        title = "dialog.liveStreaming";
-        message = "dialog.stopStreamingWarning";
-        buttonKey = "dialog.stopLiveStreaming";
-    }
-    else {
-        title = "dialog.recording";
-        message = "dialog.stopRecordingWarning";
-        buttonKey = "dialog.stopRecording";
+    let title;
+    let message;
+    let buttonKey;
+
+    if (recordingType === 'jibri') {
+        title = 'dialog.liveStreaming';
+        message = 'dialog.stopStreamingWarning';
+        buttonKey = 'dialog.stopLiveStreaming';
+    } else {
+        title = 'dialog.recording';
+        message = 'dialog.stopRecordingWarning';
+        buttonKey = 'dialog.stopRecording';
     }
 
     return new Promise((resolve, reject) => {
@@ -248,7 +257,10 @@ function _showStopRecordingPrompt(recordingType) {
  * @returns {boolean} true if the condition is met or false otherwise.
  */
 function isStartingStatus(status) {
-    return status === JitsiRecordingStatus.PENDING || status === JitsiRecordingStatus.RETRYING;
+    return (
+        status === JitsiRecordingStatus.PENDING
+            || status === JitsiRecordingStatus.RETRYING
+    );
 }
 
 /**
@@ -256,7 +268,7 @@ function isStartingStatus(status) {
  * @type {{init, initRecordingButton, showRecordingButton, updateRecordingState,
  * updateRecordingUI, checkAutoRecord}}
  */
-var Recording = {
+const Recording = {
     /**
      * Initializes the recording UI.
      */
@@ -267,11 +279,10 @@ var Recording = {
         this.updateRecordingState(APP.conference.getRecordingState());
 
         if (recordingType === 'jibri') {
-            this.baseClass = "fa fa-play-circle";
+            this.baseClass = 'fa fa-play-circle';
             Object.assign(this, STREAMING_TRANSLATION_KEYS);
-        }
-        else {
-            this.baseClass = "icon-recEnable";
+        } else {
+            this.baseClass = 'icon-recEnable';
             Object.assign(this, RECORDING_TRANSLATION_KEYS);
         }
 
@@ -301,7 +312,7 @@ var Recording = {
         const selector = $('#toolbar_button_record');
 
         selector.addClass(this.baseClass);
-        selector.attr("data-i18n", "[content]" + this.recordingButtonTooltip);
+        selector.attr('data-i18n', `[content]${this.recordingButtonTooltip}`);
         APP.translation.translateElement(selector);
     },
 
@@ -310,8 +321,8 @@ var Recording = {
      * @param show {true} to show the recording button, {false} to hide it
      */
     showRecordingButton(show) {
-        let shouldShow = show && _isRecordingButtonEnabled();
-        let id = 'toolbar_button_record';
+        const shouldShow = show && _isRecordingButtonEnabled();
+        const id = 'toolbar_button_record';
 
         UIUtil.setVisible(id, shouldShow);
     },
@@ -322,12 +333,14 @@ var Recording = {
      */
     updateRecordingState(recordingState) {
         // I'm the recorder, so I don't want to see any UI related to states.
-        if (config.iAmRecorder)
+        if (config.iAmRecorder) {
             return;
+        }
 
         // If there's no state change, we ignore the update.
-        if (!recordingState || this.currentState === recordingState)
+        if (!recordingState || this.currentState === recordingState) {
             return;
+        }
 
         this.updateRecordingUI(recordingState);
     },
@@ -338,7 +351,8 @@ var Recording = {
      */
     updateRecordingUI(recordingState) {
 
-        let oldState = this.currentState;
+        const oldState = this.currentState;
+
         this.currentState = recordingState;
 
         let labelDisplayConfiguration;
@@ -366,6 +380,7 @@ var Recording = {
             // We don't want UI changes if this is an availability change.
             if (oldState !== JitsiRecordingStatus.ON && !wasInStartingStatus) {
                 APP.store.dispatch(updateRecordingState({ recordingState }));
+
                 return;
             }
 
@@ -378,7 +393,7 @@ var Recording = {
 
             this._setToolbarButtonToggled(false);
 
-            setTimeout(function(){
+            setTimeout(() => {
                 APP.store.dispatch(hideRecordingLabel());
             }, 5000);
 
@@ -408,7 +423,8 @@ var Recording = {
         }
 
         // Return an empty label display configuration to indicate no label
-        // should be displayed. The JitsiRecordingStatus.AVAIABLE case is handled here.
+        // should be displayed. The JitsiRecordingStatus.AVAIABLE case is
+        // handled here.
         default: {
             labelDisplayConfiguration = null;
         }
@@ -450,42 +466,48 @@ var Recording = {
                     this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED);
                     sendEvent('recording.stopped');
                 },
-                () => {});
+                () => {}); // eslint-disable-line no-empty-function
             break;
         }
         case JitsiRecordingStatus.AVAILABLE:
         case JitsiRecordingStatus.OFF: {
-            if (this.recordingType === 'jibri')
-                _requestLiveStreamId().then(streamId => {
+            if (this.recordingType === 'jibri') {
+                _requestLiveStreamId()
+                .then(streamId => {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { streamId });
                     sendEvent('recording.started');
-                }).catch(reason => {
-                    if (reason !== APP.UI.messageHandler.CANCEL)
-                        logger.error(reason);
-                    else
+                })
+                .catch(reason => {
+                    if (reason === APP.UI.messageHandler.CANCEL) {
                         sendEvent('recording.canceled');
+                    } else {
+                        logger.error(reason);
+                    }
                 });
-            else {
+            } else {
                 if (this.predefinedToken) {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token: this.predefinedToken });
                     sendEvent('recording.started');
+
                     return;
                 }
 
-                _requestRecordingToken().then((token) => {
+                _requestRecordingToken().then(token => {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token });
                     sendEvent('recording.started');
-                }).catch(reason => {
-                    if (reason !== APP.UI.messageHandler.CANCEL)
-                        logger.error(reason);
-                    else
+                })
+                .catch(reason => {
+                    if (reason === APP.UI.messageHandler.CANCEL) {
                         sendEvent('recording.canceled');
+                    } else {
+                        logger.error(reason);
+                    }
                 });
             }
             break;
@@ -521,7 +543,7 @@ var Recording = {
      * or not
      */
     _setToolbarButtonToggled(isToggled) {
-        $("#toolbar_button_record").toggleClass("toggled", isToggled);
+        $('#toolbar_button_record').toggleClass('toggled', isToggled);
     }
 };
 

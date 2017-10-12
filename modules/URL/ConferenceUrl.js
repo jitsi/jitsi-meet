@@ -1,4 +1,4 @@
-const logger = require("jitsi-meet-logger").getLogger(__filename);
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The modules stores information about the URL used to start the conference and
@@ -24,9 +24,9 @@ export default class ConferenceUrl {
      * from the sample URL.
      */
     constructor(location) {
-        logger.info("Stored original conference URL: " + location.href);
+        logger.info(`Stored original conference URL: ${location.href}`);
         logger.info(
-                "Conference URL for invites: " + location.protocol + "//"
-                    + location.host + location.pathname);
+                `Conference URL for invites: ${location.protocol}//${
+                    location.host}${location.pathname}`);
     }
 }

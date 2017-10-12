@@ -19,7 +19,7 @@ import UIUtil from '../../util/UIUtil';
  * the term "contact" is not used elsewhere. Normally people in the conference
  * are internally refered to as "participants" or externally as "members".
  */
-var ContactListView = {
+const ContactListView = {
     /**
      * Creates and appends the contact list to the side panel.
      *
@@ -33,7 +33,6 @@ var ContactListView = {
 
         $('#sideToolbarContainer').append(contactListPanelContainer);
 
-        /* jshint ignore:start */
         ReactDOM.render(
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
@@ -42,7 +41,6 @@ var ContactListView = {
             </Provider>,
             contactListPanelContainer
         );
-        /* jshint ignore:end */
     },
 
     /**
@@ -50,8 +48,8 @@ var ContactListView = {
      *
      * @return {boolean) true if the contact list is currently visible.
      */
-    isVisible () {
-        return UIUtil.isVisible(document.getElementById("contactlist"));
+    isVisible() {
+        return UIUtil.isVisible(document.getElementById('contactlist'));
     }
 };
 

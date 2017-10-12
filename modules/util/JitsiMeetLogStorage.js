@@ -37,15 +37,17 @@ export default class JitsiMeetLogStorage {
             return;
         }
 
-        let logJSON = '{"log' + this.counter + '":"\n';
+        let logJSON = `{"log${this.counter}":"\n`;
+
         for (let i = 0, len = logEntries.length; i < len; i++) {
-            let logEntry = logEntries[i];
+            const logEntry = logEntries[i];
+
             if (typeof logEntry === 'object') {
                 // Aggregated message
-                logJSON += '(' + logEntry.count + ') ' + logEntry.text + '\n';
+                logJSON += `(${logEntry.count}) ${logEntry.text}\n`;
             } else {
                 // Regular message
-                logJSON += logEntry + '\n';
+                logJSON += `${logEntry}\n`;
             }
         }
         logJSON += '"}';
@@ -60,7 +62,7 @@ export default class JitsiMeetLogStorage {
         } catch (error) {
             // NOTE console is intentional here
             console.error(
-                "Failed to store the logs: ", logJSON, error);
+                'Failed to store the logs: ', logJSON, error);
         }
     }
 }
