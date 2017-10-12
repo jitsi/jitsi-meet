@@ -1,3 +1,5 @@
+// @flow
+
 import { equals, set, ReducerRegistry } from '../redux';
 
 import { SET_CALL_OVERLAY_VISIBLE, SET_JWT } from './actionTypes';
@@ -7,6 +9,7 @@ import { SET_CALL_OVERLAY_VISIBLE, SET_JWT } from './actionTypes';
  *
  * @private
  * @type {{
+ *     callOverlayVisible: ?boolean
  *     isGuest: boolean
  * }}
  */
@@ -38,22 +41,23 @@ const _INITIAL_STATE = {
  * specified {@code action}.
  */
 ReducerRegistry.register(
-'features/base/jwt', (state = _INITIAL_STATE, action) => {
-    switch (action.type) {
-    case SET_CALL_OVERLAY_VISIBLE:
-        return set(state, 'callOverlayVisible', action.callOverlayVisible);
+    'features/base/jwt',
+    (state = _INITIAL_STATE, action) => {
+        switch (action.type) {
+        case SET_CALL_OVERLAY_VISIBLE:
+            return set(state, 'callOverlayVisible', action.callOverlayVisible);
 
-    case SET_JWT: {
-        // eslint-disable-next-line no-unused-vars
-        const { type, ...payload } = action;
-        const nextState = {
-            ..._INITIAL_STATE,
-            ...payload
-        };
+        case SET_JWT: {
+            // eslint-disable-next-line no-unused-vars
+            const { type, ...payload } = action;
+            const nextState = {
+                ..._INITIAL_STATE,
+                ...payload
+            };
 
-        return equals(state, nextState) ? state : nextState;
-    }
-    }
+            return equals(state, nextState) ? state : nextState;
+        }
+        }
 
-    return state;
-});
+        return state;
+    });
