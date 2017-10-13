@@ -1,6 +1,6 @@
 // @flow
 
-import { openDialog } from '../../features/base/dialog';
+import { openDialog } from '../base/dialog';
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 
 import { CANCEL_FEEDBACK, SUBMIT_FEEDBACK } from './actionTypes';
@@ -55,8 +55,8 @@ export function maybeOpenFeedbackDialog(conference: Object) {
             // Feedback has been submitted already.
 
             return Promise.resolve({
-                thankYouDialogVisible: true,
-                feedbackSubmitted: true
+                feedbackSubmitted: true,
+                thankYouDialogVisible: true
             });
         } else if (conference.isCallstatsEnabled()) {
             return new Promise(resolve => {
@@ -71,12 +71,12 @@ export function maybeOpenFeedbackDialog(conference: Object) {
             });
         }
 
-        // If the feedback functionality isn't enabled we show a thank
-        // you dialog. Signaling it (true), so the caller
-        // of requestFeedback can act on it
+        // If the feedback functionality isn't enabled we show a "thank you"
+        // dialog. Signaling it (true), so the caller of requestFeedback can act
+        // on it.
         return Promise.resolve({
-            thankYouDialogVisible: true,
-            feedbackSubmitted: false
+            feedbackSubmitted: false,
+            thankYouDialogVisible: true
         });
     };
 }

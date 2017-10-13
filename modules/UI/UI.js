@@ -20,12 +20,17 @@ import Filmstrip from "./videolayout/Filmstrip";
 import SettingsMenu from "./side_pannels/settings/SettingsMenu";
 import Profile from "./side_pannels/profile/Profile";
 
-import { updateDeviceList } from '../../react/features/base/devices';
-import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
     openDeviceSelectionDialog
 } from '../../react/features/device-selection';
+import { updateDeviceList } from '../../react/features/base/devices';
+import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
+import { getLocalParticipant } from '../../react/features/base/participants';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
+import {
+    maybeShowNotificationWithDoNotDisplay,
+    setNotificationsEnabled
+} from '../../react/features/notifications';
 import {
     checkAutoEnableDesktopSharing,
     clearButtonPopup,
@@ -37,11 +42,6 @@ import {
     showSharedVideoButton,
     showToolbox
 } from '../../react/features/toolbox';
-import {
-    maybeShowNotificationWithDoNotDisplay,
-    setNotificationsEnabled
-} from '../../react/features/notifications';
-import { getLocalParticipant } from '../../react/features/base/participants';
 
 var EventEmitter = require("events");
 UI.messageHandler = messageHandler;
@@ -199,8 +199,8 @@ UI.setLocalRaisedHandStatus
  * Initialize conference UI.
  */
 UI.initConference = function () {
-    const { id, avatarID, email, name }
-        = getLocalParticipant(APP.store.getState());
+    const { dispatch, getState } = APP.store;
+    const { avatarID, email, id, name } = getLocalParticipant(getState);
 
     // Update default button states before showing the toolbar
     // if local role changes buttons state will be again updated.
@@ -221,7 +221,7 @@ UI.initConference = function () {
         UI.setUserAvatarID(id, avatarID);
     }
 
-    APP.store.dispatch(checkAutoEnableDesktopSharing());
+    dispatch(checkAutoEnableDesktopSharing());
 
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
     // other participants' UI. Consequently, it needs (1) read and write access

@@ -244,10 +244,10 @@ var Chat = {
 
                 // if we are in conversation mode focus on the text input
                 // if we are not, focus on the display name input
-                if (APP.conference.getLocalDisplayName())
-                    deferredFocus('usermsg');
-                else
-                    deferredFocus('nickinput');
+                deferredFocus(
+                    APP.conference.getLocalDisplayName()
+                        ? 'usermsg'
+                        : 'nickinput');
             });
 
         addSmileys();

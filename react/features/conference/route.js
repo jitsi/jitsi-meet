@@ -1,4 +1,4 @@
-/* global APP, config */
+// @flow
 
 import ConferenceUrl from '../../../modules/URL/ConferenceUrl';
 
@@ -6,6 +6,9 @@ import { chooseBOSHAddress, obtainConfig } from '../base/config';
 import { RouteRegistry } from '../base/react';
 
 import { Conference } from './components';
+
+declare var APP: Object;
+declare var config: Object;
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -29,7 +32,6 @@ RouteRegistry.register({
  * @returns {void}
  */
 function _initConference() {
-    // Initialize the conference URL handler
     APP.ConferenceUrl = new ConferenceUrl(window.location);
 }
 
@@ -43,7 +45,7 @@ function _initConference() {
  * @private
  * @returns {Promise}
  */
-function _obtainConfig(location, room) {
+function _obtainConfig(location: string, room: string) {
     return new Promise((resolve, reject) =>
         obtainConfig(location, room, (success, error) => {
             success ? resolve() : reject(error);

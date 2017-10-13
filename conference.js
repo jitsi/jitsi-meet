@@ -27,11 +27,11 @@ import {
     conferenceJoined,
     conferenceLeft,
     dataChannelOpened,
-    toggleAudioOnly,
     EMAIL_COMMAND,
     lockStateChanged,
     p2pStatusChanged,
-    setLocalParticipantData
+    sendLocalParticipant,
+    toggleAudioOnly
 } from './react/features/base/conference';
 import { updateDeviceList } from './react/features/base/devices';
 import {
@@ -1138,13 +1138,15 @@ export default {
         }
     },
 
-    _createRoom (localTracks) {
-        room = connection.initJitsiConference(APP.conference.roomName,
-            this._getConferenceOptions());
+    _createRoom(localTracks) {
+        room
+            = connection.initJitsiConference(
+                APP.conference.roomName,
+                this._getConferenceOptions());
         this._setLocalAudioVideoStreams(localTracks);
         this._room = room; // FIXME do not use this
 
-        setLocalParticipantData(room, APP.store.getState());
+        sendLocalParticipant(APP.store, room);
 
         this._setupListeners();
     },

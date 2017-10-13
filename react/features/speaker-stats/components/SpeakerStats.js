@@ -1,4 +1,4 @@
-/* global interfaceConfig */
+// @flow
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -9,6 +9,8 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
+
+declare var interfaceConfig: Object;
 
 /**
  * React component for displaying a list of speaker stats.
@@ -23,7 +25,7 @@ class SpeakerStats extends Component {
      */
     static propTypes = {
         /**
-         * The display name for the local participant obtained from the Redux
+         * The display name for the local participant obtained from the redux
          * store.
          */
         _localDisplayName: PropTypes.string,
@@ -39,6 +41,12 @@ class SpeakerStats extends Component {
         t: PropTypes.func
     };
 
+    state = {
+        stats: {}
+    };
+
+    _updateInterval: number;
+
     /**
      * Initializes a new SpeakerStats instance.
      *
@@ -48,10 +56,7 @@ class SpeakerStats extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            stats: {}
-        };
-        this._updateInterval = null;
+        // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
     }
 
@@ -101,18 +106,6 @@ class SpeakerStats extends Component {
     }
 
     /**
-     * Update the internal state with the latest speaker stats.
-     *
-     * @returns {void}
-     * @private
-     */
-    _updateStats() {
-        const stats = this.props.conference.getSpeakerStats();
-
-        this.setState({ stats });
-    }
-
-    /**
      * Create a SpeakerStatsItem instance for the passed in user id.
      *
      * @param {string} userId -  User id used to look up the associated
@@ -131,18 +124,19 @@ class SpeakerStats extends Component {
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
 
-        let displayName = '';
+        let displayName;
 
         if (statsModel.isLocalStats()) {
             const { t } = this.props;
             const meString = t('me');
 
             displayName = this.props._localDisplayName;
-            displayName = displayName ? `${displayName} (${meString})`
-                : meString;
+            displayName
+                = displayName ? `${displayName} (${meString})` : meString;
         } else {
-            displayName = this.state.stats[userId].getDisplayName()
-                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            displayName
+                = this.state.stats[userId].getDisplayName()
+                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
         }
 
         return (
@@ -154,15 +148,29 @@ class SpeakerStats extends Component {
                 key = { userId } />
         );
     }
+
+    _updateStats: () => void;
+
+    /**
+     * Update the internal state with the latest speaker stats.
+     *
+     * @returns {void}
+     * @private
+     */
+    _updateStats() {
+        const stats = this.props.conference.getSpeakerStats();
+
+        this.setState({ stats });
+    }
 }
 
 /**
- * Maps (parts of) the Redux state to the associated SpeakerStats's props.
+ * Maps (parts of) the redux state to the associated SpeakerStats's props.
  *
- * @param {Object} state - The Redux state.
+ * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _localDisplayName: string?
+ *     _localDisplayName: ?string
  * }}
  */
 function _mapStateToProps(state) {
@@ -171,6 +179,7 @@ function _mapStateToProps(state) {
     return {
         /**
          * The local display name.
+         *
          * @private
          * @type {string|undefined}
          */

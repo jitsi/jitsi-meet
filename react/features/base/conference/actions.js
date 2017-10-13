@@ -37,7 +37,7 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
-    setLocalParticipantData
+    sendLocalParticipant
 } from './functions';
 
 import type { Dispatch } from 'redux';
@@ -288,7 +288,7 @@ export function createConference() {
 
         _addConferenceListeners(conference, dispatch);
 
-        setLocalParticipantData(conference, state);
+        sendLocalParticipant(state, conference);
 
         conference.join(password);
     };

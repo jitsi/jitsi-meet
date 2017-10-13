@@ -31,7 +31,7 @@ class WelcomePage extends AbstractWelcomePage {
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
         };
 
-        // Bind event handlers so they are only bound once for every instance.
+        // Bind event handlers so they are only bound once per instance.
         this._onDisableWelcomeChange = this._onDisableWelcomeChange.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);

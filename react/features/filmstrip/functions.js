@@ -1,37 +1,36 @@
-/* @flow */
+// @flow
+
+import { getPinnedParticipant } from '../base/participants';
 
 declare var interfaceConfig: Object;
 
-import {
-    getPinnedParticipant
-} from '../base/participants';
-
 /**
- * A selector for determining whether or not remote video thumbnails should be
- * displayed in the filmstrip.
+ * Determines whether the remote video thumbnails should be displayed/visible in
+ * the filmstrip.
  *
  * @param {Object} state - The full redux state.
- * @returns {boolean} - True if remote video thumbnails should be displayed.
+ * @returns {boolean} - If remote video thumbnails should be displayed/visible
+ * in the filmstrip, then {@code true}; otherwise, {@code false}.
  */
 export function shouldRemoteVideosBeVisible(state: Object) {
     const participants = state['features/base/participants'];
-    const participantsCount = participants.length;
-    const pinnedParticipant = getPinnedParticipant(state);
+    const participantCount = participants.length;
+    let pinnedParticipant;
 
-    const shouldShowVideos
-        = participantsCount > 2
+    return Boolean(
+        participantCount > 2
 
-        // Always show the filmstrip when there is another participant to show
-        // and the filmstrip is hovered, or local video is pinned, or the
-        // toolbar is displayed.
-        || (participantsCount > 1
-            && (state['features/filmstrip'].hovered
-                || state['features/toolbox'].visible
-                || (pinnedParticipant && pinnedParticipant.local)))
+            // Always show the filmstrip when there is another participant to
+            // show and the filmstrip is hovered, or local video is pinned, or
+            // the toolbar is displayed.
+            || (participantCount > 1
+                && (state['features/filmstrip'].hovered
+                    || state['features/toolbox'].visible
+                    || ((pinnedParticipant = getPinnedParticipant(participants))
+                        && pinnedParticipant.local)))
 
-        || interfaceConfig.filmStripOnly
+            || (typeof interfaceConfig === 'object'
+                && interfaceConfig.filmStripOnly)
 
-        || state['features/base/config'].disable1On1Mode;
-
-    return Boolean(shouldShowVideos);
+            || state['features/base/config'].disable1On1Mode);
 }

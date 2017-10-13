@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { toState } from '../redux';
 
@@ -77,14 +77,14 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
 /**
  * Returns local participant from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * @param {(Function|Object|Participant[])} stateful - The redux state
  * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the
- * features/base/participants state.
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
  * @returns {(Participant|undefined)}
  */
-export function getLocalParticipant(stateOrGetState: Object | Function) {
-    const participants = _getAllParticipants(stateOrGetState);
+export function getLocalParticipant(stateful: Object | Function) {
+    const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.local);
 }
@@ -92,18 +92,18 @@ export function getLocalParticipant(stateOrGetState: Object | Function) {
 /**
  * Returns participant by ID from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * @param {(Function|Object|Participant[])} stateful - The redux state
  * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the
- * features/base/participants state.
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
  * @param {string} id - The ID of the participant to retrieve.
  * @private
  * @returns {(Participant|undefined)}
  */
 export function getParticipantById(
-        stateOrGetState: Object | Function,
+        stateful: Object | Function,
         id: string) {
-    const participants = _getAllParticipants(stateOrGetState);
+    const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.id === id);
 }
@@ -112,14 +112,14 @@ export function getParticipantById(
  * Returns a count of the known participants in the passed in redux state,
  * excluding any fake participants.
  *
- * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * @param {(Function|Object|Participant[])} stateful - The redux state
  * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the
- * features/base/participants state.
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
  * @returns {number}
  */
-export function getParticipantCount(stateOrGetState: Object | Function) {
-    return getParticipants(stateOrGetState).length;
+export function getParticipantCount(stateful: Object | Function) {
+    return getParticipants(stateful).length;
 }
 
 
@@ -127,42 +127,42 @@ export function getParticipantCount(stateOrGetState: Object | Function) {
  * Selectors for getting all known participants with fake participants filtered
  * out.
  *
- * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * @param {(Function|Object|Participant[])} stateful - The redux state
  * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the
- * features/base/participants state.
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
  * @returns {Participant[]}
  */
-export function getParticipants(stateOrGetState: Object | Function) {
-    return _getAllParticipants(stateOrGetState).filter(p => !p.isBot);
+export function getParticipants(stateful: Object | Function) {
+    return _getAllParticipants(stateful).filter(p => !p.isBot);
 }
 
 /**
  * Returns the participant which has its pinned state set to truthy.
  *
- * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * @param {(Function|Object|Participant[])} stateful - The redux state
  * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the
- * features/base/participants state.
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
  * @returns {(Participant|undefined)}
  */
-export function getPinnedParticipant(stateOrGetState: Object | Function) {
-    return _getAllParticipants(stateOrGetState).find(p => p.pinned);
+export function getPinnedParticipant(stateful: Object | Function) {
+    return _getAllParticipants(stateful).find(p => p.pinned);
 }
 
 /**
  * Returns array of participants from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateOrGetState - The redux state
+ * @param {(Function|Object|Participant[])} stateful - The redux state
  * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the
- * features/base/participants state.
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
  * @private
  * @returns {Participant[]}
  */
-function _getAllParticipants(stateOrGetState) {
+function _getAllParticipants(stateful) {
     return (
-        Array.isArray(stateOrGetState)
-            ? stateOrGetState
-            : toState(stateOrGetState)['features/base/participants'] || []);
+        Array.isArray(stateful)
+            ? stateful
+            : toState(stateful)['features/base/participants'] || []);
 }
