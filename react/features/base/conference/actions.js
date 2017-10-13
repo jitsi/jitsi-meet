@@ -1,6 +1,7 @@
 // @flow
 
 import { sendEvent } from '../../analytics';
+import { getName } from '../../app';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
@@ -280,8 +281,10 @@ export function createConference() {
             = connection.initJitsiConference(
 
                 // XXX Lib-jitsi-meet does not accept uppercase letters.
-                room.toLowerCase(),
-                state['features/base/config']);
+                room.toLowerCase(), {
+                    ...state['features/base/config'],
+                    applicationName: getName()
+                });
 
         conference[JITSI_CONFERENCE_URL_KEY] = locationURL;
         dispatch(_conferenceWillJoin(conference));

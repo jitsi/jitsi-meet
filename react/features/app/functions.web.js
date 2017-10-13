@@ -12,7 +12,7 @@ import {
 import {
     // eslint-disable-next-line camelcase
     _getRouteToRender as _super_getRouteToRender
-} from './functions.native';
+} from './getRouteToRender';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -115,4 +115,13 @@ function _interceptComponent(
     }
 
     return result || component;
+}
+
+/**
+ * Returns application name.
+ *
+ * @returns {string} The application name.
+ */
+export function getName() {
+    return interfaceConfig.APP_NAME;
 }
