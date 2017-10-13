@@ -183,6 +183,9 @@ function getDisplayName(id) {
     if (participant && participant.getDisplayName()) {
         return participant.getDisplayName();
     }
+    else if(participant){
+        return id;
+    }
 }
 
 /**
