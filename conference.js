@@ -1716,6 +1716,13 @@ export default {
             if (isButtonEnabled('chat')) {
                 room.on(JitsiConferenceEvents.MESSAGE_RECEIVED, (id, body, ts) => {
                     let nick = getDisplayName(id);
+
+                    if (!nick) {
+                        nick =
+                            `${interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${
+                                id})`;
+                    }
+
                     APP.API.notifyReceivedChatMessage({
                         id,
                         nick,
