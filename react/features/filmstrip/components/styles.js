@@ -2,6 +2,14 @@ import { Platform } from '../../base/react';
 import { BoxModel, ColorPalette } from '../../base/styles';
 
 /**
+ * The base filmstrip style shared between narrow and wide versions.
+ */
+const filmstripBaseStyle = {
+    flexGrow: 0,
+    flexDirection: 'column'
+};
+
+/**
  * The styles of the feature filmstrip common to both Web and native.
  */
 export default {
@@ -40,26 +48,28 @@ export default {
     },
 
     /**
-     * The style of the Container which represents the very filmstrip.
+     * The style of the narrow filmstrip version which displays thumbnails
+     * in a row at the bottom of the screen.
      */
-    filmstrip: {
+    filmstripNarrow: {
+        ...filmstripBaseStyle,
         alignItems: 'flex-end',
-        alignSelf: 'stretch',
-        bottom: BoxModel.margin,
-        flex: 1,
-        flexDirection: 'column',
-        left: 0,
-        position: 'absolute',
-        right: 0
+        height: 90,
+        marginBottom: BoxModel.margin,
+        marginLeft: BoxModel.margin,
+        marginRight: BoxModel.margin
     },
 
     /**
-     * The style of the content container of the ScrollView which is placed
-     * inside filmstrip and which contains the participants' thumbnails in order
-     * to allow scrolling through them if they do not fit within the display.
+     * The style of the wide version of the filmstrip which appears as a column
+     * on the short side of the screen.
      */
-    filmstripScrollViewContentContainer: {
-        paddingHorizontal: BoxModel.padding
+    filmstripWide: {
+        ...filmstripBaseStyle,
+        bottom: BoxModel.margin,
+        left: BoxModel.margin,
+        position: 'absolute',
+        top: BoxModel.margin
     },
 
     /**
@@ -86,8 +96,7 @@ export default {
         borderWidth: 1,
         flex: 1,
         justifyContent: 'center',
-        marginLeft: 2,
-        marginRight: 2,
+        margin: 2,
         overflow: 'hidden',
         position: 'relative'
     },

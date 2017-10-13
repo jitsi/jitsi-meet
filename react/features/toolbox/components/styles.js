@@ -6,7 +6,7 @@ import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
  * @type {Object}
  */
 const _toolbar = {
-    flex: 1,
+    flex: 0,
     position: 'absolute'
 };
 
@@ -86,7 +86,7 @@ export default createStyleSheet({
      */
     primaryToolbar: {
         ..._toolbar,
-        bottom: 3 * BoxModel.margin,
+        bottom: 0,
         flexDirection: 'row',
         justifyContent: 'center',
         left: 0,
@@ -135,9 +135,23 @@ export default createStyleSheet({
 
     /**
      * The style of the root/top-level {@link Container} of {@link Toolbox}
-     * which contains {@link Toolbar}s.
+     * which contains {@link Toolbar}s. This is narrow layout version which
+     * spans from the top of the screen to the top of the filmstrip located at
+     * the bottom of the screen.
      */
-    toolbarContainer: {
+    toolbarContainerNarrow: {
+        flexDirection: 'column',
+        flexGrow: 1
+    },
+
+    /**
+     * The style of the root/top-level {@link Container} of {@link Toolbox}
+     * which contains {@link Toolbar}s. This is wide layout version which
+     * spans from the top to the bottom of the screen and is located to
+     * the right of the filmstrip which is displayed as a column on the left
+     * side of the screen.
+     */
+    toolbarContainerWide: {
         bottom: 0,
         left: 0,
         position: 'absolute',

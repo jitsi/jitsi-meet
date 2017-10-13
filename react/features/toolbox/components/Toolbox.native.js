@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { sendAnalyticsEvent } from '../../analytics';
+import { AspectRatioAware, isNarrowAspectRatio } from '../../base/aspect-ratio';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
@@ -119,15 +120,25 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._visible) {
+            return null;
+        }
+
         return (
             <Container
-                style = { styles.toolbarContainer }
-                visible = { this.props._visible }>
+                style = {
+                    isNarrowAspectRatio(this)
+                        ? styles.toolbarContainerNarrow
+                        : styles.toolbarContainerWide } >
                 {
-                    this._renderPrimaryToolbar()
+                    isNarrowAspectRatio(this)
+                        ? this._renderSecondaryToolbar()
+                        : this._renderPrimaryToolbar()
                 }
                 {
-                    this._renderSecondaryToolbar()
+                    isNarrowAspectRatio(this)
+                        ? this._renderPrimaryToolbar()
+                        : this._renderSecondaryToolbar()
                 }
             </Container>
         );
@@ -420,4 +431,5 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbox);
+export default connect(_mapStateToProps, _mapDispatchToProps)(
+    AspectRatioAware(Toolbox));

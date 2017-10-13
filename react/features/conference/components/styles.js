@@ -38,5 +38,19 @@ export default createStyleSheet({
         // contrast and translucency.
         backgroundColor: ColorPalette.appBackground,
         opacity: 0.5
+    },
+
+    /**
+     * The style of the view which expands over the whole conference area and
+     * splits it between both the filmstrip and the toolbox.
+     */
+    toolboxAndFilmstripContainer: {
+        bottom: 0,
+        flexDirection: 'column',
+        left: 0,
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        right: 0,
+        top: 0
     }
 });
