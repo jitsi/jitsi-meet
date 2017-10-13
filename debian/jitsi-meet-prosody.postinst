@@ -139,8 +139,11 @@ case "$1" in
 
             update-ca-certificates
 
-            # now let's add the ssl cert for the auth. domain (we use # as a sed delimiter cause filepaths are confused with default / delimiter)
-            sed -i "s#VirtualHost \"$JICOFO_AUTH_DOMAIN\"#VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    ssl = {\n        key = \"$AUTH_KEY_FILE\";\n        certificate = \"$AUTH_CRT_FILE\";\n    \}#g" $PROSODY_HOST_CONFIG
+            # don't fail on systems with custom config ($PROSODY_HOST_CONFIG is missing)
+            if [ -f $PROSODY_HOST_CONFIG ]; then
+                # now let's add the ssl cert for the auth. domain (we use # as a sed delimiter cause filepaths are confused with default / delimiter)
+                sed -i "s#VirtualHost \"$JICOFO_AUTH_DOMAIN\"#VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    ssl = {\n        key = \"$AUTH_KEY_FILE\";\n        certificate = \"$AUTH_CRT_FILE\";\n    \}#g" $PROSODY_HOST_CONFIG
+            fi
 
             # trigger a restart
             PROSODY_CONFIG_PRESENT="false"
