@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendEvent } from '../../analytics';
+import { sendAnalyticsEvent } from '../../analytics';
 import { DEFAULT_AVATAR_RELATIVE_PATH } from '../../base/participants';
 import UIEvents from '../../../../service/UI/UIEvents';
 
@@ -102,7 +102,7 @@ class ProfileButton extends Component {
      */
     _onClick() {
         if (!this.props._unclickable) {
-            sendEvent('toolbar.profile.toggled');
+            sendAnalyticsEvent('toolbar.profile.toggled');
             APP.UI.emitEvent(UIEvents.TOGGLE_PROFILE);
         }
     }

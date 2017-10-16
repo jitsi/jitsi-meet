@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendEvent } from '../../analytics';
+import { sendAnalyticsEvent } from '../../analytics';
 import { getInviteURL } from '../../base/connection';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -51,7 +51,7 @@ class InviteDialog extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        sendEvent('toolbar.invite.close');
+        sendAnalyticsEvent('toolbar.invite.close');
     }
 
     /**

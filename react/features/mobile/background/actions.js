@@ -1,6 +1,6 @@
 /* @flow */
 
-import { sendEvent } from '../../analytics';
+import { sendAnalyticsEvent } from '../../analytics';
 import { setLastN } from '../../base/conference';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../../base/media';
 
@@ -43,7 +43,7 @@ export function _setBackgroundVideoMuted(muted: boolean) {
 
         audioOnly || dispatch(setLastN(muted ? 0 : undefined));
 
-        sendEvent('callkit.background.video.muted');
+        sendAnalyticsEvent('callkit.background.video.muted');
 
         dispatch(setVideoMuted(muted, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
     };

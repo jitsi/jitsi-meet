@@ -2,7 +2,7 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
-import { sendEvent } from '../../analytics';
+import { sendAnalyticsEvent } from '../../analytics';
 import { CONNECTION_ESTABLISHED } from '../connection';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
@@ -124,7 +124,7 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
 
     if (getState()['features/base/conference'].audioOnly) {
-        sendEvent('audioonly.disabled');
+        sendAnalyticsEvent('audioonly.disabled');
         logger.log('Audio only disabled');
         dispatch(setAudioOnly(false));
     }
@@ -196,7 +196,7 @@ function _pinParticipant(store, next, action) {
             videoType = 'remote';
         }
 
-        sendEvent(
+        sendAnalyticsEvent(
                 `${actionName}.${videoType}`,
                 { value: conference.getParticipantCount() });
     }

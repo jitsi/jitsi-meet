@@ -1,7 +1,7 @@
 /* global APP, $, interfaceConfig */
 
 import { toggleDialog } from '../../react/features/base/dialog';
-import { sendEvent } from '../../react/features/analytics';
+import { sendAnalyticsEvent } from '../../react/features/analytics';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -81,7 +81,7 @@ const KeyboardShortcut = {
                 || $(':focus').is('textarea'))) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
-                        sendEvent('shortcut.talk.released');
+                        sendAnalyticsEvent('shortcut.talk.released');
                         logger.log('Talk shortcut released');
                         APP.conference.muteAudio(false);
                     }
@@ -260,14 +260,14 @@ const KeyboardShortcut = {
         });
 
         this.registerShortcut('?', null, () => {
-            sendEvent('shortcut.shortcut.help');
+            sendAnalyticsEvent('shortcut.shortcut.help');
             showKeyboardShortcutsPanel(true);
         }, 'keyboardShortcuts.toggleShortcuts');
 
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            sendEvent('shortcut.talk.clicked');
+            sendAnalyticsEvent('shortcut.talk.clicked');
             logger.log('Talk shortcut pressed');
             APP.conference.muteAudio(true);
         });
@@ -275,7 +275,7 @@ const KeyboardShortcut = {
 
         if (!interfaceConfig.filmStripOnly) {
             this.registerShortcut('T', null, () => {
-                sendEvent('shortcut.speakerStats.clicked');
+                sendAnalyticsEvent('shortcut.speakerStats.clicked');
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
                     conference: APP.conference
                 }));
