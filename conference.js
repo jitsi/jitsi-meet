@@ -15,7 +15,7 @@ import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
-import { initAnalytics, sendEvent } from './react/features/analytics';
+import { initAnalytics, sendAnalyticsEvent } from './react/features/analytics';
 
 import EventEmitter from 'events';
 
@@ -719,12 +719,12 @@ export default {
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
                     if (track.isAudioTrack() && this.isLocalAudioMuted()) {
-                        sendEvent('conference.audio.initiallyMuted');
+                        sendAnalyticsEvent('conference.audio.initiallyMuted');
                         logger.log('Audio mute: initially muted');
                         track.mute();
                     } else if (track.isVideoTrack()
                                     && this.isLocalVideoMuted()) {
-                        sendEvent('conference.video.initiallyMuted');
+                        sendAnalyticsEvent('conference.video.initiallyMuted');
                         logger.log('Video mute: initially muted');
                         track.mute();
                     }
@@ -1423,7 +1423,7 @@ export default {
             promise = createLocalTracksF({ devices: [ 'video' ] })
                 .then(([ stream ]) => this.useVideoStream(stream))
                 .then(() => {
-                    sendEvent(
+                    sendAnalyticsEvent(
                         'conference.sharingDesktop.stop');
                     logger.log('switched back to local video');
                     if (!this.localVideo && wasVideoMuted) {
@@ -1603,7 +1603,7 @@ export default {
             .then(stream => this.useVideoStream(stream))
             .then(() => {
                 this.videoSwitchInProgress = false;
-                sendEvent('conference.sharingDesktop.start');
+                sendAnalyticsEvent('conference.sharingDesktop.start');
                 logger.log('sharing local desktop');
             })
             .catch(error => {
@@ -1896,7 +1896,7 @@ export default {
 
                     room.selectParticipant(id);
                 } catch (e) {
-                    sendEvent(
+                    sendAnalyticsEvent(
                         'selectParticipant.failed');
                     reportError(e);
                 }
@@ -2138,7 +2138,7 @@ export default {
                 // Longer delays will be caused by something else and will just
                 // poison the data.
                 if (delay < 2000) {
-                    sendEvent('stream.switch.delay', { value: delay });
+                    sendAnalyticsEvent('stream.switch.delay', { value: delay });
                 }
             });
 
@@ -2171,7 +2171,7 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
-                sendEvent('settings.changeDevice.video');
+                sendAnalyticsEvent('settings.changeDevice.video');
                 createLocalTracksF({
                     devices: [ 'video' ],
                     cameraDeviceId,
@@ -2199,7 +2199,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             micDeviceId => {
-                sendEvent(
+                sendAnalyticsEvent(
                     'settings.changeDevice.audioIn');
                 createLocalTracksF({
                     devices: [ 'audio' ],
@@ -2220,7 +2220,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             audioOutputDeviceId => {
-                sendEvent(
+                sendAnalyticsEvent(
                     'settings.changeDevice.audioOut');
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => logger.log('changed audio output device'))
@@ -2428,7 +2428,7 @@ export default {
                     if (audioWasMuted
                         || currentDevices.audioinput.length
                         > availableAudioInputDevices.length) {
-                        sendEvent('deviceListChanged.audio.muted');
+                        sendAnalyticsEvent('deviceListChanged.audio.muted');
                         logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
                     }
@@ -2439,7 +2439,7 @@ export default {
                         && (videoWasMuted
                             || currentDevices.videoinput.length
                                 > availableVideoInputDevices.length)) {
-                        sendEvent('deviceListChanged.video.muted');
+                        sendAnalyticsEvent('deviceListChanged.video.muted');
                         logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
                     }
@@ -2535,7 +2535,7 @@ export default {
      * NOTE: Should be used after conference.init
      */
     logEvent(name, value, label) {
-        sendEvent(name, {
+        sendAnalyticsEvent(name, {
             value,
             label
         });

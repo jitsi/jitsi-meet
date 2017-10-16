@@ -5,7 +5,7 @@ import { setFilmstripVisibility } from '../../../react/features/filmstrip';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 
-import { sendEvent } from '../../../react/features/analytics';
+import { sendAnalyticsEvent } from '../../../react/features/analytics';
 
 const Filmstrip = {
     /**
@@ -150,7 +150,7 @@ const Filmstrip = {
             return;
         }
         if (sendAnalytics) {
-            sendEvent('toolbar.filmstrip.toggled');
+            sendAnalyticsEvent('toolbar.filmstrip.toggled');
         }
         this.filmstrip.toggleClass('hidden');
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendEvent } from '../../analytics';
+import { sendAnalyticsEvent } from '../../analytics';
 import {
     setAudioOnly,
     setReceiveVideoQuality,
@@ -214,7 +214,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableAudioOnly() {
-        sendEvent('toolbar.audioonly.enabled');
+        sendAnalyticsEvent('toolbar.audioonly.enabled');
         logger.log('Video quality: audio only enabled');
         this.props.dispatch(setAudioOnly(true));
     }
@@ -227,7 +227,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableHighDefinition() {
-        sendEvent('toolbar.videoquality.high');
+        sendAnalyticsEvent('toolbar.videoquality.high');
         logger.log('Video quality: high enabled');
         this.props.dispatch(setReceiveVideoQuality(HIGH));
     }
@@ -240,7 +240,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableLowDefinition() {
-        sendEvent('toolbar.videoquality.low');
+        sendAnalyticsEvent('toolbar.videoquality.low');
         logger.log('Video quality: low enabled');
         this.props.dispatch(setReceiveVideoQuality(LOW));
     }
@@ -253,7 +253,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableStandardDefinition() {
-        sendEvent('toolbar.videoquality.standard');
+        sendAnalyticsEvent('toolbar.videoquality.standard');
         logger.log('Video quality: standard enabled');
         this.props.dispatch(setReceiveVideoQuality(STANDARD));
     }
