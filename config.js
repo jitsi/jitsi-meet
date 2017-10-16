@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars, no-var */
-var config = { // eslint-disable-line no-unused-vars
+
+var config = {
     // Configuration
     //
 
@@ -288,4 +289,5 @@ var config = { // eslint-disable-line no-unused-vars
         // userRegion: "asia"
     }
 };
+
 /* eslint-enable no-unused-vars, no-var */

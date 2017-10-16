@@ -1,5 +1,4 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import { openConnection } from './connection';
 
@@ -87,6 +86,8 @@ import {
     isButtonEnabled,
     showDesktopSharingButton
 } from './react/features/toolbox';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const eventEmitter = new EventEmitter();
 
@@ -211,10 +212,12 @@ function maybeRedirectToWelcomePage(options) {
 
     // if Welcome page is enabled redirect to welcome page after 3 sec.
     if (config.enableWelcomePage) {
-        setTimeout(() => {
-            APP.settings.setWelcomePageEnabled(true);
-            assignWindowLocationPathname('./');
-        }, 3000);
+        setTimeout(
+            () => {
+                APP.settings.setWelcomePageEnabled(true);
+                assignWindowLocationPathname('./');
+            },
+            3000);
     }
 }
 
@@ -595,10 +598,8 @@ export default {
                         // Try audio only...
                         audioAndVideoError = err;
 
-                        return createLocalTracksF(
-                            { devices: [ 'audio' ] },
-                            true
-                        );
+                        return (
+                            createLocalTracksF({ devices: [ 'audio' ] }, true));
                     } else if (requestedAudio && !requestedVideo) {
                         audioOnlyError = err;
 
@@ -949,9 +950,9 @@ export default {
     isParticipantModerator(id) {
         const user = room.getParticipantById(id);
 
-
         return user && user.isModerator();
     },
+
     get membersCount() {
         return room.getParticipants().length + 1;
     },
@@ -1084,7 +1085,6 @@ export default {
     getParticipantConnectionStatus(id) {
         const participant = this.getParticipantById(id);
 
-
         return participant ? participant.getConnectionStatus() : null;
     },
 
@@ -1109,12 +1109,10 @@ export default {
         }
 
         return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-
-
     },
+
     getMyUserId() {
-        return this._room
-            && this._room.myUserId();
+        return this._room && this._room.myUserId();
     },
 
     /**
@@ -1287,14 +1285,14 @@ export default {
         const options = config;
 
         if (config.enableRecording && !config.recordingType) {
-            options.recordingType = config.hosts
-                && (typeof config.hosts.jirecon !== 'undefined')
-                ? 'jirecon' : 'colibri';
+            options.recordingType
+                = config.hosts && (typeof config.hosts.jirecon !== 'undefined')
+                    ? 'jirecon'
+                    : 'colibri';
         }
 
         return options;
     },
-
 
     /**
      * Start using provided video stream.
@@ -1484,7 +1482,6 @@ export default {
         }
 
         return this._untoggleScreenSharing();
-
     },
 
     /**
@@ -1595,34 +1592,34 @@ export default {
         this.videoSwitchInProgress = true;
 
         return this._createDesktopTrack(options)
-        .then(stream => this.useVideoStream(stream))
-        .then(() => {
-            this.videoSwitchInProgress = false;
-            sendEvent('conference.sharingDesktop.start');
-            logger.log('sharing local desktop');
-        })
-        .catch(error => {
-            this.videoSwitchInProgress = false;
+            .then(stream => this.useVideoStream(stream))
+            .then(() => {
+                this.videoSwitchInProgress = false;
+                sendEvent('conference.sharingDesktop.start');
+                logger.log('sharing local desktop');
+            })
+            .catch(error => {
+                this.videoSwitchInProgress = false;
 
-            // Pawel: With this call I'm trying to preserve the original
-            // behaviour although it is not clear why would we "untoggle"
-            // on failure. I suppose it was to restore video in case there
-            // was some problem during "this.useVideoStream(desktopStream)".
-            // It's important to note that the handler will not be available
-            // if we fail early on trying to get desktop media (which makes
-            // sense, because the camera video is still being used, so
-            // nothing to "untoggle").
-            if (this._untoggleScreenSharing) {
-                this._untoggleScreenSharing();
-            }
+                // Pawel: With this call I'm trying to preserve the original
+                // behaviour although it is not clear why would we "untoggle"
+                // on failure. I suppose it was to restore video in case there
+                // was some problem during "this.useVideoStream(desktopStream)".
+                // It's important to note that the handler will not be available
+                // if we fail early on trying to get desktop media (which makes
+                // sense, because the camera video is still being used, so
+                // nothing to "untoggle").
+                if (this._untoggleScreenSharing) {
+                    this._untoggleScreenSharing();
+                }
 
-            // FIXME the code inside of _handleScreenSharingError is
-            // asynchronous, but does not return a Promise and is not part
-            // of the current Promise chain.
-            this._handleScreenSharingError(error);
+                // FIXME the code inside of _handleScreenSharingError is
+                // asynchronous, but does not return a Promise and is not part
+                // of the current Promise chain.
+                this._handleScreenSharingError(error);
 
-            return Promise.reject(error);
-        });
+                return Promise.reject(error);
+            });
     },
 
     /**

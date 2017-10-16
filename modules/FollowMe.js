@@ -339,8 +339,7 @@ class FollowMe {
         }
 
         if (!this._conference.isParticipantModerator(id)) {
-            logger.warn('Received follow-me command '
-                + 'not from moderator');
+            logger.warn('Received follow-me command not from moderator');
 
             return;
         }

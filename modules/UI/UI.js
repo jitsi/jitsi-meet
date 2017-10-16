@@ -122,9 +122,7 @@ const UIListeners = new Map([
         () => UI.toggleContactList()
     ], [
         UIEvents.TOGGLE_PROFILE,
-        () => {
-            UI.toggleSidePanel('profile_container');
-        }
+        () => UI.toggleSidePanel('profile_container')
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.handleToggleFilmstrip()
@@ -139,9 +137,7 @@ const UIListeners = new Map([
  * (a.k.a. presentation mode in Chrome).
  */
 UI.toggleFullScreen = function() {
-    UIUtil.isFullScreen()
-        ? UIUtil.exitFullScreen()
-        : UIUtil.enterFullScreen();
+    UIUtil.isFullScreen() ? UIUtil.exitFullScreen() : UIUtil.enterFullScreen();
 };
 
 /**
@@ -158,9 +154,13 @@ UI.notifyGracefulShutdown = function() {
  * Notify user that reservation error happened.
  */
 UI.notifyReservationError = function(code, msg) {
-    const message = APP.translation.generateTranslationHTML(
-        'dialog.reservationErrorMsg', { code,
-            msg });
+    const message
+        = APP.translation.generateTranslationHTML(
+            'dialog.reservationErrorMsg',
+            {
+                code,
+                msg
+            });
 
     messageHandler.openDialog(
         'dialog.reservationError', message, true, {}, () => false);
@@ -171,8 +171,8 @@ UI.notifyReservationError = function(code, msg) {
  */
 UI.notifyKicked = function() {
     messageHandler.openMessageDialog(
-            'dialog.sessTerminated',
-            'dialog.kickMessage');
+        'dialog.sessTerminated',
+        'dialog.kickMessage');
 };
 
 /**
@@ -192,10 +192,9 @@ UI.notifyConferenceDestroyed = function(reason) {
  * @param msg
  */
 UI.showChatError = function(err, msg) {
-    if (interfaceConfig.filmStripOnly) {
-        return;
+    if (!interfaceConfig.filmStripOnly) {
+        Chat.chatAddError(err, msg);
     }
-    Chat.chatAddError(err, msg);
 };
 
 /**
@@ -229,8 +228,11 @@ UI.showLocalConnectionInterrupted = function(isInterrupted) {
 UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
     VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
     if (raisedHandStatus) {
-        messageHandler.participantNotification(participant.getDisplayName(),
-            'notify.somebody', 'connected', 'notify.raisedHand');
+        messageHandler.participantNotification(
+            participant.getDisplayName(),
+            'notify.somebody',
+            'connected',
+            'notify.raisedHand');
     }
 };
 
@@ -312,7 +314,6 @@ UI.start = function() {
 
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
-
 
     SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);
@@ -471,8 +472,7 @@ UI.addUser = function(user) {
     const displayName = user.getDisplayName();
 
     messageHandler.participantNotification(
-        displayName, 'notify.somebody', 'connected', 'notify.connected'
-    );
+        displayName, 'notify.somebody', 'connected', 'notify.connected');
 
     if (!config.startAudioMuted
         || config.startAudioMuted > APP.conference.membersCount) {
@@ -498,11 +498,10 @@ UI.addUser = function(user) {
  */
 UI.removeUser = function(id, displayName) {
     messageHandler.participantNotification(
-        displayName, 'notify.somebody', 'disconnected', 'notify.disconnected'
-    );
+        displayName, 'notify.somebody', 'disconnected', 'notify.disconnected');
 
     if (!config.startAudioMuted
-        || config.startAudioMuted > APP.conference.membersCount) {
+            || config.startAudioMuted > APP.conference.membersCount) {
         UIUtil.playSoundNotification('userLeft');
     }
 
@@ -558,15 +557,17 @@ UI.updateUserRole = user => {
 
     if (displayName) {
         messageHandler.participantNotification(
-            displayName, 'notify.somebody',
-            'connected', 'notify.grantedTo', {
-                to: UIUtil.escapeHtml(displayName)
-            }
-        );
+            displayName,
+            'notify.somebody',
+            'connected',
+            'notify.grantedTo',
+            { to: UIUtil.escapeHtml(displayName) });
     } else {
         messageHandler.participantNotification(
-            '', 'notify.somebody',
-            'connected', 'notify.grantedToUnknown');
+            '',
+            'notify.somebody',
+            'connected',
+            'notify.grantedToUnknown');
     }
 };
 
@@ -584,10 +585,11 @@ UI.updateUserStatus = (user, status) => {
     const displayName = user.getDisplayName();
 
     messageHandler.participantNotification(
-        displayName, '', 'connected', 'dialOut.statusMessage',
-        {
-            status: UIUtil.escapeHtml(status)
-        });
+        displayName,
+        '',
+        'connected',
+        'dialOut.statusMessage',
+        { status: UIUtil.escapeHtml(status) });
 };
 
 /**
@@ -648,9 +650,10 @@ UI.inputDisplayNameHandler = function(newDisplayName) {
  */
 // eslint-disable-next-line max-params
 UI.showCustomToolbarPopup = function(buttonName, popupID, show, timeout) {
-    const action = show
-        ? setButtonPopupTimeout(buttonName, popupID, timeout)
-        : clearButtonPopup(buttonName);
+    const action
+        = show
+            ? setButtonPopupTimeout(buttonName, popupID, timeout)
+            : clearButtonPopup(buttonName);
 
     APP.store.dispatch(action);
 };
@@ -681,10 +684,8 @@ UI.showLoginPopup = function(callback) {
 
     // eslint-disable-next-line max-params
     const submitFunction = (e, v, m, f) => {
-        if (v) {
-            if (f.username && f.password) {
-                callback(f.username, f.password);
-            }
+        if (v && f.username && f.password) {
+            callback(f.username, f.password);
         }
     };
 

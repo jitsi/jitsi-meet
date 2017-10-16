@@ -1,5 +1,4 @@
 /* global ga */
-/* eslint-disable indent */
 
 (function(ctx) {
     /**

@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars, no-var, max-len */
+
 var interfaceConfig = {
     // TO FIX: this needs to be handled from SASS variables. There are some
     // methods allowing to use variables both in css and js.
@@ -142,4 +143,5 @@ var interfaceConfig = {
      */
     // ADD_PEOPLE_APP_NAME: ""
 };
+
 /* eslint-enable no-unused-vars, no-var, max-len */

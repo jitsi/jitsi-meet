@@ -35,8 +35,10 @@ function checkForAttachParametersAndConnect(id, password, connection) {
         // If the connection optimization is deployed and enabled and there is
         // a failure the value will be window.XMPPAttachInfo.status = "error"
         if (window.XMPPAttachInfo.status === 'error') {
-            connection.connect({ id,
-                password });
+            connection.connect({
+                id,
+                password
+            });
 
             return;
         }
@@ -47,13 +49,17 @@ function checkForAttachParametersAndConnect(id, password, connection) {
             connection.attach(attachOptions);
             delete window.XMPPAttachInfo.data;
         } else {
-            connection.connect({ id,
-                password });
+            connection.connect({
+                id,
+                password
+            });
         }
     } else {
         APP.connect.status = 'ready';
-        APP.connect.handler = checkForAttachParametersAndConnect.bind(null,
-            id, password, connection);
+        APP.connect.handler
+            = checkForAttachParametersAndConnect.bind(
+                null,
+                id, password, connection);
     }
 }
 

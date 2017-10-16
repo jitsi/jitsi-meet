@@ -64,6 +64,7 @@ const config = {
         rules: [ {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
+
             exclude: node_modules, // eslint-disable-line camelcase
             loader: 'babel-loader',
             options: {
@@ -210,11 +211,10 @@ function devServerProxyBypass({ path }) {
 
     const configs = module.exports;
 
-    /* eslint-disable indent */
-    let formattedPath = path;
+    /* eslint-disable array-callback-return, indent */
 
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
-                if (formattedPath.startsWith(c.output.publicPath)) {
+                if (path.startsWith(c.output.publicPath)) {
                     if (!minimize) {
                         // Since webpack-dev-server is serving non-minimized
                         // artifacts, serve them even if the minimized ones are
@@ -222,24 +222,20 @@ function devServerProxyBypass({ path }) {
                         Object.keys(c.entry).some(e => {
                             const name = `${e}.min.js`;
 
-                            if (formattedPath.indexOf(name) !== -1) {
-                                formattedPath
-                                    = formattedPath.replace(name, `${e}.js`);
+                            if (path.indexOf(name) !== -1) {
+                                // eslint-disable-next-line no-param-reassign
+                                path = path.replace(name, `${e}.js`);
 
                                 return true;
                             }
-
-                            return false;
                         });
                     }
 
                     return true;
                 }
-
-                return false;
             })) {
-        return formattedPath;
+        return path;
     }
 
-    /* eslint-enable indent */
+    /* eslint-enable array-callback-return, indent */
 }
