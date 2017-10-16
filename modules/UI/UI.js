@@ -143,7 +143,7 @@ UI.toggleFullScreen = function() {
 /**
  * Notify user that server has shut down.
  */
-UI.notifyGracefulShutdown = function () {
+UI.notifyGracefulShutdown = function() {
     messageHandler.showError({
         descriptionKey: 'dialog.gracefulShutdown',
         titleKey: 'dialog.serviceUnavailable'
@@ -153,7 +153,7 @@ UI.notifyGracefulShutdown = function () {
 /**
  * Notify user that reservation error happened.
  */
-UI.notifyReservationError = function (code, msg) {
+UI.notifyReservationError = function(code, msg) {
     messageHandler.showError({
         descriptionArguments: {
             code,
@@ -832,7 +832,7 @@ UI.setUserAvatarUrl = function(id, url) {
  * Notify user that connection failed.
  * @param {string} stropheErrorMsg raw Strophe error message
  */
-UI.notifyConnectionFailed = function (stropheErrorMsg) {
+UI.notifyConnectionFailed = function(stropheErrorMsg) {
     let descriptionKey;
     let descriptionArguments;
 
@@ -854,7 +854,7 @@ UI.notifyConnectionFailed = function (stropheErrorMsg) {
 /**
  * Notify user that maximum users limit has been reached.
  */
-UI.notifyMaxUsersLimitReached = function () {
+UI.notifyMaxUsersLimitReached = function() {
     messageHandler.showError({
         descriptionKey: 'dialog.maxUsersLimitReached',
         titleKey: 'dialog.error'
@@ -958,14 +958,14 @@ UI.updateRecordingState = function(state) {
     Recording.updateRecordingState(state);
 };
 
-UI.notifyTokenAuthFailed = function () {
+UI.notifyTokenAuthFailed = function() {
     messageHandler.showError({
         descriptionKey: 'dialog.tokenAuthFailed',
         titleKey: 'dialog.tokenAuthFailedTitle'
     });
 };
 
-UI.notifyInternalError = function () {
+UI.notifyInternalError = function() {
     messageHandler.showError({
         descriptionKey: 'dialog.internalError',
         titleKey: 'dialog.internalErrorTitle'
@@ -1215,7 +1215,7 @@ UI.showCameraErrorNotification = function(cameraError) {
  * track error.
  * @returns {void}
  */
-UI.showTrackNotWorkingDialog = function (isAudioTrack) {
+UI.showTrackNotWorkingDialog = function(isAudioTrack) {
     messageHandler.showError({
         descriptionKey: isAudioTrack
             ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',

@@ -459,11 +459,11 @@ const messageHandler = {
      * @param titleKey the title of the message.
      * @param msgKey the text of the message.
      */
-    showError: function(props) {
+    showError(props) {
         APP.store.dispatch(showErrorNotification(props));
     },
 
-    showWarning: function(props) {
+    showWarning(props) {
         APP.store.dispatch(showWarningNotification(props));
     },
 
