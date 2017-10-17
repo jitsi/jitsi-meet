@@ -67,8 +67,27 @@ class ContactListPanel extends Component {
      * @returns {ReactElement[]}
      */
     _renderContacts() {
+        const { t } = this.props;
+        const meString = t('me');
+
         return this.props._participants.map(participant => {
-            const { id, name } = participant;
+            const { id, local, name } = participant;
+            let displayName;
+
+            // FIXME this duplicates the logic from SpeakerStats.js, but
+            // currently it seems that the
+            // interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME is freely used in
+            // multiple other places. A proper fix should take care of all
+            // usages. Also conference.js has getParticipantDisplayName which
+            // generates HTML span making things even harder to be cleaned up
+            // properly.
+            if (local) {
+                displayName
+                    = name ? `${name} (${meString})` : meString;
+            } else {
+                displayName
+                    = name ? name : interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            }
 
             return (
                 <ContactListItem
@@ -76,7 +95,7 @@ class ContactListPanel extends Component {
                         ? getAvatarURL(participant) : null }
                     id = { id }
                     key = { id }
-                    name = { name } />
+                    name = { displayName } />
             );
         });
     }
