@@ -2195,7 +2195,14 @@ export default {
                     return stream;
                 })
                 .then(stream => {
-                    this.useVideoStream(stream);
+                    // if we are screen sharing we do not want to stop it
+                    if (this.isSharingScreen) {
+                        return Promise.resolve();
+                    }
+
+                    return this.useVideoStream(stream);
+                })
+                .then(() => {
                     logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
