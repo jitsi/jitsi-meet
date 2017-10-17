@@ -1,22 +1,13 @@
 /* @flow */
+import { NativeModules } from 'react-native';
 
-import { isRoomValid } from '../base/conference';
-import { RouteRegistry } from '../base/react';
-import { toState } from '../base/redux';
-import { Conference } from '../conference';
-import { WelcomePage } from '../welcome';
+export * from './getRouteToRender';
 
 /**
- * Determines which route is to be rendered in order to depict a specific Redux
- * store.
+ * Returns application name.
  *
- * @param {(Object|Function)} stateOrGetState - Redux state or Regux getState()
- * method.
- * @returns {Route}
+ * @returns {string} The application name.
  */
-export function _getRouteToRender(stateOrGetState: Object | Function) {
-    const { room } = toState(stateOrGetState)['features/base/conference'];
-    const component = isRoomValid(room) ? Conference : WelcomePage;
-
-    return RouteRegistry.getRouteByComponent(component);
+export function getName() {
+    return NativeModules.AppInfo.name;
 }

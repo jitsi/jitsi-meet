@@ -1297,6 +1297,8 @@ export default {
             options.displayName = nick;
         }
 
+        options.applicationName = interfaceConfig.APP_NAME;
+
         return options;
     },
 
