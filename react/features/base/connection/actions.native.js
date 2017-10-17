@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
@@ -263,7 +263,7 @@ export function disconnect() {
         const state = getState();
         const { conference, joining } = state['features/base/conference'];
 
-        // The conference we are joining or have already joined.
+        // The conference we have already joined or are joining.
         const conference_ = conference || joining;
 
         // Promise which completes when the conference has been left and the
@@ -286,7 +286,7 @@ export function disconnect() {
         // Disconnect the connection.
         const { connecting, connection } = state['features/base/connection'];
 
-        // The connection we are connecting or have already connected.
+        // The connection we have already connected or are connecting.
         const connection_ = connection || connecting;
 
         if (connection_) {
