@@ -2408,10 +2408,6 @@ export default {
         const promises = [];
         const audioWasMuted = this.isLocalAudioMuted();
         const videoWasMuted = this.isLocalVideoMuted();
-        const availableAudioInputDevices
-            = mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
-        const availableVideoInputDevices
-            = mediaDeviceHelper.getDevicesFromListByKind(devices, 'videoinput');
 
         if (typeof newDevices.audiooutput !== 'undefined') {
             // Just ignore any errors in catch block.
@@ -2430,9 +2426,7 @@ export default {
                 .then(() => {
                     // If audio was muted before, or we unplugged current device
                     // and selected new one, then mute new audio track.
-                    if (audioWasMuted
-                        || currentDevices.audioinput.length
-                        > availableAudioInputDevices.length) {
+                    if (audioWasMuted) {
                         sendAnalyticsEvent('deviceListChanged.audio.muted');
                         logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
@@ -2440,10 +2434,7 @@ export default {
 
                     // If video was muted before, or we unplugged current device
                     // and selected new one, then mute new video track.
-                    if (!this.isSharingScreen
-                        && (videoWasMuted
-                            || currentDevices.videoinput.length
-                                > availableVideoInputDevices.length)) {
+                    if (!this.isSharingScreen && videoWasMuted) {
                         sendAnalyticsEvent('deviceListChanged.video.muted');
                         logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
