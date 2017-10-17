@@ -165,7 +165,7 @@ export function replaceLocalTrack(oldTrack, newTrack, conference) {
                             logger.log(`Replace ${newTrack.getType()} track - ${
                                 isMuted ? 'muted' : 'unmuted'}`);
 
-                            return dispatch(setMuted());
+                            return dispatch(setMuted(isMuted));
                         }
                     })
                     .then(() => {

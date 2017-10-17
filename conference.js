@@ -2176,6 +2176,8 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
+                const videoWasMuted = this.isLocalVideoMuted();
+
                 sendAnalyticsEvent('settings.changeDevice.video');
                 createLocalTracksF({
                     devices: [ 'video' ],
@@ -2183,7 +2185,9 @@ export default {
                     micDeviceId: null
                 })
                 .then(([ stream ]) => {
-                    if (this.isAudioOnly()) {
+                    // if we are in audio only mode or video was muted before
+                    // changing device, then mute
+                    if (this.isAudioOnly() || videoWasMuted) {
                         return stream.mute()
                             .then(() => stream);
                     }
@@ -2204,6 +2208,8 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             micDeviceId => {
+                const audioWasMuted = this.isLocalAudioMuted();
+
                 sendAnalyticsEvent(
                     'settings.changeDevice.audioIn');
                 createLocalTracksF({
@@ -2212,6 +2218,16 @@ export default {
                     micDeviceId
                 })
                 .then(([ stream ]) => {
+                    // if audio was muted before changing the device, mute
+                    // with the new device
+                    if (audioWasMuted) {
+                        return stream.mute()
+                            .then(() => stream);
+                    }
+
+                    return stream;
+                })
+                .then(stream => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
                     APP.settings.setMicDeviceId(micDeviceId, true);
