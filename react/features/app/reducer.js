@@ -1,10 +1,8 @@
-import { SET_ROOM } from '../base/conference';
-import { SET_LOCATION_URL } from '../base/connection';
+// @flow
 
-import { ReducerRegistry, set } from '../base/redux';
+import { ReducerRegistry } from '../base/redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
-import { _getRouteToRender } from './functions';
 
 ReducerRegistry.register('features/app', (state = {}, action) => {
     switch (action.type) {
@@ -35,12 +33,6 @@ ReducerRegistry.register('features/app', (state = {}, action) => {
             };
         }
         break;
-
-    case SET_LOCATION_URL:
-        return set(state, 'getRouteToRender', undefined);
-
-    case SET_ROOM:
-        return set(state, 'getRouteToRender', _getRouteToRender);
     }
 
     return state;
