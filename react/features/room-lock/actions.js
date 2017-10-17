@@ -1,6 +1,11 @@
 // @flow
 
-import { setPassword } from '../base/conference';
+import { appNavigate } from '../app';
+import {
+    conferenceLeft,
+    JITSI_CONFERENCE_URL_KEY,
+    setPassword
+} from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
 
@@ -19,6 +24,38 @@ export function beginRoomLockRequest(conference: ?Object) {
         }
         if (conference) {
             dispatch(openDialog(RoomLockPrompt, { conference }));
+        }
+    };
+}
+
+/**
+ * Cancels a prompt for a password to join a specific conference/room.
+ *
+ * @param {JitsiConference} conference - The {@code JitsiConference} requesting
+ * the password to join.
+ * @protected
+ * @returns {Function}
+ */
+export function _cancelPasswordRequiredPrompt(conference: Object) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        // Canceling PasswordRequiredPrompt is to navigate the app/user to
+        // WelcomePage. In other words, the canceling invalidates the
+        // locationURL. Make sure that the canceling indeed has the intent to
+        // invalidate the locationURL.
+        const state = getState();
+
+        if (conference === state['features/base/conference'].passwordRequired
+                && conference[JITSI_CONFERENCE_URL_KEY]
+                    === state['features/base/connection'].locationURL) {
+            // XXX The error associated with CONFERENCE_FAILED was marked as
+            // recoverable by the feature room-lock and, consequently,
+            // recoverable-aware features such as mobile's external-api did not
+            // deliver the CONFERENCE_FAILED to the SDK clients/consumers. Since
+            // the app/user is going to nativate to WelcomePage, the SDK
+            // clients/consumers need an event.
+            dispatch(conferenceLeft(conference));
+
+            dispatch(appNavigate(undefined));
         }
     };
 }
@@ -47,10 +84,10 @@ export function endRoomLockRequest(
 }
 
 /**
- * Begins a request to enter password for a specific conference/room.
+ * Begins a prompt for a password to join a specific conference/room.
  *
- * @param {JitsiConference} conference - The JitsiConference
- * requesting password.
+ * @param {JitsiConference} conference - The {@code JitsiConference}
+ * requesting the password to join.
  * @protected
  * @returns {{
  *     type: OPEN_DIALOG,

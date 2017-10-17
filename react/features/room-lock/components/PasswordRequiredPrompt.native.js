@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { appNavigate } from '../../app';
 import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
+
+import { _cancelPasswordRequiredPrompt } from '../actions';
 
 /**
  * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
@@ -87,7 +88,8 @@ class PasswordRequiredPrompt extends Component {
      * otherwise, {@code false}.
      */
     _onCancel() {
-        this.props.dispatch(appNavigate(undefined));
+        this.props.dispatch(
+            _cancelPasswordRequiredPrompt(this.props.conference));
 
         return true;
     }
