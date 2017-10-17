@@ -1,7 +1,6 @@
 import './native';
 
-// The library lib-jitsi-meet (externally) depends on the libraries jQuery and
-// Strophe
+// The library lib-jitsi-meet (externally) depends on the libraries jQuery
 (global => {
     // jQuery
     if (typeof global.$ === 'undefined') {
@@ -9,13 +8,6 @@ import './native';
 
         jQuery(global);
         global.$ = jQuery;
-    }
-
-    // Strophe
-    if (typeof global.Strophe === 'undefined') {
-        require('strophe');
-        require('strophejs-plugins/disco/strophe.disco');
-        require('strophejs-plugins/caps/strophe.caps.jsonly');
     }
 })(global || window || this); // eslint-disable-line no-invalid-this
 

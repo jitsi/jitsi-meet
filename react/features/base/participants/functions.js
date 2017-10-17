@@ -1,4 +1,5 @@
 // @flow
+import md5 from 'js-md5';
 
 import { toState } from '../redux';
 
@@ -6,7 +7,6 @@ import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
 
 declare var config: Object;
 declare var interfaceConfig: Object;
-declare var MD5: Object;
 
 /**
  * Returns the URL of the image for the avatar of a specific participant.
@@ -71,7 +71,7 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
         }
     }
 
-    return urlPrefix + MD5.hexdigest(key.trim().toLowerCase()) + urlSuffix;
+    return urlPrefix + md5.hex(key.trim().toLowerCase()) + urlSuffix;
 }
 
 /**

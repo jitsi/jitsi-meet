@@ -49,6 +49,7 @@
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "jitsi/lib-jitsi-meet",
     "lodash": "4.17.4",
+    "js-md5": "0.6.1",
     "nuclear-js": "1.4.0",
     "postis": "2.2.0",
     "prop-types": "15.6.0",
@@ -69,8 +70,6 @@
     "react-redux": "5.0.6",
     "redux": "3.7.2",
     "redux-thunk": "2.2.0",
-    "strophe": "1.2.4",
-    "strophejs-plugins": "0.0.7",
     "styled-components": "1.3.0",
     "url-polyfill": "github:github/url-polyfill",
     "uuid": "3.1.0",
@@ -120,7 +119,6 @@
     "aui-experimental": "@atlassian/aui/lib/js/aui-experimental.js",
     "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
     "autosize": "./node_modules/autosize/build/jquery.autosize.js",
-    "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js",
-    "strophe-disco": "./node_modules/strophejs-plugins/disco/strophe.disco.js"
+    "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
   }
 }
