@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#import "RCTBridgeModule.h"
-
 #import <UIKit/UIKit.h>
+
+#import <React/RCTBridgeModule.h>
 
 @interface Proximity : NSObject<RCTBridgeModule>
 @end
