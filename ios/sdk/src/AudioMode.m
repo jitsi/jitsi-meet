@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#import "RCTBridgeModule.h"
-#import "RCTLog.h"
-
 #import <AVFoundation/AVFoundation.h>
+
+#import <React/RCTBridgeModule.h>
+#import <React/RCTLog.h>
 
 @interface AudioMode : NSObject<RCTBridgeModule>
 @end
