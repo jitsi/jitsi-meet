@@ -45,6 +45,7 @@ export function createLocalTracksF(
     }
 
     const {
+        constraints,
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = store.getState()['features/base/config'];
@@ -53,6 +54,7 @@ export function createLocalTracksF(
         JitsiMeetJS.createLocalTracks(
             {
                 cameraDeviceId,
+                constraints,
                 desktopSharingExtensionExternalInstallation:
                     options.desktopSharingExtensionExternalInstallation,
                 desktopSharingSources: options.desktopSharingSources,
