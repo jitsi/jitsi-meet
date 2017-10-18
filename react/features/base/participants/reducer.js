@@ -68,7 +68,7 @@ function _participant(state: Object = {}, action) {
         break;
 
     case PARTICIPANT_JOINED: {
-        const participant = action.participant; // eslint-disable-line no-shadow
+        const { participant } = action; // eslint-disable-line no-shadow
         const {
             avatarURL,
             connectionStatus,
@@ -114,9 +114,9 @@ function _participant(state: Object = {}, action) {
     }
 
     case PARTICIPANT_UPDATED: {
-        const participant = action.participant; // eslint-disable-line no-shadow
-        const { local } = participant;
+        const { participant } = action; // eslint-disable-line no-shadow
         let { id } = participant;
+        const { local } = participant;
 
         if (!id && local) {
             id = LOCAL_PARTICIPANT_DEFAULT_ID;
