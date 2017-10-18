@@ -204,7 +204,7 @@ module.exports = [
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
-function devServerProxyBypass({ path }) {
+function devServerProxyBypass(path) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')) {
         return path;
     }
