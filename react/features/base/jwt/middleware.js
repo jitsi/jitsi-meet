@@ -14,7 +14,6 @@ import { LIB_INIT_ERROR } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipantCount,
-    LOCAL_PARTICIPANT_DEFAULT_NAME,
     PARTICIPANT_JOINED,
     participantUpdated
 } from '../participants';
@@ -274,7 +273,7 @@ function _undoOverwriteLocalParticipant(
             newProperties.email = undefined;
         }
         if (name === localParticipant.name) {
-            newProperties.name = LOCAL_PARTICIPANT_DEFAULT_NAME;
+            newProperties.name = undefined;
         }
         dispatch(participantUpdated(newProperties));
     }
