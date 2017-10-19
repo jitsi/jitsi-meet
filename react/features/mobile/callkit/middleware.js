@@ -10,7 +10,8 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_JOINED,
-    getCurrentConference
+    getCurrentConference,
+    isConferenceErrorRecoverable
 } from '../../base/conference';
 import { getInviteURL } from '../../base/connection';
 import {
@@ -135,9 +136,10 @@ function _appWillMount({ dispatch, getState }, next, action) {
 function _conferenceFailed(store, next, action) {
     const result = next(action);
 
-    const { callUUID } = action.conference;
+    const { conference, error } = action;
+    const { callUUID } = conference;
 
-    if (callUUID) {
+    if (callUUID && !isConferenceErrorRecoverable(error)) {
         CallKit.reportCallFailed(callUUID);
     }
 
