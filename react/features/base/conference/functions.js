@@ -1,6 +1,6 @@
 // @flow
 
-import { JitsiTrackErrors } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiTrackErrors } from '../lib-jitsi-meet';
 import { getLocalParticipant } from '../participants';
 import { toState } from '../redux';
 
@@ -77,6 +77,25 @@ export function _handleParticipantError(err: { message: ?string }) {
     // these scenarios.
     if (err.message !== 'Data channels support is disabled!') {
         throw err;
+    }
+}
+
+/**
+ * Given a conference error, it returns true is such error is recoverable, and
+ * false otherwise.
+ *
+ * @param {Error} err - The Error which was attached to the CONFERENCE_FAILED
+ * action.
+ * @returns {boolean}
+ */
+export function isConferenceErrorRecoverable(err: Error) {
+    switch (err.name) {
+    case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
+    case JitsiConferenceErrors.PASSWORD_REQUIRED:
+        return true;
+
+    default:
+        return false;
     }
 }
 

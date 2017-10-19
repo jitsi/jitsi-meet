@@ -8,7 +8,8 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
-    JITSI_CONFERENCE_URL_KEY
+    JITSI_CONFERENCE_URL_KEY,
+    isConferenceErrorRecoverable
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -30,14 +31,19 @@ MiddlewareRegistry.register(store => next => action => {
 
         // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
         // prevented the user from joining a specific conference but the app may
-        // be able to eventually join the conference. For example, the app will
-        // ask the user for a password upon
-        // JitsiConferenceErrors.PASSWORD_REQUIRED and will retry joining the
-        // conference afterwards. Such errors are to not reach the native
+        // be able to eventually join the conference.
+        //
+        // - JitsiConferenceErrors.AUTHENTICATION_REQUIRED: the app will ask the
+        //   user for credentials before joining the conference and will retry
+        //   joining once they are provided.
+        // - JitsiConferenceErrors.PASSWORD_REQUIRED: the app will ask the user
+        //   for a password and will retry joining the conference afterwards.
+        //
+        // Such errors are to not reach the native
         // counterpart of the External API (or at least not in the
         // fatality/finality semantics attributed to
         // conferenceFailed:/onConferenceFailed).
-        if (!error.recoverable) {
+        if (!isConferenceErrorRecoverable(error)) {
             _sendConferenceEvent(store, /* action */ {
                 error: _toErrorString(error),
                 ...data
