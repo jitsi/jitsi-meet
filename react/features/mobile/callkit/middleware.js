@@ -135,10 +135,15 @@ function _appWillMount({ dispatch, getState }, next, action) {
 function _conferenceFailed(store, next, action) {
     const result = next(action);
 
-    const { callUUID } = action.conference;
+    // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
+    // prevented the user from joining a specific conference but the app may be
+    // able to eventually join the conference.
+    if (!action.error.recoverable) {
+        const { callUUID } = action.conference;
 
-    if (callUUID) {
-        CallKit.reportCallFailed(callUUID);
+        if (callUUID) {
+            CallKit.reportCallFailed(callUUID);
+        }
     }
 
     return result;
