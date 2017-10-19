@@ -7,7 +7,6 @@ import {
     View
 } from 'react-native';
 
-import { Platform } from '../../';
 import AbstractContainer from '../AbstractContainer';
 
 /**
@@ -39,28 +38,20 @@ export default class Container extends AbstractContainer {
 
         // visible
         if (!visible) {
-            // FIXME: It turns out that display: none will fail on some Android
-            // devices, but work on the others (currently fails on Google Pixel)
-            if (Platform.OS === 'android') {
-                return null;
-            }
-
-            // Intentionally hide this Container without destroying it.
-            props.style = {
-                ...props.style,
-                display: 'none'
-            };
+            return null;
         }
 
         let element = super._render(View, props);
 
         // onClick & touchFeedback
-        if (visible && (onClick || touchFeedback)) {
-            element = React.createElement(
-                touchFeedback ? TouchableHighlight : TouchableWithoutFeedback,
-                { onPress: onClick },
-                element
-            );
+        if (element && (onClick || touchFeedback)) {
+            element
+                = React.createElement(
+                    touchFeedback
+                        ? TouchableHighlight
+                        : TouchableWithoutFeedback,
+                    { onPress: onClick },
+                    element);
         }
 
         return element;

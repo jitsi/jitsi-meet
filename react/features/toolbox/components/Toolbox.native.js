@@ -120,16 +120,13 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props._visible) {
-            return null;
-        }
-
         return (
             <Container
                 style = {
                     isNarrowAspectRatio(this)
                         ? styles.toolbarContainerNarrow
-                        : styles.toolbarContainerWide } >
+                        : styles.toolbarContainerWide }
+                visible = { this.props._visible } >
                 {
                     isNarrowAspectRatio(this)
                         ? this._renderSecondaryToolbar()
