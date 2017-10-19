@@ -64,14 +64,27 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_FAILED:
-        if (action.error.name
-                === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+    case CONFERENCE_FAILED: {
+        const { error } = action;
+
+        // XXX The feature authentication affords recovery from
+        // CONFERENCE_FAILED caused by
+        // JitsiConferenceErrors.AUTHENTICATION_REQUIRED.
+        let recoverable;
+
+        if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+            if (typeof error.recoverable === 'undefined') {
+                error.recoverable = true;
+            }
+            recoverable = error.recoverable;
+        }
+        if (recoverable) {
             store.dispatch(waitForOwner());
         } else {
             store.dispatch(stopWaitForOwner());
         }
         break;
+    }
 
     case CONFERENCE_JOINED:
         if (_isWaitingForOwner(store)) {

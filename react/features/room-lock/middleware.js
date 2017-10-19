@@ -29,6 +29,9 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (conference
                 && error.name === JitsiConferenceErrors.PASSWORD_REQUIRED) {
+            // XXX The feature room-lock affords recovery after
+            // CONFERENCE_FAILED caused by
+            // JitsiConferenceErrors.PASSWORD_REQUIRED.
             if (typeof error.recoverable === 'undefined') {
                 error.recoverable = true;
             }
