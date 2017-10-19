@@ -127,16 +127,7 @@ class Toolbox extends Component {
                         ? styles.toolbarContainerNarrow
                         : styles.toolbarContainerWide }
                 visible = { this.props._visible } >
-                {
-                    isNarrowAspectRatio(this)
-                        ? this._renderSecondaryToolbar()
-                        : this._renderPrimaryToolbar()
-                }
-                {
-                    isNarrowAspectRatio(this)
-                        ? this._renderPrimaryToolbar()
-                        : this._renderSecondaryToolbar()
-                }
+                { this._renderToolbars() }
             </Container>
         );
     }
@@ -315,6 +306,25 @@ class Toolbox extends Component {
 
         /* eslint-enable react/jsx-curly-spacing,react/jsx-handler-names */
     }
+
+    /**
+     * Renders the primary and the secondary toolbars in the order depending on
+     * the current aspect ratio.
+     *
+     * @returns {[ReactElement, ReactElement]}
+     * @private
+     */
+    _renderToolbars() {
+        if (isNarrowAspectRatio(this)) {
+            return [
+                this._renderSecondaryToolbar(),
+                this._renderPrimaryToolbar()
+            ];
+        }
+
+        return [ this._renderPrimaryToolbar(), this._renderSecondaryToolbar() ];
+    }
+
 }
 
 /**
