@@ -183,19 +183,31 @@ function _conferenceJoined(state, { conference }) {
  * reduction of the specified action.
  */
 function _conferenceLeft(state, { conference }) {
-    if (state.conference !== conference) {
-        return state;
+    let output = state;
+
+    if (state.authRequired === conference) {
+        output = set(output, 'authRequired', undefined);
+    }
+    if (state.conference === conference) {
+        output = assign(output, {
+            conference: undefined,
+            joining: undefined,
+            leaving: undefined
+        });
+    }
+    if (state.passwordRequired === conference) {
+        // Note that in case the conference was joined those fields have been
+        // cleared already, so this step needs to be done only if the room
+        // unlock operation has been canceled and that's why it's not done in
+        // the 'state.conference' condition above.
+        output = assign(output, {
+            locked: undefined,
+            password: undefined,
+            passwordRequired: undefined
+        });
     }
 
-    return assign(state, {
-        authRequired: undefined,
-        conference: undefined,
-        joining: undefined,
-        leaving: undefined,
-        locked: undefined,
-        password: undefined,
-        passwordRequired: undefined
-    });
+    return output;
 }
 
 /**

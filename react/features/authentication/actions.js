@@ -1,7 +1,7 @@
 // @flow
 
 import { appNavigate } from '../app';
-import { checkIfCanJoin } from '../base/conference';
+import { checkIfCanJoin, conferenceLeft } from '../base/conference';
 import { openDialog } from '../base/dialog';
 
 import {
@@ -82,8 +82,14 @@ export function cancelLogin() {
  * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<*>, getState: Function) => {
         dispatch(stopWaitForOwner());
+        const { authRequired } = getState()['features/base/conference'];
+
+        if (authRequired) {
+            dispatch(conferenceLeft(authRequired));
+        }
+
         dispatch(appNavigate(undefined));
     };
 }
