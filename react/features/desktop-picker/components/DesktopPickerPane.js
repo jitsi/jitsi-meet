@@ -1,3 +1,4 @@
+import Spinner from '@atlaskit/spinner';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -60,7 +61,7 @@ class DesktopPickerPane extends Component {
         const classNames
             = `desktop-picker-pane default-scrollbar source-type-${type}`;
         const previews
-            = sources.map(
+            = sources ? sources.map(
                 source =>
 
                     // eslint-disable-next-line react/jsx-wrap-multilines
@@ -70,7 +71,14 @@ class DesktopPickerPane extends Component {
                         onDoubleClick = { onDoubleClick }
                         selected = { source.id === selectedSourceId }
                         source = { source }
-                        type = { type } />);
+                        type = { type } />)
+                : ( // eslint-disable-line no-extra-parens
+                    <div className = 'desktop-picker-pane-spinner'>
+                        <Spinner
+                            isCompleting = { false }
+                            size = 'medium' />
+                    </div>
+                );
 
         return (
             <div className = { classNames }>
