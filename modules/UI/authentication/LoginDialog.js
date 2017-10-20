@@ -61,29 +61,44 @@ function LoginDialog(successCallback, cancelCallback) {
         finishedButtons.push(cancelButton());
     }
 
-    const connDialog = APP.UI.messageHandler.openDialogWithStates(
-        states, // eslint-disable-line no-use-before-define
-        {
-            persistent: true,
-            closeText: ''
-        },
-        null
-    );
-
     const states = {
+        connecting: {
+            buttons: [],
+            defaultButton: 0,
+            html: '<div id="connectionStatus"></div>',
+            titleKey: 'dialog.connecting'
+        },
+        finished: {
+            buttons: finishedButtons,
+            defaultButton: 0,
+            html: '<div id="errorMessage"></div>',
+            titleKey: 'dialog.error',
+
+            submit(e, v) {
+                e.preventDefault();
+                if (v === 'retry') {
+                    // eslint-disable-next-line no-use-before-define
+                    connDialog.goToState('login');
+                } else {
+                    // User cancelled
+                    cancelCallback();
+                }
+            }
+        },
         login: {
-            titleKey: 'dialog.passwordRequired',
-            html: getPasswordInputHtml(),
             buttons: loginButtons,
             focus: ':input:first',
-            // eslint-disable-next-line max-params
-            submit(e, v, m, f) {
+            html: getPasswordInputHtml(),
+            titleKey: 'dialog.passwordRequired',
+
+            submit(e, v, m, f) { // eslint-disable-line max-params
                 e.preventDefault();
                 if (v) {
                     const jid = f.username;
                     const password = f.password;
 
                     if (jid && password) {
+                        // eslint-disable-next-line no-use-before-define
                         connDialog.goToState('connecting');
                         successCallback(toJid(jid, config.hosts), password);
                     }
@@ -92,29 +107,16 @@ function LoginDialog(successCallback, cancelCallback) {
                     cancelCallback();
                 }
             }
-        },
-        connecting: {
-            titleKey: 'dialog.connecting',
-            html: '<div id="connectionStatus"></div>',
-            buttons: [],
-            defaultButton: 0
-        },
-        finished: {
-            titleKey: 'dialog.error',
-            html: '<div id="errorMessage"></div>',
-            buttons: finishedButtons,
-            defaultButton: 0,
-            submit(e, v) {
-                e.preventDefault();
-                if (v === 'retry') {
-                    connDialog.goToState('login');
-                } else {
-                    // User cancelled
-                    cancelCallback();
-                }
-            }
         }
     };
+    const connDialog = APP.UI.messageHandler.openDialogWithStates(
+        states,
+        {
+            closeText: '',
+            persistent: true
+        },
+        null
+    );
 
     /**
      * Displays error message in 'finished' state which allows either to cancel
