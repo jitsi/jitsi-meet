@@ -8,7 +8,14 @@ import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-export const sendAnalyticsEvent = analytics.sendEvent.bind(analytics);
+/**
+ * Sends an analytics event.
+ *
+ * @inheritdoc
+ */
+export function sendAnalyticsEvent(...args: Array<any>) {
+    analytics.sendEvent(...args);
+}
 
 /**
  * Loads the analytics scripts and inits JitsiMeetJS.analytics by setting
