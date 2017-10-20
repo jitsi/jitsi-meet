@@ -26,6 +26,13 @@
             width: 30%;
         }
     }
+
+    &-spinner {
+        justify-content: center;
+        display: flex;
+        height: 100%;
+        align-items: center;
+    }
 }
 
 .desktop-picker-source {
