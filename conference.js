@@ -2176,6 +2176,8 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
+                const videoWasMuted = this.isLocalVideoMuted();
+
                 sendAnalyticsEvent('settings.changeDevice.video');
                 createLocalTracksF({
                     devices: [ 'video' ],
@@ -2183,7 +2185,9 @@ export default {
                     micDeviceId: null
                 })
                 .then(([ stream ]) => {
-                    if (this.isAudioOnly()) {
+                    // if we are in audio only mode or video was muted before
+                    // changing device, then mute
+                    if (this.isAudioOnly() || videoWasMuted) {
                         return stream.mute()
                             .then(() => stream);
                     }
@@ -2191,7 +2195,14 @@ export default {
                     return stream;
                 })
                 .then(stream => {
-                    this.useVideoStream(stream);
+                    // if we are screen sharing we do not want to stop it
+                    if (this.isSharingScreen) {
+                        return Promise.resolve();
+                    }
+
+                    return this.useVideoStream(stream);
+                })
+                .then(() => {
                     logger.log('switched local video device');
                     APP.settings.setCameraDeviceId(cameraDeviceId, true);
                 })
@@ -2204,6 +2215,8 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             micDeviceId => {
+                const audioWasMuted = this.isLocalAudioMuted();
+
                 sendAnalyticsEvent(
                     'settings.changeDevice.audioIn');
                 createLocalTracksF({
@@ -2212,6 +2225,16 @@ export default {
                     micDeviceId
                 })
                 .then(([ stream ]) => {
+                    // if audio was muted before changing the device, mute
+                    // with the new device
+                    if (audioWasMuted) {
+                        return stream.mute()
+                            .then(() => stream);
+                    }
+
+                    return stream;
+                })
+                .then(stream => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
                     APP.settings.setMicDeviceId(micDeviceId, true);
@@ -2408,10 +2431,6 @@ export default {
         const promises = [];
         const audioWasMuted = this.isLocalAudioMuted();
         const videoWasMuted = this.isLocalVideoMuted();
-        const availableAudioInputDevices
-            = mediaDeviceHelper.getDevicesFromListByKind(devices, 'audioinput');
-        const availableVideoInputDevices
-            = mediaDeviceHelper.getDevicesFromListByKind(devices, 'videoinput');
 
         if (typeof newDevices.audiooutput !== 'undefined') {
             // Just ignore any errors in catch block.
@@ -2430,9 +2449,7 @@ export default {
                 .then(() => {
                     // If audio was muted before, or we unplugged current device
                     // and selected new one, then mute new audio track.
-                    if (audioWasMuted
-                        || currentDevices.audioinput.length
-                        > availableAudioInputDevices.length) {
+                    if (audioWasMuted) {
                         sendAnalyticsEvent('deviceListChanged.audio.muted');
                         logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
@@ -2440,10 +2457,7 @@ export default {
 
                     // If video was muted before, or we unplugged current device
                     // and selected new one, then mute new video track.
-                    if (!this.isSharingScreen
-                        && (videoWasMuted
-                            || currentDevices.videoinput.length
-                                > availableVideoInputDevices.length)) {
+                    if (!this.isSharingScreen && videoWasMuted) {
                         sendAnalyticsEvent('deviceListChanged.video.muted');
                         logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
