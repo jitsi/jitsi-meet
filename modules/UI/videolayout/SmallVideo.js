@@ -4,6 +4,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Provider } from 'react-redux';
 
 import { i18next } from '../../../react/features/base/i18n';
@@ -780,30 +781,34 @@ SmallVideo.prototype.updateIndicators = function() {
     const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
 
     ReactDOM.render(
-        <I18nextProvider i18n = { i18next }>
-            <div>
-                { this._showConnectionIndicator
-                    ? <ConnectionIndicator
-                        alwaysVisible = { showConnectionIndicator }
-                        connectionStatus = { this._connectionStatus }
-                        iconSize = { iconSize }
-                        isLocalVideo = { this.isLocal }
-                        enableStatsDisplay = { !interfaceConfig.filmStripOnly }
-                        statsPopoverPosition = { this.statsPopoverLocation }
-                        userID = { this.id } />
-                    : null }
-                { this._showRaisedHand
-                    ? <RaisedHandIndicator
-                        iconSize = { iconSize }
-                        tooltipPosition = { tooltipPosition } />
-                    : null }
-                { this._showDominantSpeaker
-                    ? <DominantSpeakerIndicator
-                        iconSize = { iconSize }
-                        tooltipPosition = { tooltipPosition } />
-                    : null }
-            </div>
-        </I18nextProvider>,
+            <I18nextProvider i18n = { i18next }>
+                <div>
+                    <AtlasKitThemeProvider mode = 'dark'>
+                        { this._showConnectionIndicator
+                            ? <ConnectionIndicator
+                                alwaysVisible = { showConnectionIndicator }
+                                connectionStatus = { this._connectionStatus }
+                                iconSize = { iconSize }
+                                isLocalVideo = { this.isLocal }
+                                enableStatsDisplay
+                                    = { !interfaceConfig.filmStripOnly }
+                                statsPopoverPosition
+                                    = { this.statsPopoverLocation }
+                                userID = { this.id } />
+                            : null }
+                        { this._showRaisedHand
+                            ? <RaisedHandIndicator
+                                iconSize = { iconSize }
+                                tooltipPosition = { tooltipPosition } />
+                            : null }
+                        { this._showDominantSpeaker
+                            ? <DominantSpeakerIndicator
+                                iconSize = { iconSize }
+                                tooltipPosition = { tooltipPosition } />
+                            : null }
+                    </AtlasKitThemeProvider>
+                </div>
+            </I18nextProvider>,
         indicatorToolbar
     );
 };

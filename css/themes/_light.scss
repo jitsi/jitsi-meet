@@ -45,12 +45,6 @@ $filmstripOnlyOverlayBg: #000;
 $reloadProgressBarBg: #0074E0;
 
 /**
-* Connection indicator
-**/
-$downloadConnectionIconColor: #4abd04;
-$uploadConnectionIconColor: #ffa800;
-
-/**
  * Dialog colors
  **/
 $auiDialogColor: #333;
@@ -111,3 +105,8 @@ $selectFontColor: $controlColor;
 $selectBg: $controlBackground;
 $selectActiveBg: darken($controlBackground, 5%);
 $selectActiveItemBg: darken($controlBackground, 20%);
+
+/**
+ * TODO: Replace by themed component.
+ */
+$videoQualityActive: #4C9AFF;

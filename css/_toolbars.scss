@@ -36,7 +36,6 @@
  * Common toolbar styles.
  */
 .toolbar {
-    color: $modalTextColor;
     height: 100%;
     pointer-events: auto;
     position: relative;
@@ -82,18 +81,19 @@
         vertical-align: middle;
         width: $defaultToolbarSize;
 
-        &_hangup {
-            color: $hangupColor;
-            font-size: $hangupFontSize;
-        }
-
         &[disabled] {
             opacity: 0.5;
         }
 
         &:hover, &:active {
+            color: $toolbarButtonColor;
             cursor: pointer;
             text-decoration: none;
+        }
+
+        &_hangup, &_hangup:hover {
+            color: $hangupColor;
+            font-size: $hangupFontSize;
         }
 
         &:not(.toggled) {

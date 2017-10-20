@@ -86,25 +86,15 @@
                 width: 100%;
 
                 & button {
-                    background: $toolbarBackground;
                     flex-grow: 1;
                     flex-shrink: 1;
                     overflow: hidden;
                 }
 
                 & > * {
-                    color: $toolbarButtonColor;
                     flex-grow: 0;
                     flex-shrink: 0;
                     margin-left: 2px;
-                }
-
-                /**
-                 * Making sure any svg-s in an invite button group will be
-                 * colored the way we want.
-                 */
-                & path {
-                    fill: $toolbarButtonColor;
                 }
             }
         }

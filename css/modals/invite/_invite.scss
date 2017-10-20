@@ -26,17 +26,6 @@
             user-select: text;
         }
 
-        .dial-in-numbers-trigger {
-            position: relative;
-            width: 100%;
-
-            .dial-in-numbers-trigger-icon {
-                position: absolute;
-                right: 10px;
-                top: 4px;
-            }
-        }
-
         .is-disabled,
         .is-loading {
             .dial-in-numbers-trigger-icon {
@@ -62,6 +51,10 @@
         &__input-container {
             flex: 1;
             margin-right: 10px;
+
+            .dropdown-button-trigger {
+                text-align: left;
+            }
         }
     }
 

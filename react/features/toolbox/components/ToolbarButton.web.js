@@ -1,14 +1,13 @@
 /* @flow */
 
-import AKInlineDialog from '@atlaskit/inline-dialog';
-import { Tooltip } from '@atlaskit/tooltip';
+import InlineDialog from '@atlaskit/inline-dialog';
+import Tooltip from '@atlaskit/tooltip';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
 import { TOOLTIP_TO_POPUP_POSITION } from '../constants';
-import { isButtonEnabled } from '../functions';
 import StatelessToolbarButton from './StatelessToolbarButton';
 
 declare var APP: Object;
@@ -23,20 +22,6 @@ class ToolbarButton extends Component {
     button: Object;
 
     _onClick: Function;
-
-    _onMouseOut: Function;
-
-    _onMouseOver: Function;
-
-    state: {
-
-        /**
-         * Whether or not the tooltip for the button should be displayed.
-         *
-         * @type {boolean}
-         */
-        showTooltip: boolean
-    }
 
     /**
      * Toolbar button component's property types.
@@ -81,14 +66,8 @@ class ToolbarButton extends Component {
     constructor(props: Object) {
         super(props);
 
-        this.state = {
-            showTooltip: false
-        };
-
         // Bind methods to save the context
         this._onClick = this._onClick.bind(this);
-        this._onMouseOut = this._onMouseOut.bind(this);
-        this._onMouseOver = this._onMouseOver.bind(this);
     }
 
     /**
@@ -134,10 +113,7 @@ class ToolbarButton extends Component {
         const buttonComponent = ( // eslint-disable-line no-extra-parens
             <Tooltip
                 description = { button.tooltipText || t(button.tooltipKey) }
-                onMouseOut = { this._onMouseOut }
-                onMouseOver = { this._onMouseOver }
-                position = { tooltipPosition }
-                visible = { this.state.showTooltip }>
+                position = { tooltipPosition }>
                 <StatelessToolbarButton { ...props }>
                     { this.props.children }
                 </StatelessToolbarButton>
@@ -151,12 +127,12 @@ class ToolbarButton extends Component {
             const { dataAttr, dataInterpolate, position } = popupConfig;
 
             children = ( // eslint-disable-line no-extra-parens
-                <AKInlineDialog
+                <InlineDialog
                     content = { t(dataAttr, dataInterpolate) }
                     isOpen = { Boolean(popupConfig) }
                     position = { position }>
                     { buttonComponent }
-                </AKInlineDialog>
+                </InlineDialog>
             );
         }
 
@@ -176,7 +152,6 @@ class ToolbarButton extends Component {
      */
     _onClick(event) {
         this.props.onClick(event);
-        this.setState({ showTooltip: false });
     }
 
     /**
@@ -203,31 +178,6 @@ class ToolbarButton extends Component {
             {
                 position: TOOLTIP_TO_POPUP_POSITION[tooltipPosition]
             });
-    }
-
-    /**
-     * Hides any displayed tooltip.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onMouseOut(): void {
-        this.setState({ showTooltip: false });
-    }
-
-    /**
-     * Hides any displayed tooltip.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onMouseOver(): void {
-        const { button } = this.props;
-
-        this.setState({
-            showTooltip: isButtonEnabled(button.buttonName)
-                && !button.unclickable
-        });
     }
 
     /**

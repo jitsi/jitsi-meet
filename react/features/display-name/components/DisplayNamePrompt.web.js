@@ -1,7 +1,7 @@
-import AKFieldText from '@atlaskit/field-text';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -76,7 +76,7 @@ class DisplayNamePrompt extends Component {
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.displayNameRequired'
                 width = 'small'>
-                <AKFieldText
+                <TextField
                     autoFocus = { true }
                     compact = { true }
                     label = { this.props.t('dialog.enterDisplayName') }
