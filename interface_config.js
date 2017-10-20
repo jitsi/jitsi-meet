@@ -128,7 +128,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: false,
+    CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: true,
 
     /**
      * How long the connection indicator should remain displayed before hiding.
