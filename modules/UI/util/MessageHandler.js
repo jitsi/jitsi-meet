@@ -456,8 +456,8 @@ const messageHandler = {
 
     /**
      *  Shows an error dialog to the user.
-     * @param titleKey the title of the message.
-     * @param msgKey the text of the message.
+     * @param {string} titleKey - The title of the message.
+     * @param {string} msgKey - The text of the message.
      */
     showError(props) {
         APP.store.dispatch(showErrorNotification(props));

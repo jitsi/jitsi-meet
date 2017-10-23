@@ -1685,10 +1685,10 @@ export default {
 
         if (error.name === JitsiTrackErrors.PERMISSION_DENIED) {
             descriptionKey = 'dialog.screenSharingPermissionDeniedError';
-            titleKey = 'dialog.error';
+            titleKey = 'dialog.screenSharingFailedToInstallTitle';
         } else {
-            descriptionKey = 'dialog.failtoinstall';
-            titleKey = 'dialog.permissionDenied';
+            descriptionKey = 'dialog.screenSharingFailedToInstall';
+            titleKey = 'dialog.screenSharingFailedToInstallTitle';
         }
 
         APP.UI.messageHandler.showError({

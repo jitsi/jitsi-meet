@@ -7,6 +7,8 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
+declare var interfaceConfig: Object;
+
 /**
  * Implements a React {@link Component} to display a notification.
  *
@@ -146,6 +148,16 @@ class Notification extends Component {
     }
 
     /**
+     * Opens the support page.
+     *
+     * @returns {void}
+     * @private
+     */
+    _onOpenLink() {
+        window.open(interfaceConfig.SUPPORT_URL, '_blank');
+    }
+
+    /**
      * Creates action button configurations for the notification based on
      * notification appearance.
      *
@@ -155,11 +167,25 @@ class Notification extends Component {
     _mapAppearanceToButtons() {
         switch (this.props.appearance) {
         case 'error':
+            return [
+                {
+                    content: this.props.t('dialog.dismiss'),
+                    onClick: this._onDismissed
+                },
+                {
+                    content: this.props.t('dialog.contactSupport'),
+                    onClick: this._onOpenLink
+                }
+            ];
         case 'warning':
             return [
                 {
                     content: this.props.t('dialog.Ok'),
                     onClick: this._onDismissed
+                },
+                {
+                    content: this.props.t('dialog.contactSupport'),
+                    onClick: this._onOpenLink
                 }
             ];
 
