@@ -4,7 +4,6 @@ import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 
 import { i18next } from '../../base/i18n';
 import {
@@ -202,11 +201,7 @@ export class AbstractApp extends Component {
             return (
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { this._getStore() }>
-                        <AtlasKitThemeProvider mode = 'dark'>
-                            {
-                                this._createElement(component)
-                            }
-                        </AtlasKitThemeProvider>
+                        { this._createElement(component) }
                     </Provider>
                 </I18nextProvider>
             );
