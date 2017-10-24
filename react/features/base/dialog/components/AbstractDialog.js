@@ -9,7 +9,7 @@ import { DIALOG_PROP_TYPES } from '../constants';
 /**
  * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
-export default class AbstractDialog extends Component {
+export default class AbstractDialog extends Component<*, *> {
     /**
      * {@code AbstractDialog} React {@code Component}'s prop types.
      *

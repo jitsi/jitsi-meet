@@ -12,7 +12,7 @@ import { translate } from '../../base/i18n';
  * Implements a React Component which prompts the user when a password is
  * required to join a conference.
  */
-class PasswordRequiredPrompt extends Component {
+class PasswordRequiredPrompt extends Component<*, *> {
     /**
      * PasswordRequiredPrompt component's property types.
      *

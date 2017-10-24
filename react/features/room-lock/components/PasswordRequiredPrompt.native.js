@@ -36,7 +36,7 @@ const _TEXT_INPUT_PROPS = {
  * Implements a React {@code Component} which prompts the user when a password
  * is required to join a conference.
  */
-class PasswordRequiredPrompt extends Component {
+class PasswordRequiredPrompt extends Component<Props> {
     /**
      * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
      *

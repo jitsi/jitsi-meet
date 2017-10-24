@@ -21,7 +21,7 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractWelcomePage extends Component {
+export class AbstractWelcomePage extends Component<*, *> {
     /**
      * {@code AbstractWelcomePage}'s React {@code Component} prop types.
      *

@@ -11,7 +11,7 @@ import styles from './styles';
  * {@code HTMLVideoElement} and wraps around react-native-webrtc's
  * {@link RTCView}.
  */
-export default class Video extends Component {
+export default class Video extends Component<*> {
     /**
      * {@code Video} component's property types.
      *

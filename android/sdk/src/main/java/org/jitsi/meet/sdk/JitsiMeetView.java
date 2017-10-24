@@ -94,7 +94,7 @@ public class JitsiMeetView extends FrameLayout {
             = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
+                .setJSMainModulePath("index.android")
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
                 .addPackage(new com.facebook.react.shell.MainReactPackage())
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())

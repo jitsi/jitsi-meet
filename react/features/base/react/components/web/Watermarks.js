@@ -21,7 +21,7 @@ const _RIGHT_WATERMARK_STYLE = {
  * A Web Component which renders watermarks such as Jits, brand, powered by,
  * etc.
  */
-class Watermarks extends Component {
+class Watermarks extends Component<*, *> {
     static propTypes = {
         _isGuest: PropTypes.bool,
         t: PropTypes.func

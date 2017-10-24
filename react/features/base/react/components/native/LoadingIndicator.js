@@ -10,7 +10,7 @@ import { ColorPalette } from '../../../styles';
  * a suitable visualization of long-running processes with indeterminate amounts
  * of work to be done.
  */
-export default class LoadingIndicator extends Component {
+export default class LoadingIndicator extends Component<*> {
     /**
      * Implements React's {@link Component#render()}.
      *

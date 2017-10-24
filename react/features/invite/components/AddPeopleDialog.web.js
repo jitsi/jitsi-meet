@@ -19,7 +19,7 @@ declare var interfaceConfig: Object;
 /**
  * The dialog that allows to invite people to the call.
  */
-class AddPeopleDialog extends Component {
+class AddPeopleDialog extends Component<*, *> {
     /**
      * {@code AddPeopleDialog}'s property types.
      *
@@ -311,7 +311,7 @@ class AddPeopleDialog extends Component {
         );
     }
 
-    _setMultiSelectElement: (Object) => void;
+    _setMultiSelectElement: (React$ElementRef<*> | null) => mixed;
 
     /**
      * Sets the instance variable for the multi select component

@@ -16,7 +16,7 @@ import styles from './styles';
  * {@code Route} to render. Renders a progress indicator when there are ongoing
  * network requests.
  */
-class BlankPage extends Component {
+class BlankPage extends Component<*> {
     /**
      * {@code BlankPage} React {@code Component}'s prop types.
      *

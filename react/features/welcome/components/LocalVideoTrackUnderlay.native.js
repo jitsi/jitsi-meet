@@ -14,7 +14,7 @@ import styles from './styles';
  * Implements a React {@code Component} which underlays the local video track,
  * if any, underneath its children.
  */
-class LocalVideoTrackUnderlay extends Component {
+class LocalVideoTrackUnderlay extends Component<*, *> {
     state: {
 
         /**

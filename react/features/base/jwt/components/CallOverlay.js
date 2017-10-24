@@ -21,7 +21,7 @@ declare var interfaceConfig: Object;
  *
  * @extends Component
  */
-class CallOverlay extends Component {
+class CallOverlay extends Component<*, *> {
     /**
      * The (reference to the) {@link Audio} which plays/renders the audio
      * depicting the ringing phase of the call establishment represented by this

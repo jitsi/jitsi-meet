@@ -22,7 +22,7 @@ declare var interfaceConfig: Object;
 /**
  * Implements the conference toolbox on React/Web.
  */
-class Toolbox extends Component {
+class Toolbox extends Component<*> {
     /**
      * App component's property types.
      *
@@ -89,7 +89,7 @@ class Toolbox extends Component {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> {
+    render(): React$Element<*> {
         return (
             <div className = 'toolbox'>
                 {
@@ -109,7 +109,7 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      * @private
      */
-    _renderSubject(): ReactElement<*> | null {
+    _renderSubject(): React$Element<*> | null {
         const { _subjectSlideIn, _subject } = this.props;
         const classNames = [ 'subject' ];
 
@@ -146,7 +146,7 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      * @private
      */
-    _renderToolbars(): ReactElement<*> | null {
+    _renderToolbars(): React$Element<*> | null {
         // In case we're not in alwaysVisible mode the toolbox should not be
         // shown until timeoutID is initialized.
         if (!this.props._alwaysVisible && this.props._timeoutID === null) {

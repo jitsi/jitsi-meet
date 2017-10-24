@@ -16,7 +16,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 /**
  * Implements abstract React Component for the page reload overlays.
  */
-export default class AbstractPageReloadOverlay extends Component {
+export default class AbstractPageReloadOverlay extends Component<*, *> {
     /**
      * AbstractPageReloadOverlay component's property types.
      *

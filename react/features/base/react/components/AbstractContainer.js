@@ -9,7 +9,7 @@ import React, { Component } from 'react';
  *
  * @extends Component
  */
-export default class AbstractContainer extends Component {
+export default class AbstractContainer extends Component<*> {
     /**
      * {@code AbstractContainer} component's property types.
      *

@@ -30,7 +30,7 @@ const DEFAULT_BUTTON_CONFIGURATION = {
  *
  * @extends Component
  */
-class ProfileButton extends Component {
+class ProfileButton extends Component<*> {
     _onClick: Function;
 
     /**

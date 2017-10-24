@@ -10,7 +10,7 @@ import { LoadingIndicator } from '../../../base/react';
  * The React {@code Component} which renders a progress indicator when there
  * are ongoing network requests.
  */
-class NetworkActivityIndicator extends Component {
+class NetworkActivityIndicator extends Component<*> {
     /**
      * {@code NetworkActivityIndicator} React {@code Component}'s prop types.
      *

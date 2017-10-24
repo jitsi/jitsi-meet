@@ -9,7 +9,7 @@ declare var config: Object;
  *
  * @class Notice
  */
-export default class Notice extends Component {
+export default class Notice extends Component<*, *> {
     state: Object;
 
     /**

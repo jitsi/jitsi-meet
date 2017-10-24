@@ -17,7 +17,7 @@ import styles from './styles';
  *
  * See {@link LoginDialog} description for more details.
  */
-class WaitForOwnerDialog extends Component {
+class WaitForOwnerDialog extends Component<*> {
     /**
      * WaitForOwnerDialog component's property types.
      *

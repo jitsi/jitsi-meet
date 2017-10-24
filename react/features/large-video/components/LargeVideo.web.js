@@ -14,7 +14,7 @@ declare var interfaceConfig: Object;
  *
  * @extends Component
  */
-export default class LargeVideo extends Component {
+export default class LargeVideo extends Component<*> {
     /**
      * Implements React's {@link Component#render()}.
      *

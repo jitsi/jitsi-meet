@@ -59,7 +59,7 @@ const toolbarButtons = {
  * @class AlwaysOnTop
  * @extends Component
  */
-export default class AlwaysOnTop extends Component {
+export default class AlwaysOnTop extends Component<*> {
     /**
      * Initializes new AlwaysOnTop instance.
      *

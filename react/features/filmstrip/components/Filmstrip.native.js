@@ -16,7 +16,7 @@ import { styles } from './_';
  *
  * @extends Component
  */
-class Filmstrip extends Component {
+class Filmstrip extends Component<*> {
     /**
      * Filmstrip component's property types.
      *

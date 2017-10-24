@@ -47,7 +47,7 @@ const VALID_TYPES = Object.keys(TAB_LABELS);
  *
  * @extends Component
  */
-class DesktopPicker extends Component {
+class DesktopPicker extends Component<*, *> {
     /**
      * DesktopPicker component's property types.
      *

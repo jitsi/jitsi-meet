@@ -10,7 +10,7 @@ import React, { Component } from 'react';
  * @class StatelessToolbar
  * @extends Component
  */
-export default class StatelessToolbar extends Component {
+export default class StatelessToolbar extends Component<*> {
     /**
      * Base toolbar component's property types.
      *
@@ -44,7 +44,7 @@ export default class StatelessToolbar extends Component {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> {
+    render(): React$Element<*> {
         const {
             className,
             onMouseOut,

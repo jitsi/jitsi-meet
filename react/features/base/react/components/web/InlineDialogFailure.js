@@ -11,7 +11,7 @@ declare var interfaceConfig: Object;
 /**
  * Inline dialog that represents a failure and allows a retry.
  */
-class InlineDialogFailure extends Component {
+class InlineDialogFailure extends Component<*> {
     /**
      * {@code InlineDialogFailure}'s property types.
      *

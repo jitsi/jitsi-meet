@@ -91,7 +91,7 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> {
+    render(): React$Element<*> {
         const { button } = this.props;
         const attributes = getButtonAttributesByProps(button);
 

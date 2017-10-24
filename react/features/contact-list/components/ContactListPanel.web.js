@@ -16,7 +16,7 @@ declare var interfaceConfig: Object;
  *
  * @extends Component
  */
-class ContactListPanel extends Component {
+class ContactListPanel extends Component<*> {
     /**
      * Default values for {@code ContactListPanel} component's properties.
      *
