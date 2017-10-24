@@ -84,11 +84,16 @@ export function cancelLogin() {
 export function cancelWaitForOwner() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         dispatch(stopWaitForOwner());
+
+        // XXX The error associated with CONFERENCE_FAILED was marked as
+        // recoverable by the feature room-lock and, consequently,
+        // recoverable-aware features such as mobile's external-api did not
+        // deliver the CONFERENCE_FAILED to the SDK clients/consumers. Since the
+        // app/user is going to nativate to WelcomePage, the SDK
+        // clients/consumers need an event.
         const { authRequired } = getState()['features/base/conference'];
 
-        if (authRequired) {
-            dispatch(conferenceLeft(authRequired));
-        }
+        authRequired && dispatch(conferenceLeft(authRequired));
 
         dispatch(appNavigate(undefined));
     };
