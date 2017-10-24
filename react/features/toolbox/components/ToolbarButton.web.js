@@ -128,7 +128,11 @@ class ToolbarButton extends Component {
 
             children = ( // eslint-disable-line no-extra-parens
                 <InlineDialog
-                    content = { t(dataAttr, dataInterpolate) }
+                    content = {
+                        <div className = 'button-popover-message'>
+                            { t(dataAttr, dataInterpolate) }
+                        </div>
+                    }
                     isOpen = { Boolean(popupConfig) }
                     position = { position }>
                     { buttonComponent }
