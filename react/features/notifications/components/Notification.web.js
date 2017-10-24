@@ -3,11 +3,25 @@ import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
 import PropTypes from 'prop-types';
 import ErrorIcon from '@atlaskit/icon/glyph/error';
 import WarningIcon from '@atlaskit/icon/glyph/warning';
+import { colors } from '@atlaskit/theme';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
 declare var interfaceConfig: Object;
+
+/**
+ * Secondary colors for notification icons.
+ *
+ * @type {{error, info, normal, success, warning}}
+ */
+const ICON_COLOR = {
+    error: colors.R400,
+    info: colors.N500,
+    normal: colors.N0,
+    success: colors.G400,
+    warning: colors.Y200
+};
 
 /**
  * Implements a React {@link Component} to display a notification.
@@ -182,10 +196,6 @@ class Notification extends Component {
                 {
                     content: this.props.t('dialog.Ok'),
                     onClick: this._onDismissed
-                },
-                {
-                    content: this.props.t('dialog.contactSupport'),
-                    onClick: this._onOpenLink
                 }
             ];
 
@@ -202,26 +212,33 @@ class Notification extends Component {
      * @returns {ReactElement}
      */
     _mapAppearanceToIcon() {
-        switch (this.props.appearance) {
+        const appearance = this.props.appearance;
+        const secIconColor = ICON_COLOR[this.props.appearance];
+        const iconSize = 'medium';
+
+        switch (appearance) {
         case 'error':
             return (
                 <ErrorIcon
-                    label = 'error'
-                    size = 'medium' />
+                    label = { appearance }
+                    secondaryColor = { secIconColor }
+                    size = { iconSize } />
             );
 
         case 'warning' :
             return (
                 <WarningIcon
-                    label = 'Warning'
-                    size = 'medium' />
+                    label = { appearance }
+                    secondaryColor = { secIconColor }
+                    size = { iconSize } />
             );
 
         default:
             return (
                 <EditorInfoIcon
-                    label = 'info'
-                    size = 'medium' />
+                    label = { appearance }
+                    secondaryColor = { secIconColor }
+                    size = { iconSize } />
             );
         }
     }
