@@ -212,6 +212,9 @@ afterEvaluate { project ->
     }
     // If the license is not accepted, accept it so that automatic downloading
     // kicks in.
+    // The license hash can be taken from the accepted licenses, by doing this
+    // on your local machine the file is
+    // ${androidHome}/licenses/android-sdk-license
     if (androidHome) {
         def dir = file("${androidHome}/licenses")
         dir.mkdirs()
