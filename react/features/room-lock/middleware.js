@@ -81,7 +81,7 @@ function _setPasswordFailed(store, next, action) {
         if (error === JitsiConferenceErrors.PASSWORD_NOT_SUPPORTED) {
             logger.warn('room passwords not supported');
             descriptionKey = 'dialog.passwordNotSupported';
-            titleKey = 'dialog.warning';
+            titleKey = 'dialog.passwordNotSupportedTitle';
         } else {
             logger.warn('setting password failed', error);
             descriptionKey = 'dialog.lockMessage';

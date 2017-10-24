@@ -56,6 +56,9 @@ class Notification extends Component {
          */
         defaultTitleKey: PropTypes.string,
 
+        /**
+         * The description string.
+         */
         description: PropTypes.string,
 
         /**

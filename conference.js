@@ -319,9 +319,12 @@ class ConferenceConnector {
             APP.UI.notifyGracefulShutdown();
             break;
 
-        case JitsiConferenceErrors.JINGLE_FATAL_ERROR:
-            APP.UI.notifyInternalError();
+        case JitsiConferenceErrors.JINGLE_FATAL_ERROR: {
+            const [ error ] = params;
+
+            APP.UI.notifyInternalError(error);
             break;
+        }
 
         case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
             const [ reason ] = params;

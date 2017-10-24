@@ -113,7 +113,7 @@ export default class SharedVideoManager {
         } else {
             APP.UI.messageHandler.showWarning({
                 descriptionKey: 'dialog.alreadySharedVideoMsg',
-                titleKey: 'dialog.shareVideoTitle'
+                titleKey: 'dialog.alreadySharedVideoTitle'
             });
             sendAnalyticsEvent('sharedvideo.alreadyshared');
         }

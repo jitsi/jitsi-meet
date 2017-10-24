@@ -846,7 +846,7 @@ UI.notifyConnectionFailed = function(stropheErrorMsg) {
     messageHandler.showError({
         descriptionArguments,
         descriptionKey,
-        titleKey: 'dialog.error'
+        titleKey: 'connection.CONNFAIL'
     });
 };
 
@@ -855,9 +855,9 @@ UI.notifyConnectionFailed = function(stropheErrorMsg) {
  * Notify user that maximum users limit has been reached.
  */
 UI.notifyMaxUsersLimitReached = function() {
-    messageHandler.showError({
+    messageHandler.showWarning({
         descriptionKey: 'dialog.maxUsersLimitReached',
-        titleKey: 'dialog.error'
+        titleKey: 'dialog.maxUsersLimitReachedTitle'
     });
 };
 
@@ -965,8 +965,9 @@ UI.notifyTokenAuthFailed = function() {
     });
 };
 
-UI.notifyInternalError = function() {
+UI.notifyInternalError = function(error) {
     messageHandler.showError({
+        descriptionArguments: { error },
         descriptionKey: 'dialog.internalError',
         titleKey: 'dialog.internalErrorTitle'
     });
@@ -1219,7 +1220,9 @@ UI.showTrackNotWorkingDialog = function(isAudioTrack) {
     messageHandler.showError({
         descriptionKey: isAudioTrack
             ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',
-        titleKey: 'dialog.error'
+        titleKey: isAudioTrack
+            ? 'dialog.micNotSendingDataTitle'
+            : 'dialog.cameraNotSendingDataTitle'
     });
 };
 

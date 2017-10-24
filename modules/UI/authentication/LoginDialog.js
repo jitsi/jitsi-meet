@@ -205,7 +205,7 @@ export default {
         if (!dialog) {
             APP.UI.messageHandler.showWarning({
                 descriptionKey: 'dialog.popupError',
-                titleKey: 'dialog.error'
+                titleKey: 'dialog.popupErrorTitle'
             });
         }
 
