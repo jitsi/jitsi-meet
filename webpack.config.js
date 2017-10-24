@@ -24,7 +24,6 @@ const plugins = [
         minimize
     })
 ];
-const strophe = /\/node_modules\/strophe(js-plugins)?\/.*\.js$/;
 
 if (minimize) {
     // XXX Webpack's command line argument -p is not enough. Further
@@ -93,12 +92,6 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            // Disable AMD for the Strophe.js library or its imports will fail
-            // at runtime.
-
-            loader: 'imports-loader?define=>false&this=>window',
-            test: strophe
-        }, {
             // Set scope to window for URL polyfill.
 
             loader: 'imports-loader?this=>window',
@@ -122,14 +115,7 @@ const config = {
                 name: '[path][name].[ext]'
             },
             test: /\.(gif|png|svg)$/
-        } ],
-        noParse: [
-
-            // Do not parse the files of the Strophe.js library or at least
-            // parts of the properties of the Strophe global variable will be
-            // missing and strophejs-plugins will fail at runtime.
-            strophe
-        ]
+        } ]
     },
     node: {
         // Allow the use of the real filename of the module being executed. By

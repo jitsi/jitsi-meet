@@ -143,24 +143,10 @@ function _visitNode(node, callback) {
             document.cookie = '';
         }
 
-        // Document.querySelector
-        //
-        // Required by:
-        // - strophejs-plugins/caps/strophe.caps.jsonly.js
-        const documentPrototype = Object.getPrototypeOf(document);
-
-        if (documentPrototype) {
-            if (typeof documentPrototype.querySelector === 'undefined') {
-                documentPrototype.querySelector = function(selectors) {
-                    return _querySelector(this.elementNode, selectors);
-                };
-            }
-        }
-
         // Element.querySelector
         //
         // Required by:
-        // - strophejs-plugins/caps/strophe.caps.jsonly.js
+        // - lib-jitsi-meet/modules/xmpp
         const elementPrototype
             = Object.getPrototypeOf(document.documentElement);
 
@@ -212,6 +198,7 @@ function _visitNode(node, callback) {
         // FIXME There is a weird infinite loop related to console.log and
         // Document and/or Element at the time of this writing. Work around it
         // by patching Node and/or overriding console.log.
+        const documentPrototype = Object.getPrototypeOf(document);
         const nodePrototype
             = _getCommonPrototype(documentPrototype, elementPrototype);
 
