@@ -52,12 +52,12 @@
         /* The filmstrip should not be covered by the left toolbar. */
         bottom: 0;
         width:auto;
-        transition: bottom 2s;
         overflow: visible !important;
 
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
             padding-left: $defaultToolbarSize + 5;
+            transition: bottom 2s;
         }
 
         /**
@@ -187,6 +187,12 @@
     &__videos-filmstripOnly {
         margin-top: auto;
         margin-bottom: auto;
+
+        .filmstrip__videos {
+            &#filmstripLocalVideo {
+                bottom: 0px;
+            }
+        }
     }
 
     .remote-videos-container {

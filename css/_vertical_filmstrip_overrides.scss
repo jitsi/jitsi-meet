@@ -29,7 +29,6 @@
          */
         .filmstrip__videos {
             right: 0;
-            transition: right 2s;
 
             &.hidden {
                 bottom: auto;
@@ -37,12 +36,17 @@
             }
 
             /**
-             * Remove horizontal filmstrip padding used to prevent videos from
-             * overlapping the left-side toolbar. An id selector is used to
-             * match id specificity with filmstrip styles.
+             * An id selector is used to match id specificity with existing
+             * filmstrip styles.
              */
             &#remoteVideos {
+                /**
+                 * Remove horizontal filmstrip padding used to prevent videos
+                 * from overlapping the left-side toolbar. An id selector is
+                 * used to match id specificity with filmstrip styles.
+                 */
                 padding-left: 0;
+                transition: right 2s;
             }
         }
 
