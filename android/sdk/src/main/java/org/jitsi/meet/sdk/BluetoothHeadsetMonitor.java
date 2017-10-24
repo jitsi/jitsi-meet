@@ -71,7 +71,7 @@ class BluetoothHeadsetMonitor {
                 headsetAvailable
                     = (headset != null)
                         && !headset.getConnectedDevices().isEmpty();
-                audioModeModule.onAudioDeviceChange();
+                audioModeModule.onBluetoothDeviceChange();
             }
         };
 

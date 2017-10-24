@@ -25,6 +25,8 @@ import {
     abstractMapDispatchToProps,
     abstractMapStateToProps
 } from '../functions';
+
+import AudioRouteButton from './AudioRouteButton';
 import styles from './styles';
 import ToolbarButton from './ToolbarButton';
 
@@ -307,6 +309,14 @@ class Toolbox extends Component {
                             iconName = 'link'
                             iconStyle = { iconStyle }
                             onClick = { this.props._onShareRoom }
+                            style = { style }
+                            underlayColor = { underlayColor } />
+                }
+                {
+                    AudioRouteButton.supported()
+                        && <AudioRouteButton
+                            iconName = { 'volume' }
+                            iconStyle = { iconStyle }
                             style = { style }
                             underlayColor = { underlayColor } />
                 }

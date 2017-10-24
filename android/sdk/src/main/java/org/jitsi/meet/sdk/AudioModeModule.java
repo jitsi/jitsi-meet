@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
@@ -28,13 +29,19 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Module implementing a simple API to select the appropriate audio device for a
@@ -103,9 +110,52 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         = new Handler(Looper.getMainLooper());
 
     /**
+     * {@link Runnable} for running audio device detection the main thread.
+     * This is only used on Android >= M.
+     */
+    private final Runnable onAudioDeviceChangeRunner = new Runnable() {
+        @TargetApi(Build.VERSION_CODES.M)
+        @Override
+        public void run() {
+            Set<String> devices = new HashSet<>();
+            AudioDeviceInfo[] deviceInfos
+                = audioManager.getDevices(AudioManager.GET_DEVICES_ALL);
+
+            for (AudioDeviceInfo info: deviceInfos) {
+                switch (info.getType()) {
+                case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
+                    devices.add(DEVICE_BLUETOOTH);
+                    break;
+                case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
+                    devices.add(DEVICE_EARPIECE);
+                    break;
+                case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
+                    devices.add(DEVICE_SPEAKER);
+                    break;
+                case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
+                case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+                    devices.add(DEVICE_HEADPHONES);
+                    break;
+                }
+            }
+
+            availableDevices = devices;
+            Log.d(TAG, "Available audio devices: " +
+                availableDevices.toString());
+
+            // Reset user selection
+            userSelectedDevice = null;
+
+            if (mode != -1) {
+                updateAudioRoute(mode);
+            }
+        }
+    };
+
+    /**
      * {@link Runnable} for running update operation on the main thread.
      */
-    private final Runnable mainThreadRunner
+    private final Runnable updateAudioRouteRunner
         = new Runnable() {
             @Override
             public void run() {
@@ -119,6 +169,30 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * Audio mode currently in use.
      */
     private int mode = -1;
+
+    /**
+     * Audio device types.
+     */
+    private static final String DEVICE_BLUETOOTH  = "BLUETOOTH";
+    private static final String DEVICE_EARPIECE   = "EARPIECE";
+    private static final String DEVICE_HEADPHONES = "HEADPHONES";
+    private static final String DEVICE_SPEAKER    = "SPEAKER";
+
+    /**
+     * List of currently available audio devices.
+     */
+    private Set<String> availableDevices = Collections.emptySet();
+
+    /**
+     * Currently selected device.
+     */
+    private String selectedDevice;
+
+    /**
+     * User selected device. When null the default is used depending on the
+     * mode.
+     */
+    private String userSelectedDevice;
 
     /**
      * Initializes a new module instance. There shall be a single instance of
@@ -136,6 +210,20 @@ class AudioModeModule extends ReactContextBaseJavaModule {
 
         // Setup runtime device change detection.
         setupAudioRouteChangeDetection();
+
+        // Do an initial detection on Android >= M.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mainThreadHandler.post(onAudioDeviceChangeRunner);
+        } else {
+            // On Android < M, detect if we have an earpiece.
+            PackageManager pm = reactContext.getPackageManager();
+            if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+                availableDevices.add(DEVICE_EARPIECE);
+            }
+
+            // Always assume there is a speaker.
+            availableDevices.add(DEVICE_SPEAKER);
+        }
     }
 
     /**
@@ -156,6 +244,36 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     }
 
     /**
+     * Gets the list of available audio device categories, i.e. 'bluetooth',
+     * 'earpiece ', 'speaker', 'headphones'.
+     *
+     * @param promise a {@link Promise} which will be resolved with an object
+     *                containing a 'devices' key with a list of devices, plus a
+     *                'selected' key with the selected one.
+     */
+    @ReactMethod
+    public void getAudioDevices(final Promise promise) {
+        mainThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                WritableMap map = Arguments.createMap();
+                map.putString("selected", selectedDevice);
+                WritableArray devices = Arguments.createArray();
+                for (String device : availableDevices) {
+                    if (mode == VIDEO_CALL && device.equals(DEVICE_EARPIECE)) {
+                        // Skip earpiece when in video call mode.
+                        continue;
+                    }
+                    devices.pushString(device);
+                }
+                map.putArray("devices", devices);
+
+                promise.resolve(map);
+            }
+        });
+    }
+
+    /**
      * Gets the name for this module to be used in the React Native bridge.
      *
      * @return a string with the module name.
@@ -168,9 +286,81 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     /**
      * Helper method to trigger an audio route update when devices change. It
      * makes sure the operation is performed on the main thread.
+     *
+     * Only used on Android >= M.
      */
     void onAudioDeviceChange() {
-        mainThreadHandler.post(mainThreadRunner);
+        mainThreadHandler.post(onAudioDeviceChangeRunner);
+    }
+
+    /**
+     * Helper method to trigger an audio route update when Bluetooth devices are
+     * connected / disconnected.
+     *
+     * Only used on Android < M. Runs on the main thread.
+     */
+    void onBluetoothDeviceChange() {
+        if (bluetoothHeadsetMonitor.isHeadsetAvailable()) {
+            availableDevices.add(DEVICE_BLUETOOTH);
+        } else {
+            availableDevices.remove(DEVICE_BLUETOOTH);
+        }
+
+        if (mode != -1) {
+            updateAudioRoute(mode);
+        }
+    }
+
+    /**
+     * Helper method to trigger an audio route update when a headset is plugged
+     * or unplugged.
+     *
+     * Only used on Android < M.
+     */
+    void onHeadsetDeviceChange() {
+        mainThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // XXX: isWiredHeadsetOn is not deprecated when used just for
+                // knowing if there is a wired headset connected, regardless of
+                // audio being routed to it.
+                //noinspection deprecation
+                if (audioManager.isWiredHeadsetOn()) {
+                    availableDevices.add(DEVICE_HEADPHONES);
+                } else {
+                    availableDevices.remove(DEVICE_HEADPHONES);
+                }
+
+                if (mode != -1) {
+                    updateAudioRoute(mode);
+                }
+            }
+        });
+    }
+
+    /**
+     * Sets the user selected audio device as the active audio device.
+     *
+     * @param device the desired device which will become active.
+     */
+    @ReactMethod
+    public void setAudioDevice(final String device) {
+        mainThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!availableDevices.contains(device)) {
+                    Log.d(TAG, "Audio device not available: " + device);
+                    userSelectedDevice = null;
+                    return;
+                }
+
+                if (mode != -1) {
+                    Log.d(TAG, "User selected device set to: " + device);
+                    userSelectedDevice = device;
+                    updateAudioRoute(mode);
+                }
+            }
+        });
     }
 
     /**
@@ -278,7 +468,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Wired headset added / removed");
-                onAudioDeviceChange();
+                onHeadsetDeviceChange();
             }
         };
         context.registerReceiver(wiredHeadsetReceiver, wiredHeadSetFilter);
@@ -302,6 +492,8 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             audioManager.abandonAudioFocus(null);
             audioManager.setSpeakerphoneOn(false);
             setBluetoothAudioRoute(false);
+            selectedDevice = null;
+            userSelectedDevice = null;
 
             return true;
         }
@@ -318,31 +510,42 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             return false;
         }
 
-        boolean useSpeaker = (mode == VIDEO_CALL);
+        boolean bluetoothAvailable = availableDevices.contains(DEVICE_BLUETOOTH);
+        boolean earpieceAvailable = availableDevices.contains(DEVICE_EARPIECE);
+        boolean headsetAvailable = availableDevices.contains(DEVICE_HEADPHONES);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // On Android >= M we use the AudioDeviceCallback API, so turn on
-            // Bluetooth SCO from the start.
-            if (audioManager.isBluetoothScoAvailableOffCall()) {
-                audioManager.startBluetoothSco();
-            }
+        // Pick the desired device based on what's available and the mode.
+        String audioDevice;
+        if (bluetoothAvailable) {
+            audioDevice = DEVICE_BLUETOOTH;
+        } else if (headsetAvailable) {
+            audioDevice = DEVICE_HEADPHONES;
+        } else if (mode == AUDIO_CALL && earpieceAvailable) {
+            audioDevice = DEVICE_EARPIECE;
         } else {
-            // On older Android versions we must set the Bluetooth route
-            // manually. Also disable the speaker in that case.
-            setBluetoothAudioRoute(
-                    bluetoothHeadsetMonitor.isHeadsetAvailable());
-            if (bluetoothHeadsetMonitor.isHeadsetAvailable()) {
-                useSpeaker = false;
-            }
+            audioDevice = DEVICE_SPEAKER;
         }
 
-        // XXX: isWiredHeadsetOn is not deprecated when used just for knowing if
-        // there is a wired headset connected, regardless of audio being routed
-        // to it.
-        audioManager.setSpeakerphoneOn(
-                useSpeaker
-                    && !(audioManager.isWiredHeadsetOn()
-                        || audioManager.isBluetoothScoOn()));
+        // Consider the user's selection
+        if (userSelectedDevice != null
+                && availableDevices.contains(userSelectedDevice)) {
+            audioDevice = userSelectedDevice;
+        }
+
+        // If the previously selected device and the current default one
+        // match, do nothing.
+        if (selectedDevice != null && selectedDevice.equals(audioDevice)) {
+            return true;
+        }
+
+        selectedDevice = audioDevice;
+        Log.d(TAG, "Selected audio device: " + audioDevice);
+
+        // Turn bluetooth on / off
+        setBluetoothAudioRoute(audioDevice.equals(DEVICE_BLUETOOTH));
+
+        // Turn speaker on / off
+        audioManager.setSpeakerphoneOn(audioDevice.equals(DEVICE_SPEAKER));
 
         return true;
     }

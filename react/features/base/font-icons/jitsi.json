@@ -4,6 +4,114 @@
     {
       "icon": {
         "paths": [
+          "M550 696l-80-82v162zM470 248v162l80-82zM670 328l-184 184 184 184-244 242h-42v-324l-196 196-60-60 238-238-238-238 60-60 196 196v-324h42zM834 286c40 64 62 142 62 222 0 84-24 160-66 226l-50-50c26-52 42-110 42-172s-16-120-42-172zM608 512l98-98c12 30 20 64 20 98s-8 70-20 100z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "bluetooth_searching"
+        ],
+        "defaultCode": 57770,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "bluetooth_audio, bluetooth_searching",
+        "id": 79,
+        "order": 911,
+        "prevSize": 24,
+        "code": 57770,
+        "name": "bluetooth"
+      },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 79
+    },
+    {
+      "icon": {
+        "paths": [
+          "M512 42c212 0 384 172 384 384v300c0 70-58 128-128 128h-128v-342h170v-86c0-166-132-298-298-298s-298 132-298 298v86h170v342h-128c-70 0-128-58-128-128v-300c0-212 172-384 384-384z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "headset"
+        ],
+        "defaultCode": 58128,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "headset",
+        "id": 376,
+        "order": 910,
+        "prevSize": 24,
+        "code": 58128,
+        "name": "headset"
+      },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 376
+    },
+    {
+      "icon": {
+        "paths": [
+          "M640 512c0-70-58-128-128-128v-86c118 0 214 96 214 214h-86zM810 512c0-166-132-298-298-298v-86c212 0 384 172 384 384h-86zM854 662c24 0 42 18 42 42v150c0 24-18 42-42 42-400 0-726-326-726-726 0-24 18-42 42-42h150c24 0 42 18 42 42 0 54 8 104 24 152 4 14 2 32-10 44l-94 94c62 122 162 220 282 282l94-94c12-12 30-14 44-10 48 16 98 24 152 24z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "phone_in_talk"
+        ],
+        "defaultCode": 58909,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "phone_in_talk",
+        "id": 566,
+        "order": 912,
+        "prevSize": 24,
+        "code": 58909,
+        "name": "phone-talk"
+      },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 566
+    },
+    {
+      "icon": {
+        "paths": [
+          "M512 682c46 0 86 40 86 86s-40 86-86 86-86-40-86-86 40-86 86-86zM512 426c46 0 86 40 86 86s-40 86-86 86-86-40-86-86 40-86 86-86zM512 342c-46 0-86-40-86-86s40-86 86-86 86 40 86 86-40 86-86 86z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "more_vert"
+        ],
+        "defaultCode": 58836,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "more_vert",
+        "id": 0,
+        "order": 897,
+        "prevSize": 24,
+        "code": 58836,
+        "name": "thumb-menu"
+      },
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 40
+    },
+    {
+      "icon": {
+        "paths": [
           "M330.667 554.667c-0.427-14.933 6.4-29.44 17.92-39.253 32 6.827 61.867 20.053 88.747 39.253 0 29.013-23.893 52.907-53.333 52.907s-52.907-23.467-53.333-52.907zM586.667 554.667c26.88-18.773 56.747-32 88.747-38.827 11.52 9.813 18.347 24.32 17.92 38.827 0 29.867-23.893 53.76-53.333 53.76s-53.333-23.893-53.333-53.76v0zM512 384c-118.187-1.707-234.667 27.733-338.347 85.333l-2.987 42.667c0 52.48 12.373 104.107 35.84 151.040 101.12-15.36 203.093-23.040 305.493-23.040s204.373 7.68 305.493 23.040c23.467-46.933 35.84-98.56 35.84-151.040l-2.987-42.667c-103.68-57.6-220.16-87.040-338.347-85.333zM512 85.333c235.641 0 426.667 191.025 426.667 426.667s-191.025 426.667-426.667 426.667c-235.641 0-426.667-191.025-426.667-426.667s191.025-426.667 426.667-426.667z"
         ],
         "attrs": [
@@ -11,24 +119,24 @@
         ],
         "isMulticolor": false,
         "isMulticolor2": false,
-        "grid": 24,
         "tags": [
           "ninja"
-        ]
+        ],
+        "grid": 24
       },
       "attrs": [
         {}
       ],
       "properties": {
-        "order": 851,
-        "id": 121,
+        "order": 850,
+        "id": 1,
         "name": "ninja",
-        "prevSize": 32,
+        "prevSize": 24,
         "code": 59657
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 0
+      "iconIdx": 41
     },
     {
       "icon": {
@@ -47,15 +155,100 @@
       "attrs": [],
       "properties": {
         "ligatures": "call, local_phone, phone",
-        "id": 120,
-        "order": 848,
-        "prevSize": 32,
+        "id": 2,
+        "order": 851,
+        "prevSize": 24,
         "code": 57549,
         "name": "phone"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 41
+      "iconIdx": 42
+    },
+    {
+      "icon": {
+        "paths": [
+          "M810 554h-256v256h-84v-256h-256v-84h256v-256h84v256h256v84z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "add"
+        ],
+        "defaultCode": 57669,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "add",
+        "id": 3,
+        "order": 896,
+        "prevSize": 24,
+        "code": 57669,
+        "name": "add"
+      },
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 43
+    },
+    {
+      "icon": {
+        "paths": [
+          "M896 0c70.692 0 128 57.308 128 128v768c0 70.692-57.308 128-128 128s-128-57.308-128-128v-768c0-70.692 57.308-128 128-128zM512 256c70.692 0 128 57.308 128 128v512c0 70.692-57.308 128-128 128s-128-57.308-128-128v-512c0-70.692 57.308-128 128-128zM128 640v0c70.692 0 128 57.308 128 128v128c0 70.692-57.308 128-128 128s-128-57.308-128-128v-128c0-70.692 57.308-128 128-128v0z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": [
+          "gsm-bars-black"
+        ]
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 901,
+        "id": 0,
+        "name": "gsm-bars-black",
+        "prevSize": 32,
+        "code": 59686
+      },
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
+          "M512 85.333c-235.52 0-426.667 191.147-426.667 426.667s191.147 426.667 426.667 426.667 426.667-191.147 426.667-426.667-191.147-426.667-426.667-426.667zM554.667 725.333h-85.333v-256h85.333v256zM554.667 384h-85.333v-85.333h85.333v85.333z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": [
+          "ic_info_black_24px"
+        ]
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 898,
+        "id": 0,
+        "name": "info",
+        "prevSize": 32,
+        "code": 59682
+      },
+      "setIdx": 1,
+      "setId": 1,
+      "iconIdx": 1
     },
     {
       "icon": {
@@ -76,15 +269,15 @@
         {}
       ],
       "properties": {
-        "order": 109,
+        "order": 856,
         "id": 0,
         "name": "mic-camera-combined",
         "prevSize": 32,
         "code": 59651
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 1
+      "iconIdx": 2
     },
     {
       "icon": {
@@ -105,15 +298,15 @@
         {}
       ],
       "properties": {
-        "order": 104,
+        "order": 857,
         "id": 1,
         "name": "feedback",
         "prevSize": 32,
         "code": 59677
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 2
+      "iconIdx": 3
     },
     {
       "icon": {
@@ -134,15 +327,15 @@
         {}
       ],
       "properties": {
-        "order": 103,
+        "order": 858,
         "id": 2,
         "name": "toggle-filmstrip",
         "prevSize": 32,
         "code": 59676
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 3
+      "iconIdx": 4
     },
     {
       "icon": {
@@ -160,15 +353,15 @@
       "attrs": [],
       "properties": {
         "id": 3,
-        "order": 60,
+        "order": 859,
         "ligatures": "account_circle",
         "prevSize": 32,
         "code": 59649,
         "name": "avatar"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 4
+      "iconIdx": 5
     },
     {
       "icon": {
@@ -186,15 +379,15 @@
       "attrs": [],
       "properties": {
         "id": 4,
-        "order": 849,
+        "order": 860,
         "ligatures": "call_end",
         "prevSize": 32,
         "code": 59653,
         "name": "hangup"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 5
+      "iconIdx": 6
     },
     {
       "icon": {
@@ -212,15 +405,15 @@
       "attrs": [],
       "properties": {
         "id": 5,
-        "order": 61,
+        "order": 861,
         "ligatures": "chat_bubble_outline",
         "prevSize": 32,
         "code": 59654,
         "name": "chat"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 6
+      "iconIdx": 7
     },
     {
       "icon": {
@@ -238,15 +431,15 @@
       "attrs": [],
       "properties": {
         "id": 6,
-        "order": 99,
+        "order": 862,
         "ligatures": "cloud_download",
         "prevSize": 32,
         "code": 59650,
         "name": "download"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 7
+      "iconIdx": 8
     },
     {
       "icon": {
@@ -264,15 +457,15 @@
       "attrs": [],
       "properties": {
         "id": 7,
-        "order": 89,
+        "order": 863,
         "ligatures": "create, edit, mode_edit",
         "prevSize": 32,
         "code": 59655,
         "name": "edit"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 8
+      "iconIdx": 9
     },
     {
       "icon": {
@@ -290,15 +483,15 @@
       "attrs": [],
       "properties": {
         "id": 8,
-        "order": 85,
+        "order": 864,
         "ligatures": "description",
         "prevSize": 32,
         "code": 59656,
         "name": "share-doc"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 9
+      "iconIdx": 10
     },
     {
       "icon": {
@@ -315,16 +508,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 10,
-        "order": 98,
+        "id": 9,
+        "order": 865,
         "ligatures": "eject",
         "prevSize": 32,
         "code": 59652,
         "name": "kick"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 10
+      "iconIdx": 11
     },
     {
       "icon": {
@@ -341,16 +534,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 11,
-        "order": 106,
+        "id": 10,
+        "order": 900,
         "ligatures": "expand_less",
         "prevSize": 32,
         "code": 59679,
         "name": "menu-up"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 11
+      "iconIdx": 12
     },
     {
       "icon": {
@@ -367,16 +560,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 12,
-        "order": 107,
+        "id": 11,
+        "order": 867,
         "ligatures": "expand_more",
         "prevSize": 32,
         "code": 59680,
         "name": "menu-down"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 12
+      "iconIdx": 13
     },
     {
       "icon": {
@@ -393,16 +586,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 13,
-        "order": 94,
+        "id": 12,
+        "order": 868,
         "ligatures": "fullscreen",
         "prevSize": 32,
         "code": 59659,
         "name": "full-screen"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 13
+      "iconIdx": 14
     },
     {
       "icon": {
@@ -419,16 +612,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 14,
-        "order": 92,
+        "id": 13,
+        "order": 869,
         "ligatures": "fullscreen_exit",
         "prevSize": 32,
         "code": 59660,
         "name": "exit-full-screen"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 14
+      "iconIdx": 15
     },
     {
       "icon": {
@@ -445,16 +638,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 15,
-        "order": 101,
+        "id": 14,
+        "order": 870,
         "ligatures": "grade, star",
         "prevSize": 32,
         "code": 59658,
         "name": "star-full"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 15
+      "iconIdx": 16
     },
     {
       "icon": {
@@ -471,16 +664,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 16,
-        "order": 66,
+        "id": 15,
+        "order": 871,
         "ligatures": "lock_open",
         "prevSize": 32,
         "code": 59661,
         "name": "security"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 16
+      "iconIdx": 17
     },
     {
       "icon": {
@@ -497,16 +690,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 17,
-        "order": 65,
+        "id": 16,
+        "order": 872,
         "ligatures": "lock_outline",
         "prevSize": 32,
         "code": 59662,
         "name": "security-locked"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 17
+      "iconIdx": 18
     },
     {
       "icon": {
@@ -523,16 +716,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 18,
-        "order": 67,
+        "id": 17,
+        "order": 873,
         "ligatures": "loop, sync",
         "prevSize": 32,
         "code": 59663,
         "name": "reload"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 18
+      "iconIdx": 19
     },
     {
       "icon": {
@@ -549,16 +742,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 19,
-        "order": 68,
+        "id": 18,
+        "order": 874,
         "ligatures": "mic",
         "prevSize": 32,
         "code": 59664,
         "name": "microphone"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 19
+      "iconIdx": 20
     },
     {
       "icon": {
@@ -575,16 +768,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 20,
-        "order": 69,
+        "id": 19,
+        "order": 875,
         "ligatures": "mic_none",
         "prevSize": 32,
         "code": 59665,
         "name": "mic-empty"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 20
+      "iconIdx": 21
     },
     {
       "icon": {
@@ -601,16 +794,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 21,
-        "order": 70,
+        "id": 20,
+        "order": 876,
         "ligatures": "mic_off",
         "prevSize": 32,
         "code": 59666,
         "name": "mic-disabled"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 21
+      "iconIdx": 22
     },
     {
       "icon": {
@@ -627,16 +820,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 22,
-        "order": 105,
+        "id": 21,
+        "order": 899,
         "ligatures": "pan_tool",
         "prevSize": 32,
         "code": 59678,
         "name": "raised-hand"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 22
+      "iconIdx": 23
     },
     {
       "icon": {
@@ -653,16 +846,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 23,
-        "order": 100,
+        "id": 22,
+        "order": 878,
         "ligatures": "people_outline",
         "prevSize": 32,
         "code": 59675,
         "name": "contactList"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 23
+      "iconIdx": 24
     },
     {
       "icon": {
@@ -679,16 +872,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 24,
-        "order": 87,
+        "id": 23,
+        "order": 879,
         "ligatures": "person_add",
         "prevSize": 32,
         "code": 59667,
         "name": "link"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 24
+      "iconIdx": 25
     },
     {
       "icon": {
@@ -705,16 +898,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 25,
-        "order": 82,
+        "id": 24,
+        "order": 880,
         "ligatures": "play_circle_outline",
         "prevSize": 32,
         "code": 59668,
         "name": "shared-video"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 25
+      "iconIdx": 26
     },
     {
       "icon": {
@@ -731,16 +924,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 26,
-        "order": 81,
+        "id": 25,
+        "order": 881,
         "ligatures": "settings",
         "prevSize": 32,
         "code": 59669,
         "name": "settings"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 26
+      "iconIdx": 27
     },
     {
       "icon": {
@@ -757,16 +950,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 27,
-        "order": 76,
+        "id": 26,
+        "order": 882,
         "ligatures": "star_border",
         "prevSize": 32,
         "code": 59670,
         "name": "star"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 27
+      "iconIdx": 28
     },
     {
       "icon": {
@@ -783,16 +976,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 28,
-        "order": 108,
+        "id": 27,
+        "order": 883,
         "ligatures": "switch_camera",
         "prevSize": 32,
         "code": 59681,
         "name": "switch-camera"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 28
+      "iconIdx": 29
     },
     {
       "icon": {
@@ -809,16 +1002,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 29,
-        "order": 93,
+        "id": 28,
+        "order": 884,
         "ligatures": "tv",
         "prevSize": 32,
         "code": 59671,
         "name": "share-desktop"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 29
+      "iconIdx": 30
     },
     {
       "icon": {
@@ -835,16 +1028,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 30,
-        "order": 77,
+        "id": 29,
+        "order": 885,
         "ligatures": "videocam",
         "prevSize": 32,
         "code": 59672,
         "name": "camera"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 30
+      "iconIdx": 31
     },
     {
       "icon": {
@@ -861,16 +1054,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 31,
-        "order": 78,
+        "id": 30,
+        "order": 886,
         "ligatures": "videocam_off",
         "prevSize": 32,
         "code": 59673,
         "name": "camera-disabled"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 31
+      "iconIdx": 32
     },
     {
       "icon": {
@@ -887,137 +1080,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 32,
-        "order": 79,
+        "id": 31,
+        "order": 887,
         "ligatures": "volume_up",
         "prevSize": 32,
         "code": 59674,
         "name": "volume"
       },
-      "setIdx": 0,
-      "setId": 1,
-      "iconIdx": 32
-    },
-    {
-      "icon": {
-        "paths": [
-          "M-0 724.847h196.337v187.951h-196.337v-187.951z",
-          "M271.842 543.628h196.337v369.169h-196.337v-369.169z",
-          "M543.656 362.438h196.337v550.36h-196.337v-550.36z",
-          "M815.47 181.234v731.564h119.56c-14.589-33.025-23.125-71.503-23.232-111.943 0.132-86.42 38.697-163.851 99.656-216.468l0.348-403.153h-196.332z",
-          "M1087.292-0v533.672c28.874-10.572 62.222-16.73 97.009-16.825 35.717 0.129 69.823 6.614 101.322 18.371l-1.999-535.218h-196.332z",
-          "M1192.868 584.148c-0.009-0-0.020-0-0.031-0-122.247 0-221.351 98.447-221.372 219.896-0 0.007-0 0.014-0 0.021 0 121.467 99.111 219.935 221.372 219.935 0.011 0 0.021-0 0.032-0 122.248-0.014 221.345-98.477 221.345-219.935 0-0.007-0-0.013-0-0.020-0.021-121.441-99.11-219.883-221.345-219.897zM1194.706 651.393c87.601 0.006 158.614 69.787 158.614 155.866 0 0.006-0 0.012-0 0.019-0.022 86.062-71.026 155.822-158.614 155.828-87.588-0.006-158.593-69.766-158.615-155.826-0-0.007-0-0.014-0-0.020 0-86.079 71.013-155.86 158.613-155.866z",
-          "M1286.795 668.318l48.348 52.528-236.375 217.567-48.348-52.528 236.375-217.567z"
-        ],
-        "width": 1414,
-        "attrs": [
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}
-        ],
-        "isMulticolor": false,
-        "isMulticolor2": false,
-        "tags": [
-          "connection-lost"
-        ],
-        "grid": 0
-      },
-      "attrs": [
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
-      ],
-      "properties": {
-        "order": 33,
-        "id": 33,
-        "name": "connection-lost",
-        "prevSize": 32,
-        "code": 59648
-      },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
       "iconIdx": 33
-    },
-    {
-      "icon": {
-        "paths": [
-          "M3.881 813.165h220.26v210.835h-220.26v-210.835z",
-          "M308.817 609.857h220.27v414.143h-220.27v-414.143z",
-          "M613.764 406.588h220.268v617.412h-220.268v-617.412z",
-          "M918.685 203.285h220.265v820.715h-220.265v-820.715z",
-          "M1223.629 0h220.263v1024h-220.263v-1024z"
-        ],
-        "width": 1444,
-        "attrs": [
-          {
-            "opacity": 1,
-            "visibility": false
-          },
-          {
-            "opacity": 1,
-            "visibility": false
-          },
-          {
-            "opacity": 1,
-            "visibility": false
-          },
-          {
-            "opacity": 1,
-            "visibility": false
-          },
-          {
-            "opacity": 1,
-            "visibility": false
-          }
-        ],
-        "isMulticolor": false,
-        "isMulticolor2": false,
-        "tags": [
-          "connection-2"
-        ],
-        "grid": 0
-      },
-      "attrs": [
-        {
-          "opacity": 1,
-          "visibility": false
-        },
-        {
-          "opacity": 1,
-          "visibility": false
-        },
-        {
-          "opacity": 1,
-          "visibility": false
-        },
-        {
-          "opacity": 1,
-          "visibility": false
-        },
-        {
-          "opacity": 1,
-          "visibility": false
-        }
-      ],
-      "properties": {
-        "order": 37,
-        "id": 34,
-        "prevSize": 32,
-        "code": 58906,
-        "name": "connection",
-        "ligatures": ""
-      },
-      "setIdx": 0,
-      "setId": 1,
-      "iconIdx": 34
     },
     {
       "icon": {
@@ -1037,16 +1109,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 43,
-        "id": 35,
+        "order": 890,
+        "id": 34,
         "prevSize": 32,
         "code": 58899,
         "name": "recDisable",
         "ligatures": ""
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 35
+      "iconIdx": 34
     },
     {
       "icon": {
@@ -1067,16 +1139,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 44,
-        "id": 36,
+        "order": 891,
+        "id": 35,
         "prevSize": 32,
         "code": 58900,
         "name": "recEnable",
         "ligatures": ""
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 36
+      "iconIdx": 35
     },
     {
       "icon": {
@@ -1097,16 +1169,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 53,
-        "id": 37,
+        "order": 892,
+        "id": 36,
         "prevSize": 32,
         "code": 58883,
         "name": "presentation",
         "ligatures": ""
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 37
+      "iconIdx": 36
     },
     {
       "icon": {
@@ -1123,16 +1195,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 115,
+        "order": 893,
         "ligatures": "dialpad",
-        "id": 38,
+        "id": 37,
         "prevSize": 32,
         "code": 59685,
         "name": "dialpad"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 38
+      "iconIdx": 37
     },
     {
       "icon": {
@@ -1149,16 +1221,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 114,
+        "order": 894,
         "ligatures": "remove_red_eye, visibility",
-        "id": 39,
+        "id": 38,
         "prevSize": 32,
         "code": 59683,
         "name": "visibility"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 39
+      "iconIdx": 38
     },
     {
       "icon": {
@@ -1175,16 +1247,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 113,
+        "order": 895,
         "ligatures": "visibility_off",
-        "id": 40,
+        "id": 39,
         "prevSize": 32,
         "code": 59684,
         "name": "visibility-off"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 1,
-      "iconIdx": 40
+      "iconIdx": 39
     }
   ],
   "height": 1024,
@@ -1212,11 +1284,13 @@
     "imagePref": {
       "prefix": "icon-",
       "png": true,
-      "useClassSelector": true
+      "useClassSelector": true,
+      "classSelector": ".icon"
     },
     "historySize": 100,
     "showCodes": false,
     "search": "",
-    "showLiga": false
+    "showLiga": false,
+    "gridSize": 16
   }
 }
