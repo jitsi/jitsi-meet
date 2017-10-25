@@ -1,6 +1,7 @@
 /* global __dirname */
 
 const process = require('process');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 
 const auiCSS = `${__dirname}/node_modules/@atlassian/aui/dist/aui/css/`;
@@ -35,12 +36,14 @@ if (minimize) {
         }
     }));
     plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
-    plugins.push(new webpack.optimize.UglifyJsPlugin({
-        compress: {
-            warnings: true
-        },
+    plugins.push(new UglifyJsPlugin({
+        cache: true,
         extractComments: true,
-        sourceMap: true
+        parallel: true,
+        sourceMap: true,
+        uglifyOptions: {
+            warnings: true
+        }
     }));
 }
 
