@@ -46,6 +46,10 @@ var config = {
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
+    // The default password for rooms. can be overriden here,
+    // default as undefined, no password specified, user has
+    // to enter password itself if needed.
+    roomPassword: undefined,
 
     // Testing / experimental features.
     //
