@@ -83,7 +83,7 @@ function _toErrorString(
         error
             ? typeof error === 'string'
                 ? error
-                : Error.prototype.toString(error)
+                : Error.prototype.toString.apply(error)
             : '');
 }
 
