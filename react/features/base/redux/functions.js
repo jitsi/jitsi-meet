@@ -19,7 +19,7 @@ export function assign(target: Object, source: Object) {
     let t = target;
 
     for (const property in source) { // eslint-disable-line guard-for-in
-        t = set(t, property, source[property], t === target);
+        t = _set(t, property, source[property], t === target);
     }
 
     return t;
