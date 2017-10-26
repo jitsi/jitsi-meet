@@ -123,6 +123,8 @@ const commands = {
  */
 function connect(roomName) {
     return openConnection({
+	id: config.userJid,
+	password: config.userPassword,
         retry: true,
         roomName
     })

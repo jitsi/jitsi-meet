@@ -51,6 +51,12 @@ var config = {
     // to enter password itself if needed.
     roomPassword: undefined,
 
+    // The default username and password of XMPP user, can
+    // be overriden here, default as undefined, user use default auth
+    // when not provided (anonymous or login UI)
+    userJid: undefined,
+    userPassword: undefined,
+
     // Testing / experimental features.
     //
 
