@@ -63,6 +63,7 @@ function provider.get_sasl_handler(session)
         if (res == false) then
             log("warn",
                 "Error verifying token err:%s, reason:%s", error, reason);
+            return res, error, reason;
         end
 
         local customUsername
