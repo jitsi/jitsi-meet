@@ -73,7 +73,7 @@ const config = {
                 // of the prefix babel-preset- in the preset names.
                 presets: [
                     [
-                        require.resolve('babel-preset-es2015'),
+                        require.resolve('babel-preset-env'),
 
                         // Tell babel to avoid compiling imports into CommonJS
                         // so that webpack may do tree shaking.
