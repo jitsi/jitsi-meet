@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 declare var JitsiMeetJS: Object;
@@ -50,7 +51,7 @@ class TranscriptionSubtitles extends React.Component {
         /**
          * The conference which we can use to add an EventListener to
          */
-        _conference: React.PropTypes.object
+        _conference: PropTypes.object
     };
 
     /**
