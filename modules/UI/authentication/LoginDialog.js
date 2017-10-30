@@ -62,29 +62,6 @@ function LoginDialog(successCallback, cancelCallback) {
     }
 
     const states = {
-        connecting: {
-            buttons: [],
-            defaultButton: 0,
-            html: '<div id="connectionStatus"></div>',
-            titleKey: 'dialog.connecting'
-        },
-        finished: {
-            buttons: finishedButtons,
-            defaultButton: 0,
-            html: '<div id="errorMessage"></div>',
-            titleKey: 'dialog.error',
-
-            submit(e, v) {
-                e.preventDefault();
-                if (v === 'retry') {
-                    // eslint-disable-next-line no-use-before-define
-                    connDialog.goToState('login');
-                } else {
-                    // User cancelled
-                    cancelCallback();
-                }
-            }
-        },
         login: {
             buttons: loginButtons,
             focus: ':input:first',
@@ -102,6 +79,29 @@ function LoginDialog(successCallback, cancelCallback) {
                         connDialog.goToState('connecting');
                         successCallback(toJid(jid, config.hosts), password);
                     }
+                } else {
+                    // User cancelled
+                    cancelCallback();
+                }
+            }
+        },
+        connecting: {
+            buttons: [],
+            defaultButton: 0,
+            html: '<div id="connectionStatus"></div>',
+            titleKey: 'dialog.connecting'
+        },
+        finished: {
+            buttons: finishedButtons,
+            defaultButton: 0,
+            html: '<div id="errorMessage"></div>',
+            titleKey: 'dialog.error',
+
+            submit(e, v) {
+                e.preventDefault();
+                if (v === 'retry') {
+                    // eslint-disable-next-line no-use-before-define
+                    connDialog.goToState('login');
                 } else {
                     // User cancelled
                     cancelCallback();
