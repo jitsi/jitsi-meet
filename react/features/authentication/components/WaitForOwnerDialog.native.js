@@ -81,6 +81,8 @@ class WaitForOwnerDialog extends Component {
         );
     }
 
+    _onCancel: () => void;
+
     /**
      * Called when the cancel button is clicked.
      *
@@ -90,6 +92,8 @@ class WaitForOwnerDialog extends Component {
     _onCancel() {
         this.props.dispatch(cancelWaitForOwner());
     }
+
+    _onLogin: () => void;
 
     /**
      * Called when the OK button is clicked.
