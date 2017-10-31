@@ -7,23 +7,29 @@
     "connectionsettings": "连接设置",
     "poweredby": "技术支持",
     "feedback": {
-        "average": "",
-        "bad": "",
-        "good": "",
+        "average": "一般",
+        "bad": "不好的",
+        "good": "好",
         "rateExperience": "请评价您的会议体验。",
-        "veryBad": "",
-        "veryGood": ""
+        "veryBad": "非常糟糕",
+        "veryGood": "非常好"
     },
     "inviteUrlDefaultMsg": "您的会议正在被创建。。。",
     "me": "我",
     "speaker": "发言人",
     "raisedHand": "请求发言",
-    "defaultNickname": "例如 星视通",
+    "defaultNickname": "例如 李雷",
     "defaultLink": "例如 __url__",
     "callingName": "__name__",
     "audioOnly": {
         "audioOnly": "只有音频",
         "featureToggleDisabled": "在仅使用音频模式下切换功能无效"
+    },
+    "info":{
+        "title":"链接信息",
+        "copy":"复制链接",
+        "invite": "邀请他人到__app__",
+        "tooltip": "获取链接信息"
     },
     "userMedia": {
         "react-nativeGrantPermissions": "当浏览器要求权限许可时选择 <b><i>允许</i></b>",
@@ -98,12 +104,12 @@
         "title": "__app__ 需要使用您的麦克风和摄像头。"
     },
     "suspendedoverlay": {
-        "title": "",
-        "text": "",
+        "title": "由于电脑休眠，您的视频被中断了。",
+        "text": "点击 <i>Rejoin</i> 按钮。",
         "rejoinKeyTitle": "重新加入"
     },
     "toolbar": {
-        "addPeople": "",
+        "addPeople": "添加用户",
         "audioonly": "启用/禁用仅音频模式（节省带宽）",
         "mute": "静音 / 解除静音",
         "videomute": "开启 / 关闭 摄像头",
@@ -174,7 +180,7 @@
     },
     "videothumbnail": {
         "editnickname": "点击编辑您的<br/>显示名称",
-        "moderator": "<br/>此会议的拥有者",
+        "moderator": "此会议的拥有者",
         "videomute": "与会者已经<br/>关闭了摄像头",
         "mute": "与会者已被静音",
         "kick": "踢出",
@@ -335,7 +341,7 @@
         "externalInstallationTitle": "需要扩展程序",
         "externalInstallationMsg": "您需要安装桌面共享扩展",
         "inlineInstallationMsg": "您需要安装桌面共享扩展",
-        "inlineInstallExtension": "",
+        "inlineInstallExtension": "现在安装",
         "muteParticipantTitle": "静音该与会者吗？",
         "muteParticipantBody": "您无法对他们解除静音，但是他们自己可以随时解除静音。",
         "muteParticipantButton": "静音",
@@ -436,46 +442,49 @@
         "hidePassword": "隐藏密码",
         "inviteTo": "邀请人到 __会议名称__",
         "invitedYouTo": "",
+        "invitePeople": "邀请他人",
         "locked": "本次呼叫被锁定，新的呼叫必须有链接并输入口令后加入。",
         "showPassword": "查看口令",
         "unlocked": "本次呼叫已被锁定，用这个链接可以加入。"
     },
     "videoStatus": {
-        "callQuality": "",
+        "callQuality": "清晰度",
         "changeVideoTip": "",
         "hd": "高清",
-        "highDefinition": "",
-        "ld": "",
-        "lowDefinition": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
+        "highDefinition": "高清",
+        "ld": "极速",
+        "lowDefinition": "极速",
+        "p2pEnabled": "开启/关闭 点对点通讯",
+        "p2pVideoQualityDescription": "点对点通讯只有在高清或音频模式下可用。如果，开启了点对点通讯，且不再高清或音频模式下，将无法通讯直到关闭了点对点通讯。",
+        "recHighDefinitionOnly": "优先高清",
         "sd": "标清",
-        "standardDefinition": "",
-        "qualityButtonTip": ""
+        "standardDefinition": "标注设置",
+        "qualityButtonTip": "切换清晰度",
+        "labelTooltipVideo": "当前视频质量",
+        "labelTooltipAudioOnly":  "只有声音"
     },
     "dialOut": {
         "dial": "拨号",
         "dialOut": "呼叫电话号码",
-        "statusMessage": "",
+        "statusMessage": "消息状态",
         "enterPhone": "输入电话号码",
         "phoneNotAllowed": "还不支持这个目标！抱歉！"
     },
     "addPeople": {
         "add": "添加",
-        "noResults": "",
-        "searchPlaceholder": "",
-        "title": "",
-        "failedToAdd": ""
+        "noResults": "没有匹配到搜索结果",
+        "searchPlaceholder": "搜索要添加的通话人员或房间",
+        "title": "添加通话人员",
+        "failedToAdd": "添加通话人员失败"
     },
     "inlineDialogFailure": {
-        "msg": "",
-        "retry": "",
-        "support": "",
-        "supportMsg": ""
+        "msg": "很抱歉，发生了一个错误。",
+        "retry": "重试",
+        "support": "技术支持",
+        "supportMsg": "如果，再发生此类情况，请联系："
     },
     "deviceError": {
-        "cameraPermission": "",
-        "microphonePermission": ""
+        "cameraPermission": "错误，无摄像头访问权限",
+        "microphonePermission": "错误，无麦克风访问权限"
     }
 }
