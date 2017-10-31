@@ -45,6 +45,11 @@ class Notification extends Component {
      */
     static propTypes = {
         /**
+         * Whether a support link should be added to the notification message.
+         */
+        addSupportLink: PropTypes.bool,
+
+        /**
          * Display appearance for the component, passed directly to
          * {@code Flag}.
          */
@@ -128,6 +133,7 @@ class Notification extends Component {
      */
     render() {
         const {
+            addSupportLink,
             appearance,
             titleKey,
             descriptionArguments,
@@ -142,7 +148,7 @@ class Notification extends Component {
 
         return (
             <Flag
-                actions = { this._mapAppearanceToButtons() }
+                actions = { this._mapAppearanceToButtons(addSupportLink) }
                 appearance = { appearance }
                 description = { description
                     || t(descriptionKey, descriptionArguments) }
@@ -178,22 +184,30 @@ class Notification extends Component {
      * Creates action button configurations for the notification based on
      * notification appearance.
      *
+     * @param {boolean} addSupportLink - Indicates if a support link should be
+     * added to the message.
      * @private
      * @returns {Object[]}
      */
-    _mapAppearanceToButtons() {
+    _mapAppearanceToButtons(addSupportLink) {
         switch (this.props.appearance) {
-        case 'error':
-            return [
+        case 'error': {
+            const buttons = [
                 {
                     content: this.props.t('dialog.dismiss'),
                     onClick: this._onDismissed
-                },
-                {
-                    content: this.props.t('dialog.contactSupport'),
-                    onClick: this._onOpenLink
                 }
             ];
+
+            if (addSupportLink) {
+                buttons.push({
+                    content: this.props.t('dialog.contactSupport'),
+                    onClick: this._onOpenLink
+                });
+            }
+
+            return buttons;
+        }
         case 'warning':
             return [
                 {

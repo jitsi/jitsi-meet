@@ -167,7 +167,8 @@ UI.notifyReservationError = function(code, msg) {
  * Notify user that he has been kicked from the server.
  */
 UI.notifyKicked = function() {
-    messageHandler.showWarning({
+    messageHandler.showError({
+        addSupportLink: false,
         descriptionKey: 'dialog.kickMessage',
         titleKey: 'dialog.sessTerminated'
     });
@@ -855,7 +856,8 @@ UI.notifyConnectionFailed = function(stropheErrorMsg) {
  * Notify user that maximum users limit has been reached.
  */
 UI.notifyMaxUsersLimitReached = function() {
-    messageHandler.showWarning({
+    messageHandler.showError({
+        addSupportLink: false,
         descriptionKey: 'dialog.maxUsersLimitReached',
         titleKey: 'dialog.maxUsersLimitReachedTitle'
     });

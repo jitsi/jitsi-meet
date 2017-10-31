@@ -50,8 +50,12 @@ export function setNotificationsEnabled(enabled) {
  * @returns {Object}
  */
 export function showErrorNotification(props) {
+    const { addSupportLink } = props;
+
     return showNotification(Notification, {
         ...props,
+        addSupportLink: typeof addSupportLink === 'undefined'
+            ? true : addSupportLink,
         appearance: 'error'
     });
 }

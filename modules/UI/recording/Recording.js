@@ -524,7 +524,7 @@ const Recording = {
             break;
         }
         default: {
-            APP.UI.messageHandler.showWarning({
+            APP.UI.messageHandler.showError({
                 descriptionKey: this.recordingUnavailable,
                 titleKey: this.recordingUnavailableTitle
             });
