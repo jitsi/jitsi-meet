@@ -410,7 +410,7 @@
     },
     "recording":
     {
-        "busy": "We're working on freeing recording resources. Please try again later.",
+        "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
         "buttonTooltip": "Start / Stop recording",
         "error": "Recording failed. Please try again.",
@@ -423,7 +423,7 @@
     },
     "liveStreaming":
     {
-        "busy": "We're working on freeing streaming resources. Please try again later.",
+        "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "buttonTooltip": "Start / Stop live stream",
         "error": "Live streaming failed. Please try again.",
