@@ -22,7 +22,7 @@
     "defaultLink": "例如 __url__",
     "callingName": "__name__",
     "audioOnly": {
-        "audioOnly": "只有音频",
+        "audioOnly": "音频",
         "featureToggleDisabled": "在仅使用音频模式下切换功能无效"
     },
     "info":{
