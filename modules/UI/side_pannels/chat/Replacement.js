@@ -54,5 +54,5 @@ function smilify(body) {
         }
     }
 
-    return body;
+    return formattedBody;
 }
