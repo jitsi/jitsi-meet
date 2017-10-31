@@ -183,7 +183,7 @@
         "moderator": "此会议的拥有者",
         "videomute": "与会者已经<br/>关闭了摄像头",
         "mute": "与会者已被静音",
-        "kick": "踢出",
+        "kick": "请出",
         "muted": "已静音",
         "domute": "静音",
         "flip": "翻转",
@@ -228,7 +228,7 @@
     "dialog": {
         "add": "添加",
         "allow": "允许",
-        "kickMessage": "您已被踢出会议！",
+        "kickMessage": "您已被请出会议！",
         "popupError": "您的浏览器禁止弹窗，请到浏览器安全设置里设定允许弹窗后重试。",
         "passwordErrorTitle": "密码错误",
         "passwordError": "此会议现在受密码保护。只有会议的拥有者可以设定密码。",
@@ -436,13 +436,13 @@
     },
     "invite": {
         "addPassword": "添加密码",
-        "callNumber": "呼叫__号码__",
+        "callNumber": "呼叫__number__",
         "enterID": "在电话终端输入会议ID:__conferenceID__和#号拨打会议电话",
         "howToDialIn": "用以下号码和会议编号拨号。",
         "hidePassword": "隐藏密码",
-        "inviteTo": "邀请人到 __会议名称__",
+        "inviteTo": "邀请与会者到 __conferenceName__",
         "invitedYouTo": "",
-        "invitePeople": "邀请他人",
+        "invitePeople": "邀请与会者",
         "locked": "本次呼叫被锁定，新的呼叫必须有链接并输入口令后加入。",
         "showPassword": "查看口令",
         "unlocked": "本次呼叫已被锁定，用这个链接可以加入。"
@@ -458,10 +458,10 @@
         "p2pVideoQualityDescription": "点对点通讯只有在高清或音频模式下可用。如果，开启了点对点通讯，且不再高清或音频模式下，将无法通讯直到关闭了点对点通讯。",
         "recHighDefinitionOnly": "优先高清",
         "sd": "标清",
-        "standardDefinition": "标注设置",
+        "standardDefinition": "标清",
         "qualityButtonTip": "切换清晰度",
         "labelTooltipVideo": "当前视频质量",
-        "labelTooltipAudioOnly":  "只有声音"
+        "labelTooltipAudioOnly":  "音频"
     },
     "dialOut": {
         "dial": "拨号",
