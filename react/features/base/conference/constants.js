@@ -42,7 +42,7 @@ export const JITSI_CONFERENCE_URL_KEY = Symbol('url');
  * @type {object}
  */
 export const VIDEO_QUALITY_LEVELS = {
-    HIGH: 720,
+    HIGH: 1080,
     STANDARD: 360,
     LOW: 180
 };
