@@ -513,6 +513,10 @@ class DeviceSelectionDialogBase extends Component {
             this._disposeVideoPreview()
                 .then(() => createLocalTrack('video', deviceId))
                 .then(jitsiLocalTrack => {
+                    if (!jitsiLocalTrack) {
+                        return Promise.reject();
+                    }
+
                     this.setState({
                         previewVideoTrack: jitsiLocalTrack,
                         previewVideoTrackError: null

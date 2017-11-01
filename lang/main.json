@@ -466,6 +466,8 @@
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {
+        "audioOnlyLocked": "Locked in audio only mode",
+        "audioOnlySupported": "The current browser only supports audio.",
         "callQuality": "Call Quality",
         "hd": "HD",
         "highDefinition": "High definition",
