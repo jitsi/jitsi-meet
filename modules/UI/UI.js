@@ -157,7 +157,8 @@ UI.notifyReservationError = function(code, msg) {
     messageHandler.showError({
         descriptionArguments: {
             code,
-            msg },
+            msg
+        },
         descriptionKey: 'dialog.reservationErrorMsg',
         titleKey: 'dialog.reservationError'
     });

@@ -455,18 +455,24 @@ const messageHandler = {
     },
 
     /**
-     *  Shows an error dialog to the user.
-     * @param {string} titleKey - The title of the message.
-     * @param {string} msgKey - The text of the message.
+     * Shows an error dialog to the user.
+     *
+     * @param {object} props - The properties to pass to the
+     * showErrorNotification action.
      */
     showError(props) {
         APP.store.dispatch(showErrorNotification(props));
     },
 
+    /**
+     * Shows a warning dialog to the user.
+     *
+     * @param {object} props - The properties to pass to the
+     * showWarningNotification action.
+     */
     showWarning(props) {
         APP.store.dispatch(showWarningNotification(props));
     },
-
 
     /**
      * Displays a notification about participant action.
