@@ -177,7 +177,7 @@ class Notification extends Component {
      * @private
      */
     _onOpenLink() {
-        window.open(interfaceConfig.SUPPORT_URL, '_blank');
+        window.open(interfaceConfig.SUPPORT_URL, '_blank', 'noopener');
     }
 
     /**
