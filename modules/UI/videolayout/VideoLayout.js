@@ -559,12 +559,7 @@ const VideoLayout = {
                 remoteVideo.addModeratorIndicator();
             }
 
-            if (isModerator) {
-                // We are moderator, but user is not - add menu
-                if (!remoteVideo.hasRemoteVideoMenu) {
-                    remoteVideo.addRemoteVideoMenu();
-                }
-            }
+            remoteVideo.updateRemoteVideoMenu();
         });
     },
 

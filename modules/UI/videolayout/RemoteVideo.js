@@ -41,7 +41,6 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this.videoSpanId = `participant_${this.id}`;
     SmallVideo.call(this, VideoLayout);
     this._audioStreamElement = null;
-    this.hasRemoteVideoMenu = false;
     this._supportsRemoteControl = false;
     this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
         ? 'left bottom' : 'top center';
@@ -298,9 +297,11 @@ RemoteVideo.prototype._setAudioVolume = function(newVal) {
  *
  * @param isMuted the new muted state to update to
  */
-RemoteVideo.prototype.updateRemoteVideoMenu = function(
-        isMuted = this.isAudioMuted) {
-    this.isAudioMuted = isMuted;
+RemoteVideo.prototype.updateRemoteVideoMenu = function(isMuted) {
+
+    if (typeof isMuted !== 'undefined') {
+        this.isAudioMuted = isMuted;
+    }
 
     this._generatePopupContent();
 };
@@ -343,8 +344,6 @@ RemoteVideo.prototype.addRemoteVideoMenu = function() {
     }
 
     this._generatePopupContent();
-
-    this.hasRemoteVideoMenu = true;
 };
 
 /**
@@ -641,7 +640,6 @@ RemoteVideo.prototype.removeRemoteVideoMenu = function() {
     if (menuSpan.length) {
         ReactDOM.unmountComponentAtNode(menuSpan.get(0));
         menuSpan.remove();
-        this.hasRemoteVideoMenu = false;
     }
 };
 
