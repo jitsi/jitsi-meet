@@ -17,7 +17,7 @@ declare var interfaceConfig: Object;
  *
  * @extends Component
  */
-class SpeakerStats extends Component {
+class SpeakerStats extends Component<*, *> {
     /**
      * SpeakerStats component's property types.
      *

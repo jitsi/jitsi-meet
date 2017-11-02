@@ -14,7 +14,7 @@ import styles from './styles';
  *
  * @extends Component
  */
-class LargeVideo extends Component {
+class LargeVideo extends Component<*> {
     /**
      * LargeVideo component's property types.
      *

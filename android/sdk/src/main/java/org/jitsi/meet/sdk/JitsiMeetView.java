@@ -94,7 +94,7 @@ public class JitsiMeetView extends FrameLayout {
             = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
+                .setJSMainModulePath("index.android")
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
                 .addPackage(new com.facebook.react.shell.MainReactPackage())
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
@@ -370,14 +370,26 @@ public class JitsiMeetView extends FrameLayout {
         // welcomePageEnabled
         props.putBoolean("welcomePageEnabled", welcomePageEnabled);
 
-        // TODO: ReactRootView#setAppProperties is only available on React
-        // Native 0.45, so destroy the current root view and create a new one.
-        dispose();
+        // XXX The method loadURLObject: is supposed to be imperative i.e.
+        // a second invocation with one and the same URL is expected to join
+        // the respective conference again if the first invocation was followed
+        // by leaving the conference. However, React and, respectively,
+        // appProperties/initialProperties are declarative expressions i.e. one
+        // and the same URL will not trigger componentWillReceiveProps in the
+        // JavaScript source code. The workaround implemented bellow introduces
+        // imperativeness in React Component props by defining a unique value
+        // per loadURLObject: invocation.
+        props.putLong("timestamp", System.currentTimeMillis());
 
-        reactRootView = new ReactRootView(getContext());
-        reactRootView.startReactApplication(reactInstanceManager, "App", props);
-        reactRootView.setBackgroundColor(BACKGROUND_COLOR);
-        addView(reactRootView);
+        if (reactRootView == null) {
+            reactRootView = new ReactRootView(getContext());
+            reactRootView.startReactApplication(
+                reactInstanceManager, "App", props);
+            reactRootView.setBackgroundColor(BACKGROUND_COLOR);
+            addView(reactRootView);
+        } else {
+            reactRootView.setAppProperties(props);
+        }
     }
 
     /**

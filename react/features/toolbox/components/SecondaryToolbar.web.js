@@ -22,7 +22,7 @@ declare var config: Object;
  * @class SecondaryToolbar
  * @extends Component
  */
-class SecondaryToolbar extends Component {
+class SecondaryToolbar extends Component<*, *> {
     state: Object;
 
     /**
@@ -86,7 +86,7 @@ class SecondaryToolbar extends Component {
      *
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> | null {
+    render(): React$Element<*> | null {
         const { _callStatsID, _secondaryToolbarButtons } = this.props;
 
         // The number of buttons to show in the toolbar isn't fixed, it depends

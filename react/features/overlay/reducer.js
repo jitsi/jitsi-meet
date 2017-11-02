@@ -29,7 +29,7 @@ ReducerRegistry.register('features/overlay', (state = {}, action) => {
         return _conferenceFailed(state, action);
 
     case CONNECTION_ESTABLISHED:
-        return _connectionEstablished(state, action);
+        return _connectionEstablished(state);
 
     case CONNECTION_FAILED:
         return _connectionFailed(state, action);
@@ -41,7 +41,7 @@ ReducerRegistry.register('features/overlay', (state = {}, action) => {
         return _mediaPermissionPromptVisibilityChanged(state, action);
 
     case SUSPEND_DETECTED:
-        return _suspendDetected(state, action);
+        return _suspendDetected(state);
     }
 
     return state;

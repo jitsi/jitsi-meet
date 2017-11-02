@@ -11,7 +11,7 @@ declare var interfaceConfig: Object;
  *
  * @class NoMobileApp
  */
-export default class NoMobileApp extends Component {
+export default class NoMobileApp extends Component<*> {
     /**
      * Renders the component.
      *

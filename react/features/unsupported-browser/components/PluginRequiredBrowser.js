@@ -9,7 +9,7 @@ import { CHROME, CHROMIUM, FIREFOX } from './browserLinks';
  *
  * @class PluginRequiredBrowser
  */
-export default class PluginRequiredBrowser extends Component {
+export default class PluginRequiredBrowser extends Component<*> {
 
     /**
      * Renders the component.

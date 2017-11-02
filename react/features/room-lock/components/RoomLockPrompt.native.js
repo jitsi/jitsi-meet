@@ -22,7 +22,7 @@ const _TEXT_INPUT_PROPS = {
  * Implements a React Component which prompts the user for a password to lock  a
  * conference/room.
  */
-class RoomLockPrompt extends Component {
+class RoomLockPrompt extends Component<*> {
     /**
      * RoomLockPrompt component's property types.
      *

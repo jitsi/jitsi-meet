@@ -12,7 +12,7 @@ import { openFeedbackDialog } from '../actions';
 /**
  * Implements a Web/React Component which renders a feedback button.
  */
-class FeedbackButton extends Component {
+class FeedbackButton extends Component<*> {
     _onClick: Function;
 
     static propTypes = {

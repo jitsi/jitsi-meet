@@ -17,7 +17,7 @@ import { shouldRemoteVideosBeVisible } from '../functions';
  *
  * @extends Component
  */
-class Filmstrip extends Component {
+class Filmstrip extends Component<*> {
     _isHovered: boolean;
 
     _notifyOfHoveredStateUpdate: Function;

@@ -296,6 +296,9 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
         // Add rootView as a subview which completely covers this one.
         [rootView setFrame:[self bounds]];
+        rootView.autoresizingMask
+            = UIViewAutoresizingFlexibleWidth
+                | UIViewAutoresizingFlexibleHeight;
         [self addSubview:rootView];
     }
 }

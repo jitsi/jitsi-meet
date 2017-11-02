@@ -17,7 +17,7 @@ import ToolbarButton from './ToolbarButton';
  * @class Toolbar
  * @extends Component
  */
-class Toolbar extends Component {
+class Toolbar extends Component<*> {
     _onMouseOut: Function;
     _onMouseOver: Function;
     _renderToolbarButton: Function;
@@ -75,7 +75,7 @@ class Toolbar extends Component {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> {
+    render(): React$Element<*> {
         const props = {
             className: this.props.className,
             onMouseOut: this._onMouseOut,
@@ -123,7 +123,7 @@ class Toolbar extends Component {
      * @private
      * @returns {ReactElement} A toolbar button.
      */
-    _renderToolbarButton(keyValuePair: Array<*>): ReactElement<*> {
+    _renderToolbarButton(keyValuePair: Array<*>): React$Element<*> {
         const [ key, button ] = keyValuePair;
 
         if (button.component) {

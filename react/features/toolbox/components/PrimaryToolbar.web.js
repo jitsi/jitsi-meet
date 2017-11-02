@@ -15,7 +15,7 @@ declare var interfaceConfig: Object;
  * @class PrimaryToolbar
  * @extends Component
  */
-class PrimaryToolbar extends Component {
+class PrimaryToolbar extends Component<*, *> {
     static propTypes = {
 
         /**
@@ -36,7 +36,7 @@ class PrimaryToolbar extends Component {
      *
      * @returns {ReactElement}
      */
-    render(): ReactElement<*> | null {
+    render(): React$Element<*> | null {
         const { _primaryToolbarButtons } = this.props;
 
         // The number of buttons to show in the toolbar isn't fixed, it depends

@@ -21,7 +21,7 @@ declare var interfaceConfig: Object;
 /**
  * The conference page of the Web application.
  */
-class Conference extends Component {
+class Conference extends Component<*> {
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
 

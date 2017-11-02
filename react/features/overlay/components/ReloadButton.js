@@ -12,7 +12,7 @@ import { _reloadNow } from '../actions';
  * Implements a React Component for button for the overlays that will reload
  * the page.
  */
-class ReloadButton extends Component {
+class ReloadButton extends Component<*> {
     /**
      * PageReloadOverlay component's property types.
      *
