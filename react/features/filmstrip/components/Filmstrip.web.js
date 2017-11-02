@@ -111,6 +111,7 @@ class Filmstrip extends Component<*> {
                         onMouseOut = { this._onMouseOut }
                         onMouseOver = { this._onMouseOver }>
                         { this.props.filmstripOnly ? null : <InviteButton /> }
+                        <div id = 'filmstripLocalVideoThumbnail' />
                     </div>
                     <div
                         className = 'filmstrip__videos'
