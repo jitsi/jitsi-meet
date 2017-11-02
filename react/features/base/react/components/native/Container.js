@@ -39,18 +39,16 @@ export default class Container extends AbstractContainer {
 
         // visible
         if (!visible) {
-            // FIXME: Whatever I try ends up failing somehow on Android, give up
-            // for now, hoping display: 'none' solves this.
+            // FIXME: It turns out that display: none will fail on some Android
+            // devices, but work on the others (currently fails on Google Pixel)
             if (Platform.OS === 'android') {
                 return null;
             }
 
             // Intentionally hide this Container without destroying it.
-            // TODO Replace with display: 'none' supported in RN >= 0.43.
             props.style = {
                 ...props.style,
-                height: 0,
-                width: 0
+                display: 'none'
             };
         }
 
