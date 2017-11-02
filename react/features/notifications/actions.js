@@ -10,6 +10,8 @@ import {
     NotificationWithToggle
 } from './components';
 
+import { NOTIFICATION_TYPE } from './constants';
+
 /**
  * Removes the notification with the passed in id.
  *
@@ -50,13 +52,9 @@ export function setNotificationsEnabled(enabled) {
  * @returns {Object}
  */
 export function showErrorNotification(props) {
-    const { addSupportLink } = props;
-
     return showNotification(Notification, {
         ...props,
-        addSupportLink: typeof addSupportLink === 'undefined'
-            ? true : addSupportLink,
-        appearance: 'error'
+        appearance: NOTIFICATION_TYPE.ERROR
     });
 }
 
@@ -95,7 +93,7 @@ export function showNotification(component, props = {}, timeout) {
 export function showWarningNotification(props) {
     return showNotification(Notification, {
         ...props,
-        appearance: 'warning'
+        appearance: NOTIFICATION_TYPE.WARNING
     });
 }
 

@@ -47,11 +47,6 @@ class Notification extends Component {
      */
     static propTypes = {
         /**
-         * Whether a support link should be added to the notification message.
-         */
-        addSupportLink: PropTypes.bool,
-
-        /**
          * Display appearance for the component, passed directly to
          * {@code Flag}.
          */
@@ -77,6 +72,12 @@ class Notification extends Component {
          * The translation key to use as the body of the notification.
          */
         descriptionKey: PropTypes.string,
+
+        /**
+         * Whether the support link should be hidden in the case of an error
+         * message.
+         */
+        hideErrorSupportLink: PropTypes.bool,
 
         /**
          * Whether or not the dismiss button should be displayed. This is passed
@@ -135,7 +136,7 @@ class Notification extends Component {
      */
     render() {
         const {
-            addSupportLink,
+            hideErrorSupportLink,
             appearance,
             titleKey,
             descriptionArguments,
@@ -150,7 +151,7 @@ class Notification extends Component {
 
         return (
             <Flag
-                actions = { this._mapAppearanceToButtons(addSupportLink) }
+                actions = { this._mapAppearanceToButtons(hideErrorSupportLink) }
                 appearance = { appearance }
                 description = { description
                     || t(descriptionKey, descriptionArguments) }
@@ -178,7 +179,7 @@ class Notification extends Component {
      * @returns {void}
      * @private
      */
-    _onOpenLink() {
+    _onOpenSupportLink() {
         window.open(interfaceConfig.SUPPORT_URL, '_blank', 'noopener');
     }
 
@@ -186,12 +187,12 @@ class Notification extends Component {
      * Creates action button configurations for the notification based on
      * notification appearance.
      *
-     * @param {boolean} addSupportLink - Indicates if a support link should be
-     * added to the message.
+     * @param {boolean} hideErrorSupportLink - Indicates if the support link
+     * should be hidden in the error messages.
      * @private
      * @returns {Object[]}
      */
-    _mapAppearanceToButtons(addSupportLink) {
+    _mapAppearanceToButtons(hideErrorSupportLink) {
         switch (this.props.appearance) {
         case NOTIFICATION_TYPE.ERROR: {
             const buttons = [
@@ -201,10 +202,10 @@ class Notification extends Component {
                 }
             ];
 
-            if (addSupportLink) {
+            if (!hideErrorSupportLink) {
                 buttons.push({
                     content: this.props.t('dialog.contactSupport'),
-                    onClick: this._onOpenLink
+                    onClick: this._onOpenSupportLink
                 });
             }
 

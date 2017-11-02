@@ -169,7 +169,7 @@ UI.notifyReservationError = function(code, msg) {
  */
 UI.notifyKicked = function() {
     messageHandler.showError({
-        addSupportLink: false,
+        hideErrorSupportLink: true,
         descriptionKey: 'dialog.kickMessage',
         titleKey: 'dialog.sessTerminated'
     });
@@ -858,7 +858,7 @@ UI.notifyConnectionFailed = function(stropheErrorMsg) {
  */
 UI.notifyMaxUsersLimitReached = function() {
     messageHandler.showError({
-        addSupportLink: false,
+        hideErrorSupportLink: true,
         descriptionKey: 'dialog.maxUsersLimitReached',
         titleKey: 'dialog.maxUsersLimitReachedTitle'
     });
