@@ -22,7 +22,7 @@ function LocalVideo(VideoLayout, emitter) {
 
     this.container = this.createContainer();
     this.$container = $(this.container);
-    $('#filmstripLocalVideo').append(this.container);
+    $('#filmstripLocalVideoThumbnail').append(this.container);
 
     this.localVideoId = null;
     this.bindHoverHandler();
