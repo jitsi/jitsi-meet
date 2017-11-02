@@ -39,8 +39,8 @@ export default class Container extends AbstractContainer {
 
         // visible
         if (!visible) {
-            // FIXME: Whatever I try ends up failing somehow on Android, give up
-            // for now.
+            // FIXME: It turns out that display: none will fail on some Android
+            // devices, but work on the others (currently fails on Google Pixel)
             if (Platform.OS === 'android') {
                 return null;
             }
