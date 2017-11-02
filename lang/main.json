@@ -501,6 +501,8 @@
         "supportMsg": "If this keeps happening, reach out to"
     },
     "deviceError": {
+        "cameraError": "Failed to access your camera",
+        "microphoneError": "Failed to access your microphone",
         "cameraPermission": "Error obtaining camera permission",
         "microphonePermission": "Error obtaining microphone permission"
     },

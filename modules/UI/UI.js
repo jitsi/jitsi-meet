@@ -1170,7 +1170,8 @@ UI.showMicErrorNotification = function(micError) {
             showToggle: Boolean(micJitsiTrackErrorMsg),
             subtitleKey: 'dialog.micErrorPresent',
             titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.microphonePermission' : 'dialog.error',
+                ? 'deviceError.microphonePermission'
+                : 'deviceError.microphoneError',
             toggleLabelKey: 'dialog.doNotShowWarningAgain'
         }));
 };
@@ -1206,7 +1207,7 @@ UI.showCameraErrorNotification = function(cameraError) {
             showToggle: Boolean(cameraJitsiTrackErrorMsg),
             subtitleKey: 'dialog.cameraErrorPresent',
             titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.cameraPermission' : 'dialog.error',
+                ? 'deviceError.cameraPermission' : 'deviceError.cameraError',
             toggleLabelKey: 'dialog.doNotShowWarningAgain'
         }));
 };
