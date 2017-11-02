@@ -8,6 +8,8 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
+import { NOTIFICATION_TYPE } from '../constants';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -35,7 +37,7 @@ class Notification extends Component {
      * @static
      */
     static defaultProps = {
-        appearance: 'normal'
+        appearance: NOTIFICATION_TYPE.NORMAL
     };
 
     /**
@@ -191,7 +193,7 @@ class Notification extends Component {
      */
     _mapAppearanceToButtons(addSupportLink) {
         switch (this.props.appearance) {
-        case 'error': {
+        case NOTIFICATION_TYPE.ERROR: {
             const buttons = [
                 {
                     content: this.props.t('dialog.dismiss'),
@@ -208,7 +210,7 @@ class Notification extends Component {
 
             return buttons;
         }
-        case 'warning':
+        case NOTIFICATION_TYPE.WARNING:
             return [
                 {
                     content: this.props.t('dialog.Ok'),
@@ -234,7 +236,7 @@ class Notification extends Component {
         const iconSize = 'medium';
 
         switch (appearance) {
-        case 'error':
+        case NOTIFICATION_TYPE.ERROR:
             return (
                 <ErrorIcon
                     label = { appearance }
@@ -242,7 +244,7 @@ class Notification extends Component {
                     size = { iconSize } />
             );
 
-        case 'warning' :
+        case NOTIFICATION_TYPE.WARNING:
             return (
                 <WarningIcon
                     label = { appearance }
