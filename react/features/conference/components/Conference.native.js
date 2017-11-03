@@ -114,7 +114,7 @@ class Conference extends Component {
      * after this component is mounted.
      *
      * @inheritdoc
-     * returns {void}
+     * @returns {void}
      */
     componentDidMount() {
         // Set handling any hardware button presses for back navigation up.

@@ -4,7 +4,10 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { sendAnalyticsEvent } from '../../analytics';
-import { AspectRatioAware, isNarrowAspectRatio } from '../../base/aspect-ratio';
+import {
+    isNarrowAspectRatio,
+    makeAspectRatioAware
+} from '../../base/aspect-ratio';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
@@ -439,4 +442,4 @@ function _mapStateToProps(state) {
 }
 
 export default connect(_mapStateToProps, _mapDispatchToProps)(
-    AspectRatioAware(Toolbox));
+    makeAspectRatioAware(Toolbox));

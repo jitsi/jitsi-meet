@@ -1,11 +1,14 @@
-/* @flow */
+// @flow
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AspectRatioAware, isNarrowAspectRatio } from '../../base/aspect-ratio';
+import {
+    isNarrowAspectRatio,
+    makeAspectRatioAware
+} from '../../base/aspect-ratio';
 import { Container } from '../../base/react';
 
 import Thumbnail from './Thumbnail';
@@ -148,4 +151,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(AspectRatioAware(Filmstrip));
+export default connect(_mapStateToProps)(makeAspectRatioAware(Filmstrip));
