@@ -77,11 +77,13 @@ function _obtainConfigAndInit() {
                     _initConference();
                 })
                 .catch(err => {
+                    logger.log(err);
+
                     // Show obtain config error.
-                    APP.UI.messageHandler.openReportDialog(
-                        null,
-                        'dialog.connectError',
-                        err);
+                    APP.UI.messageHandler.showError({
+                        titleKey: 'connection.CONNFAIL',
+                        descriptionKey: 'dialog.connectError'
+                    });
                 });
         } else {
             chooseBOSHAddress(config, room);

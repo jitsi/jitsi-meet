@@ -111,14 +111,10 @@ export default class SharedVideoManager {
                 },
                 () => {}); // eslint-disable-line no-empty-function
         } else {
-            dialog = APP.UI.messageHandler.openMessageDialog(
-                'dialog.shareVideoTitle',
-                'dialog.alreadySharedVideoMsg',
-                null,
-                () => {
-                    dialog = null;
-                }
-            );
+            APP.UI.messageHandler.showWarning({
+                descriptionKey: 'dialog.alreadySharedVideoMsg',
+                titleKey: 'dialog.alreadySharedVideoTitle'
+            });
             sendAnalyticsEvent('sharedvideo.alreadyshared');
         }
     }

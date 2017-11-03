@@ -1,10 +1,11 @@
-import Flag from '@atlaskit/flag';
-import WarningIcon from '@atlaskit/icon/glyph/warning';
 import { ToggleStateless } from '@atlaskit/toggle';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+
+import { default as Notification } from './Notification';
+import { NOTIFICATION_TYPE } from '../constants';
 
 /**
  * React {@code Component} for displaying a notification with a toggle element.
@@ -18,28 +19,13 @@ class NotificationWithToggle extends Component {
      * @static
      */
     static propTypes = {
+        ...Notification.propTypes,
+
         /**
          * Any additional text to display at the end of the notification message
          * body.
          */
         additionalMessage: PropTypes.string,
-
-        /**
-         * Whether or not the dismiss button should be displayed. This is passed
-         * in by {@code FlagGroup}.
-         */
-        isDismissAllowed: PropTypes.bool,
-
-        /**
-         * The translation key to be used as the main body of the notification.
-         */
-        messageKey: PropTypes.string,
-
-        /**
-         * Callback invoked when the user clicks to dismiss the notification.
-         * This is passed in by {@code FlagGroup}.
-         */
-        onDismissed: PropTypes.func,
 
         /**
          * Optional callback to invoke when the notification is dismissed. The
@@ -58,27 +44,11 @@ class NotificationWithToggle extends Component {
          */
         subtitleKey: PropTypes.string,
 
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * The translation key to be used as the title of the notification.
-         */
-        titleKey: PropTypes.string,
-
         /*
          * The translation key to be used as a label describing what setting the
          * toggle will change.
          */
-        toggleLabelKey: PropTypes.string,
-
-        /**
-         * The unique identifier for the notification. Passed back by the
-         * {@code Flag} component in the onDismissed callback.
-         */
-        uid: PropTypes.number
+        toggleLabelKey: PropTypes.string
     };
 
     /**
@@ -111,32 +81,11 @@ class NotificationWithToggle extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            isDismissAllowed,
-            t,
-            titleKey,
-            uid
-        } = this.props;
-
         return (
-            <Flag
-                actions = { [
-                    {
-                        content: t('dialog.Ok'),
-                        onClick: this._onDismissed
-                    }
-                ] }
-                appearance = 'warning'
-                description = { this._renderDescription() }
-                icon = { (
-                    <WarningIcon
-                        label = 'Warning'
-                        size = 'medium' />
-                ) }
-                id = { uid }
-                isDismissAllowed = { isDismissAllowed }
-                onDismissed = { this._onDismissed }
-                title = { t(titleKey) } />
+            <Notification
+                appearance = { NOTIFICATION_TYPE.WARNING }
+                { ...this.props }
+                description = { this._renderDescription() } />
         );
     }
 
@@ -181,7 +130,7 @@ class NotificationWithToggle extends Component {
     _renderDescription() {
         const {
             additionalMessage,
-            messageKey,
+            descriptionKey,
             showToggle,
             subtitleKey,
             t,
@@ -191,7 +140,7 @@ class NotificationWithToggle extends Component {
         return (
             <div className = 'notification-with-toggle'>
                 <div>{ t(subtitleKey) }</div>
-                { messageKey ? <div>{ t(messageKey) }</div> : null }
+                { descriptionKey ? <div>{ t(descriptionKey) }</div> : null }
                 { additionalMessage ? <div>{ additionalMessage }</div>
                     : null }
                 { showToggle

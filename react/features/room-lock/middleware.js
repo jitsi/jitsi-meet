@@ -75,19 +75,22 @@ function _setPasswordFailed(store, next, action) {
         // TODO Remove this logic when displaying of error messages on web is
         // handled through react/redux.
         const { error } = action;
-        let title;
-        let message;
+        let descriptionKey;
+        let titleKey;
 
         if (error === JitsiConferenceErrors.PASSWORD_NOT_SUPPORTED) {
             logger.warn('room passwords not supported');
-            title = 'dialog.warning';
-            message = 'dialog.passwordNotSupported';
+            descriptionKey = 'dialog.passwordNotSupported';
+            titleKey = 'dialog.passwordNotSupportedTitle';
         } else {
             logger.warn('setting password failed', error);
-            title = 'dialog.lockTitle';
-            message = 'dialog.lockMessage';
+            descriptionKey = 'dialog.lockMessage';
+            titleKey = 'dialog.lockTitle';
         }
-        APP.UI.messageHandler.showError(title, message);
+        APP.UI.messageHandler.showError({
+            descriptionKey,
+            titleKey
+        });
     }
 
     return next(action);

@@ -203,7 +203,10 @@ export default {
         );
 
         if (!dialog) {
-            APP.UI.messageHandler.openMessageDialog(null, 'dialog.popupError');
+            APP.UI.messageHandler.showWarning({
+                descriptionKey: 'dialog.popupError',
+                titleKey: 'dialog.popupErrorTitle'
+            });
         }
 
         return dialog;

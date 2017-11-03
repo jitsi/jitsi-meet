@@ -5,7 +5,9 @@ import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 import {
     Notification,
-    showNotification
+    showErrorNotification,
+    showNotification,
+    showWarningNotification
 } from '../../../react/features/notifications';
 
 /**
@@ -453,26 +455,23 @@ const messageHandler = {
     },
 
     /**
-     * Shows a dialog prompting the user to send an error report.
+     * Shows an error dialog to the user.
      *
-     * @param titleKey the title of the message
-     * @param msgKey the text of the message
-     * @param error the error that is being reported
+     * @param {object} props - The properties to pass to the
+     * showErrorNotification action.
      */
-    openReportDialog(titleKey, msgKey, error) {
-        this.openMessageDialog(titleKey, msgKey);
-        logger.log(error);
-
-        // FIXME send the error to the server
+    showError(props) {
+        APP.store.dispatch(showErrorNotification(props));
     },
 
     /**
-     *  Shows an error dialog to the user.
-     * @param titleKey the title of the message.
-     * @param msgKey the text of the message.
+     * Shows a warning dialog to the user.
+     *
+     * @param {object} props - The properties to pass to the
+     * showWarningNotification action.
      */
-    showError(titleKey = 'dialog.oops', msgKey = 'dialog.defaultError') {
-        messageHandler.openMessageDialog(titleKey, msgKey);
+    showWarning(props) {
+        APP.store.dispatch(showWarningNotification(props));
     },
 
     /**
@@ -498,9 +497,9 @@ const messageHandler = {
             showNotification(
                 Notification,
                 {
-                    defaultTitleKey: displayNameKey,
                     descriptionArguments: messageArguments,
                     descriptionKey: messageKey,
+                    titleKey: displayNameKey,
                     title: displayName
                 },
                 timeout));
