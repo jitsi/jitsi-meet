@@ -3,10 +3,18 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { VIDEO_QUALITY_LEVELS } from '../../base/conference';
 import { translate } from '../../base/i18n';
 
-const { HIGH, STANDARD, LOW } = VIDEO_QUALITY_LEVELS;
+/**
+ * A map of video resolution (number) to translation key.
+ *
+ * @type {Object}
+ */
+const RESOLUTION_TO_TRANSLATION_KEY = {
+    720: 'videoStatus.hd',
+    360: 'videoStatus.sd',
+    180: 'videoStatus.ld'
+};
 
 /**
  * Expected video resolutions placed into an array, sorted from lowest to
@@ -15,18 +23,9 @@ const { HIGH, STANDARD, LOW } = VIDEO_QUALITY_LEVELS;
  * @type {number[]}
  */
 const RESOLUTIONS
-    = Object.values(VIDEO_QUALITY_LEVELS).sort((a, b) => a - b);
-
-/**
- * A map of video resolution (number) to translation key.
- *
- * @type {Object}
- */
-const RESOLUTION_TO_TRANSLATION_KEY = {
-    [HIGH]: 'videoStatus.hd',
-    [STANDARD]: 'videoStatus.sd',
-    [LOW]: 'videoStatus.ld'
-};
+    = Object.keys(RESOLUTION_TO_TRANSLATION_KEY)
+        .map(resolution => parseInt(resolution, 10))
+        .sort((a, b) => a - b);
 
 /**
  * React {@code Component} responsible for displaying a label that indicates
