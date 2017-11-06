@@ -1,18 +1,16 @@
 {
-    "contactlist": "Deltagare (__pcount__)",
-    "addParticipants": "Dela URL:en",
-    "roomLocked": "Inringande måste ange lösenord",
-    "roomUnlocked": "Alla med URL:en kan ansluta",
-    "passwordSetRemotely": "satt av en annan deltagare",
+    "contactlist": "",
+    "contactlist_plural": "",
+    "passwordSetRemotely": "bestämt av annan deltagare",
     "connectionsettings": "Anslutningsinställningar",
     "poweredby": "drivs av",
     "feedback": {
-        "average": "",
-        "bad": "",
-        "good": "",
+        "average": "Medel",
+        "bad": "Dåligt",
+        "good": "Bra",
         "rateExperience": "Skatta mötesupplevelsen.",
-        "veryBad": "",
-        "veryGood": ""
+        "veryBad": "Mycket dåligt",
+        "veryGood": "Mycket bra"
     },
     "inviteUrlDefaultMsg": "Din konferens håller på att skapas...",
     "me": "jag",
@@ -22,19 +20,19 @@
     "defaultLink": "t ex. __url__",
     "callingName": "__name__",
     "audioOnly": {
-        "audioOnly": "",
-        "featureToggleDisabled": ""
+        "audioOnly": "Enbart ljud",
+        "featureToggleDisabled": "Ändring av __feature__ är låst i enbart ljud-läge"
     },
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
-        "firefoxGrantPermissions": "",
-        "operaGrantPermissions": "",
-        "iexplorerGrantPermissions": "",
-        "safariGrantPermissions": "",
+        "react-nativeGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
+        "chromeGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
+        "androidGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
+        "firefoxGrantPermissions": "Välj <b><i>Dela vald enhet</i></b> när din webbläsare begär åtkomst.",
+        "operaGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
+        "iexplorerGrantPermissions": "Välj <b><i>OK</i></b> när din webbläsare begär åtkomst.",
+        "safariGrantPermissions": "Välj <b><i>OK</i></b> när din webbläsare begär åtkomst.",
         "nwjsGrantPermissions": "Tillåt användning av din kamera och mikrofon",
-        "edgeGrantPermissions": ""
+        "edgeGrantPermissions": "Välj <b><i>Ja</i></b> när din webbläsare begär åtkomst."
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "Tangentbordsgenvägar",
@@ -49,7 +47,7 @@
         "mute": "Tysta eller aktivera din mikrofon",
         "fullScreen": "Aktivera / avaktivera helskärm",
         "videoMute": "Aktivera / avaktivera din kamera",
-        "showSpeakerStats": ""
+        "showSpeakerStats": "Visa talarstatistik"
     },
     "welcomepage": {
         "disable": "Visa inte denna sida igen",
@@ -66,7 +64,7 @@
             "title": "Öppen källkod"
         },
         "feature4": {
-            "content": "Det finns inga artificiella restriktioner på antalet användare eller konferensdeltagare. Serverkraft och bandbredd är den enda begränsande faktorn.",
+            "content": "Det finns inga konstgjorda begränsningar av antalet konferensdeltagare. Bara serverkraft och bandbredd begränsar antalet deltagare.",
             "title": "Obegränsade användare"
         },
         "feature5": {
@@ -94,17 +92,17 @@
         "terms": "Termer"
     },
     "startupoverlay": {
-        "policyText": "",
+        "policyText": " ",
         "title": "__app__ vill använda din kamera och mikrofon."
     },
     "suspendedoverlay": {
-        "title": "",
-        "text": "",
+        "title": "Ditt videosamtal avbröts då din dator gick in i viloläge.",
+        "text": "Klicka på knappen <i>Återanslut</i> för att koppla upp igen.",
         "rejoinKeyTitle": "Gå med igen"
     },
     "toolbar": {
-        "addPeople": "",
-        "audioonly": "",
+        "addPeople": "Lägg till personer i samtal",
+        "audioonly": "Slå på / av enbart ljud-läge (sparar bandbredd)",
         "mute": "Slå av/på ljud",
         "videomute": "Aktivera / avaktivera kameran",
         "authenticate": "Autentisera",
@@ -121,8 +119,8 @@
         "login": "Logga in",
         "logout": "Logga ut",
         "dialpad": "Visa / dölj knappsatsen",
-        "sharedVideoMutedPopup": "Din delade video har stängts av så<br/>att du kan prata med de andra deltagarna.",
-        "micMutedPopup": "Din mikrofon har tystats så<br/>att du kan njuta av din delade video.",
+        "sharedVideoMutedPopup": "Din delade video har tystats så att du kan prata med övriga deltagare.",
+        "micMutedPopup": "Din mikrofon har tystats så att du kan höra ljudet från den delade videon.",
         "talkWhileMutedPopup": "Försöker du tala? Din mikrofon är tystad.",
         "unableToUnmutePopup": "Du kan inte slå på mikrofonen när delad video är på.",
         "cameraDisabled": "Kameran är inte tillgänglig",
@@ -141,7 +139,7 @@
     "bottomtoolbar": {
         "chat": "Öppna / stäng chat",
         "filmstrip": "Visa eller dölj videor",
-        "contactlist": "Bjud in deltagare"
+        "contactlist": "Visa och bjud in deltagare"
     },
     "chat": {
         "nickname": {
@@ -173,10 +171,9 @@
         "setEmailInput": "Skriv e-postadress"
     },
     "videothumbnail": {
-        "editnickname": "Klicka här för att <br/>redigera namn",
-        "moderator": "Ägaren av den<br/>här konferensen",
-        "videomute": "Deltagaren har<br/>stängt av kameran.",
-        "mute": "Deltagaren har avstängd mikrofon",
+        "moderator": "Moderator",
+        "videomute": "Deltagare har stoppat kameran",
+        "mute": "Deltagare tystad",
         "kick": "Sparka ut",
         "muted": "Tystad",
         "domute": "Tysta",
@@ -188,7 +185,7 @@
         "bitrate": "Bithastighet:",
         "packetloss": "Paketförluster:",
         "resolution": "Upplösning:",
-        "framerate": "",
+        "framerate": "Bildfrekvens:",
         "less": "Visa mindre",
         "more": "Visa mer",
         "address": "Adress:",
@@ -203,7 +200,15 @@
         "transport": "Transport:",
         "bandwidth": "Beräknad bandbredd:",
         "na": "Återkom hit för uppkopplingsinformation när konferensen startat",
-        "turn": ""
+        "turn": " (turn)",
+        "quality": {
+            "good": "Bra",
+            "inactive": "Inaktiv",
+            "lost": "Förlorad",
+            "nonoptimal": "Ej optimal",
+            "poor": "Dåligt"
+        },
+        "status": "Anslutning:"
     },
     "notify": {
         "disconnected": "frånkopplad",
@@ -214,41 +219,45 @@
         "focus": "Konferensfokus",
         "focusFail": "__componen__ inte tillgänglig - försöker igen om __ms__ sek",
         "grantedTo": "Moderatorsrättigheter tilldelat till __to__!",
-        "grantedToUnknown": "",
+        "grantedToUnknown": "Moderatorsrättigheter tilldelat till $t(somebody)!",
         "muted": "Du har startat konversationen utan mikrofon.",
         "mutedTitle": "Du har mikrofonen avstängd!",
         "raisedHand": "Begär ordet."
     },
     "dialog": {
         "add": "Lägg till",
-        "allow": "",
+        "allow": "Tillåt",
         "kickMessage": "Aj! Du har sparkats ur mötet!",
-        "popupError": "Din webbläsare blockerar popup-fönster från den här webbplatsen. Vänligen aktivera popups i din webbläsares säkerhetsinställningar och försök igen.",
+        "popupErrorTitle": "",
+        "popupError": "",
         "passwordErrorTitle": "Lösenordsfel",
         "passwordError": "Den här konversationen är för närvarande skyddad av lösenord. Bara ägaren till konferensen kan sätta ett lösenord.",
         "passwordError2": "Den här konversationen är  för närvarande inte skyddad av ett lösenord. Bara ägaren till konferensen kan sätta ett lösenord.",
         "connectError": "Ojdå! Något gick fel och vi kunde inte ansluta till konferensen.",
         "connectErrorWithMsg": "Ojdå! Något gick fel och vi kunde inte ansluta till konferensen: __msg__",
-        "incorrectPassword": "Lösenordet är felaktigt",
+        "incorrectPassword": "",
         "connecting": "Ansluter",
         "copy": "Kopiera",
+        "contactSupport": "",
         "error": "Fel",
         "createPassword": "Ange ett lösenord",
         "detectext": "Fel när skrivbordsdelnings-tillägget försökte hittas.",
-        "failtoinstall": "Misslyckades att installera skrivbordsdelnings-tillägget",
         "failedpermissions": "Misslyckades med att få tillåtelse att använda lokal mikrofon och/eller kamera.",
-        "conferenceReloadTitle": "",
-        "conferenceReloadMsg": "",
-        "conferenceDisconnectTitle": "",
-        "conferenceDisconnectMsg": "",
-        "rejoinNow": "",
-        "maxUsersLimitReached": "Gränsen för antal deltagare är nådd. Konferensrummet är full. Försök igen senare!",
+        "conferenceReloadTitle": "Något gick snett.",
+        "conferenceReloadMsg": "Vi försöker fixa problemet. Återansluter om __seconds__ sekunder...",
+        "conferenceDisconnectTitle": "Du har kopplats ner.",
+        "conferenceDisconnectMsg": "Kolla din internetanslutning. Återansluter om  __seconds__ sekunder...",
+        "dismiss": "",
+        "rejoinNow": "Återanslut nu",
+        "maxUsersLimitReachedTitle": "",
+        "maxUsersLimitReached": "",
         "lockTitle": "Låsning misslyckades",
         "lockMessage": "Misslyckades att låsa konferensen.",
         "warning": "Varning",
-        "passwordNotSupported": "Rumslösenord stöds inte för tillfället.",
+        "passwordNotSupportedTitle": "",
+        "passwordNotSupported": "",
         "internalErrorTitle": "Internt fel",
-        "internalError": "Hoppsan! Något gick fel: [setRemoteDescription]",
+        "internalError": "",
         "unableToSwitch": "Kunde inte byta videoström.",
         "SLDFailure": "Ojdå! Något gick fel och vi kunde inte stänga av mikrofonen! (SLD Failure)",
         "SRDFailure": "Ojdå! Något gick fel och vi kunde inte stänga av videokameran! (SRD Failure)",
@@ -265,7 +274,8 @@
         "shareVideoLinkError": "Skriv in en fungerande Youtube-länk.",
         "removeSharedVideoTitle": "Ta bort den delade videon",
         "removeSharedVideoMsg": "Är du säker på att du vill ta bort din delade video?",
-        "alreadySharedVideoMsg": "En annan deltagare delar redan en video. Mötesrummet tillåter endast en delad video åt gången.",
+        "alreadySharedVideoMsg": "",
+        "alreadySharedVideoTitle": "",
         "WaitingForHost": "Väntar på värden ...",
         "WaitForHostMsg": "Konferensen <b>__room__</b> har inte startat än. Om du är värd för konferensen, vänligen logga in. Annars, vänta kvar på att konferensvärden kommer.",
         "IamHost": "Jag är värd",
@@ -274,7 +284,7 @@
         "retry": "Försök igen",
         "logoutTitle": "Logga ut",
         "logoutQuestion": "Är du säker på att du vill logga ut och stoppa konferensen?",
-        "sessTerminated": "Sessionen avslutad",
+        "sessTerminated": "",
         "hungUp": "Du lade på",
         "joinAgain": "Anslut igen",
         "Share": "Dela",
@@ -284,9 +294,6 @@
         "passwordCheck": "Är du säker på att du vill ta bort ditt lösenord?",
         "passwordMsg": "Sätt ett lösenord för att låsa ditt rum",
         "shareLink": "Dela URL:en till mötesrummet",
-        "settings1": "Anpassa din konferens",
-        "settings2": "Deltagare går med med mikrofonen avstängd",
-        "settings3": "Kräver användarnamn<br/><br/>Sätt ett lösenord för att låsa ditt rum:",
         "yourPassword": "Ange nytt lösenord",
         "Back": "Tillbaka",
         "serviceUnavailable": "Tjänsten otillgänglig",
@@ -317,40 +324,44 @@
         "doNotShowWarningAgain": "Visa inte denna varning igen",
         "doNotShowMessageAgain": "Visa inte detta meddelande igen",
         "permissionDenied": "Åtkomst nekad",
-        "screenSharingPermissionDeniedError": "Du har inte gett tillåtelse att dela din skärm.",
+        "screenSharingFailedToInstall": "",
+        "screenSharingFailedToInstallTitle": "",
+        "screenSharingPermissionDeniedError": "",
         "micErrorPresent": "Kunde inte ansluta din mikrofon.",
         "cameraErrorPresent": "Det gick inte att ansluta din kamera.",
         "cameraUnsupportedResolutionError": "Din kamera stöder inte den krävda videoupplösningen.",
         "cameraUnknownError": "Av okänd anledning kan din kamera inte användas.",
         "cameraPermissionDeniedError": "Du har inte tillåtit användning av din kamera. Du kan gå med i mötet men de andra kan då inte se dej. Om du vill tillåta användning av din kamera gör du det via kameraknappen i URL-fältet.",
         "cameraNotFoundError": "Hittar ingen kamera.",
-        "cameraConstraintFailedError": "",
+        "cameraConstraintFailedError": "Din kamera uppfyller inte kraven för användning.",
         "micUnknownError": "Av okänd anledning kan inte din mikrofon användas.",
         "micPermissionDeniedError": "Du har inte tillåtit användning av din mikrofon. Du kan gå med i mötet men de andra kan då inte höra dej. Om du vill tillåta användning av din mikrofon gör du det via mikrofonknappen i URL-fältet.",
         "micNotFoundError": "Hittar ingen mikrofon.",
-        "micConstraintFailedError": "",
-        "micNotSendingData": "Kan inte ansluta din mikrofon. Välj en annan mikrofonenhet från inställningsmenyn eller försök starta/ladda om.",
-        "cameraNotSendingData": "Kan inte ansluta din kamera. Välj en annan kameraenhet från inställningsmenyn eller försök starta/ladda om.",
+        "micConstraintFailedError": "Din mikrofon uppfyller inte kraven för användning.",
+        "micNotSendingDataTitle": "",
+        "micNotSendingData": "",
+        "cameraNotSendingDataTitle": "",
+        "cameraNotSendingData": "",
         "goToStore": "Gå till appbutiken",
         "externalInstallationTitle": "Tillägg krävs",
         "externalInstallationMsg": "Misslyckades att installera skrivbordsdelnings-tillägget.",
         "inlineInstallationMsg": "Misslyckades att installera skrivbordsdelnings-tillägget.",
-        "inlineInstallExtension": "",
-        "muteParticipantTitle": "Tysta deltagaren?",
+        "inlineInstallExtension": "Installera nu",
+        "muteParticipantTitle": "Tysta denna deltagare?",
         "muteParticipantBody": "Du kan inte aktivera deras mikrofoner, men de kan göra det själva.",
         "muteParticipantButton": "Tysta",
-        "remoteControlTitle": "",
-        "remoteControlRequestMessage": "",
-        "remoteControlShareScreenWarning": "",
+        "remoteControlTitle": "Anslutning till fjärrskrivbord",
+        "remoteControlRequestMessage": "Vill du tillåta att __user__ får kontrollera din skärm?",
+        "remoteControlShareScreenWarning": "OBS, om du trycker \"Tillåt\" kommer du dela din skärm!",
         "remoteControlDeniedMessage": "__user__ avböjde din begäran om fjärrstyrning.",
         "remoteControlAllowedMessage": "__user__ godkände din begäran om fjärrstyrning.",
         "remoteControlErrorMessage": "Ett fel uppstod när fjärrstyrningsrättigheter begärdes från __user__.",
-        "startRemoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "Ett fel inträffade när fjärrsessionen skulle starta!",
         "remoteControlStopMessage": "Fjärrstyrningssessionen avslutades.",
-        "close": "",
-        "shareYourScreen": "",
-        "yourEntireScreen": "",
-        "applicationWindow": ""
+        "close": "Stäng",
+        "shareYourScreen": "Dela din skärm",
+        "yourEntireScreen": "Helskärm",
+        "applicationWindow": "Applikationsfönster"
     },
     "email": {
         "sharedKey": [
@@ -393,89 +404,104 @@
         "ATTACHED": "Ansluten"
     },
     "recording": {
-        "pending": "Inspelningen väntar på att deltagare ska gå med ...",
-        "on": "Inspelning",
-        "off": "Inspelningen avslutades",
-        "failedToStart": "Inspelningen kunde inte påbörjas",
+        "busy": "",
+        "busyTitle": "",
         "buttonTooltip": "Börja / sluta spela in",
         "error": "Inspelningen misslyckades. Försök igen.",
-        "unavailable": "Inspelningstjänsten är tillfälligt inte tillgänglig. Försök igen senare."
+        "failedToStart": "Inspelningen kunde inte påbörjas",
+        "off": "Inspelningen avslutades",
+        "on": "Inspelning",
+        "pending": "Inspelningen väntar på att deltagare ska ansluta...",
+        "unavailable": "",
+        "unavailableTitle": ""
     },
     "liveStreaming": {
-        "pending": "Börja strömma ...",
+        "busy": "",
+        "busyTitle": "",
+        "buttonTooltip": "",
+        "error": "",
+        "failedToStart": "",
+        "off": "",
         "on": "Strömma",
-        "off": "Strömning avslutad",
-        "unavailable": "Strömningstjänsten är tillfälligt inte tillgänglig. Försök igen senare.",
-        "failedToStart": "Strömningen kunde inte påbörjas",
-        "buttonTooltip": "Börja / sluta strömma",
-        "streamIdRequired": "Fyll i strömnings-id:t för att för att börja strömma.",
+        "pending": "Börja strömma ...",
+        "streamIdRequired": "",
         "streamIdHelp": "Var hittar jag det?",
-        "error": "Strömning misslyckades. Försök igen.",
-        "busy": "Alla inspelare är upptagna. Försök igen senare."
+        "unavailable": "",
+        "unavailableTitle": ""
     },
     "speakerStats": {
-        "hours": "",
-        "minutes": "",
+        "hours": "__count__h",
+        "minutes": "__count__m",
         "name": "Namn",
-        "seconds": "",
-        "speakerStats": "",
-        "speakerTime": ""
+        "seconds": "__count__s",
+        "speakerStats": "Talarstatistik",
+        "speakerTime": "Talartid"
     },
     "deviceSelection": {
-        "deviceSettings": "",
-        "noPermission": "",
-        "previewUnavailable": "",
-        "selectADevice": "",
-        "testAudio": ""
+        "deviceSettings": "Enhetsinställningar",
+        "noPermission": "Behörighet nekad",
+        "previewUnavailable": "Förhandsgranskning inte tillgänglig",
+        "selectADevice": "Välj en enhet",
+        "testAudio": "Testa ljud"
     },
     "invite": {
-        "addPassword": "",
-        "callNumber": "",
-        "enterID": "",
-        "howToDialIn": "",
-        "hidePassword": "",
-        "inviteTo": "",
-        "invitedYouTo": "",
-        "locked": "",
-        "showPassword": "",
-        "unlocked": ""
+        "addPassword": "Ange ett lösenord",
+        "callNumber": "Ring __number__",
+        "enterID": "Anslut till möte med ID: __conferenceID__ följt av # för att ringa in via telefon",
+        "howToDialIn": "För att ringa in, använd ett av följande nummer och mötes-ID",
+        "hidePassword": "Dölj lösenord",
+        "inviteTo": "Bjud in deltagare till __conferenceName__",
+        "invitedYouTo": "__userName__ har bjudit in dig till mötet __inviteURL__",
+        "invitePeople": "",
+        "locked": "Detta samtal är låst. Nya deltagare måste ha en länk och ett lösenord för att ansluta.",
+        "showPassword": "Visa lösenord",
+        "unlocked": "Detta samtal är öppet. Alla med länken kan ansluta."
     },
     "videoStatus": {
-        "callQuality": "",
-        "changeVideoTip": "",
-        "hd": "",
-        "highDefinition": "",
-        "ld": "",
-        "lowDefinition": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
-        "sd": "",
-        "standardDefinition": "",
-        "qualityButtonTip": ""
+        "callQuality": "Samtalskvalitet",
+        "hd": "HD",
+        "highDefinition": "High definition",
+        "labelTooltipVideo": "Nuvarande videkokvalitet",
+        "labelTooltipAudioOnly": "Enbart ljud-läge aktiverat",
+        "ld": "LD",
+        "lowDefinition": "Low definition",
+        "p2pEnabled": "Peer to peer används",
+        "p2pVideoQualityDescription": "I peer to peer-läge kan samtalskvalitet bara anges som \"Högt\" eller \"Enbart ljud\". Andra inställningar kommer inte att slå igenom förän peer to peer-läget avslutas.",
+        "recHighDefinitionOnly": "Föredrar high definition.",
+        "sd": "SD",
+        "standardDefinition": "Standard definition",
+        "qualityButtonTip": "Ändra mottagen videokvalitet"
     },
     "dialOut": {
         "dial": "Ring upp",
         "dialOut": "",
-        "statusMessage": "",
-        "enterPhone": "",
-        "phoneNotAllowed": ""
+        "statusMessage": "är nu __status__",
+        "enterPhone": "Ange telefonnummer",
+        "phoneNotAllowed": "Vi stödjer tyvärr inte den destinationen än!"
     },
     "addPeople": {
         "add": "Lägg till",
-        "noResults": "",
-        "searchPlaceholder": "",
-        "title": "",
-        "failedToAdd": ""
+        "noResults": "Inga sökträffar",
+        "searchPlaceholder": "Sök personer och rum att lägga till",
+        "title": "Lägg till personer i samtal",
+        "failedToAdd": "Misslyckades lägga till användare"
     },
     "inlineDialogFailure": {
-        "msg": "",
-        "retry": "",
-        "support": "",
-        "supportMsg": ""
+        "msg": "Vi slirade lite.",
+        "retry": "Försök igen",
+        "support": "Support",
+        "supportMsg": "Om detta fortsätter hända kontakta"
     },
     "deviceError": {
-        "cameraPermission": "",
-        "microphonePermission": ""
+        "cameraError": "",
+        "microphoneError": "",
+        "cameraPermission": "Fel vid begäran om åtkomst till kamera",
+        "microphonePermission": "Fel vid begäran om åtkomst till mikrofon"
+    },
+    "info": {
+        "copy": "Kopiera länk",
+        "invite": "Bjud in i __app__",
+        "title": "Samtalsinformation",
+        "tooltip": "Få tillgång till information om mötet"
     }
 }
