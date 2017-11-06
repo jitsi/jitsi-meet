@@ -1,18 +1,15 @@
 {
-    "contactlist": "与会者 (__pcount__)",
-    "addParticipants": "分享链接",
-    "roomLocked": "与会者必须输入密码",
-    "roomUnlocked": "任何人都可以通过此链接参加会议",
-    "passwordSetRemotely": "由其他与会者设置",
+    "contactlist": "",
+    "passwordSetRemotely": "",
     "connectionsettings": "连接设置",
     "poweredby": "技术支持",
     "feedback": {
         "average": "",
-        "bad": "",
-        "good": "",
+        "bad": "差",
+        "good": "好",
         "rateExperience": "请评价您的会议体验。",
-        "veryBad": "",
-        "veryGood": ""
+        "veryBad": "非常差",
+        "veryGood": "非常好"
     },
     "inviteUrlDefaultMsg": "您的会议正在被创建。。。",
     "me": "我",
@@ -66,7 +63,7 @@
             "title": "开源"
         },
         "feature4": {
-            "content": "对于使用者和与会者没有人数的限制。 服务器的性能和带宽是唯一的限制因素。",
+            "content": "",
             "title": "不限用户数"
         },
         "feature5": {
@@ -98,10 +95,11 @@
         "title": "__app__ 需要使用您的麦克风和摄像头。"
     },
     "suspendedoverlay": {
-        "title": "",
-        "text": "",
+        "title": "由于您的电脑休眠，视频通话已经中断。",
+        "text": "重新连接",
         "rejoinKeyTitle": "重新加入"
     },
+    "\u0005suspendedoverlay": {},
     "toolbar": {
         "addPeople": "",
         "audioonly": "启用/禁用仅音频模式（节省带宽）",
@@ -121,8 +119,8 @@
         "login": "登录",
         "logout": "登出",
         "dialpad": "开启 / 关闭 拨号盘",
-        "sharedVideoMutedPopup": "您共享的视频已被关闭 <br/> 您可以与其他与会者交谈。",
-        "micMutedPopup": "您的麦克风已被静音 您<br/>可以尽情享受您的共享视频。",
+        "sharedVideoMutedPopup": "",
+        "micMutedPopup": "",
         "talkWhileMutedPopup": "您在尝试发言吗? 当前您已被静音。",
         "unableToUnmutePopup": "正在共享视频的时候您不能解除静音。",
         "cameraDisabled": "摄像头不可用",
@@ -141,7 +139,7 @@
     "bottomtoolbar": {
         "chat": "开启 / 关闭 聊天",
         "filmstrip": "显示 / 隐藏 视频",
-        "contactlist": "查看和邀请与会者"
+        "contactlist": ""
     },
     "chat": {
         "nickname": {
@@ -173,10 +171,9 @@
         "setEmailInput": "输入您的邮箱"
     },
     "videothumbnail": {
-        "editnickname": "点击编辑您的<br/>显示名称",
-        "moderator": "<br/>此会议的拥有者",
-        "videomute": "与会者已经<br/>关闭了摄像头",
-        "mute": "与会者已被静音",
+        "moderator": "",
+        "videomute": "",
+        "mute": "",
         "kick": "踢出",
         "muted": "已静音",
         "domute": "静音",
@@ -203,8 +200,17 @@
         "transport": "传输：",
         "bandwidth": "估计带宽：",
         "na": "会议开始可回到此处查看连接信息",
-        "turn": ""
+        "turn": "",
+        "quality": {
+            "good": "好",
+            "inactive": "未激活",
+            "lost": "",
+            "nonoptimal": "",
+            "poor": ""
+        },
+        "status": "连接中"
     },
+    "\u0005connectionindicator": {},
     "notify": {
         "disconnected": "已断开连接",
         "moderator": "已授权主持人权限！",
@@ -223,32 +229,36 @@
         "add": "添加",
         "allow": "允许",
         "kickMessage": "您已被踢出会议！",
-        "popupError": "您的浏览器禁止弹窗，请到浏览器安全设置里设定允许弹窗后重试。",
+        "popupErrorTitle": "",
+        "popupError": "",
         "passwordErrorTitle": "密码错误",
         "passwordError": "此会议现在受密码保护。只有会议的拥有者可以设定密码。",
         "passwordError2": "此会议现在受密码保护。只有会议的拥有者可以设定密码。",
         "connectError": "发生错误，无法连接至会议！",
         "connectErrorWithMsg": "发生错误，无法连接至会议: __msg__",
-        "incorrectPassword": "密码不正确",
+        "incorrectPassword": "",
         "connecting": "连接中",
         "copy": "复制",
+        "contactSupport": "",
         "error": "错误",
         "createPassword": "创建密码",
         "detectext": "尝试检测桌面共享扩展时发生错误",
-        "failtoinstall": "安装桌面共享扩展失败",
         "failedpermissions": "未能获取使用本地麦克风或摄像头的权限。",
         "conferenceReloadTitle": "不好意思，出错了。",
         "conferenceReloadMsg": "我们试着修复它。重连中__秒",
         "conferenceDisconnectTitle": "你已经断开。",
         "conferenceDisconnectMsg": "需要检查你的网络连接。重新连接中 __秒",
+        "dismiss": "",
         "rejoinNow": "马上重新加入",
-        "maxUsersLimitReached": "已达到会议的最大人数限制，请稍后尝试！",
+        "maxUsersLimitReachedTitle": "",
+        "maxUsersLimitReached": "",
         "lockTitle": "锁定失败",
         "lockMessage": "锁定会议失败。",
         "warning": "警告",
-        "passwordNotSupported": "当前不支持给房间加密码。",
+        "passwordNotSupportedTitle": "",
+        "passwordNotSupported": "",
         "internalErrorTitle": "内部错误",
-        "internalError": "发生以下错误: [setRemoteDescription]",
+        "internalError": "",
         "unableToSwitch": "无法转换视频流。",
         "SLDFailure": "发生错误，无法静音! (SLD故障)",
         "SRDFailure": "发生错误，无法关闭视频! (SRD故障)",
@@ -265,7 +275,8 @@
         "shareVideoLinkError": "请提供正确的youtube链接。",
         "removeSharedVideoTitle": "移除共享的视频",
         "removeSharedVideoMsg": "您确定要移除共享的视频吗？",
-        "alreadySharedVideoMsg": "其他的与会者正在分享视频，同一时间只能有一个人分享视频。",
+        "alreadySharedVideoMsg": "",
+        "alreadySharedVideoTitle": "",
         "WaitingForHost": "等待主持人。。。",
         "WaitForHostMsg": "会议<b>__room__ </b>还没有开始。如果您是主持人请授权开始，否则请等待主持人。",
         "IamHost": "我是主持人。",
@@ -274,7 +285,7 @@
         "retry": "重试",
         "logoutTitle": "登出",
         "logoutQuestion": "你确定要登出并停止会议吗",
-        "sessTerminated": "会话终止",
+        "sessTerminated": "",
         "hungUp": "挂断",
         "joinAgain": "重新加入",
         "Share": "分享",
@@ -284,9 +295,6 @@
         "passwordCheck": "确定要移除密码吗？",
         "passwordMsg": "设定密码来锁定房间",
         "shareLink": "分享此会议的链接",
-        "settings1": "配置您的会议",
-        "settings2": "与会者静音后加入",
-        "settings3": "需要昵称<br/><br/>设定密码来锁定房间：",
         "yourPassword": "输入新的密码",
         "Back": "返回",
         "serviceUnavailable": "服务不可用",
@@ -297,7 +305,7 @@
         "password": "输入密码",
         "userPassword": "用户密码",
         "token": "标识",
-        "tokenAuthFailedTitle": "认证问题",
+        "tokenAuthFailedTitle": "认证失败",
         "tokenAuthFailed": "对不起，您未被允许参加此会议。",
         "displayNameRequired": "需要显示名称",
         "enterDisplayName": "请输入您的显示名称",
@@ -317,7 +325,9 @@
         "doNotShowWarningAgain": "不再显示此警告",
         "doNotShowMessageAgain": "不再显示此信息",
         "permissionDenied": "许可禁止",
-        "screenSharingPermissionDeniedError": "您并未授权分享屏幕。",
+        "screenSharingFailedToInstall": "",
+        "screenSharingFailedToInstallTitle": "",
+        "screenSharingPermissionDeniedError": "",
         "micErrorPresent": "连接到麦克风时发生错误。",
         "cameraErrorPresent": "连接到摄像头时发生错误。",
         "cameraUnsupportedResolutionError": "您的摄像头不支持所需分辨率。",
@@ -329,14 +339,16 @@
         "micPermissionDeniedError": "您未授权使用麦克风，您仍可参加会议但是其他人无法听到，使用地址栏里的摄像头按钮来启动麦克风",
         "micNotFoundError": "未发现麦克风",
         "micConstraintFailedError": "你的麦克风不满足要求。",
-        "micNotSendingData": "麦克风无法使用，请从设置菜单选择其他设备或者重启应用",
-        "cameraNotSendingData": "摄像头无法使用，请检查摄像头是否被占用，从设置菜单选择其他设备或者重启应用。",
+        "micNotSendingDataTitle": "",
+        "micNotSendingData": "",
+        "cameraNotSendingDataTitle": "",
+        "cameraNotSendingData": "",
         "goToStore": "跳转至应用商店",
         "externalInstallationTitle": "需要扩展程序",
         "externalInstallationMsg": "您需要安装桌面共享扩展",
         "inlineInstallationMsg": "您需要安装桌面共享扩展",
         "inlineInstallExtension": "",
-        "muteParticipantTitle": "静音该与会者吗？",
+        "muteParticipantTitle": "",
         "muteParticipantBody": "您无法对他们解除静音，但是他们自己可以随时解除静音。",
         "muteParticipantButton": "静音",
         "remoteControlTitle": "远程桌面控制",
@@ -393,25 +405,31 @@
         "ATTACHED": "已接入"
     },
     "recording": {
-        "pending": "录制中，等待一位与会者加入",
-        "on": "录制中",
-        "off": "录制已停止",
-        "failedToStart": "录制启动失败",
+        "busy": "",
+        "busyTitle": "",
         "buttonTooltip": "开始 / 结束录制",
         "error": "录制失败。请重新尝试。",
-        "unavailable": "录制服务目前不可用。请稍后再试。"
+        "failedToStart": "录制启动失败",
+        "off": "录制已停止",
+        "on": "录制中",
+        "pending": "录制中，等待一位与会者加入",
+        "unavailable": "",
+        "unavailableTitle": ""
     },
+    "\u0005recording": {},
     "liveStreaming": {
-        "pending": "启动流媒体。。。",
+        "busy": "",
+        "busyTitle": "",
+        "buttonTooltip": "",
+        "error": "",
+        "failedToStart": "",
+        "off": "",
         "on": "流媒体直播中",
-        "off": "流媒体直播已结束",
-        "unavailable": "流媒体直播服务当前不可用，请稍后再试。",
-        "failedToStart": "流媒体直播启动失败",
-        "buttonTooltip": "启动 / 停止流媒体直播",
-        "streamIdRequired": "请填写媒体流ID来启动流媒体直播。",
+        "pending": "启动流媒体。。。",
+        "streamIdRequired": "",
         "streamIdHelp": "在哪里找到这个",
-        "error": "流媒体直播失败。请重试。",
-        "busy": "所有的录制器都在忙。请稍后重试。"
+        "unavailable": "",
+        "unavailableTitle": ""
     },
     "speakerStats": {
         "hours": "__count__h",
@@ -436,15 +454,17 @@
         "hidePassword": "隐藏密码",
         "inviteTo": "邀请人到 __会议名称__",
         "invitedYouTo": "",
+        "invitePeople": "",
         "locked": "本次呼叫被锁定，新的呼叫必须有链接并输入口令后加入。",
         "showPassword": "查看口令",
         "unlocked": "本次呼叫已被锁定，用这个链接可以加入。"
     },
     "videoStatus": {
         "callQuality": "",
-        "changeVideoTip": "",
         "hd": "高清",
         "highDefinition": "",
+        "labelTooltipVideo": "",
+        "labelTooltipAudioOnly": "",
         "ld": "",
         "lowDefinition": "",
         "p2pEnabled": "",
@@ -456,7 +476,7 @@
     },
     "dialOut": {
         "dial": "拨号",
-        "dialOut": "呼叫电话号码",
+        "dialOut": "",
         "statusMessage": "",
         "enterPhone": "输入电话号码",
         "phoneNotAllowed": "还不支持这个目标！抱歉！"
@@ -475,7 +495,15 @@
         "supportMsg": ""
     },
     "deviceError": {
+        "cameraError": "",
+        "microphoneError": "",
         "cameraPermission": "",
         "microphonePermission": ""
+    },
+    "info": {
+        "copy": "",
+        "invite": "",
+        "title": "",
+        "tooltip": ""
     }
 }
