@@ -1,9 +1,10 @@
 /**
- * The type of (redux) action which signals that a new aspect ratio has been
- * detected by the app.
+ * The type of (redux) action which sets the aspect ratio of the app's user
+ * interface.
+ *
  * {
- *      type: SET_ASPECT_RATIO,
- *      aspectRatio: Symbol
+ *     type: SET_ASPECT_RATIO,
+ *     aspectRatio: Symbol
  * }
  */
 export const SET_ASPECT_RATIO = Symbol('SET_ASPECT_RATIO');

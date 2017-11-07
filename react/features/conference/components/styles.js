@@ -47,8 +47,8 @@ export default createStyleSheet({
     toolboxAndFilmstripContainer: {
         bottom: 0,
         flexDirection: 'column',
-        left: 0,
         justifyContent: 'flex-end',
+        left: 0,
         position: 'absolute',
         right: 0,
         top: 0

@@ -51,20 +51,21 @@ class Filmstrip extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
+        const isNarrowAspectRatio_ = isNarrowAspectRatio(this);
         const filmstripStyle
-            = isNarrowAspectRatio(this)
-                ? styles.filmstripNarrow : styles.filmstripWide;
+            = isNarrowAspectRatio_
+                ? styles.filmstripNarrow
+                : styles.filmstripWide;
 
         return (
             <Container
                 style = { filmstripStyle }
-                visible = { this.props._visible } >
+                visible = { this.props._visible }>
                 <ScrollView
-                    horizontal = { isNarrowAspectRatio(this) }
+                    horizontal = { isNarrowAspectRatio_ }
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }>
                     {
-
                         /* eslint-disable react/jsx-wrap-multilines */
 
                         this._sort(this.props._participants)
@@ -138,11 +139,9 @@ function _mapStateToProps(state) {
         _participants: participants,
 
         /**
-         * The indicator which determines whether the filmstrip is visible.
-         *
-         * XXX The React Component Filmstrip is used on mobile only at the time
-         * of this writing and on mobile the filmstrip is when there are at
-         * least 2 participants in the conference (including the local one).
+         * The indicator which determines whether the filmstrip is visible. The
+         * mobile/react-native Filmstrip is visible when there are at least 2
+         * participants in the conference (including the local one).
          *
          * @private
          * @type {boolean}

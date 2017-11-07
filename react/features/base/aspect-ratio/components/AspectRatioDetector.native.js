@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { calculateNewAspectRatio } from '../actions';
+import { setAspectRatio } from '../actions';
 import styles from './styles';
 
 /**
@@ -25,7 +25,7 @@ class AspectRatioDetector extends Component {
         /**
          * Any nested components.
          */
-        children: PropTypes.object
+        children: PropTypes.node
     };
 
     /**
@@ -37,9 +37,10 @@ class AspectRatioDetector extends Component {
         return (
             <View
                 onLayout = { this.props._onLayout }
-                style = { styles.aspectRatioDetectorStyle } >
-                {this.props.children}
-            </View>);
+                style = { styles.aspectRatioDetector } >
+                { this.props.children }
+            </View>
+        );
     }
 }
 
@@ -58,15 +59,13 @@ function _mapDispatchToProps(dispatch) {
          * Handles the "on layout" View's event and dispatches aspect ratio
          * changed action.
          *
-         * @param {{ width: number, height: number }} event - The "on layout"
-         * event structure passed by react-native.
-         * @returns {void}
+         * @param {Object} event - The "on layout" event object/structure passed
+         * by react-native.
          * @private
+         * @returns {void}
          */
-        _onLayout(event) {
-            const { width, height } = event.nativeEvent.layout;
-
-            dispatch(calculateNewAspectRatio(width, height));
+        _onLayout({ nativeEvent: { layout: { height, width } } }) {
+            dispatch(setAspectRatio(width, height));
         }
     };
 }

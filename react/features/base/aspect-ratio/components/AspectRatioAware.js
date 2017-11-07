@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from '../constants';
 
 /**
- * Checks if given React component decorated in {@link AspectRatioAwareWrapper}
- * has currently the {@link ASPECT_RATIO_NARROW} set in the aspect ratio
- * property.
+ * Determines whether a specific React {@code Component} decorated into an
+ * {@link AspectRatioAware} has {@link ASPECT_RATIO_NARROW} as the value of its
+ * {@code aspectRatio} React prop.
  *
- * @param {AspectRatioAwareWrapper} component - A
- * {@link AspectRatioAwareWrapper} which has <tt>aspectRation</tt> property.
+ * @param {AspectRatioAware} component - An {@link AspectRatioAware} which may
+ * have an {@code aspectRatio} React prop.
  * @returns {boolean}
  */
 export function isNarrowAspectRatio(component: React$Component<*>) {
@@ -62,13 +62,13 @@ export function makeAspectRatioAware(
 }
 
 /**
- * Maps Redux state to {@link AspectRatioAwareWrapper} properties.
+ * Maps (parts of) the redux state to {@link AspectRatioAware} props.
  *
- * @param {Object} state - The Redux whole state.
+ * @param {Object} state - The whole redux state.
+ * @private
  * @returns {{
  *      aspectRatio: Symbol
  * }}
- * @private
  */
 function _mapStateToProps(state) {
     return {

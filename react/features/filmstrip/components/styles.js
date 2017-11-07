@@ -2,11 +2,11 @@ import { Platform } from '../../base/react';
 import { BoxModel, ColorPalette } from '../../base/styles';
 
 /**
- * The base filmstrip style shared between narrow and wide versions.
+ * The base style of {@link Filmstrip} shared between narrow and wide versions.
  */
-const filmstripBaseStyle = {
-    flexGrow: 0,
-    flexDirection: 'column'
+const filmstrip = {
+    flexDirection: 'column',
+    flexGrow: 0
 };
 
 /**
@@ -48,11 +48,11 @@ export default {
     },
 
     /**
-     * The style of the narrow filmstrip version which displays thumbnails
-     * in a row at the bottom of the screen.
+     * The style of the narrow {@link Filmstrip} version which displays
+     * thumbnails in a row at the bottom of the screen.
      */
     filmstripNarrow: {
-        ...filmstripBaseStyle,
+        ...filmstrip,
         alignItems: 'flex-end',
         height: 90,
         marginBottom: BoxModel.margin,
@@ -61,11 +61,11 @@ export default {
     },
 
     /**
-     * The style of the wide version of the filmstrip which appears as a column
-     * on the short side of the screen.
+     * The style of the wide {@link Filmstrip} version which displays thumbnails
+     * in a column on the short size of the screen.
      */
     filmstripWide: {
-        ...filmstripBaseStyle,
+        ...filmstrip,
         bottom: BoxModel.margin,
         left: BoxModel.margin,
         position: 'absolute',

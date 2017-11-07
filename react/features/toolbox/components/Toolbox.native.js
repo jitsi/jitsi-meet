@@ -123,12 +123,14 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const toolboxStyle
+            = isNarrowAspectRatio(this)
+                ? styles.toolboxNarrow
+                : styles.toolboxWide;
+
         return (
             <Container
-                style = {
-                    isNarrowAspectRatio(this)
-                        ? styles.toolbarContainerNarrow
-                        : styles.toolbarContainerWide }
+                style = { toolboxStyle }
                 visible = { this.props._visible } >
                 { this._renderToolbars() }
             </Container>
@@ -311,23 +313,17 @@ class Toolbox extends Component {
     }
 
     /**
-     * Renders the primary and the secondary toolbars in the order depending on
-     * the current aspect ratio.
+     * Renders the primary and the secondary toolbars.
      *
-     * @returns {[ReactElement, ReactElement]}
      * @private
+     * @returns {[ReactElement, ReactElement]}
      */
     _renderToolbars() {
-        if (isNarrowAspectRatio(this)) {
-            return [
-                this._renderSecondaryToolbar(),
-                this._renderPrimaryToolbar()
-            ];
-        }
-
-        return [ this._renderPrimaryToolbar(), this._renderSecondaryToolbar() ];
+        return [
+            this._renderSecondaryToolbar(),
+            this._renderPrimaryToolbar()
+        ];
     }
-
 }
 
 /**

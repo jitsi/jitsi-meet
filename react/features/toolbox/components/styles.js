@@ -139,19 +139,19 @@ export default createStyleSheet({
      * spans from the top of the screen to the top of the filmstrip located at
      * the bottom of the screen.
      */
-    toolbarContainerNarrow: {
+    toolboxNarrow: {
         flexDirection: 'column',
         flexGrow: 1
     },
 
     /**
      * The style of the root/top-level {@link Container} of {@link Toolbox}
-     * which contains {@link Toolbar}s. This is wide layout version which
-     * spans from the top to the bottom of the screen and is located to
-     * the right of the filmstrip which is displayed as a column on the left
-     * side of the screen.
+     * which contains {@link Toolbar}s. This is wide layout version which spans
+     * from the top to the bottom of the screen and is located to the right of
+     * the filmstrip which is displayed as a column on the left side of the
+     * screen.
      */
-    toolbarContainerWide: {
+    toolboxWide: {
         bottom: 0,
         left: 0,
         position: 'absolute',

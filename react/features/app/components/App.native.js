@@ -89,16 +89,17 @@ export class App extends AbstractApp {
     }
 
     /**
-     * Overrides the super method to inject {@link AspectRatioDetector} as
-     * the top most component.
+     * Injects {@link AspectRatioDetector} in order to detect the aspect ratio
+     * of this {@code App}'s user interface and afford {@link AspectRatioAware}.
      *
      * @override
      */
     _createElement(component, props) {
         return (
             <AspectRatioDetector>
-                {super._createElement(component, props)}
-            </AspectRatioDetector>);
+                { super._createElement(component, props) }
+            </AspectRatioDetector>
+        );
     }
 
     /**

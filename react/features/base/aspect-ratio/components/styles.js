@@ -1,14 +1,14 @@
-import { createStyleSheet, fixAndroidViewClipping } from '../../styles/index';
+import { createStyleSheet } from '../../styles';
 
 /**
- * The styles of the feature app.
+ * The styles of the feature base/aspect-ratio.
  */
 export default createStyleSheet({
     /**
-     * The style for {@link AspectRatioDetector} root view used on react-native.
+     * The style of {@link AspectRatioDetector} used on react-native.
      */
-    aspectRatioDetectorStyle: fixAndroidViewClipping({
+    aspectRatioDetector: {
         alignSelf: 'stretch',
         flex: 1
-    })
+    }
 });
