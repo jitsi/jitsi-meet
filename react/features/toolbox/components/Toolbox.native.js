@@ -232,7 +232,9 @@ class Toolbox extends Component {
         /* eslint-disable react/jsx-handler-names */
 
         return (
-            <View style = { styles.primaryToolbar }>
+            <View
+                key = 'primaryToolbar'
+                style = { styles.primaryToolbar }>
                 <ToolbarButton
                     iconName = { audioButtonStyles.iconName }
                     iconStyle = { audioButtonStyles.iconStyle }
@@ -275,7 +277,9 @@ class Toolbox extends Component {
         /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
         return (
-            <View style = { styles.secondaryToolbar }>
+            <View
+                key = 'secondaryToolbar'
+                style = { styles.secondaryToolbar }>
                 <ToolbarButton
                     disabled = { audioOnly || videoMuted }
                     iconName = 'switch-camera'
