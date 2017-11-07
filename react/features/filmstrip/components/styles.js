@@ -1,5 +1,5 @@
 import { Platform } from '../../base/react';
-import { BoxModel, ColorPalette } from '../../base/styles';
+import { ColorPalette } from '../../base/styles';
 
 /**
  * The base style of {@link Filmstrip} shared between narrow and wide versions.
@@ -54,10 +54,7 @@ export default {
     filmstripNarrow: {
         ...filmstrip,
         alignItems: 'flex-end',
-        height: 90,
-        marginBottom: BoxModel.margin,
-        marginLeft: BoxModel.margin,
-        marginRight: BoxModel.margin
+        height: 90
     },
 
     /**
@@ -66,10 +63,10 @@ export default {
      */
     filmstripWide: {
         ...filmstrip,
-        bottom: BoxModel.margin,
-        left: BoxModel.margin,
+        bottom: 0,
+        left: 0,
         position: 'absolute',
-        top: BoxModel.margin
+        top: 0
     },
 
     /**

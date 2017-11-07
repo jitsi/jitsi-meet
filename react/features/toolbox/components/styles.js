@@ -111,8 +111,8 @@ export default createStyleSheet({
         ..._toolbar,
         bottom: 0,
         flexDirection: 'column',
-        right: BoxModel.margin,
-        top: BoxModel.margin * 2
+        right: 0,
+        top: 0
     },
 
     /**

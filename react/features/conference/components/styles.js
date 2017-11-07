@@ -1,4 +1,5 @@
 import {
+    BoxModel,
     ColorPalette,
     createStyleSheet,
     fixAndroidViewClipping
@@ -41,16 +42,21 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the view which expands over the whole conference area and
-     * splits it between both the filmstrip and the toolbox.
+     * The style of the {@link View} which expands over the whole
+     * {@link Conference} area and splits it between the {@link Filmstrip} and
+     * the {@link Toolbox}.
      */
     toolboxAndFilmstripContainer: {
-        bottom: 0,
+        bottom: BoxModel.margin,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        left: 0,
+        left: BoxModel.margin,
         position: 'absolute',
-        right: 0,
-        top: 0
+        right: BoxModel.margin,
+
+        // Both on Android and iOS there is the status bar which may be visible.
+        // On iPhone X there is the notch. In the two cases BoxModel.margin is
+        // not enough.
+        top: BoxModel.margin * 3
     }
 });
