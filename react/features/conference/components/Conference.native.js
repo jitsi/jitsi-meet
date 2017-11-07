@@ -248,7 +248,10 @@ class Conference extends Component {
         const toolboxVisible = !this.props._toolboxVisible;
 
         this.props._setToolboxVisible(toolboxVisible);
-        this._setToolboxTimeout(toolboxVisible);
+
+        // XXX If the user taps to toggle the visibility of the Toolbox, then no
+        // automatic toggling of the visibility should happen.
+        this._clearToolboxTimeout();
     }
 
     /**
