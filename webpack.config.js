@@ -172,7 +172,12 @@ module.exports = [
     // JitsiMeetExternalAPI).
     Object.assign({}, config, {
         entry: {
-            'external_api': './modules/API/external/index.js'
+            'external_api': [
+
+                // XXX Required by at least IE11 at the time of this writing.
+                'babel-polyfill',
+                './modules/API/external/index.js'
+            ]
         },
         output: Object.assign({}, config.output, {
             library: 'JitsiMeetExternalAPI',
