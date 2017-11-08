@@ -27,8 +27,11 @@
         value = value ? Math.round(parseFloat(value)) : null;
         const label = data.label || '';
 
-        ga('send', 'event', 'jit.si',
-            `${action}.${data.browserName}`, label, value);
+        // Intentionally use string concatenation as analytics needs to work on
+        // IE but this file does not go through babel.
+        // eslint-disable-next-line prefer-template
+        ga('send', 'event', 'jit.si', action + '.' + data.browserName,
+            label, value);
     };
 
     if (typeof ctx.JitsiMeetJS === 'undefined') {
