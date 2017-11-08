@@ -138,6 +138,7 @@ class DisplayName extends Component {
                     onKeyDown = { this._onKeyDown }
                     placeholder = { t('defaultNickname') }
                     ref = { this._setNameInputRef }
+                    spellCheck = { 'false' }
                     type = 'text'
                     value = { this.state.editDisplayNameValue } />
             );
