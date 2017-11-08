@@ -2,16 +2,13 @@
     "contactlist": "__count__ Member",
     "contactlist_plural": "__count__ Members",
     "passwordSetRemotely": "set by another member",
-    "connectionsettings": "Connection Settings",
     "poweredby": "powered by",
-    "feedback": "Give us your feedback",
     "inviteUrlDefaultMsg": "Your conference is currently being created...",
     "me": "me",
     "speaker": "Speaker",
     "raisedHand": "Would like to speak",
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
-    "callingName": "__name__",
     "audioOnly": {
         "audioOnly": "Audio only",
         "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode"
