@@ -79,7 +79,7 @@ const VideoLayout = {
         // the local video thumb maybe one pixel
         this.resizeThumbnails(false, true);
 
-        this._onContactClicked = onContactClicked.bind(this);
+        this.handleVideoThumbClicked = this.handleVideoThumbClicked.bind(this);
 
         this.registerListeners();
     },
@@ -105,7 +105,7 @@ const VideoLayout = {
         eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED,
             onLocalFlipXChanged);
         eventEmitter.addListener(UIEvents.CONTACT_CLICKED,
-            this._onContactClicked);
+            this.handleVideoThumbClicked);
     },
 
     /**
@@ -116,7 +116,7 @@ const VideoLayout = {
     unregisterListeners() {
         if (this._onContactClicked) {
             eventEmitter.removeListener(UIEvents.CONTACT_CLICKED,
-                this._onContactClicked);
+                this.handleVideoThumbClicked);
         }
     },
 
@@ -1205,41 +1205,5 @@ const VideoLayout = {
         );
     }
 };
-
-/**
- * On contact list item clicked.
- */
-function onContactClicked(id) {
-    if (APP.conference.isLocalId(id)) {
-        $('#localVideoContainer').click();
-
-        return;
-    }
-
-    const remoteVideo = remoteVideos[id];
-
-    if (remoteVideo && remoteVideo.hasVideo()) {
-        // It is not always the case that a videoThumb exists (if there is
-        // no actual video).
-        if (remoteVideo.hasVideoStarted()) {
-            // We have a video src, great! Let's update the large video
-            // now.
-            VideoLayout.handleVideoThumbClicked(id);
-        } else {
-
-            // If we don't have a video src for jid, there's absolutely
-            // no point in calling handleVideoThumbClicked; Quite
-            // simply, it won't work because it needs an src to attach
-            // to the large video.
-            //
-            // Instead, we trigger the pinned endpoint changed event to
-            // let the bridge adjust its lastN set for myjid and store
-            // the pinned user in the lastNPickupId variable to be
-            // picked up later by the lastN changed event handler.
-            // eslint-disable-next-line no-invalid-this
-            this.pinParticipant(remoteVideo.id);
-        }
-    }
-}
 
 export default VideoLayout;
