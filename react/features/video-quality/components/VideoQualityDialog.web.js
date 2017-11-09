@@ -183,7 +183,7 @@ class VideoQualityDialog extends Component {
 
         return (
             <InlineMessage
-                title = { t('videoStatus.audioOnlyLocked') }>
+                title = { t('videoStatus.onlyAudioAvailable') }>
                 { t('videoStatus.onlyAudioSupported') }
             </InlineMessage>
         );

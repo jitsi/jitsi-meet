@@ -466,7 +466,6 @@
         "unlocked": "This call is unlocked. Any new caller with the link may join the call."
     },
     "videoStatus": {
-        "audioOnlyLocked": "Locked in audio only mode",
         "callQuality": "Call Quality",
         "hd": "HD",
         "highDefinition": "High definition",
@@ -474,7 +473,8 @@
         "labelTooltipAudioOnly":  "Audio-only mode enabled",
         "ld": "LD",
         "lowDefinition": "Low definition",
-        "onlyAudioSupported": "Only the sending and receiving of audio is currently supported; video is not supported.",
+        "onlyAudioAvailable": "Only audio is available",
+        "onlyAudioSupported": "We only support audio in this browser.",
         "p2pEnabled": "Peer to Peer Enabled",
         "p2pVideoQualityDescription": "In peer to peer mode, received call quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
         "recHighDefinitionOnly": "Will prefer high definition.",
