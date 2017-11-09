@@ -1,25 +1,28 @@
-#keyboard-shortcuts {
-    display: none;
-    position: absolute;
-    bottom: 20px;
-    left: $defaultToolbarSize;
-    overflow: hidden;
-    padding: 20px;
-    margin-left: 10px;
-    z-index: $zindex10;
-    border-radius: $borderRadius;
-    background-attachment: scroll;
-    background-size: auto auto;
-    color: rgba(255, 255, 255, .8);
-    background-color: rgba(0, 0, 0, .8);
-}
-
-#keyboard-shortcuts .item-action {
-    color: #209EFF;
-    font-size: 14pt;
-    padding-right: 5px;
-}
-
 #keyboard-shortcuts-list {
     list-style-type: none;
+}
+
+.regular-key {
+    display: table-cell;
+    width: 25px;
+    height: 20px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    font-family: $baseFontFamily;
+    color: $defaultDarkColor;
+    font-size: 12px;
+}
+
+.shortcuts-list {
+    padding: 0;
+
+    &__description {
+        margin-left: em(16, 14);
+        vertical-align: top;
+    }
+
+    &__item {
+        margin-bottom: em(7, 14);
+    }
 }
