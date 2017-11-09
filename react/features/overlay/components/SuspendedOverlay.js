@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 
 import { translate, translateToHTML } from '../../base/i18n';
 
+import AbstractSuspendedOverlay from './AbstractSuspendedOverlay';
 import OverlayFrame from './OverlayFrame';
 import ReloadButton from './ReloadButton';
 
@@ -10,26 +10,12 @@ import ReloadButton from './ReloadButton';
  * Implements a React Component for suspended overlay. Shown when a suspend is
  * detected.
  */
-class SuspendedOverlay extends Component {
-    /**
-     * SuspendedOverlay component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func
-    };
-
+class SuspendedOverlay extends AbstractSuspendedOverlay {
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
+     * @override
      * @returns {ReactElement|null}
      */
     render() {

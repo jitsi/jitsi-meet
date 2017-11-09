@@ -1,43 +1,23 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
 
+import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
+    from './AbstractUserMediaPermissionsOverlay';
 import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
 
 /**
  * Implements a React Component for overlay with guidance how to proceed with
  * gUM prompt. This component will be displayed only for filmstrip only mode.
  */
-class UserMediaPermissionsFilmstripOnlyOverlay extends Component {
-    /**
-     * UserMediaPermissionsFilmstripOnlyOverlay component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The browser which is used currently. The text is different for every
-         * browser.
-         *
-         * @public
-         * @type {string}
-         */
-        browser: PropTypes.string,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func
-    };
-
+class UserMediaPermissionsFilmstripOnlyOverlay
+    extends AbstractUserMediaPermissionsOverlay {
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
+     * @override
      * @returns {ReactElement|null}
      */
     render() {
@@ -66,4 +46,5 @@ class UserMediaPermissionsFilmstripOnlyOverlay extends Component {
     }
 }
 
-export default translate(UserMediaPermissionsFilmstripOnlyOverlay);
+export default translate(
+    connect(abstractMapStateToProps)(UserMediaPermissionsFilmstripOnlyOverlay));

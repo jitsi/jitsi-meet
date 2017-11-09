@@ -8,6 +8,7 @@ import JitsiMeetJS from './_';
 
 declare var APP: Object;
 
+const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 
 /**
@@ -53,10 +54,34 @@ export function isAnalyticsEnabled(stateful: Function | Object) {
 }
 
 /**
+ * Determines whether a specific JitsiConferenceErrors instance indicates a
+ * fatal JitsiConference error.
+ *
+ * FIXME Figure out the category of errors defined by the function and describe
+ * that category. I've currently named the category fatal because it appears to
+ * be used in the cases of unrecoverable errors that necessitate a reload.
+ *
+ * @param {Object|string} error - The JitsiConferenceErrors instance to
+ * categorize/classify or an Error-like object.
+ * @returns {boolean} True if the specified JitsiConferenceErrors instance
+ * indicates a fatal JitsiConference error; otherwise, false.
+ */
+export function isFatalJitsiConferenceError(error: Object | string) {
+    if (typeof error !== 'string') {
+        error = error.name; // eslint-disable-line no-param-reassign
+    }
+
+    return (
+        error === JitsiConferenceErrors.FOCUS_DISCONNECTED
+            || error === JitsiConferenceErrors.FOCUS_LEFT
+            || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
+}
+
+/**
  * Determines whether a specific JitsiConnectionErrors instance indicates a
  * fatal JitsiConnection error.
  *
- * FIXME Figure out the category of errors defined by the fucntion and describe
+ * FIXME Figure out the category of errors defined by the function and describe
  * that category. I've currently named the category fatal because it appears to
  * be used in the cases of unrecoverable errors that necessitate a reload.
  *

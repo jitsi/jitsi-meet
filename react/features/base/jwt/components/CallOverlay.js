@@ -78,6 +78,18 @@ class CallOverlay extends Component<*, *> {
     };
 
     /**
+     * Check if this overlay needs to be rendered. This function will be called
+     * by the {@code OverlayContainer}.
+     *
+     * @param {Object} state - The redux state.
+     * @returns {boolean} - True if this overlay needs to be rendered, false
+     * otherwise.
+     */
+    static needsRender(state) {
+        return state['features/base/jwt'].callOverlayVisible;
+    }
+
+    /**
      * Initializes a new {@code CallOverlay} instance.
      *
      * @param {Object} props - The read-only React {@link Component} props with

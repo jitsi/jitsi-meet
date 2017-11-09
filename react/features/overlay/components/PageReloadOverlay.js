@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 
-import AbstractPageReloadOverlay from './AbstractPageReloadOverlay';
+import AbstractPageReloadOverlay, { abstractMapStateToProps }
+    from './AbstractPageReloadOverlay';
 import OverlayFrame from './OverlayFrame';
 
 /**
@@ -40,4 +41,4 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
     }
 }
 
-export default translate(connect()(PageReloadOverlay));
+export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));

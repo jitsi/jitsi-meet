@@ -3,6 +3,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import {
+    isFatalJitsiConferenceError,
+    isFatalJitsiConnectionError
+} from '../../base/lib-jitsi-meet';
 import { randomInt } from '../../base/util';
 
 import { _reloadNow } from '../actions';
@@ -83,6 +87,25 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
          * @type {string}
          */
         title: string
+    }
+
+    /**
+     * Check if this overlay needs to be rendered. This function will be called
+     * by the {@code OverlayContainer}.
+     *
+     * @param {Object} state - The redux state.
+     * @returns {boolean} - True if this overlay needs to be rendered, false
+     * otherwise.
+     */
+    static needsRender(state) {
+        const conferenceError = state['features/base/conference'].error;
+        const connectionError = state['features/base/connection'].error;
+
+        return (
+            (connectionError && isFatalJitsiConnectionError(connectionError))
+                || (conferenceError
+                    && isFatalJitsiConferenceError(conferenceError))
+        );
     }
 
     /**
@@ -214,4 +237,24 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
             </div>
         );
     }
+}
+
+/**
+ * Maps (parts of) the redux state to the associated component's props.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {{
+ *      isNetworkFailure: boolean,
+ *      reason: string
+ * }}
+ * @protected
+ */
+export function abstractMapStateToProps(state: Object) {
+    const conferenceError = state['features/base/conference'].error;
+    const connectionError = state['features/base/connection'].error;
+
+    return {
+        isNetworkFailure: Boolean(connectionError),
+        reason: (connectionError || conferenceError).message
+    };
 }
