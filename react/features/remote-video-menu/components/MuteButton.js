@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 
 import { sendAnalyticsEvent } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { muteRemoteParticipant } from '../../base/participants';
+import { openDialog } from '../../base/dialog';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import MuteRemoteParticipantDialog from './MuteRemoteParticipantDialog';
 
 /**
  * Implements a React {@link Component} which displays a button for audio muting
@@ -105,7 +106,7 @@ class MuteButton extends Component {
             }
         );
 
-        dispatch(muteRemoteParticipant(participantID));
+        dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
 
         if (onClick) {
             onClick();

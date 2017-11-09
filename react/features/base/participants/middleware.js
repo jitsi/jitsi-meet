@@ -27,6 +27,8 @@ declare var APP: Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const { conference } = store.getState()['features/base/conference'];
+
     switch (action.type) {
     case CONFERENCE_JOINED:
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
@@ -37,29 +39,11 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case KICK_PARTICIPANT:
-        if (typeof APP !== 'undefined') {
-            APP.UI.emitEvent(UIEvents.USER_KICKED, action.id);
-        }
+        conference.kickParticipant(action.id);
         break;
 
     case MUTE_REMOTE_PARTICIPANT:
-        if (typeof APP !== 'undefined') {
-            APP.UI.messageHandler.openTwoButtonDialog({
-                titleKey: 'dialog.muteParticipantTitle',
-                msgString:
-                    '<div data-i18n="dialog.muteParticipantBody"></div>',
-                leftButtonKey: 'dialog.muteParticipantButton',
-                dontShowAgain: {
-                    id: 'dontShowMuteParticipantDialog',
-                    textKey: 'dialog.doNotShowMessageAgain',
-                    checked: true,
-                    buttonValues: [ true ]
-                },
-                submitFunction: () => {
-                    APP.UI.emitEvent(UIEvents.REMOTE_AUDIO_MUTED, action.id);
-                }
-            });
-        }
+        conference.muteParticipant(action.id);
         break;
 
     // TODO Remove this middleware when the local display name update flow is
