@@ -40,14 +40,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case KICK_PARTICIPANT:
         conference.kickParticipant(action.id);
-
         break;
 
-    case MUTE_REMOTE_PARTICIPANT: {
+    case MUTE_REMOTE_PARTICIPANT:
         conference.muteParticipant(action.id);
-
         break;
-    }
 
     // TODO Remove this middleware when the local display name update flow is
     // fully brought into redux.

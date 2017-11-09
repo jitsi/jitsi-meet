@@ -2165,14 +2165,6 @@ export default {
             APP.UI.setSubject(subject);
         });
 
-        APP.UI.addListener(UIEvents.USER_KICKED, id => {
-            room.kickParticipant(id);
-        });
-
-        APP.UI.addListener(UIEvents.REMOTE_AUDIO_MUTED, id => {
-            room.muteParticipant(id);
-        });
-
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);
         });
