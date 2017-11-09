@@ -1,28 +1,10 @@
-#keyboard-shortcuts-list {
-    list-style-type: none;
-}
-
-.regular-key {
-    display: table-cell;
-    width: 25px;
-    height: 20px;
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-    font-family: $baseFontFamily;
-    color: $defaultDarkColor;
-    font-size: 12px;
-}
-
 .shortcuts-list {
+    list-style-type: none;
     padding: 0;
-
-    &__description {
-        margin-left: em(16, 14);
-        vertical-align: top;
-    }
 
     &__item {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: em(7, 14);
     }
 }

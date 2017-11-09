@@ -25,6 +25,7 @@
     "@atlaskit/icon": "10.0.0",
     "@atlaskit/inline-dialog": "5.0.2",
     "@atlaskit/inline-message": "3.0.1",
+    "@atlaskit/lozenge": "3.4.2",
     "@atlaskit/modal-dialog": "2.6.0",
     "@atlaskit/multi-select": "7.1.3",
     "@atlaskit/spinner": "4.0.0",

@@ -1,3 +1,4 @@
+import Lozenge from '@atlaskit/lozenge';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -74,13 +75,13 @@ class KeyboardShortcutsDialog extends Component {
             <li
                 className = 'shortcuts-list__item'
                 key = { keyboardKey }>
-                <span className = 'item-action'>
-                    <kbd className = 'aui-label regular-key'>
-                        { keyboardKey }
-                    </kbd>
-                </span>
                 <span className = 'shortcuts-list__description'>
                     { this.props.t(translationKey) }
+                </span>
+                <span className = 'item-action'>
+                    <Lozenge isBold = { true }>
+                        { keyboardKey }
+                    </Lozenge>
                 </span>
             </li>
         );
