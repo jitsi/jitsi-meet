@@ -102,6 +102,7 @@ function _conferenceFailed(state, { conference, error }) {
     return assign(state, {
         authRequired,
         conference: undefined,
+        error,
         joining: undefined,
         leaving: undefined,
 
@@ -224,7 +225,10 @@ function _conferenceLeft(state, { conference }) {
  * reduction of the specified action.
  */
 function _conferenceWillJoin(state, { conference }) {
-    return set(state, 'joining', conference);
+    return assign(state, {
+        error: undefined,
+        joining: conference
+    });
 }
 
 /**
