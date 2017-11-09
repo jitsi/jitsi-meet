@@ -29,8 +29,7 @@ import {
     EMAIL_COMMAND,
     lockStateChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    toggleAudioOnly
+    sendLocalParticipant
 } from './react/features/base/conference';
 import { updateDeviceList } from './react/features/base/devices';
 import {
@@ -553,11 +552,6 @@ export default {
         );
 
         let tryCreateLocalTracks;
-
-        // Enable audio only mode
-        if (config.startAudioOnly) {
-            APP.store.dispatch(toggleAudioOnly());
-        }
 
         // FIXME is there any simpler way to rewrite this spaghetti below ?
         if (options.startScreenSharing) {

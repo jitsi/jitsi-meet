@@ -10,6 +10,7 @@ import {
     VIDEO_QUALITY_LEVELS
 } from '../../base/conference';
 import { translate } from '../../base/i18n';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -47,6 +48,12 @@ class VideoQualityDialog extends Component {
          * from remote participants.
          */
         _receiveVideoQuality: PropTypes.number,
+
+        /**
+         * Whether or not displaying video is supported in the current
+         * environment. If false, the slider will be disabled.
+         */
+        _videoSupported: PropTypes.bool,
 
         /**
          * Invoked to request toggling of audio only mode.
@@ -116,17 +123,26 @@ class VideoQualityDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _p2p, t } = this.props;
+        const { _audioOnly, _p2p, _videoSupported, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
-        const showP2PWarning = _p2p && !_audioOnly;
+
+        let classNames = 'video-quality-dialog';
+        let warning = null;
+
+        if (!_videoSupported) {
+            classNames += ' video-not-supported';
+            warning = this._renderAudioOnlyLockedMessage();
+        } else if (_p2p && !_audioOnly) {
+            warning = this._renderP2PMessage();
+        }
 
         return (
-            <div className = 'video-quality-dialog'>
+            <div className = { classNames }>
                 <h3 className = 'video-quality-dialog-title'>
                     { t('videoStatus.callQuality') }
                 </h3>
-                <div className = { showP2PWarning ? '' : 'hide-warning' }>
-                    { this._renderP2PMessage() }
+                <div className = { warning ? '' : 'hide-warning' }>
+                    { warning }
                 </div>
                 <div className = 'video-quality-dialog-contents'>
                     <div className = 'video-quality-dialog-slider-container'>
@@ -136,6 +152,7 @@ class VideoQualityDialog extends Component {
                            */ }
                         <input
                             className = 'video-quality-dialog-slider'
+                            disabled = { !_videoSupported }
                             max = { this._sliderOptions.length - 1 }
                             min = '0'
                             onChange = { this._onSliderChange }
@@ -151,6 +168,24 @@ class VideoQualityDialog extends Component {
                     </div>
                 </div>
             </div>
+        );
+    }
+
+    /**
+     * Creates a React Element for notifying that the browser is in audio only
+     * and cannot be changed.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderAudioOnlyLockedMessage() {
+        const { t } = this.props;
+
+        return (
+            <InlineMessage
+                title = { t('videoStatus.onlyAudioAvailable') }>
+                { t('videoStatus.onlyAudioSupported') }
+            </InlineMessage>
         );
     }
 
@@ -330,7 +365,8 @@ function _mapStateToProps(state) {
     return {
         _audioOnly: audioOnly,
         _p2p: p2p,
-        _receiveVideoQuality: receiveVideoQuality
+        _receiveVideoQuality: receiveVideoQuality,
+        _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo()
     };
 }
 

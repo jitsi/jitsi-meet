@@ -3,6 +3,7 @@
 import { sendAnalyticsEvent } from '../../analytics';
 import { SET_ROOM, setAudioOnly } from '../conference';
 import { parseURLParams } from '../config';
+import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
@@ -108,10 +109,19 @@ function _setRoom({ dispatch, getState }, next, action) {
     // because it looks like config.startWithAudioMuted and
     // config.startWithVideoMuted.
     if (room) {
-        let audioOnly = urlParams && urlParams['config.startAudioOnly'];
+        let audioOnly;
 
-        typeof audioOnly === 'undefined' && (audioOnly = config.startAudioOnly);
-        audioOnly = Boolean(audioOnly);
+        if (JitsiMeetJS.mediaDevices.supportsVideo()) {
+            audioOnly = urlParams && urlParams['config.startAudioOnly'];
+            typeof audioOnly === 'undefined'
+                && (audioOnly = config.startAudioOnly);
+            audioOnly = Boolean(audioOnly);
+        } else {
+            // Always default to being audio only if the current environment
+            // does not support sending or receiving video.
+            audioOnly = true;
+        }
+
         sendAnalyticsEvent(
             `startaudioonly.${audioOnly ? 'enabled' : 'disabled'}`);
         logger.log(`Start audio only set to ${audioOnly.toString()}`);
