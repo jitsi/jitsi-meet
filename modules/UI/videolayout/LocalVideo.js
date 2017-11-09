@@ -48,6 +48,8 @@ function LocalVideo(VideoLayout, emitter) {
 
     this.addAudioLevelIndicator();
     this.updateIndicators();
+
+    this.container.onclick = this._onContainerClick.bind(this);
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -94,42 +96,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
 
 LocalVideo.prototype.changeVideo = function(stream) {
     this.videoStream = stream;
-
-    const localVideoClick = event => {
-        // TODO Checking the classes is a workround to allow events to bubble
-        // into the DisplayName component if it was clicked. React's synthetic
-        // events will fire after jQuery handlers execute, so stop propogation
-        // at this point will prevent DisplayName from getting click events.
-        // This workaround should be removeable once LocalVideo is a React
-        // Component because then the components share the same eventing system.
-        const $source = $(event.target || event.srcElement);
-        const { classList } = event.target;
-
-        const clickedOnDisplayName
-            = $source.parents('.displayNameContainer').length > 0;
-        const clickedOnPopover
-            = $source.parents('.connection-info').length > 0;
-        const clickedOnPopoverTrigger
-            = $source.parents('.popover-trigger').length > 0
-                || classList.contains('popover-trigger');
-
-        const ignoreClick = clickedOnDisplayName
-            || clickedOnPopoverTrigger
-            || clickedOnPopover;
-
-        // FIXME: with Temasys plugin event arg is not an event, but
-        // the clicked object itself, so we have to skip this call
-        if (event.stopPropagation && !ignoreClick) {
-            event.stopPropagation();
-        }
-
-        if (!ignoreClick) {
-            this.VideoLayout.handleVideoThumbClicked(this.id);
-        }
-    };
-
-    this.$container.off('click');
-    this.$container.on('click', localVideoClick);
 
     this.localVideoId = `localVideo_${stream.getId()}`;
 
@@ -243,6 +209,43 @@ LocalVideo.prototype._buildContextMenu = function() {
 LocalVideo.prototype._enableDisableContextMenu = function(enable) {
     if (this.$container.contextMenu) {
         this.$container.contextMenu(enable);
+    }
+};
+
+/**
+ * Callback invoked when the thumbnail is clicked. Will directly call
+ * VideoLayout to handle thumbnail click if certain elements have not been
+ * clicked.
+ *
+ * @param {MouseEvent} event - The click event to intercept.
+ * @private
+ * @returns {void}
+ */
+LocalVideo.prototype._onContainerClick = function(event) {
+    // TODO Checking the classes is a workround to allow events to bubble into
+    // the DisplayName component if it was clicked. React's synthetic events
+    // will fire after jQuery handlers execute, so stop propogation at this
+    // point will prevent DisplayName from getting click events. This workaround
+    // should be removeable once LocalVideo is a React Component because then
+    // the components share the same eventing system.
+    const $source = $(event.target || event.srcElement);
+    const { classList } = event.target;
+
+    const clickedOnDisplayName
+        = $source.parents('.displayNameContainer').length > 0;
+    const clickedOnPopover = $source.parents('.popover').length > 0
+            || classList.contains('popover');
+
+    const ignoreClick = clickedOnDisplayName || clickedOnPopover;
+
+    // FIXME: with Temasys plugin event arg is not an event, but the clicked
+    // object itself, so we have to skip this call
+    if (event.stopPropagation && !ignoreClick) {
+        event.stopPropagation();
+    }
+
+    if (!ignoreClick) {
+        this.VideoLayout.handleVideoThumbClicked(this.id);
     }
 };
 
