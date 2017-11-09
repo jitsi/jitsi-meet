@@ -1,5 +1,4 @@
-import AKButton from '@atlaskit/button';
-import AKButtonGroup from '@atlaskit/button-group';
+import Button, { ButtonGroup } from '@atlaskit/button';
 import ModalDialog from '@atlaskit/modal-dialog';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import PropTypes from 'prop-types';
@@ -189,12 +188,14 @@ class StatelessDialog extends Component {
         }
 
         return (
-            <AKButton
+            <Button
                 appearance = 'subtle'
                 id = { CANCEL_BUTTON_ID }
-                onClick = { this._onCancel }>
+                key = 'cancel'
+                onClick = { this._onCancel }
+                type = 'button'>
                 { this.props.t(this.props.cancelTitleKey || 'dialog.Cancel') }
-            </AKButton>
+            </Button>
         );
     }
 
@@ -205,12 +206,18 @@ class StatelessDialog extends Component {
      * @returns {ReactElement}
      */
     _renderFooter() {
+        // Filter out falsy (null) values because {@code ButtonGroup} will error
+        // if passed in anything but buttons with valid type props.
+        const buttons = [
+            this._renderCancelButton(),
+            this._renderOKButton()
+        ].filter(Boolean);
+
         return (
             <footer className = 'modal-dialog-footer'>
-                <AKButtonGroup>
-                    { this._renderCancelButton() }
-                    { this._renderOKButton() }
-                </AKButtonGroup>
+                <ButtonGroup>
+                    { buttons }
+                </ButtonGroup>
             </footer>
         );
     }
@@ -245,14 +252,16 @@ class StatelessDialog extends Component {
         }
 
         return (
-            <AKButton
+            <Button
                 appearance = 'primary'
                 form = 'modal-dialog-form'
                 id = { OK_BUTTON_ID }
                 isDisabled = { this.props.okDisabled }
-                onClick = { this._onSubmit }>
+                key = 'submit'
+                onClick = { this._onSubmit }
+                type = 'button'>
                 { this.props.t(this.props.okTitleKey || 'dialog.Ok') }
-            </AKButton>
+            </Button>
         );
     }
 
