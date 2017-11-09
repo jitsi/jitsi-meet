@@ -12,7 +12,7 @@ import {
     participantRoleChanged,
     participantUpdated
 } from '../participants';
-import { trackAdded, trackRemoved } from '../tracks';
+import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 
 import {
     CONFERENCE_FAILED,
@@ -222,8 +222,7 @@ export function conferenceLeft(conference: Object) {
 function _conferenceWillJoin(conference: Object) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const localTracks
-            = getState()['features/base/tracks']
-                .filter(t => t.local)
+            = getLocalTracks(getState()['features/base/tracks'])
                 .map(t => t.jitsiTrack);
 
         if (localTracks.length) {

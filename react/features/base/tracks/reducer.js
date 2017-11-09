@@ -3,15 +3,22 @@ import { ReducerRegistry } from '../redux';
 
 import {
     TRACK_ADDED,
+    TRACK_BEING_CREATED,
+    TRACK_CREATE_CANCELED,
+    TRACK_CREATE_ERROR,
     TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
 
 /**
  * @typedef {Object} Track
- * @property {(JitsiLocalTrack|JitsiRemoteTrack)} jitsiTrack - JitsiTrack
- * instance.
+ * @property {(JitsiLocalTrack|JitsiRemoteTrack)} [jitsiTrack] - JitsiTrack
+ * instance. Optional for local tracks if those are being created (GUM in
+ * progress).
  * @property {boolean} local=false - If track is local.
+ * @property {Promise} [gumProcess] - if local track is being created it
+ * will have no JitsiTrack, but a 'gumProcess' set to a Promise with and extra
+ * cancel().
  * @property {MEDIA_TYPE} mediaType=false - Media type of track.
  * @property {boolean} mirror=false - The indicator which determines whether the
  * display/rendering of the track should be mirrored. It only makes sense in the
@@ -81,11 +88,25 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     case TRACK_UPDATED:
         return state.map(t => track(t, action));
 
-    case TRACK_ADDED:
-        return [
-            ...state,
-            action.track
-        ];
+    case TRACK_ADDED: {
+        let withoutTrackStub = state;
+
+        if (action.track.local) {
+            withoutTrackStub
+                = state.filter(
+                    t => !t.local || t.mediaType !== action.track.mediaType);
+        }
+
+        return [ ...withoutTrackStub, action.track ];
+    }
+
+    case TRACK_BEING_CREATED:
+        return [ ...state, action.track ];
+
+    case TRACK_CREATE_CANCELED:
+    case TRACK_CREATE_ERROR: {
+        return state.filter(t => !t.local || t.mediaType !== action.trackType);
+    }
 
     case TRACK_REMOVED:
         return state.filter(t => t.jitsiTrack !== action.track.jitsiTrack);

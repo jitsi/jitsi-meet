@@ -106,7 +106,26 @@ export function getLocalAudioTrack(tracks) {
  * @returns {(Track|undefined)}
  */
 export function getLocalTrack(tracks, mediaType) {
-    return tracks.find(t => t.local && t.mediaType === mediaType);
+    return getLocalTracks(tracks).find(t => t.mediaType === mediaType);
+}
+
+/**
+ * Returns an array containing local tracks. Local tracks without valid
+ * JitsiTrack will not be included in the list.
+ *
+ * @param {Track[]} tracks - An array of all local tracks.
+ * @returns {Track[]}
+ */
+export function getLocalTracks(tracks) {
+
+    // XXX A local track is considered ready only once it has 'jitsiTrack' field
+    // set by the TRACK_ADDED action. Until then there is a stub added just
+    // before get user media call with a cancellable 'gumInProgress' field which
+    // then can be used to destroy the track that has not yet been added to
+    // the Redux store. Once GUM is cancelled it will never make it to the store
+    // nor there will be any TRACK_ADDED/TRACK_REMOVED related events fired for
+    // it.
+    return tracks.filter(t => t.local && t.jitsiTrack);
 }
 
 /**
