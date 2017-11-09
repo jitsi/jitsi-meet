@@ -1,6 +1,6 @@
 /* @flow */
 
-import AKButton from '@atlaskit/button';
+import Button from '@atlaskit/button';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -64,11 +64,11 @@ class InlineDialogFailure extends Component<*> {
                     { t('inlineDialogFailure.msg') }
                 </div>
                 { supportLinkElem }
-                <AKButton
+                <Button
                     className = 'inline-dialog-error-button'
                     onClick = { this.props.onRetry } >
                     { t('inlineDialogFailure.retry') }
-                </AKButton>
+                </Button>
             </div>
         );
     }
