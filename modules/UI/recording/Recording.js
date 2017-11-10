@@ -302,7 +302,12 @@ const Recording = {
         if (config.iAmRecorder) {
             VideoLayout.enableDeviceAvailabilityIcons(
                 APP.conference.getMyUserId(), false);
-            VideoLayout.setLocalVideoVisible(false);
+
+            // in case of iAmSipGateway keep local video visible
+            if (!config.iAmSipGateway) {
+                VideoLayout.setLocalVideoVisible(false);
+            }
+
             APP.store.dispatch(setToolboxEnabled(false));
             APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);
