@@ -18,6 +18,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED:
+        // we do not want to show call info in iAmRecorder mode
+        if (store.getState()['features/base/config'].iAmRecorder) {
+            return result;
+        }
         store.dispatch(setInfoDialogVisibility(true, true));
         break;
 
