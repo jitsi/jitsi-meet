@@ -36,13 +36,8 @@ class KeyboardShortcutsDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { shortcutDescriptions } = this.props;
-        const shortcuts = [];
-
-        for (const [ keyboardKey, translationKey ] of shortcutDescriptions) {
-            shortcuts.push(
-                this._renderShortcutsListItem(keyboardKey, translationKey));
-        }
+        const shortcuts = Array.from(this.props.shortcutDescriptions)
+            .map(description => this._renderShortcutsListItem(...description));
 
         return (
             <Dialog
