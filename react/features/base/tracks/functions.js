@@ -110,21 +110,21 @@ export function getLocalTrack(tracks, mediaType) {
 }
 
 /**
- * Returns an array containing local tracks. Local tracks without valid
- * JitsiTrack will not be included in the list.
+ * Returns an array containing the local tracks with a (valid)
+ * {@code JitsiTrack}.
  *
- * @param {Track[]} tracks - An array of all local tracks.
+ * @param {Track[]} tracks - An array containing all local tracks.
  * @returns {Track[]}
  */
 export function getLocalTracks(tracks) {
 
-    // XXX A local track is considered ready only once it has 'jitsiTrack' field
-    // set by the TRACK_ADDED action. Until then there is a stub added just
-    // before get user media call with a cancellable 'gumInProgress' field which
-    // then can be used to destroy the track that has not yet been added to
-    // the Redux store. Once GUM is cancelled it will never make it to the store
-    // nor there will be any TRACK_ADDED/TRACK_REMOVED related events fired for
-    // it.
+    // XXX A local track is considered ready only once it has its `jitsiTrack`
+    // property set by the `TRACK_ADDED` action. Until then there is a stub
+    // added just before the `getUserMedia` call with a cancellable
+    // `gumInProgress` property which then can be used to destroy the track that
+    // has not yet been added to the redux store. Once GUM is cancelled, it will
+    // never make it to the store nor there will be any
+    // `TRACK_ADDED`/`TRACK_REMOVED` actions dispatched for it.
     return tracks.filter(t => t.local && t.jitsiTrack);
 }
 
@@ -215,7 +215,7 @@ export function setTrackMuted(track, muted) {
 
     return track[f]().catch(error => {
 
-        // FIXME emit mute failed, so that the app can show error dialog
+        // FIXME Emit mute failed, so that the app can show error dialog.
         console.error(`set track ${f} failed`, error);
     });
 }

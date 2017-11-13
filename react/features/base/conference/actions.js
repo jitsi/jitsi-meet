@@ -211,12 +211,12 @@ export function conferenceLeft(conference: Object) {
 }
 
 /**
- * Attaches any pre-existing local media to the conference, before
- * the conference will be joined. Then signals the intention of the application
- * to have the local participant join a specific conference.
+ * Adds any existing local tracks to a specific conference before the conference
+ * is joined. Then signals the intention of the application to have the local
+ * participant join the specified conference.
  *
- * @param {JitsiConference} conference - The JitsiConference instance the
- * local participant will (try to) join.
+ * @param {JitsiConference} conference - The {@code JitsiConference} instance
+ * the local participant will (try to) join.
  * @returns {Function}
  */
 function _conferenceWillJoin(conference: Object) {

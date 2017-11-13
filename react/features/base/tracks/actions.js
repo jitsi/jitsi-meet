@@ -37,7 +37,7 @@ export function createDesiredLocalTracks(...desiredTypes) {
             const { audio, video } = state['features/base/media'];
 
             audio.muted || desiredTypes.push(MEDIA_TYPE.AUDIO);
-            Boolean(video.muted) || desiredTypes.push(MEDIA_TYPE.VIDEO);
+            video.muted || desiredTypes.push(MEDIA_TYPE.VIDEO);
         }
 
         const availableTypes
@@ -85,44 +85,52 @@ export function createLocalTracksA(options = {}) {
                     .find(t => t.local && t.mediaType === device)) {
                 throw new Error(`Local track for ${device} already exists`);
             }
-            const gumProcess = createLocalTracksF(
-                {
-                    cameraDeviceId: options.cameraDeviceId,
-                    devices: [ device ],
-                    facingMode: options.facingMode || CAMERA_FACING_MODE.USER,
-                    micDeviceId: options.micDeviceId
-                },
-                /* firePermissionPromptIsShownEvent */ false,
-                store)
-            .then(
-                localTracks => {
-                    // Because GUM is called for 1 device (which is actually
-                    // a media type 'audio','video', 'screen' etc.) we should
-                    // not get more than one JitsiTrack.
-                    if (localTracks.length !== 1) {
-                        throw new Error(
-                            'Expected exactly 1 track, but was '
-                                + `given ${localTracks.length} tracks`
-                                + `for device: ${device}.`);
-                    }
 
-                    if (gumProcess.canceled) {
-                        return _disposeTracks(localTracks)
-                                    .then(
-                                        () =>
-                                            dispatch(
-                                                _trackCreateCanceled(device)));
-                    }
+            const gumProcess
+                = createLocalTracksF(
+                    {
+                        cameraDeviceId: options.cameraDeviceId,
+                        devices: [ device ],
+                        facingMode:
+                            options.facingMode || CAMERA_FACING_MODE.USER,
+                        micDeviceId: options.micDeviceId
+                    },
+                    /* firePermissionPromptIsShownEvent */ false,
+                    store)
+                .then(
+                    localTracks => {
+                        // Because GUM is called for 1 device (which is actually
+                        // a media type 'audio', 'video', 'screen', etc.) we
+                        // should not get more than one JitsiTrack.
+                        if (localTracks.length !== 1) {
+                            throw new Error(
+                                `Expected exactly 1 track, but was given ${
+                                    localTracks.length} tracks for device: ${
+                                    device}.`);
+                        }
 
-                    return dispatch(trackAdded(localTracks[0]));
-                },
-                // eslint-disable-next-line no-confusing-arrow
-                reason =>
-                    dispatch(
-                        gumProcess.canceled
-                            ? _trackCreateCanceled(device)
-                            : _onCreateLocalTracksRejected(reason, device)));
+                        if (gumProcess.canceled) {
+                            return _disposeTracks(localTracks)
+                                .then(() =>
+                                    dispatch(_trackCreateCanceled(device)));
+                        }
 
+                        return dispatch(trackAdded(localTracks[0]));
+                    },
+                    reason =>
+                        dispatch(
+                            gumProcess.canceled
+                                ? _trackCreateCanceled(device)
+                                : _onCreateLocalTracksRejected(
+                                    reason,
+                                    device)));
+
+            /**
+             * Cancels the {@code getUserMedia} process represented by this
+             * {@code Promise}.
+             *
+             * @returns {Promise} This {@code Promise} i.e. {@code gumProcess}.
+             */
             gumProcess.cancel = () => {
                 gumProcess.canceled = true;
 
@@ -132,8 +140,8 @@ export function createLocalTracksA(options = {}) {
             dispatch({
                 type: TRACK_BEING_CREATED,
                 track: {
-                    local: true,
                     gumProcess,
+                    local: true,
                     mediaType: device
                 }
             });
@@ -151,9 +159,9 @@ export function destroyLocalTracks() {
     return (dispatch, getState) => {
         // First wait until any getUserMedia in progress is settled and then get
         // rid of all local tracks.
-        _cancelAllGumInProgress(getState)
-            .then(
-                () => dispatch(
+        _cancelGUMProcesses(getState)
+            .then(() =>
+                dispatch(
                     _disposeAndRemoveTracks(
                         getState()['features/base/tracks']
                             .filter(t => t.local)
@@ -366,49 +374,27 @@ function _addTracks(tracks) {
 }
 
 /**
- * Signals that track create operation for given media track has been canceled.
- * Will clean up local track stub from the Redux state which holds the
- * 'gumProcess' reference.
+ * Cancels and waits for any {@code getUserMedia} process/currently in progress
+ * to complete/settle.
  *
- * @param {MEDIA_TYPE} mediaType - The type of the media for which the track was
- * being created.
- * @returns {{
- *      type,
- *      trackType: MEDIA_TYPE
- * }}
+ * @param {Function} getState - The redux store {@code getState} function used
+ * to obtain the state.
  * @private
+ * @returns {Promise} - A {@code Promise} resolved once all
+ * {@code gumProcess.cancel()} {@code Promise}s are settled because all we care
+ * about here is to be sure that the {@code getUserMedia} callbacks have
+ * completed (i.e. returned from the native side).
  */
-function _trackCreateCanceled(mediaType) {
-    return {
-        type: TRACK_CREATE_CANCELED,
-        trackType: mediaType
-    };
-}
-
-/**
- * Cancels and waits for any get user media operations currently in progress to
- * complete.
- *
- * @param {Function} getState - The Redux store {@code getState} method used to
- * obtain the state.
- * @returns {Promise} - A Promise resolved once all {@code gumProcess.cancel}
- * Promises are settled. That is when they are either resolved or rejected,
- * because all we care about here is to be sure that get user media callbacks
- * have completed (returned from the native side).
- * @private
- */
-function _cancelAllGumInProgress(getState) {
-    // FIXME use logger
+function _cancelGUMProcesses(getState) {
     const logError
         = error =>
-            console.error('gumProcess.cancel failed', JSON.stringify(error));
+            logger.error('gumProcess.cancel failed', JSON.stringify(error));
 
     return Promise.all(
         getState()['features/base/tracks']
             .filter(t => t.local)
-            .map(
-                t => t.gumProcess
-                    && t.gumProcess.cancel().catch(logError)));
+            .map(({ gumProcess }) =>
+                gumProcess && gumProcess.cancel().catch(logError)));
 }
 
 /**
@@ -421,15 +407,15 @@ function _cancelAllGumInProgress(getState) {
 export function _disposeAndRemoveTracks(tracks) {
     return dispatch =>
         _disposeTracks(tracks)
-            .then(
-                () => Promise.all(tracks.map(t => dispatch(trackRemoved(t)))));
+            .then(() =>
+                Promise.all(tracks.map(t => dispatch(trackRemoved(t)))));
 }
 
 /**
  * Disposes passed tracks.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} tracks - List of tracks.
- * @protected
+ * @private
  * @returns {Promise} - A Promise resolved once {@link JitsiTrack.dispose()} is
  * done for every track from the list.
  */
@@ -438,13 +424,12 @@ function _disposeTracks(tracks) {
         tracks.map(t =>
             t.dispose()
                 .catch(err => {
-                    // Track might be already disposed so ignore such an
-                    // error. Of course, re-throw any other error(s).
+                    // Track might be already disposed so ignore such an error.
+                    // Of course, re-throw any other error(s).
                     if (err.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
                         throw err;
                     }
-                })
-        ));
+                })));
 }
 
 /**
@@ -496,7 +481,8 @@ function _onCreateLocalTracksRejected({ gum }, device) {
 }
 
 /**
- * Returns true if the provided JitsiTrack should be rendered as a mirror.
+ * Returns true if the provided {@code JitsiTrack} should be rendered as a
+ * mirror.
  *
  * We only want to show a video in mirrored mode when:
  * 1) The video source is local, and not remote.
@@ -523,4 +509,24 @@ function _shouldMirror(track) {
             // by jitsi-meet. The type definitions are surely compatible today
             // but that may not be the case tomorrow.
             && track.getCameraFacingMode() === CAMERA_FACING_MODE.USER);
+}
+
+/**
+ * Signals that track create operation for given media track has been canceled.
+ * Will clean up local track stub from the redux state which holds the
+ * {@code gumProcess} reference.
+ *
+ * @param {MEDIA_TYPE} mediaType - The type of the media for which the track was
+ * being created.
+ * @private
+ * @returns {{
+ *     type,
+ *     trackType: MEDIA_TYPE
+ * }}
+ */
+function _trackCreateCanceled(mediaType) {
+    return {
+        type: TRACK_CREATE_CANCELED,
+        trackType: mediaType
+    };
 }

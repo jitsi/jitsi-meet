@@ -12,23 +12,24 @@ import {
 
 /**
  * @typedef {Object} Track
- * @property {(JitsiLocalTrack|JitsiRemoteTrack)} [jitsiTrack] - JitsiTrack
- * instance. Optional for local tracks if those are being created (GUM in
- * progress).
- * @property {boolean} local=false - If track is local.
- * @property {Promise} [gumProcess] - if local track is being created it
- * will have no JitsiTrack, but a 'gumProcess' set to a Promise with and extra
- * cancel().
- * @property {MEDIA_TYPE} mediaType=false - Media type of track.
+ * @property {(JitsiLocalTrack|JitsiRemoteTrack)} [jitsiTrack] - The associated
+ * {@code JitsiTrack} instance. Optional for local tracks if those are still
+ * being created (i.e. {@code getUserMedia} is still in progress).
+ * @property {Promise} [gumProcess] - If a local track is still being created,
+ * it will have no {@code JitsiTrack}, but a {@code gumProcess} set to a
+ * {@code Promise} with and extra {@code cancel()}.
+ * @property {boolean} local=false - If the track is local.
+ * @property {MEDIA_TYPE} mediaType=false - The media type of the track.
  * @property {boolean} mirror=false - The indicator which determines whether the
  * display/rendering of the track should be mirrored. It only makes sense in the
  * context of video (at least at the time of this writing).
- * @property {boolean} muted=false - If track is muted.
- * @property {(string|undefined)} participantId - ID of participant whom this
- * track belongs to.
- * @property {boolean} videoStarted=false - If video track has already started
- * to play.
- * @property {(VIDEO_TYPE|undefined)} videoType - Type of video track if any.
+ * @property {boolean} muted=false - If the track is muted.
+ * @property {(string|undefined)} participantId - The ID of the participant whom
+ * the track belongs to.
+ * @property {boolean} videoStarted=false - If the video track has already
+ * started to play.
+ * @property {(VIDEO_TYPE|undefined)} videoType - The type of video track if
+ * any.
  */
 
 /**

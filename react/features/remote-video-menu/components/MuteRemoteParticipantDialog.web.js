@@ -95,9 +95,9 @@ class MuteRemoteParticipantDialog extends Component {
     /**
      * Renders the content of the dialog.
      *
-     * @returns {Component} the react component, which is the view of the dialog
-     * content
      * @private
+     * @returns {Component} The React {@code Component} which is the view of the
+     * dialog content.
      */
     _renderContent() {
         const { t } = this.props;

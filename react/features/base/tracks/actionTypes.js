@@ -1,6 +1,6 @@
 /**
- * Action for when a track has been added to the conference,
- * local or remote.
+ * The type of redux action dispatched when a track has been (locally or
+ * remotely) added to the conference.
  *
  * {
  *     type: TRACK_ADDED,
@@ -10,18 +10,19 @@
 export const TRACK_ADDED = Symbol('TRACK_ADDED');
 
 /**
- * Action triggered when a local track starts being created through the WebRTC
- * getUserMedia call. It will include extra 'gumProcess' field which is
- * a Promise with extra 'cancel' method which can be used to cancel the process.
- * Canceling will result in disposing any JitsiLocalTrack returned by the GUM
- * callback. There will be TRACK_CREATE_CANCELED event instead of track
- * added/gum failed events.
+ * The type of redux action dispatched when a local track starts being created
+ * via a WebRTC {@code getUserMedia} call. The action's payload includes an
+ * extra {@code gumProcess} property which is a {@code Promise} with an extra
+ * {@code cancel} method which can be used to cancel the process. Canceling will
+ * result in disposing any {@code JitsiLocalTrack} returned by the
+ * {@code getUserMedia} callback. There will be a {@code TRACK_CREATE_CANCELED}
+ * action instead of a {@code TRACK_ADDED} or {@code TRACK_CREATE_ERROR} action.
  *
  * {
  *     type: TRACK_BEING_CREATED
  *     track: {
+ *         gumProcess: Promise with a `cancel` method to cancel the process,
  *         local: true,
- *         gumProcess: Promise with cancel() method to abort,
  *         mediaType: MEDIA_TYPE
  *     }
  * }
@@ -29,8 +30,9 @@ export const TRACK_ADDED = Symbol('TRACK_ADDED');
 export const TRACK_BEING_CREATED = Symbol('TRACK_BEING_CREATED');
 
 /**
- * Action sent when canceled GUM process completes either successfully or with
- * an error (error is ignored and track is immediately disposed if created).
+ * The type of redux action dispatched when a canceled {@code getUserMedia}
+ * process completes either successfully or with an error (the error is ignored
+ * and the track is immediately disposed if it has been created).
  *
  * {
  *     type: TRACK_CREATE_CANCELED,
@@ -40,7 +42,8 @@ export const TRACK_BEING_CREATED = Symbol('TRACK_BEING_CREATED');
 export const TRACK_CREATE_CANCELED = Symbol('TRACK_CREATE_CANCELED');
 
 /**
- * Action sent when GUM fails with an error other than permission denied.
+ * The type of redux action dispatched when {@code getUserMedia} fails with an
+ * error (such as permission denied).
  *
  * {
  *     type: TRACK_CREATE_ERROR,
@@ -51,8 +54,8 @@ export const TRACK_CREATE_CANCELED = Symbol('TRACK_CREATE_CANCELED');
 export const TRACK_CREATE_ERROR = Symbol('TRACK_CREATE_ERROR');
 
 /**
- * Action for when a track has been removed from the conference,
- * local or remote.
+ * The type of redux action dispatched when a track has been (locally or
+ * remotely) removed from the conference.
  *
  * {
  *     type: TRACK_REMOVED,
@@ -62,7 +65,7 @@ export const TRACK_CREATE_ERROR = Symbol('TRACK_CREATE_ERROR');
 export const TRACK_REMOVED = Symbol('TRACK_REMOVED');
 
 /**
- * Action for when a track properties were updated.
+ * The type of redux action dispatched when a track's properties were updated.
  *
  * {
  *     type: TRACK_UPDATED,
