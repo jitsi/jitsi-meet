@@ -1,7 +1,6 @@
 /* @flow */
 
 import Tooltip from '@atlaskit/tooltip';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -10,31 +9,39 @@ import { translate } from '../../base/i18n';
 import { openFeedbackDialog } from '../actions';
 
 /**
+ * Defines property types for the FeedbackButton component.
+ */
+type FeedbackButtonPropTypes = {
+
+    /**
+     * The JitsiConference for which the feedback will be about.
+     *
+     * FIXME define JitsiConference type
+     * @type {JitsiConference}
+     */
+    _conference: Object,
+
+    /**
+     * Redux store dispatch function.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * From which side of the button the tooltip should appear from.
+     */
+    tooltipPosition: String
+}
+
+/**
  * Implements a Web/React Component which renders a feedback button.
  */
-class FeedbackButton extends Component<*> {
+class FeedbackButton extends Component<FeedbackButtonPropTypes> {
     _onClick: Function;
-
-    static propTypes = {
-        /**
-         * The JitsiConference for which the feedback will be about.
-         *
-         * @type {JitsiConference}
-         */
-        _conference: PropTypes.object,
-
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * From which side of the button the tooltip should appear from.
-         */
-        tooltipPosition: PropTypes.string
-    };
 
     /**
      * Initializes a new FeedbackButton instance.

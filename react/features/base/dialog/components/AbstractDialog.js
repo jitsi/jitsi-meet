@@ -1,38 +1,44 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
+import * as React from 'react';
 
 import { hideDialog } from '../actions';
-import { DIALOG_PROP_TYPES } from '../constants';
+import { DialogPropTypes } from '../constants';
+
+/**
+ * Defines the property types for AbstractDialog.
+ */
+export type AbstractDialogPropTypes = {
+    ...DialogPropTypes,
+
+    /**
+     * The React {@code Component} children of {@code AbstractDialog}
+     * which represents the dialog's body.
+     */
+    children: React.Node,
+
+    /**
+     * Used to show/hide the dialog on cancel.
+     */
+    dispatch: Dispatch<*>
+}
+
+/**
+ * Defines the state for AbstractDialog.
+ */
+type AbstractDialogState = {
+    submitting: boolean
+}
 
 /**
  * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
-export default class AbstractDialog extends Component<*, *> {
-    /**
-     * {@code AbstractDialog} React {@code Component}'s prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...DIALOG_PROP_TYPES,
-
-        /**
-         * The React {@code Component} children of {@code AbstractDialog}
-         * which represents the dialog's body.
-         */
-        children: PropTypes.node,
-
-        /**
-         * Used to show/hide the dialog on cancel.
-         */
-        dispatch: PropTypes.func
-    };
-
+export default class AbstractDialog
+    extends React.Component<AbstractDialogPropTypes, AbstractDialogState> {
     _mounted: boolean;
 
     state = {
+        submitting: false
     };
 
     /**

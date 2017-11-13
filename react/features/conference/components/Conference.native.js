@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 // eslint-disable-next-line react-native/split-platform-components
@@ -26,66 +25,67 @@ import styles from './styles';
 const _TOOLBOX_TIMEOUT_MS = 5000;
 
 /**
+ * Conference component's property types.
+ *
+ * @static
+ */
+type ConferencePropTypes = {
+
+    /**
+     * The indicator which determines that we are still connecting to the
+     * conference which includes establishing the XMPP connection and then
+     * joining the room. If truthy, then an activity/loading indicator will
+     * be rendered.
+     *
+     * @private
+     */
+    _connecting: boolean,
+
+    /**
+     * The handler which dispatches the (redux) action connect.
+     *
+     * @private
+     */
+    _onConnect: Function,
+
+    /**
+     * The handler which dispatches the (redux) action disconnect.
+     *
+     * @private
+     */
+    _onDisconnect: Function,
+
+    /**
+     * Handles a hardware button press for back navigation. Leaves the
+     * associated {@code Conference}.
+     *
+     * @private
+     * @returns {boolean} As the associated conference is unconditionally
+     * left and exiting the app while it renders a {@code Conference} is
+     * undesired, {@code true} is always returned.
+     */
+    _onHardwareBackPress: Function,
+
+    /**
+     * The handler which dispatches the (redux) action setToolboxVisible to
+     * show/hide the Toolbox.
+     *
+     * @private
+     */
+    _setToolboxVisible: Function,
+
+    /**
+     * The indicator which determines whether the Toolbox is visible.
+     *
+     * @private
+     */
+    _toolboxVisible: boolean
+};
+
+/**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends Component {
-    /**
-     * Conference component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The indicator which determines that we are still connecting to the
-         * conference which includes establishing the XMPP connection and then
-         * joining the room. If truthy, then an activity/loading indicator will
-         * be rendered.
-         *
-         * @private
-         */
-        _connecting: PropTypes.bool,
-
-        /**
-         * The handler which dispatches the (redux) action connect.
-         *
-         * @private
-         */
-        _onConnect: PropTypes.func,
-
-        /**
-         * The handler which dispatches the (redux) action disconnect.
-         *
-         * @private
-         */
-        _onDisconnect: PropTypes.func,
-
-        /**
-         * Handles a hardware button press for back navigation. Leaves the
-         * associated {@code Conference}.
-         *
-         * @private
-         * @returns {boolean} As the associated conference is unconditionally
-         * left and exiting the app while it renders a {@code Conference} is
-         * undesired, {@code true} is always returned.
-         */
-        _onHardwareBackPress: PropTypes.func,
-
-        /**
-         * The handler which dispatches the (redux) action setToolboxVisible to
-         * show/hide the Toolbox.
-         *
-         * @private
-         */
-        _setToolboxVisible: PropTypes.func,
-
-        /**
-         * The indicator which determines whether the Toolbox is visible.
-         *
-         * @private
-         */
-        _toolboxVisible: PropTypes.bool
-    };
-
+class Conference extends Component<ConferencePropTypes> {
     /**
      * Initializes a new Conference instance.
      *

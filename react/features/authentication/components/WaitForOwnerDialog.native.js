@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
@@ -12,34 +11,33 @@ import { cancelWaitForOwner, _openLoginDialog } from '../actions';
 import styles from './styles';
 
 /**
+ * WaitForOwnerDialog component's property types.
+ */
+type WaitForOwnerDialogPropTypes = {
+
+    /**
+     * The name of the conference room (without the domain part).
+     */
+    _room: String,
+
+    /**
+     * Redux store dispatch function.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * The dialog is display in XMPP password + guest access configuration, after
  * user connects from anonymous domain and the conference does not exist yet.
  *
  * See {@link LoginDialog} description for more details.
  */
-class WaitForOwnerDialog extends Component<*> {
-    /**
-     * WaitForOwnerDialog component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The name of the conference room (without the domain part).
-         */
-        _room: PropTypes.string,
-
-        /**
-         * Redux store dispatch function.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class WaitForOwnerDialog extends Component<WaitForOwnerDialogPropTypes> {
     /**
      * Initializes a new WaitForWonderDialog instance.
      *

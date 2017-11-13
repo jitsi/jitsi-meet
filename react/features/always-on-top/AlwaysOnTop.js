@@ -54,12 +54,23 @@ const toolbarButtons = {
 };
 
 /**
+ * Defines the state for <tt>AlwaysOnTop</tt> component.
+ */
+type AlwaysOnTopState = {
+    visible: boolean,
+    audioMuted: boolean,
+    videoMuted: boolean,
+    audioAvailable: boolean,
+    videoAvailable: boolean
+}
+
+/**
  * Represents the always on top page.
  *
  * @class AlwaysOnTop
  * @extends Component
  */
-export default class AlwaysOnTop extends Component<*> {
+export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
     /**
      * Initializes new AlwaysOnTop instance.
      *

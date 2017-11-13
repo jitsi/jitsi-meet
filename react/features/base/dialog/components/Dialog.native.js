@@ -1,6 +1,3 @@
-// @flow
-
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Modal, StyleSheet, TextInput } from 'react-native';
 import Prompt from 'react-native-prompt';
@@ -10,7 +7,7 @@ import { translate } from '../../i18n';
 import { LoadingIndicator } from '../../react';
 import { set } from '../../redux';
 
-import AbstractDialog from './AbstractDialog';
+import AbstractDialog, { AbstractDialogPropTypes } from './AbstractDialog';
 import { dialog as styles } from './styles';
 
 /**
@@ -30,33 +27,38 @@ const _SUBMIT_TEXT_TAG_VALUE = '_SUBMIT_TEXT_TAG_VALUE';
 const _TAG_KEY = '_TAG_KEY';
 
 /**
+ * {@code Dialog}'s React {@code Component} prop types.
+ */
+type DialogPropTypes = {
+    ...AbstractDialogPropTypes,
+
+    /**
+     * I18n key to put as body title.
+     */
+    bodyKey: String
+}
+
+/**
+ * Defines {@code Dialog}'s state.
+ */
+type DialogState = {
+
+    /**
+     * The text of the {@link TextInput} rendered by {@link Prompt} in
+     * general and by this {@code Dialog} in particular if no
+     * {@code children} are specified to it. It mimics/reimplements the
+     * functionality of {@code Prompt} because this {@code Dialog} does not
+     * really render the (whole) {@code Prompt}.
+     */
+    text: String
+}
+
+/**
  * Implements {@code AbstractDialog} on react-native using {@code Prompt}.
  */
-class Dialog extends AbstractDialog {
-    /**
-     * {@code AbstractDialog}'s React {@code Component} prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractDialog.propTypes,
-
-        /**
-         * I18n key to put as body title.
-         */
-        bodyKey: PropTypes.string
-    };
+class Dialog extends AbstractDialog<DialogPropTypes, DialogState> {
 
     state = {
-        /**
-         * The text of the {@link TextInput} rendered by {@link Prompt} in
-         * general and by this {@code Dialog} in particular if no
-         * {@code children} are specified to it. It mimics/reimplements the
-         * functionality of {@code Prompt} because this {@code Dialog} does not
-         * really render the (whole) {@code Prompt}.
-         *
-         * @type {string}
-         */
         text: ''
     };
 
