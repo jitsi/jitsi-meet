@@ -215,7 +215,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL,
             roomName
         });
-        this._baseUrl = `${noSSL ? 'http' : 'https'}://${domain}/`;
         this._createIFrame(height, width);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
@@ -261,8 +260,21 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {Array<string>}
      */
     _getAlwaysOnTopResources() {
+        const iframeWindow = this._frame.contentWindow;
+        const iframeDocument = iframeWindow.document;
+        let baseURL = '';
+        const base = iframeDocument.querySelector('base');
+
+        if (base && base.href) {
+            baseURL = base.href;
+        } else {
+            const { protocol, host } = iframeWindow.location;
+
+            baseURL = `${protocol}//${host}`;
+        }
+
         return ALWAYS_ON_TOP_FILENAMES.map(
-            filename => this._baseUrl + filename
+            filename => (new URL(filename, baseURL)).href
         );
     }
 
