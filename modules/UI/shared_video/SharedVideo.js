@@ -270,7 +270,7 @@ export default class SharedVideoManager {
             const thumb = new SharedVideoThumb(
                 self.url, SHARED_VIDEO_CONTAINER_TYPE, VideoLayout);
 
-            thumb.setDisplayName(player.getVideoData().title);
+            thumb.setDisplayName('YouTube');
             VideoLayout.addRemoteVideoContainer(self.url, thumb);
 
             const iframe = player.getIframe();
@@ -293,7 +293,7 @@ export default class SharedVideoManager {
             APP.store.dispatch(participantJoined({
                 id: self.url,
                 isBot: true,
-                name: player.getVideoData().title
+                name: 'YouTube'
             }));
 
             VideoLayout.handleVideoThumbClicked(self.url);
