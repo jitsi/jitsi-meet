@@ -31,6 +31,12 @@ class Conference extends Component<*> {
      * @static
      */
     static propTypes = {
+        /**
+         * Whether or not the current local user is recording the conference.
+         *
+         */
+        _isRecording: PropTypes.bool,
+
         dispatch: PropTypes.func
     };
 
@@ -92,14 +98,18 @@ class Conference extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
-        const { filmStripOnly } = interfaceConfig;
+        const { filmStripOnly, VIDEO_QUALITY_LABEL_DISABLED } = interfaceConfig;
+        const hideVideoQualityLabel = filmStripOnly
+            || VIDEO_QUALITY_LABEL_DISABLED
+            || this.props._isRecording;
 
         return (
             <div
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <div id = 'videospace'>
-                    <LargeVideo />
+                    <LargeVideo
+                        hideVideoQualityLabel = { hideVideoQualityLabel } />
                     <Filmstrip filmstripOnly = { filmStripOnly } />
                 </div>
 
@@ -132,4 +142,20 @@ class Conference extends Component<*> {
     }
 }
 
-export default reactReduxConnect()(Conference);
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code Conference} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _isRecording: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _isRecording: state['features/base/config'].iAmRecorder
+    };
+}
+
+export default reactReduxConnect(_mapStateToProps)(Conference);

@@ -136,12 +136,20 @@ var interfaceConfig = {
      *
      * @type {number}
      */
-    CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000
+    CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
 
     /**
      * The name of the application connected to the "Add people" search service.
      */
-    // ADD_PEOPLE_APP_NAME: ""
+    // ADD_PEOPLE_APP_NAME: "",
+
+    /**
+     * If true, hides the video quality label indicating the resolution status
+     * of the current large video.
+     *
+     * @type {boolean}
+     */
+    VIDEO_QUALITY_LABEL_DISABLED: false
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */
