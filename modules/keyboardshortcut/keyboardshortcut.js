@@ -2,39 +2,24 @@
 
 import { toggleDialog } from '../../react/features/base/dialog';
 import { sendAnalyticsEvent } from '../../react/features/analytics';
+import { KeyboardShortcutsDialog }
+    from '../../react/features/keyboard-shortcuts';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-/**
- * The reference to the shortcut dialogs when opened.
- */
-let keyboardShortcutDialog = null;
-
-/**
- * Shows or hides the keyboard shortcuts dialog.
- * @param {boolean} show whether to show or hide the dialog
- */
-function showKeyboardShortcutsPanel(show) {
-    if (show
-            && !APP.UI.messageHandler.isDialogOpened()
-            && keyboardShortcutDialog === null) {
-        const msg = $('#keyboard-shortcuts').html();
-        const buttons = { Close: true };
-
-        keyboardShortcutDialog = APP.UI.messageHandler.openDialog(
-            'keyboardShortcuts.keyboardShortcuts', msg, true, buttons);
-    } else if (keyboardShortcutDialog !== null) {
-        keyboardShortcutDialog.close();
-        keyboardShortcutDialog = null;
-    }
-}
 
 /**
  * Map of shortcuts. When a shortcut is registered it enters the mapping.
  * @type {{}}
  */
 const _shortcuts = {};
+
+/**
+ * Map of registered keyboard keys and translation keys describing the
+ * action performed by the key.
+ * @type {Map}
+ */
+const _shortcutsHelp = new Map();
 
 /**
  * True if the keyboard shortcuts are enabled and false if not.
@@ -133,30 +118,7 @@ const KeyboardShortcut = {
      */
     unregisterShortcut(shortcutChar) {
         _shortcuts.remove(shortcutChar);
-
-        this._removeShortcutFromHelp(shortcutChar);
-    },
-
-    /**
-     * Returns the tooltip string for the given shortcut attribute.
-     *
-     * @param shortcutAttr indicates the popover associated with the shortcut
-     * @returns {string} the tooltip string to add to the given shortcut popover
-     * or an empty string if the shortcutAttr is null, an empty string or not
-     * found in the shortcut mapping
-     */
-    getShortcutTooltip(shortcutAttr) {
-        if (typeof shortcutAttr === 'string' && shortcutAttr.length > 0) {
-            for (const key in _shortcuts) {
-                if (_shortcuts.hasOwnProperty(key)
-                    && _shortcuts[key].shortcutAttr
-                    && _shortcuts[key].shortcutAttr === shortcutAttr) {
-                    return ` (${_shortcuts[key].character})`;
-                }
-            }
-        }
-
-        return '';
+        _shortcutsHelp.delete(shortcutChar);
     },
 
     /**
@@ -196,56 +158,7 @@ const KeyboardShortcut = {
      * @private
      */
     _addShortcutToHelp(shortcutChar, shortcutDescriptionKey) {
-
-        const listElement = document.createElement('li');
-        const itemClass = 'shortcuts-list__item';
-
-        listElement.className = itemClass;
-        listElement.id = shortcutChar;
-
-        const spanElement = document.createElement('span');
-
-        spanElement.className = 'item-action';
-
-        const kbdElement = document.createElement('kbd');
-        const classes = 'aui-label regular-key';
-
-        kbdElement.className = classes;
-        kbdElement.innerHTML = shortcutChar;
-        spanElement.appendChild(kbdElement);
-
-        const descriptionElement = document.createElement('span');
-        const descriptionClass = 'shortcuts-list__description';
-
-        descriptionElement.className = descriptionClass;
-        descriptionElement.setAttribute('data-i18n', shortcutDescriptionKey);
-        APP.translation.translateElement($(descriptionElement));
-
-        listElement.appendChild(spanElement);
-        listElement.appendChild(descriptionElement);
-
-        const parentListElement
-            = document.getElementById('keyboard-shortcuts-list');
-
-        if (parentListElement) {
-            parentListElement.appendChild(listElement);
-        }
-    },
-
-    /**
-     * Removes the list element corresponding to the given shortcut from the
-     * help dialog
-     * @private
-     */
-    _removeShortcutFromHelp(shortcutChar) {
-        const parentListElement
-            = document.getElementById('keyboard-shortcuts-list');
-
-        const shortcutElement = document.getElementById(shortcutChar);
-
-        if (shortcutElement) {
-            parentListElement.removeChild(shortcutElement);
-        }
+        _shortcutsHelp.set(shortcutChar, shortcutDescriptionKey);
     },
 
     /**
@@ -255,13 +168,11 @@ const KeyboardShortcut = {
      * triggered _only_ with a shortcut.
      */
     _initGlobalShortcuts() {
-        this.registerShortcut('ESCAPE', null, () => {
-            showKeyboardShortcutsPanel(false);
-        });
-
         this.registerShortcut('?', null, () => {
             sendAnalyticsEvent('shortcut.shortcut.help');
-            showKeyboardShortcutsPanel(true);
+            APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
+                shortcutDescriptions: _shortcutsHelp
+            }));
         }, 'keyboardShortcuts.toggleShortcuts');
 
         // register SPACE shortcut in two steps to insure visibility of help
