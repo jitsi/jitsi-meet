@@ -721,11 +721,7 @@ const VideoLayout = {
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
-        // Update the large video if the video source is already available,
-        // otherwise wait for the "videoactive.jingle" event.
-        // FIXME: there is no "videoactive.jingle" event.
         if (!interfaceConfig.filmStripOnly && !this.getPinnedId()
-            && remoteVideo.hasVideoStarted()
             && !this.getCurrentlyOnLargeContainer().stayOnStage()) {
             this.updateLargeVideo(id);
         }
