@@ -410,9 +410,7 @@ const VideoLayout = {
 
             // Enable the currently set dominant speaker.
             if (currentDominantSpeaker) {
-                if (smallVideo && smallVideo.hasVideo()) {
-                    this.updateLargeVideo(currentDominantSpeaker);
-                }
+                this.updateLargeVideo(currentDominantSpeaker);
             } else {
                 // if there is no currentDominantSpeaker, it can also be
                 // that local participant is the dominant speaker
