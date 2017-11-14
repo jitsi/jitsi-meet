@@ -47,8 +47,9 @@ class ToolbarButton extends AbstractToolbarButton {
         return React.createElement(TouchableHighlight, props, children);
     }
 
-    // eslint-disable-next-line valid-jsdoc
     /**
+     * Renders the icon of this {@code ToolbarButton}.
+     *
      * @inheritdoc
      */
     _renderIcon() {

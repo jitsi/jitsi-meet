@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import {
     findNodeHandle,
-    requireNativeComponent,
     NativeModules,
+    requireNativeComponent,
     View
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -15,17 +15,15 @@ import { AudioRoutePickerDialog } from '../../mobile/audio-mode';
 import ToolbarButton from './ToolbarButton';
 
 /**
- * Define the {@code MPVolumeView} React component. It will only be available
+ * The {@code MPVolumeView} React {@code Component}. It will only be available
  * on iOS.
  */
-let MPVolumeView;
-
-if (NativeModules.MPVolumeViewManager) {
-    MPVolumeView = requireNativeComponent('MPVolumeView', null);
-}
+const MPVolumeView
+    = NativeModules.MPVolumeViewManager
+        && requireNativeComponent('MPVolumeView', null);
 
 /**
- * Style required to hide the {@code MPVolumeView} view, since it's displayed
+ * The style required to hide the {@code MPVolumeView}, since it's displayed
  * programmatically.
  */
 const HIDE_VIEW_STYLE = { display: 'none' };
@@ -33,7 +31,8 @@ const HIDE_VIEW_STYLE = { display: 'none' };
 type Props = {
 
     /**
-     * Used to show the {@code AudioRoutePickerDialog}.
+     * The redux {@code dispatch} function used to open/show the
+     * {@code AudioRoutePickerDialog}.
      */
     dispatch: Function,
 
@@ -48,12 +47,12 @@ type Props = {
     iconStyle: Object,
 
     /**
-     * {@code AudioRouteButton} styles.
+     * The style(s) of {@code AudioRouteButton}.
      */
     style: Array<*> | Object,
 
     /**
-     * The color underlying the button.
+     * The color underlaying the button.
      */
     underlayColor: string
 };
@@ -63,16 +62,6 @@ type Props = {
  */
 class AudioRouteButton extends Component<Props> {
     _volumeComponent: ?Object;
-
-    /**
-     * Indicates if there is support for audio device selection via this button.
-     *
-     * @returns {boolean} - True if audio device selection is supported, false
-     * otherwise.
-     */
-    static supported() {
-        return Boolean(MPVolumeView || AudioRoutePickerDialog);
-    }
 
     /**
      * Initializes a new {@code AudioRouteButton} instance.
@@ -108,25 +97,11 @@ class AudioRouteButton extends Component<Props> {
      */
     _onClick() {
         if (MPVolumeView) {
-            const handle = findNodeHandle(this._volumeComponent);
-
-            NativeModules.MPVolumeViewManager.show(handle);
+            NativeModules.MPVolumeViewManager.show(
+                findNodeHandle(this._volumeComponent));
         } else if (AudioRoutePickerDialog) {
             this.props.dispatch(openDialog(AudioRoutePickerDialog));
         }
-    }
-
-    _setVolumeComponent: (?Object) => void;
-
-    /**
-     * Sets the internal reference to the React Component wrapping the
-     * {@code MPVolumeView} component.
-     *
-     * @param {ReactComponent} component - React Component.
-     * @returns {void}
-     */
-    _setVolumeComponent(component) {
-        this._volumeComponent = component;
     }
 
     /**
@@ -155,6 +130,21 @@ class AudioRouteButton extends Component<Props> {
             </View>
         );
     }
+
+    _setVolumeComponent: (?Object) => void;
+
+    /**
+     * Sets the internal reference to the React Component wrapping the
+     * {@code MPVolumeView} component.
+     *
+     * @param {ReactComponent} component - React Component.
+     * @private
+     * @returns {void}
+     */
+    _setVolumeComponent(component) {
+        this._volumeComponent = component;
+    }
 }
 
-export default connect()(AudioRouteButton);
+export default (MPVolumeView || AudioRoutePickerDialog)
+  && connect()(AudioRouteButton);

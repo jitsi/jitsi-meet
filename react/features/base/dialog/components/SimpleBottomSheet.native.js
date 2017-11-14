@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 
 import { Icon } from '../../font-icons';
 
-import { bottomSheet as styles } from './styles';
+import { simpleBottomSheet as styles } from './styles';
 
 /**
  * Underlay color for the buttons on the sheet.

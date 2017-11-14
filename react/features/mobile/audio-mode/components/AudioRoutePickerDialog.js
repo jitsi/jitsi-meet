@@ -7,11 +7,30 @@ import { connect } from 'react-redux';
 
 import { hideDialog, SimpleBottomSheet } from '../../../base/dialog';
 
-const AudioMode = NativeModules.AudioMode;
+/**
+ * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
+ */
+type Props = {
+
+    /**
+     * Used for hiding the dialog when the selection was completed.
+     */
+    dispatch: Function
+};
+
+type State = {
+
+    /**
+     * Array of available devices.
+     */
+    devices: Array<string>
+};
+
+const { AudioMode } = NativeModules;
 
 /**
  * Maps each device type to a display name and icon.
- * TODO: internationalization.
+ * TODO i18n
  */
 const deviceInfoMap = {
     BLUETOOTH: {
@@ -37,30 +56,11 @@ const deviceInfoMap = {
 };
 
 /**
- * Variable to hold the reference to the exported component. This dialog is only
- * exported if the {@code AudioMode} module has the capability to get / set
+ * The exported React {@code Component}. {@code AudioRoutePickerDialog} is
+ * exported only if the {@code AudioMode} module has the capability to get / set
  * audio devices.
  */
-let DialogType;
-
-/**
- * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
- */
-type Props = {
-
-    /**
-     * Used for hiding the dialog when the selection was completed.
-     */
-    dispatch: Function
-};
-
-type State = {
-
-    /**
-     * Array of available devices.
-     */
-    devices: Array<string>
-};
+let AudioRoutePickerDialog_;
 
 /**
  * Implements a React {@code Component} which prompts the user when a password
@@ -68,7 +68,10 @@ type State = {
  */
 class AudioRoutePickerDialog extends Component<Props, State> {
     state = {
-        // Available audio devices, it will be set in componentWillMount.
+        /**
+         * Available audio devices, it will be set in
+         * {@link #componentWillMount()}.
+         */
         devices: []
     };
 
@@ -87,7 +90,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     }
 
     /**
-     * Initializes the device list by querying the {@code AudioMode} module.
+     * Initializes the device list by querying {@code AudioMode}.
      *
      * @inheritdoc
      */
@@ -107,8 +110,10 @@ class AudioRoutePickerDialog extends Component<Props, State> {
             }
 
             if (audioDevices) {
-                // Make sure devices is alphabetically sorted
-                this.setState({ devices: _.sortBy(audioDevices, 'text') });
+                // Make sure devices is alphabetically sorted.
+                this.setState({
+                    devices: _.sortBy(audioDevices, 'text')
+                });
             }
         });
     }
@@ -119,7 +124,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {void}
      */
     _hide() {
-        this.props.dispatch(hideDialog(DialogType));
+        this.props.dispatch(hideDialog(AudioRoutePickerDialog_));
     }
 
     _onCancel: () => void;
@@ -156,7 +161,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.state.devices.length) {
+        const { devices } = this.state;
+
+        if (!devices.length) {
             return null;
         }
 
@@ -164,7 +171,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
             <SimpleBottomSheet
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                options = { this.state.devices } />
+                options = { devices } />
         );
     }
 }
@@ -172,7 +179,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
 // Only export the dialog if we have support for getting / setting audio devices
 // in AudioMode.
 if (AudioMode.getAudioDevices && AudioMode.setAudioDevice) {
-    DialogType = connect()(AudioRoutePickerDialog);
+    AudioRoutePickerDialog_ = connect()(AudioRoutePickerDialog);
 }
 
-export default DialogType;
+export default AudioRoutePickerDialog_;

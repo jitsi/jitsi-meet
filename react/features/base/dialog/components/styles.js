@@ -1,9 +1,9 @@
 import { ColorPalette, createStyleSheet } from '../../styles';
 
 /**
- * The React {@code Component} styles of the feature base/dialog.
+ * The React {@code Component} styles of {@code Dialog}.
  */
-export default createStyleSheet({
+export const dialog = createStyleSheet({
     /**
      * The style of the {@code Text} in a {@code Dialog} button.
      */
@@ -21,11 +21,11 @@ export default createStyleSheet({
 });
 
 /**
- *  The React {@code Component} styles for {@code SimpleBottomSheet}.
- *  These styles have been implemented as per the Material Design guidelines:
- *  https://material.io/guidelines/components/bottom-sheets.html
+ * The React {@code Component} styles of {@code SimpleBottomSheet}. These have
+ * been implemented as per the Material Design guidelines:
+ * {@link https://material.io/guidelines/components/bottom-sheets.html}.
  */
-export const bottomSheet = createStyleSheet({
+export const simpleBottomSheet = createStyleSheet({
     /**
      * Style for the container of the sheet.
      */

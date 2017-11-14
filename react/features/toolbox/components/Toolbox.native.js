@@ -282,11 +282,25 @@ class Toolbox extends Component {
             <View
                 key = 'secondaryToolbar'
                 style = { styles.secondaryToolbar }>
+                {
+                    AudioRouteButton
+                        && <AudioRouteButton
+                            iconName = { 'volume' }
+                            iconStyle = { iconStyle }
+                            style = { style }
+                            underlayColor = { underlayColor } />
+                }
                 <ToolbarButton
                     disabled = { audioOnly || videoMuted }
                     iconName = 'switch-camera'
                     iconStyle = { iconStyle }
                     onClick = { this.props._onToggleCameraFacingMode }
+                    style = { style }
+                    underlayColor = { underlayColor } />
+                <ToolbarButton
+                    iconName = { audioOnly ? 'visibility-off' : 'visibility' }
+                    iconStyle = { iconStyle }
+                    onClick = { this.props._onToggleAudioOnly }
                     style = { style }
                     underlayColor = { underlayColor } />
                 <ToolbarButton
@@ -297,26 +311,12 @@ class Toolbox extends Component {
                     onClick = { this.props._onRoomLock }
                     style = { style }
                     underlayColor = { underlayColor } />
-                <ToolbarButton
-                    iconName = { audioOnly ? 'visibility-off' : 'visibility' }
-                    iconStyle = { iconStyle }
-                    onClick = { this.props._onToggleAudioOnly }
-                    style = { style }
-                    underlayColor = { underlayColor } />
                 {
                     _SHARE_ROOM_TOOLBAR_BUTTON
                         && <ToolbarButton
                             iconName = 'link'
                             iconStyle = { iconStyle }
                             onClick = { this.props._onShareRoom }
-                            style = { style }
-                            underlayColor = { underlayColor } />
-                }
-                {
-                    AudioRouteButton.supported()
-                        && <AudioRouteButton
-                            iconName = { 'volume' }
-                            iconStyle = { iconStyle }
                             style = { style }
                             underlayColor = { underlayColor } />
                 }

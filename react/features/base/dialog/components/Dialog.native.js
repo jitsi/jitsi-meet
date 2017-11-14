@@ -9,7 +9,7 @@ import { LoadingIndicator } from '../../react';
 import { set } from '../../redux';
 
 import AbstractDialog from './AbstractDialog';
-import styles from './styles';
+import { dialog as styles } from './styles';
 
 /**
  * The value of the style property {@link _TAG_KEY} which identifies the
