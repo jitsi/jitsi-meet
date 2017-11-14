@@ -93,7 +93,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 
     this.initBrowserSpecificProperties();
 
-    this.addRemoteVideoMenu();
+    this.updateRemoteVideoMenu();
 
     this.VideoLayout.resizeThumbnails(false, true);
 
@@ -333,19 +333,6 @@ RemoteVideo.prototype._figureOutMutedWhileDisconnected = function() {
     } else if (isActive && !this.isVideoMuted) {
         this.mutedWhileDisconnected = false;
     }
-};
-
-/**
- * Adds the remote video menu element for the given <tt>id</tt> in the
- * given <tt>parentElement</tt>.
- *
- */
-RemoteVideo.prototype.addRemoteVideoMenu = function() {
-    if (interfaceConfig.filmStripOnly) {
-        return;
-    }
-
-    this._generatePopupContent();
 };
 
 /**
