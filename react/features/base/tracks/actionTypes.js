@@ -10,26 +10,6 @@
 export const TRACK_ADDED = Symbol('TRACK_ADDED');
 
 /**
- * The type of redux action dispatched when a local track starts being created
- * via a WebRTC {@code getUserMedia} call. The action's payload includes an
- * extra {@code gumProcess} property which is a {@code Promise} with an extra
- * {@code cancel} method which can be used to cancel the process. Canceling will
- * result in disposing any {@code JitsiLocalTrack} returned by the
- * {@code getUserMedia} callback. There will be a {@code TRACK_CREATE_CANCELED}
- * action instead of a {@code TRACK_ADDED} or {@code TRACK_CREATE_ERROR} action.
- *
- * {
- *     type: TRACK_BEING_CREATED
- *     track: {
- *         gumProcess: Promise with a `cancel` method to cancel the process,
- *         local: true,
- *         mediaType: MEDIA_TYPE
- *     }
- * }
- */
-export const TRACK_BEING_CREATED = Symbol('TRACK_BEING_CREATED');
-
-/**
  * The type of redux action dispatched when a canceled {@code getUserMedia}
  * process completes either successfully or with an error (the error is ignored
  * and the track is immediately disposed if it has been created).
@@ -73,3 +53,23 @@ export const TRACK_REMOVED = Symbol('TRACK_REMOVED');
  * }
  */
 export const TRACK_UPDATED = Symbol('TRACK_UPDATED');
+
+/**
+ * The type of redux action dispatched when a local track starts being created
+ * via a WebRTC {@code getUserMedia} call. The action's payload includes an
+ * extra {@code gumProcess} property which is a {@code Promise} with an extra
+ * {@code cancel} method which can be used to cancel the process. Canceling will
+ * result in disposing any {@code JitsiLocalTrack} returned by the
+ * {@code getUserMedia} callback. There will be a {@code TRACK_CREATE_CANCELED}
+ * action instead of a {@code TRACK_ADDED} or {@code TRACK_CREATE_ERROR} action.
+ *
+ * {
+ *     type: TRACK_WILL_CREATE
+ *     track: {
+ *         gumProcess: Promise with a `cancel` method to cancel the process,
+ *         local: true,
+ *         mediaType: MEDIA_TYPE
+ *     }
+ * }
+ */
+export const TRACK_WILL_CREATE = Symbol('TRACK_WILL_CREATE');

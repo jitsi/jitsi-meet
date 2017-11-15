@@ -3,11 +3,11 @@ import { ReducerRegistry } from '../redux';
 
 import {
     TRACK_ADDED,
-    TRACK_BEING_CREATED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
     TRACK_REMOVED,
-    TRACK_UPDATED
+    TRACK_UPDATED,
+    TRACK_WILL_CREATE
 } from './actionTypes';
 
 /**
@@ -101,9 +101,6 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         return [ ...withoutTrackStub, action.track ];
     }
 
-    case TRACK_BEING_CREATED:
-        return [ ...state, action.track ];
-
     case TRACK_CREATE_CANCELED:
     case TRACK_CREATE_ERROR: {
         return state.filter(t => !t.local || t.mediaType !== action.trackType);
@@ -111,6 +108,9 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
 
     case TRACK_REMOVED:
         return state.filter(t => t.jitsiTrack !== action.track.jitsiTrack);
+
+    case TRACK_WILL_CREATE:
+        return [ ...state, action.track ];
 
     default:
         return state;

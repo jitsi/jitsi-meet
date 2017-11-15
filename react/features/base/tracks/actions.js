@@ -10,11 +10,11 @@ import { getLocalParticipant } from '../participants';
 
 import {
     TRACK_ADDED,
-    TRACK_BEING_CREATED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
     TRACK_REMOVED,
-    TRACK_UPDATED
+    TRACK_UPDATED,
+    TRACK_WILL_CREATE
 } from './actionTypes';
 import { createLocalTracksF } from './functions';
 
@@ -138,7 +138,7 @@ export function createLocalTracksA(options = {}) {
             };
 
             dispatch({
-                type: TRACK_BEING_CREATED,
+                type: TRACK_WILL_CREATE,
                 track: {
                     gumProcess,
                     local: true,
