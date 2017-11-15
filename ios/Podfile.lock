@@ -1,0 +1,91 @@
+PODS:
+  - React (0.49.5):
+    - React/Core (= 0.49.5)
+  - react-native-background-timer (1.3.0):
+    - React
+  - react-native-fetch-blob (0.10.6):
+    - React/Core
+  - react-native-keep-awake (2.0.5):
+    - React
+  - react-native-webrtc (1.58.2)
+  - React/BatchedBridge (0.49.5):
+    - React/Core
+    - React/cxxreact_legacy
+  - React/Core (0.49.5):
+    - yoga (= 0.49.5.React)
+  - React/cxxreact_legacy (0.49.5):
+    - React/jschelpers_legacy
+  - React/DevSupport (0.49.5):
+    - React/Core
+    - React/RCTWebSocket
+  - React/fishhook (0.49.5)
+  - React/jschelpers_legacy (0.49.5)
+  - React/RCTActionSheet (0.49.5):
+    - React/Core
+  - React/RCTAnimation (0.49.5):
+    - React/Core
+  - React/RCTBlob (0.49.5):
+    - React/Core
+  - React/RCTImage (0.49.5):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.49.5):
+    - React/Core
+  - React/RCTNetwork (0.49.5):
+    - React/Core
+  - React/RCTText (0.49.5):
+    - React/Core
+  - React/RCTWebSocket (0.49.5):
+    - React/Core
+    - React/fishhook
+    - React/RCTBlob
+  - RNVectorIcons (4.4.0):
+    - React
+  - yoga (0.49.5.React)
+
+DEPENDENCIES:
+  - react-native-background-timer (from `../node_modules/react-native-background-timer`)
+  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
+  - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
+  - react-native-webrtc (from `../node_modules/react-native-webrtc`)
+  - React/BatchedBridge (from `../node_modules/react-native`)
+  - React/Core (from `../node_modules/react-native`)
+  - React/DevSupport (from `../node_modules/react-native`)
+  - React/RCTActionSheet (from `../node_modules/react-native`)
+  - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native`)
+  - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+EXTERNAL SOURCES:
+  React:
+    :path: ../node_modules/react-native
+  react-native-background-timer:
+    :path: ../node_modules/react-native-background-timer
+  react-native-fetch-blob:
+    :path: ../node_modules/react-native-fetch-blob
+  react-native-keep-awake:
+    :path: ../node_modules/react-native-keep-awake
+  react-native-webrtc:
+    :path: ../node_modules/react-native-webrtc
+  RNVectorIcons:
+    :path: ../node_modules/react-native-vector-icons
+  yoga:
+    :path: ../node_modules/react-native/ReactCommon/yoga
+
+SPEC CHECKSUMS:
+  React: 9d5a23842dcc75ffef540ee2d2ef0eee1904ee58
+  react-native-background-timer: ca2afbbdda52ed2caa0c51762938a1e4296d097c
+  react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
+  react-native-keep-awake: 8fda9ff5acfdde27bc9b3a5cfde381b415297f71
+  react-native-webrtc: 6fd0b3aa890d7a9b9b4d01d30f958d17ae88a785
+  RNVectorIcons: 208e7e1507e3bc800619caf1c2748ad6b6b68188
+  yoga: 596e987aa8aac0165abb235d2977982f090476a0
+
+PODFILE CHECKSUM: a7cb8c7365f8cf9a01ee4eb78325139933776faf
+
+COCOAPODS: 1.3.1
