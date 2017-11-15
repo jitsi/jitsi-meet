@@ -50,8 +50,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         .then(handlers => {
             const state = getState();
             const permanentProperties: Object = {
-                roomName: state['features/base/conference'].room,
-                userAgent: navigator.userAgent
+                roomName: state['features/base/conference'].room
             };
             const { group, server } = state['features/base/jwt'];
 
