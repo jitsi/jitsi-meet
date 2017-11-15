@@ -22,19 +22,24 @@ export function getInviteOptionPosition(name: string): number {
  * invitation.
  * @param {string} inviteUrl - The url to the conference.
  * @param {string} jwt - The jwt token to pass to the search service.
- * @param {Immutable.List} people - The list of the "user" type items to invite.
+ * @param {Immutable.List} inviteItems - The list of the "user" or "room"
+ * type items to invite.
  * @returns {Promise} - The promise created by the request.
  */
 export function invitePeople( // eslint-disable-line max-params
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
-        people: Object) {
+        inviteItems: Object) {
+    if (!inviteItems || inviteItems.length === 0) {
+        return Promise.resolve();
+    }
+
     return new Promise((resolve, reject) => {
         $.post(
                 `${inviteServiceUrl}?token=${jwt}`,
                 JSON.stringify({
-                    'invited': people,
+                    'invited': inviteItems,
                     'url': inviteUrl
                 }),
                 resolve,

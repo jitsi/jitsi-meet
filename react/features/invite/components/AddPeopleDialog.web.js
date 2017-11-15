@@ -224,7 +224,8 @@ class AddPeopleDialog extends Component<*, *> {
                 this.props._inviteServiceUrl,
                 this.props._inviteUrl,
                 this.props._jwt,
-                this.state.inviteItems.filter(i => i.type === 'user'))
+                this.state.inviteItems.filter(
+                    i => i.type === 'user' || i.type === 'room'))
             .then(
                 /* onFulfilled */ () => {
                     this.setState({
