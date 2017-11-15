@@ -172,7 +172,7 @@ class RemoteVideoMenuTriggerButton extends Component {
             );
         }
 
-        if (onVolumeChange && isModerator) {
+        if (onVolumeChange) {
             buttons.push(
                 <VolumeSlider
                     initialValue = { initialVolumeValue }
