@@ -1,4 +1,6 @@
 /* global $, APP */
+import throttle from 'lodash/throttle';
+
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
@@ -112,6 +114,74 @@ function dontShowAgainSubmitFunctionWrapper(options, submitFunction) {
 function isDontShowAgainEnabled(options) {
     return typeof options === 'object';
 }
+
+/**
+ * By default how long a notification should display before being automatically
+ * dismissed.
+ *
+ * @private
+ * @type {number}
+ */
+const NOTIFICATION_DISMISS_TIMEOUT = 2500;
+
+/**
+ * An array of names of participants that have joined the conference. The array
+ * is replaced with an empty array as notifications are displayed.
+ *
+ * @private
+ * @type {string[]}
+ */
+let joinedParticipantsNames = [];
+
+/**
+ * A throttled internal function that takes the internal list of participant
+ * names, {@code joinedParticipantsNames}, and triggers the display of a
+ * notification informing of their joining.
+ *
+ * @private
+ * @type {Function}
+ */
+const throttledNotifyParticipantConnected = throttle(() => {
+    const joinedParticipantsCount = joinedParticipantsNames.length;
+
+    let notificationProps;
+
+    if (joinedParticipantsCount >= 3) {
+        notificationProps = {
+            titleArguments: {
+                name: joinedParticipantsNames[0],
+                count: joinedParticipantsCount - 1
+            },
+            titleKey: 'notify.connectedThreePlusMembers'
+        };
+    } else if (joinedParticipantsCount === 2) {
+        notificationProps = {
+            titleArguments: {
+                first: joinedParticipantsNames[0],
+                second: joinedParticipantsNames[1]
+            },
+            titleKey: 'notify.connectedTwoMembers'
+        };
+    } else if (joinedParticipantsCount) {
+        notificationProps = {
+            titleArguments: {
+                name: joinedParticipantsNames[0]
+            },
+            titleKey: 'notify.connectedOneMember'
+        };
+    }
+
+    if (notificationProps) {
+        APP.store.dispatch(
+            showNotification(
+                Notification,
+                notificationProps,
+                NOTIFICATION_DISMISS_TIMEOUT));
+    }
+
+    joinedParticipantsNames = [];
+
+}, 500, { leading: false });
 
 const messageHandler = {
     OK: 'dialog.OK',
@@ -362,7 +432,7 @@ const messageHandler = {
         $titleString.attr('data-i18n', titleKey);
 
         return $('<div>').append($titleString)
-.html();
+            .html();
     },
 
     /**
@@ -479,7 +549,7 @@ const messageHandler = {
      * @param displayName the display name of the participant that is
      * associated with the notification.
      * @param displayNameKey the key from the language file for the display
-     * name. Only used if displayName i not provided.
+     * name. Only used if displayName is not provided.
      * @param cls css class for the notification
      * @param messageKey the key from the language file for the text of the
      * message.
@@ -492,7 +562,7 @@ const messageHandler = {
             cls,
             messageKey,
             messageArguments,
-            timeout = 2500) {
+            timeout = NOTIFICATION_DISMISS_TIMEOUT) {
         APP.store.dispatch(
             showNotification(
                 Notification,
@@ -503,6 +573,20 @@ const messageHandler = {
                     title: displayName
                 },
                 timeout));
+    },
+
+    /**
+     * Queues the display of a notification of a participant having connected to
+     * the meeting. The notifications are batched so that quick consecutive
+     * connection events are shown in one notification.
+     *
+     * @param {string} displayName - The name of the participant that connected.
+     * @returns {void}
+     */
+    notifyParticipantConnected(displayName) {
+        joinedParticipantsNames.push(displayName);
+
+        throttledNotifyParticipantConnected();
     },
 
     /**

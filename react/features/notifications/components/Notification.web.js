@@ -103,6 +103,11 @@ class Notification extends Component {
         title: PropTypes.string,
 
         /**
+         * The translation arguments that may be necessary for the title.
+         */
+        titleArguments: PropTypes.object,
+
+        /**
          * The translation key to display as the title of the notification if
          * no title is provided.
          */
@@ -136,16 +141,17 @@ class Notification extends Component {
      */
     render() {
         const {
-            hideErrorSupportLink,
             appearance,
-            titleKey,
+            description,
             descriptionArguments,
             descriptionKey,
-            description,
+            hideErrorSupportLink,
             isDismissAllowed,
             onDismissed,
             t,
             title,
+            titleArguments,
+            titleKey,
             uid
         } = this.props;
 
@@ -159,7 +165,7 @@ class Notification extends Component {
                 id = { uid }
                 isDismissAllowed = { isDismissAllowed }
                 onDismissed = { onDismissed }
-                title = { title || t(titleKey) } />
+                title = { title || t(titleKey, titleArguments) } />
         );
     }
 

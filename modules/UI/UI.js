@@ -473,8 +473,7 @@ UI.addUser = function(user) {
     const id = user.getId();
     const displayName = user.getDisplayName();
 
-    messageHandler.participantNotification(
-        displayName, 'notify.somebody', 'connected', 'notify.connected');
+    messageHandler.notifyParticipantConnected(displayName);
 
     if (!config.startAudioMuted
         || config.startAudioMuted > APP.conference.membersCount) {
