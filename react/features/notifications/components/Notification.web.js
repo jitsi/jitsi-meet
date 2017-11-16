@@ -61,7 +61,8 @@ class Notification extends Component<*> {
         defaultTitleKey: PropTypes.string,
 
         /**
-         * The description string.
+         * A description string that can be used in addition to the prop
+         * descriptionKey.
          */
         description: PropTypes.string,
 
@@ -161,8 +162,7 @@ class Notification extends Component<*> {
             <Flag
                 actions = { this._mapAppearanceToButtons(hideErrorSupportLink) }
                 appearance = { appearance }
-                description = { description
-                    || t(descriptionKey, descriptionArguments) }
+                description = { this._renderDescription() }
                 icon = { this._mapAppearanceToIcon() }
                 id = { uid }
                 isDismissAllowed = { isDismissAllowed }
@@ -172,6 +172,30 @@ class Notification extends Component<*> {
     }
 
     _onDismissed: () => void;
+
+    /**
+     * Creates a {@code ReactElement} for displaying the contents of the
+     * notification.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderDescription() {
+        const {
+            description,
+            descriptionArguments,
+            descriptionKey,
+            t
+        } = this.props;
+
+        return (
+            <div>
+                { descriptionKey
+                    ? t(descriptionKey, descriptionArguments) : null }
+                { description || null }
+            </div>
+        );
+    }
 
     /**
      * Calls back into {@code FlagGroup} to dismiss the notification.

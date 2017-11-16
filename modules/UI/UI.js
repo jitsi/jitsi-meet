@@ -31,8 +31,8 @@ import {
 } from '../../react/features/base/participants';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import {
-    maybeShowNotificationWithDoNotDisplay,
-    setNotificationsEnabled
+    setNotificationsEnabled,
+    showWarningNotification
 } from '../../react/features/notifications';
 import {
     checkAutoEnableDesktopSharing,
@@ -1155,8 +1155,6 @@ UI.showMicErrorNotification = function(micError) {
 
     const { message, name } = micError;
 
-    const persistenceKey = `doNotShowErrorAgain-mic-${name}`;
-
     const micJitsiTrackErrorMsg
         = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[name];
     const micErrorMsg = micJitsiTrackErrorMsg
@@ -1164,18 +1162,13 @@ UI.showMicErrorNotification = function(micError) {
             .microphone[JitsiTrackErrors.GENERAL];
     const additionalMicErrorMsg = micJitsiTrackErrorMsg ? null : message;
 
-    APP.store.dispatch(maybeShowNotificationWithDoNotDisplay(
-        persistenceKey,
-        {
-            additionalMessage: additionalMicErrorMsg,
-            messageKey: micErrorMsg,
-            showToggle: Boolean(micJitsiTrackErrorMsg),
-            subtitleKey: 'dialog.micErrorPresent',
-            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.microphonePermission'
-                : 'deviceError.microphoneError',
-            toggleLabelKey: 'dialog.doNotShowWarningAgain'
-        }));
+    APP.store.dispatch(showWarningNotification({
+        description: additionalMicErrorMsg,
+        descriptionKey: micErrorMsg,
+        titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
+            ? 'deviceError.microphonePermission'
+            : 'deviceError.microphoneError'
+    }));
 };
 
 /**
@@ -1192,8 +1185,6 @@ UI.showCameraErrorNotification = function(cameraError) {
 
     const { message, name } = cameraError;
 
-    const persistenceKey = `doNotShowErrorAgain-camera-${name}`;
-
     const cameraJitsiTrackErrorMsg
         = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[name];
     const cameraErrorMsg = cameraJitsiTrackErrorMsg
@@ -1201,17 +1192,12 @@ UI.showCameraErrorNotification = function(cameraError) {
             .camera[JitsiTrackErrors.GENERAL];
     const additionalCameraErrorMsg = cameraJitsiTrackErrorMsg ? null : message;
 
-    APP.store.dispatch(maybeShowNotificationWithDoNotDisplay(
-        persistenceKey,
-        {
-            additionalMessage: additionalCameraErrorMsg,
-            messageKey: cameraErrorMsg,
-            showToggle: Boolean(cameraJitsiTrackErrorMsg),
-            subtitleKey: 'dialog.cameraErrorPresent',
-            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.cameraPermission' : 'deviceError.cameraError',
-            toggleLabelKey: 'dialog.doNotShowWarningAgain'
-        }));
+    APP.store.dispatch(showWarningNotification({
+        description: additionalCameraErrorMsg,
+        descriptionKey: cameraErrorMsg,
+        titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
+            ? 'deviceError.cameraPermission' : 'deviceError.cameraError'
+    }));
 };
 
 /**

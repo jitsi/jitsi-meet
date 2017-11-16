@@ -30,7 +30,6 @@
     "@atlaskit/spinner": "4.0.0",
     "@atlaskit/tabs": "4.0.1",
     "@atlaskit/theme": "2.2.0",
-    "@atlaskit/toggle": "2.6.1",
     "@atlaskit/tooltip": "6.0.0",
     "@atlassian/aui": "6.0.6",
     "autosize": "1.18.13",

@@ -1,14 +1,9 @@
-import jitsiLocalStorage from '../../../modules/util/JitsiLocalStorage';
-
 import {
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
-import {
-    Notification,
-    NotificationWithToggle
-} from './components';
+import { Notification } from './components';
 
 import { NOTIFICATION_TYPE } from './constants';
 
@@ -95,34 +90,4 @@ export function showWarningNotification(props) {
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
     });
-}
-
-/**
- * Displays a notification unless the passed in persistenceKey value exists in
- * local storage and has been set to "true".
- *
- * @param {string} persistenceKey - The local storage key to look up for whether
- * or not the notification should display.
- * @param {Object} props - The props needed to show the notification component.
- * @returns {Function}
- */
-export function maybeShowNotificationWithDoNotDisplay(persistenceKey, props) {
-    return dispatch => {
-        if (jitsiLocalStorage.getItem(persistenceKey) === 'true') {
-            return;
-        }
-
-        const newProps = Object.assign({}, props, {
-            onToggleSubmit: isToggled => {
-                jitsiLocalStorage.setItem(persistenceKey, isToggled);
-            }
-        });
-
-        dispatch({
-            type: SHOW_NOTIFICATION,
-            component: NotificationWithToggle,
-            props: newProps,
-            uid: window.Date.now()
-        });
-    };
 }
