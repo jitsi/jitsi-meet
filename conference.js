@@ -1702,11 +1702,7 @@ export default {
     _setupListeners() {
         // add local streams when joined to the conference
         room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
-            APP.store.dispatch(conferenceJoined(room));
-
-            APP.UI.mucJoined();
-            APP.API.notifyConferenceJoined(APP.conference.roomName);
-            APP.UI.markVideoInterrupted(false);
+            this._onConferenceJoined();
         });
 
         room.on(
@@ -2332,6 +2328,62 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+    },
+
+    /**
+     * Callback invoked when the conference has been successfully joined.
+     * Initializes the UI and various other features.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onConferenceJoined() {
+        if (APP.logCollector) {
+            // Start the LogCollector's periodic "store logs" task
+            APP.logCollector.start();
+            APP.logCollectorStarted = true;
+
+            // Make an attempt to flush in case a lot of logs have been
+            // cached, before the collector was started.
+            APP.logCollector.flush();
+
+            // This event listener will flush the logs, before
+            // the statistics module (CallStats) is stopped.
+            //
+            // NOTE The LogCollector is not stopped, because this event can
+            // be triggered multiple times during single conference
+            // (whenever statistics module is stopped). That includes
+            // the case when Jicofo terminates the single person left in the
+            // room. It will then restart the media session when someone
+            // eventually join the room which will start the stats again.
+            APP.conference.addConferenceListener(
+                JitsiConferenceEvents.BEFORE_STATISTICS_DISPOSED,
+                () => {
+                    if (APP.logCollector) {
+                        APP.logCollector.flush();
+                    }
+                }
+            );
+        }
+
+        APP.UI.initConference();
+
+        APP.UI.addListener(
+            UIEvents.LANG_CHANGED,
+            language => APP.translation.setLanguage(language));
+
+        APP.keyboardshortcut.init();
+
+        if (config.requireDisplayName
+                && !APP.conference.getLocalDisplayName()) {
+            APP.UI.promptDisplayName();
+        }
+
+        APP.store.dispatch(conferenceJoined(room));
+
+        APP.UI.mucJoined();
+        APP.API.notifyConferenceJoined(APP.conference.roomName);
+        APP.UI.markVideoInterrupted(false);
     },
 
     /**
