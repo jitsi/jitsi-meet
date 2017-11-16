@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, interfaceConfig */
 import throttle from 'lodash/throttle';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -584,7 +584,8 @@ const messageHandler = {
      * @returns {void}
      */
     notifyParticipantConnected(displayName) {
-        joinedParticipantsNames.push(displayName);
+        joinedParticipantsNames.push(
+            displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
 
         throttledNotifyParticipantConnected();
     },
