@@ -1,3 +1,5 @@
+/* global interfaceConfig */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -9,8 +11,6 @@ import { translate } from '../../base/i18n';
 import AddPeopleDialog from './AddPeopleDialog';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-declare var interfaceConfig: Object;
 
 /**
  * A React Component with the contents for a dialog that shows information about

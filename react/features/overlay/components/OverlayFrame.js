@@ -1,7 +1,7 @@
+/* global interfaceConfig */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-declare var interfaceConfig: Object;
 
 /**
  * Implements a React Component for the frame of the overlays.

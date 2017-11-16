@@ -1,3 +1,5 @@
+/* global JitsiMeetJS */
+
 import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -10,8 +12,6 @@ import {
 import { parseURLParams } from '../base/config';
 
 import DeviceSelectionDialogBase from './components/DeviceSelectionDialogBase';
-
-declare var JitsiMeetJS: Object;
 
 const logger = Logger.getLogger(__filename);
 

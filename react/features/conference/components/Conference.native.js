@@ -339,7 +339,7 @@ function _mapDispatchToProps(dispatch) {
          * @returns {void}
          * @private
          */
-        _setToolboxVisible(visible: boolean) {
+        _setToolboxVisible(visible) {
             dispatch(setToolboxVisible(visible));
         }
     };

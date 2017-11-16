@@ -1,9 +1,11 @@
+// @flow
+
 import Flag from '@atlaskit/flag';
 import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
-import PropTypes from 'prop-types';
 import ErrorIcon from '@atlaskit/icon/glyph/error';
 import WarningIcon from '@atlaskit/icon/glyph/warning';
 import { colors } from '@atlaskit/theme';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -30,7 +32,7 @@ const ICON_COLOR = {
  *
  * @extends Component
  */
-class Notification extends Component {
+class Notification extends Component<*> {
     /**
      * Default values for {@code Notification} component's properties.
      *
@@ -162,6 +164,8 @@ class Notification extends Component {
                 title = { title || t(titleKey) } />
         );
     }
+
+    _onDismissed: () => void;
 
     /**
      * Calls back into {@code FlagGroup} to dismiss the notification.

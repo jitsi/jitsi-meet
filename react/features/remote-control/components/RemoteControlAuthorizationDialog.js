@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,7 +13,7 @@ declare var APP: Object;
 /**
  * Implements a dialog for remote control authorization.
  */
-class RemoteControlAuthorizationDialog extends Component {
+class RemoteControlAuthorizationDialog extends Component<*> {
     /**
      * RemoteControlAuthorizationDialog component's property types.
      *
@@ -105,6 +107,8 @@ class RemoteControlAuthorizationDialog extends Component {
         );
     }
 
+    _onCancel: () => boolean;
+
     /**
      * Notifies the remote control module about the denial of the remote control
      * request.
@@ -118,6 +122,8 @@ class RemoteControlAuthorizationDialog extends Component {
 
         return true;
     }
+
+    _onSubmit: () => boolean;
 
     /**
      * Notifies the remote control module that the remote control request is

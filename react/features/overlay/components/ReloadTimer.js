@@ -1,9 +1,9 @@
+/* global AJS */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-
-declare var AJS: Object;
 
 /**
  * Implements a React Component for the reload timer. Starts counter from

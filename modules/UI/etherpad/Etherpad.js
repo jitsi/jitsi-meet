@@ -202,7 +202,7 @@ export default class EtherpadManager {
     }
 
     /**
-     * 
+     *
      */
     isVisible() {
         return VideoLayout.isLargeContainerTypeVisible(ETHERPAD_CONTAINER_TYPE);

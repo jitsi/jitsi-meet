@@ -1,3 +1,5 @@
+/* global interfaceConfig */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,8 +13,6 @@ import SuspendedOverlay from './SuspendedOverlay';
 import UserMediaPermissionsFilmstripOnlyOverlay
     from './UserMediaPermissionsFilmstripOnlyOverlay';
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
-
-declare var interfaceConfig: Object;
 
 /**
  * Implements a React Component that will display the correct overlay when

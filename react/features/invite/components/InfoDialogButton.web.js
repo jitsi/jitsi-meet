@@ -1,3 +1,5 @@
+/* global interfaceConfig */
+
 import InlineDialog from '@atlaskit/inline-dialog';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -6,10 +8,7 @@ import { connect } from 'react-redux';
 import { ToolbarButton, TOOLTIP_TO_POPUP_POSITION } from '../../toolbox';
 
 import { setInfoDialogVisibility } from '../actions';
-
 import InfoDialog from './InfoDialog';
-
-declare var interfaceConfig: Object;
 
 const { INITIAL_TOOLBAR_TIMEOUT } = interfaceConfig;
 

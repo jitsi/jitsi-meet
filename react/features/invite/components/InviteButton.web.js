@@ -1,3 +1,5 @@
+/* global interfaceConfig */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,8 +13,6 @@ import { openDialog } from '../../base/dialog';
 import { AddPeopleDialog, InviteDialog } from '.';
 import { DialOutDialog } from '../../dial-out';
 import { isInviteOptionEnabled, getInviteOptionPosition } from '../functions';
-
-declare var interfaceConfig: Object;
 
 const SHARE_LINK_OPTION = 'invite';
 const DIAL_OUT_OPTION = 'dialout';

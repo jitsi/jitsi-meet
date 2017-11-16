@@ -68,7 +68,7 @@ class Translation {
     }
 
     /**
-     * 
+     *
      */
     translateElement(selector: Object, options: Object) {
         // XXX i18next expects undefined if options are missing.

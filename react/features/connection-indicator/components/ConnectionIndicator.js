@@ -1,3 +1,5 @@
+/* global interfaceConfig */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -7,8 +9,6 @@ import { Popover } from '../../base/popover';
 import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
-
-declare var interfaceConfig: Object;
 
 /**
  * The connection quality percentage that must be reached to be considered of

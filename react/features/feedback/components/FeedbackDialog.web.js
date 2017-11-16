@@ -1,3 +1,5 @@
+/* global interfaceConfig */
+
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
 import PropTypes from 'prop-types';
@@ -9,8 +11,6 @@ import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 import { cancelFeedback, submitFeedback } from '../actions';
-
-declare var interfaceConfig: Object;
 
 const scoreAnimationClass
     = interfaceConfig.ENABLE_FEEDBACK_ANIMATION ? 'shake-rotate' : '';

@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -5,7 +7,7 @@ import React, { Component } from 'react';
  * The React {@link Component} which is similar to Web's
  * {@code HTMLAudioElement}.
  */
-export default class AbstractAudio extends Component {
+export default class AbstractAudio extends Component<*> {
     /**
      * The (reference to the) {@link ReactElement} which actually implements
      * this {@code AbstractAudio}.

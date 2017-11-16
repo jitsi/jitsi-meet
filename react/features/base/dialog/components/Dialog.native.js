@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Modal, StyleSheet, TextInput } from 'react-native';
@@ -105,6 +107,8 @@ class Dialog extends AbstractDialog {
             <Prompt
                 cancelButtonTextStyle = { cancelButtonTextStyle }
                 cancelText = { t(cancelTitleKey) }
+
+                // $FlowFixMeState
                 defaultValue = { this.state.text }
                 onCancel = { this._onCancel }
                 onChangeText = { this._onChangeText }
@@ -226,7 +230,7 @@ class Dialog extends AbstractDialog {
                 mapped
                     = React.cloneElement(
                         mapped,
-                        /* props */ undefined,
+                        /* props */ {},
                         ...React.Children.toArray(React.Children.map(
                             children,
                             function(element) { // eslint-disable-line no-shadow
@@ -239,6 +243,8 @@ class Dialog extends AbstractDialog {
 
         return mapped;
     }
+
+    _onCancel: () => void;
 
     _onChangeText: (string) => void;
 
@@ -254,6 +260,8 @@ class Dialog extends AbstractDialog {
         this.setState({ text });
     }
 
+    _onSubmit: (?string) => void;
+
     /**
      * Submits this {@code Dialog} with the value of the {@link TextInput}
      * rendered by {@link Prompt} unless a value is explicitly specified.
@@ -263,6 +271,7 @@ class Dialog extends AbstractDialog {
      * @returns {void}
      */
     _onSubmit(value: ?string) {
+        // $FlowFixMeState
         super._onSubmit(value || this.state.text);
     }
 }

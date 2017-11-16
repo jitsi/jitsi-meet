@@ -588,7 +588,7 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * 
+     *
      */
     hide() {
         // as the container is hidden/replaced by another container

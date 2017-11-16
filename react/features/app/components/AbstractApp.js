@@ -1,3 +1,5 @@
+/* global APP */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { I18nextProvider } from 'react-i18next';
@@ -16,8 +18,6 @@ import { toURLString } from '../../base/util';
 import { BlankPage } from '../../welcome';
 
 import { appNavigate, appWillMount, appWillUnmount } from '../actions';
-
-declare var APP: Object;
 
 /**
  * The default URL to open if no other was specified to {@code AbstractApp}

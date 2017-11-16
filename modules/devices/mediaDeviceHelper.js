@@ -237,7 +237,7 @@ export default {
         }
 
         /**
-         * 
+         *
          */
         function createVideoTrack(showError) {
             return (

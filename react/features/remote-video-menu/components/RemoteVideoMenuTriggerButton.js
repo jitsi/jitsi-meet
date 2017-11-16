@@ -1,3 +1,5 @@
+// @flow
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -20,7 +22,7 @@ declare var interfaceConfig: Object;
  *
  * @extends {Component}
  */
-class RemoteVideoMenuTriggerButton extends Component {
+class RemoteVideoMenuTriggerButton extends Component<*> {
     static propTypes = {
         /**
          * A value between 0 and 1 indicating the volume of the participant's
@@ -67,23 +69,23 @@ class RemoteVideoMenuTriggerButton extends Component {
     };
 
     /**
+     * The internal reference to topmost DOM/HTML element backing the React
+     * {@code Component}. Accessed directly for associating an element as
+     * the trigger for a popover.
+     *
+     * @private
+     * @type {HTMLDivElement}
+     */
+    _rootElement = null;
+
+    /**
      * Initializes a new {#@code RemoteVideoMenuTriggerButton} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Object) {
         super(props);
-
-        /**
-         * The internal reference to topmost DOM/HTML element backing the React
-         * {@code Component}. Accessed directly for associating an element as
-         * the trigger for a popover.
-         *
-         * @private
-         * @type {HTMLDivElement}
-         */
-        this._rootElement = null;
 
         // Bind event handler so it is only bound once for every instance.
         this._onShowRemoteMenu = this._onShowRemoteMenu.bind(this);
@@ -117,6 +119,8 @@ class RemoteVideoMenuTriggerButton extends Component {
             </Popover>
         );
     }
+
+    _onShowRemoteMenu: () => void;
 
     /**
      * Opens the {@code RemoteVideoMenu}.
