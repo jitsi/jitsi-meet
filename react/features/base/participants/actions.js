@@ -1,3 +1,9 @@
+/* global interfaceConfig */
+
+import throttle from 'lodash/throttle';
+
+import { Notification, showNotification } from '../../notifications';
+
 import {
     DOMINANT_SPEAKER_CHANGED,
     KICK_PARTICIPANT,
@@ -316,5 +322,81 @@ export function pinParticipant(id) {
         participant: {
             id
         }
+    };
+}
+
+/**
+ * An array of names of participants that have joined the conference. The array
+ * is replaced with an empty array as notifications are displayed.
+ *
+ * @private
+ * @type {string[]}
+ */
+let joinedParticipantsNames = [];
+
+/**
+ * A throttled internal function that takes the internal list of participant
+ * names, {@code joinedParticipantsNames}, and triggers the display of a
+ * notification informing of their joining.
+ *
+ * @private
+ * @type {Function}
+ */
+const _throttledNotifyParticipantConnected = throttle(dispatch => {
+    const joinedParticipantsCount = joinedParticipantsNames.length;
+
+    let notificationProps;
+
+    if (joinedParticipantsCount >= 3) {
+        notificationProps = {
+            titleArguments: {
+                name: joinedParticipantsNames[0],
+                count: joinedParticipantsCount - 1
+            },
+            titleKey: 'notify.connectedThreePlusMembers'
+        };
+    } else if (joinedParticipantsCount === 2) {
+        notificationProps = {
+            titleArguments: {
+                first: joinedParticipantsNames[0],
+                second: joinedParticipantsNames[1]
+            },
+            titleKey: 'notify.connectedTwoMembers'
+        };
+    } else if (joinedParticipantsCount) {
+        notificationProps = {
+            titleArguments: {
+                name: joinedParticipantsNames[0]
+            },
+            titleKey: 'notify.connectedOneMember'
+        };
+    }
+
+    if (notificationProps) {
+        dispatch(
+            showNotification(
+                Notification,
+                notificationProps,
+                2500));
+    }
+
+    joinedParticipantsNames = [];
+
+}, 500, { leading: false });
+
+/**
+ * Queues the display of a notification of a participant having connected to
+ * the meeting. The notifications are batched so that quick consecutive
+ * connection events are shown in one notification.
+ *
+ * @param {string} displayName - The name of the participant that connected.
+ * @returns {Function}
+ */
+export function showParticipantJoinedNotification(displayName) {
+    joinedParticipantsNames.push(
+        displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+
+    return dispatch => {
+        _throttledNotifyParticipantConnected(dispatch);
     };
 }
