@@ -116,13 +116,8 @@ function getCurrentTime(stamp) {
 function toggleSmileys() {
     const smileys = $('#smileysContainer'); // eslint-disable-line no-shadow
 
-    if (smileys.is(':visible')) {
-        smileys.hide('slide', { direction: 'down',
-            duration: 300 });
-    } else {
-        smileys.show('slide', { direction: 'down',
-            duration: 300 });
-    }
+    smileys.slideToggle();
+
     $('#usermsg').focus();
 }
 
