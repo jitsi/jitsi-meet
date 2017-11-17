@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 
 import { CachedImage, ImageCache } from '../../../mobile/image-cache';
 import { Platform } from '../../react';
@@ -263,13 +263,19 @@ export default class Avatar extends Component {
             imageStyle = style;
         }
 
-        let element = React.createElement(CachedImage, {
-            ...props,
+        let element
+            = React.createElement(
 
-            resizeMode: 'contain',
-            source,
-            style: imageStyle
-        });
+                // XXX CachedImage removed support for images which clearly do
+                // not need caching.
+                typeof source === 'number' ? Image : CachedImage,
+                {
+                    ...props,
+
+                    resizeMode: 'contain',
+                    source,
+                    style: imageStyle
+                });
 
         if (viewStyle) {
             element = React.createElement(View, { style: viewStyle }, element);
