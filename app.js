@@ -8,7 +8,6 @@ import './react/features/base/react/prop-types-polyfill.js';
 
 import 'jquery';
 import 'jquery-contextmenu';
-import 'jquery-ui';
 import 'jQuery-Impromptu';
 import 'autosize';
 
