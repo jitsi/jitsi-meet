@@ -1,45 +1,36 @@
 // @flow
 
-import * as React from 'react';
+import { Component } from 'react';
 
 import { hideDialog } from '../actions';
-import { DialogPropTypes } from '../constants';
+import type { DialogProps } from '../constants';
 
 /**
- * Defines the property types for AbstractDialog.
+ * The type of the React {@code Component} props of {@link AbstractDialog}.
  */
-export type AbstractDialogPropTypes = {
-    ...DialogPropTypes,
-
-    /**
-     * The React {@code Component} children of {@code AbstractDialog}
-     * which represents the dialog's body.
-     */
-    children: React.Node,
+export type Props = {
+    ...DialogProps,
 
     /**
      * Used to show/hide the dialog on cancel.
      */
     dispatch: Dispatch<*>
-}
+};
 
 /**
- * Defines the state for AbstractDialog.
+ * The type of the React {@code Component} state of {@link AbstractDialog}.
  */
-type AbstractDialogState = {
-    submitting: boolean
-}
+export type State = {
+    submitting: ?boolean
+};
 
 /**
  * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
-export default class AbstractDialog
-    extends React.Component<AbstractDialogPropTypes, AbstractDialogState> {
-    _mounted: boolean;
+export default class AbstractDialog<P : Props, S : State>
+    extends Component<P, S> {
 
-    state = {
-        submitting: false
-    };
+    _mounted: boolean;
 
     /**
      * Initializes a new {@code AbstractDialog} instance.
@@ -47,7 +38,7 @@ export default class AbstractDialog
      * @param {Object} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

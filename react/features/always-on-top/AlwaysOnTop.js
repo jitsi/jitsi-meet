@@ -1,3 +1,5 @@
+// @flow
+
 import React, { Component } from 'react';
 
 import StatelessToolbar from '../toolbox/components/StatelessToolbar';
@@ -7,14 +9,9 @@ import StatelessToolbarButton
 const { api } = window.alwaysOnTop;
 
 /**
- * The timeout in ms for hidding the toolbar.
- */
-const TOOLBAR_TIMEOUT = 4000;
-
-/**
  * Map with toolbar button descriptors.
  */
-const toolbarButtons = {
+const TOOLBAR_BUTTONS = {
     /**
      * The descriptor of the camera toolbar button.
      */
@@ -54,15 +51,20 @@ const toolbarButtons = {
 };
 
 /**
- * Defines the state for <tt>AlwaysOnTop</tt> component.
+ * The timeout in ms for hidding the toolbar.
  */
-type AlwaysOnTopState = {
-    visible: boolean,
-    audioMuted: boolean,
-    videoMuted: boolean,
+const TOOLBAR_TIMEOUT = 4000;
+
+/**
+ * The type of the React {@code Component} state of {@link FeedbackButton}.
+ */
+type State = {
     audioAvailable: boolean,
-    videoAvailable: boolean
-}
+    audioMuted: boolean,
+    videoAvailable: boolean,
+    videoMuted: boolean,
+    visible: boolean
+};
 
 /**
  * Represents the always on top page.
@@ -70,14 +72,16 @@ type AlwaysOnTopState = {
  * @class AlwaysOnTop
  * @extends Component
  */
-export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
+export default class AlwaysOnTop extends Component<*, State> {
+    _hovered: boolean;
+
     /**
      * Initializes new AlwaysOnTop instance.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @param {*} props - The read-only properties with which the new instance
+     * is to be initialized.
      */
-    constructor(props) {
+    constructor(props: *) {
         super(props);
 
         this.state = {
@@ -88,18 +92,19 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
             videoAvailable: false
         };
 
-        this._hovered = false;
-
+        // Bind event handlers so they are only bound once per instance.
         this._audioAvailabilityListener
             = this._audioAvailabilityListener.bind(this);
         this._audioMutedListener = this._audioMutedListener.bind(this);
         this._mouseMove = this._mouseMove.bind(this);
-        this._onMouseOver = this._onMouseOver.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
+        this._onMouseOver = this._onMouseOver.bind(this);
         this._videoAvailabilityListener
             = this._videoAvailabilityListener.bind(this);
         this._videoMutedListener = this._videoMutedListener.bind(this);
     }
+
+    _audioAvailabilityListener: ({ available: boolean }) => void;
 
     /**
      * Handles audio available api events.
@@ -110,6 +115,8 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
     _audioAvailabilityListener({ available }) {
         this.setState({ audioAvailable: available });
     }
+
+    _audioMutedListener: ({ muted: boolean }) => void;
 
     /**
      * Handles audio muted api events.
@@ -137,6 +144,8 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
         }, TOOLBAR_TIMEOUT);
     }
 
+    _mouseMove: () => void;
+
     /**
      * Handles mouse move events.
      *
@@ -148,14 +157,7 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
         }
     }
 
-    /**
-     * Toolbar mouse over handler.
-     *
-     * @returns {void}
-     */
-    _onMouseOver() {
-        this._hovered = true;
-    }
+    _onMouseOut: () => void;
 
     /**
      * Toolbar mouse out handler.
@@ -166,6 +168,19 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
         this._hovered = false;
     }
 
+    _onMouseOver: () => void;
+
+    /**
+     * Toolbar mouse over handler.
+     *
+     * @returns {void}
+     */
+    _onMouseOver() {
+        this._hovered = true;
+    }
+
+    _videoAvailabilityListener: ({ available: boolean }) => void;
+
     /**
      * Handles audio available api events.
      *
@@ -175,6 +190,8 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
     _videoAvailabilityListener({ available }) {
         this.setState({ videoAvailable: available });
     }
+
+    _videoMutedListener: ({ muted: boolean }) => void;
 
     /**
      * Handles video muted api events.
@@ -248,7 +265,7 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUpdate(nextProps, nextState) {
+    componentWillUpdate(nextProps: *, nextState: State) {
         if (!this.state.visible && nextState.visible) {
             this._hideToolbarAfterTimeout();
         }
@@ -271,9 +288,15 @@ export default class AlwaysOnTop extends Component<*, AlwaysOnTopState> {
                 onMouseOut = { this._onMouseOut }
                 onMouseOver = { this._onMouseOver }>
                 {
-                    Object.entries(toolbarButtons).map(([ key, button ]) => {
+                    Object.entries(TOOLBAR_BUTTONS).map(([ key, button ]) => {
+                        // XXX The following silences a couple of flow errors:
+                        if (button === null || typeof button !== 'object') {
+                            return null;
+                        }
+
                         const { onClick } = button;
-                        let enabled = false, toggled = false;
+                        let enabled = false;
+                        let toggled = false;
 
                         switch (key) {
                         case 'microphone':

@@ -11,14 +11,14 @@ import { cancelWaitForOwner, _openLoginDialog } from '../actions';
 import styles from './styles';
 
 /**
- * WaitForOwnerDialog component's property types.
+ * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
-type WaitForOwnerDialogPropTypes = {
+type Props = {
 
     /**
      * The name of the conference room (without the domain part).
      */
-    _room: String,
+    _room: string,
 
     /**
      * Redux store dispatch function.
@@ -37,7 +37,7 @@ type WaitForOwnerDialogPropTypes = {
  *
  * See {@link LoginDialog} description for more details.
  */
-class WaitForOwnerDialog extends Component<WaitForOwnerDialogPropTypes> {
+class WaitForOwnerDialog extends Component<Props> {
     /**
      * Initializes a new WaitForWonderDialog instance.
      *

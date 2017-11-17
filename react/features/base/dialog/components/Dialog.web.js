@@ -1,14 +1,17 @@
+// @flow
+
 import React from 'react';
 import { connect } from 'react-redux';
 
-import AbstractDialog, { AbstractDialogPropTypes } from './AbstractDialog';
+import AbstractDialog from './AbstractDialog';
+import type { Props as AbstractDialogProps, State } from './AbstractDialog';
 import StatelessDialog from './StatelessDialog';
 
 /**
- * Web dialog component's property types.
+ * The type of the React {@code Component} props of {@link Dialog}.
  */
-type DialogPropTypes = {
-    ...AbstractDialogPropTypes,
+type Props = {
+    ...AbstractDialogProps,
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
@@ -28,13 +31,13 @@ type DialogPropTypes = {
      * - integer value for pixel width
      * - string value for percentage
      */
-    width: String
-}
+    width: string
+};
 
 /**
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
-class Dialog extends AbstractDialog<DialogPropTypes> {
+class Dialog extends AbstractDialog<Props, State> {
     /**
      * Initializes a new Dialog instance.
      *
@@ -44,6 +47,7 @@ class Dialog extends AbstractDialog<DialogPropTypes> {
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
@@ -66,6 +70,8 @@ class Dialog extends AbstractDialog<DialogPropTypes> {
         return <StatelessDialog { ...props } />;
     }
 
+    _onCancel: () => void;
+
     /**
      * Dispatches action to hide the dialog.
      *
@@ -74,6 +80,8 @@ class Dialog extends AbstractDialog<DialogPropTypes> {
     _onCancel() {
         this.props.isModal || super._onCancel();
     }
+
+    _onSubmit: (?string) => void;
 }
 
 export default connect()(Dialog);

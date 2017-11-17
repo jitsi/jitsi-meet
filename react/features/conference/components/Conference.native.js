@@ -1,3 +1,5 @@
+// @flow
+
 import React, { Component } from 'react';
 
 // eslint-disable-next-line react-native/split-platform-components
@@ -25,11 +27,9 @@ import styles from './styles';
 const _TOOLBOX_TIMEOUT_MS = 5000;
 
 /**
- * Conference component's property types.
- *
- * @static
+ * The type of the React {@code Component} props of {@link Conference}.
  */
-type ConferencePropTypes = {
+type Props = {
 
     /**
      * The indicator which determines that we are still connecting to the
@@ -85,7 +85,11 @@ type ConferencePropTypes = {
 /**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends Component<ConferencePropTypes> {
+class Conference extends Component<Props> {
+    _backHandler: ?BackHandler;
+
+    _toolboxTimeout: ?number;
+
     /**
      * Initializes a new Conference instance.
      *
@@ -237,6 +241,8 @@ class Conference extends Component<ConferencePropTypes> {
         }
     }
 
+    _onClick: () => void;
+
     /**
      * Changes the value of the toolboxVisible state, thus allowing us to switch
      * between Toolbox and Filmstrip and change their visibility.
@@ -253,6 +259,8 @@ class Conference extends Component<ConferencePropTypes> {
         // automatic toggling of the visibility should happen.
         this._clearToolboxTimeout();
     }
+
+    _onHardwareBackPress: () => boolean;
 
     /**
      * Handles a hardware button press for back navigation.
@@ -393,5 +401,6 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowFixMe
 export default reactReduxConnect(_mapStateToProps, _mapDispatchToProps)(
     Conference);

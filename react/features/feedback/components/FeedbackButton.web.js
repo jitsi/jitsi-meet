@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
@@ -9,9 +9,9 @@ import { translate } from '../../base/i18n';
 import { openFeedbackDialog } from '../actions';
 
 /**
- * Defines property types for the FeedbackButton component.
+ * The type of the React {@code Component} props of {@link FeedbackButton}.
  */
-type FeedbackButtonPropTypes = {
+type Props = {
 
     /**
      * The JitsiConference for which the feedback will be about.
@@ -34,13 +34,13 @@ type FeedbackButtonPropTypes = {
     /**
      * From which side of the button the tooltip should appear from.
      */
-    tooltipPosition: String
+    tooltipPosition: string
 }
 
 /**
  * Implements a Web/React Component which renders a feedback button.
  */
-class FeedbackButton extends Component<FeedbackButtonPropTypes> {
+class FeedbackButton extends Component<Props> {
     _onClick: Function;
 
     /**

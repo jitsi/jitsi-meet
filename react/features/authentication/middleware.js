@@ -59,6 +59,10 @@ MiddlewareRegistry.register(store => next => action => {
 
             // Go back to the app's entry point.
             _hideLoginDialog(store);
+
+            // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify
+            // the external-api.
+
             dispatch(appNavigate(undefined));
         }
         break;

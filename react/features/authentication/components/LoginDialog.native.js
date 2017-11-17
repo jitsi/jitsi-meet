@@ -226,7 +226,7 @@ class LoginDialog extends Component {
      */
     _onLogin() {
         const { _conference: conference, dispatch } = this.props;
-        const { username, password } = this.state;
+        const { password, username } = this.state;
         const jid = toJid(username, this.props._configHosts);
         let r;
 

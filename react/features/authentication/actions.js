@@ -71,6 +71,9 @@ export function authenticateAndUpgradeRole(
  * }}
  */
 export function cancelLogin() {
+    // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify the
+    // external-api.
+
     return {
         type: CANCEL_LOGIN
     };

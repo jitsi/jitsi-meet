@@ -1,12 +1,14 @@
+// @flow
+
 import Button, { ButtonGroup } from '@atlaskit/button';
 import ModalDialog from '@atlaskit/modal-dialog';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import PropTypes from 'prop-types';
+import _ from 'lodash';
 import React, { Component } from 'react';
 
 import { translate } from '../../i18n';
 
-import { DIALOG_PROP_TYPES } from '../constants';
+import type { DialogProps } from '../constants';
 
 /**
  * The ID to be used for the cancel button if enabled.
@@ -21,48 +23,45 @@ const CANCEL_BUTTON_ID = 'modal-dialog-cancel-button';
 const OK_BUTTON_ID = 'modal-dialog-ok-button';
 
 /**
+ * The type of the React {@code Component} props of {@link StatelessDialog}.
+ *
+ * @static
+ */
+type Props = {
+    ...DialogProps,
+
+    /**
+     * Disables dismissing the dialog when the blanket is clicked. Enabled
+     * by default.
+     */
+    disableBlanketClickDismiss: boolean,
+
+    /**
+     * Whether the dialog is modal. This means clicking on the blanket will
+     * leave the dialog open. No cancel button.
+     */
+    isModal: boolean,
+
+    /**
+     * Disables rendering of the submit button.
+     */
+    submitDisabled: boolean,
+
+    /**
+     * Width of the dialog, can be:
+     * - 'small' (400px), 'medium' (600px), 'large' (800px),
+     *   'x-large' (968px)
+     * - integer value for pixel width
+     * - string value for percentage
+     */
+    width: string
+};
+
+/**
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
-class StatelessDialog extends Component {
-    /**
-     * {@code StatelessDialog} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...DIALOG_PROP_TYPES,
-
-        /**
-         * This is the body of the dialog, the component children.
-         */
-        children: PropTypes.node,
-
-        /**
-         * Disables dismissing the dialog when the blanket is clicked. Enabled
-         * by default.
-         */
-        disableBlanketClickDismiss: PropTypes.bool,
-
-        /**
-         * Whether the dialog is modal. This means clicking on the blanket will
-         * leave the dialog open. No cancel button.
-         */
-        isModal: PropTypes.bool,
-
-        /**
-         * Disables rendering of the submit button.
-         */
-        submitDisabled: PropTypes.bool,
-
-        /**
-         * Width of the dialog, can be:
-         * - 'small' (400px), 'medium' (600px), 'large' (800px),
-         *   'x-large' (968px)
-         * - integer value for pixel width
-         * - string value for percentage
-         */
-        width: PropTypes.string
-    };
+class StatelessDialog extends Component<Props> {
+    _dialogElement: ?HTMLElement;
 
     /**
      * Initializes a new {@code StatelessDialog} instance.
@@ -100,8 +99,8 @@ class StatelessDialog extends Component {
         // if there is an update in any of the buttons enable/disable props
         // update the focus if needed
         if (prevProps.okDisabled !== this.props.okDisabled
-            || prevProps.cancelDisabled !== this.props.cancelDisabled
-            || prevProps.submitDisabled !== this.props.submitDisabled) {
+                || prevProps.cancelDisabled !== this.props.cancelDisabled
+                || prevProps.submitDisabled !== this.props.submitDisabled) {
             this._updateButtonFocus();
         }
     }
@@ -143,6 +142,8 @@ class StatelessDialog extends Component {
         );
     }
 
+    _onCancel: () => void;
+
     /**
      * Dispatches action to hide the dialog.
      *
@@ -150,9 +151,13 @@ class StatelessDialog extends Component {
      */
     _onCancel() {
         if (!this.props.isModal) {
-            this.props.onCancel();
+            const { onCancel } = this.props;
+
+            onCancel && onCancel();
         }
     }
+
+    _onDialogDismissed: () => void;
 
     /**
      * Handles click on the blanket area.
@@ -165,6 +170,8 @@ class StatelessDialog extends Component {
         }
     }
 
+    _onSubmit: (?string) => void;
+
     /**
      * Dispatches the action when submitting the dialog.
      *
@@ -173,7 +180,9 @@ class StatelessDialog extends Component {
      * @returns {void}
      */
     _onSubmit(value) {
-        this.props.onSubmit(value);
+        const { onSubmit } = this.props;
+
+        onSubmit && onSubmit(value);
     }
 
     /**
@@ -187,6 +196,10 @@ class StatelessDialog extends Component {
             return null;
         }
 
+        const {
+            t /* The following fixes a flow error: */ = _.identity
+        } = this.props;
+
         return (
             <Button
                 appearance = 'subtle'
@@ -194,7 +207,7 @@ class StatelessDialog extends Component {
                 key = 'cancel'
                 onClick = { this._onCancel }
                 type = 'button'>
-                { this.props.t(this.props.cancelTitleKey || 'dialog.Cancel') }
+                { t(this.props.cancelTitleKey || 'dialog.Cancel') }
             </Button>
         );
     }
@@ -229,7 +242,9 @@ class StatelessDialog extends Component {
      * @returns {ReactElement}
      */
     _renderHeader() {
-        const { t } = this.props;
+        const {
+            t /* The following fixes a flow error: */ = _.identity
+        } = this.props;
 
         return (
             <header>
@@ -251,6 +266,10 @@ class StatelessDialog extends Component {
             return null;
         }
 
+        const {
+            t /* The following fixes a flow error: */ = _.identity
+        } = this.props;
+
         return (
             <Button
                 appearance = 'primary'
@@ -260,22 +279,27 @@ class StatelessDialog extends Component {
                 key = 'submit'
                 onClick = { this._onSubmit }
                 type = 'button'>
-                { this.props.t(this.props.okTitleKey || 'dialog.Ok') }
+                { t(this.props.okTitleKey || 'dialog.Ok') }
             </Button>
         );
     }
+
+    _setDialogElement: (?HTMLElement) => void;
 
     /**
      * Sets the instance variable for the div containing the component's dialog
      * element so it can be accessed directly.
      *
-     * @param {Object} element - The DOM element for the component's dialog.
+     * @param {HTMLElement} element - The DOM element for the component's
+     * dialog.
      * @private
      * @returns {void}
      */
-    _setDialogElement(element) {
+    _setDialogElement(element: ?HTMLElement) {
         this._dialogElement = element;
     }
+
+    _onKeyDown: (Object) => void;
 
     /**
      * Handles 'Enter' key in the dialog to submit/hide dialog depending on
@@ -312,22 +336,24 @@ class StatelessDialog extends Component {
      * @returns {void}
      */
     _updateButtonFocus() {
-        if (this._dialogElement) {
+        const dialogElement = this._dialogElement;
+
+        if (dialogElement) {
 
             // if we have a focused element inside the dialog, skip changing
             // the focus
-            if (this._dialogElement.contains(document.activeElement)) {
+            if (dialogElement.contains(document.activeElement)) {
                 return;
             }
 
             let buttonToFocus;
 
             if (this.props.submitDisabled) {
-                buttonToFocus = this._dialogElement
-                    .querySelector(`[id=${CANCEL_BUTTON_ID}]`);
+                buttonToFocus
+                    = dialogElement.querySelector(`[id=${CANCEL_BUTTON_ID}]`);
             } else if (!this.props.okDisabled) {
-                buttonToFocus = this._dialogElement
-                    .querySelector(`[id=${OK_BUTTON_ID}]`);
+                buttonToFocus
+                    = dialogElement.querySelector(`[id=${OK_BUTTON_ID}]`);
             }
 
             if (buttonToFocus) {
