@@ -6,6 +6,8 @@ import { NativeModules } from 'react-native';
 import { connect } from 'react-redux';
 
 import { hideDialog, SimpleBottomSheet } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+
 
 /**
  * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
@@ -15,7 +17,12 @@ type Props = {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 type State = {
@@ -30,27 +37,26 @@ const { AudioMode } = NativeModules;
 
 /**
  * Maps each device type to a display name and icon.
- * TODO i18n
  */
 const deviceInfoMap = {
     BLUETOOTH: {
         iconName: 'bluetooth',
-        text: 'Bluetooth',
+        text: 'audioDevices.bluetooth',
         type: 'BLUETOOTH'
     },
     EARPIECE: {
         iconName: 'phone-talk',
-        text: 'Phone',
+        text: 'audioDevices.phone',
         type: 'EARPIECE'
     },
     HEADPHONES: {
         iconName: 'headset',
-        text: 'Headphones',
+        text: 'audioDevices.headphones',
         type: 'HEADPHONES'
     },
     SPEAKER: {
         iconName: 'volume',
-        text: 'Speaker',
+        text: 'audioDevices.speaker',
         type: 'SPEAKER'
     }
 };
@@ -100,10 +106,11 @@ class AudioRoutePickerDialog extends Component<Props, State> {
 
             if (devices) {
                 for (const device of devices) {
-                    const info = deviceInfoMap[device];
+                    if (deviceInfoMap[device]) {
+                        const info = Object.assign({}, deviceInfoMap[device]);
 
-                    if (info) {
                         info.selected = device === selected;
+                        info.text = this.props.t(info.text);
                         audioDevices.push(info);
                     }
                 }
@@ -179,7 +186,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
 // Only export the dialog if we have support for getting / setting audio devices
 // in AudioMode.
 if (AudioMode.getAudioDevices && AudioMode.setAudioDevice) {
-    AudioRoutePickerDialog_ = connect()(AudioRoutePickerDialog);
+    AudioRoutePickerDialog_ = translate(connect()(AudioRoutePickerDialog));
 }
 
 export default AudioRoutePickerDialog_;

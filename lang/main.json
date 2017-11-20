@@ -9,6 +9,12 @@
     "raisedHand": "Would like to speak",
     "defaultNickname": "ex. Jane Pink",
     "defaultLink": "e.g. __url__",
+    "audioDevices": {
+        "bluetooth": "Bluetooth",
+        "headphones": "Headphones",
+        "phone": "Phone",
+        "speaker": "Speaker"
+    },
     "audioOnly": {
         "audioOnly": "Audio only",
         "featureToggleDisabled": "Toggling of __feature__ is disabled while in audio only mode"
