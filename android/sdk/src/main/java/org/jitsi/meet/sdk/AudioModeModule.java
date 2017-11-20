@@ -299,7 +299,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * Only used on Android < M. Runs on the main thread.
      */
     void onBluetoothDeviceChange() {
-        if (bluetoothHeadsetMonitor.isHeadsetAvailable()) {
+        if (bluetoothHeadsetMonitor != null && bluetoothHeadsetMonitor.isHeadsetAvailable()) {
             availableDevices.add(DEVICE_BLUETOOTH);
         } else {
             availableDevices.remove(DEVICE_BLUETOOTH);
