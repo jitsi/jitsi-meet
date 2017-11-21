@@ -64,7 +64,8 @@ ReducerRegistry.register('features/notifications',
  * @param {Object[]} notifications - The queue of notifications to be displayed.
  * @param {Object} notification - The new notification to add to the queue.
  * @private
- * @returns {Object[]}
+ * @returns {Object[]} A new array with an updated order of the notification
+ * queue.
  */
 function _insertNotificationByPriority(notifications, notification) {
     const newNotificationPriority
