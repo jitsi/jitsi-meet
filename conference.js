@@ -25,6 +25,7 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
+    conferenceWillJoin,
     dataChannelOpened,
     EMAIL_COMMAND,
     lockStateChanged,
@@ -1249,6 +1250,7 @@ export default {
             = connection.initJitsiConference(
                 APP.conference.roomName,
                 this._getConferenceOptions());
+        APP.store.dispatch(conferenceWillJoin(room));
         this._setLocalAudioVideoStreams(localTracks);
         this._room = room; // FIXME do not use this
 

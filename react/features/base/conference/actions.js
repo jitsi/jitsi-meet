@@ -229,10 +229,25 @@ function _conferenceWillJoin(conference: Object) {
             _addLocalTracksToConference(conference, localTracks);
         }
 
-        dispatch({
-            type: CONFERENCE_WILL_JOIN,
-            conference
-        });
+        dispatch(conferenceWillJoin(conference));
+    };
+}
+
+/**
+ * Signals the intention of the application to have the local participant
+ * join the specified conference.
+ *
+ * @param {JitsiConference} conference - The {@code JitsiConference} instance
+ * the local participant will (try to) join.
+ * @returns {{
+ *     type: CONFERENCE_WILL_JOIN,
+ *     conference: JitsiConference
+ * }}
+ */
+export function conferenceWillJoin(conference: Object) {
+    return {
+        type: CONFERENCE_WILL_JOIN,
+        conference
     };
 }
 
