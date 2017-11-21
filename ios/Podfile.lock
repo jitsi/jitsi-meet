@@ -1,11 +1,11 @@
 PODS:
   - React (0.49.5):
     - React/Core (= 0.49.5)
-  - react-native-background-timer (1.3.0):
+  - react-native-background-timer (2.0.0):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
-  - react-native-keep-awake (2.0.5):
+  - react-native-keep-awake (2.0.6):
     - React
   - react-native-webrtc (1.58.2)
   - React/BatchedBridge (0.49.5):
@@ -39,7 +39,7 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNVectorIcons (4.4.0):
+  - RNVectorIcons (4.4.2):
     - React
   - yoga (0.49.5.React)
 
@@ -79,11 +79,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   React: 9d5a23842dcc75ffef540ee2d2ef0eee1904ee58
-  react-native-background-timer: ca2afbbdda52ed2caa0c51762938a1e4296d097c
+  react-native-background-timer: 10063c04bf85d7f8811dff8c74399f0aa715245f
   react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
-  react-native-keep-awake: 8fda9ff5acfdde27bc9b3a5cfde381b415297f71
+  react-native-keep-awake: bb4dbb6fd21a7879432f9538b0b7d71398fe9f81
   react-native-webrtc: 6fd0b3aa890d7a9b9b4d01d30f958d17ae88a785
-  RNVectorIcons: 208e7e1507e3bc800619caf1c2748ad6b6b68188
+  RNVectorIcons: c1821d56c775cc5a3bca66c77dfc8cb4a90d27e2
   yoga: 596e987aa8aac0165abb235d2977982f090476a0
 
 PODFILE CHECKSUM: a7cb8c7365f8cf9a01ee4eb78325139933776faf
