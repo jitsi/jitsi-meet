@@ -9,11 +9,6 @@ export default {
     MESSAGE_CREATED: 'UI.message_created',
 
     /**
-     * Notifies that local user changed language.
-     */
-    LANG_CHANGED: 'UI.lang_changed',
-
-    /**
      * Notifies that local user changed email.
      */
     EMAIL_CHANGED: 'UI.email_changed',
@@ -21,7 +16,6 @@ export default {
     /**
      * Notifies that "start muted" settings changed.
      */
-    START_MUTED_CHANGED: 'UI.start_muted_changed',
     AUDIO_MUTED: 'UI.audio_muted',
     VIDEO_MUTED: 'UI.video_muted',
     VIDEO_UNMUTING_WHILE_AUDIO_ONLY: 'UI.video_unmuting_while_audio_only',

@@ -17,7 +17,6 @@ import Recording from './recording/Recording';
 
 import VideoLayout from './videolayout/VideoLayout';
 import Filmstrip from './videolayout/Filmstrip';
-import SettingsMenu from './side_pannels/settings/SettingsMenu';
 import Profile from './side_pannels/profile/Profile';
 
 import {
@@ -541,8 +540,6 @@ UI.updateLocalRole = isModerator => {
     APP.store.dispatch(showSharedVideoButton());
 
     Recording.showRecordingButton(isModerator);
-    SettingsMenu.showStartMutedOptions(isModerator);
-    SettingsMenu.showFollowMeOptions(isModerator);
 
     if (isModerator) {
         if (!interfaceConfig.DISABLE_FOCUS_INDICATOR) {
@@ -1015,10 +1012,6 @@ UI.updateAuthInfo = function(isAuthEnabled, login) {
         Profile.showLoginButton(!loggedIn);
         Profile.showLogoutButton(loggedIn);
     }
-};
-
-UI.onStartMutedChanged = function(startAudioMuted, startVideoMuted) {
-    SettingsMenu.updateStartMutedBox(startAudioMuted, startVideoMuted);
 };
 
 /**
