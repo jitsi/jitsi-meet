@@ -111,7 +111,7 @@ class OverlayContainer extends Component {
     };
 
     /**
-     * Initializes a new ReloadTimer instance.
+     * Initializes a new OverlayContainer instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.

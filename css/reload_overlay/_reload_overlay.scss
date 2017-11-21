@@ -11,9 +11,16 @@
 }
 
 #reloadProgressBar {
-    width: 180px;
+    background: #e9e9e9;
+    border-radius: 3px;
+    height: 5px;
     margin: 5px auto;
-    > .aui-progress-indicator-value {
+    overflow: hidden;
+    width: 180px;
+
+    .progress-indicator-fill {
         background: $reloadProgressBarBg;
+        height: 100%;
+        transition: width .5s;
     }
 }
