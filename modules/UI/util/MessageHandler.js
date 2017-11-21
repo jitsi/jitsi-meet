@@ -362,7 +362,7 @@ const messageHandler = {
         $titleString.attr('data-i18n', titleKey);
 
         return $('<div>').append($titleString)
-.html();
+            .html();
     },
 
     /**
@@ -479,7 +479,7 @@ const messageHandler = {
      * @param displayName the display name of the participant that is
      * associated with the notification.
      * @param displayNameKey the key from the language file for the display
-     * name. Only used if displayName i not provided.
+     * name. Only used if displayName is not provided.
      * @param cls css class for the notification
      * @param messageKey the key from the language file for the text of the
      * message.

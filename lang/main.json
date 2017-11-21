@@ -214,7 +214,9 @@
     "notify": {
         "disconnected": "disconnected",
         "moderator": "Moderator rights granted!",
-        "connected": "connected",
+        "connectedOneMember": "__name__ connected",
+        "connectedTwoMembers": "__first__ and __second__ connected",
+        "connectedThreePlusMembers": "__name__ and __count__ others connected",
         "somebody": "Somebody",
         "me": "Me",
         "focus": "Conference focus",

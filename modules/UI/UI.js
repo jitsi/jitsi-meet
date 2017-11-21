@@ -25,7 +25,10 @@ import {
 } from '../../react/features/device-selection';
 import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
-import { getLocalParticipant } from '../../react/features/base/participants';
+import {
+    getLocalParticipant,
+    showParticipantJoinedNotification
+} from '../../react/features/base/participants';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import {
     maybeShowNotificationWithDoNotDisplay,
@@ -473,8 +476,7 @@ UI.addUser = function(user) {
     const id = user.getId();
     const displayName = user.getDisplayName();
 
-    messageHandler.participantNotification(
-        displayName, 'notify.somebody', 'connected', 'notify.connected');
+    APP.store.dispatch(showParticipantJoinedNotification(displayName));
 
     if (!config.startAudioMuted
         || config.startAudioMuted > APP.conference.membersCount) {
