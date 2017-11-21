@@ -11,7 +11,7 @@ import { SIP_GW_INVITE_ROOMS } from './actionTypes';
  * invite.
  * @returns {void}
  */
-export function inviteRooms(
+export function inviteVideoRooms(
         conference: Object,
         rooms: Object) {
     return {

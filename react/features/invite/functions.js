@@ -26,7 +26,7 @@ export function getInviteOptionPosition(name: string): number {
  * type items to invite.
  * @returns {Promise} - The promise created by the request.
  */
-export function invitePeople( // eslint-disable-line max-params
+export function invitePeopleAndChatRooms( // eslint-disable-line max-params
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
@@ -70,7 +70,7 @@ export function isInviteOptionEnabled(name: string) {
  * executed - "conferenceRooms" | "user" | "room".
  * @returns {Promise} - The promise created by the request.
  */
-export function searchPeople( // eslint-disable-line max-params
+export function searchDirectory( // eslint-disable-line max-params
         serviceUrl: string,
         jwt: string,
         text: string,

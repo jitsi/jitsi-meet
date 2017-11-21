@@ -12,8 +12,8 @@ import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { MultiSelectAutocomplete } from '../../base/react';
 
-import { invitePeople, searchPeople } from '../functions';
-import { inviteRooms } from '../../videosipgw';
+import { invitePeopleAndChatRooms, searchDirectory } from '../functions';
+import { inviteVideoRooms } from '../../videosipgw';
 
 declare var interfaceConfig: Object;
 
@@ -66,7 +66,7 @@ class AddPeopleDialog extends Component<*, *> {
         /**
          * Used to invite video rooms.
          */
-        inviteRooms: PropTypes.func,
+        inviteVideoRooms: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -85,7 +85,7 @@ class AddPeopleDialog extends Component<*, *> {
             } = this.props; // eslint-disable-line no-invalid-this
 
             return (
-                searchPeople(
+                searchDirectory(
                     _peopleSearchUrl,
                     _jwt,
                     text,
@@ -221,12 +221,12 @@ class AddPeopleDialog extends Component<*, *> {
             });
 
             this.props._conference
-                && this.props.inviteRooms(
+                && this.props.inviteVideoRooms(
                         this.props._conference,
                         this.state.inviteItems.filter(
                             i => i.type === 'videosipgw'));
 
-            invitePeople(
+            invitePeopleAndChatRooms(
                 this.props._inviteServiceUrl,
                 this.props._inviteUrl,
                 this.props._jwt,
@@ -364,5 +364,5 @@ function _mapStateToProps(state) {
 
 export default translate(connect(_mapStateToProps, {
     hideDialog,
-    inviteRooms })(
+    inviteVideoRooms })(
     AddPeopleDialog));
