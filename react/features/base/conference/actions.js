@@ -1,5 +1,7 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
+
 import { sendAnalyticsEvent } from '../../analytics';
 import { getName } from '../../app';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
@@ -24,11 +26,13 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
+    SET_FOLLOW_ME,
     SET_LASTN,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
     SET_RECEIVE_VIDEO_QUALITY,
-    SET_ROOM
+    SET_ROOM,
+    SET_START_MUTED_POLICY
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -44,6 +48,8 @@ import {
 import type { Dispatch } from 'redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+declare var APP: Object;
 
 /**
  * Adds conference (event) listeners.
@@ -363,6 +369,28 @@ export function lockStateChanged(conference: Object, locked: boolean) {
 }
 
 /**
+ * Updates the known state of start muted policies.
+ *
+ * @param {boolean} audioMuted - Whether or not members will join the conference
+ * as audio muted.
+ * @param {boolean} videoMuted - Whether or not members will join the conference
+ * as video muted.
+ * @returns {{
+ *     type: SET_START_MUTED_POLICY,
+ *     startAudioMutedPolicy: boolean,
+ *     startVideoMutedPolicy: boolean
+ * }}
+ */
+export function onStartMutedPolicyChanged(
+        audioMuted: boolean, videoMuted: boolean) {
+    return {
+        type: SET_START_MUTED_POLICY,
+        startAudioMutedPolicy: audioMuted,
+        startVideoMutedPolicy: videoMuted
+    };
+}
+
+/**
  * Sets whether or not peer2peer is currently enabled.
  *
  * @param {boolean} p2p - Whether or not peer2peer is currently active.
@@ -392,6 +420,26 @@ export function setAudioOnly(audioOnly: boolean) {
     return {
         type: SET_AUDIO_ONLY,
         audioOnly
+    };
+}
+
+/**
+ * Enables or disables the Follow Me feature.
+ *
+ * @param {boolean} enabled - Whether or not Follow Me should be enabled.
+ * @returns {{
+ *     type: SET_FOLLOW_ME,
+ *     enabled: boolean
+ * }}
+ */
+export function setFollowMe(enabled: boolean) {
+    if (typeof APP !== 'undefined') {
+        APP.UI.emitEvent(UIEvents.FOLLOW_ME_ENABLED, enabled);
+    }
+
+    return {
+        type: SET_FOLLOW_ME,
+        enabled
     };
 }
 
@@ -525,6 +573,30 @@ export function setRoom(room: ?string) {
     return {
         type: SET_ROOM,
         room
+    };
+}
+
+/**
+ * Sets whether or not members should join audio and/or video muted.
+ *
+ * @param {boolean} startAudioMuted - Whether or not members will join the
+ * conference as audio muted.
+ * @param {boolean} startVideoMuted - Whether or not members will join the
+ * conference as video muted.
+ * @returns {Function}
+ */
+export function setStartMutedPolicy(
+        startAudioMuted: boolean, startVideoMuted: boolean) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        const { conference } = getState()['features/base/conference'];
+
+        conference.setStartMutedPolicy({
+            audio: startAudioMuted,
+            video: startVideoMuted
+        });
+
+        return dispatch(
+            onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
     };
 }
 

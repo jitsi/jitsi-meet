@@ -29,6 +29,7 @@ import {
     dataChannelOpened,
     EMAIL_COMMAND,
     lockStateChanged,
+    onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant
 } from './react/features/base/conference';
@@ -2078,18 +2079,11 @@ export default {
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
             this.changeLocalDisplayName.bind(this));
 
-        APP.UI.addListener(UIEvents.START_MUTED_CHANGED,
-            (startAudioMuted, startVideoMuted) => {
-                room.setStartMutedPolicy({
-                    audio: startAudioMuted,
-                    video: startVideoMuted
-                });
-            }
-        );
         room.on(
             JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
             ({ audio, video }) => {
-                APP.UI.onStartMutedChanged(audio, video);
+                APP.store.dispatch(
+                    onStartMutedPolicyChanged(audio, video));
             }
         );
         room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
@@ -2372,10 +2366,6 @@ export default {
         }
 
         APP.UI.initConference();
-
-        APP.UI.addListener(
-            UIEvents.LANG_CHANGED,
-            language => APP.translation.setLanguage(language));
 
         APP.keyboardshortcut.init();
 
