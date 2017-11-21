@@ -16,6 +16,7 @@ export const JitsiMediaDevicesEvents = JitsiMeetJS.events.mediaDevices;
 export const JitsiParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;
 export const JitsiRecordingStatus = JitsiMeetJS.constants.recordingStatus;
+export const JitsiSIPVideoGWStatus = JitsiMeetJS.constants.sipVideoGW;
 export const JitsiTrackErrors = JitsiMeetJS.errors.track;
 export const JitsiTrackEvents = JitsiMeetJS.events.track;
 

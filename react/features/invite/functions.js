@@ -22,52 +22,30 @@ export function getInviteOptionPosition(name: string): number {
  * invitation.
  * @param {string} inviteUrl - The url to the conference.
  * @param {string} jwt - The jwt token to pass to the search service.
- * @param {Immutable.List} people - The list of the "user" type items to invite.
+ * @param {Immutable.List} inviteItems - The list of the "user" or "room"
+ * type items to invite.
  * @returns {Promise} - The promise created by the request.
  */
-export function invitePeople( // eslint-disable-line max-params
+export function invitePeopleAndChatRooms( // eslint-disable-line max-params
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
-        people: Object) {
+        inviteItems: Object) {
+    if (!inviteItems || inviteItems.length === 0) {
+        return Promise.resolve();
+    }
+
     return new Promise((resolve, reject) => {
         $.post(
                 `${inviteServiceUrl}?token=${jwt}`,
                 JSON.stringify({
-                    'invited': people,
+                    'invited': inviteItems,
                     'url': inviteUrl
                 }),
                 resolve,
                 'json')
             .fail((jqxhr, textStatus, error) => reject(error));
     });
-}
-
-/**
- * Invites room participants to the conference through the SIP Jibri service.
- *
- * @param {JitsiMeetConference} conference - The conference to which the rooms
- * will be invited to.
- * @param {Immutable.List} rooms - The list of the "videosipgw" type items to
- * invite.
- * @returns {void}
- */
-export function inviteRooms(
-        conference: { createVideoSIPGWSession: Function },
-        rooms: Object) {
-    for (const room of rooms) {
-        const { id: sipAddress, name: displayName } = room;
-
-        if (sipAddress && displayName) {
-            const newSession
-                = conference.createVideoSIPGWSession(sipAddress, displayName);
-
-            newSession.start();
-        } else {
-            console.error(
-                `No display name or sip number for ${JSON.stringify(room)}`);
-        }
-    }
 }
 
 /**
@@ -92,7 +70,7 @@ export function isInviteOptionEnabled(name: string) {
  * executed - "conferenceRooms" | "user" | "room".
  * @returns {Promise} - The promise created by the request.
  */
-export function searchPeople( // eslint-disable-line max-params
+export function searchDirectory( // eslint-disable-line max-params
         serviceUrl: string,
         jwt: string,
         text: string,

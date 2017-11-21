@@ -420,7 +420,8 @@
         "off": "Recording stopped",
         "on": "Recording",
         "pending": "Recording waiting for a member to join...",
-        "unavailable": "Oops! The recording service is currently unavailable. We're working on resolving the issue. Please try again later.",
+        "serviceName": "Recording service",
+        "unavailable": "Oops! The __serviceName__ is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"
     },
     "liveStreaming":
@@ -433,10 +434,23 @@
         "off": "Live Streaming stopped",
         "on": "Live Streaming",
         "pending": "Starting Live Stream...",
+        "serviceName": "Live Streaming service",
         "streamIdRequired": "Please fill in the stream id in order to launch the Live Streaming.",
         "streamIdHelp": "Where do I find this?",
-        "unavailable": "Oops! The Live Streaming service is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Live Streaming unavailable"
+    },
+    "videoSIPGW":
+    {
+        "busy": "We're working on freeing resources. Please try again in a few minutes.",
+        "busyTitle": "The Room service is currently busy",
+        "errorInvite": "Conference not established yet. Please try again later.",
+        "errorInviteTitle": "Error inviting room",
+        "errorAlreadyInvited": "__displayName__ already invited",
+        "errorInviteFailedTitle": "Inviting __displayName__ failed",
+        "errorInviteFailed": "We're working on resolving the issue. Please try again later.",
+        "pending": "__displayName__ has been invited",
+        "serviceName": "Room service",
+        "unavailableTitle": "Room service unavailable"
     },
     "speakerStats":
     {

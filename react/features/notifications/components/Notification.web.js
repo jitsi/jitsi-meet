@@ -145,9 +145,6 @@ class Notification extends Component<*> {
     render() {
         const {
             appearance,
-            description,
-            descriptionArguments,
-            descriptionKey,
             hideErrorSupportLink,
             isDismissAllowed,
             onDismissed,

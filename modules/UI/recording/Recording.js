@@ -51,6 +51,7 @@ export const RECORDING_TRANSLATION_KEYS = {
     recordingPendingKey: 'recording.pending',
     recordingTitle: 'dialog.recording',
     recordingUnavailable: 'recording.unavailable',
+    recordingUnavailableParams: '$t(recording.serviceName)',
     recordingUnavailableTitle: 'recording.unavailableTitle'
 };
 
@@ -71,7 +72,8 @@ export const STREAMING_TRANSLATION_KEYS = {
     recordingOnKey: 'liveStreaming.on',
     recordingPendingKey: 'liveStreaming.pending',
     recordingTitle: 'dialog.liveStreaming',
-    recordingUnavailable: 'liveStreaming.unavailable',
+    recordingUnavailable: 'recording.unavailable',
+    recordingUnavailableParams: '$t(liveStreaming.serviceName)',
     recordingUnavailableTitle: 'liveStreaming.unavailableTitle'
 };
 
@@ -531,6 +533,8 @@ const Recording = {
         default: {
             APP.UI.messageHandler.showError({
                 descriptionKey: this.recordingUnavailable,
+                descriptionArguments: {
+                    serviceName: this.recordingUnavailableParams },
                 titleKey: this.recordingUnavailableTitle
             });
         }
