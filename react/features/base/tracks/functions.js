@@ -1,6 +1,7 @@
 /* global APP */
 
-import JitsiMeetJS, { JitsiTrackEvents } from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackErrors, JitsiTrackEvents }
+    from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -214,8 +215,10 @@ export function setTrackMuted(track, muted) {
     const f = muted ? 'mute' : 'unmute';
 
     return track[f]().catch(error => {
-
-        // FIXME Emit mute failed, so that the app can show error dialog.
-        console.error(`set track ${f} failed`, error);
+        // Track might be already disposed so ignore such an error.
+        if (error.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
+            // FIXME Emit mute failed, so that the app can show error dialog.
+            console.error(`set track ${f} failed`, error);
+        }
     });
 }

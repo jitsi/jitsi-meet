@@ -47,7 +47,7 @@
     "js-md5": "0.6.1",
     "jssha": "2.2.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#9b99e6bb33048e1f418465ec33db923f1786ba1f",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#21b07deabccd0b28b6d8eacaa6eee613e018b482",
     "lodash": "4.17.4",
     "nuclear-js": "1.4.0",
     "postis": "2.2.0",
