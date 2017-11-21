@@ -439,6 +439,19 @@
         "streamIdHelp": "Where do I find this?",
         "unavailableTitle": "Live Streaming unavailable"
     },
+    "videoSIPGW":
+    {
+        "busy": "We're working on freeing resources. Please try again in a few minutes.",
+        "busyTitle": "The Room service is currently busy",
+        "errorInvite": "Conference not established yet. Please try again later.",
+        "errorInviteTitle": "Error inviting room",
+        "errorAlreadyInvited": "__displayName__ already invited",
+        "errorInviteFailedTitle": "Inviting __displayName__ failed",
+        "errorInviteFailed": "We're working on resolving the issue. Please try again later.",
+        "pending": "__displayName__ has been invited",
+        "serviceName": "Room service",
+        "unavailableTitle": "Room service unavailable"
+    },
     "speakerStats":
     {
         "hours": "__count__h",

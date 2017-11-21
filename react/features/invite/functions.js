@@ -49,33 +49,6 @@ export function invitePeople( // eslint-disable-line max-params
 }
 
 /**
- * Invites room participants to the conference through the SIP Jibri service.
- *
- * @param {JitsiMeetConference} conference - The conference to which the rooms
- * will be invited to.
- * @param {Immutable.List} rooms - The list of the "videosipgw" type items to
- * invite.
- * @returns {void}
- */
-export function inviteRooms(
-        conference: { createVideoSIPGWSession: Function },
-        rooms: Object) {
-    for (const room of rooms) {
-        const { id: sipAddress, name: displayName } = room;
-
-        if (sipAddress && displayName) {
-            const newSession
-                = conference.createVideoSIPGWSession(sipAddress, displayName);
-
-            newSession.start();
-        } else {
-            console.error(
-                `No display name or sip number for ${JSON.stringify(room)}`);
-        }
-    }
-}
-
-/**
  * Indicates if an invite option is enabled in the configuration.
  *
  * @param {string} name - The name of the option defined in

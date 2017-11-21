@@ -12,7 +12,8 @@ import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { MultiSelectAutocomplete } from '../../base/react';
 
-import { invitePeople, inviteRooms, searchPeople } from '../functions';
+import { invitePeople, searchPeople } from '../functions';
+import { inviteRooms } from '../../videosipgw';
 
 declare var interfaceConfig: Object;
 
@@ -61,6 +62,11 @@ class AddPeopleDialog extends Component<*, *> {
          * The function closing the dialog.
          */
         hideDialog: PropTypes.func,
+
+        /**
+         * Used to invite video rooms.
+         */
+        inviteRooms: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -215,10 +221,10 @@ class AddPeopleDialog extends Component<*, *> {
             });
 
             this.props._conference
-                && inviteRooms(
-                    this.props._conference,
-                    this.state.inviteItems.filter(
-                        i => i.type === 'videosipgw'));
+                && this.props.inviteRooms(
+                        this.props._conference,
+                        this.state.inviteItems.filter(
+                            i => i.type === 'videosipgw'));
 
             invitePeople(
                 this.props._inviteServiceUrl,
@@ -356,5 +362,7 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps, { hideDialog })(
+export default translate(connect(_mapStateToProps, {
+    hideDialog,
+    inviteRooms })(
     AddPeopleDialog));
