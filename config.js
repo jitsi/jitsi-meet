@@ -286,6 +286,14 @@ var config = {
             { urls: 'stun:stun2.l.google.com:19302' }
         ],
 
+        // Sets the ICE transport policy for the p2p connection. At the time
+        // of this writing the list of possible values are 'all' and 'relay',
+        // but that is subject to change in the future. The enum is defined in
+        // the WebRTC standard:
+        // https://www.w3.org/TR/webrtc/#rtcicetransportpolicy-enum.
+        // If not set, the effective value is 'all'.
+        // iceTransportPolicy: 'all',
+
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported).
         preferH264: true
