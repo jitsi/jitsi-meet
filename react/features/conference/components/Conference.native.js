@@ -13,7 +13,6 @@ import { Container, LoadingIndicator } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
-import { OverlayContainer } from '../../overlay';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import styles from './styles';
@@ -189,12 +188,6 @@ class Conference extends Component<Props> {
                   * The LargeVideo is the lowermost stacking layer.
                   */}
                 <LargeVideo />
-
-                {/*
-                  * The overlays need to be bellow the Toolbox so that the user
-                  * may tap the ToolbarButtons.
-                  */}
-                <OverlayContainer />
 
                 {/*
                   * The activity/loading indicator goes above everything, except

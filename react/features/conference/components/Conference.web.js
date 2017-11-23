@@ -10,7 +10,6 @@ import { DialogContainer } from '../../base/dialog';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
-import { OverlayContainer } from '../../overlay';
 import { showToolbox, Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
@@ -117,7 +116,6 @@ class Conference extends Component<*> {
 
                 <DialogContainer />
                 <NotificationsContainer />
-                <OverlayContainer />
 
                 {/*
                   * Temasys automatically injects a notification bar, if
