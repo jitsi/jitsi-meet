@@ -8,7 +8,6 @@ import { randomInt } from '../../base/util';
 import { _reloadNow } from '../actions';
 import ReloadButton from './ReloadButton';
 
-declare var AJS: Object;
 declare var APP: Object;
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -141,8 +140,6 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
             `The conference will be reloaded after ${
                 this.state.timeoutSeconds} seconds.`);
 
-        AJS.progressBars.update('#reloadProgressBar', 0);
-
         this._interval
             = setInterval(
                 () => {
@@ -162,20 +159,6 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
                     }
                 },
                 1000);
-    }
-
-    /**
-     * React Component method that executes once component is updated.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidUpdate() {
-        const { timeLeft, timeoutSeconds } = this.state;
-
-        AJS.progressBars.update(
-            '#reloadProgressBar',
-            (timeoutSeconds - timeLeft) / timeoutSeconds);
     }
 
     /**
@@ -214,11 +197,20 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @returns {ReactElement}
      */
     _renderProgressBar() {
+        const { timeoutSeconds, timeLeft } = this.state;
+        const timeRemaining = timeoutSeconds - timeLeft;
+        const percentageComplete = Math.floor(
+            (timeRemaining / timeoutSeconds) * 100);
+
         return (
             <div
-                className = 'aui-progress-indicator'
+                className = 'progress-indicator'
                 id = 'reloadProgressBar'>
-                <span className = 'aui-progress-indicator-value' />
+                <div
+                    className = 'progress-indicator-fill'
+                    style = {{
+                        width: `${percentageComplete}%`
+                    }} />
             </div>
         );
     }
