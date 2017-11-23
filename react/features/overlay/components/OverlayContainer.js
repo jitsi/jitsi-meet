@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { CallOverlay } from '../../base/jwt';
-
 import PageReloadFilmstripOnlyOverlay from './PageReloadFilmstripOnlyOverlay';
 import PageReloadOverlay from './PageReloadOverlay';
 import SuspendedFilmstripOnlyOverlay from './SuspendedFilmstripOnlyOverlay';
@@ -95,8 +93,7 @@ function _getOverlays(filmstripOnly) {
         overlays = _nonFilmstripOnlyOverlays = [
             PageReloadOverlay,
             SuspendedOverlay,
-            UserMediaPermissionsOverlay,
-            CallOverlay
+            UserMediaPermissionsOverlay
         ];
     }
 

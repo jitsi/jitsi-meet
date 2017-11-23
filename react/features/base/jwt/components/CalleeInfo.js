@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -16,81 +15,74 @@ declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@code Component} props of {@link CalleeInfo}.
+ */
+type Props = {
+
+    /**
+     * Object containing the callee's information.
+     */
+    _callee: Object
+}
+
+/**
+ * The type of the React {@code Component} state of {@link CalleeInfo}.
+ */
+type State = {
+
+    /**
+     * The CSS class (name), if any, to add to this {@code CalleeInfo}.
+     *
+     * @type {string}
+     */
+    className: ?string,
+
+    /**
+     * The indicator which determines whether this {@code CalleeInfo}
+     * should play/render audio to indicate the ringing phase of the
+     * call establishment between the local participant and the
+     * associated remote callee.
+     *
+     * @type {boolean}
+     */
+    renderAudio: boolean,
+
+    /**
+     * The indicator which determines whether this {@code CalleeInfo}
+     * is depicting the ringing phase of the call establishment between
+     * the local participant and the associated remote callee or the
+     * phase afterwards when the callee has not answered the call for a
+     * period of time and, consequently, is considered unavailable.
+     *
+     * @type {boolean}
+     */
+    ringing: boolean
+}
+
+/**
  * Implements a React {@link Component} which depicts the establishment of a
  * call with a specific remote callee.
  *
  * @extends Component
  */
-class CallOverlay extends Component<*, *> {
-    /**
-     * {@code CallOverlay} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _callee: PropTypes.object
-    };
-
-    /**
-     * Determines whether this overlay needs to be rendered (according to a
-     * specific redux state). Called by {@link OverlayContainer}.
-     *
-     * @param {Object} state - The redux state.
-     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
-     * {@code false}, otherwise.
-     */
-    static needsRender(state) {
-        return state['features/base/jwt'].callOverlayVisible;
-    }
-
+class CalleeInfo extends Component<Props, State> {
     /**
      * The (reference to the) {@link Audio} which plays/renders the audio
      * depicting the ringing phase of the call establishment represented by this
-     * {@code CallOverlay}.
+     * {@code CalleeInfo}.
      */
-    _audio: ?Audio
+    _audio: ?Audio;
 
-    _onLargeVideoAvatarVisible: Function
+    _onLargeVideoAvatarVisible: Function;
 
-    _playAudioInterval: ?number
+    _playAudioInterval: ?number;
 
     _ringingTimeout: ?number
 
-    _setAudio: Function
-
-    state: {
-
-        /**
-         * The CSS class (name), if any, to add to this {@code CallOverlay}.
-         *
-         * @type {string}
-         */
-        className: ?string,
-
-        /**
-         * The indicator which determines whether this {@code CallOverlay}
-         * should play/render audio to indicate the ringing phase of the
-         * call establishment between the local participant and the
-         * associated remote callee.
-         *
-         * @type {boolean}
-         */
-        renderAudio: boolean,
-
-        /**
-         * The indicator which determines whether this {@code CallOverlay}
-         * is depicting the ringing phase of the call establishment between
-         * the local participant and the associated remote callee or the
-         * phase afterwards when the callee has not answered the call for a
-         * period of time and, consequently, is considered unavailable.
-         *
-         * @type {boolean}
-         */
-        ringing: boolean
-    }
+    _setAudio: Function;
 
     /**
-     * Initializes a new {@code CallOverlay} instance.
+     * Initializes a new {@code CalleeInfo} instance.
      *
      * @param {Object} props - The read-only React {@link Component} props with
      * which the new instance is to be initialized.
@@ -119,13 +111,13 @@ class CallOverlay extends Component<*, *> {
 
     /**
      * Sets up timeouts such as the timeout to end the ringing phase of the call
-     * establishment depicted by this {@code CallOverlay}.
+     * establishment depicted by this {@code CalleeInfo}.
      *
      * @inheritdoc
      */
     componentDidMount() {
         // Set up the timeout to end the ringing phase of the call establishment
-        // depicted by this CallOverlay.
+        // depicted by this CalleeInfo.
         if (this.state.ringing && !this._ringingTimeout) {
             this._ringingTimeout
                 = setTimeout(
@@ -200,7 +192,7 @@ class CallOverlay extends Component<*, *> {
     }
 
     /**
-     * Notifies this {@code CallOverlay} that the visibility of the
+     * Notifies this {@code CalleeInfo} that the visibility of the
      * participant's avatar in the large video has changed.
      *
      * @param {boolean} largeVideoAvatarVisible - If the avatar in the large
@@ -217,7 +209,7 @@ class CallOverlay extends Component<*, *> {
 
     /**
      * Stops the playback of the audio which represents the ringing phase of the
-     * call establishment depicted by this {@code CallOverlay}.
+     * call establishment depicted by this {@code CalleeInfo}.
      *
      * @private
      * @returns {void}
@@ -236,7 +228,7 @@ class CallOverlay extends Component<*, *> {
 
     /**
      * Starts the playback of the audio which represents the ringing phase of
-     * the call establishment depicted by this {@code CallOverlay}.
+     * the call establishment depicted by this {@code CalleeInfo}.
      *
      * @private
      * @returns {void}
@@ -253,7 +245,7 @@ class CallOverlay extends Component<*, *> {
 
     /**
      * Renders an audio element to represent the ringing phase of the call
-     * establishment represented by this {@code CallOverlay}.
+     * establishment represented by this {@code CalleeInfo}.
      *
      * @private
      * @returns {ReactElement}
@@ -272,11 +264,11 @@ class CallOverlay extends Component<*, *> {
 
     /**
      * Sets the (reference to the) {@link Audio} which renders the ringing phase
-     * of the call establishment represented by this {@code CallOverlay}.
+     * of the call establishment represented by this {@code CalleeInfo}.
      *
      * @param {Audio} audio - The (reference to the) {@code Audio} which
      * plays/renders the audio depicting the ringing phase of the call
-     * establishment represented by this {@code CallOverlay}.
+     * establishment represented by this {@code CalleeInfo}.
      * @private
      * @returns {void}
      */
@@ -332,7 +324,7 @@ class CallOverlay extends Component<*, *> {
 }
 
 /**
- * Maps (parts of) the redux state to {@code CallOverlay}'s props.
+ * Maps (parts of) the redux state to {@code CalleeInfo}'s props.
  *
  * @param {Object} state - The redux state.
  * @private
@@ -351,4 +343,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(CallOverlay);
+export default connect(_mapStateToProps)(CalleeInfo);

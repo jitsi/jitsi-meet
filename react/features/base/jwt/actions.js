@@ -1,25 +1,25 @@
 // @flow
 
-import { SET_CALL_OVERLAY_VISIBLE, SET_JWT } from './actionTypes';
+import { SET_CALLEE_INFO_VISIBLE, SET_JWT } from './actionTypes';
 
 /**
- * Sets the visibility of {@code CallOverlay}.
+ * Sets the visibility of {@code CalleeInfo}.
  *
- * @param {boolean|undefined} [callOverlayVisible] - If {@code CallOverlay} is
+ * @param {boolean|undefined} [calleeInfoVisible] - If {@code CalleeInfo} is
  * to be displayed/visible, then {@code true}; otherwise, {@code false} or
  * {@code undefined}.
  * @returns {{
- *     type: SET_CALL_OVERLAY_VISIBLE,
- *     callOverlayVisible: (boolean|undefined)
+ *     type: SET_CALLEE_INFO_VISIBLE,
+ *     calleeInfoVisible: (boolean|undefined)
  * }}
  */
-export function setCallOverlayVisible(callOverlayVisible: ?boolean) {
+export function setCalleeInfoVisible(calleeInfoVisible: ?boolean) {
     return (dispatch: Dispatch<*>, getState: Function) => {
         getState()['features/base/jwt']
-            .callOverlayVisible === callOverlayVisible
+            .calleeInfoVisible === calleeInfoVisible
             || dispatch({
-                type: SET_CALL_OVERLAY_VISIBLE,
-                callOverlayVisible
+                type: SET_CALLEE_INFO_VISIBLE,
+                calleeInfoVisible
             });
     };
 }

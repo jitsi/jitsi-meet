@@ -19,7 +19,7 @@ import {
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
-import { setCallOverlayVisible, setJWT } from './actions';
+import { setCalleeInfoVisible, setJWT } from './actions';
 import { SET_JWT } from './actionTypes';
 import { parseJWTFromURLParams } from './functions';
 
@@ -40,7 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
     case LIB_INIT_ERROR:
     case PARTICIPANT_JOINED:
     case SET_ROOM:
-        return _maybeSetCallOverlayVisible(store, next, action);
+        return _maybeSetCalleeInfoVisible(store, next, action);
 
     case SET_CONFIG:
     case SET_LOCATION_URL:
@@ -61,7 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
 /**
  * Notifies the feature jwt that a specific {@code action} is being dispatched
  * within a specific redux {@code store} which may have an effect on the
- * visiblity of (the) {@code CallOverlay}.
+ * visiblity of (the) {@code CalleeInfo}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -73,17 +73,17 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
+function _maybeSetCalleeInfoVisible({ dispatch, getState }, next, action) {
     const result = next(action);
 
     const state = getState();
     const stateFeaturesJWT = state['features/base/jwt'];
-    let callOverlayVisible;
+    let calleeInfoVisible;
 
     if (stateFeaturesJWT.callee) {
         const { conference, leaving, room } = state['features/base/conference'];
 
-        // XXX The CallOverlay is to be displayed/visible as soon as possible
+        // XXX The CalleeInfo is to be displayed/visible as soon as possible
         // including even before the conference is joined.
         if (room && (!conference || conference !== leaving)) {
             switch (action.type) {
@@ -91,7 +91,7 @@ function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
             case CONFERENCE_LEFT:
             case CONFERENCE_WILL_LEAVE:
             case LIB_INIT_ERROR:
-                // Because the CallOverlay is to be displayed/visible as soon as
+                // Because the CalleeInfo is to be displayed/visible as soon as
                 // possible even before the connection is established and/or the
                 // conference is joined, it is very complicated to figure out
                 // based on the current state alone. In order to reduce the
@@ -103,24 +103,24 @@ function _maybeSetCallOverlayVisible({ dispatch, getState }, next, action) {
                 break;
 
             default: {
-                // The CallOverlay is to no longer be displayed/visible as soon
+                // The CalleeInfo is to no longer be displayed/visible as soon
                 // as another participant joins.
-                callOverlayVisible
+                calleeInfoVisible
                     = getParticipantCount(state) === 1
                         && Boolean(getLocalParticipant(state));
 
                 // However, the CallDialog is not to be displayed/visible again
                 // after all remote participants leave.
-                if (callOverlayVisible
-                        && stateFeaturesJWT.callOverlayVisible === false) {
-                    callOverlayVisible = false;
+                if (calleeInfoVisible
+                        && stateFeaturesJWT.calleeInfoVisible === false) {
+                    calleeInfoVisible = false;
                 }
                 break;
             }
             }
         }
     }
-    dispatch(setCallOverlayVisible(callOverlayVisible));
+    dispatch(setCalleeInfoVisible(calleeInfoVisible));
 
     return result;
 }
@@ -240,7 +240,7 @@ function _setJWT(store, next, action) {
         }
     }
 
-    return _maybeSetCallOverlayVisible(store, next, action);
+    return _maybeSetCalleeInfoVisible(store, next, action);
 }
 
 /**

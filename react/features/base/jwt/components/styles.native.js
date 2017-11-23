@@ -5,7 +5,7 @@ export default createStyleSheet({
     // with the existing CSS class names on Web.
 
     /**
-     * The style of {@code CallOverlay}.
+     * The style of {@code CalleeInfo}.
      */
     ringing: {
         alignItems: 'center',
@@ -43,7 +43,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of {@code Text} within {@code CallOverlay}.
+     * The style of {@code Text} within {@code CalleeInfo}.
      */
     'ringing__text': {
         color: ColorPalette.white

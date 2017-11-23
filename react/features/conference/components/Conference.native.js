@@ -9,11 +9,14 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
+import { CalleeInfo } from '../../base/jwt';
 import { Container, LoadingIndicator } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
+
+import { abstractMapStateToProps } from '../functions';
 
 import styles from './styles';
 
@@ -29,6 +32,14 @@ const _TOOLBOX_TIMEOUT_MS = 5000;
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = {
+
+    /**
+     * The indication which determines if the {@code CalleeInfo} component
+     * should be shown or not.
+     *
+     * @private
+     */
+    _calleeInfoVisible: boolean,
 
     /**
      * The indicator which determines that we are still connecting to the
@@ -188,6 +199,13 @@ class Conference extends Component<Props> {
                   * The LargeVideo is the lowermost stacking layer.
                   */}
                 <LargeVideo />
+
+                {/*
+                  * If there is a ringing call, show the callee's info.
+                  */
+                    this.props._calleeInfoVisible
+                        && <CalleeInfo />
+                }
 
                 {/*
                   * The activity/loading indicator goes above everything, except
@@ -375,6 +393,8 @@ function _mapStateToProps(state) {
         = connecting || (connection && (joining || (!conference && !leaving)));
 
     return {
+        ...abstractMapStateToProps(state),
+
         /**
          * The indicator which determines that we are still connecting to the
          * conference which includes establishing the XMPP connection and then

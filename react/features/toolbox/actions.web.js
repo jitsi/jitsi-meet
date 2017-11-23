@@ -187,7 +187,7 @@ export function hideToolbox(force: boolean = false): Function {
 
         if (!force
                 && (hovered
-                    || state['features/base/jwt'].callOverlayVisible
+                    || state['features/base/jwt'].calleeInfoVisible
                     || SideContainerToggler.isVisible())) {
             dispatch(
                 setToolboxTimeout(
