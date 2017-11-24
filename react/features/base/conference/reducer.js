@@ -405,7 +405,10 @@ function _setRoom(state, action) {
      *
      * @type {string}
      */
-    return set(state, 'room', room);
+    return assign(state, {
+        error: undefined,
+        room
+    });
 }
 
 /**

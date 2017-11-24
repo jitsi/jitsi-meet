@@ -91,10 +91,16 @@ function _getOverlays(filmstripOnly) {
         }
     } else if (!(overlays = _nonFilmstripOnlyOverlays)) {
         overlays = _nonFilmstripOnlyOverlays = [
-            PageReloadOverlay,
-            SuspendedOverlay,
-            UserMediaPermissionsOverlay
+            PageReloadOverlay
         ];
+
+        // Mobile only has a PageReloadOverlay.
+        if (navigator.product !== 'ReactNative') {
+            overlays.push(...[
+                SuspendedOverlay,
+                UserMediaPermissionsOverlay
+            ]);
+        }
     }
 
     return overlays;

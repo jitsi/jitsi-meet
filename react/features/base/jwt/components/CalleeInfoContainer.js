@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import CalleeInfo from './CalleeInfo';
 
 /**
- * The type of the React {@code Component} props of {@link Conference}.
+ * The type of the React {@code Component} props of {@code CalleeInfoContainer}.
  */
 type Props = {
 

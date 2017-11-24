@@ -1,6 +1,7 @@
 /* @flow */
 
-import { assign, ReducerRegistry } from '../redux';
+import { SET_ROOM } from '../conference';
+import { assign, set, ReducerRegistry } from '../redux';
 import { parseURIString } from '../util';
 
 import {
@@ -32,6 +33,9 @@ ReducerRegistry.register(
 
         case SET_LOCATION_URL:
             return _setLocationURL(state, action);
+
+        case SET_ROOM:
+            return _setRoom(state);
         }
 
         return state;
@@ -193,4 +197,17 @@ function _setLocationURL(
         locationURL,
         options: locationURL ? _constructOptions(locationURL) : undefined
     });
+}
+
+/**
+ * Reduces a specific redux action {@link SET_ROOM} of the feature
+ * base/connection.
+ *
+ * @param {Object} state - The redux state of the feature base/connection.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _setRoom(state: Object) {
+    return set(state, 'error', undefined);
 }

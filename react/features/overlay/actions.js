@@ -1,3 +1,5 @@
+import { appNavigate } from '../app';
+import { toURLString } from '../base/util';
 import { reload, replace } from '../../../modules/util/helpers';
 
 import {
@@ -40,11 +42,13 @@ export function _reloadNow() {
 
         logger.info(`Reloading the conference using URL: ${locationURL}`);
 
-        // In an iframe reload with the reload() utility because the replace()
-        // utility does not work on an iframe.
-        if (window.self === window.top) {
+        if (navigator.product === 'ReactNative') {
+            dispatch(appNavigate(toURLString(locationURL)));
+        } else if (window.self === window.top) {
             replace(locationURL);
         } else {
+            // In an iframe reload with the reload() utility because the
+            // replace() utility does not work on an iframe.
             reload();
         }
     };

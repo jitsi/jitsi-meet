@@ -156,10 +156,13 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
         // because the log queue is not flushed before "fabric terminated" is
         // sent to the backed.
         // FIXME: We should dispatch action for this.
-        APP.conference.logEvent(
-            PAGE_RELOAD,
-            /* value */ undefined,
-            /* label */ this.props.reason);
+        if (typeof APP !== 'undefined') {
+            APP.conference.logEvent(
+                PAGE_RELOAD,
+                /* value */ undefined,
+                /* label */ this.props.reason);
+        }
+
         logger.info(
             `The conference will be reloaded after ${
                 this.state.timeoutSeconds} seconds.`);
