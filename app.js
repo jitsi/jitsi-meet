@@ -11,8 +11,6 @@ import 'jquery-contextmenu';
 import 'jQuery-Impromptu';
 import 'autosize';
 
-import 'aui';
-import 'aui-experimental';
 import 'aui-css';
 import 'aui-experimental-css';
 
