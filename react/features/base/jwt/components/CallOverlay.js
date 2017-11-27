@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -22,6 +22,27 @@ declare var interfaceConfig: Object;
  * @extends Component
  */
 class CallOverlay extends Component<*, *> {
+    /**
+     * {@code CallOverlay} component's property types.
+     *
+     * @static
+     */
+    static propTypes = {
+        _callee: PropTypes.object
+    };
+
+    /**
+     * Determines whether this overlay needs to be rendered (according to a
+     * specific redux state). Called by {@link OverlayContainer}.
+     *
+     * @param {Object} state - The redux state.
+     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
+     * {@code false}, otherwise.
+     */
+    static needsRender(state) {
+        return state['features/base/jwt'].callOverlayVisible;
+    }
+
     /**
      * The (reference to the) {@link Audio} which plays/renders the audio
      * depicting the ringing phase of the call establishment represented by this
@@ -66,27 +87,6 @@ class CallOverlay extends Component<*, *> {
          * @type {boolean}
          */
         ringing: boolean
-    }
-
-    /**
-     * {@code CallOverlay} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _callee: PropTypes.object
-    };
-
-    /**
-     * Check if this overlay needs to be rendered. This function will be called
-     * by the {@code OverlayContainer}.
-     *
-     * @param {Object} state - The redux state.
-     * @returns {boolean} - True if this overlay needs to be rendered, false
-     * otherwise.
-     */
-    static needsRender(state) {
-        return state['features/base/jwt'].callOverlayVisible;
     }
 
     /**

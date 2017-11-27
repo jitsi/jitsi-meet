@@ -82,7 +82,7 @@ class FilmstripOnlyOverlayFrame extends Component {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement|null}
+     * @returns {ReactElement}
      */
     render() {
         return (

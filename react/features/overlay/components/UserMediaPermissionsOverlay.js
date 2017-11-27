@@ -38,8 +38,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @override
-     * @returns {ReactElement|null}
+     * @returns {ReactElement}
      */
     render() {
         const { browser, t } = this.props;
@@ -77,8 +76,8 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
     /**
      * Renders the policy logo.
      *
-     * @returns {ReactElement|null}
      * @private
+     * @returns {ReactElement|null}
      */
     _renderPolicyLogo() {
         const { policyLogoSrc } = this.state;

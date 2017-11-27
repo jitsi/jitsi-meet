@@ -51,8 +51,8 @@ function getOverlays() {
 }
 
 /**
- * Implements a React Component that will display the correct overlay when
- * needed.
+ * Implements a React {@link Component} that will display the correct overlay
+ * when needed.
  */
 class OverlayContainer extends Component {
     /**
@@ -71,8 +71,8 @@ class OverlayContainer extends Component {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement|null}
      * @public
+     * @returns {ReactElement|null}
      */
     render() {
         const { overlay } = this.props;
@@ -82,13 +82,14 @@ class OverlayContainer extends Component {
 }
 
 /**
- * Maps (parts of) the redux state to the associated OverlayContainer's props.
+ * Maps (parts of) the redux state to the associated {@code OverlayContainer}'s
+ * props.
  *
  * @param {Object} state - The redux state.
- * @returns {{
- *      overlay: ?Object
- * }}
  * @private
+ * @returns {{
+ *     overlay: ?Object
+ * }}
  */
 function _mapStateToProps(state) {
     let overlay;

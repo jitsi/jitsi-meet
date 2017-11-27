@@ -15,8 +15,7 @@ class SuspendedOverlay extends AbstractSuspendedOverlay {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @override
-     * @returns {ReactElement|null}
+     * @returns {ReactElement}
      */
     render() {
         const { t } = this.props;

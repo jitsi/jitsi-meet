@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
- * Implements a React Component for the frame of the overlays.
+ * Implements a React {@link Component} for the frame of the overlays.
  */
 export default class OverlayFrame extends Component {
     /**

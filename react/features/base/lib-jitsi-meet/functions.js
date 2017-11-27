@@ -1,8 +1,8 @@
-/* @flow */
+// @flow
 
-import { setConfigFromURLParams } from '../../base/config';
-import { toState } from '../../base/redux';
-import { loadScript } from '../../base/util';
+import { setConfigFromURLParams } from '../config';
+import { toState } from '../redux';
+import { loadScript } from '../util';
 
 import JitsiMeetJS from './_';
 
@@ -54,17 +54,18 @@ export function isAnalyticsEnabled(stateful: Function | Object) {
 }
 
 /**
- * Determines whether a specific JitsiConferenceErrors instance indicates a
- * fatal JitsiConference error.
+ * Determines whether a specific {@link JitsiConferenceErrors} instance
+ * indicates a fatal {@link JitsiConference} error.
  *
  * FIXME Figure out the category of errors defined by the function and describe
  * that category. I've currently named the category fatal because it appears to
  * be used in the cases of unrecoverable errors that necessitate a reload.
  *
- * @param {Object|string} error - The JitsiConferenceErrors instance to
- * categorize/classify or an Error-like object.
- * @returns {boolean} True if the specified JitsiConferenceErrors instance
- * indicates a fatal JitsiConference error; otherwise, false.
+ * @param {Object|string} error - The {@code JitsiConferenceErrors} instance to
+ * categorize/classify or an {@link Error}-like object.
+ * @returns {boolean} If the specified {@code JitsiConferenceErrors} instance
+ * indicates a fatal {@code JitsiConference} error, {@code true}; otherwise,
+ * {@code false}.
  */
 export function isFatalJitsiConferenceError(error: Object | string) {
     if (typeof error !== 'string') {
@@ -78,17 +79,18 @@ export function isFatalJitsiConferenceError(error: Object | string) {
 }
 
 /**
- * Determines whether a specific JitsiConnectionErrors instance indicates a
- * fatal JitsiConnection error.
+ * Determines whether a specific {@link JitsiConnectionErrors} instance
+ * indicates a fatal {@link JitsiConnection} error.
  *
  * FIXME Figure out the category of errors defined by the function and describe
  * that category. I've currently named the category fatal because it appears to
  * be used in the cases of unrecoverable errors that necessitate a reload.
  *
- * @param {Object|string} error - The JitsiConnectionErrors instance to
- * categorize/classify or an Error-like object.
- * @returns {boolean} True if the specified JitsiConnectionErrors instance
- * indicates a fatal JitsiConnection error; otherwise, false.
+ * @param {Object|string} error - The {@code JitsiConnectionErrors} instance to
+ * categorize/classify or an {@link Error}-like object.
+ * @returns {boolean} If the specified {@code JitsiConnectionErrors} instance
+ * indicates a fatal {@code JitsiConnection} error, {@code true}; otherwise,
+ * {@code false}.
  */
 export function isFatalJitsiConnectionError(error: Object | string) {
     if (typeof error !== 'string') {

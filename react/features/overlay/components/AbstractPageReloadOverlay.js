@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -17,11 +17,11 @@ declare var APP: Object;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Implements abstract React Component for the page reload overlays.
+ * Implements an abstract React {@link Component} for the page reload overlays.
  */
 export default class AbstractPageReloadOverlay extends Component<*, *> {
     /**
-     * AbstractPageReloadOverlay component's property types.
+     * {@code AbstractPageReloadOverlay} component's property types.
      *
      * @static
      */
@@ -55,6 +55,25 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
         t: PropTypes.func
     };
 
+    /**
+     * Determines whether this overlay needs to be rendered (according to a
+     * specific redux state). Called by {@link OverlayContainer}.
+     *
+     * @param {Object} state - The redux state.
+     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
+     * {@code false}, otherwise.
+     */
+    static needsRender(state) {
+        const conferenceError = state['features/base/conference'].error;
+        const connectionError = state['features/base/connection'].error;
+
+        return (
+            (connectionError && isFatalJitsiConnectionError(connectionError))
+                || (conferenceError
+                    && isFatalJitsiConferenceError(conferenceError))
+        );
+    }
+
     _interval: ?number
 
     state: {
@@ -87,25 +106,6 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
          * @type {string}
          */
         title: string
-    }
-
-    /**
-     * Check if this overlay needs to be rendered. This function will be called
-     * by the {@code OverlayContainer}.
-     *
-     * @param {Object} state - The redux state.
-     * @returns {boolean} - True if this overlay needs to be rendered, false
-     * otherwise.
-     */
-    static needsRender(state) {
-        const conferenceError = state['features/base/conference'].error;
-        const connectionError = state['features/base/connection'].error;
-
-        return (
-            (connectionError && isFatalJitsiConnectionError(connectionError))
-                || (conferenceError
-                    && isFatalJitsiConferenceError(conferenceError))
-        );
     }
 
     /**
@@ -220,10 +220,10 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @returns {ReactElement}
      */
     _renderProgressBar() {
-        const { timeoutSeconds, timeLeft } = this.state;
+        const { timeLeft, timeoutSeconds } = this.state;
         const timeRemaining = timeoutSeconds - timeLeft;
-        const percentageComplete = Math.floor(
-            (timeRemaining / timeoutSeconds) * 100);
+        const percentageComplete
+            = Math.floor((timeRemaining / timeoutSeconds) * 100);
 
         return (
             <div
@@ -231,9 +231,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
                 id = 'reloadProgressBar'>
                 <div
                     className = 'progress-indicator-fill'
-                    style = {{
-                        width: `${percentageComplete}%`
-                    }} />
+                    style = {{ width: `${percentageComplete}%` }} />
             </div>
         );
     }
@@ -243,11 +241,11 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
  * Maps (parts of) the redux state to the associated component's props.
  *
  * @param {Object} state - The redux state.
- * @returns {{
- *      isNetworkFailure: boolean,
- *      reason: string
- * }}
  * @protected
+ * @returns {{
+ *     isNetworkFailure: boolean,
+ *     reason: string
+ * }}
  */
 export function abstractMapStateToProps(state: Object) {
     const conferenceError = state['features/base/conference'].error;

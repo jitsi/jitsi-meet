@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
-
 /**
- * Implements a React Component for overlay with guidance how to proceed with
- * gUM prompt.
+ * Implements a React {@link Component} for overlay with guidance how to proceed
+ * with gUM prompt.
  */
 export default class AbstractUserMediaPermissionsOverlay extends Component {
     /**
-     * UserMediaPermissionsOverlay component's property types.
+     * {@code AbstractUserMediaPermissionsOverlay} component's property types.
      *
      * @static
      */
@@ -32,25 +31,15 @@ export default class AbstractUserMediaPermissionsOverlay extends Component {
     };
 
     /**
-     * Check if this overlay needs to be rendered. This function will be called
-     * by the {@code OverlayContainer}.
+     * Determines whether this overlay needs to be rendered (according to a
+     * specific redux state). Called by {@link OverlayContainer}.
      *
      * @param {Object} state - The redux state.
-     * @returns {boolean} - True if this overlay needs to be rendered, false
-     * otherwise.
+     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
+     * {@code false}, otherwise.
      */
     static needsRender(state) {
         return state['features/overlay'].isMediaPermissionPromptVisible;
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement|null}
-     */
-    render() {
-        return null;
     }
 }
 
@@ -58,10 +47,10 @@ export default class AbstractUserMediaPermissionsOverlay extends Component {
  * Maps (parts of) the redux state to the associated component's props.
  *
  * @param {Object} state - The redux state.
- * @returns {{
- *      browser: string
- * }}
  * @protected
+ * @returns {{
+ *     browser: string
+ * }}
  */
 export function abstractMapStateToProps(state) {
     const { browser } = state['features/overlay'];
