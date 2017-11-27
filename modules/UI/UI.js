@@ -27,6 +27,7 @@ import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
     getLocalParticipant,
+    participantPresenceChanged,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
@@ -475,8 +476,18 @@ UI.getSharedDocumentManager = () => etherpadManager;
 UI.addUser = function(user) {
     const id = user.getId();
     const displayName = user.getDisplayName();
+    const status = user.getStatus();
 
-    APP.store.dispatch(showParticipantJoinedNotification(displayName));
+    if (status) {
+        // if user has initial status dispatch it
+        // and skip 'connected' notifications
+        APP.store.dispatch(participantPresenceChanged(id, status));
+
+        // FIXME: move updateUserStatus in participantPresenceChanged action
+        UI.updateUserStatus(user, status);
+    } else {
+        APP.store.dispatch(showParticipantJoinedNotification(displayName));
+    }
 
     if (!config.startAudioMuted
         || config.startAudioMuted > APP.conference.membersCount) {
