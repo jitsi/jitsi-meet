@@ -482,7 +482,9 @@ UI.addUser = function(user) {
         // if user has initial status dispatch it
         // and skip 'connected' notifications
         APP.store.dispatch(participantPresenceChanged(id, status));
-        APP.UI.updateUserStatus(user, status);
+
+        // FIXME: move updateUserStatus in participantPresenceChanged action
+        UI.updateUserStatus(user, status);
     } else {
         APP.store.dispatch(showParticipantJoinedNotification(displayName));
     }
