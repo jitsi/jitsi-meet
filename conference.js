@@ -632,11 +632,14 @@ export default {
                 });
         }
 
+        // Hide permissions overlay when tracks are created
+        tryCreateLocalTracks.then(() => {
+            APP.store.dispatch(
+                mediaPermissionPromptVisibilityChanged(false));
+        });
+
         return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
             .then(([ tracks, con ]) => {
-                APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(false));
-
                 // FIXME If there will be microphone error it will cover any
                 // screensharing dialog, but it's still better than in
                 // the reverse order where the screensharing dialog will
