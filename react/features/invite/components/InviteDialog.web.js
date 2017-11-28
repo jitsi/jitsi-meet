@@ -67,8 +67,8 @@ class InviteDialog extends Component {
 
         return (
             <Dialog
-                cancelDisabled = { true }
-                okTitleKey = 'dialog.done'
+                cancelTitleKey = 'dialog.done'
+                submitDisabled = { true }
                 titleString = { titleString }>
                 <div className = 'invite-dialog'>
                     <ShareLinkForm toCopy = { _inviteURL } />
