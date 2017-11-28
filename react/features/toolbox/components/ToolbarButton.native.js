@@ -38,6 +38,8 @@ class ToolbarButton extends AbstractToolbarButton {
     _renderButton(children) {
         const props = {};
 
+        'accessibilityLabel' in this.props
+            && (props.accessibilityLabel = this.props.accessibilityLabel);
         'disabled' in this.props && (props.disabled = this.props.disabled);
         'onClick' in this.props && (props.onPress = this._onClick);
         'style' in this.props && (props.style = this.props.style);

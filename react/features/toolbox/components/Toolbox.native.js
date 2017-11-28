@@ -243,6 +243,7 @@ class Toolbox extends Component {
                     onClick = { this._onToggleAudio }
                     style = { audioButtonStyles.style } />
                 <ToolbarButton
+                    accessibilityLabel = 'Hangup'
                     iconName = 'hangup'
                     iconStyle = { styles.whitePrimaryToolbarButtonIcon }
                     onClick = { this.props._onHangup }
