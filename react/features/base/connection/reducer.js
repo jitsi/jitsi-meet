@@ -96,7 +96,11 @@ function _connectionFailed(
             connection: Object,
             error: Object | string
         }) {
-    if (state.connection && state.connection !== connection) {
+
+    // The active or in-progress connection.
+    const connection_ = state.connecting || state.connection;
+
+    if (connection_ && connection_ !== connection) {
         return state;
     }
 
