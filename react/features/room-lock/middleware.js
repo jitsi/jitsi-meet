@@ -5,11 +5,13 @@ import {
     LOCK_STATE_CHANGED,
     SET_PASSWORD_FAILED
 } from '../base/conference';
+import { hideDialog } from '../base/dialog';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import { _openPasswordRequiredPrompt } from './actions';
+import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
 
 declare var APP: Object;
 
@@ -38,6 +40,9 @@ MiddlewareRegistry.register(store => next => action => {
             if (error.recoverable) {
                 store.dispatch(_openPasswordRequiredPrompt(conference));
             }
+        } else {
+            store.dispatch(hideDialog(PasswordRequiredPrompt));
+            store.dispatch(hideDialog(RoomLockPrompt));
         }
         break;
     }
