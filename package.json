@@ -31,7 +31,6 @@
     "@atlaskit/tabs": "4.0.1",
     "@atlaskit/theme": "2.2.0",
     "@atlaskit/tooltip": "6.0.0",
-    "@atlassian/aui": "6.0.6",
     "autosize": "1.18.13",
     "es6-iterator": "2.0.3",
     "es6-symbol": "3.1.1",
@@ -114,8 +113,6 @@
     "lint"
   ],
   "browser": {
-    "aui-css": "./node_modules/@atlassian/aui/dist/aui/css/aui.min.css",
-    "aui-experimental-css": "./node_modules/@atlassian/aui/dist/aui/css/aui-experimental.min.css",
     "autosize": "./node_modules/autosize/build/jquery.autosize.js",
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
   }

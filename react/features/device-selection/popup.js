@@ -1,8 +1,5 @@
 /* global JitsiMeetJS */
 
-import 'aui-css';
-import 'aui-experimental-css';
-
 // FIXME: remove once atlaskit work with React 16.
 import '../base/react/prop-types-polyfill.js';
 
