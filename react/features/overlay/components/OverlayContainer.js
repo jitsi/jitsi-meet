@@ -15,40 +15,28 @@ import UserMediaPermissionsFilmstripOnlyOverlay
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
 
 /**
- * Reference to the lazily loaded list of overlays.
+ * The lazily-initialized list of overlay React {@link Component} types used The
+ * user interface is filmstrip-only.
+ *
+ * XXX The value is meant to be compile-time defined so it does not contradict
+ * our coding style to not have global values that are runtime defined and
+ * merely works around side effects of circular imports.
+ *
+ * @type Array
  */
-let _overlays;
+let _filmstripOnlyOverlays;
 
 /**
- * Returns the list of overlays which can be rendered by this container. The
- * list is lazily loaded the first time it's required.
+ * The lazily-initialized list of overlay React {@link Component} types used The
+ * user interface is not filmstrip-only.
  *
- * @returns {Array} - The list of overlay types which are available.
+ * XXX The value is meant to be compile-time defined so it does not contradict
+ * our coding style to not have global values that are runtime defined and
+ * merely works around side effects of circular imports.
+ *
+ * @type Array
  */
-function getOverlays() {
-    if (typeof _overlays === 'undefined') {
-        const filmstripOnly
-            = typeof interfaceConfig === 'object'
-                && interfaceConfig.filmStripOnly;
-
-        if (filmstripOnly) {
-            _overlays = [
-                PageReloadFilmstripOnlyOverlay,
-                SuspendedFilmstripOnlyOverlay,
-                UserMediaPermissionsFilmstripOnlyOverlay
-            ];
-        } else {
-            _overlays = [
-                PageReloadOverlay,
-                SuspendedOverlay,
-                UserMediaPermissionsOverlay,
-                CallOverlay
-            ];
-        }
-    }
-
-    return _overlays;
-}
+let _nonFilmstripOnlyOverlays;
 
 /**
  * Implements a React {@link Component} that will display the correct overlay
@@ -82,6 +70,39 @@ class OverlayContainer extends Component {
 }
 
 /**
+ * Returns the list of overlay React {@link Component} types to be rendered by
+ * {@code OverlayContainer}. The list is lazily initialized the first time it is
+ * required in order to works around side effects of circular imports.
+ *
+ * @param {boolean} filmstripOnly - The indicator which determines whether the
+ * user interface is filmstrip-only.
+ * @returns {Array} The list of overlay React {@code Component} types to be
+ * rendered by {@code OverlayContainer}.
+ */
+function _getOverlays(filmstripOnly) {
+    let overlays;
+
+    if (filmstripOnly) {
+        if (!(overlays = _filmstripOnlyOverlays)) {
+            overlays = _filmstripOnlyOverlays = [
+                PageReloadFilmstripOnlyOverlay,
+                SuspendedFilmstripOnlyOverlay,
+                UserMediaPermissionsFilmstripOnlyOverlay
+            ];
+        }
+    } else if (!(overlays = _nonFilmstripOnlyOverlays)) {
+        overlays = _nonFilmstripOnlyOverlays = [
+            PageReloadOverlay,
+            SuspendedOverlay,
+            UserMediaPermissionsOverlay,
+            CallOverlay
+        ];
+    }
+
+    return overlays;
+}
+
+/**
  * Maps (parts of) the redux state to the associated {@code OverlayContainer}'s
  * props.
  *
@@ -92,9 +113,14 @@ class OverlayContainer extends Component {
  * }}
  */
 function _mapStateToProps(state) {
+    // XXX In the future interfaceConfig is expected to not be a global variable
+    // but a redux state like config. Hence, the variable filmStripOnly
+    // naturally belongs here in preparation for the future.
+    const filmstripOnly
+        = typeof interfaceConfig === 'object' && interfaceConfig.filmStripOnly;
     let overlay;
 
-    for (const o of getOverlays()) {
+    for (const o of _getOverlays(filmstripOnly)) {
         // react-i18n / react-redux wrap components and thus we cannot access
         // the wrapped component's static methods directly.
         const component = o.WrappedComponent || o;
@@ -107,7 +133,8 @@ function _mapStateToProps(state) {
 
     return {
         /**
-         * Type of overlay that should be rendered.
+         * The React {@link Component} type of overlay to be rendered by the
+         * associated {@code OverlayContainer}.
          */
         overlay
     };
