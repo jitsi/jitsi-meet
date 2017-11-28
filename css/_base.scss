@@ -123,6 +123,9 @@ form {
 * Dialogs fade
 */
 .aui-blanket {
+    background: #000;
+    transition: opacity 0.2s, visibility 0.2s;
+    transition-delay: 0.1s;
     visibility: visible;
 }
 

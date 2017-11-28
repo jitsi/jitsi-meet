@@ -1,6 +1,10 @@
 .dialog {
-    visibility: visible;
+    box-sizing: border-box;
     height: auto;
+    min-height: 131px;
+    overflow: visible;
+    visibility: visible;
+    width: 400px;
 
     h1, h2, h3, h4, h5, h6 {
         color: $auiDialogColor;
@@ -10,10 +14,27 @@
 
         &-icon {
             color: $auiDialogColor;
+            text-indent: -999em;
 
             &-small {
                 width: 14px;
                 height: 14px;
+
+                &:before {
+                    color: inherit;
+                    font-family: "FontAwesome";
+                    font-size: 16px;
+                    -webkit-font-smoothing: antialiased;
+                    font-style: normal;
+                    font-weight: normal;
+                    left: 0;
+                    line-height: 1;
+                    margin-top: -8px;
+                    position: absolute;
+                    text-indent: 0;
+                    speak: none;
+                    top: 50%;
+                }
             }
         }
 
@@ -22,6 +43,10 @@
             right: 20px;
             position: absolute;
             top: -49px;
+
+            &:before {
+                content: "\f00d";
+            }
         }
 
         &-dialog2 {
@@ -31,8 +56,16 @@
             }
 
             &-header {
-                height: em(58, 12);
                 border-bottom: 1px solid $auiBorderColor;
+                border-radius: 5px 5px 0 0;
+                box-sizing: border-box;
+                color: #333;
+                display: table;
+                font-weight: normal;
+                height: em(58, 12);
+                margin-top: -69px;
+                padding: 0 20px;
+                width: 100%;
 
                 h2 {
                     font-size: em(20, 12);
@@ -41,19 +74,40 @@
                 }
 
                 &-main {
+                    display: table-cell;
                     padding-right: 0;
+                    max-width: 400px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    vertical-align: middle;
+                    white-space: nowrap;
+
                 }
             }
 
             &-footer {
                 border-top: 1px solid $auiBorderColor;
+                border-radius: 0 0 5px 5px;
+                box-sizing: border-box;
+                height: 51px;
+                overflow: hidden;
+                padding: 10px 20px;
+                width: 100%;
+
+                &:empty {
+                    height: 5px;
+                    padding: 0;
+                }
             }
 
             &-content {
-                font-size: em(14, 12);
-                min-height: 0;
                 background-color: $auiDialogContentBg;
+                box-sizing: border-box;
                 color: $auiDialogColor;
+                font-size: em(14, 12);
+                overflow: auto;
+                max-height: 100%;
+                padding: 20px;
 
                 p,span, h3 {
                     font-weight: $labelFontWeight;
@@ -75,6 +129,12 @@
     .form-control:not(:last-child) {
         border-bottom: 1px solid $auiBorderColor;
     }
+}
+
+@media all and (max-width: 420px) {
+  .aui-dialog2-small .aui-dialog2-content {
+    height: 100%;
+  }
 }
 
 .modal-dialog-form {
