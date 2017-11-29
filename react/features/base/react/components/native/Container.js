@@ -30,6 +30,8 @@ export default class Container extends AbstractContainer {
      */
     render() {
         const {
+            accessibilityLabel,
+            accessible,
             onClick,
             touchFeedback = onClick,
             visible = true,
@@ -50,7 +52,11 @@ export default class Container extends AbstractContainer {
                     touchFeedback
                         ? TouchableHighlight
                         : TouchableWithoutFeedback,
-                    { onPress: onClick },
+                    {
+                        accessibilityLabel,
+                        accessible,
+                        onPress: onClick
+                    },
                     element);
         }
 

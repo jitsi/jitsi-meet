@@ -179,6 +179,8 @@ class Conference extends Component<Props> {
     render() {
         return (
             <Container
+                accessibilityLabel = 'Conference'
+                accessible = { false }
                 onClick = { this._onClick }
                 style = { styles.conference }
                 touchFeedback = { false }>
