@@ -30,7 +30,7 @@ fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
 echo "#!/bin/bash" > $CRON_FILE
-echo "/usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log" >> $CRON_FILE
+echo "/usr/local/sbin/certbot-auto --renew-hook '/usr/share/jitsi-meet/scripts/renew-letsencrypt-cert.sh' renew >> /var/log/le-renew.log" >> $CRON_FILE
 
 CERT_KEY="/etc/letsencrypt/live/$DOMAIN/privkey.pem"
 CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
@@ -54,7 +54,6 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
         $CONF_FILE
 
-    echo "service nginx reload" >> $CRON_FILE
     service nginx reload
 
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
@@ -76,13 +75,11 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
     sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
         $CONF_FILE
 
-    echo "service apache2 reload" >> $CRON_FILE
     service apache2 reload
 else
-    service jitsi-videobridge stop
 
     ./certbot-auto certonly --noninteractive \
-    --standalone \
+    --webroot --webroot-path /usr/share/jitsi-meet \
     -d $DOMAIN \
     --agree-tos --email $EMAIL
 
@@ -97,7 +94,14 @@ else
         -srckeystore $CERT_P12 -srcstoretype pkcs12 \
         -noprompt -storepass changeit -srcstorepass changeit
 
-    service jitsi-videobridge start
+    PIDFILE=/var/run/jitsi-videobridge.pid
+    if [ -f $PIDFILE ]; then
+        PID=$(cat $PIDFILE)
+
+        /usr/share/jitsi-videobridge/graceful_shutdown.sh $PID || true
+    fi
+
+    service jitsi-videobridge restart
 
 fi
 
