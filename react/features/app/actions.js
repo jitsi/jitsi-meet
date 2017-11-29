@@ -1,7 +1,7 @@
 /* @flow */
 
 import { setRoom } from '../base/conference';
-import { loadConfigError, setConfig } from '../base/config';
+import { configWillLoad, loadConfigError, setConfig } from '../base/config';
 import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { parseURIString } from '../base/util';
@@ -44,6 +44,8 @@ function _appNavigateToMandatoryLocation(
 ): Promise<void> {
     const { room } = newLocation;
 
+    dispatch(configWillLoad(newLocation));
+
     return (
         _loadConfig(newLocation)
             .then(
@@ -67,23 +69,20 @@ function _appNavigateToMandatoryLocation(
         // config may or may not be required by the time the notification
         // arrives.
 
+        const promise
+            = dispatch(setLocationURL(new URL(newLocation.toString())));
+
         if (error) {
             // XXX The failure could be, for example, because of a
             // certificate-related error. In which case the connection will
             // fail later in Strophe anyway.
-            dispatch(loadConfigError(error, newLocation));
-
-            // Cannot go to a room if its configuration failed to load.
-            if (room) {
-                dispatch(appNavigate(undefined));
-
+            return promise.then(() => {
+                dispatch(loadConfigError(error, newLocation));
                 throw error;
-            }
+            });
         }
 
-        return (
-            dispatch(setLocationURL(new URL(newLocation.toString())))
-                .then(() => dispatch(setConfig(config))));
+        return promise.then(() => dispatch(setConfig(config)));
     }
 }
 

@@ -1,6 +1,27 @@
 /* @flow */
 
-import { LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import {
+    CONFIG_WILL_LOAD,
+    LOAD_CONFIG_ERROR,
+    SET_CONFIG
+} from './actionTypes';
+
+/**
+ * Signals that the configuration for a specific locationURL will be loaded now.
+ *
+ * @param {string|URL} locationURL - The URL of the location which necessitated
+ * the loading of a configuration.
+ * @returns {{
+ *     type: CONFIG_WILL_LOAD,
+ *     locationURL
+ * }}
+ */
+export function configWillLoad(locationURL: string | URL) {
+    return {
+        type: CONFIG_WILL_LOAD,
+        locationURL
+    };
+}
 
 /**
  * Signals that a configuration could not be loaded due to a specific error.

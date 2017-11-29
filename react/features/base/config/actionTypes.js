@@ -1,4 +1,15 @@
 /**
+ * The redux action which signals that a configuration will be loaded for a
+ * specific locationURL.
+ *
+ * {
+ *     type: CONFIG_WILL_LOAD,
+ *     locationURL: string | URL
+ * }
+ */
+export const CONFIG_WILL_LOAD = Symbol('CONFIG_WILL_LOAD');
+
+/**
  * The redux action which signals that a configuration could not be loaded due
  * to a specific error.
  *

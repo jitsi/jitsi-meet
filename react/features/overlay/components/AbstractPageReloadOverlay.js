@@ -66,12 +66,14 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      */
     static needsRender(state) {
         const conferenceError = state['features/base/conference'].error;
+        const configError = state['features/base/config'].error;
         const connectionError = state['features/base/connection'].error;
 
         return (
             (connectionError && isFatalJitsiConnectionError(connectionError))
                 || (conferenceError
                     && isFatalJitsiConferenceError(conferenceError))
+                || configError
         );
     }
 
@@ -253,10 +255,11 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
  */
 export function abstractMapStateToProps(state: Object) {
     const conferenceError = state['features/base/conference'].error;
+    const configError = state['features/base/config'].error;
     const connectionError = state['features/base/connection'].error;
 
     return {
-        isNetworkFailure: Boolean(connectionError),
-        reason: (connectionError || conferenceError).message
+        isNetworkFailure: Boolean(configError || connectionError),
+        reason: (configError || connectionError || conferenceError).message
     };
 }
