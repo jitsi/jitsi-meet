@@ -67,6 +67,10 @@ type State = {
  * Implements {@code AbstractDialog} on react-native using {@code Prompt}.
  */
 class Dialog extends AbstractDialog<Props, State> {
+    state = {
+        text: ''
+    };
+
     /**
      * Initailizes a new {@code Dialog} instance.
      *
@@ -75,10 +79,6 @@ class Dialog extends AbstractDialog<Props, State> {
      */
     constructor(props: Object) {
         super(props);
-
-        this.state = {
-            text: ''
-        };
 
         // Bind event handlers so they are only bound once per instance.
         this._onChangeText = this._onChangeText.bind(this);
