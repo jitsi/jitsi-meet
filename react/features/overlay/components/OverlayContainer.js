@@ -1,6 +1,5 @@
-/* global interfaceConfig */
+// @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -13,6 +12,8 @@ import SuspendedOverlay from './SuspendedOverlay';
 import UserMediaPermissionsFilmstripOnlyOverlay
     from './UserMediaPermissionsFilmstripOnlyOverlay';
 import UserMediaPermissionsOverlay from './UserMediaPermissionsOverlay';
+
+declare var interfaceConfig: Object;
 
 /**
  * The lazily-initialized list of overlay React {@link Component} types used The
@@ -39,22 +40,23 @@ let _filmstripOnlyOverlays;
 let _nonFilmstripOnlyOverlays;
 
 /**
+ * OverlayContainer component's property types.
+ */
+type Props = {
+
+    /**
+     * Type of overlay that should be rendered.
+     * XXX: We are using 'any' here because overlays are usually wrapped in
+     * functions, so a 'Node' won't do.
+     */
+    overlay: any
+}
+
+/**
  * Implements a React {@link Component} that will display the correct overlay
  * when needed.
  */
-class OverlayContainer extends Component {
-    /**
-     * OverlayContainer component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Type of overlay that should be rendered.
-         */
-        overlay: PropTypes.element
-    };
-
+class OverlayContainer extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
