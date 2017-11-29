@@ -35,20 +35,21 @@ export function initAnalytics({ getState }: { getState: Function }) {
         return;
     }
 
-    const config = getState()['features/base/config'];
+    const state = getState();
+    const config = state['features/base/config'];
     const { analyticsScriptUrls } = config;
     const machineId = JitsiMeetJS.getMachineId();
+    const { user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         product: 'lib-jitsi-meet',
         version: JitsiMeetJS.version,
         session: machineId,
-        user: `uid-${machineId}`,
-        server: getState()['features/base/connection'].locationURL.host
+        user: user ? user.id : `uid-${machineId}`,
+        server: state['features/base/connection'].locationURL.host
     };
 
     _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
         .then(handlers => {
-            const state = getState();
             const permanentProperties: Object = {
                 roomName: state['features/base/conference'].room,
                 userAgent: navigator.userAgent

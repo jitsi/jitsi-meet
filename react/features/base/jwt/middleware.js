@@ -288,10 +288,11 @@ function _undoOverwriteLocalParticipant(
  * @returns {{
  *     avatarURL: ?string,
  *     email: ?string,
+ *     id: ?string,
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, name }) {
+function _user2participant({ avatar, avatarUrl, email, id, name }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -301,6 +302,9 @@ function _user2participant({ avatar, avatarUrl, email, name }) {
     }
     if (typeof email === 'string') {
         participant.email = email.trim();
+    }
+    if (typeof id === 'string') {
+        participant.id = id.trim();
     }
     if (typeof name === 'string') {
         participant.name = name.trim();
