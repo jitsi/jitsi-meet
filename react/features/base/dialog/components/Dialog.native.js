@@ -76,7 +76,9 @@ class Dialog extends AbstractDialog<Props, State> {
     constructor(props: Object) {
         super(props);
 
-        this.state.text = '';
+        this.state = {
+            text: ''
+        };
 
         // Bind event handlers so they are only bound once per instance.
         this._onChangeText = this._onChangeText.bind(this);
