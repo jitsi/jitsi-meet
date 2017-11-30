@@ -64,7 +64,7 @@
     "react-native-locale-detector": "1.0.1",
     "react-native-prompt": "1.0.0",
     "react-native-vector-icons": "4.4.2",
-    "react-native-webrtc": "github:jitsi/react-native-webrtc#51e9cb2abe5b8ab318e7635c1b1d92dbba077a18",
+    "react-native-webrtc": "github:jitsi/react-native-webrtc#cf1945b18e8c6bd68508500145781e831b494140",
     "react-redux": "5.0.6",
     "redux": "3.7.2",
     "redux-thunk": "2.2.0",
