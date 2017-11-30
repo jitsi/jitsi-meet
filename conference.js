@@ -632,11 +632,13 @@ export default {
                 });
         }
 
-        // Hide permissions overlay when tracks are created
-        tryCreateLocalTracks.then(() => {
-            APP.store.dispatch(
-                mediaPermissionPromptVisibilityChanged(false));
-        });
+        // Hide the permissions prompt/overlay as soon as the tracks are
+        // created. Don't wait for the connection to be made, since in some
+        // cases, when auth is rquired, for instance, that won't happen until
+        // the user inputs their credentials, but the dialog would be
+        // overshadowed by the overlay.
+        tryCreateLocalTracks.then(() =>
+            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false)));
 
         return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
             .then(([ tracks, con ]) => {
