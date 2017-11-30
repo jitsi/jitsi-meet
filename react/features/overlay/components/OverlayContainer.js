@@ -40,16 +40,15 @@ let _filmstripOnlyOverlays;
 let _nonFilmstripOnlyOverlays;
 
 /**
- * OverlayContainer component's property types.
+ * The type of the React {@link Component} props of {@code OverlayContainer}.
  */
 type Props = {
 
     /**
-     * Type of overlay that should be rendered.
-     * XXX: We are using 'any' here because overlays are usually wrapped in
-     * functions, so a 'Node' won't do.
+     * The React {@link Component} type of overlay to be rendered by the
+     * associated {@code OverlayContainer}.
      */
-    overlay: any
+    overlay: ?React$ComponentType<*>
 }
 
 /**
