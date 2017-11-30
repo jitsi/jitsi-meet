@@ -250,6 +250,7 @@
 /**
  * Positions video thumbnail display name and editor.
  */
+#alwaysOnTop .displayname,
 .videocontainer .displayname,
 .videocontainer .editdisplayname {
     display: inline-block;
@@ -267,6 +268,15 @@
     white-space: nowrap;
     line-height: $thumbnailToolbarHeight;
     z-index: $zindex2;
+}
+
+#alwaysOnTop .displayname {
+    font-size: 15px;
+    position: inherit;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    margin-top: 10px;
 }
 
 /**
@@ -505,6 +515,20 @@
     border-radius: 50%;
     height: 50%;
     width: auto;
+}
+
+#videoNotAvailableScreen {
+    text-align: center;
+    #avatarContainer {
+        height: 50vh;
+        display:inline-block;
+        margin-top: 25vh;
+
+        #avatar {
+            border-radius: 50%;
+            height: 100%;
+        }
+    }
 }
 
 .sharedVideoAvatar {

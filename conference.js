@@ -78,6 +78,7 @@ import {
 import { getLocationContextRoot } from './react/features/base/util';
 import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from './react/features/desktop-picker';
+import { appendSuffix } from './react/features/display-name';
 import { maybeOpenFeedbackDialog } from './react/features/feedback';
 import {
     mediaPermissionPromptVisibilityChanged,
@@ -1726,15 +1727,20 @@ export default {
             if (user.isHidden()) {
                 return;
             }
+            const displayName = user.getDisplayName();
 
             APP.store.dispatch(participantJoined({
                 id,
-                name: user.getDisplayName(),
+                name: displayName,
                 role: user.getRole()
             }));
 
             logger.log('USER %s connnected', id, user);
-            APP.API.notifyUserJoined(id);
+            APP.API.notifyUserJoined(id, {
+                displayName,
+                formattedDisplayName: appendSuffix(
+                    displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
+            });
             APP.UI.addUser(user);
 
             // check the roles for the new user and reflect them
@@ -1892,6 +1898,7 @@ export default {
             }
 
             APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, id => {
+                APP.API.notifyOnStageParticipantChanged(id);
                 try {
                     // do not try to select participant if there is none (we
                     // are alone in the room), otherwise an error will be
@@ -1938,7 +1945,13 @@ export default {
                     id,
                     name: formattedDisplayName
                 }));
-                APP.API.notifyDisplayNameChanged(id, formattedDisplayName);
+                APP.API.notifyDisplayNameChanged(id, {
+                    displayName: formattedDisplayName,
+                    formattedDisplayName:
+                        appendSuffix(
+                            formattedDisplayName
+                                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
+                });
                 APP.UI.changeDisplayName(id, formattedDisplayName);
             }
         );
@@ -2377,7 +2390,19 @@ export default {
         APP.store.dispatch(conferenceJoined(room));
 
         APP.UI.mucJoined();
-        APP.API.notifyConferenceJoined(APP.conference.roomName);
+        const displayName = APP.settings.getDisplayName();
+
+        APP.API.notifyConferenceJoined(
+            this.roomName,
+            this._room.myUserId(),
+            {
+                displayName,
+                formattedDisplayName: appendSuffix(
+                    displayName,
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME),
+                avatarURL: APP.UI.getAvatarUrl()
+            }
+        );
         APP.UI.markVideoInterrupted(false);
     },
 
@@ -2748,6 +2773,14 @@ export default {
         }));
 
         APP.settings.setDisplayName(formattedNickname);
+        APP.API.notifyDisplayNameChanged(id, {
+            displayName: formattedNickname,
+            formattedDisplayName:
+                appendSuffix(
+                    formattedNickname,
+                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME)
+        });
+
         if (room) {
             room.setDisplayName(formattedNickname);
             APP.UI.changeDisplayName(id, formattedNickname);

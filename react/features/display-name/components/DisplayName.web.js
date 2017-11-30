@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { appendSuffix } from '../functions';
+
 import { translate } from '../../base/i18n';
 import { participantDisplayNameChanged } from '../../base/participants';
 
@@ -144,15 +146,12 @@ class DisplayName extends Component {
             );
         }
 
-        const suffix
-            = displayName && displayNameSuffix ? ` (${displayNameSuffix})` : '';
-
         return (
             <span
                 className = 'displayname'
                 id = { elementID }
                 onClick = { this._onStartEditing }>
-                { `${displayName || displayNameSuffix || ''}${suffix}` }
+                { `${appendSuffix(displayName, displayNameSuffix)}` }
             </span>
         );
     }
