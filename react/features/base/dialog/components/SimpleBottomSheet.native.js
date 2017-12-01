@@ -21,10 +21,6 @@ import { simpleBottomSheet as styles } from './styles';
  */
 const BUTTON_UNDERLAY_COLOR = '#eee';
 
-/**
- * {@code SimpleBottomSheet}'s React {@code Component} prop types.
- */
-
 type Option = {
 
     /**
@@ -44,6 +40,10 @@ type Option = {
     text: string
 };
 
+
+/**
+ * The type of {@code SimpleBottomSheet}'s React {@code Component} prop types.
+ */
 type Props = {
 
     /**
@@ -125,7 +125,9 @@ class SimpleBottomSheet extends Component<Props> {
      * @returns {void}
      */
     _onButtonPress(option) {
-        this.props.onSubmit && this.props.onSubmit(option);
+        const { onSubmit } = this.props;
+
+        onSubmit && onSubmit(option);
     }
 
     _onCancel: () => void;
@@ -137,7 +139,9 @@ class SimpleBottomSheet extends Component<Props> {
      * @returns {void}
      */
     _onCancel() {
-        this.props.onCancel && this.props.onCancel();
+        const { onCancel } = this.props;
+
+        onCancel && onCancel();
     }
 
     /**
@@ -160,14 +164,30 @@ class SimpleBottomSheet extends Component<Props> {
      * @returns {ReactElement} - A row element with an icon and text.
      */
     _renderRow(option, index) {
-        const onPress = this._onButtonPress.bind(this, option);
         const { iconName, selected, text } = option;
         const selectedStyle = selected ? styles.rowSelectedText : {};
 
         return (
             <TouchableHighlight
                 key = { index }
-                onPress = { onPress }
+
+                // TODO The following disables an eslint error alerting about a
+                // known potential/theoretical performance pernalty:
+                //
+                // A bind call or arrow function in a JSX prop will create a
+                // brand new function on every single render. This is bad for
+                // performance, as it will result in the garbage collector being
+                // invoked way more than is necessary. It may also cause
+                // unnecessary re-renders if a brand new function is passed as a
+                // prop to a component that uses reference equality check on the
+                // prop to determine if it should update.
+                //
+                // I'm not addressing the potential/theoretical performance
+                // penalty at the time of this writing because it doesn't seem
+                // to me that it's a practical performance penalty in the case.
+                //
+                // eslint-disable-next-line react/jsx-no-bind
+                onPress = { this._onButtonPress.bind(this, option) }
                 underlayColor = { BUTTON_UNDERLAY_COLOR } >
                 <View style = { styles.row } >
                     <Icon

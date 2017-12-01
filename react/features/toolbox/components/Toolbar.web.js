@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -18,10 +18,6 @@ import ToolbarButton from './ToolbarButton';
  * @extends Component
  */
 class Toolbar extends Component<*> {
-    _onMouseOut: Function;
-    _onMouseOver: Function;
-    _renderToolbarButton: Function;
-
     /**
      * Base toolbar component's property types.
      *
@@ -86,7 +82,7 @@ class Toolbar extends Component<*> {
             <StatelessToolbar { ...props }>
                 {
                     [ ...this.props.toolbarButtons.entries() ]
-                    .map(this._renderToolbarButton)
+                        .map(this._renderToolbarButton)
                 }
                 {
                     this.props.children
@@ -95,25 +91,31 @@ class Toolbar extends Component<*> {
         );
     }
 
+    _onMouseOut: () => void;
+
     /**
      * Dispatches an action signalling that toolbar is no being hovered.
      *
      * @protected
-     * @returns {Object} Dispatched action.
+     * @returns {void}
      */
     _onMouseOut() {
         this.props.dispatch(setToolbarHovered(false));
     }
 
+    _onMouseOver: () => void;
+
     /**
      * Dispatches an action signalling that toolbar is now being hovered.
      *
      * @protected
-     * @returns {Object} Dispatched action.
+     * @returns {void}
      */
     _onMouseOver() {
         this.props.dispatch(setToolbarHovered(true));
     }
+
+    _renderToolbarButton: (Array<*>) => React$Element<*>;
 
     /**
      * Renders toolbar button. Method is passed to map function.
@@ -123,20 +125,18 @@ class Toolbar extends Component<*> {
      * @private
      * @returns {ReactElement} A toolbar button.
      */
-    _renderToolbarButton(keyValuePair: Array<*>): React$Element<*> {
-        const [ key, button ] = keyValuePair;
+    _renderToolbarButton([ key, button ]): React$Element<*> {
+        const { tooltipPosition } = this.props;
 
         if (button.component) {
-
             return (
                 <button.component
                     key = { key }
                     toggled = { button.toggled }
-                    tooltipPosition = { this.props.tooltipPosition } />
+                    tooltipPosition = { tooltipPosition } />
             );
         }
 
-        const { tooltipPosition } = this.props;
         const {
             childComponent: ChildComponent,
             onClick,
@@ -150,6 +150,23 @@ class Toolbar extends Component<*> {
             <ToolbarButton
                 button = { button }
                 key = { key }
+
+                // TODO The following disables an eslint error alerting about a
+                // known potential/theoretical performance pernalty:
+                //
+                // A bind call or arrow function in a JSX prop will create a
+                // brand new function on every single render. This is bad for
+                // performance, as it will result in the garbage collector being
+                // invoked way more than is necessary. It may also cause
+                // unnecessary re-renders if a brand new function is passed as a
+                // prop to a component that uses reference equality check on the
+                // prop to determine if it should update.
+                //
+                // I'm not addressing the potential/theoretical performance
+                // penalty at the time of this writing because I don't know for
+                // a fact that it's a practical performance penalty in the case.
+                //
+                // eslint-disable-next-line react/jsx-no-bind
                 onClick = { onClickWithDispatch }
                 onMount = { onMount }
                 onUnmount = { onUnmount }
