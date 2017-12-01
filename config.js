@@ -219,6 +219,11 @@ var config = {
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
 
+    // If true open a externalAuth URL on popup else perform a redirection
+    // of current page.
+    // enablePopupExternalAuth:true,
+
+
     // The minimum value a video's height (or width, whichever is smaller) needs
     // to be in order to be considered high-definition.
     minHDHeight: 540,

@@ -13,11 +13,12 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 let externalAuthWindow;
 let authRequiredDialog;
-
+let isForcePopupExternalAuth;
 const isTokenAuthEnabled
     = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
 const getTokenAuthUrl
     = JitsiMeetJS.util.AuthUtil.getTokenAuthUrl.bind(null, config.tokenAuthUrl);
+
 
 /**
  * Authenticate using external service or just focus
@@ -27,11 +28,14 @@ const getTokenAuthUrl
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function doExternalAuth(room, lockPassword) {
+    isForcePopupExternalAuth = config.enablePopupExternalAuth === true;
+
     if (externalAuthWindow) {
         externalAuthWindow.focus();
 
         return;
     }
+
     if (room.isJoined()) {
         let getUrl;
 
@@ -39,24 +43,43 @@ function doExternalAuth(room, lockPassword) {
             getUrl = Promise.resolve(getTokenAuthUrl(room.getName(), true));
             initJWTTokenListener(room);
         } else {
-            getUrl = room.getExternalAuthUrl(true);
+            getUrl = room.getExternalAuthUrl(isForcePopupExternalAuth);
         }
-        getUrl.then(url => {
-            externalAuthWindow = LoginDialog.showExternalAuthDialog(
-                url,
-                () => {
-                    externalAuthWindow = null;
-                    if (!isTokenAuthEnabled) {
-                        room.join(lockPassword);
-                    }
-                }
-            );
-        });
+        if (isForcePopupExternalAuth) {
+            getUrl.then(url => {
+                openPopupAuthDialog(url, room, lockPassword);
+            });
+        } else {
+            getUrl(UIUtil.redirect);
+        }
     } else if (isTokenAuthEnabled) {
         redirectToTokenAuthService(room.getName());
+    } else if (isForcePopupExternalAuth) {
+        room.getExternalAuthUrl(true).then(url => {
+            openPopupAuthDialog(url, room, lockPassword);
+        });
     } else {
-        room.getExternalAuthUrl().then(UIUtil.redirect);
+        room.getExternalAuthUrl(false).then(UIUtil.redirect);
     }
+}
+
+/**
+ * Open the external authentication service for the login to be
+ * performed.
+ * @param {JitsiConference} room
+ * @param {string} [url] url of the external login service.
+ * @param {string} [lockPassword]  password to use if the conference is locked
+ */
+function openPopupAuthDialog(url, room, lockPassword) {
+    externalAuthWindow = LoginDialog.showExternalAuthDialog(
+        url,
+        () => {
+            externalAuthWindow = null;
+            if (!isTokenAuthEnabled) {
+                room.join(lockPassword);
+            }
+        }
+    );
 }
 
 /**
