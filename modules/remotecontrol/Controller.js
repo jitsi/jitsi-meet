@@ -108,7 +108,10 @@ export default class Controller extends RemoteControlParticipant {
      * @returns {Promise<boolean>} Resolve values - true(accept), false(deny),
      * null(the participant has left).
      */
-    requestPermissions(userId: string, eventCaptureArea: Object) {
+    requestPermissions(
+            userId: string,
+            eventCaptureArea: Object
+    ): Promise<boolean | null> {
         if (!this._enabled) {
             return Promise.reject(new Error('Remote control is disabled!'));
         }
@@ -163,13 +166,16 @@ export default class Controller extends RemoteControlParticipant {
                 JitsiConferenceEvents.USER_LEFT,
                 onUserLeft);
             this._requestedParticipant = userId;
-            this.sendRemoteControlEndpointMessage(userId, {
-                type: EVENTS.permissions,
-                action: PERMISSIONS_ACTIONS.request
-            }, e => {
-                clearRequest();
-                reject(e);
-            });
+            this.sendRemoteControlEndpointMessage(
+                userId,
+                {
+                    type: EVENTS.permissions,
+                    action: PERMISSIONS_ACTIONS.request
+                },
+                e => {
+                    clearRequest();
+                    reject(e);
+                });
         });
     }
 
@@ -179,7 +185,7 @@ export default class Controller extends RemoteControlParticipant {
      * @param {JitsiParticipant} participant - The participant that has sent the
      * reply.
      * @param {RemoteControlEvent} event - The remote control event.
-     * @returns {void}
+     * @returns {boolean|null}
      */
     _handleReply(participant: Object, event: Object) {
         const userId = participant.getId();
@@ -257,46 +263,42 @@ export default class Controller extends RemoteControlParticipant {
      * @returns {void}
      */
     resume() {
-        if (!this._enabled || this._isCollectingEvents || !this._area) {
+        let area;
+
+        if (!this._enabled
+                || this._isCollectingEvents
+                || !(area = this._area)) {
             return;
         }
         logger.log('Resuming remote control controller.');
         this._isCollectingEvents = true;
         APP.keyboardshortcut.enable(false);
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.mousemove(event => {
-            // $FlowDisableNextLine: we are sure that this._area is not null.
-            const position = this._area.position();
+        area.mousemove(event => {
+            const area = this._area; // eslint-disable-line no-shadow
+
+            if (!area) {
+                return;
+            }
+
+            const position = area.position();
 
             this.sendRemoteControlEndpointMessage(this._controlledParticipant, {
                 type: EVENTS.mousemove,
-
-                // $FlowDisableNextLine: we are sure that this._area is not null
-                x: (event.pageX - position.left) / this._area.width(),
-
-                // $FlowDisableNextLine: we are sure that this._area is not null
-                y: (event.pageY - position.top) / this._area.height()
+                x: (event.pageX - position.left) / area.width(),
+                y: (event.pageY - position.top) / area.height()
             });
         });
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.mousedown(this._onMouseClickHandler.bind(this,
-            EVENTS.mousedown));
+        area.mousedown(this._onMouseClickHandler.bind(this, EVENTS.mousedown));
+        area.mouseup(this._onMouseClickHandler.bind(this, EVENTS.mouseup));
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.mouseup(this._onMouseClickHandler.bind(this,
-            EVENTS.mouseup));
-
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.dblclick(
+        area.dblclick(
             this._onMouseClickHandler.bind(this, EVENTS.mousedblclick));
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.contextmenu(() => false);
+        area.contextmenu(() => false);
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area[0].onmousewheel = event => {
+        area[0].onmousewheel = event => {
             event.preventDefault();
             event.stopPropagation();
             this.sendRemoteControlEndpointMessage(this._controlledParticipant, {
@@ -307,6 +309,7 @@ export default class Controller extends RemoteControlParticipant {
 
             return false;
         };
+
         $(window).keydown(this._onKeyPessHandler.bind(this,
             EVENTS.keydown));
         $(window).keyup(this._onKeyPessHandler.bind(this, EVENTS.keyup));
@@ -376,26 +379,20 @@ export default class Controller extends RemoteControlParticipant {
         this._isCollectingEvents = false;
         APP.keyboardshortcut.enable(true);
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.off('mousemove');
+        const area = this._area;
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.off('mousedown');
+        if (area) {
+            area.off('contextmenu');
+            area.off('dblclick');
+            area.off('mousedown');
+            area.off('mousemove');
+            area.off('mouseup');
 
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.off('mouseup');
-
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.off('contextmenu');
-
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area.off('dblclick');
+            area[0].onmousewheel = undefined;
+        }
 
         $(window).off('keydown');
         $(window).off('keyup');
-
-        // $FlowDisableNextLine: we are sure that this._area is not null.
-        this._area[0].onmousewheel = undefined;
     }
 
     /**

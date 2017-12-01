@@ -30,7 +30,7 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
-        inviteItems: Object) {
+        inviteItems: Object): Promise<void> {
     if (!inviteItems || inviteItems.length === 0) {
         return Promise.resolve();
     }
@@ -74,7 +74,8 @@ export function searchDirectory( // eslint-disable-line max-params
         serviceUrl: string,
         jwt: string,
         text: string,
-        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]) {
+        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
+): Promise<void> {
     const queryTypesString = JSON.stringify(queryTypes);
 
     return new Promise((resolve, reject) => {

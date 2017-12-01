@@ -41,7 +41,12 @@ export function cancelFeedback(score: number, message: string) {
  * submitted. Rejected if another dialog is already displayed.
  */
 export function maybeOpenFeedbackDialog(conference: Object) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    type R = {
+        feedbackSubmitted: boolean,
+        thankYouDialogVisible: boolean
+    };
+
+    return (dispatch: Dispatch<*>, getState: Function): Promise<R> => {
         const state = getState();
 
         if (interfaceConfig.filmStripOnly || config.iAmRecorder) {

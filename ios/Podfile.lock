@@ -1,6 +1,6 @@
 PODS:
-  - React (0.49.5):
-    - React/Core (= 0.49.5)
+  - React (0.50.4):
+    - React/Core (= 0.50.4)
   - react-native-background-timer (2.0.0):
     - React
   - react-native-fetch-blob (0.10.6):
@@ -8,40 +8,40 @@ PODS:
   - react-native-keep-awake (2.0.6):
     - React
   - react-native-webrtc (1.58.2)
-  - React/BatchedBridge (0.49.5):
+  - React/BatchedBridge (0.50.4):
     - React/Core
     - React/cxxreact_legacy
-  - React/Core (0.49.5):
-    - yoga (= 0.49.5.React)
-  - React/cxxreact_legacy (0.49.5):
+  - React/Core (0.50.4):
+    - yoga (= 0.50.4.React)
+  - React/cxxreact_legacy (0.50.4):
     - React/jschelpers_legacy
-  - React/DevSupport (0.49.5):
+  - React/DevSupport (0.50.4):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.49.5)
-  - React/jschelpers_legacy (0.49.5)
-  - React/RCTActionSheet (0.49.5):
+  - React/fishhook (0.50.4)
+  - React/jschelpers_legacy (0.50.4)
+  - React/RCTActionSheet (0.50.4):
     - React/Core
-  - React/RCTAnimation (0.49.5):
+  - React/RCTAnimation (0.50.4):
     - React/Core
-  - React/RCTBlob (0.49.5):
+  - React/RCTBlob (0.50.4):
     - React/Core
-  - React/RCTImage (0.49.5):
+  - React/RCTImage (0.50.4):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.49.5):
+  - React/RCTLinkingIOS (0.50.4):
     - React/Core
-  - React/RCTNetwork (0.49.5):
+  - React/RCTNetwork (0.50.4):
     - React/Core
-  - React/RCTText (0.49.5):
+  - React/RCTText (0.50.4):
     - React/Core
-  - React/RCTWebSocket (0.49.5):
+  - React/RCTWebSocket (0.50.4):
     - React/Core
     - React/fishhook
     - React/RCTBlob
   - RNVectorIcons (4.4.2):
     - React
-  - yoga (0.49.5.React)
+  - yoga (0.50.4.React)
 
 DEPENDENCIES:
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
@@ -78,13 +78,13 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
-  React: 9d5a23842dcc75ffef540ee2d2ef0eee1904ee58
+  React: 6d7efef18e0241eb832cf4c085405169a15080ed
   react-native-background-timer: 10063c04bf85d7f8811dff8c74399f0aa715245f
   react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
   react-native-keep-awake: bb4dbb6fd21a7879432f9538b0b7d71398fe9f81
   react-native-webrtc: 6fd0b3aa890d7a9b9b4d01d30f958d17ae88a785
   RNVectorIcons: c1821d56c775cc5a3bca66c77dfc8cb4a90d27e2
-  yoga: 596e987aa8aac0165abb235d2977982f090476a0
+  yoga: b9aebf996711e50fc31f5608c10aa108a5a0c29e
 
 PODFILE CHECKSUM: a7cb8c7365f8cf9a01ee4eb78325139933776faf
 

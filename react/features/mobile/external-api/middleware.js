@@ -120,7 +120,11 @@ function _getSymbolDescription(symbol: Symbol) {
  */
 function _sendConferenceEvent(
         store: Object,
-        { conference, type, ...data }: { conference: Object, type: Symbol }) {
+        { conference, type, ...data }: {
+            conference: Object,
+            type: Symbol,
+            url: ?string
+        }) {
     // For these (redux) actions, conference identifies a JitsiConference
     // instance. The external API cannot transport such an object so we have to
     // transport an "equivalent".

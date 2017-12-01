@@ -439,7 +439,7 @@ export function setPassword(
         conference: Object,
         method: Function,
         password: string) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<*>, getState: Function): ?Promise<void> => {
         switch (method) {
         case conference.join: {
             let state = getState()['features/base/conference'];

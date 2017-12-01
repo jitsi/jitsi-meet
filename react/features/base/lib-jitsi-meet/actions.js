@@ -37,7 +37,7 @@ export function disposeLib() {
  * @returns {Function}
  */
 export function initLib() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<*>, getState: Function): Promise<void> => {
         const config = getState()['features/base/config'];
 
         if (!config) {

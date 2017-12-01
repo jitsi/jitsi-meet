@@ -1,8 +1,5 @@
-// flow-typed signature: 4e93c65cedbfbf7f1ab3fe4e800943d3
-// flow-typed version: 9092387fd2/react-redux_v5.x.x/flow_>=v0.53.x <=v0.53.x
-
-// flow-typed signature: 8db7b853f57c51094bf0ab8b2650fd9c
-// flow-typed version: ab8db5f14d/react-redux_v5.x.x/flow_>=v0.30.x
+// flow-typed signature: 59b0c4be0e1408f21e2446be96c79804
+// flow-typed version: 9092387fd2/react-redux_v5.x.x/flow_>=v0.54.x
 
 import type { Dispatch, Store } from "redux";
 
@@ -34,6 +31,22 @@ declare module "react-redux" {
 
   declare type Context = { store: Store<*, *> };
 
+  declare type ComponentWithDefaultProps<DP: {}, P: {}, CP: P> = Class<
+    React$Component<CP>
+  > & { defaultProps: DP };
+
+  declare class ConnectedComponentWithDefaultProps<
+    OP,
+    DP,
+    CP
+  > extends React$Component<OP> {
+    static defaultProps: DP, // <= workaround for https://github.com/facebook/flow/issues/4644
+    static WrappedComponent: Class<React$Component<CP>>,
+    getWrappedInstance(): React$Component<CP>,
+    props: OP,
+    state: void
+  }
+
   declare class ConnectedComponent<OP, P> extends React$Component<OP> {
     static WrappedComponent: Class<React$Component<P>>,
     getWrappedInstance(): React$Component<P>,
@@ -41,13 +54,18 @@ declare module "react-redux" {
     state: void
   }
 
+  declare type ConnectedComponentWithDefaultPropsClass<OP, DP, CP> = Class<
+    ConnectedComponentWithDefaultProps<OP, DP, CP>
+  >;
+
   declare type ConnectedComponentClass<OP, P> = Class<
     ConnectedComponent<OP, P>
   >;
 
-  declare type Connector<OP, P> = (
-    component: React$ComponentType<P>
-  ) => ConnectedComponentClass<OP, P>;
+  declare type Connector<OP, P> = (<DP: {}, CP: {}>(
+    component: ComponentWithDefaultProps<DP, P, CP>
+  ) => ConnectedComponentWithDefaultPropsClass<OP, DP, CP>) &
+    ((component: React$ComponentType<P>) => ConnectedComponentClass<OP, P>);
 
   declare class Provider<S, A> extends React$Component<{
     store: Store<S, A>,
@@ -77,12 +95,12 @@ declare module "react-redux" {
     options: ConnectOptions
   ): Connector<OP, $Supertype<{ dispatch: Dispatch<A> } & OP>>;
 
-  declare function connect<S, A, OP, SP>(
-    mapStateToProps: MapStateToProps<S, OP, SP>,
-    mapDispatchToProps: Null,
-    mergeProps: Null,
-    options?: ConnectOptions
-  ): Connector<OP, $Supertype<SP & { dispatch: Dispatch<A> } & OP>>;
+//  declare function connect<S, A, OP, SP>(
+//    mapStateToProps: MapStateToProps<S, OP, SP>,
+//    mapDispatchToProps: Null,
+//    mergeProps: Null,
+//    options?: ConnectOptions
+//  ): Connector<OP, $Supertype<SP & { dispatch: Dispatch<A> } & OP>>;
 
   declare function connect<A, OP, DP>(
     mapStateToProps: Null,
@@ -93,7 +111,7 @@ declare module "react-redux" {
 
   declare function connect<S, A, OP, SP, DP>(
     mapStateToProps: MapStateToProps<S, OP, SP>,
-    mapDispatchToProps: MapDispatchToProps<A, OP, DP>,
+    mapDispatchToProps: MapDispatchToProps<A, OP, DP> | Null,
     mergeProps: Null,
     options?: ConnectOptions
   ): Connector<OP, $Supertype<SP & DP & OP>>;

@@ -36,11 +36,12 @@ export function appNavigate(uri: ?string) {
  * property, it may have a value equal to {@code undefined} and that may be
  * acceptable.
  * @private
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function _appNavigateToMandatoryLocation(
         dispatch: Dispatch<*>, getState: Function,
-        newLocation: Object) {
+        newLocation: Object
+): Promise<void> {
     const { room } = newLocation;
 
     return (

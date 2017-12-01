@@ -259,7 +259,7 @@ function _constructOptions(state) {
  * @returns {Function}
  */
 export function disconnect() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<*>, getState: Function): Promise<void> => {
         const state = getState();
         const { conference, joining } = state['features/base/conference'];
 

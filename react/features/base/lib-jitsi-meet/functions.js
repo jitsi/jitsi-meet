@@ -109,7 +109,7 @@ export function isFatalJitsiConnectionError(error: Object | string) {
  * @param {string} url - The URL to load.
  * @returns {Promise<Object>}
  */
-export function loadConfig(url: string) {
+export function loadConfig(url: string): Promise<Object> {
     let promise;
 
     if (typeof APP === 'undefined') {
