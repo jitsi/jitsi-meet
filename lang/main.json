@@ -126,11 +126,9 @@
         "raiseHand": "Raise / Lower your hand"
     },
     "unsupportedBrowser": {
-        "appInstalled": "or if you already have it<br /><strong>then</strong>",
-        "appNotInstalled": "You need <strong>__app__</strong> to join a conversation on your mobile",
-        "downloadApp": "Download the App",
-        "joinConversation": "Join the conversation",
-        "startConference": "Start a conference"
+        "appNotInstalled": "Join this meeting with __app__ on your phone.",
+        "downloadApp": "Download the app",
+        "openApp": "Continue to __app__"
     },
     "bottomtoolbar": {
         "chat": "Open / close chat",

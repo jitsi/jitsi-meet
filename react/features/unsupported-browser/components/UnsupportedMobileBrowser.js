@@ -2,12 +2,13 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
 
 import HideNotificationBarStyle from './HideNotificationBarStyle';
+
+declare var interfaceConfig: Object;
 
 /**
  * The namespace of the CSS styles of UnsupportedMobileBrowser.
@@ -33,8 +34,10 @@ const _TNS = 'unsupportedBrowser';
  * @type {Array<string>}
  */
 const _URLS = {
-    android: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
-    ios: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905'
+    android: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID
+        || 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    ios: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS
+        || 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905'
 };
 
 /**
@@ -52,15 +55,6 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      */
     static propTypes = {
         /**
-         * The name of the conference room to be joined upon clicking the
-         * respective button.
-         *
-         * @private
-         * @type {string}
-         */
-        _room: PropTypes.string,
-
-        /**
          * The function to translate human-readable text.
          *
          * @public
@@ -76,18 +70,15 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      * @inheritdoc
      */
     componentWillMount() {
-        const joinText
-            = this.props._room ? 'joinConversation' : 'startConference';
-
         // If the user installed the app while this Component was displayed
         // (e.g. the user clicked the Download the App button), then we would
         // like to open the current URL in the mobile app. The only way to do it
         // appears to be a link with an app-specific scheme, not a Universal
         // Link.
-        const joinURL = `org.jitsi.meet:${window.location.href}`;
+        const appScheme = interfaceConfig.MOBILE_APP_SCHEME || 'org.jitsi.meet';
+        const joinURL = `${appScheme}:${window.location.href}`;
 
         this.setState({
-            joinText,
             joinURL
         });
     }
@@ -101,8 +92,10 @@ class UnsupportedMobileBrowser extends Component<*, *> {
     render() {
         const { t } = this.props;
 
-        const downloadButtonClassName
+        const openAppButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
+        const appName
+            = interfaceConfig.ADD_PEOPLE_APP_NAME || interfaceConfig.APP_NAME;
 
         return (
             <div className = { _SNS }>
@@ -115,20 +108,18 @@ class UnsupportedMobileBrowser extends Component<*, *> {
                             translateToHTML(
                                 t,
                                 `${_TNS}.appNotInstalled`,
-                                { postProcess: 'resolveAppName' })
+                                { app: appName })
                         }
                     </p>
-                    <a href = { _URLS[Platform.OS] }>
-                        <button className = { downloadButtonClassName }>
-                            { t(`${_TNS}.downloadApp`) }
+                    <a href = { this.state.joinURL }>
+                        <button className = { openAppButtonClassName }>
+                            { t(`${_TNS}.openApp`,
+                                { app: appName }) }
                         </button>
                     </a>
-                    <p className = { `${_SNS}__text ${_SNS}__text_small` }>
-                        { translateToHTML(t, `${_TNS}.appInstalled`) }
-                    </p>
-                    <a href = { this.state.joinURL }>
+                    <a href = { _URLS[Platform.OS] }>
                         <button className = { `${_SNS}__button` }>
-                            { t(`${_TNS}.${this.state.joinText}`) }
+                            { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
                 </div>
@@ -139,27 +130,4 @@ class UnsupportedMobileBrowser extends Component<*, *> {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated UnsupportedMobileBrowser's
- * props.
- *
- * @param {Object} state - Redux state.
- * @private
- * @returns {{
- *     _room: string
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        /**
-         * The name of the conference room to be joined upon clicking the
-         * respective button.
-         *
-         * @private
-         * @type {string}
-         */
-        _room: state['features/base/conference'].room
-    };
-}
-
-export default translate(connect(_mapStateToProps)(UnsupportedMobileBrowser));
+export default translate(UnsupportedMobileBrowser);
