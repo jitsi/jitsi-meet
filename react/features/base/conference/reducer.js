@@ -82,7 +82,8 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
  * reduction of the specified action.
  */
 function _conferenceFailed(state, { conference, error }) {
-    // The active conference or the one we are joining.
+    // The current (similar to getCurrentConference in
+    // base/conference/functions.js) conference which is joining or joined:
     const conference_ = state.conference || state.joining;
 
     if (conference_ && conference_ !== conference) {
