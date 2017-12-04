@@ -100,6 +100,11 @@
 
             #filmstripRemoteVideosContainer {
                 flex-direction: column-reverse;
+                /**
+                 * Add padding as a hack for Firefox not to show scrollbars when
+                 * unnecessary.
+                 */
+                padding: 1px 0;
                 overflow-x: hidden;
             }
         }
