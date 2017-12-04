@@ -32,6 +32,7 @@ window.addEventListener('beforeunload', () => {
         APP.logCollector.stop();
         APP.logCollectorStarted = false;
     }
+    APP.API.notifyConferenceLeft(APP.conference.roomName);
     APP.API.dispose();
     getJitsiMeetTransport().dispose();
 });
