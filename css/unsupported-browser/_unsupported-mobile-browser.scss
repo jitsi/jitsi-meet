@@ -17,7 +17,7 @@
     }
 
     &__text {
-        font-size: 1.8em;
+        font-size: 1.2em;
         line-height: em(29px, 21px);
         margin-bottom: 0.65em;
 
@@ -39,20 +39,14 @@
 
     &__button {
         border: 0;
-        height: 42px;
-        margin: 0 auto;
+        height: 2.2857142857142856em;
+        line-height: 2.2857142857142856em;
+        margin: auto auto 9px;
         max-width: 300px;
-        width: 98%;
-        @include border-radius(8px);
+        width: auto;
+        @include border-radius(3px);
         background-color: $unsupportedBrowserButtonBgColor;
-        font-size: 1.5em;
-        font-weight: 300;
-        letter-spacing: 0.5px;
-        text-shadow: 0px 1px 2px $unsupportedBrowserTextColor;
-
-        // Disable standard button effects.
-        box-shadow: none;
-        outline: none;
+        color: #505F79;
 
         &:active {
             background-color: $unsupportedBrowserButtonBgColor;
@@ -60,6 +54,7 @@
 
         &_primary {
             background-color: $primaryUnsupportedBrowserButtonBgColor;
+            color: #FFFFFF;
 
             &:active {
                 background-color: $primaryUnsupportedBrowserButtonBgColor;
