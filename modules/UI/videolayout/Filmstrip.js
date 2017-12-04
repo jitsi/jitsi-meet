@@ -428,6 +428,8 @@ const Filmstrip = {
                 promises.push(new Promise(resolve => {
                     thumbs.localThumb.animate({
                         height: local.thumbHeight,
+                        'min-height': local.thumbHeight,
+                        'min-width': local.thumbWidth,
                         width: local.thumbWidth
                     }, this._getAnimateOptions(animate, resolve));
                 }));
@@ -437,6 +439,8 @@ const Filmstrip = {
                 promises.push(new Promise(resolve => {
                     thumbs.remoteThumbs.animate({
                         height: remote.thumbHeight,
+                        'min-height': remote.thumbHeight,
+                        'min-width': remote.thumbWidth,
                         width: remote.thumbWidth
                     }, this._getAnimateOptions(animate, resolve));
                 }));
