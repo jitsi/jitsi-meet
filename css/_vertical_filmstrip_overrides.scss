@@ -2,6 +2,18 @@
  * Override other styles to support vertical filmstrip mode.
  */
 .vertical-filmstrip {
+    /*
+     * Firefox sets flex items to min-height: auto and min-width: auto,
+     * preventing flex children from shrinking like they do on other browsers.
+     * Setting min-height and min-width 0 is a workaround for the issue so
+     * Firefox behaves like other browsers.
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=1043520
+     */
+    @mixin minHWAutoFix() {
+        min-height: 0;
+        min-width: 0;
+    }
+
     .filmstrip {
         align-items: flex-end;
         box-sizing: border-box;
@@ -78,6 +90,8 @@
         }
 
         #filmstripRemoteVideos {
+            @include minHWAutoFix();
+
             display: flex;
             flex: 1;
             flex-direction: column;
@@ -115,6 +129,8 @@
         }
 
         #remoteVideos {
+            @include minHWAutoFix();
+
             flex-direction: column;
             flex-grow: 1;
         }
@@ -223,4 +239,34 @@
             pointer-events: all;
         }
     }
+}
+
+/**
+ * Workarounds for Edge, IE11, and Firefox not handling scrolling properly
+ * with flex-direction: column-reverse. The remove videos in filmstrip should
+ * start scrolling from the bottom of the filmstrip, but in those browsers the
+ * scrolling won't happen. Per W3C spec, scrolling should happen from the
+ * bottom. As such, use css hacks to get around the css issue, with the intent
+ * being to remove the hacks as the spec is supported.
+ */
+@mixin undoColumnReverseVideos() {
+    #remoteVideos #filmstripRemoteVideos #filmstripRemoteVideosContainer {
+        flex-direction:column;
+    }
+}
+
+/** Firefox detection hack **/
+@-moz-document url-prefix() {
+    @include undoColumnReverseVideos();
+}
+
+/** IE11 detection hack **/
+@media screen and (-ms-high-contrast: active),
+screen and (-ms-high-contrast: none) {
+    @include undoColumnReverseVideos();
+}
+
+/** Edge detection hack **/
+@supports (-ms-ime-align:auto) {
+    @include undoColumnReverseVideos();
 }
