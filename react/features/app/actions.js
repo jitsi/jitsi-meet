@@ -11,11 +11,6 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 declare var APP: Object;
 
 /**
- * Timeout for loading the configuration.
- */
-const LOAD_CONFIG_TIMEOUT = 8000;
-
-/**
  * Triggers an in-app navigation to a specific route. Allows navigation to be
  * abstracted between the mobile/React Native and Web/React applications.
  *
@@ -211,7 +206,7 @@ function _loadConfig({ contextRoot, host, protocol, room }) {
 
     const key = `config.js/${baseURL}`;
 
-    return loadConfig(url, LOAD_CONFIG_TIMEOUT).then(
+    return loadConfig(url).then(
         /* onFulfilled */ config => {
             // Try to store the configuration in localStorage. If the deployment
             // specified 'getroom' as a function, for example, it does not make

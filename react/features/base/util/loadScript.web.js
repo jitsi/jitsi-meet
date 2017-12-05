@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 declare var JitsiMeetJS: Object;
 

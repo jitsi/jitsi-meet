@@ -2,7 +2,7 @@
 
 import { setConfigFromURLParams } from '../config';
 import { toState } from '../redux';
-import { loadScript, timeoutPromise } from '../util';
+import { loadScript } from '../util';
 
 import JitsiMeetJS from './_';
 
@@ -107,16 +107,20 @@ export function isFatalJitsiConnectionError(error: Object | string) {
  * Loads config.js from a specific remote server.
  *
  * @param {string} url - The URL to load.
- * @param {number} timeoutMs - The timeout for the configuration to be loaded,
- * in milliseconds.
+ * @param {number} [timeout] - The timeout for the configuration to be loaded,
+ * in milliseconds. If not specified, a default value deamed appropriate for the
+ * purpsoe is used.
  * @returns {Promise<Object>}
  */
-export function loadConfig(url: string, timeoutMs: number): Promise<Object> {
+export function loadConfig(
+        url: string,
+        timeout: ?number = 10 /* seconds */ * 1000 /* in milliseconds */
+): Promise<Object> {
     let promise;
 
     if (typeof APP === 'undefined') {
         promise
-            = loadScript(url)
+            = loadScript(url, timeout)
                 .then(() => {
                     const { config } = window;
 
@@ -150,5 +154,5 @@ export function loadConfig(url: string, timeoutMs: number): Promise<Object> {
         return value;
     });
 
-    return timeoutPromise(promise, timeoutMs);
+    return promise;
 }

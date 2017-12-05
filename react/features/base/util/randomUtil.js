@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 /**
  * Alphanumeric characters.
