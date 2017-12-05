@@ -140,11 +140,7 @@ class ToolbarButton extends Component<*> {
             );
         }
 
-        return (
-            <div className = { `toolbar-button-wrapper ${button.id}-wrapper` }>
-                { children }
-            </div>
-        );
+        return children;
     }
 
     /**
