@@ -56,11 +56,14 @@
         /**
          * Toolbar button styles for always on top.
          */
-        > .button {
+        .button {
             font-size: $alwaysOnTopToolbarFontSize;
             height: $alwaysOnTopToolbarSize;
             line-height: $alwaysOnTopToolbarSize;
             width: $alwaysOnTopToolbarSize;
+            &_hangup, &_hangup:hover {
+                font-size: $alwaysOnTopToolbarFontSize;
+            }
         }
     }
 
