@@ -45,7 +45,7 @@ modules_enabled = {
 	-- Not essential, but recommended
 		"private"; -- Private XML storage (for room bookmarks, etc.)
 		"vcard"; -- Allow users to set vCards
-	
+
 	-- These are commented by default as they have a performance impact
 		--"privacy"; -- Support privacy lists
 		"compression"; -- Stream compression (requires the lua-zlib package installed)
@@ -180,6 +180,13 @@ VirtualHost "jitsi.example.com"
 	}
 
 	c2s_require_encryption = false
+
+VirtualHost "auth.jitsi.example.com"
+	ssl = {
+		key = "/var/lib/prosody/auth.jitsi.example.com.key";
+		certificate = "/var/lib/prosody/auth.jitsi.example.com.crt";
+	}
+	authentication = "internal_plain"
 
 ------ Components ------
 -- You can specify components to add hosts that provide special services,

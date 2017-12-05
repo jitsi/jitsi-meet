@@ -60,6 +60,10 @@ VirtualHost "jitsi.example.com"
 - add domain with authentication for conference focus user:
 ```
 VirtualHost "auth.jitsi.example.com"
+    ssl = {
+        key = "/var/lib/prosody/auth.jitsi.example.com.key";
+        certificate = "/var/lib/prosody/auth.jitsi.example.com.crt";
+    }
     authentication = "internal_plain"
 ```
 - add focus user to server admins:
@@ -83,6 +87,13 @@ ln -s /etc/prosody/conf.avail/jitsi.example.com.cfg.lua /etc/prosody/conf.d/jits
 Generate certs for the domain:
 ```sh
 prosodyctl cert generate jitsi.example.com
+prosodyctl cert generate auth.jitsi.example.com
+```
+
+Add auth.jitsi.example.com to the trusted certificates on the local machine:
+```sh
+ln -sf /var/lib/prosody/auth.jitsi.example.com.crt /usr/local/share/ca-certificates/auth.jitsi.example.com.crt
+update-ca-certificates
 ```
 
 Create conference focus user:
