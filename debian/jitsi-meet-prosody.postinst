@@ -112,29 +112,19 @@ case "$1" in
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
-            HOST="$( (hostname -s; echo localhost) | head -n 1)"
-            DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
-            openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
-                "/O=$DOMAIN/OU=$HOST/CN=$JVB_HOSTNAME/emailAddress=webmaster@$HOST.$DOMAIN" \
-                -keyout /var/lib/prosody/$JVB_HOSTNAME.key \
-                -out /var/lib/prosody/$JVB_HOSTNAME.crt
+            # prosodyctl takes care for the permissions
+            prosodyctl cert generate $JVB_HOSTNAME
+
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
         fi
 
         if [ ! -f /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt ]; then
-            HOST="$( (hostname -s; echo localhost) | head -n 1)"
-            DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
-            openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
-                "/O=$DOMAIN/OU=$HOST/CN=$JICOFO_AUTH_DOMAIN/emailAddress=webmaster@$HOST.$DOMAIN" \
-                -keyout /var/lib/prosody/$JICOFO_AUTH_DOMAIN.key \
-                -out /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt
+            # prosodyctl takes care for the permissions
+            prosodyctl cert generate $JICOFO_AUTH_DOMAIN
 
-            AUTH_KEY_FILE="/etc/prosody/certs/$JICOFO_AUTH_DOMAIN.key"
-            AUTH_CRT_FILE="/etc/prosody/certs/$JICOFO_AUTH_DOMAIN.crt"
-
-            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.key $AUTH_KEY_FILE
-            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt $AUTH_CRT_FILE
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.key /etc/prosody/certs/$JICOFO_AUTH_DOMAIN.key
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /etc/prosody/certs/$JICOFO_AUTH_DOMAIN.crt
             ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.crt
 
             update-ca-certificates
