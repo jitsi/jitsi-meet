@@ -28,7 +28,8 @@ import {
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
     SET_RECEIVE_VIDEO_QUALITY,
-    SET_ROOM
+    SET_ROOM,
+    SAVE_RECENT_CONFERENCE_LOCATION
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -525,6 +526,19 @@ export function setRoom(room: ?string) {
     return {
         type: SET_ROOM,
         room
+    };
+}
+
+/**
+* Stores the conference information permanently that the user recently joined.
+*
+* @param {Object} location - Location of the conference.
+* @returns {void}
+*/
+export function storeRecentConferenceLocation(location: Object) {
+    return {
+        type: SAVE_RECENT_CONFERENCE_LOCATION,
+        location
     };
 }
 

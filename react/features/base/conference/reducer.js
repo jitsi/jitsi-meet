@@ -4,6 +4,7 @@ import { CONNECTION_WILL_CONNECT } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
+import { urlObjectToString } from '../util';
 
 import {
     CONFERENCE_FAILED,
@@ -17,9 +18,10 @@ import {
     SET_PASSWORD,
     SET_RECEIVE_VIDEO_QUALITY,
     SET_ROOM,
+    SAVE_RECENT_CONFERENCE_LOCATION,
     SET_SIP_GATEWAY_ENABLED
 } from './actionTypes';
-import { VIDEO_QUALITY_LEVELS } from './constants';
+import { VIDEO_QUALITY_LEVELS, RECENT_URL_STORAGE } from './constants';
 import { isRoomValid } from './functions';
 
 /**
@@ -63,6 +65,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case SET_ROOM:
         return _setRoom(state, action);
+
+    case SAVE_RECENT_CONFERENCE_LOCATION:
+        return _saveRecentConference(state, action);
 
     case SET_SIP_GATEWAY_ENABLED:
         return _setSIPGatewayEnabled(state, action);
@@ -387,6 +392,63 @@ function _setRoom(state, action) {
      * @type {string}
      */
     return set(state, 'room', room);
+}
+
+/**
+ * Reduces a specific Redux action SAVE_RECENT_CONFERENCE
+ * of the feature base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SAVE_RECENT_CONFERENCE to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _saveRecentConference(state, action) {
+    const { location } = action;
+
+    if (location.room) {
+        const conferenceLink = urlObjectToString(location);
+        let recentUrls = window.localStorage.getItem(RECENT_URL_STORAGE);
+
+        if (recentUrls) {
+            recentUrls = JSON.parse(recentUrls);
+        } else {
+            recentUrls = [];
+        }
+
+        // if the current conference is already in the list,
+        // we remove it to add it
+        // to the top at the end
+        recentUrls = recentUrls.filter(
+            entry => entry.conference !== conferenceLink
+        );
+
+        // please note, this is a reverse sorted array
+        // (newer elements at the end)
+
+        // maximising the size to 99 (+1)
+
+        if (recentUrls.length > 99) {
+            recentUrls.splice(0, recentUrls.length - 99);
+        }
+
+        recentUrls.push({
+            conference: conferenceLink,
+            date: Date.now()
+        });
+
+        window.localStorage.setItem(
+            RECENT_URL_STORAGE,
+            JSON.stringify(recentUrls)
+        );
+
+        console.log('==== ZB ==== Recent URL list', recentUrls);
+
+        return set(state, 'lastConference', action.conference);
+    }
+
+    return state;
 }
 
 /**

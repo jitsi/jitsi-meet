@@ -46,3 +46,11 @@ export const VIDEO_QUALITY_LEVELS = {
     STANDARD: 360,
     LOW: 180
 };
+
+/**
+* The name of the {@code window.localStorage} {@code Storage} name
+* that stores the list of the recently joined conferences.
+*
+* @type {string}
+*/
+export const RECENT_URL_STORAGE = 'recentURLs';

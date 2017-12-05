@@ -1,6 +1,6 @@
 /* @flow */
 
-import { setRoom } from '../base/conference';
+import { setRoom, storeRecentConferenceLocation } from '../base/conference';
 import { loadConfigError, setConfig } from '../base/config';
 import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
@@ -48,7 +48,9 @@ function _appNavigateToMandatoryLocation(
             .then(
                 config => loadConfigSettled(/* error */ undefined, config),
                 error => loadConfigSettled(error, /* config */ undefined))
-            .then(() => dispatch(setRoom(room))));
+            .then(() => dispatch(setRoom(room)))
+            .then(() => dispatch(
+                storeRecentConferenceLocation(newLocation))));
 
     /**
      * Notifies that an attempt to load a configuration has completed. Due to

@@ -153,6 +153,18 @@ export const SET_RECEIVE_VIDEO_QUALITY = Symbol('SET_RECEIVE_VIDEO_QUALITY');
 export const SET_ROOM = Symbol('SET_ROOM');
 
 /**
+ * The type of (redux) action which saves the recently joined conference.
+ *
+ * {
+ *     type: SET_ROOM,
+ *     location: Object
+ * }
+ */
+export const SAVE_RECENT_CONFERENCE_LOCATION = Symbol(
+    'SAVE_RECENT_CONFERENCE_LOCATION'
+);
+
+/**
  * The type of (redux) action, which indicates if a SIP gateway is enabled on
  * the server.
  *
