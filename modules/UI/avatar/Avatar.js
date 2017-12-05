@@ -48,6 +48,10 @@ export default {
             users[id] = {};
         }
         users[id][prop] = val;
+        APP.API.notifyAvatarChanged(
+            id === 'local' ? APP.conference.getMyUserId() : id,
+            this.getAvatarUrl(id)
+        );
     },
 
     /**

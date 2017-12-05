@@ -1,4 +1,4 @@
-/* global $, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
@@ -545,6 +545,7 @@ export class VideoContainer extends LargeContainer {
         this.avatarDisplayed = show;
 
         this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE, show);
+        APP.API.notifyLargeVideoVisibilityChanged(show);
     }
 
     /**

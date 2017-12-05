@@ -802,6 +802,16 @@ function changeAvatar(id, avatarUrl) {
 }
 
 /**
+ * Returns the avatar URL for a given user.
+ *
+ * @param {string} id - The id of the user.
+ * @returns {string} The avatar URL.
+ */
+UI.getAvatarUrl = function(id) {
+    return Avatar.getAvatarUrl(id);
+};
+
+/**
  * Update user email.
  * @param {string} id user id
  * @param {string} email user email

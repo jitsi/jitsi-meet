@@ -34,6 +34,7 @@ const commands = {
  * events expected by jitsi-meet
  */
 const events = {
+    'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
@@ -224,7 +225,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
             })
         });
-        this._numberOfParticipants = 1;
+        this._isLargeVideoVisible = true;
+        this._numberOfParticipants = 0;
+        this._participants = {};
+        this._myUserID = undefined;
+        this._onStageParticipant = undefined;
         this._setupListeners();
         id++;
     }
@@ -279,6 +284,34 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the id of the on stage participant.
+     *
+     * @returns {string} - The id of the on stage participant.
+     */
+    _getOnStageParticipant() {
+        return this._onStageParticipant;
+    }
+
+
+    /**
+     * Getter for the large video element in Jitsi Meet.
+     *
+     * @returns {HTMLElement|undefined} - The large video.
+     */
+    _getLargeVideo() {
+        const iframe = this.getIFrame();
+
+        if (!this._isLargeVideoVisible
+                || !iframe
+                || !iframe.contentWindow
+                || !iframe.contentWindow.document) {
+            return;
+        }
+
+        return iframe.contentWindow.document.getElementById('largeVideo');
+    }
+
+    /**
      * Sets the size of the iframe element.
      *
      * @param {number|string} height - The height of the iframe.
@@ -308,12 +341,58 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @private
      */
     _setupListeners() {
-
         this._transport.on('event', ({ name, ...data }) => {
-            if (name === 'participant-joined') {
+            const userID = data.id;
+
+            switch (name) {
+            case 'video-conference-joined':
+                this._myUserID = userID;
+                this._participants[userID] = {
+                    avatarURL: data.avatarURL
+                };
+
+            // eslint-disable-next-line no-fallthrough
+            case 'participant-joined': {
+                this._participants[userID] = this._participants[userID] || {};
+                this._participants[userID].displayName = data.displayName;
+                this._participants[userID].formattedDisplayName
+                    = data.formattedDisplayName;
                 changeParticipantNumber(this, 1);
-            } else if (name === 'participant-left') {
+                break;
+            }
+            case 'participant-left':
                 changeParticipantNumber(this, -1);
+                delete this._participants[userID];
+                break;
+            case 'display-name-change': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.displayName = data.displayname;
+                    user.formattedDisplayName = data.formattedDisplayName;
+                }
+                break;
+            }
+            case 'avatar-changed': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.avatarURL = data.avatarURL;
+                }
+                break;
+            }
+            case 'on-stage-participant-changed':
+                this._onStageParticipant = userID;
+                this.emit('largeVideoChanged');
+                break;
+            case 'large-video-visibility-changed':
+                this._isLargeVideoVisible = data.isVisible;
+                this.emit('largeVideoChanged');
+                break;
+            case 'video-conference-left':
+                changeParticipantNumber(this, -1);
+                delete this._participants[this._myUserID];
+                break;
             }
 
             const eventName = events[name];
@@ -485,6 +564,43 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._transport.sendRequest({
             name: 'is-audio-muted'
         });
+    }
+
+    /**
+     * Returns the avatar URL of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The avatar URL.
+     */
+    getAvatarURL(participantId) {
+        const { avatarURL } = this._participants[participantId] || {};
+
+        return avatarURL;
+    }
+
+    /**
+     * Returns the display name of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The display name.
+     */
+    getDisplayName(participantId) {
+        const { displayName } = this._participants[participantId] || {};
+
+        return displayName;
+    }
+
+    /**
+     * Returns the formatted display name of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The formatted display name.
+     */
+    _getFormattedDisplayName(participantId) {
+        const { formattedDisplayName }
+            = this._participants[participantId] || {};
+
+        return formattedDisplayName;
     }
 
     /**

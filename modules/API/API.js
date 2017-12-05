@@ -185,6 +185,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the large video
+     * visibility changed.
+     *
+     * @param {boolean} isHidden - True if the large video is hidden and false
+     * otherwise.
+     * @returns {void}
+     */
+    notifyLargeVideoVisibilityChanged(isHidden: boolean) {
+        this._sendEvent({
+            name: 'large-video-visibility-changed',
+            isVisible: !isHidden
+        });
+    }
+
+    /**
      * Sends event to the external application.
      *
      * @param {Object} event - The event to be sent.
@@ -238,12 +253,14 @@ class API {
      * conference.
      *
      * @param {string} id - User id.
+     * @param {Object} props - The display name of the user.
      * @returns {void}
      */
-    notifyUserJoined(id: string) {
+    notifyUserJoined(id: string, props: Object) {
         this._sendEvent({
             name: 'participant-joined',
-            id
+            id,
+            ...props
         });
     }
 
@@ -263,16 +280,37 @@ class API {
 
     /**
      * Notify external application (if API is enabled) that user changed their
+     * avatar.
+     *
+     * @param {string} id - User id.
+     * @param {string} avatarURL - The new avatar URL of the participant.
+     * @returns {void}
+     */
+    notifyAvatarChanged(id: string, avatarURL: string) {
+        this._sendEvent({
+            name: 'avatar-changed',
+            avatarURL,
+            id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that user changed their
      * nickname.
      *
      * @param {string} id - User id.
      * @param {string} displayname - User nickname.
+     * @param {string} formattedDisplayName - The display name shown in Jitsi
+     * meet's UI for the user.
      * @returns {void}
      */
-    notifyDisplayNameChanged(id: string, displayname: string) {
+    notifyDisplayNameChanged(
+            id: string,
+            { displayName, formattedDisplayName }: Object) {
         this._sendEvent({
             name: 'display-name-change',
-            displayname,
+            displayname: displayName,
+            formattedDisplayName,
             id
         });
     }
@@ -282,12 +320,17 @@ class API {
      * been joined.
      *
      * @param {string} roomName - The room name.
+     * @param {string} id - The id of the local user.
+     * @param {Object} props - The display name and avatar URL of the local
+     * user.
      * @returns {void}
      */
-    notifyConferenceJoined(roomName: string) {
+    notifyConferenceJoined(roomName: string, id: string, props: Object) {
         this._sendEvent({
             name: 'video-conference-joined',
-            roomName
+            roomName,
+            id,
+            ...props
         });
     }
 
@@ -370,6 +413,20 @@ class API {
         this._sendEvent({
             name: 'video-availability-changed',
             available
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the on stage
+     * participant has changed.
+     *
+     * @param {string} id - User id of the new on stage participant.
+     * @returns {void}
+     */
+    notifyOnStageParticipantChanged(id: string) {
+        this._sendEvent({
+            name: 'on-stage-participant-changed',
+            id
         });
     }
 
