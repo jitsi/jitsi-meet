@@ -220,11 +220,12 @@ class AddPeopleDialog extends Component<*, *> {
                 addToCallInProgress: true
             });
 
+            const vrooms = this.state.inviteItems.filter(
+                i => i.type === 'videosipgw');
+
             this.props._conference
-                && this.props.inviteVideoRooms(
-                        this.props._conference,
-                        this.state.inviteItems.filter(
-                            i => i.type === 'videosipgw'));
+                && vrooms.length > 0
+                && this.props.inviteVideoRooms(this.props._conference, vrooms);
 
             invitePeopleAndChatRooms(
                 this.props._inviteServiceUrl,
