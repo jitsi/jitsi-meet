@@ -89,6 +89,25 @@ export default class Storage {
     }
 
     /**
+     * Returns the value associated with a specific key in this storage in an
+     * async manner. This method is required for those cases where we need
+     * the stored data but we're not sure yet whether the {@code Storage}
+     * is already initialised or not - e.g. on app start.
+     *
+     * @param {string} key - The name of the key to retrieve the value of.
+     * @param {Function} cb - The callback to be invoked when the
+     * data is available.
+     * @returns {void}
+     */
+    getItemAsync(key, cb) {
+        AsyncStorage.getItem(
+            `${String(this._keyPrefix)}${key}`,
+            (error, result) => {
+                cb(result ? result : null);
+            });
+    }
+
+    /**
      * Returns the name of the nth key in this storage.
      *
      * @param {number} n - The zero-based integer index of the key to get the
