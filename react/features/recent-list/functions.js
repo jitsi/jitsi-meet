@@ -25,7 +25,7 @@ export function getRecentRooms(cb: Function) {
                     recentRoomDS.push({
                         conference: entry.conference,
                         dateTimeStamp: entry.date,
-                        date: _getDateString(entry.date),
+                        dateString: _getDateString(entry.date),
                         initials: _getInitials(location.room),
                         room: location.room
                     });

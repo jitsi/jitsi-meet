@@ -69,7 +69,7 @@ class RecentList extends AbstractRecentList {
                         { data.room }
                     </Text>
                     <Text style = { styles.date }>
-                        { data.date }
+                        { data.dateString }
                     </Text>
                 </View>
             </TouchableHighlight>

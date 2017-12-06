@@ -19,21 +19,22 @@ export default class AbstractRecentList extends Component < *, * > {
     /**
      * Initializes a new {@code AbstractRecentList} instance.
      *
-     * @param {Object} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
      */
     constructor() {
         super();
 
         const ds = new ListView.DataSource({
             rowHasChanged: (r1, r2) =>
-                r1.conference !== r2.conference && r1.timeStamp !== r2.timeStamp
+                r1.conference !== r2.conference
+                && r1.dateTimeStamp !== r2.dateTimeStamp
         });
 
         this.state = {
             dataSource: ds.cloneWithRows([])
         };
 
+        // this must be done asynchronously because we don't have the storage
+        // initiated on app startup immediately.
         getRecentRooms(rooms => {
             this.setState({
                 dataSource: ds.cloneWithRows(rooms)
