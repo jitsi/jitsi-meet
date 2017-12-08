@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    REMOTE_VIDEO_MENU_KICK,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { translate } from '../../base/i18n';
 import { kickParticipant } from '../../base/participants';
 
@@ -84,7 +87,7 @@ class KickButton extends Component {
         const { dispatch, onClick, participantID } = this.props;
 
         sendAnalyticsEvent(
-            'remotevideomenu.kick',
+            REMOTE_VIDEO_MENU_KICK,
             {
                 value: 1,
                 label: participantID

@@ -2,7 +2,14 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    _LOCAL,
+    _REMOTE,
+    AUDIO_ONLY_DISABLED,
+    PINNED_,
+    UNPINNED_,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { CONNECTION_ESTABLISHED } from '../connection';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
@@ -124,7 +131,7 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
 
     if (getState()['features/base/conference'].audioOnly) {
-        sendAnalyticsEvent('audioonly.disabled');
+        sendAnalyticsEvent(AUDIO_ONLY_DISABLED);
         logger.log('Audio only disabled');
         dispatch(setAudioOnly(false));
     }
@@ -186,14 +193,14 @@ function _pinParticipant(store, next, action) {
 
     if (typeof APP !== 'undefined') {
         const pinnedParticipant = getPinnedParticipant(participants);
-        const actionName = action.participant.id ? 'pinned' : 'unpinned';
+        const actionName = action.participant.id ? PINNED_ : UNPINNED_;
         let videoType;
 
         if ((participantById && participantById.local)
                 || (!id && pinnedParticipant && pinnedParticipant.local)) {
-            videoType = 'local';
+            videoType = _LOCAL;
         } else {
-            videoType = 'remote';
+            videoType = _REMOTE;
         }
 
         sendAnalyticsEvent(

@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    TOOLBAR_AUDIO_ONLY_ENABLED,
+    TOOLBAR_VIDEO_QUALITY_HIGH,
+    TOOLBAR_VIDEO_QUALITY_LOW,
+    TOOLBAR_VIDEO_QUALITY_STANDARD,
+    sendAnalyticsEvent
+} from '../../analytics';
 import {
     setAudioOnly,
     setReceiveVideoQuality,
@@ -249,7 +255,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableAudioOnly() {
-        sendAnalyticsEvent('toolbar.audioonly.enabled');
+        sendAnalyticsEvent(TOOLBAR_AUDIO_ONLY_ENABLED);
         logger.log('Video quality: audio only enabled');
         this.props.dispatch(setAudioOnly(true));
     }
@@ -262,7 +268,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableHighDefinition() {
-        sendAnalyticsEvent('toolbar.videoquality.high');
+        sendAnalyticsEvent(TOOLBAR_VIDEO_QUALITY_HIGH);
         logger.log('Video quality: high enabled');
         this.props.dispatch(setReceiveVideoQuality(HIGH));
     }
@@ -275,7 +281,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableLowDefinition() {
-        sendAnalyticsEvent('toolbar.videoquality.low');
+        sendAnalyticsEvent(TOOLBAR_VIDEO_QUALITY_LOW);
         logger.log('Video quality: low enabled');
         this.props.dispatch(setReceiveVideoQuality(LOW));
     }
@@ -288,7 +294,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableStandardDefinition() {
-        sendAnalyticsEvent('toolbar.videoquality.standard');
+        sendAnalyticsEvent(TOOLBAR_VIDEO_QUALITY_STANDARD);
         logger.log('Video quality: standard enabled');
         this.props.dispatch(setReceiveVideoQuality(STANDARD));
     }

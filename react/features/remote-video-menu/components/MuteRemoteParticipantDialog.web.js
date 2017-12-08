@@ -5,7 +5,10 @@ import { connect } from 'react-redux';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    REMOTE_VIDEO_MENU_MUTE_CONFIRMED,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { muteRemoteParticipant } from '../../base/participants';
 
 /**
@@ -80,7 +83,7 @@ class MuteRemoteParticipantDialog extends Component {
         const { dispatch, participantID } = this.props;
 
         sendAnalyticsEvent(
-            'remotevideomenu.mute.confirmed',
+            REMOTE_VIDEO_MENU_MUTE_CONFIRMED,
             {
                 value: 1,
                 label: participantID

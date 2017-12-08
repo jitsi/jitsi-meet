@@ -6,7 +6,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    FEEDBACK_OPEN,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
@@ -145,7 +148,7 @@ class FeedbackDialog extends Component {
      * @inheritdoc
      */
     componentDidMount() {
-        sendAnalyticsEvent('feedback.open');
+        sendAnalyticsEvent(FEEDBACK_OPEN);
     }
 
     /**

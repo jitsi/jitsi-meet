@@ -3,6 +3,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import { PAGE_RELOAD } from '../../analytics';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
@@ -156,7 +157,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
         // sent to the backed.
         // FIXME: We should dispatch action for this.
         APP.conference.logEvent(
-            'page.reload',
+            PAGE_RELOAD,
             /* value */ undefined,
             /* label */ this.props.reason);
         logger.info(

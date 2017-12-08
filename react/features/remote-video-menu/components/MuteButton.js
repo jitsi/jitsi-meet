@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    REMOTE_VIDEO_MENU_MUTE_CLICKED,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { translate } from '../../base/i18n';
 import { openDialog } from '../../base/dialog';
 
@@ -99,7 +102,7 @@ class MuteButton extends Component {
         const { dispatch, onClick, participantID } = this.props;
 
         sendAnalyticsEvent(
-            'remotevideomenu.mute.clicked',
+            REMOTE_VIDEO_MENU_MUTE_CLICKED,
             {
                 value: 1,
                 label: participantID
