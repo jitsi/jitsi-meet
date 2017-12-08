@@ -1,5 +1,4 @@
 /* global APP */
-/* eslint-disable react/no-multi-comp */
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -13,7 +12,7 @@ import {
     localParticipantJoined,
     localParticipantLeft
 } from '../../base/participants';
-import { RouteRegistry } from '../../base/react';
+import { Fragment, RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
@@ -26,32 +25,6 @@ import { appNavigate, appWillMount, appWillUnmount } from '../actions';
  * via props.
  */
 const DEFAULT_URL = 'https://meet.jit.si';
-
-/**
- * react-redux's {@code Provider} component only accepts a single child, so use
- * a simple wrapper component in order to pass more than 1 child components.
- * TODO: remove this once React Native supports Fragment (0.52 probably).
- */
-class Fragment extends Component {
-    /**
-     * {@code Fragment} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        children: PropTypes.node
-    };
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return this.props.children;
-    }
-}
 
 /**
  * Base (abstract) class for main App component.
