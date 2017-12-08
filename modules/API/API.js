@@ -68,7 +68,7 @@ function initCommands() {
         'toggle-chat': APP.UI.toggleChat,
         'toggle-contact-list': APP.UI.toggleContactList,
         'toggle-share-screen': toggleScreenSharing,
-        'video-hangup': () => APP.conference.hangup(),
+        'video-hangup': () => APP.conference.hangup(true),
         'email': APP.conference.changeLocalEmail,
         'avatar-url': APP.conference.changeLocalAvatarUrl
     };
