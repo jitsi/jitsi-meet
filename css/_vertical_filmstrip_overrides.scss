@@ -260,8 +260,10 @@
  * being to remove the hacks as the spec is supported.
  */
 @mixin undoColumnReverseVideos() {
-    #remoteVideos #filmstripRemoteVideos #filmstripRemoteVideosContainer {
-        flex-direction:column;
+    .vertical-filmstrip {
+        #remoteVideos #filmstripRemoteVideos #filmstripRemoteVideosContainer {
+            flex-direction: column;
+        }
     }
 }
 
