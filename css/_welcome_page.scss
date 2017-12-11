@@ -175,10 +175,11 @@
 
 .feature_holder
 {
-    float:left;
+    display: inline-block;
     width: 169px;
     padding-left: 75px;
     padding-bottom: 30px;
+    vertical-align: top;
 }
 
 .feature_icon
@@ -192,7 +193,8 @@
     /*font-weight: bold;*/
     text-align: center;
     display: table-cell;
-    padding: 50px 26px 0px 20px;
+    padding: 0px 26px 0px 20px;
+    vertical-align: middle;
 }
 
 .feature_description
