@@ -2,7 +2,11 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    START_MUTED_SERVER_AUDIO_,
+    START_MUTED_SERVER_VIDEO_,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { getName } from '../../app';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
@@ -85,9 +89,11 @@ function _addConferenceListeners(conference, dispatch) {
             const videoMuted = Boolean(conference.startVideoMuted);
 
             sendAnalyticsEvent(
-                `startmuted.server.audio.${audioMuted ? 'muted' : 'unmuted'}`);
+                `${START_MUTED_SERVER_AUDIO_}.${
+                    audioMuted ? 'muted' : 'unmuted'}`);
             sendAnalyticsEvent(
-                `startmuted.server.video.${videoMuted ? 'muted' : 'unmuted'}`);
+                `${START_MUTED_SERVER_VIDEO_}.${
+                    videoMuted ? 'muted' : 'unmuted'}`);
             logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${
                 videoMuted ? 'video' : ''}`);
 

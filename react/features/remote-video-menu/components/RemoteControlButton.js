@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    REMOTE_VIDEO_MENU_REMOTE_CONTROL_,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { translate } from '../../base/i18n';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -131,7 +134,7 @@ class RemoteControlButton extends Component {
 
         if (eventName) {
             sendAnalyticsEvent(
-                `remotevideomenu.remotecontrol.${eventName}`,
+                `${REMOTE_VIDEO_MENU_REMOTE_CONTROL_}.${eventName}`,
                 {
                     value: 1,
                     label: participantID

@@ -24,6 +24,10 @@ import {
     JitsiRecordingStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import {
+    RECORDING_CANCELED,
+    RECORDING_CLICKED,
+    RECORDING_STARTED,
+    RECORDING_STOPPED,
     sendAnalyticsEvent
 } from '../../../react/features/analytics';
 import { setToolboxEnabled } from '../../../react/features/toolbox';
@@ -467,7 +471,7 @@ const Recording = {
             return;
         }
 
-        sendAnalyticsEvent('recording.clicked');
+        sendAnalyticsEvent(RECORDING_CLICKED);
         switch (this.currentState) {
         case JitsiRecordingStatus.ON:
         case JitsiRecordingStatus.RETRYING:
@@ -475,7 +479,7 @@ const Recording = {
             _showStopRecordingPrompt(this.recordingType).then(
                 () => {
                     this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED);
-                    sendAnalyticsEvent('recording.stopped');
+                    sendAnalyticsEvent(RECORDING_STOPPED);
                 },
                 () => {}); // eslint-disable-line no-empty-function
             break;
@@ -488,11 +492,11 @@ const Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { streamId });
-                    sendAnalyticsEvent('recording.started');
+                    sendAnalyticsEvent(RECORDING_STARTED);
                 })
                 .catch(reason => {
                     if (reason === APP.UI.messageHandler.CANCEL) {
-                        sendAnalyticsEvent('recording.canceled');
+                        sendAnalyticsEvent(RECORDING_CANCELED);
                     } else {
                         logger.error(reason);
                     }
@@ -502,7 +506,7 @@ const Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token: this.predefinedToken });
-                    sendAnalyticsEvent('recording.started');
+                    sendAnalyticsEvent(RECORDING_STARTED);
 
                     return;
                 }
@@ -511,11 +515,11 @@ const Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token });
-                    sendAnalyticsEvent('recording.started');
+                    sendAnalyticsEvent(RECORDING_STARTED);
                 })
                 .catch(reason => {
                     if (reason === APP.UI.messageHandler.CANCEL) {
-                        sendAnalyticsEvent('recording.canceled');
+                        sendAnalyticsEvent(RECORDING_CANCELED);
                     } else {
                         logger.error(reason);
                     }

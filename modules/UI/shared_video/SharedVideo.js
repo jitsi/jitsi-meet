@@ -10,7 +10,17 @@ import VideoLayout from '../videolayout/VideoLayout';
 import LargeContainer from '../videolayout/LargeContainer';
 import Filmstrip from '../videolayout/Filmstrip';
 
-import { sendAnalyticsEvent } from '../../../react/features/analytics';
+import {
+    SHARED_VIDEO_ALREADY_SHARED,
+    SHARED_VIDEO_AUDIO_MUTED,
+    SHARED_VIDEO_AUDIO_UNMUTED,
+    SHARED_VIDEO_CANCELED,
+    SHARED_VIDEO_PAUSED,
+    SHARED_VIDEO_STARTED,
+    SHARED_VIDEO_STOPPED,
+    SHARED_VIDEO_VOLUME_CHANGED,
+    sendAnalyticsEvent
+} from '../../../react/features/analytics';
 import {
     participantJoined,
     participantLeft
@@ -85,11 +95,11 @@ export default class SharedVideoManager {
                     url => {
                         this.emitter.emit(
                             UIEvents.UPDATE_SHARED_VIDEO, url, 'start');
-                        sendAnalyticsEvent('sharedvideo.started');
+                        sendAnalyticsEvent(SHARED_VIDEO_STARTED);
                     },
                     err => {
                         logger.log('SHARED VIDEO CANCELED', err);
-                        sendAnalyticsEvent('sharedvideo.canceled');
+                        sendAnalyticsEvent(SHARED_VIDEO_CANCELED);
                     }
             );
 
@@ -109,7 +119,7 @@ export default class SharedVideoManager {
                     }
                     this.emitter.emit(
                         UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
-                    sendAnalyticsEvent('sharedvideo.stoped');
+                    sendAnalyticsEvent(SHARED_VIDEO_STOPPED);
                 },
                 () => {}); // eslint-disable-line no-empty-function
         } else {
@@ -117,7 +127,7 @@ export default class SharedVideoManager {
                 descriptionKey: 'dialog.alreadySharedVideoMsg',
                 titleKey: 'dialog.alreadySharedVideoTitle'
             });
-            sendAnalyticsEvent('sharedvideo.alreadyshared');
+            sendAnalyticsEvent(SHARED_VIDEO_ALREADY_SHARED);
         }
     }
 
@@ -226,7 +236,7 @@ export default class SharedVideoManager {
                 // eslint-disable-next-line eqeqeq
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.smartAudioUnmute();
-                sendAnalyticsEvent('sharedvideo.paused');
+                sendAnalyticsEvent(SHARED_VIDEO_PAUSED);
             }
             // eslint-disable-next-line eqeqeq
             self.fireSharedVideoEvent(event.data == YT.PlayerState.PAUSED);
@@ -258,7 +268,7 @@ export default class SharedVideoManager {
             } else if (event.data.volume <= 0 || event.data.muted) {
                 self.smartAudioUnmute();
             }
-            sendAnalyticsEvent('sharedvideo.volumechanged');
+            sendAnalyticsEvent(SHARED_VIDEO_VOLUME_CHANGED);
         };
 
         window.onPlayerReady = function(event) {
@@ -564,7 +574,7 @@ export default class SharedVideoManager {
         if (APP.conference.isLocalAudioMuted()
             && !this.mutedWithUserInteraction
             && !this.isSharedVideoVolumeOn()) {
-            sendAnalyticsEvent('sharedvideo.audio.unmuted');
+            sendAnalyticsEvent(SHARED_VIDEO_AUDIO_UNMUTED);
             logger.log('Shared video: audio unmuted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
             this.showMicMutedPopup(false);
@@ -578,7 +588,7 @@ export default class SharedVideoManager {
     smartAudioMute() {
         if (!APP.conference.isLocalAudioMuted()
             && this.isSharedVideoVolumeOn()) {
-            sendAnalyticsEvent('sharedvideo.audio.muted');
+            sendAnalyticsEvent(SHARED_VIDEO_AUDIO_MUTED);
             logger.log('Shared video: audio muted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
             this.showMicMutedPopup(true);

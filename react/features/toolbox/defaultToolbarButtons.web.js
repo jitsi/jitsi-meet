@@ -2,7 +2,31 @@
 
 import React from 'react';
 
-import { sendAnalyticsEvent } from '../analytics';
+import {
+    SHORTCUT_AUDIO_MUTE_TOGGLED,
+    SHORTCUT_CHAT_TOGGLED,
+    SHORTCUT_RAISE_HAND_CLICKED,
+    SHORTCUT_SCREEN_TOGGLED,
+    SHORTCUT_VIDEO_MUTE_TOGGLED,
+    TOOLBAR_AUDIO_MUTED,
+    TOOLBAR_AUDIO_UNMUTED,
+    TOOLBAR_CHAT_TOGGLED,
+    TOOLBAR_CONTACTS_TOGGLED,
+    TOOLBAR_ETHERPACK_CLICKED,
+    TOOLBAR_FILMSTRIP_ONLY_DEVICE_SELECTION_TOGGLED,
+    TOOLBAR_FULLSCREEN_ENABLED,
+    TOOLBAR_HANGUP,
+    TOOLBAR_INVITE_CLICKED,
+    TOOLBAR_RAISE_HAND_CLICKED,
+    TOOLBAR_SCREEN_DISABLED,
+    TOOLBAR_SCREEN_ENABLED,
+    TOOLBAR_SETTINGS_TOGGLED,
+    TOOLBAR_SHARED_VIDEO_CLICKED,
+    TOOLBAR_SIP_DIALPAD_CLICKED,
+    TOOLBAR_VIDEO_DISABLED,
+    TOOLBAR_VIDEO_ENABLED,
+    sendAnalyticsEvent
+} from '../analytics';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { InfoDialogButton, openInviteDialog } from '../invite';
@@ -42,9 +66,9 @@ export default function getDefaultButtons() {
                 const newVideoMutedState = !APP.conference.isLocalVideoMuted();
 
                 if (newVideoMutedState) {
-                    sendAnalyticsEvent('toolbar.video.enabled');
+                    sendAnalyticsEvent(TOOLBAR_VIDEO_ENABLED);
                 } else {
-                    sendAnalyticsEvent('toolbar.video.disabled');
+                    sendAnalyticsEvent(TOOLBAR_VIDEO_DISABLED);
                 }
                 APP.UI.emitEvent(UIEvents.VIDEO_MUTED, newVideoMutedState);
             },
@@ -64,7 +88,7 @@ export default function getDefaultButtons() {
                     return;
                 }
 
-                sendAnalyticsEvent('shortcut.videomute.toggled');
+                sendAnalyticsEvent(SHORTCUT_VIDEO_MUTE_TOGGLED);
                 APP.conference.toggleVideoMuted();
             },
             shortcutDescription: 'keyboardShortcuts.videoMute',
@@ -81,13 +105,13 @@ export default function getDefaultButtons() {
                 <span id = 'unreadMessages' /></span>,
             id: 'toolbar_button_chat',
             onClick() {
-                sendAnalyticsEvent('toolbar.chat.toggled');
+                sendAnalyticsEvent(TOOLBAR_CHAT_TOGGLED);
                 APP.UI.emitEvent(UIEvents.TOGGLE_CHAT);
             },
             shortcut: 'C',
             shortcutAttr: 'toggleChatPopover',
             shortcutFunc() {
-                sendAnalyticsEvent('shortcut.chat.toggled');
+                sendAnalyticsEvent(SHORTCUT_CHAT_TOGGLED);
                 APP.UI.toggleChat();
             },
             shortcutDescription: 'keyboardShortcuts.toggleChat',
@@ -104,8 +128,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_contact_list',
             onClick() {
-                sendAnalyticsEvent(
-                    'toolbar.contacts.toggled');
+                sendAnalyticsEvent(TOOLBAR_CONTACTS_TOGGLED);
                 APP.UI.emitEvent(UIEvents.TOGGLE_CONTACT_LIST);
             },
             sideContainerId: 'contacts_container',
@@ -121,9 +144,9 @@ export default function getDefaultButtons() {
             id: 'toolbar_button_desktopsharing',
             onClick() {
                 if (APP.conference.isSharingScreen) {
-                    sendAnalyticsEvent('toolbar.screen.disabled');
+                    sendAnalyticsEvent(TOOLBAR_SCREEN_DISABLED);
                 } else {
-                    sendAnalyticsEvent('toolbar.screen.enabled');
+                    sendAnalyticsEvent(TOOLBAR_SCREEN_ENABLED);
                 }
                 APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
             },
@@ -137,7 +160,7 @@ export default function getDefaultButtons() {
             shortcut: 'D',
             shortcutAttr: 'toggleDesktopSharingPopover',
             shortcutFunc() {
-                sendAnalyticsEvent('shortcut.screen.toggled');
+                sendAnalyticsEvent(SHORTCUT_SCREEN_TOGGLED);
 
                 // eslint-disable-next-line no-empty-function
                 APP.conference.toggleScreenSharing().catch(() => {});
@@ -158,7 +181,7 @@ export default function getDefaultButtons() {
             id: 'toolbar_button_fodeviceselection',
             onClick(dispatch: Function) {
                 sendAnalyticsEvent(
-                    'toolbar.fodeviceselection.toggled');
+                    TOOLBAR_FILMSTRIP_ONLY_DEVICE_SELECTION_TOGGLED);
 
                 dispatch(openDeviceSelectionDialog());
             },
@@ -177,7 +200,7 @@ export default function getDefaultButtons() {
             hidden: true,
             id: 'toolbar_button_dialpad',
             onClick() {
-                sendAnalyticsEvent('toolbar.sip.dialpad.clicked');
+                sendAnalyticsEvent(TOOLBAR_SIP_DIALPAD_CLICKED);
             },
             tooltipKey: 'toolbar.dialpad'
         },
@@ -191,7 +214,7 @@ export default function getDefaultButtons() {
             hidden: true,
             id: 'toolbar_button_etherpad',
             onClick() {
-                sendAnalyticsEvent('toolbar.etherpad.clicked');
+                sendAnalyticsEvent(TOOLBAR_ETHERPACK_CLICKED);
                 APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
             },
             tooltipKey: 'toolbar.etherpad'
@@ -205,7 +228,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_fullScreen',
             onClick() {
-                sendAnalyticsEvent('toolbar.fullscreen.enabled');
+                sendAnalyticsEvent(TOOLBAR_FULLSCREEN_ENABLED);
 
                 APP.UI.emitEvent(UIEvents.TOGGLE_FULLSCREEN);
             },
@@ -229,7 +252,7 @@ export default function getDefaultButtons() {
             isDisplayed: () => true,
             id: 'toolbar_button_hangup',
             onClick() {
-                sendAnalyticsEvent('toolbar.hangup');
+                sendAnalyticsEvent(TOOLBAR_HANGUP);
                 APP.UI.emitEvent(UIEvents.HANGUP);
             },
             tooltipKey: 'toolbar.hangup'
@@ -252,7 +275,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_link',
             onClick(dispatch: Function) {
-                sendAnalyticsEvent('toolbar.invite.clicked');
+                sendAnalyticsEvent(TOOLBAR_INVITE_CLICKED);
 
                 dispatch(openInviteDialog());
             },
@@ -280,11 +303,11 @@ export default function getDefaultButtons() {
                         APP.UI.showCustomToolbarPopup(
                             'microphone', 'unableToUnmutePopup', true, 5000);
                     } else {
-                        sendAnalyticsEvent('toolbar.audio.unmuted');
+                        sendAnalyticsEvent(TOOLBAR_AUDIO_UNMUTED);
                         APP.UI.emitEvent(UIEvents.AUDIO_MUTED, false, true);
                     }
                 } else {
-                    sendAnalyticsEvent('toolbar.audio.muted');
+                    sendAnalyticsEvent(TOOLBAR_AUDIO_MUTED);
                     APP.UI.emitEvent(UIEvents.AUDIO_MUTED, true, true);
                 }
             },
@@ -305,7 +328,7 @@ export default function getDefaultButtons() {
             shortcut: 'M',
             shortcutAttr: 'mutePopover',
             shortcutFunc() {
-                sendAnalyticsEvent('shortcut.audiomute.toggled');
+                sendAnalyticsEvent(SHORTCUT_AUDIO_MUTE_TOGGLED);
                 APP.conference.toggleAudioMuted();
             },
             shortcutDescription: 'keyboardShortcuts.mute',
@@ -328,14 +351,14 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_raisehand',
             onClick() {
-                sendAnalyticsEvent('toolbar.raiseHand.clicked');
+                sendAnalyticsEvent(TOOLBAR_RAISE_HAND_CLICKED);
                 APP.conference.maybeToggleRaisedHand();
             },
             shortcut: 'R',
             shortcutAttr: 'raiseHandPopover',
             shortcutDescription: 'keyboardShortcuts.raiseHand',
             shortcutFunc() {
-                sendAnalyticsEvent('shortcut.raisehand.clicked');
+                sendAnalyticsEvent(SHORTCUT_RAISE_HAND_CLICKED);
                 APP.conference.maybeToggleRaisedHand();
             },
             tooltipKey: 'toolbar.raiseHand'
@@ -363,7 +386,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_settings',
             onClick() {
-                sendAnalyticsEvent('toolbar.settings.toggled');
+                sendAnalyticsEvent(TOOLBAR_SETTINGS_TOGGLED);
                 APP.UI.emitEvent(UIEvents.TOGGLE_SETTINGS);
             },
             sideContainerId: 'settings_container',
@@ -378,7 +401,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_sharedvideo',
             onClick() {
-                sendAnalyticsEvent('toolbar.sharedvideo.clicked');
+                sendAnalyticsEvent(TOOLBAR_SHARED_VIDEO_CLICKED);
                 APP.UI.emitEvent(UIEvents.SHARED_VIDEO_CLICKED);
             },
             popups: [

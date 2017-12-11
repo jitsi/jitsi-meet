@@ -3,7 +3,11 @@ import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
 import Settings from '../../../settings/Settings';
 
-import { sendAnalyticsEvent } from '../../../../react/features/analytics';
+import {
+    AUTHENTICATE_LOGIN_CLICKED,
+    AUTHENTICATE_LOGOUT_CLICKED,
+    sendAnalyticsEvent
+} from '../../../../react/features/analytics';
 
 const sidePanelsContainerId = 'sideToolbarContainer';
 const htmlStr = `
@@ -91,7 +95,7 @@ export default {
          *
          */
         function loginClicked() {
-            sendAnalyticsEvent('authenticate.login.clicked');
+            sendAnalyticsEvent(AUTHENTICATE_LOGIN_CLICKED);
             emitter.emit(UIEvents.AUTH_CLICKED);
         }
 
@@ -104,7 +108,7 @@ export default {
             const titleKey = 'dialog.logoutTitle';
             const msgKey = 'dialog.logoutQuestion';
 
-            sendAnalyticsEvent('authenticate.logout.clicked');
+            sendAnalyticsEvent(AUTHENTICATE_LOGOUT_CLICKED);
 
             // Ask for confirmation
             APP.UI.messageHandler.openTwoButtonDialog({

@@ -1,6 +1,12 @@
 /* @flow */
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    START_AUDIO_ONLY_,
+    START_MUTED_CLIENT_AUDIO_,
+    START_MUTED_CLIENT_VIDEO_,
+    SYNC_TRACK_STATE_,
+    sendAnalyticsEvent
+} from '../../analytics';
 import { SET_ROOM, setAudioOnly } from '../conference';
 import { parseURLParams } from '../config';
 import JitsiMeetJS from '../lib-jitsi-meet';
@@ -87,9 +93,9 @@ function _setRoom({ dispatch, getState }, next, action) {
     // Apply the config.
 
     sendAnalyticsEvent(
-        `startmuted.client.audio.${audioMuted ? 'muted' : 'unmuted'}`);
+        `${START_MUTED_CLIENT_AUDIO_}.${audioMuted ? 'muted' : 'unmuted'}`);
     sendAnalyticsEvent(
-        `startmuted.client.video.${videoMuted ? 'muted' : 'unmuted'}`);
+        `${START_MUTED_CLIENT_VIDEO_}.${videoMuted ? 'muted' : 'unmuted'}`);
 
     logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${
         videoMuted ? 'video' : ''}`);
@@ -123,7 +129,7 @@ function _setRoom({ dispatch, getState }, next, action) {
         }
 
         sendAnalyticsEvent(
-            `startaudioonly.${audioOnly ? 'enabled' : 'disabled'}`);
+            `${START_AUDIO_ONLY_}.${audioOnly ? 'enabled' : 'disabled'}`);
         logger.log(`Start audio only set to ${audioOnly.toString()}`);
         dispatch(setAudioOnly(audioOnly));
     }
@@ -150,7 +156,8 @@ function _syncTrackMutedState({ getState }, track) {
     // fired before track gets to state.
     if (track.muted !== muted) {
         sendAnalyticsEvent(
-            `synctrackstate.${track.mediaType}.${muted ? 'muted' : 'unmuted'}`);
+            `${SYNC_TRACK_STATE_}.${track.mediaType}.${
+                muted ? 'muted' : 'unmuted'}`);
         logger.log(`Sync ${track.mediaType} track muted state to ${
             muted ? 'muted' : 'unmuted'}`);
         track.muted = muted;
