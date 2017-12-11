@@ -4,6 +4,10 @@
     padding: 35px 0;
     width: 100vw;
 
+    a {
+        text-decoration: none
+    }
+
     &__body {
         color: $unsupportedBrowserTextColor;
         margin: auto;
@@ -41,7 +45,7 @@
         border: 0;
         height: 2.2857142857142856em;
         line-height: 2.2857142857142856em;
-        margin: auto auto 9px;
+        margin: 18px auto 20px;
         max-width: 300px;
         width: auto;
         @include border-radius(3px);
