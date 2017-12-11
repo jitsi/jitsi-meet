@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import { hideNotification } from '../actions';
 
+import { Notification } from './';
+
 /**
  * Implements a React {@link Component} which displays notifications and handles
  * automatic dismissmal after a notification is shown for a defined timeout
@@ -142,7 +144,6 @@ class NotificationsContainer extends Component {
         }
 
         return _notifications.map(notification => {
-            const Notification = notification.component;
             const { props, uid } = notification;
 
             // The id attribute is necessary as {@code FlagGroup} looks for

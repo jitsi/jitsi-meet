@@ -3,7 +3,6 @@ import {
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
-import { Notification } from './components';
 
 import { NOTIFICATION_TYPE } from './constants';
 
@@ -47,7 +46,7 @@ export function setNotificationsEnabled(enabled) {
  * @returns {Object}
  */
 export function showErrorNotification(props) {
-    return showNotification(Notification, {
+    return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
     });
@@ -56,23 +55,19 @@ export function showErrorNotification(props) {
 /**
  * Queues a notification for display.
  *
- * @param {ReactComponent} component - The notification component to be
- * displayed.
  * @param {Object} props - The props needed to show the notification component.
  * @param {number} timeout - How long the notification should display before
  * automatically being hidden.
  * @returns {{
  *     type: SHOW_NOTIFICATION,
- *     component: ReactComponent,
  *     props: Object,
  *     timeout: number,
  *     uid: number
  * }}
  */
-export function showNotification(component, props = {}, timeout) {
+export function showNotification(props = {}, timeout) {
     return {
         type: SHOW_NOTIFICATION,
-        component,
         props,
         timeout,
         uid: window.Date.now()
@@ -86,7 +81,7 @@ export function showNotification(component, props = {}, timeout) {
  * @returns {Object}
  */
 export function showWarningNotification(props) {
-    return showNotification(Notification, {
+    return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
     });

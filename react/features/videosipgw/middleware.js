@@ -12,7 +12,6 @@ import {
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import {
-    Notification,
     showErrorNotification,
     showNotification,
     showWarningNotification
@@ -158,13 +157,12 @@ function _sessionStateChanged(
         event: Object) {
     switch (event.newState) {
     case JitsiSIPVideoGWStatus.STATE_PENDING: {
-        return showNotification(
-            Notification, {
-                titleKey: 'videoSIPGW.pending',
-                titleArguments: {
-                    displayName: event.displayName
-                }
-            }, 2000);
+        return showNotification({
+            titleKey: 'videoSIPGW.pending',
+            titleArguments: {
+                displayName: event.displayName
+            }
+        }, 2000);
     }
     case JitsiSIPVideoGWStatus.STATE_FAILED: {
         return showErrorNotification({

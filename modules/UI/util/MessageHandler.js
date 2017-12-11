@@ -4,7 +4,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 import {
-    Notification,
     showErrorNotification,
     showNotification,
     showWarningNotification
@@ -493,16 +492,13 @@ const messageHandler = {
             messageKey,
             messageArguments,
             timeout = 2500) {
-        APP.store.dispatch(
-            showNotification(
-                Notification,
-                {
-                    descriptionArguments: messageArguments,
-                    descriptionKey: messageKey,
-                    titleKey: displayNameKey,
-                    title: displayName
-                },
-                timeout));
+        APP.store.dispatch(showNotification({
+            descriptionArguments: messageArguments,
+            descriptionKey: messageKey,
+            titleKey: displayNameKey,
+            title: displayName
+        },
+        timeout));
     },
 
     /**

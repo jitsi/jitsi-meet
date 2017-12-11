@@ -2,7 +2,7 @@
 
 import throttle from 'lodash/throttle';
 
-import { Notification, showNotification } from '../../notifications';
+import { showNotification } from '../../notifications';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -374,10 +374,7 @@ const _throttledNotifyParticipantConnected = throttle(dispatch => {
 
     if (notificationProps) {
         dispatch(
-            showNotification(
-                Notification,
-                notificationProps,
-                2500));
+            showNotification(notificationProps, 2500));
     }
 
     joinedParticipantsNames = [];
