@@ -62,6 +62,7 @@ import {
     setVideoAvailable,
     setVideoMuted
 } from './react/features/base/media';
+import { showNotification } from './react/features/notifications';
 import {
     dominantSpeakerChanged,
     getAvatarURLByParticipantId,
@@ -203,7 +204,7 @@ function muteLocalVideo(muted) {
  *
  * @param {object} options used to decide which particular close page to show
  * or if close page is disabled, whether we should show the thankyou dialog
- * @param {boolean} options.thankYouDialogVisible - whether we should
+ * @param {boolean} options.showThankYou - whether we should
  * show thank you dialog
  * @param {boolean} options.feedbackSubmitted - whether feedback was submitted
  */
@@ -222,9 +223,11 @@ function maybeRedirectToWelcomePage(options) {
     }
 
     // else: show thankYou dialog only if there is no feedback
-    if (options.thankYouDialogVisible) {
-        APP.UI.messageHandler.openMessageDialog(
-            null, 'dialog.thankYou', { appName: interfaceConfig.APP_NAME });
+    if (options.showThankYou) {
+        APP.store.dispatch(showNotification({
+            titleArguments: { appName: interfaceConfig.APP_NAME },
+            titleKey: 'dialog.thankYou'
+        }));
     }
 
     // if Welcome page is enabled redirect to welcome page after 3 sec.
