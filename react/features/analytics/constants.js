@@ -115,6 +115,14 @@ export const CONFERENCE_VIDEO_INITIALLY_MUTED
 export const DEVICE_LIST_CHANGED_AUDIO_MUTED = 'deviceListChanged.audio.muted';
 
 /**
+ * The list of known devices was changed and new video input has been used
+ * and should start as muted.
+ *
+ * @type {String}
+ */
+export const DEVICE_LIST_CHANGED_VIDEO_MUTED = 'deviceListChanged.video.muted';
+
+/**
  * The feedback dialog is displayed.
  *
  * @type {String}
@@ -252,7 +260,7 @@ export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
  *
  * @type {String}
  */
-export const SETTING_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
+export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
 
 /**
  * Attempted to start sharing a YouTube video but one is already being shared.
@@ -653,11 +661,3 @@ export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
  * @type {String}
  */
 export const UNPINNED_ = 'unpinned';
-
-/**
- * The list of known devices was changed and new video input has been used
- * and should start as muted.
- *
- * @type {String}
- */
-export const DEVICE_LIST_CHANGED_VIDEO_MUTED = 'deviceListChanged.video.muted';

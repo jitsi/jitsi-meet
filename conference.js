@@ -25,7 +25,7 @@ import {
     SELECT_PARTICIPANT_FAILED,
     SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
     SETTINGS_CHANGE_DEVICE_AUDIO_IN,
-    SETTING_CHANGE_DEVICE_VIDEO,
+    SETTINGS_CHANGE_DEVICE_VIDEO,
     STREAM_SWITCH_DELAY,
     initAnalytics,
     sendAnalyticsEvent
@@ -2190,7 +2190,7 @@ export default {
             cameraDeviceId => {
                 const videoWasMuted = this.isLocalVideoMuted();
 
-                sendAnalyticsEvent(SETTING_CHANGE_DEVICE_VIDEO);
+                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_VIDEO);
                 createLocalTracksF({
                     devices: [ 'video' ],
                     cameraDeviceId,

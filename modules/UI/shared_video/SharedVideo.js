@@ -12,13 +12,13 @@ import Filmstrip from '../videolayout/Filmstrip';
 
 import {
     SHARED_VIDEO_ALREADY_SHARED,
+    SHARED_VIDEO_AUDIO_MUTED,
+    SHARED_VIDEO_AUDIO_UNMUTED,
     SHARED_VIDEO_CANCELED,
     SHARED_VIDEO_PAUSED,
     SHARED_VIDEO_STARTED,
     SHARED_VIDEO_STOPPED,
     SHARED_VIDEO_VOLUME_CHANGED,
-    SHARED_VIDEO_AUDIO_MUTED,
-    SHARED_VIDEO_AUDIO_UNMUTED,
     sendAnalyticsEvent
 } from '../../../react/features/analytics';
 import {
