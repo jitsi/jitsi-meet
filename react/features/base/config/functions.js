@@ -1,6 +1,5 @@
 /* @flow */
 
-import JSSHA from 'jssha';
 import _ from 'lodash';
 
 import parseURLParams from './parseURLParams';
@@ -27,60 +26,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
 export { parseURLParams };
-
-/* eslint-disable no-shadow */
-
-/**
- * Looks for a list of possible BOSH addresses in {@code config.boshList} and
- * sets the value of {@code config.bosh} based on that list and
- * {@code roomName}.
- *
- * @param {Object} config - The configuration object.
- * @param {string} roomName - The name of the room/conference.
- * @returns {void}
- */
-export function chooseBOSHAddress(config: Object, roomName: string) {
-    if (!roomName) {
-        return;
-    }
-
-    const { boshList } = config;
-
-    if (!boshList || !Array.isArray(boshList) || !boshList.length) {
-        return;
-    }
-
-    // This implements the actual choice of an entry in the list based on
-    // roomName. Please consider the implications for existing deployments
-    // before introducing changes.
-    const hash = (new JSSHA(roomName, 'TEXT')).getHash('SHA-1', 'HEX');
-    const n = parseInt(hash.substr(-6), 16);
-    let idx = n % boshList.length;
-
-    config.bosh = boshList[idx];
-    logger.log(`Setting config.bosh to ${config.bosh} (idx=${idx})`);
-
-    const { boshAttemptFirstList } = config;
-
-    if (boshAttemptFirstList
-            && Array.isArray(boshAttemptFirstList)
-            && boshAttemptFirstList.length > 0) {
-        idx = n % boshAttemptFirstList.length;
-
-        const attemptFirstAddress = boshAttemptFirstList[idx];
-
-        if (attemptFirstAddress === config.bosh) {
-            logger.log('Not setting config.boshAttemptFirst, address matches.');
-        } else {
-            config.boshAttemptFirst = attemptFirstAddress;
-            logger.log(
-                `Setting config.boshAttemptFirst=${attemptFirstAddress} (idx=${
-                    idx})`);
-        }
-    }
-}
-
-/* eslint-enable no-shadow */
 
 /**
  * Sends HTTP POST request to specified {@code endpoint}. In request the name
