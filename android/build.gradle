@@ -133,7 +133,7 @@ ext {
     buildToolsVersion = "26.0.2"
     compileSdkVersion = 26
     minSdkVersion    = 16
-    targetSdkVersion = 25
+    targetSdkVersion = 26
 
     // The Maven artifact groupdId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
