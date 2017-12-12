@@ -1,6 +1,5 @@
 /* @flow */
 
-import JSSHA from 'jssha';
 import _ from 'lodash';
 
 import parseURLParams from './parseURLParams';
@@ -8,15 +7,87 @@ import parseURLParams from './parseURLParams';
 declare var $: Object;
 
 /**
- * The config keys to ignore because, for example, their values identify scripts
- * and it is not desireable to inject these through URL params.
+ * The config keys to whitelist, the keys that can be overridden.
+ * Currently we can only whitelist the first part of the properties, like
+ * 'p2p.useStunTurn' and 'p2p.enabled' we whitelist all p2p options.
+ * The whitelist is used only for config.js.
  *
  * @private
  * @type Array
  */
-const _KEYS_TO_IGNORE = [
-    'analyticsScriptUrls',
-    'callStatsCustomScriptUrl'
+const WHITELISTED_KEYS = [
+    '_peerConnStatusOutOfLastNTimeout',
+    '_peerConnStatusRtcMuteTimeout',
+    'abTesting',
+    'alwaysVisibleToolbar',
+    'autoEnableDesktopSharing',
+    'autoRecord',
+    'autoRecordToken',
+    'avgRtpStatsN',
+    'callStatsConfIDNamespace',
+    'callStatsID',
+    'callStatsSecret',
+    'channelLastN',
+    'constraints',
+    'debug',
+    'debugAudioLevels',
+    'defaultLanguage',
+    'desktopSharingChromeDisabled',
+    'desktopSharingChromeExtId',
+    'desktopSharingChromeMinExtVersion',
+    'desktopSharingChromeSources',
+    'desktopSharingFirefoxDisabled',
+    'desktopSharingSources',
+    'disable1On1Mode',
+    'disableAEC',
+    'disableAGC',
+    'disableAP',
+    'disableAudioLevels',
+    'disableDesktopSharing',
+    'disableDesktopSharing',
+    'disableH264',
+    'disableHPF',
+    'disableNS',
+    'disableRemoteControl',
+    'disableRtx',
+    'disableSuspendVideo',
+    'displayJids',
+    'enableDisplayNameInStats',
+    'enableLipSync',
+    'enableLocalVideoFlip',
+    'enableRecording',
+    'enableStatsID',
+    'enableTalkWhileMuted',
+    'enableUserRolesBasedOnToken',
+    'etherpad_base',
+    'failICE',
+    'firefox_fake_device',
+    'forceJVB121Ratio',
+    'hiddenDomain',
+    'hosts',
+    'iAmRecorder',
+    'iAmSipGateway',
+    'ignoreStartMuted',
+    'nick',
+    'openBridgeChannel',
+    'p2p',
+    'preferH264',
+    'recordingType',
+    'requireDisplayName',
+    'resolution',
+    'startAudioMuted',
+    'startAudioOnly',
+    'startBitrate',
+    'startScreenSharing',
+    'startVideoMuted',
+    'startWithAudioMuted',
+    'startWithVideoMuted',
+    'testing',
+    'useIPv6',
+    'useNicks',
+    'useStunTurn',
+    'webrtcIceTcpDisable',
+    'webrtcIceUdpDisable'
 ];
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -27,60 +98,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
 export { parseURLParams };
-
-/* eslint-disable no-shadow */
-
-/**
- * Looks for a list of possible BOSH addresses in {@code config.boshList} and
- * sets the value of {@code config.bosh} based on that list and
- * {@code roomName}.
- *
- * @param {Object} config - The configuration object.
- * @param {string} roomName - The name of the room/conference.
- * @returns {void}
- */
-export function chooseBOSHAddress(config: Object, roomName: string) {
-    if (!roomName) {
-        return;
-    }
-
-    const { boshList } = config;
-
-    if (!boshList || !Array.isArray(boshList) || !boshList.length) {
-        return;
-    }
-
-    // This implements the actual choice of an entry in the list based on
-    // roomName. Please consider the implications for existing deployments
-    // before introducing changes.
-    const hash = (new JSSHA(roomName, 'TEXT')).getHash('SHA-1', 'HEX');
-    const n = parseInt(hash.substr(-6), 16);
-    let idx = n % boshList.length;
-
-    config.bosh = boshList[idx];
-    logger.log(`Setting config.bosh to ${config.bosh} (idx=${idx})`);
-
-    const { boshAttemptFirstList } = config;
-
-    if (boshAttemptFirstList
-            && Array.isArray(boshAttemptFirstList)
-            && boshAttemptFirstList.length > 0) {
-        idx = n % boshAttemptFirstList.length;
-
-        const attemptFirstAddress = boshAttemptFirstList[idx];
-
-        if (attemptFirstAddress === config.bosh) {
-            logger.log('Not setting config.boshAttemptFirst, address matches.');
-        } else {
-            config.boshAttemptFirst = attemptFirstAddress;
-            logger.log(
-                `Setting config.boshAttemptFirst=${attemptFirstAddress} (idx=${
-                    idx})`);
-        }
-    }
-}
-
-/* eslint-enable no-shadow */
 
 /**
  * Sends HTTP POST request to specified {@code endpoint}. In request the name
@@ -135,6 +152,7 @@ export function obtainConfig(
 /**
  * Overrides JSON properties in {@code config} and
  * {@code interfaceConfig} Objects with the values from {@code newConfig}.
+ * Overrides only the whitelisted keys.
  *
  * @param {Object} config - The config Object in which we'll be overriding
  * properties.
@@ -171,7 +189,8 @@ export function overrideConfigJSON(
             configObj = loggingConfig;
         }
         if (configObj) {
-            const configJSON = json[configName];
+            const configJSON
+                = _getWhitelistedJSON(configName, json[configName]);
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
@@ -188,6 +207,26 @@ export function overrideConfigJSON(
             }
         }
     }
+}
+
+/**
+ * Whitelist only config.js, skips this for others configs
+ * (interfaceConfig, loggingConfig).
+ * Only extracts overridden values for keys we allow to be overridden.
+ *
+ * @param {string} configName - The config name, one of config,
+ * interfaceConfig, loggingConfig.
+ * @param {Object} configJSON - The object with keys and values to override.
+ * @returns {Object} - The result object only with the keys
+ * that are whitelisted.
+ * @private
+ */
+function _getWhitelistedJSON(configName, configJSON) {
+    if (configName !== 'config') {
+        return configJSON;
+    }
+
+    return _.pick(configJSON, WHITELISTED_KEYS);
 }
 
 /* eslint-enable max-params, no-shadow */
@@ -232,12 +271,6 @@ export function setConfigFromURLParams() {
         let base = json;
         const names = param.split('.');
         const last = names.pop();
-
-        // Prevent passing some parameters which can inject scripts.
-        if (_KEYS_TO_IGNORE.indexOf(last) !== -1) {
-            // eslint-disable-next-line no-continue
-            continue;
-        }
 
         for (const name of names) {
             base = base[name] = base[name] || {};

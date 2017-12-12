@@ -16,14 +16,17 @@ import parseURLParams from '../react/features/base/config/parseURLParams';
  */
 
 if (typeof createConnectionExternally === 'function') {
-    // URL params have higher proirity than config params.
+    // URL params have higher priority than config params.
     let url
         = parseURLParams(window.location, true, 'hash')[
                 'config.externalConnectUrl']
             || config.externalConnectUrl;
+    const isRecorder
+        = parseURLParams(window.location, true, 'hash')['config.iAmRecorder'];
+
     let roomName;
 
-    if (url && (roomName = getRoomName())) {
+    if (url && (roomName = getRoomName()) && !isRecorder) {
         url += `?room=${roomName}`;
 
         const token = parseURLParams(window.location, true, 'search').jwt;

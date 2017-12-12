@@ -43,7 +43,6 @@
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.0",
     "js-md5": "0.6.1",
-    "jssha": "2.2.0",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#81f57c024e137879d6c93bef62308971d0ec71b0",
     "lodash": "4.17.4",

@@ -2,7 +2,7 @@
 
 import ConferenceUrl from '../../../modules/URL/ConferenceUrl';
 
-import { chooseBOSHAddress, obtainConfig } from '../base/config';
+import { obtainConfig } from '../base/config';
 import { RouteRegistry } from '../base/react';
 
 import { Conference } from './components';
@@ -86,7 +86,6 @@ function _obtainConfigAndInit() {
                     });
                 });
         } else {
-            chooseBOSHAddress(config, room);
             _initConference();
         }
     }
