@@ -317,6 +317,57 @@ var config = {
         // region: "europe",
         // userRegion: "asia"
     }
+
+    // List of undocumented settings used in jitsi-meet
+    /**
+     alwaysVisibleToolbar
+     analyticsScriptUrls
+     autoEnableDesktopSharing
+     autoRecord
+     autoRecordToken
+     debug
+     debugAudioLevels
+     deploymentInfo
+     dialInConfCodeUrl
+     dialInNumbersUrl
+     dialOutAuthUrl
+     dialOutCodesUrl
+     disableRemoteControl
+     displayJids
+     enableLocalVideoFlip
+     etherpad_base
+     externalConnectUrl
+     firefox_fake_device
+     iAmRecorder
+     iAmSipGateway
+     peopleSearchQueryTypes
+     peopleSearchUrl
+     requireDisplayName
+     tokenAuthUrl
+     */
+
+    // List of undocumented settings used in lib-jitsi-meet
+    /**
+     _peerConnStatusOutOfLastNTimeout
+     _peerConnStatusRtcMuteTimeout
+     abTesting
+     avgRtpStatsN
+     callStatsConfIDNamespace
+     callStatsCustomScriptUrl
+     desktopSharingSources
+     disableAEC
+     disableAGC
+     disableAP
+     disableHPF
+     disableNS
+     enableLipSync
+     enableTalkWhileMuted
+     forceJVB121Ratio
+     hiddenDomain
+     ignoreStartMuted
+     nick
+     startBitrate
+     */
 };
 
 /* eslint-enable no-unused-vars, no-var */
