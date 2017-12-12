@@ -41,6 +41,7 @@ class LargeVideo extends Component<*> {
                 avatarStyle = { styles.avatar }
                 participantId = { this.props._participantId }
                 style = { styles.largeVideo }
+                useConnectivityInfoLabel = { true }
                 zOrder = { 0 } />
         );
     }

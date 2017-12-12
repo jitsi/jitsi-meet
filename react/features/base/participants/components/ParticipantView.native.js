@@ -1,19 +1,25 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
 import { prefetch } from '../../../mobile/image-cache';
+
+import { translate } from '../../i18n';
+import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
     shouldRenderVideoTrack,
     VideoTrack
 } from '../../media';
-import { Container } from '../../react';
+import { Container, TintedView } from '../../react';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
+import {
+    getAvatarURL, getParticipantById, getParticipantDisplayName
+} from '../functions';
+
 import Avatar from './Avatar';
-import { getAvatarURL, getParticipantById } from '../functions';
 import styles from './styles';
 
 /**
@@ -55,6 +61,13 @@ class ParticipantView extends Component {
         _connectionStatus: PropTypes.string,
 
         /**
+         * The name of the participant which this component represents.
+         *
+         * @private
+         */
+        _participantName: PropTypes.string,
+
+        /**
          * The video Track of the participant with {@link #participantId}.
          */
         _videoTrack: PropTypes.object,
@@ -91,12 +104,67 @@ class ParticipantView extends Component {
         style: PropTypes.object,
 
         /**
+         * The function to translate human-readable text.
+         */
+        t: PropTypes.func,
+
+        /**
+         * Indicates if the connectivity info label should be shown, if
+         * appropriate. It will be shown in case the connection is interrupted.
+         */
+        useConnectivityInfoLabel: PropTypes.bool,
+
+        /**
          * The z-order of the Video of ParticipantView in the stacking space of
          * all Videos. For more details, refer to the zOrder property of the
          * Video class for React Native.
          */
         zOrder: PropTypes.number
     };
+
+    /**
+     * Renders the connection status label, if appropriate.
+     *
+     * @param {string} connectionStatus - The status of the participant's
+     * connection.
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderConnectionInfo(connectionStatus) {
+        let messageKey;
+
+        switch (connectionStatus) {
+        case JitsiParticipantConnectionStatus.INACTIVE:
+            messageKey = 'connection.LOW_BANDWIDTH';
+            break;
+        case JitsiParticipantConnectionStatus.INTERRUPTED:
+            messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
+            break;
+        default:
+            return null;
+        }
+
+        const {
+            avatarStyle,
+            _participantName: displayName,
+            t
+        } = this.props;
+
+        // XXX Consider splitting this component into 2: one for the large
+        // view and one for the thumbnail. Some of these don't apply to both.
+        const containerStyle = {
+            ...styles.connectionInfoContainer,
+            width: avatarStyle.width * 1.5
+        };
+
+        return (
+            <View style = { containerStyle } >
+                <Text style = { styles.connectionInfoText } >
+                    { t(messageKey, { displayName }) }
+                </Text>
+            </View>
+        );
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -115,6 +183,10 @@ class ParticipantView extends Component {
         // FIXME It's currently impossible to have true as the value of
         // waitForVideoStarted because videoTrack's state videoStarted will be
         // updated only after videoTrack is rendered.
+        // XXX Note that, unlike on web, we don't render video when the
+        // connection status is interrupted, this is because the renderer
+        // doesn't retain the last frame forever, so we would end up with a
+        // black screen.
         const waitForVideoStarted = false;
         const renderVideo
             = !this.props._audioOnly
@@ -124,6 +196,12 @@ class ParticipantView extends Component {
 
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
+
+        // If the connection has problems we will "tint" the video / avatar.
+        const useTint
+            = connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
+                || connectionStatus
+                    === JitsiParticipantConnectionStatus.INTERRUPTED;
 
         return (
             <Container
@@ -154,6 +232,14 @@ class ParticipantView extends Component {
                     && <Avatar
                         style = { this.props.avatarStyle }
                         uri = { avatar } /> }
+
+                { useTint
+
+                    // If the connection has problems, tint the video / avatar.
+                    && <TintedView /> }
+
+                { this.props.useConnectivityInfoLabel
+                    && this._renderConnectionInfo(connectionStatus) }
             </Container>
         );
     }
@@ -196,10 +282,12 @@ function _mapStateToProps(state, ownProps) {
             participantId);
     let avatar;
     let connectionStatus;
+    let participantName;
 
     if (participant) {
         avatar = getAvatarURL(participant);
         connectionStatus = participant.connectionStatus;
+        participantName = getParticipantDisplayName(state);
 
         // Avatar (on React Native) now has the ability to generate an
         // automatically-colored default image when no URI/URL is specified or
@@ -223,6 +311,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
+        _participantName: participantName,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],
@@ -231,4 +320,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps)(ParticipantView);
+export default translate(connect(_mapStateToProps)(ParticipantView));
