@@ -189,11 +189,8 @@ export function overrideConfigJSON(
             configObj = loggingConfig;
         }
         if (configObj) {
-            // whitelist only config.js, skip this for others
             const configJSON
-                = configName === 'config'
-                    ? _.pick(json[configName], WHITELISTED_KEYS)
-                    : json[configName];
+                = _getWhitelistedJSON(configName, json[configName]);
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
@@ -210,6 +207,26 @@ export function overrideConfigJSON(
             }
         }
     }
+}
+
+/**
+ * Whitelist only config.js, skips this for others configs
+ * (interfaceConfig, loggingConfig).
+ * Only extracts overridden values for keys we allow to be overridden.
+ *
+ * @param {string} configName - The config name, one of config,
+ * interfaceConfig, loggingConfig.
+ * @param {Object} configJSON - The object with keys and values to override.
+ * @returns {Object} - The result object only with the keys
+ * that are whitelisted.
+ * @private
+ */
+function _getWhitelistedJSON(configName, configJSON) {
+    if (configName !== 'config') {
+        return configJSON;
+    }
+
+    return _.pick(configJSON, WHITELISTED_KEYS);
 }
 
 /* eslint-enable max-params, no-shadow */
