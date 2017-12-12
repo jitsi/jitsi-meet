@@ -10,6 +10,7 @@ declare var $: Object;
  * The config keys to whitelist, the keys that can be overridden.
  * Currently we can only whitelist the first part of the properties, like
  * 'p2p.useStunTurn' and 'p2p.enabled' we whitelist all p2p options.
+ * The whitelist is used only for config.js.
  *
  * @private
  * @type Array
@@ -59,6 +60,7 @@ const WHITELISTED_KEYS = [
     'enableTalkWhileMuted',
     'enableUserRolesBasedOnToken',
     'etherpad_base',
+    'failICE',
     'firefox_fake_device',
     'forceJVB121Ratio',
     'hiddenDomain',
@@ -187,7 +189,11 @@ export function overrideConfigJSON(
             configObj = loggingConfig;
         }
         if (configObj) {
-            const configJSON = _.pick(json[configName], WHITELISTED_KEYS);
+            // whitelist only config.js, skip this for others
+            const configJSON
+                = configName === 'config'
+                    ? _.pick(json[configName], WHITELISTED_KEYS)
+                    : json[configName];
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
