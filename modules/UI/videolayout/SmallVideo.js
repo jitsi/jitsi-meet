@@ -28,7 +28,6 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import Avatar from '../avatar/Avatar';
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 
@@ -590,7 +589,7 @@ SmallVideo.prototype.updateView = function() {
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
-            this.avatarChanged(Avatar.getAvatarUrl(this.id));
+            this.avatarChanged(APP.UI.getAvatarUrl(this.id));
         } else {
             logger.error('Unable to init avatar - no id', this);
 

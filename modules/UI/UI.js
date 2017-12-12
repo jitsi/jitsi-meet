@@ -6,7 +6,6 @@ const UI = {};
 
 import Chat from './side_pannels/chat/Chat';
 import SidePanels from './side_pannels/SidePanels';
-import Avatar from './avatar/Avatar';
 import SideContainerToggler from './side_pannels/SideContainerToggler';
 import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
@@ -25,7 +24,9 @@ import {
 import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
+    getAvatarURL,
     getLocalParticipant,
+    getParticipantById,
     participantPresenceChanged,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
@@ -255,7 +256,7 @@ UI.setLocalRaisedHandStatus
  */
 UI.initConference = function() {
     const { dispatch, getState } = APP.store;
-    const { avatarID, email, id, name } = getLocalParticipant(getState);
+    const { email, id, name } = getLocalParticipant(getState);
 
     // Update default button states before showing the toolbar
     // if local role changes buttons state will be again updated.
@@ -273,7 +274,7 @@ UI.initConference = function() {
     if (email) {
         UI.setUserEmail(id, email);
     } else {
-        UI.setUserAvatarID(id, avatarID);
+        APP.UI.refreshAvatarDisplay(id);
     }
 
     dispatch(checkAutoEnableDesktopSharing());
@@ -790,25 +791,22 @@ UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
 UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
 
 /**
- * Updates the avatar for participant.
- * @param {string} id user id
- * @param {string} avatarUrl the URL for the avatar
- */
-function changeAvatar(id, avatarUrl) {
-    VideoLayout.changeUserAvatar(id, avatarUrl);
-    if (APP.conference.isLocalId(id)) {
-        Profile.changeAvatar(avatarUrl);
-    }
-}
-
-/**
  * Returns the avatar URL for a given user.
  *
  * @param {string} id - The id of the user.
  * @returns {string} The avatar URL.
  */
 UI.getAvatarUrl = function(id) {
-    return Avatar.getAvatarUrl(id);
+    const state = APP.store.getState();
+    let participant;
+
+    if (!id || APP.conference.isLocalId(id) || id === 'local') {
+        participant = getLocalParticipant(state);
+    } else {
+        participant = getParticipantById(state, id);
+    }
+
+    return participant ? getAvatarURL(participant) : '';
 };
 
 /**
@@ -817,37 +815,27 @@ UI.getAvatarUrl = function(id) {
  * @param {string} email user email
  */
 UI.setUserEmail = function(id, email) {
-    // update avatar
-    Avatar.setUserEmail(id, email);
+    UI.refreshAvatarDisplay(id);
 
-    changeAvatar(id, Avatar.getAvatarUrl(id));
     if (APP.conference.isLocalId(id)) {
         Profile.changeEmail(email);
     }
 };
 
 /**
- * Update user avtar id.
- * @param {string} id user id
- * @param {string} avatarId user's avatar id
+ * Updates the displayed avatar for participant.
+ *
+ * @param {string} id - User id whose avatar should be updated.
+ * @returns {void}
  */
-UI.setUserAvatarID = function(id, avatarId) {
-    // update avatar
-    Avatar.setUserAvatarID(id, avatarId);
+UI.refreshAvatarDisplay = function(id) {
+    const avatarURL = this.getAvatarUrl(id);
 
-    changeAvatar(id, Avatar.getAvatarUrl(id));
-};
+    VideoLayout.changeUserAvatar(id, avatarURL);
 
-/**
- * Update user avatar URL.
- * @param {string} id user id
- * @param {string} url user avatar url
- */
-UI.setUserAvatarUrl = function(id, url) {
-    // update avatar
-    Avatar.setUserAvatarUrl(id, url);
-
-    changeAvatar(id, Avatar.getAvatarUrl(id));
+    if (APP.conference.isLocalId(id)) {
+        Profile.changeAvatar(avatarURL);
+    }
 };
 
 /**

@@ -2088,7 +2088,7 @@ export default {
                         id: from,
                         avatarURL: data.value
                     }));
-                APP.UI.setUserAvatarUrl(from, data.value);
+                APP.UI.refreshAvatarDisplay(from);
             });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
@@ -2098,7 +2098,7 @@ export default {
                         id: from,
                         avatarID: data.value
                     }));
-                APP.UI.setUserAvatarID(from, data.value);
+                APP.UI.refreshAvatarDisplay(from);
             });
 
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
@@ -2700,7 +2700,7 @@ export default {
         APP.store.dispatch(participantUpdated({
             id: localId,
             local: true,
-            formattedEmail
+            email: formattedEmail
         }));
 
         APP.settings.setEmail(formattedEmail);
@@ -2728,7 +2728,7 @@ export default {
         }));
 
         APP.settings.setAvatarUrl(url);
-        APP.UI.setUserAvatarUrl(id, url);
+        APP.UI.refreshAvatarDisplay(id);
         sendData(commands.AVATAR_URL, url);
     },
 

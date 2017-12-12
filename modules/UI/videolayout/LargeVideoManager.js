@@ -16,7 +16,6 @@ import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
 
-import Avatar from '../avatar/Avatar';
 import { createDeferred } from '../../util/helpers';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
@@ -219,7 +218,7 @@ export default class LargeVideoManager {
             container.setStream(id, stream, videoType);
 
             // change the avatar url on large
-            this.updateAvatar(Avatar.getAvatarUrl(id));
+            this.updateAvatar(APP.UI.getAvatarUrl(id));
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
