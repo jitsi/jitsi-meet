@@ -97,6 +97,7 @@ public class JitsiMeetView extends FrameLayout {
                 .setJSMainModulePath("index.android")
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
                 .addPackage(new com.facebook.react.shell.MainReactPackage())
+                .addPackage(new com.i18n.reactnativei18n.ReactNativeI18n())
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
                 .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
