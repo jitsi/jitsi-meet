@@ -21,7 +21,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.facebook.react:react-native:+'
 
     compile project(':react-native-background-timer')
