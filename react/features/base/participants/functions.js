@@ -122,6 +122,37 @@ export function getParticipantCount(stateful: Object | Function) {
     return getParticipants(stateful).length;
 }
 
+/**
+ * Returns participant's display name.
+ * FIXME: remove the hardcoded strings once interfaceConfig is stored in redux
+ * and merge with a similarly named method in conference.js.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @param {string} id - The ID of the participant's display name to retrieve.
+ * @private
+ * @returns {string}
+ */
+export function getParticipantDisplayName(
+        stateful: Object | Function, id: string) {
+    const participant = getParticipantById(stateful, id);
+
+    if (participant) {
+        if (participant.name) {
+            return participant.name;
+        }
+
+        if (participant.local) {
+            return typeof interfaceConfig === 'object'
+                ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
+                : 'me';
+        }
+    }
+
+    return typeof interfaceConfig === 'object'
+        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
+        : 'Fellow Jitster';
+}
 
 /**
  * Selectors for getting all known participants with fake participants filtered
