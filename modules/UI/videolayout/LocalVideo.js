@@ -86,7 +86,7 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
     }
 
     this.updateDisplayName({
-        allowEditing: true,
+        allowEditing: APP.store.getState()['features/base/jwt'].isGuest,
         displayName,
         displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         elementID: 'localDisplayName',
