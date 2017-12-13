@@ -7,6 +7,8 @@ PODS:
     - React/Core
   - react-native-keep-awake (2.0.6):
     - React
+  - react-native-locale-detector (1.0.0):
+    - React
   - react-native-webrtc (1.58.2)
   - React/BatchedBridge (0.50.4):
     - React/Core
@@ -47,6 +49,7 @@ DEPENDENCIES:
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
+  - react-native-locale-detector (from `../node_modules/react-native-locale-detector`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - React/BatchedBridge (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
@@ -70,6 +73,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-fetch-blob
   react-native-keep-awake:
     :path: ../node_modules/react-native-keep-awake
+  react-native-locale-detector:
+    :path: ../node_modules/react-native-locale-detector
   react-native-webrtc:
     :path: ../node_modules/react-native-webrtc
   RNVectorIcons:
@@ -82,10 +87,11 @@ SPEC CHECKSUMS:
   react-native-background-timer: 10063c04bf85d7f8811dff8c74399f0aa715245f
   react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
   react-native-keep-awake: bb4dbb6fd21a7879432f9538b0b7d71398fe9f81
+  react-native-locale-detector: bb60716189d4c69c459355d0a4804c9b13f65e84
   react-native-webrtc: 6fd0b3aa890d7a9b9b4d01d30f958d17ae88a785
   RNVectorIcons: c1821d56c775cc5a3bca66c77dfc8cb4a90d27e2
   yoga: b9aebf996711e50fc31f5608c10aa108a5a0c29e
 
-PODFILE CHECKSUM: a7cb8c7365f8cf9a01ee4eb78325139933776faf
+PODFILE CHECKSUM: fabd6b6c27f8e1849f0668db3f403bf536ac8903
 
 COCOAPODS: 1.3.1

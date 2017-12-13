@@ -59,7 +59,7 @@
     "react-native-img-cache": "1.5.2",
     "react-native-immersive": "1.1.0",
     "react-native-keep-awake": "2.0.6",
-    "react-native-locale-detector": "1.0.1",
+    "react-native-locale-detector": "github:jitsi/react-native-locale-detector#cc76092",
     "react-native-prompt": "1.0.0",
     "react-native-vector-icons": "4.4.2",
     "react-native-webrtc": "github:jitsi/react-native-webrtc#7c6b167120d2224f62222037ff71deb8ff93bd38",
