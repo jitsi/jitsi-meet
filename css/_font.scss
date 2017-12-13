@@ -25,6 +25,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-public:before {
+  content: "\e80b";
+}
+.icon-event_note:before {
+    content: "\e616";
+}
+.icon-timer:before {
+    content: "\e425";
+}
 .icon-thumb-menu:before {
     content: "\e5d4";
 }

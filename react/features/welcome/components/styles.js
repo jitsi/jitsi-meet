@@ -10,6 +10,8 @@ import {
  */
 const TEXT_COLOR = ColorPalette.white;
 
+export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
+
 /**
  * The styles of the React {@code Components} of the feature welcome including
  * {@code WelcomePage} and {@code BlankPage}.
@@ -83,7 +85,8 @@ export default createStyleSheet({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
-        margin: 3 * BoxModel.margin
+        margin: 3 * BoxModel.margin,
+        marginBottom: BoxModel.margin
     },
 
     /**
