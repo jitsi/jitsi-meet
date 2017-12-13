@@ -6,14 +6,12 @@ import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
-import { CalleeInfo } from '../../base/jwt';
+import { CalleeInfoContainer } from '../../base/jwt';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
 import { showToolbox, Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
-
-import { abstractMapStateToProps } from '../functions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -22,12 +20,6 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = {
-
-    /**
-     * Whether or not the callee's info for a ringing call should be shown
-     * or not.
-     */
-    _calleeInfoVisible: boolean,
 
     /**
      * Whether or not the current local user is recording the conference.
@@ -122,9 +114,7 @@ class Conference extends Component<Props> {
                 <DialogContainer />
                 <NotificationsContainer />
 
-                { this.props._calleeInfoVisible
-                    && <CalleeInfo />
-                }
+                <CalleeInfoContainer />
 
                 {/*
                   * Temasys automatically injects a notification bar, if
@@ -161,8 +151,6 @@ class Conference extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        ...abstractMapStateToProps(state),
-
         /**
          * Indicates if the current user is recording the conference, ie, they
          * are a recorder.

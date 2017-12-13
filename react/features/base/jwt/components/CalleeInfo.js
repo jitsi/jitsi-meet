@@ -20,10 +20,10 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
-     * Object containing the callee's information.
+     * The callee's information such as avatar and display name.
      */
     _callee: Object
-}
+};
 
 /**
  * The type of the React {@code Component} state of {@link CalleeInfo}.
@@ -57,7 +57,7 @@ type State = {
      * @type {boolean}
      */
     ringing: boolean
-}
+};
 
 /**
  * Implements a React {@link Component} which depicts the establishment of a
@@ -335,6 +335,7 @@ class CalleeInfo extends Component<Props, State> {
 function _mapStateToProps(state) {
     return {
         /**
+         * The callee's information such as avatar and display name.
          *
          * @private
          * @type {Object}
