@@ -145,6 +145,7 @@
         height: $defaultToolbarSize;
         border-radius: 3px;
         opacity: 0;
+        white-space: nowrap;
 
         &.always-on-top {
             height: $alwaysOnTopToolbarSize;
