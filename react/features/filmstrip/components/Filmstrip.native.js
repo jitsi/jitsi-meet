@@ -56,11 +56,14 @@ class Filmstrip extends Component<*> {
             = isNarrowAspectRatio_
                 ? styles.filmstripNarrow
                 : styles.filmstripWide;
+        const {
+            _participants: participants,
+            _visible: visible } = this.props;
 
         return (
             <Container
                 style = { filmstripStyle }
-                visible = { this.props._visible }>
+                visible = { visible }>
                 <ScrollView
                     horizontal = { isNarrowAspectRatio_ }
                     showsHorizontalScrollIndicator = { false }
@@ -68,7 +71,7 @@ class Filmstrip extends Component<*> {
                     {
                         /* eslint-disable react/jsx-wrap-multilines */
 
-                        this._sort(this.props._participants)
+                        this._sort(participants, isNarrowAspectRatio_)
                             .map(p =>
                                 <Thumbnail
                                     key = { p.id }
@@ -86,30 +89,30 @@ class Filmstrip extends Component<*> {
      *
      * @param {Participant[]} participants - The array of {@code Participant}s
      * to sort in display order.
+     * @param {boolean} isNarrowAspectRatio_ - Indicates if the aspect ratio is
+     * wide or narrow.
      * @private
      * @returns {Participant[]} A new array containing the elements of the
      * specified {@code participants} array sorted in display order.
      */
-    _sort(participants) {
+    _sort(participants, isNarrowAspectRatio_) {
         // XXX Array.prototype.sort() is not appropriate because (1) it operates
         // in place and (2) it is not necessarily stable.
 
-        const sortedParticipants = [];
+        const sortedParticipants = [
 
-        // Group the remote participants so that the local participant does not
-        // appear in between remote participants. Have the remote participants
-        // from right to left with the newest added/joined to the leftmost side.
-        for (let i = participants.length - 1; i >= 0; --i) {
-            const p = participants[i];
+            // First put the local participant.
+            ...participants.filter(p => p.local),
 
-            p.local || sortedParticipants.push(p);
-        }
+            // Then the remote participants, which are sorted by join order.
+            ...participants.filter(p => !p.local)
+        ];
 
-        // Have the local participant at the rightmost side.
-        for (let i = participants.length - 1; i >= 0; --i) {
-            const p = participants[i];
-
-            p.local && sortedParticipants.push(p);
+        if (isNarrowAspectRatio_) {
+            // When the narrow aspect ratio is used, we want to have the remote
+            // participants from right to left with the newest added/joined to
+            // the leftmost side. The local participant is the leftmost item.
+            sortedParticipants.reverse();
         }
 
         return sortedParticipants;
