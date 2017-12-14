@@ -10,7 +10,7 @@ import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { CalleeInfoContainer } from '../../base/jwt';
-import { Container, LoadingIndicator } from '../../base/react';
+import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
@@ -200,9 +200,9 @@ class Conference extends Component<Props> {
                   * the toolbox/toolbars and the dialogs.
                   */
                     this.props._connecting
-                        && <View style = { styles.connectingIndicator }>
+                        && <TintedView>
                             <LoadingIndicator />
-                        </View>
+                        </TintedView>
                 }
 
                 <View style = { styles.toolboxAndFilmstripContainer } >

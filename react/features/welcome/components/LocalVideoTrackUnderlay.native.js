@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { VideoTrack } from '../../base/media';
+import { TintedView } from '../../base/react';
 import { getLocalVideoTrack } from '../../base/tracks';
 
 import styles from './styles';
@@ -91,9 +92,9 @@ class LocalVideoTrackUnderlay extends Component<*, *> {
         return (
             <View style = { this.state.style }>
                 <VideoTrack videoTrack = { this.props._localVideoTrack } />
-                <View style = { styles.localVideoTrackOverlay }>
+                <TintedView>
                     { this.props.children }
-                </View>
+                </TintedView>
             </View>
         );
     }
