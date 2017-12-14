@@ -33,34 +33,53 @@ export default class Storage {
         if (typeof this._keyPrefix !== 'undefined') {
             // Load all previously persisted data items from React Native's
             // AsyncStorage.
-            AsyncStorage.getAllKeys().then((...getAllKeysCallbackArgs) => {
-                // XXX The keys argument of getAllKeys' callback may or may not
-                // be preceded by an error argument.
-                const keys
-                    = getAllKeysCallbackArgs[getAllKeysCallbackArgs.length - 1]
-                        .filter(key => key.startsWith(this._keyPrefix));
 
-                AsyncStorage.multiGet(keys).then((...multiGetCallbackArgs) => {
-                    // XXX The result argument of multiGet may or may not be
-                    // preceded by an errors argument.
-                    const result
-                        = multiGetCallbackArgs[multiGetCallbackArgs.length - 1];
-                    const keyPrefixLength
-                        = this._keyPrefix && this._keyPrefix.length;
+            /**
+             * A flag to indicate that the async {@code AsyncStorage} is not
+             * initialized yet. This is native specific but it will work
+             * fine on web as well, as it will have no value (== false) there.
+             * This is required to be available as we need a sync way to check
+             * if the storage is inited or not.
+             */
+            this._initializing = true;
 
-                    // eslint-disable-next-line prefer-const
-                    for (let [ key, value ] of result) {
-                        key = key.substring(keyPrefixLength);
+            this._inited = new Promise(resolve => {
+                AsyncStorage.getAllKeys().then((...getAllKeysCallbackArgs) => {
+                    // XXX The keys argument of getAllKeys' callback may
+                    // or may not be preceded by an error argument.
+                    const keys
+                        = getAllKeysCallbackArgs[
+                            getAllKeysCallbackArgs.length - 1
+                        ].filter(key => key.startsWith(this._keyPrefix));
 
-                        // XXX The loading of the previously persisted data
-                        // items from AsyncStorage is asynchronous which means
-                        // that it is technically possible to invoke setItem
-                        // with a key before the key is loaded from
-                        // AsyncStorage.
-                        if (!this.hasOwnProperty(key)) {
-                            this[key] = value;
+                    AsyncStorage.multiGet(keys)
+                    .then((...multiGetCallbackArgs) => {
+                        // XXX The result argument of multiGet may or may not be
+                        // preceded by an errors argument.
+                        const result
+                            = multiGetCallbackArgs[
+                                multiGetCallbackArgs.length - 1
+                            ];
+                        const keyPrefixLength
+                            = this._keyPrefix && this._keyPrefix.length;
+
+                        // eslint-disable-next-line prefer-const
+                        for (let [ key, value ] of result) {
+                            key = key.substring(keyPrefixLength);
+
+                            // XXX The loading of the previously persisted data
+                            // items from AsyncStorage is asynchronous which
+                            // means that it is technically possible to invoke
+                            // setItem with a key before the key is loaded from
+                            // AsyncStorage.
+                            if (!this.hasOwnProperty(key)) {
+                                this[key] = value;
+                            }
                         }
-                    }
+
+                        this._initializing = false;
+                        resolve();
+                    });
                 });
             });
         }
