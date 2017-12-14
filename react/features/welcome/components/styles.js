@@ -66,24 +66,6 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the {@code View} displayed over the local video by
-     * {@code LocalVideoTrackUnderlay}. The latter is thought of as the
-     * background (content). The former is thought of as the foreground
-     * (content).
-     */
-    localVideoTrackOverlay: {
-        backgroundColor: 'transparent',
-        bottom: 0,
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
-    },
-
-    /**
      * The style of the top-level container/{@code View} of
      * {@code LocalVideoTrackUnderlay}.
      */
@@ -97,6 +79,7 @@ export default createStyleSheet({
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
+        alignSelf: 'stretch',
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
