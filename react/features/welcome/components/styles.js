@@ -38,12 +38,26 @@ export default createStyleSheet({
     },
 
     /**
+    * Layout of the button container.
+    */
+    buttonRow: {
+        flexDirection: 'row'
+    },
+
+    /**
      * Join button text style.
      */
     buttonText: {
         alignSelf: 'center',
         color: ColorPalette.blue,
         fontSize: 18
+    },
+
+    /**
+    * Style of the join button.
+    */
+    joinButton: {
+        flex: 1
     },
 
     /**
@@ -109,6 +123,22 @@ export default createStyleSheet({
         // all bottom and top margins and account for legaleseItem) which brings
         // symmetry as well.
         marginTop: 5 * BoxModel.margin
+    },
+
+    /**
+    * Style of the settings button.
+    */
+    settingsButton: {
+        width: 65,
+        marginRight: BoxModel.margin
+    },
+
+    /**
+    * Style of the settings icon on the settings button.
+    */
+    settingsIcon: {
+        fontSize: 24,
+        alignSelf: 'center'
     },
 
     /**

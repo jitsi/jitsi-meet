@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 
 import { appNavigate } from '../../app';
+import { showAppSettings } from '../../app-settings';
 import { isRoomValid } from '../../base/conference';
 
 import { generateRoomWithoutSeparator } from '../functions';
@@ -70,6 +71,7 @@ export class AbstractWelcomePage extends Component<*, *> {
             = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._onSettingsOpen = this._onSettingsOpen.bind(this);
         this._updateRoomname = this._updateRoomname.bind(this);
     }
 
@@ -194,6 +196,18 @@ export class AbstractWelcomePage extends Component<*, *> {
      */
     _onRoomChange(value: string) {
         this.setState({ room: value });
+    }
+
+    _onSettingsOpen: () => void;
+
+    /**
+    * Sets the app settings modal visible.
+    *
+    * @protected
+    * @returns {void}
+    */
+    _onSettingsOpen() {
+        this.props.dispatch(showAppSettings());
     }
 
     _updateRoomname: () => void;

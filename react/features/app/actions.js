@@ -4,6 +4,7 @@ import { setRoom } from '../base/conference';
 import { configWillLoad, loadConfigError, setConfig } from '../base/config';
 import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
+import { getProfile } from '../base/profile';
 import { parseURIString } from '../base/util';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
@@ -82,7 +83,11 @@ function _appNavigateToMandatoryLocation(
             });
         }
 
-        return promise.then(() => dispatch(setConfig(config)));
+        const profile = getProfile(getState());
+
+        return promise.then(() => dispatch(setConfig(
+            _mergeConfigWithProfile(config, profile)
+        )));
     }
 }
 
@@ -244,4 +249,24 @@ function _loadConfig({ contextRoot, host, protocol, room }) {
 
             throw error;
         });
+}
+
+/**
+ * Merges the downloaded config with the current profile values. The profile
+ * values are named the same way as the config values in the config.js so
+ * a clean merge is possible.
+ *
+ * @param {Object|undefined} config - The downloaded config.
+ * @param {Object} profile - The persisted profile.
+ * @returns {Object}
+ */
+function _mergeConfigWithProfile(config, profile) {
+    if (!config) {
+        return;
+    }
+
+    return {
+        ...config,
+        ...profile
+    };
 }

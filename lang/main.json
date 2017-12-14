@@ -535,5 +535,13 @@
         "invite": "Invite in __app__",
         "title": "Call access info",
         "tooltip": "Get access info about the meeting"
+    },
+    "profileModal": {
+        "displayName": "Display name",
+        "email": "Email",
+        "header": "Settings",
+        "serverURL": "Server URL",
+        "startWithAudioMuted": "Start with audio muted",
+        "startWithVideoMuted": "Start with video muted"
     }
 }
