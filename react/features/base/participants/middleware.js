@@ -88,11 +88,12 @@ MiddlewareRegistry.register(store => next => action => {
                 = getAvatarURLByParticipantId(store.getState(), idToSearch);
 
             if (preUpdateAvatarURL !== postUpdateAvatarURL) {
+                const currentKnownId = participant.local
+                    ? APP.conference.getMyUserId() : participant.id;
+
+                APP.UI.refreshAvatarDisplay(currentKnownId);
                 APP.API.notifyAvatarChanged(
-                    participant.local
-                        ? APP.conference.getMyUserId() : participant.id,
-                    postUpdateAvatarURL
-                );
+                    currentKnownId, postUpdateAvatarURL);
             }
 
             return result;

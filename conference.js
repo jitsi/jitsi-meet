@@ -70,6 +70,7 @@ import {
 } from './react/features/base/media';
 import {
     dominantSpeakerChanged,
+    getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
     localParticipantConnectionStatusChanged,
@@ -2410,7 +2411,8 @@ export default {
                 formattedDisplayName: appendSuffix(
                     displayName,
                     interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME),
-                avatarURL: APP.UI.getAvatarUrl()
+                avatarURL: getAvatarURLByParticipantId(
+                    APP.store.getState(), this._room.myUserId())
             }
         );
         APP.UI.markVideoInterrupted(false);

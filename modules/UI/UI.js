@@ -24,9 +24,8 @@ import {
 import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
-    getAvatarURL,
+    getAvatarURLByParticipantId,
     getLocalParticipant,
-    getParticipantById,
     participantPresenceChanged,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
@@ -791,25 +790,6 @@ UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
 UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
 
 /**
- * Returns the avatar URL for a given user.
- *
- * @param {string} id - The id of the user.
- * @returns {string} The avatar URL.
- */
-UI.getAvatarUrl = function(id) {
-    const state = APP.store.getState();
-    let participant;
-
-    if (!id || APP.conference.isLocalId(id) || id === 'local') {
-        participant = getLocalParticipant(state);
-    } else {
-        participant = getParticipantById(state, id);
-    }
-
-    return participant ? getAvatarURL(participant) : '';
-};
-
-/**
  * Update user email.
  * @param {string} id user id
  * @param {string} email user email
@@ -829,7 +809,7 @@ UI.setUserEmail = function(id, email) {
  * @returns {void}
  */
 UI.refreshAvatarDisplay = function(id) {
-    const avatarURL = this.getAvatarUrl(id);
+    const avatarURL = getAvatarURLByParticipantId(APP.store.getState(), id);
 
     VideoLayout.changeUserAvatar(id, avatarURL);
 

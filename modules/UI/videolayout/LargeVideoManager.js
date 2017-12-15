@@ -13,9 +13,11 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import {
+    getAvatarURLByParticipantId
+} from '../../../react/features/base/participants';
+import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
-
 import { createDeferred } from '../../util/helpers';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
@@ -218,7 +220,8 @@ export default class LargeVideoManager {
             container.setStream(id, stream, videoType);
 
             // change the avatar url on large
-            this.updateAvatar(APP.UI.getAvatarUrl(id));
+            this.updateAvatar(
+                getAvatarURLByParticipantId(APP.store.getState(), id));
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
