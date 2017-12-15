@@ -801,6 +801,7 @@ UI.setUserEmail = function(id, email) {
  * Updates the displayed avatar for participant.
  *
  * @param {string} id - User id whose avatar should be updated.
+ * @param {string} avatarURL - The URL to avatar image to display.
  * @returns {void}
  */
 UI.refreshAvatarDisplay = function(id, avatarURL) {
