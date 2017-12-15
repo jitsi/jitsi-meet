@@ -812,10 +812,6 @@ UI.refreshAvatarDisplay = function(id) {
     const avatarURL = getAvatarURLByParticipantId(APP.store.getState(), id);
 
     VideoLayout.changeUserAvatar(id, avatarURL);
-
-    if (APP.conference.isLocalId(id)) {
-        Profile.changeAvatar(avatarURL);
-    }
 };
 
 /**

@@ -143,14 +143,6 @@ export default {
     },
 
     /**
-     * Change user avatar in the settings menu.
-     * @param {string} avatarUrl url of the new avatar
-     */
-    changeAvatar(avatarUrl) {
-        $('#avatar').attr('src', avatarUrl);
-    },
-
-    /**
      * Change the value of the field for the user email.
      * @param {string} email the new value that will be displayed in the field.
      */
