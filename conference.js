@@ -2089,7 +2089,6 @@ export default {
                         id: from,
                         avatarURL: data.value
                     }));
-                APP.UI.refreshAvatarDisplay(from);
             });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
@@ -2099,7 +2098,6 @@ export default {
                         id: from,
                         avatarID: data.value
                     }));
-                APP.UI.refreshAvatarDisplay(from);
             });
 
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
@@ -2730,7 +2728,6 @@ export default {
         }));
 
         APP.settings.setAvatarUrl(url);
-        APP.UI.refreshAvatarDisplay(id);
         sendData(commands.AVATAR_URL, url);
     },
 

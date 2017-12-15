@@ -91,7 +91,8 @@ MiddlewareRegistry.register(store => next => action => {
                 const currentKnownId = participant.local
                     ? APP.conference.getMyUserId() : participant.id;
 
-                APP.UI.refreshAvatarDisplay(currentKnownId);
+                APP.UI.refreshAvatarDisplay(
+                    currentKnownId, postUpdateAvatarURL);
                 APP.API.notifyAvatarChanged(
                     currentKnownId, postUpdateAvatarURL);
             }

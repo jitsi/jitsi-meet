@@ -24,7 +24,6 @@ import {
 import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
-    getAvatarURLByParticipantId,
     getLocalParticipant,
     participantPresenceChanged,
     showParticipantJoinedNotification
@@ -272,8 +271,6 @@ UI.initConference = function() {
     // Make sure we configure our avatar id, before creating avatar for us
     if (email) {
         UI.setUserEmail(id, email);
-    } else {
-        APP.UI.refreshAvatarDisplay(id);
     }
 
     dispatch(checkAutoEnableDesktopSharing());
@@ -795,8 +792,6 @@ UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
  * @param {string} email user email
  */
 UI.setUserEmail = function(id, email) {
-    UI.refreshAvatarDisplay(id);
-
     if (APP.conference.isLocalId(id)) {
         Profile.changeEmail(email);
     }
@@ -808,9 +803,7 @@ UI.setUserEmail = function(id, email) {
  * @param {string} id - User id whose avatar should be updated.
  * @returns {void}
  */
-UI.refreshAvatarDisplay = function(id) {
-    const avatarURL = getAvatarURLByParticipantId(APP.store.getState(), id);
-
+UI.refreshAvatarDisplay = function(id, avatarURL) {
     VideoLayout.changeUserAvatar(id, avatarURL);
 };
 
