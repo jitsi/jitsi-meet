@@ -75,6 +75,25 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
 }
 
 /**
+ * Returns the avatarURL for the participant associated with the passed in
+ * participant ID.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @param {string} id - The ID of the participant to retrieve.
+ * @returns {(string|undefined)}
+ */
+export function getAvatarURLByParticipantId(
+        stateful: Object | Function,
+        id: string) {
+    const participant = getParticipantById(stateful, id);
+
+    return participant && getAvatarURL(participant);
+}
+
+/**
  * Returns local participant from Redux state.
  *
  * @param {(Function|Object|Participant[])} stateful - The redux state

@@ -18,9 +18,8 @@ import {
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID } from './constants';
 import {
-    getAvatarURL,
-    getLocalParticipant,
-    getParticipantById
+    getAvatarURLByParticipantId,
+    getLocalParticipant
 } from './functions';
 
 declare var APP: Object;
@@ -67,36 +66,37 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED:
-        action.participant.locallyGeneratedAvatarURL
-            = getAvatarURL(action.participant);
-
-        break;
-
     case PARTICIPANT_UPDATED: {
-        const { participant } = action;
-        const state = store.getState();
-        const participantInStore = action.participant.local
-            ? getLocalParticipant(state)
-            : getParticipantById(state, participant.id);
+        if (typeof APP !== 'undefined') {
+            const participant = action.participant;
+            const { id, local } = participant;
 
-        if (!participantInStore) {
-            break;
+            let idToSearch = id;
+
+            // Support the workaround where the id for the local user is
+            // hardcoded to be "local" on initial conference join.
+            if (!id && local) {
+                idToSearch = 'local';
+            }
+
+            const preUpdateAvatarURL
+                = getAvatarURLByParticipantId(store.getState(), idToSearch);
+
+            const result = next(action);
+
+            const postUpdateAvatarURL
+                = getAvatarURLByParticipantId(store.getState(), idToSearch);
+
+            if (preUpdateAvatarURL !== postUpdateAvatarURL) {
+                APP.API.notifyAvatarChanged(
+                    participant.local
+                        ? APP.conference.getMyUserId() : participant.id,
+                    postUpdateAvatarURL
+                );
+            }
+
+            return result;
         }
-
-        const predictedParticipantState
-            = Object.assign({}, participantInStore, participant);
-        const newAvatarURL = getAvatarURL(predictedParticipantState);
-
-        if (typeof APP !== 'undefined'
-            && newAvatarURL !== participantInStore.locallyGeneratedAvatarURL) {
-            APP.API.notifyAvatarChanged(
-                participant.local
-                    ? APP.conference.getMyUserId() : participant.id,
-                newAvatarURL
-            );
-        }
-
-        participant.locallyGeneratedAvatarURL = newAvatarURL;
 
         break;
     }
