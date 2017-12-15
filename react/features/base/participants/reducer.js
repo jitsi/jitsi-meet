@@ -76,7 +76,6 @@ function _participant(state: Object = {}, action) {
             email,
             isBot,
             local,
-            locallyGeneratedAvatarURL,
             name,
             pinned,
             role
@@ -108,7 +107,6 @@ function _participant(state: Object = {}, action) {
             id,
             isBot,
             local: local || false,
-            locallyGeneratedAvatarURL,
             name,
             pinned: pinned || false,
             role: role || PARTICIPANT_ROLE.NONE
