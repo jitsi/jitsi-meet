@@ -222,6 +222,16 @@ export class VideoContainer extends LargeContainer {
          */
         this.wasVideoRendered = false;
 
+        /**
+         * Indicates whether or not the video stream attached to the background
+         * video element has displayed any image. Used to prevent updates of
+         * the background caused by resize events.
+         *
+         * @private
+         * @type {boolean}
+         */
+        this._wasBackgroundVideoRendered = false;
+
         this.$wrapper = $('#largeVideoWrapper');
 
         /**
@@ -245,6 +255,14 @@ export class VideoContainer extends LargeContainer {
         // this.$video.on('play', onPlay);
 
         this.$video[0].onplaying = onPlayingCallback;
+
+        const onBackgroundPlayingCallback = function() {
+            this._wasBackgroundVideoRendered = true;
+
+            this.$videoBackground[0].pause();
+        }.bind(this);
+
+        this.$videoBackground[0].onplaying = onBackgroundPlayingCallback;
 
         /**
          * A Set of functions to invoke when the video element resizes.
@@ -479,7 +497,7 @@ export class VideoContainer extends LargeContainer {
 
         // The stream has changed, so the image will be lost on detach
         this.wasVideoRendered = false;
-
+        this._wasBackgroundVideoRendered = false;
 
         // detach old stream
         if (this.stream) {
@@ -672,6 +690,12 @@ export class VideoContainer extends LargeContainer {
      */
     _showVideoBackground() {
         this.$videoBackground.css({ visibility: 'visible' });
+
+        // No need to play if the current stream has already played once and
+        // so the background should be displaying something.
+        if (this._wasBackgroundVideoRendered) {
+            return;
+        }
 
         // XXX HTMLMediaElement.play's Promise may be rejected. Certain
         // environments such as Google Chrome and React Native will report the
