@@ -776,6 +776,10 @@ SmallVideo.prototype.updateIndicators = function() {
     const indicatorToolbar
         = this.container.querySelector('.videocontainer__toptoolbar');
 
+    if (!indicatorToolbar) {
+        return;
+    }
+
     const iconSize = UIUtil.getIndicatorFontSize();
     const showConnectionIndicator = this.videoIsHovered
         || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
