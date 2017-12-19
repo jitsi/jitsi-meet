@@ -3,7 +3,10 @@ import md5 from 'js-md5';
 
 import { toState } from '../redux';
 
-import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
+import {
+    DEFAULT_AVATAR_RELATIVE_PATH,
+    LOCAL_PARTICIPANT_DEFAULT_ID
+} from './constants';
 
 declare var config: Object;
 declare var interfaceConfig: Object;
@@ -72,6 +75,29 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
     }
 
     return urlPrefix + md5.hex(key.trim().toLowerCase()) + urlSuffix;
+}
+
+/**
+ * Returns the avatarURL for the participant associated with the passed in
+ * participant ID.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @param {string} id - The ID of the participant to retrieve.
+ * @param {boolean} isLocal - An optional parameter indicating whether or not
+ * the partcipant id is for the local user. If true, a different logic flow is
+ * used find the local user, ignoring the id value as it can change through the
+ * beginning and end of a call.
+ * @returns {(string|undefined)}
+ */
+export function getAvatarURLByParticipantId(
+        stateful: Object | Function,
+        id: string = LOCAL_PARTICIPANT_DEFAULT_ID) {
+    const participant = getParticipantById(stateful, id);
+
+    return participant && getAvatarURL(participant);
 }
 
 /**

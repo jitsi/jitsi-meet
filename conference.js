@@ -70,6 +70,7 @@ import {
 } from './react/features/base/media';
 import {
     dominantSpeakerChanged,
+    getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
     localParticipantConnectionStatusChanged,
@@ -2092,7 +2093,6 @@ export default {
                         id: from,
                         avatarURL: data.value
                     }));
-                APP.UI.setUserAvatarUrl(from, data.value);
             });
 
         room.addCommandListener(this.commands.defaults.AVATAR_ID,
@@ -2102,7 +2102,6 @@ export default {
                         id: from,
                         avatarID: data.value
                     }));
-                APP.UI.setUserAvatarID(from, data.value);
             });
 
         APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
@@ -2414,7 +2413,8 @@ export default {
                 formattedDisplayName: appendSuffix(
                     displayName,
                     interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME),
-                avatarURL: APP.UI.getAvatarUrl()
+                avatarURL: getAvatarURLByParticipantId(
+                    APP.store.getState(), this._room.myUserId())
             }
         );
         APP.UI.markVideoInterrupted(false);
@@ -2704,7 +2704,7 @@ export default {
         APP.store.dispatch(participantUpdated({
             id: localId,
             local: true,
-            formattedEmail
+            email: formattedEmail
         }));
 
         APP.settings.setEmail(formattedEmail);
@@ -2732,7 +2732,6 @@ export default {
         }));
 
         APP.settings.setAvatarUrl(url);
-        APP.UI.setUserAvatarUrl(id, url);
         sendData(commands.AVATAR_URL, url);
     },
 
