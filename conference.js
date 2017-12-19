@@ -2410,7 +2410,7 @@ export default {
                     displayName,
                     interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME),
                 avatarURL: getAvatarURLByParticipantId(
-                    APP.store.getState(), this._room.myUserId(), true)
+                    APP.store.getState(), this._room.myUserId())
             }
         );
         APP.UI.markVideoInterrupted(false);

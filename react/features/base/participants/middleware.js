@@ -72,14 +72,14 @@ MiddlewareRegistry.register(store => next => action => {
             const { id, local } = participant;
 
             const preUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), id, local);
+                = getAvatarURLByParticipantId(store.getState(), id);
 
             // Allow the redux update to go through and compare the old avatar
             // to the new avatar and emit out change events if necessary.
             const result = next(action);
 
             const postUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), id, local);
+                = getAvatarURLByParticipantId(store.getState(), id);
 
             if (preUpdateAvatarURL !== postUpdateAvatarURL) {
                 const currentKnownId = local

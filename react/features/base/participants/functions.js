@@ -3,7 +3,10 @@ import md5 from 'js-md5';
 
 import { toState } from '../redux';
 
-import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
+import {
+    DEFAULT_AVATAR_RELATIVE_PATH,
+    LOCAL_PARTICIPANT_DEFAULT_ID
+} from './constants';
 
 declare var config: Object;
 declare var interfaceConfig: Object;
@@ -91,11 +94,8 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
  */
 export function getAvatarURLByParticipantId(
         stateful: Object | Function,
-        id: string,
-        isLocal: boolean) {
-    const participant = isLocal
-        ? getLocalParticipant(stateful)
-        : getParticipantById(stateful, id);
+        id: string = LOCAL_PARTICIPANT_DEFAULT_ID) {
+    const participant = getParticipantById(stateful, id);
 
     return participant && getAvatarURL(participant);
 }
