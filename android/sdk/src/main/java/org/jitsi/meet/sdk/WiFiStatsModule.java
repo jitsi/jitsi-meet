@@ -1,0 +1,208 @@
+/*
+ * Copyright @ 2017-present Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jitsi.meet.sdk;
+
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+
+/**
+ * Module exposing WiFi statistics.
+ *
+ * Gathers rssi, signal in percentage, timestamp and the addresses
+ * of the wifi device.
+ */
+class WiFiStatsModule extends ReactContextBaseJavaModule {
+    /**
+     * The name of {@code WiFiStatsModule} to be used in the React Native
+     * bridge.
+     */
+    private static final String MODULE_NAME = "WiFiStats";
+
+    /**
+     * The {@code Log} tag {@code WiFiStatsModule} is to log messages with.
+     */
+    static final String TAG = MODULE_NAME;
+
+    /**
+     * The scale used for the signal value.
+     * A level of the signal, given in the range
+     * of 0 to SIGNAL_LEVEL_SCALE-1 (both inclusive).
+     */
+    public final static int SIGNAL_LEVEL_SCALE = 101;
+
+    /**
+     * {@link Handler} for running all operations on the main thread.
+     */
+    private final Handler mainThreadHandler
+            = new Handler(Looper.getMainLooper());
+
+    /**
+     * Initializes a new module instance. There shall be a single instance of
+     * this module throughout the lifetime of the application.
+     *
+     * @param reactContext the {@link ReactApplicationContext} where this module
+     * is created.
+     */
+    public WiFiStatsModule(ReactApplicationContext reactContext) {
+        super(reactContext);
+    }
+
+    /**
+     * Gets the name for this module to be used in the React Native bridge.
+     *
+     * @return a string with the module name.
+     */
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
+
+    /**
+     * Returns the {@link InetAddress} represented by this int.
+     *
+     * @param value the int representation of the ip address.
+     * @return the {@link InetAddress}.
+     * @throws UnknownHostException - if IP address is of illegal length.
+     */
+    public static InetAddress toInetAddress(int value)
+            throws UnknownHostException {
+        return InetAddress.getByAddress(
+            new byte[] {
+                    (byte) value,
+                    (byte) (value >> 8),
+                    (byte) (value >> 16),
+                    (byte) (value >> 24)
+            });
+    }
+
+    /**
+     * Public method to retrieve WiFi stats.
+     *
+     * @param promise a {@link Promise} which will be resolved if WiFi stats are
+     * retrieved successfully, and it will be rejected otherwise.
+     */
+    @ReactMethod
+    public void getWiFiStats(final Promise promise) {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    Context context
+                        = getReactApplicationContext().getApplicationContext();
+                    WifiManager wifiManager
+                        = (WifiManager) context
+                            .getSystemService(Context.WIFI_SERVICE);
+
+                    if (!wifiManager.isWifiEnabled()) {
+                        promise.reject(new Exception("Wifi not enabled"));
+                        return;
+                    }
+
+                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+
+                    if (wifiInfo.getNetworkId() == -1) {
+                        promise.reject(new Exception("Wifi not connected"));
+                        return;
+                    }
+
+                    int rssi = wifiInfo.getRssi();
+                    int signalLevel
+                        = WifiManager.calculateSignalLevel(
+                            rssi, SIGNAL_LEVEL_SCALE);
+
+                    JSONObject result = new JSONObject();
+                    result.put("rssi", rssi)
+                        .put("signal", signalLevel)
+                        .put("timestamp",
+                                String.valueOf(System.currentTimeMillis()));
+
+                    JSONArray addresses = new JSONArray();
+
+                    InetAddress wifiAddress
+                        = toInetAddress(wifiInfo.getIpAddress());
+
+                    try {
+                        Enumeration<NetworkInterface> e
+                            =  NetworkInterface.getNetworkInterfaces();
+                        while (e.hasMoreElements()) {
+                            NetworkInterface networkInterface = e.nextElement();
+                            boolean found = false;
+
+                            // first check whether this is the desired interface
+                            Enumeration<InetAddress> as
+                                = networkInterface.getInetAddresses();
+                            while (as.hasMoreElements()) {
+                                InetAddress a = as.nextElement();
+                                if(a.equals(wifiAddress)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (found) {
+                                // interface found let's put addresses
+                                // to the result object
+                                as = networkInterface.getInetAddresses();
+                                while (as.hasMoreElements()) {
+                                    InetAddress a = as.nextElement();
+                                    if (a.isLinkLocalAddress())
+                                        continue;
+
+                                    addresses.put(a.getHostAddress());
+                                }
+                            }
+
+                        }
+                    } catch (SocketException e) {
+                        Log.wtf(TAG,
+                            "Unable to NetworkInterface.getNetworkInterfaces()"
+                        );
+                    }
+
+                    result.put("addresses", addresses);
+                    promise.resolve(result.toString());
+
+                    Log.d(TAG, "WiFi stats: " + result.toString());
+                } catch (Throwable e) {
+                    Log.e(TAG, "Failed to obtain wifi stats", e);
+                    promise.reject(
+                        new Exception("Failed to obtain wifi stats"));
+                }
+            }
+        };
+        mainThreadHandler.post(r);
+    }
+}

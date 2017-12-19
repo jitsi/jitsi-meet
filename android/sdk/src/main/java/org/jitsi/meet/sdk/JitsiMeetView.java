@@ -64,7 +64,8 @@ public class JitsiMeetView extends FrameLayout {
             new AppInfoModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
-            new ProximityModule(reactContext)
+            new ProximityModule(reactContext),
+            new WiFiStatsModule(reactContext)
         );
     }
 
