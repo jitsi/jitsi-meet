@@ -53,7 +53,7 @@ function LocalVideo(VideoLayout, emitter) {
     // state. Redux stores the local user with a hardcoded participant id of
     // 'local' if no id has been assigned yet.
     this.avatarChanged(
-        getAvatarURLByParticipantId(APP.store.getState(), this.id || 'local'));
+        getAvatarURLByParticipantId(APP.store.getState(), this.id, true));
 
     this.addAudioLevelIndicator();
     this.updateIndicators();

@@ -83,12 +83,19 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @param {string} id - The ID of the participant to retrieve.
+ * @param {boolean} isLocal - An optional parameter indicating whether or not
+ * the partcipant id is for the local user. If true, a different logic flow is
+ * used find the local user, ignoring the id value as it can change through the
+ * beginning and end of a call.
  * @returns {(string|undefined)}
  */
 export function getAvatarURLByParticipantId(
         stateful: Object | Function,
-        id: string) {
-    const participant = getParticipantById(stateful, id);
+        id: string,
+        isLocal: boolean) {
+    const participant = isLocal
+        ? getLocalParticipant(stateful)
+        : getParticipantById(stateful, id);
 
     return participant && getAvatarURL(participant);
 }

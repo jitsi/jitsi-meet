@@ -71,25 +71,19 @@ MiddlewareRegistry.register(store => next => action => {
             const participant = action.participant;
             const { id, local } = participant;
 
-            let idToSearch = id;
-
-            // Support the workaround where the id for the local user is
-            // hardcoded to be "local" on initial conference join.
-            if (!id && local) {
-                idToSearch = 'local';
-            }
-
             const preUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), idToSearch);
+                = getAvatarURLByParticipantId(store.getState(), id, local);
 
+            // Allow the redux update to go through and compare the old avatar
+            // to the new avatar and emit out change events if necessary.
             const result = next(action);
 
             const postUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), idToSearch);
+                = getAvatarURLByParticipantId(store.getState(), id, local);
 
             if (preUpdateAvatarURL !== postUpdateAvatarURL) {
-                const currentKnownId = participant.local
-                    ? APP.conference.getMyUserId() : participant.id;
+                const currentKnownId = local
+                    ? APP.conference.getMyUserId() : id;
 
                 APP.UI.refreshAvatarDisplay(
                     currentKnownId, postUpdateAvatarURL);
