@@ -1,6 +1,23 @@
 import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
+/* eslint-disable no-unused-vars */
+
+// Address families.
+const AF_INET6 = 30; /* IPv6 */
+
+// Protocols (RFC 1700)
+const IPPROTO_TCP = 6; /* tcp */
+const IPPROTO_UDP = 17; /* user datagram protocol */
+
+// Protocol families, same as address families for now.
+const PF_INET6 = AF_INET6;
+
+const SOCK_DGRAM = 2; /* datagram socket */
+const SOCK_STREAM = 1; /* stream socket */
+
+/* eslint-enable no-unused-vars */
+
 // XXX At the time of this writing extending RTCPeerConnection using ES6 'class'
 // and 'extends' causes a runtime error related to the attempt to define the
 // onaddstream property setter. The error mentions that babelHelpers.set is
@@ -182,7 +199,7 @@ function _synthesizeIPv6Addresses(sdp) {
 /* eslint-disable max-depth */
 
 /**
- * Implements the initial phase of the synthesis of IPv6 addresses.
+ * Begins the asynchronous synthesis of IPv6 addresses.
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses will be synthesized.
@@ -197,7 +214,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
     let start = 0;
     const lines = [];
     const ips = new Map();
-    const getaddrinfo = NativeModules.POSIX.getaddrinfo;
+    const { getaddrinfo } = NativeModules.POSIX;
 
     do {
         const end = sdp.indexOf('\r\n', start);
@@ -236,8 +253,8 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
                                 if (v && typeof v === 'string') {
                                     resolve(v);
                                 } else {
-                                    getaddrinfo(ip).then(
-                                        value => {
+                                    getaddrinfo(ip, undefined).then(
+                                        ([ { ai_addr: value } ]) => {
                                             if (value.indexOf(':') === -1
                                                     || value === ips.get(ip)) {
                                                 ips.delete(ip);
@@ -275,7 +292,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
 /* eslint-enable max-depth */
 
 /**
- * Implements the initial phase of the synthesis of IPv6 addresses.
+ * Completes the asynchronous ynthesis of IPv6 addresses.
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses are being synthesized.
