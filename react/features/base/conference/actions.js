@@ -11,6 +11,7 @@ import { getName } from '../../app';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
+    MAX_DISPLAY_NAME_LENGTH,
     dominantSpeakerChanged,
     participantConnectionStatusChanged,
     participantJoined,
@@ -120,6 +121,12 @@ function _addConferenceListeners(conference, dispatch) {
         t => t && !t.isLocal() && dispatch(trackRemoved(t)));
 
     // Dispatches into features/base/participants follow:
+    conference.on(
+        JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
+        (id, displayName) => dispatch(participantUpdated({
+            id,
+            name: displayName.substr(0, MAX_DISPLAY_NAME_LENGTH)
+        })));
 
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
