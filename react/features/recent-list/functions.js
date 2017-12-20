@@ -2,131 +2,116 @@
 
 import moment from 'moment';
 
-import { RECENT_URL_STORAGE } from './constants';
-
 import { i18next } from '../base/i18n';
 import { parseURIString } from '../base/util';
 
-/**
-* Retreives the recent room list and generates all the data needed
-* to be displayed.
-*
-* @returns {Promise} The {@code Promise} to be resolved when the list
-* is available.
-*/
-export function getRecentRooms(): Promise<Array<Object>> {
-    return new Promise(resolve => {
-        window.localStorage._getItemAsync(RECENT_URL_STORAGE)
-            .then(recentUrls => {
-                if (recentUrls) {
-                    const recentUrlsObj = JSON.parse(recentUrls);
-                    const recentRoomDS = [];
+import { RECENT_URL_STORAGE } from './constants';
 
-                    for (const entry of recentUrlsObj) {
-                        const location = parseURIString(entry.conference);
+/**
+ * Retreives the recent room list and generates all the data needed to be
+ * displayed.
+ *
+ * @returns {Promise} The {@code Promise} to be resolved when the list is
+ * available.
+ */
+export function getRecentRooms(): Promise<Array<Object>> {
+    return new Promise((resolve, reject) =>
+        window.localStorage._getItemAsync(RECENT_URL_STORAGE).then(
+            /* onFulfilled */ recentURLs => {
+                const recentRoomDS = [];
+
+                if (recentURLs) {
+                    for (const e of JSON.parse(recentURLs)) {
+                        const location = parseURIString(e.conference);
 
                         if (location && location.room && location.hostname) {
                             recentRoomDS.push({
                                 baseURL:
                                     `${location.protocol}//${location.host}`,
-                                conference: entry.conference,
-                                dateTimeStamp: entry.date,
-                                conferenceDuration: entry.conferenceDuration,
-                                dateString: _getDateString(
-                                    entry.date
-                                ),
-                                conferenceDurationString: _getLengthString(
-                                    entry.conferenceDuration
-                                ),
+                                conference: e.conference,
+                                conferenceDuration: e.conferenceDuration,
+                                conferenceDurationString:
+                                    _getDurationString(e.conferenceDuration),
+                                dateString: _getDateString(e.date),
+                                dateTimeStamp: e.date,
                                 initials: _getInitials(location.room),
                                 room: location.room,
                                 serverName: location.hostname
                             });
                         }
                     }
-
-                    resolve(recentRoomDS.reverse());
-                } else {
-                    resolve([]);
                 }
-            });
-    });
-}
 
-/**
-* Retreives the recent URL list as a list of objects.
-*
-* @returns {Array} The list of already stored recent URLs.
-*/
-export function getRecentUrls() {
-    let recentUrls = window.localStorage.getItem(RECENT_URL_STORAGE);
-
-    if (recentUrls) {
-        recentUrls = JSON.parse(recentUrls);
-    } else {
-        recentUrls = [];
-    }
-
-    return recentUrls;
-}
-
-/**
-* Updates the recent URL list.
-*
-* @param {Array} recentUrls - The new URL list.
-* @returns {void}
-*/
-export function updaterecentUrls(recentUrls: Array<Object>) {
-    window.localStorage.setItem(
-        RECENT_URL_STORAGE,
-        JSON.stringify(recentUrls)
+                resolve(recentRoomDS.reverse());
+            },
+            /* onRejected */ reject)
     );
 }
 
 /**
-* Returns a well formatted date string to be displayed in the list.
-*
-* @private
-* @param {number} dateTimeStamp - The UTC timestamp to be converted to String.
-* @returns {string}
-*/
-function _getDateString(dateTimeStamp: number) {
-    const date = new Date(dateTimeStamp);
+ * Retreives the recent URL list as a list of objects.
+ *
+ * @returns {Array} The list of already stored recent URLs.
+ */
+export function getRecentURLs() {
+    const recentURLs = window.localStorage.getItem(RECENT_URL_STORAGE);
 
-    if (date.toDateString() === new Date().toDateString()) {
-        // the date is today, we use fromNow format
-
-        return moment(date)
-                .locale(i18next.language)
-                .fromNow();
-    }
-
-    return moment(date)
-            .locale(i18next.language)
-            .format('lll');
+    return recentURLs ? JSON.parse(recentURLs) : [];
 }
 
 /**
-* Returns a well formatted duration string to be displayed
-* as the conference length.
-*
-* @private
-* @param {number} duration - The duration in MS.
-* @returns {string}
-*/
-function _getLengthString(duration: number) {
+ * Updates the recent URL list.
+ *
+ * @param {Array} recentURLs - The new URL list.
+ * @returns {void}
+ */
+export function updateRecentURLs(recentURLs: Array<Object>) {
+    window.localStorage.setItem(
+        RECENT_URL_STORAGE,
+        JSON.stringify(recentURLs)
+    );
+}
+
+/**
+ * Returns a well formatted date string to be displayed in the list.
+ *
+ * @param {number} dateTimeStamp - The UTC timestamp to be converted to String.
+ * @private
+ * @returns {string}
+ */
+function _getDateString(dateTimeStamp: number) {
+    const date = new Date(dateTimeStamp);
+    const m = moment(date).locale(i18next.language);
+
+    if (date.toDateString() === new Date().toDateString()) {
+        // The date is today, we use fromNow format.
+        return m.fromNow();
+    }
+
+    return m.format('lll');
+}
+
+/**
+ * Returns a well formatted duration string to be displayed as the conference
+ * length.
+ *
+ * @param {number} duration - The duration in MS.
+ * @private
+ * @returns {string}
+ */
+function _getDurationString(duration: number) {
     return moment.duration(duration)
             .locale(i18next.language)
             .humanize();
 }
 
 /**
-* Returns the initials supposed to be used based on the room name.
-*
-* @private
-* @param {string} room - The room name.
-* @returns {string}
-*/
+ * Returns the initials supposed to be used based on the room name.
+ *
+ * @param {string} room - The room name.
+ * @private
+ * @returns {string}
+ */
 function _getInitials(room: string) {
     return room && room.charAt(0) ? room.charAt(0).toUpperCase() : '?';
 }

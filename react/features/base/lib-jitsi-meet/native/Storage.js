@@ -90,22 +90,20 @@ export default class Storage {
 
     /**
      * Returns the value associated with a specific key in this storage in an
-     * async manner. This method is required for those cases where we need
-     * the stored data but we're not sure yet whether the {@code Storage}
-     * is already initialised or not - e.g. on app start.
+     * async manner. This method is required for those cases where we need the
+     * stored data but we're not sure yet whether the {@code Storage} is already
+     * initialised or not - e.g. on app start.
      *
-     * @private
      * @param {string} key - The name of the key to retrieve the value of.
+     * @private
      * @returns {Promise}
      */
     _getItemAsync(key) {
-        return new Promise(resolve => {
-            AsyncStorage.getItem(
-                `${String(this._keyPrefix)}${key}`,
-                (error, result) => {
-                    resolve(result ? result : null);
-                });
-        });
+        return new Promise(
+            resolve =>
+                AsyncStorage.getItem(
+                    `${String(this._keyPrefix)}${key}`,
+                    (error, result) => resolve(result ? result : null)));
     }
 
     /**

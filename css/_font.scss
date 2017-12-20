@@ -25,11 +25,11 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-public:before {
-  content: "\e80b";
-}
 .icon-event_note:before {
     content: "\e616";
+}
+.icon-public:before {
+    content: "\e80b";
 }
 .icon-timer:before {
     content: "\e425";

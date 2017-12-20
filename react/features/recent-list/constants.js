@@ -1,10 +1,13 @@
 /**
  * The max size of the list.
+ *
+ * @type {number}
  */
 export const LIST_SIZE = 30;
 
 /**
- * The name of the {@code localStorage} item where recent rooms are stored.
+ * The name of the {@code window.localStorage} item where recent rooms are
+ * stored.
  *
  * @type {string}
  */

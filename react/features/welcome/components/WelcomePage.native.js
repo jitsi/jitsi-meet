@@ -2,16 +2,16 @@ import React from 'react';
 import { TextInput, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
-import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
-
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
 import { Link, LoadingIndicator, Text } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { RecentList } from '../../recent-list';
+
+import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
+import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
+import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 /**
  * The URL at which the privacy policy is available to the user.

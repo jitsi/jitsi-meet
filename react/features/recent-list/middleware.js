@@ -1,16 +1,16 @@
-/* @flow */
-
-import { LIST_SIZE } from './constants';
-import { getRecentUrls, updaterecentUrls } from './functions';
+// @flow
 
 import { CONFERENCE_WILL_LEAVE, SET_ROOM } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 
+import { LIST_SIZE } from './constants';
+import { getRecentURLs, updateRecentURLs } from './functions';
+
 /**
- * Middleware that captures joined rooms so then it can be saved to
- * {@code localStorage}
+ * Middleware that captures joined rooms so they can be saved into
+ * {@code window.localStorage}.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
@@ -26,44 +26,44 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
-* Stores the recently joined room in {@code localStorage}.
+* Stores the recently joined room into {@code window.localStorage}.
 *
 * @param {Store} store - The redux store in which the specified action is being
 * dispatched.
-* @param {Dispatch} next - The redux dispatch function to dispatch the
+* @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
 * specified action to the specified store.
-* @param {Action} action - The redux action CONFERENCE_JOINED which is being
+* @param {Action} action - The redux action {@code SET_ROOM} which is being
 * dispatched in the specified store.
+* @private
 * @returns {Object} The new state that is the result of the reduction of the
 * specified action.
 */
 function _storeJoinedRoom(store, next, action) {
     const result = next(action);
+
     const { room } = action;
 
     if (room) {
         const { locationURL } = store.getState()['features/base/connection'];
-        const conferenceLink = locationURL.href;
+        const conference = locationURL.href;
 
-        // if the current conference is already in the list,
-        // we remove it to add it
-        // to the top at the end
-        const recentUrls = getRecentUrls().filter(
-            entry => entry.conference !== conferenceLink
-        );
+        // If the current conference is already in the list, we remove it to add
+        // it to the top at the end.
+        const recentURLs
+            = getRecentURLs()
+                .filter(e => e.conference !== conference);
 
-        // please note, this is a reverse sorted array
-        // (newer elements at the end)
-        recentUrls.push({
-            conference: conferenceLink,
-            date: Date.now(),
-            conferenceDuration: 0
+        // XXX This is a reverse sorted array (i.e. newer elements at the end).
+        recentURLs.push({
+            conference,
+            conferenceDuration: 0,
+            date: Date.now()
         });
 
         // maximising the size
-        recentUrls.splice(0, recentUrls.length - LIST_SIZE);
+        recentURLs.splice(0, recentURLs.length - LIST_SIZE);
 
-        updaterecentUrls(recentUrls);
+        updateRecentURLs(recentURLs);
     }
 
     return result;
@@ -72,33 +72,35 @@ function _storeJoinedRoom(store, next, action) {
 /**
 * Updates the conference length when left.
 *
-* @private
 * @param {Store} store - The redux store in which the specified action is being
 * dispatched.
-* @param {Dispatch} next - The redux dispatch function to dispatch the
+* @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
 * specified action to the specified store.
-* @param {Action} action - The redux action CONFERENCE_JOINED which is being
-* dispatched in the specified store.
+* @param {Action} action - The redux action {@code CONFERENCE_WILL_LEAVE} which
+* is being dispatched in the specified store.
+* @private
 * @returns {Object} The new state that is the result of the reduction of the
 * specified action.
 */
-function _updateConferenceDuration(store, next, action) {
+function _updateConferenceDuration({ getState }, next, action) {
     const result = next(action);
-    const { locationURL } = store.getState()['features/base/connection'];
+
+    const { locationURL } = getState()['features/base/connection'];
 
     if (locationURL && locationURL.href) {
-        const recentUrls = getRecentUrls();
+        const recentURLs = getRecentURLs();
 
-        if (recentUrls.length > 0
-            && recentUrls[recentUrls.length - 1].conference
-                === locationURL.href) {
-            // the last conference start was stored
-            // so we need to update the length
+        if (recentURLs.length > 0) {
+            const mostRecentURL = recentURLs[recentURLs.length - 1];
 
-            recentUrls[recentUrls.length - 1].conferenceDuration
-                = Date.now() - recentUrls[recentUrls.length - 1].date;
+            if (mostRecentURL.conference === locationURL.href) {
+                // The last conference start was stored so we need to update the
+                // length.
+                mostRecentURL.conferenceDuration
+                    = Date.now() - mostRecentURL.date;
 
-            updaterecentUrls(recentUrls);
+                updateRecentURLs(recentURLs);
+            }
         }
     }
 
