@@ -246,6 +246,12 @@ export class VideoContainer extends LargeContainer {
 
         this.$video[0].onplaying = onPlayingCallback;
 
+        const onBackgroundPlayingCallback = function() {
+            this.$videoBackground[0].pause();
+        }.bind(this);
+
+        this.$videoBackground[0].onplaying = onBackgroundPlayingCallback;
+
         /**
          * A Set of functions to invoke when the video element resizes.
          *
@@ -402,13 +408,10 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        this._hideVideoBackground();
-
         const [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
 
         if ((containerWidth > width) || (containerHeight > height)) {
-            this._showVideoBackground();
             const css
                 = containerWidth > width
                     ? { width: '100%',
@@ -480,7 +483,6 @@ export class VideoContainer extends LargeContainer {
         // The stream has changed, so the image will be lost on detach
         this.wasVideoRendered = false;
 
-
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
@@ -497,8 +499,6 @@ export class VideoContainer extends LargeContainer {
         stream.attach(this.$video[0]);
         stream.attach(this.$videoBackground[0]);
 
-        this._hideVideoBackground();
-
         const flipX = stream.isLocal() && this.localFlipX;
 
         this.$video.css({
@@ -510,6 +510,20 @@ export class VideoContainer extends LargeContainer {
 
         // Reset the large video background depending on the stream.
         this.setLargeVideoBackground(this.avatarDisplayed);
+
+        // XXX HTMLMediaElement.play's Promise may be rejected. Certain
+        // environments such as Google Chrome and React Native will report the
+        // rejection as unhandled. And that may appear scary depending on how
+        // the environment words the report. To reduce the risk of scaring a
+        // developer, make sure that the rejection is handled. We cannot really
+        // do anything substantial about the rejection and, more importantly, we
+        // do not care. Some browsers (at this time, only Edge is known) don't
+        // return a promise from .play(), so check before trying to catch.
+        const res = this.$videoBackground[0].play();
+
+        if (typeof res !== 'undefined') {
+            res.catch(reason => logger.error(reason));
+        }
     }
 
     /**
@@ -644,17 +658,6 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Sets the blur background to be invisible and pauses any playing video.
-     *
-     * @private
-     * @returns {void}
-     */
-    _hideVideoBackground() {
-        this.$videoBackground.css({ visibility: 'hidden' });
-        this.$videoBackground[0].pause();
-    }
-
-    /**
      * Callback invoked when the video element changes dimensions.
      *
      * @private
@@ -662,29 +665,5 @@ export class VideoContainer extends LargeContainer {
      */
     _onResize() {
         this._resizeListeners.forEach(callback => callback());
-    }
-
-    /**
-     * Sets the blur background to be visible and starts any loaded video.
-     *
-     * @private
-     * @returns {void}
-     */
-    _showVideoBackground() {
-        this.$videoBackground.css({ visibility: 'visible' });
-
-        // XXX HTMLMediaElement.play's Promise may be rejected. Certain
-        // environments such as Google Chrome and React Native will report the
-        // rejection as unhandled. And that may appear scary depending on how
-        // the environment words the report. To reduce the risk of scaring a
-        // developer, make sure that the rejection is handled. We cannot really
-        // do anything substantial about the rejection and, more importantly, we
-        // do not care. Some browsers (at this time, only Edge is known) don't
-        // return a promise from .play(), so check before trying to catch.
-        const res = this.$videoBackground[0].play();
-
-        if (typeof res !== 'undefined') {
-            res.catch(reason => logger.error(reason));
-        }
     }
 }
