@@ -292,7 +292,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
 /* eslint-enable max-depth */
 
 /**
- * Completes the asynchronous ynthesis of IPv6 addresses.
+ * Completes the asynchronous synthesis of IPv6 addresses.
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses are being synthesized.
