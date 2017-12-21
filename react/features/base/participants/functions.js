@@ -236,14 +236,12 @@ function _getInitials(name) {
         return '';
     }
 
-    const nameParts = name.split(' ');
+    const nameParts = name.toUpperCase().split(' ');
     const firstName = nameParts[0];
     let initials = firstName[0];
 
     if (nameParts.length > 1) {
-        const lastName = nameParts[nameParts.length - 1];
-
-        initials = `${initials}${lastName[0]}`;
+        initials += nameParts[nameParts.length - 1];
     }
 
     return initials;
