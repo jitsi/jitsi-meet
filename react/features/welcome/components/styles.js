@@ -54,7 +54,11 @@ export default createStyleSheet({
         alignItems: 'center',
         flex: 0,
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'center',
+
+        // XXX Lift the legaleseContainer up above the iPhone X home indicator;
+        // otherwise, the former is partially underneath the latter.
+        marginBottom: BoxModel.margin
     },
 
     /**
@@ -62,6 +66,10 @@ export default createStyleSheet({
      * Privacy Policy or Terms of Service displayed on the WelcomePage.
      */
     legaleseItem: {
+        // XXX The backgroundColor must be transparent; otherwise, the
+        // backgroundColor of a parent may show through. Moreover, the
+        // legaleseItem is not really expected to have a background of its own.
+        backgroundColor: 'transparent',
         color: TEXT_COLOR,
         fontSize: 12,
         margin: BoxModel.margin
@@ -84,9 +92,23 @@ export default createStyleSheet({
         alignSelf: 'stretch',
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'center',
+
+        // XXX RecentList will eventually push the room name TextInput and the
+        // Join button up from the center. I don't like that movement from
+        // center to top, especially without an animation. Just start with the
+        // room name TextInput and the Join button at the top.
+        justifyContent: 'flex-start',
         margin: 3 * BoxModel.margin,
-        marginBottom: BoxModel.margin
+
+        // XXX Be consistent with the marginBottom of legaleseContainer!
+        marginBottom: BoxModel.margin,
+
+        // XXX Push the roomContainer down bellow the iPhone X notchl otherwise,
+        // the former seems glued to the latter. THe amount of visual margin at
+        // the top is pretty much as the visual margin at the bottom (if you sum
+        // all bottom and top margins and account for legaleseItem) which brings
+        // symmetry as well.
+        marginTop: 5 * BoxModel.margin
     },
 
     /**
