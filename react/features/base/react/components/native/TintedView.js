@@ -104,8 +104,10 @@ export default class TintedView extends Component<Props, State> {
 
         const assignState = !this.state;
 
-        if (prevColor !== nextColor || prevOpacity !== nextOpacity
-                || prevStyle !== nextStyle || assignState) {
+        if (assignState
+                || prevColor !== nextColor
+                || prevOpacity !== nextOpacity
+                || prevStyle !== nextStyle) {
             const nextState = {
                 style: {
                     ...BASE_STYLE,
@@ -131,9 +133,13 @@ export default class TintedView extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        // XXX Don't tint the children, tint the background only.
         return (
-            <View style = { this.state.style }>
-                { this.props.children }
+            <View style = { BASE_STYLE }>
+                <View style = { this.state.style } />
+                <View style = { BASE_STYLE }>
+                    { this.props.children }
+                </View>
             </View>
         );
     }
