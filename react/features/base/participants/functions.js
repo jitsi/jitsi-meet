@@ -24,11 +24,12 @@ declare var interfaceConfig: Object;
  * @returns {string} The URL of the image for the avatar of the specified
  * participant.
  */
-export function getAvatarURL({ avatarID, avatarURL, email, id }: {
+export function getAvatarURL({ avatarID, avatarURL, email, id, name }: {
         avatarID: string,
         avatarURL: string,
         email: string,
-        id: string
+        id: string,
+        name: string
 }) {
     // If disableThirdPartyRequests disables third-party avatar services, we are
     // restricted to a stock image of ours.
@@ -68,9 +69,8 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
         if (urlPrefix) {
             urlSuffix = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
         } else {
-            // Otherwise, use a default (meeples, of course).
-            urlPrefix = 'https://abotars.jitsi.net/meeple/';
-            urlSuffix = '';
+            urlPrefix = 'https://avatar-cdn.jitsi.net/';
+            urlSuffix = `/${_getInitials(name) || ' '}/200/avatar.png`;
         }
     }
 
@@ -222,4 +222,27 @@ function _getAllParticipants(stateful) {
         Array.isArray(stateful)
             ? stateful
             : toState(stateful)['features/base/participants'] || []);
+}
+
+/**
+ * Gets the initials from a name, assuming a westernized name.
+ *
+ * @param {string} name - The name from which to parse initials.
+ * @private
+ * @returns {string}
+ */
+function _getInitials(name) {
+    if (!name) {
+        return '';
+    }
+
+    const nameParts = name.toUpperCase().split(' ');
+    const firstName = nameParts[0];
+    let initials = firstName[0];
+
+    if (nameParts.length > 1) {
+        initials += nameParts[nameParts.length - 1];
+    }
+
+    return initials;
 }
