@@ -58,7 +58,7 @@ const options = {
 };
 
 i18next
-    .use(I18nextXHRBackend)
+    .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
     .use(languageDetector)
     .use({
         name: 'resolveAppName',
