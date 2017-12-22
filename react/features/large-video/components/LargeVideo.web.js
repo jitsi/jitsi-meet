@@ -50,12 +50,18 @@ export default class LargeVideo extends Component<*> {
                 <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />
                 <div>
-                    <div className = 'video_blurred_container'>
-                        <video
-                            autoPlay = { true }
-                            id = 'largeVideoBackground'
-                            muted = 'true' />
-                    </div>
+                    {
+
+                        /**
+                         * FIXME: The LargeVideo component should be in charge
+                         * of how the large video background is rendered.
+                         * However, in order to coordinate video transition
+                         * timing between large video and the background video,
+                         * the logic for updating the background video is left
+                         * in the non-react large video component.
+                         */
+                    }
+                    <div id = 'largeVideoBackgroundContainer' />
                     {
 
                         /**

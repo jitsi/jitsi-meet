@@ -1,8 +1,20 @@
+.flip-x {
+    transform: scaleX(-1);
+}
+
+.hidden {
+  display: none;
+}
+
 /**
  * Hides an element.
  */
 .hide {
     display: none !important;
+}
+
+.invisible {
+    visibility: hidden;
 }
 
 /**
@@ -35,8 +47,4 @@
     display: -ms-flexbox !important;
     display: -webkit-flex !important;
     display: flex !important;
-}
-
-.hidden {
-  display: none;
 }
