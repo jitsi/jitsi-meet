@@ -682,18 +682,8 @@ export class VideoContainer extends LargeContainer {
             = document.getElementById('largeVideoBackgroundContainer');
 
         if (backgroundContainer) {
-            const hasRemoteProblem
-                = this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS);
-            const hasLocalProblem
-                = this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS);
-
-            const classNames = `${
-                hasRemoteProblem ? REMOTE_PROBLEM_FILTER_CLASS : ''} ${
-                hasLocalProblem ? LOCAL_PROBLEM_FILTER_CLASS : ''}`.trim();
-
             ReactDOM.render(
                 <LargeVideoBackground
-                    className = { classNames }
                     hidden = { !this._backgroundOrientation }
                     mirror = {
                         this.stream
@@ -701,6 +691,10 @@ export class VideoContainer extends LargeContainer {
                         && this.localFlipX
                     }
                     orientationFit = { this._backgroundOrientation }
+                    showLocalProblemFilter
+                        = { this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS) }
+                    showRemoteProblemFilter
+                        = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
                     videoTrack = { this.stream } />,
                 backgroundContainer
             );

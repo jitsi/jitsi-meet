@@ -67,6 +67,18 @@ export class LargeVideoBackground extends Component {
         ]),
 
         /**
+         * Whether or not to display a filter on the video to visually indicate
+         * a problem with the video being displayed.
+         */
+        showLocalProblemFilter: PropTypes.bool,
+
+        /**
+         * Whether or not to display a filter on the video to visually indicate
+         * a problem with the video being displayed.
+         */
+        showRemoteProblemFilter: PropTypes.bool,
+
+        /**
          * The video stream to display.
          */
         videoTrack: PropTypes.object
@@ -79,18 +91,30 @@ export class LargeVideoBackground extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { className, hidden, mirror, orientationFit } = this.props;
+        const {
+            hidden,
+            mirror,
+            orientationFit,
+            showLocalProblemFilter,
+            showRemoteProblemFilter,
+            videoTrack
+        } = this.props;
         const orientationClass = orientationFit
             ? ORIENTATION_TO_CLASS[orientationFit] : '';
         const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${
-            hidden ? 'invisible' : ''} ${orientationClass} ${className}`;
+            hidden ? 'invisible' : ''} ${orientationClass} ${
+            showLocalProblemFilter ? 'videoProblemFilter' : ''} ${
+            showRemoteProblemFilter ? 'remoteVideoProblemFilter' : ''}`;
+        const videoTrackModel = {
+            jitsiTrack: hidden ? null : videoTrack
+        };
 
         return (
             <div className = { classNames }>
                 <Video
                     autoPlay = { true }
                     id = 'largeVideoBackground'
-                    videoTrack = {{ jitsiTrack: this.props.videoTrack }} />
+                    videoTrack = { videoTrackModel } />
             </div>
         );
     }
