@@ -18,6 +18,17 @@ export function sendAnalyticsEvent(...args: Array<any>) {
 }
 
 /**
+ * TODO.
+ *
+ * @inheritdoc Now this explains the copious usage of @inheritdoc. That's how
+ * you trick the linter to leave you alone!
+ */
+export function sendAnalytics(event: Object) {
+    analytics.sendEvent(event);
+}
+
+
+/**
  * Loads the analytics scripts and inits JitsiMeetJS.analytics by setting
  * permanent properties and setting the handlers from the loaded scripts.
  * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be
@@ -76,6 +87,9 @@ export function initAnalytics({ getState }: { getState: Function }) {
             }
 
             analytics.addPermanentProperties(permanentProperties);
+            analytics.setConferenceName(permanentProperties.roomName);
+
+            // Set the handlers last, since this triggers emptying of the cache
             analytics.setAnalyticsHandlers(handlers);
         },
         error => analytics.dispose() && logger.error(error));

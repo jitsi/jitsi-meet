@@ -1,24 +1,25 @@
 /**
- * The target of a pin or unpin event was the local participant.
- *
- * Known full event names:
- * pinned.local
- * unpinned.local
- *
- * @type {String}
+ * The constant for the event type 'track'.
+ * @type {string}
  */
-export const _LOCAL = 'local';
+const TYPE_TRACK = 'track';
 
 /**
- * The target of a pin or unpin event was a remote participant.
- *
- * Known full event names:
- * pinned.remote
- * unpinned.remote
+ * The identifier for the "pinned" action. The local participant has pinned a
+ * participant to remain on large video.
  *
  * @type {String}
  */
-export const _REMOTE = 'remote';
+export const ACTION_PINNED = 'pinned';
+
+/**
+ * The identifier for the "unpinned" action. The local participant has unpinned
+ * a participant so the participant doesn't remain permanently on local large
+ * video.
+ *
+ * @type {String}
+ */
+export const ACTION_UNPINNED = 'unpinned';
 
 /**
  * Audio mute toggled was triggered through the jitsi-meet api.
@@ -137,17 +138,6 @@ export const FEEDBACK_OPEN = 'feedback.open';
  * @type {String}
  */
 export const PAGE_RELOAD = 'page.reload';
-
-/**
- * The local participant has pinned a participant to remain on large video.
- *
- * Known full event names:
- * pinned.local
- * pinned.remote
- *
- * @type {String}
- */
-export const PINNED_ = 'pinned';
 
 /**
  * Recording start was attempted but the local user canceled the request.
@@ -651,13 +641,22 @@ export const TOOLBAR_VIDEO_QUALITY_LOW = 'toolbar.videoquality.low';
 export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
 
 /**
- * The local participant has unpinned a participant so the participant doesn't
- * remain permanently on local large video.
+ * Creates a "pinned" or "unpinned" event.
  *
- * Known full event names:
- * unpinned.local
- * unpinned.remote
- *
- * @type {String}
+ * @param {string} action - The action ("pinned" or "unpinned").
+ * @param {string} participantId - The ID of the participant which was pinned.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalyticsEvent.
  */
-export const UNPINNED_ = 'unpinned';
+export const createPinnedEvent
+        = function(action, participantId, attributes) {
+            return {
+                type: TYPE_TRACK,
+                action,
+                actionSubject: 'participant',
+                objectType: 'participant',
+                objectId: participantId,
+                attributes
+            };
+        };
