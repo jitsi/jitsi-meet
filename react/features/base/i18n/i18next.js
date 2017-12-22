@@ -81,4 +81,10 @@ i18next.addResourceBundle(
     /* deep */ true,
     /* overwrite */ true);
 
+// Add builtin languages.
+// XXX: Note we are using require here, because we want the side-effects of
+// the import, but imports can only be placed at the top, and it would be
+// too early, since i18next is not yet initialized at that point.
+require('./BuiltinLanguages');
+
 export default i18next;
