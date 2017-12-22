@@ -43,6 +43,16 @@ Add the Maven repository
 `https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
 dependency `org.jitsi.react:jitsi-meet-sdk:1.9.0` into your `build.gradle`.
 
+Add Java 1.8 compatibility support to your project by adding the following lines
+into your `build.gradle` file:
+
+```
+compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+```
+
 ## API
 
 Jitsi Meet SDK is an Android library which embodies the whole Jitsi Meet
