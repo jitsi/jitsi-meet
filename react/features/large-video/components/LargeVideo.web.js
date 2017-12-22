@@ -3,6 +3,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
 import { RecordingLabel } from '../../recording';
@@ -61,7 +62,11 @@ export default class LargeVideo extends Component<*> {
                          * in the non-react large video component.
                          */
                     }
-                    <div id = 'largeVideoBackgroundContainer' />
+                    {
+                        JitsiMeetJS.util.RTCUIHelper.isVideoFilterSupported()
+                            ? <div id = 'largeVideoBackgroundContainer' />
+                            : null
+                    }
                     {
 
                         /**
