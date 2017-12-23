@@ -1,6 +1,6 @@
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
-Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the session #482 of the VoIP Users Conference.
+Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](#security) and scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the session #482 of the VoIP Users Conference.
 
 You can also try it out yourself at https://meet.jit.si .
 
@@ -97,6 +97,21 @@ see our [guidelines for contributing](CONTRIBUTING.md).
 ## Embedding in external applications
 
 Jitsi Meet provides a very flexible way of embedding it in external applications by using the [Jitsi Meet API](doc/api.md).
+
+## Security
+WebRTC today does not provide a way of conducting multiparty conversations with
+end-to-end encryption. As a matter of fact, unless you consistently vocally
+compare DTLS fingerprints with your peers, the same goes for one-to-one calls.
+As a result when using a Jitsi Meet instance, your stream is encrypted on the
+network but decrypted on the machine that hosts the bridge.
+
+The Jitsi Meet architecture allows you to deploy your own version, including
+all server components, and in that case your security guarantees will be roughly
+equivalent to these of a direct one-to-one WebRTC call. This is what's unique to 
+Jitsi Meet in terms of security.
+
+The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
+at [Atlassian](https://atlassian.com).
 
 ## Mobile app
 Jitsi Meet is also available as a React Native app for Android and iOS.
