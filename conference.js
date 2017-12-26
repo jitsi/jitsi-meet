@@ -22,10 +22,10 @@ import {
     CONFERENCE_VIDEO_INITIALLY_MUTED,
     DEVICE_LIST_CHANGED_AUDIO_MUTED,
     DEVICE_LIST_CHANGED_VIDEO_MUTED,
-    SELECT_PARTICIPANT_FAILED,
     SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
     SETTINGS_CHANGE_DEVICE_AUDIO_IN,
     SETTINGS_CHANGE_DEVICE_VIDEO,
+    createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
     initAnalytics,
     sendAnalytics,
@@ -1929,7 +1929,7 @@ export default {
 
                     room.selectParticipant(id);
                 } catch (e) {
-                    sendAnalyticsEvent(SELECT_PARTICIPANT_FAILED);
+                    sendAnalytics(createSelectParticipantFailedEvent(e));
                     reportError(e);
                 }
             });

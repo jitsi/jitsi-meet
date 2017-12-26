@@ -217,15 +217,6 @@ export const REMOTE_VIDEO_MENU_REMOTE_CONTROL_
 export const REPLACE_TRACK_ = 'replacetrack';
 
 /**
- * The local participant failed to start receiving high quality video from
- * a remote participant, which is usually initiated by the remote participant
- * being put on large video.
- *
- * @type {String}
- */
-export const SELECT_PARTICIPANT_FAILED = 'selectParticipant.failed';
-
-/**
  * The local participant began using a different audio input device (mic).
  *
  * @type {String}
@@ -659,6 +650,26 @@ export const createPinnedEvent
                 attributes
             };
         };
+
+/**
+ * The local participant failed to send a "selected endpoint" message to the
+ * bridge.
+ *
+ * @param {Error} error - The error which caused the failure.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createSelectParticipantFailedEvent = function(error) {
+    const event = {
+        name: 'select.participant.failed'
+    };
+
+    if (error) {
+        event.error = error.toString();
+    }
+
+    return event;
+};
 
 /**
  * Creates an event which indicates the delay for switching between simulcast
