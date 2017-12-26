@@ -71,14 +71,6 @@ export const CALLKIT_AUDIO_ = 'callkit.audio';
 export const CALLKIT_BACKGROUND_VIDEO_MUTED = 'callkit.background.video.muted';
 
 /**
- * The local participant joined audio muted.
- *
- * @type {String}
- */
-export const CONFERENCE_AUDIO_INITIALLY_MUTED
-    = 'conference.audio.initiallyMuted';
-
-/**
  * The local participant has started desktop sharing.
  *
  * @type {String}
@@ -93,14 +85,6 @@ export const CONFERENCE_SHARING_DESKTOP_START
  */
 export const CONFERENCE_SHARING_DESKTOP_STOP
     = 'conference.sharingDesktop.stop';
-
-/**
- * The local participant joined video muted.
- *
- * @type {String}
- */
-export const CONFERENCE_VIDEO_INITIALLY_MUTED
-    = 'conference.video.initiallyMuted';
 
 /**
  * The list of known input/output devices was changed and new audio input has
@@ -683,5 +667,20 @@ export const createStreamSwitchDelayEvent = function(attributes) {
     return {
         name: 'stream.switch.delay',
         attributes
+    };
+};
+
+/**
+ * Creates an event which indicates that a local track was muted because of the
+ * "initially muted" configuration.
+ *
+ * @param {string} mediaType - The track's media type ('audio' or 'video').
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createTrackInitiallyMutedEvent = function(mediaType) {
+    return {
+        name: 'track.initially.muted',
+        mediaType
     };
 };

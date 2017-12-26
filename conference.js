@@ -16,10 +16,8 @@ import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
-    CONFERENCE_AUDIO_INITIALLY_MUTED,
     CONFERENCE_SHARING_DESKTOP_START,
     CONFERENCE_SHARING_DESKTOP_STOP,
-    CONFERENCE_VIDEO_INITIALLY_MUTED,
     DEVICE_LIST_CHANGED_AUDIO_MUTED,
     DEVICE_LIST_CHANGED_VIDEO_MUTED,
     SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
@@ -27,6 +25,7 @@ import {
     SETTINGS_CHANGE_DEVICE_VIDEO,
     createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
+    createTrackInitiallyMutedEvent,
     initAnalytics,
     sendAnalytics,
     sendAnalyticsEvent
@@ -742,14 +741,13 @@ export default {
             })
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
-                    if (track.isAudioTrack() && this.isLocalAudioMuted()) {
-                        sendAnalyticsEvent(CONFERENCE_AUDIO_INITIALLY_MUTED);
-                        logger.log('Audio mute: initially muted');
-                        track.mute();
-                    } else if (track.isVideoTrack()
-                                    && this.isLocalVideoMuted()) {
-                        sendAnalyticsEvent(CONFERENCE_VIDEO_INITIALLY_MUTED);
-                        logger.log('Video mute: initially muted');
+                    if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                        || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                        const mediaType = track.getType();
+
+                        sendAnalytics(
+                            createTrackInitiallyMutedEvent(mediaType));
+                        logger.log(`${mediaType} mute: initially muted.`);
                         track.mute();
                     }
                 });
