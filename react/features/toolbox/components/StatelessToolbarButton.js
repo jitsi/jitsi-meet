@@ -96,7 +96,7 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
         const attributes = getButtonAttributesByProps(button);
 
         return (
-            <div className = { `toolbar-button-wrapper ${button.id}-wrapper` }>
+            <div className = 'toolbar-button'>
                 <a
                     { ...attributes }
                     onClick = { this._onClick }>
