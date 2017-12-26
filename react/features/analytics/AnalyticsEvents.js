@@ -191,62 +191,6 @@ export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
 export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
 
 /**
- * Attempted to start sharing a YouTube video but one is already being shared.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_ALREADY_SHARED = 'sharedvideo.alreadyshared';
-
-/**
- * The local participant's mic was muted automatically during a shared video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_AUDIO_MUTED = 'sharedvideo.audio.muted';
-
-/**
- * The local participant's mic was unmuted automatically during a shared video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_AUDIO_UNMUTED = 'sharedvideo.audio.unmuted';
-
-/**
- * Canceled the prompt to enter a YouTube video to share.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_CANCELED = 'sharedvideo.canceled';
-
-/**
- * The shared YouTube video has been paused.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_PAUSED = 'sharedvideo.paused';
-
-/**
- * Started sharing a YouTube video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_STARTED = 'sharedvideo.started';
-
-/**
- * Confirmed stoppage of the shared YouTube video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_STOPPED = 'sharedvideo.stoped';
-
-/**
- * The shared YouTube video had its volume change.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_VOLUME_CHANGED = 'sharedvideo.volumechanged';
-
-/**
  * Pressed the keyboard shortcut for toggling audio mute.
  *
  * @type {String}
@@ -636,6 +580,22 @@ export const createSelectParticipantFailedEvent = function(error) {
     }
 
     return event;
+};
+
+/**
+ * Creates an event associated with the "shared video" feature.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createSharedVideoEvent = function(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        actionSubject: 'shared.video'
+    };
 };
 
 /**
