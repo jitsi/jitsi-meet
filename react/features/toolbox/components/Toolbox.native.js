@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
-    TOOLBAR_AUDIO_MUTED,
-    TOOLBAR_AUDIO_UNMUTED,
-    TOOLBAR_VIDEO_,
-    sendAnalyticsEvent
+    AUDIO_MUTE,
+    VIDEO_MUTE,
+    createToolbarEvent,
+    sendAnalytics
 } from '../../analytics';
 import {
     isNarrowAspectRatio,
@@ -188,7 +188,11 @@ class Toolbox extends Component {
     _onToggleAudio() {
         const mute = !this.props._audioMuted;
 
-        sendAnalyticsEvent(mute ? TOOLBAR_AUDIO_MUTED : TOOLBAR_AUDIO_UNMUTED);
+        sendAnalytics(createToolbarEvent(
+            AUDIO_MUTE,
+            {
+                enable: mute
+            }));
 
         // The user sees the reality i.e. the state of base/tracks and intends
         // to change reality by tapping on the respective button i.e. the user
@@ -211,7 +215,11 @@ class Toolbox extends Component {
     _onToggleVideo() {
         const mute = !this.props._videoMuted;
 
-        sendAnalyticsEvent(`${TOOLBAR_VIDEO_}.${mute ? 'muted' : 'unmuted'}`);
+        sendAnalytics(createToolbarEvent(
+            VIDEO_MUTE,
+            {
+                enable: mute
+            }));
 
         // The user sees the reality i.e. the state of base/tracks and intends
         // to change reality by tapping on the respective button i.e. the user

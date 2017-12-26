@@ -57,6 +57,17 @@ export const ACTION_SHORTCUT_RELEASED = 'released';
 export const ACTION_SHORTCUT_TRIGGERED = 'triggered';
 
 /**
+ * The name of the keyboard shortcut or toolbar button for muting audio.
+ */
+export const AUDIO_MUTE = 'audio.mute';
+
+/**
+ * The name of the keyboard shortcut or toolbar button for muting video.
+ */
+export const VIDEO_MUTE = 'video.mute';
+
+
+/**
  * Audio mute toggled was triggered through the jitsi-meet api.
  *
  * @type {String}
@@ -193,84 +204,11 @@ export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
 export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
 
 /**
- * Clicked the toolbar button to enter audio mute state.
- *
- * @type {String}
- */
-export const TOOLBAR_AUDIO_MUTED = 'toolbar.audio.muted';
-
-/**
  * Clicked within a toolbar menu to enable audio only.
  *
  * @type {String}
  */
 export const TOOLBAR_AUDIO_ONLY_ENABLED = 'toolbar.audioonly.enabled';
-
-/**
- * Clicked the toolbar button to exit audio mute state.
- *
- * @type {String}
- */
-export const TOOLBAR_AUDIO_UNMUTED = 'toolbar.audio.unmuted';
-
-/**
- * Clicked the toolbar button for toggling chat panel display.
- *
- * @type {String}
- */
-export const TOOLBAR_CHAT_TOGGLED = 'toolbar.chat.toggled';
-
-/**
- * Clicked the toolbar button for toggling contact list panel display.
- *
- * @type {String}
- */
-export const TOOLBAR_CONTACTS_TOGGLED = 'toolbar.contacts.toggled';
-
-/**
- * Clicked the toolbar button to toggle display of etherpad (collaborative
- * document writing).
- *
- * @type {String}
- */
-export const TOOLBAR_ETHERPACK_CLICKED = 'toolbar.etherpad.clicked';
-
-/**
- * Pressed the keyboard shortcut to open the device selection window while in
- * filmstrip only mode.
- *
- * @type {String}
- */
-export const TOOLBAR_FILMSTRIP_ONLY_DEVICE_SELECTION_TOGGLED
-    = 'toolbar.fodeviceselection.toggled';
-
-/**
- * Visibility of the filmstrip has been toggled.
- *
- * @type {String}
- */
-export const TOOLBAR_FILMSTRIP_TOGGLED = 'toolbar.filmstrip.toggled';
-
-/**
- * Clicked the toolbar button to toggle display full screen mode.
- *
- * @type {String}
- */
-export const TOOLBAR_FULLSCREEN_ENABLED = 'toolbar.fullscreen.enabled';
-
-/**
- * Clicked the toolbar button to leave the conference.
- *
- * @type {String}
- */
-export const TOOLBAR_HANGUP = 'toolbar.hangup';
-
-/**
- * Clicked the toolbar button to open the invite dialog.
- *
- * @type {String}
- */
-export const TOOLBAR_INVITE_CLICKED = 'toolbar.invite.clicked';
 
 /**
  * The invite dialog has been dismissed.
@@ -285,73 +223,6 @@ export const TOOLBAR_INVITE_CLOSE = 'toolbar.invite.close';
  * @type {String}
  */
 export const TOOLBAR_PROFILE_TOGGLED = 'toolbar.profile.toggled';
-
-/**
- * Clicked the toolbar button for toggling raise hand status.
- *
- * @type {String}
- */
-export const TOOLBAR_RAISE_HAND_CLICKED = 'toolbar.raiseHand.clicked';
-
-/**
- * Clicked the toolbar button to stop screensharing.
- *
- * @type {String}
- */
-export const TOOLBAR_SCREEN_DISABLED = 'toolbar.screen.disabled';
-
-/**
- * Clicked the toolbar button to start screensharing.
- *
- * @type {String}
- */
-export const TOOLBAR_SCREEN_ENABLED = 'toolbar.screen.enabled';
-
-/**
- * Clicked the toolbar button for toggling display of the settings menu.
- *
- * @type {String}
- */
-export const TOOLBAR_SETTINGS_TOGGLED = 'toolbar.settings.toggled';
-
-/**
- * Clicked the toolbar button for toggling a shared YouTube video.
- *
- * @type {String}
- */
-export const TOOLBAR_SHARED_VIDEO_CLICKED = 'toolbar.sharedvideo.clicked';
-
-/**
- * Clicked the toolbar button to open the dial-out feature.
- *
- * @type {String}
- */
-export const TOOLBAR_SIP_DIALPAD_CLICKED = 'toolbar.sip.dialpad.clicked';
-
-/**
- * In the mobile app, clicked on the toolbar button to toggle video mute.
- *
- * Known full event names:
- * toolbar.video.muted
- * toolbar.video.unmuted
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_ = 'toolbar.video';
-
-/**
- * Clicked on the toolbar to video unmute.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_DISABLED = 'toolbar.video.disabled';
-
-/**
- * Clicked on the toolbar to video mute.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_ENABLED = 'toolbar.video.enabled';
 
 /**
  * Clicked within a toolbar menu to set max incoming video quality to high
@@ -387,6 +258,20 @@ export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
 export const createAudioOnlyDisableEvent = function() {
     return {
         name: 'audio.only.disabled'
+    };
+};
+
+/**
+ * Creates a "filmstrip toggled" event.
+ *
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createFilmstripToggledEvent = function(attributes) {
+    return {
+        attributes,
+        name: 'filmstrip.toggled'
     };
 };
 
@@ -488,6 +373,29 @@ export const createShortcutEvent
             type: TYPE_UI
         };
     };
+
+/**
+ * Creates an event associated with a toolbar button being clicked/pressed. By
+ * convention, where appropriate an attribute named 'enable' should be used to
+ * indicate the action which resulted by the shortcut being pressed (e.g.
+ * whether screen sharing was enabled or disabled).
+ *
+ * @param {string} buttonName - The identifier of the toolbar button which was
+ * clicked/pressed.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createToolbarEvent = function(buttonName, attributes = {}) {
+    return {
+        action: 'clicked',
+        actionSubject: 'toolbar.button',
+        actionSubjectId: buttonName,
+        attributes,
+        source: 'toolbar.button',
+        type: TYPE_UI
+    };
+};
 
 /**
  * Creates an event which indicates the "start audio only" configuration.

@@ -6,8 +6,8 @@ import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 
 import {
-    TOOLBAR_FILMSTRIP_TOGGLED,
-    sendAnalyticsEvent
+    createFilmstripToggledEvent,
+    sendAnalytics as sendAnalyticsEvent
 } from '../../../react/features/analytics';
 
 const Filmstrip = {
@@ -153,7 +153,11 @@ const Filmstrip = {
             return;
         }
         if (sendAnalytics) {
-            sendAnalyticsEvent(TOOLBAR_FILMSTRIP_TOGGLED);
+            // TODO: This should be converted to an event which indicates
+            // why/how the filmstrip was toggled (i.e. was it a button click,
+            // keyboard shortcut, API call).
+            sendAnalyticsEvent(createFilmstripToggledEvent(
+                { enable: !this.isFilmstripVisible() }));
         }
         this.filmstrip.toggleClass('hidden');
 
