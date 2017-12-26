@@ -138,18 +138,6 @@ export const REMOTE_VIDEO_MENU_REMOTE_CONTROL_
     = 'remotevideomenu.remotecontrol';
 
 /**
- * Replacing the currently used track of specified type with a new track of the
- * same type. The event is fired when changing devices.
- *
- * Known full event names:
- * replacetrack.audio
- * replacetrack.video
- *
- * @type {String}
- */
-export const REPLACE_TRACK_ = 'replacetrack';
-
-/**
  * The local participant began using a different audio input device (mic).
  *
  * @type {String}

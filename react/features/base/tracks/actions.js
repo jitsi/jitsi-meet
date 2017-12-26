@@ -1,6 +1,6 @@
 import {
-    REPLACE_TRACK_,
-    sendAnalyticsEvent
+    createTrackMutedEvent,
+    sendAnalytics
 } from '../../analytics';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import {
@@ -220,9 +220,10 @@ export function replaceLocalTrack(oldTrack, newTrack, conference) {
                                     : setAudioMuted;
                             const isMuted = newTrack.isMuted();
 
-                            sendAnalyticsEvent(`${REPLACE_TRACK_}.${
-                                newTrack.getType()}.${
-                                isMuted ? 'muted' : 'unmuted'}`);
+                            sendAnalytics(createTrackMutedEvent(
+                                newTrack.getType(),
+                                'track.replaced',
+                                isMuted));
                             logger.log(`Replace ${newTrack.getType()} track - ${
                                 isMuted ? 'muted' : 'unmuted'}`);
 
