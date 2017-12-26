@@ -153,10 +153,13 @@
 
         @include transform(translateX(-50%));
 
+        > a:first-child.button,
         > div:first-child .button {
             border-bottom-left-radius: 3px;
             border-top-left-radius: 3px;
         }
+
+        > a:last-child.button,
         > div:last-child .button {
             border-bottom-right-radius: 3px;
             border-top-right-radius: 3px;
