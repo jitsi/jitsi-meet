@@ -1,5 +1,7 @@
 /**
  * The constant for the event type 'track'.
+ * TODO: keep this constants in a single place. Can we import them from
+ * lib-jitsi-meet's AnalyticsEvents somehow?
  * @type {string}
  */
 const TYPE_TRACK = 'track';
@@ -34,13 +36,6 @@ export const API_TOGGLE_AUDIO = 'api.toggle.audio';
  * @type {String}
  */
 export const API_TOGGLE_VIDEO = 'api.toggle.video';
-
-/**
- * Audio only mode has been turned off.
- *
- * @type {String}
- */
-export const AUDIO_ONLY_DISABLED = 'audioonly.disabled';
 
 /**
  * The login button in the profile pane was clicked.
@@ -641,13 +636,26 @@ export const TOOLBAR_VIDEO_QUALITY_LOW = 'toolbar.videoquality.low';
 export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
 
 /**
+ * Creates an event which indicates that the audio-only mode has been turned
+ * off.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createAudioOnlyDisableEvent = function() {
+    return {
+        name: 'audio.only.disabled'
+    };
+};
+
+/**
  * Creates a "pinned" or "unpinned" event.
  *
  * @param {string} action - The action ("pinned" or "unpinned").
  * @param {string} participantId - The ID of the participant which was pinned.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalyticsEvent.
+ *      sendAnalytics.
  */
 export const createPinnedEvent
         = function(action, participantId, attributes) {

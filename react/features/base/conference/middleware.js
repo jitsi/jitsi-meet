@@ -3,9 +3,9 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import {
-    AUDIO_ONLY_DISABLED,
     ACTION_PINNED,
     ACTION_UNPINNED,
+    createAudioOnlyDisableEvent,
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
@@ -130,7 +130,7 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
 
     if (getState()['features/base/conference'].audioOnly) {
-        sendAnalytics(AUDIO_ONLY_DISABLED);
+        sendAnalytics(createAudioOnlyDisableEvent());
         logger.log('Audio only disabled');
         dispatch(setAudioOnly(false));
     }
