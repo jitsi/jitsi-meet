@@ -428,15 +428,6 @@ export const START_MUTED_SERVER_AUDIO_ = 'startmuted.server.audio';
 export const START_MUTED_SERVER_VIDEO_ = 'startmuted.server.video';
 
 /**
- * How long it took to switch between simulcast streams.
- *
- * Properties: value
- *
- * @type {String}
- */
-export const STREAM_SWITCH_DELAY = 'stream.switch.delay';
-
-/**
  * Automatically changing the mute state of a media track in order to match
  * the current stored state in redux.
  *
@@ -668,3 +659,18 @@ export const createPinnedEvent
                 attributes
             };
         };
+
+/**
+ * Creates an event which indicates the delay for switching between simulcast
+ * streams.
+ *
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createStreamSwitchDelayEvent = function(attributes) {
+    return {
+        name: 'stream.switch.delay',
+        attributes
+    };
+};

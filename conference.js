@@ -26,8 +26,9 @@ import {
     SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
     SETTINGS_CHANGE_DEVICE_AUDIO_IN,
     SETTINGS_CHANGE_DEVICE_VIDEO,
-    STREAM_SWITCH_DELAY,
+    createStreamSwitchDelayEvent,
     initAnalytics,
+    sendAnalytics,
     sendAnalyticsEvent
 } from './react/features/analytics';
 
@@ -2162,12 +2163,12 @@ export default {
 
                 room.sendApplicationLog(JSON.stringify(logObject));
 
-                // We only care about the delay between simulcast streams.
-                // Longer delays will be caused by something else and will just
-                // poison the data.
-                if (delay < 2000) {
-                    sendAnalyticsEvent(STREAM_SWITCH_DELAY, { value: delay });
-                }
+                sendAnalytics(createStreamSwitchDelayEvent(
+                    {
+                        oldResolution,
+                        newResolution,
+                        delay
+                    }));
             });
 
         /* eslint-enable max-params */
