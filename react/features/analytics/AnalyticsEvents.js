@@ -71,22 +71,6 @@ export const CALLKIT_AUDIO_ = 'callkit.audio';
 export const CALLKIT_BACKGROUND_VIDEO_MUTED = 'callkit.background.video.muted';
 
 /**
- * The list of known input/output devices was changed and new audio input has
- * been used and should start as muted.
- *
- * @type {String}
- */
-export const DEVICE_LIST_CHANGED_AUDIO_MUTED = 'deviceListChanged.audio.muted';
-
-/**
- * The list of known devices was changed and new video input has been used
- * and should start as muted.
- *
- * @type {String}
- */
-export const DEVICE_LIST_CHANGED_VIDEO_MUTED = 'deviceListChanged.video.muted';
-
-/**
  * The feedback dialog is displayed.
  *
  * @type {String}
@@ -674,12 +658,16 @@ export const createStreamSwitchDelayEvent = function(attributes) {
  * "initially muted" configuration.
  *
  * @param {string} mediaType - The track's media type ('audio' or 'video').
+ * @param {string} reason - The reason the track was muted (e.g. it was
+ * triggered by the "initial mute" option, or a previously muted track was
+ * replaced (e.g. when a new device was used)).
  * @returns {Object} The event in a format suitable for sending via
  *      sendAnalytics.
  */
-export const createTrackInitiallyMutedEvent = function(mediaType) {
+export const createTrackMutedEvent = function(mediaType, reason) {
     return {
+        mediaType,
         name: 'track.initially.muted',
-        mediaType
+        reason
     };
 };

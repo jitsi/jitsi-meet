@@ -16,15 +16,13 @@ import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
-    DEVICE_LIST_CHANGED_AUDIO_MUTED,
-    DEVICE_LIST_CHANGED_VIDEO_MUTED,
     SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
     SETTINGS_CHANGE_DEVICE_AUDIO_IN,
     SETTINGS_CHANGE_DEVICE_VIDEO,
     createScreenSharingEvent,
     createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
-    createTrackInitiallyMutedEvent,
+    createTrackMutedEvent,
     initAnalytics,
     sendAnalytics,
     sendAnalyticsEvent
@@ -745,7 +743,7 @@ export default {
                         const mediaType = track.getType();
 
                         sendAnalytics(
-                            createTrackInitiallyMutedEvent(mediaType));
+                            createTrackMutedEvent(mediaType, 'initial mute'));
                         logger.log(`${mediaType} mute: initially muted.`);
                         track.mute();
                     }
@@ -2527,7 +2525,9 @@ export default {
                     // If audio was muted before, or we unplugged current device
                     // and selected new one, then mute new audio track.
                     if (audioWasMuted) {
-                        sendAnalyticsEvent(DEVICE_LIST_CHANGED_AUDIO_MUTED);
+                        sendAnalytics(createTrackMutedEvent(
+                            'audio',
+                            'device list changed'));
                         logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
                     }
@@ -2535,7 +2535,9 @@ export default {
                     // If video was muted before, or we unplugged current device
                     // and selected new one, then mute new video track.
                     if (!this.isSharingScreen && videoWasMuted) {
-                        sendAnalyticsEvent(DEVICE_LIST_CHANGED_VIDEO_MUTED);
+                        sendAnalytics(createTrackMutedEvent(
+                            'video',
+                            'device list changed'));
                         logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
                     }
