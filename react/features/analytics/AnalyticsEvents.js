@@ -266,53 +266,6 @@ export const SHORTCUT_VIDEO_MUTE_TOGGLED = 'shortcut.videomute.toggled';
  */
 export const START_AUDIO_ONLY_ = 'startaudioonly';
 
-/**
- * The config specifies the local participant should start with audio mute
- * enabled or disabled.
- *
- * Known full event names:
- * startmuted.client.audio.muted
- * startmuted.client.audio.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_CLIENT_AUDIO_ = 'startmuted.client.audio';
-
-/**
- * The config specifies the local participant should start with video mute
- * enabled or disabled.
- *
- * Known full event names:
- * startmuted.client.video.muted
- * startmuted.client.video.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_CLIENT_VIDEO_ = 'startmuted.client.video';
-
-/**
- * The local participant has received an event from the server stating to
- * start audio muted or unmuted.
- *
- * Known full event names:
- * startmuted.server.audio.muted
- * startmuted.server.audio.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_SERVER_AUDIO_ = 'startmuted.server.audio';
-
-/**
- * The local participant has received an event from the server stating to
- * start video muted or unmuted.
- *
- * Known full event names:
- * startmuted.server.video.muted
- * startmuted.server.video.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_SERVER_VIDEO_ = 'startmuted.server.video';
 
 /**
  * Automatically changing the mute state of a media track in order to match
@@ -597,6 +550,31 @@ export const createSharedVideoEvent = function(action, attributes = {}) {
         actionSubject: 'shared.video'
     };
 };
+
+/**
+ * Creates an event which indicates the "start muted" configuration.
+ *
+ * @param {string} source - The source of the configuration, 'local' or
+ * 'remote' depending on whether it comes from the static configuration (i.e.
+ * config.js) or comes dynamically from Jicofo.
+ * @param {boolean} audioMute - Whether the configuration requests that audio
+ * is muted.
+ * @param {boolean} videoMute - Whether the configuration requests that video
+ * is muted.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createStartMutedConfigurationEvent
+    = function(source, audioMute, videoMute) {
+        return {
+            name: 'start.muted.configuration',
+            attributes: {
+                source,
+                audioMute,
+                videoMute
+            }
+        };
+    };
 
 /**
  * Creates an event which indicates the delay for switching between simulcast

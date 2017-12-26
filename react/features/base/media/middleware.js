@@ -2,9 +2,9 @@
 
 import {
     START_AUDIO_ONLY_,
-    START_MUTED_CLIENT_AUDIO_,
-    START_MUTED_CLIENT_VIDEO_,
     SYNC_TRACK_STATE_,
+    createStartMutedConfigurationEvent,
+    sendAnalytics,
     sendAnalyticsEvent
 } from '../../analytics';
 import { SET_ROOM, setAudioOnly } from '../conference';
@@ -90,12 +90,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     audioMuted = Boolean(audioMuted);
     videoMuted = Boolean(videoMuted);
 
-    // Apply the config.
-
-    sendAnalyticsEvent(
-        `${START_MUTED_CLIENT_AUDIO_}.${audioMuted ? 'muted' : 'unmuted'}`);
-    sendAnalyticsEvent(
-        `${START_MUTED_CLIENT_VIDEO_}.${videoMuted ? 'muted' : 'unmuted'}`);
+    sendAnalytics(createStartMutedConfigurationEvent(
+        'local', audioMuted, videoMuted));
 
     logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${
         videoMuted ? 'video' : ''}`);
