@@ -1,11 +1,10 @@
 /* @flow */
 
 import {
-    SYNC_TRACK_STATE_,
     createStartAudioOnlyEvent,
     createStartMutedConfigurationEvent,
-    sendAnalytics,
-    sendAnalyticsEvent
+    createSyncTrackStateEvent,
+    sendAnalytics
 } from '../../analytics';
 import { SET_ROOM, setAudioOnly } from '../conference';
 import { parseURLParams } from '../config';
@@ -150,9 +149,7 @@ function _syncTrackMutedState({ getState }, track) {
     // not yet in redux state and JitsiTrackEvents.TRACK_MUTE_CHANGED may be
     // fired before track gets to state.
     if (track.muted !== muted) {
-        sendAnalyticsEvent(
-            `${SYNC_TRACK_STATE_}.${track.mediaType}.${
-                muted ? 'muted' : 'unmuted'}`);
+        sendAnalytics(createSyncTrackStateEvent(track.mediaType, muted));
         logger.log(`Sync ${track.mediaType} track muted state to ${
             muted ? 'muted' : 'unmuted'}`);
         track.muted = muted;

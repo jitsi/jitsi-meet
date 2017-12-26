@@ -254,21 +254,6 @@ export const SHORTCUT_TALK_RELEASED = 'shortcut.talk.released';
  */
 export const SHORTCUT_VIDEO_MUTE_TOGGLED = 'shortcut.videomute.toggled';
 
-
-/**
- * Automatically changing the mute state of a media track in order to match
- * the current stored state in redux.
- *
- * Known full event names:
- * synctrackstate.audio.muted
- * synctrackstate.audio.unmuted
- * synctrackstate.video.muted
- * synctrackstate.video.unmuted
- *
- * @type {String}
- */
-export const SYNC_TRACK_STATE_ = 'synctrackstate';
-
 /**
  * Clicked the toolbar button to enter audio mute state.
  *
@@ -592,6 +577,26 @@ export const createStreamSwitchDelayEvent = function(attributes) {
     return {
         name: 'stream.switch.delay',
         attributes
+    };
+};
+
+/**
+ * Automatically changing the mute state of a media track in order to match
+ * the current stored state in redux.
+ *
+ * @param {string} mediaType - The track's media type ('audio' or 'video').
+ * @param {boolean} muted - Whether the track is being muted or unmuted as
+ * as result of the sync operation.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createSyncTrackStateEvent = function(mediaType, muted) {
+    return {
+        name: 'sync.track.state',
+        attributes: {
+            mediaType,
+            muted
+        }
     };
 };
 
