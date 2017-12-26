@@ -52,25 +52,6 @@ export const AUTHENTICATE_LOGIN_CLICKED = 'authenticate.login.clicked';
 export const AUTHENTICATE_LOGOUT_CLICKED = 'authenticate.logout.clicked';
 
 /**
- * Performing a mute or unmute event based on a callkit setMuted event.
- *
- * Known full event names:
- * callkit.audio.muted
- * callkit.audio.unmuted
- *
- * @type {String}
- */
-export const CALLKIT_AUDIO_ = 'callkit.audio';
-
-/**
- * Toggling remote and local video display when entering or exiting backgrounded
- * app state.
- *
- * @type {String}
- */
-export const CALLKIT_BACKGROUND_VIDEO_MUTED = 'callkit.background.video.muted';
-
-/**
  * The feedback dialog is displayed.
  *
  * @type {String}
@@ -608,13 +589,17 @@ export const createSyncTrackStateEvent = function(mediaType, muted) {
  * @param {string} reason - The reason the track was muted (e.g. it was
  * triggered by the "initial mute" option, or a previously muted track was
  * replaced (e.g. when a new device was used)).
+ * @param {boolean} muted - Whether the track was muted or unmuted.
  * @returns {Object} The event in a format suitable for sending via
  *      sendAnalytics.
  */
-export const createTrackMutedEvent = function(mediaType, reason) {
+export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
     return {
-        mediaType,
-        name: 'track.initially.muted',
-        reason
+        name: 'track.muted',
+        attributes: {
+            mediaType,
+            muted,
+            reason
+        }
     };
 };
