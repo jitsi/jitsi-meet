@@ -2,11 +2,11 @@
 
 import { toggleDialog } from '../../react/features/base/dialog';
 import {
-    SHORTCUT_HELP,
-    SHORTCUT_SPEAKER_STATS_CLICKED,
-    SHORTCUT_TALK_CLICKED,
-    SHORTCUT_TALK_RELEASED,
-    sendAnalyticsEvent
+    ACTION_SHORTCUT_PRESSED as PRESSED,
+    ACTION_SHORTCUT_RELEASED as RELEASED,
+    ACTION_SHORTCUT_TRIGGERED as TRIGGERED,
+    createShortcutEvent,
+    sendAnalytics
 } from '../../react/features/analytics';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
@@ -72,7 +72,9 @@ const KeyboardShortcut = {
                 || $(':focus').is('textarea'))) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
-                        sendAnalyticsEvent(SHORTCUT_TALK_RELEASED);
+                        sendAnalytics(createShortcutEvent(
+                            RELEASED,
+                            'push.to.talk'));
                         logger.log('Talk shortcut released');
                         APP.conference.muteAudio(false);
                     }
@@ -175,7 +177,7 @@ const KeyboardShortcut = {
      */
     _initGlobalShortcuts() {
         this.registerShortcut('?', null, () => {
-            sendAnalyticsEvent(SHORTCUT_HELP);
+            sendAnalytics(createShortcutEvent(TRIGGERED, 'help'));
             APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
                 shortcutDescriptions: _shortcutsHelp
             }));
@@ -184,7 +186,7 @@ const KeyboardShortcut = {
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            sendAnalyticsEvent(SHORTCUT_TALK_CLICKED);
+            sendAnalytics(createShortcutEvent(PRESSED, 'talk'));
             logger.log('Talk shortcut pressed');
             APP.conference.muteAudio(true);
         });
@@ -192,7 +194,7 @@ const KeyboardShortcut = {
 
         if (!interfaceConfig.filmStripOnly) {
             this.registerShortcut('T', null, () => {
-                sendAnalyticsEvent(SHORTCUT_SPEAKER_STATS_CLICKED);
+                sendAnalytics(createShortcutEvent(TRIGGERED, 'speaker.stats'));
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
                     conference: APP.conference
                 }));

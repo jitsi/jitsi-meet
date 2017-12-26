@@ -7,6 +7,14 @@
 const TYPE_TRACK = 'track';
 
 /**
+ * The constant for the event type 'UI' (User Interaction).
+ * TODO: keep this constants in a single place. Can we import them from
+ * lib-jitsi-meet's AnalyticsEvents somehow?
+ * @type {string}
+ */
+const TYPE_UI = 'ui';
+
+/**
  * The identifier for the "pinned" action. The local participant has pinned a
  * participant to remain on large video.
  *
@@ -22,6 +30,31 @@ export const ACTION_PINNED = 'pinned';
  * @type {String}
  */
 export const ACTION_UNPINNED = 'unpinned';
+
+/**
+ * The identifier for the "pressed" action for shortcut events. This action
+ * means that a button was pressed (and not yet released).
+ *
+ * @type {String}
+ */
+export const ACTION_SHORTCUT_PRESSED = 'pressed';
+
+/**
+ * The identifier for the "released" action for shortcut events. This action
+ * means that a button which was previously pressed was released.
+ *
+ * @type {String}
+ */
+export const ACTION_SHORTCUT_RELEASED = 'released';
+
+/**
+ * The identifier for the "triggered" action for shortcut events. This action
+ * means that a button was pressed, and we don't care about whether it was
+ * released or will be released in the future.
+ *
+ * @type {String}
+ */
+export const ACTION_SHORTCUT_TRIGGERED = 'triggered';
 
 /**
  * Audio mute toggled was triggered through the jitsi-meet api.
@@ -158,70 +191,6 @@ export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
  * @type {String}
  */
 export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
-
-/**
- * Pressed the keyboard shortcut for toggling audio mute.
- *
- * @type {String}
- */
-export const SHORTCUT_AUDIO_MUTE_TOGGLED = 'shortcut.audiomute.toggled';
-
-/**
- * Pressed the keyboard shortcut for toggling chat panel display.
- *
- * @type {String}
- */
-export const SHORTCUT_CHAT_TOGGLED = 'shortcut.chat.toggled';
-
-/**
- * Toggled the display of the keyboard shortcuts help dialog.
- *
- * @type {String}
- */
-export const SHORTCUT_HELP = 'shortcut.shortcut.help';
-
-/**
- * Pressed the keyboard shortcut for togglgin raise hand status.
- *
- * @type {String}
- */
-export const SHORTCUT_RAISE_HAND_CLICKED = 'shortcut.raisehand.clicked';
-
-/**
- * Pressed the keyboard shortcut for toggling screenshare.
- *
- * @type {String}
- */
-export const SHORTCUT_SCREEN_TOGGLED = 'shortcut.screen.toggled';
-
-/**
- * Toggled the display of the speaker stats dialog.
- *
- * @type {String}
- */
-export const SHORTCUT_SPEAKER_STATS_CLICKED = 'shortcut.speakerStats.clicked';
-
-/**
- * Started pressing the key that undoes audio mute while the key is pressed.
- *
- * @type {String}
- */
-export const SHORTCUT_TALK_CLICKED = 'shortcut.talk.clicked';
-
-/**
- * Released the key used to talk while audio muted, returning to the audio muted
- * state.
- *
- * @type {String}
- */
-export const SHORTCUT_TALK_RELEASED = 'shortcut.talk.released';
-
-/**
- * Toggling video mute state using a keyboard shortcut.
- *
- * @type {String}
- */
-export const SHORTCUT_VIDEO_MUTE_TOGGLED = 'shortcut.videomute.toggled';
 
 /**
  * Clicked the toolbar button to enter audio mute state.
@@ -492,6 +461,33 @@ export const createSharedVideoEvent = function(action, attributes = {}) {
         actionSubject: 'shared.video'
     };
 };
+
+/**
+ * Creates an event associated with a shortcut being pressed, released or
+ * triggered. By convention, where appropriate an attribute named 'enable'
+ * should be used to indicate the action which resulted by the shortcut being
+ * pressed (e.g. whether screen sharing was enabled or disabled).
+ *
+ * @param {string} action - The action that the event represents (one
+ * of ACTION_SHORTCUT_PRESSED, ACTION_SHORTCUT_RELEASED
+ * or ACTION_SHORTCUT_TRIGGERED).
+ * @param {string} shortcut - The identifier of the shortcut which produced
+ * an action.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createShortcutEvent
+    = function(action, shortcut, attributes = {}) {
+        return {
+            action,
+            actionSubject: 'keyboard.shortcut',
+            actionSubjectId: shortcut,
+            attributes,
+            source: 'keyboard.shortcut',
+            type: TYPE_UI
+        };
+    };
 
 /**
  * Creates an event which indicates the "start audio only" configuration.

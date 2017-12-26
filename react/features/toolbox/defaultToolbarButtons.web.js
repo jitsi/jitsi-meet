@@ -3,11 +3,7 @@
 import React from 'react';
 
 import {
-    SHORTCUT_AUDIO_MUTE_TOGGLED,
-    SHORTCUT_CHAT_TOGGLED,
-    SHORTCUT_RAISE_HAND_CLICKED,
-    SHORTCUT_SCREEN_TOGGLED,
-    SHORTCUT_VIDEO_MUTE_TOGGLED,
+    ACTION_SHORTCUT_TRIGGERED as TRIGGERED,
     TOOLBAR_AUDIO_MUTED,
     TOOLBAR_AUDIO_UNMUTED,
     TOOLBAR_CHAT_TOGGLED,
@@ -25,6 +21,8 @@ import {
     TOOLBAR_SIP_DIALPAD_CLICKED,
     TOOLBAR_VIDEO_DISABLED,
     TOOLBAR_VIDEO_ENABLED,
+    createShortcutEvent,
+    sendAnalytics,
     sendAnalyticsEvent
 } from '../analytics';
 import { ParticipantCounter } from '../contact-list';
@@ -88,7 +86,13 @@ export default function getDefaultButtons() {
                     return;
                 }
 
-                sendAnalyticsEvent(SHORTCUT_VIDEO_MUTE_TOGGLED);
+                // The 'enable' attribute in the event is set to true if the
+                // shortcut triggered a mute action, and set to false if it
+                // triggered an unmute action.
+                sendAnalytics(createShortcutEvent(
+                    TRIGGERED,
+                    'video.mute',
+                    { enable: !APP.conference.isLocalVideoMuted() }));
                 APP.conference.toggleVideoMuted();
             },
             shortcutDescription: 'keyboardShortcuts.videoMute',
@@ -111,7 +115,9 @@ export default function getDefaultButtons() {
             shortcut: 'C',
             shortcutAttr: 'toggleChatPopover',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_CHAT_TOGGLED);
+                // TODO: include an 'enable' attribute which specifies whether
+                // the chat panel was opened or closed.
+                sendAnalytics(createShortcutEvent(TRIGGERED, 'chat'));
                 APP.UI.toggleChat();
             },
             shortcutDescription: 'keyboardShortcuts.toggleChat',
@@ -160,7 +166,13 @@ export default function getDefaultButtons() {
             shortcut: 'D',
             shortcutAttr: 'toggleDesktopSharingPopover',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_SCREEN_TOGGLED);
+                // The 'enable' attribute is set to true if pressing the
+                // shortcut resulted in screen sharing being enabled, and false
+                // if it resulted in screen sharing being disabled.
+                sendAnalytics(createShortcutEvent(
+                    TRIGGERED,
+                    'screen.sharing',
+                    { enable: !APP.conference.isSharingScreen }));
 
                 // eslint-disable-next-line no-empty-function
                 APP.conference.toggleScreenSharing().catch(() => {});
@@ -236,7 +248,10 @@ export default function getDefaultButtons() {
             shortcutAttr: 'toggleFullscreenPopover',
             shortcutDescription: 'keyboardShortcuts.fullScreen',
             shortcutFunc() {
-                sendAnalyticsEvent('shortcut.fullscreen.toggled');
+                // TODO: include an 'enable' attribute which specifies whether
+                // pressing the shortcut resulted in fullscreen being enabled
+                // or disabled.
+                sendAnalytics(createShortcutEvent(TRIGGERED, 'fullscreen'));
                 APP.UI.toggleFullScreen();
             },
             tooltipKey: 'toolbar.fullscreen'
@@ -328,7 +343,13 @@ export default function getDefaultButtons() {
             shortcut: 'M',
             shortcutAttr: 'mutePopover',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_AUDIO_MUTE_TOGGLED);
+                // The 'enable' attribute in the event is set to true if the
+                // shortcut triggered a mute action, and set to false if it
+                // triggered an unmute action.
+                sendAnalytics(createShortcutEvent(
+                    TRIGGERED,
+                    'audio.mute',
+                    { enable: !APP.conference.isLocalAudioMuted() }));
                 APP.conference.toggleAudioMuted();
             },
             shortcutDescription: 'keyboardShortcuts.mute',
@@ -358,7 +379,13 @@ export default function getDefaultButtons() {
             shortcutAttr: 'raiseHandPopover',
             shortcutDescription: 'keyboardShortcuts.raiseHand',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_RAISE_HAND_CLICKED);
+                // The 'enable' attribute is set to true if the pressing of the
+                // shortcut resulted in the hand being raised, and to false
+                // if it resulted in the hand being 'lowered'.
+                sendAnalytics(createShortcutEvent(
+                    TRIGGERED,
+                    'raise.hand',
+                    { enable: !APP.conference.isHandRaised }));
                 APP.conference.maybeToggleRaisedHand();
             },
             tooltipKey: 'toolbar.raiseHand'
