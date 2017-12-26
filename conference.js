@@ -16,13 +16,12 @@ import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
-    CONFERENCE_SHARING_DESKTOP_START,
-    CONFERENCE_SHARING_DESKTOP_STOP,
     DEVICE_LIST_CHANGED_AUDIO_MUTED,
     DEVICE_LIST_CHANGED_VIDEO_MUTED,
     SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
     SETTINGS_CHANGE_DEVICE_AUDIO_IN,
     SETTINGS_CHANGE_DEVICE_VIDEO,
+    createScreenSharingEvent,
     createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
     createTrackInitiallyMutedEvent,
@@ -1452,8 +1451,9 @@ export default {
             promise = createLocalTracksF({ devices: [ 'video' ] })
                 .then(([ stream ]) => this.useVideoStream(stream))
                 .then(() => {
-                    sendAnalyticsEvent(CONFERENCE_SHARING_DESKTOP_STOP);
-                    logger.log('switched back to local video');
+                    sendAnalytics(createScreenSharingEvent('stopped'));
+                    logger.log('Screen sharing stopped, switching to video.');
+
                     if (!this.localVideo && wasVideoMuted) {
                         return Promise.reject('No local video to be muted!');
                     } else if (wasVideoMuted && this.localVideo) {
@@ -1608,7 +1608,7 @@ export default {
     },
 
     /**
-     * Tries to switch to the screenshairng mode by disposing camera stream and
+     * Tries to switch to the screensharing mode by disposing camera stream and
      * replacing it with a desktop one.
      *
      * @param {Object} [options] - Screen sharing options that will be passed to
@@ -1631,8 +1631,8 @@ export default {
             .then(stream => this.useVideoStream(stream))
             .then(() => {
                 this.videoSwitchInProgress = false;
-                sendAnalyticsEvent(CONFERENCE_SHARING_DESKTOP_START);
-                logger.log('sharing local desktop');
+                sendAnalytics(createScreenSharingEvent('started'));
+                logger.log('Screen sharing started');
             })
             .catch(error => {
                 this.videoSwitchInProgress = false;

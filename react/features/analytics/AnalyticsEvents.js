@@ -71,22 +71,6 @@ export const CALLKIT_AUDIO_ = 'callkit.audio';
 export const CALLKIT_BACKGROUND_VIDEO_MUTED = 'callkit.background.video.muted';
 
 /**
- * The local participant has started desktop sharing.
- *
- * @type {String}
- */
-export const CONFERENCE_SHARING_DESKTOP_START
-    = 'conference.sharingDesktop.start';
-
-/**
- * The local participant was desktop sharing but has stopped.
- *
- * @type {String}
- */
-export const CONFERENCE_SHARING_DESKTOP_STOP
-    = 'conference.sharingDesktop.stop';
-
-/**
  * The list of known input/output devices was changed and new audio input has
  * been used and should start as muted.
  *
@@ -634,6 +618,21 @@ export const createPinnedEvent
                 attributes
             };
         };
+
+/**
+ * Creates an event indicating that an action related to screen sharing
+ * occurred (e.g. it was started or stopped).
+ *
+ * @param {Object} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createScreenSharingEvent = function(action) {
+    return {
+        action,
+        actionSubject: 'screen.sharing'
+    };
+};
 
 /**
  * The local participant failed to send a "selected endpoint" message to the
