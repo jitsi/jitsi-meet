@@ -254,18 +254,6 @@ export const SHORTCUT_TALK_RELEASED = 'shortcut.talk.released';
  */
 export const SHORTCUT_VIDEO_MUTE_TOGGLED = 'shortcut.videomute.toggled';
 
-/**
- * The config specifies the local participant should start with audio only mode
- * enabled or disabled.
- *
- * Known full event names:
- * startaudioonly.enabled
- * startaudioonly.disabled
- *
- * @type {String}
- */
-export const START_AUDIO_ONLY_ = 'startaudioonly';
-
 
 /**
  * Automatically changing the mute state of a media track in order to match
@@ -548,6 +536,22 @@ export const createSharedVideoEvent = function(action, attributes = {}) {
         action,
         attributes,
         actionSubject: 'shared.video'
+    };
+};
+
+/**
+ * Creates an event which indicates the "start audio only" configuration.
+ *
+ * @param {boolean} audioOnly - Whether "start audio only" is enabled or not.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createStartAudioOnlyEvent = function(audioOnly) {
+    return {
+        name: 'start.audio.only',
+        attributes: {
+            'enabled': audioOnly
+        }
     };
 };
 

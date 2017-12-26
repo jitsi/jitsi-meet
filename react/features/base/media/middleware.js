@@ -1,8 +1,8 @@
 /* @flow */
 
 import {
-    START_AUDIO_ONLY_,
     SYNC_TRACK_STATE_,
+    createStartAudioOnlyEvent,
     createStartMutedConfigurationEvent,
     sendAnalytics,
     sendAnalyticsEvent
@@ -124,8 +124,7 @@ function _setRoom({ dispatch, getState }, next, action) {
             audioOnly = true;
         }
 
-        sendAnalyticsEvent(
-            `${START_AUDIO_ONLY_}.${audioOnly ? 'enabled' : 'disabled'}`);
+        sendAnalytics(createStartAudioOnlyEvent(audioOnly));
         logger.log(`Start audio only set to ${audioOnly.toString()}`);
         dispatch(setAudioOnly(audioOnly));
     }
