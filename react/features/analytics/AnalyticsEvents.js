@@ -143,6 +143,18 @@ export const createFilmstripToggledEvent = function(attributes) {
 };
 
 /**
+ * Creates an event which indicates that the invite dialog was closed. This is
+ * not a UI, since it is not necessarily the result of a user interaction.
+ *
+ * @returns {{name: string}}
+ */
+export const createInviteDialogClosedEvent = function() {
+    return {
+        name: 'invite.dialog.closed'
+    };
+};
+
+/**
  * Creates a "page reload" event.
  *
  * @param {string} reason - The reason for the reload.
@@ -181,6 +193,26 @@ export const createPinnedEvent
                 attributes
             };
         };
+
+/**
+ * Creates an event which indicates that a button in the profile pane was
+ * clicked.
+ *
+ * @param {string} buttonName - The name of the button.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createProfilePaneButtonEvent
+    = function(buttonName, attributes = {}) {
+        return {
+            action: 'clicked',
+            actionSubject: buttonName,
+            attributes,
+            source: 'profile.pane',
+            type: TYPE_UI
+        };
+    };
 
 /**
  * Creates an event which indicates that a specific button on one of the
@@ -321,48 +353,6 @@ export const createShortcutEvent
     };
 
 /**
- * Creates an event associated with a toolbar button being clicked/pressed. By
- * convention, where appropriate an attribute named 'enable' should be used to
- * indicate the action which resulted by the shortcut being pressed (e.g.
- * whether screen sharing was enabled or disabled).
- *
- * @param {string} buttonName - The identifier of the toolbar button which was
- * clicked/pressed.
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
- */
-export const createToolbarEvent = function(buttonName, attributes = {}) {
-    return {
-        action: 'clicked',
-        actionSubject: buttonName,
-        attributes,
-        source: 'toolbar.button',
-        type: TYPE_UI
-    };
-};
-
-/**
- * Creates an event which indicates that a button in the profile pane was
- * clicked.
- *
- * @param {string} buttonName - The name of the button.
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
- */
-export const createProfilePaneButtonEvent
-    = function(buttonName, attributes = {}) {
-        return {
-            action: 'clicked',
-            actionSubject: buttonName,
-            attributes,
-            source: 'profile.pane',
-            type: TYPE_UI
-        };
-    };
-
-/**
  * Creates an event which indicates the "start audio only" configuration.
  *
  * @param {boolean} audioOnly - Whether "start audio only" is enabled or not.
@@ -404,18 +394,6 @@ export const createStartMutedConfigurationEvent
     };
 
 /**
- * Creates an event which indicates that the invite dialog was closed. This is
- * not a UI, since it is not necessarily the result of a user interaction.
- *
- * @returns {{name: string}}
- */
-export const createInviteDialogClosedEvent = function() {
-    return {
-        name: 'invite.dialog.closed'
-    };
-};
-
-/**
  * Creates an event which indicates the delay for switching between simulcast
  * streams.
  *
@@ -447,6 +425,28 @@ export const createSyncTrackStateEvent = function(mediaType, muted) {
             mediaType,
             muted
         }
+    };
+};
+
+/**
+ * Creates an event associated with a toolbar button being clicked/pressed. By
+ * convention, where appropriate an attribute named 'enable' should be used to
+ * indicate the action which resulted by the shortcut being pressed (e.g.
+ * whether screen sharing was enabled or disabled).
+ *
+ * @param {string} buttonName - The identifier of the toolbar button which was
+ * clicked/pressed.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createToolbarEvent = function(buttonName, attributes = {}) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        attributes,
+        source: 'toolbar.button',
+        type: TYPE_UI
     };
 };
 
