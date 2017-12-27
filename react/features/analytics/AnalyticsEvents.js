@@ -167,28 +167,6 @@ export const REMOTE_VIDEO_MENU_REMOTE_CONTROL_
     = 'remotevideomenu.remotecontrol';
 
 /**
- * The local participant began using a different audio input device (mic).
- *
- * @type {String}
- */
-export const SETTINGS_CHANGE_DEVICE_AUDIO_IN = 'settings.changeDevice.audioIn';
-
-/**
- * The local participant began using a different audio output device (speaker).
- *
- * @type {String}
- */
-export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
-    = 'settings.changeDevice.audioOut';
-
-/**
- * The local participant began using a different camera.
- *
- * @type {String}
- */
-export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
-
-/**
  * Creates an event which indicates that a certain action was requested through
  * the jitsi-meet API.
  *
@@ -218,6 +196,26 @@ export const createAudioOnlyDisableEvent = function() {
         name: 'audio.only.disabled'
     };
 };
+
+/**
+ * Creates an event which indicates that a device was changed.
+ *
+ * @param {string} mediaType - The media type of the device ('audio' or
+ * 'video').
+ * @param {string} deviceType - The type of the device ('input' or 'output').
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createDeviceChangedEvent = function(mediaType, deviceType) {
+    return {
+        name: 'device.changed',
+        attributes: {
+            deviceType,
+            mediaType
+        }
+    };
+};
+
 
 /**
  * Creates a "filmstrip toggled" event.

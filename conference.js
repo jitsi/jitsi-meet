@@ -16,9 +16,7 @@ import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
-    SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
-    SETTINGS_CHANGE_DEVICE_AUDIO_IN,
-    SETTINGS_CHANGE_DEVICE_VIDEO,
+    createDeviceChangedEvent,
     createScreenSharingEvent,
     createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
@@ -2190,7 +2188,7 @@ export default {
             cameraDeviceId => {
                 const videoWasMuted = this.isLocalVideoMuted();
 
-                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_VIDEO);
+                sendAnalytics(createDeviceChangedEvent('video', 'input'));
                 createLocalTracksF({
                     devices: [ 'video' ],
                     cameraDeviceId,
@@ -2229,7 +2227,7 @@ export default {
             micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
 
-                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_AUDIO_IN);
+                sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
                     cameraDeviceId: null,
@@ -2259,7 +2257,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             audioOutputDeviceId => {
-                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_AUDIO_OUT);
+                sendAnalytics(createDeviceChangedEvent('audio', 'output'));
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => logger.log('changed audio output device'))
                     .catch(err => {
