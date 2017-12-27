@@ -88,15 +88,6 @@ export const AUTHENTICATE_LOGOUT_CLICKED = 'authenticate.logout.clicked';
 export const FEEDBACK_OPEN = 'feedback.open';
 
 /**
- * Page reload overlay has been displayed.
- *
- * Properties: label: reason for reload
- *
- * @type {String}
- */
-export const PAGE_RELOAD = 'page.reload';
-
-/**
  * Recording start was attempted but the local user canceled the request.
  *
  * @type {String}
@@ -123,48 +114,6 @@ export const RECORDING_STARTED = 'recording.started';
  * @type {String}
  */
 export const RECORDING_STOPPED = 'recording.stopped';
-
-/**
- * Clicked on the button to kick a remote participant from the conference.
- *
- * Properties: value: 1, label: participantID
- *
- * @type {String}
- */
-export const REMOTE_VIDEO_MENU_KICK = 'remotevideomenu.kick';
-
-/**
- * Clicked on the button to audio mute a remote participant.
- *
- * Properties: value: 1, label: participantID
- *
- * @type {String}
- */
-export const REMOTE_VIDEO_MENU_MUTE_CLICKED = 'remotevideomenu.mute.clicked';
-
-/**
- * Confirmed the muting of a remote participant.
- *
- * Properties: value: 1, label: participantID
- *
- * @type {String}
- */
-export const REMOTE_VIDEO_MENU_MUTE_CONFIRMED
-    = 'remotevideomenu.mute.confirmed';
-
-/**
- * Clicked on the remote control option in the remote menu.
- *
- * Properties: value: 1, label: participantID
- *
- * Known full event names:
- * remotevideomenu.remotecontrol.stop
- * remotevideomenu.remotecontrol.start
- *
- * @type {String}
- */
-export const REMOTE_VIDEO_MENU_REMOTE_CONTROL_
-    = 'remotevideomenu.remotecontrol';
 
 /**
  * Creates an event which indicates that a certain action was requested through
@@ -272,6 +221,47 @@ export const createPinnedEvent
         };
 
 /**
+ * Creates an event which specifies that the "confirm" button on the remote
+ * mute dialog has been clicked.
+ *
+ * @param {string} participantId - The ID of the participant that was remotely
+ * muted.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createRemoteMuteConfirmedEvent = function(participantId) {
+    return {
+        action: 'clicked',
+        actionSubject: 'remote.mute.dialog.confirm.button',
+        attributes: {
+            participantId
+        },
+        source: 'remote.mute.dialog',
+        type: TYPE_UI
+    };
+};
+
+/**
+ * Creates an event which indicates that one of the buttons in the "remote
+ * video menu" was clicked.
+ *
+ * @param {string} buttonName - The name of the button.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createRemoteVideoMenuButtonEvent
+    = function(buttonName, attributes) {
+        return {
+            action: 'clicked',
+            actionSubject: buttonName,
+            attributes,
+            source: 'remote.video.menu',
+            type: TYPE_UI
+        };
+    };
+
+/**
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. it was started or stopped).
  *
@@ -364,8 +354,7 @@ export const createShortcutEvent
 export const createToolbarEvent = function(buttonName, attributes = {}) {
     return {
         action: 'clicked',
-        actionSubject: 'toolbar.button',
-        actionSubjectId: buttonName,
+        actionSubject: buttonName,
         attributes,
         source: 'toolbar.button',
         type: TYPE_UI
