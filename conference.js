@@ -22,8 +22,7 @@ import {
     createStreamSwitchDelayEvent,
     createTrackMutedEvent,
     initAnalytics,
-    sendAnalytics,
-    sendAnalyticsEvent
+    sendAnalytics
 } from './react/features/analytics';
 
 import EventEmitter from 'events';
@@ -2618,27 +2617,6 @@ export default {
 
             // Update the view
             APP.UI.setLocalRaisedHandStatus(raisedHand);
-        }
-    },
-
-    /**
-     * Log event to callstats and analytics.
-     * @param {string} name the event name
-     * @param {int} value the value (it's int because google analytics supports
-     * only int).
-     * @param {string} label short text which provides more info about the event
-     * which allows to distinguish between few event cases of the same name
-     * NOTE: Should be used after conference.init
-     */
-    logEvent(name, value, label) {
-        sendAnalyticsEvent(name, {
-            value,
-            label
-        });
-        if (room) {
-            room.sendApplicationLog(JSON.stringify({ name,
-                value,
-                label }));
         }
     },
 
