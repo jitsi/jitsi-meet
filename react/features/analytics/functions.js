@@ -9,24 +9,15 @@ import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Sends an analytics event.
+ * Sends an event through the lib-jitsi-meet AnalyticsAdapter interface.
  *
- * @inheritdoc
- */
-export function sendAnalyticsEvent(...args: Array<any>) {
-    analytics.sendEvent(...args);
-}
-
-/**
- * TODO.
- *
- * @inheritdoc Now this explains the copious usage of @inheritdoc. That's how
- * you trick the linter to leave you alone!
+ * @param {Object} event - The event to send. It should be formatted as
+ * described in AnalyticsAdapter.js in lib-jitsi-meet.
+ * @returns {void}
  */
 export function sendAnalytics(event: Object) {
     analytics.sendEvent(event);
 }
-
 
 /**
  * Loads the analytics scripts and inits JitsiMeetJS.analytics by setting
