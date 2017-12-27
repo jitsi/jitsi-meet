@@ -66,21 +66,6 @@ export const AUDIO_MUTE = 'audio.mute';
  */
 export const VIDEO_MUTE = 'video.mute';
 
-
-/**
- * Audio mute toggled was triggered through the jitsi-meet api.
- *
- * @type {String}
- */
-export const API_TOGGLE_AUDIO = 'api.toggle.audio';
-
-/**
- * Video mute toggling was triggered through the jitsi-meet api.
- *
- * @type {String}
- */
-export const API_TOGGLE_VIDEO = 'api.toggle.video';
-
 /**
  * The login button in the profile pane was clicked.
  *
@@ -247,6 +232,24 @@ export const TOOLBAR_VIDEO_QUALITY_LOW = 'toolbar.videoquality.low';
  * @type {String}
  */
 export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
+
+/**
+ * Creates an event which indicates that a certain action was requested through
+ * the jitsi-meet API.
+ *
+ * @param {Object} action - The action which was requested through the
+ * jitsi-meet API.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createApiEvent = function(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        source: 'jitsi-meet-api'
+    };
+};
 
 /**
  * Creates an event which indicates that the audio-only mode has been turned

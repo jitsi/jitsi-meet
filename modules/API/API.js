@@ -3,9 +3,8 @@
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import {
-    API_TOGGLE_AUDIO,
-    API_TOGGLE_VIDEO,
-    sendAnalyticsEvent
+    createApiEvent,
+    sendAnalytics
 } from '../../react/features/analytics';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -59,12 +58,12 @@ function initCommands() {
         'display-name':
             APP.conference.changeLocalDisplayName.bind(APP.conference),
         'toggle-audio': () => {
-            sendAnalyticsEvent(API_TOGGLE_AUDIO);
+            sendAnalytics(createApiEvent('toggle-audio'));
             logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
-            sendAnalyticsEvent(API_TOGGLE_VIDEO);
+            sendAnalytics(createApiEvent('toggle-video'));
             logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */);
         },
