@@ -189,51 +189,6 @@ export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
 export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
 
 /**
- * Clicked within a toolbar menu to enable audio only.
- *
- * @type {String}
- */
-export const TOOLBAR_AUDIO_ONLY_ENABLED = 'toolbar.audioonly.enabled';
-
-/**
- * The invite dialog has been dismissed.
- *
- * @type {String}
- */
-export const TOOLBAR_INVITE_CLOSE = 'toolbar.invite.close';
-
-/**
- * Clicked the toolbar button for toggling the display of the profile panel.
- *
- * @type {String}
- */
-export const TOOLBAR_PROFILE_TOGGLED = 'toolbar.profile.toggled';
-
-/**
- * Clicked within a toolbar menu to set max incoming video quality to high
- * definition.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_QUALITY_HIGH = 'toolbar.videoquality.high';
-
-/**
- * Clicked within a toolbar menu to set max incoming video quality to low
- * definition.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_QUALITY_LOW = 'toolbar.videoquality.low';
-
-/**
- * Clicked within a toolbar menu to set max incoming video quality to standard
- * definition.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
-
-/**
  * Creates an event which indicates that a certain action was requested through
  * the jitsi-meet API.
  *
@@ -440,6 +395,18 @@ export const createStartMutedConfigurationEvent
             }
         };
     };
+
+/**
+ * Creates an event which indicates that the invite dialog was closed. This is
+ * not a UI, since it is not necessarily the result of a user interaction.
+ *
+ * @returns {{name: string}}
+ */
+export const createInviteDialogClosedEvent = function() {
+    return {
+        name: 'invite.dialog.closed'
+    };
+};
 
 /**
  * Creates an event which indicates the delay for switching between simulcast
