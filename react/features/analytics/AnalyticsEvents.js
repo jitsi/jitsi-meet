@@ -1,6 +1,6 @@
 /**
  * The constant for the event type 'track'.
- * TODO: keep this constants in a single place. Can we import them from
+ * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
  * @type {string}
  */
@@ -8,7 +8,7 @@ const TYPE_TRACK = 'track';
 
 /**
  * The constant for the event type 'UI' (User Interaction).
- * TODO: keep this constants in a single place. Can we import them from
+ * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
  * @type {string}
  */
@@ -67,41 +67,6 @@ export const AUDIO_MUTE = 'audio.mute';
 export const VIDEO_MUTE = 'video.mute';
 
 /**
- * The feedback dialog is displayed.
- *
- * @type {String}
- */
-export const FEEDBACK_OPEN = 'feedback.open';
-
-/**
- * Recording start was attempted but the local user canceled the request.
- *
- * @type {String}
- */
-export const RECORDING_CANCELED = 'recording.canceled';
-
-/**
- * Recording button has been clicked.
- *
- * @type {String}
- */
-export const RECORDING_CLICKED = 'recording.clicked';
-
-/**
- * Recording has been started.
- *
- * @type {String}
- */
-export const RECORDING_STARTED = 'recording.started';
-
-/**
- * Recording has been stopped by clicking the recording button.
- *
- * @type {String}
- */
-export const RECORDING_STOPPED = 'recording.stopped';
-
-/**
  * Creates an event which indicates that a certain action was requested through
  * the jitsi-meet API.
  *
@@ -151,6 +116,17 @@ export const createDeviceChangedEvent = function(mediaType, deviceType) {
     };
 };
 
+/**
+ * Creates an event which specifies that the feedback dialog has been opened.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createFeedbackOpenEvent = function() {
+    return {
+        name: 'feedback.opened'
+    };
+};
 
 /**
  * Creates a "filmstrip toggled" event.
@@ -205,6 +181,25 @@ export const createPinnedEvent
                 attributes
             };
         };
+
+/**
+ * Creates an event which indicates that a specific button on one of the
+ * recording-related dialogs was clicked.
+ *
+ * @param {string} dialogName - The name of the dialog (e.g. 'start' or 'stop').
+ * @param {string} buttonName - The name of the button (e.g. 'confirm' or
+ * 'cancel').
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createRecordingDialogEvent = function(dialogName, buttonName) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        source: `${dialogName}.recording.dialog`,
+        type: TYPE_UI
+    };
+};
 
 /**
  * Creates an event which specifies that the "confirm" button on the remote
