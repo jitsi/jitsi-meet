@@ -67,20 +67,6 @@ export const AUDIO_MUTE = 'audio.mute';
 export const VIDEO_MUTE = 'video.mute';
 
 /**
- * The login button in the profile pane was clicked.
- *
- * @type {String}
- */
-export const AUTHENTICATE_LOGIN_CLICKED = 'authenticate.login.clicked';
-
-/**
- * The logout button in the profile pane was clicked.
- *
- * @type {String}
- */
-export const AUTHENTICATE_LOGOUT_CLICKED = 'authenticate.logout.clicked';
-
-/**
  * The feedback dialog is displayed.
  *
  * @type {String}
@@ -360,6 +346,26 @@ export const createToolbarEvent = function(buttonName, attributes = {}) {
         type: TYPE_UI
     };
 };
+
+/**
+ * Creates an event which indicates that a button in the profile pane was
+ * clicked.
+ *
+ * @param {string} buttonName - The name of the button.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createProfilePaneButtonEvent
+    = function(buttonName, attributes = {}) {
+        return {
+            action: 'clicked',
+            actionSubject: buttonName,
+            attributes,
+            source: 'profile.pane',
+            type: TYPE_UI
+        };
+    };
 
 /**
  * Creates an event which indicates the "start audio only" configuration.
