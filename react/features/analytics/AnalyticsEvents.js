@@ -232,6 +232,25 @@ export const createFilmstripToggledEvent = function(attributes) {
 };
 
 /**
+ * Creates a "page reload" event.
+ *
+ * @param {string} reason - The reason for the reload.
+ * @param {number} timeout - The timeout in seconds after which the page is
+ * scheduled to reload.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+export const createPageReloadScheduledEvent = function(reason, timeout) {
+    return {
+        attributes: {
+            reason,
+            timeout
+        },
+        name: 'page.reload.scheduled'
+    };
+};
+
+/**
  * Creates a "pinned" or "unpinned" event.
  *
  * @param {string} action - The action ("pinned" or "unpinned").
