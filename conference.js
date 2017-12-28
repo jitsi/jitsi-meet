@@ -2146,16 +2146,6 @@ export default {
         APP.UI.addListener(
             UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-                const logObject = {
-                    id: 'resolution_change',
-                    participant: id,
-                    oldValue: oldResolution,
-                    newValue: newResolution,
-                    delay
-                };
-
-                room.sendApplicationLog(JSON.stringify(logObject));
-
                 sendAnalytics(createStreamSwitchDelayEvent(
                     {
                         oldResolution,
