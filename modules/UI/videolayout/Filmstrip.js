@@ -169,6 +169,8 @@ const Filmstrip = {
             return;
         }
 
+        this.filmstrip.toggleClass('hidden');
+
         if (visible) {
             this.showMenuUpIcon();
         } else {
