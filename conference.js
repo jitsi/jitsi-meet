@@ -2148,8 +2148,8 @@ export default {
             (id, oldResolution, newResolution, delay) => {
                 sendAnalytics(createStreamSwitchDelayEvent(
                     {
-                        oldResolution,
-                        newResolution,
+                        'old_resolution': oldResolution,
+                        'new_resolution': newResolution,
                         delay
                     }));
             });

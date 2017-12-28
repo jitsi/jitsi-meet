@@ -133,7 +133,7 @@ class RemoteControlButton extends Component {
                 'remote.control.button',
                 {
                     enable,
-                    participantID
+                    'participant_id': participantID
                 }));
         }
 

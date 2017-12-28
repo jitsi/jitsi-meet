@@ -469,7 +469,7 @@ const Recording = {
         sendAnalytics(createToolbarEvent(
             'recording.button',
             {
-                dialogPresent: Boolean(dialog)
+                'dialog_present': Boolean(dialog)
             }));
 
         if (dialog) {

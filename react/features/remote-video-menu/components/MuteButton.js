@@ -101,11 +101,10 @@ class MuteButton extends Component {
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
 
-        // In the analytics, we use the "participantId" capitalisation.
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'mute.button',
             {
-                participantId: participantID
+                'participant_id': participantID
             }));
 
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));

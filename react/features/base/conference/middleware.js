@@ -201,7 +201,7 @@ function _pinParticipant(store, next, action) {
             actionName,
             local ? 'local' : id,
             {
-                participantCount: conference.getParticipantCount(),
+                'participant_count': conference.getParticipantCount(),
                 local
             }));
 

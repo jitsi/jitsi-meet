@@ -110,8 +110,8 @@ export const createDeviceChangedEvent = function(mediaType, deviceType) {
     return {
         action: 'device.changed',
         attributes: {
-            deviceType,
-            mediaType
+            'device_type': deviceType,
+            'media_type': mediaType
         }
     };
 };
@@ -235,7 +235,7 @@ export const createRemoteMuteConfirmedEvent = function(participantId) {
         action: 'clicked',
         actionSubject: 'remote.mute.dialog.confirm.button',
         attributes: {
-            participantId
+            'participant_id': participantId
         },
         source: 'remote.mute.dialog',
         type: TYPE_UI
@@ -351,7 +351,7 @@ export const createStartAudioOnlyEvent = function(audioOnly) {
     return {
         action: 'start.audio.only',
         attributes: {
-            'enabled': audioOnly
+            enabled: audioOnly
         }
     };
 };
@@ -375,8 +375,8 @@ export const createStartMutedConfigurationEvent
             action: 'start.muted.configuration',
             attributes: {
                 source,
-                audioMute,
-                videoMute
+                'audio_mute': audioMute,
+                'video_mute': videoMute
             }
         };
     };
@@ -410,7 +410,7 @@ export const createSyncTrackStateEvent = function(mediaType, muted) {
     return {
         action: 'sync.track.state',
         attributes: {
-            mediaType,
+            'media_type': mediaType,
             muted
         }
     };
@@ -453,7 +453,7 @@ export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
     return {
         action: 'track.muted',
         attributes: {
-            mediaType,
+            'media_type': mediaType,
             muted,
             reason
         }

@@ -86,11 +86,10 @@ class KickButton extends Component {
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
 
-        // In the analytics, we use the "participantId" capitalisation.
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'kick.button',
             {
-                participantId: participantID
+                'participant_id': participantID
             }));
 
         dispatch(kickParticipant(participantID));
