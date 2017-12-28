@@ -52,11 +52,9 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
     _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
         .then(handlers => {
-            const permanentProperties: Object = {
-                roomName: state['features/base/conference'].room,
-                userAgent: navigator.userAgent
-            };
+            const roomName = state['features/base/conference'].room;
             const { group, server } = state['features/base/jwt'];
+            const permanentProperties = {};
 
             if (server) {
                 permanentProperties.server = server;
@@ -78,7 +76,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
             }
 
             analytics.addPermanentProperties(permanentProperties);
-            analytics.setConferenceName(permanentProperties.roomName);
+            analytics.setConferenceName(roomName);
 
             // Set the handlers last, since this triggers emptying of the cache
             analytics.setAnalyticsHandlers(handlers);
