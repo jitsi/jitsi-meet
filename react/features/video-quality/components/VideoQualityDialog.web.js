@@ -268,10 +268,6 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableAudioOnly() {
-        // Note that this should only execute when the user of the application
-        // interacts with the quality selection UI. If in the future this
-        // executes for another reason (e.g. as a result of a call of the
-        // external API) the code must be refactored to not fire this event.
         sendAnalytics(createEvent('audio.only'));
         logger.log('Video quality: audio only enabled');
         this.props.dispatch(setAudioOnly(true));
@@ -286,10 +282,6 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableHighDefinition() {
-        // Note that this should only execute when the user of the application
-        // interacts with the quality selection UI. If in the future this
-        // executes for another reason (e.g. as a result of a call of the
-        // external API) the code must be refactored to not fire this event.
         sendAnalytics(createEvent('high'));
         logger.log('Video quality: high enabled');
         this.props.dispatch(setReceiveVideoQuality(HIGH));
@@ -303,10 +295,6 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableLowDefinition() {
-        // Note that this should only execute when the user of the application
-        // interacts with the quality selection UI. If in the future this
-        // executes for another reason (e.g. as a result of a call of the
-        // external API) the code must be refactored to not fire this event.
         sendAnalytics(createEvent('low'));
         logger.log('Video quality: low enabled');
         this.props.dispatch(setReceiveVideoQuality(LOW));
@@ -320,10 +308,6 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableStandardDefinition() {
-        // Note that this should only execute when the user of the application
-        // interacts with the quality selection UI. If in the future this
-        // executes for another reason (e.g. as a result of a call of the
-        // external API) the code must be refactored to not fire this event.
         sendAnalytics(createEvent('standard'));
         logger.log('Video quality: standard enabled');
         this.props.dispatch(setReceiveVideoQuality(STANDARD));

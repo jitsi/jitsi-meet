@@ -74,7 +74,7 @@ export const VIDEO_MUTE = 'video.mute';
  * jitsi-meet API.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createApiEvent = function(action, attributes = {}) {
     return {
@@ -89,11 +89,11 @@ export const createApiEvent = function(action, attributes = {}) {
  * off.
  *
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createAudioOnlyDisableEvent = function() {
     return {
-        name: 'audio.only.disabled'
+        action: 'audio.only.disabled'
     };
 };
 
@@ -104,11 +104,11 @@ export const createAudioOnlyDisableEvent = function() {
  * 'video').
  * @param {string} deviceType - The type of the device ('input' or 'output').
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createDeviceChangedEvent = function(mediaType, deviceType) {
     return {
-        name: 'device.changed',
+        action: 'device.changed',
         attributes: {
             deviceType,
             mediaType
@@ -120,37 +120,25 @@ export const createDeviceChangedEvent = function(mediaType, deviceType) {
  * Creates an event which specifies that the feedback dialog has been opened.
  *
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createFeedbackOpenEvent = function() {
     return {
-        name: 'feedback.opened'
-    };
-};
-
-/**
- * Creates a "filmstrip toggled" event.
- *
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
- */
-export const createFilmstripToggledEvent = function(attributes) {
-    return {
-        attributes,
-        name: 'filmstrip.toggled'
+        action: 'feedback.opened'
     };
 };
 
 /**
  * Creates an event which indicates that the invite dialog was closed. This is
- * not a UI, since it is not necessarily the result of a user interaction.
+ * not a TYPE_UI event, since it is not necessarily the result of a user
+ * interaction.
  *
- * @returns {{name: string}}
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
 export const createInviteDialogClosedEvent = function() {
     return {
-        name: 'invite.dialog.closed'
+        action: 'invite.dialog.closed'
     };
 };
 
@@ -161,15 +149,15 @@ export const createInviteDialogClosedEvent = function() {
  * @param {number} timeout - The timeout in seconds after which the page is
  * scheduled to reload.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createPageReloadScheduledEvent = function(reason, timeout) {
     return {
+        action: 'page.reload.scheduled',
         attributes: {
             reason,
             timeout
-        },
-        name: 'page.reload.scheduled'
+        }
     };
 };
 
@@ -180,7 +168,7 @@ export const createPageReloadScheduledEvent = function(reason, timeout) {
  * @param {string} participantId - The ID of the participant which was pinned.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createPinnedEvent
         = function(action, participantId, attributes) {
@@ -195,21 +183,21 @@ export const createPinnedEvent
         };
 
 /**
- * Creates an event which indicates that a button in the profile pane was
+ * Creates an event which indicates that a button in the profile panel was
  * clicked.
  *
  * @param {string} buttonName - The name of the button.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
-export const createProfilePaneButtonEvent
+export const createProfilePanelButtonEvent
     = function(buttonName, attributes = {}) {
         return {
             action: 'clicked',
             actionSubject: buttonName,
             attributes,
-            source: 'profile.pane',
+            source: 'profile.panel',
             type: TYPE_UI
         };
     };
@@ -222,7 +210,7 @@ export const createProfilePaneButtonEvent
  * @param {string} buttonName - The name of the button (e.g. 'confirm' or
  * 'cancel').
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createRecordingDialogEvent = function(dialogName, buttonName) {
     return {
@@ -240,7 +228,7 @@ export const createRecordingDialogEvent = function(dialogName, buttonName) {
  * @param {string} participantId - The ID of the participant that was remotely
  * muted.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createRemoteMuteConfirmedEvent = function(participantId) {
     return {
@@ -261,7 +249,7 @@ export const createRemoteMuteConfirmedEvent = function(participantId) {
  * @param {string} buttonName - The name of the button.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createRemoteVideoMenuButtonEvent
     = function(buttonName, attributes) {
@@ -278,9 +266,9 @@ export const createRemoteVideoMenuButtonEvent
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. it was started or stopped).
  *
- * @param {Object} action - The action which occurred.
+ * @param {string} action - The action which occurred.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createScreenSharingEvent = function(action) {
     return {
@@ -295,11 +283,11 @@ export const createScreenSharingEvent = function(action) {
  *
  * @param {Error} error - The error which caused the failure.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createSelectParticipantFailedEvent = function(error) {
     const event = {
-        name: 'select.participant.failed'
+        action: 'select.participant.failed'
     };
 
     if (error) {
@@ -315,7 +303,7 @@ export const createSelectParticipantFailedEvent = function(error) {
  * @param {string} action - The action that the event represents.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createSharedVideoEvent = function(action, attributes = {}) {
     return {
@@ -331,17 +319,17 @@ export const createSharedVideoEvent = function(action, attributes = {}) {
  * should be used to indicate the action which resulted by the shortcut being
  * pressed (e.g. whether screen sharing was enabled or disabled).
  *
+ * @param {string} shortcut - The identifier of the shortcut which produced
+ * an action.
  * @param {string} action - The action that the event represents (one
  * of ACTION_SHORTCUT_PRESSED, ACTION_SHORTCUT_RELEASED
  * or ACTION_SHORTCUT_TRIGGERED).
- * @param {string} shortcut - The identifier of the shortcut which produced
- * an action.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createShortcutEvent
-    = function(action, shortcut, attributes = {}) {
+    = function(shortcut, action = ACTION_SHORTCUT_TRIGGERED, attributes = {}) {
         return {
             action,
             actionSubject: 'keyboard.shortcut',
@@ -357,11 +345,11 @@ export const createShortcutEvent
  *
  * @param {boolean} audioOnly - Whether "start audio only" is enabled or not.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createStartAudioOnlyEvent = function(audioOnly) {
     return {
-        name: 'start.audio.only',
+        action: 'start.audio.only',
         attributes: {
             'enabled': audioOnly
         }
@@ -379,12 +367,12 @@ export const createStartAudioOnlyEvent = function(audioOnly) {
  * @param {boolean} videoMute - Whether the configuration requests that video
  * is muted.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createStartMutedConfigurationEvent
     = function(source, audioMute, videoMute) {
         return {
-            name: 'start.muted.configuration',
+            action: 'start.muted.configuration',
             attributes: {
                 source,
                 audioMute,
@@ -399,11 +387,11 @@ export const createStartMutedConfigurationEvent
  *
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createStreamSwitchDelayEvent = function(attributes) {
     return {
-        name: 'stream.switch.delay',
+        action: 'stream.switch.delay',
         attributes
     };
 };
@@ -416,11 +404,11 @@ export const createStreamSwitchDelayEvent = function(attributes) {
  * @param {boolean} muted - Whether the track is being muted or unmuted as
  * as result of the sync operation.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createSyncTrackStateEvent = function(mediaType, muted) {
     return {
-        name: 'sync.track.state',
+        action: 'sync.track.state',
         attributes: {
             mediaType,
             muted
@@ -438,7 +426,7 @@ export const createSyncTrackStateEvent = function(mediaType, muted) {
  * clicked/pressed.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createToolbarEvent = function(buttonName, attributes = {}) {
     return {
@@ -451,8 +439,7 @@ export const createToolbarEvent = function(buttonName, attributes = {}) {
 };
 
 /**
- * Creates an event which indicates that a local track was muted because of the
- * "initially muted" configuration.
+ * Creates an event which indicates that a local track was muted.
  *
  * @param {string} mediaType - The track's media type ('audio' or 'video').
  * @param {string} reason - The reason the track was muted (e.g. it was
@@ -460,11 +447,11 @@ export const createToolbarEvent = function(buttonName, attributes = {}) {
  * replaced (e.g. when a new device was used)).
  * @param {boolean} muted - Whether the track was muted or unmuted.
  * @returns {Object} The event in a format suitable for sending via
- *      sendAnalytics.
+ * sendAnalytics.
  */
 export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
     return {
-        name: 'track.muted',
+        action: 'track.muted',
         attributes: {
             mediaType,
             muted,

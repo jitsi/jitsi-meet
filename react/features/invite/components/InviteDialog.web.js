@@ -54,7 +54,7 @@ class InviteDialog extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        sendAnalytics(createInviteDialogClosedEvent);
+        sendAnalytics(createInviteDialogClosedEvent());
     }
 
     /**

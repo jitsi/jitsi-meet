@@ -6,8 +6,9 @@ import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 
 import {
-    createFilmstripToggledEvent,
-    sendAnalytics as sendAnalyticsEvent
+    createShortcutEvent,
+    createToolbarEvent,
+    sendAnalytics
 } from '../../../react/features/analytics';
 
 const Filmstrip = {
@@ -75,8 +76,18 @@ const Filmstrip = {
         // Firing the event instead of executing toggleFilmstrip method because
         // it's important to hide the filmstrip by UI.toggleFilmstrip in order
         // to correctly resize the video area.
-        $('#toggleFilmstripButton').on('click',
-            () => this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP));
+        $('#toggleFilmstripButton').on(
+            'click',
+            () => {
+                // The 'enable' parameter is set to true if the action results
+                // in the filmstrip being hidden.
+                sendAnalytics(createToolbarEvent(
+                    'toggle.filmstrip.button',
+                    {
+                        enable: this.isFilmstripVisible()
+                    }));
+                this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+            });
 
         this._registerToggleFilmstripShortcut();
     },
@@ -94,7 +105,14 @@ const Filmstrip = {
         // Firing the event instead of executing toggleFilmstrip method because
         // it's important to hide the filmstrip by UI.toggleFilmstrip in order
         // to correctly resize the video area.
-        const handler = () => this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+        const handler = () => {
+            sendAnalytics(createShortcutEvent(
+                'toggle.filmstrip',
+                {
+                    enable: this.isFilmstripVisible()
+                }));
+            this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+        };
 
         APP.keyboardshortcut.registerShortcut(
             shortcut,
@@ -135,15 +153,13 @@ const Filmstrip = {
      * of the filmstrip. If not specified, the visibility will be flipped
      * (i.e. toggled); otherwise, the visibility will be set to the specified
      * value.
-     * @param {Boolean} sendAnalytics - True to send an analytics event. The
-     * default value is true.
      *
      * Note:
      * This method shouldn't be executed directly to hide the filmstrip.
      * It's important to hide the filmstrip with UI.toggleFilmstrip in order
      * to correctly resize the video area.
      */
-    toggleFilmstrip(visible, sendAnalytics = true) {
+    toggleFilmstrip(visible) {
         const isVisibleDefined = typeof visible === 'boolean';
 
         if (!isVisibleDefined) {
@@ -152,14 +168,6 @@ const Filmstrip = {
         } else if (this.isFilmstripVisible() === visible) {
             return;
         }
-        if (sendAnalytics) {
-            // TODO: This should be converted to an event which indicates
-            // why/how the filmstrip was toggled (i.e. was it a button click,
-            // keyboard shortcut, API call).
-            sendAnalyticsEvent(createFilmstripToggledEvent(
-                { enable: !this.isFilmstripVisible() }));
-        }
-        this.filmstrip.toggleClass('hidden');
 
         if (visible) {
             this.showMenuUpIcon();

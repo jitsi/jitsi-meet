@@ -4,7 +4,6 @@ import { toggleDialog } from '../../react/features/base/dialog';
 import {
     ACTION_SHORTCUT_PRESSED as PRESSED,
     ACTION_SHORTCUT_RELEASED as RELEASED,
-    ACTION_SHORTCUT_TRIGGERED as TRIGGERED,
     createShortcutEvent,
     sendAnalytics
 } from '../../react/features/analytics';
@@ -73,8 +72,8 @@ const KeyboardShortcut = {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
                         sendAnalytics(createShortcutEvent(
-                            RELEASED,
-                            'push.to.talk'));
+                            'push.to.talk',
+                            RELEASED));
                         logger.log('Talk shortcut released');
                         APP.conference.muteAudio(false);
                     }
@@ -95,7 +94,7 @@ const KeyboardShortcut = {
      * Registers a new shortcut.
      *
      * @param shortcutChar the shortcut character triggering the action
-     * @param shortcutAttr the "shortcut" html element attribute mappring an
+     * @param shortcutAttr the "shortcut" html element attribute mapping an
      * element to this shortcut and used to show the shortcut character on the
      * element tooltip
      * @param exec the function to be executed when the shortcut is pressed
@@ -177,7 +176,7 @@ const KeyboardShortcut = {
      */
     _initGlobalShortcuts() {
         this.registerShortcut('?', null, () => {
-            sendAnalytics(createShortcutEvent(TRIGGERED, 'help'));
+            sendAnalytics(createShortcutEvent('help'));
             APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
                 shortcutDescriptions: _shortcutsHelp
             }));
@@ -186,7 +185,7 @@ const KeyboardShortcut = {
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            sendAnalytics(createShortcutEvent(PRESSED, 'talk'));
+            sendAnalytics(createShortcutEvent('talk', PRESSED));
             logger.log('Talk shortcut pressed');
             APP.conference.muteAudio(true);
         });
@@ -194,7 +193,7 @@ const KeyboardShortcut = {
 
         if (!interfaceConfig.filmStripOnly) {
             this.registerShortcut('T', null, () => {
-                sendAnalytics(createShortcutEvent(TRIGGERED, 'speaker.stats'));
+                sendAnalytics(createShortcutEvent('speaker.stats'));
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
                     conference: APP.conference
                 }));

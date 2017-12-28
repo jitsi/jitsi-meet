@@ -432,8 +432,8 @@ export default class SharedVideoManager {
     }
 
     /**
-     * Updates video, if its not playing and needs starting or
-     * if its playing and needs to be paysed
+     * Updates video, if it's not playing and needs starting or if it's playing
+     * and needs to be paused.
      * @param id the id of the sender of the command
      * @param url the video url
      * @param attributes

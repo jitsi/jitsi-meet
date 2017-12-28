@@ -4,7 +4,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import Settings from '../../../settings/Settings';
 
 import {
-    createProfilePaneButtonEvent,
+    createProfilePanelButtonEvent,
     sendAnalytics
 } from '../../../../react/features/analytics';
 
@@ -94,7 +94,7 @@ export default {
          *
          */
         function loginClicked() {
-            sendAnalytics(createProfilePaneButtonEvent('login.button'));
+            sendAnalytics(createProfilePanelButtonEvent('login.button'));
             emitter.emit(UIEvents.AUTH_CLICKED);
         }
 
@@ -107,7 +107,7 @@ export default {
             const titleKey = 'dialog.logoutTitle';
             const msgKey = 'dialog.logoutQuestion';
 
-            sendAnalytics(createProfilePaneButtonEvent('logout.button'));
+            sendAnalytics(createProfilePanelButtonEvent('logout.button'));
 
             // Ask for confirmation
             APP.UI.messageHandler.openTwoButtonDialog({

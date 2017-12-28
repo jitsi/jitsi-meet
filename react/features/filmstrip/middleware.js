@@ -26,7 +26,7 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
                 // not need the middleware implemented here, Filmstrip.init, and
                 // UI.start.
                 || (Filmstrip.filmstrip
-                    && Filmstrip.toggleFilmstrip(!newValue, false));
+                    && Filmstrip.toggleFilmstrip(!newValue));
 
             return result;
         }

@@ -466,11 +466,16 @@ const Recording = {
      * @returns {void}
      */
     _onToolbarButtonClick() {
+        sendAnalytics(createToolbarEvent(
+            'recording.button',
+            {
+                dialogPresent: Boolean(dialog)
+            }));
+
         if (dialog) {
             return;
         }
 
-        sendAnalytics(createToolbarEvent('recording.button'));
         switch (this.currentState) {
         case JitsiRecordingStatus.ON:
         case JitsiRecordingStatus.RETRYING:

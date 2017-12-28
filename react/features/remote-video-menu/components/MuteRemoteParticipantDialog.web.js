@@ -77,7 +77,7 @@ class MuteRemoteParticipantDialog extends Component {
      * Handles the submit button action.
      *
      * @private
-     * @returns {boolean} - True.
+     * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
         const { dispatch, participantID } = this.props;

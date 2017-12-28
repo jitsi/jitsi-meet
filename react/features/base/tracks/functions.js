@@ -8,8 +8,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Create local tracks of specific types.
- * TODO: Add a note on why this was specifically renamed to have an "F" in the
- * name.
  *
  * @param {Object} options - The options with which the local tracks are to be
  * created.

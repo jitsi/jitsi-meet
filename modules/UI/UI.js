@@ -143,6 +143,32 @@ UI.toggleFullScreen = function() {
 };
 
 /**
+ * Indicates if we're currently in full screen mode.
+ *
+ * @return {boolean} {true} to indicate that we're currently in full screen
+ * mode, {false} otherwise
+ */
+UI.isFullScreen = function() {
+    return UIUtil.isFullScreen();
+};
+
+/**
+ * Returns true if the etherpad window is currently visible.
+ * @returns {Boolean} - true if the etherpad window is currently visible.
+ */
+UI.isEtherpadVisible = function() {
+    return Boolean(etherpadManager && etherpadManager.isVisible());
+};
+
+/**
+ * Returns true if there is a shared video which is being shown (?).
+ * @returns {boolean} - true if there is a shared video which is being shown.
+ */
+UI.isSharedVideoShown = function() {
+    return Boolean(sharedVideoManager && sharedVideoManager.isSharedVideoShown);
+};
+
+/**
  * Notify user that server has shut down.
  */
 UI.notifyGracefulShutdown = function() {
