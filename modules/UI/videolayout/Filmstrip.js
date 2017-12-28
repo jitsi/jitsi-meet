@@ -147,7 +147,8 @@ const Filmstrip = {
     },
 
     /**
-     * Toggles the visibility of the filmstrip.
+     * Toggles the visibility of the filmstrip, or sets it to a specific value
+     * if the 'visible' parameter is specified.
      *
      * @param visible optional {Boolean} which specifies the desired visibility
      * of the filmstrip. If not specified, the visibility will be flipped
@@ -160,33 +161,29 @@ const Filmstrip = {
      * to correctly resize the video area.
      */
     toggleFilmstrip(visible) {
-        const isVisibleDefined = typeof visible === 'boolean';
+        const wasFilmstripVisible = this.isFilmstripVisible();
 
-        if (!isVisibleDefined) {
-            // eslint-disable-next-line no-param-reassign
-            visible = this.isFilmstripVisible();
-        } else if (this.isFilmstripVisible() === visible) {
+        // If 'visible' is defined and matches the current state, we have
+        // nothing to do. Otherwise (regardless of whether 'visible' is defined)
+        // we need to toggle the state.
+        if (visible === wasFilmstripVisible) {
             return;
         }
 
         this.filmstrip.toggleClass('hidden');
 
-        if (visible) {
+        if (wasFilmstripVisible) {
             this.showMenuUpIcon();
         } else {
             this.showMenuDownIcon();
         }
 
-        // Emit/fire UIEvents.TOGGLED_FILMSTRIP.
-        const eventEmitter = this.eventEmitter;
-        const isFilmstripVisible = this.isFilmstripVisible();
-
-        if (eventEmitter) {
-            eventEmitter.emit(
+        if (this.eventEmitter) {
+            this.eventEmitter.emit(
                 UIEvents.TOGGLED_FILMSTRIP,
-                this.isFilmstripVisible());
+                !wasFilmstripVisible);
         }
-        APP.store.dispatch(setFilmstripVisibility(isFilmstripVisible));
+        APP.store.dispatch(setFilmstripVisibility(!wasFilmstripVisible));
     },
 
     /**
