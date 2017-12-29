@@ -40,14 +40,10 @@ export function initAnalytics({ getState }: { getState: Function }) {
     const state = getState();
     const config = state['features/base/config'];
     const { analyticsScriptUrls } = config;
-    const machineId = JitsiMeetJS.getMachineId();
     const { user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
-        product: 'lib-jitsi-meet',
         version: JitsiMeetJS.version,
-        session: machineId,
-        user: user ? user.id : `uid-${machineId}`,
-        server: state['features/base/connection'].locationURL.host
+        user
     };
 
     _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
