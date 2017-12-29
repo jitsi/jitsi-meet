@@ -2,23 +2,19 @@
     "contactlist": "__count__ Teilnehmer",
     "contactlist_plural": "",
     "passwordSetRemotely": "von einem anderen Teilnehmer gesetzt",
-    "connectionsettings": "Verbindungseinstellungen",
     "poweredby": "Betrieben von",
-    "feedback": {
-        "average": "Durschnittlich",
-        "bad": "Schlecht",
-        "good": "Gut",
-        "rateExperience": "Bitte bewerten Sie diese Konferenz.",
-        "veryBad": "Sehr schlecht",
-        "veryGood": "Sehr gut"
-    },
     "inviteUrlDefaultMsg": "Die Konferenz wird erstellt...",
     "me": "ich",
     "speaker": "Sprecher",
     "raisedHand": "Möchte sprechen",
     "defaultNickname": "Bsp: Heidi Blau",
     "defaultLink": "Bsp.: __url__",
-    "callingName": "__name__",
+    "audioDevices": {
+        "bluetooth": "Bluetooth",
+        "headphones": "Kopfhörer",
+        "phone": "Telefon",
+        "speaker": "Sprecher"
+    },
     "audioOnly": {
         "audioOnly": "Nur Audio",
         "featureToggleDisabled": "Umschalten zwischen __feature__ ist im Audio-Modus deaktiviert"
@@ -130,11 +126,9 @@
         "raiseHand": "Hand erheben"
     },
     "unsupportedBrowser": {
-        "appInstalled": "oder wenn die App bereits installiert ist<br/>, <strong>dann</strong>",
-        "appNotInstalled": "Sie benötigen <strong>__app__</strong> um der Konferenz mit dem Mobilgerät beizutreten",
+        "appNotInstalled": "Mit __app__ auf dem Mobiltelefon teilnehmen.",
         "downloadApp": "App herunterladen",
-        "joinConversation": "Der Konferenz beitreten",
-        "startConference": "Konferenz starten"
+        "openApp": "In __app__ fortfahren"
     },
     "bottomtoolbar": {
         "chat": "Chat öffnen / schliessen",
@@ -213,7 +207,9 @@
     "notify": {
         "disconnected": "getrennt",
         "moderator": "Moderatorenrechte vergeben",
-        "connected": "verbunden",
+        "connectedOneMember": "__name__ ist beigetreten",
+        "connectedTwoMembers": "__first__ und __second__ sind beigetreten",
+        "connectedThreePlusMembers": "__name__ und __count__ sind beigetreten",
         "somebody": "Jemand",
         "me": "Ich",
         "focus": "Konferenz-Organisator",
@@ -321,14 +317,11 @@
         "stopRecordingWarning": "Sind Sie sicher dass Sie die Aufnahme stoppen möchten?",
         "stopLiveStreaming": "Live-Streaming stoppen",
         "stopRecording": "Aufnahme stoppen",
-        "doNotShowWarningAgain": "Diesen Hinweis nicht mehr anzeigen",
         "doNotShowMessageAgain": "Diesen Hinweis nicht mehr anzeigen",
         "permissionDenied": "Zugriff verweigert",
         "screenSharingFailedToInstall": "Oh! Die Erweiterung für die Bildschirmfreigabe konnte nicht installiert werden.",
         "screenSharingFailedToInstallTitle": "Bildschirmfreigabe-Erweiterung konnte nicht installiert werden",
         "screenSharingPermissionDeniedError": "Oh! Beim Anfordern der Bildschirmfreigabe-Berechtigungen hat etwas nicht funktioniert. Bitte aktualisieren und erneut versuchen.",
-        "micErrorPresent": "Fehler beim Verbinden zum Mikrofon.",
-        "cameraErrorPresent": "Fehler beim Verbinden zur Kamera.",
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
         "cameraPermissionDeniedError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
@@ -416,7 +409,8 @@
         "off": "Aufnahme gestoppt",
         "on": "Aufnahme",
         "pending": "Die Aufnahme wartet auf den Beitritt eines Teilnehmers...",
-        "unavailable": "Oh! Der Aufnahme-Service ist momentan nicht verfügbar. Wir arbeiten der Behebung des Problems. Bitte später wieder versuchen.",
+        "serviceName": "Aufnahmedienst",
+        "unavailable": "Oh! Der __serviceName__ ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
         "unavailableTitle": "Aufnahme nicht verfügbar"
     },
     "liveStreaming": {
@@ -428,10 +422,22 @@
         "off": "Live-Streaming gestoppt",
         "on": "Live-Streaming",
         "pending": "Live-Stream wird gestartet...",
+        "serviceName": "Live Streaming-Dienst",
         "streamIdRequired": "Bitte Stream-ID eingeben um das Live-Streaming zu starten.",
         "streamIdHelp": "Wo ist die Stream-ID zu finden?",
-        "unavailable": "Oh! Der Live-Streaming Dienst ist momentan nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte später wieder versuchen.",
         "unavailableTitle": "Live-Streaming nicht verfügbar"
+    },
+    "videoSIPGW": {
+        "busy": "Es stehen keine freien Ressourcen zur Verfügung. Bitte versuchen Sie es später noch einmal.",
+        "busyTitle": "Keine freien Ressourcen",
+        "errorInvite": "Die Konferenz konnte nicht gestartet werden. Bitte versuchen Sie es später noch einmal.",
+        "errorInviteTitle": "Fehler beim Erstellen der Konferenz",
+        "errorAlreadyInvited": "__displayName__ ist bereits eingeladen",
+        "errorInviteFailedTitle": "__displayName__ konnte nicht eingeladen werden",
+        "errorInviteFailed": "Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
+        "pending": "__displayName__ wurde eingeladen",
+        "serviceName": "Raumkonferenz-Dienst",
+        "unavailableTitle": "Raumkonferenz-Dienst nicht verfügbar"
     },
     "speakerStats": {
         "hours": "__count__h",
@@ -456,7 +462,7 @@
         "hidePassword": "Passwort verstecken",
         "inviteTo": "Teilnehmer zu __conferenceName__ einladen",
         "invitedYouTo": "Sie wurden von __userName__ zur Konferenz __inviteURL__ eingeladen",
-        "invitePeople": "Teilnehmer einladen",
+        "invitePeople": "Einladen",
         "locked": "Diese Konferenz ist gesperrt. Neue Teilnehmer müssen das Passwort eingeben um beizutreten.",
         "showPassword": "Passwort anzeigen",
         "unlocked": "Die Konferenz ist nicht geschützt. Jeder mit dem Link kann der Konferenz beitreten."
@@ -469,6 +475,8 @@
         "labelTooltipAudioOnly": "Nur-Audio Modus aktiv",
         "ld": "LD",
         "lowDefinition": "Niedrige Auflösung",
+        "onlyAudioAvailable": "Nur Ton",
+        "onlyAudioSupported": "In diesem Browser wird nur Audio unterstützt.",
         "p2pEnabled": "Ende-zu-Ende aktiviert",
         "p2pVideoQualityDescription": "Im Ende-zu-Ende Modus kann die Konferenzqualität nur zwischen hoch und nur-Audio gewählt werden. Andere Einstellungen werden nicht beachtet.",
         "recHighDefinitionOnly": "Hohe Qualität wird bevorzugt.",
@@ -501,6 +509,14 @@
         "microphoneError": "Fehler beim Zugriff auf das Mikrofon",
         "cameraPermission": "Fehler beim Bezug der Kamera-Zugriffsberechtigungen",
         "microphonePermission": "Fehler beim Bezug der Mikrofon-Zugriffsberechtigungen"
+    },
+    "feedback": {
+        "average": "Durschnittlich",
+        "bad": "Schlecht",
+        "good": "Gut",
+        "rateExperience": "Bitte bewerten Sie diese Konferenz.",
+        "veryBad": "Sehr schlecht",
+        "veryGood": "Sehr gut"
     },
     "info": {
         "copy": "Link kopieren",
