@@ -73,8 +73,8 @@ const KeyboardShortcut = {
                     if (APP.conference.isLocalAudioMuted()) {
                         sendAnalytics(createShortcutEvent(
                             'push.to.talk',
-                            RELEASED));
-                        logger.log('Talk shortcut released');
+                            PRESSED));
+                        logger.log('Talk shortcut pressed');
                         APP.conference.muteAudio(false);
                     }
                 }
@@ -185,8 +185,8 @@ const KeyboardShortcut = {
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            sendAnalytics(createShortcutEvent('talk', PRESSED));
-            logger.log('Talk shortcut pressed');
+            sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
+            logger.log('Talk shortcut released');
             APP.conference.muteAudio(true);
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
