@@ -882,8 +882,7 @@ UI.notifyInitiallyMuted = function() {
         'notify.mutedTitle',
         'connected',
         'notify.muted',
-        null,
-        120000);
+        null);
 };
 
 /**
