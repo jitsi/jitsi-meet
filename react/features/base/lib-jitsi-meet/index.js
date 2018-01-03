@@ -3,9 +3,11 @@
 import JitsiMeetJS from './_';
 export { JitsiMeetJS as default };
 
-// XXX Re-export the types exported by JitsiMeetJS in order to prevent undefined
-// imported JitsiMeetJS. It may be caused by import cycles but I have not
-// confirmed the theory.
+// XXX Re-export the properties exported by JitsiMeetJS in order to prevent
+// undefined imported JitsiMeetJS. It may be caused by import cycles but I have
+// not confirmed the theory.
+export const analytics = JitsiMeetJS.analytics;
+export const RTCBrowserType = JitsiMeetJS.util.RTCBrowserType;
 export const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 export const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 export const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
@@ -19,8 +21,6 @@ export const JitsiRecordingStatus = JitsiMeetJS.constants.recordingStatus;
 export const JitsiSIPVideoGWStatus = JitsiMeetJS.constants.sipVideoGW;
 export const JitsiTrackErrors = JitsiMeetJS.errors.track;
 export const JitsiTrackEvents = JitsiMeetJS.events.track;
-
-export const analytics = JitsiMeetJS.analytics;
 
 export * from './actions';
 export * from './actionTypes';
