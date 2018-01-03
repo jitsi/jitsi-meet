@@ -2150,7 +2150,7 @@ export default {
                     {
                         'old_resolution': oldResolution,
                         'new_resolution': newResolution,
-                        delay
+                        value: delay
                     }));
             });
 
