@@ -9,7 +9,8 @@ var loggingConfig = {
 
     // Logging level adjustments for verbose modules:
     'modules/xmpp/strophe.util.js': 'log',
-    'modules/statistics/CallStats.js': 'info'
+    'modules/statistics/CallStats.js': 'info',
+    'modules/RTC/TraceablePeerConnection.js': 'info'
 };
 
 /* eslint-enable no-unused-vars, no-var */
